@@ -3,18 +3,48 @@ import {
   Box, FormControl, InputLabel,
   Select, MenuItem,
 } from '@mui/material';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
-
+import axios from 'axios';
 interface SelectProps {
   inputLabel : string,
-   inputElements: string [],
     showIcon : boolean,
+    status : string
+}
+interface TipoContratto {
+  id: number,
+  descrizione : string
+ 
 }
 
-const SelectComponet: React.FC<SelectProps>= (props) => {
+const SelectComponet: React.FC<SelectProps> = (props) => {
   const [element, setElement] = useState('');
-  const { inputLabel, inputElements, showIcon } = props;
+  const { inputLabel, showIcon, status } = props;
+
+  const [tipoContratto, setTipoContratto] = useState<TipoContratto[]>([{id:0, descrizione:''}]);
+
+  const getAllTipoContratto  = async () => {
+    const response = await axios.get(
+      `https://portalefatturebeapi20231102162515.azurewebsites.net/api/datifatturazione/tipocontratto`).then( (res) => {
+        setTipoContratto(res.data);
+    
+          return res.data;
+      });
+};
+
+  useEffect(()=>{
+
+    
+   getAllTipoContratto();
+
+  
+  }, []);
+
+
+ 
+
+
+
 
   let iconCom; 
   if(showIcon){
@@ -40,15 +70,16 @@ iconCom = SearchIcon;
           onChange={(e) => setElement(e.target.value)}
           value={element || ''}
           IconComponent={iconCom}
+          disabled={status=== 'immutable' ? true : false}
 
         >
-          {inputElements.map((el) => (
+          {tipoContratto.map((el) => (
 
             <MenuItem
               key={Math.random()}
-              value={el}
+              value={el.id}
             >
-              {el}
+              {el.descrizione}
             </MenuItem>
 
           ))}

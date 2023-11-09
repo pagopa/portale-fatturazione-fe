@@ -5,6 +5,7 @@ import LabelComponent from './label';
 
 export default function PrimoContainerInsCom() {
   const exampleDate = "Nov/2023";
+  const exampleTipoContratto = "PAC";
   return (
     <div className="m-3">
       <Grid
@@ -18,7 +19,11 @@ export default function PrimoContainerInsCom() {
           item
           xs={6}
         >
-          <LabelComponent label="Mese/Anno" input={exampleDate} />
+          <div>
+          <LabelComponent label="Mese/Anno:" input={exampleDate} />
+          <LabelComponent label="Tipo Contratto:" input={exampleTipoContratto} />
+          </div>
+         
         </Grid>
 
         <Grid

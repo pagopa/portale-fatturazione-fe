@@ -2,6 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 
 export default function TerzoContainerInsCom() {
+  const mese= <span className="fw-semibold"> Novembre/2023</span>;
   return (
     <div className=" m-3 pl-5 pt-3">
       {/* prima row start */}
@@ -20,7 +21,7 @@ export default function TerzoContainerInsCom() {
         >
           Numero complessivo delle notifiche
           da processare in via analogica del
-          tipo notifica ex L. 890/1982 nel mese di riferimento
+          tipo notifica ex L. 890/1982 nel mese di {mese}
         </Grid>
 
         <Grid
@@ -56,7 +57,7 @@ export default function TerzoContainerInsCom() {
         >
           Notifiche Analogiche: “Art. 2 comma 6
           Anticipo pari al 30% per le notifiche
-          analogiche oggetto della commessa di mese/anno”
+          analogiche oggetto della commessa di {mese}
         </Grid>
 
         <Grid
@@ -76,7 +77,7 @@ export default function TerzoContainerInsCom() {
       {/* seconda row end */}
       <hr></hr>
       <Grid
-        sx={{ marginTop: '3%' }}
+        sx={{ marginTop: '25px', paddingBottom: '16px'}}
         container
         columns={12}
       >

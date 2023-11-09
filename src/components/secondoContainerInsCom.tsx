@@ -3,13 +3,15 @@ import { Grid, Typography } from '@mui/material';
 import RowInserimentoCommessa from './rowInserimentoCommessa';
 
 export default function SecondoContainerInsCom() {
+
+ 
   return (
     <div className="m-3 pl-5 ">
 <hr></hr>
       {/* prima row start */}
       <RowInserimentoCommessa
         sentence="Numero complessivo delle notifiche da
-          processare in via digitale nel mese di riferimento"
+          processare in via digitale nel mese di"
         textBoxHidden={false}
       />
       {/* prima row end */}
@@ -17,7 +19,7 @@ export default function SecondoContainerInsCom() {
       {/* seconda row start */}
       <RowInserimentoCommessa
         sentence="Numero complessivo delle notifiche da
-          processare in via analogica tramite Raccomandata A/R nel mese di riferimento"
+          processare in via analogica tramite Raccomandata A/R nel mese di"
         textBoxHidden={false}
       />
       {/* seconda row end */}
@@ -25,7 +27,7 @@ export default function SecondoContainerInsCom() {
       <hr></hr>
       <RowInserimentoCommessa
         sentence="Numero complessivo delle notifiche da
-          processare in via analogica del tipo notifica ex L. 890/1982 nel mese di riferimento"
+          processare in via analogica del tipo notifica ex L. 890/1982 nel mese di"
         textBoxHidden
       />
       <hr></hr>
@@ -33,7 +35,8 @@ export default function SecondoContainerInsCom() {
       {/* quarta row start */}
       <Grid
         sx={{
-          marginTop: '30px',
+          marginTop: '3%',
+          paddingBottom: '3%'
         }}
         container
         columns={12}

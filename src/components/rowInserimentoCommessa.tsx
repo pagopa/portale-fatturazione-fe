@@ -7,6 +7,7 @@ interface RowInsComProps {
 }
 
 const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHidden }) => {
+  const mese= <span className="fw-semibold"> Novembre/2023</span>;
   return (
     <Grid
       sx={{ marginTop: '20px' }}
@@ -24,7 +25,7 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
         xs={6}
       >
 
-        {sentence}
+        <p>{sentence}{mese}</p>
       </Grid>
 
       <Grid

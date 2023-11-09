@@ -1,21 +1,34 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 
+type OptinsRadio = {
+  id: string,
+  descrizione: string
+}
+
+
 interface RadioComponentProps {
-  valueRadio : string,
+  valueRadio? : string 
   label?: string,
   setValueRadio: any,
-  options: string [],
+  options:OptinsRadio[],
+  status:string,
+ 
+
 }
 
 const  RadioComponent: React.FC<RadioComponentProps> = (props) => {
   const {
-    valueRadio, label, setValueRadio, options,
+   label, options, status, valueRadio, setValueRadio
   } = props;
+
+  console.log('radio');
+
+
 
   return (
     <FormControl>
@@ -24,13 +37,13 @@ const  RadioComponent: React.FC<RadioComponentProps> = (props) => {
         row
         aria-labelledby="demo-row-radio-buttons-group-label"
         name="row-radio-buttons-group"
-        onChange={(e) => setValueRadio(e.target.value)}
-        value={valueRadio}
+        onChange={(e) =>setValueRadio(e.target.value)}>
+        {options.map((el:OptinsRadio) => (
 
-      >
-        {options.map((el) => (
-          <FormControlLabel key={Math.random()} value={el} control={<Radio />} label={el} />
-        ))}
+        <FormControlLabel  key={Math.random()} value={el.id} control={<Radio checked={el.id === valueRadio} disabled={status === 'immutable' ? true : false} />} label={el.descrizione} />
+        )
+          
+        )}
 
       </RadioGroup>
     </FormControl>

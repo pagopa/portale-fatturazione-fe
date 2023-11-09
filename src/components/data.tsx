@@ -6,11 +6,12 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 interface DataProps {
   dataLabel: string,
-  formatDate: string
+  formatDate: string,
+  status:string
   // any props that come into the component
 }
 
- const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate }) => {
+ const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate, status }) => {
   const [value, setValue] = React.useState(new Date());
   const onChangeHandler = (data:any) => {
     setValue(data);
@@ -23,6 +24,7 @@ interface DataProps {
           format={formatDate}
           value={value}
           onChange={onChangeHandler}
+          disabled={status=== 'immutable' ? true : false}
           slotProps={{
             textField: {
               inputProps: {

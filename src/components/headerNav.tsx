@@ -1,10 +1,28 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   HeaderProduct,
 } from '@pagopa/mui-italia';
 
+type PartySwitchItem = {
+  id: string;
+  name: string;
+  productRole?: string;
+  logoUrl?: string;
+  parentName?: string;
+};
+type LinkType = "internal" | "external";
+type ProductSwitchItem = {
+  id: string;
+  title: string;
+  productUrl: string;
+  linkType: LinkType;
+  icon?: ReactNode;
+};
+type PartyEntity = PartySwitchItem;
+type ProductEntity = ProductSwitchItem;
+
 const HeaderNavComponent : React.FC =() => {
-  const productsList = [
+  const productsList : Array<ProductEntity>  = [
     {
       id: '0',
       title: 'Piattaforma PagoPa',
@@ -20,7 +38,7 @@ const HeaderNavComponent : React.FC =() => {
 
   const cdnPath = 'https://assets.cdn.io.italia.it/logos/organizations/';
 
-  const partyList = [
+  const partyList : Array<PartyEntity> = [
     {
       id: '0',
       name: `Commissario straordinario per la realizzazione di
@@ -36,12 +54,17 @@ const HeaderNavComponent : React.FC =() => {
       name: 'Comune di Roma',
       productRole: 'Referente amministrativo',
     }];
+
+    
   return (
     <HeaderProduct
       productId="1"
       productsList={productsList}
       onSelectedProduct={(p) => console.log('Selected Item:', p.title)}
-      partyList={[partyList[0]]}
+      partyList={partyList}
+      
+   
+  
 
     />
 

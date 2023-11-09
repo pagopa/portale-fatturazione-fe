@@ -10,9 +10,15 @@ interface LabelProps{
 
 const LabelComponent : React.FC<LabelProps> = ({ label, input }) => {
   return (
-    <div className="d-flex">
-      <InputLabel sx={{ marginRight: '20px' }} size={"normal"}>{label}</InputLabel>
-      <Typography>{input}</Typography>
+    <div className="row">
+      <div className='col-6 col-sm-3'>
+      <InputLabel sx={{textAlign:'start'}}  size={"normal"}>{label}</InputLabel>
+      </div>
+      <div className='col-6 col-sm-3'>
+      <Typography sx={{textAlign:'start'}} >{input}</Typography>
+      </div>
+      
+      
     </div>
   );
 };

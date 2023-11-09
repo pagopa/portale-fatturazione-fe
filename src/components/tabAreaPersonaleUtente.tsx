@@ -1,19 +1,93 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../style/areaPersonaleUtenteEnte.css';
-import { Box } from '@mui/material';
-
+import { Box, InputLabel, Typography } from '@mui/material';
 import RadioComponent from './radio';
 import DataComponent from './data';
 import DynamicInsert from './dynamicInsert';
 import SelectComponet from './select';
 import TextFieldComponent from './textField';
 import LabelComponent from './label';
+import axios from 'axios';
 
-function TabAreaPersonaleUtente() {
-  const [splitPayment, setSplitPayment] = useState('');
-  const [tipoDati, setTipoDati] = useState('');
+type Contatti = {
+  email: string,
+  tipo: number
+}
+interface TabAreaPesonaleProps{
+  statusPage: string;
+}
+
+interface DatiFatturazione{
+  flagOrdineContratto:string,
+  splitPayment:boolean,
+  cup: string,
+  cig:string,
+  idDocumento:string,
+  codCommessa:string,
+  contatti: Contatti[],
+}
+
+
+const TabAreaPersonaleUtente : React.FC<TabAreaPesonaleProps> = (props) => {
+
+const {statusPage } = props;
+
+
+  
 
   const exampleDate = new Date().toLocaleDateString('en-GB');
+
+
+
+  const [datiFatturazione, setDatiFatturazione] = useState<DatiFatturazione>({
+    flagOrdineContratto:'',
+    splitPayment:false,
+    cup: '',
+    cig:'',
+    idDocumento:'',
+    codCommessa:'',
+    contatti:[],
+  });
+
+
+
+
+  const getDatiFatturazione  = async () => {
+    const response = await axios.get(
+      `https://portalefatturebeapi20231102162515.azurewebsites.net/api/datifatturazione/17`).then( (res) => {
+       setDatiFatturazione(res.data);
+      
+        console.log(res.data, 'CICCIO');
+          return res.data;
+      });
+      return response;
+};
+
+
+  useEffect(()=>{
+
+    getDatiFatturazione();
+
+  }, []);
+
+const valueOptionRadioTipoOrdine = [
+  {descrizione:'Dati ordine d\'acquisto', id:"1"},
+  {descrizione:'Dati contratto', id:"2"}
+  ];
+
+  const valueOptionRadioSplitPayment = [
+    {descrizione:'Si', id: '1'},
+    {descrizione:'No', id: '2'}
+    ];
+
+   let booleanToStringSplitPayment; 
+    if(datiFatturazione.splitPayment){
+      booleanToStringSplitPayment = '1';
+    }else{
+      booleanToStringSplitPayment = '2';
+    }
+const [ordineacquisto, setOrdineAcquisto] = useState();
+const [split, setSplit] = useState();
   return (
 
     <div className="m-5 pb-5 bg-white rounded">
@@ -22,9 +96,10 @@ function TabAreaPersonaleUtente() {
 
         <div>
           <RadioComponent
-            valueRadio={tipoDati}
-            setValueRadio={setTipoDati}
-            options={['Dati ordine d\'acquisto', 'Dati contratto']}
+            options={valueOptionRadioTipoOrdine}
+            status={statusPage}
+            valueRadio={ordineacquisto || datiFatturazione.flagOrdineContratto}
+            setValueRadio={setOrdineAcquisto}
           />
         </div>
 
@@ -37,6 +112,9 @@ function TabAreaPersonaleUtente() {
               label="CUP"
               placeholder="Inserisci il CUP"
               fullWidth={false}
+              status={statusPage}
+              value={datiFatturazione.cup}
+             
             />
 
           </div>
@@ -48,23 +126,40 @@ function TabAreaPersonaleUtente() {
               label="CIG"
               placeholder="Inserisci il CIG"
               fullWidth={false}
+              status={statusPage}
+              value={datiFatturazione.cig}
+             
             />
           </div>
           {/* CIG end */}
-          {/* radio start */}
+          {/* radio start  */}
           <div>
             <RadioComponent
-              valueRadio={splitPayment}
-              setValueRadio={setSplitPayment}
+              valueRadio={split || booleanToStringSplitPayment}
               label="Split Paymet"
-              options={['Si', 'No']}
+              options={valueOptionRadioSplitPayment}
+              status={statusPage}
+              setValueRadio={setSplit}
             />
           </div>
+         
           {/* radio start */}
-          {/* Box tipo contratto start      */}
-          <SelectComponet inputLabel="Tipo Contratto:" inputElements={['', 'PAC', 'PAL']} showIcon={false} />
-          {/* Box tipo contratto end */}
+          {/* Box tipo contratto start    
+          <SelectComponet inputLabel="Tipo Contratto:"  showIcon={false} status={statusPage} />
+           Box tipo contratto end */}
+
+             <div>
+                <TextFieldComponent
+                  helperText="Inserisci Mail Pec"
+                  label="Mail Pec"
+                  placeholder="Inserisci Mail Pec"
+                  fullWidth={false}
+                  status={statusPage}
+                  value={'gino@gino.it'}
+                />
+              </div>
           <div />
+          
         </Box>
 
         {/* first box cap cig split radio  end */}
@@ -79,12 +174,14 @@ function TabAreaPersonaleUtente() {
                   label="ID Documento"
                   placeholder="Inserisci ID"
                   fullWidth={false}
+                  status={statusPage}
+                  value={datiFatturazione.idDocumento}
                 />
               </div>
               {/* id documento end */}
               {/* data notifica start */}
               <div>
-                <DataComponent dataLabel="Data documento" formatDate="dd/MM/yyyy" />
+                <DataComponent dataLabel="Data documento" formatDate="dd/MM/yyyy" status={statusPage} />
               </div>
               {/* data notifica end */}
             </Box>
@@ -95,6 +192,8 @@ function TabAreaPersonaleUtente() {
                 label="Codice. Commessa/Convenzione"
                 placeholder="Commessa/Convenzione"
                 fullWidth
+                status={statusPage}
+                value={datiFatturazione.codCommessa}
               />
             </div>
             {/* commessa end */}
@@ -104,20 +203,29 @@ function TabAreaPersonaleUtente() {
         {/* secondo box   end */}
         {/* terzo box   start */}
         <div className="mt-3">
-          <DynamicInsert />
+          <DynamicInsert status={statusPage} arrElement={datiFatturazione.contatti} />
         </div>
 
         {/* terzo box   end */}
         <hr className="mx-5 mt-5" />
         <div className="d-flex justify-content-around mt-5">
-          <LabelComponent label="Data primo accesso" input={exampleDate} />
-          <LabelComponent label="Data ultimo accesso" input={exampleDate} />
+          <div className='d-flex'>
+           <InputLabel  sx={{ marginRight:'20px'}}  size={"normal"}>Data primo accesso</InputLabel>
+           <Typography >{exampleDate}</Typography>
+          </div>
+
+          <div className='d-flex'>
+           <InputLabel sx={{ marginRight:'20px'}}  size={"normal"}>Data ultimo accesso</InputLabel>
+           <Typography >{exampleDate}</Typography>
+          </div>
+        
+        
         </div>
 
       </div>
 
     </div>
   );
-}
+};
 
 export default TabAreaPersonaleUtente;
