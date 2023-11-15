@@ -1,17 +1,11 @@
-import React , { ReactNode } from "react";
+import React from "react";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import {DataProps}  from '../types/typesAreaPersonaleUtenteEnte';
 
 
-interface DataProps {
-    dataLabel: string,
-    formatDate: string,
-    status:string,
-    children:string,
-    data:Date,
-    setData:any
-}
+
 
 const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate, status, children, data, setData }) => {
 

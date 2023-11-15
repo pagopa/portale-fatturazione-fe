@@ -3,74 +3,99 @@ import {
     TextField, Button, Typography, IconButton,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { useState, useEffect } from 'react';
+import { useState, useContext } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import {DynamicInsertProps,DatiFatturazione,Email,AreaPersonaleContext}  from '../types/typesAreaPersonaleUtenteEnte';
+import { DatiFatturazioneContext } from '../page/areaPersonaleUtenteEnte';
+import { _YupEmail} from '../validations/email/index';
 
-interface Email {
-    tipo?: number;
-    email?: string
-}
-
-interface DynamicInsertProps {
-    status: string,
-    arrElement: Email[]
-}
 
 const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
-    const {status, arrElement} = props;
-    const [arr, setArr] = useState<Email [] >(arrElement);
-    const [element, setElement] = useState<{email?: string, tipo?: number}>({ });
 
-    useEffect(()=>{
-        setArr(arrElement);
-    },[arrElement]);
-   
-    console.log({arr,arrElement});
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const {datiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
+
+    const {status, arrElement, setData} = props;
+    const [element, setElement] = useState('');
+    const [validation, setValidation] = useState(false);
+
+
+
+ 
+
+    const handleSubmit = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
-        if (element.email) {
-            setArr([...arr, element]);
-            setElement({});
-        }
+        if (element) {
+            setData((prevState: DatiFatturazione)=>{
+                  
+                const arrContatti = prevState.contatti;
+                const newArrContatti = [...arrContatti, {tipo:datiFatturazione.tipoCommessa,email:element}];
+                const newState = {...prevState, ...{contatti:newArrContatti}};
+                         
+                return newState;
+            });
+        
+            setElement('');
+        }  
+    };
+ 
+    const hendleOnMouseOut = (e: React.SyntheticEvent<EventTarget>) =>{
+        e.persist();
+       
+        _YupEmail.validate(element).then(( )=>{
+              
+            setValidation(false);
+
+        }).catch(()=> setValidation(true));
     };
 
-   
+    const handleElement = (e: any) => {
+        const mail = e.target.value;
+      
+        setElement(mail);
+        
+    };
 
-    const handleElement = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const editArray = ( e: React.MouseEvent<HTMLButtonElement, MouseEvent>,email?: string,) => {
         e.preventDefault();
-        const el = e.target.value;
-     
-        setElement({ tipo: Math.random(), email: el });
+        const el = arrElement.filter((singleObj ) => singleObj.email === email);
+
+        const newArr = arrElement.filter((singleObj) => singleObj.email !== email);
+        setData((prevState: DatiFatturazione)=>{
+            const newState = {...prevState, ...{contatti:newArr}};
+            return newState;
+        });
+        const setemail = el[0].email; 
+        setElement(setemail|| '');
     };
 
-    const editArray = (tipo?: number) => {
-  
-        const el = arr.filter((singleObj ) => singleObj.tipo === tipo);
-
-        const newArr = arr.filter((singleObj) => singleObj.tipo !== tipo);
-        setArr(newArr);
-        setElement(el[0]);
-    };
-
-    const deleteElementFromArr = (tipo?: number) => {
-        const newArr = arr.filter((singleObj) => singleObj.tipo !== tipo);
-        setArr(newArr);
+    const deleteElementFromArr = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, email?: string) => {
+        e.preventDefault();
+        const newArr = arrElement.filter((singleObj) => singleObj.email !== email);
+        setData((prevState: DatiFatturazione)=>{
+            const newState = {...prevState, ...{contatti:newArr}};
+            return newState;
+        });
+       
     };
 
     return (
-        <form onSubmit={(e) => handleSubmit(e)}>
+        <div>
 
 
             <div className='d-flex'>
              
                 <TextField
-                    label={`Email amministrativo  di riferimento Max ${3 - arr.length}`}
+                    label={`Email amministrativo  di riferimento Max ${3 - arrElement.length}`}
                     placeholder="Indirizzo email amministrativo"
                     sx={{ width: '30%' }}
-                    onChange={(e) => { handleElement(e); }}
-                    value={element.email || ''}
-                    disabled={(arr.length >= 3 || status=== 'immutable') ? true : false}
+                    type='text'
+                    value={element||''}
+                    onChange={(e)=>handleElement(e)}
+                    disabled={(arrElement.length >= 3 || status=== 'immutable') ? true : false}
+                    onMouseOut={(e) => hendleOnMouseOut(e)}
+                    error={validation}
+                    
                 />
              
                 <div className='d-flex align-items-center'>
@@ -78,8 +103,9 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
                         variant="contained"
                         sx={{ marginLeft: '20px' }}
                         size="small"
-                        type="submit"
-                        disabled={(arr.length >= 3 || status=== 'immutable') ? true : false}
+                        onClick={(e) => handleSubmit(e)}
+                        disabled={(arrElement.length >= 3 || status=== 'immutable'|| validation) ? true : false}
+                       
                     >
                         <AddIcon fontSize="small" sx={{ color: 'ffffff' }} />
           Aggiungi Email
@@ -89,11 +115,11 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
                
             </div>
             <div className=" mt-3 ">
-                {arr.map((el : Email) => {
-                    const { tipo , email} = el;
+                {arrElement.map((el : Email) => {
+                    const { email} = el;
 
                     return (
-                        <div className='d-flex' key={tipo}>
+                        <div className='d-flex' key={Math.random()}>
                             <div className='d-flex align-items-center w-25'>
                                 <Typography
                                     variant="caption-semibold"
@@ -109,7 +135,7 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
                                     aria-label="Edit"
                                     color="primary"
                                     size="small"
-                                    onClick={() => editArray(tipo)}
+                                    onClick={(e)=> editArray(e, email)}
                                 >{status === 'immutable'?null: <EditIcon/>}
                  
                                 </IconButton>
@@ -117,7 +143,7 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
                                 <IconButton
                                     aria-label="Scarica"
                                     size="medium"
-                                    onClick={() => deleteElementFromArr(tipo)}
+                                    onClick={(e) => deleteElementFromArr(e, email)}
                                 >{status === 'immutable'?null: <DeleteIcon
                                         sx={{ color: '#FF0000' }}
                                     />}
@@ -132,7 +158,7 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
 
         
 
-        </form>
+        </div>
 
     );
 };

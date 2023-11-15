@@ -1,42 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-
-type OptinsRadio = {
-    id: string,
-    descrizione: string
-}
+import { RadioComponentProps,DatiFatturazione,OptinsRadio }  from '../types/typesAreaPersonaleUtenteEnte';
 
 
-type Contatti = {
-    email: string,
-    tipo: number
-}
-interface DatiFatturazione{
-    tipoCommessa:string,
-    splitPayment:boolean,
-    cup: string,
-    cig:string,
-    idDocumento:string,
-    codCommessa:string,
-    contatti: Contatti[],
-    dataCreazione:string,
-    dataModifica:string,
-    dataDocumento:string,
-}
-interface RadioComponentProps {
-    valueRadio? : string 
-    label?: string,
-    setDatiFatturazione: any,
-    options:OptinsRadio[],
-    status:string,
-    keyObject:string
- 
 
-}
 
 const  RadioComponent: React.FC<RadioComponentProps> = (props) => {
     const {
@@ -55,10 +26,20 @@ const  RadioComponent: React.FC<RadioComponentProps> = (props) => {
                 aria-labelledby="demo-row-radio-buttons-group-label"
                 name="row-radio-buttons-group"
                 onChange={(e)=>{setDatiFatturazione((prevState: DatiFatturazione) =>{
-                    const newValue = {[keyObject]:e.target.value};
-                    const newState = {...prevState, ...newValue};
-                    console.log({newState});
+                    let newState;
+                    if(e.target.value.toLowerCase() === 'true'){
+                        const newValue = {[keyObject]:true};
+                        newState = {...prevState, ...newValue};
+                    }else if(e.target.value.toLowerCase() === 'false'){
+                        const newValue = {[keyObject]:false};
+                        newState = {...prevState, ...newValue};
+                    }else{
+                        const newValue = {[keyObject]:e.target.value};
+                        newState = {...prevState, ...newValue};
+                    }
+                  
                     return newState;
+                   
                 } );}}>
                 {options.map((el:OptinsRadio) => (
 

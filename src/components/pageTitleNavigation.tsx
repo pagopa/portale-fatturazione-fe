@@ -1,16 +1,14 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { Typography, Button } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-
 import { ButtonNaked } from '@pagopa/mui-italia';
+import { DatiFatturazioneContext } from '../page/areaPersonaleUtenteEnte';
 
 
-interface PageTitleProps {
-    statusPage: string,
-    setStatusPage : any
-}
+const PageTitleNavigation = () => {
 
-const PageTitleNavigation : React.FC<PageTitleProps> = ({ statusPage, setStatusPage }) => {
+    const {statusPage, setStatusPage} = useContext(DatiFatturazioneContext);
+ 
     let titleNavigation;
 
     if (statusPage === 'immutable') {
@@ -33,7 +31,7 @@ const PageTitleNavigation : React.FC<PageTitleProps> = ({ statusPage, setStatusP
                         >
               Indietro 
                         </ButtonNaked>
-                        <Typography sx={{ marginLeft: '10px' }} variant="caption">Dati di fatturazione / Modifica</Typography>
+                        <Typography sx={{ marginLeft: '10px' }} variant="caption">/ Modifica</Typography>
 
                     </div>
                 ) : null}

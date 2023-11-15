@@ -1,70 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import '../style/areaPersonaleUtenteEnte.css';
 import { Box, InputLabel, Typography } from '@mui/material';
 import RadioComponent from './radio';
 import DataComponent from './data';
 import DynamicInsert from './dynamicInsert';
-import SelectComponet from './select';
 import TextFieldComponent from './textField';
-import LabelComponent from './label';
-import axios from 'axios';
+import {AreaPersonaleContext} from '../types/typesAreaPersonaleUtenteEnte';
 
-type Contatti = {
-    email: string,
-    tipo: number
-}
-interface TabAreaPesonaleProps{
-    statusPage: string;
-}
-
-interface DatiFatturazione{
-    tipoCommessa:string,
-    splitPayment:boolean,
-    cup: string,
-    cig:string,
-    idDocumento:string,
-    codCommessa:string,
-    contatti: Contatti[],
-    dataCreazione:string,
-    dataModifica:string,
-    dataDocumento:string,
-    pec:string,
-}
-
-
-const TabAreaPersonaleUtente : React.FC<TabAreaPesonaleProps> = (props) => {
-
-    const {statusPage } = props;
-
-    const [datiFatturazione, setDatiFatturazione] = useState<DatiFatturazione>({
-        tipoCommessa:'',
-        splitPayment:false,
-        cup: '',
-        cig:'',
-        idDocumento:'',
-        codCommessa:'',
-        contatti:[],
-        dataCreazione:'',
-        dataModifica:'',
-        dataDocumento:'',
-        pec:'>'
-
-    });
+import { DatiFatturazioneContext } from '../page/areaPersonaleUtenteEnte';
 
 
 
 
-    const getDatiFatturazione  = async () => {
-        const response = await axios.get(
-            `https://portalefatturebeapi20231102162515.azurewebsites.net/api/datifatturazione/ente/176f304b-d5d5-4cb8-a99a-45937c3df238`).then( (res) => {
-            setDatiFatturazione(res.data);
-      
-            console.log(res.data, 'CICCIO');
-            return res.data;
-        });
-        return response;
-    };
 
+const TabAreaPersonaleUtente = () => {
+    const {statusPage,datiFatturazione,setDatiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
+   
     function createDateFromString(string:string){
         const getGiorno = new Date(string).getDate();
         const getMese = new Date(string).getMonth();
@@ -76,11 +27,6 @@ const TabAreaPersonaleUtente : React.FC<TabAreaPesonaleProps> = (props) => {
 
     
    
-    useEffect(()=>{
-
-        getDatiFatturazione();
-
-    }, []);
 
     const valueOptionRadioTipoOrdine = [
         {descrizione:'Dati ordine d\'acquisto', id:"1"},
@@ -88,18 +34,11 @@ const TabAreaPersonaleUtente : React.FC<TabAreaPesonaleProps> = (props) => {
     ];
 
     const valueOptionRadioSplitPayment = [
-        {descrizione:'Si', id: '1'},
-        {descrizione:'No', id: '2'}
+        {descrizione:'Si', id: true},
+        {descrizione:'No', id: false},
     ];
 
-    let booleanToStringSplitPayment; 
-    if(datiFatturazione.splitPayment){
-        booleanToStringSplitPayment = '1';
-    }else{
-        booleanToStringSplitPayment = '2';
-    }
   
-    const [split, setSplit] = useState();
     const [dataDocumento, setDataDocumento] = useState(new Date());
    
 
@@ -128,10 +67,15 @@ const TabAreaPersonaleUtente : React.FC<TabAreaPesonaleProps> = (props) => {
                             label="CUP"
                             placeholder="Inserisci il CUP"
                             fullWidth={false}
-                            status={statusPage}
+                          
                             value={datiFatturazione.cup}
-                            setDatiFatturazione={setDatiFatturazione}
+                           
                             keyObject='cup'
+                            
+                            dataValidation={{max:15,validation:'Validazione Mail'}}
+
+                           
+                            
              
                         />
 
@@ -144,10 +88,12 @@ const TabAreaPersonaleUtente : React.FC<TabAreaPesonaleProps> = (props) => {
                             label="CIG"
                             placeholder="Inserisci il CIG"
                             fullWidth={false}
-                            status={statusPage}
+                            
                             value={datiFatturazione.cig}
-                            setDatiFatturazione={setDatiFatturazione}
+                         
                             keyObject='cig'
+                          
+                            dataValidation={{max:10,validation:'Max 10 caratteri'}}
              
                         />
                     </div>
@@ -155,11 +101,12 @@ const TabAreaPersonaleUtente : React.FC<TabAreaPesonaleProps> = (props) => {
                     {/* radio start  */}
                     <div>
                         <RadioComponent
-                            valueRadio={split || booleanToStringSplitPayment}
+                            valueRadio={datiFatturazione.splitPayment}
                             label="Split Paymet"
                             options={valueOptionRadioSplitPayment}
                             status={statusPage}
-                            setValueRadio={setSplit}
+                            setDatiFatturazione={setDatiFatturazione}
+                            keyObject='splitPayment'
                         />
                     </div>
          
@@ -174,10 +121,12 @@ const TabAreaPersonaleUtente : React.FC<TabAreaPesonaleProps> = (props) => {
                             label="Mail Pec"
                             placeholder="Inserisci Mail Pec"
                             fullWidth={false}
-                            status={statusPage}
+                          
                             value={datiFatturazione.pec}
-                            setDatiFatturazione={setDatiFatturazione}
+                           
                             keyObject='pec'
+                           
+                            dataValidation={{max:15,validation:'Max 15 caratteri'}}
 
                         />
                     </div>
@@ -197,10 +146,12 @@ const TabAreaPersonaleUtente : React.FC<TabAreaPesonaleProps> = (props) => {
                                     label="ID Documento"
                                     placeholder="Inserisci ID"
                                     fullWidth={false}
-                                    status={statusPage}
+                                   
                                     value={datiFatturazione.idDocumento}
-                                    setDatiFatturazione={setDatiFatturazione}
+                                   
                                     keyObject='idDocumento'
+                                 
+                                    dataValidation={{max:20,validation:'Max 20 caratteri'}}
                                 />
                             </div>
                             {/* id documento end */}
@@ -224,10 +175,11 @@ const TabAreaPersonaleUtente : React.FC<TabAreaPesonaleProps> = (props) => {
                                 label="Codice. Commessa/Convenzione"
                                 placeholder="Commessa/Convenzione"
                                 fullWidth
-                                status={statusPage}
+                              
                                 value={datiFatturazione.codCommessa}
-                                setDatiFatturazione={setDatiFatturazione}
+                               
                                 keyObject='codCommessa'
+                                dataValidation={{max:100,validation:'Max 100 caratteri'}}
                             />
                         </div>
                         {/* commessa end */}
@@ -237,7 +189,7 @@ const TabAreaPersonaleUtente : React.FC<TabAreaPesonaleProps> = (props) => {
                 {/* secondo box   end */}
                 {/* terzo box   start */}
                 <div className="mt-3">
-                    <DynamicInsert status={statusPage} arrElement={datiFatturazione.contatti} />
+                    <DynamicInsert status={statusPage} arrElement={datiFatturazione.contatti} setData={setDatiFatturazione} />
                 </div>
 
                 {/* terzo box   end */}

@@ -1,43 +1,55 @@
-import React from 'react';
-import {
-    TextField,
-} from '@mui/material';
-
-type Contatti = {
-    email: string,
-    tipo: number
-}
-interface DatiFatturazione{
-    tipoCommessa:string,
-    splitPayment:boolean,
-    cup: string,
-    cig:string,
-    idDocumento:string,
-    codCommessa:string,
-    contatti: Contatti[],
-    dataCreazione:string,
-    dataModifica:string,
-    dataDocumento:string,
-}
-
-interface TextFieldProps {
-    helperText : string,
-    label : string,
-    placeholder : string,
-    fullWidth : boolean,
-    status : string,
-    value : string,
-    setDatiFatturazione: any,
-    keyObject:string
-
-}
+import React, {useState, useContext} from 'react';
+import {TextField,} from '@mui/material';
+import {DatiFatturazione, TextFieldProps, StateEnableConferma,AreaPersonaleContext}  from '../types/typesAreaPersonaleUtenteEnte';
+import { DatiFatturazioneContext } from '../page/areaPersonaleUtenteEnte';
+import { _YupEmail} from '../validations/email/index';
+import YupString from '../validations/string/index';
 
 const TextFieldComponent : React.FC<TextFieldProps> = props => {
+    const {statusPage,setDatiFatturazione,setStatusBottmConferma} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
+
+    const [errorValidation, setErrorValidation] = useState(false);
     const {
-        helperText, label, placeholder, fullWidth, status, value, setDatiFatturazione,keyObject
+        helperText, label, placeholder, fullWidth,value,keyObject, dataValidation
     } = props;
 
+    const validationTextArea = (max: number, validation:string, input:string|number)=>{
+        YupString.max(max, validation)
+            .validate(input)
+            .then(()=>{
+                setErrorValidation(false);
+                setStatusBottmConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+            })
+            .catch(() =>{
+                setErrorValidation(true);
+                setStatusBottmConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
+            } );
+    }; 
 
+    const validationTextAreaEmail = (element:string)=>{
+        _YupEmail.validate(element)
+            .then(()=>{
+                setErrorValidation(false);
+                setStatusBottmConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+            })
+            .catch(()=> {
+                setStatusBottmConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
+                setErrorValidation(true);
+            } );
+    }; 
+
+
+    const hendleOnMouseOut = (e: React.SyntheticEvent<EventTarget>) =>{
+        e.persist();
+        if(label === 'Mail Pec'){
+            validationTextAreaEmail(value);
+           
+        }else{
+            validationTextArea(dataValidation.max,dataValidation.validation ,value);
+           
+        }
+
+    };
   
     return (
 
@@ -46,14 +58,18 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
             label={label}
             placeholder={placeholder}
             fullWidth={fullWidth}
-            disabled={status === 'immutable'? true : false}
+            disabled={statusPage === 'immutable'? true : false}
             value={value}
+            error={errorValidation}
             onChange={(e)=>{setDatiFatturazione((prevState: DatiFatturazione) =>{
                 const newValue = {[keyObject]:e.target.value};
                 const newState = {...prevState, ...newValue};
                 console.log({newState});
                 return newState;
             } );}}
+            onMouseOut={(e) => hendleOnMouseOut(e)}
+            
+           
       
     
       

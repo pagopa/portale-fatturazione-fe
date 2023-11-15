@@ -1,28 +1,21 @@
 import axios from 'axios';
-interface TipoContratto {
-    id: number,
-    descrizione : string
-   
-  }
+import {DatiFatturazione} from '../types/typesAreaPersonaleUtenteEnte';
 
-export const getAllTipoContratto  = async () => {
+export const getDatiFatturazione  = async (setState:any) => {
+    const response = await axios.get(
+        `https://portalefatturebeapi20231102162515.azurewebsites.net/api/datifatturazione/ente/176f304b-d5d5-4cb8-a99a-45937c3df238`).then( (res) => {
+        setState(res.data);
+  
+        console.log(res.data, 'CICCIO');
+        return res.data;
+    });
+    return response;
+};
 
 
-    try{
-      const response = await axios.get<TipoContratto[]>(
-        `https://portalefatturebeapi20231102162515.azurewebsites.net/api/datifatturazione/tipocontratto`)
-        .then( (res) => {
+export const modifyDatiFatturazione = async (datiFatturazione: DatiFatturazione) => {
 
-            return res.data;
-        });
-      
-        console.log(response,'RE');
-        return response;
-
-           
-    }catch(error){
-        alert(error);
-    }
-return [];
-   
-  };
+    const response= await axios.put(`https://portalefatturebeapi20231102162515.azurewebsites.net/api/datifatturazione/176f304b-d5d5-4cb8-a99a-45937c3df238`,
+        datiFatturazione
+    );
+};
