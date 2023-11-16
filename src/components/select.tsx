@@ -3,7 +3,7 @@ import {
     Box, FormControl, InputLabel,
     Select, MenuItem,
 } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import axios from 'axios';
 interface SelectProps {
@@ -24,22 +24,6 @@ const SelectComponet: React.FC<SelectProps> = (props) => {
 
     const [tipoContratto, setTipoContratto] = useState<TipoContratto[]>([{id:0, descrizione:''}]);
 
-    const getAllTipoContratto  = async () => {
-        const response = await axios.get(
-            `https://portalefatturebeapi20231102162515.azurewebsites.net/api/datifatturazione/tipocontratto`).then( (res) => {
-            setTipoContratto(res.data);
-    
-            return res.data;
-        });
-    };
-
-    useEffect(()=>{
-
-    
-        getAllTipoContratto();
-
-  
-    }, []);
 
 
  

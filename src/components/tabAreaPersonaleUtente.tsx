@@ -14,7 +14,7 @@ import { DatiFatturazioneContext } from '../page/areaPersonaleUtenteEnte';
 
 
 const TabAreaPersonaleUtente = () => {
-    const {statusPage,datiFatturazione,setDatiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
+    const {statusPage,datiFatturazione,setDatiFatturazione, user} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
    
     function createDateFromString(string:string){
         const getGiorno = new Date(string).getDate();
@@ -39,7 +39,7 @@ const TabAreaPersonaleUtente = () => {
     ];
 
   
-    const [dataDocumento, setDataDocumento] = useState(new Date());
+  
    
 
     return (
@@ -51,10 +51,9 @@ const TabAreaPersonaleUtente = () => {
                 <div>
                     <RadioComponent
                         options={valueOptionRadioTipoOrdine}
-                        status={statusPage}
                         valueRadio={datiFatturazione.tipoCommessa}
-                        setDatiFatturazione={setDatiFatturazione}
                         keyObject='tipoCommessa'
+                      
                     />
                 </div>
 
@@ -67,16 +66,9 @@ const TabAreaPersonaleUtente = () => {
                             label="CUP"
                             placeholder="Inserisci il CUP"
                             fullWidth={false}
-                          
                             value={datiFatturazione.cup}
-                           
                             keyObject='cup'
-                            
                             dataValidation={{max:15,validation:'Validazione Mail'}}
-
-                           
-                            
-             
                         />
 
                     </div>
@@ -88,13 +80,9 @@ const TabAreaPersonaleUtente = () => {
                             label="CIG"
                             placeholder="Inserisci il CIG"
                             fullWidth={false}
-                            
                             value={datiFatturazione.cig}
-                         
                             keyObject='cig'
-                          
                             dataValidation={{max:10,validation:'Max 10 caratteri'}}
-             
                         />
                     </div>
                     {/* CIG end */}
@@ -104,8 +92,6 @@ const TabAreaPersonaleUtente = () => {
                             valueRadio={datiFatturazione.splitPayment}
                             label="Split Paymet"
                             options={valueOptionRadioSplitPayment}
-                            status={statusPage}
-                            setDatiFatturazione={setDatiFatturazione}
                             keyObject='splitPayment'
                         />
                     </div>
@@ -121,13 +107,9 @@ const TabAreaPersonaleUtente = () => {
                             label="Mail Pec"
                             placeholder="Inserisci Mail Pec"
                             fullWidth={false}
-                          
                             value={datiFatturazione.pec}
-                           
                             keyObject='pec'
-                           
                             dataValidation={{max:15,validation:'Max 15 caratteri'}}
-
                         />
                     </div>
                     <div />
@@ -146,11 +128,8 @@ const TabAreaPersonaleUtente = () => {
                                     label="ID Documento"
                                     placeholder="Inserisci ID"
                                     fullWidth={false}
-                                   
                                     value={datiFatturazione.idDocumento}
-                                   
                                     keyObject='idDocumento'
-                                 
                                     dataValidation={{max:20,validation:'Max 20 caratteri'}}
                                 />
                             </div>
@@ -160,10 +139,6 @@ const TabAreaPersonaleUtente = () => {
                                 <DataComponent 
                                     dataLabel="Data documento"
                                     formatDate="dd/MM/yyyy"
-                                    status={statusPage} 
-                                    children={datiFatturazione.dataDocumento}
-                                    data={dataDocumento || new Date()}
-                                    setData={setDataDocumento}
                                 />
                             </div>
                             {/* data notifica end */}
@@ -175,9 +150,7 @@ const TabAreaPersonaleUtente = () => {
                                 label="Codice. Commessa/Convenzione"
                                 placeholder="Commessa/Convenzione"
                                 fullWidth
-                              
                                 value={datiFatturazione.codCommessa}
-                               
                                 keyObject='codCommessa'
                                 dataValidation={{max:100,validation:'Max 100 caratteri'}}
                             />
@@ -197,12 +170,13 @@ const TabAreaPersonaleUtente = () => {
                 <div className="d-flex justify-content-around marginTopBottom24">
                     <div className='d-flex'>
                         <InputLabel  sx={{ marginRight:'20px'}}  size={"normal"}>Data primo accesso</InputLabel>
-                        <Typography >{createDateFromString(datiFatturazione.dataCreazione)}</Typography>
+                        {user === 'old' ? <Typography >{createDateFromString(datiFatturazione.dataCreazione)}</Typography>: null}
                     </div>
 
                     <div className='d-flex'>
                         <InputLabel sx={{ marginRight:'20px'}}  size={"normal"}>Data ultimo accesso</InputLabel>
-                        <Typography >{createDateFromString(datiFatturazione.dataModifica)}</Typography>
+                        {user === 'old' ? <Typography >{createDateFromString(datiFatturazione.dataModifica)}</Typography>: null}
+                        
                     </div>
         
         

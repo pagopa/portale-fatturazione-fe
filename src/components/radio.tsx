@@ -1,21 +1,45 @@
-import React from 'react';
+import React,{useContext} from 'react';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import { RadioComponentProps,DatiFatturazione,OptinsRadio }  from '../types/typesAreaPersonaleUtenteEnte';
+import { RadioComponentProps,DatiFatturazione,OptinsRadio,AreaPersonaleContext }  from '../types/typesAreaPersonaleUtenteEnte';
+import { DatiFatturazioneContext } from '../page/areaPersonaleUtenteEnte';
 
 
 
 
 const  RadioComponent: React.FC<RadioComponentProps> = (props) => {
     const {
-        label, options, status, valueRadio, setDatiFatturazione,keyObject
+        label, options, valueRadio,keyObject,
     } = props;
 
- 
+    const {statusPage,setDatiFatturazione, datiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
 
+
+    let makeSplitRadioDisable = true;
+    if(label ==='Split Paymet'){
+
+        if(statusPage === 'immutable'){
+            makeSplitRadioDisable = true;
+        }else if(statusPage === 'mutable' && datiFatturazione.tipoCommessa === ''){
+            makeSplitRadioDisable = true;
+        }else if(statusPage === 'mutable' && datiFatturazione.tipoCommessa !== ''){
+            makeSplitRadioDisable = false;
+    
+        }
+
+    }else{
+        if(statusPage === 'immutable'){
+            makeSplitRadioDisable = true;
+        }else{
+            makeSplitRadioDisable = false;
+        }
+    }
+ 
+   
+    
 
 
     return (
@@ -28,22 +52,26 @@ const  RadioComponent: React.FC<RadioComponentProps> = (props) => {
                 onChange={(e)=>{setDatiFatturazione((prevState: DatiFatturazione) =>{
                     let newState;
                     if(e.target.value.toLowerCase() === 'true'){
+                        console.log('1');
                         const newValue = {[keyObject]:true};
                         newState = {...prevState, ...newValue};
                     }else if(e.target.value.toLowerCase() === 'false'){
+                        console.log('2');
                         const newValue = {[keyObject]:false};
                         newState = {...prevState, ...newValue};
                     }else{
+                        console.log('3');
                         const newValue = {[keyObject]:e.target.value};
                         newState = {...prevState, ...newValue};
+                        //setstatusPagePage('mutable');
                     }
-                  
+                    console.log('4', newState);
                     return newState;
                    
                 } );}}>
                 {options.map((el:OptinsRadio) => (
 
-                    <FormControlLabel  key={Math.random()} value={el.id} control={<Radio checked={el.id === valueRadio} disabled={status === 'immutable' ? true : false} />} label={el.descrizione} />
+                    <FormControlLabel  key={Math.random()} value={el.id} control={<Radio checked={el.id === valueRadio} disabled={makeSplitRadioDisable} />} label={el.descrizione} />
                 )
           
                 )}

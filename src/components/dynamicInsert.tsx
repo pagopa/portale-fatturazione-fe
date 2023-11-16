@@ -46,7 +46,9 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
               
             setValidation(false);
 
-        }).catch(()=> setValidation(true));
+        }).catch(()=>{
+            setValidation(true);
+        } );
     };
 
     const handleElement = (e: any) => {
@@ -79,6 +81,20 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
        
     };
 
+    let dynamicInsertDisable = true;
+
+    if(arrElement.length >= 3){
+        dynamicInsertDisable = true;
+  
+    }else if(status === 'mutable' && datiFatturazione.tipoCommessa === ''){
+      
+        dynamicInsertDisable = true;
+    }else if((status === 'mutable' && datiFatturazione.tipoCommessa !== '' )){
+  
+        dynamicInsertDisable = false;
+
+    }
+
     return (
         <div>
 
@@ -92,8 +108,8 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
                     type='text'
                     value={element||''}
                     onChange={(e)=>handleElement(e)}
-                    disabled={(arrElement.length >= 3 || status=== 'immutable') ? true : false}
-                    onMouseOut={(e) => hendleOnMouseOut(e)}
+                    disabled={dynamicInsertDisable}
+                    onBlur={(e) => hendleOnMouseOut(e)}
                     error={validation}
                     
                 />
@@ -104,7 +120,7 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
                         sx={{ marginLeft: '20px' }}
                         size="small"
                         onClick={(e) => handleSubmit(e)}
-                        disabled={(arrElement.length >= 3 || status=== 'immutable'|| validation) ? true : false}
+                        disabled={validation || dynamicInsertDisable}
                        
                     >
                         <AddIcon fontSize="small" sx={{ color: 'ffffff' }} />
@@ -131,24 +147,26 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
                             </div>
               
                             <div>
-                                <IconButton
-                                    aria-label="Edit"
-                                    color="primary"
-                                    size="small"
-                                    onClick={(e)=> editArray(e, email)}
-                                >{status === 'immutable'?null: <EditIcon/>}
-                 
-                                </IconButton>
-
-                                <IconButton
-                                    aria-label="Scarica"
-                                    size="medium"
-                                    onClick={(e) => deleteElementFromArr(e, email)}
-                                >{status === 'immutable'?null: <DeleteIcon
-                                        sx={{ color: '#FF0000' }}
-                                    />}
+                                {status === 'immutable' ? null:
+                                    <IconButton
+                                        aria-label="Edit"
+                                        color="primary"
+                                        size="small"
+                                        onClick={(e)=> editArray(e, email)}
+                                    ><EditIcon/>
+             
+                                    </IconButton>}
+                                
+                                {status === 'immutable' ? null:
+                                    <IconButton
+                                        aria-label="Scarica"
+                                        size="medium"
+                                        onClick={(e) => deleteElementFromArr(e, email)}
+                                    > <DeleteIcon
+                                            sx={{ color: '#FF0000' }}
+                                        />
                   
-                                </IconButton>
+                                    </IconButton>}
                             </div>
               
                         </div>

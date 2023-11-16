@@ -15,12 +15,25 @@ export interface DatiFatturazione{
     dataDocumento:string,
     pec:string,
 }
+
+export interface DatiFatturazionePost{
+    tipoCommessa:string,
+    splitPayment:boolean,
+    cup: string,
+    cig:string,
+    idDocumento:string,
+    codCommessa:string,
+    contatti: Contatti[],
+    dataDocumento:string,
+    pec:string,
+}
 export interface AreaPersonaleContext {
     statusPage: string,
     datiFatturazione:DatiFatturazione, 
     setDatiFatturazione?:any,
     setStatusPage?:any,
-    setStatusBottmConferma?:any
+    setStatusBottmConferma?:any,
+    user?:string
 
 
 }
@@ -50,19 +63,14 @@ export interface TextFieldProps {
 export interface RadioComponentProps {
     valueRadio? : string | boolean
     label?: string,
-    setDatiFatturazione: any,
     options:OptinsRadio[],
-    status:string,
-    keyObject:string
+    keyObject:string,
+
 }
 
 export interface DataProps {
     dataLabel: string,
     formatDate: string,
-    status:string,
-    children:string,
-    data:Date,
-    setData:any
 }
 
 export interface Email {

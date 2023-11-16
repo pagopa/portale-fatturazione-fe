@@ -4,8 +4,8 @@ import '../style/areaPersonaleUtenteEnte.css';
 import { Button } from '@mui/material';
 import TabAreaPersonaleUtente from '../components/tabAreaPersonaleUtente';
 import PageTitleNavigation from '../components/pageTitleNavigation';
-import {AreaPersonaleContext, DatiFatturazione, StateEnableConferma} from '../types/typesAreaPersonaleUtenteEnte';
-import {getDatiFatturazione, modifyDatiFatturazione} from '../api/api';
+import {AreaPersonaleContext, DatiFatturazione, StateEnableConferma, DatiFatturazionePost} from '../types/typesAreaPersonaleUtenteEnte';
+import {getDatiFatturazione, modifyDatiFatturazione,insertDatiFatturazione} from '../api/api';
 
 
 
@@ -35,17 +35,7 @@ export const DatiFatturazioneContext = createContext<AreaPersonaleContext>({
 const AreaPersonaleUtenteEnte : React.FC = () => {
  
     const [statusPage, setStatusPage] = useState('immutable');
-
-    const [statusBottonConferma, setStatusBottmConferma] = useState<StateEnableConferma>({
-        'CUP':false,
-        'CIG':false,
-        'Mail Pec':false,
-        'ID Documento':false,
-        "Codice. Commessa/Convenzione":false,
-    });
-   
-    const enableDisableConferma = Object.values(statusBottonConferma).every(element => element === false);
-  
+    const [user, setUser] = useState('old');
     const [datiFatturazione, setDatiFatturazione] = useState<DatiFatturazione>({
         tipoCommessa:'',
         splitPayment:false,
@@ -56,32 +46,78 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
         contatti:[],
         dataCreazione:'',
         dataModifica:'',
-        dataDocumento:'',
+        dataDocumento:new Date().toISOString(),
         pec:''
 
     });
 
+    console.log({datiFatturazione});
+
+    const [statusBottonConferma, setStatusBottmConferma] = useState<StateEnableConferma>({
+        'CUP':false,
+        'CIG':false,
+        'Mail Pec':false,
+        'ID Documento':false,
+        "Codice. Commessa/Convenzione":false,
+    });
    
+    const enableDisableConferma = Object.values(statusBottonConferma).every(element => element === false);
+   
+    const ifAnyTextAreaIsEmpty = (
+        datiFatturazione.cup === ''
+     || datiFatturazione.cig === '' 
+     || datiFatturazione.pec === ''
+     || datiFatturazione.idDocumento === ''
+      || datiFatturazione.codCommessa === ''
+    );
 
 
     useEffect(()=>{
-        getDatiFatturazione(setDatiFatturazione);
+     
+        getDatiFatturazione(setDatiFatturazione, setStatusPage, setUser);
+  
+     
+        
     }, []);
 
    
 
     const hendleSubmitDatiFatturazione = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) =>{
         e.preventDefault();
+        if(user === 'old'){
+            modifyDatiFatturazione(datiFatturazione);
+            setStatusPage('immutable');
+        }else{
+            const body : DatiFatturazionePost= {
+                tipoCommessa:datiFatturazione.tipoCommessa,
+                splitPayment:datiFatturazione.splitPayment,
+                cup: datiFatturazione.cup,
+                cig:datiFatturazione.cig,
+                idDocumento:datiFatturazione.idDocumento,
+                codCommessa:datiFatturazione.codCommessa,
+                contatti:datiFatturazione.contatti,
+                dataDocumento:new Date().toISOString(),
+                pec:datiFatturazione.pec};
+
+            insertDatiFatturazione(body);
+            setStatusPage('immutable');
+        }
     
-        modifyDatiFatturazione(datiFatturazione);
-        setStatusPage('immutable'); 
+         
     };
  
-   
+    console.log({user});
     
 
     return (
-        <DatiFatturazioneContext.Provider value={{statusPage, datiFatturazione, setDatiFatturazione, setStatusPage, setStatusBottmConferma}}>
+        <DatiFatturazioneContext.Provider
+            value={{
+                statusPage,
+                datiFatturazione,
+                setDatiFatturazione,
+                setStatusPage,
+                setStatusBottmConferma,
+                user}}>
 
             <div >
                 <PageTitleNavigation />
@@ -106,7 +142,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                                 size="medium"
                                 type='submit'
                                 onClick={(e) => hendleSubmitDatiFatturazione(e)}
-                                disabled={!enableDisableConferma}
+                                disabled={!enableDisableConferma || ifAnyTextAreaIsEmpty}
                             >
               Conferma
 

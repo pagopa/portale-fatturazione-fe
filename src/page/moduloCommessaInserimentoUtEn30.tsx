@@ -1,4 +1,3 @@
-import React from 'react';
 import {
     Typography, Button,
 } from '@mui/material';
@@ -8,11 +7,13 @@ import { ButtonNaked } from '@pagopa/mui-italia';
 import PrimoContainerInsCom from '../components/primoContainerInsCom';
 import SecondoContainerInsCom from '../components/secondoContainerInsCom';
 import TerzoContainerInsCom from '../components/terzoConteinerInsCom';
+import ViewModuleIcon from '@mui/icons-material/ViewModule';
+import HorizontalLinearStepper from '../components/stepper';
 
 export default function ModuloCommessaInserimentoUtEn30() {
     return (
 
-        <div className="m-5">
+        <div className="marginTop24 ms-5 me-5">
             <div>
                 <ButtonNaked
                     color="primary"
@@ -20,14 +21,18 @@ export default function ModuloCommessaInserimentoUtEn30() {
                     size="small"
                     startIcon={<ArrowBackIcon />}
                     onClick={() => console.log('esci')}
+                    sx={{marginBottom:'3px'}}
                 >
           Esci
                 </ButtonNaked>
-                <Typography sx={{ marginLeft: '10px' }} variant="caption">Navigazione</Typography>
+                <Typography sx={{ marginLeft: '20px' }} variant="caption"> <ViewModuleIcon sx={{marginBottom:'5px'}} fontSize='small'></ViewModuleIcon> Modulo commessa / <strong>Aggiungi modulo commessa</strong></Typography>
 
             </div>
-            <div className="mt-3">
-                <Typography variant="h4">Aggiungi modulo commessa</Typography>
+            <div className="marginTop24">
+                <Typography variant="h4"> Aggiungi modulo commessa</Typography>
+            </div>
+            <div className='marginTop24 marginBottom24'>
+                <HorizontalLinearStepper></HorizontalLinearStepper>
             </div>
 
             <div className="bg-white mt-3 pt-3">

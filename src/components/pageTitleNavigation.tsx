@@ -7,19 +7,30 @@ import { DatiFatturazioneContext } from '../page/areaPersonaleUtenteEnte';
 
 const PageTitleNavigation = () => {
 
-    const {statusPage, setStatusPage} = useContext(DatiFatturazioneContext);
+    const {statusPage, setStatusPage, user} = useContext(DatiFatturazioneContext);
  
     let titleNavigation;
-
-    if (statusPage === 'immutable') {
+    console.log({statusPage, user});
+    if (statusPage === 'immutable' &&  user !== 'new') {
+        console.log('primo');
         titleNavigation = 'Dati di fatturazione';
-    } else {
+    }else if(statusPage === 'mutable' &&  user === 'old'){
         titleNavigation = 'Modifica dati di fatturazione';
+        console.log('second');
+    }else {
+        titleNavigation = 'Inserisci dati di fatturazione ';
+        console.log('terzo');
     }
+    console.log({statusPage, user}, 'cazzo');
+    // da usare quando si saprà bene la logica
+    // const pathNewUser =  <Typography  variant="caption"> /<strong> Iserisci dati di fatturazione</strong></Typography>;
+    const pathOldUser = <Typography sx={{ marginLeft: '10px' }} variant="caption">Dati di fatturazione <strong>/ Modifica</strong></Typography>;
+  
 
     return (
         <div className="mx-5 mt-2">
-            {statusPage === 'mutable'
+           
+            {(statusPage === 'mutable' && user === 'old')
                 ? (
                     <div>
                         <ButtonNaked
@@ -28,10 +39,12 @@ const PageTitleNavigation = () => {
                             size="small"
                             startIcon={<ArrowBackIcon />}
                             onClick={() => setStatusPage('immutable')}
+                            sx={{marginBottom:'2px'}}
                         >
-              Indietro 
+                          Indietro 
                         </ButtonNaked>
-                        <Typography sx={{ marginLeft: '10px' }} variant="caption">/ Modifica</Typography>
+                        {pathOldUser}
+                        
 
                     </div>
                 ) : null}

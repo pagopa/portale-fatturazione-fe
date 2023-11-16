@@ -6,7 +6,7 @@ import { _YupEmail} from '../validations/email/index';
 import YupString from '../validations/string/index';
 
 const TextFieldComponent : React.FC<TextFieldProps> = props => {
-    const {statusPage,setDatiFatturazione,setStatusBottmConferma} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
+    const {statusPage,setDatiFatturazione,setStatusBottmConferma, datiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
 
     const [errorValidation, setErrorValidation] = useState(false);
     const {
@@ -21,6 +21,18 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
                 setStatusBottmConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
             })
             .catch(() =>{
+                setErrorValidation(true);
+                setStatusBottmConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
+            } );
+
+        YupString.matches(/^[a-zA-Z0-9_.-]*$/,  {
+            message: "Non è possibile inserire caratteri speciali",
+            excludeEmptyString: true
+        }).validate(input)
+            .then(()=>{
+                setErrorValidation(false);
+                setStatusBottmConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+            }).catch(() =>{
                 setErrorValidation(true);
                 setStatusBottmConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
             } );
@@ -50,6 +62,17 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
         }
 
     };
+
+
+    let makeTextInputDisable = true;
+    if(statusPage === 'immutable'){
+        makeTextInputDisable = true;
+    }else if(statusPage === 'mutable' && datiFatturazione.tipoCommessa === ''){
+        makeTextInputDisable = true;
+    }else if(statusPage === 'mutable' && datiFatturazione.tipoCommessa !== ''){
+        makeTextInputDisable = false;
+
+    }
   
     return (
 
@@ -58,16 +81,17 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
             label={label}
             placeholder={placeholder}
             fullWidth={fullWidth}
-            disabled={statusPage === 'immutable'? true : false}
+            disabled={makeTextInputDisable}
             value={value}
             error={errorValidation}
             onChange={(e)=>{setDatiFatturazione((prevState: DatiFatturazione) =>{
+                
                 const newValue = {[keyObject]:e.target.value};
                 const newState = {...prevState, ...newValue};
                 console.log({newState});
                 return newState;
             } );}}
-            onMouseOut={(e) => hendleOnMouseOut(e)}
+            onBlur={(e)=> hendleOnMouseOut(e)}
             
            
       

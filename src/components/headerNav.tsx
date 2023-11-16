@@ -64,11 +64,7 @@ const HeaderNavComponent : React.FC =() => {
             productsList={productsList}
             onSelectedProduct={(p) => console.log('Selected Item:', p.title)}
             partyList={partyList}
-       
-      
-   
-  
-
+            chipSize='small'
         />
 
 
