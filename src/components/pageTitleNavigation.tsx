@@ -21,7 +21,7 @@ const PageTitleNavigation = () => {
         titleNavigation = 'Inserisci dati di fatturazione ';
         console.log('terzo');
     }
-    console.log({statusPage, user}, 'cazzo');
+   
     // da usare quando si saprà bene la logica
     // const pathNewUser =  <Typography  variant="caption"> /<strong> Iserisci dati di fatturazione</strong></Typography>;
     const pathOldUser = <Typography sx={{ marginLeft: '10px' }} variant="caption">Dati di fatturazione <strong>/ Modifica</strong></Typography>;

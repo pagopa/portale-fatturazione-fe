@@ -45,7 +45,7 @@ const TabAreaPersonaleUtente = () => {
     return (
 
         <div className="ms-5 me-5 mb-5  bg-white rounded">
-
+            
             <div className="ms-4  me-4 pt-4 marginTop24">
 
                 <div>
