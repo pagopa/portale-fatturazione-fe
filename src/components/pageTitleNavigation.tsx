@@ -12,14 +12,14 @@ const PageTitleNavigation = () => {
     let titleNavigation;
     console.log({statusPage, user});
     if (statusPage === 'immutable' &&  user !== 'new') {
-        console.log('primo');
+       
         titleNavigation = 'Dati di fatturazione';
     }else if(statusPage === 'mutable' &&  user === 'old'){
         titleNavigation = 'Modifica dati di fatturazione';
-        console.log('second');
+       
     }else {
         titleNavigation = 'Inserisci dati di fatturazione ';
-        console.log('terzo');
+      
     }
    
     // da usare quando si saprà bene la logica
