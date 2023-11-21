@@ -13,11 +13,11 @@ export interface DatiCommessa  {
 export interface InsModuloCommessaContext {
     datiCommessa: DatiCommessa,
     setDatiCommessa?: any,
+    setDisableContinua?:any
 }
 export interface RowInsComProps {
     sentence : string,
     textBoxHidden : boolean
-    setDatiCommessa:any
     idTipoSpedizione:number,
     setInputTotale:any, 
     rowNumber : number
@@ -31,5 +31,14 @@ export interface DataTotaleObj {
     analNotificaNazionale:number,
     analNotificaInternazionale:number,
 
+}
+
+export type ResponsTotaliInsModuloCommessa = {
+    idCategoriaSpedizione: number,
+    totaleValoreCategoriaSpedizione:number
+}
+
+export interface TerzoContainerModCommessa{
+    valueTotali:ResponsTotaliInsModuloCommessa[]
 }
 

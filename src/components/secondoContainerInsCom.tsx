@@ -1,11 +1,9 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useEffect, useState} from 'react';
 import { Grid, Typography } from '@mui/material';
 import RowInserimentoCommessa from './rowInserimentoCommessa';
-import {InserimentoModuloCommessaContext} from '../page/moduloCommessaInserimentoUtEn30';
-import {InsModuloCommessaContext, DataTotaleObj} from '../types/typeModuloCommessaInserimento';
+import { DataTotaleObj} from '../types/typeModuloCommessaInserimento';
 
 export default function SecondoContainerInsCom() {
-    const {datiCommessa,setDatiCommessa} = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
     const [inputTotale, setInputTotale] = useState<DataTotaleObj>({
         digitaleNazionale:0,
         digitaleInternazionale:0,
@@ -30,7 +28,7 @@ export default function SecondoContainerInsCom() {
             <RowInserimentoCommessa
                 sentence="Numero complessivo delle notifiche da processare in via digitale nel mese di"
                 textBoxHidden
-                setDatiCommessa={setDatiCommessa}
+              
                 idTipoSpedizione={1}
                 setInputTotale={setInputTotale}
                 rowNumber={1}
@@ -41,7 +39,7 @@ export default function SecondoContainerInsCom() {
             <RowInserimentoCommessa
                 sentence="Numero complessivo delle notifiche da processare in via analogica tramite Raccomandata A/R nel mese di"
                 textBoxHidden={false}
-                setDatiCommessa={setDatiCommessa}
+              
                 idTipoSpedizione={2}
                 setInputTotale={setInputTotale}
                 rowNumber={2}
@@ -52,7 +50,7 @@ export default function SecondoContainerInsCom() {
             <RowInserimentoCommessa
                 sentence="Numero complessivo delle notifiche da processare in via analogica del tipo notifica ex L. 890/1982 nel mese di"
                 textBoxHidden
-                setDatiCommessa={setDatiCommessa}
+              
                 idTipoSpedizione={3}
                 setInputTotale={setInputTotale}
                 rowNumber={3}

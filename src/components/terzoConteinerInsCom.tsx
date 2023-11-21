@@ -1,7 +1,8 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { TerzoContainerModCommessa } from '../types/typeModuloCommessaInserimento';
 
-export default function TerzoContainerInsCom() {
+const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali}) => {
     const mese= <span className="fw-semibold"> Novembre/2023</span>;
     return (
         <div className=" m-3 pl-5 pt-3">
@@ -33,7 +34,7 @@ export default function TerzoContainerInsCom() {
                         variant="caption-semibold"
                         sx={{fontSize:'18px'}}
                     >
-            20
+                        {valueTotali[0].totaleValoreCategoriaSpedizione}
                     </Typography>
                 </Grid>
   
@@ -69,7 +70,7 @@ export default function TerzoContainerInsCom() {
                         variant="caption-semibold"
                         sx={{fontSize:'18px', textAlign:'center'}}
                     >
-            20
+                        {valueTotali[1].totaleValoreCategoriaSpedizione}
                     </Typography>
                 </Grid>
 
@@ -98,11 +99,13 @@ export default function TerzoContainerInsCom() {
                         variant="caption-semibold"
                         sx={{fontSize:'18px'}}
                     >
-            20
+                        {valueTotali[0].totaleValoreCategoriaSpedizione + valueTotali[1].totaleValoreCategoriaSpedizione}
                     </Typography>
                 </Grid>
 
             </Grid>
         </div>
     );
-}
+};
+
+export default TerzoContainerInsCom;

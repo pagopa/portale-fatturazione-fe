@@ -1,15 +1,17 @@
-import {useState, createContext} from 'react';
+import {useState, createContext, useEffect} from 'react';
 import {Typography, Button} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import PrimoContainerInsCom from '../components/primoContainerInsCom';
 import SecondoContainerInsCom from '../components/secondoContainerInsCom';
 import TerzoContainerInsCom from '../components/terzoConteinerInsCom';
+import BasicModal from '../components/modal';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import HorizontalLinearStepper from '../components/stepper';
 import {insertDatiModuloCommessa} from '../api/api';
-import { DatiCommessa, InsModuloCommessaContext } from '../types/typeModuloCommessaInserimento';
-import { DatiFatturazioneContext } from './areaPersonaleUtenteEnte';
+import { DatiCommessa, InsModuloCommessaContext , ResponsTotaliInsModuloCommessa} from '../types/typeModuloCommessaInserimento';
+
+
 
 export const InserimentoModuloCommessaContext = createContext<InsModuloCommessaContext>({
     datiCommessa: {
@@ -60,31 +62,54 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
           
         ]
     });
-    console.log({datiCommessa});
+    const [disableContinua, setDisableContinua] = useState(false);
+
+    
+ 
+   
+    useEffect(()=>{
+
+        const check  = datiCommessa.moduliCommessa.map((singleObj) => {
+            const arrBoolean = singleObj.numeroNotificheNazionali <= 0 &&  singleObj.numeroNotificheInternazionali <= 0;
+            return arrBoolean;
+        });
+        const status = check.every(v => v === true);
+        setDisableContinua(status);
+
+    },[datiCommessa]);
+
+    const [response, setResponse] = useState<ResponsTotaliInsModuloCommessa[]>([
+        {
+            idCategoriaSpedizione: 0,
+            totaleValoreCategoriaSpedizione: 0
+        },
+        {
+            idCategoriaSpedizione: 0,
+            totaleValoreCategoriaSpedizione: 0
+        }
+    ]);
 
     const hendlePostModuloCommessa = async () =>{
 
-        const result =  await insertDatiModuloCommessa(datiCommessa);
-        console.log({result});
-        return result;
+        await insertDatiModuloCommessa(datiCommessa, setResponse);
+       
 
     };
-
-    let disableButtonContinua = false;
-    const check  = datiCommessa.moduliCommessa.map((singleObj) => {
-        const arrBoolean = singleObj.numeroNotificheNazionali <= 0 &&  singleObj.numeroNotificheInternazionali <= 0;
-        return arrBoolean;
-    });
-    disableButtonContinua =  check.every(v => v === true);
    
+
+
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => setOpen(true);
 
 
     return (
         <InserimentoModuloCommessaContext.Provider
             value={{
                 setDatiCommessa,
-                datiCommessa
+                datiCommessa,
+                setDisableContinua
             }}>
+            <BasicModal setOpen={setOpen} open={open}></BasicModal>
             <div className="marginTop24 ms-5 me-5">
                 <div>
                     <ButtonNaked
@@ -113,15 +138,23 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
        
                 </div>
                 <div className='bg-white'>
-                    <TerzoContainerInsCom />
+                    <TerzoContainerInsCom valueTotali={response}/>
                 </div>
       
                 <div className="d-flex justify-content-between mt-5 ">
-                    <Button variant="outlined">Indietro</Button>
+                    <Button
+                        variant="outlined"
+                        type="button"
+                        data-bs-toggle="modal"
+                        data-bs-target="#exampleModal"
+                        onClick={()=>handleOpen()}
+                    >Indietro</Button>
                     <Button variant="contained" 
-                        disabled={disableButtonContinua}
+                       
+                        disabled={disableContinua}
                         onClick={()=>hendlePostModuloCommessa()}
                     >Continua</Button>
+                   
                 </div>
 
             </div>

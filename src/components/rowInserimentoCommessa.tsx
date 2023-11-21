@@ -1,14 +1,19 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState,useContext} from 'react';
 import { Grid, TextField, Typography } from '@mui/material';
 import { RowInsComProps, ModuliCommessa, DatiCommessa , DataTotaleObj} from '../types/typeModuloCommessaInserimento';
 import YupString from '../validations/string/index';
+import { InsModuloCommessaContext } from '../types/typeModuloCommessaInserimento';
+import { InserimentoModuloCommessaContext } from '../page/moduloCommessaInserimentoUtEn30';
 
 
 
 
-const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHidden,setDatiCommessa, idTipoSpedizione, setInputTotale, rowNumber}) => {
-    
-    const [error, setError] = useState(false);
+const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHidden, idTipoSpedizione, setInputTotale, rowNumber}) => {
+    const { setDatiCommessa,setDisableContinua} = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
+
+
+    const [errorNazionale, setErrorNazionale] = useState(false);
+    const [errorInternazionale, setErrorInternazionale] = useState(false);
     const [input, setInput] = useState({nazionale:0, internazionale:0});
     const [totaleNotifiche, setTotaleNotifiche] = useState(0);
 
@@ -16,26 +21,51 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
         setTotaleNotifiche(input.nazionale + input.internazionale);
     },[input]);
  
-    /*
-    const validationTextField = (input:number) =>{
-        YupString.matches(/^[1-9][0-9]*$/,  {
+   
+    const validationAllowNumberColumNazionale = (input:number, set:any) =>{
+        YupString.matches(/^[0-9]*$/,  {
             message: "Non è possibile inserire numeri negatii",
             excludeEmptyString: true
         }).validate(input)
             .then(()=>{
-            //setErrorValidation(false);
-            //setStatusBottmConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+                set(false);
+        
             }).catch(() =>{
-            // setErrorValidation(true);
-            //setStatusBottmConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
+                setDisableContinua(true);
+                set(true);
+          
             } );
-    };*/
+    };
+
+
+    const validationAllowNumberColumnInternazionale = (input:number, set:any) =>{
+        YupString.matches(/^[0-9]*$/,  {
+            message: "Non è possibile inserire numeri negatii",
+            excludeEmptyString: true
+        }).validate(input)
+            .then(()=>{
+                set(false);
+        
+            }).catch(() =>{
+                setDisableContinua(true);
+                set(true);
+      
+            } );
+    };
  
  
 
-    const hendleOnBlur = (e: React.SyntheticEvent<EventTarget>) =>{
-
-        return 'ciao';
+    const hendleOnBlur = (e:any) =>{
+        e.persist();
+      
+        validationAllowNumberColumNazionale(e.target.value, setErrorNazionale);
+        validationAllowNumberColumnInternazionale(e.target.value, setErrorNazionale);
+    
+    };
+    const hendleOnBlur2 = (e:any) =>{
+        e.persist();
+        validationAllowNumberColumNazionale(e.target.value, setErrorInternazionale);
+        validationAllowNumberColumnInternazionale(e.target.value, setErrorInternazionale);
     };
 
     const mese= <span className="fw-semibold"> Novembre/2023</span>;
@@ -71,13 +101,18 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
                 {/*text sotto territorio nazionale*/}
                 <TextField
                     sx={{ backgroundColor: '#ffffff', width: '100px'}}
-                    type="number"
+                    
                     size="small"
                     InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                    error={errorNazionale}
                     onBlur={(e)=>hendleOnBlur(e)}
                     onChange={(e)=>{
 
-                        const value = parseInt(e.target.value);
+                        let value = parseInt(e.target.value);
+                      
+                        if(!value){
+                            value = 0;
+                        }
                         setInput({...input, ...{nazionale: value}});
 
 
@@ -126,12 +161,17 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
                     : (
                         <TextField
                             sx={{ backgroundColor: '#ffffff', width: '100px' }}
-                            type="number"
+                           
                             size="small"
                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                            error={errorInternazionale}
+                            onBlur={(e)=>hendleOnBlur2(e)}
                             onChange={(e)=>{
 
-                                const value = parseInt(e.target.value);
+                                let value = parseInt(e.target.value);
+                                if(!value){
+                                    value = 0;
+                                }
                                 setInput({...input, ...{internazionale: value}});
 
                                 if(rowNumber === 1){

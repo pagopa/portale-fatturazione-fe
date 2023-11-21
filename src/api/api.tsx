@@ -48,8 +48,8 @@ export const insertDatiFatturazione = async (datiFatturazione: DatiFatturazioneP
 };
 
 
-export const insertDatiModuloCommessa = async (datiCommessa : DatiCommessa) => {
-    await axios.post(`https://portalefatturebeapi20231102162515.azurewebsites.net/api/modulocommessa/176f304b-d5d5-4cb8-a99a-45937c3df238`,
+export const insertDatiModuloCommessa = async (datiCommessa : DatiCommessa, setResponse : any) => {
+    await axios.post(`https://portalefatturebeapi20231102162515.azurewebsites.net/api/modulocommessa`,
         datiCommessa
-    ).then(res => res).catch(err => err);
+    ).then(res => setResponse(res.data.totale)).catch(err => err);
 };
