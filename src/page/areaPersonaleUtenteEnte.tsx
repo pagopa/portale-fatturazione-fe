@@ -1,10 +1,10 @@
 import React, { useState, useEffect, createContext  } from 'react';
-
+import { useNavigate } from 'react-router';
 import '../style/areaPersonaleUtenteEnte.css';
 import { Button } from '@mui/material';
 import TabAreaPersonaleUtente from '../components/tabAreaPersonaleUtente';
 import PageTitleNavigation from '../components/pageTitleNavigation';
-import {AreaPersonaleContext, DatiFatturazione, StateEnableConferma, DatiFatturazionePost} from '../types/typesAreaPersonaleUtenteEnte';
+import {AreaPersonaleContext, DatiFatturazione, StateEnableConferma, DatiFatturazionePost,AreaPersonaleProps} from '../types/typesAreaPersonaleUtenteEnte';
 import {getDatiFatturazione, modifyDatiFatturazione,insertDatiFatturazione} from '../api/api';
 
 
@@ -32,10 +32,12 @@ export const DatiFatturazioneContext = createContext<AreaPersonaleContext>({
     }
 });
 
-const AreaPersonaleUtenteEnte : React.FC = () => {
+const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({setCheckProfilo}) => {
  
     const [statusPage, setStatusPage] = useState('immutable');
     const [user, setUser] = useState('old');
+    const navigate = useNavigate();
+   
     const [datiFatturazione, setDatiFatturazione] = useState<DatiFatturazione>({
         tipoCommessa:'',
         splitPayment:false,
@@ -50,8 +52,14 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
         pec:''
 
     });
+    /*
+    const retrieToken = localStorage.getItem('selfcareToken');
+  
+    if(retrieToken){
+        setCheckProfilo(true);
+    }
 
-    console.log({datiFatturazione});
+  */
 
     const [statusBottonConferma, setStatusBottmConferma] = useState<StateEnableConferma>({
         'CUP':false,
@@ -72,12 +80,43 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
     );
 
 
-    useEffect(()=>{
-     
-        getDatiFatturazione(setDatiFatturazione, setStatusPage, setUser);
-  
-     
+    const getDatiFat = async () =>{
+        await getDatiFatturazione().then((res:any) =>{
+            console.log(res, 'bestia');
+            
+               
+            setUser('old');
+            setDatiFatturazione(res.data); 
+           
+        }).catch(err =>{
+            console.log(err,'dio');
+            if(err.response.status === 401){
+                navigate('/login');
+            }
+            setStatusPage('mutable');
+            setUser('new');
+            setDatiFatturazione({
+                tipoCommessa:'',
+                splitPayment:false,
+                cup: '',
+                cig:'',
+                idDocumento:'',
+                codCommessa:'',
+                contatti:[],
+                dataCreazione:'',
+                dataModifica:'',
+                dataDocumento:new Date().toISOString(),
+                pec:''
         
+            });
+        });
+
+    };
+ 
+
+
+    useEffect(()=>{
+        getDatiFat();
     }, []);
 
    
@@ -106,7 +145,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
          
     };
  
-    console.log({user});
+
     
 
     return (

@@ -3,33 +3,33 @@ import {DatiFatturazione,DatiFatturazionePost} from '../types/typesAreaPersonale
 import { DatiCommessa } from '../types/typeModuloCommessaInserimento';
 
 const standardId = 'c2e6c704-692d-44f9-872b-39e46c32d003';
-export const getDatiFatturazione  = async (setData:any, setStatus:any, setUser:any) => {
-    try{
-        const response = await axios.get(
-            `https://portalefatturebeapi20231102162515.azurewebsites.net/api/datifatturazione/ente/c2e6c704-692d-44f9-872b-39e46c32d003`);
-        setUser('old');
-        setData(response.data);  
-    }catch(err: any){
-        
-        setStatus('mutable');
-        setUser('new');
-        setData({
-            tipoCommessa:'',
-            splitPayment:false,
-            cup: '',
-            cig:'',
-            idDocumento:'',
-            codCommessa:'',
-            contatti:[],
-            dataCreazione:'',
-            dataModifica:'',
-            dataDocumento:new Date().toISOString(),
-            pec:''
-    
-        });
-        console.log(err.message);
-        return err;
-    }
+
+
+export const selfcareLogin = async (selfcareToken:string|null) =>{
+    const result = await axios.get(`https://portalefatturebeapi20231102162515.azurewebsites.net/api/auth/selfcare/login?selfcareToken=${selfcareToken}`,
+  
+    );
+    return result;
+};
+
+export const getAuthProfilo = async (tokenFromSelfcare:string) => {
+    const result = await axios.get(`https://portalefatturebeapi20231102162515.azurewebsites.net/api/auth/profilo`,
+        { headers: {
+            Authorization: 'Bearer ' + tokenFromSelfcare
+        }}
+  
+    );
+    return result;
+};
+
+
+export const getDatiFatturazione  = async () => {
+  
+    const response = await axios.get(
+        `https://portalefatturebeapi20231102162515.azurewebsites.net/api/datifatturazione/ente/99755d5a-322c-4dd3-bad5-8de118295366`);
+    return response;
+     
+   
    
 };
 

@@ -1,4 +1,5 @@
 import { HeaderAccount } from '@pagopa/mui-italia';
+import { useLocation } from 'react-router';
 
 type JwtUser = {
     id: string;
@@ -8,6 +9,8 @@ type JwtUser = {
 };
 
 export default function HeaderPostLogin() {
+
+    const location : any = useLocation();
     const pagoPALink = {
         label: 'PagoPA S.p.A.',
         href: 'https://www.pagopa.it/',
@@ -26,20 +29,21 @@ export default function HeaderPostLogin() {
     return (
 
         <div className="div_header">
-            <HeaderAccount
-                rootLink={pagoPALink}
-                loggedUser={user}
-                onAssistanceClick={() => {
-                    console.log('Clicked/Tapped on Assistance');
-                }}
-                onLogin={() => {
-                    console.log('User login');
-                }}
-                onLogout={() => {
-                    console.log('User logout');
-                }}
-            />
-
+            {location.pathname === '/login' ? null : 
+                <HeaderAccount
+                    rootLink={pagoPALink}
+                    loggedUser={user}
+                    onAssistanceClick={() => {
+                        console.log('Clicked/Tapped on Assistance');
+                    }}
+                    onLogin={() => {
+                        console.log('User login');
+                    }}
+                    onLogout={() => {
+                        console.log('User logout');
+                    }}
+                />
+            }
         </div>
     );
 }

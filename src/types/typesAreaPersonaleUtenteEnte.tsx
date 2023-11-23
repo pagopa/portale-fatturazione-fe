@@ -2,6 +2,10 @@ export type Contatti = {
     email: string,
     tipo: number
 }
+
+export interface AreaPersonaleProps{ 
+    setCheckProfilo:any
+}
 export interface DatiFatturazione{
     tipoCommessa:string,
     splitPayment:boolean,

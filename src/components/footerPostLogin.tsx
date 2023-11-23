@@ -1,6 +1,7 @@
 import React from 'react';
 import { Footer } from '@pagopa/mui-italia';
 import { useState } from 'react';
+import { useLocation } from 'react-router';
 import '../style/areaPersonaleUtenteEnte.css';
 
 type LangCode = "it" | "en";
@@ -43,6 +44,7 @@ type PreLoginFooterLinksType = {
 export default function FooterPostLogin() {
  
     const [ lang, setLang ] = useState<LangCode>("it"); 
+    const location : any = useLocation();
 
     const LANGUAGES = {
         it: {
@@ -248,22 +250,23 @@ export default function FooterPostLogin() {
 
     return (
         <div>
-            <Footer
-                loggedUser
-                companyLink={pagoPALink}
-                legalInfo={companyLegalInfo}
-                postLoginLinks={postLoginLinks}
-                languages={LANGUAGES}
-                currentLangCode={lang}
-                preLoginLinks={preLoginLinks}
-                onLanguageChanged={
-                    (/* newLang */) => {
-                        console.log("Changed Language");
+            {location.pathname === '/login' ? null : 
+                <Footer
+                    loggedUser
+                    companyLink={pagoPALink}
+                    legalInfo={companyLegalInfo}
+                    postLoginLinks={postLoginLinks}
+                    languages={LANGUAGES}
+                    currentLangCode={lang}
+                    preLoginLinks={preLoginLinks}
+                    onLanguageChanged={
+                        (/* newLang */) => {
+                            console.log("Changed Language");
+                        }
                     }
-                }
-                productsJsonUrl="https://dev.selfcare.pagopa.it/assets/products.json"
-                hideProductsColumn={false}
-            />
+                    productsJsonUrl="https://dev.selfcare.pagopa.it/assets/products.json"
+                    hideProductsColumn={false}
+                />}
         </div>
 
     );

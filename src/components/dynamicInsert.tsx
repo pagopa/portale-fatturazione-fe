@@ -102,8 +102,9 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
             <div className='d-flex'>
              
                 <TextField
-                    label={`Email amministrativo  di riferimento Max ${3 - arrElement.length}`}
-                    placeholder="Indirizzo email amministrativo"
+                    label={`Email amministrativo`}
+                    placeholder="Email amministrativo"
+                    helperText={`max ${3 - arrElement.length}`}
                     sx={{ width: '30%' }}
                     type='text'
                     value={element||''}

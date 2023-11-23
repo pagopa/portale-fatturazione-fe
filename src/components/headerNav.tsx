@@ -1,7 +1,9 @@
 import React, { ReactNode, useState } from 'react';
+import { useLocation } from 'react-router';
 import {
     HeaderProduct,
 } from '@pagopa/mui-italia';
+import { LocationState } from '../types/typesGeneral';
 
 type PartySwitchItem = {
     id: string;
@@ -22,6 +24,9 @@ type PartyEntity = PartySwitchItem;
 type ProductEntity = ProductSwitchItem;
 
 const HeaderNavComponent : React.FC =() => {
+
+    const location : any = useLocation();
+
 
     const [title, setTitle] = useState('1');
     const productsList : Array<ProductEntity>  = [
@@ -59,13 +64,17 @@ const HeaderNavComponent : React.FC =() => {
 
     
     return (
-        <HeaderProduct
-            productId="1"
-            productsList={productsList}
-            onSelectedProduct={(p) => console.log('Selected Item:', p.title)}
-            partyList={partyList}
-            chipSize='small'
-        />
+        <>
+            {location.pathname === '/login'? null :
+                <HeaderProduct
+                    productId="1"
+                    productsList={productsList}
+                    onSelectedProduct={(p) => console.log('Selected Item:', p.title)}
+                    partyList={partyList}
+                    chipSize='small'
+                />}
+        </>
+       
 
 
 
