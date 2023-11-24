@@ -36,6 +36,12 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({setCheckProfilo
  
     const [statusPage, setStatusPage] = useState('immutable');
     const [user, setUser] = useState('old');
+   
+
+    const getToken = localStorage.getItem('token') || '{}';
+    const token =  JSON.parse(getToken).token;
+   
+  
     const navigate = useNavigate();
    
     const [datiFatturazione, setDatiFatturazione] = useState<DatiFatturazione>({
@@ -81,20 +87,20 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({setCheckProfilo
 
 
     const getDatiFat = async () =>{
-        await getDatiFatturazione().then((res:any) =>{
-            console.log(res, 'bestia');
-            
-               
+      
+        await getDatiFatturazione(token).then((res:any) =>{   
             setUser('old');
             setDatiFatturazione(res.data); 
            
         }).catch(err =>{
-            console.log(err,'dio');
+           
             if(err.response.status === 401){
                 navigate('/login');
+            }else if(err.response.status === 404){
+                setUser('new');
             }
+            // setUser('new');
             setStatusPage('mutable');
-            setUser('new');
             setDatiFatturazione({
                 tipoCommessa:'',
                 splitPayment:false,
@@ -124,7 +130,15 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({setCheckProfilo
     const hendleSubmitDatiFatturazione = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) =>{
         e.preventDefault();
         if(user === 'old'){
-            modifyDatiFatturazione(datiFatturazione);
+            modifyDatiFatturazione(datiFatturazione, token)
+                .then(res => res)
+                .catch(err => {
+
+                    if(err.response.status === 401){
+                        console.log('CU cu');
+                        // navigate('/login');
+                    }
+                });
             setStatusPage('immutable');
         }else{
             const body : DatiFatturazionePost= {
@@ -138,8 +152,14 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({setCheckProfilo
                 dataDocumento:new Date().toISOString(),
                 pec:datiFatturazione.pec};
 
-            insertDatiFatturazione(body);
-            setStatusPage('immutable');
+            insertDatiFatturazione(body, token).then(res =>{
+                setStatusPage('immutable');
+            }).catch(err =>{
+                if(err.response.status === 401){
+                    navigate('/login');
+                }
+            });
+            
         }
     
          

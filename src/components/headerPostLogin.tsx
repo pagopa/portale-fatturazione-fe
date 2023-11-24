@@ -29,7 +29,7 @@ export default function HeaderPostLogin() {
     return (
 
         <div className="div_header">
-            {location.pathname === '/login' ? null : 
+            {(location.pathname === '/login' || location.pathname === '/auth')  ? null : 
                 <HeaderAccount
                     rootLink={pagoPALink}
                     loggedUser={user}

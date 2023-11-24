@@ -10,44 +10,47 @@ const Auth : React.FC<AuthProps> = ({setCheckProfilo}) =>{
   
     const token = searchParams.get('selfcareToken');
 
-    console.log("TOKEN", token);
+
+    const getProfilo = async (res:any)=>{
+                   
+        await getAuthProfilo(res.data[0].jwt)
+            .then(res =>{
+               
+                const storeProfilo = res.data;
+                localStorage.setItem('profilo', JSON.stringify(storeProfilo));
+                setCheckProfilo(true);
+                navigate("/");
+            } )
+            .catch(err => {
+                navigate('/login');
+            });
+    };
+
+ 
  
     const getSelfcare = async() =>{
         const result = await selfcareLogin(token).then(res =>{
-            console.log({res});
+          
             if(res.status === 200){
                 // store del token nella local storage per tutte le successive chiamate START
                 const storeJwt = {token:res.data[0].jwt};
                 localStorage.setItem('token', JSON.stringify(storeJwt));
+           
                 // store del token nella local storage per tutte le successive chiamate END
 
-                const getProfilo = async ()=>{
-                   
-                    await getAuthProfilo(res.data[0].jwt)
-                        .then(res =>{
-                           
-                            const storeProfilo = res.data;
-                            localStorage.setItem('profilo', JSON.stringify(storeProfilo));
-                            setCheckProfilo(true);
-                            navigate("/");
-                        } )
-                        .catch(err => {
-                            navigate('/login');
-                        });
-                };
+             
 
-                getProfilo();
+                getProfilo(res);
                
             }
-        }).catch(err => console.log(err.message));
+        }).catch(err => alert(err.response.data.detail));
        
-        console.log(result, 'selfcare');
+    
 
     };
 
     //const objToSave = {token};
 
-    // console.log(token,'ciao');
     useEffect(()=>{
         getSelfcare();
         // localStorage.setItem('testObject', JSON.stringify(objToSave));

@@ -54,7 +54,8 @@ const SelectComponet: React.FC<SelectProps> = (props) => {
                     labelId="search-by-label"
                     onChange={(e) => setElement(e.target.value)}
                     value={element || ''}
-                    IconComponent={iconCom}
+                    IconComponent={SearchIcon}
+                    
                     disabled={status=== 'immutable' ? true : false}
 
                 >

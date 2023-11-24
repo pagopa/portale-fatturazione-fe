@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useState, useEffect } from 'react';
 import { useLocation } from 'react-router';
 import {
     HeaderProduct,
@@ -26,9 +26,25 @@ type ProductEntity = ProductSwitchItem;
 const HeaderNavComponent : React.FC =() => {
 
     const location : any = useLocation();
+    const getUserDetails = localStorage.getItem('profilo') || '{}';
 
+    const camelizeDescizioneRuolo = () =>{
+       
+        const UserDetailsParsed = JSON.parse(getUserDetails);
+        const allLower =  UserDetailsParsed.descrizioneRuolo?.toLowerCase();
+        const ruolo = allLower?.charAt(0).toUpperCase() + allLower?.slice(1);
+        return {name:UserDetailsParsed.nomeEnte, ruolo };
 
-    const [title, setTitle] = useState('1');
+    }; 
+    const [user, setuser] = useState({name:'', ruolo:'' });
+
+    useEffect(()=>{
+        setuser(camelizeDescizioneRuolo());
+        console.log(user);
+    },[getUserDetails]);
+    
+
+    const [title, setTitle] = useState('0');
     const productsList : Array<ProductEntity>  = [
         {
             id: '0',
@@ -44,16 +60,15 @@ const HeaderNavComponent : React.FC =() => {
         }];
 
     const cdnPath = 'https://assets.cdn.io.italia.it/logos/organizations/';
+    const name = user.name;
 
     const partyList : Array<PartyEntity> = [
         {
             id: '0',
-            name: `Commissario straordinario per la realizzazione di
-          approdi temporanei e di interventi complementari per la
-          salvaguardia di Venezia e della sua laguna e ulteriori
-          interventi per la salvaguardia della laguna di Venezia`,
-            productRole: 'Amministratore',
             logoUrl: `${cdnPath}1199250158.png`,
+            name: name,
+            productRole: user.ruolo,
+            
         },
         {
             id: '1',
@@ -65,9 +80,9 @@ const HeaderNavComponent : React.FC =() => {
     
     return (
         <>
-            {location.pathname === '/login'? null :
+            {(location.pathname === '/login' || location.pathname === '/auth') ? null :
                 <HeaderProduct
-                    productId="1"
+                    productId="0"
                     productsList={productsList}
                     onSelectedProduct={(p) => console.log('Selected Item:', p.title)}
                     partyList={partyList}

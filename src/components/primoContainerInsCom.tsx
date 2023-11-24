@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid } from '@mui/material';
+import { Grid , Typography} from '@mui/material';
 import LabelComponent from './label';
 
 
@@ -30,19 +30,19 @@ export default function PrimoContainerInsCom() {
                     item
                     xs={2}
                 >
-                    <p className="text-center fw-bolder">Territorio Nazionale</p>
+                    <Typography sx={{fontWeight:'bold', textAlign:'center'}}>Territorio Nazionale</Typography>
                 </Grid>
                 <Grid
                     item
                     xs={2}
                 >
-                    <p className=" text-center fw-bolder">Territorio diverso da nazionale</p>
+                    <Typography sx={{fontWeight:'bold', textAlign:'center'}}>Territorio diverso da nazionale</Typography>
                 </Grid>
                 <Grid
                     item
                     xs={2}
                 >
-                    <p className="text-center  fw-bolder">Totale notifiche da processare</p>
+                    <Typography sx={{fontWeight:'bold', textAlign:'center'}}>Totale notifiche da processare</Typography>
                 </Grid>
 
             </Grid>

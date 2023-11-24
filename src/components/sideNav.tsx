@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     List,
     ListItemButton,
@@ -16,15 +16,31 @@ import ViewModuleIcon from '@mui/icons-material/ViewModule';
 export default function SideNavComponent() {
     const navigate = useNavigate();
     const location : any = useLocation();
+    console.log({location});
     const [selectedIndex, setSelectedIndex] = useState(0);
     const handleListItemClick = (index : number, route : string) => {
         navigate(route);
         setSelectedIndex(index);
     };
 
+    const currentLocation = location.pathname;
+
+    useEffect(()=>{
+        if(currentLocation === '/'){
+            setSelectedIndex(0);
+        }else if(currentLocation === '/8'){
+            setSelectedIndex(1);
+        }else if(currentLocation === '/4'){
+            setSelectedIndex(2);
+        }
+        
+    },[currentLocation]);
+
+    
+
     return (
         <>
-            {location.pathname === '/login' ? null : 
+            {(location.pathname === '/login' || location.pathname === '/auth') ? null : 
                 <Box sx={{
                     height: '100%',
                     maxWidth: 360,

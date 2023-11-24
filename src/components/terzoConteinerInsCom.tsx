@@ -20,9 +20,12 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                     item
                     xs={6}
                 >
-          Numero complessivo delle notifiche
-          da processare in via analogica del
-          tipo notifica ex L. 890/1982 nel mese di {mese}
+                    <Typography>
+                         Numero complessivo delle notifiche
+                         da processare in via analogica del
+                         tipo notifica ex L. 890/1982 nel mese di {mese}
+                    </Typography>
+         
                 </Grid>
 
                 <Grid
@@ -56,9 +59,12 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                     item
                     xs={6}
                 >
-          Notifiche Analogiche: “Art. 2 comma 6
-          Anticipo pari al 30% per le notifiche
-          analogiche oggetto della commessa di {mese}
+                    <Typography>
+                      Notifiche Analogiche: “Art. 2 comma 6
+                      Anticipo pari al 30% per le notifiche
+                      analogiche oggetto della commessa di {mese}
+                    </Typography>
+         
                 </Grid>
 
                 <Grid
@@ -86,9 +92,13 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                 <Grid
                     item
                     xs={6}
+                   
                 >
+                    <div className='d-flex justify-content-end'>
+                        <Typography sx={{fontWeight:'bold'}} >TOTALE MODULO COMMESSA NETTO IVA</Typography>
+                    </div>
 
-                    <p className="text-center float-end fw-bolder">TOTALE MODULO COMMESSA NETTO IVA</p>
+                    
                 </Grid>
                 <Grid
                     sx={{ textAlign: 'center' }}

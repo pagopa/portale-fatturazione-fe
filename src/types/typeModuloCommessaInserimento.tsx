@@ -2,24 +2,33 @@
 export type ModuliCommessa = {
     numeroNotificheNazionali: number,
     numeroNotificheInternazionali : number,
-    idTipoSpedizione: number
+    idTipoSpedizione: number,
+    totaleNotifiche:number
 
 }
 
 export interface DatiCommessa  {
     moduliCommessa : ModuliCommessa[]
 }
+export interface TotaleNazionaleInternazionale{
+    totaleNazionale:number,
+    totaleInternazionale:number,
+    totaleNotifiche:number
+}
 
 export interface InsModuloCommessaContext {
     datiCommessa: DatiCommessa,
     setDatiCommessa?: any,
-    setDisableContinua?:any
+    setDisableContinua?:any,
+    statusModuloCommessa?:string,
+    totaliModuloCommessa?: ResponsTotaliInsModuloCommessa[],
+    setTotale?:any,
+    totale:TotaleNazionaleInternazionale
 }
 export interface RowInsComProps {
     sentence : string,
     textBoxHidden : boolean
     idTipoSpedizione:number,
-    setInputTotale:any, 
     rowNumber : number
 }
 

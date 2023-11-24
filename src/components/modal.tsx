@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { ModalProps } from 'react-bootstrap';
+import { useNavigate } from 'react-router';
 
 const style = {
     position: 'absolute' as const,
@@ -17,8 +18,13 @@ const style = {
 };
 
 const BasicModal : React.FC<ModalProps> =({setOpen, open}) => {
+    const navigate = useNavigate();
 
     const handleClose = () => setOpen(false);
+
+    const handleEsci = () =>{
+        navigate('/');
+    };
 
     return (
         <div>
@@ -42,7 +48,10 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open}) => {
                             variant='outlined'
                             onClick={()=>handleClose()}
                         >Annulla</Button>
-                        <Button variant='contained'>Esci</Button>
+                        <Button
+                            variant='contained'
+                            onClick={()=>handleEsci()}
+                        >Esci</Button>
                     </div>
                     
                 </Box>

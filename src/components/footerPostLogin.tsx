@@ -250,7 +250,7 @@ export default function FooterPostLogin() {
 
     return (
         <div>
-            {location.pathname === '/login' ? null : 
+            {(location.pathname === '/login' || location.pathname === '/auth')  ? null : 
                 <Footer
                     loggedUser
                     companyLink={pagoPALink}

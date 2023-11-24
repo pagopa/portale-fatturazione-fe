@@ -1,26 +1,13 @@
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useState, useContext} from 'react';
 import { Grid, Typography } from '@mui/material';
 import RowInserimentoCommessa from './rowInserimentoCommessa';
-import { DataTotaleObj} from '../types/typeModuloCommessaInserimento';
+import { DataTotaleObj,InsModuloCommessaContext, TotaleNazionaleInternazionale} from '../types/typeModuloCommessaInserimento';
+import { InserimentoModuloCommessaContext } from '../page/moduloCommessaInserimentoUtEn30';
 
-export default function SecondoContainerInsCom() {
-    const [inputTotale, setInputTotale] = useState<DataTotaleObj>({
-        digitaleNazionale:0,
-        digitaleInternazionale:0,
-        analogicoNazionale:0,
-        analogicoInternazionale:0,
-        analNotificaNazionale:0,
-        analNotificaInternazionale:0,
-    });
-    console.log({inputTotale});
-    const [totale, setTotale] = useState({totaleNazionale:0, totaleInternazionale:0, totaleNotifiche:0});
-    useEffect(()=>{
-        const totNazionale = inputTotale.digitaleNazionale + inputTotale.analogicoNazionale + inputTotale.analNotificaNazionale;
-        const totInternazionale = inputTotale.digitaleInternazionale + inputTotale.analogicoInternazionale + inputTotale.analNotificaInternazionale;
-        const totNotifiche = totNazionale + totInternazionale; 
-        setTotale(prev => ({...prev, ...{totaleNazionale:totNazionale, totaleInternazionale:totInternazionale,totaleNotifiche:totNotifiche}}));
-    },[inputTotale]);
- 
+const SecondoContainerInsCom : React.FC = () => {
+    const { totale} = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
+   
+  
     return (
         <div className="m-3 pl-5 ">
             <hr></hr>
@@ -28,9 +15,8 @@ export default function SecondoContainerInsCom() {
             <RowInserimentoCommessa
                 sentence="Numero complessivo delle notifiche da processare in via digitale nel mese di"
                 textBoxHidden
-              
                 idTipoSpedizione={1}
-                setInputTotale={setInputTotale}
+                // setInputTotale={setInputTotale}
                 rowNumber={1}
             />
             {/* prima row end */}
@@ -39,9 +25,9 @@ export default function SecondoContainerInsCom() {
             <RowInserimentoCommessa
                 sentence="Numero complessivo delle notifiche da processare in via analogica tramite Raccomandata A/R nel mese di"
                 textBoxHidden={false}
-              
+               
                 idTipoSpedizione={2}
-                setInputTotale={setInputTotale}
+                // setInputTotale={setInputTotale}
                 rowNumber={2}
             />
             {/* seconda row end */}
@@ -52,7 +38,7 @@ export default function SecondoContainerInsCom() {
                 textBoxHidden
               
                 idTipoSpedizione={3}
-                setInputTotale={setInputTotale}
+                // setInputTotale={setInputTotale}
                 rowNumber={3}
             />
             <hr></hr>
@@ -71,8 +57,11 @@ export default function SecondoContainerInsCom() {
                     item
                     xs={6}
                 >
+                    <div className='d-flex justify-content-end'>
+                        <Typography sx={{fontWeight:'bold'}}> TOTALE</Typography >
+                    </div>
 
-                    <p className="text-center float-end fw-bolder">TOTALE</p>
+                    
                 </Grid>
 
                 <Grid
@@ -116,4 +105,5 @@ export default function SecondoContainerInsCom() {
             {/* quarta row end */}
         </div>
     );
-}
+};
+export default  SecondoContainerInsCom;

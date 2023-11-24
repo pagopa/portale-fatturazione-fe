@@ -88,7 +88,7 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
                 
                 const newValue = {[keyObject]:e.target.value};
                 const newState = {...prevState, ...newValue};
-                console.log({newState});
+              
                 return newState;
             } );}}
             onBlur={(e)=> hendleOnMouseOut(e)}
