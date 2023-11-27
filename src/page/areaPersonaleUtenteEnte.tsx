@@ -1,5 +1,5 @@
 import React, { useState, useEffect, createContext  } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 import '../style/areaPersonaleUtenteEnte.css';
 import { Button } from '@mui/material';
 import TabAreaPersonaleUtente from '../components/tabAreaPersonaleUtente';
@@ -84,8 +84,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({setCheckProfilo
      || datiFatturazione.idDocumento === ''
       || datiFatturazione.codCommessa === ''
     );
-
-
+    const location : any = useLocation();
     const getDatiFat = async () =>{
       
         await getDatiFatturazione(token).then((res:any) =>{   
@@ -95,8 +94,10 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({setCheckProfilo
         }).catch(err =>{
            
             if(err.response.status === 401){
+                console.log({location});
                 navigate('/login');
             }else if(err.response.status === 404){
+
                 setUser('new');
             }
             // setUser('new');
