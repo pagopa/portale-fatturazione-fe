@@ -24,7 +24,7 @@
         "react/jsx-filename-extension": "off",
         "react/prop-types": "off",
         "react/jsx-props-no-spreading":"off",
-       "@typescript-eslint/indent": "error"
+      // "@typescript-eslint/indent": "error"
     },
     "settings": {
       "import/resolver": {
