@@ -70,12 +70,7 @@ const HeaderNavComponent : React.FC =() => {
             productRole: user.ruolo,
             
         },
-        {
-            id: '1',
-            logoUrl: `${cdnPath}2438750586.png`,
-            name: 'Comune di Roma',
-            productRole: 'Amministratore',
-        }];
+      ];
 
     
     return (
