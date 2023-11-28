@@ -47,12 +47,6 @@ const HeaderNavComponent : React.FC =() => {
     const [title, setTitle] = useState('0');
     const productsList : Array<ProductEntity>  = [
         {
-            id: '0',
-            title: 'Piattaforma PagoPa',
-            productUrl: '#Piattaforma PagoPa',
-            linkType: 'external',
-        },
-        {
             id: '1',
             title: 'SEND - Servizio Notifiche Digitali',
             productUrl: '#send',
@@ -61,6 +55,7 @@ const HeaderNavComponent : React.FC =() => {
 
     const cdnPath = 'https://assets.cdn.io.italia.it/logos/organizations/';
     const name = user.name;
+    console.log(name, 'nome');
 
     const partyList : Array<PartyEntity> = [
         {
@@ -70,14 +65,14 @@ const HeaderNavComponent : React.FC =() => {
             productRole: user.ruolo,
             
         },
-      ];
+    ];
 
     
     return (
         <>
-            {(location.pathname === '/login' || location.pathname === '/auth') ? null :
+            {(location.pathname === '/error' || location.pathname === '/auth') ? null :
                 <HeaderProduct
-                    productId="0"
+                    productId="1"
                     productsList={productsList}
                     onSelectedProduct={(p) => console.log('Selected Item:', p.title)}
                     partyList={partyList}

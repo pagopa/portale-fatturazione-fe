@@ -40,6 +40,8 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({setCheckProfilo
 
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
+
+
    
   
     const navigate = useNavigate();
@@ -94,8 +96,9 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({setCheckProfilo
         }).catch(err =>{
            
             if(err.response.status === 401){
-                console.log({location});
-                navigate('/login');
+                localStorage.removeItem("token");
+                localStorage.removeItem("profilo");
+                navigate('/error');
             }else if(err.response.status === 404){
 
                 setUser('new');

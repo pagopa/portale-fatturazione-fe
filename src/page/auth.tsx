@@ -1,9 +1,10 @@
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { selfcareLogin, getAuthProfilo } from '../api/api';
 import {useEffect} from 'react';
-import { AuthProps } from '../types/typeAuth';
+import { LoginProps } from '../types/typesGeneral';
 
-const Auth : React.FC<AuthProps> = ({setCheckProfilo}) =>{
+
+const Auth : React.FC<LoginProps> = ({setCheckProfilo}) =>{
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
    
@@ -17,12 +18,18 @@ const Auth : React.FC<AuthProps> = ({setCheckProfilo}) =>{
             .then(res =>{
                
                 const storeProfilo = res.data;
-                localStorage.setItem('profilo', JSON.stringify(storeProfilo));
+                localStorage.setItem('profilo', JSON.stringify({
+                    nomeEnte:storeProfilo.nomeEnte,
+                    descrizioneRuolo:storeProfilo.descrizioneRuolo,
+                    nonce:storeProfilo.nonce,
+                    dataUltimo:storeProfilo.dataUltimo,
+                    dataPrimo:storeProfilo.dataPrimo
+                }));
                 setCheckProfilo(true);
                 navigate("/");
             } )
             .catch(err => {
-                navigate('/login');
+                navigate('/error');
             });
     };
 
@@ -43,7 +50,7 @@ const Auth : React.FC<AuthProps> = ({setCheckProfilo}) =>{
                 getProfilo(res);
                
             }
-        }).catch(err => alert(err.response.data.detail));
+        }).catch(err =>navigate('/error'));
        
     
 
@@ -58,7 +65,7 @@ const Auth : React.FC<AuthProps> = ({setCheckProfilo}) =>{
     
    
     return (
-        <div></div>
+        <div className='auth'></div>
     );
 };
 

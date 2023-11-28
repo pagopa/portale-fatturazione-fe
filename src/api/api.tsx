@@ -1,8 +1,35 @@
 import axios from 'axios';
 import {DatiFatturazione,DatiFatturazionePost} from '../types/typesAreaPersonaleUtenteEnte';
 import { DatiCommessa } from '../types/typeModuloCommessaInserimento';
+import { useState, useEffect } from 'react';
 
-const standardId = 'c2e6c704-692d-44f9-872b-39e46c32d003';
+
+
+export const url = 'https://portalefatturebeapi20231102162515.azurewebsites.net';
+
+
+export  const useAxios = (axiosParams:any) => {
+    const [response, setResponse] = useState<any>(undefined);
+    const [error, setError] = useState({response:{status:0}});
+    const [loading, setLoading] = useState(true);
+
+    const fetchData = async (params:any) => {
+        try {
+            const result = await axios.request(params);
+            setResponse(result.data);
+        } catch( error:any ) {
+            setError(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchData(axiosParams);
+    }, []);
+
+    return { response, error, loading };
+};
 
 
 export const selfcareLogin = async (selfcareToken:string|null) =>{
@@ -82,3 +109,8 @@ export const getDatiModuloCommessa = async ( token:string) => {
 
     return response;
 };
+
+
+
+
+

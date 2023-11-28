@@ -54,3 +54,12 @@
 .container_buttons_modal{
   margin-top: 20px;
 }
+
+.auth{
+  height: 100%;
+  width: 100%;
+  z-index: 2;
+  background-color: white;
+  position: absolute;
+
+}

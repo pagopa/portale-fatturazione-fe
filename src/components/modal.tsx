@@ -19,6 +19,7 @@ const style = {
 
 const BasicModal : React.FC<ModalProps> =({setOpen, open}) => {
     const navigate = useNavigate();
+   
 
     const handleClose = () => setOpen(false);
 

@@ -11,7 +11,8 @@ import Auth from './page/auth';
 import HeaderPostLogin from './components/headerPostLogin';
 import SideNavComponent from './components/sideNav';
 import FooterPostLogin from './components/footerPostLogin';
-import Prova from './page/prova';
+import ErrorPage from './page/error';
+//import LoginPage from './page/login';
 
 import HeaderNavComponent from './components/headerNav';
 
@@ -21,46 +22,53 @@ const App : React.FC = () => {
     const [checkProfilo,setCheckProfilo] = useState(false);
     console.log({checkProfilo});
 
- 
+  
   
     return (
 
         <Router>
+           
             <Routes>
                 <Route path="/auth" element={<Auth setCheckProfilo={setCheckProfilo}/>} />
             </Routes>
-            
            
             <ThemeProvider theme={theme}>
                 <div className="App">
-
+                   
                     <HeaderPostLogin />
-                    <HeaderNavComponent />
+                   
+                    <div>
+                        <HeaderNavComponent />
 
-                    <Grid sx={{ paddingBottom: '80px', height: '100%' }} container spacing={2} columns={12}>
+                        <Grid sx={{ paddingBottom: '80px', height: '100%' }} container spacing={2} columns={12}>
 
-                        <Grid sx={{ marginBottom: '-100px' }} item xs={2}>
-                            <SideNavComponent />
-                        </Grid>
+                            <Grid sx={{ marginBottom: '-100px' }} item xs={2}>
+                                <SideNavComponent />
+                            </Grid>
 
-                        <Grid item xs={10}>
-                            <Routes>
-                                <Route path="/" element={<AreaPersonaleUtenteEnte setCheckProfilo={setCheckProfilo} />} />
-                            </Routes>
-                            <Routes>
-                                <Route path="/4" element={<DatiFatturazioneUtentePagoPa />} />
-                            </Routes>
-                            <Routes>
-                                <Route path="/8" element={<ModuloCommessaInserimentoUtEn30 />} />
-                            </Routes>
-                            <Routes>
-                                <Route path="/login" element={<Prova />} />
-                            </Routes>
+                            <Grid item xs={10}>
+                                <Routes>
+                                    <Route path="/" element={<AreaPersonaleUtenteEnte setCheckProfilo={setCheckProfilo} />} />
+                                </Routes>
+                                <Routes>
+                                    <Route path="/4" element={<DatiFatturazioneUtentePagoPa />} />
+                                </Routes>
+                                <Routes>
+                                    <Route path="/8" element={<ModuloCommessaInserimentoUtEn30 />} />
+                                </Routes>
+
+                                    
                            
+                            </Grid>
+
                         </Grid>
-
-                    </Grid>
-
+                    </div>
+                    <div className='container d-flex align-items-center justify-content-center pb-4'>
+                        <Routes>
+                            <Route path="/error" element={<ErrorPage />} />
+                        </Routes>
+                    </div>
+                   
                     <FooterPostLogin />
                 </div>
             </ThemeProvider>

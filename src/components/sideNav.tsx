@@ -40,7 +40,7 @@ export default function SideNavComponent() {
 
     return (
         <>
-            {(location.pathname === '/login' || location.pathname === '/auth') ? null : 
+            {(location.pathname === '/error' ||location.pathname === '/auth') ? null :
                 <Box sx={{
                     height: '100%',
                     maxWidth: 360,
@@ -51,7 +51,7 @@ export default function SideNavComponent() {
                         <ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick(0,'/')}>
                             <ListItemIcon>
                                 <DnsIcon fontSize="inherit"></DnsIcon>
-                        
+                      
                             </ListItemIcon>
                             <ListItemText primary="Dati di fatturazione" />
                         </ListItemButton>

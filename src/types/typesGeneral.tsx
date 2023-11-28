@@ -8,3 +8,7 @@ export interface LocationState {
     pathname?: string;
    
 }
+
+export interface LoginProps {
+    setCheckProfilo:any
+}

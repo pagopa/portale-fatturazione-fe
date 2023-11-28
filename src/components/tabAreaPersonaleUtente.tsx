@@ -38,7 +38,8 @@ const TabAreaPersonaleUtente = () => {
         {descrizione:'No', id: false},
     ];
 
-  
+    const getProfilo =  localStorage.getItem('profilo') || '{}';
+    const parseProfilo = JSON.parse(getProfilo);
   
    
 
@@ -170,12 +171,12 @@ const TabAreaPersonaleUtente = () => {
                 <div className="d-flex justify-content-around marginTopBottom24">
                     <div className='d-flex'>
                         <InputLabel  sx={{ marginRight:'20px'}}  size={"normal"}>Data primo accesso</InputLabel>
-                        {user === 'old' ? <Typography >{createDateFromString(datiFatturazione.dataCreazione)}</Typography>: null}
+                        {user === 'old' ? <Typography >{createDateFromString(parseProfilo.dataPrimo)}</Typography>: null}
                     </div>
 
                     <div className='d-flex'>
                         <InputLabel sx={{ marginRight:'20px'}}  size={"normal"}>Data ultimo accesso</InputLabel>
-                        {user === 'old' ? <Typography >{createDateFromString(datiFatturazione.dataModifica)}</Typography>: null}
+                        {user === 'old' ? <Typography >{createDateFromString(parseProfilo.dataUltimo)}</Typography>: null}
                         
                     </div>
         

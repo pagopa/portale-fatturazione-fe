@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Footer } from '@pagopa/mui-italia';
 import { useState } from 'react';
 import { useLocation } from 'react-router';
@@ -248,11 +248,22 @@ export default function FooterPostLogin() {
         },
     };
 
+    const getDataUser = localStorage.getItem('dati')|| '{}';
+    console.log(getDataUser === '{}');
+    const dataUser = JSON.parse(getDataUser);
+
+    const [statusLog, setStatusLog] = useState(false);
+
+    useEffect(()=>{
+        const bool = getDataUser === '{}' ? false : true;
+        setStatusLog(bool);
+    },[dataUser]);
+
     return (
         <div>
-            {(location.pathname === '/login' || location.pathname === '/auth')  ? null : 
+            {( location.pathname === '/auth')  ? null : 
                 <Footer
-                    loggedUser
+                    loggedUser={statusLog}
                     companyLink={pagoPALink}
                     legalInfo={companyLegalInfo}
                     postLoginLinks={postLoginLinks}
@@ -260,7 +271,7 @@ export default function FooterPostLogin() {
                     currentLangCode={lang}
                     preLoginLinks={preLoginLinks}
                     onLanguageChanged={
-                        (/* newLang */) => {
+                        () => {
                             console.log("Changed Language");
                         }
                     }

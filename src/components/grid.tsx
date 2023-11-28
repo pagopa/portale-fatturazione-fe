@@ -4,46 +4,42 @@ import { DataGrid,  GridColDef } from '@mui/x-data-grid';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 
-type GridData = {
-    id: number,
-    Mese: string,
-    Lavorazione: string,
-    Stato: string,
-    'Not. Digitali': number,
-    'Not. Analog. AR. Naz.': number,
-    'Not. Analog. AR. No Naz.': number,
-    'Not. Analog. 890/1982': number,
-    'Tot. Mod. Commessa': string,
-  
-}
+
 interface GridComponentProps {
-    data: GridData[],
+    data: any[],
    
 }
 
 const GridComponent : React.FC<GridComponentProps> = (props) => {
 
     const {data } = props;
-    const makeColums = Object.keys(data[0]).map((singleKey) => {
-        if (singleKey === 'Mese') {
+    console.log(data);
+    let makeColums : any[] = [];
+  
+    if(data.length > 0){
+        makeColums = Object.keys(data[0]).map((singleKey) => {
+            console.log(singleKey);
+            if (singleKey === 'meseValidita') {
+                return {
+                    field: singleKey,
+                    headerClassName: 'super-app-theme--header',
+                    headerAlign: 'left',
+                    width: 160,
+                    renderCell: (param:any) => <a className="primary" href="/">{param.row.meseValidita}</a>
+                    ,
+    
+                };
+            }
             return {
                 field: singleKey,
                 headerClassName: 'super-app-theme--header',
                 headerAlign: 'left',
                 width: 160,
-                renderCell: (param:any) => <a className="primary" href="/">{param.row.Mese}</a>
-                ,
-
+    
             };
-        }
-        return {
-            field: singleKey,
-            headerClassName: 'super-app-theme--header',
-            headerAlign: 'left',
-            width: 160,
-
-        };
-    });
+        });
+    }
+  
 
     const showDetailsButton = {
         field: 'action',
@@ -87,7 +83,6 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
                 }}
                 autoHeight
                 disableColumnMenu
-       
             />
         </Box>
     );

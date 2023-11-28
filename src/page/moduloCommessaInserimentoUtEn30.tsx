@@ -9,7 +9,7 @@ import BasicModal from '../components/modal';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { useNavigate } from 'react-router';
 // import HorizontalLinearStepper from '../components/stepper';
-import {insertDatiModuloCommessa, getDatiModuloCommessa} from '../api/api';
+import {insertDatiModuloCommessa, getDatiModuloCommessa } from '../api/api';
 import { DatiCommessa, InsModuloCommessaContext , ResponsTotaliInsModuloCommessa, TotaleNazionaleInternazionale} from '../types/typeModuloCommessaInserimento';
 
 
@@ -45,6 +45,10 @@ export const InserimentoModuloCommessaContext = createContext<InsModuloCommessaC
 
 const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
 
+    
+    const getToken = localStorage.getItem('token') || '{}';
+    const token =  JSON.parse(getToken).token;
+
     const navigate = useNavigate();
 
     const [statusModuloCommessa, setStatusModuloCommessa] = useState('mutable');
@@ -52,8 +56,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
 
-    const getToken = localStorage.getItem('token') || '{}';
-    const token =  JSON.parse(getToken).token;
+   
    
 
     const [datiCommessa, setDatiCommessa] = useState<DatiCommessa>( {
@@ -112,7 +115,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             .catch(err => {
                 console.log(err,'ERROR');
                 if(err.response.status === 401){
-                    navigate('/login');
+                    navigate('/error');
                 } 
             });
     };
@@ -159,7 +162,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             } )
             .catch(err => {
                 if(err.response.status === 401){
-                    navigate('/login');
+                    navigate('/error');
                 } 
             });
     };
