@@ -10,6 +10,9 @@ export type ModuliCommessa = {
 export interface DatiCommessa  {
     moduliCommessa : ModuliCommessa[]
 }
+export  interface ModuloCommessaInserimentoProps{
+    meseAnnoModuloCommessa:any
+}
 export interface TotaleNazionaleInternazionale{
     totaleNazionale:number,
     totaleInternazionale:number,

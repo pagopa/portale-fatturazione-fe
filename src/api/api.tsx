@@ -10,10 +10,11 @@ export const url = 'https://portalefatturebeapi20231102162515.azurewebsites.net'
 
 export  const useAxios = (axiosParams:any) => {
     const [response, setResponse] = useState<any>(undefined);
-    const [error, setError] = useState({response:{status:0}});
+    const [error, setError] = useState(undefined);
     const [loading, setLoading] = useState(true);
-
+  
     const fetchData = async (params:any) => {
+        
         try {
             const result = await axios.request(params);
             setResponse(result.data);
@@ -23,13 +24,30 @@ export  const useAxios = (axiosParams:any) => {
             setLoading(false);
         }
     };
-
+  
     useEffect(() => {
         fetchData(axiosParams);
     }, []);
 
-    return { response, error, loading };
+    return { response, error, loading ,fetchData};
 };
+
+
+export const menageError = (res:any,navigate:any) =>{
+    console.log({res}, 'response');
+    if(res?.response?.status === 404){
+            
+        alert('Non è stato possibile aggiungere i dati');
+    }else if(res?.error?.response?.status === 401){
+        console.log('DENTRO 401');
+        navigate('/error');
+    }else if(res?.error?.response?.status === 500){
+        
+        navigate('/error');
+    }
+};
+
+
 
 
 export const selfcareLogin = async (selfcareToken:string|null) =>{

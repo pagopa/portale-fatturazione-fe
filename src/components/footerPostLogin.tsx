@@ -42,7 +42,7 @@ type PreLoginFooterLinksType = {
 };
 
 export default function FooterPostLogin() {
- 
+    console.log("FOOTER");
     const [ lang, setLang ] = useState<LangCode>("it"); 
     const location : any = useLocation();
 
@@ -249,7 +249,7 @@ export default function FooterPostLogin() {
     };
 
     const getDataUser = localStorage.getItem('dati')|| '{}';
-    console.log(getDataUser === '{}');
+    
     const dataUser = JSON.parse(getDataUser);
 
     const [statusLog, setStatusLog] = useState(false);

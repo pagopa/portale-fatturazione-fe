@@ -10,7 +10,8 @@ import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { useNavigate } from 'react-router';
 // import HorizontalLinearStepper from '../components/stepper';
 import {insertDatiModuloCommessa, getDatiModuloCommessa } from '../api/api';
-import { DatiCommessa, InsModuloCommessaContext , ResponsTotaliInsModuloCommessa, TotaleNazionaleInternazionale} from '../types/typeModuloCommessaInserimento';
+import {useAxios, url, menageError} from '../api/api';
+import { DatiCommessa, InsModuloCommessaContext , ResponsTotaliInsModuloCommessa,ModuloCommessaInserimentoProps, TotaleNazionaleInternazionale} from '../types/typeModuloCommessaInserimento';
 
 
 
@@ -43,7 +44,9 @@ export const InserimentoModuloCommessaContext = createContext<InsModuloCommessaC
 });
 
 
-const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
+const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps> = ({meseAnnoModuloCommessa}) => {
+
+  
 
     
     const getToken = localStorage.getItem('token') || '{}';
@@ -82,7 +85,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
           
         ]
     });
-    console.log({datiCommessa});
+  
     
     const [totaliModuloCommessa, setTotaliModuloCommessa] = useState<ResponsTotaliInsModuloCommessa[]>([
         {
@@ -97,12 +100,38 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
 
     const [totale, setTotale] = useState<TotaleNazionaleInternazionale>({totaleNazionale:0, totaleInternazionale:0, totaleNotifiche:0});
    
-    
+    // visualizza modulo cmmessa from grid 
 
+    const { ...getDatiCommessaOnClickFromGrid } = useAxios({});
+   
+    const handleButtonAnnullaFiltri = () => {
+        getDatiCommessaOnClickFromGrid.fetchData({
+            method: 'GET',
+            url: `${url}/api/modulocommessa/dettaglio/${meseAnnoModuloCommessa.anno}/${meseAnnoModuloCommessa.mese}`,
+            headers: {
+                Authorization: 'Bearer ' + token
+            }
+        });
+        
+    };
+
+   
+    useEffect(()=>{
+        if(meseAnnoModuloCommessa.userClickOn === 'GRID'){
+            handleButtonAnnullaFiltri();
+        }
+        
+    },[]);
+       
+   
+
+
+   
+ 
     const getDatiCommessa = async () =>{
         await getDatiModuloCommessa(token)
             .then(res =>{
-                console.log({res},'GET');
+           
                 setStatusModuloCommessa('immutable');
                 setDatiCommessa({moduliCommessa:res.data.moduliCommessa});
                 setTotaliModuloCommessa(res.data.totale);
@@ -120,10 +149,29 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             });
     };
 
+
+
     useEffect(()=>{
      
-        getDatiCommessa();
-    },[]);
+        // getDatiCommessa();
+
+        if(getDatiCommessaOnClickFromGrid.response){
+            const res = getDatiCommessaOnClickFromGrid.response;
+            console.log(res);
+            
+            setStatusModuloCommessa('immutable');
+            setDatiCommessa({moduliCommessa:res.moduliCommessa});
+            setTotaliModuloCommessa(res.totale);
+            const objAboutTotale = res.totaleModuloCommessaNotifica;
+            setTotale({totaleNazionale:objAboutTotale.totaleNumeroNotificheNazionali
+                , totaleInternazionale:objAboutTotale.totaleNumeroNotificheInternazionali
+                , totaleNotifiche:objAboutTotale.totaleNumeroNotificheDaProcessare});
+           
+      
+        }
+        menageError(getDatiCommessaOnClickFromGrid, navigate);
+       
+    },[getDatiCommessaOnClickFromGrid.response]);
 
    
    
@@ -222,14 +270,14 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                     <Typography sx={{fontWeight:cssPathAggModComm}} variant="caption">/ Modifica modulo commessa</Typography>
                     
                     
-
+                   
                 </div>
                 <div className="marginTop24 marginTopBottom24">
                     {statusModuloCommessa === 'mutable'? <Typography variant="h4"> Modifica modulo commessa</Typography>
                         :
                         <Typography variant="h4"> Modulo commessa</Typography>
                     }
-                    {statusModuloCommessa === 'immutable'?
+                    {(statusModuloCommessa === 'immutable'&& meseAnnoModuloCommessa.modifica === true)?
                         <div className="d-flex justify-content-end ">
                             <Button variant="contained" size="small" onClick={()=> hendleModificaModuloCommessa()} >Modifica</Button>
                         </div>

@@ -24,7 +24,7 @@ type PartyEntity = PartySwitchItem;
 type ProductEntity = ProductSwitchItem;
 
 const HeaderNavComponent : React.FC =() => {
-
+    console.log('HEADERNAv');
     const location : any = useLocation();
     const getUserDetails = localStorage.getItem('profilo') || '{}';
 
@@ -40,7 +40,7 @@ const HeaderNavComponent : React.FC =() => {
 
     useEffect(()=>{
         setuser(camelizeDescizioneRuolo());
-        console.log(user);
+    
     },[getUserDetails]);
     
 
@@ -55,7 +55,7 @@ const HeaderNavComponent : React.FC =() => {
 
     const cdnPath = 'https://assets.cdn.io.italia.it/logos/organizations/';
     const name = user.name;
-    console.log(name, 'nome');
+
 
     const partyList : Array<PartyEntity> = [
         {

@@ -13,12 +13,13 @@ const LoginPage : React.FC<LoginProps> = ({ setCheckProfilo}) =>{
 
     const getDataUser = localStorage.getItem('dati')|| '{}';
     const dataUser = JSON.parse(getDataUser);
-
+    console.log('login');
+    /*
     const getProfilo = async ()=>{
                    
         await getAuthProfilo(dataUser.token)
             .then(res =>{
-                console.log({res}, 'ffff');
+          
                 setCheckProfilo(true);
                 navigate("/");
             } )
@@ -28,7 +29,7 @@ const LoginPage : React.FC<LoginProps> = ({ setCheckProfilo}) =>{
             });
     };
 
-  
+  */
  
     return (
         <div className='"d-flex justify-content-center"'>

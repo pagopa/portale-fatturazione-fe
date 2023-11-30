@@ -33,7 +33,7 @@ export const DatiFatturazioneContext = createContext<AreaPersonaleContext>({
 });
 
 const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({setCheckProfilo}) => {
- 
+   
     const [statusPage, setStatusPage] = useState('immutable');
     const [user, setUser] = useState('old');
    

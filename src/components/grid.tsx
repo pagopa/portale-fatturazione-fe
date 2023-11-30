@@ -1,31 +1,62 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import { DataGrid,  GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridRowParams,GridEventListener,MuiEvent } from '@mui/x-data-grid';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { useNavigate } from 'react-router';
 
 
 
 interface GridComponentProps {
     data: any[],
+    setMeseAnnoModuloCommessa:any
    
 }
 
 const GridComponent : React.FC<GridComponentProps> = (props) => {
+    const {data, setMeseAnnoModuloCommessa} = props;
+    const navigate = useNavigate();
 
-    const {data } = props;
-    console.log(data);
+    let columsSelectedGrid = '';
+    const handleOnCellClick = (params:any) =>{
+        columsSelectedGrid  = params.field;
+        
+    };
+
+
+
+    const handleEvent: GridEventListener<'rowClick'> = (
+        params:GridRowParams,
+        event: MuiEvent<React.MouseEvent<HTMLElement>>,
+    ) => {
+        event.preventDefault();
+        if(columsSelectedGrid  === 'meseValidita' ||columsSelectedGrid  === 'action' ){
+            setMeseAnnoModuloCommessa({
+                mese:params.row.meseValidita,
+                anno:params.row.annoValidita,
+                modifica:params.row.modifica,
+                userClickOn:'GRID'
+            });
+            navigate('/8');
+        }
+       
+    };
+
+    
+   
+   
+  
     let makeColums : any[] = [];
   
     if(data.length > 0){
         makeColums = Object.keys(data[0]).map((singleKey) => {
-            console.log(singleKey);
+          
             if (singleKey === 'meseValidita') {
                 return {
                     field: singleKey,
                     headerClassName: 'super-app-theme--header',
                     headerAlign: 'left',
                     width: 160,
-                    renderCell: (param:any) => <a className="primary" href="/">{param.row.meseValidita}</a>
+                    renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.meseValidita}</a>
                     ,
     
                 };
@@ -48,7 +79,7 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
         headerAlign: 'left',
         renderCell: ((row : any) => (
 
-            <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} onClick={() => console.log('Show page details', row)} />
+            <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} onClick={() => console.log('Show page details')} />
 
         )
         ),
@@ -74,12 +105,13 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
                         display: 'none'
                     }
                 }}
+                onRowClick={handleEvent}
+                onCellClick={handleOnCellClick}
                 rows={data}
                 columns={columsWithButton}
                 columnVisibilityModel={{
                     id: false,
-                    DataPrimoAccesso: false,
-                    DataUltimoAccesso: false,
+                    modifica:false
                 }}
                 autoHeight
                 disableColumnMenu

@@ -1,29 +1,15 @@
 import React, {useState, useEffect} from 'react';
-import {useAxios, url} from '../api/api';
+import {useAxios, url, menageError} from '../api/api';
 import { Button, Box, Typography, FormControl, InputLabel,Select, MenuItem,} from '@mui/material';
 import GridComponent from '../components/grid';
 import { useNavigate } from 'react-router';
-import SearchIcon from '@mui/icons-material/Search';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { VisualModuliCommessaProps } from '../types/typeModuloCommessaElenco';
 
 
+const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMeseAnnoModuloCommessa}) => {
 
-
-
-interface GridData {
-    id: number,
-    Mese: string,
-    Lavorazione: string,
-    Stato: string,
-    'Not. Digitali': number,
-    'Not. Analog. AR. Naz.': number,
-    'Not. Analog. AR. No Naz.': number,
-    'Not. Analog. 890/1982': number,
-    'Tot. Mod. Commessa': string,
-}
-
-
-export default function ModuloCommessaElencoUtPa() {
-
+    console.log('DIO mALEDETTO');
 
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
@@ -34,7 +20,7 @@ export default function ModuloCommessaElencoUtPa() {
     const [valueSelect, setValueSelect] = useState<string>('');
    
    
-    const {...data} = useAxios({
+    const {...dataGetAnni} = useAxios({
         method: 'GET',
         url: `${url}/api/modulocommessa/anni`,
         headers: {
@@ -42,70 +28,100 @@ export default function ModuloCommessaElencoUtPa() {
         }
     });
 
-    useEffect(()=>{
-       
-        if(data.response){
-            
-            setAnni(data.response);
-        }else if(data.error.response.status === 404){
-            
-            alert('Non è stato possibile aggiungere gli anni nella select');
-        }else if(data.error.response.status === 401){
-            
-            navigate('/error');
-        }else if(data.error.response.status === 500){
-            
-            navigate('/error');
-        }
-        
-    },[data.response,data.error]);
-
-
+  
+    const fixResponseForDataGrid = (arr:any) =>{
+        const result = arr.map( (singlObj:any,i:number) =>{
+            return {
+                id : Math.random(),
+                meseValidita: singlObj.meseValidita,
+                modifica: singlObj.modifica,
+                annoValidita: singlObj.annoValidita,
+                idEnte: singlObj.idEnte,
+                idTipoContratto: singlObj.idTipoContratto,
+                stato: singlObj.stato,
+                prodotto: singlObj.prodotto,
+                totale: singlObj.totale,
+                idCategoriaSpedizione : singlObj.totali[i+1].idCategoriaSpedizione,
+                tipo : singlObj.totali[i+1].tipo,
+                totaleCategoria: singlObj.totali[i+1].totaleCategoria,
+            };
+        } );
+        return result;
+    };
     
    
-   
-   
-    const { ...data2 } = useAxios({
+    const { ...dataGetListaCommessa } = useAxios({
         method: 'GET',
-        url: `${url}/api/modulocommessa/lista/${valueSelect}`,
+        url: `${url}/api/modulocommessa/lista`,
         headers: {
             Authorization: 'Bearer ' + token
         }
     });
-
+   
     const [gridData, setGridData] = useState([]);
+    
+  
+  
+    const { ...dataGetListaCommessaFiltered } = useAxios({});
+   
+    const handleButtonFiltra = () => {
+        dataGetListaCommessaFiltered.fetchData({
+            method: 'GET',
+            url: `${url}/api/modulocommessa/lista/${valueSelect}`,
+            headers: {
+                Authorization: 'Bearer ' + token
+            }
+        });
+        
+    };
+
+    const { ...dataGetListaOnAnnullaFiltri } = useAxios({});
+   
+    const handleButtonAnnullaFiltri = () => {
+        dataGetListaOnAnnullaFiltri.fetchData({
+            method: 'GET',
+            url: `${url}/api/modulocommessa/lista`,
+            headers: {
+                Authorization: 'Bearer ' + token
+            }
+        });
+        
+    };
 
     useEffect(()=>{
-
-      
-        if(data2.response){
-        
-
-            const finalData = data2.response.map( (singlObj:any,i:number) =>{
-   
-                singlObj.id = Math.random();
-                singlObj.idCategoriaSpedizione = singlObj.totali[i+1].idCategoriaSpedizione;
-             
-                singlObj.tipo = singlObj.totali[i+1].tipo;
-                singlObj.totaleCategoria= singlObj.totali[i+1].totaleCategoria;
-                
-                delete singlObj.totali;
-               
-                return singlObj;
-            } );
-         
+       
+        if(dataGetListaOnAnnullaFiltri.response){
+            console.log('ciao1');
+            const finalData = fixResponseForDataGrid(dataGetListaOnAnnullaFiltri.response);
             setGridData(finalData);
         }
-        
-    },[data2.response]);
 
+        if(dataGetListaCommessa.response){
+            console.log('ciao2');
+            const finalData = fixResponseForDataGrid(dataGetListaCommessa.response);
+            setGridData(finalData);
+        }
+      
+        if(dataGetListaCommessaFiltered.response){
+            console.log('ciao3');
+            const finalData = fixResponseForDataGrid(dataGetListaCommessaFiltered.response);
+            setGridData(finalData);
+        }
+        if(dataGetAnni.response){
+            console.log('ciao4');
+            setAnni(dataGetAnni.response);
+        }
+         
+        menageError(dataGetAnni, navigate);
+        menageError(dataGetListaCommessaFiltered,navigate);
+        menageError(dataGetListaOnAnnullaFiltri,navigate);
+        menageError(dataGetListaCommessa,navigate);
 
       
-
-    
-   
-   
-
+    },[dataGetListaOnAnnullaFiltri.response,
+        dataGetListaCommessaFiltered.response,
+        dataGetListaCommessa.response,
+        dataGetAnni.response]);
 
   
     return (
@@ -136,9 +152,9 @@ export default function ModuloCommessaElencoUtPa() {
                             id="sea"
                             label="Anno"
                             labelId="search-by-label"
-                            onChange={(e) => setValueSelect(e.target.value) }
+                            onChange={(e) =>{setValueSelect(e.target.value); console.log('tttttt');}  }
                             value={valueSelect}
-                            IconComponent={SearchIcon}
+                            IconComponent={ArrowDropDownIcon}
                         >
                             {anni.map((el) => (
 
@@ -162,6 +178,7 @@ export default function ModuloCommessaElencoUtPa() {
                         variant="contained"
                         disabled={valueSelect === ''}
                         sx={{ marginTop: 'auto', marginBottom: 'auto', marginLeft: '30px' }}
+                        onClick={()=>handleButtonFiltra()}
                      
                     >
             Filtra 
@@ -170,7 +187,7 @@ export default function ModuloCommessaElencoUtPa() {
                     {valueSelect !== '' ? 
                         <Typography
                             variant="caption-semibold"
-                            onClick={()=>setValueSelect('')}
+                            onClick={()=>{setValueSelect(''); handleButtonAnnullaFiltri();}}
                             sx={{
                                 marginTop: 'auto',
                                 marginBottom: 'auto',
@@ -188,13 +205,14 @@ export default function ModuloCommessaElencoUtPa() {
             </div>
 
             <div>
-                <GridComponent data={gridData} /> 
+                <GridComponent data={gridData} setMeseAnnoModuloCommessa={setMeseAnnoModuloCommessa} />
+                
             </div>
 
         </div>
     );
-}
-
+};
+export default  ModuloCommessaElencoUtPa;
 
 /*
 const gridData:GridData[] = [{

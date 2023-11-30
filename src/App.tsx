@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { ThemeProvider, Grid } from '@mui/material';
 import {theme} from '@pagopa/mui-italia';
 import AreaPersonaleUtenteEnte from './page/areaPersonaleUtenteEnte';
-import DatiFatturazioneUtentePagoPa from './page/moduloCommessaElencoUtPa';
+import ModuloCommessaElencoUtPa from './page/moduloCommessaElencoUtPa';
 import ModuloCommessaInserimentoUtEn30 from './page/moduloCommessaInserimentoUtEn30';
 import Auth from './page/auth';
 import HeaderPostLogin from './components/headerPostLogin';
@@ -20,9 +20,14 @@ const App : React.FC = () => {
 
 
     const [checkProfilo,setCheckProfilo] = useState(false);
-    console.log({checkProfilo});
+    const [meseAnnoModuloCommessa, setMeseAnnoModuloCommessa] = useState({
+        mese:'',
+        anno:'',
+        modifica:undefined,
+        userClickOn:''
+    });
 
-  
+    console.log({meseAnnoModuloCommessa});
   
     return (
 
@@ -51,12 +56,12 @@ const App : React.FC = () => {
                                     <Route path="/" element={<AreaPersonaleUtenteEnte setCheckProfilo={setCheckProfilo} />} />
                                 </Routes>
                                 <Routes>
-                                    <Route path="/4" element={<DatiFatturazioneUtentePagoPa />} />
+                                    <Route path="/4" element={<ModuloCommessaElencoUtPa setMeseAnnoModuloCommessa={setMeseAnnoModuloCommessa} />} />
                                 </Routes>
                                 <Routes>
-                                    <Route path="/8" element={<ModuloCommessaInserimentoUtEn30 />} />
+                                    <Route path="/8" element={<ModuloCommessaInserimentoUtEn30 meseAnnoModuloCommessa={meseAnnoModuloCommessa} />} />
                                 </Routes>
-
+                                
                                     
                            
                             </Grid>
