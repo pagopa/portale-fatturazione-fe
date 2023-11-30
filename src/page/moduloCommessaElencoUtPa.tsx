@@ -31,19 +31,11 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMeseA
   
     const fixResponseForDataGrid = (arr:any) =>{
         const result = arr.map( (singlObj:any,i:number) =>{
+            
             return {
                 id : Math.random(),
-                meseValidita: singlObj.meseValidita,
-                modifica: singlObj.modifica,
-                annoValidita: singlObj.annoValidita,
-                idEnte: singlObj.idEnte,
-                idTipoContratto: singlObj.idTipoContratto,
-                stato: singlObj.stato,
-                prodotto: singlObj.prodotto,
-                totale: singlObj.totale,
-                idCategoriaSpedizione : singlObj.totali[i+1].idCategoriaSpedizione,
-                tipo : singlObj.totali[i+1].tipo,
-                totaleCategoria: singlObj.totali[i+1].totaleCategoria,
+                ...singlObj
+               
             };
         } );
         return result;
@@ -52,7 +44,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMeseA
    
     const { ...dataGetListaCommessa } = useAxios({
         method: 'GET',
-        url: `${url}/api/modulocommessa/lista`,
+        url: `${url}/api/modulocommessa/lista/parziali`,
         headers: {
             Authorization: 'Bearer ' + token
         }
@@ -67,7 +59,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMeseA
     const handleButtonFiltra = () => {
         dataGetListaCommessaFiltered.fetchData({
             method: 'GET',
-            url: `${url}/api/modulocommessa/lista/${valueSelect}`,
+            url: `${url}/api/modulocommessa/lista/parziali/${valueSelect}`,
             headers: {
                 Authorization: 'Bearer ' + token
             }
@@ -80,7 +72,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMeseA
     const handleButtonAnnullaFiltri = () => {
         dataGetListaOnAnnullaFiltri.fetchData({
             method: 'GET',
-            url: `${url}/api/modulocommessa/lista`,
+            url: `${url}/api/modulocommessa/lista/parziali`,
             headers: {
                 Authorization: 'Bearer ' + token
             }
@@ -97,7 +89,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMeseA
         }
 
         if(dataGetListaCommessa.response){
-            console.log('ciao2');
+            console.log(dataGetListaCommessa.response, 'MADOnna');
             const finalData = fixResponseForDataGrid(dataGetListaCommessa.response);
             setGridData(finalData);
         }

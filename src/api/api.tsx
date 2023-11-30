@@ -12,13 +12,15 @@ export  const useAxios = (axiosParams:any) => {
     const [response, setResponse] = useState<any>(undefined);
     const [error, setError] = useState(undefined);
     const [loading, setLoading] = useState(true);
-  
+
+   
     const fetchData = async (params:any) => {
-        
+        console.log(params, 'params');
         try {
             const result = await axios.request(params);
             setResponse(result.data);
         } catch( error:any ) {
+            console.log({error}, 'hook');
             setError(error);
         } finally {
             setLoading(false);
@@ -26,7 +28,9 @@ export  const useAxios = (axiosParams:any) => {
     };
   
     useEffect(() => {
+       
         fetchData(axiosParams);
+       
     }, []);
 
     return { response, error, loading ,fetchData};
@@ -34,13 +38,14 @@ export  const useAxios = (axiosParams:any) => {
 
 
 export const menageError = (res:any,navigate:any) =>{
-    console.log({res}, 'response');
-    if(res?.response?.status === 404){
-            
-        alert('Non è stato possibile aggiungere i dati');
-    }else if(res?.error?.response?.status === 401){
+    console.log({res},'menage');
+    if(res?.error?.response?.status === 401){
         console.log('DENTRO 401');
         navigate('/error');
+      
+    }else if(res?.error?.response?.status === 404){
+        navigate('/error');
+        //alert('Non è stato possibile aggiungere i dati');
     }else if(res?.error?.response?.status === 500){
         
         navigate('/error');

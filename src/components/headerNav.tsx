@@ -24,7 +24,7 @@ type PartyEntity = PartySwitchItem;
 type ProductEntity = ProductSwitchItem;
 
 const HeaderNavComponent : React.FC =() => {
-    console.log('HEADERNAv');
+   
     const location : any = useLocation();
     const getUserDetails = localStorage.getItem('profilo') || '{}';
 

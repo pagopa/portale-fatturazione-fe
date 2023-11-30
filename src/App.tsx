@@ -24,7 +24,7 @@ const App : React.FC = () => {
         mese:'',
         anno:'',
         modifica:undefined,
-        userClickOn:''
+        userClickOn:undefined
     });
 
     console.log({meseAnnoModuloCommessa});
@@ -59,7 +59,7 @@ const App : React.FC = () => {
                                     <Route path="/4" element={<ModuloCommessaElencoUtPa setMeseAnnoModuloCommessa={setMeseAnnoModuloCommessa} />} />
                                 </Routes>
                                 <Routes>
-                                    <Route path="/8" element={<ModuloCommessaInserimentoUtEn30 meseAnnoModuloCommessa={meseAnnoModuloCommessa} />} />
+                                    <Route path="/8" element={<ModuloCommessaInserimentoUtEn30 setMeseAnnoModuloCommessa={setMeseAnnoModuloCommessa} meseAnnoModuloCommessa={meseAnnoModuloCommessa} />} />
                                 </Routes>
                                 
                                     

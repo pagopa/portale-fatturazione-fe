@@ -55,6 +55,7 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
                     field: singleKey,
                     headerClassName: 'super-app-theme--header',
                     headerAlign: 'left',
+                    headerName:'Mese',
                     width: 160,
                     renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.meseValidita}</a>
                     ,
@@ -111,7 +112,11 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
                 columns={columsWithButton}
                 columnVisibilityModel={{
                     id: false,
-                    modifica:false
+                    modifica:false,
+                    idEnte:false,
+                    idTipoContratto:false,
+                    annoValidita:false,
+                    prodotto:false,
                 }}
                 autoHeight
                 disableColumnMenu

@@ -15,7 +15,7 @@ import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import {useAxios, url, menageError} from '../api/api';
 
 export default function SideNavComponent() {
-    console.log('SIDENAV');
+    
     const navigate = useNavigate();
     const location : any = useLocation();
 
@@ -41,7 +41,7 @@ export default function SideNavComponent() {
         
     },[currentLocation]);
 
-
+    /*
     const {...getCheckCommessaCurrentMonth} = useAxios({
         method: 'GET',
         url: `${url}/api/modulocommessa`,
@@ -49,14 +49,14 @@ export default function SideNavComponent() {
             Authorization: 'Bearer ' + token
         }
     });
-    console.log(getCheckCommessaCurrentMonth.response);
+    
     const handleModuloCommessa = () =>{
         if(getCheckCommessaCurrentMonth.response.lenght > 0){
             console.log('ciao');
         }
     };
 
-    
+    */
 
     return (
         <>

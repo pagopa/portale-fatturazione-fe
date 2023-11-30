@@ -11,7 +11,8 @@ export interface DatiCommessa  {
     moduliCommessa : ModuliCommessa[]
 }
 export  interface ModuloCommessaInserimentoProps{
-    meseAnnoModuloCommessa:any
+    meseAnnoModuloCommessa:any,
+    setMeseAnnoModuloCommessa:any
 }
 export interface TotaleNazionaleInternazionale{
     totaleNazionale:number,
@@ -54,3 +55,7 @@ export interface TerzoContainerModCommessa{
     valueTotali:ResponsTotaliInsModuloCommessa[]
 }
 
+export interface ModalDatiFatProps{
+    setOpenModalDatiFatturazione:any,
+    openModalDatiFatturazione:boolean
+}

@@ -42,7 +42,7 @@ type PreLoginFooterLinksType = {
 };
 
 export default function FooterPostLogin() {
-    console.log("FOOTER");
+    
     const [ lang, setLang ] = useState<LangCode>("it"); 
     const location : any = useLocation();
 

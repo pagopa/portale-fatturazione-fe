@@ -6,6 +6,7 @@ import PrimoContainerInsCom from '../components/primoContainerInsCom';
 import SecondoContainerInsCom from '../components/secondoContainerInsCom';
 import TerzoContainerInsCom from '../components/terzoConteinerInsCom';
 import BasicModal from '../components/modal';
+import ModalDatiFatturazione from '../components/modalDatiFatturazione';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { useNavigate } from 'react-router';
 // import HorizontalLinearStepper from '../components/stepper';
@@ -44,7 +45,7 @@ export const InserimentoModuloCommessaContext = createContext<InsModuloCommessaC
 });
 
 
-const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps> = ({meseAnnoModuloCommessa}) => {
+const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps> = ({meseAnnoModuloCommessa, setMeseAnnoModuloCommessa}) => {
 
   
 
@@ -58,6 +59,11 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
+
+    const [openModalDatiFatturazione, setOpenModalDatiFatturazione] = useState(false);
+    const handleOpenModalDatiFatt = () => setOpenModalDatiFatturazione(true);
+
+
 
    
    
@@ -104,7 +110,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
     const { ...getDatiCommessaOnClickFromGrid } = useAxios({});
    
-    const handleButtonAnnullaFiltri = () => {
+    const handleButtonAnnullaFiltri = async() => {
         getDatiCommessaOnClickFromGrid.fetchData({
             method: 'GET',
             url: `${url}/api/modulocommessa/dettaglio/${meseAnnoModuloCommessa.anno}/${meseAnnoModuloCommessa.mese}`,
@@ -112,21 +118,11 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 Authorization: 'Bearer ' + token
             }
         });
+
         
     };
 
-   
-    useEffect(()=>{
-        if(meseAnnoModuloCommessa.userClickOn === 'GRID'){
-            handleButtonAnnullaFiltri();
-        }
-        
-    },[]);
-       
-   
-
-
-   
+ 
  
     const getDatiCommessa = async () =>{
         await getDatiModuloCommessa(token)
@@ -149,11 +145,23 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
             });
     };
 
+      
+    useEffect(()=>{
+    
+        handleButtonAnnullaFiltri();
+           
+       
+    },[]);
+
 
 
     useEffect(()=>{
-     
+        
         // getDatiCommessa();
+        if(meseAnnoModuloCommessa.userClickOn === 'GRID'){
+            handleButtonAnnullaFiltri();
+            setMeseAnnoModuloCommessa('');
+        }
 
         if(getDatiCommessaOnClickFromGrid.response){
             const res = getDatiCommessaOnClickFromGrid.response;
@@ -169,9 +177,9 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
            
       
         }
+        console.log(getDatiCommessaOnClickFromGrid.response, 'RESPONSE');
         menageError(getDatiCommessaOnClickFromGrid, navigate);
-       
-    },[getDatiCommessaOnClickFromGrid.response]);
+    },[getDatiCommessaOnClickFromGrid.response,getDatiCommessaOnClickFromGrid.error ]);
 
    
    
@@ -247,8 +255,10 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 totale,
             }}>
             <BasicModal setOpen={setOpen} open={open}></BasicModal>
+            <ModalDatiFatturazione openModalDatiFatturazione={openModalDatiFatturazione} setOpenModalDatiFatturazione={setOpenModalDatiFatturazione}></ModalDatiFatturazione>
             <div className="marginTop24 ms-5 me-5">
                 <div className='d-flex'>
+                    {/*
                     <ButtonNaked
                         color="primary"
                         onFocusVisible={() => { console.log('onFocus'); }}
@@ -259,8 +269,10 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                     >
           Esci
                     </ButtonNaked>
+                     */}
                     
-                    <Typography sx={{ marginLeft: '20px', fontWeight:cssPathModuloComm}} variant="caption">
+                    
+                    <Typography sx={{ fontWeight:cssPathModuloComm}} variant="caption">
                        
                         <ViewModuleIcon sx={{paddingBottom:'3px'}}  fontSize='small'></ViewModuleIcon>
                          Modulo commessa 
@@ -277,7 +289,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                         :
                         <Typography variant="h4"> Modulo commessa</Typography>
                     }
-                    {(statusModuloCommessa === 'immutable'&& meseAnnoModuloCommessa.modifica === true)?
+                    {(statusModuloCommessa === 'immutable'|| meseAnnoModuloCommessa.modifica === true)?
                         <div className="d-flex justify-content-end ">
                             <Button variant="contained" size="small" onClick={()=> hendleModificaModuloCommessa()} >Modifica</Button>
                         </div>
@@ -315,7 +327,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                             <Button variant="contained" 
                        
                                 disabled={disableContinua}
-                                onClick={()=>hendlePostModuloCommessa()}
+                                onClick={()=>{hendlePostModuloCommessa(); handleOpenModalDatiFatt();}}
                             >Continua</Button>
                    
                         </div> 
