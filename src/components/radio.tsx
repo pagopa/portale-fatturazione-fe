@@ -15,23 +15,23 @@ const  RadioComponent: React.FC<RadioComponentProps> = (props) => {
         label, options, valueRadio,keyObject,
     } = props;
 
-    const {statusPage,setDatiFatturazione, datiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
+    const {infoModuloCommessa ,setDatiFatturazione, datiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
 
 
     let makeSplitRadioDisable = true;
     if(label ==='Split Paymet'){
 
-        if(statusPage === 'immutable'){
+        if(infoModuloCommessa.statusPageDatiFatturazione === 'immutable'){
             makeSplitRadioDisable = true;
-        }else if(statusPage === 'mutable' && datiFatturazione.tipoCommessa === ''){
+        }else if(infoModuloCommessa.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa === ''){
             makeSplitRadioDisable = true;
-        }else if(statusPage === 'mutable' && datiFatturazione.tipoCommessa !== ''){
+        }else if(infoModuloCommessa.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa !== ''){
             makeSplitRadioDisable = false;
     
         }
 
     }else{
-        if(statusPage === 'immutable'){
+        if(infoModuloCommessa.statusPageDatiFatturazione === 'immutable'){
             makeSplitRadioDisable = true;
         }else{
             makeSplitRadioDisable = false;
@@ -52,20 +52,20 @@ const  RadioComponent: React.FC<RadioComponentProps> = (props) => {
                 onChange={(e)=>{setDatiFatturazione((prevState: DatiFatturazione) =>{
                     let newState;
                     if(e.target.value.toLowerCase() === 'true'){
-                        console.log('1');
+                       
                         const newValue = {[keyObject]:true};
                         newState = {...prevState, ...newValue};
                     }else if(e.target.value.toLowerCase() === 'false'){
-                        console.log('2');
+                     
                         const newValue = {[keyObject]:false};
                         newState = {...prevState, ...newValue};
                     }else{
-                        console.log('3');
+                 
                         const newValue = {[keyObject]:e.target.value};
                         newState = {...prevState, ...newValue};
                         //setstatusPagePage('mutable');
                     }
-                    console.log('4', newState);
+                   
                     return newState;
                    
                 } );}}>

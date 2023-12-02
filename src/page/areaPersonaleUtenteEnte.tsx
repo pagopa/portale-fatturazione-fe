@@ -9,14 +9,8 @@ import {getDatiFatturazione, modifyDatiFatturazione,insertDatiFatturazione} from
 
 
 
-
-
-
-
-
 export const DatiFatturazioneContext = createContext<AreaPersonaleContext>({
-    statusPage:''
-    ,datiFatturazione:{
+    datiFatturazione:{
         tipoCommessa:'',
         splitPayment:false,
         cup: '',
@@ -32,11 +26,11 @@ export const DatiFatturazioneContext = createContext<AreaPersonaleContext>({
     }
 });
 
-const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({setCheckProfilo}) => {
+const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloCommessa, setInfoModuloCommessa}) => {
    
-    const [statusPage, setStatusPage] = useState('immutable');
+  
     const [user, setUser] = useState('old');
-   
+  
 
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
@@ -104,7 +98,8 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({setCheckProfilo
                 setUser('new');
             }
             // setUser('new');
-            setStatusPage('mutable');
+            setInfoModuloCommessa((prev:any)=>({...prev, ...{statusPageDatiFatturazione:'mutable'}}));
+            
             setDatiFatturazione({
                 tipoCommessa:'',
                 splitPayment:false,
@@ -135,7 +130,21 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({setCheckProfilo
         e.preventDefault();
         if(user === 'old'){
             modifyDatiFatturazione(datiFatturazione, token)
-                .then(res => res)
+                .then((res) =>{
+
+                    if(infoModuloCommessa.action === 'DATI_FATTURAZIONE'){
+                        setInfoModuloCommessa((prev:any)=>({...prev, ...{
+                            statusPageDatiFatturazione:'immutable',
+                        }}));
+                    }else{
+                        setInfoModuloCommessa((prev:any)=>({...prev, ...{
+                            statusPageDatiFatturazione:'immutable',
+                            action:'SHOW_MODULO_COMMESSA'
+                        }}));
+                        navigate('/4');
+                    }
+                    
+                })
                 .catch(err => {
 
                     if(err.response.status === 401){
@@ -143,7 +152,9 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({setCheckProfilo
                         // navigate('/login');
                     }
                 });
-            setStatusPage('immutable');
+         
+
+           
         }else{
             const body : DatiFatturazionePost= {
                 tipoCommessa:datiFatturazione.tipoCommessa,
@@ -157,10 +168,15 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({setCheckProfilo
                 pec:datiFatturazione.pec};
 
             insertDatiFatturazione(body, token).then(res =>{
-                setStatusPage('immutable');
+                setInfoModuloCommessa((prev:any)=>({...prev, ...{
+                    statusPageDatiFatturazione:'immutable',
+                    action:'SHOW_MODULO_COMMESSA'
+                }}));
+                navigate('/4');
+                
             }).catch(err =>{
                 if(err.response.status === 401){
-                    navigate('/login');
+                    navigate('/error');
                 }
             });
             
@@ -175,25 +191,30 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({setCheckProfilo
     return (
         <DatiFatturazioneContext.Provider
             value={{
-                statusPage,
                 datiFatturazione,
                 setDatiFatturazione,
-                setStatusPage,
+                setInfoModuloCommessa,
                 setStatusBottmConferma,
-                user}}>
+                user,
+                infoModuloCommessa}}>
 
             <div >
-                <PageTitleNavigation />
+                
+                {infoModuloCommessa.action !== "HIDE_MODULO_COMMESSA" ?
+                    <PageTitleNavigation /> : null
+                }
+                
                 {/* tab 1 e 2 start */}
+               
                 <TabAreaPersonaleUtente />
 
                 <div>
 
-                    {statusPage === 'immutable' ? null : (
+                    {infoModuloCommessa.statusPageDatiFatturazione === 'immutable' ? null : (
                         <div className="d-flex justify-content-between m-5 ">
 
                             <Button
-                                onClick={() =>setStatusPage('immutable')}
+                                onClick={() =>setInfoModuloCommessa((prev:any)=>({...prev, ...{statusPageDatiFatturazione:'immutable'}}))}
                                 variant="outlined"
                                 size="medium"
                             >

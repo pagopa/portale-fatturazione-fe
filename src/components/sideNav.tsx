@@ -13,20 +13,78 @@ import PlaylistRemoveIcon from '@mui/icons-material/PlaylistRemove';
 import DnsIcon from '@mui/icons-material/Dns';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import {useAxios, url, menageError} from '../api/api';
+import { SideNavProps } from '../types/typesGeneral';
 
-export default function SideNavComponent() {
+const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa}) => {
     
     const navigate = useNavigate();
     const location : any = useLocation();
 
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
+
+
+    const {...getCheckCommessaCurrentMonth} = useAxios({
+        method: 'GET',
+        url: `${url}/api/modulocommessa`,
+        headers: {
+            Authorization: 'Bearer ' + token
+        }
+    });
+    useEffect(()=>{
+        menageError(getCheckCommessaCurrentMonth, navigate);
+    },[getCheckCommessaCurrentMonth.error]);
+    // console.log(getCheckCommessaCurrentMonth.response ,'xxxxx');
+
+    // se non ci sono commesse inserite nel mese corrente 
+    useEffect(()=>{
+        if(getCheckCommessaCurrentMonth?.response?.modifica === true && getCheckCommessaCurrentMonth?.response?.moduliCommessa?.length === 0 ){
+            setInfoModuloCommessa((prev:any)=>({
+                ...prev,
+                ...{
+                    inserisciModificaCommessa:'INSERT',
+                    statusPageInserimentoCommessa:'mutable',
+                    modifica:true
+                }}));
+            
+        }else if(getCheckCommessaCurrentMonth?.response?.modifica === true && getCheckCommessaCurrentMonth?.response?.moduliCommessa?.length > 0){
+            setInfoModuloCommessa((prev:any)=>({ 
+                ...prev,
+                ...{
+                    inserisciModificaCommessa:'MODIFY',
+                    statusPageInserimentoCommessa:'immutable',
+                    modifica:true}}));
+        }
+    },[getCheckCommessaCurrentMonth.response]);
    
     const [selectedIndex, setSelectedIndex] = useState(0);
     const handleListItemClick = (index : number, route : string) => {
         navigate(route);
         setSelectedIndex(index);
+        setInfoModuloCommessa((prev:any)=>({ 
+            ...prev,
+            ...{
+                action:'DATI_FATTURAZIONE'
+            }}));
+
+       
     };
+
+    const handleListItemClickModuloCommessa = (index : number,) => {
+        
+        setSelectedIndex(index);
+
+        if(getCheckCommessaCurrentMonth.response?.modifica === true && getCheckCommessaCurrentMonth.response?.moduliCommessa.length === 0 ){
+           
+            navigate('/8');
+        }else{
+           
+            navigate('/4');
+        }
+
+    };
+
+    
 
     const currentLocation = location.pathname;
 
@@ -41,22 +99,11 @@ export default function SideNavComponent() {
         
     },[currentLocation]);
 
-    /*
-    const {...getCheckCommessaCurrentMonth} = useAxios({
-        method: 'GET',
-        url: `${url}/api/modulocommessa`,
-        headers: {
-            Authorization: 'Bearer ' + token
-        }
-    });
     
-    const handleModuloCommessa = () =>{
-        if(getCheckCommessaCurrentMonth.response.lenght > 0){
-            console.log('ciao');
-        }
-    };
+   
 
-    */
+ 
+
 
     return (
         <>
@@ -75,7 +122,7 @@ export default function SideNavComponent() {
                             </ListItemIcon>
                             <ListItemText primary="Dati di fatturazione" />
                         </ListItemButton>
-                        <ListItemButton selected={selectedIndex === 1} onClick={() => handleListItemClick(1, '/4')}>
+                        <ListItemButton selected={selectedIndex === 1} onClick={() => handleListItemClickModuloCommessa(1)}>
                             <ListItemIcon>
                                 <ViewModuleIcon fontSize="inherit" />
                             </ListItemIcon>
@@ -96,4 +143,5 @@ export default function SideNavComponent() {
         </>
 
     );
-}
+};
+export default SideNavComponent;

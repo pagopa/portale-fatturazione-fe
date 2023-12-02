@@ -11,8 +11,8 @@ export interface DatiCommessa  {
     moduliCommessa : ModuliCommessa[]
 }
 export  interface ModuloCommessaInserimentoProps{
-    meseAnnoModuloCommessa:any,
-    setMeseAnnoModuloCommessa:any
+    infoModuloCommessa:any,
+    setInfoModuloCommessa:any
 }
 export interface TotaleNazionaleInternazionale{
     totaleNazionale:number,
@@ -24,10 +24,11 @@ export interface InsModuloCommessaContext {
     datiCommessa: DatiCommessa,
     setDatiCommessa?: any,
     setDisableContinua?:any,
-    statusModuloCommessa?:string,
     totaliModuloCommessa?: ResponsTotaliInsModuloCommessa[],
     setTotale?:any,
     totale:TotaleNazionaleInternazionale
+    infoModuloCommessa?:any,
+    setInfoModuloCommessa?:any
 }
 export interface RowInsComProps {
     sentence : string,

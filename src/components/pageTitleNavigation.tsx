@@ -3,18 +3,18 @@ import { Typography, Button } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import { DatiFatturazioneContext } from '../page/areaPersonaleUtenteEnte';
-
+import HorizontalLinearStepper from '../components/stepper';
 
 const PageTitleNavigation = () => {
 
-    const {statusPage, setStatusPage, user} = useContext(DatiFatturazioneContext);
+    const {infoModuloCommessa, setInfoModuloCommessa, user} = useContext(DatiFatturazioneContext);
  
     let titleNavigation;
-    console.log({statusPage, user});
-    if (statusPage === 'immutable' &&  user !== 'new') {
+  
+    if (infoModuloCommessa.statusPageDatiFatturazione === 'immutable' &&  user !== 'new') {
        
         titleNavigation = 'Dati di fatturazione';
-    }else if(statusPage === 'mutable' &&  user === 'old'){
+    }else if(infoModuloCommessa.statusPageDatiFatturazione === 'mutable' &&  user === 'old'){
         titleNavigation = 'Modifica dati di fatturazione';
        
     }else {
@@ -30,7 +30,7 @@ const PageTitleNavigation = () => {
     return (
         <div className="mx-5 mt-2">
            
-            {(statusPage === 'mutable' && user === 'old')
+            {(infoModuloCommessa.statusPageDatiFatturazione === 'mutable' && user === 'old')
                 ? (
                     <div>
                         <ButtonNaked
@@ -38,7 +38,7 @@ const PageTitleNavigation = () => {
                             onFocusVisible={() => { console.log('onFocus'); }}
                             size="small"
                             startIcon={<ArrowBackIcon />}
-                            onClick={() => setStatusPage('immutable')}
+                            onClick={() => setInfoModuloCommessa((prev:any)=>({...prev, ...{statusPageDatiFatturazione:'immutable'}}))}
                             sx={{marginBottom:'2px'}}
                         >
                           Indietro 
@@ -47,13 +47,16 @@ const PageTitleNavigation = () => {
                         
 
                     </div>
+                     
+                      
                 ) : null}
             <div className="marginTop24">
                 <Typography variant="h4">{titleNavigation}</Typography>
             </div>
-            {statusPage === 'immutable' ? (
+            
+            {infoModuloCommessa.statusPageDatiFatturazione === 'immutable' ? (
                 <div className="text-end marginTop24">
-                    <Button onClick={() => setStatusPage('mutable')} variant="contained" size="small">Modifica</Button>
+                    <Button onClick={() => setInfoModuloCommessa((prev:any)=>({...prev, ...{statusPageDatiFatturazione:'mutable'}}))} variant="contained" size="small">Modifica</Button>
                 </div>
             ) : null}
 

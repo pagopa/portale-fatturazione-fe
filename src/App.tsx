@@ -20,19 +20,25 @@ const App : React.FC = () => {
 
 
     const [checkProfilo,setCheckProfilo] = useState(false);
-    const [meseAnnoModuloCommessa, setMeseAnnoModuloCommessa] = useState({
+    // set status page abilita e disabilita le modifiche al componente dati fatturazione
+   
+    const [infoModuloCommessa, setInfoModuloCommessa] = useState({
         mese:'',
         anno:'',
-        modifica:undefined,
-        userClickOn:undefined
+        modifica:undefined, // se la commessa selezionata è modificabile
+        userClickOn:undefined, // se l'utente clicca su un elemento di lista commesse setto GRID
+        inserisciModificaCommessa:undefined, // INSERT MODIFY  se il sevizio get commessa mi restituisce true []
+        action:'DATI_FATTURAZIONE', // le action possono essere HIDE_MODULO_COMMESSA / SHOW_MODULO_COMMESSA / DATI_FATTURAZIOne
+        statusPageDatiFatturazione:'immutable',
+        statusPageInserimentoCommessa:'immutable'
     });
 
-    console.log({meseAnnoModuloCommessa});
+    console.log({infoModuloCommessa});
   
     return (
 
         <Router>
-           
+            
             <Routes>
                 <Route path="/auth" element={<Auth setCheckProfilo={setCheckProfilo}/>} />
             </Routes>
@@ -48,18 +54,21 @@ const App : React.FC = () => {
                         <Grid sx={{ paddingBottom: '80px', height: '100%' }} container spacing={2} columns={12}>
 
                             <Grid sx={{ marginBottom: '-100px' }} item xs={2}>
-                                <SideNavComponent />
+                                <SideNavComponent  setInfoModuloCommessa={setInfoModuloCommessa}/>
                             </Grid>
 
                             <Grid item xs={10}>
                                 <Routes>
-                                    <Route path="/" element={<AreaPersonaleUtenteEnte setCheckProfilo={setCheckProfilo} />} />
+                                    <Route path="/" element={<AreaPersonaleUtenteEnte
+                                        infoModuloCommessa={infoModuloCommessa}
+                                        setInfoModuloCommessa={setInfoModuloCommessa}
+                                    />} />
                                 </Routes>
                                 <Routes>
-                                    <Route path="/4" element={<ModuloCommessaElencoUtPa setMeseAnnoModuloCommessa={setMeseAnnoModuloCommessa} />} />
+                                    <Route path="/4" element={<ModuloCommessaElencoUtPa setInfoModuloCommessa={setInfoModuloCommessa} />} />
                                 </Routes>
                                 <Routes>
-                                    <Route path="/8" element={<ModuloCommessaInserimentoUtEn30 setMeseAnnoModuloCommessa={setMeseAnnoModuloCommessa} meseAnnoModuloCommessa={meseAnnoModuloCommessa} />} />
+                                    <Route path="/8" element={<ModuloCommessaInserimentoUtEn30 infoModuloCommessa={infoModuloCommessa} setInfoModuloCommessa={setInfoModuloCommessa} />} />
                                 </Routes>
                                 
                                     

@@ -9,7 +9,7 @@ import { InserimentoModuloCommessaContext } from '../page/moduloCommessaInserime
 
 
 const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHidden, idTipoSpedizione, rowNumber}) => {
-    const { setDatiCommessa,setDisableContinua,statusModuloCommessa, datiCommessa, totale, setTotale} = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
+    const { setDatiCommessa,setDisableContinua, datiCommessa, totale, setTotale, infoModuloCommessa} = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
 
 
     const [errorNazionale, setErrorNazionale] = useState(false);
@@ -115,7 +115,7 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
                 {/*text sotto territorio nazionale*/}
                 <TextField
                     sx={{ backgroundColor: '#ffffff', width: '100px'}}
-                    disabled={statusModuloCommessa === 'immutable'}
+                    disabled={infoModuloCommessa.statusPageInserimentoCommessa === 'immutable'}
                     size="small"
                     value={findValueNazione(rowNumber)}
                     InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
@@ -167,7 +167,7 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
                     : (
                         <TextField
                             sx={{ backgroundColor: '#ffffff', width: '100px' }}
-                            disabled={statusModuloCommessa === 'immutable'}
+                            disabled={infoModuloCommessa.statusPageInserimentoCommessa === 'immutable'}
                             size="small"
                             value={findValueInternazionale(rowNumber)}
                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}

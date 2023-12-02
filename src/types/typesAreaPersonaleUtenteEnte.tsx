@@ -4,7 +4,8 @@ export type Contatti = {
 }
 
 export interface AreaPersonaleProps{ 
-    setCheckProfilo:any
+    infoModuloCommessa?:any,
+    setInfoModuloCommessa:any
 }
 export interface DatiFatturazione{
     tipoCommessa:string,
@@ -32,12 +33,13 @@ export interface DatiFatturazionePost{
     pec:string,
 }
 export interface AreaPersonaleContext {
-    statusPage: string,
     datiFatturazione:DatiFatturazione, 
     setDatiFatturazione?:any,
-    setStatusPage?:any,
+    setInfoModuloCommessa?:any,
     setStatusBottmConferma?:any,
-    user?:string
+    user?:string,
+    infoModuloCommessa?:any
+   
 
 
 }

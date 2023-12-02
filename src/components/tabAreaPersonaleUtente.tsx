@@ -14,7 +14,7 @@ import { DatiFatturazioneContext } from '../page/areaPersonaleUtenteEnte';
 
 
 const TabAreaPersonaleUtente = () => {
-    const {statusPage,datiFatturazione,setDatiFatturazione, user} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
+    const {infoModuloCommessa,datiFatturazione,setDatiFatturazione, user} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
    
     function createDateFromString(string:string){
         const getGiorno = new Date(string).getDate();
@@ -163,7 +163,7 @@ const TabAreaPersonaleUtente = () => {
                 {/* secondo box   end */}
                 {/* terzo box   start */}
                 <div className="mt-3">
-                    <DynamicInsert status={statusPage} arrElement={datiFatturazione.contatti} setData={setDatiFatturazione} />
+                    <DynamicInsert status={infoModuloCommessa.statusPageDatiFatturazione} arrElement={datiFatturazione.contatti} setData={setDatiFatturazione} />
                 </div>
 
                 {/* terzo box   end */}

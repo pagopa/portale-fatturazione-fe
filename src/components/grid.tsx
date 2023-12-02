@@ -8,12 +8,12 @@ import { useNavigate } from 'react-router';
 
 interface GridComponentProps {
     data: any[],
-    setMeseAnnoModuloCommessa:any
+    setInfoModuloCommessa:any
    
 }
 
 const GridComponent : React.FC<GridComponentProps> = (props) => {
-    const {data, setMeseAnnoModuloCommessa} = props;
+    const {data, setInfoModuloCommessa} = props;
     const navigate = useNavigate();
 
     let columsSelectedGrid = '';
@@ -30,11 +30,12 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
     ) => {
         event.preventDefault();
         if(columsSelectedGrid  === 'meseValidita' ||columsSelectedGrid  === 'action' ){
-            setMeseAnnoModuloCommessa({
+            setInfoModuloCommessa({
                 mese:params.row.meseValidita,
                 anno:params.row.annoValidita,
                 modifica:params.row.modifica,
-                userClickOn:'GRID'
+                userClickOn:'GRID',
+                inserisciModificaCommessa:"MODIFY"
             });
             navigate('/8');
         }

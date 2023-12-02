@@ -6,12 +6,13 @@ import PrimoContainerInsCom from '../components/primoContainerInsCom';
 import SecondoContainerInsCom from '../components/secondoContainerInsCom';
 import TerzoContainerInsCom from '../components/terzoConteinerInsCom';
 import BasicModal from '../components/modal';
-import ModalDatiFatturazione from '../components/modalDatiFatturazione';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { useNavigate } from 'react-router';
 // import HorizontalLinearStepper from '../components/stepper';
 import {insertDatiModuloCommessa, getDatiModuloCommessa } from '../api/api';
 import {useAxios, url, menageError} from '../api/api';
+import AreaPersonaleUtenteEnte from '../page/areaPersonaleUtenteEnte';
+import HorizontalLinearStepper from '../components/stepper';
 import { DatiCommessa, InsModuloCommessaContext , ResponsTotaliInsModuloCommessa,ModuloCommessaInserimentoProps, TotaleNazionaleInternazionale} from '../types/typeModuloCommessaInserimento';
 
 
@@ -45,7 +46,7 @@ export const InserimentoModuloCommessaContext = createContext<InsModuloCommessaC
 });
 
 
-const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps> = ({meseAnnoModuloCommessa, setMeseAnnoModuloCommessa}) => {
+const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps> = ({infoModuloCommessa, setInfoModuloCommessa}) => {
 
   
 
@@ -55,7 +56,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
     const navigate = useNavigate();
 
-    const [statusModuloCommessa, setStatusModuloCommessa] = useState('mutable');
+
 
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
@@ -110,10 +111,10 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
     const { ...getDatiCommessaOnClickFromGrid } = useAxios({});
    
-    const handleButtonAnnullaFiltri = async() => {
+    const handleGetDettaglioModuloCommessa = async() => {
         getDatiCommessaOnClickFromGrid.fetchData({
             method: 'GET',
-            url: `${url}/api/modulocommessa/dettaglio/${meseAnnoModuloCommessa.anno}/${meseAnnoModuloCommessa.mese}`,
+            url: `${url}/api/modulocommessa/dettaglio/${infoModuloCommessa.anno}/${infoModuloCommessa.mese}`,
             headers: {
                 Authorization: 'Bearer ' + token
             }
@@ -123,7 +124,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     };
 
  
- 
+    /*
     const getDatiCommessa = async () =>{
         await getDatiModuloCommessa(token)
             .then(res =>{
@@ -144,30 +145,34 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 } 
             });
     };
-
-      
+*/
     useEffect(()=>{
-    
-        handleButtonAnnullaFiltri();
-           
+        if(infoModuloCommessa.userClickOn === undefined){
+            // handleGetDettaglioModuloCommessa();
        
+        }
+     
     },[]);
+   
 
 
 
     useEffect(()=>{
-        
-        // getDatiCommessa();
-        if(meseAnnoModuloCommessa.userClickOn === 'GRID'){
-            handleButtonAnnullaFiltri();
-            setMeseAnnoModuloCommessa('');
+       
+        if(infoModuloCommessa.userClickOn === 'GRID'){
+            handleGetDettaglioModuloCommessa();
+            setInfoModuloCommessa((prev:any)=>({...prev,...{userClickOn:'',statusPageInserimentoCommessa:'immutable'}}));
+            console.log('franco');
         }
+        
+        // setInfoModuloCommessa((prev:any)=>({...prev,...{statusPageInserimentoCommessa:'immutable'}}));
+      
+       
 
         if(getDatiCommessaOnClickFromGrid.response){
             const res = getDatiCommessaOnClickFromGrid.response;
-            console.log(res);
-            
-            setStatusModuloCommessa('immutable');
+            console.log(res,'cicici');
+         
             setDatiCommessa({moduliCommessa:res.moduliCommessa});
             setTotaliModuloCommessa(res.totale);
             const objAboutTotale = res.totaleModuloCommessaNotifica;
@@ -175,11 +180,13 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 , totaleInternazionale:objAboutTotale.totaleNumeroNotificheInternazionali
                 , totaleNotifiche:objAboutTotale.totaleNumeroNotificheDaProcessare});
            
-      
         }
+     
+      
+        
         console.log(getDatiCommessaOnClickFromGrid.response, 'RESPONSE');
         menageError(getDatiCommessaOnClickFromGrid, navigate);
-    },[getDatiCommessaOnClickFromGrid.response,getDatiCommessaOnClickFromGrid.error ]);
+    },[getDatiCommessaOnClickFromGrid.response]);
 
    
    
@@ -213,8 +220,20 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
         await insertDatiModuloCommessa(datiCommessa, token)
             .then(res =>{
-                setStatusModuloCommessa('immutable');
-                setTotaliModuloCommessa(res.data.totale);
+                if(infoModuloCommessa.inserisciModificaCommessa === 'MODIFY'){
+                    navigate('/4');
+                    setInfoModuloCommessa((prev:any)=>({
+                        ...prev,
+                        ...{
+                            action:'SHOW_MODULO_COMMESSA',
+                            statusPageInserimentoCommessa:'immutable',
+                            statusPageDatiFatturazione:'immutable',
+                        }}));
+                }else{
+                    setTotaliModuloCommessa(res.data.totale);
+                    setInfoModuloCommessa((prev:any)=>({...prev,...{action:'HIDE_MODULO_COMMESSA', statusPageInserimentoCommessa:'immutable'}}));
+                }
+               
             } )
             .catch(err => {
                 if(err.response.status === 401){
@@ -225,7 +244,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
    
 
     const hendleModificaModuloCommessa = () => {
-        setStatusModuloCommessa('mutable');
+        setInfoModuloCommessa((prev:any)=>({...prev,...{statusPageInserimentoCommessa:'mutable'}}));
         setTotaliModuloCommessa([
             {
                 idCategoriaSpedizione: 0,
@@ -237,10 +256,17 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
             }
         ]);
     };
-    const cssPathModuloComm = statusModuloCommessa === 'immutable' ? 'bold' : 'normal';
-    const cssPathAggModComm = statusModuloCommessa === 'mutable' ? 'bold' : 'normal';
+    const cssPathModuloComm = infoModuloCommessa.statusPageInserimentoCommessa === 'immutable' ? 'bold' : 'normal';
+    const cssPathAggModComm = infoModuloCommessa.statusPageInserimentoCommessa === 'mutable' ? 'bold' : 'normal';
 
-   
+    let actionTitle; 
+    if(infoModuloCommessa.inserisciModificaCommessa === 'INSERT'){
+        actionTitle =  <Typography variant="h4"> Aggiungi modulo commessa</Typography>;
+    }else if(infoModuloCommessa.inserisciModificaCommessa  === 'MODIFY' && infoModuloCommessa.statusPageInserimentoCommessa === 'immutable' ){
+        actionTitle =  <Typography variant="h4"> Mese commessa</Typography>;
+    }else if(infoModuloCommessa.inserisciModificaCommessa  === 'MODIFY' && infoModuloCommessa.statusPageInserimentoCommessa === 'mutable'  ){
+        actionTitle =  <Typography variant="h4"> Modifica modulo commessa</Typography>;
+    }
 
 
     return (
@@ -249,30 +275,43 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 setDatiCommessa,
                 datiCommessa,
                 setDisableContinua,
-                statusModuloCommessa,
                 totaliModuloCommessa,
                 setTotale,
                 totale,
+                infoModuloCommessa,
+                setInfoModuloCommessa
             }}>
             <BasicModal setOpen={setOpen} open={open}></BasicModal>
-            <ModalDatiFatturazione openModalDatiFatturazione={openModalDatiFatturazione} setOpenModalDatiFatturazione={setOpenModalDatiFatturazione}></ModalDatiFatturazione>
+            {/*Hidden di modulo commessa sul click contina , save del modulo commessa cosi da mostrare dati fatturazione,
+            il componente visualizzato è AreaPersonaleUtenteEnte  */}
+           
             <div className="marginTop24 ms-5 me-5">
                 <div className='d-flex'>
-                    {/*
+                 
                     <ButtonNaked
                         color="primary"
                         onFocusVisible={() => { console.log('onFocus'); }}
                         size="small"
                         startIcon={<ArrowBackIcon />}
-                        onClick={() => console.log('esci')}
+                        onClick={() =>{
+                            if(infoModuloCommessa.statusPageInserimentoCommessa === 'immutable'){
+                                navigate('/4');
+                            }else{
+                                setInfoModuloCommessa((prev:any)=>({...prev,...{statusPageInserimentoCommessa:'immutable'}}));
+                            }
+                            
+                        } }
                       
                     >
-          Esci
+                        {infoModuloCommessa.statusPageInserimentoCommessa === 'immutable' ? 'Esci': 'Indietro'}
+    
                     </ButtonNaked>
-                     */}
                     
                     
-                    <Typography sx={{ fontWeight:cssPathModuloComm}} variant="caption">
+                    
+                    <Typography sx={{ fontWeight:cssPathModuloComm, marginLeft:'20px'}} variant="caption">
+
+                        
                        
                         <ViewModuleIcon sx={{paddingBottom:'3px'}}  fontSize='small'></ViewModuleIcon>
                          Modulo commessa 
@@ -284,16 +323,21 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                     
                    
                 </div>
+                <div className="marginTop24">
+                    <HorizontalLinearStepper></HorizontalLinearStepper>
+                </div>
+               
                 <div className="marginTop24 marginTopBottom24">
-                    {statusModuloCommessa === 'mutable'? <Typography variant="h4"> Modifica modulo commessa</Typography>
-                        :
-                        <Typography variant="h4"> Modulo commessa</Typography>
-                    }
-                    {(statusModuloCommessa === 'immutable'|| meseAnnoModuloCommessa.modifica === true)?
+                    
+                
+                    {actionTitle}
+
+                    {(infoModuloCommessa.statusPageInserimentoCommessa === 'mutable'&& infoModuloCommessa.modifica === true)?
+                        null :
                         <div className="d-flex justify-content-end ">
                             <Button variant="contained" size="small" onClick={()=> hendleModificaModuloCommessa()} >Modifica</Button>
                         </div>
-                        : null
+                        
                     }
                     
                     
@@ -303,38 +347,54 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                     <div className='marginTop24 marginBottom24'>
                         <HorizontalLinearStepper></HorizontalLinearStepper>
                     </div>
-                */}
+                    */}
                
-
-                <div className="bg-white mt-3 pt-3">
-                    <PrimoContainerInsCom />
-                    <SecondoContainerInsCom  />
+                {infoModuloCommessa.action !== "HIDE_MODULO_COMMESSA" ?
+                    <div>
+                        <div className="bg-white mt-3 pt-3">
+                            <PrimoContainerInsCom />
+                            <SecondoContainerInsCom  />
        
-                </div>
-                <div className='bg-white'>
-                    <TerzoContainerInsCom valueTotali={totaliModuloCommessa}/>
-                </div>
-                {
-                    statusModuloCommessa === 'immutable' ? null :
-                        <div className="d-flex justify-content-between mt-5 ">
-                            <Button
-                                variant="outlined"
-                                type="button"
-                                data-bs-toggle="modal"
-                                data-bs-target="#exampleModal"
-                                onClick={()=>handleOpen()}
-                            >Indietro</Button>
-                            <Button variant="contained" 
+                        </div>
+                        <div className='bg-white'>
+                            <TerzoContainerInsCom valueTotali={totaliModuloCommessa}/>
+                        </div>
+                        {
+                            infoModuloCommessa.statusPageInserimentoCommessa === 'immutable' ? null :
+                                <div className="d-flex justify-content-between mt-5 ">
+                                    <Button
+                                        variant="outlined"
+                                        type="button"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#exampleModal"
+                                        onClick={()=>handleOpen()}
+                                    >Indietro</Button>
+                                    <Button variant="contained" 
                        
-                                disabled={disableContinua}
-                                onClick={()=>{hendlePostModuloCommessa(); handleOpenModalDatiFatt();}}
-                            >Continua</Button>
+                                        disabled={disableContinua}
+                                        onClick={()=>{ 
+                                            setInfoModuloCommessa((prev:any)=>({
+                                                ...prev,
+                                                ...{action:'HIDE_MODULO_COMMESSA',
+                                                    statusPageDatiFatturazione:'mutable'}}));
+                                            hendlePostModuloCommessa();
+                                        }}
+                                                    
+                                    >Continua</Button>
                    
-                        </div> 
-                }
-                
-
-            </div>
+                                </div> 
+                        }
+                    </div> 
+                    : null}
+            </div> 
+            {/* Nascondo il dettaglio fatturazione fino al click continua */}
+            {infoModuloCommessa.action === 'HIDE_MODULO_COMMESSA' ?
+                <AreaPersonaleUtenteEnte 
+                    infoModuloCommessa={infoModuloCommessa}
+                    setInfoModuloCommessa={setInfoModuloCommessa}></AreaPersonaleUtenteEnte>
+                : null
+            }
+            
         </InserimentoModuloCommessaContext.Provider>
     );
 };

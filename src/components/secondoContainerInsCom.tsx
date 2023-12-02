@@ -1,12 +1,50 @@
 import React, { useEffect, useState, useContext} from 'react';
 import { Grid, Typography } from '@mui/material';
 import RowInserimentoCommessa from './rowInserimentoCommessa';
-import { DataTotaleObj,InsModuloCommessaContext, TotaleNazionaleInternazionale} from '../types/typeModuloCommessaInserimento';
+import { InsModuloCommessaContext } from '../types/typeModuloCommessaInserimento';
 import { InserimentoModuloCommessaContext } from '../page/moduloCommessaInserimentoUtEn30';
+import {useAxios, url, menageError} from '../api/api';
 
 const SecondoContainerInsCom : React.FC = () => {
     const { totale} = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
+
+    const getToken = localStorage.getItem('token') || '{}';
+    const token =  JSON.parse(getToken).token;
+
+    const { ...getCategoriaSpedizione } = useAxios({
+        method: 'GET',
+        url: `${url}/api/tipologia/categoriaspedizione`,
+        headers: {
+            Authorization: 'Bearer ' + token
+        }
+    });
+
+    const getIdByTipo = (string:string, array:any[]) =>{
+      
+        const getAllObjs = array.map((singleObj)=>{
+            return singleObj.tipoSpedizione;
+        }).flat().filter((obj)=>{
+            return obj.tipo === string;
+        });
+        return getAllObjs[0].id;
+     
+    };
+
+    let idSpedizioneDigitale = 0;
+    let idSpedizioneAnalog890 = 0;
+    let idSpedizioneAnalogAR = 0;
+
+    if(getCategoriaSpedizione.response !== undefined){
+        idSpedizioneDigitale = getIdByTipo('Digitale',getCategoriaSpedizione.response);
+        idSpedizioneAnalog890 = getIdByTipo('Analog. L. 890/82',getCategoriaSpedizione.response);
+        idSpedizioneAnalogAR = getIdByTipo('Analog. A/R',getCategoriaSpedizione.response);
+    }
+  
+
    
+
+
+    console.log(getCategoriaSpedizione.response, 'eleee');
   
     return (
         <div className="m-3 pl-5 ">
@@ -14,10 +52,10 @@ const SecondoContainerInsCom : React.FC = () => {
             {/* prima row start */}
             <RowInserimentoCommessa
                 sentence="Numero complessivo delle notifiche da processare in via digitale nel mese di"
-                textBoxHidden
-                idTipoSpedizione={1}
+                textBoxHidden={false}
+                idTipoSpedizione={idSpedizioneDigitale}
                 // setInputTotale={setInputTotale}
-                rowNumber={1}
+                rowNumber={3}
             />
             {/* prima row end */}
             <hr></hr>
@@ -26,9 +64,9 @@ const SecondoContainerInsCom : React.FC = () => {
                 sentence="Numero complessivo delle notifiche da processare in via analogica tramite Raccomandata A/R nel mese di"
                 textBoxHidden={false}
                
-                idTipoSpedizione={2}
+                idTipoSpedizione={idSpedizioneAnalogAR}
                 // setInputTotale={setInputTotale}
-                rowNumber={2}
+                rowNumber={1}
             />
             {/* seconda row end */}
             {/* terza row start */}
@@ -37,9 +75,9 @@ const SecondoContainerInsCom : React.FC = () => {
                 sentence="Numero complessivo delle notifiche da processare in via analogica del tipo notifica ex L. 890/1982 nel mese di"
                 textBoxHidden
               
-                idTipoSpedizione={3}
+                idTipoSpedizione={idSpedizioneAnalog890}
                 // setInputTotale={setInputTotale}
-                rowNumber={3}
+                rowNumber={2}
             />
             <hr></hr>
             {/* terza row end */}
