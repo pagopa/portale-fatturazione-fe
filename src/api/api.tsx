@@ -5,7 +5,9 @@ import { useState, useEffect } from 'react';
 
 
 
-export const url = 'https://portalefatturebeapi20231102162515.azurewebsites.net';
+export const url = "https://fat-p-app-api.azurewebsites.net";
+//"https://fat-p-app-api.azurewebsites.net";
+//'https://portalefatturebeapi20231102162515.azurewebsites.net';
 const getToken = localStorage.getItem('token') || '{}';
 export const token =  JSON.parse(getToken).token;
 
@@ -50,6 +52,8 @@ export const menageError = (res:any,navigate:any) =>{
         //alert('Non è stato possibile aggiungere i dati');
     }else if(res?.error?.response?.status === 500){
         
+        navigate('/error');
+    }else if(res?.error?.response?.status === 400){
         navigate('/error');
     }
 };

@@ -104,7 +104,7 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
                 <TextField
                     label={`Email amministrativo`}
                     placeholder="Email amministrativo"
-                    helperText={`max ${3 - arrElement.length}`}
+                    helperText={`max ${3 - arrElement?.length}`}
                     sx={{ width: '30%' }}
                     type='text'
                     value={element||''}
