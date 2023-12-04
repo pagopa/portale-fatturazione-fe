@@ -9,13 +9,12 @@ import {
     Divider,
 } from '@mui/material';
 import { useNavigate, useLocation } from "react-router-dom";
-import PlaylistRemoveIcon from '@mui/icons-material/PlaylistRemove';
 import DnsIcon from '@mui/icons-material/Dns';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import {useAxios, url, menageError} from '../api/api';
 import { SideNavProps } from '../types/typesGeneral';
 
-const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa}) => {
+const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoModuloCommessa}) => {
     
     const navigate = useNavigate();
     const location : any = useLocation();
@@ -36,8 +35,9 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa}) => {
     },[getCheckCommessaCurrentMonth.error]);
     // console.log(getCheckCommessaCurrentMonth.response ,'xxxxx');
 
-    // se non ci sono commesse inserite nel mese corrente 
+    
     useEffect(()=>{
+        // se non ci sono commesse inserite nel mese corrente e posso insrirle
         if(getCheckCommessaCurrentMonth?.response?.modifica === true && getCheckCommessaCurrentMonth?.response?.moduliCommessa?.length === 0 ){
             setInfoModuloCommessa((prev:any)=>({
                 ...prev,
@@ -46,7 +46,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa}) => {
                     statusPageInserimentoCommessa:'mutable',
                     modifica:true
                 }}));
-            
+            // ci sono commesse inserite nel mese corrente e posso modificarle
         }else if(getCheckCommessaCurrentMonth?.response?.modifica === true && getCheckCommessaCurrentMonth?.response?.moduliCommessa?.length > 0){
             setInfoModuloCommessa((prev:any)=>({ 
                 ...prev,
@@ -64,17 +64,18 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa}) => {
         setInfoModuloCommessa((prev:any)=>({ 
             ...prev,
             ...{
-                action:'DATI_FATTURAZIONE'
+                action:'DATI_FATTURAZIONE',
+                statusPageDatiFatturazione:'immutable'
             }}));
 
-       
+        localStorage.setItem('statusApplication', JSON.stringify(infoModuloCommessa));
     };
 
     const handleListItemClickModuloCommessa = (index : number,) => {
         
         setSelectedIndex(index);
 
-        if(getCheckCommessaCurrentMonth.response?.modifica === true && getCheckCommessaCurrentMonth.response?.moduliCommessa.length === 0 ){
+        if(getCheckCommessaCurrentMonth.response?.modifica === true && getCheckCommessaCurrentMonth.response.moduliCommessa.length === 0 ){
            
             navigate('/8');
         }else{

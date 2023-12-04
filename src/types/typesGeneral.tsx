@@ -14,5 +14,6 @@ export interface LoginProps {
 }
 
 export interface SideNavProps{
-    setInfoModuloCommessa:any
+    setInfoModuloCommessa:any,
+    infoModuloCommessa:any
 }

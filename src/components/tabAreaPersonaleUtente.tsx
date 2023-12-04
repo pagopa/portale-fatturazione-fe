@@ -163,7 +163,7 @@ const TabAreaPersonaleUtente = () => {
                 {/* secondo box   end */}
                 {/* terzo box   start */}
                 <div className="mt-3">
-                    <DynamicInsert status={infoModuloCommessa.statusPageDatiFatturazione} arrElement={datiFatturazione.contatti} setData={setDatiFatturazione} />
+                    <DynamicInsert status={infoModuloCommessa?.statusPageDatiFatturazione} arrElement={datiFatturazione.contatti} setData={setDatiFatturazione} />
                 </div>
 
                 {/* terzo box   end */}

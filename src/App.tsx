@@ -1,6 +1,6 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { ThemeProvider, Grid } from '@mui/material';
 import {theme} from '@pagopa/mui-italia';
@@ -30,8 +30,11 @@ const App : React.FC = () => {
         inserisciModificaCommessa:undefined, // INSERT MODIFY  se il sevizio get commessa mi restituisce true []
         action:'DATI_FATTURAZIONE', // le action possono essere HIDE_MODULO_COMMESSA / SHOW_MODULO_COMMESSA / DATI_FATTURAZIOne
         statusPageDatiFatturazione:'immutable',
-        statusPageInserimentoCommessa:'immutable'
+        statusPageInserimentoCommessa:'immutable',
+        path:'/' // in che pat sono al momento del reload?
     });
+
+
 
     console.log({infoModuloCommessa});
   
@@ -54,7 +57,8 @@ const App : React.FC = () => {
                         <Grid sx={{ paddingBottom: '80px', height: '100%' }} container spacing={2} columns={12}>
 
                             <Grid sx={{ marginBottom: '-100px' }} item xs={2}>
-                                <SideNavComponent  setInfoModuloCommessa={setInfoModuloCommessa}/>
+                                <SideNavComponent  setInfoModuloCommessa={setInfoModuloCommessa}
+                                    infoModuloCommessa={infoModuloCommessa}/>
                             </Grid>
 
                             <Grid item xs={10}>
