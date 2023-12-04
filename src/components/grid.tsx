@@ -8,12 +8,13 @@ import { useNavigate } from 'react-router';
 
 interface GridComponentProps {
     data: any[],
-    setInfoModuloCommessa:any
+    setInfoModuloCommessa:any,
+    infoModuloCommessa:any
    
 }
 
 const GridComponent : React.FC<GridComponentProps> = (props) => {
-    const {data, setInfoModuloCommessa} = props;
+    const {data, setInfoModuloCommessa, infoModuloCommessa} = props;
     const navigate = useNavigate();
 
     let columsSelectedGrid = '';
@@ -27,9 +28,22 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
     const handleEvent: GridEventListener<'rowClick'> = (
         params:GridRowParams,
         event: MuiEvent<React.MouseEvent<HTMLElement>>,
+        idCommessa
     ) => {
         event.preventDefault();
+        // l'evento verrà eseguito solo se l'utente farà il clik sul mese o l'action(freccia)
         if(columsSelectedGrid  === 'meseValidita' ||columsSelectedGrid  === 'action' ){
+
+            const newState = {
+                path:'/8',
+                mese:params.row.meseValidita,
+                anno:params.row.annoValidita,
+                userClickOn:'GRID',
+                inserisciModificaCommessa:"MODIFY"
+            };
+            const string = JSON.stringify(newState);
+            localStorage.setItem('statusApplication', string);
+
             setInfoModuloCommessa({
                 mese:params.row.meseValidita,
                 anno:params.row.annoValidita,
@@ -37,6 +51,8 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
                 userClickOn:'GRID',
                 inserisciModificaCommessa:"MODIFY"
             });
+            // localStorage.removeItem('statusApplication');
+           
             navigate('/8');
         }
        

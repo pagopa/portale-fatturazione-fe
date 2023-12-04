@@ -13,7 +13,7 @@ const LoginPage : React.FC<LoginProps> = ({ setCheckProfilo}) =>{
 
     const getDataUser = localStorage.getItem('dati')|| '{}';
     const dataUser = JSON.parse(getDataUser);
-    console.log('login');
+   
     /*
     const getProfilo = async ()=>{
                    

@@ -6,10 +6,10 @@ import { InserimentoModuloCommessaContext } from '../page/moduloCommessaInserime
 import {useAxios, url, menageError} from '../api/api';
 
 const SecondoContainerInsCom : React.FC = () => {
-    const { totale} = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
-
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
+    const { totale} = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
+
 
     const { ...getCategoriaSpedizione } = useAxios({
         method: 'GET',
@@ -44,7 +44,7 @@ const SecondoContainerInsCom : React.FC = () => {
    
 
 
-    console.log(getCategoriaSpedizione.response, 'eleee');
+
   
     return (
         <div className="m-3 pl-5 ">

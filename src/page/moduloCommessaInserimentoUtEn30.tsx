@@ -51,12 +51,12 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
   
 
     
-    const getToken = localStorage.getItem('token') || '{}';
-    const token =  JSON.parse(getToken).token;
+
 
     const navigate = useNavigate();
 
-
+    const getToken = localStorage.getItem('token') || '{}';
+    const token =  JSON.parse(getToken).token;
 
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
@@ -110,11 +110,15 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     // visualizza modulo cmmessa from grid 
 
     const { ...getDatiCommessaOnClickFromGrid } = useAxios({});
+    const state = localStorage.getItem('statusApplication') || '{}';
+    const statusApp =  JSON.parse(state);
+    console.log(statusApp,'APP');
    
     const handleGetDettaglioModuloCommessa = async() => {
+      
         getDatiCommessaOnClickFromGrid.fetchData({
             method: 'GET',
-            url: `${url}/api/modulocommessa/dettaglio/${infoModuloCommessa.anno}/${infoModuloCommessa.mese}`,
+            url: `${url}/api/modulocommessa/dettaglio/${statusApp.anno}/${statusApp.mese}`,
             headers: {
                 Authorization: 'Bearer ' + token
             }
@@ -154,15 +158,26 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
      
     },[]);
    
-
+    
+ 
 
 
     useEffect(()=>{
+        if(statusApp.userClickOn === 'GRID'){
+            handleGetDettaglioModuloCommessa();
+            setInfoModuloCommessa((prev:any)=>({...prev,...{userClickOn:'',statusPageInserimentoCommessa:'immutable'}}));
+        }
        
+    },[]);
+
+    useEffect(()=>{
+       
+        
+        
         if(infoModuloCommessa.userClickOn === 'GRID'){
             handleGetDettaglioModuloCommessa();
             setInfoModuloCommessa((prev:any)=>({...prev,...{userClickOn:'',statusPageInserimentoCommessa:'immutable'}}));
-            console.log('franco');
+        
         }
         
         // setInfoModuloCommessa((prev:any)=>({...prev,...{statusPageInserimentoCommessa:'immutable'}}));
@@ -171,7 +186,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
         if(getDatiCommessaOnClickFromGrid.response){
             const res = getDatiCommessaOnClickFromGrid.response;
-            console.log(res,'cicici');
+     
          
             setDatiCommessa({moduliCommessa:res.moduliCommessa});
             setTotaliModuloCommessa(res.totale);
@@ -184,7 +199,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
      
       
         
-        console.log(getDatiCommessaOnClickFromGrid.response, 'RESPONSE');
+  
         menageError(getDatiCommessaOnClickFromGrid, navigate);
     },[getDatiCommessaOnClickFromGrid.response]);
 
@@ -267,7 +282,15 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     }else if(infoModuloCommessa.inserisciModificaCommessa  === 'MODIFY' && infoModuloCommessa.statusPageInserimentoCommessa === 'mutable'  ){
         actionTitle =  <Typography variant="h4"> Modifica modulo commessa</Typography>;
     }
+    console.log({infoModuloCommessa});
 
+   
+    let indexStepper = 0;
+    if(infoModuloCommessa.inserisciModificaCommessa === 'INSERT'){
+        indexStepper = 1;
+    }else if(infoModuloCommessa.action === 'HIDE_MODULO_COMMESSA' && infoModuloCommessa.inserisciModificaCommessa === 'MODIFY'){
+        indexStepper = 2;
+    }
 
     return (
         <InserimentoModuloCommessaContext.Provider
@@ -323,20 +346,25 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                     
                    
                 </div>
-                <div className="marginTop24">
-                    <HorizontalLinearStepper></HorizontalLinearStepper>
-                </div>
+                {infoModuloCommessa.inserisciModificaCommessa === 'INSERT' ||
+                (infoModuloCommessa.action === 'HIDE_MODULO_COMMESSA' && infoModuloCommessa.inserisciModificaCommessa === 'MODIFY')
+                    ? 
+                    <div className="marginTop24">
+                        <HorizontalLinearStepper indexStepper={indexStepper}></HorizontalLinearStepper>
+                    </div> :null
+                }
+               
                
                 <div className="marginTop24 marginTopBottom24">
                     
                 
                     {actionTitle}
 
-                    {(infoModuloCommessa.statusPageInserimentoCommessa === 'mutable'&& infoModuloCommessa.modifica === true)?
-                        null :
+                    {(infoModuloCommessa.statusPageInserimentoCommessa === 'immutable')?
+                       
                         <div className="d-flex justify-content-end ">
                             <Button variant="contained" size="small" onClick={()=> hendleModificaModuloCommessa()} >Modifica</Button>
-                        </div>
+                        </div> :  null
                         
                     }
                     

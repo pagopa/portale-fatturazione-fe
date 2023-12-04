@@ -17,3 +17,7 @@ export interface SideNavProps{
     setInfoModuloCommessa:any,
     infoModuloCommessa:any
 }
+
+export interface StepperProps {
+    indexStepper: number
+}

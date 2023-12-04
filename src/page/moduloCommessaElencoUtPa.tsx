@@ -7,10 +7,9 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { VisualModuliCommessaProps } from '../types/typeModuloCommessaElenco';
 
 
-const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setInfoModuloCommessa}) => {
-
-    console.log('DIO mALEDETTO');
-
+const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setInfoModuloCommessa,infoModuloCommessa}) => {
+    console.log({infoModuloCommessa});
+  
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
    
@@ -83,24 +82,24 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setInfoM
     useEffect(()=>{
        
         if(dataGetListaOnAnnullaFiltri.response){
-            console.log('ciao1');
+          
             const finalData = fixResponseForDataGrid(dataGetListaOnAnnullaFiltri.response);
             setGridData(finalData);
         }
 
         if(dataGetListaCommessa.response){
-            console.log(dataGetListaCommessa.response, 'MADOnna');
+          
             const finalData = fixResponseForDataGrid(dataGetListaCommessa.response);
             setGridData(finalData);
         }
       
         if(dataGetListaCommessaFiltered.response){
-            console.log('ciao3');
+          
             const finalData = fixResponseForDataGrid(dataGetListaCommessaFiltered.response);
             setGridData(finalData);
         }
         if(dataGetAnni.response){
-            console.log('ciao4');
+         
             setAnni(dataGetAnni.response);
         }
          
@@ -200,7 +199,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setInfoM
             </div>
 
             <div>
-                <GridComponent data={gridData} setInfoModuloCommessa={setInfoModuloCommessa} />
+                <GridComponent data={gridData} setInfoModuloCommessa={setInfoModuloCommessa} infoModuloCommessa={infoModuloCommessa} />
                 
             </div>
 

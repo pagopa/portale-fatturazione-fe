@@ -11,29 +11,45 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import DnsIcon from '@mui/icons-material/Dns';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
-import {useAxios, url, menageError} from '../api/api';
+import {useAxios, url, menageError, getDatiModuloCommessa} from '../api/api';
 import { SideNavProps } from '../types/typesGeneral';
+import { info } from 'console';
 
 const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoModuloCommessa}) => {
-    
+
     const navigate = useNavigate();
     const location : any = useLocation();
 
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
 
+    
 
-    const {...getCheckCommessaCurrentMonth} = useAxios({
-        method: 'GET',
-        url: `${url}/api/modulocommessa`,
-        headers: {
-            Authorization: 'Bearer ' + token
+    const {...getCheckCommessaCurrentMonth} = useAxios({});
+    const getCommessa = () =>{
+        getCheckCommessaCurrentMonth.fetchData({
+            method: 'GET',
+            url: `${url}/api/modulocommessa`,
+            headers: {
+                Authorization: 'Bearer ' + token
+            }});
+    };
+
+ 
+    useEffect(()=>{
+        if(token !== undefined){
+            getCommessa();
         }
-    });
+
+    },[token, infoModuloCommessa.action]);
+  
+
+  
+    
     useEffect(()=>{
         menageError(getCheckCommessaCurrentMonth, navigate);
     },[getCheckCommessaCurrentMonth.error]);
-    // console.log(getCheckCommessaCurrentMonth.response ,'xxxxx');
+
 
     
     useEffect(()=>{
@@ -71,14 +87,19 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
         localStorage.setItem('statusApplication', JSON.stringify(infoModuloCommessa));
     };
 
-    const handleListItemClickModuloCommessa = (index : number,) => {
-        
+    const handleListItemClickModuloCommessa = async (index : number,) => {
+       
         setSelectedIndex(index);
-
-        if(getCheckCommessaCurrentMonth.response?.modifica === true && getCheckCommessaCurrentMonth.response.moduliCommessa.length === 0 ){
-           
+       
+        if(getCheckCommessaCurrentMonth?.response?.modifica === true && getCheckCommessaCurrentMonth?.response?.moduliCommessa.length === 0 ){
+            
+            const newState = {path:'/8'};
+            localStorage.setItem('statusApplication', JSON.stringify(newState));
+          
             navigate('/8');
         }else{
+            const newState = {path:'/4'};
+            localStorage.setItem('statusApplication', JSON.stringify(newState));
            
             navigate('/4');
         }

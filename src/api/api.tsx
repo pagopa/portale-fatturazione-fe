@@ -6,6 +6,8 @@ import { useState, useEffect } from 'react';
 
 
 export const url = 'https://portalefatturebeapi20231102162515.azurewebsites.net';
+const getToken = localStorage.getItem('token') || '{}';
+export const token =  JSON.parse(getToken).token;
 
 
 export  const useAxios = (axiosParams:any) => {
@@ -15,12 +17,12 @@ export  const useAxios = (axiosParams:any) => {
 
    
     const fetchData = async (params:any) => {
-        console.log(params, 'params');
+       
         try {
             const result = await axios.request(params);
             setResponse(result.data);
         } catch( error:any ) {
-            console.log({error}, 'hook');
+        
             setError(error);
         } finally {
             setLoading(false);
@@ -38,9 +40,9 @@ export  const useAxios = (axiosParams:any) => {
 
 
 export const menageError = (res:any,navigate:any) =>{
-    console.log({res},'menage');
+    
     if(res?.error?.response?.status === 401){
-        console.log('DENTRO 401');
+      
         navigate('/error');
       
     }else if(res?.error?.response?.status === 404){
@@ -56,14 +58,14 @@ export const menageError = (res:any,navigate:any) =>{
 
 
 export const selfcareLogin = async (selfcareToken:string|null) =>{
-    const result = await axios.get(`https://portalefatturebeapi20231102162515.azurewebsites.net/api/auth/selfcare/login?selfcareToken=${selfcareToken}`,
+    const result = await axios.get(`${url}/api/auth/selfcare/login?selfcareToken=${selfcareToken}`,
   
     );
     return result;
 };
 
 export const getAuthProfilo = async (tokenFromSelfcare:string) => {
-    const result = await axios.get(`https://portalefatturebeapi20231102162515.azurewebsites.net/api/auth/profilo`,
+    const result = await axios.get(`${url}/api/auth/profilo`,
         { headers: {
             Authorization: 'Bearer ' + tokenFromSelfcare
         }} 
@@ -73,10 +75,12 @@ export const getAuthProfilo = async (tokenFromSelfcare:string) => {
 };
 
 
+
+
 export const getDatiFatturazione  = async (token:string) => {
   
     const response = await axios.get(
-        `https://portalefatturebeapi20231102162515.azurewebsites.net/api/datifatturazione/ente`,
+        `${url}/api/datifatturazione/ente`,
         { headers: {
             Authorization: 'Bearer ' + token
         }});
@@ -89,7 +93,7 @@ export const getDatiFatturazione  = async (token:string) => {
 
 export const modifyDatiFatturazione = async (datiFatturazione: DatiFatturazione, token:string) => {
 
-    const response= await axios.put(`https://portalefatturebeapi20231102162515.azurewebsites.net/api/datifatturazione`,
+    const response= await axios.put(`${url}/api/datifatturazione`,
         datiFatturazione,
         { headers: {
             Authorization: 'Bearer ' + token
@@ -101,7 +105,7 @@ export const modifyDatiFatturazione = async (datiFatturazione: DatiFatturazione,
 };
 
 export const insertDatiFatturazione = async (datiFatturazione: DatiFatturazionePost, token:string) => {
-    const response = await axios.post(`https://portalefatturebeapi20231102162515.azurewebsites.net/api/datifatturazione`,
+    const response = await axios.post(`${url}/api/datifatturazione`,
         datiFatturazione,
         { headers: {
             Authorization: 'Bearer ' + token
@@ -112,7 +116,7 @@ export const insertDatiFatturazione = async (datiFatturazione: DatiFatturazioneP
 
 
 export const insertDatiModuloCommessa = async (datiCommessa : DatiCommessa, token:string) => {
-    const response =  await axios.post(`https://portalefatturebeapi20231102162515.azurewebsites.net/api/modulocommessa`,
+    const response =  await axios.post(`${url}/api/modulocommessa`,
         datiCommessa,
         { headers: {
             Authorization: 'Bearer ' + token
@@ -123,7 +127,7 @@ export const insertDatiModuloCommessa = async (datiCommessa : DatiCommessa, toke
 };
 
 export const getDatiModuloCommessa = async ( token:string) => {
-    const response =  await axios.get(`https://portalefatturebeapi20231102162515.azurewebsites.net/api/modulocommessa`,
+    const response =  await axios.get(`${url}/api/modulocommessa`,
        
         { headers: {
             Authorization: 'Bearer ' + token

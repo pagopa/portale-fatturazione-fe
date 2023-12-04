@@ -32,9 +32,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
     const [user, setUser] = useState('old');
   
 
-    const getToken = localStorage.getItem('token') || '{}';
-    const token =  JSON.parse(getToken).token;
-
 
    
   
@@ -54,14 +51,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
         pec:''
 
     });
-    /*
-    const retrieToken = localStorage.getItem('selfcareToken');
-  
-    if(retrieToken){
-        setCheckProfilo(true);
-    }
-
-  */
+ 
 
     const [statusBottonConferma, setStatusBottmConferma] = useState<StateEnableConferma>({
         'CUP':false,
@@ -81,6 +71,10 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
       || datiFatturazione.codCommessa === ''
     );
     const location : any = useLocation();
+
+
+    const getToken = localStorage.getItem('token') || '{}';
+    const token =  JSON.parse(getToken).token;
     const getDatiFat = async () =>{
       
         await getDatiFatturazione(token).then((res:any) =>{   
@@ -141,6 +135,10 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
                             statusPageDatiFatturazione:'immutable',
                             action:'SHOW_MODULO_COMMESSA'
                         }}));
+                        // localStorage.removeItem('statusApplication');
+                        localStorage.removeItem('statusApplication'); 
+                      
+                        localStorage.setItem('statusApplication', JSON.stringify({path:'/4'}));
                         navigate('/4');
                     }
                     
@@ -148,7 +146,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
                 .catch(err => {
 
                     if(err.response.status === 401){
-                        console.log('CU cu');
+                        
                         // navigate('/login');
                     }
                 });

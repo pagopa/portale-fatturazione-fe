@@ -31,12 +31,13 @@ const App : React.FC = () => {
         action:'DATI_FATTURAZIONE', // le action possono essere HIDE_MODULO_COMMESSA / SHOW_MODULO_COMMESSA / DATI_FATTURAZIOne
         statusPageDatiFatturazione:'immutable',
         statusPageInserimentoCommessa:'immutable',
-        path:'/' // in che pat sono al momento del reload?
+        path:'/',
+        indexStepper:0 // in che pat sono al momento del reload?
     });
 
 
 
-    console.log({infoModuloCommessa});
+
   
     return (
 
@@ -69,7 +70,7 @@ const App : React.FC = () => {
                                     />} />
                                 </Routes>
                                 <Routes>
-                                    <Route path="/4" element={<ModuloCommessaElencoUtPa setInfoModuloCommessa={setInfoModuloCommessa} />} />
+                                    <Route path="/4" element={<ModuloCommessaElencoUtPa infoModuloCommessa={infoModuloCommessa} setInfoModuloCommessa={setInfoModuloCommessa} />} />
                                 </Routes>
                                 <Routes>
                                     <Route path="/8" element={<ModuloCommessaInserimentoUtEn30 infoModuloCommessa={infoModuloCommessa} setInfoModuloCommessa={setInfoModuloCommessa} />} />

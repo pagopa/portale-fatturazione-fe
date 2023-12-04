@@ -3,5 +3,6 @@ export interface ResponseGetAnni {
 }
 
 export interface VisualModuliCommessaProps{
-    setInfoModuloCommessa:any
+    setInfoModuloCommessa:any,
+    infoModuloCommessa:any,
 }
