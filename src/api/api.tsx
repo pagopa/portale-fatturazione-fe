@@ -9,7 +9,7 @@ export const url = "https://portalefatturebeapi20231102162515.azurewebsites.net"
 //"https://fat-p-app-api.azurewebsites.net";
 //'https://portalefatturebeapi20231102162515.azurewebsites.net';
 const getToken = localStorage.getItem('token') || '{}';
-export const token =  JSON.parse(getToken).token;
+const token =  JSON.parse(getToken).token;
 
 
 export  const useAxios = (axiosParams:any) => {
@@ -141,7 +141,7 @@ export const getDatiModuloCommessa = async ( token:string) => {
     return response;
 };
 
-export const getModuloCommessaPdf = async ( mese:string, anno:string) => {
+export const getModuloCommessaPdf = async ( token:string ,mese:string, anno:string) => {
     const response =  await axios.get(`${url}/api/modulocommessa/documento/${mese}/${anno}`,
        
         { headers: {

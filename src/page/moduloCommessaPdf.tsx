@@ -12,6 +12,9 @@ import { DataPdf } from "../types/typeModuloCommessaInserimento";
 
 const ModuloCommessaPdf : React.FC<ModuloComPdfProps> = ({setInfoModuloCommessa,infoModuloCommessa}) =>{
 
+    const getToken = localStorage.getItem('token') || '{}';
+    const token =  JSON.parse(getToken).token;
+
     const navigate = useNavigate();
 
     const [dataPdf, setDataPdf] = useState<DataPdf>({
@@ -51,7 +54,7 @@ const ModuloCommessaPdf : React.FC<ModuloComPdfProps> = ({setInfoModuloCommessa,
     
 
     const getPdf = async() =>{
-        getModuloCommessaPdf(statusApp.anno,statusApp.mese).then((res)=>{
+        getModuloCommessaPdf(token, statusApp.anno,statusApp.mese).then((res)=>{
             setDataPdf(res.data);
             console.log({res}, 'PDF');
         }).catch((err)=>{
