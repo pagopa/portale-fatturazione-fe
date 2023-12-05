@@ -7,6 +7,7 @@ import {theme} from '@pagopa/mui-italia';
 import AreaPersonaleUtenteEnte from './page/areaPersonaleUtenteEnte';
 import ModuloCommessaElencoUtPa from './page/moduloCommessaElencoUtPa';
 import ModuloCommessaInserimentoUtEn30 from './page/moduloCommessaInserimentoUtEn30';
+import ModuloCommessaPdf from './page/moduloCommessaPdf';
 import Auth from './page/auth';
 import HeaderPostLogin from './components/headerPostLogin';
 import SideNavComponent from './components/sideNav';
@@ -75,7 +76,9 @@ const App : React.FC = () => {
                                 <Routes>
                                     <Route path="/8" element={<ModuloCommessaInserimentoUtEn30 infoModuloCommessa={infoModuloCommessa} setInfoModuloCommessa={setInfoModuloCommessa} />} />
                                 </Routes>
-                                
+                                <Routes>
+                                    <Route path="/pdf" element={<ModuloCommessaPdf infoModuloCommessa={infoModuloCommessa} setInfoModuloCommessa={setInfoModuloCommessa} />} />
+                                </Routes>
                                     
                            
                             </Grid>

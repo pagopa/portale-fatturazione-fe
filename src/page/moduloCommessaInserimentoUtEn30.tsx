@@ -360,7 +360,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 
                     {actionTitle}
 
-                    {(infoModuloCommessa.statusPageInserimentoCommessa === 'immutable')?
+                    {(infoModuloCommessa.statusPageInserimentoCommessa === 'immutable' && infoModuloCommessa.inserisciModificaCommessa === 'MODIFY'
+                    )?
                        
                         <div className="d-flex justify-content-end ">
                             <Button variant="contained" size="small" onClick={()=> hendleModificaModuloCommessa()} >Modifica</Button>

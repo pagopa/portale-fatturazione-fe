@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 
 
 
-export const url = "https://fat-p-app-api.azurewebsites.net";
+export const url = "https://api.portalefatturazione.pagopa.it";
 //"https://fat-p-app-api.azurewebsites.net";
 //'https://portalefatturebeapi20231102162515.azurewebsites.net';
 const getToken = localStorage.getItem('token') || '{}';
@@ -132,6 +132,28 @@ export const insertDatiModuloCommessa = async (datiCommessa : DatiCommessa, toke
 
 export const getDatiModuloCommessa = async ( token:string) => {
     const response =  await axios.get(`${url}/api/modulocommessa`,
+       
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
+export const getModuloCommessaPdf = async ( mese:string, anno:string) => {
+    const response =  await axios.get(`${url}/api/modulocommessa/documento/${mese}/${anno}`,
+       
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
+export const downloadModuloCommessaPdf = async ( mese:string, anno:string) => {
+    const response =  await axios.get(`${url}/api/modulocommessa/download/${mese}/${anno}`,
        
         { headers: {
             Authorization: 'Bearer ' + token

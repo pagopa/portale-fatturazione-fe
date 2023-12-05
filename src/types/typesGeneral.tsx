@@ -21,3 +21,8 @@ export interface SideNavProps{
 export interface StepperProps {
     indexStepper: number
 }
+
+export interface ModuloComPdfProps{
+    setInfoModuloCommessa:any,
+    infoModuloCommessa:any
+}
