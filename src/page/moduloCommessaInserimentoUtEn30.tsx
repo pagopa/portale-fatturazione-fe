@@ -360,8 +360,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 
                     {actionTitle}
 
-                    {(infoModuloCommessa.statusPageInserimentoCommessa === 'immutable' && infoModuloCommessa.inserisciModificaCommessa === 'MODIFY'
-                    )?
+                    {infoModuloCommessa.statusPageInserimentoCommessa === 'immutable' && !infoModuloCommessa.action ?
                        
                         <div className="d-flex justify-content-end ">
                             <Button variant="contained" size="small" onClick={()=> hendleModificaModuloCommessa()} >Modifica</Button>
@@ -388,6 +387,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                         <div className='bg-white'>
                             <TerzoContainerInsCom valueTotali={totaliModuloCommessa}/>
                         </div>
+                 
                         {
                             infoModuloCommessa.statusPageInserimentoCommessa === 'immutable' ? null :
                                 <div className="d-flex justify-content-between mt-5 ">
@@ -413,9 +413,17 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                    
                                 </div> 
                         }
+                       
                     </div> 
                     : null}
             </div> 
+            {infoModuloCommessa.statusPageInserimentoCommessa === 'immutable' && !infoModuloCommessa.action ?
+                <div className="d-flex justify-content-center marginTop24">
+                    <Button onClick={()=>navigate('/pdf')} variant="contained">Vedi anteprima</Button>
+                </div> : null
+            }
+          
+           
             {/* Nascondo il dettaglio fatturazione fino al click continua */}
             {infoModuloCommessa.action === 'HIDE_MODULO_COMMESSA' ?
                 <AreaPersonaleUtenteEnte 

@@ -60,3 +60,41 @@ export interface ModalDatiFatProps{
     setOpenModalDatiFatturazione:any,
     openModalDatiFatturazione:boolean
 }
+
+export interface TextPdfProps{
+    description: string,
+    value:string,
+}
+
+type ContattiPdf ={
+    idDatiFatturazione: number,
+    email: string
+}
+
+type  DatiCommessaPdf = {
+    totaleNotifiche: number,
+    numeroNotificheNazionali: number,
+    numeroNotificheInternazionali: number,
+    tipo:string,
+    idTipoSpedizione: number
+}
+
+export interface DataPdf {
+    cup: string,
+    cig: string,
+    codCommessa: string,
+    dataDocumento: string,
+    splitPayment: string,
+    idDocumento: string,
+    map: string,
+    tipoCommessa: string,
+    prodott: string,
+    pec: string,
+    dataModifica: string,
+    meseAttivita: number,
+    contatti: ContattiPdf[],
+    descrizione: string,
+    partitaIva: string,
+    indirizzoCompleto: string,
+    datiModuloCommessa: DatiCommessaPdf[]
+}
