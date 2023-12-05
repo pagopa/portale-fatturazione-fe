@@ -152,8 +152,8 @@ export const getModuloCommessaPdf = async ( token:string ,mese:string, anno:stri
     return response;
 };
 
-export const downloadModuloCommessaPdf = async ( mese:string, anno:string) => {
-    const response =  await axios.get(`${url}/api/modulocommessa/download/${mese}/${anno}`,
+export const downloadModuloCommessaPdf = async (token:string, mese:string, anno:string,tipo:string) => {
+    const response =  await axios.get(`${url}/api/modulocommessa/download/${mese}/${anno}?Tipo=${tipo}`,
        
         { headers: {
             Authorization: 'Bearer ' + token

@@ -1,19 +1,24 @@
-import { getModuloCommessaPdf } from "../api/api";
+import { getModuloCommessaPdf, downloadModuloCommessaPdf } from "../api/api";
 import {useEffect, useState} from 'react';
-import { ModuloComPdfProps } from "../types/typesGeneral";
-import {Typography, Button, Grid, TextField} from '@mui/material';
+import {Typography, Button} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked} from '@pagopa/mui-italia';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { useNavigate } from "react-router";
 import TextDettaglioPdf from '../components/textDettaglioPdf';
 import { DataPdf } from "../types/typeModuloCommessaInserimento";
+import { menageError } from "../api/api";
+import { usePDF } from 'react-to-pdf';
 
 
-const ModuloCommessaPdf : React.FC<ModuloComPdfProps> = ({setInfoModuloCommessa,infoModuloCommessa}) =>{
+
+
+const ModuloCommessaPdf : React.FC = () =>{
 
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
+
+    const { toPDF, targetRef } = usePDF({filename: 'ModuloCommessa.pdf'});
 
     const navigate = useNavigate();
 
@@ -56,23 +61,34 @@ const ModuloCommessaPdf : React.FC<ModuloComPdfProps> = ({setInfoModuloCommessa,
     const getPdf = async() =>{
         getModuloCommessaPdf(token, statusApp.anno,statusApp.mese).then((res)=>{
             setDataPdf(res.data);
-            console.log({res}, 'PDF');
+            localStorage.setItem("tipo", res.data.tipoCommessa);
+         
+        }).catch((err)=>{
+            console.log('ccccc');
+        });  
+    };
+ 
+    const downloadPdf = async()=>{
+        const tipoCommessa =  localStorage.getItem('tipo') || '';
+        downloadModuloCommessaPdf(token, statusApp.anno,statusApp.mese, tipoCommessa).then((res)=>{
+            const wrapper = document.getElementById('file_download');
+            if(wrapper){
+                wrapper.innerHTML = res.data;
+            }
         }).catch((err)=>{
             console.log(err);
-        });
-
-     
-
-        
+        });   
     };
     useEffect(()=>{
         getPdf();
+        downloadPdf();
     },[]);
     
    
 
     return (
         <div className="">
+           
             <div className='d-flex marginTop24 '>
                 <ButtonNaked
                     color="primary"
@@ -175,7 +191,13 @@ const ModuloCommessaPdf : React.FC<ModuloComPdfProps> = ({setInfoModuloCommessa,
 
             </div>
             <div className="d-flex justify-content-center">
-                <Button  variant="contained">Scarica</Button>
+                <Button onClick={()=> toPDF()}  variant="contained">Scarica</Button>
+            </div>
+
+
+
+            <div style={{position:'absolute', zIndex:'-1'}}  id='file_download' ref={targetRef}>
+
             </div>
             
 
@@ -183,3 +205,4 @@ const ModuloCommessaPdf : React.FC<ModuloComPdfProps> = ({setInfoModuloCommessa,
     );
 };
 export default ModuloCommessaPdf;
+

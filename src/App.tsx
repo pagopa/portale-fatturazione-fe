@@ -77,7 +77,7 @@ const App : React.FC = () => {
                                     <Route path="/8" element={<ModuloCommessaInserimentoUtEn30 infoModuloCommessa={infoModuloCommessa} setInfoModuloCommessa={setInfoModuloCommessa} />} />
                                 </Routes>
                                 <Routes>
-                                    <Route path="/pdf" element={<ModuloCommessaPdf infoModuloCommessa={infoModuloCommessa} setInfoModuloCommessa={setInfoModuloCommessa} />} />
+                                    <Route path="/pdf" element={<ModuloCommessaPdf />} />
                                 </Routes>
                                     
                            
