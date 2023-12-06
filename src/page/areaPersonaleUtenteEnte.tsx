@@ -83,11 +83,11 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
            
         }).catch(err =>{
            
-            if(err.response.status === 401){
+            if(err.response?.status === 401){
                 localStorage.removeItem("token");
                 localStorage.removeItem("profilo");
                 navigate('/error');
-            }else if(err.response.status === 404){
+            }else if(err.response?.status === 404){
 
                 setUser('new');
             }
@@ -145,7 +145,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
                 })
                 .catch(err => {
 
-                    if(err.response.status === 401){
+                    if(err.response?.status === 401){
                         
                         // navigate('/login');
                     }

@@ -26,7 +26,14 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
     }else{
         const mon = new Date().getMonth();
         const date = new Date();
-        anno = date.getFullYear();
+      
+        if(mon === 11){
+           
+            anno = date.getFullYear()+1;
+           
+        }else{
+            anno = date.getFullYear();
+        }
         mese = month[mon + 1 ];
 
     }
