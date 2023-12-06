@@ -4,8 +4,38 @@ import LabelComponent from './label';
 
 
 export default function PrimoContainerInsCom() {
-    const exampleDate = "Nov/2023";
-    const exampleTipoContratto = "PAC";
+
+    const getStatusApplication = localStorage.getItem('statusApplication') || '{}';
+    const statusApplication =  JSON.parse(getStatusApplication);
+
+    const getProfilo = localStorage.getItem('profilo') || '{}';
+    const profilo =  JSON.parse(getProfilo);
+   
+    const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre", "Gennaio"];
+    
+
+    let mese = '';
+    let anno = 2000;
+    if(statusApplication.inserisciModificaCommessa === 'MODIFY' ){
+        mese = month[statusApplication.mese -1 ];
+        anno = statusApplication.anno;
+    }else{
+        const mon = new Date().getMonth();
+        const date = new Date();
+        anno = date.getFullYear();
+        mese = month[mon + 1 ];
+
+    }
+   
+
+    const data = `${mese}/${anno}`;
+
+   
+    let exampleTipoContratto = "PAC";
+    if(profilo.idTipoContratto === 1){
+        exampleTipoContratto = 'PAL';
+
+    }
     return (
         <div className="m-3">
             <Grid
@@ -20,7 +50,7 @@ export default function PrimoContainerInsCom() {
                     xs={6}
                 >
                     <div>
-                        <LabelComponent label="Mese/Anno:" input={exampleDate} />
+                        <LabelComponent label="Mese/Anno:" input={data} />
                         <LabelComponent label="Tipo Contratto:" input={exampleTipoContratto} />
                     </div>
          

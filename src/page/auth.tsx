@@ -23,7 +23,12 @@ const Auth : React.FC<LoginProps> = ({setCheckProfilo}) =>{
                     descrizioneRuolo:storeProfilo.descrizioneRuolo,
                     nonce:storeProfilo.nonce,
                     dataUltimo:storeProfilo.dataUltimo,
-                    dataPrimo:storeProfilo.dataPrimo
+                    dataPrimo:storeProfilo.dataPrimo,
+                    prodotto:storeProfilo.prodotto,
+                    idTipoContratto:storeProfilo.idTipoContratto
+
+
+                   
                 }));
                 setCheckProfilo(true);
                 navigate("/");

@@ -96,11 +96,11 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     
     const [totaliModuloCommessa, setTotaliModuloCommessa] = useState<ResponsTotaliInsModuloCommessa[]>([
         {
-            idCategoriaSpedizione: 0,
+            idCategoriaSpedizione: 1,
             totaleValoreCategoriaSpedizione: 0
         },
         {
-            idCategoriaSpedizione: 0,
+            idCategoriaSpedizione: 2,
             totaleValoreCategoriaSpedizione: 0
         }
     ]);
@@ -112,7 +112,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     const { ...getDatiCommessaOnClickFromGrid } = useAxios({});
     const state = localStorage.getItem('statusApplication') || '{}';
     const statusApp =  JSON.parse(state);
-    console.log(statusApp,'APP');
+   
    
     const handleGetDettaglioModuloCommessa = async() => {
       

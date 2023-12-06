@@ -38,16 +38,22 @@ export default function HeaderPostLogin() {
                 <HeaderAccount
                     rootLink={pagoPALink}
                     loggedUser={getDataUser === '{}' ? false : user}
+                   
                     onAssistanceClick={() => {
                         console.log('Clicked/Tapped on Assistance');
                     }}
+                    
                     onLogin={() => {
                         console.log('User login');
                     }}
                     onLogout={() => {
                         localStorage.removeItem('profilo');
                         localStorage.removeItem('token');
+                        localStorage.removeItem('statusApplication');
                         navigate('/error');
+                    }}
+                    onDocumentationClick={() => {
+                        console.log("Clicked/Tapped on Assistance");
                     }}
                 />
             }

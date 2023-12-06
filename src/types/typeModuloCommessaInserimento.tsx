@@ -98,3 +98,11 @@ export interface DataPdf {
     indirizzoCompleto: string,
     datiModuloCommessa: DatiCommessaPdf[]
 }
+
+export interface CategorieTotali {
+   
+    idCategoriaSpedizione: number,
+    percentuale: number,
+    descrizione: string
+    
+}

@@ -78,6 +78,17 @@ export const getAuthProfilo = async (tokenFromSelfcare:string) => {
     return result;
 };
 
+export const getDatiConfigurazioneCommessa = async (token:string, idTipoContratto:number, prodotto:string) =>{
+
+    const result = await axios.get(`${url}/api/configurazionemodulocommessa?idTipoContratto=${idTipoContratto}&prodotto=${prodotto}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }} 
+  
+    );
+    return result;
+};
+
 
 
 

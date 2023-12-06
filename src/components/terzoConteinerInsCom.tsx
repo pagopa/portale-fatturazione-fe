@@ -1,9 +1,76 @@
-import React from 'react';
+import React, { startTransition, useEffect, useState } from 'react';
 import { Grid, Typography } from '@mui/material';
-import { TerzoContainerModCommessa } from '../types/typeModuloCommessaInserimento';
+import { TerzoContainerModCommessa, CategorieTotali } from '../types/typeModuloCommessaInserimento';
+import { getDatiConfigurazioneCommessa } from '../api/api';
 
 const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali}) => {
-    const mese= <span className="fw-semibold"> Novembre/2023</span>;
+
+    const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre","Gennaio"];
+
+    const getToken = localStorage.getItem('token') || '{}';
+    const token =  JSON.parse(getToken).token;
+
+    const getProfilo = localStorage.getItem('profilo') || '{}';
+    const profilo =  JSON.parse(getProfilo);
+
+    const getStatusApplication = localStorage.getItem('statusApplication') || '{}';
+    const statusApplication =  JSON.parse(getStatusApplication);
+
+    let mese = '';
+    let anno = 2000;
+    if(statusApplication.inserisciModificaCommessa === 'MODIFY' ){
+        mese = month[statusApplication.mese -1 ];
+        anno = statusApplication.anno;
+    }else{
+        const mon = new Date().getMonth();
+        const date = new Date();
+        anno = date.getFullYear();
+        mese = month[mon + 1 ];
+
+    }
+   
+    
+    
+  
+    const [labelCategorie, setLabelCategorie] = useState<CategorieTotali[]>([
+        {
+            idCategoriaSpedizione: 1,
+            percentuale: 0,
+            descrizione: ''
+        },
+        {
+            idCategoriaSpedizione: 2,
+            percentuale: 0,
+            descrizione: ''
+        }]);
+    const dataToInsert = <span className="fw-semibold"> {mese}/{anno}</span>;
+    console.log(dataToInsert);
+
+    const replaceDate = (arr:[], stringToRepace:string, stringToInsert:string) =>{
+  
+        return arr.map((singleObj:CategorieTotali) =>{
+            singleObj.descrizione = singleObj.descrizione.replace(stringToRepace,stringToInsert);
+            return singleObj;
+        });
+    };
+
+    const getConfigurazione = async() =>{
+        getDatiConfigurazioneCommessa(token, profilo.idTipoContratto, profilo.prodotto)
+            .then((res)=>{
+                const newCategorie = replaceDate(res.data.categorie,'[data]', '');
+                setLabelCategorie(newCategorie);
+            }).catch((err)=>err);
+    };
+
+    useEffect(()=>{
+        getConfigurazione();
+    },[]);
+
+    const labelDigitale = labelCategorie.filter((obj) => obj.idCategoriaSpedizione === 2);
+    const labelAnalogica = labelCategorie.filter((obj) => obj.idCategoriaSpedizione === 1);
+
+    const valueDigitale = valueTotali.filter((obj) => obj.idCategoriaSpedizione === 2);
+    const valueAnalogico = valueTotali.filter((obj) => obj.idCategoriaSpedizione === 1);
     return (
         <div className=" m-3 pl-5 pt-3">
             {/* prima row start */}
@@ -21,9 +88,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                     xs={6}
                 >
                     <Typography>
-                         Numero complessivo delle notifiche
-                         da processare in via analogica del
-                         tipo notifica ex L. 890/1982 nel mese di {mese}
+                        {labelDigitale[0].descrizione} {dataToInsert}
                     </Typography>
          
                 </Grid>
@@ -37,7 +102,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                         variant="caption-semibold"
                         sx={{fontSize:'18px'}}
                     >
-                        {valueTotali[0].totaleValoreCategoriaSpedizione}
+                        {valueDigitale[0].totaleValoreCategoriaSpedizione} €
                     </Typography>
                 </Grid>
   
@@ -60,9 +125,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                     xs={6}
                 >
                     <Typography>
-                      Notifiche Analogiche: “Art. 2 comma 6
-                      Anticipo pari al 30% per le notifiche
-                      analogiche oggetto della commessa di {mese}
+                        {labelAnalogica[0].descrizione} {dataToInsert}
                     </Typography>
          
                 </Grid>
@@ -76,7 +139,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                         variant="caption-semibold"
                         sx={{fontSize:'18px', textAlign:'center'}}
                     >
-                        {valueTotali[1].totaleValoreCategoriaSpedizione}
+                        {valueAnalogico[0].totaleValoreCategoriaSpedizione} €
                     </Typography>
                 </Grid>
 
@@ -109,7 +172,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                         variant="caption-semibold"
                         sx={{fontSize:'18px'}}
                     >
-                        {valueTotali[0].totaleValoreCategoriaSpedizione + valueTotali[1].totaleValoreCategoriaSpedizione}
+                        {valueTotali[0].totaleValoreCategoriaSpedizione + valueTotali[1].totaleValoreCategoriaSpedizione} €
                     </Typography>
                 </Grid>
 

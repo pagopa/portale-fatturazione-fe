@@ -12,6 +12,28 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
     const { setDatiCommessa,setDisableContinua, datiCommessa, totale, setTotale, infoModuloCommessa} = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
 
 
+    const getStatusApplication = localStorage.getItem('statusApplication') || '{}';
+    const statusApplication =  JSON.parse(getStatusApplication);
+   
+    const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre",'Gennaio'];
+
+    
+    let mese = '';
+    let anno = 2000;
+    if(statusApplication.inserisciModificaCommessa === 'MODIFY' ){
+        mese = month[statusApplication.mese -1 ];
+        anno = statusApplication.anno;
+    }else{
+        const mon = new Date().getMonth();
+        const date = new Date();
+        anno = date.getFullYear();
+        mese = month[mon + 1 ];
+
+    }
+    
+
+    const meseAnno = <span className="fw-semibold"> {mese}/{anno}</span>;
+
     const [errorNazionale, setErrorNazionale] = useState(false);
     const [errorInternazionale, setErrorInternazionale] = useState(false);
     const [input, setInput] = useState({nazionale:0, internazionale:0});
@@ -68,7 +90,7 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
         validationAllowNumberColumnInternazionale(e.target.value, setErrorInternazionale);
     };
 
-    const mese= <span className="fw-semibold"> Novembre/2023</span>;
+    
 
     const findValueNazione = (rowNumber : number) =>{
         return datiCommessa.moduliCommessa.filter(obj => obj.idTipoSpedizione === rowNumber)[0].numeroNotificheNazionali;
@@ -104,7 +126,7 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
                 xs={6}
             >
 
-                <Typography>{sentence}{mese}</Typography>
+                <Typography>{sentence}{meseAnno}</Typography>
             </Grid>
 
             <Grid
