@@ -170,8 +170,7 @@ const ModuloCommessaPdf : React.FC = () =>{
                         <div className="container text-center">
                             <TextDettaglioPdf description={'Soggetto aderente'} value={dataPdf.descrizione}></TextDettaglioPdf>
                             <TextDettaglioPdf description={'Sede Legale completa'} value={dataPdf.indirizzoCompleto}></TextDettaglioPdf>
-                            <TextDettaglioPdf description={'Partita IVA'} value={dataPdf.partitaIva}></TextDettaglioPdf>
-                            <TextDettaglioPdf description={'Codice Fiscale'} value={''}></TextDettaglioPdf>
+                            <TextDettaglioPdf description={'Partita IVA/Codice Fiscale'} value={dataPdf.partitaIva}></TextDettaglioPdf>
                             <TextDettaglioPdf description={'Cup'} value={dataPdf.cup}></TextDettaglioPdf>
                             <TextDettaglioPdf description={'Cig'} value={dataPdf.cig}></TextDettaglioPdf>
                             <TextDettaglioPdf description={'Soggetto Split Payment'} value={dataPdf.splitPayment}></TextDettaglioPdf>

@@ -43,7 +43,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setInfoM
    
     const { ...dataGetListaCommessa } = useAxios({
         method: 'GET',
-        url: `${url}/api/modulocommessa/lista/parziali`,
+        url: `${url}/api/modulocommessa/lista`,
         headers: {
             Authorization: 'Bearer ' + token
         }

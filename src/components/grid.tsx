@@ -32,6 +32,9 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
 */
 
     //  console.log({dataWithLabelFixed});
+
+
+    
     const navigate = useNavigate();
 
     let columsSelectedGrid = '';
@@ -76,7 +79,7 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
     };
 
     
-   
+  
    
   
     let makeColums : any[] = [];
@@ -90,12 +93,63 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
                     headerClassName: 'super-app-theme--header',
                     headerAlign: 'left',
                     headerName:'Mese',
-                    width: 160,
+                    width: 120,
                     renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.meseValidita}</a>
                     ,
     
                 };
             }
+            if (singleKey === 'totale') {
+                return {
+                    field: singleKey,
+                    headerClassName: 'super-app-theme--header',
+                    headerAlign: 'left',
+                    headerName:'Totale',
+                    width: 160,
+        
+                };
+            }
+            if (singleKey === 'stato') {
+                return {
+                    field: singleKey,
+                    headerClassName: 'super-app-theme--header',
+                    headerAlign: 'left',
+                    headerName:'Stato',
+                    width: 160,
+        
+                };
+            }
+            if (singleKey === 'dataModifica') {
+                return {
+                    field: singleKey,
+                    headerClassName: 'super-app-theme--header',
+                    headerAlign: 'left',
+                    headerName:'Data',
+                    width: 160,
+        
+                };
+            }
+            if (singleKey === 'totaleDigitale') {
+                return {
+                    field: singleKey,
+                    headerClassName: 'super-app-theme--header',
+                    headerAlign: 'left',
+                    headerName:'Tot. Digitale',
+                    width: 160,
+        
+                };
+            }
+            if (singleKey === 'totaleAnalogico') {
+                return {
+                    field: singleKey,
+                    headerClassName: 'super-app-theme--header',
+                    headerAlign: 'left',
+                    headerName:'Tot. Analogiche',
+                    width: 160,
+        
+                };
+            }
+
             return {
                 field: singleKey,
                 headerClassName: 'super-app-theme--header',
