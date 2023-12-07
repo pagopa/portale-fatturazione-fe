@@ -129,120 +129,126 @@ const ModuloCommessaPdf : React.FC = () =>{
    
 
     return (
-        <div className="">
-           
-            <div className='d-flex marginTop24 '>
-                <ButtonNaked
-                    color="primary"
-                    onFocusVisible={() => { console.log('onFocus'); }}
-                    size="small"
-                    startIcon={<ArrowBackIcon />}
-                    onClick={() => navigate('/8') }
+        <>
+        
+            <div className="">
+                
+                <div className='d-flex marginTop24 '>
+                    <ButtonNaked
+                        color="primary"
+                        onFocusVisible={() => { console.log('onFocus'); }}
+                        size="small"
+                        startIcon={<ArrowBackIcon />}
+                        onClick={() => navigate('/8') }
                    
-                >
-                    Esci
+                    >
+                    Indietro
  
-                </ButtonNaked>
+                    </ButtonNaked>
               
-                <Typography sx={{ fontWeight:'bold', marginLeft:'20px'}} variant="caption">
+                    <Typography sx={{ fontWeight:'bold', marginLeft:'20px'}} variant="caption">
 
-                    <ViewModuleIcon sx={{paddingBottom:'3px'}}  fontSize='small'></ViewModuleIcon>
+                        <ViewModuleIcon sx={{paddingBottom:'3px'}}  fontSize='small'></ViewModuleIcon>
                       Modulo commessa 
                     
-                </Typography>
-                <Typography  variant="caption">/ {mese}</Typography>
+                    </Typography>
+                    <Typography  variant="caption">/ {mese}</Typography>
                  
                  
                 
-            </div>
-            <div className="bg-white m-5 p-5">
+                </div>
+                <div className="bg-white m-5 p-5">
 
             
 
-                <div className=" ">
+                    <div className=" ">
+                        {/* nascondo il pdf */}
+                        <div style={{ position:'absolute',zIndex:-1}}  id='file_download' ref={targetRef}>
 
-                    <div className="container text-center">
-                        <TextDettaglioPdf description={'Soggetto aderente'} value={dataPdf.descrizione}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Sede Legale completa'} value={dataPdf.indirizzoCompleto}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Partita IVA'} value={dataPdf.partitaIva}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Codice Fiscale'} value={''}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Cup'} value={dataPdf.cup}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Cig'} value={dataPdf.cig}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Soggetto Split Payment'} value={dataPdf.splitPayment}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'PEC'} value={dataPdf.pec}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Email riferimento contatti'} value={dataPdf.contatti[0].email}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Data di compilazione'} value={dataPdf.dataModifica}></TextDettaglioPdf>
-                    </div>
-                </div>
-
-                <div className="mt-5">
-                    <div className="container text-center">
-                        <div className="row">
-                            <div className="col-7">
-                        
-                            </div>
-                            <div className="col-5">
-                                <div className="row">
-                                    <div className="col">
-                                        <Typography  variant="overline">Territorio nazionale</Typography>
-                                    </div>
-                                    <div className="col">
-                                        <Typography  variant="overline">Territorio diverso da  nazionale</Typography>
-                                    </div>
-                                    <div className="col">
-                                        <Typography  variant="overline">Totale notifiche da processare</Typography>
-                                    </div>
-                                </div>
-    
-                            </div>
-                       
                         </div>
 
+                        <div className="container text-center">
+                            <TextDettaglioPdf description={'Soggetto aderente'} value={dataPdf.descrizione}></TextDettaglioPdf>
+                            <TextDettaglioPdf description={'Sede Legale completa'} value={dataPdf.indirizzoCompleto}></TextDettaglioPdf>
+                            <TextDettaglioPdf description={'Partita IVA'} value={dataPdf.partitaIva}></TextDettaglioPdf>
+                            <TextDettaglioPdf description={'Codice Fiscale'} value={''}></TextDettaglioPdf>
+                            <TextDettaglioPdf description={'Cup'} value={dataPdf.cup}></TextDettaglioPdf>
+                            <TextDettaglioPdf description={'Cig'} value={dataPdf.cig}></TextDettaglioPdf>
+                            <TextDettaglioPdf description={'Soggetto Split Payment'} value={dataPdf.splitPayment}></TextDettaglioPdf>
+                            <TextDettaglioPdf description={'PEC'} value={dataPdf.pec}></TextDettaglioPdf>
+                            <TextDettaglioPdf description={'Email riferimento contatti'} value={dataPdf.contatti[0].email}></TextDettaglioPdf>
+                            <TextDettaglioPdf description={'Data di compilazione'} value={dataPdf.dataModifica}></TextDettaglioPdf>
+                        </div>
+                    </div>
+
+                    <div className="mt-5">
+                        <div className="container text-center">
+                            <div className="row">
+                                <div className="col-7">
+                        
+                                </div>
+                                <div className="col-5">
+                                    <div className="row">
+                                        <div className="col">
+                                            <Typography  variant="overline">Territorio nazionale</Typography>
+                                        </div>
+                                        <div className="col">
+                                            <Typography  variant="overline">Territorio diverso da  nazionale</Typography>
+                                        </div>
+                                        <div className="col">
+                                            <Typography  variant="overline">Totale notifiche da processare</Typography>
+                                        </div>
+                                    </div>
+    
+                                </div>
+                       
+                            </div>
+
                     
-                        {arrWithlabelDateMonth.map((singleObj:DatiModuloCommessaPdf)=>{
-                            return (
-                                <div key={Math.random()} className="row mt-3">
-                                    <div className="col-7">
+                            {arrWithlabelDateMonth.map((singleObj:DatiModuloCommessaPdf)=>{
+                                return (
+                                    <div key={Math.random()} className="row mt-3">
+                                        <div className="col-7">
                                       
-                                        <Typography sx={{display:'flex',textAlign:'left'}} variant="caption">{singleObj.tipo}</Typography>
+                                            <Typography sx={{display:'flex',textAlign:'left'}} variant="caption">{singleObj.tipo}</Typography>
                                      
                                         
-                                    </div>
-                                    <div className="col-5">
-                                        <div className="row">
-                                            <div className="col">
-                                                <Typography  variant="caption">{singleObj.numeroNotificheNazionali}</Typography>
-                                            </div>
-                                            <div className="col">
-                                                <Typography  variant="caption">{singleObj.numeroNotificheInternazionali}</Typography>
-                                            </div>
-                                            <div className="col">
-                                                <Typography  variant="caption">{singleObj.totaleNotifiche}</Typography>
+                                        </div>
+                                        <div className="col-5">
+                                            <div className="row">
+                                                <div className="col">
+                                                    <Typography  variant="caption">{singleObj.numeroNotificheNazionali}</Typography>
+                                                </div>
+                                                <div className="col">
+                                                    <Typography  variant="caption">{singleObj.numeroNotificheInternazionali}</Typography>
+                                                </div>
+                                                <div className="col">
+                                                    <Typography  variant="caption">{singleObj.totaleNotifiche}</Typography>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            );
-                        })}
+                                );
+                            })}
                        
                     
+                        </div>
                     </div>
-                </div>
                
 
-            </div>
-            <div className="d-flex justify-content-center">
-                <Button onClick={()=> toPDF()}  variant="contained">Scarica</Button>
-            </div>
+                </div>
+                <div className="d-flex justify-content-center">
+                    <Button onClick={()=> toPDF()}  variant="contained">Scarica</Button>
+                </div>
 
 
-
-            <div style={{position:'absolute', zIndex:'-1'}}  id='file_download' ref={targetRef}>
-
-            </div>
+               
+                
             
 
-        </div>
+            </div>
+           
+        </>
     );
 };
 export default ModuloCommessaPdf;
