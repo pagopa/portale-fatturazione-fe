@@ -51,7 +51,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
   
 
     
-
+    const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre",'Gennaio'];
 
     const navigate = useNavigate();
 
@@ -279,7 +279,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     if(infoModuloCommessa.inserisciModificaCommessa === 'INSERT'){
         actionTitle =  <Typography variant="h4"> Aggiungi modulo commessa</Typography>;
     }else if(infoModuloCommessa.inserisciModificaCommessa  === 'MODIFY' && infoModuloCommessa.statusPageInserimentoCommessa === 'immutable' ){
-        actionTitle =  <Typography variant="h4"> Mese commessa</Typography>;
+        actionTitle =  <Typography variant="h4">{month[statusApp.mese - 1]}</Typography>;
     }else if(infoModuloCommessa.inserisciModificaCommessa  === 'MODIFY' && infoModuloCommessa.statusPageInserimentoCommessa === 'mutable'  ){
         actionTitle =  <Typography variant="h4"> Modifica modulo commessa</Typography>;
     }
@@ -327,7 +327,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                         } }
                       
                     >
-                        {infoModuloCommessa.statusPageInserimentoCommessa === 'immutable' ? 'Esci': 'Indietro'}
+                        Indietro
     
                     </ButtonNaked>
                     
