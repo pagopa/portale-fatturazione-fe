@@ -96,7 +96,8 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
             const newState = {
                 path:'/8',
                 mese:getCheckCommessaCurrentMonth?.response.mese,
-                anno:getCheckCommessaCurrentMonth?.response.anno
+                anno:getCheckCommessaCurrentMonth?.response.anno,
+                inserisciModificaCommessa:'INSERT'
             };
             localStorage.setItem('statusApplication', JSON.stringify(newState));
           

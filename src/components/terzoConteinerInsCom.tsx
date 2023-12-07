@@ -1,10 +1,10 @@
 import React, { startTransition, useEffect, useState } from 'react';
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography, InputLabel } from '@mui/material';
 import { TerzoContainerModCommessa, CategorieTotali,ResponsTotaliInsModuloCommessa } from '../types/typeModuloCommessaInserimento';
 import { getDatiConfigurazioneCommessa } from '../api/api';
 
-const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali}) => {
-    console.log({valueTotali});
+const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali, dataModifica}) => {
+    console.log({valueTotali, dataModifica});
     const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre","Gennaio"];
    
     
@@ -87,6 +87,16 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
     const sum = valueTotali[0]?.totaleValoreCategoriaSpedizione + valueTotali[1]?.totaleValoreCategoriaSpedizione;
     const sumFixed2Decimal = sum.toFixed(2).toString().replace('.', ',');
     console.log(sumFixed2Decimal);
+
+
+    function createDateFromString(string:string){
+        const getGiorno = new Date(string).getDate();
+        console.log({getGiorno});
+        const getMese = new Date(string).getMonth() + 1;
+        const getAnno = new Date(string).getFullYear();
+
+        return getGiorno+'/'+getMese+'/'+getAnno;
+    }
     return (
         <div className=" m-3 pl-5 pt-3">
             {/* prima row start */}
@@ -193,8 +203,25 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                 </Grid>
 
             </Grid>
+
+            <hr className="mx-3 mt-5" />
+
+            {
+                statusApplication.inserisciModificaCommessa === 'INSERT' ? null :
+                    <div className="d-flex justify-content-around marginTopBottom24">
+                        <div className='d-flex'>
+                            <InputLabel  sx={{ marginRight:'20px'}}  size={"normal"}>Data modifica</InputLabel>
+                            <Typography >{createDateFromString(dataModifica)}</Typography>
+                        </div>
+                    </div>
+            }
+          
+
+
+
         </div>
     );
 };
 
 export default TerzoContainerInsCom;
+//{createDateFromString(parseProfilo.dataPrimo)}

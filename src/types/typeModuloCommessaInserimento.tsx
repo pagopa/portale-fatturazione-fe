@@ -53,7 +53,8 @@ export interface ResponsTotaliInsModuloCommessa {
 }
 
 export interface TerzoContainerModCommessa{
-    valueTotali:ResponsTotaliInsModuloCommessa[]
+    valueTotali:ResponsTotaliInsModuloCommessa[],
+    dataModifica:string,
 }
 
 export interface ModalDatiFatProps{

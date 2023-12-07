@@ -48,7 +48,7 @@ export const InserimentoModuloCommessaContext = createContext<InsModuloCommessaC
 
 const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps> = ({infoModuloCommessa, setInfoModuloCommessa}) => {
 
-  
+
 
     
     const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre",'Gennaio'];
@@ -113,7 +113,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     const state = localStorage.getItem('statusApplication') || '{}';
     const statusApp =  JSON.parse(state);
    
-   
+    //console.log(getDatiCommessaOnClickFromGrid.response.dataModifica, 'pio');
     const handleGetDettaglioModuloCommessa = async() => {
       
         getDatiCommessaOnClickFromGrid.fetchData({
@@ -128,28 +128,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     };
 
  
-    /*
-    const getDatiCommessa = async () =>{
-        await getDatiModuloCommessa(token)
-            .then(res =>{
-           
-                setStatusModuloCommessa('immutable');
-                setDatiCommessa({moduliCommessa:res.data.moduliCommessa});
-                setTotaliModuloCommessa(res.data.totale);
-                const objAboutTotale = res.data.totaleModuloCommessaNotifica;
-                setTotale({totaleNazionale:objAboutTotale.totaleNumeroNotificheNazionali
-                    , totaleInternazionale:objAboutTotale.totaleNumeroNotificheInternazionali
-                    , totaleNotifiche:objAboutTotale.totaleNumeroNotificheDaProcessare});
-               
-            } )
-            .catch(err => {
-                console.log(err,'ERROR');
-                if(err.response.status === 401){
-                    navigate('/error');
-                } 
-            });
-    };
-*/
+
     useEffect(()=>{
         if(infoModuloCommessa.userClickOn === undefined){
             // handleGetDettaglioModuloCommessa();
@@ -342,7 +321,12 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                         
                       
                     </Typography>
-                    <Typography sx={{fontWeight:cssPathAggModComm}} variant="caption">/ Modifica modulo commessa</Typography>
+                    {
+                        statusApp.inserisciModificaCommessa === 'INSERT' ? 
+                            <Typography sx={{fontWeight:cssPathAggModComm}} variant="caption">/ Aggiungi modulo commessa</Typography> :
+                            <Typography sx={{fontWeight:cssPathAggModComm}} variant="caption">/ Modifica modulo commessa</Typography>
+                    }
+                    
                     
                     
                    
@@ -386,7 +370,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
        
                         </div>
                         <div className='bg-white'>
-                            <TerzoContainerInsCom valueTotali={totaliModuloCommessa}/>
+                            <TerzoContainerInsCom valueTotali={totaliModuloCommessa} dataModifica={getDatiCommessaOnClickFromGrid?.response?.dataModifica}/>
                         </div>
                  
                         {
