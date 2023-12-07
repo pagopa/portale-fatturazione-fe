@@ -9,11 +9,14 @@ import TextDettaglioPdf from '../components/textDettaglioPdf';
 import { DataPdf } from "../types/typeModuloCommessaInserimento";
 import { menageError } from "../api/api";
 import { usePDF } from 'react-to-pdf';
+import { DatiModuloCommessaPdf  } from "../types/typeModuloCommessaInserimento";
 
 
 
 
 const ModuloCommessaPdf : React.FC = () =>{
+
+    const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre","Gennaio"];
 
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
@@ -60,6 +63,15 @@ const ModuloCommessaPdf : React.FC = () =>{
 
     const getPdf = async() =>{
         getModuloCommessaPdf(token, statusApp.anno,statusApp.mese).then((res)=>{
+
+            const primo = res.data.datiModuloCommessa.find((obj:any)=>obj.idTipoSpedizione === 3);
+            const secondo = res.data.datiModuloCommessa.find((obj:any)=>obj.idTipoSpedizione === 1);
+            const terzo = res.data.datiModuloCommessa.find((obj:any)=>obj.idTipoSpedizione === 2);
+            const quarto = res.data.datiModuloCommessa.find((obj:any)=>obj.idTipoSpedizione === 0);
+            const  final = [primo, secondo, terzo, quarto];
+            res.data.datiModuloCommessa = final;
+        
+            
             setDataPdf(res.data);
             localStorage.setItem("tipo", res.data.tipoCommessa);
          
@@ -79,11 +91,41 @@ const ModuloCommessaPdf : React.FC = () =>{
             console.log(err);
         });   
     };
+
+ 
     useEffect(()=>{
         getPdf();
         downloadPdf();
+      
     },[]);
-    
+
+    let mese = '';
+    let anno = 2000;
+
+    const mon = new Date().getMonth();
+    const date = new Date();
+    mese = month[mon + 1 ];
+    if(mon === 11){
+       
+        anno = date.getFullYear()+1;
+       
+    }else{
+        anno = date.getFullYear();
+    }
+
+    const replaceDate = (arr:DatiModuloCommessaPdf[], stringToRepace:string, stringToInsert:string) =>{
+  
+        return arr.map((singleObj :DatiModuloCommessaPdf ) =>{
+            singleObj.tipo = singleObj.tipo.replace(stringToRepace,stringToInsert);
+            return singleObj;
+        });
+    };
+    const string = `${mese}/${anno}`;
+   
+    const arrWithlabelDateMonth = replaceDate(dataPdf.datiModuloCommessa,'[data]',string );
+
+  
+
    
 
     return (
@@ -108,7 +150,7 @@ const ModuloCommessaPdf : React.FC = () =>{
                       Modulo commessa 
                     
                 </Typography>
-                <Typography  variant="caption">/ Mese</Typography>
+                <Typography  variant="caption">/ {mese}</Typography>
                  
                  
                 
@@ -124,13 +166,12 @@ const ModuloCommessaPdf : React.FC = () =>{
                         <TextDettaglioPdf description={'Sede Legale completa'} value={dataPdf.indirizzoCompleto}></TextDettaglioPdf>
                         <TextDettaglioPdf description={'Partita IVA'} value={dataPdf.partitaIva}></TextDettaglioPdf>
                         <TextDettaglioPdf description={'Codice Fiscale'} value={''}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Codice IPA'} value={''}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Codice SDI'} value={''}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Cup'} value={dataPdf.cup}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Cig'} value={dataPdf.cig}></TextDettaglioPdf>
                         <TextDettaglioPdf description={'Soggetto Split Payment'} value={dataPdf.splitPayment}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Altre informazioni utili ai fini della fatturazione'} value={''}></TextDettaglioPdf>
                         <TextDettaglioPdf description={'PEC'} value={dataPdf.pec}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Indirizzo email amministrativo  di riferimento per contatti'} value={dataPdf.contatti[0].email}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Data di compilazione'} value={dataPdf.dataDocumento}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Email riferimento contatti'} value={dataPdf.contatti[0].email}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Data di compilazione'} value={dataPdf.dataModifica}></TextDettaglioPdf>
                     </div>
                 </div>
 
@@ -143,10 +184,10 @@ const ModuloCommessaPdf : React.FC = () =>{
                             <div className="col-5">
                                 <div className="row">
                                     <div className="col">
-                                        <Typography  variant="overline">Terristorio nazionale</Typography>
+                                        <Typography  variant="overline">Territorio nazionale</Typography>
                                     </div>
                                     <div className="col">
-                                        <Typography  variant="overline">Terristorio diverso da  nazionale</Typography>
+                                        <Typography  variant="overline">Territorio diverso da  nazionale</Typography>
                                     </div>
                                     <div className="col">
                                         <Typography  variant="overline">Totale notifiche da processare</Typography>
@@ -158,9 +199,9 @@ const ModuloCommessaPdf : React.FC = () =>{
                         </div>
 
                     
-                        {dataPdf.datiModuloCommessa.map((singleObj)=>{
+                        {arrWithlabelDateMonth.map((singleObj:DatiModuloCommessaPdf)=>{
                             return (
-                                <div className="row mt-3">
+                                <div key={Math.random()} className="row mt-3">
                                     <div className="col-7">
                                       
                                         <Typography sx={{display:'flex',textAlign:'left'}} variant="caption">{singleObj.tipo}</Typography>

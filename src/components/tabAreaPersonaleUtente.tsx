@@ -91,7 +91,7 @@ const TabAreaPersonaleUtente = () => {
                     <div>
                         <RadioComponent
                             valueRadio={datiFatturazione.splitPayment}
-                            label="Split Paymet"
+                            label="Split Payment"
                             options={valueOptionRadioSplitPayment}
                             keyObject='splitPayment'
                         />

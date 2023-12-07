@@ -15,6 +15,23 @@ interface GridComponentProps {
 
 const GridComponent : React.FC<GridComponentProps> = (props) => {
     const {data, setInfoModuloCommessa, infoModuloCommessa} = props;
+    const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre",'Gennaio'];
+
+    
+    /*
+    const dataWithLabelFixed = data.map((singleObj)=>{
+        const mese = month[singleObj.meseValidita + 1 ];
+        console.log(mese, singleObj);
+        singleObj.meseValidita = mese;
+       
+
+        return singleObj;
+       
+    });
+
+*/
+
+    //  console.log({dataWithLabelFixed});
     const navigate = useNavigate();
 
     let columsSelectedGrid = '';

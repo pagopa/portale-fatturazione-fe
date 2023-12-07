@@ -3,6 +3,7 @@ import { useLocation } from 'react-router';
 
 import { useNavigate } from 'react-router';
 
+
 type JwtUser = {
     id: string;
     name?: string;
@@ -11,6 +12,7 @@ type JwtUser = {
 };
 
 export default function HeaderPostLogin() {
+
 
     const location : any = useLocation();
     const navigate = useNavigate();
@@ -30,6 +32,21 @@ export default function HeaderPostLogin() {
         email: "",
     };
 
+    const onButtonClick = () => {
+        const pdfUrl = "/ManualeUtentePortaleFatturazione.pdf";
+        const link = document.createElement("a");
+        link.href = pdfUrl;
+        link.download = "ManualeUtentePortaleFatturazione.pdf";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+  
+    function onEmailClick() {
+        window.open(`mailto:fatturazione@assistenza.pagopa.it`);
+    }
+  
 
     return (
 
@@ -39,9 +56,9 @@ export default function HeaderPostLogin() {
                     rootLink={pagoPALink}
                     loggedUser={getDataUser === '{}' ? false : user}
                    
-                    onAssistanceClick={() => {
-                        console.log('Clicked/Tapped on Assistance');
-                    }}
+                    onAssistanceClick={() => onEmailClick()
+                        //navigate('https://fatturazione@assistenza.pagopa.it');
+                    }
                     
                     onLogin={() => {
                         console.log('User login');
@@ -52,9 +69,7 @@ export default function HeaderPostLogin() {
                         localStorage.removeItem('statusApplication');
                         navigate('/error');
                     }}
-                    onDocumentationClick={() => {
-                        console.log("Clicked/Tapped on Assistance");
-                    }}
+                    onDocumentationClick={()=>onButtonClick()}
                 />
             }
         </div>

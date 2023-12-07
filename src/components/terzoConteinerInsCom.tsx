@@ -1,12 +1,19 @@
 import React, { startTransition, useEffect, useState } from 'react';
 import { Grid, Typography } from '@mui/material';
-import { TerzoContainerModCommessa, CategorieTotali } from '../types/typeModuloCommessaInserimento';
+import { TerzoContainerModCommessa, CategorieTotali,ResponsTotaliInsModuloCommessa } from '../types/typeModuloCommessaInserimento';
 import { getDatiConfigurazioneCommessa } from '../api/api';
 
 const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali}) => {
-
+    console.log({valueTotali});
     const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre","Gennaio"];
+    /*
+    const replaceDot = valueTotali.map((obj:any)=>{
+        const nummberReplace = obj.totaleValoreCategoriaSpedizione.toString().replace('.',',');
+        obj.totaleValoreCategoriaSpedizione = nummberReplace;
 
+        return obj;
+
+    });*/
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
 
@@ -78,6 +85,10 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
 
     const valueDigitale = valueTotali.filter((obj) => obj.idCategoriaSpedizione === 2);
     const valueAnalogico = valueTotali.filter((obj) => obj.idCategoriaSpedizione === 1);
+
+    const sum = valueTotali[0]?.totaleValoreCategoriaSpedizione + valueTotali[1]?.totaleValoreCategoriaSpedizione;
+    const sumFixed2Decimal = sum.toFixed(2).toString().replace('.', ',');
+    console.log(sumFixed2Decimal);
     return (
         <div className=" m-3 pl-5 pt-3">
             {/* prima row start */}
@@ -109,7 +120,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                         variant="caption-semibold"
                         sx={{fontSize:'18px'}}
                     >
-                        {valueDigitale[0].totaleValoreCategoriaSpedizione} €
+                        {valueDigitale[0]?.totaleValoreCategoriaSpedizione} €
                     </Typography>
                 </Grid>
   
@@ -146,7 +157,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                         variant="caption-semibold"
                         sx={{fontSize:'18px', textAlign:'center'}}
                     >
-                        {valueAnalogico[0].totaleValoreCategoriaSpedizione} €
+                        {valueAnalogico[0]?.totaleValoreCategoriaSpedizione} €
                     </Typography>
                 </Grid>
 
@@ -179,7 +190,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                         variant="caption-semibold"
                         sx={{fontSize:'18px'}}
                     >
-                        {valueTotali[0].totaleValoreCategoriaSpedizione + valueTotali[1].totaleValoreCategoriaSpedizione} €
+                        {sumFixed2Decimal} €
                     </Typography>
                 </Grid>
 

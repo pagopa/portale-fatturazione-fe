@@ -47,7 +47,7 @@ export interface DataTotaleObj {
 
 }
 
-export type ResponsTotaliInsModuloCommessa = {
+export interface ResponsTotaliInsModuloCommessa {
     idCategoriaSpedizione: number,
     totaleValoreCategoriaSpedizione:number
 }
@@ -105,4 +105,13 @@ export interface CategorieTotali {
     percentuale: number,
     descrizione: string
     
+}
+
+export interface DatiModuloCommessaPdf {
+    totaleNotifiche: number,
+    numeroNotificheNazionali: number,
+    numeroNotificheInternazionali: number,
+    tipo:string,
+    idTipoSpedizione: number
+
 }

@@ -90,15 +90,23 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
     const handleListItemClickModuloCommessa = async (index : number,) => {
        
         setSelectedIndex(index);
-       
+        console.log({getCheckCommessaCurrentMonth});
         if(getCheckCommessaCurrentMonth?.response?.modifica === true && getCheckCommessaCurrentMonth?.response?.moduliCommessa.length === 0 ){
-            
-            const newState = {path:'/8'};
+           
+            const newState = {
+                path:'/8',
+                mese:getCheckCommessaCurrentMonth?.response.mese,
+                anno:getCheckCommessaCurrentMonth?.response.anno
+            };
             localStorage.setItem('statusApplication', JSON.stringify(newState));
           
             navigate('/8');
         }else{
-            const newState = {path:'/4'};
+            const newState = {
+                path:'/4',
+                mese:getCheckCommessaCurrentMonth?.response.mese,
+                anno:getCheckCommessaCurrentMonth?.response.anno
+            };
             localStorage.setItem('statusApplication', JSON.stringify(newState));
            
             navigate('/4');

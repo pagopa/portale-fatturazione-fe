@@ -237,6 +237,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
             .then(res =>{
                 if(infoModuloCommessa.inserisciModificaCommessa === 'MODIFY'){
                     navigate('/4');
+
                     setInfoModuloCommessa((prev:any)=>({
                         ...prev,
                         ...{
