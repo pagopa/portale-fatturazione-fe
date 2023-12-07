@@ -18,7 +18,8 @@ const TabAreaPersonaleUtente = () => {
    
     function createDateFromString(string:string){
         const getGiorno = new Date(string).getDate();
-        const getMese = new Date(string).getMonth();
+        console.log({getGiorno});
+        const getMese = new Date(string).getMonth() + 1;
         const getAnno = new Date(string).getFullYear();
 
         return getGiorno+'/'+getMese+'/'+getAnno;

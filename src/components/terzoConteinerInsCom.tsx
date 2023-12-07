@@ -6,14 +6,10 @@ import { getDatiConfigurazioneCommessa } from '../api/api';
 const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali}) => {
     console.log({valueTotali});
     const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre","Gennaio"];
-    /*
-    const replaceDot = valueTotali.map((obj:any)=>{
-        const nummberReplace = obj.totaleValoreCategoriaSpedizione.toString().replace('.',',');
-        obj.totaleValoreCategoriaSpedizione = nummberReplace;
+   
+    
 
-        return obj;
-
-    });*/
+    
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
 
@@ -80,6 +76,8 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
         getConfigurazione();
     },[]);
 
+  
+
     const labelDigitale = labelCategorie.filter((obj) => obj.idCategoriaSpedizione === 2);
     const labelAnalogica = labelCategorie.filter((obj) => obj.idCategoriaSpedizione === 1);
 
@@ -120,7 +118,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                         variant="caption-semibold"
                         sx={{fontSize:'18px'}}
                     >
-                        {valueDigitale[0]?.totaleValoreCategoriaSpedizione} €
+                        {valueDigitale[0]?.totaleValoreCategoriaSpedizione.toFixed(2).toString().replace('.',',')} €
                     </Typography>
                 </Grid>
   
@@ -157,7 +155,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                         variant="caption-semibold"
                         sx={{fontSize:'18px', textAlign:'center'}}
                     >
-                        {valueAnalogico[0]?.totaleValoreCategoriaSpedizione} €
+                        {valueAnalogico[0]?.totaleValoreCategoriaSpedizione.toFixed(2).toString().replace('.',',')} €
                     </Typography>
                 </Grid>
 
