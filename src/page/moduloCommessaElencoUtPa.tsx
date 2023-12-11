@@ -45,6 +45,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setInfoM
         method: 'GET',
         url: `${url}/api/modulocommessa/lista`,
         headers: {
+            'Cache-Control':'no-cache',
             Authorization: 'Bearer ' + token
         }
     });
@@ -58,7 +59,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setInfoM
     const handleButtonFiltra = () => {
         dataGetListaCommessaFiltered.fetchData({
             method: 'GET',
-            url: `${url}/api/modulocommessa/lista/parziali/${valueSelect}`,
+            url: `${url}/api/modulocommessa/lista/${valueSelect}`,
             headers: {
                 Authorization: 'Bearer ' + token
             }
@@ -71,7 +72,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setInfoM
     const handleButtonAnnullaFiltri = () => {
         dataGetListaOnAnnullaFiltri.fetchData({
             method: 'GET',
-            url: `${url}/api/modulocommessa/lista/parziali`,
+            url: `${url}/api/modulocommessa/lista`,
             headers: {
                 Authorization: 'Bearer ' + token
             }
