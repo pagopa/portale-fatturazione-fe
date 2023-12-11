@@ -75,6 +75,11 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
 
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
+
+
+
+
+
     const getDatiFat = async () =>{
       
         await getDatiFatturazione(token).then((res:any) =>{   
@@ -135,11 +140,14 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
                             statusPageDatiFatturazione:'immutable',
                             action:'SHOW_MODULO_COMMESSA'
                         }}));
-                        // localStorage.removeItem('statusApplication');
-                        localStorage.removeItem('statusApplication'); 
-                      
-                        localStorage.setItem('statusApplication', JSON.stringify({path:'/4'}));
-                        navigate('/4');
+                    
+                        const statusApp = localStorage.getItem('statusApplication')||'{}';
+                        const parseStatusApp = JSON.parse(statusApp);
+                    
+                        localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
+                            ...{ statusPageDatiFatturazione:'immutable',
+                                action:'SHOW_MODULO_COMMESSA'
+                            }}));
                     }
                     
                 })

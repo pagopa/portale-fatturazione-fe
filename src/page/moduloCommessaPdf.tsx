@@ -53,7 +53,11 @@ const ModuloCommessaPdf : React.FC = () =>{
             numeroNotificheInternazionali: 0,
             tipo:"",
             idTipoSpedizione: 0
-        }]
+        }],
+        datiModuloCommessaCosti:[
+            {Totale:'',
+                descrizione:''}
+        ]
     });
 
     const state = localStorage.getItem('statusApplication') || '{}';
@@ -229,7 +233,38 @@ const ModuloCommessaPdf : React.FC = () =>{
                                     </div>
                                 );
                             })}
-                       
+                            <hr></hr>
+
+                            {dataPdf.datiModuloCommessaCosti.map((singleObj)=>{
+                                return (
+                                    <div key={Math.random()} className="row mt-3">
+                                        <div className="col-7">
+      
+                                            <Typography sx={{display:'flex',textAlign:'left'}} variant="caption">{singleObj.descrizione}</Typography>
+     
+        
+                                        </div>
+                                        <div className="col-5">
+                                           
+                                            <div className="row">
+                                                <div className="col">
+                                                  
+                                                </div>
+                                                <div className="col">
+                                                    
+                                                </div>
+                                                <div className="row">
+                                                    <div className="d-flex flex-row-reverse">
+                                                        <Typography  variant="caption">{singleObj.Totale}</Typography>
+                                                    </div>
+                                                </div>
+                                               
+                                              
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                     
                         </div>
                     </div>

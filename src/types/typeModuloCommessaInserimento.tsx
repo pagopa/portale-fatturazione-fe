@@ -97,7 +97,8 @@ export interface DataPdf {
     descrizione: string,
     partitaIva: string,
     indirizzoCompleto: string,
-    datiModuloCommessa: DatiCommessaPdf[]
+    datiModuloCommessa: DatiCommessaPdf[],
+    datiModuloCommessaCosti: DatiCommessaCosti[],
 }
 
 export interface CategorieTotali {
@@ -115,4 +116,8 @@ export interface DatiModuloCommessaPdf {
     tipo:string,
     idTipoSpedizione: number
 
+}
+export interface DatiCommessaCosti{
+    Totale:string,
+    descrizione: string
 }

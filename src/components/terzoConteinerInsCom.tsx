@@ -4,7 +4,7 @@ import { TerzoContainerModCommessa, CategorieTotali,ResponsTotaliInsModuloCommes
 import { getDatiConfigurazioneCommessa } from '../api/api';
 
 const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali, dataModifica}) => {
-    console.log({valueTotali, dataModifica});
+
     const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre","Gennaio"];
    
     
@@ -54,7 +54,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
             descrizione: ''
         }]);
     const dataToInsert = <span className="fw-semibold"> {mese}/{anno}</span>;
-    console.log(dataToInsert);
+   
 
     const replaceDate = (arr:[], stringToRepace:string, stringToInsert:string) =>{
   
@@ -86,12 +86,12 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
 
     const sum = valueTotali[0]?.totaleValoreCategoriaSpedizione + valueTotali[1]?.totaleValoreCategoriaSpedizione;
     const sumFixed2Decimal = sum.toFixed(2).toString().replace('.', ',');
-    console.log(sumFixed2Decimal);
+ 
 
 
     function createDateFromString(string:string){
         const getGiorno = new Date(string).getDate();
-        console.log({getGiorno});
+      
         const getMese = new Date(string).getMonth() + 1;
         const getAnno = new Date(string).getFullYear();
 
