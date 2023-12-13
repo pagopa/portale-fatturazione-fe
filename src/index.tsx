@@ -8,12 +8,10 @@ const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
 );
 root.render(
-    <React.StrictMode>
-        <App />
-        {/* Nonce nascosto  */}
-        <input style={{display: 'none'}} id="nonce" defaultValue=''></input>
-        {/* Nonce nascosto  */}
-    </React.StrictMode>
+    
+    <App />
+       
+   
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -7,16 +7,16 @@ import { LoginProps } from '../types/typesGeneral';
 const Auth : React.FC<LoginProps> = ({setCheckProfilo, setInfoModuloCommessa}) =>{
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-   
+    localStorage.removeItem('profilo');
   
     const token = searchParams.get('selfcareToken');
 
 
     const getProfilo = async (res:any)=>{
-                   
+      
         await getAuthProfilo(res.data[0].jwt)
             .then(resp =>{
-                localStorage.removeItem('profilo');
+               
                 const storeProfilo = resp.data;
                 localStorage.setItem('profilo', JSON.stringify({
                     nomeEnte:storeProfilo.nomeEnte,
@@ -53,7 +53,7 @@ const Auth : React.FC<LoginProps> = ({setCheckProfilo, setInfoModuloCommessa}) =
            
                 // store del token nella local storage per tutte le successive chiamate END
 
-             
+                
 
                 getProfilo(res);
                
@@ -67,13 +67,16 @@ const Auth : React.FC<LoginProps> = ({setCheckProfilo, setInfoModuloCommessa}) =
     //const objToSave = {token};
 
     useEffect(()=>{
+      
         getSelfcare();
+      
+        
         // localStorage.setItem('testObject', JSON.stringify(objToSave));
-    },[token]);
+    },[]);
     
    
     return (
-        <input className='auth' value=''></input>
+        <></>
     );
 };
 

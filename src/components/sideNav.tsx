@@ -46,10 +46,10 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
     // in quel caso il get profilo viene chiamato nella page auth
   
     useEffect(()=>{
-        
-        
+        const x = Object.values(profilo).length;
+        console.log(infoModuloCommessa.nonce,x);
         if(infoModuloCommessa.nonce === '' && Object.values(profilo).length !== 0){
-           
+            console.log('BECCATO');
             getProfiloToGetNonce();
         }
          
