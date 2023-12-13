@@ -140,7 +140,7 @@ export const getAnni = async (token:string , nonce:string) =>{
     return response;
 };
 
-export const getListaCommessa = async (string:string, nonce:string) =>{
+export const getListaCommessa = async(token:string , nonce:string) =>{
     const response = await axios.get(
         `${url}/api/modulocommessa/lista?nonce=${nonce}`,
         { headers: {
