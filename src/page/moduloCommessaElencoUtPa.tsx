@@ -32,7 +32,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setInfoM
 
     const getAnniSelect = async () =>{
 
-        await getAnni(infoModuloCommessa.nonce).then((res:any)=>{
+        await getAnni(token, infoModuloCommessa.nonce).then((res:any)=>{
             setAnni(res.data);
         }).catch((err:any)=>{
             if(err.response.status === 401){
@@ -47,7 +47,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setInfoM
 
     const getListaCommessaGrid = async () =>{
 
-        await getListaCommessa(infoModuloCommessa.nonce).then((res:any)=>{
+        await getListaCommessa(token , infoModuloCommessa.nonce).then((res:any)=>{
             const finalData = fixResponseForDataGrid(res.data);
             setGridData(finalData);
         }).catch((err:any)=>{
@@ -82,7 +82,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setInfoM
 
    
     const handleButtonFiltra = () => {
-        getListaCommessaFiltered(infoModuloCommessa.nonce, valueSelect).then((res:any)=>{
+        getListaCommessaFiltered(token , infoModuloCommessa.nonce, valueSelect).then((res:any)=>{
             const finalData = fixResponseForDataGrid(res.data);
             setGridData(finalData);
            
@@ -101,7 +101,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setInfoM
    
     const handleButtonAnnullaFiltri = () => {
 
-        getListaCommessaOnAnnulla(infoModuloCommessa.nonce).then((res:any)=>{
+        getListaCommessaOnAnnulla(token, infoModuloCommessa.nonce).then((res:any)=>{
             const finalData = fixResponseForDataGrid(res.data);
             setGridData(finalData);
            
@@ -150,7 +150,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setInfoM
                             id="sea"
                             label="Anno"
                             labelId="search-by-label"
-                            onChange={(e) =>{setValueSelect(e.target.value); console.log('tttttt');}  }
+                            onChange={(e) =>{setValueSelect(e.target.value);}  }
                             value={valueSelect}
                             IconComponent={ArrowDropDownIcon}
                         >

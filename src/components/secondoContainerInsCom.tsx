@@ -29,7 +29,7 @@ const SecondoContainerInsCom : React.FC = () => {
     });
  
     const getCategoria = async () =>{
-        await getCategoriaSpedizione(infoModuloCommessa.nonce).then((res:any) => {
+        await getCategoriaSpedizione(token , infoModuloCommessa.nonce).then((res:any) => {
             console.log({res}, 'PIPPO');
             setArrTipoSpedizione({
                 idSpedizioneDigitale :getIdByTipo('Digitale',res.data),

@@ -39,7 +39,6 @@ const App : React.FC = () => {
 
 
 
-    console.log({infoModuloCommessa});
     return (
 
         <Router>

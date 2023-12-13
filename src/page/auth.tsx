@@ -16,7 +16,7 @@ const Auth : React.FC<LoginProps> = ({setCheckProfilo, setInfoModuloCommessa}) =
                    
         await getAuthProfilo(res.data[0].jwt)
             .then(resp =>{
-               
+                localStorage.removeItem('profilo');
                 const storeProfilo = resp.data;
                 localStorage.setItem('profilo', JSON.stringify({
                     nomeEnte:storeProfilo.nomeEnte,
@@ -31,7 +31,7 @@ const Auth : React.FC<LoginProps> = ({setCheckProfilo, setInfoModuloCommessa}) =
               
               
                 setCheckProfilo(true);
-                console.log({resp}, 'ciao');
+               
                 // setto il nonce nello state di riferimento globale
                 setInfoModuloCommessa((prev:any)=>({...prev, ...{nonce:resp?.data.nonce}}));
                 navigate("/");
