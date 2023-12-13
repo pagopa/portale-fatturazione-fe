@@ -4,7 +4,7 @@ import {useEffect} from 'react';
 import { LoginProps } from '../types/typesGeneral';
 
 
-const Auth : React.FC<LoginProps> = ({setCheckProfilo}) =>{
+const Auth : React.FC<LoginProps> = ({setCheckProfilo, setInfoModuloCommessa}) =>{
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
    
@@ -15,22 +15,25 @@ const Auth : React.FC<LoginProps> = ({setCheckProfilo}) =>{
     const getProfilo = async (res:any)=>{
                    
         await getAuthProfilo(res.data[0].jwt)
-            .then(res =>{
+            .then(resp =>{
                
-                const storeProfilo = res.data;
+                const storeProfilo = resp.data;
                 localStorage.setItem('profilo', JSON.stringify({
                     nomeEnte:storeProfilo.nomeEnte,
                     descrizioneRuolo:storeProfilo.descrizioneRuolo,
-                    nonce:storeProfilo.nonce,
+                    ruolo:storeProfilo.ruolo,
                     dataUltimo:storeProfilo.dataUltimo,
                     dataPrimo:storeProfilo.dataPrimo,
                     prodotto:storeProfilo.prodotto,
-                    idTipoContratto:storeProfilo.idTipoContratto
-
-
-                   
+                    jwt:res.data[0].jwt
                 }));
+                
+              
+              
                 setCheckProfilo(true);
+                console.log({resp}, 'ciao');
+                // setto il nonce nello state di riferimento globale
+                setInfoModuloCommessa((prev:any)=>({...prev, ...{nonce:resp?.data.nonce}}));
                 navigate("/");
             } )
             .catch(err => {
@@ -70,7 +73,7 @@ const Auth : React.FC<LoginProps> = ({setCheckProfilo}) =>{
     
    
     return (
-        <div className='auth'></div>
+        <input className='auth' value=''></input>
     );
 };
 

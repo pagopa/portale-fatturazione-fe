@@ -1,14 +1,15 @@
-import React, { startTransition, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Grid, Typography, InputLabel } from '@mui/material';
-import { TerzoContainerModCommessa, CategorieTotali,ResponsTotaliInsModuloCommessa } from '../types/typeModuloCommessaInserimento';
+import { TerzoContainerModCommessa, CategorieTotali} from '../types/typeModuloCommessaInserimento';
 import { getDatiConfigurazioneCommessa } from '../api/api';
+import { useNavigate } from 'react-router';
 
-const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali, dataModifica}) => {
+const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali, dataModifica, infoModuloCommessa}) => {
 
     const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre","Gennaio"];
    
     
-
+    const navigate = useNavigate();
     
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
@@ -64,16 +65,26 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
         });
     };
 
+
     const getConfigurazione = async() =>{
-        getDatiConfigurazioneCommessa(token, profilo.idTipoContratto, profilo.prodotto)
+        getDatiConfigurazioneCommessa(token, profilo.idTipoContratto, profilo.prodotto, infoModuloCommessa.nonce)
             .then((res)=>{
                 const newCategorie = replaceDate(res.data.categorie,'[data]', '');
                 setLabelCategorie(newCategorie);
-            }).catch((err)=>err);
+            }).catch((err)=>{
+                if(err.response.status === 401){
+                    navigate('/error');
+                }else if(err.response.status === 419){
+                    navigate('/error');
+                }
+            });
     };
 
     useEffect(()=>{
-        getConfigurazione();
+        if(infoModuloCommessa.nonce !== ''){
+            getConfigurazione();
+        }
+        
     },[]);
 
   

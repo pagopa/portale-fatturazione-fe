@@ -70,13 +70,13 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
             const string = JSON.stringify(newState);
             localStorage.setItem('statusApplication', string);
 
-            setInfoModuloCommessa({
+            setInfoModuloCommessa((prev:any)=>({...prev, ...{
                 mese:getMeseIndex+1,
                 anno:params.row.annoValidita,
                 modifica:params.row.modifica,
                 userClickOn:'GRID',
                 inserisciModificaCommessa:"MODIFY"
-            });
+            }}));
             // localStorage.removeItem('statusApplication');
            
             navigate('/8');
@@ -152,101 +152,7 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
     ];
   
    
-    /*
-    let makeColums : any[] = [];
-  
-    if(data.length > 0){
-        makeColums = Object.keys(data[0]).map((singleKey) => {
-            if (singleKey === 'totale') {
-                return {
-                    field: singleKey,
-                    headerClassName: 'super-app-theme--header',
-                    headerAlign: 'left',
-                    headerName:'Totale',
-                    width: 160,
-        
-                };
-            }
-          
-            if (singleKey === 'meseValidita') {
-                return {
-                    field: singleKey,
-                    headerClassName: 'super-app-theme--header',
-                    headerAlign: 'left',
-                    headerName:'Mese',
-                    width: 120,
-                    renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.meseValidita}</a>
-                    ,
-    
-                };
-            }
-         
-            if (singleKey === 'stato') {
-                return {
-                    field: singleKey,
-                    headerClassName: 'super-app-theme--header',
-                    headerAlign: 'left',
-                    headerName:'Stato',
-                    width: 160,
-        
-                };
-            }
-            if (singleKey === 'dataModifica') {
-                return {
-                    field: singleKey,
-                    headerClassName: 'super-app-theme--header',
-                    headerAlign: 'left',
-                    headerName:'Data',
-                    width: 160,
-        
-                };
-            }
-            if (singleKey === 'totaleDigitale') {
-                return {
-                    field: singleKey,
-                    headerClassName: 'super-app-theme--header',
-                    headerAlign: 'left',
-                    headerName:'Tot. Digitale',
-                    width: 160,
-        
-                };
-            }
-            if (singleKey === 'totaleAnalogico') {
-                return {
-                    field: singleKey,
-                    headerClassName: 'super-app-theme--header',
-                    headerAlign: 'left',
-                    headerName:'Tot. Analogiche',
-                    width: 160,
-        
-                };
-            }
-
-            return {
-                field: singleKey,
-                headerClassName: 'super-app-theme--header',
-                headerAlign: 'left',
-                width: 160,
-    
-            };
-        });
-    }
-  
-*/
-    const showDetailsButton = {
-        field: 'action',
-        headerName: '',
-        sortable: false,
-        headerAlign: 'left',
-        renderCell: ((row : any) => (
-
-            <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} onClick={() => console.log('Show page details')} />
-
-        )
-        ),
-    };
-
-  
+   
 
     return (
 

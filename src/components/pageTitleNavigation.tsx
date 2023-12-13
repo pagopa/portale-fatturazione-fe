@@ -7,6 +7,10 @@ import HorizontalLinearStepper from '../components/stepper';
 
 const PageTitleNavigation = () => {
 
+
+    const getProfilo = localStorage.getItem('profilo') || '{}';
+    const profilo =  JSON.parse(getProfilo);
+
     const {infoModuloCommessa, setInfoModuloCommessa, user} = useContext(DatiFatturazioneContext);
  
     let titleNavigation;
@@ -54,7 +58,7 @@ const PageTitleNavigation = () => {
                 <Typography variant="h4">{titleNavigation}</Typography>
             </div>
             
-            {infoModuloCommessa.statusPageDatiFatturazione === 'immutable' ? (
+            {infoModuloCommessa.statusPageDatiFatturazione === 'immutable' && profilo.ruolo === 'R/W' ? (
                 <div className="text-end marginTop24">
                     <Button onClick={() => setInfoModuloCommessa((prev:any)=>({...prev, ...{statusPageDatiFatturazione:'mutable'}}))} variant="contained" size="small">Modifica</Button>
                 </div>

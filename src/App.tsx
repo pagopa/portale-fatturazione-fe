@@ -19,7 +19,7 @@ import HeaderNavComponent from './components/headerNav';
 
 const App : React.FC = () => {
 
-
+ 
     const [checkProfilo,setCheckProfilo] = useState(false);
     // set status page abilita e disabilita le modifiche al componente dati fatturazione
    
@@ -33,19 +33,19 @@ const App : React.FC = () => {
         statusPageDatiFatturazione:'immutable',
         statusPageInserimentoCommessa:'immutable',
         path:'/',
+        nonce:'',
         indexStepper:0 // in che pat sono al momento del reload?
     });
 
 
 
-
-  
+    console.log({infoModuloCommessa});
     return (
 
         <Router>
             
             <Routes>
-                <Route path="/auth" element={<Auth setCheckProfilo={setCheckProfilo}/>} />
+                <Route path="/auth" element={<Auth setCheckProfilo={setCheckProfilo} setInfoModuloCommessa={setInfoModuloCommessa}/>} />
             </Routes>
            
             <ThemeProvider theme={theme}>
@@ -77,7 +77,7 @@ const App : React.FC = () => {
                                     <Route path="/8" element={<ModuloCommessaInserimentoUtEn30 infoModuloCommessa={infoModuloCommessa} setInfoModuloCommessa={setInfoModuloCommessa} />} />
                                 </Routes>
                                 <Routes>
-                                    <Route path="/pdf" element={<ModuloCommessaPdf />} />
+                                    <Route path="/pdf" element={<ModuloCommessaPdf infoModuloCommessa={infoModuloCommessa} />} />
                                 </Routes>
                                     
                            

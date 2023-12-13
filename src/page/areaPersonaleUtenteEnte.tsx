@@ -76,25 +76,27 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
 
+   
 
-
-
+  
 
     const getDatiFat = async () =>{
       
-        await getDatiFatturazione(token).then((res:any) =>{   
+        await getDatiFatturazione(token,infoModuloCommessa.nonce).then((res:any) =>{   
             setUser('old');
             setDatiFatturazione(res.data); 
            
         }).catch(err =>{
            
-            if(err.response?.status === 401){
+            if(err.response.status === 401){
                 localStorage.removeItem("token");
                 localStorage.removeItem("profilo");
                 navigate('/error');
-            }else if(err.response?.status === 404){
+            }else if(err.response.status === 404){
 
                 setUser('new');
+            }else if(err.response.status === 419){
+                navigate('/error');
             }
             // setUser('new');
             setInfoModuloCommessa((prev:any)=>({...prev, ...{statusPageDatiFatturazione:'mutable'}}));
@@ -120,15 +122,22 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
 
 
     useEffect(()=>{
-        getDatiFat();
-    }, []);
+        if(infoModuloCommessa.nonce !== ''){
+            getDatiFat();
+       
+        }
+       
+        
+    }, [infoModuloCommessa.nonce]);
+
+
 
    
 
     const hendleSubmitDatiFatturazione = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) =>{
         e.preventDefault();
         if(user === 'old'){
-            modifyDatiFatturazione(datiFatturazione, token)
+            modifyDatiFatturazione(datiFatturazione, token,infoModuloCommessa.nonce)
                 .then((res) =>{
 
                     if(infoModuloCommessa.action === 'DATI_FATTURAZIONE'){
@@ -153,9 +162,11 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
                 })
                 .catch(err => {
 
-                    if(err.response?.status === 401){
-                        
-                        // navigate('/login');
+                    if(err.response.status === 404){
+
+                        setUser('new');
+                    }else if(err.response.status === 419){
+                        navigate('/error');
                     }
                 });
          
@@ -173,7 +184,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
                 dataDocumento:new Date().toISOString(),
                 pec:datiFatturazione.pec};
 
-            insertDatiFatturazione(body, token).then(res =>{
+            insertDatiFatturazione(body, token,infoModuloCommessa.nonce).then(res =>{
                 setInfoModuloCommessa((prev:any)=>({...prev, ...{
                     statusPageDatiFatturazione:'immutable',
                     action:'SHOW_MODULO_COMMESSA'

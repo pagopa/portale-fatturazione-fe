@@ -69,6 +69,7 @@ export const selfcareLogin = async (selfcareToken:string|null) =>{
 };
 
 export const getAuthProfilo = async (tokenFromSelfcare:string) => {
+
     const result = await axios.get(`${url}/api/auth/profilo`,
         { headers: {
             Authorization: 'Bearer ' + tokenFromSelfcare
@@ -78,9 +79,9 @@ export const getAuthProfilo = async (tokenFromSelfcare:string) => {
     return result;
 };
 
-export const getDatiConfigurazioneCommessa = async (token:string, idTipoContratto:number, prodotto:string) =>{
+export const getDatiConfigurazioneCommessa = async (token:string, idTipoContratto:number, prodotto:string, nonce:string) =>{
 
-    const result = await axios.get(`${url}/api/configurazionemodulocommessa?idTipoContratto=${idTipoContratto}&prodotto=${prodotto}`,
+    const result = await axios.get(`${url}/api/configurazionemodulocommessa?idTipoContratto=${idTipoContratto}&prodotto=${prodotto}&nonce=${nonce}`,
         { headers: {
             Authorization: 'Bearer ' + token
         }} 
@@ -92,10 +93,10 @@ export const getDatiConfigurazioneCommessa = async (token:string, idTipoContratt
 
 
 
-export const getDatiFatturazione  = async (token:string) => {
+export const getDatiFatturazione  = async (token:string, nonce:string) => {
   
     const response = await axios.get(
-        `${url}/api/datifatturazione/ente`,
+        `${url}/api/datifatturazione/ente?nonce=${nonce}`,
         { headers: {
             Authorization: 'Bearer ' + token
         }});
@@ -106,9 +107,9 @@ export const getDatiFatturazione  = async (token:string) => {
 };
 
 
-export const modifyDatiFatturazione = async (datiFatturazione: DatiFatturazione, token:string) => {
+export const modifyDatiFatturazione = async (datiFatturazione: DatiFatturazione, token:string, nonce:string) => {
 
-    const response= await axios.put(`${url}/api/datifatturazione`,
+    const response= await axios.put(`${url}/api/datifatturazione?nonce=${nonce}`,
         datiFatturazione,
         { headers: {
             Authorization: 'Bearer ' + token
@@ -119,8 +120,8 @@ export const modifyDatiFatturazione = async (datiFatturazione: DatiFatturazione,
     return response;
 };
 
-export const insertDatiFatturazione = async (datiFatturazione: DatiFatturazionePost, token:string) => {
-    const response = await axios.post(`${url}/api/datifatturazione`,
+export const insertDatiFatturazione = async (datiFatturazione: DatiFatturazionePost, token:string, nonce:string) => {
+    const response = await axios.post(`${url}/api/datifatturazione?nonce=${nonce}`,
         datiFatturazione,
         { headers: {
             Authorization: 'Bearer ' + token
@@ -130,8 +131,55 @@ export const insertDatiFatturazione = async (datiFatturazione: DatiFatturazioneP
 };
 
 
-export const insertDatiModuloCommessa = async (datiCommessa : DatiCommessa, token:string) => {
-    const response =  await axios.post(`${url}/api/modulocommessa`,
+export const getAnni = async (nonce:string) =>{
+    const response = await axios.get(
+        `${url}/api/modulocommessa/anni?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }});
+    return response;
+};
+
+export const getListaCommessa = async (nonce:string) =>{
+    const response = await axios.get(
+        `${url}/api/modulocommessa/lista?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }});
+    return response;
+};
+
+export const getListaCommessaFiltered = async (nonce:string, valueSelect:string) =>{
+    const response = await axios.get(
+        `${url}/api/modulocommessa/lista/${valueSelect}?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }});
+    return response;
+};
+
+export const getListaCommessaOnAnnulla = async (nonce:string) =>{
+    const response = await axios.get(
+        `${url}/api/modulocommessa/lista?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }});
+    return response;
+};
+
+export const getCategoriaSpedizione =  async (nonce:string) =>{
+    const response = await axios.get(
+        `${url}/api/tipologia/categoriaspedizione?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }});
+    return response;
+};
+
+
+
+export const insertDatiModuloCommessa = async (datiCommessa : DatiCommessa, token:string, nonce:string) => {
+    const response =  await axios.post(`${url}/api/modulocommessa?nonce=${nonce}`,
         datiCommessa,
         { headers: {
             Authorization: 'Bearer ' + token
@@ -141,8 +189,8 @@ export const insertDatiModuloCommessa = async (datiCommessa : DatiCommessa, toke
     return response;
 };
 
-export const getDatiModuloCommessa = async ( token:string) => {
-    const response =  await axios.get(`${url}/api/modulocommessa`,
+export const getDatiModuloCommessa = async ( token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/modulocommessa?nonce=${nonce}`,
        
         { headers: {
             Authorization: 'Bearer ' + token
@@ -152,8 +200,8 @@ export const getDatiModuloCommessa = async ( token:string) => {
     return response;
 };
 
-export const getDettaglioModuloCommessa = async (token:string, anno:string, mese:string) => {
-    const response =  await axios.get(`${url}/api/modulocommessa/dettaglio/${anno}/${mese}`,
+export const getDettaglioModuloCommessa = async (token:string, anno:string, mese:string,nonce:string) => {
+    const response =  await axios.get(`${url}/api/modulocommessa/dettaglio/${anno}/${mese}?nonce=${nonce}`,
        
         { headers: {
             Authorization: 'Bearer ' + token
@@ -163,8 +211,8 @@ export const getDettaglioModuloCommessa = async (token:string, anno:string, mese
     return response;
 };
 
-export const getModuloCommessaPdf = async ( token:string ,mese:string, anno:string) => {
-    const response =  await axios.get(`${url}/api/modulocommessa/documento/${mese}/${anno}`,
+export const getModuloCommessaPdf = async ( token:string ,mese:string, anno:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/modulocommessa/documento/${mese}/${anno}?nonce=${nonce}`,
        
         { headers: {
             Authorization: 'Bearer ' + token
@@ -174,8 +222,8 @@ export const getModuloCommessaPdf = async ( token:string ,mese:string, anno:stri
     return response;
 };
 
-export const downloadModuloCommessaPdf = async (token:string, mese:string, anno:string,tipo:string) => {
-    const response =  await axios.get(`${url}/api/modulocommessa/download/${mese}/${anno}?Tipo=${tipo}`,
+export const downloadModuloCommessaPdf = async (token:string, mese:string, anno:string,tipo:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/modulocommessa/download/${mese}/${anno}?Tipo=${tipo}&nonce=${nonce}`,
        
         { headers: {
             Authorization: 'Bearer ' + token

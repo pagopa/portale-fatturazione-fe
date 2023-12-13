@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {useAxios, url, menageError} from '../api/api';
+import {useAxios, url, menageError, getAnni, getListaCommessa, getListaCommessaFiltered,getListaCommessaOnAnnulla} from '../api/api';
 import { Button, Box, Typography, FormControl, InputLabel,Select, MenuItem,} from '@mui/material';
 import GridComponent from '../components/grid';
 import { useNavigate } from 'react-router';
@@ -18,104 +18,107 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setInfoM
     const [anni, setAnni] = useState([]);
     const [valueSelect, setValueSelect] = useState<string>('');
    
-   
-    const {...dataGetAnni} = useAxios({
-        method: 'GET',
-        url: `${url}/api/modulocommessa/anni`,
-        headers: {
-            Authorization: 'Bearer ' + token
-        }
-    });
-
-  
     const fixResponseForDataGrid = (arr:any) =>{
         const result = arr.map( (singlObj:any,i:number) =>{
             
             return {
                 id : Math.random(),
                 ...singlObj
-               
             };
         } );
         return result;
     };
+
+
+    const getAnniSelect = async () =>{
+
+        await getAnni(infoModuloCommessa.nonce).then((res:any)=>{
+            setAnni(res.data);
+        }).catch((err:any)=>{
+            if(err.response.status === 401){
+
+                navigate('/error');
+            }else if(err.response.status === 419){
+
+                navigate('/error');
+            }
+        });
+    };
+
+    const getListaCommessaGrid = async () =>{
+
+        await getListaCommessa(infoModuloCommessa.nonce).then((res:any)=>{
+            const finalData = fixResponseForDataGrid(res.data);
+            setGridData(finalData);
+        }).catch((err:any)=>{
+            if(err.response.status === 401){
+
+                navigate('/error');
+            }else if(err.response.status === 419){
+
+                navigate('/error');
+            }
+        });
+    };
+
+    useEffect(()=>{
+        if(infoModuloCommessa.nonce !== ''){
+            getAnniSelect();
+            getListaCommessaGrid();
+        }
+        
+    },[infoModuloCommessa.nonce]);
+
+  
+  
     
    
-    const { ...dataGetListaCommessa } = useAxios({
-        method: 'GET',
-        url: `${url}/api/modulocommessa/lista`,
-        headers: {
-            'Cache-Control':'no-cache',
-            Authorization: 'Bearer ' + token
-        }
-    });
+    
    
     const [gridData, setGridData] = useState([]);
     
   
   
-    const { ...dataGetListaCommessaFiltered } = useAxios({});
+
    
     const handleButtonFiltra = () => {
-        dataGetListaCommessaFiltered.fetchData({
-            method: 'GET',
-            url: `${url}/api/modulocommessa/lista/${valueSelect}`,
-            headers: {
-                Authorization: 'Bearer ' + token
+        getListaCommessaFiltered(infoModuloCommessa.nonce, valueSelect).then((res:any)=>{
+            const finalData = fixResponseForDataGrid(res.data);
+            setGridData(finalData);
+           
+        }).catch((err:any)=>{
+            if(err.response.status === 401){
+
+                navigate('/error');
+            }else if(err.response.status === 419){
+
+                navigate('/error');
             }
         });
-        
     };
 
-    const { ...dataGetListaOnAnnullaFiltri } = useAxios({});
+
    
     const handleButtonAnnullaFiltri = () => {
-        dataGetListaOnAnnullaFiltri.fetchData({
-            method: 'GET',
-            url: `${url}/api/modulocommessa/lista`,
-            headers: {
-                Authorization: 'Bearer ' + token
+
+        getListaCommessaOnAnnulla(infoModuloCommessa.nonce).then((res:any)=>{
+            const finalData = fixResponseForDataGrid(res.data);
+            setGridData(finalData);
+           
+        }).catch((err:any)=>{
+            if(err.response.status === 401){
+
+                navigate('/error');
+            }else if(err.response.status === 419){
+
+                navigate('/error');
             }
         });
-        
+      
     };
 
-    useEffect(()=>{
-       
-        if(dataGetListaOnAnnullaFiltri.response){
-          
-            const finalData = fixResponseForDataGrid(dataGetListaOnAnnullaFiltri.response);
-            setGridData(finalData);
-        }
 
-        if(dataGetListaCommessa.response){
-          
-            const finalData = fixResponseForDataGrid(dataGetListaCommessa.response);
-            setGridData(finalData);
-        }
-      
-        if(dataGetListaCommessaFiltered.response){
-          
-            const finalData = fixResponseForDataGrid(dataGetListaCommessaFiltered.response);
-            setGridData(finalData);
-        }
-        if(dataGetAnni.response){
-         
-            setAnni(dataGetAnni.response);
-        }
-         
-        menageError(dataGetAnni, navigate);
-        menageError(dataGetListaCommessaFiltered,navigate);
-        menageError(dataGetListaOnAnnullaFiltri,navigate);
-        menageError(dataGetListaCommessa,navigate);
-
-      
-    },[dataGetListaOnAnnullaFiltri.response,
-        dataGetListaCommessaFiltered.response,
-        dataGetListaCommessa.response,
-        dataGetAnni.response]);
-
-  
+    console.log({infoModuloCommessa},'grid');
     return (
 
         <div className="m-5">

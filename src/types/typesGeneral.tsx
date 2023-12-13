@@ -10,7 +10,9 @@ export interface LocationState {
 }
 
 export interface LoginProps {
-    setCheckProfilo:any
+    setCheckProfilo:any,
+    setInfoModuloCommessa:any
+
 }
 
 export interface SideNavProps{

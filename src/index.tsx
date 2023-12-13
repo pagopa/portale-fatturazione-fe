@@ -10,6 +10,9 @@ const root = ReactDOM.createRoot(
 root.render(
     <React.StrictMode>
         <App />
+        {/* Nonce nascosto  */}
+        <input style={{display: 'none'}} id="nonce" defaultValue=''></input>
+        {/* Nonce nascosto  */}
     </React.StrictMode>
 );
 

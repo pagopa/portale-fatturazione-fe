@@ -9,12 +9,12 @@ import TextDettaglioPdf from '../components/textDettaglioPdf';
 import { DataPdf } from "../types/typeModuloCommessaInserimento";
 import { menageError } from "../api/api";
 import { usePDF } from 'react-to-pdf';
-import { DatiModuloCommessaPdf  } from "../types/typeModuloCommessaInserimento";
+import { DatiModuloCommessaPdf,ModComPdfProps  } from "../types/typeModuloCommessaInserimento";
 
 
 
 
-const ModuloCommessaPdf : React.FC = () =>{
+const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({infoModuloCommessa}) =>{
 
     const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre","Gennaio"];
 
@@ -66,7 +66,7 @@ const ModuloCommessaPdf : React.FC = () =>{
     
 
     const getPdf = async() =>{
-        getModuloCommessaPdf(token, statusApp.anno,statusApp.mese).then((res)=>{
+        getModuloCommessaPdf(token, statusApp.anno,statusApp.mese, infoModuloCommessa.nonce).then((res)=>{
 
             const primo = res.data.datiModuloCommessa.find((obj:any)=>obj.idTipoSpedizione === 3);
             const secondo = res.data.datiModuloCommessa.find((obj:any)=>obj.idTipoSpedizione === 1);
@@ -80,19 +80,31 @@ const ModuloCommessaPdf : React.FC = () =>{
             localStorage.setItem("tipo", res.data.tipoCommessa);
          
         }).catch((err)=>{
-            console.log('ccccc');
+            if(err.response.status === 401){
+
+                navigate('/error');
+            }else if(err.response.status === 419){
+
+                navigate('/error');
+            }
         });  
     };
  
     const downloadPdf = async()=>{
         const tipoCommessa =  localStorage.getItem('tipo') || '';
-        downloadModuloCommessaPdf(token, statusApp.anno,statusApp.mese, tipoCommessa).then((res)=>{
+        downloadModuloCommessaPdf(token, statusApp.anno,statusApp.mese, tipoCommessa, infoModuloCommessa.nonce).then((res)=>{
             const wrapper = document.getElementById('file_download');
             if(wrapper){
                 wrapper.innerHTML = res.data;
             }
         }).catch((err)=>{
-            console.log(err);
+            if(err.response.status === 401){
+
+                navigate('/error');
+            }else if(err.response.status === 419){
+
+                navigate('/error');
+            }
         });   
     };
 
@@ -179,7 +191,7 @@ const ModuloCommessaPdf : React.FC = () =>{
                             <TextDettaglioPdf description={'Cig'} value={dataPdf.cig}></TextDettaglioPdf>
                             <TextDettaglioPdf description={'Soggetto Split Payment'} value={dataPdf.splitPayment}></TextDettaglioPdf>
                             <TextDettaglioPdf description={'PEC'} value={dataPdf.pec}></TextDettaglioPdf>
-                            <TextDettaglioPdf description={'Email riferimento contatti'} value={dataPdf.contatti[0].email}></TextDettaglioPdf>
+                            <TextDettaglioPdf description={'Email riferimento contatti'} value={dataPdf?.contatti[0]?.email}></TextDettaglioPdf>
                             <TextDettaglioPdf description={'Data di compilazione'} value={dataPdf.dataModifica}></TextDettaglioPdf>
                         </div>
                     </div>

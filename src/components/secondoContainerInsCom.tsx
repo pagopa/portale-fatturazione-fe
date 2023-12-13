@@ -3,21 +3,14 @@ import { Grid, Typography } from '@mui/material';
 import RowInserimentoCommessa from './rowInserimentoCommessa';
 import { InsModuloCommessaContext } from '../types/typeModuloCommessaInserimento';
 import { InserimentoModuloCommessaContext } from '../page/moduloCommessaInserimentoUtEn30';
-import {useAxios, url, menageError} from '../api/api';
+import {useAxios, url, menageError, getCategoriaSpedizione} from '../api/api';
+import { useNavigate } from 'react-router';
 
 const SecondoContainerInsCom : React.FC = () => {
+    const navigate = useNavigate();
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
-    const { totale} = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
-
-
-    const { ...getCategoriaSpedizione } = useAxios({
-        method: 'GET',
-        url: `${url}/api/tipologia/categoriaspedizione`,
-        headers: {
-            Authorization: 'Bearer ' + token
-        }
-    });
+    const { totale, infoModuloCommessa} = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
 
     const getIdByTipo = (string:string, array:any[]) =>{
       
@@ -29,20 +22,39 @@ const SecondoContainerInsCom : React.FC = () => {
         return getAllObjs[0].id;
      
     };
-
-    let idSpedizioneDigitale = 0;
-    let idSpedizioneAnalog890 = 0;
-    let idSpedizioneAnalogAR = 0;
-
-    if(getCategoriaSpedizione.response !== undefined){
-        idSpedizioneDigitale = getIdByTipo('Digitale',getCategoriaSpedizione.response);
-        idSpedizioneAnalog890 = getIdByTipo('Analog. L. 890/82',getCategoriaSpedizione.response);
-        idSpedizioneAnalogAR = getIdByTipo('Analog. A/R',getCategoriaSpedizione.response);
-    }
-  
-
+    const [arrTipoSpedizione , setArrTipoSpedizione] = useState({
+        idSpedizioneDigitale : 0,
+        idSpedizioneAnalog890 : 0,
+        idSpedizioneAnalogAR : 0,
+    });
+ 
+    const getCategoria = async () =>{
+        await getCategoriaSpedizione(infoModuloCommessa.nonce).then((res:any) => {
+            console.log({res}, 'PIPPO');
+            setArrTipoSpedizione({
+                idSpedizioneDigitale :getIdByTipo('Digitale',res.data),
+                idSpedizioneAnalog890 :  getIdByTipo('Analog. L. 890/82',res.data),
+                idSpedizioneAnalogAR : getIdByTipo('Analog. A/R',res.data),
+            });
+          
+            
+        }).catch((err:any) =>{
+            if(err.response.status === 401){
+                navigate('/error');
+            }else if(err.response.status === 419){
+                navigate('/error');
+            }
+        });
+    };
    
+    useEffect(()=>{
+        if(infoModuloCommessa.nonce !== ''){
+            getCategoria();
+        }
+        
+    },[infoModuloCommessa.nonce]);
 
+  
 
 
   
@@ -53,7 +65,7 @@ const SecondoContainerInsCom : React.FC = () => {
             <RowInserimentoCommessa
                 sentence="Numero complessivo delle notifiche da processare in via digitale nel mese di"
                 textBoxHidden={false}
-                idTipoSpedizione={idSpedizioneDigitale}
+                idTipoSpedizione={arrTipoSpedizione.idSpedizioneDigitale}
                 // setInputTotale={setInputTotale}
                 rowNumber={3}
             />
@@ -64,7 +76,7 @@ const SecondoContainerInsCom : React.FC = () => {
                 sentence="Numero complessivo delle notifiche da processare in via analogica tramite Raccomandata A/R nel mese di"
                 textBoxHidden={false}
                
-                idTipoSpedizione={idSpedizioneAnalogAR}
+                idTipoSpedizione={arrTipoSpedizione.idSpedizioneAnalogAR}
                 // setInputTotale={setInputTotale}
                 rowNumber={1}
             />
@@ -75,7 +87,7 @@ const SecondoContainerInsCom : React.FC = () => {
                 sentence="Numero complessivo delle notifiche da processare in via analogica del tipo notifica ex L. 890/1982 nel mese di"
                 textBoxHidden
               
-                idTipoSpedizione={idSpedizioneAnalog890}
+                idTipoSpedizione={arrTipoSpedizione.idSpedizioneAnalog890}
                 // setInputTotale={setInputTotale}
                 rowNumber={2}
             />

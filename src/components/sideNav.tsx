@@ -11,9 +11,9 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import DnsIcon from '@mui/icons-material/Dns';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
-import {useAxios, url, menageError, getDatiModuloCommessa} from '../api/api';
+import { getDatiModuloCommessa, getAuthProfilo} from '../api/api';
 import { SideNavProps } from '../types/typesGeneral';
-import { info } from 'console';
+
 
 const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoModuloCommessa}) => {
 
@@ -22,57 +22,107 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
 
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
+   
+    const getProfilo = localStorage.getItem('profilo') || '{}';
+    const profilo =  JSON.parse(getProfilo);
+
+   
+
+    // questa chiamata viene eseguita esclusivamente se l'utenete fa un reload page cosi da inserire nuovamente il NONCE nel DOM
+    const getProfiloToGetNonce = async () =>{
+        await getAuthProfilo(profilo.jwt)
+            .then((res) =>{
+            
+                setInfoModuloCommessa((prev:any)=>({...prev, ...{nonce:res?.data.nonce}}));
+           
+              
+            }).catch(()=>{
+
+                navigate('/error');
+            });
+    };
+    // eseguiamo la get a riga 21 solo se il value dell'input(nonce) nel Dom è non c'è e controlliamo che nella local storage sia settatto il profilo
+    // Object.values(profilo).length !== 0 viene fatto solo per far si che la chiamanta non venga fatta al primo rendering
+    // in quel caso il get profilo viene chiamato nella page auth
+  
+    useEffect(()=>{
+        
+        
+        if(infoModuloCommessa.nonce === '' && Object.values(profilo).length !== 0){
+           
+            getProfiloToGetNonce();
+        }
+         
+    },[infoModuloCommessa.nonce]);
 
     
 
-    const {...getCheckCommessaCurrentMonth} = useAxios({});
-    const getCommessa = () =>{
-        getCheckCommessaCurrentMonth.fetchData({
-            method: 'GET',
-            url: `${url}/api/modulocommessa`,
-            headers: {
-                Authorization: 'Bearer ' + token
-            }});
+  
+
+    const getCommessa = async () =>{
+        await getDatiModuloCommessa(token, infoModuloCommessa.nonce).then((res)=>{
+
+            if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
+           
+                setInfoModuloCommessa((prev:any)=>({
+                    ...prev,
+                    ...{
+                        inserisciModificaCommessa:'INSERT',
+                        statusPageInserimentoCommessa:'mutable',
+                        modifica:true
+                    }}));
+                // ci sono commesse inserite nel mese corrente e posso modificarle
+            }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0){
+             
+               
+                setInfoModuloCommessa((prev:any)=>({ 
+                    ...prev,
+                    ...{
+                        inserisciModificaCommessa:'MODIFY',
+                        statusPageInserimentoCommessa:'immutable',
+                        modifica:true}}));
+            }else if(res.data.modifica === false ){
+                setInfoModuloCommessa((prev:any)=>({ 
+                    ...prev,
+                    ...{
+                        inserisciModificaCommessa:'NO_ACTION',
+                        statusPageInserimentoCommessa:'immutable',
+                        modifica:false}}));
+            }
+
+            const getProfilo = localStorage.getItem('profilo') || '{}';
+            const profilo =  JSON.parse(getProfilo);
+            const newProfilo = {...profilo, ...{idTipoContratto:res.data.idTipoContratto}};
+
+            const string = JSON.stringify(newProfilo);
+            localStorage.setItem('profilo', string);
+
+        }).catch((err)=>{
+          
+            if(err.response.status === 401){
+                navigate('/error');
+            }else if(err.response.status === 419){
+                navigate('/error');
+            }
+            // menageError(err.response.status, navigate);
+            
+        });
     };
 
- 
+   
     useEffect(()=>{
-        if(token !== undefined){
+        if(token !== undefined && infoModuloCommessa.nonce !== '' ){
             getCommessa();
         }
-
-    },[token, infoModuloCommessa.action]);
+    },[token,infoModuloCommessa.nonce]);
   
 
-  
+ 
     
-    useEffect(()=>{
-        menageError(getCheckCommessaCurrentMonth, navigate);
-    },[getCheckCommessaCurrentMonth.error]);
-
-
-    
-    useEffect(()=>{
-        // se non ci sono commesse inserite nel mese corrente e posso insrirle
-        if(getCheckCommessaCurrentMonth?.response?.modifica === true && getCheckCommessaCurrentMonth?.response?.moduliCommessa?.length === 0 ){
-            setInfoModuloCommessa((prev:any)=>({
-                ...prev,
-                ...{
-                    inserisciModificaCommessa:'INSERT',
-                    statusPageInserimentoCommessa:'mutable',
-                    modifica:true
-                }}));
-            // ci sono commesse inserite nel mese corrente e posso modificarle
-        }else if(getCheckCommessaCurrentMonth?.response?.modifica === true && getCheckCommessaCurrentMonth?.response?.moduliCommessa?.length > 0){
-            setInfoModuloCommessa((prev:any)=>({ 
-                ...prev,
-                ...{
-                    inserisciModificaCommessa:'MODIFY',
-                    statusPageInserimentoCommessa:'immutable',
-                    modifica:true}}));
-        }
-    },[getCheckCommessaCurrentMonth.response]);
    
+
+    
+
     const [selectedIndex, setSelectedIndex] = useState(0);
     const handleListItemClick = (index : number, route : string) => {
         navigate(route);
@@ -87,31 +137,65 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
         localStorage.setItem('statusApplication', JSON.stringify(infoModuloCommessa));
     };
 
+
     const handleListItemClickModuloCommessa = async (index : number,) => {
        
         setSelectedIndex(index);
-        console.log({getCheckCommessaCurrentMonth});
-        if(getCheckCommessaCurrentMonth?.response?.modifica === true && getCheckCommessaCurrentMonth?.response?.moduliCommessa.length === 0 ){
+      
+
+        await getDatiModuloCommessa(token, infoModuloCommessa.nonce).then((res)=>{
+
+            if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
            
-            const newState = {
-                path:'/8',
-                mese:getCheckCommessaCurrentMonth?.response.mese,
-                anno:getCheckCommessaCurrentMonth?.response.anno,
-                inserisciModificaCommessa:'INSERT'
-            };
-            localStorage.setItem('statusApplication', JSON.stringify(newState));
-          
-            navigate('/8');
-        }else{
-            const newState = {
-                path:'/4',
-                mese:getCheckCommessaCurrentMonth?.response.mese,
-                anno:getCheckCommessaCurrentMonth?.response.anno
-            };
-            localStorage.setItem('statusApplication', JSON.stringify(newState));
-           
-            navigate('/4');
-        }
+                const newState = {
+                    path:'/8',
+                    mese:res.data.mese,
+                    anno:res.data.anno,
+                    inserisciModificaCommessa:'INSERT'
+                };
+                localStorage.setItem('statusApplication', JSON.stringify(newState));
+              
+                navigate('/8');
+            }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0 ){
+                const newState = {
+                    path:'/4',
+                    mese:res.data.mese,
+                    anno:res.data.anno,
+                    inserisciModificaCommessa:'MODIFY'
+                };
+                localStorage.setItem('statusApplication', JSON.stringify(newState));
+               
+                navigate('/4');
+            }else if(res.data.modifica === false && res.data.moduliCommessa.length === 0){
+                const newState = {
+                    path:'/4',
+                    mese:res.data.mese,
+                    anno:res.data.anno,
+                    inserisciModificaCommessa:'NO_ACTION'
+                };
+                localStorage.setItem('statusApplication', JSON.stringify(newState));
+               
+                navigate('/4');
+            }else if(res.data.modifica === false && res.data.moduliCommessa.length > 0){
+                const newState = {
+                    path:'/8',
+                    mese:res.data.mese,
+                    anno:res.data.anno,
+                    inserisciModificaCommessa:'NO_ACTION'
+                };
+                localStorage.setItem('statusApplication', JSON.stringify(newState));
+               
+                navigate('/8');
+            }
+
+        }).catch((err) =>{
+            if(err.response.status === 401){
+                navigate('/error');
+            }else if(err.response.status === 419){
+                navigate('/error');
+            }
+        });
+       
 
     };
 
@@ -138,7 +222,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
 
     return (
         <>
-            {(location.pathname === '/error' ||location.pathname === '/auth') ? null :
+            {(location.pathname === '/error'||location.pathname === '/auth') ? null :
                 <Box sx={{
                     height: '100%',
                     maxWidth: 360,
@@ -159,14 +243,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
                             </ListItemIcon>
                             <ListItemText primary="Modulo commessa" />
                         </ListItemButton>
-                        {/* 
-                        <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClick(2,'/8')}>
-                            <ListItemIcon>
-                                <PlaylistRemoveIcon fontSize="inherit" />
-                            </ListItemIcon>
-                            <ListItemText primary="Contestazioni" />
-                        </ListItemButton>
-                        */}
+                       
                     </List>
                     <Divider />
                 </Box>

@@ -114,23 +114,11 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     const state = localStorage.getItem('statusApplication') || '{}';
     const statusApp =  JSON.parse(state);
    
-    /*
-    const handleGetDettaglioModuloCommessa = async() => {
-      
-        getDatiCommessaOnClickFromGrid.fetchData({
-            method: 'GET',
-            url: `${url}/api/modulocommessa/dettaglio/${statusApp.anno}/${statusApp.mese}`,
-            headers: {
-                Authorization: 'Bearer ' + token
-            }
-        });
+   
 
-        
-    };
-*/
     const handleGetDettaglioModuloCommessa = async () =>{
 
-        await getDettaglioModuloCommessa(token,statusApp.anno,statusApp.mese)
+        await getDettaglioModuloCommessa(token,statusApp.anno,statusApp.mese, infoModuloCommessa.nonce)
             .then((response:any)=>{
                 const res = response.data;
                 console.log({res});
@@ -144,46 +132,26 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
             }).catch((err:any)=>{
                 if(err.response.status === 401){
                     navigate('/error');
+                }else if(err.response.status === 419){
+                    navigate('/error');
                 } 
             });
     };
 
   
     useEffect(()=>{
-        if(statusApp.userClickOn === 'GRID'){
+        if(statusApp.userClickOn === 'GRID' && infoModuloCommessa.nonce !== ''){
             handleGetDettaglioModuloCommessa();
           
-            setInfoModuloCommessa((prev:any)=>({...prev,...{userClickOn:'',statusPageInserimentoCommessa:'immutable'}}));
-        }
-    },[]);
-   
-    /*
-    useEffect(()=>{
-       
-        if(infoModuloCommessa.userClickOn === 'GRID'){
-            handleGetDettaglioModuloCommessa();
-            setInfoModuloCommessa((prev:any)=>({...prev,...{userClickOn:'',statusPageInserimentoCommessa:'immutable'}}));
-           
-     
-         
-         
-        
-        }
-       
-        if(getDatiCommessaOnClickFromGrid.response){
-            const res = getDatiCommessaOnClickFromGrid.response;
-            setDatiCommessa({moduliCommessa:res.moduliCommessa});
-            setTotaliModuloCommessa(res.totale);
-            const objAboutTotale = res.totaleModuloCommessaNotifica;
-            setTotale({totaleNazionale:objAboutTotale.totaleNumeroNotificheNazionali
-                , totaleInternazionale:objAboutTotale.totaleNumeroNotificheInternazionali
-                , totaleNotifiche:objAboutTotale.totaleNumeroNotificheDaProcessare});
-        }
-        console.log(getDatiCommessaOnClickFromGrid.response, 'TOT');
-        menageError(getDatiCommessaOnClickFromGrid, navigate);
-    },[getDatiCommessaOnClickFromGrid.response]);
+            setInfoModuloCommessa((prev:any)=>{
 
-   */
+                console.log({prev});
+                return {...prev,...{userClickOn:'',statusPageInserimentoCommessa:'immutable'}};
+            });
+        }
+    },[infoModuloCommessa.nonce]);
+   
+   
    
 
     const [disableContinua, setDisableContinua] = useState(false);
@@ -202,7 +170,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
             totaleNotifiche:calculateTot(datiCommessa.moduliCommessa,'totaleNotifiche')});
 
         const check  = datiCommessa.moduliCommessa.map((singleObj) => {
-            const arrBoolean = singleObj.numeroNotificheNazionali <= 0 &&  singleObj.numeroNotificheInternazionali <= 0;
+            const arrBoolean = singleObj?.numeroNotificheNazionali <= 0 &&  singleObj?.numeroNotificheInternazionali <= 0;
             return arrBoolean;
         });
         const status = check.every(v => v === true);
@@ -213,7 +181,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
     const hendlePostModuloCommessa = async () =>{
 
-        await insertDatiModuloCommessa(datiCommessa, token)
+        await insertDatiModuloCommessa(datiCommessa, token, infoModuloCommessa.nonce)
             .then(res =>{
                 const statusApp = localStorage.getItem('statusApplication')||'{}';
                 const parseStatusApp = JSON.parse(statusApp);
@@ -356,8 +324,10 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                     
                    
                 </div>
-                {infoModuloCommessa.inserisciModificaCommessa === 'INSERT' ||
-                (infoModuloCommessa.action === 'HIDE_MODULO_COMMESSA' && infoModuloCommessa.inserisciModificaCommessa === 'MODIFY')
+                {(infoModuloCommessa.inserisciModificaCommessa === 'INSERT' &&  infoModuloCommessa.modify === true) ||
+                (infoModuloCommessa.action === 'HIDE_MODULO_COMMESSA' && 
+                infoModuloCommessa.inserisciModificaCommessa === 'MODIFY' && 
+                infoModuloCommessa.modify === true)
                     ? 
                     <div className="marginTop24">
                         <HorizontalLinearStepper indexStepper={indexStepper}></HorizontalLinearStepper>
@@ -381,11 +351,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                     
                     
                 </div>
-                {/*
-                    <div className='marginTop24 marginBottom24'>
-                        <HorizontalLinearStepper></HorizontalLinearStepper>
-                    </div>
-                    */}
                
                 {infoModuloCommessa.action !== "HIDE_MODULO_COMMESSA" ?
                     <div>
@@ -395,7 +360,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
        
                         </div>
                         <div className='bg-white'>
-                            <TerzoContainerInsCom valueTotali={totaliModuloCommessa} dataModifica={dataMod}/>
+                            <TerzoContainerInsCom valueTotali={totaliModuloCommessa} dataModifica={dataMod} infoModuloCommessa={infoModuloCommessa}/>
                         </div>
                  
                         {
@@ -429,7 +394,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                     </div> 
                     : null}
             </div> 
-            {infoModuloCommessa.statusPageInserimentoCommessa === 'immutable' && !infoModuloCommessa.action ?
+            {infoModuloCommessa.statusPageInserimentoCommessa === 'immutable' ?
                 <div className="d-flex justify-content-center marginTop24">
                     <Button onClick={()=>navigate('/pdf')} variant="contained">Vedi anteprima</Button>
                 </div> : null

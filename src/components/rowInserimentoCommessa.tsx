@@ -16,7 +16,7 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
     const statusApplication =  JSON.parse(getStatusApplication);
    
     const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre",'Gennaio'];
-
+    console.log({datiCommessa}, 'DATI');
     
     let mese = '';
     let anno = 2000;
@@ -100,6 +100,8 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
     
 
     const findValueNazione = (rowNumber : number) =>{
+        const rr = datiCommessa.moduliCommessa.filter(obj => obj.idTipoSpedizione === rowNumber)[0].numeroNotificheNazionali;
+        console.log({rowNumber,rr});
         return datiCommessa.moduliCommessa.filter(obj => obj.idTipoSpedizione === rowNumber)[0].numeroNotificheNazionali;
     };
     const findValueInternazionale = (rowNumber : number) =>{
@@ -151,9 +153,9 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
                     error={errorNazionale}
                     onBlur={(e)=>hendleOnBlur(e)}
                     onChange={(e)=>{
-
+                        
                         let value = parseInt(e.target.value);
-                      
+                        console.log({value}, 'value');
                         if(!value){
                             value = 0;
                         }
@@ -172,8 +174,8 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
                         
                             const setNotificheNazionali = {
                                 numeroNotificheNazionali: value,
-                                numeroNotificheInternazionali: getsingleIdTipoSpedizione[0].numeroNotificheInternazionali,
-                                totaleNotifiche:value + getsingleIdTipoSpedizione[0].numeroNotificheInternazionali,
+                                numeroNotificheInternazionali: getsingleIdTipoSpedizione[0]?.numeroNotificheInternazionali,
+                                totaleNotifiche:value + getsingleIdTipoSpedizione[0]?.numeroNotificheInternazionali,
                                 idTipoSpedizione: rowNumber
                             };
                             const newModuliCommessa = [...arrayFiltered, setNotificheNazionali];

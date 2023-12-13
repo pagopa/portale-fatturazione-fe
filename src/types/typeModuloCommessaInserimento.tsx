@@ -55,6 +55,7 @@ export interface ResponsTotaliInsModuloCommessa {
 export interface TerzoContainerModCommessa{
     valueTotali:ResponsTotaliInsModuloCommessa[],
     dataModifica:string,
+    infoModuloCommessa:any
 }
 
 export interface ModalDatiFatProps{
@@ -120,4 +121,8 @@ export interface DatiModuloCommessaPdf {
 export interface DatiCommessaCosti{
     Totale:string,
     descrizione: string
+}
+
+export interface ModComPdfProps{
+    infoModuloCommessa: any
 }
