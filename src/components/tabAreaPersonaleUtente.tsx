@@ -19,7 +19,7 @@ const TabAreaPersonaleUtente = () => {
     console.log({datiFatturazione});
     function createDateFromString(string:string){
         const getGiorno = new Date(string).getDate();
-        console.log({getGiorno});
+      
         const getMese = new Date(string).getMonth() + 1;
         const getAnno = new Date(string).getFullYear();
 
@@ -66,6 +66,7 @@ const TabAreaPersonaleUtente = () => {
                     <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 2fr)' }}>
                         <div>
                             <TextFieldComponent
+                                required={false}
                                 helperText="max 15 caratteri alfanumerici"
                                 label="CUP"
                                 placeholder="Inserisci il CUP"
@@ -109,6 +110,7 @@ const TabAreaPersonaleUtente = () => {
                     <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(1, 2fr)' }}>
                         <div>
                             <TextFieldComponent
+                                required={true}
                                 helperText="Inserisci Mail Pec"
                                 label="Mail Pec"
                                 placeholder="Inserisci Mail Pec"
@@ -133,6 +135,7 @@ const TabAreaPersonaleUtente = () => {
                             {/* Id documento start */}
                             <div>
                                 <TextFieldComponent
+                                    required={false}
                                     helperText="max 20 caratteri alfanumerici"
                                     label="ID Documento"
                                     placeholder="Inserisci ID"
@@ -155,6 +158,7 @@ const TabAreaPersonaleUtente = () => {
                         {/* commessa start */}
                         <div>
                             <TextFieldComponent
+                                required={false}
                                 helperText="max 100 caratteri alfanumerici"
                                 label="Codice. Commessa/Convenzione"
                                 placeholder="Commessa/Convenzione"
@@ -183,6 +187,7 @@ const TabAreaPersonaleUtente = () => {
                         fontSize: '0.8rem',
                     },
                 }}  
+                required
                 control={<Checkbox 
                     checked={datiFatturazione.notaLegale || false}
                     onChange={()=> setDatiFatturazione((prev:any)=>({...prev,...{notaLegale:!datiFatturazione.notaLegale}}))}/>}

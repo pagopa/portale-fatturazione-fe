@@ -64,11 +64,9 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
     const enableDisableConferma = Object.values(statusBottonConferma).every(element => element === false);
    
     const ifAnyTextAreaIsEmpty = (
-        datiFatturazione.cup === ''
-     || datiFatturazione.notaLegale === false 
+        datiFatturazione.notaLegale === false 
      || datiFatturazione.pec === ''
-     || datiFatturazione.idDocumento === ''
-      || datiFatturazione.codCommessa === ''
+     || datiFatturazione.contatti.length === 0
     );
     const location : any = useLocation();
 
@@ -191,7 +189,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
                     statusPageDatiFatturazione:'immutable',
                     action:'SHOW_MODULO_COMMESSA'
                 }}));
-                navigate('/4');
+                navigate('/');
                 
             }).catch(err =>{
                 if(err.response.status === 401){

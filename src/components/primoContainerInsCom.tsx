@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Grid , Typography} from '@mui/material';
 import LabelComponent from './label';
+import { PrimoContainerInsComProps } from '../types/typeModuloCommessaInserimento';
 
 
-export default function PrimoContainerInsCom() {
+const PrimoContainerInsCom : React.FC<PrimoContainerInsComProps> = ({setInfoModuloCommessa}) => {
 
     const getStatusApplication = localStorage.getItem('statusApplication') || '{}';
     const statusApplication =  JSON.parse(getStatusApplication);
@@ -19,20 +20,25 @@ export default function PrimoContainerInsCom() {
     if(statusApplication.inserisciModificaCommessa === 'MODIFY' ){
         mese = month[statusApplication.mese -1 ];
         anno = statusApplication.anno;
-    }else{
+    }else if(statusApplication.inserisciModificaCommessa === 'INSERT'){
         const mon = new Date().getMonth();
         const date = new Date();
       
         if(mon === 11){
            
             anno = date.getFullYear()+1;
+            mese = month[mon + 1 ];
+            //setInfoModuloCommessa((prev:any) =>({...prev, ...{mese:mese,anno:anno}}));
            
         }else{
             anno = date.getFullYear();
+            mese = month[mon + 1 ];
+            // setInfoModuloCommessa((prev:any) =>({...prev, ...{mese:mese,anno:anno}}));
         }
-        mese = month[mon + 1 ];
+     
 
     }
+    
    
 
     const data = `${mese}/${anno}`;
@@ -85,4 +91,5 @@ export default function PrimoContainerInsCom() {
             </Grid>
         </div>
     );
-}
+};
+export default  PrimoContainerInsCom;

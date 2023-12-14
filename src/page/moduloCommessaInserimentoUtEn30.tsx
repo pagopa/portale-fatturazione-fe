@@ -186,7 +186,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 const statusApp = localStorage.getItem('statusApplication')||'{}';
                 const parseStatusApp = JSON.parse(statusApp);
             
-
+              
                 if(infoModuloCommessa.inserisciModificaCommessa === 'MODIFY'){
                     // navigate('/4');
                     console.log({infoModuloCommessa});
@@ -208,16 +208,23 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                     setTotaliModuloCommessa(res.data.totale);
                 }else{
                     setTotaliModuloCommessa(res.data.totale);
+
+                    console.log({res},'POST MODULO');
                     setInfoModuloCommessa((prev:any)=>({
                         ...prev,
                         ...{action:'HIDE_MODULO_COMMESSA',
                             statusPageInserimentoCommessa:'immutable',
-                            statusPageDatiFatturazione:'mutable',}}));
+                            statusPageDatiFatturazione:'mutable',
+                            mese:res.data.mese,
+                            anno:res.data.anno
+                        }}));
 
                     localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
                         ...{action:'HIDE_MODULO_COMMESSA',
                             statusPageInserimentoCommessa:'immutable',
-                            statusPageDatiFatturazione:'mutable'
+                            statusPageDatiFatturazione:'mutable',
+                            mese:res.data.mese,
+                            anno:res.data.anno
                         }}));
                 }
                
@@ -355,7 +362,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 {infoModuloCommessa.action !== "HIDE_MODULO_COMMESSA" ?
                     <div>
                         <div className="bg-white mt-3 pt-3">
-                            <PrimoContainerInsCom />
+                            <PrimoContainerInsCom setInfoModuloCommessa={setInfoModuloCommessa} />
                             <SecondoContainerInsCom  />
        
                         </div>
@@ -394,7 +401,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                     </div> 
                     : null}
             </div> 
-            {infoModuloCommessa.statusPageInserimentoCommessa === 'immutable' ?
+            {infoModuloCommessa.statusPageInserimentoCommessa === 'immutable' && infoModuloCommessa.action !== "HIDE_MODULO_COMMESSA"?
                 <div className="d-flex justify-content-center marginTop24">
                     <Button onClick={()=>navigate('/pdf')} variant="contained">Vedi anteprima</Button>
                 </div> : null

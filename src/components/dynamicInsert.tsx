@@ -102,6 +102,7 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
             <div className='d-flex'>
              
                 <TextField
+                    required
                     label={`Email amministrativo`}
                     placeholder="Email amministrativo"
                     helperText={`max ${3 - arrElement?.length}`}

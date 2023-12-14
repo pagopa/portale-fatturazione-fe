@@ -67,7 +67,9 @@ export default function HeaderPostLogin() {
                         localStorage.removeItem('profilo');
                         localStorage.removeItem('token');
                         localStorage.removeItem('statusApplication');
-                        navigate('/error');
+                        window.location.href = 'https://uat.selfcare.pagopa.it/';
+                        //navigate('https://selfcare.pagopa.it/');
+                        
                     }}
                     onDocumentationClick={()=>onButtonClick()}
                 />

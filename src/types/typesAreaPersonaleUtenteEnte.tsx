@@ -63,6 +63,7 @@ export interface TextFieldProps {
     value : string,
     keyObject:string,
     dataValidation:ObjectValidationTextArea 
+    required:boolean
 
 }
 

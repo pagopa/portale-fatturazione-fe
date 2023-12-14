@@ -3,7 +3,7 @@ import { Grid, Typography } from '@mui/material';
 import RowInserimentoCommessa from './rowInserimentoCommessa';
 import { InsModuloCommessaContext } from '../types/typeModuloCommessaInserimento';
 import { InserimentoModuloCommessaContext } from '../page/moduloCommessaInserimentoUtEn30';
-import {useAxios, url, menageError, getCategoriaSpedizione} from '../api/api';
+import { getCategoriaSpedizione} from '../api/api';
 import { useNavigate } from 'react-router';
 
 const SecondoContainerInsCom : React.FC = () => {
@@ -30,7 +30,7 @@ const SecondoContainerInsCom : React.FC = () => {
  
     const getCategoria = async () =>{
         await getCategoriaSpedizione(token , infoModuloCommessa.nonce).then((res:any) => {
-            console.log({res}, 'PIPPO');
+         
             setArrTipoSpedizione({
                 idSpedizioneDigitale :getIdByTipo('Digitale',res.data),
                 idSpedizioneAnalog890 :  getIdByTipo('Analog. L. 890/82',res.data),
@@ -39,9 +39,9 @@ const SecondoContainerInsCom : React.FC = () => {
           
             
         }).catch((err:any) =>{
-            if(err.response.status === 401){
+            if(err?.response?.status === 401){
                 navigate('/error');
-            }else if(err.response.status === 419){
+            }else if(err?.response?.status === 419){
                 navigate('/error');
             }
         });

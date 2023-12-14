@@ -10,7 +10,7 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
 
     const [errorValidation, setErrorValidation] = useState(false);
     const {
-        helperText, label, placeholder, fullWidth,value,keyObject, dataValidation
+        helperText, label, placeholder, fullWidth,value,keyObject, dataValidation, required
     } = props;
 
     const validationTextArea = (max: number, validation:string, input:string|number)=>{
@@ -77,6 +77,7 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
     return (
 
         <TextField
+            required={required}
             helperText={helperText}
             label={label}
             placeholder={placeholder}
