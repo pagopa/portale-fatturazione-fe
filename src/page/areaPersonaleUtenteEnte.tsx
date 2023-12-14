@@ -14,14 +14,14 @@ export const DatiFatturazioneContext = createContext<AreaPersonaleContext>({
         tipoCommessa:'',
         splitPayment:false,
         cup: '',
-        cig:'',
         idDocumento:'',
         codCommessa:'',
         contatti:[],
         dataCreazione:'',
         dataModifica:'',
         dataDocumento:'',
-        pec:''
+        pec:'',
+        notaLegale:false
 
     }
 });
@@ -41,14 +41,14 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
         tipoCommessa:'',
         splitPayment:false,
         cup: '',
-        cig:'',
         idDocumento:'',
         codCommessa:'',
         contatti:[],
         dataCreazione:'',
         dataModifica:'',
         dataDocumento:new Date().toISOString(),
-        pec:''
+        pec:'',
+        notaLegale:false
 
     });
  
@@ -65,7 +65,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
    
     const ifAnyTextAreaIsEmpty = (
         datiFatturazione.cup === ''
-     || datiFatturazione.cig === '' 
+     || datiFatturazione.notaLegale === false 
      || datiFatturazione.pec === ''
      || datiFatturazione.idDocumento === ''
       || datiFatturazione.codCommessa === ''
@@ -96,6 +96,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
 
                 setUser('new');
             }else if(err.response.status === 419){
+
                 navigate('/error');
             }
             // setUser('new');
@@ -105,14 +106,14 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
                 tipoCommessa:'',
                 splitPayment:false,
                 cup: '',
-                cig:'',
                 idDocumento:'',
                 codCommessa:'',
                 contatti:[],
                 dataCreazione:'',
                 dataModifica:'',
                 dataDocumento:new Date().toISOString(),
-                pec:''
+                pec:'',
+                notaLegale:false
         
             });
         });
@@ -162,10 +163,11 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
                 })
                 .catch(err => {
 
-                    if(err.response.status === 404){
-
-                        setUser('new');
+                    if(err.response?.status === 401){
+                        
+                        navigate('/error');
                     }else if(err.response.status === 419){
+
                         navigate('/error');
                     }
                 });
@@ -177,7 +179,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
                 tipoCommessa:datiFatturazione.tipoCommessa,
                 splitPayment:datiFatturazione.splitPayment,
                 cup: datiFatturazione.cup,
-                cig:datiFatturazione.cig,
+                notaLegale:datiFatturazione.notaLegale,
                 idDocumento:datiFatturazione.idDocumento,
                 codCommessa:datiFatturazione.codCommessa,
                 contatti:datiFatturazione.contatti,
@@ -193,6 +195,9 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
                 
             }).catch(err =>{
                 if(err.response.status === 401){
+                    navigate('/error');
+                }else if(err.response.status === 419){
+
                     navigate('/error');
                 }
             });

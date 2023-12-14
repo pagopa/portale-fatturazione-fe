@@ -11,7 +11,6 @@ export interface DatiFatturazione{
     tipoCommessa:string,
     splitPayment:boolean,
     cup: string,
-    cig:string,
     idDocumento:string,
     codCommessa:string,
     contatti: Contatti[],
@@ -19,18 +18,19 @@ export interface DatiFatturazione{
     dataModifica:string,
     dataDocumento:string,
     pec:string,
+    notaLegale:boolean
 }
 
 export interface DatiFatturazionePost{
     tipoCommessa:string,
     splitPayment:boolean,
     cup: string,
-    cig:string,
     idDocumento:string,
     codCommessa:string,
     contatti: Contatti[],
     dataDocumento:string,
     pec:string,
+    notaLegale:boolean
 }
 export interface AreaPersonaleContext {
     datiFatturazione:DatiFatturazione, 
