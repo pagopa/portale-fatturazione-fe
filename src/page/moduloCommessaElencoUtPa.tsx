@@ -69,7 +69,11 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setInfoM
         
     },[infoModuloCommessa.nonce]);
 
-  
+    useEffect(()=>{
+        if(token === undefined){
+            window.location.href = 'https://uat.selfcare.pagopa.it/';
+        }
+    },[]);
   
     
    
