@@ -154,7 +154,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
     useEffect(()=>{
         if(token === undefined){
-            window.location.href = 'https://uat.selfcare.pagopa.it/';
+            window.location.href = 'https://selfcare.pagopa.it/';
         }
     },[]);
    

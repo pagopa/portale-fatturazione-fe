@@ -130,7 +130,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
 
     useEffect(()=>{
         if(token === undefined){
-            window.location.href = 'https://uat.selfcare.pagopa.it/';
+            window.location.href = 'https://selfcare.pagopa.it/';
         }
     },[]);
 
