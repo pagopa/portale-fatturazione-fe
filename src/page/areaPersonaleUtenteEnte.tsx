@@ -46,7 +46,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
         contatti:[],
         dataCreazione:'',
         dataModifica:'',
-        dataDocumento:new Date().toISOString(),
+        dataDocumento:null,
         pec:'',
         notaLegale:false
 
@@ -97,6 +97,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
 
                 navigate('/error');
             }
+            navigate('/error');
             // setUser('new');
             setInfoModuloCommessa((prev:any)=>({...prev, ...{statusPageDatiFatturazione:'mutable'}}));
             
@@ -109,7 +110,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
                 contatti:[],
                 dataCreazione:'',
                 dataModifica:'',
-                dataDocumento:new Date().toISOString(),
+                dataDocumento:null,
                 pec:'',
                 notaLegale:false
         

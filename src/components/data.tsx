@@ -15,13 +15,21 @@ const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate}) => {
   
 
     const onChangeHandler = (e: any) => {
-       
-        const data = new Date(e).toISOString();
-     
-        setDatiFatturazione({...datiFatturazione,...{dataDocumento:data}});
+        console.log(e === null);
+
+        try {
+            const data = new Date(e).toISOString();
+            setDatiFatturazione({...datiFatturazione,...{dataDocumento:data}});
+        } catch (error) {
+            setDatiFatturazione({...datiFatturazione,...{dataDocumento:null}});
+        }
     };
-   
-    const valueDate = new Date(datiFatturazione.dataDocumento);
+
+    let valueDate = null;
+    if(datiFatturazione.dataDocumento){
+        valueDate = new Date(datiFatturazione.dataDocumento);
+    }
+  
 
     let dataInputDisable  = true;
 
