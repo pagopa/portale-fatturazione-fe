@@ -185,9 +185,15 @@ const TabAreaPersonaleUtente = () => {
                     marginTop:'24px',
                     '& .MuiFormControlLabel-label': {
                         fontSize: '0.8rem',
+                       
                     },
+                    '&.MuiFormControlLabel-root': {
+                        marginLeft:'0',
+                        marginRight:'0'
+                    }
                 }}  
                 required
+                labelPlacement="start"
                 control={<Checkbox 
                     checked={datiFatturazione.notaLegale || false}
                     onChange={()=> setDatiFatturazione((prev:any)=>({...prev,...{notaLegale:!datiFatturazione.notaLegale}}))}/>}
