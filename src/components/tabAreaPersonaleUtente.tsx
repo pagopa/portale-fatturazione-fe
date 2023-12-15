@@ -16,7 +16,7 @@ import { DatiFatturazioneContext } from '../page/areaPersonaleUtenteEnte';
 const TabAreaPersonaleUtente = () => {
     const {infoModuloCommessa,datiFatturazione,setDatiFatturazione, user} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
 
-    console.log({datiFatturazione});
+   
     function createDateFromString(string:string){
         const getGiorno = new Date(string).getDate();
       

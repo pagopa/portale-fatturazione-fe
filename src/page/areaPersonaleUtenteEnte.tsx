@@ -126,11 +126,13 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
             getDatiFat();
        
         }
-       
-        
     }, [infoModuloCommessa.nonce]);
 
-
+    useEffect(()=>{
+        if(token === undefined){
+            window.location.href = 'https://uat.selfcare.pagopa.it/';
+        }
+    },[]);
 
    
 

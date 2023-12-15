@@ -51,7 +51,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
         console.log(infoModuloCommessa.nonce,x);*/
 
         if(infoModuloCommessa.nonce === '' && Object.values(profilo).length !== 0){
-            console.log('BECCATO');
+          
             getProfiloToGetNonce();
         }
          
@@ -78,7 +78,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
                 // ci sono commesse inserite nel mese corrente e posso modificarle
             }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0){
              
-                console.log(2, 'xxx');
+             
                 setInfoModuloCommessa((prev:any)=>({ 
                     ...prev,
                     ...{
@@ -120,6 +120,10 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
             getCommessa();
         }
     },[token,infoModuloCommessa.nonce]);
+
+  
+
+  
   
 
  

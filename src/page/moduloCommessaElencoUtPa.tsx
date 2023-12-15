@@ -62,12 +62,12 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setInfoM
     };
 
     useEffect(()=>{
-        if(infoModuloCommessa.nonce !== ''){
-            getAnniSelect();
-            getListaCommessaGrid();
-        }
+       
+        getAnniSelect();
+        getListaCommessaGrid();
         
-    },[infoModuloCommessa.nonce]);
+        
+    },[]);
 
   
   
