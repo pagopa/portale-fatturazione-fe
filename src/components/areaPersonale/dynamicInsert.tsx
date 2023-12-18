@@ -6,9 +6,9 @@ import AddIcon from '@mui/icons-material/Add';
 import { useState, useContext } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import {DynamicInsertProps,DatiFatturazione,Email,AreaPersonaleContext}  from '../types/typesAreaPersonaleUtenteEnte';
-import { DatiFatturazioneContext } from '../page/areaPersonaleUtenteEnte';
-import { _YupEmail} from '../validations/email/index';
+import {DynamicInsertProps,DatiFatturazione,Email,AreaPersonaleContext}  from '../../types/typesAreaPersonaleUtenteEnte';
+import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
+import { _YupEmail} from '../../validations/email/index';
 
 
 const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
@@ -19,13 +19,6 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
     const [element, setElement] = useState('');
     const [validation, setValidation] = useState(false);
 
-
-
-<<<<<<< Updated upstream:src/components/dynamicInsert.tsx
- 
-=======
-  
->>>>>>> Stashed changes:src/components/areaPersonale/dynamicInsert.tsx
 
     const handleSubmit = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
@@ -38,8 +31,8 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
                          
                 return newState;
             });
-        
             setElement('');
+          
         }  
     };
  
@@ -48,7 +41,12 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
        
         _YupEmail.validate(element).then(( )=>{
               
-            setValidation(false);
+          
+            if(arrElement.length === 0 && element === ''){
+                setValidation(true);
+            }else{
+                setValidation(false);
+            }
 
         }).catch(()=>{
             setValidation(true);
@@ -106,6 +104,7 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
             <div className='d-flex'>
              
                 <TextField
+                    required
                     label={`Email amministrativo`}
                     placeholder="Email amministrativo"
                     helperText={`max ${3 - arrElement?.length}`}

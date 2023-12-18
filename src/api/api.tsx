@@ -4,11 +4,13 @@ import { DatiCommessa } from '../types/typeModuloCommessaInserimento';
 import { useState, useEffect } from 'react';
 
 
+//dev
 
 export const url = "https://portalefatturebeapi20231102162515.azurewebsites.net";
 //"https://fat-p-app-api.azurewebsites.net";
 //'https://portalefatturebeapi20231102162515.azurewebsites.net';
-
+const getToken = localStorage.getItem('token') || '{}';
+const token =  JSON.parse(getToken).token;
 
 
 export  const useAxios = (axiosParams:any) => {

@@ -1,6 +1,6 @@
 import { HeaderAccount } from '@pagopa/mui-italia';
 import { useLocation } from 'react-router';
-
+import { redirect } from '../../api/api';
 import { useNavigate } from 'react-router';
 
 
@@ -67,7 +67,9 @@ export default function HeaderPostLogin() {
                         localStorage.removeItem('profilo');
                         localStorage.removeItem('token');
                         localStorage.removeItem('statusApplication');
-                        navigate('/error');
+                        window.location.href = redirect;
+                        //navigate('https://selfcare.pagopa.it/');
+                        
                     }}
                     onDocumentationClick={()=>onButtonClick()}
                 />

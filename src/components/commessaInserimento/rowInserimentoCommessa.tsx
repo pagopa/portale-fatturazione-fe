@@ -1,9 +1,9 @@
 import React, {useEffect, useState,useContext} from 'react';
 import { Grid, TextField, Typography } from '@mui/material';
-import { RowInsComProps, ModuliCommessa, DatiCommessa , DataTotaleObj} from '../types/typeModuloCommessaInserimento';
-import YupString from '../validations/string/index';
-import { InsModuloCommessaContext } from '../types/typeModuloCommessaInserimento';
-import { InserimentoModuloCommessaContext } from '../page/moduloCommessaInserimentoUtEn30';
+import { RowInsComProps, ModuliCommessa, DatiCommessa , DataTotaleObj} from '../../types/typeModuloCommessaInserimento';
+import YupString from '../../validations/string/index';
+import { InsModuloCommessaContext } from '../../types/typeModuloCommessaInserimento';
+import { InserimentoModuloCommessaContext } from '../../page/moduloCommessaInserimentoUtEn30';
 
 
 
@@ -16,7 +16,7 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
     const statusApplication =  JSON.parse(getStatusApplication);
    
     const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre",'Gennaio'];
-    console.log({datiCommessa}, 'DATI');
+    
     
     let mese = '';
     let anno = 2000;
@@ -100,8 +100,8 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
     
 
     const findValueNazione = (rowNumber : number) =>{
-        const rr = datiCommessa.moduliCommessa.filter(obj => obj.idTipoSpedizione === rowNumber)[0].numeroNotificheNazionali;
-        console.log({rowNumber,rr});
+
+        
         return datiCommessa.moduliCommessa.filter(obj => obj.idTipoSpedizione === rowNumber)[0].numeroNotificheNazionali;
     };
     const findValueInternazionale = (rowNumber : number) =>{

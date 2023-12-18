@@ -11,8 +11,8 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import DnsIcon from '@mui/icons-material/Dns';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
-import { getDatiModuloCommessa, getAuthProfilo} from '../api/api';
-import { SideNavProps } from '../types/typesGeneral';
+import { getDatiModuloCommessa, getAuthProfilo} from '../../api/api';
+import { SideNavProps } from '../../types/typesGeneral';
 
 
 const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoModuloCommessa}) => {
@@ -46,10 +46,12 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
     // in quel caso il get profilo viene chiamato nella page auth
   
     useEffect(()=>{
+        /*
         const x = Object.values(profilo).length;
-        console.log(infoModuloCommessa.nonce,x);
+        console.log(infoModuloCommessa.nonce,x);*/
+
         if(infoModuloCommessa.nonce === '' && Object.values(profilo).length !== 0){
-            console.log('BECCATO');
+          
             getProfiloToGetNonce();
         }
          
@@ -63,7 +65,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
         await getDatiModuloCommessa(token, infoModuloCommessa.nonce).then((res)=>{
 
             if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
-           
+                console.log(1, 'xxx');
                 setInfoModuloCommessa((prev:any)=>({
                     ...prev,
                     ...{
@@ -71,10 +73,12 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
                         statusPageInserimentoCommessa:'mutable',
                         modifica:true
                     }}));
+
+               
                 // ci sono commesse inserite nel mese corrente e posso modificarle
             }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0){
              
-               
+             
                 setInfoModuloCommessa((prev:any)=>({ 
                     ...prev,
                     ...{
@@ -82,6 +86,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
                         statusPageInserimentoCommessa:'immutable',
                         modifica:true}}));
             }else if(res.data.modifica === false ){
+                console.log(3, 'xxx');
                 setInfoModuloCommessa((prev:any)=>({ 
                     ...prev,
                     ...{
@@ -115,6 +120,10 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
             getCommessa();
         }
     },[token,infoModuloCommessa.nonce]);
+
+  
+
+  
   
 
  
@@ -146,6 +155,13 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
         await getDatiModuloCommessa(token, infoModuloCommessa.nonce).then((res)=>{
 
             if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
+                setInfoModuloCommessa((prev:any)=>({
+                    ...prev,
+                    ...{
+                        inserisciModificaCommessa:'INSERT',
+                        statusPageInserimentoCommessa:'mutable',
+                        modifica:true
+                    }}));
            
                 const newState = {
                     path:'/8',
@@ -157,6 +173,14 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
               
                 navigate('/8');
             }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0 ){
+
+                setInfoModuloCommessa((prev:any)=>({ 
+                    ...prev,
+                    ...{
+                        inserisciModificaCommessa:'MODIFY',
+                        statusPageInserimentoCommessa:'immutable',
+                        modifica:true}}));
+
                 const newState = {
                     path:'/4',
                     mese:res.data.mese,
@@ -167,6 +191,13 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
                
                 navigate('/4');
             }else if(res.data.modifica === false && res.data.moduliCommessa.length === 0){
+                setInfoModuloCommessa((prev:any)=>({ 
+                    ...prev,
+                    ...{
+                        inserisciModificaCommessa:'NO_ACTION',
+                        statusPageInserimentoCommessa:'immutable',
+                        modifica:false}}));
+
                 const newState = {
                     path:'/4',
                     mese:res.data.mese,
@@ -177,6 +208,12 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
                
                 navigate('/4');
             }else if(res.data.modifica === false && res.data.moduliCommessa.length > 0){
+                setInfoModuloCommessa((prev:any)=>({ 
+                    ...prev,
+                    ...{
+                        inserisciModificaCommessa:'NO_ACTION',
+                        statusPageInserimentoCommessa:'immutable',
+                        modifica:false}})); 
                 const newState = {
                     path:'/8',
                     mese:res.data.mese,
@@ -185,7 +222,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
                 };
                 localStorage.setItem('statusApplication', JSON.stringify(newState));
                
-                navigate('/8');
+                navigate('/4');
             }
 
         }).catch((err) =>{

@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import { Footer } from '@pagopa/mui-italia';
 import { useState } from 'react';
 import { useLocation } from 'react-router';
-import '../style/areaPersonaleUtenteEnte.css';
+import '../../style/areaPersonaleUtenteEnte.css';
+
 
 type LangCode = "it" | "en";
 type LinkType = "internal" | "external";

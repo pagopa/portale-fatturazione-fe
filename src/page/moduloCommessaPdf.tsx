@@ -5,7 +5,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked} from '@pagopa/mui-italia';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { useNavigate } from "react-router";
-import TextDettaglioPdf from '../components/textDettaglioPdf';
+import TextDettaglioPdf from '../components/commessaPdf/textDettaglioPdf';
 import { DataPdf } from "../types/typeModuloCommessaInserimento";
 import { menageError } from "../api/api";
 import { usePDF } from 'react-to-pdf';

@@ -1,13 +1,14 @@
 import React, {useContext } from 'react';
-import '../style/areaPersonaleUtenteEnte.css';
+import '../../style/areaPersonaleUtenteEnte.css';
 import { Box, InputLabel, Typography, Checkbox, FormControlLabel } from '@mui/material';
+import { red } from '@mui/material/colors';
 import RadioComponent from './radio';
 import DataComponent from './data';
 import DynamicInsert from './dynamicInsert';
 import TextFieldComponent from './textField';
-import {AreaPersonaleContext} from '../types/typesAreaPersonaleUtenteEnte';
+import {AreaPersonaleContext} from '../../types/typesAreaPersonaleUtenteEnte';
 
-import { DatiFatturazioneContext } from '../page/areaPersonaleUtenteEnte';
+import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
 
 
 
@@ -16,10 +17,10 @@ import { DatiFatturazioneContext } from '../page/areaPersonaleUtenteEnte';
 const TabAreaPersonaleUtente = () => {
     const {infoModuloCommessa,datiFatturazione,setDatiFatturazione, user} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
 
-    console.log({datiFatturazione});
+   
     function createDateFromString(string:string){
         const getGiorno = new Date(string).getDate();
-        console.log({getGiorno});
+      
         const getMese = new Date(string).getMonth() + 1;
         const getAnno = new Date(string).getFullYear();
 
@@ -66,6 +67,7 @@ const TabAreaPersonaleUtente = () => {
                     <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 2fr)' }}>
                         <div>
                             <TextFieldComponent
+                                required={false}
                                 helperText="max 15 caratteri alfanumerici"
                                 label="CUP"
                                 placeholder="Inserisci il CUP"
@@ -109,6 +111,7 @@ const TabAreaPersonaleUtente = () => {
                     <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(1, 2fr)' }}>
                         <div>
                             <TextFieldComponent
+                                required={true}
                                 helperText="Inserisci Mail Pec"
                                 label="Mail Pec"
                                 placeholder="Inserisci Mail Pec"
@@ -133,6 +136,7 @@ const TabAreaPersonaleUtente = () => {
                             {/* Id documento start */}
                             <div>
                                 <TextFieldComponent
+                                    required={false}
                                     helperText="max 20 caratteri alfanumerici"
                                     label="ID Documento"
                                     placeholder="Inserisci ID"
@@ -155,6 +159,7 @@ const TabAreaPersonaleUtente = () => {
                         {/* commessa start */}
                         <div>
                             <TextFieldComponent
+                                required={false}
                                 helperText="max 100 caratteri alfanumerici"
                                 label="Codice. Commessa/Convenzione"
                                 placeholder="Commessa/Convenzione"
@@ -181,18 +186,25 @@ const TabAreaPersonaleUtente = () => {
                     marginTop:'24px',
                     '& .MuiFormControlLabel-label': {
                         fontSize: '0.8rem',
+                       
                     },
+                    '&.MuiFormControlLabel-root': {
+                        marginLeft:'0',
+                        marginRight:'0'
+                    }
                 }}  
+                required
+                labelPlacement="start"
                 control={<Checkbox 
+                    sx={{color: red[800]}}
                     checked={datiFatturazione.notaLegale || false}
                     onChange={()=> setDatiFatturazione((prev:any)=>({...prev,...{notaLegale:!datiFatturazione.notaLegale}}))}/>}
                 disabled={infoModuloCommessa.statusPageDatiFatturazione === 'immutable'}
-                label="Tutti gli accordi di adesione e tutti gli accordi di collaborazione pubblico-
-                           pubblico, in quanto contratti esclusi dall`applicazione del Codice dei contratti pubblici, 
-                           rispettivamente, ai sensi dell`art. 56, comma 1, lett a) del D.lgs 36/2023, e ai sensi dell`art. 7, comma 4 D.l.gs 36/2023,
-                           non sono sottoposti alla disciplina della tracciabilità dei flussi finanziari di cui alla Legge 136/2010,
-                           come indicato dall`ANAC nelle Linee guida sulla tracciabilità dei flussi finanziari 
-                          (si veda par. 2.5. della Determinazione n. 4 del 7 luglio 2011 aggiornata con delibera n. 371 del 27 luglio 2022)" />
+                label="Gli accordi di adesione a SEND sono esclusi dall`applicazione del Codice dei Contratti Pubblici ai
+                 sensi dell`art. 56, comma 1, lett a) del D.lgs. 36/2023 pertanto non sono sottoposti alla disciplina della
+                  tracciabilità dei flussi finanziari di cui alla L. 136/2010, come indicato dall`ANAC nelle relative Linee Guida.
+                Conseguentemente, il CIG non deve essere acquisito e riportato nelle fatture "
+                />
 
                 {/*checkbox start */}
                 <hr className="mx-3 mt-5" />

@@ -1,5 +1,5 @@
 import {Typography} from '@mui/material';
-import { TextPdfProps } from '../types/typeModuloCommessaInserimento';
+import { TextPdfProps } from '../../types/typeModuloCommessaInserimento';
 
 const TextDettaglioPdf : React.FC<TextPdfProps> = ({description, value}) =>{
     return(

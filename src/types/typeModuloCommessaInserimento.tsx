@@ -126,3 +126,7 @@ export interface DatiCommessaCosti{
 export interface ModComPdfProps{
     infoModuloCommessa: any
 }
+
+export interface PrimoContainerInsComProps{
+    setInfoModuloCommessa: any
+}

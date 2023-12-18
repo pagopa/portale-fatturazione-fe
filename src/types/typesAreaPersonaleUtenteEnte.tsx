@@ -16,7 +16,7 @@ export interface DatiFatturazione{
     contatti: Contatti[],
     dataCreazione:string,
     dataModifica:string,
-    dataDocumento:string,
+    dataDocumento:string | null,
     pec:string,
     notaLegale:boolean
 }
@@ -63,6 +63,7 @@ export interface TextFieldProps {
     value : string,
     keyObject:string,
     dataValidation:ObjectValidationTextArea 
+    required:boolean
 
 }
 

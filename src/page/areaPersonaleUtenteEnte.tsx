@@ -1,9 +1,10 @@
 import React, { useState, useEffect, createContext  } from 'react';
+import { redirect } from '../api/api';
 import { useNavigate, useLocation } from 'react-router';
 import '../style/areaPersonaleUtenteEnte.css';
 import { Button } from '@mui/material';
-import TabAreaPersonaleUtente from '../components/tabAreaPersonaleUtente';
-import PageTitleNavigation from '../components/pageTitleNavigation';
+import TabAreaPersonaleUtente from '../components/areaPersonale/tabAreaPersonaleUtente';
+import PageTitleNavigation from '../components/areaPersonale/pageTitleNavigation';
 import {AreaPersonaleContext, DatiFatturazione, StateEnableConferma, DatiFatturazionePost,AreaPersonaleProps} from '../types/typesAreaPersonaleUtenteEnte';
 import {getDatiFatturazione, modifyDatiFatturazione,insertDatiFatturazione} from '../api/api';
 
@@ -46,7 +47,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
         contatti:[],
         dataCreazione:'',
         dataModifica:'',
-        dataDocumento:new Date().toISOString(),
+        dataDocumento:null,
         pec:'',
         notaLegale:false
 
@@ -64,11 +65,9 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
     const enableDisableConferma = Object.values(statusBottonConferma).every(element => element === false);
    
     const ifAnyTextAreaIsEmpty = (
-        datiFatturazione.cup === ''
-     || datiFatturazione.notaLegale === false 
+        datiFatturazione.notaLegale === false 
      || datiFatturazione.pec === ''
-     || datiFatturazione.idDocumento === ''
-      || datiFatturazione.codCommessa === ''
+     || datiFatturazione.contatti.length === 0
     );
     const location : any = useLocation();
 
@@ -99,6 +98,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
 
                 navigate('/error');
             }
+            navigate('/error');
             // setUser('new');
             setInfoModuloCommessa((prev:any)=>({...prev, ...{statusPageDatiFatturazione:'mutable'}}));
             
@@ -111,7 +111,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
                 contatti:[],
                 dataCreazione:'',
                 dataModifica:'',
-                dataDocumento:new Date().toISOString(),
+                dataDocumento:null,
                 pec:'',
                 notaLegale:false
         
@@ -127,11 +127,13 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
             getDatiFat();
        
         }
-       
-        
     }, [infoModuloCommessa.nonce]);
 
-
+    useEffect(()=>{
+        if(token === undefined){
+            window.location.href = redirect;
+        }
+    },[]);
 
    
 
@@ -191,7 +193,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
                     statusPageDatiFatturazione:'immutable',
                     action:'SHOW_MODULO_COMMESSA'
                 }}));
-                navigate('/4');
+                navigate('/');
                 
             }).catch(err =>{
                 if(err.response.status === 401){

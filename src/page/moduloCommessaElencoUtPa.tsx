@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from 'react';
+import { redirect } from '../api/api';
 import {useAxios, url, menageError, getAnni, getListaCommessa, getListaCommessaFiltered,getListaCommessaOnAnnulla} from '../api/api';
 import { Button, Box, Typography, FormControl, InputLabel,Select, MenuItem,} from '@mui/material';
-import GridComponent from '../components/grid';
+import GridComponent from '../components/commessaElenco/grid';
 import { useNavigate } from 'react-router';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { VisualModuliCommessaProps } from '../types/typeModuloCommessaElenco';
@@ -69,7 +70,11 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setInfoM
         
     },[infoModuloCommessa.nonce]);
 
-  
+    useEffect(()=>{
+        if(token === undefined){
+            window.location.href = redirect;
+        }
+    },[]);
   
     
    

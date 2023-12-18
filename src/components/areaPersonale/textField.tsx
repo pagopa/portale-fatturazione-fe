@@ -1,16 +1,16 @@
 import React, {useState, useContext} from 'react';
 import {TextField,} from '@mui/material';
-import {DatiFatturazione, TextFieldProps, StateEnableConferma,AreaPersonaleContext}  from '../types/typesAreaPersonaleUtenteEnte';
-import { DatiFatturazioneContext } from '../page/areaPersonaleUtenteEnte';
-import { _YupEmail} from '../validations/email/index';
-import YupString from '../validations/string/index';
+import {DatiFatturazione, TextFieldProps, StateEnableConferma,AreaPersonaleContext}  from '../../types/typesAreaPersonaleUtenteEnte';
+import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
+import { _YupPec} from '../../validations/email/index';
+import YupString from '../../validations/string/index';
 
 const TextFieldComponent : React.FC<TextFieldProps> = props => {
     const {infoModuloCommessa,setDatiFatturazione,setStatusBottmConferma, datiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
 
     const [errorValidation, setErrorValidation] = useState(false);
     const {
-        helperText, label, placeholder, fullWidth,value,keyObject, dataValidation
+        helperText, label, placeholder, fullWidth,value,keyObject, dataValidation, required
     } = props;
 
     const validationTextArea = (max: number, validation:string, input:string|number)=>{
@@ -39,7 +39,9 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
     }; 
 
     const validationTextAreaEmail = (element:string)=>{
-        _YupEmail.validate(element)
+
+        
+        _YupPec.validate(element)
             .then(()=>{
                 setErrorValidation(false);
                 setStatusBottmConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
@@ -77,6 +79,7 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
     return (
 
         <TextField
+            required={required}
             helperText={helperText}
             label={label}
             placeholder={placeholder}
