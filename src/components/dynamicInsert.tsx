@@ -21,7 +21,11 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
 
 
 
+<<<<<<< Updated upstream:src/components/dynamicInsert.tsx
  
+=======
+  
+>>>>>>> Stashed changes:src/components/areaPersonale/dynamicInsert.tsx
 
     const handleSubmit = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
