@@ -1,9 +1,10 @@
 import React, { useState, useEffect, createContext  } from 'react';
+import { redirect } from '../api/api';
 import { useNavigate, useLocation } from 'react-router';
 import '../style/areaPersonaleUtenteEnte.css';
 import { Button } from '@mui/material';
-import TabAreaPersonaleUtente from '../components/tabAreaPersonaleUtente';
-import PageTitleNavigation from '../components/pageTitleNavigation';
+import TabAreaPersonaleUtente from '../components/areaPersonale/tabAreaPersonaleUtente';
+import PageTitleNavigation from '../components/areaPersonale/pageTitleNavigation';
 import {AreaPersonaleContext, DatiFatturazione, StateEnableConferma, DatiFatturazionePost,AreaPersonaleProps} from '../types/typesAreaPersonaleUtenteEnte';
 import {getDatiFatturazione, modifyDatiFatturazione,insertDatiFatturazione} from '../api/api';
 
@@ -130,7 +131,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
 
     useEffect(()=>{
         if(token === undefined){
-            window.location.href = 'https://selfcare.pagopa.it/';
+            window.location.href = redirect;
         }
     },[]);
 

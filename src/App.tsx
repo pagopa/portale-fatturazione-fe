@@ -9,13 +9,13 @@ import ModuloCommessaElencoUtPa from './page/moduloCommessaElencoUtPa';
 import ModuloCommessaInserimentoUtEn30 from './page/moduloCommessaInserimentoUtEn30';
 import ModuloCommessaPdf from './page/moduloCommessaPdf';
 import Auth from './page/auth';
-import HeaderPostLogin from './components/headerPostLogin';
-import SideNavComponent from './components/sideNav';
-import FooterPostLogin from './components/footerPostLogin';
+import HeaderPostLogin from './components/reusableComponents/headerPostLogin';
+import SideNavComponent from './components/reusableComponents/sideNav';
+import FooterPostLogin from './components/reusableComponents/footerPostLogin';
 import ErrorPage from './page/error';
 //import LoginPage from './page/login';
 
-import HeaderNavComponent from './components/headerNav';
+import HeaderNavComponent from './components/reusableComponents/headerNav';
 
 const App : React.FC = () => {
 

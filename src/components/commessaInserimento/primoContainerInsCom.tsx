@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Grid , Typography} from '@mui/material';
 import LabelComponent from './label';
-import { PrimoContainerInsComProps } from '../types/typeModuloCommessaInserimento';
+import { PrimoContainerInsComProps } from '../../types/typeModuloCommessaInserimento';
 
 
 const PrimoContainerInsCom : React.FC<PrimoContainerInsComProps> = ({setInfoModuloCommessa}) => {

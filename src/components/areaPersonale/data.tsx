@@ -2,8 +2,8 @@ import React, {useContext} from "react";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import {DataProps, AreaPersonaleContext}  from '../types/typesAreaPersonaleUtenteEnte';
-import { DatiFatturazioneContext } from '../page/areaPersonaleUtenteEnte';
+import {DataProps, AreaPersonaleContext}  from '../../types/typesAreaPersonaleUtenteEnte';
+import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
 
 
 

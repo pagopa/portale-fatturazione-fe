@@ -3,7 +3,7 @@ import { useLocation } from 'react-router';
 import {
     HeaderProduct,
 } from '@pagopa/mui-italia';
-import { LocationState } from '../types/typesGeneral';
+import { LocationState } from '../../types/typesGeneral';
 
 type PartySwitchItem = {
     id: string;

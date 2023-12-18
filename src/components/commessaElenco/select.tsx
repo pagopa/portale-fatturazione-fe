@@ -19,6 +19,7 @@ interface TipoContratto {
 }
 
 const SelectComponet: React.FC<SelectProps> = (props) => {
+   
     const [element, setElement] = useState('');
     const { inputLabel, showIcon, status} = props;
 

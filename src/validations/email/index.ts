@@ -11,13 +11,13 @@ export const _YupEmail = YupString.lowercase().matches(
     }
 );
 
-const _YupPec = YupString.matches(
+export const _YupPec = YupString.matches(
     // eslint-disable-next-line no-useless-escape
     /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i,
     {
         message:
             "l'indirizzo di posta elettronica certificata è invalido o incompleto",
-        excludeEmptyString: true
+        excludeEmptyString: false
     }
 );
 

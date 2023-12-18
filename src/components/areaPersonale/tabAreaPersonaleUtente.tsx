@@ -1,13 +1,14 @@
 import React, {useContext } from 'react';
-import '../style/areaPersonaleUtenteEnte.css';
+import '../../style/areaPersonaleUtenteEnte.css';
 import { Box, InputLabel, Typography, Checkbox, FormControlLabel } from '@mui/material';
+import { red } from '@mui/material/colors';
 import RadioComponent from './radio';
 import DataComponent from './data';
 import DynamicInsert from './dynamicInsert';
 import TextFieldComponent from './textField';
-import {AreaPersonaleContext} from '../types/typesAreaPersonaleUtenteEnte';
+import {AreaPersonaleContext} from '../../types/typesAreaPersonaleUtenteEnte';
 
-import { DatiFatturazioneContext } from '../page/areaPersonaleUtenteEnte';
+import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
 
 
 
@@ -195,6 +196,7 @@ const TabAreaPersonaleUtente = () => {
                 required
                 labelPlacement="start"
                 control={<Checkbox 
+                    sx={{color: red[800]}}
                     checked={datiFatturazione.notaLegale || false}
                     onChange={()=> setDatiFatturazione((prev:any)=>({...prev,...{notaLegale:!datiFatturazione.notaLegale}}))}/>}
                 disabled={infoModuloCommessa.statusPageDatiFatturazione === 'immutable'}

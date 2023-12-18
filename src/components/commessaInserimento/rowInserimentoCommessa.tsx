@@ -1,9 +1,9 @@
 import React, {useEffect, useState,useContext} from 'react';
 import { Grid, TextField, Typography } from '@mui/material';
-import { RowInsComProps, ModuliCommessa, DatiCommessa , DataTotaleObj} from '../types/typeModuloCommessaInserimento';
-import YupString from '../validations/string/index';
-import { InsModuloCommessaContext } from '../types/typeModuloCommessaInserimento';
-import { InserimentoModuloCommessaContext } from '../page/moduloCommessaInserimentoUtEn30';
+import { RowInsComProps, ModuliCommessa, DatiCommessa , DataTotaleObj} from '../../types/typeModuloCommessaInserimento';
+import YupString from '../../validations/string/index';
+import { InsModuloCommessaContext } from '../../types/typeModuloCommessaInserimento';
+import { InserimentoModuloCommessaContext } from '../../page/moduloCommessaInserimentoUtEn30';
 
 
 

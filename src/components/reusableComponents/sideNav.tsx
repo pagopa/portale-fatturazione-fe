@@ -11,8 +11,8 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import DnsIcon from '@mui/icons-material/Dns';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
-import { getDatiModuloCommessa, getAuthProfilo} from '../api/api';
-import { SideNavProps } from '../types/typesGeneral';
+import { getDatiModuloCommessa, getAuthProfilo} from '../../api/api';
+import { SideNavProps } from '../../types/typesGeneral';
 
 
 const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoModuloCommessa}) => {
@@ -222,7 +222,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
                 };
                 localStorage.setItem('statusApplication', JSON.stringify(newState));
                
-                navigate('/8');
+                navigate('/4');
             }
 
         }).catch((err) =>{

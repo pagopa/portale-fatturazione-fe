@@ -4,8 +4,8 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import { RadioComponentProps,DatiFatturazione,OptinsRadio,AreaPersonaleContext }  from '../types/typesAreaPersonaleUtenteEnte';
-import { DatiFatturazioneContext } from '../page/areaPersonaleUtenteEnte';
+import { RadioComponentProps,DatiFatturazione,OptinsRadio,AreaPersonaleContext }  from '../../types/typesAreaPersonaleUtenteEnte';
+import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
 
 
 

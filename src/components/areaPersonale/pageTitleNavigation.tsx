@@ -2,8 +2,8 @@ import React, {useContext} from 'react';
 import { Typography, Button } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked } from '@pagopa/mui-italia';
-import { DatiFatturazioneContext } from '../page/areaPersonaleUtenteEnte';
-import HorizontalLinearStepper from '../components/stepper';
+import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
+import HorizontalLinearStepper from '../reusableComponents/stepper';
 
 const PageTitleNavigation = () => {
 

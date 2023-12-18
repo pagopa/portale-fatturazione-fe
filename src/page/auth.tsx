@@ -33,7 +33,7 @@ const Auth : React.FC<LoginProps> = ({setCheckProfilo, setInfoModuloCommessa}) =
                 setCheckProfilo(true);
                
                 // setto il nonce nello state di riferimento globale
-                setInfoModuloCommessa((prev:any)=>({...prev, ...{nonce:resp?.data.nonce}}));
+                setInfoModuloCommessa((prev:any)=>({...prev, ...{nonce:resp?.data.nonce,ruolo:resp.data.ruolo}}));
                 navigate("/");
             } )
             .catch(err => {

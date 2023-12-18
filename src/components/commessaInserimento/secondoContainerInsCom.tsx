@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useContext} from 'react';
 import { Grid, Typography } from '@mui/material';
 import RowInserimentoCommessa from './rowInserimentoCommessa';
-import { InsModuloCommessaContext } from '../types/typeModuloCommessaInserimento';
-import { InserimentoModuloCommessaContext } from '../page/moduloCommessaInserimentoUtEn30';
-import { getCategoriaSpedizione} from '../api/api';
+import { InsModuloCommessaContext } from '../../types/typeModuloCommessaInserimento';
+import { InserimentoModuloCommessaContext } from '../../page/moduloCommessaInserimentoUtEn30';
+import { getCategoriaSpedizione} from '../../api/api';
 import { useNavigate } from 'react-router';
 
 const SecondoContainerInsCom : React.FC = () => {

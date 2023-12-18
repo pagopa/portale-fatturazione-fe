@@ -2,17 +2,18 @@ import {useState, createContext, useEffect} from 'react';
 import {Typography, Button} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked } from '@pagopa/mui-italia';
-import PrimoContainerInsCom from '../components/primoContainerInsCom';
-import SecondoContainerInsCom from '../components/secondoContainerInsCom';
-import TerzoContainerInsCom from '../components/terzoConteinerInsCom';
-import BasicModal from '../components/modal';
+import PrimoContainerInsCom from '../components/commessaInserimento/primoContainerInsCom';
+import SecondoContainerInsCom from '../components/commessaInserimento/secondoContainerInsCom';
+import TerzoContainerInsCom from '../components/commessaInserimento/terzoConteinerInsCom';
+import BasicModal from '../components/reusableComponents/modal';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { useNavigate } from 'react-router';
 // import HorizontalLinearStepper from '../components/stepper';
 import {insertDatiModuloCommessa, getDettaglioModuloCommessa} from '../api/api';
 import {useAxios, url, menageError} from '../api/api';
+import { redirect } from '../api/api';
 import AreaPersonaleUtenteEnte from '../page/areaPersonaleUtenteEnte';
-import HorizontalLinearStepper from '../components/stepper';
+import HorizontalLinearStepper from '../components/reusableComponents/stepper';
 import { DatiCommessa, InsModuloCommessaContext , ResponsTotaliInsModuloCommessa,ModuloCommessaInserimentoProps, TotaleNazionaleInternazionale} from '../types/typeModuloCommessaInserimento';
 
 
@@ -145,16 +146,17 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
           
             setInfoModuloCommessa((prev:any)=>{
 
-                console.log({prev});
+               
                 return {...prev,...{userClickOn:'',statusPageInserimentoCommessa:'immutable'}};
             });
         }
+      
     },[infoModuloCommessa.nonce]);
    
 
     useEffect(()=>{
         if(token === undefined){
-            window.location.href = 'https://selfcare.pagopa.it/';
+            window.location.href = redirect;
         }
     },[]);
    
@@ -353,7 +355,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 
                     {actionTitle}
 
-                    {infoModuloCommessa.statusPageInserimentoCommessa === 'immutable' && infoModuloCommessa.action !== 'HIDE_MODULO_COMMESSA'?
+                    {infoModuloCommessa.statusPageInserimentoCommessa === 'immutable' && infoModuloCommessa.action !== 'HIDE_MODULO_COMMESSA' && infoModuloCommessa.ruolo !== 'R' ?
                        
                         <div className="d-flex justify-content-end ">
                             <Button variant="contained" size="small" onClick={()=> hendleOnButtonModificaModuloCommessa()} >Modifica</Button>
