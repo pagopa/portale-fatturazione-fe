@@ -70,7 +70,7 @@ const HeaderNavComponent : React.FC =() => {
     
     return (
         <>
-            {(location.pathname === '/error' || location.pathname === '/auth') ? null :
+            {(location.pathname === '/error' || location.pathname === '/auth' || location.pathname ==='/azureLogin') ? null :
                 <HeaderProduct
                     productId="1"
                     productsList={productsList}

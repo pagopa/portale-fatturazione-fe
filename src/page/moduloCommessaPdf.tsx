@@ -110,10 +110,14 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({infoModuloCommessa}) =>{
 
  
     useEffect(()=>{
-        getPdf();
-        downloadPdf();
+
+        if(infoModuloCommessa.nonce !== ''){
+            getPdf();
+            downloadPdf();
+        }
       
-    },[]);
+      
+    },[infoModuloCommessa.nonce]);
 
     let mese = '';
     let anno = 2000;
@@ -149,7 +153,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({infoModuloCommessa}) =>{
         
             <div className="">
                 
-                <div className='d-flex marginTop24 '>
+                <div className='d-flex marginTop24 ms-5 '>
                     <ButtonNaked
                         color="primary"
                         onFocusVisible={() => { console.log('onFocus'); }}
@@ -283,7 +287,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({infoModuloCommessa}) =>{
                
 
                 </div>
-                <div className="d-flex justify-content-center">
+                <div className="d-flex justify-content-center mb-5">
                     <Button onClick={()=> toPDF()}  variant="contained">Scarica</Button>
                 </div>
 

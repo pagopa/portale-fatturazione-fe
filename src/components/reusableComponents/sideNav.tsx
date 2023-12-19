@@ -259,7 +259,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
 
     return (
         <>
-            {(location.pathname === '/error'||location.pathname === '/auth') ? null :
+            {(location.pathname === '/error'||location.pathname === '/auth'|| location.pathname ==='/azureLogin') ? null :
                 <Box sx={{
                     height: '100%',
                     maxWidth: 360,

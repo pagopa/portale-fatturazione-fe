@@ -380,7 +380,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                  
                         {
                             infoModuloCommessa.statusPageInserimentoCommessa === 'immutable' ? null :
-                                <div className="d-flex justify-content-between mt-5 ">
+                                <div className="d-flex justify-content-between mt-5 mb-5 ">
                                     <Button
                                         variant="outlined"
                                         type="button"
@@ -410,7 +410,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                     : null}
             </div> 
             {infoModuloCommessa.statusPageInserimentoCommessa === 'immutable' && infoModuloCommessa.action !== "HIDE_MODULO_COMMESSA"?
-                <div className="d-flex justify-content-center marginTop24">
+                <div className="d-flex justify-content-center marginTop24 mb-5">
                     <Button onClick={()=>navigate('/pdf')} variant="contained">Vedi anteprima</Button>
                 </div> : null
             }
