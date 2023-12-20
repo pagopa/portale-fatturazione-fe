@@ -33,7 +33,7 @@ export default function HeaderPostLogin() {
     };
 
     const onButtonClick = () => {
-        const pdfUrl = "/ManualeUtentePortaleFatturazione.pdf";
+        const pdfUrl = "/ManualeUtentePortaleFatturazione2.pdf";
         const link = document.createElement("a");
         link.href = pdfUrl;
         link.download = "ManualeUtentePortaleFatturazione.pdf";
