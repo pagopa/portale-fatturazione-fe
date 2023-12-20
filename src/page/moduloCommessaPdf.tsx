@@ -110,10 +110,13 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({infoModuloCommessa}) =>{
 
  
     useEffect(()=>{
-        getPdf();
-        downloadPdf();
+        if(infoModuloCommessa.nonce !== ''){
+            getPdf();
+            downloadPdf();
+        }
+       
       
-    },[]);
+    },[infoModuloCommessa.nonce]);
 
     let mese = '';
     let anno = 2000;
