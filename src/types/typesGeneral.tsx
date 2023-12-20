@@ -24,5 +24,8 @@ export interface StepperProps {
     indexStepper: number
 }
 
-
+export type TokenObject = {
+    accessToken?:string,
+    idToken?:string,
+}
 

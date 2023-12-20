@@ -1,13 +1,24 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
+import { useMsal } from "@azure/msal-react";
+import { InteractionRequiredAuthError } from "@azure/msal-browser";
 
 const AzureLogin : React.FC = () =>{
+
 
     useEffect(()=>{
         localStorage.removeItem('profilo');
         localStorage.removeItem('token');
         localStorage.removeItem('statusApplication');
 
+       
     },[]);
+
+   
+   
+   
+   
+
+    
 
    
 

@@ -1,6 +1,6 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import {useState, useEffect} from 'react';
+import {useState} from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { ThemeProvider, Grid } from '@mui/material';
 import {theme} from '@pagopa/mui-italia';
@@ -15,13 +15,13 @@ import FooterPostLogin from './components/reusableComponents/footerPostLogin';
 import ErrorPage from './page/error';
 import HeaderNavComponent from './components/reusableComponents/headerNav';
 import AzureLogin from './page/azureLogin';
-
+import PagoPaListaDatiFatturazione from './page/pagoPaListaDatiFatturazione';
+import AuthAzure from './page/authAzure';
 import { MsalProvider, AuthenticatedTemplate, useMsal, UnauthenticatedTemplate } from '@azure/msal-react';
 import { Container, Button } from 'react-bootstrap';
-
 import { loginRequest } from './authConfig';
-
 import './App.css';
+
 
 
 
@@ -94,6 +94,10 @@ const App = ({ instance }) => {
                 <Routes>
                     <Route path="/auth" element={<Auth setCheckProfilo={setCheckProfilo} setInfoModuloCommessa={setInfoModuloCommessa}/>} />
                 </Routes>
+
+               
+
+                
            
                 <ThemeProvider theme={theme}>
                     <div className="App">
@@ -125,6 +129,13 @@ const App = ({ instance }) => {
                                     </Routes>
                                     <Routes>
                                         <Route path="/pdf" element={<ModuloCommessaPdf infoModuloCommessa={infoModuloCommessa} />} />
+                                    </Routes>
+                                    <Routes>
+                                        <Route path="/pagopalistadatifatturazione" element={<PagoPaListaDatiFatturazione />} />
+                                    </Routes>
+
+                                    <Routes>
+                                        <Route path="/auth/azure" element={<AuthAzure />} />
                                     </Routes>
                                     
                            

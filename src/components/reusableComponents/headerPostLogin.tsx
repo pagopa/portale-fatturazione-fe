@@ -54,11 +54,16 @@ export default function HeaderPostLogin() {
     // end on click su assistenza redirect alla tua apllicazione predefinita per l'invio mail
 
     const { instance } = useMsal();
-    
-    const handleLoginRedirect = () => {instance.loginRedirect(loginRequest).catch((error) => console.log(error));};
+   
+    const handleLoginRedirect = () => {
+       
+        
+        instance.loginRedirect(loginRequest).catch((error) => console.log(error));
+    };
 
 
     const handleLogoutRedirect = () => {
+        
         instance.logoutRedirect().catch((error) => console.log(error));
     };
   

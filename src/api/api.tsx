@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {DatiFatturazione,DatiFatturazionePost} from '../types/typesAreaPersonaleUtenteEnte';
 import { DatiCommessa } from '../types/typeModuloCommessaInserimento';
-import { useState, useEffect } from 'react';
+import { TokenObject } from '../types/typesGeneral';
 
 
 //dev
@@ -15,33 +15,7 @@ export const redirect = "https://uat.selfcare.pagopa.it/";
 export const url = "https://fat-p-app-api.azurewebsites.net";
 export const redirect = "https://selfcare.pagopa.it/";
 */
-export  const useAxios = (axiosParams:any) => {
-    const [response, setResponse] = useState<any>(undefined);
-    const [error, setError] = useState(undefined);
-    const [loading, setLoading] = useState(true);
 
-   
-    const fetchData = async (params:any) => {
-       
-        try {
-            const result = await axios.request(params);
-            setResponse(result.data);
-        } catch( error:any ) {
-        
-            setError(error);
-        } finally {
-            setLoading(false);
-        }
-    };
-  
-    useEffect(() => {
-       
-        fetchData(axiosParams);
-       
-    }, []);
-
-    return { response, error, loading ,fetchData};
-};
 
 
 export const menageError = (res:any,navigate:any) =>{
@@ -64,6 +38,14 @@ export const menageError = (res:any,navigate:any) =>{
 
 
 
+export const pagopaLogin = async (tokenObject:TokenObject) => {
+    const result = await axios.post(`${url}/api/auth/pagopa/login`, tokenObject);
+    return result;
+};
+
+
+
+
 export const selfcareLogin = async (selfcareToken:string|null) =>{
     const result = await axios.get(`${url}/api/auth/selfcare/login?selfcareToken=${selfcareToken}`,
   
@@ -71,16 +53,18 @@ export const selfcareLogin = async (selfcareToken:string|null) =>{
     return result;
 };
 
-export const getAuthProfilo = async (tokenFromSelfcare:string) => {
+export const getAuthProfilo = async (tokenFromSelfcarePagoPa:string) => {
 
     const result = await axios.get(`${url}/api/auth/profilo`,
         { headers: {
-            Authorization: 'Bearer ' + tokenFromSelfcare
+            Authorization: 'Bearer ' + tokenFromSelfcarePagoPa
         }} 
   
     );
     return result;
 };
+
+
 
 export const getDatiConfigurazioneCommessa = async (token:string, idTipoContratto:number, prodotto:string, nonce:string) =>{
 
