@@ -94,6 +94,9 @@ const App = ({ instance }) => {
                 <Routes>
                     <Route path="/auth" element={<Auth setCheckProfilo={setCheckProfilo} setInfoModuloCommessa={setInfoModuloCommessa}/>} />
                 </Routes>
+                <Routes>
+                    <Route path="/auth/azure" element={<AuthAzure />} />
+                </Routes>
 
                
 
@@ -134,9 +137,7 @@ const App = ({ instance }) => {
                                         <Route path="/pagopalistadatifatturazione" element={<PagoPaListaDatiFatturazione />} />
                                     </Routes>
 
-                                    <Routes>
-                                        <Route path="/auth/azure" element={<AuthAzure />} />
-                                    </Routes>
+                                   
                                     
                            
                                 </Grid>
