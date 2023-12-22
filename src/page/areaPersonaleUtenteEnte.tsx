@@ -6,7 +6,7 @@ import { Button } from '@mui/material';
 import TabAreaPersonaleUtente from '../components/areaPersonale/tabAreaPersonaleUtente';
 import PageTitleNavigation from '../components/areaPersonale/pageTitleNavigation';
 import {AreaPersonaleContext, DatiFatturazione, StateEnableConferma, DatiFatturazionePost,AreaPersonaleProps} from '../types/typesAreaPersonaleUtenteEnte';
-import {getDatiFatturazione, modifyDatiFatturazione,insertDatiFatturazione} from '../api/api';
+import {getDatiFatturazione, modifyDatiFatturazione,insertDatiFatturazione, getDatiFatturazionePagoPa} from '../api/api';
 
 
 
@@ -119,8 +119,48 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({infoModuloComme
         });
 
     };
- 
+    /*
+    const getDatiFatPagoPa = async () =>{
 
+        await getDatiFatturazionePagoPa(token,infoModuloCommessa.nonce).then((res:any) =>{   
+            setUser('old');
+            setDatiFatturazione(res.data); 
+           
+        }).catch(err =>{
+           
+            if(err.response.status === 401){
+                localStorage.removeItem("token");
+                localStorage.removeItem("profilo");
+                navigate('/error');
+            }else if(err.response.status === 404){
+
+                setUser('new');
+            }else if(err.response.status === 419){
+
+                navigate('/error');
+            }
+            navigate('/error');
+            // setUser('new');
+            setInfoModuloCommessa((prev:any)=>({...prev, ...{statusPageDatiFatturazione:'mutable'}}));
+            
+            setDatiFatturazione({
+                tipoCommessa:'',
+                splitPayment:false,
+                cup: '',
+                idDocumento:'',
+                codCommessa:'',
+                contatti:[],
+                dataCreazione:'',
+                dataModifica:'',
+                dataDocumento:null,
+                pec:'',
+                notaLegale:false
+        
+            });
+        });
+    }
+ 
+*/
 
     useEffect(()=>{
         if(infoModuloCommessa.nonce !== ''){

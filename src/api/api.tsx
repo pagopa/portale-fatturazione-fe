@@ -1,7 +1,8 @@
 import axios from 'axios';
 import {DatiFatturazione,DatiFatturazionePost} from '../types/typesAreaPersonaleUtenteEnte';
 import { DatiCommessa } from '../types/typeModuloCommessaInserimento';
-import { TokenObject } from '../types/typesGeneral';
+import { TokenObject, BodyListaDatiFatturazione } from '../types/typesGeneral';
+
 
 
 //dev
@@ -34,7 +35,6 @@ export const menageError = (res:any,navigate:any) =>{
         navigate('/error');
     }
 };
-
 
 
 
@@ -219,6 +219,47 @@ export const downloadModuloCommessaPdf = async (token:string, mese:string, anno:
 
     return response;
 };
+
+export const getTipologiaProdotto = async (token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/tipologia/prodotto?nonce=${nonce}`,
+       
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
+export const getTipologiaProfilo = async (token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/tipologia/tipoprofilo?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+};
+
+export const listaDatiFatturazionePagopa = async (body : BodyListaDatiFatturazione, token:string, nonce:string) => {
+    const response =  await axios.post(`${url}/api/datifatturazione/pagopa/ricerca?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
+export const getDatiFatturazionePagoPa = async (token:string, nonce:string , idente:string, prodotto:string) => {
+    const response =  await axios.get(`${url}/api/tipologia/tipoprofilo?idente=${idente}&prodotto=${prodotto}&nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+};
+
 
 
 

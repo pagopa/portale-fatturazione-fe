@@ -1,84 +1,126 @@
-import { useState, useEffect } from "react";
-import { useMsal } from "@azure/msal-react";
-import { InteractionRequiredAuthError } from "@azure/msal-browser";
 import { pagopaLogin, getAuthProfilo } from "../api/api";
+import { loginRequest } from '../authConfig';
+import {InteractionRequiredAuthError,InteractionStatus,
+} from "@azure/msal-browser";
+import { useMsal } from "@azure/msal-react";
+import {useState, useEffect} from 'react';
+import { useNavigate } from "react-router";
+import { AuthAzureProps } from "../types/typesGeneral";
 
 
+const AuthAzure : React.FC<AuthAzureProps> = ({setInfoModuloCommessa}) =>{
 
+    
+    const navigate = useNavigate();
 
-
-
-
-
-const AuthAzure :React.FC = () =>{
-    const { instance, accounts } = useMsal();
+    const { instance, inProgress, accounts } = useMsal();
+   
+   
+    const [apiData, setApiData] = useState(null);
     const [tokens, setTokens] = useState({});
-    console.log({tokens});
-    async function useToken() {
-        console.log(1);
-        if (accounts.length > 0) {
-            const request = {
-                scopes: ["openid"],
-                account: accounts[0]
-            };
-            console.log(2);
-            const cc = instance.acquireTokenSilent(request).then(response => {
-                console.log(3);
-                setTokens({access_token:response.accessToken, id_token:response.idToken});
-            }).catch(error => {
-                // acquireTokenSilent can fail for a number of reasons, fallback to interaction
-                if (error instanceof InteractionRequiredAuthError) {
-                    instance.acquireTokenPopup(request).then(response => {
-                        setTokens({access_token:response.accessToken, id_token:response.idToken});
-                    });
-                }
-            });
-            console.log(await cc);
-            return cc;
-        }
-    
-        return tokens;
-    }
-   
   
-    
-    const postPagoPa = async() =>{
-        console.log('dentro');
-        await pagopaLogin(tokens).then((res) => {
-            const x = JSON.stringify(res);
-            localStorage.setItem('prova',x );
-            console.log({res});
-            return res.data;
-        }).catch((err)=>{
-            console.log(err);
-        });
-    };
+    useEffect(() => {
+        const accessTokenRequest = {
+            scopes: ["user.read"],
+            account: accounts[0],
+        };
+        if (!apiData && inProgress === InteractionStatus.None) {
+            instance
+                .acquireTokenSilent(accessTokenRequest)
+                .then((accessTokenResponse) => {
+                    // Acquire token silent success
+                    const accessToken = accessTokenResponse.accessToken;
+                    const idToken = accessTokenResponse.idToken;
+               
 
-   
+                    setTokens({access_token:accessToken, id_token:idToken});
+                    /*
+                    const stringTokens = JSON.stringify(tokens);
+                    localStorage.setItem('tokens',stringTokens);
+                    // Call your API with token
+                      callApi(accessToken).then((response) => {
+                        setApiData(response);
+                    });*/
+                })
+                .catch((error) => {
+                    if (error instanceof InteractionRequiredAuthError) {
+                        instance.acquireTokenRedirect(accessTokenRequest);
+                    }
+                    console.log(error);
+                });
+        }
+    }, [instance, accounts, inProgress, apiData]);
+
 
     useEffect(()=>{
-        useToken();
-    },[]);
-
-    useEffect(()=>{
-    
         if(Object.values(tokens).length > 0){
             postPagoPa();
         }
-      
-         
-         
+
     },[tokens]);
 
 
+    console.log({tokens});
+    const postPagoPa = () =>{
+        pagopaLogin(tokens).then((res)=>{
+            if(res.status === 200){
+                console.log('dentro postpagopa', {res});
+                // store del token nella local storage per tutte le successive chiamate START
+                const storeJwt = {token:res.data.jwt};
+                localStorage.setItem('token', JSON.stringify(storeJwt));
+           
+                // store del token nella local storage per tutte le successive chiamate END
+
+            
+
+                getProfilo(res);
+               
+            }
+
+        }).catch((err) =>{
+            console.log(err);
+        });
+
+    };
+
+
+
+    const getProfilo = async (res:any)=>{
+      
+        await getAuthProfilo(res.data.jwt)
+            .then(resp =>{
+                console.log('dentro getProfilo', {res});
+               
+                const storeProfilo = resp.data;
+                localStorage.setItem('profilo', JSON.stringify({
+                    auth:storeProfilo.auth,
+                    nomeEnte:storeProfilo.nomeEnte,
+                    descrizioneRuolo:storeProfilo.descrizioneRuolo,
+                    ruolo:storeProfilo.ruolo,
+                    dataUltimo:storeProfilo.dataUltimo,
+                    dataPrimo:storeProfilo.dataPrimo,
+                    prodotto:storeProfilo.prodotto,
+                    jwt:res.data.jwt
+                }));
+                
+              
+              
+                setInfoModuloCommessa((prev:any)=>({...prev, ...{nonce:resp?.data.nonce,ruolo:resp.data.ruolo,action:'LISTA_DATI_FATTURAZIONE'}}));
+                navigate('/pagopalistadatifatturazione');
+                // setto il nonce nello state di riferimento globale
+              
+            } )
+            .catch(err => {
+                console.log(err);
+            });
+    };
+
   
-
-
     return (
         <>
-            <h1> Azure Auth cccccc</h1>
+            <h1>Auth azure</h1>
         </>
-    );
+    ); 
 };
 
 export default AuthAzure;

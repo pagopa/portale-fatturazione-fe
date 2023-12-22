@@ -29,3 +29,12 @@ export type TokenObject = {
     idToken?:string,
 }
 
+export type AuthAzureProps = {
+    setInfoModuloCommessa:any,
+}
+
+export type BodyListaDatiFatturazione = {
+    descrizione: string,
+    prodotto: string,
+    profilo: string
+}

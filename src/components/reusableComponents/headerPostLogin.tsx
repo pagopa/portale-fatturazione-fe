@@ -15,10 +15,11 @@ type JwtUser = {
 export default function HeaderPostLogin() {
 
 
-    const location : any = useLocation();
-    const navigate = useNavigate();
+    const location  = useLocation();
+    
 
     const getDataUser = localStorage.getItem('profilo')|| '{}';
+    
 
     const dataUser = JSON.parse(getDataUser);
     const pagoPALink = {
@@ -56,8 +57,6 @@ export default function HeaderPostLogin() {
     const { instance } = useMsal();
    
     const handleLoginRedirect = () => {
-       
-        
         instance.loginRedirect(loginRequest).catch((error) => console.log(error));
     };
 
@@ -66,28 +65,55 @@ export default function HeaderPostLogin() {
         
         instance.logoutRedirect().catch((error) => console.log(error));
     };
-  
 
+
+
+    const navigate = useNavigate();
+
+    const getProfiloFromLocalStorage = localStorage.getItem('profilo') || '{}';
+
+    const checkIfUserIsAutenticated = JSON.parse(getProfiloFromLocalStorage).auth;
+
+   
+
+    const hideShowHeaderLogin =  location.pathname === '/auth' ||
+                                 location.pathname === '/azure' ||
+                                 location.pathname === '/auth/azure' ; 
+  
+    
+    const statusUser = getDataUser === '{}' ? false : user;
     return (
 
         <div className="div_header">
-            {(location.pathname === '/auth')  ? null : 
+            {hideShowHeaderLogin ? null : 
                 <HeaderAccount
                     rootLink={pagoPALink}
-                    loggedUser={getDataUser === '{}' ? false : user}
+                    loggedUser={statusUser}
                    
                     onAssistanceClick={() => onEmailClick()
-                        //navigate('https://fatturazione@assistenza.pagopa.it');
+                       
                     }
                     
                     onLogin={handleLoginRedirect}
                     onLogout={() => {
-                        localStorage.removeItem('profilo');
-                        localStorage.removeItem('token');
-                        localStorage.removeItem('statusApplication');
-                        window.location.href = redirect;
-                        // handleLogoutRedirect();
-                        //navigate('https://selfcare.pagopa.it/');
+
+
+                        
+                        
+
+                        if(checkIfUserIsAutenticated === 'PAGOPA'){
+                            // handleLogoutRedirect();
+                            
+                            localStorage.removeItem('profilo');
+                            localStorage.removeItem('token');
+                            localStorage.removeItem('statusApplication');
+                            navigate('/azureLogin');
+                        }else{
+                            localStorage.removeItem('profilo');
+                            localStorage.removeItem('token');
+                            localStorage.removeItem('statusApplication');
+                            window.location.href = redirect;
+                        }
                         
                     }}
                     onDocumentationClick={()=>onButtonClick()}

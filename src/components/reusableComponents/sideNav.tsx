@@ -124,6 +124,9 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
   
 
   
+    const getProfiloFromLocalStorage = localStorage.getItem('profilo') || '{}';
+
+    const checkIfUserIsAutenticated = JSON.parse(getProfiloFromLocalStorage).auth;
   
 
  
@@ -133,17 +136,23 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
     
 
     const [selectedIndex, setSelectedIndex] = useState(0);
-    const handleListItemClick = (index : number, route : string) => {
-        navigate(route);
-        setSelectedIndex(index);
-        setInfoModuloCommessa((prev:any)=>({ 
-            ...prev,
-            ...{
-                action:'DATI_FATTURAZIONE',
-                statusPageDatiFatturazione:'immutable'
-            }}));
+    const handleListItemClick = (index : number) => {
 
-        localStorage.setItem('statusApplication', JSON.stringify(infoModuloCommessa));
+        if(checkIfUserIsAutenticated === 'PAGOPA'){
+            navigate('/pagopalistadatifatturazione');
+        }else{
+            navigate('/');
+            setSelectedIndex(index);
+            setInfoModuloCommessa((prev:any)=>({ 
+                ...prev,
+                ...{
+                    action:'DATI_FATTURAZIONE',
+                    statusPageDatiFatturazione:'immutable'
+                }}));
+    
+            localStorage.setItem('statusApplication', JSON.stringify(infoModuloCommessa));
+        }
+        
     };
 
 
@@ -253,13 +262,16 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
 
     
    
-
+    const hideShowSidenav = location.pathname === '/auth' ||
+                            location.pathname === '/azure' ||
+                            location.pathname === '/auth/azure'||
+                            location.pathname === '/azureLogin';
  
 
 
     return (
         <>
-            {(location.pathname === '/error'||location.pathname === '/auth'|| location.pathname ==='/azureLogin') ? null :
+            {hideShowSidenav ? null :
                 <Box sx={{
                     height: '100%',
                     maxWidth: 360,
@@ -267,7 +279,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
                 }}
                 >
                     <List component="nav" aria-label="main piattaforma-notifiche sender">
-                        <ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick(0,'/')}>
+                        <ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick(0)}>
                             <ListItemIcon>
                                 <DnsIcon fontSize="inherit"></DnsIcon>
                       

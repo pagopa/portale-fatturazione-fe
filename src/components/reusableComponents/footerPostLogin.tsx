@@ -260,9 +260,13 @@ export default function FooterPostLogin() {
         setStatusLog(bool);
     },[dataUser]);
 
+    const hideFooter = location.pathname === '/auth' ||
+    location.pathname === '/azure' ||
+    location.pathname === '/auth/azure';
+
     return (
         <div>
-            {( location.pathname === '/auth')  ? null : 
+            {hideFooter ? null : 
                 <Footer
                     loggedUser={statusLog}
                     companyLink={pagoPALink}

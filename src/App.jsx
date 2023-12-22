@@ -18,6 +18,8 @@ import AzureLogin from './page/azureLogin';
 import PagoPaListaDatiFatturazione from './page/pagoPaListaDatiFatturazione';
 import AuthAzure from './page/authAzure';
 import { MsalProvider, AuthenticatedTemplate, useMsal, UnauthenticatedTemplate } from '@azure/msal-react';
+import { InteractionRequiredAuthError, InteractionStatus} from "@azure/msal-browser";
+import Azure from './page/azure';
 import { Container, Button } from 'react-bootstrap';
 import { loginRequest } from './authConfig';
 import './App.css';
@@ -82,47 +84,52 @@ const App = ({ instance }) => {
         indexStepper:0 // in che pat sono al momento del reload?
     });
 
-
+    console.log({infoModuloCommessa});
 
     return (
+
+      
         <MsalProvider instance={instance}>
-       
-   
+
+
 
             <Router>
-            
+
                 <Routes>
-                    <Route path="/auth" element={<Auth setCheckProfilo={setCheckProfilo} setInfoModuloCommessa={setInfoModuloCommessa}/>} />
-                </Routes>
-                <Routes>
-                    <Route path="/auth/azure" element={<AuthAzure />} />
+                    <Route path="/auth" element={<Auth setCheckProfilo={setCheckProfilo} setInfoModuloCommessa={setInfoModuloCommessa} />} />
                 </Routes>
 
-               
+                <Routes>
+                    <Route path="/auth/azure" element={<AuthAzure setInfoModuloCommessa={setInfoModuloCommessa}/>} />
+                </Routes>
 
-                
-           
+                <Routes>
+                    <Route path="azure" element={<Azure />} />
+                </Routes>
+
+
+
+
                 <ThemeProvider theme={theme}>
                     <div className="App">
-                   
+
                         <HeaderPostLogin />
-                   
+
                         <div>
                             <HeaderNavComponent />
 
                             <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
-                                <Grid  item xs={2}>
-                                    <SideNavComponent  setInfoModuloCommessa={setInfoModuloCommessa}
-                                        infoModuloCommessa={infoModuloCommessa}/>
+                                <Grid item xs={2}>
+                                    <SideNavComponent setInfoModuloCommessa={setInfoModuloCommessa}
+                                        infoModuloCommessa={infoModuloCommessa} />
                                 </Grid>
-                            
+
 
                                 <Grid item xs={10}>
                                     <Routes>
                                         <Route path="/" element={<AreaPersonaleUtenteEnte
                                             infoModuloCommessa={infoModuloCommessa}
-                                            setInfoModuloCommessa={setInfoModuloCommessa}
-                                        />} />
+                                            setInfoModuloCommessa={setInfoModuloCommessa} />} />
                                     </Routes>
                                     <Routes>
                                         <Route path="/4" element={<ModuloCommessaElencoUtPa infoModuloCommessa={infoModuloCommessa} setInfoModuloCommessa={setInfoModuloCommessa} />} />
@@ -134,17 +141,17 @@ const App = ({ instance }) => {
                                         <Route path="/pdf" element={<ModuloCommessaPdf infoModuloCommessa={infoModuloCommessa} />} />
                                     </Routes>
                                     <Routes>
-                                        <Route path="/pagopalistadatifatturazione" element={<PagoPaListaDatiFatturazione />} />
+                                        <Route path="/pagopalistadatifatturazione" element={<PagoPaListaDatiFatturazione infoModuloCommessa={infoModuloCommessa} />} />
                                     </Routes>
 
-                                   
-                                    
-                           
+
+
+
                                 </Grid>
 
                             </Grid>
                         </div>
-                
+
                         <Routes>
                             <Route path="/error" element={<ErrorPage />} />
                         </Routes>
@@ -154,7 +161,7 @@ const App = ({ instance }) => {
                         <FooterPostLogin />
                     </div>
                 </ThemeProvider>
-              
+
             </Router>
         </MsalProvider>
 

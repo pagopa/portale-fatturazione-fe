@@ -19,6 +19,7 @@ const Auth : React.FC<LoginProps> = ({setCheckProfilo, setInfoModuloCommessa}) =
                
                 const storeProfilo = resp.data;
                 localStorage.setItem('profilo', JSON.stringify({
+                    auth:storeProfilo.auth,
                     nomeEnte:storeProfilo.nomeEnte,
                     descrizioneRuolo:storeProfilo.descrizioneRuolo,
                     ruolo:storeProfilo.ruolo,
