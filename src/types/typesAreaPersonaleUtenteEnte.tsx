@@ -1,13 +1,20 @@
+export interface SuccesResponseGetDatiFatturazione {
+    data:DatiFatturazione
+}
+
 export type Contatti = {
     email: string,
     tipo: number
 }
 
 export interface AreaPersonaleProps{ 
-    infoModuloCommessa?:any,
-    setInfoModuloCommessa:any
+    mainState?:any,
+    setMainState:any
 }
 export interface DatiFatturazione{
+    id?:string,
+    idEnte:string,
+    map?:string
     tipoCommessa:string,
     splitPayment:boolean,
     cup: string,
@@ -18,8 +25,11 @@ export interface DatiFatturazione{
     dataModifica:string,
     dataDocumento:string | null,
     pec:string,
-    notaLegale:boolean
+    notaLegale:boolean,
+    prodotto?:string,
 }
+
+    
 
 export interface DatiFatturazionePost{
     tipoCommessa:string,
@@ -32,13 +42,27 @@ export interface DatiFatturazionePost{
     pec:string,
     notaLegale:boolean
 }
+
+export interface DatiFatturazionePostPagopa {
+    tipoCommessa:string,
+    splitPayment:boolean,
+    cup: string,
+    idDocumento:string,
+    codCommessa:string,
+    contatti: Contatti[],
+    dataDocumento:string| null,
+    pec:string,
+    notaLegale:boolean,
+    prodotto:string,
+    idEnte:string
+}
 export interface AreaPersonaleContext {
     datiFatturazione:DatiFatturazione, 
     setDatiFatturazione?:any,
-    setInfoModuloCommessa?:any,
+    setMainState?:any,
     setStatusBottmConferma?:any,
     user?:string,
-    infoModuloCommessa?:any
+    mainState?:any
    
 
 

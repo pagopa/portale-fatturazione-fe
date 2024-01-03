@@ -6,7 +6,7 @@ import { _YupPec} from '../../validations/email/index';
 import YupString from '../../validations/string/index';
 
 const TextFieldComponent : React.FC<TextFieldProps> = props => {
-    const {infoModuloCommessa,setDatiFatturazione,setStatusBottmConferma, datiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
+    const {mainState,setDatiFatturazione,setStatusBottmConferma, datiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
 
     const [errorValidation, setErrorValidation] = useState(false);
     const {
@@ -67,11 +67,11 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
 
 
     let makeTextInputDisable = true;
-    if(infoModuloCommessa.statusPageDatiFatturazione === 'immutable'){
+    if(mainState.statusPageDatiFatturazione === 'immutable'){
         makeTextInputDisable = true;
-    }else if(infoModuloCommessa.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa === ''){
+    }else if(mainState.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa === ''){
         makeTextInputDisable = true;
-    }else if(infoModuloCommessa.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa !== ''){
+    }else if(mainState.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa !== ''){
         makeTextInputDisable = false;
 
     }

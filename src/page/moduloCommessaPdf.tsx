@@ -7,14 +7,14 @@ import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { useNavigate } from "react-router";
 import TextDettaglioPdf from '../components/commessaPdf/textDettaglioPdf';
 import { DataPdf } from "../types/typeModuloCommessaInserimento";
-import { menageError } from "../api/api";
+import { manageError } from "../api/api";
 import { usePDF } from 'react-to-pdf';
 import { DatiModuloCommessaPdf,ModComPdfProps  } from "../types/typeModuloCommessaInserimento";
 
 
 
 
-const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({infoModuloCommessa}) =>{
+const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
 
     const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre","Gennaio"];
 
@@ -66,7 +66,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({infoModuloCommessa}) =>{
     
 
     const getPdf = async() =>{
-        getModuloCommessaPdf(token, statusApp.anno,statusApp.mese, infoModuloCommessa.nonce).then((res)=>{
+        getModuloCommessaPdf(token, statusApp.anno,statusApp.mese, mainState.nonce).then((res)=>{
 
             const primo = res.data.datiModuloCommessa.find((obj:any)=>obj.idTipoSpedizione === 3);
             const secondo = res.data.datiModuloCommessa.find((obj:any)=>obj.idTipoSpedizione === 1);
@@ -92,7 +92,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({infoModuloCommessa}) =>{
  
     const downloadPdf = async()=>{
         const tipoCommessa =  localStorage.getItem('tipo') || '';
-        downloadModuloCommessaPdf(token, statusApp.anno,statusApp.mese, tipoCommessa, infoModuloCommessa.nonce).then((res)=>{
+        downloadModuloCommessaPdf(token, statusApp.anno,statusApp.mese, tipoCommessa, mainState.nonce).then((res)=>{
             const wrapper = document.getElementById('file_download');
             if(wrapper){
                 wrapper.innerHTML = res.data;
@@ -111,13 +111,13 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({infoModuloCommessa}) =>{
  
     useEffect(()=>{
 
-        if(infoModuloCommessa.nonce !== ''){
+        if(mainState.nonce !== ''){
             getPdf();
             downloadPdf();
         }
       
       
-    },[infoModuloCommessa.nonce]);
+    },[mainState.nonce]);
 
     let mese = '';
     let anno = 2000;

@@ -4,7 +4,7 @@ import { TerzoContainerModCommessa, CategorieTotali} from '../../types/typeModul
 import { getDatiConfigurazioneCommessa } from '../../api/api';
 import { useNavigate } from 'react-router';
 
-const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali, dataModifica, infoModuloCommessa}) => {
+const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali, dataModifica, mainState}) => {
 
     const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre","Gennaio"];
    
@@ -67,7 +67,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
 
 
     const getConfigurazione = async() =>{
-        getDatiConfigurazioneCommessa(token, profilo.idTipoContratto, profilo.prodotto, infoModuloCommessa.nonce)
+        getDatiConfigurazioneCommessa(token, profilo.idTipoContratto, profilo.prodotto, mainState.nonce)
             .then((res)=>{
                 const newCategorie = replaceDate(res.data.categorie,'[data]', '');
                 setLabelCategorie(newCategorie);
@@ -81,7 +81,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
     };
 
     useEffect(()=>{
-        if(infoModuloCommessa.nonce !== ''){
+        if(mainState.nonce !== ''){
             getConfigurazione();
         }
         

@@ -46,7 +46,7 @@ export const InserimentoModuloCommessaContext = createContext<InsModuloCommessaC
 });
 
 
-const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps> = ({infoModuloCommessa, setInfoModuloCommessa}) => {
+const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps> = ({mainState, setMainState}) => {
 
 
 
@@ -118,7 +118,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
     const handleGetDettaglioModuloCommessa = async () =>{
 
-        await getDettaglioModuloCommessa(token,statusApp.anno,statusApp.mese, infoModuloCommessa.nonce)
+        await getDettaglioModuloCommessa(token,statusApp.anno,statusApp.mese, mainState.nonce)
             .then((response:any)=>{
                 const res = response.data;
                 console.log({res});
@@ -140,17 +140,17 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
   
     useEffect(()=>{
-        if(statusApp.userClickOn === 'GRID' && infoModuloCommessa.nonce !== ''){
+        if(statusApp.userClickOn === 'GRID' && mainState.nonce !== ''){
             handleGetDettaglioModuloCommessa();
           
-            setInfoModuloCommessa((prev:any)=>{
+            setMainState((prev:any)=>{
 
                
                 return {...prev,...{userClickOn:'',statusPageInserimentoCommessa:'immutable'}};
             });
         }
       
-    },[infoModuloCommessa.nonce]);
+    },[mainState.nonce]);
    
 
     useEffect(()=>{
@@ -188,16 +188,16 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
     const hendlePostModuloCommessa = async () =>{
 
-        await insertDatiModuloCommessa(datiCommessa, token, infoModuloCommessa.nonce)
+        await insertDatiModuloCommessa(datiCommessa, token, mainState.nonce)
             .then(res =>{
                 const statusApp = localStorage.getItem('statusApplication')||'{}';
                 const parseStatusApp = JSON.parse(statusApp);
             
               
-                if(infoModuloCommessa.inserisciModificaCommessa === 'MODIFY'){
+                if(mainState.inserisciModificaCommessa === 'MODIFY'){
                     // navigate('/4');
-                    console.log({infoModuloCommessa});
-                    setInfoModuloCommessa((prev:any)=>({
+                    console.log({mainState});
+                    setMainState((prev:any)=>({
                         ...prev,
                         ...{
                             action:'SHOW_MODULO_COMMESSA',
@@ -217,7 +217,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                     setTotaliModuloCommessa(res.data.totale);
 
                     console.log({res},'POST MODULO');
-                    setInfoModuloCommessa((prev:any)=>({
+                    setMainState((prev:any)=>({
                         ...prev,
                         ...{action:'HIDE_MODULO_COMMESSA',
                             statusPageInserimentoCommessa:'immutable',
@@ -246,7 +246,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
    
 
     const hendleOnButtonModificaModuloCommessa = () => {
-        setInfoModuloCommessa((prev:any)=>({...prev,...{statusPageInserimentoCommessa:'mutable'}}));
+        setMainState((prev:any)=>({...prev,...{statusPageInserimentoCommessa:'mutable'}}));
         setTotaliModuloCommessa([
             {
                 idCategoriaSpedizione: 0,
@@ -258,24 +258,24 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
             }
         ]);
     };
-    const cssPathModuloComm = infoModuloCommessa.statusPageInserimentoCommessa === 'immutable' ? 'bold' : 'normal';
-    const cssPathAggModComm = infoModuloCommessa.statusPageInserimentoCommessa === 'mutable' ? 'bold' : 'normal';
+    const cssPathModuloComm = mainState.statusPageInserimentoCommessa === 'immutable' ? 'bold' : 'normal';
+    const cssPathAggModComm = mainState.statusPageInserimentoCommessa === 'mutable' ? 'bold' : 'normal';
 
     let actionTitle; 
-    if(infoModuloCommessa.inserisciModificaCommessa === 'INSERT'){
+    if(mainState.inserisciModificaCommessa === 'INSERT'){
         actionTitle =  <Typography variant="h4"> Aggiungi modulo commessa</Typography>;
-    }else if(infoModuloCommessa.inserisciModificaCommessa  === 'MODIFY' && infoModuloCommessa.statusPageInserimentoCommessa === 'immutable' ){
+    }else if(mainState.inserisciModificaCommessa  === 'MODIFY' && mainState.statusPageInserimentoCommessa === 'immutable' ){
         actionTitle =  <Typography variant="h4">{month[statusApp.mese - 1]}</Typography>;
-    }else if(infoModuloCommessa.inserisciModificaCommessa  === 'MODIFY' && infoModuloCommessa.statusPageInserimentoCommessa === 'mutable'  ){
+    }else if(mainState.inserisciModificaCommessa  === 'MODIFY' && mainState.statusPageInserimentoCommessa === 'mutable'  ){
         actionTitle =  <Typography variant="h4"> Modifica modulo commessa</Typography>;
     }
-    console.log({infoModuloCommessa});
+    console.log({mainState});
 
    
     let indexStepper = 0;
-    if(infoModuloCommessa.inserisciModificaCommessa === 'INSERT'){
+    if(mainState.inserisciModificaCommessa === 'INSERT'){
         indexStepper = 1;
-    }else if(infoModuloCommessa.action === 'HIDE_MODULO_COMMESSA' && infoModuloCommessa.inserisciModificaCommessa === 'MODIFY'){
+    }else if(mainState.action === 'HIDE_MODULO_COMMESSA' && mainState.inserisciModificaCommessa === 'MODIFY'){
         indexStepper = 2;
     }
 
@@ -288,8 +288,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 totaliModuloCommessa,
                 setTotale,
                 totale,
-                infoModuloCommessa,
-                setInfoModuloCommessa
+                mainState,
+                setMainState
             }}>
             <BasicModal setOpen={setOpen} open={open}></BasicModal>
             {/*Hidden di modulo commessa sul click contina , save del modulo commessa cosi da mostrare dati fatturazione,
@@ -304,10 +304,10 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                         size="small"
                         startIcon={<ArrowBackIcon />}
                         onClick={() =>{
-                            if(infoModuloCommessa.statusPageInserimentoCommessa === 'immutable'){
+                            if(mainState.statusPageInserimentoCommessa === 'immutable'){
                                 navigate('/4');
                             }else{
-                                setInfoModuloCommessa((prev:any)=>({...prev,...{statusPageInserimentoCommessa:'immutable'}}));
+                                setMainState((prev:any)=>({...prev,...{statusPageInserimentoCommessa:'immutable'}}));
                             }
                             
                         } }
@@ -338,10 +338,10 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                     
                    
                 </div>
-                {(infoModuloCommessa.inserisciModificaCommessa === 'INSERT' &&  infoModuloCommessa.modify === true) ||
-                (infoModuloCommessa.action === 'HIDE_MODULO_COMMESSA' && 
-                infoModuloCommessa.inserisciModificaCommessa === 'MODIFY' && 
-                infoModuloCommessa.modify === true)
+                {(mainState.inserisciModificaCommessa === 'INSERT' &&  mainState.modify === true) ||
+                (mainState.action === 'HIDE_MODULO_COMMESSA' && 
+                mainState.inserisciModificaCommessa === 'MODIFY' && 
+                mainState.modify === true)
                     ? 
                     <div className="marginTop24">
                         <HorizontalLinearStepper indexStepper={indexStepper}></HorizontalLinearStepper>
@@ -354,7 +354,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 
                     {actionTitle}
 
-                    {infoModuloCommessa.statusPageInserimentoCommessa === 'immutable' && infoModuloCommessa.action !== 'HIDE_MODULO_COMMESSA' && infoModuloCommessa.ruolo !== 'R' ?
+                    {mainState.statusPageInserimentoCommessa === 'immutable' && mainState.action !== 'HIDE_MODULO_COMMESSA' && mainState.ruolo !== 'R' ?
                        
                         <div className="d-flex justify-content-end ">
                             <Button variant="contained" size="small" onClick={()=> hendleOnButtonModificaModuloCommessa()} >Modifica</Button>
@@ -366,19 +366,19 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                     
                 </div>
                
-                {infoModuloCommessa.action !== "HIDE_MODULO_COMMESSA" ?
+                {mainState.action !== "HIDE_MODULO_COMMESSA" ?
                     <div>
                         <div className="bg-white mt-3 pt-3">
-                            <PrimoContainerInsCom setInfoModuloCommessa={setInfoModuloCommessa} />
+                            <PrimoContainerInsCom setMainState={setMainState} />
                             <SecondoContainerInsCom  />
        
                         </div>
                         <div className='bg-white'>
-                            <TerzoContainerInsCom valueTotali={totaliModuloCommessa} dataModifica={dataMod} infoModuloCommessa={infoModuloCommessa}/>
+                            <TerzoContainerInsCom valueTotali={totaliModuloCommessa} dataModifica={dataMod} mainState={mainState}/>
                         </div>
                  
                         {
-                            infoModuloCommessa.statusPageInserimentoCommessa === 'immutable' ? null :
+                            mainState.statusPageInserimentoCommessa === 'immutable' ? null :
                                 <div className="d-flex justify-content-between mt-5 mb-5 ">
                                     <Button
                                         variant="outlined"
@@ -392,7 +392,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                                         disabled={disableContinua}
                                         onClick={()=>{ 
                                             /*
-                                            setInfoModuloCommessa((prev:any)=>({
+                                            setMainState((prev:any)=>({
                                                 ...prev,
                                                 ...{action:'HIDE_MODULO_COMMESSA',
                                                     statusPageDatiFatturazione:'mutable'}}));
@@ -408,7 +408,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                     </div> 
                     : null}
             </div> 
-            {infoModuloCommessa.statusPageInserimentoCommessa === 'immutable' && infoModuloCommessa.action !== "HIDE_MODULO_COMMESSA"?
+            {mainState.statusPageInserimentoCommessa === 'immutable' && mainState.action !== "HIDE_MODULO_COMMESSA"?
                 <div className="d-flex justify-content-center marginTop24 mb-5">
                     <Button onClick={()=>navigate('/pdf')} variant="contained">Vedi anteprima</Button>
                 </div> : null
@@ -416,10 +416,10 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
           
            
             {/* Nascondo il dettaglio fatturazione fino al click continua */}
-            {infoModuloCommessa.action === 'HIDE_MODULO_COMMESSA' ?
+            {mainState.action === 'HIDE_MODULO_COMMESSA' ?
                 <AreaPersonaleUtenteEnte 
-                    infoModuloCommessa={infoModuloCommessa}
-                    setInfoModuloCommessa={setInfoModuloCommessa}></AreaPersonaleUtenteEnte>
+                    mainState={mainState}
+                    setMainState={setMainState}></AreaPersonaleUtenteEnte>
                 : null
             }
             

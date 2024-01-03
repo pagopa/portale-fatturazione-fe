@@ -7,9 +7,10 @@ import { useNavigate } from "react-router";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import {BodyListaDatiFatturazione} from '../types/typesGeneral';
 import { DataGrid, GridRowParams,GridEventListener,MuiEvent, GridColDef } from '@mui/x-data-grid';
+import DownloadIcon from '@mui/icons-material/Download';
 
 
-const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({infoModuloCommessa}) =>{
+const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainState, setMainState}) =>{
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
 
@@ -37,7 +38,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({infoM
     
 
     const getProdotti = async() => {
-        await getTipologiaProdotto(token, infoModuloCommessa.nonce )
+        await getTipologiaProdotto(token, mainState.nonce )
             .then((res)=>{
                 console.log({res}, 'getProdotti');
                 setProdotti(res.data);
@@ -51,7 +52,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({infoM
     };
 
     const getProfili = async() => {
-        await getTipologiaProfilo(token, infoModuloCommessa.nonce)
+        await getTipologiaProfilo(token, mainState.nonce)
             .then((res)=>{
                 console.log({res}, 'getProfilii');
                 setProfili(res.data);
@@ -67,7 +68,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({infoM
     
 
     const getListaDatifatturazione = async(body:BodyListaDatiFatturazione) =>{
-        await listaDatiFatturazionePagopa(body ,token, infoModuloCommessa.nonce)
+        await listaDatiFatturazionePagopa(body ,token, mainState.nonce)
             .then((res)=>{
                 console.log({res}, 'lista');
                 setGridData(res.data);
@@ -85,14 +86,14 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({infoM
 
     useEffect(()=>{
         
-        if(infoModuloCommessa.nonce !== ''){
+        if(mainState.nonce !== ''){
 
             getProdotti();
             getProfili();
             getListaDatifatturazione(bodyGetLista);
        
         }
-    }, [infoModuloCommessa.nonce]);
+    }, [mainState.nonce]);
 
     let columsSelectedGrid = '';
     const handleOnCellClick = (params:any) =>{
@@ -107,16 +108,31 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({infoM
         idCommessa
     ) => {
         event.preventDefault();
+        console.log({params});
         // l'evento verrà eseguito solo se l'utente farà il clik sul 
         if(columsSelectedGrid  === 'ragioneSociale' || columsSelectedGrid === 'action' ){
 
-            /*
-            setInfoModuloCommessa((prev:any)=>({...prev, ...{
-               
+            /* 
+            setMainState((prev:any)=>({...prev, ...{
+                idEnte:params.row.idEnte,
+                prodotto:params.row.prodotto,
                
             }}));
-*/
-            navigate('/4');
+            */
+
+            const getProfilo = localStorage.getItem('profilo') || '{}';
+            const profilo =  JSON.parse(getProfilo);
+
+            localStorage.setItem('profilo', JSON.stringify({
+                ...profilo,
+                ...{
+                    idEnte:params.row.idEnte,
+                    prodotto:params.row.prodotto
+                }
+               
+            }));
+
+            navigate('/');
         }
        
     };
@@ -131,14 +147,16 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({infoM
         { field: 'splitPayment', headerName: 'Split payment', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'idDocumento', headerName: 'ID. Documento', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'dataDocumento', headerName: 'Data Documento', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'codCommessa', headerName: 'cod. Commessa', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        { field: 'codCommessa', headerName: 'Cod. Commessa', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'dataCreazione', headerName: 'Data Primo Acc.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'dataModifica', headerName: 'Data Ultimo Acc.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         {
             field: 'action',
             headerName: '',
             sortable: false,
+            width:70,
             headerAlign: 'left',
+            disableColumnMenu :true,
             renderCell: ((row : any) => (
     
                 <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} onClick={() => console.log('Show page details')} />
@@ -269,7 +287,14 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({infoM
                
             </div>
             {/* grid */}
-            <div className="marginTop24 mb-5" style={{ width: '100%'}}>
+            <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
+               
+                <Button >
+                Download Risultati
+                    <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
+                </Button>
+            </div>
+            <div className="mt-1 mb-5" style={{ width: '100%'}}>
                 <DataGrid sx={{
                     height:'400px',
                     '& .MuiDataGrid-virtualScroller': {
@@ -281,7 +306,9 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({infoM
                 columns={columns}
                 getRowId={(row) => row.key}
                 onRowClick={handleEvent}
-                onCellClick={handleOnCellClick} />
+                onCellClick={handleOnCellClick}
+                />
+                
             </div>
             <div>
 

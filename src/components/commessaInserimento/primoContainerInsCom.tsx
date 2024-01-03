@@ -4,7 +4,7 @@ import LabelComponent from './label';
 import { PrimoContainerInsComProps } from '../../types/typeModuloCommessaInserimento';
 
 
-const PrimoContainerInsCom : React.FC<PrimoContainerInsComProps> = ({setInfoModuloCommessa}) => {
+const PrimoContainerInsCom : React.FC<PrimoContainerInsComProps> = ({setMainState}) => {
 
     const getStatusApplication = localStorage.getItem('statusApplication') || '{}';
     const statusApplication =  JSON.parse(getStatusApplication);
@@ -28,12 +28,12 @@ const PrimoContainerInsCom : React.FC<PrimoContainerInsComProps> = ({setInfoModu
            
             anno = date.getFullYear()+1;
             mese = month[mon + 1 ];
-            //setInfoModuloCommessa((prev:any) =>({...prev, ...{mese:mese,anno:anno}}));
+            //setMainState((prev:any) =>({...prev, ...{mese:mese,anno:anno}}));
            
         }else{
             anno = date.getFullYear();
             mese = month[mon + 1 ];
-            // setInfoModuloCommessa((prev:any) =>({...prev, ...{mese:mese,anno:anno}}));
+            // setMainState((prev:any) =>({...prev, ...{mese:mese,anno:anno}}));
         }
      
 

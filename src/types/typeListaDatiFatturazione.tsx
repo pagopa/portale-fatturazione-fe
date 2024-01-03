@@ -1,3 +1,4 @@
 export interface ListaDatiFatturazioneProps{
-    infoModuloCommessa:any
+    mainState:any,
+    setMainState:any,
 }

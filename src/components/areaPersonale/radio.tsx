@@ -15,23 +15,23 @@ const  RadioComponent: React.FC<RadioComponentProps> = (props) => {
         label, options, valueRadio,keyObject,
     } = props;
 
-    const {infoModuloCommessa ,setDatiFatturazione, datiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
+    const {mainState ,setDatiFatturazione, datiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
 
 
     let makeSplitRadioDisable = true;
     if(label ==='Split Paymet'){
 
-        if(infoModuloCommessa.statusPageDatiFatturazione === 'immutable'){
+        if(mainState.statusPageDatiFatturazione === 'immutable'){
             makeSplitRadioDisable = true;
-        }else if(infoModuloCommessa.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa === ''){
+        }else if(mainState.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa === ''){
             makeSplitRadioDisable = true;
-        }else if(infoModuloCommessa.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa !== ''){
+        }else if(mainState.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa !== ''){
             makeSplitRadioDisable = false;
     
         }
 
     }else{
-        if(infoModuloCommessa.statusPageDatiFatturazione === 'immutable'){
+        if(mainState.statusPageDatiFatturazione === 'immutable'){
             makeSplitRadioDisable = true;
         }else{
             makeSplitRadioDisable = false;

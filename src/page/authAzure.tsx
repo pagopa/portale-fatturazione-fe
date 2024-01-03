@@ -8,7 +8,7 @@ import { useNavigate } from "react-router";
 import { AuthAzureProps } from "../types/typesGeneral";
 
 
-const AuthAzure : React.FC<AuthAzureProps> = ({setInfoModuloCommessa}) =>{
+const AuthAzure : React.FC<AuthAzureProps> = ({setMainState}) =>{
 
     
     const navigate = useNavigate();
@@ -105,7 +105,7 @@ const AuthAzure : React.FC<AuthAzureProps> = ({setInfoModuloCommessa}) =>{
                 
               
               
-                setInfoModuloCommessa((prev:any)=>({...prev, ...{nonce:resp?.data.nonce,ruolo:resp.data.ruolo,action:'LISTA_DATI_FATTURAZIONE'}}));
+                setMainState((prev:any)=>({...prev, ...{nonce:resp?.data.nonce,ruolo:resp.data.ruolo,action:'LISTA_DATI_FATTURAZIONE'}}));
                 navigate('/pagopalistadatifatturazione');
                 // setto il nonce nello state di riferimento globale
               

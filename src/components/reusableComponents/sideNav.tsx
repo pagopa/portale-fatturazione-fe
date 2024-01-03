@@ -15,7 +15,7 @@ import { getDatiModuloCommessa, getAuthProfilo} from '../../api/api';
 import { SideNavProps } from '../../types/typesGeneral';
 
 
-const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoModuloCommessa}) => {
+const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => {
 
     const navigate = useNavigate();
     const location : any = useLocation();
@@ -33,7 +33,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
         await getAuthProfilo(profilo.jwt)
             .then((res) =>{
             
-                setInfoModuloCommessa((prev:any)=>({...prev, ...{nonce:res?.data.nonce}}));
+                setMainState((prev:any)=>({...prev, ...{nonce:res?.data.nonce}}));
            
               
             }).catch(()=>{
@@ -48,25 +48,25 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
     useEffect(()=>{
         /*
         const x = Object.values(profilo).length;
-        console.log(infoModuloCommessa.nonce,x);*/
+        console.log(mainState.nonce,x);*/
 
-        if(infoModuloCommessa.nonce === '' && Object.values(profilo).length !== 0){
+        if(mainState.nonce === '' && Object.values(profilo).length !== 0){
           
             getProfiloToGetNonce();
         }
          
-    },[infoModuloCommessa.nonce]);
+    },[mainState.nonce]);
 
     
 
   
 
     const getCommessa = async () =>{
-        await getDatiModuloCommessa(token, infoModuloCommessa.nonce).then((res)=>{
+        await getDatiModuloCommessa(token, mainState.nonce).then((res)=>{
 
             if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
                 console.log(1, 'xxx');
-                setInfoModuloCommessa((prev:any)=>({
+                setMainState((prev:any)=>({
                     ...prev,
                     ...{
                         inserisciModificaCommessa:'INSERT',
@@ -79,7 +79,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
             }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0){
              
              
-                setInfoModuloCommessa((prev:any)=>({ 
+                setMainState((prev:any)=>({ 
                     ...prev,
                     ...{
                         inserisciModificaCommessa:'MODIFY',
@@ -87,7 +87,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
                         modifica:true}}));
             }else if(res.data.modifica === false ){
                 console.log(3, 'xxx');
-                setInfoModuloCommessa((prev:any)=>({ 
+                setMainState((prev:any)=>({ 
                     ...prev,
                     ...{
                         inserisciModificaCommessa:'NO_ACTION',
@@ -116,10 +116,10 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
 
    
     useEffect(()=>{
-        if(token !== undefined && infoModuloCommessa.nonce !== '' ){
+        if(token !== undefined && mainState.nonce !== '' ){
             getCommessa();
         }
-    },[token,infoModuloCommessa.nonce]);
+    },[token,mainState.nonce]);
 
   
 
@@ -143,14 +143,14 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
         }else{
             navigate('/');
             setSelectedIndex(index);
-            setInfoModuloCommessa((prev:any)=>({ 
+            setMainState((prev:any)=>({ 
                 ...prev,
                 ...{
                     action:'DATI_FATTURAZIONE',
                     statusPageDatiFatturazione:'immutable'
                 }}));
     
-            localStorage.setItem('statusApplication', JSON.stringify(infoModuloCommessa));
+            localStorage.setItem('statusApplication', JSON.stringify(mainState));
         }
         
     };
@@ -161,10 +161,10 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
         setSelectedIndex(index);
       
 
-        await getDatiModuloCommessa(token, infoModuloCommessa.nonce).then((res)=>{
+        await getDatiModuloCommessa(token, mainState.nonce).then((res)=>{
 
             if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
-                setInfoModuloCommessa((prev:any)=>({
+                setMainState((prev:any)=>({
                     ...prev,
                     ...{
                         inserisciModificaCommessa:'INSERT',
@@ -183,7 +183,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
                 navigate('/8');
             }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0 ){
 
-                setInfoModuloCommessa((prev:any)=>({ 
+                setMainState((prev:any)=>({ 
                     ...prev,
                     ...{
                         inserisciModificaCommessa:'MODIFY',
@@ -200,7 +200,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
                
                 navigate('/4');
             }else if(res.data.modifica === false && res.data.moduliCommessa.length === 0){
-                setInfoModuloCommessa((prev:any)=>({ 
+                setMainState((prev:any)=>({ 
                     ...prev,
                     ...{
                         inserisciModificaCommessa:'NO_ACTION',
@@ -217,7 +217,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
                
                 navigate('/4');
             }else if(res.data.modifica === false && res.data.moduliCommessa.length > 0){
-                setInfoModuloCommessa((prev:any)=>({ 
+                setMainState((prev:any)=>({ 
                     ...prev,
                     ...{
                         inserisciModificaCommessa:'NO_ACTION',

@@ -4,7 +4,7 @@ import {useEffect} from 'react';
 import { LoginProps } from '../types/typesGeneral';
 
 
-const Auth : React.FC<LoginProps> = ({setCheckProfilo, setInfoModuloCommessa}) =>{
+const Auth : React.FC<LoginProps> = ({setCheckProfilo, setMainState}) =>{
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     localStorage.removeItem('profilo');
@@ -34,7 +34,7 @@ const Auth : React.FC<LoginProps> = ({setCheckProfilo, setInfoModuloCommessa}) =
                 setCheckProfilo(true);
                
                 // setto il nonce nello state di riferimento globale
-                setInfoModuloCommessa((prev:any)=>({...prev, ...{nonce:resp?.data.nonce,ruolo:resp.data.ruolo}}));
+                setMainState((prev:any)=>({...prev, ...{nonce:resp?.data.nonce,ruolo:resp.data.ruolo}}));
                 navigate("/");
             } )
             .catch(err => {

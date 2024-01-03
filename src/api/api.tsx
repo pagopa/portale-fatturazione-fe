@@ -1,7 +1,7 @@
 import axios from 'axios';
-import {DatiFatturazione,DatiFatturazionePost} from '../types/typesAreaPersonaleUtenteEnte';
+import {DatiFatturazione,DatiFatturazionePost, DatiFatturazionePostPagopa} from '../types/typesAreaPersonaleUtenteEnte';
 import { DatiCommessa } from '../types/typeModuloCommessaInserimento';
-import { TokenObject, BodyListaDatiFatturazione } from '../types/typesGeneral';
+import { TokenObject, BodyListaDatiFatturazione} from '../types/typesGeneral';
 
 
 
@@ -19,7 +19,7 @@ export const redirect = "https://selfcare.pagopa.it/";
 
 
 
-export const menageError = (res:any,navigate:any) =>{
+export const manageError = (res:any,navigate:any) =>{
     
     if(res?.error?.response?.status === 401){
       
@@ -32,7 +32,7 @@ export const menageError = (res:any,navigate:any) =>{
         
         navigate('/error');
     }else if(res?.error?.response?.status === 400){
-        navigate('/error');
+        console.log('404 da gestire');
     }
 };
 
@@ -252,13 +252,35 @@ export const listaDatiFatturazionePagopa = async (body : BodyListaDatiFatturazio
 };
 
 export const getDatiFatturazionePagoPa = async (token:string, nonce:string , idente:string, prodotto:string) => {
-    const response =  await axios.get(`${url}/api/tipologia/tipoprofilo?idente=${idente}&prodotto=${prodotto}&nonce=${nonce}`,
+    const response =  await axios.get(`${url}/api/datifatturazione/pagopa/ente?idente=${idente}&prodotto=${prodotto}&nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+}; 
+
+export const modifyDatiFatturazionePagoPa = async (token:string, nonce:string ,body: DatiFatturazionePostPagopa,) => {
+    const response =  await axios.put(`${url}/api/datifatturazione/pagopa?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+}; 
+
+export const insertDatiFatturazionePagoPa = async (token:string, nonce:string ,body: DatiFatturazionePostPagopa) => {
+    const response =  await axios.post(`${url}/api/datifatturazione/pagopa?nonce=${nonce}`,
+        body,
         { headers: {
             Authorization: 'Bearer ' + token
         },}
     );
     return response;
 };
+
+
 
 
 

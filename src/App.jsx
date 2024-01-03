@@ -16,9 +16,9 @@ import ErrorPage from './page/error';
 import HeaderNavComponent from './components/reusableComponents/headerNav';
 import AzureLogin from './page/azureLogin';
 import PagoPaListaDatiFatturazione from './page/pagoPaListaDatiFatturazione';
+import PagoPaListaModuliCommessa from './page/pagoPaListaModuliCommessa';
 import AuthAzure from './page/authAzure';
 import { MsalProvider, AuthenticatedTemplate, useMsal, UnauthenticatedTemplate } from '@azure/msal-react';
-import { InteractionRequiredAuthError, InteractionStatus} from "@azure/msal-browser";
 import Azure from './page/azure';
 import { Container, Button } from 'react-bootstrap';
 import { loginRequest } from './authConfig';
@@ -70,7 +70,7 @@ const App = ({ instance }) => {
     const [checkProfilo,setCheckProfilo] = useState(false);
     // set status page abilita e disabilita le modifiche al componente dati fatturazione
    
-    const [infoModuloCommessa, setInfoModuloCommessa] = useState({
+    const [mainState, setMainState] = useState({
         mese:'',
         anno:'',
         modifica:undefined, // se la commessa selezionata è modificabile
@@ -81,10 +81,12 @@ const App = ({ instance }) => {
         statusPageInserimentoCommessa:'immutable',
         path:'/',
         nonce:'',
-        indexStepper:0 // in che pat sono al momento del reload?
+        indexStepper:0, // in che pat sono al momento del reload?
+        idEnte:'',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
+        prodotto: '',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
     });
 
-    console.log({infoModuloCommessa});
+ 
 
     return (
 
@@ -96,11 +98,11 @@ const App = ({ instance }) => {
             <Router>
 
                 <Routes>
-                    <Route path="/auth" element={<Auth setCheckProfilo={setCheckProfilo} setInfoModuloCommessa={setInfoModuloCommessa} />} />
+                    <Route path="/auth" element={<Auth setCheckProfilo={setCheckProfilo} setMainState={setMainState} />} />
                 </Routes>
 
                 <Routes>
-                    <Route path="/auth/azure" element={<AuthAzure setInfoModuloCommessa={setInfoModuloCommessa}/>} />
+                    <Route path="/auth/azure" element={<AuthAzure setMainState={setMainState}/>} />
                 </Routes>
 
                 <Routes>
@@ -120,28 +122,31 @@ const App = ({ instance }) => {
 
                             <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
                                 <Grid item xs={2}>
-                                    <SideNavComponent setInfoModuloCommessa={setInfoModuloCommessa}
-                                        infoModuloCommessa={infoModuloCommessa} />
+                                    <SideNavComponent setMainState={setMainState}
+                                        mainState={mainState} />
                                 </Grid>
 
 
                                 <Grid item xs={10}>
                                     <Routes>
                                         <Route path="/" element={<AreaPersonaleUtenteEnte
-                                            infoModuloCommessa={infoModuloCommessa}
-                                            setInfoModuloCommessa={setInfoModuloCommessa} />} />
+                                            mainState={mainState}
+                                            setMainState={setMainState} />} />
                                     </Routes>
                                     <Routes>
-                                        <Route path="/4" element={<ModuloCommessaElencoUtPa infoModuloCommessa={infoModuloCommessa} setInfoModuloCommessa={setInfoModuloCommessa} />} />
+                                        <Route path="/4" element={<ModuloCommessaElencoUtPa mainState={mainState} setMainState={setMainState} />} />
                                     </Routes>
                                     <Routes>
-                                        <Route path="/8" element={<ModuloCommessaInserimentoUtEn30 infoModuloCommessa={infoModuloCommessa} setInfoModuloCommessa={setInfoModuloCommessa} />} />
+                                        <Route path="/8" element={<ModuloCommessaInserimentoUtEn30 mainState={mainState} setMainState={setMainState} />} />
                                     </Routes>
                                     <Routes>
-                                        <Route path="/pdf" element={<ModuloCommessaPdf infoModuloCommessa={infoModuloCommessa} />} />
+                                        <Route path="/pdf" element={<ModuloCommessaPdf mainState={mainState} />} />
                                     </Routes>
                                     <Routes>
-                                        <Route path="/pagopalistadatifatturazione" element={<PagoPaListaDatiFatturazione infoModuloCommessa={infoModuloCommessa} />} />
+                                        <Route path="/pagopalistadatifatturazione" element={<PagoPaListaDatiFatturazione mainState={mainState} setMainState={setMainState} />} />
+                                    </Routes>
+                                    <Routes>
+                                        <Route path="/pagopalistamodulicommessa" element={<PagoPaListaModuliCommessa mainState={mainState} setMainState={setMainState} />} />
                                     </Routes>
 
 

@@ -11,8 +11,8 @@ export interface DatiCommessa  {
     moduliCommessa : ModuliCommessa[]
 }
 export  interface ModuloCommessaInserimentoProps{
-    infoModuloCommessa:any,
-    setInfoModuloCommessa:any
+    mainState:any,
+    setMainState:any
 }
 export interface TotaleNazionaleInternazionale{
     totaleNazionale:number,
@@ -27,8 +27,8 @@ export interface InsModuloCommessaContext {
     totaliModuloCommessa?: ResponsTotaliInsModuloCommessa[],
     setTotale?:any,
     totale:TotaleNazionaleInternazionale
-    infoModuloCommessa?:any,
-    setInfoModuloCommessa?:any
+    mainState?:any,
+    setMainState?:any
 }
 export interface RowInsComProps {
     sentence : string,
@@ -55,7 +55,7 @@ export interface ResponsTotaliInsModuloCommessa {
 export interface TerzoContainerModCommessa{
     valueTotali:ResponsTotaliInsModuloCommessa[],
     dataModifica:string,
-    infoModuloCommessa:any
+    mainState:any
 }
 
 export interface ModalDatiFatProps{
@@ -124,9 +124,9 @@ export interface DatiCommessaCosti{
 }
 
 export interface ModComPdfProps{
-    infoModuloCommessa: any
+    mainState: any
 }
 
 export interface PrimoContainerInsComProps{
-    setInfoModuloCommessa: any
+    setMainState: any
 }
