@@ -12,7 +12,75 @@ import DownloadIcon from '@mui/icons-material/Download';
 
 const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState,setMainState}) =>{
 
+    const navigate = useNavigate();
 
+    const getToken = localStorage.getItem('token') || '{}';
+    const token =  JSON.parse(getToken).token;
+
+
+    // prendo gli ultimi 2 anni dinamicamente
+    const currentYear = (new Date()).getFullYear().toString();
+    const getCurrentFinancialYear = () => {
+        const thisYear = (new Date()).getFullYear();
+        const yearArray = [0, 1].map((count) => `${thisYear - count}`);
+        return yearArray;
+    };
+
+    //creo un array di oggetti con tutti i mesi 
+    const currentMonth = (new Date()).getMonth() + 1;
+    const currString = currentMonth.toString();
+    const mesi = [
+        {1:'Gennaio'},{2:'Febbraio'},{3:'Marzo'},{4:'Aprile'},{5:'Maggio'},{6:'Giugno'},
+        {7:'Luglio'},{8:'Agosto'},{9:'Settembre'},{10:'Ottobre'},{11:'Novembre'},{12:'Dicembre'}];
+   
+
+    const [prodotti, setProdotti] = useState([{nome:''}]);
+   
+    
+    const [bodyGetLista, setBodyGetLista] = useState({descrizione:'',prodotto:'', anno:currentYear, mese:currString});
+
+    
+
+    const [statusAnnulla, setStatusAnnulla] = useState('hidden');
+
+
+    useEffect(()=>{
+        if(bodyGetLista.descrizione !== '' || bodyGetLista.prodotto !== '' ){
+            setStatusAnnulla('show');
+        }else{
+            setStatusAnnulla('hidden');
+        }
+    },[bodyGetLista]);
+
+   
+
+    
+
+    const getProdotti = async() => {
+        await getTipologiaProdotto(token, mainState.nonce )
+            .then((res)=>{
+                console.log({res}, 'getProdotti');
+                setProdotti(res.data);
+            })
+            .catch(((err)=>{
+                if(err.response?.status === 401){
+                        
+                    navigate('/error');
+                }
+            }));
+    };
+
+ 
+
+    useEffect(()=>{
+        
+        if(mainState.nonce !== ''){
+
+            getProdotti();
+           
+       
+        }
+    }, [mainState.nonce]);
 
     return (
         <div className="mx-5">
@@ -23,7 +91,8 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
             {/*title container end */}
     
             <div className="d-flex  me-5 mb-5   marginTop24" >
-                <div className="me-5">
+               
+                <div>
                     <Box sx={{ width: 200 }}>
                         <FormControl
                             fullWidth
@@ -32,21 +101,21 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
                             <InputLabel
                                 id="sea"
                             >
-                            Seleziona Prodotto
+                                Anno
 
                             </InputLabel>
                             <Select
                                 id="sea"
                                 label='Seleziona Prodotto'
                                 labelId="search-by-label"
-                                onChange={(e) => console.log('888')}
-                                value={''}
+                                onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{anno:e.target.value}}))}
+                                value={bodyGetLista.anno}
                                 //IconComponent={SearchIcon}
-                
+                    
                                 disabled={status=== 'immutable' ? true : false}
 
                             >
-                                {[1,2,3].map((el) => (
+                                {getCurrentFinancialYear().map((el) => (
 
                                     <MenuItem
                                         key={Math.random()}
@@ -61,7 +130,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
                         </FormControl>
                     </Box>
                 </div>
-                <div>
+                <div className="ms-5">
                     <Box sx={{ width: 200 }}>
                         <FormControl
                             fullWidth
@@ -70,27 +139,31 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
                             <InputLabel
                                 id="sea"
                             >
-                            Seleziona Profilo
+                                Mese
 
                             </InputLabel>
                             <Select
                                 id="sea"
-                                label='Seleziona Profilo'
+                                label='Seleziona Prodotto'
                                 labelId="search-by-label"
-                                onChange={(e) =>  console.log('bestia')}
-                                value={''}
+                                onChange={(e) =>{
+                                    setBodyGetLista((prev)=> ({...prev, ...{mese:e.target.value}}));
+                                }}
+
+                               
+                                value={bodyGetLista.mese}
                                 //IconComponent={SearchIcon}
-                
+                    
                                 disabled={status=== 'immutable' ? true : false}
 
                             >
-                                {[3,4,5].map((el) => (
+                                {mesi.map((el) => (
 
                                     <MenuItem
                                         key={Math.random()}
-                                        value={el}
+                                        value={Object.keys(el)[0].toString()}
                                     >
-                                        {el}
+                                        {Object.values(el)[0]}
                                     </MenuItem>
 
                                 ))}
@@ -101,6 +174,44 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
                 </div>
             </div>
             <div className="d-flex" >
+                <div className="me-5">
+                    <Box sx={{ width: 200 }}>
+                        <FormControl
+                            fullWidth
+                            size="medium"
+                        >
+                            <InputLabel
+                                id="sea"
+                            >
+                                Seleziona Prodotto
+
+                            </InputLabel>
+                            <Select
+                                id="sea"
+                                label='Seleziona Prodotto'
+                                labelId="search-by-label"
+                                onChange={(e) => setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}))}
+                                value={bodyGetLista.prodotto}
+                                //IconComponent={SearchIcon}
+                    
+                                disabled={status=== 'immutable' ? true : false}
+
+                            >
+                                {prodotti.map((el) => (
+
+                                    <MenuItem
+                                        key={Math.random()}
+                                        value={el.nome}
+                                    >
+                                        {el.nome}
+                                    </MenuItem>
+
+                                ))}
+
+                            </Select>
+                        </FormControl>
+                    </Box>
+                </div>
                 <div className="me-5">
                     <TextField
                         sx={{ width: 200 }}

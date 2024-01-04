@@ -5,6 +5,8 @@ import {InteractionStatus,
 } from "@azure/msal-browser";
 import { useNavigate } from "react-router";
 
+//Pagina di accesso con l'autenticazione AZURE
+
 const Azure : React.FC = () =>{
 
     const navigate = useNavigate();

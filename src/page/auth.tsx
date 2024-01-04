@@ -1,9 +1,9 @@
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { selfcareLogin, getAuthProfilo } from '../api/api';
 import {useEffect} from 'react';
-import { LoginProps } from '../types/typesGeneral';
+import { LoginProps, MainState } from '../types/typesGeneral';
 
-
+// Blank page utilizzata per l'accesso degli utenti tramite  Selfcare
 const Auth : React.FC<LoginProps> = ({setCheckProfilo, setMainState}) =>{
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -34,7 +34,7 @@ const Auth : React.FC<LoginProps> = ({setCheckProfilo, setMainState}) =>{
                 setCheckProfilo(true);
                
                 // setto il nonce nello state di riferimento globale
-                setMainState((prev:any)=>({...prev, ...{nonce:resp?.data.nonce,ruolo:resp.data.ruolo}}));
+                setMainState((prev: MainState)=>({...prev, ...{nonce:resp?.data.nonce,ruolo:resp.data.ruolo}}));
                 navigate("/");
             } )
             .catch(err => {

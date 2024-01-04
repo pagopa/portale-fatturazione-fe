@@ -60,7 +60,7 @@ export interface AreaPersonaleContext {
     datiFatturazione:DatiFatturazione, 
     setDatiFatturazione?:any,
     setMainState?:any,
-    setStatusBottmConferma?:any,
+    setStatusButtonConferma?:any,
     user?:string,
     mainState?:any
    

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {DatiFatturazione,DatiFatturazionePost, DatiFatturazionePostPagopa} from '../types/typesAreaPersonaleUtenteEnte';
 import { DatiCommessa } from '../types/typeModuloCommessaInserimento';
-import { TokenObject, BodyListaDatiFatturazione} from '../types/typesGeneral';
+import { TokenObject, BodyListaDatiFatturazione, BodyDownloadDatiFatturazione} from '../types/typesGeneral';
 
 
 
@@ -20,9 +20,9 @@ export const redirect = "https://selfcare.pagopa.it/";
 
 
 export const manageError = (res:any,navigate:any) =>{
-    
+    console.log({res}, 'ERROR');
     if(res?.error?.response?.status === 401){
-      
+        localStorage.removeItem("token");
         navigate('/error');
       
     }else if(res?.error?.response?.status === 404){
@@ -279,6 +279,21 @@ export const insertDatiFatturazionePagoPa = async (token:string, nonce:string ,b
     );
     return response;
 };
+
+export const downloadDocumentoListaDatiFatturazionePagoPa = async (token:string, nonce:string ,body: BodyDownloadDatiFatturazione) => {
+    const response =  await axios.post(`${url}/api/datifatturazione/pagopa/documento/ricerca?nonce=${nonce}`,
+        body,
+        
+        { headers: {
+            Authorization: 'Bearer ' + token,
+            ContentType: 'application/octet-stream',
+        },
+        }
+    );
+    return response;
+};
+
+
 
 
 

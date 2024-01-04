@@ -5,6 +5,7 @@ import '../style/areaPersonaleUtenteEnte.css';
 import { Button } from '@mui/material';
 import TabAreaPersonaleUtente from '../components/areaPersonale/tabAreaPersonaleUtente';
 import PageTitleNavigation from '../components/areaPersonale/pageTitleNavigation';
+import { MainState } from '../types/typesGeneral';
 import {
     AreaPersonaleContext,
     DatiFatturazione,
@@ -66,11 +67,11 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
 
     });
 
-
+    console.log({datiFatturazione},'TEST');
   
  
-    console.log({datiFatturazione});
-    const [statusBottonConferma, setStatusBottmConferma] = useState<StateEnableConferma>({
+
+    const [statusBottonConferma, setStatusButtonConferma] = useState<StateEnableConferma>({
         'CUP':false,
         'CIG':false,
         'Mail Pec':false,
@@ -93,9 +94,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
     const profilo =  JSON.parse(getProfilo);
 
    
-   
-
-  
 
     const getDatiFat = async () =>{
       
@@ -118,7 +116,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
             }
             navigate('/error');
             // setUser('new');
-            setMainState((prev:any)=>({...prev, ...{statusPageDatiFatturazione:'mutable'}}));
+            setMainState((prev:MainState)=>({...prev, ...{statusPageDatiFatturazione:'mutable'}}));
             
             setDatiFatturazione({
                 tipoCommessa:'',
@@ -143,7 +141,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
 
         await getDatiFatturazionePagoPa(token,mainState.nonce, profilo.idEnte, profilo.prodotto ).then((res:SuccesResponseGetDatiFatturazione) =>{   
             setUser('old');
-            console.log(res.data, '2 gennaio');
+           
             setDatiFatturazione(res.data); 
            
         }).catch(err =>{
@@ -161,7 +159,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
             }
             // navigate('/error');
             // setUser('new');
-            setMainState((prev:any)=>({...prev, ...{statusPageDatiFatturazione:'mutable'}}));
+            setMainState((prev:MainState)=>({...prev, ...{statusPageDatiFatturazione:'mutable'}}));
             
             setDatiFatturazione({
                 tipoCommessa:'',
@@ -203,11 +201,11 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
 
     const actionOnResponseModifyDatiFatturazione = () =>{
         if(mainState.action === 'DATI_FATTURAZIONE'){
-            setMainState((prev:any)=>({...prev, ...{
+            setMainState((prev:MainState)=>({...prev, ...{
                 statusPageDatiFatturazione:'immutable',
             }}));
         }else{
-            setMainState((prev:any)=>({...prev, ...{
+            setMainState((prev:MainState)=>({...prev, ...{
                 statusPageDatiFatturazione:'immutable',
                 action:'SHOW_MODULO_COMMESSA'
             }}));
@@ -236,7 +234,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
 
                 const newDatiFatturazione = {...datiFatturazione, ...{idEnte:profilo.idEnte,prodotto:profilo.prodotto}};
 
-                modifyDatiFatturazionePagoPa(token,mainState.nonce, newDatiFatturazione ).then((res) =>{
+                modifyDatiFatturazionePagoPa(token,mainState.nonce, newDatiFatturazione ).then((res:any) =>{
 
                     actionOnResponseModifyDatiFatturazione();
                 
@@ -249,7 +247,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
 
                 console.log({datiFatturazione}, 'GENNAIO');
                 modifyDatiFatturazione(datiFatturazione, token,mainState.nonce)
-                    .then((res) =>{
+                    .then((res:any) =>{
 
                         actionOnResponseModifyDatiFatturazione();
                     
@@ -270,7 +268,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
            
         }else{
             
-            const body : DatiFatturazionePost = {
+            const body = {
                 tipoCommessa:datiFatturazione.tipoCommessa,
                 splitPayment:datiFatturazione.splitPayment,
                 cup: datiFatturazione.cup,
@@ -297,9 +295,9 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
               
 
             if(profilo.auth === 'PAGOPA'){
-                insertDatiFatturazionePagoPa( token,mainState.nonce, bodyPagoPa).then(res =>{
-
-                    setMainState((prev:any)=>({...prev, ...{
+                insertDatiFatturazionePagoPa( token,mainState.nonce, bodyPagoPa).then((res:any)  =>{
+                    
+                    setMainState((prev:MainState)=>({...prev, ...{
                         statusPageDatiFatturazione:'immutable',
                         action:'SHOW_MODULO_COMMESSA'
                     }}));
@@ -316,7 +314,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
 
             }else{
                 insertDatiFatturazione(body, token,mainState.nonce).then(res =>{
-                    setMainState((prev:any)=>({...prev, ...{
+                    setMainState((prev:MainState)=>({...prev, ...{
                         statusPageDatiFatturazione:'immutable',
                         action:'SHOW_MODULO_COMMESSA'
                     }}));
@@ -351,7 +349,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
                 datiFatturazione,
                 setDatiFatturazione,
                 setMainState,
-                setStatusBottmConferma,
+                setStatusButtonConferma,
                 user,
                 mainState}}>
 
@@ -371,7 +369,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
                         <div className="d-flex justify-content-between m-5 ">
 
                             <Button
-                                onClick={() =>setMainState((prev:any)=>({...prev, ...{statusPageDatiFatturazione:'immutable'}}))}
+                                onClick={() =>setMainState((prev:MainState)=>({...prev, ...{statusPageDatiFatturazione:'immutable'}}))}
                                 variant="outlined"
                                 size="medium"
                             >

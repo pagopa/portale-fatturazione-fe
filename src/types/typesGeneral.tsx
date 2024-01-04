@@ -39,18 +39,24 @@ export type BodyListaDatiFatturazione = {
     profilo: string
 }
 
-export interface mainState{
-    mese:'',
-    anno:'',
+export interface MainState{
+    mese:string,
+    anno:string,
     modifica:undefined, // se la commessa selezionata è modificabile
     userClickOn:undefined, // se l'utente clicca su un elemento di lista commesse setto GRID
-    inserisciModificaCommessa:undefined, // INSERT MODIFY  se il sevizio get commessa mi restituisce true []
-    action:'DATI_FATTURAZIONE', // le action possono essere HIDE_MODULO_COMMESSA / SHOW_MODULO_COMMESSA / DATI_FATTURAZIOne
-    statusPageDatiFatturazione:'immutable',
-    statusPageInserimentoCommessa:'immutable',
-    path:'/',
-    nonce:'',
+    inserisciModificaCommessa:string |undefined, // INSERT MODIFY  se il sevizio get commessa mi restituisce true []
+    action:string, // le action possono essere HIDE_MODULO_COMMESSA / SHOW_MODULO_COMMESSA / DATI_FATTURAZIOne
+    statusPageDatiFatturazione:string,
+    statusPageInserimentoCommessa:string,
+    path:string,
+    nonce:string,
     indexStepper:0, // in che pat sono al momento del reload?
-    idEnte:'',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
-    prodotto: '',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
+    idEnte:string,// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
+    prodotto: string,// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
+}
+
+export interface BodyDownloadDatiFatturazione{
+    descrizione: string,
+    prodotto: string,
+    profilo: string  
 }

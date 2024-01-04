@@ -93,6 +93,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
     const downloadPdf = async()=>{
         const tipoCommessa =  localStorage.getItem('tipo') || '';
         downloadModuloCommessaPdf(token, statusApp.anno,statusApp.mese, tipoCommessa, mainState.nonce).then((res)=>{
+         
             const wrapper = document.getElementById('file_download');
             if(wrapper){
                 wrapper.innerHTML = res.data;

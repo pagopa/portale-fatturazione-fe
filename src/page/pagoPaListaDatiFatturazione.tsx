@@ -1,6 +1,6 @@
 import { Typography } from "@mui/material";
 import { Box, FormControl, InputLabel,Select, MenuItem, TextField, Button} from '@mui/material';
-import {getTipologiaProdotto, getTipologiaProfilo, listaDatiFatturazionePagopa} from '../api/api';
+import {getTipologiaProdotto, getTipologiaProfilo, listaDatiFatturazionePagopa, downloadDocumentoListaDatiFatturazionePagoPa, manageError} from '../api/api';
 import { ListaDatiFatturazioneProps } from "../types/typeListaDatiFatturazione";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
@@ -8,13 +8,14 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import {BodyListaDatiFatturazione} from '../types/typesGeneral';
 import { DataGrid, GridRowParams,GridEventListener,MuiEvent, GridColDef } from '@mui/x-data-grid';
 import DownloadIcon from '@mui/icons-material/Download';
-
+import { usePDF } from 'react-to-pdf';
 
 const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainState, setMainState}) =>{
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
 
     const navigate = useNavigate();
+    const { toPDF, targetRef } = usePDF({filename: 'ModuloCommessa.pdf'});
 
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [profili, setProfili] = useState(['']);
@@ -94,6 +95,30 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
        
         }
     }, [mainState.nonce]);
+
+
+
+    const onDownloadButton = async() =>{
+        await downloadDocumentoListaDatiFatturazionePagoPa(token, mainState.nonce, bodyGetLista).then((res:any) => {
+            console.log({res:res.data});
+            //const url = window.URL.createObjectURL(res.data.documento);
+            const link = document.createElement('a');
+            link.href = "data:text/plain;base64," + res.data.documento;
+            // link.href = url;
+            console.log({link});
+            link.setAttribute('download', 'file.xlsx'); //or any other extension
+            document.body.appendChild(link);
+          
+            link.click();
+            document.body.removeChild(link);
+           
+        }).catch(err => {
+            console.log('ppppp');
+            manageError(err,navigate);
+        });
+    };
+
+
 
     let columsSelectedGrid = '';
     const handleOnCellClick = (params:any) =>{
@@ -289,7 +314,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
             {/* grid */}
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
                
-                <Button >
+                <Button onClick={() =>onDownloadButton()}>
                 Download Risultati
                     <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
                 </Button>

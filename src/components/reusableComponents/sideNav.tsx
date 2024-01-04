@@ -116,7 +116,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
 
    
     useEffect(()=>{
-        if(token !== undefined && mainState.nonce !== '' ){
+        if(token !== undefined && mainState.nonce !== '' && profilo.auth !== 'PAGOPA' ){
             getCommessa();
         }
     },[token,mainState.nonce]);
@@ -136,13 +136,13 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
     
 
     const [selectedIndex, setSelectedIndex] = useState(0);
-    const handleListItemClick = (index : number) => {
+    const handleListItemClick = () => {
 
         if(checkIfUserIsAutenticated === 'PAGOPA'){
             navigate('/pagopalistadatifatturazione');
         }else{
             navigate('/');
-            setSelectedIndex(index);
+            
             setMainState((prev:any)=>({ 
                 ...prev,
                 ...{
@@ -156,97 +156,106 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
     };
 
 
-    const handleListItemClickModuloCommessa = async (index : number,) => {
+    const handleListItemClickModuloCommessa = async () => {
        
-        setSelectedIndex(index);
+        if(profilo.auth === 'PAGOPA'){
+            //cliccando sulla side nav Modulo commessa e sono l'ente PAGOPA
+            navigate('/pagopalistamodulicommessa');
+
+        }else{
+            //cliccando sulla side nav Modulo commessa e sono un ente qualsiasi
+
+            await getDatiModuloCommessa(token, mainState.nonce).then((res)=>{
+
+                if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
+                    setMainState((prev:any)=>({
+                        ...prev,
+                        ...{
+                            inserisciModificaCommessa:'INSERT',
+                            statusPageInserimentoCommessa:'mutable',
+                            modifica:true
+                        }}));
+               
+                    const newState = {
+                        path:'/8',
+                        mese:res.data.mese,
+                        anno:res.data.anno,
+                        inserisciModificaCommessa:'INSERT'
+                    };
+                    localStorage.setItem('statusApplication', JSON.stringify(newState));
+                  
+                    navigate('/8');
+                }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0 ){
+    
+                    setMainState((prev:any)=>({ 
+                        ...prev,
+                        ...{
+                            inserisciModificaCommessa:'MODIFY',
+                            statusPageInserimentoCommessa:'immutable',
+                            modifica:true}}));
+    
+                    const newState = {
+                        path:'/4',
+                        mese:res.data.mese,
+                        anno:res.data.anno,
+                        inserisciModificaCommessa:'MODIFY'
+                    };
+                    localStorage.setItem('statusApplication', JSON.stringify(newState));
+                   
+                    navigate('/4');
+                }else if(res.data.modifica === false && res.data.moduliCommessa.length === 0){
+                    setMainState((prev:any)=>({ 
+                        ...prev,
+                        ...{
+                            inserisciModificaCommessa:'NO_ACTION',
+                            statusPageInserimentoCommessa:'immutable',
+                            modifica:false}}));
+    
+                    const newState = {
+                        path:'/4',
+                        mese:res.data.mese,
+                        anno:res.data.anno,
+                        inserisciModificaCommessa:'NO_ACTION'
+                    };
+                    localStorage.setItem('statusApplication', JSON.stringify(newState));
+                   
+                    navigate('/4');
+                }else if(res.data.modifica === false && res.data.moduliCommessa.length > 0){
+                    setMainState((prev:any)=>({ 
+                        ...prev,
+                        ...{
+                            inserisciModificaCommessa:'NO_ACTION',
+                            statusPageInserimentoCommessa:'immutable',
+                            modifica:false}})); 
+                    const newState = {
+                        path:'/8',
+                        mese:res.data.mese,
+                        anno:res.data.anno,
+                        inserisciModificaCommessa:'NO_ACTION'
+                    };
+                    localStorage.setItem('statusApplication', JSON.stringify(newState));
+                   
+                    navigate('/4');
+                }
+    
+            }).catch((err) =>{
+                if(err.response.status === 401){
+                    navigate('/error');
+                }else if(err.response.status === 419){
+                    navigate('/error');
+                }
+            });
+            
+        }
       
 
-        await getDatiModuloCommessa(token, mainState.nonce).then((res)=>{
-
-            if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
-                setMainState((prev:any)=>({
-                    ...prev,
-                    ...{
-                        inserisciModificaCommessa:'INSERT',
-                        statusPageInserimentoCommessa:'mutable',
-                        modifica:true
-                    }}));
-           
-                const newState = {
-                    path:'/8',
-                    mese:res.data.mese,
-                    anno:res.data.anno,
-                    inserisciModificaCommessa:'INSERT'
-                };
-                localStorage.setItem('statusApplication', JSON.stringify(newState));
-              
-                navigate('/8');
-            }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0 ){
-
-                setMainState((prev:any)=>({ 
-                    ...prev,
-                    ...{
-                        inserisciModificaCommessa:'MODIFY',
-                        statusPageInserimentoCommessa:'immutable',
-                        modifica:true}}));
-
-                const newState = {
-                    path:'/4',
-                    mese:res.data.mese,
-                    anno:res.data.anno,
-                    inserisciModificaCommessa:'MODIFY'
-                };
-                localStorage.setItem('statusApplication', JSON.stringify(newState));
-               
-                navigate('/4');
-            }else if(res.data.modifica === false && res.data.moduliCommessa.length === 0){
-                setMainState((prev:any)=>({ 
-                    ...prev,
-                    ...{
-                        inserisciModificaCommessa:'NO_ACTION',
-                        statusPageInserimentoCommessa:'immutable',
-                        modifica:false}}));
-
-                const newState = {
-                    path:'/4',
-                    mese:res.data.mese,
-                    anno:res.data.anno,
-                    inserisciModificaCommessa:'NO_ACTION'
-                };
-                localStorage.setItem('statusApplication', JSON.stringify(newState));
-               
-                navigate('/4');
-            }else if(res.data.modifica === false && res.data.moduliCommessa.length > 0){
-                setMainState((prev:any)=>({ 
-                    ...prev,
-                    ...{
-                        inserisciModificaCommessa:'NO_ACTION',
-                        statusPageInserimentoCommessa:'immutable',
-                        modifica:false}})); 
-                const newState = {
-                    path:'/8',
-                    mese:res.data.mese,
-                    anno:res.data.anno,
-                    inserisciModificaCommessa:'NO_ACTION'
-                };
-                localStorage.setItem('statusApplication', JSON.stringify(newState));
-               
-                navigate('/4');
-            }
-
-        }).catch((err) =>{
-            if(err.response.status === 401){
-                navigate('/error');
-            }else if(err.response.status === 419){
-                navigate('/error');
-            }
-        });
+      
        
 
     };
 
     
-
+    
     const currentLocation = location.pathname;
 
     useEffect(()=>{
@@ -255,7 +264,13 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
         }else if(currentLocation === '/4'){
             setSelectedIndex(1);
         }else if(currentLocation === '/8'){
-            setSelectedIndex(2);
+            setSelectedIndex(1);
+        }else if(currentLocation === '/pagopalistadatifatturazione'){
+            setSelectedIndex(0);
+        }else if(currentLocation === '/pagopalistamodulicommessa'){
+            setSelectedIndex(1);
+        }else if(currentLocation === '/pdf'){
+            setSelectedIndex(1);
         }
         
     },[currentLocation]);
@@ -279,14 +294,14 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
                 }}
                 >
                     <List component="nav" aria-label="main piattaforma-notifiche sender">
-                        <ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick(0)}>
+                        <ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick()}>
                             <ListItemIcon>
                                 <DnsIcon fontSize="inherit"></DnsIcon>
                       
                             </ListItemIcon>
                             <ListItemText primary="Dati di fatturazione" />
                         </ListItemButton>
-                        <ListItemButton selected={selectedIndex === 1} onClick={() => handleListItemClickModuloCommessa(1)}>
+                        <ListItemButton selected={selectedIndex === 1} onClick={() => handleListItemClickModuloCommessa()}>
                             <ListItemIcon>
                                 <ViewModuleIcon fontSize="inherit" />
                             </ListItemIcon>

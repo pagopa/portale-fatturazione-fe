@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
-import { useMsal } from "@azure/msal-react";
-import { InteractionRequiredAuthError } from "@azure/msal-browser";
 import { useNavigate } from "react-router";
+
+
+// pagina visulizzata nel caso in cui l'utenete PagoPa procede con il log out
+// l'utente PagoPa potrà riaccedere tramite questa pagina
 
 const AzureLogin : React.FC = () =>{
 

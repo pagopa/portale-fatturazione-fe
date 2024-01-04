@@ -20,9 +20,12 @@ import PagoPaListaModuliCommessa from './page/pagoPaListaModuliCommessa';
 import AuthAzure from './page/authAzure';
 import { MsalProvider, AuthenticatedTemplate, useMsal, UnauthenticatedTemplate } from '@azure/msal-react';
 import Azure from './page/azure';
+
 import { Container, Button } from 'react-bootstrap';
 import { loginRequest } from './authConfig';
 import './App.css';
+
+
 
 
 
@@ -66,7 +69,6 @@ const MainContent = () => {
 
 const App = ({ instance }) => {
 
- 
     const [checkProfilo,setCheckProfilo] = useState(false);
     // set status page abilita e disabilita le modifiche al componente dati fatturazione
    
@@ -79,7 +81,6 @@ const App = ({ instance }) => {
         action:'DATI_FATTURAZIONE', // le action possono essere HIDE_MODULO_COMMESSA / SHOW_MODULO_COMMESSA / DATI_FATTURAZIOne
         statusPageDatiFatturazione:'immutable',
         statusPageInserimentoCommessa:'immutable',
-        path:'/',
         nonce:'',
         indexStepper:0, // in che pat sono al momento del reload?
         idEnte:'',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
