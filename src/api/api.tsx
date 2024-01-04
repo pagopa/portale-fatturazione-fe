@@ -1,7 +1,12 @@
 import axios from 'axios';
 import {DatiFatturazione,DatiFatturazionePost, DatiFatturazionePostPagopa} from '../types/typesAreaPersonaleUtenteEnte';
 import { DatiCommessa } from '../types/typeModuloCommessaInserimento';
-import { TokenObject, BodyListaDatiFatturazione, BodyDownloadDatiFatturazione} from '../types/typesGeneral';
+import { 
+    TokenObject,
+    BodyListaDatiFatturazione,
+    BodyDownloadDatiFatturazione,
+    BodyListaModuloCommessa
+} from '../types/typesGeneral';
 
 
 
@@ -32,7 +37,7 @@ export const manageError = (res:any,navigate:any) =>{
         
         navigate('/error');
     }else if(res?.error?.response?.status === 400){
-        console.log('404 da gestire');
+        console.log('400 da gestire');
     }
 };
 
@@ -290,6 +295,18 @@ export const downloadDocumentoListaDatiFatturazionePagoPa = async (token:string,
         },
         }
     );
+    return response;
+};
+
+
+export const listaModuloCommessaPagopa = async (body : BodyListaModuloCommessa, token:string, nonce:string) => {
+    const response =  await axios.post(`${url}/api/modulocommessa/pagopa/ricerca?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
     return response;
 };
 

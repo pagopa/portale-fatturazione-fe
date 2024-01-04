@@ -106,7 +106,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
             link.href = "data:text/plain;base64," + res.data.documento;
             // link.href = url;
             console.log({link});
-            link.setAttribute('download', 'file.xlsx'); //or any other extension
+            link.setAttribute('download', 'Lista Dati Fatturazione.xlsx'); //or any other extension
             document.body.appendChild(link);
           
             link.click();

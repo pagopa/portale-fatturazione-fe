@@ -1,8 +1,7 @@
 import { ListaModuliCommessaProps } from "../types/typeListaModuliCommessa";
 import { Typography } from "@mui/material";
 import { Box, FormControl, InputLabel,Select, MenuItem, TextField, Button} from '@mui/material';
-import {getTipologiaProdotto, getTipologiaProfilo, listaDatiFatturazionePagopa} from '../api/api';
-import { ListaDatiFatturazioneProps } from "../types/typeListaDatiFatturazione";
+import {getTipologiaProdotto, manageError, listaDatiFatturazionePagopa, listaModuloCommessaPagopa} from '../api/api';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -35,14 +34,10 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
    
 
     const [prodotti, setProdotti] = useState([{nome:''}]);
-   
-    
+    const [gridData, setGridData] = useState([]);
     const [bodyGetLista, setBodyGetLista] = useState({descrizione:'',prodotto:'', anno:currentYear, mese:currString});
 
-    
-
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
-
 
     useEffect(()=>{
         if(bodyGetLista.descrizione !== '' || bodyGetLista.prodotto !== '' ){
@@ -59,29 +54,95 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
     const getProdotti = async() => {
         await getTipologiaProdotto(token, mainState.nonce )
             .then((res)=>{
-                console.log({res}, 'getProdotti');
+               
                 setProdotti(res.data);
             })
             .catch(((err)=>{
-                if(err.response?.status === 401){
-                        
-                    navigate('/error');
-                }
+                manageError(err,navigate);
             }));
     };
 
  
 
     useEffect(()=>{
-        
         if(mainState.nonce !== ''){
-
             getProdotti();
-           
-       
+            getListaCommesse();
         }
     }, [mainState.nonce]);
 
+
+    const getListaCommesse = async() =>{
+        await listaModuloCommessaPagopa(bodyGetLista ,token, mainState.nonce)
+            .then((res)=>{
+                console.log({res}, 'lista');
+                setGridData(res.data);
+            })
+            .catch((err)=>{
+                manageError(err,navigate);
+            }); 
+    };
+
+
+
+    let columsSelectedGrid = '';
+    const handleOnCellClick = (params:any) =>{
+        columsSelectedGrid  = params.field;
+        
+    };
+
+
+    const handleEvent: GridEventListener<'rowClick'> = (
+        params:GridRowParams,
+        event: MuiEvent<React.MouseEvent<HTMLElement>>,
+      
+    ) => {
+        event.preventDefault();
+        console.log({params});
+        // l'evento verrà eseguito solo se l'utente farà il clik sul 
+        if(columsSelectedGrid  === 'mese' || columsSelectedGrid === 'action' ){
+            /*
+            const getProfilo = localStorage.getItem('profilo') || '{}';
+            const profilo =  JSON.parse(getProfilo);
+
+            localStorage.setItem('profilo', JSON.stringify({
+                ...profilo,
+                ...{
+                    idEnte:params.row.idEnte,
+                    prodotto:params.row.prodotto
+                }
+               
+            }));
+*/
+            navigate('/8');
+        }
+       
+    };
+
+
+    
+
+    const columns: GridColDef[] = [
+        { field: 'mese', headerName: 'Mese', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/8">{param.row.ragioneSociale}</a>},
+        { field: 'totaleAnalogicoLordo', headerName: 'Tot. Analogico', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        { field: 'totaleDigitaleLordo', headerName: 'Tot. Digitale', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+    
+        {
+            field: 'action',
+            headerName: '',
+            sortable: false,
+            width:70,
+            headerAlign: 'left',
+            disableColumnMenu :true,
+            renderCell: ((row : any) => (
+    
+                <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} onClick={() => console.log('Show page details')} />
+    
+            )
+            ),
+        }
+
+    ];
     return (
         <div className="mx-5">
             {/*title container start */}
@@ -217,14 +278,14 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
                         sx={{ width: 200 }}
                         label="Rag Soc. Ente"
                         placeholder="Rag Soc. Ente"
-                        value={''}
-                        onChange={(e)=>console.log('dio ')}
+                        value={bodyGetLista.descrizione}
+                        onChange={(e) => setBodyGetLista((prev)=> ({...prev, ...{descrizione:e.target.value}}))}
                     />
                 </div>
                 <div className=" d-flex justify-content-center align-items-center">
                     <div>
                         <Button 
-                            onClick={()=> console.log('cioa')} 
+                            onClick={()=> getListaCommesse()} 
                             sx={{ marginTop: 'auto', marginBottom: 'auto'}}
                             variant="contained"> Filtra
                         </Button>
@@ -251,8 +312,21 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
                 </Button>
             </div>
             <div className="mt-1 mb-5" style={{ width: '100%'}}>
-                <h1>Data grid</h1>
-            
+                <DataGrid sx={{
+                    height:'400px',
+                    '& .MuiDataGrid-virtualScroller': {
+                        backgroundColor: 'white',
+                    }
+                   
+                }}
+                rows={gridData} 
+                columns={columns}
+                getRowId={(row) => row.key}
+                onRowClick={handleEvent}
+                onCellClick={handleOnCellClick}
+                
+                />
+                
             </div>
             <div>
 

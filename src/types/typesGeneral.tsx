@@ -39,6 +39,13 @@ export type BodyListaDatiFatturazione = {
     profilo: string
 }
 
+export type BodyListaModuloCommessa = {
+    anno: number | string,
+    mese: number | string,
+    prodotto: string,
+    descrizione: string
+}
+
 export interface MainState{
     mese:string,
     anno:string,
