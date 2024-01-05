@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 
 
-// pagina visulizzata nel caso in cui l'utenete PagoPa procede con il log out
+// pagina visulizzata nel caso in cui l'utenete PagoPa procede con il logOut
 // l'utente PagoPa potrà riaccedere tramite questa pagina
 
 const AzureLogin : React.FC = () =>{

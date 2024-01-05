@@ -8,8 +8,7 @@ import TerzoContainerInsCom from '../components/commessaInserimento/terzoContein
 import BasicModal from '../components/reusableComponents/modal';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { useNavigate } from 'react-router';
-// import HorizontalLinearStepper from '../components/stepper';
-import {insertDatiModuloCommessa, getDettaglioModuloCommessa} from '../api/api';
+import {insertDatiModuloCommessa, getDettaglioModuloCommessa, getModuloCommessaPagoPa, modifyDatiModuloCommessaPagoPa, manageError} from '../api/api';
 import { redirect } from '../api/api';
 import AreaPersonaleUtenteEnte from '../page/areaPersonaleUtenteEnte';
 import HorizontalLinearStepper from '../components/reusableComponents/stepper';
@@ -57,6 +56,13 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
+
+    const state = localStorage.getItem('statusApplication') || '{}';
+    const statusApp =  JSON.parse(state);
+   
+    const getProfilo = localStorage.getItem('profilo') || '{}';
+    const profilo =  JSON.parse(getProfilo);
+    
 
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
@@ -107,14 +113,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
     const [totale, setTotale] = useState<TotaleNazionaleInternazionale>({totaleNazionale:0, totaleInternazionale:0, totaleNotifiche:0});
     const [dataMod, setDataModifica] = useState('');
+    const [buttonModifica, setButtonMofica] = useState(false);
     // visualizza modulo cmmessa from grid 
-
-   
-    
-    const state = localStorage.getItem('statusApplication') || '{}';
-    const statusApp =  JSON.parse(state);
-   
-   
 
     const handleGetDettaglioModuloCommessa = async () =>{
 
@@ -129,26 +129,47 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                     , totaleInternazionale:objAboutTotale.totaleNumeroNotificheInternazionali
                     , totaleNotifiche:objAboutTotale.totaleNumeroNotificheDaProcessare});
                 setDataModifica(res.dataModifica);
+                setButtonMofica(res.modifica);
             }).catch((err:any)=>{
-                if(err.response.status === 401){
-                    navigate('/error');
-                }else if(err.response.status === 419){
-                    navigate('/error');
-                } 
+                manageError(err,navigate);
             });
     };
 
+    const handleGetDettaglioModuloCommessaPagoPa = async () => {
+        await getModuloCommessaPagoPa(token, mainState.nonce,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto, statusApp.mese, statusApp.anno )
+            .then((response:any)=>{
+                const res = response.data;
+                setDatiCommessa({moduliCommessa:res.moduliCommessa});
+                setTotaliModuloCommessa(res.totale);
+                const objAboutTotale = res.totaleModuloCommessaNotifica;
+                setTotale({totaleNazionale:objAboutTotale.totaleNumeroNotificheNazionali
+                    , totaleInternazionale:objAboutTotale.totaleNumeroNotificheInternazionali
+                    , totaleNotifiche:objAboutTotale.totaleNumeroNotificheDaProcessare});
+                setDataModifica(res.dataModifica);
+                setButtonMofica(res.modifica);
+            }).catch((err:any)=>{
+             
+                manageError(err,navigate);
+            });
+    };
   
     useEffect(()=>{
+      
         if(statusApp.userClickOn === 'GRID' && mainState.nonce !== ''){
-            handleGetDettaglioModuloCommessa();
-          
-            setMainState((prev:any)=>{
 
-               
+            // SELFCARE
+            if(profilo.auth !== 'PAGOPA'){
+                handleGetDettaglioModuloCommessa();
+                //PAGOPA
+            }else if(profilo.auth === 'PAGOPA'){
+                handleGetDettaglioModuloCommessaPagoPa();
+            }
+
+            setMainState((prev:any)=>{
                 return {...prev,...{userClickOn:'',statusPageInserimentoCommessa:'immutable'}};
             });
         }
+      
       
     },[mainState.nonce]);
    
@@ -159,8 +180,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
         }
     },[]);
    
-   
-
     const [disableContinua, setDisableContinua] = useState(false);
 
     const calculateTot = (arr:any, string:string) =>{
@@ -185,63 +204,87 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
     },[datiCommessa]);
 
+    // funzione utilizzata con la response sul click modifica/insert modulo commessa , sia utente selcare che pagopa
+    const toDoOnPostModifyCommessa = (res:any) =>{
+        if(mainState.inserisciModificaCommessa === 'MODIFY'){
+                 
+            setMainState((prev:any)=>({
+                ...prev,
+                ...{
+                    action:'SHOW_MODULO_COMMESSA',
+                    statusPageInserimentoCommessa:'immutable',
+                    statusPageDatiFatturazione:'immutable',
+                }}));
+          
+           
+            localStorage.setItem('statusApplication',JSON.stringify({...statusApp, ...{
+                action:'SHOW_MODULO_COMMESSA',
+                statusPageInserimentoCommessa:'immutable',
+                statusPageDatiFatturazione:'immutable',
+            }}));
+            // aggiunta ora attenzione>
+            setTotaliModuloCommessa(res.data.totale);
+        }else{
+            setTotaliModuloCommessa(res.data.totale);
+
+            setMainState((prev:any)=>({
+                ...prev,
+                ...{action:'HIDE_MODULO_COMMESSA',
+                    statusPageInserimentoCommessa:'immutable',
+                    statusPageDatiFatturazione:'mutable',
+                    mese:res.data.mese,
+                    anno:res.data.anno
+                }}));
+
+            localStorage.setItem('statusApplication',JSON.stringify({...statusApp,
+                ...{action:'HIDE_MODULO_COMMESSA',
+                    statusPageInserimentoCommessa:'immutable',
+                    statusPageDatiFatturazione:'mutable',
+                    mese:res.data.mese,
+                    anno:res.data.anno
+                }}));
+        }  
+    };
+
 
     const hendlePostModuloCommessa = async () =>{
 
         await insertDatiModuloCommessa(datiCommessa, token, mainState.nonce)
             .then(res =>{
-                const statusApp = localStorage.getItem('statusApplication')||'{}';
-                const parseStatusApp = JSON.parse(statusApp);
-            
-              
-                if(mainState.inserisciModificaCommessa === 'MODIFY'){
-                    // navigate('/4');
-                    console.log({mainState});
-                    setMainState((prev:any)=>({
-                        ...prev,
-                        ...{
-                            action:'SHOW_MODULO_COMMESSA',
-                            statusPageInserimentoCommessa:'immutable',
-                            statusPageDatiFatturazione:'immutable',
-                        }}));
-                  
-                    console.log(parseStatusApp);
-                    localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp, ...{
-                        action:'SHOW_MODULO_COMMESSA',
-                        statusPageInserimentoCommessa:'immutable',
-                        statusPageDatiFatturazione:'immutable',
-                    }}));
-                    // aggiunta ora attenzione>
-                    setTotaliModuloCommessa(res.data.totale);
-                }else{
-                    setTotaliModuloCommessa(res.data.totale);
-
-                    console.log({res},'POST MODULO');
-                    setMainState((prev:any)=>({
-                        ...prev,
-                        ...{action:'HIDE_MODULO_COMMESSA',
-                            statusPageInserimentoCommessa:'immutable',
-                            statusPageDatiFatturazione:'mutable',
-                            mese:res.data.mese,
-                            anno:res.data.anno
-                        }}));
-
-                    localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
-                        ...{action:'HIDE_MODULO_COMMESSA',
-                            statusPageInserimentoCommessa:'immutable',
-                            statusPageDatiFatturazione:'mutable',
-                            mese:res.data.mese,
-                            anno:res.data.anno
-                        }}));
-                }
-               
-               
+                toDoOnPostModifyCommessa(res);
+                 
             } )
             .catch(err => {
-                if(err.response.status === 401){
-                    navigate('/error');
-                } 
+                manageError(err, navigate); 
             });
+    };
+
+
+    const hendleModifyDatiModuloCommessaPagoPa = async() =>{
+        // probabilmente questo verra modificato con l'agginta del flag fatturabile
+        const datiCommessaPlusIdTpcProIdE = {
+            ...datiCommessa,
+            ...{
+                prodotto:profilo.prodotto,
+                idTipoContratto:profilo.idTipoContratto,
+                idEnte:profilo.idEnte,
+                fatturabile:true }};
+
+        await modifyDatiModuloCommessaPagoPa(datiCommessaPlusIdTpcProIdE, token, mainState.nonce)
+            .then((res)=>{
+                toDoOnPostModifyCommessa(res);
+            }).catch(err => {
+                manageError(err, navigate); 
+            });
+    };
+
+
+    const OnButtonContinua = () =>{
+        if(profilo.auth === 'PAGOPA'){
+            hendleModifyDatiModuloCommessaPagoPa();
+        }else{
+            hendlePostModuloCommessa();
+        }
     };
    
 
@@ -269,7 +312,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     }else if(mainState.inserisciModificaCommessa  === 'MODIFY' && mainState.statusPageInserimentoCommessa === 'mutable'  ){
         actionTitle =  <Typography variant="h4"> Modifica modulo commessa</Typography>;
     }
-    console.log({mainState});
+   
 
    
     let indexStepper = 0;
@@ -278,6 +321,18 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     }else if(mainState.action === 'HIDE_MODULO_COMMESSA' && mainState.inserisciModificaCommessa === 'MODIFY'){
         indexStepper = 2;
     }
+
+    const hiddenShowHorizontalStepper = (
+        mainState.inserisciModificaCommessa === 'INSERT' &&
+        mainState.modify === true) ||
+        (mainState.action === 'HIDE_MODULO_COMMESSA' && 
+         mainState.inserisciModificaCommessa === 'MODIFY' && 
+         mainState.modify === true);
+
+    const hideShowButtonModifica =  mainState.statusPageInserimentoCommessa === 'immutable' &&
+                                         mainState.action !== 'HIDE_MODULO_COMMESSA' &&
+                                         mainState.ruolo !== 'R' && 
+                                         buttonModifica;
 
     return (
         <InserimentoModuloCommessaContext.Provider
@@ -292,7 +347,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 setMainState
             }}>
             <BasicModal setOpen={setOpen} open={open}></BasicModal>
-            {/*Hidden di modulo commessa sul click contina , save del modulo commessa cosi da mostrare dati fatturazione,
+            {/*Hide   modulo commessa sul click contina , save del modulo commessa cosi da mostrare dati fatturazione,
             il componente visualizzato è AreaPersonaleUtenteEnte  */}
            
             <div className="marginTop24 ms-5 me-5">
@@ -304,8 +359,10 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                         size="small"
                         startIcon={<ArrowBackIcon />}
                         onClick={() =>{
-                            if(mainState.statusPageInserimentoCommessa === 'immutable'){
+                            if(mainState.statusPageInserimentoCommessa === 'immutable' && profilo.auth !== 'PAGOPA'){
                                 navigate('/4');
+                            }else if(mainState.statusPageInserimentoCommessa === 'immutable' && profilo.auth === 'PAGOPA'){
+                                navigate('/pagopalistamodulicommessa');
                             }else{
                                 setMainState((prev:any)=>({...prev,...{statusPageInserimentoCommessa:'immutable'}}));
                             }
@@ -320,50 +377,33 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                     
                     
                     <Typography sx={{ fontWeight:cssPathModuloComm, marginLeft:'20px'}} variant="caption">
-
-                        
-                       
                         <ViewModuleIcon sx={{paddingBottom:'3px'}}  fontSize='small'></ViewModuleIcon>
                          Modulo commessa 
-                        
-                      
                     </Typography>
                     {
                         statusApp.inserisciModificaCommessa === 'INSERT' ? 
                             <Typography sx={{fontWeight:cssPathAggModComm}} variant="caption">/ Aggiungi modulo commessa</Typography> :
                             <Typography sx={{fontWeight:cssPathAggModComm}} variant="caption">/ Modifica modulo commessa</Typography>
                     }
-                    
-                    
-                    
-                   
+                 
                 </div>
-                {(mainState.inserisciModificaCommessa === 'INSERT' &&  mainState.modify === true) ||
-                (mainState.action === 'HIDE_MODULO_COMMESSA' && 
-                mainState.inserisciModificaCommessa === 'MODIFY' && 
-                mainState.modify === true)
+                { hiddenShowHorizontalStepper
                     ? 
                     <div className="marginTop24">
                         <HorizontalLinearStepper indexStepper={indexStepper}></HorizontalLinearStepper>
                     </div> :null
                 }
-               
-               
+            
                 <div className="marginTop24 marginTopBottom24">
-                    
-                
                     {actionTitle}
 
-                    {mainState.statusPageInserimentoCommessa === 'immutable' && mainState.action !== 'HIDE_MODULO_COMMESSA' && mainState.ruolo !== 'R' ?
+                    {hideShowButtonModifica ?
                        
                         <div className="d-flex justify-content-end ">
                             <Button variant="contained" size="small" onClick={()=> hendleOnButtonModificaModuloCommessa()} >Modifica</Button>
                         </div> :  null
                         
-                    }
-                    
-                    
-                    
+                    } 
                 </div>
                
                 {mainState.action !== "HIDE_MODULO_COMMESSA" ?
@@ -391,13 +431,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                        
                                         disabled={disableContinua}
                                         onClick={()=>{ 
-                                            /*
-                                            setMainState((prev:any)=>({
-                                                ...prev,
-                                                ...{action:'HIDE_MODULO_COMMESSA',
-                                                    statusPageDatiFatturazione:'mutable'}}));
-                                                    */
-                                            hendlePostModuloCommessa();
+                                            OnButtonContinua();
                                         }}
                                                     
                                     >Continua</Button>

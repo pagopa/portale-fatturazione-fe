@@ -9,7 +9,7 @@ import { VisualModuliCommessaProps } from '../types/typeModuloCommessaElenco';
 
 
 const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMainState,mainState}) => {
-    console.log({mainState});
+   
   
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;

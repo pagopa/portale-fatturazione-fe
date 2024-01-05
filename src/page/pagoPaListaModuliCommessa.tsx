@@ -16,6 +16,9 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
 
+    const getProfilo = localStorage.getItem('profilo') || '{}';
+    const profilo =  JSON.parse(getProfilo);
+
 
     // prendo gli ultimi 2 anni dinamicamente
     const currentYear = (new Date()).getFullYear().toString();
@@ -83,6 +86,18 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
             }); 
     };
 
+    const getListaCommesseOnAnnulla = async() =>{
+        await listaModuloCommessaPagopa({descrizione:'',prodotto:'', anno:currentYear, mese:currString} ,token, mainState.nonce)
+            .then((res)=>{
+             
+                setBodyGetLista({descrizione:'',prodotto:'', anno:currentYear, mese:currString});
+                setGridData(res.data);
+            })
+            .catch((err)=>{
+                manageError(err,navigate);
+            }); 
+    };
+
 
 
     let columsSelectedGrid = '';
@@ -98,34 +113,66 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
       
     ) => {
         event.preventDefault();
-        console.log({params});
-        // l'evento verrà eseguito solo se l'utente farà il clik sul 
-        if(columsSelectedGrid  === 'mese' || columsSelectedGrid === 'action' ){
-            /*
-            const getProfilo = localStorage.getItem('profilo') || '{}';
-            const profilo =  JSON.parse(getProfilo);
+        console.log({params},'PARAMS');
+        // l'evento verrà eseguito solo se l'utente farà il clik sul  mese e action
+        if(columsSelectedGrid  === 'regioneSociale' ||columsSelectedGrid  === 'action' ){
+            
+        
+          
+            const newState = {
+                path:'/8',
+                mese:params.row.mese,
+                anno:params.row.anno,
+                userClickOn:'GRID',
+                inserisciModificaCommessa:"MODIFY"
+            };
+            const string = JSON.stringify(newState);
+            localStorage.setItem('statusApplication', string);
 
-            localStorage.setItem('profilo', JSON.stringify({
-                ...profilo,
-                ...{
-                    idEnte:params.row.idEnte,
-                    prodotto:params.row.prodotto
-                }
-               
-            }));
-*/
+
+            const newProfilo = {...profilo,...{
+                idTipoContratto: params.row.idTipoContratto,
+                prodotto:params.row.prodotto,
+                idEnte:params.row.idEnte
+            }};
+            const stringProfilo = JSON.stringify(newProfilo);
+            localStorage.setItem('profilo', stringProfilo);
+
+
+            setMainState((prev:any)=>({...prev, ...{
+                mese:params.row.mese,
+                anno:params.row.anno,
+                modifica:params.row.modifica,
+                userClickOn:'GRID',
+                inserisciModificaCommessa:"MODIFY"
+            }}));
+            // localStorage.removeItem('statusApplication');
+           
             navigate('/8');
+           
         }
        
     };
 
 
     
+    
+
 
     const columns: GridColDef[] = [
-        { field: 'mese', headerName: 'Mese', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/8">{param.row.ragioneSociale}</a>},
-        { field: 'totaleAnalogicoLordo', headerName: 'Tot. Analogico', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'totaleDigitaleLordo', headerName: 'Tot. Digitale', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        { field: 'regioneSociale', headerName: 'Regione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/8">{param.row.ragioneSociale}</a>},
+        { field: 'prodotto', headerName: 'Prodotto', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        // { field: 'tipoSpedizioneDigitale', headerName: 'Tipo Spedizione', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        { field: 'numeroNotificheNazionaliDigitale', headerName: 'Num. Not. Naz.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        { field: 'numeroNotificheInternazionaliDigitale', headerName: 'Num. Not. Int', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        // { field: 'tipoSpedizioneAnalogicoAR', headerName: 'Tipo spediz Anal', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        { field: 'numeroNotificheNazionaliAnalogicoAR', headerName: 'Num. Not. Naz. AR', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        { field: 'numeroNotificheInternazionaliAnalogicoAR', headerName: 'Num. Not. Int. AR', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        // { field: 'tipoSpedizioneAnalogicoAR', headerName: 'Tipo spediz Anal', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        { field: 'numeroNotificheNazionaliAnalogico890', headerName: 'Num. Not. Naz. 890', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        { field: 'numeroNotificheInternazionaliAnalogico890', headerName: 'Num. Not. Naz. AR 890', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        { field: 'totaleAnalogicoLordo', headerName: 'Tot. Spedizioni A.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        { field: 'totaleDigitaleLordo', headerName: 'Tot. Spedizioni D', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
     
         {
             field: 'action',
@@ -292,7 +339,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
                         
                         <Button
                             onClick={()=>{
-                                console.log('ciao');
+                                getListaCommesseOnAnnulla();
                             } }
                             variant="contained"
                             sx={{marginLeft:'24px'}} >

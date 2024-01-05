@@ -18,13 +18,22 @@ const style = {
 };
 
 const BasicModal : React.FC<ModalProps> =({setOpen, open}) => {
+
+    const getProfilo = localStorage.getItem('profilo') || '{}';
+    const profilo =  JSON.parse(getProfilo);
+
     const navigate = useNavigate();
    
 
     const handleClose = () => setOpen(false);
 
     const handleEsci = () =>{
-        navigate('/');
+        if(profilo.auth === 'PAGOPA'){
+            navigate('/pagopalistadatifatturazione');
+        }else{
+            navigate('/');
+        }
+        
     };
 
     return (

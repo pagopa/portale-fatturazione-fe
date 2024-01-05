@@ -14,22 +14,7 @@ const LoginPage : React.FC<LoginProps> = ({ setCheckProfilo}) =>{
     const getDataUser = localStorage.getItem('dati')|| '{}';
     const dataUser = JSON.parse(getDataUser);
    
-    /*
-    const getProfilo = async ()=>{
-                   
-        await getAuthProfilo(dataUser.token)
-            .then(res =>{
-          
-                setCheckProfilo(true);
-                navigate("/");
-            } )
-            .catch(err => {
-                
-                alert(err);
-            });
-    };
-
-  */
+  
  
     return (
         <div className='"d-flex justify-content-center"'>

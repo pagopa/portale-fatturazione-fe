@@ -45,10 +45,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                 setProdotti(res.data);
             })
             .catch(((err)=>{
-                if(err.response?.status === 401){
-                        
-                    navigate('/error');
-                }
+                manageError(err,navigate);
             }));
     };
 
@@ -59,10 +56,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                 setProfili(res.data);
             })
             .catch(((err)=>{
-                if(err.response?.status === 401){
-                    
-                    navigate('/error');
-                }
+                manageError(err,navigate);
             }));
     };
 
@@ -75,12 +69,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                 setGridData(res.data);
             })
             .catch(((err)=>{
-                if(err.response?.status === 401){
-                
-                    navigate('/error');
-                }if(err.response?.status === 404){
-                    setGridData([]);
-                }
+                manageError(err,navigate);
             })); 
     };
 
@@ -113,7 +102,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
             document.body.removeChild(link);
            
         }).catch(err => {
-            console.log('ppppp');
+          
             manageError(err,navigate);
         });
     };
@@ -136,14 +125,6 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
         console.log({params});
         // l'evento verrà eseguito solo se l'utente farà il clik sul 
         if(columsSelectedGrid  === 'ragioneSociale' || columsSelectedGrid === 'action' ){
-
-            /* 
-            setMainState((prev:any)=>({...prev, ...{
-                idEnte:params.row.idEnte,
-                prodotto:params.row.prodotto,
-               
-            }}));
-            */
 
             const getProfilo = localStorage.getItem('profilo') || '{}';
             const profilo =  JSON.parse(getProfilo);

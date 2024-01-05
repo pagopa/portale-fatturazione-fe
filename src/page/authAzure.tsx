@@ -5,9 +5,11 @@ import {InteractionRequiredAuthError,InteractionStatus,
 import { useMsal } from "@azure/msal-react";
 import {useState, useEffect} from 'react';
 import { useNavigate } from "react-router";
-import { AuthAzureProps } from "../types/typesGeneral";
+import { AuthAzureProps, MainState } from "../types/typesGeneral";
 
 
+// Blank Page utilizzata per l'autenticazione Azure e le conseguenti chiamate di accesso pagoPA
+// e salvataggio del profilo nlla local storage
 const AuthAzure : React.FC<AuthAzureProps> = ({setMainState}) =>{
 
     
@@ -60,7 +62,7 @@ const AuthAzure : React.FC<AuthAzureProps> = ({setMainState}) =>{
     },[tokens]);
 
 
-    console.log({tokens});
+  
     const postPagoPa = () =>{
         pagopaLogin(tokens).then((res)=>{
             if(res.status === 200){
@@ -70,9 +72,6 @@ const AuthAzure : React.FC<AuthAzureProps> = ({setMainState}) =>{
                 localStorage.setItem('token', JSON.stringify(storeJwt));
            
                 // store del token nella local storage per tutte le successive chiamate END
-
-            
-
                 getProfilo(res);
                
             }
@@ -105,7 +104,7 @@ const AuthAzure : React.FC<AuthAzureProps> = ({setMainState}) =>{
                 
               
               
-                setMainState((prev:any)=>({...prev, ...{nonce:resp?.data.nonce,ruolo:resp.data.ruolo,action:'LISTA_DATI_FATTURAZIONE'}}));
+                setMainState((prev:MainState)=>({...prev, ...{nonce:resp?.data.nonce,ruolo:resp.data.ruolo,action:'LISTA_DATI_FATTURAZIONE'}}));
                 navigate('/pagopalistadatifatturazione');
                 // setto il nonce nello state di riferimento globale
               
