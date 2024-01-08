@@ -8,13 +8,13 @@ import { useNavigate } from 'react-router';
 
 interface GridComponentProps {
     data: any[],
-    setInfoModuloCommessa:any,
-    infoModuloCommessa:any
+    setMainState:any,
+    mainState:any
    
 }
 
 const GridComponent : React.FC<GridComponentProps> = (props) => {
-    const {data, setInfoModuloCommessa, infoModuloCommessa} = props;
+    const {data, setMainState, mainState} = props;
     const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre",'Gennaio'];
 
   
@@ -34,11 +34,6 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
     console.log({dataWithLabelFixed});
 
 
-
-  
-
-
-    
     const navigate = useNavigate();
 
     let columsSelectedGrid = '';
@@ -70,7 +65,7 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
             const string = JSON.stringify(newState);
             localStorage.setItem('statusApplication', string);
 
-            setInfoModuloCommessa((prev:any)=>({...prev, ...{
+            setMainState((prev:any)=>({...prev, ...{
                 mese:getMeseIndex+1,
                 anno:params.row.annoValidita,
                 modifica:params.row.modifica,

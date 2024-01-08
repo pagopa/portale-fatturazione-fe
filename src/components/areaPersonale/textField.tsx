@@ -6,7 +6,7 @@ import { _YupPec} from '../../validations/email/index';
 import YupString from '../../validations/string/index';
 
 const TextFieldComponent : React.FC<TextFieldProps> = props => {
-    const {infoModuloCommessa,setDatiFatturazione,setStatusBottmConferma, datiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
+    const {mainState,setDatiFatturazione,setStatusButtonConferma, datiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
 
     const [errorValidation, setErrorValidation] = useState(false);
     const {
@@ -18,11 +18,11 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
             .validate(input)
             .then(()=>{
                 setErrorValidation(false);
-                setStatusBottmConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
             })
             .catch(() =>{
                 setErrorValidation(true);
-                setStatusBottmConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
+                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
             } );
 
         YupString.matches(/^[a-zA-Z0-9_.-]*$/,  {
@@ -31,10 +31,10 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
         }).validate(input)
             .then(()=>{
                 setErrorValidation(false);
-                setStatusBottmConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
             }).catch(() =>{
                 setErrorValidation(true);
-                setStatusBottmConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
+                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
             } );
     }; 
 
@@ -44,10 +44,10 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
         _YupPec.validate(element)
             .then(()=>{
                 setErrorValidation(false);
-                setStatusBottmConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
             })
             .catch(()=> {
-                setStatusBottmConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
+                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
                 setErrorValidation(true);
             } );
     }; 
@@ -67,11 +67,11 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
 
 
     let makeTextInputDisable = true;
-    if(infoModuloCommessa.statusPageDatiFatturazione === 'immutable'){
+    if(mainState.statusPageDatiFatturazione === 'immutable'){
         makeTextInputDisable = true;
-    }else if(infoModuloCommessa.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa === ''){
+    }else if(mainState.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa === ''){
         makeTextInputDisable = true;
-    }else if(infoModuloCommessa.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa !== ''){
+    }else if(mainState.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa !== ''){
         makeTextInputDisable = false;
 
     }

@@ -15,7 +15,7 @@ import { getDatiModuloCommessa, getAuthProfilo} from '../../api/api';
 import { SideNavProps } from '../../types/typesGeneral';
 
 
-const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoModuloCommessa}) => {
+const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => {
 
     const navigate = useNavigate();
     const location : any = useLocation();
@@ -33,7 +33,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
         await getAuthProfilo(profilo.jwt)
             .then((res) =>{
             
-                setInfoModuloCommessa((prev:any)=>({...prev, ...{nonce:res?.data.nonce}}));
+                setMainState((prev:any)=>({...prev, ...{nonce:res?.data.nonce}}));
            
               
             }).catch(()=>{
@@ -48,25 +48,25 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
     useEffect(()=>{
         /*
         const x = Object.values(profilo).length;
-        console.log(infoModuloCommessa.nonce,x);*/
+        console.log(mainState.nonce,x);*/
 
-        if(infoModuloCommessa.nonce === '' && Object.values(profilo).length !== 0){
+        if(mainState.nonce === '' && Object.values(profilo).length !== 0){
           
             getProfiloToGetNonce();
         }
          
-    },[infoModuloCommessa.nonce]);
+    },[mainState.nonce]);
 
     
 
   
 
     const getCommessa = async () =>{
-        await getDatiModuloCommessa(token, infoModuloCommessa.nonce).then((res)=>{
+        await getDatiModuloCommessa(token, mainState.nonce).then((res)=>{
 
             if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
                 console.log(1, 'xxx');
-                setInfoModuloCommessa((prev:any)=>({
+                setMainState((prev:any)=>({
                     ...prev,
                     ...{
                         inserisciModificaCommessa:'INSERT',
@@ -79,7 +79,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
             }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0){
              
              
-                setInfoModuloCommessa((prev:any)=>({ 
+                setMainState((prev:any)=>({ 
                     ...prev,
                     ...{
                         inserisciModificaCommessa:'MODIFY',
@@ -87,7 +87,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
                         modifica:true}}));
             }else if(res.data.modifica === false ){
                 console.log(3, 'xxx');
-                setInfoModuloCommessa((prev:any)=>({ 
+                setMainState((prev:any)=>({ 
                     ...prev,
                     ...{
                         inserisciModificaCommessa:'NO_ACTION',
@@ -116,14 +116,17 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
 
    
     useEffect(()=>{
-        if(token !== undefined && infoModuloCommessa.nonce !== '' ){
+        if(token !== undefined && mainState.nonce !== '' && profilo.auth !== 'PAGOPA' ){
             getCommessa();
         }
-    },[token,infoModuloCommessa.nonce]);
+    },[token,mainState.nonce]);
 
   
 
   
+    const getProfiloFromLocalStorage = localStorage.getItem('profilo') || '{}';
+
+    const checkIfUserIsAutenticated = JSON.parse(getProfiloFromLocalStorage).auth;
   
 
  
@@ -133,111 +136,126 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
     
 
     const [selectedIndex, setSelectedIndex] = useState(0);
-    const handleListItemClick = (index : number, route : string) => {
-        navigate(route);
-        setSelectedIndex(index);
-        setInfoModuloCommessa((prev:any)=>({ 
-            ...prev,
-            ...{
-                action:'DATI_FATTURAZIONE',
-                statusPageDatiFatturazione:'immutable'
-            }}));
+    const handleListItemClick = () => {
 
-        localStorage.setItem('statusApplication', JSON.stringify(infoModuloCommessa));
+        if(checkIfUserIsAutenticated === 'PAGOPA'){
+            navigate('/pagopalistadatifatturazione');
+        }else{
+            navigate('/');
+            
+            setMainState((prev:any)=>({ 
+                ...prev,
+                ...{
+                    action:'DATI_FATTURAZIONE',
+                    statusPageDatiFatturazione:'immutable'
+                }}));
+    
+            localStorage.setItem('statusApplication', JSON.stringify(mainState));
+        }
+        
     };
 
 
-    const handleListItemClickModuloCommessa = async (index : number,) => {
+    const handleListItemClickModuloCommessa = async () => {
        
-        setSelectedIndex(index);
+        if(profilo.auth === 'PAGOPA'){
+            //cliccando sulla side nav Modulo commessa e sono l'ente PAGOPA
+            navigate('/pagopalistamodulicommessa');
+
+        }else{
+            //cliccando sulla side nav Modulo commessa e sono un ente qualsiasi
+
+            await getDatiModuloCommessa(token, mainState.nonce).then((res)=>{
+
+                if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
+                    setMainState((prev:any)=>({
+                        ...prev,
+                        ...{
+                            inserisciModificaCommessa:'INSERT',
+                            statusPageInserimentoCommessa:'mutable',
+                            modifica:true
+                        }}));
+               
+                    const newState = {
+                        path:'/8',
+                        mese:res.data.mese,
+                        anno:res.data.anno,
+                        inserisciModificaCommessa:'INSERT'
+                    };
+                    localStorage.setItem('statusApplication', JSON.stringify(newState));
+                  
+                    navigate('/8');
+                }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0 ){
+    
+                    setMainState((prev:any)=>({ 
+                        ...prev,
+                        ...{
+                            inserisciModificaCommessa:'MODIFY',
+                            statusPageInserimentoCommessa:'immutable',
+                            modifica:true}}));
+    
+                    const newState = {
+                        path:'/4',
+                        mese:res.data.mese,
+                        anno:res.data.anno,
+                        inserisciModificaCommessa:'MODIFY'
+                    };
+                    localStorage.setItem('statusApplication', JSON.stringify(newState));
+                   
+                    navigate('/4');
+                }else if(res.data.modifica === false && res.data.moduliCommessa.length === 0){
+                    setMainState((prev:any)=>({ 
+                        ...prev,
+                        ...{
+                            inserisciModificaCommessa:'NO_ACTION',
+                            statusPageInserimentoCommessa:'immutable',
+                            modifica:false}}));
+    
+                    const newState = {
+                        path:'/4',
+                        mese:res.data.mese,
+                        anno:res.data.anno,
+                        inserisciModificaCommessa:'NO_ACTION'
+                    };
+                    localStorage.setItem('statusApplication', JSON.stringify(newState));
+                   
+                    navigate('/4');
+                }else if(res.data.modifica === false && res.data.moduliCommessa.length > 0){
+                    setMainState((prev:any)=>({ 
+                        ...prev,
+                        ...{
+                            inserisciModificaCommessa:'NO_ACTION',
+                            statusPageInserimentoCommessa:'immutable',
+                            modifica:false}})); 
+                    const newState = {
+                        path:'/8',
+                        mese:res.data.mese,
+                        anno:res.data.anno,
+                        inserisciModificaCommessa:'NO_ACTION'
+                    };
+                    localStorage.setItem('statusApplication', JSON.stringify(newState));
+                   
+                    navigate('/4');
+                }
+    
+            }).catch((err) =>{
+                if(err.response.status === 401){
+                    navigate('/error');
+                }else if(err.response.status === 419){
+                    navigate('/error');
+                }
+            });
+            
+        }
       
 
-        await getDatiModuloCommessa(token, infoModuloCommessa.nonce).then((res)=>{
-
-            if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
-                setInfoModuloCommessa((prev:any)=>({
-                    ...prev,
-                    ...{
-                        inserisciModificaCommessa:'INSERT',
-                        statusPageInserimentoCommessa:'mutable',
-                        modifica:true
-                    }}));
-           
-                const newState = {
-                    path:'/8',
-                    mese:res.data.mese,
-                    anno:res.data.anno,
-                    inserisciModificaCommessa:'INSERT'
-                };
-                localStorage.setItem('statusApplication', JSON.stringify(newState));
-              
-                navigate('/8');
-            }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0 ){
-
-                setInfoModuloCommessa((prev:any)=>({ 
-                    ...prev,
-                    ...{
-                        inserisciModificaCommessa:'MODIFY',
-                        statusPageInserimentoCommessa:'immutable',
-                        modifica:true}}));
-
-                const newState = {
-                    path:'/4',
-                    mese:res.data.mese,
-                    anno:res.data.anno,
-                    inserisciModificaCommessa:'MODIFY'
-                };
-                localStorage.setItem('statusApplication', JSON.stringify(newState));
-               
-                navigate('/4');
-            }else if(res.data.modifica === false && res.data.moduliCommessa.length === 0){
-                setInfoModuloCommessa((prev:any)=>({ 
-                    ...prev,
-                    ...{
-                        inserisciModificaCommessa:'NO_ACTION',
-                        statusPageInserimentoCommessa:'immutable',
-                        modifica:false}}));
-
-                const newState = {
-                    path:'/4',
-                    mese:res.data.mese,
-                    anno:res.data.anno,
-                    inserisciModificaCommessa:'NO_ACTION'
-                };
-                localStorage.setItem('statusApplication', JSON.stringify(newState));
-               
-                navigate('/4');
-            }else if(res.data.modifica === false && res.data.moduliCommessa.length > 0){
-                setInfoModuloCommessa((prev:any)=>({ 
-                    ...prev,
-                    ...{
-                        inserisciModificaCommessa:'NO_ACTION',
-                        statusPageInserimentoCommessa:'immutable',
-                        modifica:false}})); 
-                const newState = {
-                    path:'/8',
-                    mese:res.data.mese,
-                    anno:res.data.anno,
-                    inserisciModificaCommessa:'NO_ACTION'
-                };
-                localStorage.setItem('statusApplication', JSON.stringify(newState));
-               
-                navigate('/4');
-            }
-
-        }).catch((err) =>{
-            if(err.response.status === 401){
-                navigate('/error');
-            }else if(err.response.status === 419){
-                navigate('/error');
-            }
-        });
+      
        
 
     };
 
     
-
+    
     const currentLocation = location.pathname;
 
     useEffect(()=>{
@@ -246,20 +264,29 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
         }else if(currentLocation === '/4'){
             setSelectedIndex(1);
         }else if(currentLocation === '/8'){
-            setSelectedIndex(2);
+            setSelectedIndex(1);
+        }else if(currentLocation === '/pagopalistadatifatturazione'){
+            setSelectedIndex(0);
+        }else if(currentLocation === '/pagopalistamodulicommessa'){
+            setSelectedIndex(1);
+        }else if(currentLocation === '/pdf'){
+            setSelectedIndex(1);
         }
         
     },[currentLocation]);
 
     
    
-
+    const hideShowSidenav = location.pathname === '/auth' ||
+                            location.pathname === '/azure' ||
+                            location.pathname === '/auth/azure'||
+                            location.pathname === '/azureLogin';
  
 
 
     return (
         <>
-            {(location.pathname === '/error'||location.pathname === '/auth') ? null :
+            {hideShowSidenav ? null :
                 <Box sx={{
                     height: '100%',
                     maxWidth: 360,
@@ -267,14 +294,14 @@ const SideNavComponent: React.FC<SideNavProps> = ({setInfoModuloCommessa, infoMo
                 }}
                 >
                     <List component="nav" aria-label="main piattaforma-notifiche sender">
-                        <ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick(0,'/')}>
+                        <ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick()}>
                             <ListItemIcon>
                                 <DnsIcon fontSize="inherit"></DnsIcon>
                       
                             </ListItemIcon>
                             <ListItemText primary="Dati di fatturazione" />
                         </ListItemButton>
-                        <ListItemButton selected={selectedIndex === 1} onClick={() => handleListItemClickModuloCommessa(1)}>
+                        <ListItemButton selected={selectedIndex === 1} onClick={() => handleListItemClickModuloCommessa()}>
                             <ListItemIcon>
                                 <ViewModuleIcon fontSize="inherit" />
                             </ListItemIcon>

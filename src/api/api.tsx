@@ -1,7 +1,18 @@
 import axios from 'axios';
-import {DatiFatturazione,DatiFatturazionePost} from '../types/typesAreaPersonaleUtenteEnte';
+import {DatiFatturazione,DatiFatturazionePost, DatiFatturazionePostPagopa} from '../types/typesAreaPersonaleUtenteEnte';
 import { DatiCommessa } from '../types/typeModuloCommessaInserimento';
+<<<<<<< HEAD
 import { TokenObject } from '../types/typesGeneral';
+=======
+import { 
+    TokenObject,
+    BodyListaDatiFatturazione,
+    BodyDownloadDatiFatturazione,
+    BodyListaModuloCommessa,
+    BodyDownloadListaCommesse
+} from '../types/typesGeneral';
+
+>>>>>>> issues/237
 
 
 //dev
@@ -16,23 +27,33 @@ export const url = "https://fat-p-app-api.azurewebsites.net";
 export const redirect = "https://selfcare.pagopa.it/";
 
 
-
-
-export const menageError = (res:any,navigate:any) =>{
+<<<<<<< HEAD
+=======
+export const manageError = (res:any,navigate:any) =>{
     
-    if(res?.error?.response?.status === 401){
-      
+    if(res.response.status === 401){
+       
+        localStorage.removeItem("token");
+        localStorage.removeItem("profilo");
         navigate('/error');
       
-    }else if(res?.error?.response?.status === 404){
+    }else if(res.response.status  === 404){
         navigate('/error');
         //alert('Non è stato possibile aggiungere i dati');
-    }else if(res?.error?.response?.status === 500){
+    }else if(res.response.status  === 500){
         
         navigate('/error');
-    }else if(res?.error?.response?.status === 400){
-        navigate('/error');
+    }else if(res.response.status  === 400){
+        console.log('400 da gestire');
     }
+};
+>>>>>>> issues/237
+
+
+
+export const pagopaLogin = async (tokenObject:TokenObject) => {
+    const result = await axios.post(`${url}/api/auth/pagopa/login`, tokenObject);
+    return result;
 };
 
 
@@ -219,6 +240,149 @@ export const downloadModuloCommessaPdf = async (token:string, mese:string, anno:
 
     return response;
 };
+
+export const getTipologiaProdotto = async (token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/tipologia/prodotto?nonce=${nonce}`,
+       
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
+export const getTipologiaProfilo = async (token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/tipologia/tipoprofilo?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+};
+
+export const listaDatiFatturazionePagopa = async (body : BodyListaDatiFatturazione, token:string, nonce:string) => {
+    const response =  await axios.post(`${url}/api/datifatturazione/pagopa/ricerca?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
+export const getDatiFatturazionePagoPa = async (token:string, nonce:string , idente:string, prodotto:string) => {
+    const response =  await axios.get(`${url}/api/datifatturazione/pagopa/ente?idente=${idente}&prodotto=${prodotto}&nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+}; 
+
+export const modifyDatiFatturazionePagoPa = async (token:string, nonce:string ,body: DatiFatturazionePostPagopa,) => {
+    const response =  await axios.put(`${url}/api/datifatturazione/pagopa?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+}; 
+
+export const insertDatiFatturazionePagoPa = async (token:string, nonce:string ,body: DatiFatturazionePostPagopa) => {
+    const response =  await axios.post(`${url}/api/datifatturazione/pagopa?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+};
+
+export const downloadDocumentoListaDatiFatturazionePagoPa = async (token:string, nonce:string ,body: BodyDownloadDatiFatturazione) => {
+    const response =  await axios.post(`${url}/api/datifatturazione/pagopa/documento/ricerca?nonce=${nonce}`,
+        body,
+        
+        { headers: {
+            Authorization: 'Bearer ' + token,
+            ContentType: 'application/octet-stream',
+        },
+        }
+    );
+    return response;
+};
+
+
+export const listaModuloCommessaPagopa = async (body : BodyListaModuloCommessa, token:string, nonce:string) => {
+    const response =  await axios.post(`${url}/api/modulocommessa/pagopa/ricerca?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
+export const getModuloCommessaPagoPa = async (token:string, nonce:string , idente:string, prodotto:string, idtipocontratto:number , mese:number, anno:number) => {
+    const response =  await axios.get(`${url}/api/modulocommessa/pagopa/dettaglio/${anno}/${mese}?idEnte=${idente}&prodotto=${prodotto}&idTipoContratto=${idtipocontratto}&nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+}; 
+
+
+export const modifyDatiModuloCommessaPagoPa = async (body:DatiCommessa, token:string, nonce:string) => {
+    const response =  await axios.post(`${url}/api/modulocommessa/pagopa?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
+export const getModuloCommessaPagoPaPdf = async ( token:string ,nonce:string ,mese:string, anno:string,idEnte:string, prodotto:string, idTipoContratto:number ) => {
+    const response =  await axios.get(`${url}/api/modulocommessa/pagopa/documento/${anno}/${mese}?idEnte=${idEnte}&prodotto=${prodotto}&idTipoContratto=${idTipoContratto}&nonce=${nonce}`,  
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
+export const downloadModuloCommessaPagoPaPdf = async (token:string, nonce:string, mese:string, anno:string, idEnte:string, prodotto:string, idTipoContratto:number, tipo:string, ) => {
+    const response =  await axios.get(`${url}/api/modulocommessa/pagopa/download/${anno}/${mese}?idEnte=${idEnte}&prodotto=${prodotto}&idTipoContratto=${idTipoContratto}&tipo=${tipo}&nonce=${nonce}`,
+       
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
+export const downloadDocumentoListaModuloCommessaPagoPa = async (token:string, nonce:string , body: BodyDownloadListaCommesse) => {
+    const response =  await axios.post(`${url}/api/modulocommessa/pagopa/documento/ricerca?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token,
+            ContentType: 'application/octet-stream',
+        },
+        }
+    );
+    return response;
+};
+
+
+
+
 
 
 

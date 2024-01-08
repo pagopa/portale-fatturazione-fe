@@ -10,7 +10,7 @@ import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
 
 const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate}) => {
 
-    const {infoModuloCommessa,setDatiFatturazione, datiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
+    const {mainState,setDatiFatturazione, datiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
 
   
 
@@ -34,11 +34,11 @@ const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate}) => {
     let dataInputDisable  = true;
 
   
-    if(infoModuloCommessa.statusPageDatiFatturazione === 'immutable'){
+    if(mainState.statusPageDatiFatturazione === 'immutable'){
         dataInputDisable = true;
-    }else if(infoModuloCommessa.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa === ''){
+    }else if(mainState.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa === ''){
         dataInputDisable = true;
-    }else if(infoModuloCommessa.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa !== ''){
+    }else if(mainState.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa !== ''){
         dataInputDisable = false;
 
     }

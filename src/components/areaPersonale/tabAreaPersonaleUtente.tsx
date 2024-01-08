@@ -15,7 +15,7 @@ import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
 
 
 const TabAreaPersonaleUtente = () => {
-    const {infoModuloCommessa,datiFatturazione,setDatiFatturazione, user} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
+    const {mainState,datiFatturazione,setDatiFatturazione, user} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
 
    
     function createDateFromString(string:string){
@@ -176,7 +176,7 @@ const TabAreaPersonaleUtente = () => {
                 {/* secondo box   end */}
                 {/* terzo box   start */}
                 <div className="mt-3">
-                    <DynamicInsert status={infoModuloCommessa?.statusPageDatiFatturazione} arrElement={datiFatturazione.contatti} setData={setDatiFatturazione} />
+                    <DynamicInsert status={mainState?.statusPageDatiFatturazione} arrElement={datiFatturazione.contatti} setData={setDatiFatturazione} />
                 </div>
 
                 {/* terzo box   end */}
@@ -199,7 +199,7 @@ const TabAreaPersonaleUtente = () => {
                     sx={{color: red[800]}}
                     checked={datiFatturazione.notaLegale || false}
                     onChange={()=> setDatiFatturazione((prev:any)=>({...prev,...{notaLegale:!datiFatturazione.notaLegale}}))}/>}
-                disabled={infoModuloCommessa.statusPageDatiFatturazione === 'immutable'}
+                disabled={mainState.statusPageDatiFatturazione === 'immutable'}
                 label="Gli accordi di adesione a SEND sono esclusi dall`applicazione del Codice dei Contratti Pubblici ai
                  sensi dell`art. 56, comma 1, lett a) del D.lgs. 36/2023 pertanto non sono sottoposti alla disciplina della
                   tracciabilità dei flussi finanziari di cui alla L. 136/2010, come indicato dall`ANAC nelle relative Linee Guida.

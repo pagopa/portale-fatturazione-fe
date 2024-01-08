@@ -1,10 +1,10 @@
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { selfcareLogin, getAuthProfilo } from '../api/api';
 import {useEffect} from 'react';
-import { LoginProps } from '../types/typesGeneral';
+import { LoginProps, MainState } from '../types/typesGeneral';
 
-
-const Auth : React.FC<LoginProps> = ({setCheckProfilo, setInfoModuloCommessa}) =>{
+// Blank page utilizzata per l'accesso degli utenti tramite  Selfcare
+const Auth : React.FC<LoginProps> = ({setCheckProfilo, setMainState}) =>{
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     localStorage.removeItem('profilo');
@@ -19,6 +19,7 @@ const Auth : React.FC<LoginProps> = ({setCheckProfilo, setInfoModuloCommessa}) =
                
                 const storeProfilo = resp.data;
                 localStorage.setItem('profilo', JSON.stringify({
+                    auth:storeProfilo.auth,
                     nomeEnte:storeProfilo.nomeEnte,
                     descrizioneRuolo:storeProfilo.descrizioneRuolo,
                     ruolo:storeProfilo.ruolo,
@@ -33,7 +34,7 @@ const Auth : React.FC<LoginProps> = ({setCheckProfilo, setInfoModuloCommessa}) =
                 setCheckProfilo(true);
                
                 // setto il nonce nello state di riferimento globale
-                setInfoModuloCommessa((prev:any)=>({...prev, ...{nonce:resp?.data.nonce,ruolo:resp.data.ruolo}}));
+                setMainState((prev: MainState)=>({...prev, ...{nonce:resp?.data.nonce,ruolo:resp.data.ruolo}}));
                 navigate("/");
             } )
             .catch(err => {

@@ -2,7 +2,8 @@ import { HeaderAccount } from '@pagopa/mui-italia';
 import { useLocation } from 'react-router';
 import { redirect } from '../../api/api';
 import { useNavigate } from 'react-router';
-
+import {useMsal } from '@azure/msal-react';
+import { loginRequest } from '../../authConfig';
 
 type JwtUser = {
     id: string;
@@ -14,9 +15,12 @@ type JwtUser = {
 export default function HeaderPostLogin() {
 
 
-    const location : any = useLocation();
-    const navigate = useNavigate();
+    const location  = useLocation();
+    
+
     const getDataUser = localStorage.getItem('profilo')|| '{}';
+    
+
     const dataUser = JSON.parse(getDataUser);
     const pagoPALink = {
         label: 'PagoPA S.p.A.',
@@ -32,6 +36,8 @@ export default function HeaderPostLogin() {
         email: "",
     };
 
+    // start actions sul manuale operativo , download del manuale
+
     const onButtonClick = () => {
         const pdfUrl = "/ManualeUtentePortaleFatturazione2.pdf";
         const link = document.createElement("a");
@@ -41,34 +47,73 @@ export default function HeaderPostLogin() {
         link.click();
         document.body.removeChild(link);
     };
-
-  
+    //end actions sul manuale operativo , download del manuale
+    // start on click su assistenza redirect alla tua apllicazione predefinita per l'invio mail
     function onEmailClick() {
         window.open(`mailto:fatturazione@assistenza.pagopa.it`);
     }
-  
+    // end on click su assistenza redirect alla tua apllicazione predefinita per l'invio mail
 
+    const { instance } = useMsal();
+   
+    const handleLoginRedirect = () => {
+        instance.loginRedirect(loginRequest).catch((error) => console.log(error));
+    };
+
+
+    const handleLogoutRedirect = () => {
+        
+        instance.logoutRedirect().catch((error) => console.log(error));
+    };
+
+
+
+    const navigate = useNavigate();
+
+    const getProfiloFromLocalStorage = localStorage.getItem('profilo') || '{}';
+
+    const checkIfUserIsAutenticated = JSON.parse(getProfiloFromLocalStorage).auth;
+
+   
+
+    const hideShowHeaderLogin =  location.pathname === '/auth' ||
+                                 location.pathname === '/azure' ||
+                                 location.pathname === '/auth/azure' ; 
+  
+    
+    const statusUser = getDataUser === '{}' ? false : user;
     return (
 
         <div className="div_header">
-            {(location.pathname === '/auth')  ? null : 
+            {hideShowHeaderLogin ? null : 
                 <HeaderAccount
                     rootLink={pagoPALink}
-                    loggedUser={getDataUser === '{}' ? false : user}
+                    loggedUser={statusUser}
                    
                     onAssistanceClick={() => onEmailClick()
-                        //navigate('https://fatturazione@assistenza.pagopa.it');
+                       
                     }
                     
-                    onLogin={() => {
-                        console.log('User login');
-                    }}
+                    onLogin={handleLoginRedirect}
                     onLogout={() => {
-                        localStorage.removeItem('profilo');
-                        localStorage.removeItem('token');
-                        localStorage.removeItem('statusApplication');
-                        window.location.href = redirect;
-                        //navigate('https://selfcare.pagopa.it/');
+
+
+                        
+                        
+
+                        if(checkIfUserIsAutenticated === 'PAGOPA'){
+                            // handleLogoutRedirect();
+                            
+                            localStorage.removeItem('profilo');
+                            localStorage.removeItem('token');
+                            localStorage.removeItem('statusApplication');
+                            navigate('/azureLogin');
+                        }else{
+                            localStorage.removeItem('profilo');
+                            localStorage.removeItem('token');
+                            localStorage.removeItem('statusApplication');
+                            window.location.href = redirect;
+                        }
                         
                     }}
                     onDocumentationClick={()=>onButtonClick()}

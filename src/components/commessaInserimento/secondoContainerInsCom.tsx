@@ -10,7 +10,7 @@ const SecondoContainerInsCom : React.FC = () => {
     const navigate = useNavigate();
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
-    const { totale, infoModuloCommessa} = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
+    const { totale, mainState} = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
 
     const getIdByTipo = (string:string, array:any[]) =>{
       
@@ -29,7 +29,7 @@ const SecondoContainerInsCom : React.FC = () => {
     });
  
     const getCategoria = async () =>{
-        await getCategoriaSpedizione(token , infoModuloCommessa.nonce).then((res:any) => {
+        await getCategoriaSpedizione(token , mainState.nonce).then((res:any) => {
          
             setArrTipoSpedizione({
                 idSpedizioneDigitale :getIdByTipo('Digitale',res.data),
@@ -48,11 +48,11 @@ const SecondoContainerInsCom : React.FC = () => {
     };
    
     useEffect(()=>{
-        if(infoModuloCommessa.nonce !== ''){
+        if(mainState.nonce !== ''){
             getCategoria();
         }
         
-    },[infoModuloCommessa.nonce]);
+    },[mainState.nonce]);
 
   
 

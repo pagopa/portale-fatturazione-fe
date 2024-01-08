@@ -11,14 +11,14 @@ const PageTitleNavigation = () => {
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
 
-    const {infoModuloCommessa, setInfoModuloCommessa, user} = useContext(DatiFatturazioneContext);
+    const {mainState, setMainState, user} = useContext(DatiFatturazioneContext);
  
     let titleNavigation;
   
-    if (infoModuloCommessa.statusPageDatiFatturazione === 'immutable' &&  user !== 'new') {
+    if (mainState.statusPageDatiFatturazione === 'immutable' &&  user !== 'new') {
        
         titleNavigation = 'Dati di fatturazione';
-    }else if(infoModuloCommessa.statusPageDatiFatturazione === 'mutable' &&  user === 'old'){
+    }else if(mainState.statusPageDatiFatturazione === 'mutable' &&  user === 'old'){
         titleNavigation = 'Modifica dati di fatturazione';
        
     }else {
@@ -34,7 +34,7 @@ const PageTitleNavigation = () => {
     return (
         <div className="mx-5 mt-2">
            
-            {(infoModuloCommessa.statusPageDatiFatturazione === 'mutable' && user === 'old')
+            {(mainState.statusPageDatiFatturazione === 'mutable' && user === 'old')
                 ? (
                     <div>
                         <ButtonNaked
@@ -42,7 +42,7 @@ const PageTitleNavigation = () => {
                             onFocusVisible={() => { console.log('onFocus'); }}
                             size="small"
                             startIcon={<ArrowBackIcon />}
-                            onClick={() => setInfoModuloCommessa((prev:any)=>({...prev, ...{statusPageDatiFatturazione:'immutable'}}))}
+                            onClick={() => setMainState((prev:any)=>({...prev, ...{statusPageDatiFatturazione:'immutable'}}))}
                             sx={{marginBottom:'2px'}}
                         >
                           Indietro 
@@ -58,9 +58,9 @@ const PageTitleNavigation = () => {
                 <Typography variant="h4">{titleNavigation}</Typography>
             </div>
             
-            {infoModuloCommessa.statusPageDatiFatturazione === 'immutable' && profilo.ruolo === 'R/W' ? (
+            {mainState.statusPageDatiFatturazione === 'immutable' && profilo.ruolo === 'R/W' ? (
                 <div className="text-end marginTop24">
-                    <Button onClick={() => setInfoModuloCommessa((prev:any)=>({...prev, ...{statusPageDatiFatturazione:'mutable'}}))} variant="contained" size="small">Modifica</Button>
+                    <Button onClick={() => setMainState((prev:any)=>({...prev, ...{statusPageDatiFatturazione:'mutable'}}))} variant="contained" size="small">Modifica</Button>
                 </div>
             ) : null}
 

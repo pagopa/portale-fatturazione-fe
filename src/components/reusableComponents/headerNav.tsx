@@ -67,10 +67,15 @@ const HeaderNavComponent : React.FC =() => {
         },
     ];
 
+    const hideHeadernav = location.pathname === '/auth' ||
+                            location.pathname === '/azure' ||
+                            location.pathname === '/auth/azure'||
+                            location.pathname === '/azureLogin';
+
     
     return (
         <>
-            {(location.pathname === '/error' || location.pathname === '/auth') ? null :
+            {hideHeadernav ? null :
                 <HeaderProduct
                     productId="1"
                     productsList={productsList}

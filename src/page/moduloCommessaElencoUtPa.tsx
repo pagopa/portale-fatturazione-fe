@@ -8,8 +8,8 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { VisualModuliCommessaProps } from '../types/typeModuloCommessaElenco';
 
 
-const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setInfoModuloCommessa,infoModuloCommessa}) => {
-    console.log({infoModuloCommessa});
+const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMainState,mainState}) => {
+   
   
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
@@ -33,7 +33,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setInfoM
 
     const getAnniSelect = async () =>{
 
-        await getAnni(token, infoModuloCommessa.nonce).then((res:any)=>{
+        await getAnni(token, mainState.nonce).then((res:any)=>{
             setAnni(res.data);
         }).catch((err:any)=>{
             if(err.response.status === 401){
@@ -48,7 +48,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setInfoM
 
     const getListaCommessaGrid = async () =>{
 
-        await getListaCommessa(token , infoModuloCommessa.nonce).then((res:any)=>{
+        await getListaCommessa(token , mainState.nonce).then((res:any)=>{
             const finalData = fixResponseForDataGrid(res.data);
             setGridData(finalData);
         }).catch((err:any)=>{
@@ -63,12 +63,12 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setInfoM
     };
 
     useEffect(()=>{
-        if(infoModuloCommessa.nonce !== ''){
+        if(mainState.nonce !== ''){
             getAnniSelect();
             getListaCommessaGrid();
         }
         
-    },[infoModuloCommessa.nonce]);
+    },[mainState.nonce]);
 
     useEffect(()=>{
         if(token === undefined){
@@ -87,7 +87,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setInfoM
 
    
     const handleButtonFiltra = () => {
-        getListaCommessaFiltered(token , infoModuloCommessa.nonce, valueSelect).then((res:any)=>{
+        getListaCommessaFiltered(token , mainState.nonce, valueSelect).then((res:any)=>{
             const finalData = fixResponseForDataGrid(res.data);
             setGridData(finalData);
            
@@ -106,7 +106,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setInfoM
    
     const handleButtonAnnullaFiltri = () => {
 
-        getListaCommessaOnAnnulla(token, infoModuloCommessa.nonce).then((res:any)=>{
+        getListaCommessaOnAnnulla(token, mainState.nonce).then((res:any)=>{
             const finalData = fixResponseForDataGrid(res.data);
             setGridData(finalData);
            
@@ -123,7 +123,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setInfoM
     };
 
 
-    console.log({infoModuloCommessa},'grid');
+    console.log({mainState},'grid');
     return (
 
         <div className="m-5">
@@ -208,7 +208,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setInfoM
             </div>
 
             <div>
-                <GridComponent data={gridData} setInfoModuloCommessa={setInfoModuloCommessa} infoModuloCommessa={infoModuloCommessa} />
+                <GridComponent data={gridData} setMainState={setMainState} mainState={mainState} />
                 
             </div>
 

@@ -20,9 +20,6 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
     const [validation, setValidation] = useState(false);
 
 
-
-    console.log({arrElement, datiFatturazione});
-
     const handleSubmit = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
         if (element) {

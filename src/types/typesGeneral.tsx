@@ -11,13 +11,13 @@ export interface LocationState {
 
 export interface LoginProps {
     setCheckProfilo:any,
-    setInfoModuloCommessa:any
+    setMainState:any
 
 }
 
 export interface SideNavProps{
-    setInfoModuloCommessa:any,
-    infoModuloCommessa:any
+    setMainState:any,
+    mainState:any
 }
 
 export interface StepperProps {
@@ -28,4 +28,55 @@ export type TokenObject = {
     accessToken?:string,
     idToken?:string,
 }
+<<<<<<< HEAD
+=======
+
+export type AuthAzureProps = {
+    setMainState:any,
+}
+
+export type BodyListaDatiFatturazione = {
+    descrizione: string,
+    prodotto: string,
+    profilo: string
+}
+
+export type BodyListaModuloCommessa = {
+    anno: number | string,
+    mese: number | string,
+    prodotto: string,
+    descrizione: string
+}
+
+export interface MainState{
+    mese:string,
+    anno:string,
+    modifica:undefined, // se la commessa selezionata è modificabile
+    userClickOn:undefined, // se l'utente clicca su un elemento di lista commesse setto GRID
+    inserisciModificaCommessa:string |undefined, // INSERT MODIFY  se il sevizio get commessa mi restituisce true []
+    action:string, // le action possono essere HIDE_MODULO_COMMESSA / SHOW_MODULO_COMMESSA / DATI_FATTURAZIOne
+    statusPageDatiFatturazione:string,
+    statusPageInserimentoCommessa:string,
+    path:string,
+    nonce:string,
+    indexStepper:0, // in che pat sono al momento del reload?
+    idEnte:string,// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
+    prodotto: string,// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
+}
+
+export interface BodyDownloadDatiFatturazione{
+    descrizione: string,
+    prodotto: string,
+    profilo: string  
+}
+
+
+export interface BodyDownloadListaCommesse{
+    descrizione: string,
+    prodotto: string,
+    anno:string,
+    mese:string 
+}
+
+>>>>>>> issues/237
 
