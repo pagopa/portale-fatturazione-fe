@@ -108,6 +108,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
     const [totale, setTotale] = useState<TotaleNazionaleInternazionale>({totaleNazionale:0, totaleInternazionale:0, totaleNotifiche:0});
     const [dataMod, setDataModifica] = useState('');
+    const [buttonModifica, setButtonMofica] = useState(false);
     // visualizza modulo cmmessa from grid 
 
    
@@ -130,6 +131,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                     , totaleInternazionale:objAboutTotale.totaleNumeroNotificheInternazionali
                     , totaleNotifiche:objAboutTotale.totaleNumeroNotificheDaProcessare});
                 setDataModifica(res.dataModifica);
+                setButtonMofica(res.modifica);
             }).catch((err:any)=>{
                 if(err.response.status === 401){
                     navigate('/error');
@@ -355,7 +357,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 
                     {actionTitle}
 
-                    {infoModuloCommessa.statusPageInserimentoCommessa === 'immutable' && infoModuloCommessa.action !== 'HIDE_MODULO_COMMESSA' && infoModuloCommessa.ruolo !== 'R' ?
+                    {infoModuloCommessa.statusPageInserimentoCommessa === 'immutable' && infoModuloCommessa.action !== 'HIDE_MODULO_COMMESSA' && infoModuloCommessa.ruolo !== 'R' && buttonModifica ?
                        
                         <div className="d-flex justify-content-end ">
                             <Button variant="contained" size="small" onClick={()=> hendleOnButtonModificaModuloCommessa()} >Modifica</Button>
