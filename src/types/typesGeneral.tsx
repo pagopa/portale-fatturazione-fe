@@ -67,3 +67,13 @@ export interface BodyDownloadDatiFatturazione{
     prodotto: string,
     profilo: string  
 }
+
+
+export interface BodyDownloadListaCommesse{
+    descrizione: string,
+    prodotto: string,
+    anno:string,
+    mese:string 
+}
+
+

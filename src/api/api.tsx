@@ -5,7 +5,8 @@ import {
     TokenObject,
     BodyListaDatiFatturazione,
     BodyDownloadDatiFatturazione,
-    BodyListaModuloCommessa
+    BodyListaModuloCommessa,
+    BodyDownloadListaCommesse
 } from '../types/typesGeneral';
 
 
@@ -351,6 +352,18 @@ export const downloadModuloCommessaPagoPaPdf = async (token:string, nonce:string
         },}
     );
 
+    return response;
+};
+
+export const downloadDocumentoListaModuloCommessaPagoPa = async (token:string, nonce:string , body: BodyDownloadListaCommesse) => {
+    const response =  await axios.post(`${url}/api/modulocommessa/pagopa/documento/ricerca?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token,
+            ContentType: 'application/octet-stream',
+        },
+        }
+    );
     return response;
 };
 

@@ -1,13 +1,13 @@
 import { ListaModuliCommessaProps } from "../types/typeListaModuliCommessa";
 import { Typography } from "@mui/material";
 import { Box, FormControl, InputLabel,Select, MenuItem, TextField, Button} from '@mui/material';
-import {getTipologiaProdotto, manageError, listaDatiFatturazionePagopa, listaModuloCommessaPagopa} from '../api/api';
+import {getTipologiaProdotto, manageError, listaModuloCommessaPagopa, downloadDocumentoListaModuloCommessaPagoPa} from '../api/api';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import {BodyListaDatiFatturazione} from '../types/typesGeneral';
 import { DataGrid, GridRowParams,GridEventListener,MuiEvent, GridColDef } from '@mui/x-data-grid';
 import DownloadIcon from '@mui/icons-material/Download';
+
 
 const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState,setMainState}) =>{
 
@@ -18,6 +18,12 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
 
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
+
+    
+    const state = localStorage.getItem('statusApplication') || '{}';
+    const statusApp =  JSON.parse(state);
+
+
 
 
     // prendo gli ultimi 2 anni dinamicamente
@@ -99,6 +105,28 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
     };
 
 
+    const downloadExelListaCommessa = async () =>{
+        await downloadDocumentoListaModuloCommessaPagoPa(token, mainState.nonce,bodyGetLista)
+            .then((res)=>{
+                console.log(res.data, 'DOC');
+                //const url = window.URL.createObjectURL(res.data.documento);
+                const link = document.createElement('a');
+                link.href = "data:text/plain;base64," + res.data.documento;
+                // link.href = url;
+                console.log({link});
+                link.setAttribute('download', 'Lista Modulo Commessa.xlsx'); //or any other extension
+                document.body.appendChild(link);
+              
+                link.click();
+                document.body.removeChild(link);
+
+            })
+            .catch((err)=>{
+                manageError(err,navigate);
+            });
+    };
+
+
 
     let columsSelectedGrid = '';
     const handleOnCellClick = (params:any) =>{
@@ -171,8 +199,8 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
         // { field: 'tipoSpedizioneAnalogicoAR', headerName: 'Tipo spediz Anal', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'numeroNotificheNazionaliAnalogico890', headerName: 'Num. Not. Naz. 890', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'numeroNotificheInternazionaliAnalogico890', headerName: 'Num. Not. Naz. AR 890', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'totaleAnalogicoLordo', headerName: 'Tot. Spedizioni A.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'totaleDigitaleLordo', headerName: 'Tot. Spedizioni D', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        { field: 'totaleAnalogicoLordo', headerName: 'Tot. Spedizioni A.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',  valueFormatter: ({ value }) => value.toFixed(2)},
+        { field: 'totaleDigitaleLordo', headerName: 'Tot. Spedizioni D', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left', valueFormatter: ({ value }) => value.toFixed(2) },
     
         {
             field: 'action',
@@ -336,15 +364,18 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
                             sx={{ marginTop: 'auto', marginBottom: 'auto'}}
                             variant="contained"> Filtra
                         </Button>
+
+                        {statusAnnulla === 'hidden' ? null :
                         
-                        <Button
-                            onClick={()=>{
-                                getListaCommesseOnAnnulla();
-                            } }
-                            variant="contained"
-                            sx={{marginLeft:'24px'}} >
+                            <Button
+                                onClick={()=>{
+                                    getListaCommesseOnAnnulla();
+                                } }
+                                variant="contained"
+                                sx={{marginLeft:'24px'}} >
                     Annulla filtri
-                        </Button>
+                            </Button>
+                        }
                     </div>
                 
                 </div>
@@ -353,7 +384,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
             {/* grid */}
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
            
-                <Button >
+                <Button onClick={()=>downloadExelListaCommessa() } >
             Download Risultati
                     <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
                 </Button>

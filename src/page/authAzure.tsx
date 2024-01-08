@@ -117,7 +117,6 @@ const AuthAzure : React.FC<AuthAzureProps> = ({setMainState}) =>{
   
     return (
         <>
-            <h1>Auth azure</h1>
         </>
     ); 
 };
