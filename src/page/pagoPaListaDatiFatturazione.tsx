@@ -41,7 +41,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
     const getProdotti = async() => {
         await getTipologiaProdotto(token, mainState.nonce )
             .then((res)=>{
-                console.log({res}, 'getProdotti');
+               
                 setProdotti(res.data);
             })
             .catch(((err)=>{
@@ -52,7 +52,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
     const getProfili = async() => {
         await getTipologiaProfilo(token, mainState.nonce)
             .then((res)=>{
-                console.log({res}, 'getProfilii');
+               
                 setProfili(res.data);
             })
             .catch(((err)=>{
@@ -65,7 +65,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
     const getListaDatifatturazione = async(body:BodyListaDatiFatturazione) =>{
         await listaDatiFatturazionePagopa(body ,token, mainState.nonce)
             .then((res)=>{
-                console.log({res}, 'lista');
+              
                 setGridData(res.data);
             })
             .catch(((err)=>{
@@ -89,12 +89,11 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
 
     const onDownloadButton = async() =>{
         await downloadDocumentoListaDatiFatturazionePagoPa(token, mainState.nonce, bodyGetLista).then((res:any) => {
-            console.log({res:res.data});
+   
             //const url = window.URL.createObjectURL(res.data.documento);
             const link = document.createElement('a');
             link.href = "data:text/plain;base64," + res.data.documento;
-            // link.href = url;
-            console.log({link});
+         
             link.setAttribute('download', 'Lista Dati Fatturazione.xlsx'); //or any other extension
             document.body.appendChild(link);
           
@@ -122,7 +121,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
         idCommessa
     ) => {
         event.preventDefault();
-        console.log({params});
+     
         // l'evento verrà eseguito solo se l'utente farà il clik sul 
         if(columsSelectedGrid  === 'ragioneSociale' || columsSelectedGrid === 'action' ){
 

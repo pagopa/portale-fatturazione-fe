@@ -84,7 +84,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
     const getListaCommesse = async() =>{
         await listaModuloCommessaPagopa(bodyGetLista ,token, mainState.nonce)
             .then((res)=>{
-                console.log({res}, 'lista');
+               
                 setGridData(res.data);
             })
             .catch((err)=>{
@@ -108,12 +108,10 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
     const downloadExelListaCommessa = async () =>{
         await downloadDocumentoListaModuloCommessaPagoPa(token, mainState.nonce,bodyGetLista)
             .then((res)=>{
-                console.log(res.data, 'DOC');
+             
                 //const url = window.URL.createObjectURL(res.data.documento);
                 const link = document.createElement('a');
                 link.href = "data:text/plain;base64," + res.data.documento;
-                // link.href = url;
-                console.log({link});
                 link.setAttribute('download', 'Lista Modulo Commessa.xlsx'); //or any other extension
                 document.body.appendChild(link);
               
@@ -141,7 +139,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
       
     ) => {
         event.preventDefault();
-        console.log({params},'PARAMS');
+       
         // l'evento verrà eseguito solo se l'utente farà il clik sul  mese e action
         if(columsSelectedGrid  === 'regioneSociale' ||columsSelectedGrid  === 'action' ){
             

@@ -48,7 +48,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
     useEffect(()=>{
         /*
         const x = Object.values(profilo).length;
-        console.log(mainState.nonce,x);*/
+   */
 
         if(mainState.nonce === '' && Object.values(profilo).length !== 0){
           
@@ -65,7 +65,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
         await getDatiModuloCommessa(token, mainState.nonce).then((res)=>{
 
             if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
-                console.log(1, 'xxx');
+              
                 setMainState((prev:any)=>({
                     ...prev,
                     ...{
@@ -86,7 +86,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
                         statusPageInserimentoCommessa:'immutable',
                         modifica:true}}));
             }else if(res.data.modifica === false ){
-                console.log(3, 'xxx');
+              
                 setMainState((prev:any)=>({ 
                     ...prev,
                     ...{

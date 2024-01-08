@@ -155,7 +155,7 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
                     onChange={(e)=>{
                         
                         let value = parseInt(e.target.value);
-                        console.log({value}, 'value');
+                
                         if(!value){
                             value = 0;
                         }

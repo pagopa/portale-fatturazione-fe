@@ -121,7 +121,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
         await getDettaglioModuloCommessa(token,statusApp.anno,statusApp.mese, mainState.nonce)
             .then((response:any)=>{
                 const res = response.data;
-                console.log({res});
+               
                 setDatiCommessa({moduliCommessa:res.moduliCommessa});
                 setTotaliModuloCommessa(res.totale);
                 const objAboutTotale = res.totaleModuloCommessaNotifica;

@@ -67,7 +67,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
 
     });
 
-    console.log({datiFatturazione},'TEST');
+
   
  
 
@@ -245,7 +245,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
             }else{
 
 
-                console.log({datiFatturazione}, 'GENNAIO');
+            
                 modifyDatiFatturazione(datiFatturazione, token,mainState.nonce)
                     .then((res:any) =>{
 

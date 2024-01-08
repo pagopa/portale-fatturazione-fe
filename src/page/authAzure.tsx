@@ -1,4 +1,4 @@
-import { pagopaLogin, getAuthProfilo } from "../api/api";
+import { pagopaLogin, getAuthProfilo, manageError } from "../api/api";
 import { loginRequest } from '../authConfig';
 import {InteractionRequiredAuthError,InteractionStatus,
 } from "@azure/msal-browser";
@@ -48,7 +48,7 @@ const AuthAzure : React.FC<AuthAzureProps> = ({setMainState}) =>{
                     if (error instanceof InteractionRequiredAuthError) {
                         instance.acquireTokenRedirect(accessTokenRequest);
                     }
-                    console.log(error);
+                 
                 });
         }
     }, [instance, accounts, inProgress, apiData]);
@@ -66,7 +66,7 @@ const AuthAzure : React.FC<AuthAzureProps> = ({setMainState}) =>{
     const postPagoPa = () =>{
         pagopaLogin(tokens).then((res)=>{
             if(res.status === 200){
-                console.log('dentro postpagopa', {res});
+            
                 // store del token nella local storage per tutte le successive chiamate START
                 const storeJwt = {token:res.data.jwt};
                 localStorage.setItem('token', JSON.stringify(storeJwt));
@@ -77,7 +77,7 @@ const AuthAzure : React.FC<AuthAzureProps> = ({setMainState}) =>{
             }
 
         }).catch((err) =>{
-            console.log(err);
+            manageError(err, navigate);
         });
 
     };
@@ -88,7 +88,7 @@ const AuthAzure : React.FC<AuthAzureProps> = ({setMainState}) =>{
       
         await getAuthProfilo(res.data.jwt)
             .then(resp =>{
-                console.log('dentro getProfilo', {res});
+              
                
                 const storeProfilo = resp.data;
                 localStorage.setItem('profilo', JSON.stringify({
@@ -110,7 +110,7 @@ const AuthAzure : React.FC<AuthAzureProps> = ({setMainState}) =>{
               
             } )
             .catch(err => {
-                console.log(err);
+                manageError(err, navigate);
             });
     };
 

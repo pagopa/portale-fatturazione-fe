@@ -123,20 +123,13 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMainS
     };
 
 
-    console.log({mainState},'grid');
     return (
 
         <div className="m-5">
             <div>
                 <Typography variant="h4">Modulo commessa</Typography>
             </div>
-
-            {/*
-            <div className="text-end">
-                <Button onClick={() => console.log('pagina aggiungi modulo commessa')} variant="contained" size="small">Aggiungi</Button>
-            </div>
- */}
-            
+        
             <div className=" marginTop24 d-flex mb-5">
                 <Box sx={{ width: 300 }}>
                     <FormControl

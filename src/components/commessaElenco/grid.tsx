@@ -20,7 +20,6 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
   
     const dataWithLabelFixed = data.map((singleObj)=>{
         const mese = month[singleObj.meseValidita -1 ];
-        console.log(mese, singleObj);
         const newObj = {
             meseValidita: mese,
         };
@@ -30,8 +29,6 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
         return {...singleObj, ...newObj};
        
     });
-
-    console.log({dataWithLabelFixed});
 
 
     const navigate = useNavigate();
@@ -139,7 +136,7 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
             headerAlign: 'left',
             renderCell: ((row : any) => (
     
-                <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} onClick={() => console.log('Show page details')} />
+                <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} />
     
             )
             ),

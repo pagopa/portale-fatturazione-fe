@@ -15,7 +15,7 @@ const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate}) => {
   
 
     const onChangeHandler = (e: any) => {
-        console.log(e === null);
+      
 
         try {
             const data = new Date(e).toISOString();
