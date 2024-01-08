@@ -5,16 +5,16 @@ import { TokenObject } from '../types/typesGeneral';
 
 
 //dev
-
+/*
 export const url = "https://portalefatturebeapi20231102162515.azurewebsites.net";
 export const redirect = "https://uat.selfcare.pagopa.it/";
-
+*/
 
 //prd
-/*
+
 export const url = "https://fat-p-app-api.azurewebsites.net";
 export const redirect = "https://selfcare.pagopa.it/";
-*/
+
 
 
 
