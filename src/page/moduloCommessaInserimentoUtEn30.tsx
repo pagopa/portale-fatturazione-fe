@@ -8,13 +8,7 @@ import TerzoContainerInsCom from '../components/commessaInserimento/terzoContein
 import BasicModal from '../components/reusableComponents/modal';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { useNavigate } from 'react-router';
-<<<<<<< HEAD
-// import HorizontalLinearStepper from '../components/stepper';
-import {insertDatiModuloCommessa, getDettaglioModuloCommessa} from '../api/api';
-import {url, menageError} from '../api/api';
-=======
 import {insertDatiModuloCommessa, getDettaglioModuloCommessa, getModuloCommessaPagoPa, modifyDatiModuloCommessaPagoPa, manageError} from '../api/api';
->>>>>>> issues/237
 import { redirect } from '../api/api';
 import AreaPersonaleUtenteEnte from '../page/areaPersonaleUtenteEnte';
 import HorizontalLinearStepper from '../components/reusableComponents/stepper';
@@ -403,11 +397,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 <div className="marginTop24 marginTopBottom24">
                     {actionTitle}
 
-<<<<<<< HEAD
-                    {infoModuloCommessa.statusPageInserimentoCommessa === 'immutable' && infoModuloCommessa.action !== 'HIDE_MODULO_COMMESSA' && infoModuloCommessa.ruolo !== 'R' && buttonModifica ?
-=======
                     {hideShowButtonModifica ?
->>>>>>> issues/237
                        
                         <div className="d-flex justify-content-end ">
                             <Button variant="contained" size="small" onClick={()=> hendleOnButtonModificaModuloCommessa()} >Modifica</Button>

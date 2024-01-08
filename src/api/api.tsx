@@ -1,9 +1,6 @@
 import axios from 'axios';
 import {DatiFatturazione,DatiFatturazionePost, DatiFatturazionePostPagopa} from '../types/typesAreaPersonaleUtenteEnte';
 import { DatiCommessa } from '../types/typeModuloCommessaInserimento';
-<<<<<<< HEAD
-import { TokenObject } from '../types/typesGeneral';
-=======
 import { 
     TokenObject,
     BodyListaDatiFatturazione,
@@ -12,23 +9,20 @@ import {
     BodyDownloadListaCommesse
 } from '../types/typesGeneral';
 
->>>>>>> issues/237
 
 
 //dev
-/*
+
 export const url = "https://portalefatturebeapi20231102162515.azurewebsites.net";
 export const redirect = "https://uat.selfcare.pagopa.it/";
-*/
+
 
 //prd
-
+/*
 export const url = "https://fat-p-app-api.azurewebsites.net";
 export const redirect = "https://selfcare.pagopa.it/";
+*/
 
-
-<<<<<<< HEAD
-=======
 export const manageError = (res:any,navigate:any) =>{
     
     if(res.response.status === 401){
@@ -47,7 +41,6 @@ export const manageError = (res:any,navigate:any) =>{
         console.log('400 da gestire');
     }
 };
->>>>>>> issues/237
 
 
 
@@ -55,15 +48,6 @@ export const pagopaLogin = async (tokenObject:TokenObject) => {
     const result = await axios.post(`${url}/api/auth/pagopa/login`, tokenObject);
     return result;
 };
-
-
-
-
-export const pagopaLogin = async (tokenObject:TokenObject) => {
-    const result = await axios.post(`${url}/api/auth/pagopa/login`, tokenObject);
-    return result;
-};
-
 
 
 

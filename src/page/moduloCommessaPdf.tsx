@@ -133,15 +133,6 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
 
  
     useEffect(()=>{
-<<<<<<< HEAD
-        if(infoModuloCommessa.nonce !== ''){
-            getPdf();
-            downloadPdf();
-        }
-       
-      
-    },[infoModuloCommessa.nonce]);
-=======
 
         if(mainState.nonce !== ''){
 
@@ -157,7 +148,6 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
       
       
     },[mainState.nonce]);
->>>>>>> issues/237
 
     let mese = '';
     let anno = 2000;

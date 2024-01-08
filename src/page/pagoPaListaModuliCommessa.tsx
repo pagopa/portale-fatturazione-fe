@@ -371,7 +371,6 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
                                 onClick={()=>{
                                     getListaCommesseOnAnnulla();
                                 } }
-                                variant="contained"
                                 sx={{marginLeft:'24px'}} >
                     Annulla filtri
                             </Button>

@@ -28,8 +28,6 @@ export type TokenObject = {
     accessToken?:string,
     idToken?:string,
 }
-<<<<<<< HEAD
-=======
 
 export type AuthAzureProps = {
     setMainState:any,
@@ -78,5 +76,4 @@ export interface BodyDownloadListaCommesse{
     mese:string 
 }
 
->>>>>>> issues/237
 

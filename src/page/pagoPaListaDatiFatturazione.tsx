@@ -283,7 +283,6 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                                     setBodyGetLista(({descrizione:'',prodotto:'',profilo:''}));
                                     getListaDatifatturazione({descrizione:'',prodotto:'',profilo:''});
                                 } }
-                                variant="contained"
                                 sx={{marginLeft:'24px'}} >
                         Annulla filtri
                             </Button>}
