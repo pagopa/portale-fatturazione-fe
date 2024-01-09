@@ -116,7 +116,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
 
                 navigate('/error');
             }
-            navigate('/error');
+            //navigate('/error');
             // setUser('new');
             setMainState((prev:MainState)=>({...prev, ...{statusPageDatiFatturazione:'mutable'}}));
             
@@ -199,6 +199,9 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
         if(token === undefined){
             window.location.href = redirect;
         }
+
+        /* se l'utente PagoPA modifa l'url e cerca di accedere al path '/' 
+        senza aver prima selezionato una row della grid lista dati fatturazione viene fatto il redirect automatico a  '/pagopalistadatifatturazione'*/
         if(profilo.auth === 'PAGOPA' && !profilo.idEnte){
             window.location.href = '/pagopalistadatifatturazione';
         }

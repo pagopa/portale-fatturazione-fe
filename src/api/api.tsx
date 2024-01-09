@@ -13,6 +13,8 @@ import {
 
 //dev
 
+//"https://portalefatturebeapi20231102162515.azurewebsites.net"
+
 export const url = "https://portalefatturebeapi20231102162515.azurewebsites.net";
 export const redirect = "https://uat.selfcare.pagopa.it/";
 
