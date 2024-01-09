@@ -46,6 +46,13 @@ export const DatiFatturazioneContext = createContext<AreaPersonaleContext>({
 
 const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setMainState}) => {
    
+
+    const getToken = localStorage.getItem('token') || '{}';
+    const token =  JSON.parse(getToken).token;
+
+    const getProfilo = localStorage.getItem('profilo') || '{}';
+    const profilo =  JSON.parse(getProfilo);
+
   
     const [user, setUser] = useState('old');
   
@@ -87,12 +94,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
      || datiFatturazione.contatti.length === 0
     );
   
-    const getToken = localStorage.getItem('token') || '{}';
-    const token =  JSON.parse(getToken).token;
-
-    const getProfilo = localStorage.getItem('profilo') || '{}';
-    const profilo =  JSON.parse(getProfilo);
-
+    
    
 
     const getDatiFat = async () =>{
@@ -196,6 +198,9 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
     useEffect(()=>{
         if(token === undefined){
             window.location.href = redirect;
+        }
+        if(profilo.auth === 'PAGOPA' && !profilo.idEnte){
+            window.location.href = '/pagopalistadatifatturazione';
         }
     },[]);
 

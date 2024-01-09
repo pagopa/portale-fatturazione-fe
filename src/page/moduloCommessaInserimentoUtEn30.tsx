@@ -178,6 +178,15 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
         if(token === undefined){
             window.location.href = redirect;
         }
+        /* se l'utente PagoPA modifa l'url e cerca di accedere al path '/8' senza aver prima selezionato
+         una row della grid lista MODULI COMMESSA viene fatto il redirect automatico a  '/pagopalistamodulocommessa'*/
+        if(profilo.auth === 'PAGOPA' && !profilo.idEnte){
+            window.location.href = '/pagopalistamodulicommessa';
+        }
+        /* se l'utente selcare  modifica l'url andando ad inserire '/8' viene eseguito il redirect a datifatturazione*/
+        if(profilo.auth === 'SELFCARE' && !statusApp.mese && !statusApp.anno){
+            window.location.href = '/';
+        }
     },[]);
    
     const [disableContinua, setDisableContinua] = useState(false);

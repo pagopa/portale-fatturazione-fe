@@ -49,6 +49,19 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
 
     useEffect(()=>{
+
+        // se un utente ha già selezionato un elemento nella grid avrà in memoria l'idEnte, per errore se andrà nella pagina '/8'
+        // modificando a mano l'url andrà a modificare il modulo commessa dell'ultima commessa  selezionata
+        if(profilo.auth === 'PAGOPA'){
+            delete profilo.idEnte;
+            const newProfilo = profilo; 
+            localStorage.setItem('profilo', JSON.stringify(newProfilo));
+        }
+        
+
+    },[]);
+
+    useEffect(()=>{
         if(bodyGetLista.descrizione !== '' || bodyGetLista.prodotto !== '' ){
             setStatusAnnulla('show');
         }else{

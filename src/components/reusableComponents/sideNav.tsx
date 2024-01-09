@@ -139,6 +139,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
     const handleListItemClick = () => {
 
         if(checkIfUserIsAutenticated === 'PAGOPA'){
+           
             navigate('/pagopalistadatifatturazione');
         }else{
             navigate('/');
@@ -196,8 +197,8 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
     
                     const newState = {
                         path:'/4',
-                        mese:res.data.mese,
-                        anno:res.data.anno,
+                        // mese:res.data.mese,
+                        // anno:res.data.anno,
                         inserisciModificaCommessa:'MODIFY'
                     };
                     localStorage.setItem('statusApplication', JSON.stringify(newState));
@@ -213,8 +214,8 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
     
                     const newState = {
                         path:'/4',
-                        mese:res.data.mese,
-                        anno:res.data.anno,
+                        // mese:res.data.mese,
+                        // anno:res.data.anno,
                         inserisciModificaCommessa:'NO_ACTION'
                     };
                     localStorage.setItem('statusApplication', JSON.stringify(newState));
@@ -229,8 +230,8 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
                             modifica:false}})); 
                     const newState = {
                         path:'/8',
-                        mese:res.data.mese,
-                        anno:res.data.anno,
+                        // mese:res.data.mese,
+                        // anno:res.data.anno,
                         inserisciModificaCommessa:'NO_ACTION'
                     };
                     localStorage.setItem('statusApplication', JSON.stringify(newState));

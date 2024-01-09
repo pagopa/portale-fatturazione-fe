@@ -14,6 +14,9 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
 
+    const getProfilo = localStorage.getItem('profilo') || '{}';
+    const profilo =  JSON.parse(getProfilo);
+
     const navigate = useNavigate();
     const { toPDF, targetRef } = usePDF({filename: 'ModuloCommessa.pdf'});
 
@@ -24,6 +27,19 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
     const [gridData, setGridData] = useState([]);
 
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
+
+
+    useEffect(()=>{
+
+        // se un utente ha già selezionato un elemento nella grid avrà in memoria l'idEnte, per errore se andrà nella pagina '/'
+        // modificando a mano l'url andrà a modificare i dati fatturazione dell'ultimo utente selezionato
+        if(profilo.auth === 'PAGOPA'){
+            delete profilo.idEnte;
+            const newProfilo = profilo; 
+            localStorage.setItem('profilo', JSON.stringify(newProfilo));
+        }
+
+    },[]);
 
 
     useEffect(()=>{
@@ -125,8 +141,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
         // l'evento verrà eseguito solo se l'utente farà il clik sul 
         if(columsSelectedGrid  === 'ragioneSociale' || columsSelectedGrid === 'action' ){
 
-            const getProfilo = localStorage.getItem('profilo') || '{}';
-            const profilo =  JSON.parse(getProfilo);
+        
 
             localStorage.setItem('profilo', JSON.stringify({
                 ...profilo,
