@@ -1,7 +1,7 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import {useState} from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { ThemeProvider, Grid } from '@mui/material';
 import {theme} from '@pagopa/mui-italia';
 import AreaPersonaleUtenteEnte from './page/areaPersonaleUtenteEnte';
@@ -24,6 +24,7 @@ import Azure from './page/azure';
 import { Container, Button } from 'react-bootstrap';
 import { loginRequest } from './authConfig';
 import './App.css';
+
 
 
 
@@ -69,6 +70,9 @@ const MainContent = () => {
 
 const App = ({ instance }) => {
 
+    const getProfilo = localStorage.getItem('profilo') || '{}';
+    const profilo =  JSON.parse(getProfilo);
+
     const [checkProfilo,setCheckProfilo] = useState(false);
     // set status page abilita e disabilita le modifiche al componente dati fatturazione
    
@@ -87,32 +91,21 @@ const App = ({ instance }) => {
         prodotto: '',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
     });
 
- 
+    let redirectOnWrongURL = '/';
+
+    if(profilo.auth === 'PAGOPA'){
+        redirectOnWrongURL = '/pagopalistadatifatturazione';
+    }
+   
+
 
     return (
 
       
         <MsalProvider instance={instance}>
 
-
-
             <Router>
-
-                <Routes>
-                    <Route path="/auth" element={<Auth setCheckProfilo={setCheckProfilo} setMainState={setMainState} />} />
-                </Routes>
-
-                <Routes>
-                    <Route path="/auth/azure" element={<AuthAzure setMainState={setMainState}/>} />
-                </Routes>
-
-                <Routes>
-                    <Route path="azure" element={<Azure />} />
-                </Routes>
-
-
-
-
+           
                 <ThemeProvider theme={theme}>
                     <div className="App">
 
@@ -130,25 +123,38 @@ const App = ({ instance }) => {
 
                                 <Grid item xs={10}>
                                     <Routes>
+                                        <Route path="*" element={<Navigate to={redirectOnWrongURL} replace />} />
+                                        
+                                        <Route path="/auth" element={<Auth setCheckProfilo={setCheckProfilo} setMainState={setMainState} />} />
+                                        
+                                        <Route path="/auth/azure" element={<AuthAzure setMainState={setMainState}/>} />
+                                        
+                                        <Route path="azure" element={<Azure />} />
+
+                                        <Route path="/azureLogin" element={<AzureLogin />} />
+
+                                        <Route path="/error" element={<ErrorPage />} />
+                                        
                                         <Route path="/" element={<AreaPersonaleUtenteEnte
                                             mainState={mainState}
                                             setMainState={setMainState} />} />
-                                    </Routes>
-                                    <Routes>
+                                   
                                         <Route path="/4" element={<ModuloCommessaElencoUtPa mainState={mainState} setMainState={setMainState} />} />
-                                    </Routes>
-                                    <Routes>
+                                  
                                         <Route path="/8" element={<ModuloCommessaInserimentoUtEn30 mainState={mainState} setMainState={setMainState} />} />
-                                    </Routes>
-                                    <Routes>
+                                  
                                         <Route path="/pdf" element={<ModuloCommessaPdf mainState={mainState} />} />
-                                    </Routes>
-                                    <Routes>
+                                  
                                         <Route path="/pagopalistadatifatturazione" element={<PagoPaListaDatiFatturazione mainState={mainState} setMainState={setMainState} />} />
-                                    </Routes>
-                                    <Routes>
+                                    
                                         <Route path="/pagopalistamodulicommessa" element={<PagoPaListaModuliCommessa mainState={mainState} setMainState={setMainState} />} />
+                                   
+
+                                       
+
+                                       
                                     </Routes>
+
 
 
 
@@ -158,12 +164,6 @@ const App = ({ instance }) => {
                             </Grid>
                         </div>
 
-                        <Routes>
-                            <Route path="/error" element={<ErrorPage />} />
-                        </Routes>
-                        <Routes>
-                            <Route path="/azureLogin" element={<AzureLogin />} />
-                        </Routes>
                         <FooterPostLogin />
                     </div>
                 </ThemeProvider>

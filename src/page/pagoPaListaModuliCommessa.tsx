@@ -50,13 +50,21 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
 
     useEffect(()=>{
 
-        // se un utente ha già selezionato un elemento nella grid avrà in memoria l'idEnte, per errore se andrà nella pagina '/8'
+
+
+        if(token === undefined){
+            window.location.href = '/azureLogin';
+        }else if(profilo.auth === 'PAGOPA'){
+            // se un utente ha già selezionato un elemento nella grid avrà in memoria l'idEnte, per errore se andrà nella pagina '/8'
         // modificando a mano l'url andrà a modificare il modulo commessa dell'ultima commessa  selezionata
-        if(profilo.auth === 'PAGOPA'){
             delete profilo.idEnte;
             const newProfilo = profilo; 
             localStorage.setItem('profilo', JSON.stringify(newProfilo));
+        }else if(profilo.auth === 'SELFCARE'){
+            navigate('/');
         }
+
+        
         
 
     },[]);

@@ -27,10 +27,10 @@ const HeaderNavComponent : React.FC =() => {
    
     const location : any = useLocation();
     const getUserDetails = localStorage.getItem('profilo') || '{}';
-
+    const UserDetailsParsed = JSON.parse(getUserDetails);
     const camelizeDescizioneRuolo = () =>{
        
-        const UserDetailsParsed = JSON.parse(getUserDetails);
+       
         const allLower =  UserDetailsParsed.descrizioneRuolo?.toLowerCase();
         const ruolo = allLower?.charAt(0).toUpperCase() + allLower?.slice(1);
         return {name:UserDetailsParsed.nomeEnte, ruolo };
@@ -70,7 +70,8 @@ const HeaderNavComponent : React.FC =() => {
     const hideHeadernav = location.pathname === '/auth' ||
                             location.pathname === '/azure' ||
                             location.pathname === '/auth/azure'||
-                            location.pathname === '/azureLogin';
+                            location.pathname === '/azureLogin'||
+                            !UserDetailsParsed.auth;
 
     
     return (

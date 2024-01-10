@@ -281,7 +281,8 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
     const hideShowSidenav = location.pathname === '/auth' ||
                             location.pathname === '/azure' ||
                             location.pathname === '/auth/azure'||
-                            location.pathname === '/azureLogin';
+                            location.pathname === '/azureLogin'||
+                            !profilo.auth;
  
 
 

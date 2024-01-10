@@ -78,7 +78,7 @@ export default function HeaderPostLogin() {
 
     const hideShowHeaderLogin =  location.pathname === '/auth' ||
                                  location.pathname === '/azure' ||
-                                 location.pathname === '/auth/azure' ; 
+                                 location.pathname === '/auth/azure'; 
   
     
     const statusUser = getDataUser === '{}' ? false : user;
