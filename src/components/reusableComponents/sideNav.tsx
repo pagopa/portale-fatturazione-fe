@@ -247,13 +247,13 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
             });
             
         }
-      
-
-      
-       
-
     };
 
+
+    const handleListItemClickNotifiche = () => {
+
+        navigate('/notifiche');
+    };
     
     
     const currentLocation = location.pathname;
@@ -271,6 +271,8 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
             setSelectedIndex(1);
         }else if(currentLocation === '/pdf'){
             setSelectedIndex(1);
+        }else if(currentLocation === '/notifiche'){
+            setSelectedIndex(2);
         }
         
     },[currentLocation]);
@@ -281,6 +283,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
                             location.pathname === '/azure' ||
                             location.pathname === '/auth/azure'||
                             location.pathname === '/azureLogin';
+                           
  
 
 
@@ -306,6 +309,13 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
                                 <ViewModuleIcon fontSize="inherit" />
                             </ListItemIcon>
                             <ListItemText primary="Modulo commessa" />
+                        </ListItemButton>
+
+                        <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClickNotifiche()}>
+                            <ListItemIcon>
+                                <ViewModuleIcon fontSize="inherit" />
+                            </ListItemIcon>
+                            <ListItemText primary="Notifiche" />
                         </ListItemButton>
                        
                     </List>
