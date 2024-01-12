@@ -1,13 +1,17 @@
 import {
     Typography, Card, CardContent, CardActions, Button
 } from '@mui/material';
-import {useEffect} from 'react';
+
 import { useNavigate } from 'react-router';
 import {MonogramPagoPACompany} from '@pagopa/mui-italia';
-import {  getAuthProfilo } from '../api/api';
+
 import { LoginProps } from '../types/typesGeneral';
 
-const LoginPage : React.FC<LoginProps> = ({ setCheckProfilo}) =>{
+
+// pagina non utilizzata nell'applicazione, probabilmete verra utilizzata in seguito
+
+
+const LoginPage : React.FC<LoginProps> = () =>{
 
     const navigate = useNavigate();
 

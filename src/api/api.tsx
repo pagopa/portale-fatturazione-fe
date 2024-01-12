@@ -6,7 +6,8 @@ import {
     BodyListaDatiFatturazione,
     BodyDownloadDatiFatturazione,
     BodyListaModuloCommessa,
-    BodyDownloadListaCommesse
+    BodyDownloadListaCommesse,
+    BodyListaNotifiche
 } from '../types/typesGeneral';
 
 
@@ -25,19 +26,19 @@ export const redirect = "https://selfcare.pagopa.it/";
 
 export const manageError = (res:any,navigate:any) =>{
     
-    if(res.response.status === 401){
-       
+    if(res?.response?.status === 401){
+        console.log('401');
         localStorage.removeItem("token");
         localStorage.removeItem("profilo");
         navigate('/error');
       
-    }else if(res.response.status  === 404){
+    }else if(res?.response?.status  === 404){
         navigate('/error');
         //alert('Non è stato possibile aggiungere i dati');
-    }else if(res.response.status  === 500){
+    }else if(res?.response?.status  === 500){
         
         navigate('/error');
-    }else if(res.response.status  === 400){
+    }else if(res?.response?.status === 400){
         console.log('400 da gestire');
     }
 };
@@ -358,6 +359,17 @@ export const downloadDocumentoListaModuloCommessaPagoPa = async (token:string, n
         { headers: {
             Authorization: 'Bearer ' + token,
             ContentType: 'application/octet-stream',
+        },
+        }
+    );
+    return response;
+};
+
+export const listaNotifiche = async (token:string, nonce:string , page:number, pageSize:number, body: BodyListaNotifiche) => {
+    const response =  await axios.post(`${url}/api/notifiche/ente?page=${page}&pageSize=${pageSize}&nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
         },
         }
     );

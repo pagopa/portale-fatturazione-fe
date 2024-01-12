@@ -16,6 +16,11 @@ const AzureLogin : React.FC = () =>{
     if(checkIfUserIsAutenticated === 'PAGOPA'){
         navigate('/pagopalistadatifatturazione');
     }
+    if(checkIfUserIsAutenticated === 'SELFCARE'){
+        localStorage.removeItem('profilo');
+        localStorage.removeItem('token');
+
+    }
 
 
 

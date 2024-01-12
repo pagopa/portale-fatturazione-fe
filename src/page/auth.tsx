@@ -4,14 +4,26 @@ import {useEffect} from 'react';
 import { LoginProps, MainState } from '../types/typesGeneral';
 
 // Blank page utilizzata per l'accesso degli utenti tramite  Selfcare
+
+/*quando l'utente SELFCARE va al link https://uat.selfcare.pagopa.it/auth/login , procede con login es. (comune di Erba ) , viene fatto un redirect
+automatico su questa ('/auth?selfcareToken=token') blank page dove , se c'è un profilo già presente nella LOCAL STORAGE lo andiamo ad eliminare , prendiamo il token che selfcare ci inserisce nell'url ,
+e andiamo a fare la prima chiamata getSelfcare che ci restituisce un secondo token che noi utilizziamo nella seconda chiamata getProfilo.
+Nella risposta della chiamata getProfilo noi andiamo ad estrapolare il jwt, salvarlo nella LOCAL STORAGE, così da poterlo utilizzare in ogni chiamata 
+da parte dell'utente SELFCARE
+
+*/
 const Auth : React.FC<LoginProps> = ({setCheckProfilo, setMainState}) =>{
-    const [searchParams] = useSearchParams();
-    const navigate = useNavigate();
+ 
+    
     localStorage.removeItem('profilo');
   
+    const [searchParams] = useSearchParams();
     const token = searchParams.get('selfcareToken');
 
 
+    const navigate = useNavigate();
+
+    //  seconda chiamata
     const getProfilo = async (res:any)=>{
       
         await getAuthProfilo(res.data[0].jwt)
@@ -43,7 +55,7 @@ const Auth : React.FC<LoginProps> = ({setCheckProfilo, setMainState}) =>{
     };
 
  
- 
+    // prima chiamata 
     const getSelfcare = async() =>{
         const result = await selfcareLogin(token).then(res =>{
           
@@ -65,14 +77,10 @@ const Auth : React.FC<LoginProps> = ({setCheckProfilo, setMainState}) =>{
 
     };
 
-    //const objToSave = {token};
+  
 
     useEffect(()=>{
-      
         getSelfcare();
-      
-        
-        // localStorage.setItem('testObject', JSON.stringify(objToSave));
     },[]);
     
    

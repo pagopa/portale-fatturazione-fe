@@ -67,3 +67,7 @@
 .mese_alidita{
   text-decoration: none; 
 }
+
+.nopadding_Left{
+  padding-left: 0 !important;
+}

@@ -76,4 +76,14 @@ export interface BodyDownloadListaCommesse{
     mese:string 
 }
 
+export interface BodyListaNotifiche{
+    anno: number,
+    mese: number,
+    prodotto: string,
+    cap: string ,
+    profilo: string,
+    tipoNotifica: number | null,
+    contestazione: number | null
+}
+
 

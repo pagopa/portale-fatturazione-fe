@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { redirect } from '../api/api';
+import { manageError, redirect } from '../api/api';
 import { getAnni, getListaCommessa, getListaCommessaFiltered,getListaCommessaOnAnnulla} from '../api/api';
 import { Button, Box, Typography, FormControl, InputLabel,Select, MenuItem,} from '@mui/material';
 import GridComponent from '../components/commessaElenco/grid';
@@ -18,7 +18,11 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMainS
 
     const [anni, setAnni] = useState([]);
     const [valueSelect, setValueSelect] = useState<string>('');
-   
+
+    const [gridData, setGridData] = useState([]);
+
+
+    // il componente data grid ha bisogno di un id per ogni elemento
     const fixResponseForDataGrid = (arr:any) =>{
         const result = arr.map( (singlObj:any,i:number) =>{
             
@@ -30,38 +34,29 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMainS
         return result;
     };
 
-
+    // servizio che  popola la select anni
     const getAnniSelect = async () =>{
 
         await getAnni(token, mainState.nonce).then((res:any)=>{
             setAnni(res.data);
         }).catch((err:any)=>{
-            if(err.response.status === 401){
-
-                navigate('/error');
-            }else if(err.response.status === 419){
-
-                navigate('/error');
-            }
+            manageError(err, navigate);
         });
     };
 
+    // servizio che popola la grid con la lista commesse
     const getListaCommessaGrid = async () =>{
 
         await getListaCommessa(token , mainState.nonce).then((res:any)=>{
             const finalData = fixResponseForDataGrid(res.data);
             setGridData(finalData);
         }).catch((err:any)=>{
-            if(err.response.status === 401){
-
-                navigate('/error');
-            }else if(err.response.status === 419){
-
-                navigate('/error');
-            }
+            manageError(err, navigate);
         });
     };
 
+    // nel caso in cui un utente apre un altra tab e accede come un utente diverso le chiamate andranno in errore
+    // nel beck è stato implementato un controllo basato sul nonce
     useEffect(()=>{
         if(mainState.nonce !== ''){
             getAnniSelect();
@@ -69,41 +64,27 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMainS
         }
         
     },[mainState.nonce]);
-
+    
+    // se il token non c'è viene fatto il redirect al portale di accesso
     useEffect(()=>{
         if(token === undefined){
             window.location.href = redirect;
         }
     },[]);
   
-    
-   
-    
-   
-    const [gridData, setGridData] = useState([]);
-    
   
-  
-
-   
     const handleButtonFiltra = () => {
         getListaCommessaFiltered(token , mainState.nonce, valueSelect).then((res:any)=>{
             const finalData = fixResponseForDataGrid(res.data);
             setGridData(finalData);
            
         }).catch((err:any)=>{
-            if(err.response.status === 401){
-
-                navigate('/error');
-            }else if(err.response.status === 419){
-
-                navigate('/error');
-            }
+            manageError(err, navigate);
         });
     };
 
 
-   
+    // on click sul button annulla filtri
     const handleButtonAnnullaFiltri = () => {
 
         getListaCommessaOnAnnulla(token, mainState.nonce).then((res:any)=>{
@@ -111,13 +92,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMainS
             setGridData(finalData);
            
         }).catch((err:any)=>{
-            if(err.response.status === 401){
-
-                navigate('/error');
-            }else if(err.response.status === 419){
-
-                navigate('/error');
-            }
+            manageError(err, navigate);
         });
       
     };

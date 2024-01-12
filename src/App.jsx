@@ -96,18 +96,7 @@ const App = ({ instance }) => {
 
       
         <MsalProvider instance={instance}>
-
-
-
             <Router>
-           
-                
-
-
-
-
-
-
                 <ThemeProvider theme={theme}>
                     <div className="App">
 
@@ -146,7 +135,7 @@ const App = ({ instance }) => {
                                     
                                         <Route path="/pagopalistamodulicommessa" element={<PagoPaListaModuliCommessa mainState={mainState} setMainState={setMainState} />} />
                                    
-                                        <Route path="/notifiche" element={<ReportDettaglio />} />
+                                        <Route path="/notifiche" element={<ReportDettaglio mainState={mainState} />} />
 
                                         <Route path="*" element={<Navigate to="/error" replace />} />
 

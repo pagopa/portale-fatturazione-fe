@@ -11,7 +11,7 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import DnsIcon from '@mui/icons-material/Dns';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
-import { getDatiModuloCommessa, getAuthProfilo} from '../../api/api';
+import { getDatiModuloCommessa, getAuthProfilo, manageError} from '../../api/api';
 import { SideNavProps } from '../../types/typesGeneral';
 
 
@@ -103,12 +103,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
             localStorage.setItem('profilo', string);
 
         }).catch((err)=>{
-          
-            if(err.response.status === 401){
-                navigate('/error');
-            }else if(err.response.status === 419){
-                navigate('/error');
-            }
+            manageError(err, navigate);
             // menageError(err.response.status, navigate);
             
         });
@@ -239,11 +234,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
                 }
     
             }).catch((err) =>{
-                if(err.response.status === 401){
-                    navigate('/error');
-                }else if(err.response.status === 419){
-                    navigate('/error');
-                }
+                manageError(err, navigate);
             });
             
         }
