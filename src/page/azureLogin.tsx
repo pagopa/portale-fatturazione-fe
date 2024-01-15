@@ -6,7 +6,6 @@ import { useNavigate } from "react-router";
 
 const AzureLogin : React.FC = () =>{
 
-
     const navigate = useNavigate();
 
     const getProfiloFromLocalStorage = localStorage.getItem('profilo') || '{}';
@@ -15,6 +14,11 @@ const AzureLogin : React.FC = () =>{
 
     if(checkIfUserIsAutenticated === 'PAGOPA'){
         navigate('/pagopalistadatifatturazione');
+    }
+    if(checkIfUserIsAutenticated === 'SELFCARE'){
+        localStorage.removeItem('profilo');
+        localStorage.removeItem('token');
+
     }
 
 
