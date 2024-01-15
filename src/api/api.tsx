@@ -10,19 +10,8 @@ import {
     BodyListaNotifiche
 } from '../types/typesGeneral';
 
-
-
-//dev
-
-export const url = "https://portalefatturebeapi20231102162515.azurewebsites.net";
-export const redirect = "https://uat.selfcare.pagopa.it/";
-
-
-//prd
-/*
-export const url = "https://fat-p-app-api.azurewebsites.net";
-export const redirect = "https://selfcare.pagopa.it/";
-*/
+export const url = process.env.REACT_APP_URL;
+export const redirect = process.env.REACT_APP_REDIRECT || '';
 
 export const manageError = (res:any,navigate:any) =>{
     
@@ -30,7 +19,7 @@ export const manageError = (res:any,navigate:any) =>{
         console.log('401');
         localStorage.removeItem("token");
         localStorage.removeItem("profilo");
-        navigate('/error');
+        window.location.href = redirect;
       
     }else if(res?.response?.status  === 404){
         navigate('/error');
