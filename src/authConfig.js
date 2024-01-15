@@ -17,7 +17,7 @@ const clientProd = 'b5f6a72a-c9f1-4d74-9464-0bffdd76ea79';
 
 export const msalConfig = {
     auth: {
-        clientId: clientProd, // This is the ONLY mandatory field that you need to supply.
+        clientId: clientDev, // This is the ONLY mandatory field that you need to supply.
         authority: 'https://login.microsoftonline.com/7788edaf-0346-4068-9d79-c868aed15b3d', // Replace the placeholder with your tenant subdomain 
         redirectUri: '/auth/azure', // Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
         postLogoutRedirectUri: '/azureLogin', // Indicates the page to navigate after logout.
