@@ -80,10 +80,10 @@ export interface BodyListaNotifiche{
     anno: number,
     mese: number,
     prodotto: string,
-    cap: string ,
+    cap: string|null ,
     profilo: string,
     tipoNotifica: number | null,
-    contestazione: number | null
+    //contestazione: number | null
 }
 
 

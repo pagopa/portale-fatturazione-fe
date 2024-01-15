@@ -9,7 +9,7 @@ import {
     Box, FormControl, InputLabel,Select, MenuItem, Button
 } from '@mui/material';
 import { manageError, getTipologiaProdotto, getTipologiaProfilo, listaNotifiche } from "../api/api";
-import { ReportDettaglioProps } from "../types/typeReportDettaglio";
+import { ReportDettaglioProps, NotificheList } from "../types/typeReportDettaglio";
 import { useNavigate } from "react-router";
 import { BodyListaNotifiche } from "../types/typesGeneral";
 
@@ -53,47 +53,45 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const [profili, setProfili] = useState([]);
   
     const [bodyGetLista, setBodyGetLista] = useState<BodyListaNotifiche>({
-        profilo:'',
-        prodotto:'',
-        anno:currentYear,
-        mese:currString, 
+        profilo:'pa',
+        prodotto:"prod-pn",
+        anno:2023,
+        mese:12, 
         tipoNotifica:null,
-        contestazione:null,
-        cap:''
+        //contestazione:null,
+        cap:null,
     });
     console.log({bodyGetLista});
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
 
 
 
-    const [passengersList, setPassengersList] = useState([]);
-    const [passengersCount, setPassengersCount] = useState(0);
+    const [notificheList, setNotificheList] = useState<NotificheList[]>([]);
+    const [notificheCount, setNotificheCount] = useState(0);
     const [controller, setController] = useState({
-        page: 0,
+        page: 1,
         rowsPerPage: 10
     });
+
+
+    const getlistaNotifiche = async () => {
+
+        await listaNotifiche(token,mainState.nonce,controller.page,controller.rowsPerPage, bodyGetLista)
+            .then((res)=>{
+             
+                setNotificheList(res.data.notifiche);
+                setNotificheCount(res.data.count);
+
+            }).catch((error)=>{
+                manageError(error, navigate);
+            });
+
+    };
   
     useEffect(() => {
-        const getlistaNotifiche = async () => {
-
-            await listaNotifiche(token,mainState.nonce,controller.page,controller.rowsPerPage, bodyGetLista);
-            const url = `https://api.instantwebtools.net/v1/passenger?page=${controller.page}&size=${controller.rowsPerPage}`;
-            try {
-                const response = await fetch(url);
-                if (response.statusText === 'OK') {
-                    const data = await response.json();
-                    console.log(data);
-                    setPassengersList(data.data);
-                    setPassengersCount(data.totalPassengers);
-                } else {
-                    throw new Error('Request failed');
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        };
-        //getData();
-    }, [controller]);
+      
+        getlistaNotifiche();
+    }, []);
   
     const handlePageChange = (event :any, newPage : number) => {
         setController({
@@ -136,9 +134,11 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     };
 
     useEffect(()=>{
-        getProdotti();
-        getProfili();
-    },[]);
+        if(mainState.nonce !== ''){
+            getProdotti();
+            getProfili();
+        }
+    },[mainState.nonce]);
 
     return (
         <div className="mx-5">
@@ -379,7 +379,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                         const value = Number(e.target.value);
                                         setBodyGetLista((prev)=> ({...prev, ...{contestazione:value}}));}
                                     } 
-                                    value={bodyGetLista.contestazione}
+                                    value={''}
                                     //IconComponent={SearchIcon}
                     
                                     disabled={status=== 'immutable' ? true : false}
@@ -408,7 +408,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                 label='Cap'
                                 placeholder='Cap'
                                 //  disabled={makeTextInputDisable}
-                                value={bodyGetLista.cap}
+                                value={''}
                                 // error={errorValidation}
                                 onChange={(e) => setBodyGetLista((prev)=> ({...prev, ...{cap:e.target.value}}))}
                                 onBlur={()=> console.log('miao')}
@@ -456,21 +456,29 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     <TableHead>
                         <TableRow>
                             <TableCell>
-              Name
+              Codice Fiscale
                             </TableCell>
                             <TableCell>
-              Trips
+              Regione Sociale
+                            </TableCell>
+                         
+                            <TableCell>
+              Contestazione
                             </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {[{name:'Nico', id:1, trips:'Australia'}].map((passenger) => (
-                            <TableRow key={passenger.id}>
+                        {notificheList.map((notifica:NotificheList) => (
+                            <TableRow key={Math.random()}>
                                 <TableCell>
-                                    {passenger.name}
+                                    {notifica.codiceFiscale}
                                 </TableCell>
                                 <TableCell>
-                                    {passenger.trips}
+                                    {notifica.ragioneSociale}
+                                </TableCell>
+                              
+                                <TableCell>
+                                    {notifica.contestazione}
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -480,7 +488,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     component="div"
                     onPageChange={handlePageChange}
                     page={controller.page}
-                    count={passengersCount}
+                    count={notificheCount}
                     rowsPerPage={controller.rowsPerPage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />

@@ -5,15 +5,18 @@
 
 import { LogLevel } from '@azure/msal-browser';
 
+
 /**
  * Configuration object to be passed to MSAL instance on creation. 
  * For a full list of MSAL.js configuration parameters, visit:
  * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/configuration.md 
  */
 
+
 export const msalConfig = {
     auth: {
-        clientId: '3f40708b-4f51-49f1-8c28-fd3e2bccc709', // This is the ONLY mandatory field that you need to supply.
+        
+        clientId: process.env.REACT_APP_CLIENT_ID, // This is the ONLY mandatory field that you need to supply.
         authority: 'https://login.microsoftonline.com/7788edaf-0346-4068-9d79-c868aed15b3d', // Replace the placeholder with your tenant subdomain 
         redirectUri: '/auth/azure', // Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
         postLogoutRedirectUri: '/azureLogin', // Indicates the page to navigate after logout.

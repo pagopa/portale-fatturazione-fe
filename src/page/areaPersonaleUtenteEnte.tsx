@@ -138,17 +138,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
            
         }).catch(err =>{
            
-            if(err.response.status === 401){
-                localStorage.removeItem("token");
-                localStorage.removeItem("profilo");
-                navigate('/error');
-            }else if(err.response.status === 404){
-
-                setUser('new');
-            }else if(err.response.status === 419){
-
-                navigate('/error');
-            }
+            manageError(err, navigate);
             // navigate('/error');
             // setUser('new');
             setMainState((prev:MainState)=>({...prev, ...{statusPageDatiFatturazione:'mutable'}}));
