@@ -3,7 +3,6 @@ import { useLocation } from 'react-router';
 import {
     HeaderProduct,
 } from '@pagopa/mui-italia';
-import { LocationState } from '../../types/typesGeneral';
 
 type PartySwitchItem = {
     id: string;
@@ -25,7 +24,7 @@ type ProductEntity = ProductSwitchItem;
 
 const HeaderNavComponent : React.FC =() => {
    
-    const location : any = useLocation();
+    const location = useLocation();
     const getUserDetails = localStorage.getItem('profilo') || '{}';
 
     const camelizeDescizioneRuolo = () =>{
@@ -44,7 +43,6 @@ const HeaderNavComponent : React.FC =() => {
     },[getUserDetails]);
     
 
-    const [title, setTitle] = useState('0');
     const productsList : Array<ProductEntity>  = [
         {
             id: '1',

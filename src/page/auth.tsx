@@ -1,7 +1,7 @@
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { selfcareLogin, getAuthProfilo } from '../api/api';
+import { selfcareLogin, getAuthProfilo, manageError } from '../api/api';
 import {useEffect} from 'react';
-import { LoginProps, MainState } from '../types/typesGeneral';
+import { LoginProps, MainState, ManageErrorResponse } from '../types/typesGeneral';
 
 // Blank page utilizzata per l'accesso degli utenti tramite  Selfcare
 
@@ -23,70 +23,73 @@ const Auth : React.FC<LoginProps> = ({setCheckProfilo, setMainState}) =>{
 
     const navigate = useNavigate();
 
-    //  seconda chiamata
-    const getProfilo = async (res:any)=>{
+type  Jwt = {
+    jwt:string
+}
+interface ParameterGetProfilo {
+    data:Jwt[]
+}
+
+//  seconda chiamata
+const getProfilo = async (res:ParameterGetProfilo)=>{
       
-        await getAuthProfilo(res.data[0].jwt)
-            .then(resp =>{
+    await getAuthProfilo(res.data[0].jwt)
+        .then(resp =>{
                
-                const storeProfilo = resp.data;
-                localStorage.setItem('profilo', JSON.stringify({
-                    auth:storeProfilo.auth,
-                    nomeEnte:storeProfilo.nomeEnte,
-                    descrizioneRuolo:storeProfilo.descrizioneRuolo,
-                    ruolo:storeProfilo.ruolo,
-                    dataUltimo:storeProfilo.dataUltimo,
-                    dataPrimo:storeProfilo.dataPrimo,
-                    prodotto:storeProfilo.prodotto,
-                    jwt:res.data[0].jwt
-                }));
+            const storeProfilo = resp.data;
+            localStorage.setItem('profilo', JSON.stringify({
+                auth:storeProfilo.auth,
+                nomeEnte:storeProfilo.nomeEnte,
+                descrizioneRuolo:storeProfilo.descrizioneRuolo,
+                ruolo:storeProfilo.ruolo,
+                dataUltimo:storeProfilo.dataUltimo,
+                dataPrimo:storeProfilo.dataPrimo,
+                prodotto:storeProfilo.prodotto,
+                jwt:res.data[0].jwt
+            }));
                 
               
               
-                setCheckProfilo(true);
+            setCheckProfilo(true);
                
-                // setto il nonce nello state di riferimento globale
-                setMainState((prev: MainState)=>({...prev, ...{nonce:resp?.data.nonce,ruolo:resp.data.ruolo}}));
-                navigate("/");
-            } )
-            .catch(err => {
-                navigate('/error');
-            });
-    };
+            // setto il nonce nello state di riferimento globale
+            setMainState((prev: MainState)=>({...prev, ...{nonce:resp?.data.nonce,ruolo:resp.data.ruolo}}));
+            navigate("/");
+        } )
+        .catch((err: ManageErrorResponse) => {
+            manageError(err,navigate);
+        });
+};
 
  
-    // prima chiamata 
-    const getSelfcare = async() =>{
-        const result = await selfcareLogin(token).then(res =>{
+// prima chiamata 
+const getSelfcare = async() =>{
+    await selfcareLogin(token).then(res =>{
           
-            if(res.status === 200){
-                // store del token nella local storage per tutte le successive chiamate START
-                const storeJwt = {token:res.data[0].jwt};
-                localStorage.setItem('token', JSON.stringify(storeJwt));
+        if(res.status === 200){
+            // store del token nella local storage per tutte le successive chiamate START
+            const storeJwt = {token:res.data[0].jwt};
+            localStorage.setItem('token', JSON.stringify(storeJwt));
            
-                // store del token nella local storage per tutte le successive chiamate END
-
-                
-
-                getProfilo(res);
+            // store del token nella local storage per tutte le successive chiamate END
+            getProfilo(res);
                
-            }
-        }).catch(err =>navigate('/error'));
-       
-    
-
-    };
+        }
+    }).catch((err:ManageErrorResponse) =>{
+        manageError(err, navigate);
+    });
+};
 
   
 
-    useEffect(()=>{
-        getSelfcare();
-    },[]);
+useEffect(()=>{
+    getSelfcare();
+},[]);
     
    
-    return (
-        <></>
-    );
+return (
+    <></>
+);
 };
 
 export default Auth;

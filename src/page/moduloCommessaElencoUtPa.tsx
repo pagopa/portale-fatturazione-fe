@@ -5,7 +5,9 @@ import { Button, Box, Typography, FormControl, InputLabel,Select, MenuItem,} fro
 import GridComponent from '../components/commessaElenco/grid';
 import { useNavigate } from 'react-router';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { VisualModuliCommessaProps } from '../types/typeModuloCommessaElenco';
+import { VisualModuliCommessaProps,  DataGridCommessa , GetAnniResponse, ResponseGetListaCommesse} from '../types/typeModuloCommessaElenco';
+import { ManageErrorResponse } from '../types/typesGeneral';
+
 
 
 const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMainState,mainState}) => {
@@ -16,15 +18,16 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMainS
    
     const navigate = useNavigate();
 
-    const [anni, setAnni] = useState([]);
+    const [anni, setAnni] = useState<string[]>([]);
     const [valueSelect, setValueSelect] = useState<string>('');
 
-    const [gridData, setGridData] = useState([]);
+    const [gridData, setGridData] = useState<DataGridCommessa[]>([]);
 
 
     // il componente data grid ha bisogno di un id per ogni elemento
-    const fixResponseForDataGrid = (arr:any) =>{
-        const result = arr.map( (singlObj:any,i:number) =>{
+    const fixResponseForDataGrid = (arr:DataGridCommessa[]) =>{
+        console.log({arr}, 'bbbb');
+        const result = arr.map( (singlObj:DataGridCommessa,i:number) =>{
             
             return {
                 id : Math.random(),
@@ -34,12 +37,15 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMainS
         return result;
     };
 
+  
+
     // servizio che  popola la select anni
     const getAnniSelect = async () =>{
 
-        await getAnni(token, mainState.nonce).then((res:any)=>{
+        await getAnni(token, mainState.nonce).then((res:GetAnniResponse)=>{
+           
             setAnni(res.data);
-        }).catch((err:any)=>{
+        }).catch((err:ManageErrorResponse)=>{
             manageError(err, navigate);
         });
     };
@@ -47,10 +53,11 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMainS
     // servizio che popola la grid con la lista commesse
     const getListaCommessaGrid = async () =>{
 
-        await getListaCommessa(token , mainState.nonce).then((res:any)=>{
+        await getListaCommessa(token , mainState.nonce).then((res:ResponseGetListaCommesse)=>{
+            
             const finalData = fixResponseForDataGrid(res.data);
             setGridData(finalData);
-        }).catch((err:any)=>{
+        }).catch((err:ManageErrorResponse)=>{
             manageError(err, navigate);
         });
     };
@@ -74,11 +81,11 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMainS
   
   
     const handleButtonFiltra = () => {
-        getListaCommessaFiltered(token , mainState.nonce, valueSelect).then((res:any)=>{
+        getListaCommessaFiltered(token , mainState.nonce, valueSelect).then((res:ResponseGetListaCommesse)=>{
             const finalData = fixResponseForDataGrid(res.data);
             setGridData(finalData);
            
-        }).catch((err:any)=>{
+        }).catch((err:ManageErrorResponse)=>{
             manageError(err, navigate);
         });
     };
@@ -87,11 +94,11 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMainS
     // on click sul button annulla filtri
     const handleButtonAnnullaFiltri = () => {
 
-        getListaCommessaOnAnnulla(token, mainState.nonce).then((res:any)=>{
+        getListaCommessaOnAnnulla(token, mainState.nonce).then((res:ResponseGetListaCommesse)=>{
             const finalData = fixResponseForDataGrid(res.data);
             setGridData(finalData);
            
-        }).catch((err:any)=>{
+        }).catch((err:ManageErrorResponse)=>{
             manageError(err, navigate);
         });
       

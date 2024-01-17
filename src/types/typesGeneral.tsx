@@ -1,3 +1,4 @@
+import { DataGridCommessa } from "./typeModuloCommessaElenco";
 export interface ModalProps {
     setOpen : any,
     open: boolean
@@ -68,6 +69,11 @@ export interface BodyDownloadDatiFatturazione{
     profilo: string  
 }
 
+export  type Params = {
+    field:string,
+    row:DataGridCommessa
+}
+
 
 export interface BodyDownloadListaCommesse{
     descrizione: string,
@@ -85,5 +91,22 @@ export interface BodyListaNotifiche{
     tipoNotifica: number | null,
     //contestazione: number | null
 }
+type RequestError = {
+    status:number,
+    statusText: string
+}
+
+interface ResponseError {
+    request:RequestError
+}
+
+export interface ManageErrorResponse{
+    message:string,
+    response: ResponseError
+
+
+}
+
+
 
 

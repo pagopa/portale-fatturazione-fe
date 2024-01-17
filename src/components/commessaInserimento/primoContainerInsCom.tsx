@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Grid , Typography} from '@mui/material';
 import LabelComponent from './label';
 import { PrimoContainerInsComProps } from '../../types/typeModuloCommessaInserimento';
 
 
-const PrimoContainerInsCom : React.FC<PrimoContainerInsComProps> = ({setMainState}) => {
+const PrimoContainerInsCom : React.FC<PrimoContainerInsComProps> = () => {
 
     const getStatusApplication = localStorage.getItem('statusApplication') || '{}';
     const statusApplication =  JSON.parse(getStatusApplication);

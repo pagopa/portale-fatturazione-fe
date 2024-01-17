@@ -7,28 +7,32 @@ import {
     BodyDownloadDatiFatturazione,
     BodyListaModuloCommessa,
     BodyDownloadListaCommesse,
-    BodyListaNotifiche
+    BodyListaNotifiche,
+    ManageErrorResponse
 } from '../types/typesGeneral';
 
 export const url = process.env.REACT_APP_URL;
 export const redirect = process.env.REACT_APP_REDIRECT || '';
 
-export const manageError = (res:any,navigate:any) =>{
-    
-    if(res?.response?.status === 401){
+export const manageError = (res:ManageErrorResponse,navigate:any) =>{
+    console.log({res}, 'ERROR');
+    if(res?.response?.request?.status === 401){
         console.log('401');
         localStorage.removeItem("token");
         localStorage.removeItem("profilo");
         window.location.href = redirect;
       
-    }else if(res?.response?.status  === 404){
+    }else if(res?.response?.request?.status   === 404){
         navigate('/error');
         //alert('Non è stato possibile aggiungere i dati');
-    }else if(res?.response?.status  === 500){
+    }else if(res?.response?.request?.status   === 500){
         
         navigate('/error');
-    }else if(res?.response?.status === 400){
+    }else if(res?.response?.request?.status  === 400){
         console.log('400 da gestire');
+    }
+    else if(res?.response?.request?.status  === 403){
+        navigate('/error');
     }
 };
 

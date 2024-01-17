@@ -1,6 +1,6 @@
 import React, { useState, useEffect, createContext  } from 'react';
 import { redirect } from '../api/api';
-import { useNavigate, useLocation } from 'react-router';
+import { useNavigate} from 'react-router';
 import '../style/areaPersonaleUtenteEnte.css';
 import { Button } from '@mui/material';
 import TabAreaPersonaleUtente from '../components/areaPersonale/tabAreaPersonaleUtente';
@@ -218,7 +218,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
 
                 const newDatiFatturazione = {...datiFatturazione, ...{idEnte:profilo.idEnte,prodotto:profilo.prodotto}};
 
-                modifyDatiFatturazionePagoPa(token,mainState.nonce, newDatiFatturazione ).then((res:any) =>{
+                modifyDatiFatturazionePagoPa(token,mainState.nonce, newDatiFatturazione ).then(() =>{
 
                     actionOnResponseModifyDatiFatturazione();
                 
@@ -229,7 +229,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
             }else{
                 // 1 - ed è un utente SELFCARE
                 modifyDatiFatturazione(datiFatturazione, token,mainState.nonce)
-                    .then((res:any) =>{
+                    .then(() =>{
 
                         actionOnResponseModifyDatiFatturazione();
                     
@@ -277,7 +277,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
               
             // 2 - ed è un utente PAGOPA
             if(profilo.auth === 'PAGOPA'){
-                insertDatiFatturazionePagoPa( token,mainState.nonce, bodyPagoPa).then((res:any)  =>{
+                insertDatiFatturazionePagoPa( token,mainState.nonce, bodyPagoPa).then(()  =>{
                     
                     setMainState((prev:MainState)=>({...prev, ...{
                         statusPageDatiFatturazione:'immutable',
@@ -296,7 +296,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
 
             }else{
                 // 2 - ED è UN UTENTE SELFCARE
-                insertDatiFatturazione(body, token,mainState.nonce).then(res =>{
+                insertDatiFatturazione(body, token,mainState.nonce).then(() =>{
                     setMainState((prev:MainState)=>({...prev, ...{
                         statusPageDatiFatturazione:'immutable',
                         action:'SHOW_MODULO_COMMESSA'
@@ -319,6 +319,9 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
     
          
     };
+
+
+   
  
 
     
@@ -354,7 +357,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
                                 size="medium"
                             >
               Indietro
-
                             </Button>
                             <Button
                                 variant="contained"

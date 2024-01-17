@@ -1,7 +1,6 @@
 import { Typography } from "@mui/material";
 import { } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
-import { usePDF } from 'react-to-pdf';
 import { useState, useEffect } from 'react';
 import {
     Card, Table,TableHead,TableBody,
@@ -12,6 +11,7 @@ import { manageError, getTipologiaProdotto, getTipologiaProfilo, listaNotifiche 
 import { ReportDettaglioProps, NotificheList } from "../types/typeReportDettaglio";
 import { useNavigate } from "react-router";
 import { BodyListaNotifiche } from "../types/typesGeneral";
+import React from "react";
 
 const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
@@ -53,34 +53,35 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const [profili, setProfili] = useState([]);
   
     const [bodyGetLista, setBodyGetLista] = useState<BodyListaNotifiche>({
-        profilo:'pa',
-        prodotto:"prod-pn",
-        anno:2023,
-        mese:12, 
+        profilo:'',
+        prodotto:'',
+        anno:currentYear,
+        mese:currString, 
         tipoNotifica:null,
         //contestazione:null,
         cap:null,
     });
-    console.log({bodyGetLista});
+ 
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
 
 
 
     const [notificheList, setNotificheList] = useState<NotificheList[]>([]);
-    const [notificheCount, setNotificheCount] = useState(0);
-    const [controller, setController] = useState({
-        page: 1,
-        rowsPerPage: 10
-    });
+    const [page, setPage] = React.useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [totalNotifiche, setTotalNotifiche]  = useState(0);
 
 
     const getlistaNotifiche = async () => {
 
-        await listaNotifiche(token,mainState.nonce,controller.page,controller.rowsPerPage, bodyGetLista)
+        const realPageNumber = page + 1;
+        const convertToNumber = Number(realPageNumber);
+
+        await listaNotifiche(token,mainState.nonce,convertToNumber,rowsPerPage, bodyGetLista)
             .then((res)=>{
              
                 setNotificheList(res.data.notifiche);
-                setNotificheCount(res.data.count);
+                setTotalNotifiche(res.data.count);
 
             }).catch((error)=>{
                 manageError(error, navigate);
@@ -89,25 +90,30 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     };
   
     useEffect(() => {
-      
-        getlistaNotifiche();
-    }, []);
-  
-    const handlePageChange = (event :any, newPage : number) => {
-        setController({
-            ...controller,
-            page: newPage
-        });
-    };
-  
-    const handleChangeRowsPerPage = (event : any) => {
-        setController({
-            ...controller,
-            rowsPerPage: parseInt(event.target.value, 10),
-            page: 0
-        });
-    };
+        if(mainState.nonce !== ''){
 
+            getlistaNotifiche();
+        }
+      
+      
+    }, [mainState.nonce,rowsPerPage,page]);
+  
+    const handleChangePage = (
+        event: React.MouseEvent<HTMLButtonElement> | null,
+        newPage: number,
+    ) => {
+        console.log({newPage}, 'changePage');
+        setPage(newPage);
+    };
+    
+    const handleChangeRowsPerPage = (
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    ) => {
+        console.log(event.target.value, 'rowPage');
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+        
+    };
 
     const getProdotti = async() => {
         await getTipologiaProdotto(token, mainState.nonce )
@@ -139,6 +145,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             getProfili();
         }
     },[mainState.nonce]);
+
+   
 
     return (
         <div className="mx-5">
@@ -420,7 +428,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                         <div className=" d-flex">
                             <div>
                                 <Button 
-                                    onClick={()=> console.log('ciao')} 
+                                    onClick={()=> getlistaNotifiche()} 
                                     sx={{ marginTop: 'auto', marginBottom: 'auto'}}
                                     variant="contained"> Filtra
                                 </Button>
@@ -450,49 +458,58 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 </Button>
             </div>
 
-
-            <Card>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>
+            <div className="mb-5">
+                <Card>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>
               Codice Fiscale
-                            </TableCell>
-                            <TableCell>
+                                </TableCell>
+                                <TableCell>
               Regione Sociale
-                            </TableCell>
+                                </TableCell>
                          
-                            <TableCell>
+                                <TableCell>
               Contestazione
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {notificheList.map((notifica:NotificheList) => (
-                            <TableRow key={Math.random()}>
-                                <TableCell>
-                                    {notifica.codiceFiscale}
-                                </TableCell>
-                                <TableCell>
-                                    {notifica.ragioneSociale}
-                                </TableCell>
-                              
-                                <TableCell>
-                                    {notifica.contestazione}
                                 </TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-                <TablePagination
-                    component="div"
-                    onPageChange={handlePageChange}
-                    page={controller.page}
-                    count={notificheCount}
-                    rowsPerPage={controller.rowsPerPage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                />
-            </Card>
+                        </TableHead>
+                        <TableBody>
+                            {notificheList.map((notifica:NotificheList) => (
+                                <TableRow key={Math.random()}>
+                                    <TableCell>
+                                        {notifica.codiceFiscale}
+                                    </TableCell>
+                                    <TableCell>
+                                        {notifica.ragioneSociale}
+                                    </TableCell>
+                              
+                                    <TableCell>
+                                        {notifica.contestazione?.toString()}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                    <div className=" mt-3">
+
+                        <TablePagination
+                            sx={{'.MuiTablePagination-selectLabel': {
+                                display:'none'
+                            }}}
+                            component="div"
+                            page={page}
+                            count={totalNotifiche}
+                            rowsPerPage={rowsPerPage}
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                        />  
+                    </div>
+                   
+              
+                </Card>
+            </div>
             {/* 
              <div className="mt-1 mb-5" style={{ width: '100%'}}>
                 <DataGrid sx={{
@@ -510,7 +527,25 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 
                 />
                 
-            </div>*/}
+            </div>
+
+
+
+             const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+        setPage(value);
+    };
+              <TablePagination
+                            sx={{'.MuiTablePagination-selectLabel,.MuiTablePagination-displayedRows, .MuiTablePagination-actions': {
+                                display:'none'
+                            }}}
+                            component="div"
+                            page={page}
+                            count={totalNotifiche}
+                            rowsPerPage={rowsPerPage}
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
+                        <Pagination sx={{margin:'auto'}} count={10}   onChange={handleChange} />*/}
            
             <div>
 
