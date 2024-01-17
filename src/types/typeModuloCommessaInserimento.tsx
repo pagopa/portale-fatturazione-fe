@@ -73,13 +73,6 @@ type ContattiPdf ={
     email: string
 }
 
-type  DatiCommessaPdf = {
-    totaleNotifiche: number,
-    numeroNotificheNazionali: number,
-    numeroNotificheInternazionali: number,
-    tipo:string,
-    idTipoSpedizione: number
-}
 
 export interface DataPdf {
     cup: string,
@@ -98,7 +91,7 @@ export interface DataPdf {
     descrizione: string,
     partitaIva: string,
     indirizzoCompleto: string,
-    datiModuloCommessa: DatiCommessaPdf[],
+    datiModuloCommessa: DatiModuloCommessaPdf[],
     datiModuloCommessaCosti: DatiCommessaCosti[],
 }
 
@@ -128,5 +121,54 @@ export interface ModComPdfProps{
 }
 
 export interface PrimoContainerInsComProps{
-    setMainState: any
+    setMainState?: any
+}
+
+export  interface ArrayTipologieCommesse {
+    id: number,
+    descrizione: string,
+    tipo: string,
+    tipoSpedizione: [
+        {
+            id: number,
+            descrizione: string,
+            tipo: string
+        },
+        {
+            id: number,
+            descrizione: string,
+            tipo: string
+        }
+    ]
+}
+
+
+export interface ResponseCategorieSpedizione {
+    data:ArrayTipologieCommesse[]
+}
+
+
+export interface ResponseDownloadPdf {
+    data: string
+}
+
+export interface TotaleModuloCommessaNotifica {
+    totaleNumeroNotificheNazionali: number,
+    totaleNumeroNotificheInternazionali: number,
+    totaleNumeroNotificheDaProcessare: number,
+    totale: number
+    
+}
+export    interface ResponseDettaglioModuloCommessa {
+    data:{
+        idTipoContratto: number,
+        modifica: boolean,
+        anno: number,
+        mese: number,
+        dataModifica: string,
+        moduliCommessa:ModuliCommessa[],
+        totaleModuloCommessaNotifica: TotaleModuloCommessaNotifica,
+        totale:ResponsTotaliInsModuloCommessa[]
+    }
+
 }

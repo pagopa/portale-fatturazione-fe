@@ -27,12 +27,6 @@ import { loginRequest } from './authConfig';
 import './App.css';
 
 
-
-
-
-
-
-
 const MainContent = () => {
     /**
      * useMsal is hook that returns the PublicClientApplication instance,

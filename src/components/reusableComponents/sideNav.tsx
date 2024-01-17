@@ -12,13 +12,13 @@ import { useNavigate, useLocation } from "react-router-dom";
 import DnsIcon from '@mui/icons-material/Dns';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { getDatiModuloCommessa, getAuthProfilo, manageError} from '../../api/api';
-import { SideNavProps } from '../../types/typesGeneral';
+import { MainState, SideNavProps } from '../../types/typesGeneral';
 
 
 const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => {
 
     const navigate = useNavigate();
-    const location : any = useLocation();
+    const location = useLocation();
 
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
@@ -33,7 +33,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
         await getAuthProfilo(profilo.jwt)
             .then((res) =>{
             
-                setMainState((prev:any)=>({...prev, ...{nonce:res?.data.nonce}}));
+                setMainState((prev:MainState)=>({...prev, ...{nonce:res?.data.nonce}}));
            
               
             }).catch(()=>{
@@ -66,7 +66,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
 
             if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
               
-                setMainState((prev:any)=>({
+                setMainState((prev:MainState)=>({
                     ...prev,
                     ...{
                         inserisciModificaCommessa:'INSERT',
@@ -79,7 +79,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
             }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0){
              
              
-                setMainState((prev:any)=>({ 
+                setMainState((prev:MainState)=>({ 
                     ...prev,
                     ...{
                         inserisciModificaCommessa:'MODIFY',
@@ -87,7 +87,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
                         modifica:true}}));
             }else if(res.data.modifica === false ){
               
-                setMainState((prev:any)=>({ 
+                setMainState((prev:MainState)=>({ 
                     ...prev,
                     ...{
                         inserisciModificaCommessa:'NO_ACTION',
@@ -138,7 +138,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
         }else{
             navigate('/');
             
-            setMainState((prev:any)=>({ 
+            setMainState((prev:MainState)=>({ 
                 ...prev,
                 ...{
                     action:'DATI_FATTURAZIONE',
@@ -163,7 +163,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
             await getDatiModuloCommessa(token, mainState.nonce).then((res)=>{
 
                 if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
-                    setMainState((prev:any)=>({
+                    setMainState((prev:MainState)=>({
                         ...prev,
                         ...{
                             inserisciModificaCommessa:'INSERT',
@@ -182,7 +182,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
                     navigate('/8');
                 }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0 ){
     
-                    setMainState((prev:any)=>({ 
+                    setMainState((prev:MainState)=>({ 
                         ...prev,
                         ...{
                             inserisciModificaCommessa:'MODIFY',
@@ -199,7 +199,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
                    
                     navigate('/4');
                 }else if(res.data.modifica === false && res.data.moduliCommessa.length === 0){
-                    setMainState((prev:any)=>({ 
+                    setMainState((prev:MainState)=>({ 
                         ...prev,
                         ...{
                             inserisciModificaCommessa:'NO_ACTION',
@@ -216,7 +216,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
                    
                     navigate('/4');
                 }else if(res.data.modifica === false && res.data.moduliCommessa.length > 0){
-                    setMainState((prev:any)=>({ 
+                    setMainState((prev:MainState)=>({ 
                         ...prev,
                         ...{
                             inserisciModificaCommessa:'NO_ACTION',

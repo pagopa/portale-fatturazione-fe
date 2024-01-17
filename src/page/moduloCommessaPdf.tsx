@@ -8,7 +8,8 @@ import { useNavigate } from "react-router";
 import TextDettaglioPdf from '../components/commessaPdf/textDettaglioPdf';
 import { DataPdf } from "../types/typeModuloCommessaInserimento";
 import { usePDF } from 'react-to-pdf';
-import { DatiModuloCommessaPdf,ModComPdfProps  } from "../types/typeModuloCommessaInserimento";
+import { DatiModuloCommessaPdf,ModComPdfProps, ResponseDownloadPdf } from "../types/typeModuloCommessaInserimento";
+
 
 const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
 
@@ -64,25 +65,50 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
         ]
     });
 
+    interface DatiCommessaPdf {
+        totaleNotifiche?: number,
+        numeroNotificheNazionali?: number,
+        numeroNotificheInternazionali?: number,
+        tipo?: string,
+        idTipoSpedizione?: number
+    }
+
+    interface ResponseGetPdfPagoPa {
+        data:DataPdf
+    }
+
  
     // richiamo questa funzione in entrambe le getPdf     selfcare     pagopa
-    const toDoOnGetPdfSelfcarePagopa = (res:any) =>{
-        const primo = res.data.datiModuloCommessa.find((obj:any)=>obj.idTipoSpedizione === 3);
-        const secondo = res.data.datiModuloCommessa.find((obj:any)=>obj.idTipoSpedizione === 1);
-        const terzo = res.data.datiModuloCommessa.find((obj:any)=>obj.idTipoSpedizione === 2);
-        const quarto = res.data.datiModuloCommessa.find((obj:any)=>obj.idTipoSpedizione === 0);
-        const  final = [primo, secondo, terzo, quarto];
-        res.data.datiModuloCommessa = final;
-    
-        
-        setDataPdf(res.data);
+    const toDoOnGetPdfSelfcarePagopa = (res:ResponseGetPdfPagoPa) =>{
+
+        console.log({res}, 'pdf');
+
+        let final = [{
+            totaleNotifiche: 0,
+            numeroNotificheNazionali: 0,
+            numeroNotificheInternazionali: 0,
+            tipo:"",
+            idTipoSpedizione: 0
+        }];
+     
+       
+        const primo = res.data.datiModuloCommessa.find((obj:DatiCommessaPdf)=>obj.idTipoSpedizione === 3);
+        const secondo = res.data.datiModuloCommessa.find((obj:DatiCommessaPdf)=>obj.idTipoSpedizione === 1);
+        const terzo = res.data.datiModuloCommessa.find((obj:DatiCommessaPdf)=>obj.idTipoSpedizione === 2);
+        const quarto = res.data.datiModuloCommessa.find((obj:DatiCommessaPdf)=>obj.idTipoSpedizione === 0);
+
+        if(primo !== undefined && secondo !== undefined && terzo !== undefined && quarto !== undefined){
+            final = [primo, secondo, terzo, quarto];
+        }
+         
+        setDataPdf({...res.data,...{datiModuloCommessa:final}});
         localStorage.setItem("tipo", res.data.tipoCommessa);
     };
 
-    
+    console.log(dataPdf);
 
     const getPdf = async() =>{
-        getModuloCommessaPdf(token, statusApp.anno,statusApp.mese, mainState.nonce).then((res)=>{
+        getModuloCommessaPdf(token, statusApp.anno,statusApp.mese, mainState.nonce).then((res:ResponseGetPdfPagoPa)=>{
 
             toDoOnGetPdfSelfcarePagopa(res);
          
@@ -93,17 +119,21 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
 
 
     const getPagoPdf = async() =>{
-        getModuloCommessaPagoPaPdf(token, mainState.nonce,statusApp.mese,statusApp.anno,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto).then((res)=>{
+        getModuloCommessaPagoPaPdf(token, mainState.nonce,statusApp.mese,statusApp.anno,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto)
+            .then((res)=>{
 
-            toDoOnGetPdfSelfcarePagopa(res);
+                toDoOnGetPdfSelfcarePagopa(res);
          
-        }).catch((err)=>{
-            manageError(err, navigate);
-        });  
+            }).catch((err)=>{
+                manageError(err, navigate);
+            });  
     };
 
+  
 
-    const toDoOnDownloadPdf = (res:any) =>{
+    const toDoOnDownloadPdf = (res:ResponseDownloadPdf) =>{
+
+        console.log({res}, 'pippo');
 
         const wrapper = document.getElementById('file_download');
         if(wrapper){
@@ -113,7 +143,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
  
     const downloadPdf = async()=>{
        
-        downloadModuloCommessaPdf(token, statusApp.anno,statusApp.mese, tipoCommessa, mainState.nonce).then((res)=>{
+        downloadModuloCommessaPdf(token, statusApp.anno,statusApp.mese, tipoCommessa, mainState.nonce).then((res: ResponseDownloadPdf)=>{
             toDoOnDownloadPdf(res);
            
         }).catch((err)=>{
@@ -123,7 +153,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
 
 
     const downlodPagoPaPdf = async()=>{
-        downloadModuloCommessaPagoPaPdf(token,  mainState.nonce,statusApp.mese,statusApp.anno,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto,tipoCommessa).then((res)=>{
+        downloadModuloCommessaPagoPaPdf(token,  mainState.nonce,statusApp.mese,statusApp.anno,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto,tipoCommessa).then((res:ResponseDownloadPdf)=>{
          
             toDoOnDownloadPdf(res);
         }).catch((err)=>{
