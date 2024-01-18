@@ -60,7 +60,7 @@ const HeaderNavComponent : React.FC =() => {
     const partyList : Array<PartyEntity> = [
         {
             id: '0',
-            logoUrl: `${cdnPath}1199250158.png`,
+            logoUrl: ``,
             name: name,
             productRole: user.ruolo,
             
