@@ -189,7 +189,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
         }
     },[]);
    
-    const [disableContinua, setDisableContinua] = useState(false);
+    //const [disableContinua, setDisableContinua] = useState(false);
 
     const calculateTot = (arr:any, string:string) =>{
         return arr.reduce((a:number,b:any) =>{
@@ -203,13 +203,14 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
             totaleNazionale:calculateTot(datiCommessa.moduliCommessa,'numeroNotificheNazionali'),
             totaleInternazionale:calculateTot(datiCommessa.moduliCommessa,'numeroNotificheInternazionali'),
             totaleNotifiche:calculateTot(datiCommessa.moduliCommessa,'totaleNotifiche')});
-
+        /*
         const check  = datiCommessa.moduliCommessa.map((singleObj) => {
             const arrBoolean = singleObj?.numeroNotificheNazionali <= 0 &&  singleObj?.numeroNotificheInternazionali <= 0;
             return arrBoolean;
         });
         const status = check.every(v => v === true);
         setDisableContinua(status);
+        */
 
     },[datiCommessa]);
 
@@ -348,7 +349,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
             value={{
                 setDatiCommessa,
                 datiCommessa,
-                setDisableContinua,
+                // setDisableContinua,
                 totaliModuloCommessa,
                 setTotale,
                 totale,
@@ -438,7 +439,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                                     >Indietro</Button>
                                     <Button variant="contained" 
                        
-                                        disabled={disableContinua}
+                                        //disabled={disableContinua}
                                         onClick={()=>{ 
                                             OnButtonContinua();
                                         }}
