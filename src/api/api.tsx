@@ -8,7 +8,8 @@ import {
     BodyListaModuloCommessa,
     BodyDownloadListaCommesse,
     BodyListaNotifiche,
-    ManageErrorResponse
+    ManageErrorResponse,
+    BodyCreateContestazione
 } from '../types/typesGeneral';
 
 export const url = process.env.REACT_APP_URL;
@@ -369,7 +370,36 @@ export const listaNotifiche = async (token:string, nonce:string , page:number, p
     return response;
 };
 
+export const tipologiaTipoContestazione = async (token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/tipologia/tipocontestazione?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
 
+    return response;
+};
+
+export const flagContestazione = async (token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/tipologia/flagcontestazione?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
+export const createContestazione = async (token:string, nonce:string , body: BodyCreateContestazione) => {
+    const response =  await axios.post(`${url}/api/notifiche/contestazione?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token,
+        },
+        }
+    );
+    return response;
+};
 
 
 

@@ -11,6 +11,7 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import DnsIcon from '@mui/icons-material/Dns';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
+import MarkUnreadChatAltIcon from '@mui/icons-material/MarkUnreadChatAlt';
 import { getDatiModuloCommessa, getAuthProfilo, manageError} from '../../api/api';
 import { MainState, SideNavProps } from '../../types/typesGeneral';
 
@@ -304,7 +305,8 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
 
                         <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClickNotifiche()}>
                             <ListItemIcon>
-                                <ViewModuleIcon fontSize="inherit" />
+                           
+                                <MarkUnreadChatAltIcon fontSize="inherit" />
                             </ListItemIcon>
                             <ListItemText primary="Notifiche" />
                         </ListItemButton>

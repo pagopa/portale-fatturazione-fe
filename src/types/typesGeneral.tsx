@@ -89,7 +89,7 @@ export interface BodyListaNotifiche{
     cap: string|null ,
     profilo: string,
     tipoNotifica: number | null,
-    //contestazione: number | null
+    statoContestazione: number | null
 }
 type RequestError = {
     status:number,
@@ -105,6 +105,13 @@ export interface ManageErrorResponse{
     response: ResponseError
 
 
+}
+
+export interface BodyCreateContestazione{
+    tipoContestazione: number,
+    idNotifica: string,
+    noteEnte: string
+    
 }
 
 
