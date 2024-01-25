@@ -29,7 +29,7 @@ export const DatiFatturazioneContext = createContext<AreaPersonaleContext>({
     datiFatturazione:{
         idEnte:'',
         tipoCommessa:'',
-        splitPayment:false,
+        splitPayment:true,
         cup: '',
         idDocumento:'',
         codCommessa:'',
@@ -62,7 +62,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
     const [datiFatturazione, setDatiFatturazione] = useState<DatiFatturazione>({
         tipoCommessa:'',
         idEnte:'',
-        splitPayment:false,
+        splitPayment:true,
         cup: '',
         idDocumento:'',
         codCommessa:'',
@@ -74,6 +74,8 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
         notaLegale:false
 
     });
+
+    console.log({datiFatturazione});
 
     // state creato per il tasto conferma , abilitato nel caso in cui tutti values sono true
     const [statusBottonConferma, setStatusButtonConferma] = useState<StateEnableConferma>({
@@ -110,7 +112,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
             setDatiFatturazione({
                 tipoCommessa:'',
                 idEnte:'',
-                splitPayment:false,
+                splitPayment:true,
                 cup: '',
                 idDocumento:'',
                 codCommessa:'',
@@ -146,7 +148,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
             setDatiFatturazione({
                 tipoCommessa:'',
                 idEnte:'',
-                splitPayment:false,
+                splitPayment:true,
                 cup: '',
                 idDocumento:'',
                 codCommessa:'',

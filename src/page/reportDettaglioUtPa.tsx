@@ -7,10 +7,11 @@ import {
     TableRow,TableCell,TablePagination, TextField,
     Box, FormControl, InputLabel,Select, MenuItem, Button
 } from '@mui/material';
-import { manageError, getTipologiaProdotto, getTipologiaProfilo, listaNotifiche } from "../api/api";
-import { ReportDettaglioProps, NotificheList } from "../types/typeReportDettaglio";
+import { manageError, getTipologiaProdotto, getTipologiaProfilo, listaNotifiche, tipologiaTipoContestazione, flagContestazione } from "../api/api";
+import { ReportDettaglioProps, NotificheList, FlagContestazione  } from "../types/typeReportDettaglio";
 import { useNavigate } from "react-router";
 import { BodyListaNotifiche } from "../types/typesGeneral";
+import ModalContestazione from '../components/reportDettaglio/modalContestazione';
 import React from "react";
 
 const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
@@ -19,6 +20,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
+
+    
 
     // prendo gli ultimi 2 anni dinamicamente
     const currentYear = (new Date()).getFullYear();
@@ -43,12 +46,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         {"Analogico RS Internazionali": 5}, 
         {"Analogico 890":6}];
 
-    const contestazioni = [
-        {'Si':1,},
-        {'No':2,},
-        {'Tutte':3}
-    ];
- 
+  
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [profili, setProfili] = useState([]);
   
@@ -58,11 +56,31 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         anno:currentYear,
         mese:currString, 
         tipoNotifica:null,
-        //contestazione:null,
+        statoContestazione:null,
         cap:null,
     });
+
+    //console.log({bodyGetLista});
  
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
+
+
+    useEffect(()=>{
+
+        if( 
+            bodyGetLista.profilo !== '' ||
+            bodyGetLista.prodotto !== '' ||
+            bodyGetLista.tipoNotifica !== null ||
+            bodyGetLista.statoContestazione !== null ||
+            bodyGetLista.cap !== null){
+            setStatusAnnulla('show');
+        }else{
+            console.log('hjshjdhjjhf');
+            setStatusAnnulla('hidden');
+        }
+        
+
+    },[bodyGetLista]);
 
 
 
@@ -139,12 +157,37 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             }));
     };
 
+
+    const [fgContestazione, setFgContestazione] = useState<FlagContestazione[]>([]);
+
+    const getFlagContestazione =  async() => {
+        await flagContestazione(token, mainState.nonce )
+            .then((res)=>{
+                setFgContestazione(res.data);
+              
+            })
+            .catch(((err)=>{
+                manageError(err,navigate);
+            }));
+    };
+
+
+   
+
+    
+
     useEffect(()=>{
         if(mainState.nonce !== ''){
             getProdotti();
             getProfili();
+            getFlagContestazione();
         }
     },[mainState.nonce]);
+
+
+    // modal
+
+    const [open, setOpen] = React.useState(false);
 
    
 
@@ -155,10 +198,10 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 <Typography variant="h4">Report Dettaglio</Typography>
             </div>
             {/*title container end */}
-            <div className="container nopadding_Left mt-5 mb-5 ">
+            <div className="container  mt-5 mb-5 ">
                 <div className="row">
                     <div className="col-3   ">
-                        <Box >
+                        <Box sx={{width:'80%'}} >
                             <FormControl
                                 fullWidth
                                 size="medium"
@@ -200,7 +243,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                         </Box>
                     </div>
                     <div className="col-3  ">
-                        <Box >
+                        <Box sx={{width:'80%', marginLeft:'20px'}}  >
                             <FormControl
                                 fullWidth
                                 size="medium"
@@ -244,7 +287,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                         </Box>
                     </div>
                     <div className="col-3  ">
-                        <Box >
+                        <Box sx={{width:'80%', marginLeft:'20px'}} >
                             <FormControl
                                 fullWidth
                                 size="medium"
@@ -253,18 +296,15 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                     id="sea"
                                 >
                                Seleziona Prodotto
-
                                 </InputLabel>
                                 <Select
-                                    id="sea"
+                                    id="prodotto"
                                     label='Seleziona Prodotto'
                                     labelId="search-by-label"
                                     onChange={(e) => setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}))}
                                     value={bodyGetLista.prodotto}
                                     //IconComponent={SearchIcon}
-                   
                                     disabled={status=== 'immutable' ? true : false}
-
                                 >
                                     {prodotti.map((el) => (
 
@@ -282,7 +322,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                         </Box>
                     </div>
                     <div className="col-3 ">
-                        <Box >
+                        <Box  sx={{width:'80%', marginLeft:'20px'}} >
                             <FormControl
                                 fullWidth
                                 size="medium"
@@ -300,12 +340,10 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                     onChange={(e) => setBodyGetLista((prev)=> ({...prev, ...{profilo:e.target.value}}))}
                                     value={bodyGetLista.profilo}
                                     //IconComponent={SearchIcon}
-                   
                                     disabled={status=== 'immutable' ? true : false}
 
                                 >
                                     {profili.map((el) => (
-
                                         <MenuItem
                                             key={Math.random()}
                                             value={el}
@@ -327,7 +365,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 <div className="row mt-5" >
                 
                     <div className="col-3">
-                        <Box >
+                        <Box sx={{width:'80%'}} >
                             <FormControl
                                 fullWidth
                                 size="medium"
@@ -346,11 +384,10 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                         const value = Number(e.target.value);
                                         setBodyGetLista((prev)=> ({...prev, ...{tipoNotifica:value}}));
                                     }}
-                                    value={bodyGetLista.tipoNotifica}
+                                    value={bodyGetLista.tipoNotifica || ''}
                                     //IconComponent={SearchIcon}
                     
                                     disabled={status=== 'immutable' ? true : false}
-
                                 >
                                     {tipoNotifica.map((el) => (
 
@@ -368,38 +405,38 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                         </Box>
                     </div>
                     <div className=" col-3 ">
-                        <Box>
+                        <Box sx={{width:'80%', marginLeft:'20px'}} >
                             <FormControl
                                 fullWidth
                                 size="medium"
                             >
                                 <InputLabel
-                                    id="sea"
+                                    id="contestazioni"
                                 >
                                 Contestazione
 
                                 </InputLabel>
                                 <Select
-                                    id="sea"
+                                    id="contestazioni"
                                     label='Contestazione'
                                     labelId="search-by-label"
                                     onChange={(e) =>{
                                         const value = Number(e.target.value);
-                                        setBodyGetLista((prev)=> ({...prev, ...{contestazione:value}}));}
+                                        setBodyGetLista((prev)=> ({...prev, ...{statoContestazione:value}}));}
                                     } 
-                                    value={''}
+                                    value={bodyGetLista.statoContestazione || ''}
                                     //IconComponent={SearchIcon}
                     
                                     disabled={status=== 'immutable' ? true : false}
 
                                 >
-                                    {contestazioni.map((el) => (
+                                    {fgContestazione.map((el) => (
 
                                         <MenuItem
-                                            key={Math.random()}
-                                            value={Object.values(el)[0].toString()}
+                                            key={el.id}
+                                            value={el.id}
                                         >
-                                            {Object.keys(el)[0].toString()}
+                                            {el.flag}
                                         </MenuItem>
 
                                     ))}
@@ -409,27 +446,34 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                         </Box>
                     </div>
                     <div className="col-3 ">
-                        <Box >
+                        <Box sx={{width:'80%', marginLeft:'20px'}} >
                             <TextField
                                 //required={required}
                                 // helperText='Cap'
                                 label='Cap'
                                 placeholder='Cap'
                                 //  disabled={makeTextInputDisable}
-                                value={''}
+                                value={bodyGetLista.cap || ''}
                                 // error={errorValidation}
-                                onChange={(e) => setBodyGetLista((prev)=> ({...prev, ...{cap:e.target.value}}))}
+                                onChange={(e) => setBodyGetLista((prev)=>{
+                                   
+                                    if(e.target.value === ''){
+                                        return {...prev, ...{cap:null}};
+                                    }else{
+                                        return {...prev, ...{cap:e.target.value}};
+                                    }
+                                } )}
                                 onBlur={()=> console.log('miao')}
             
                             />
                         </Box>
                     </div>
-                    <div className="col-3">
-                        <div className=" d-flex">
+                    <div className="col-3  ">
+                        <div className=" d-flex align-items-center justify-content-center h-100">
                             <div>
                                 <Button 
                                     onClick={()=> getlistaNotifiche()} 
-                                    sx={{ marginTop: 'auto', marginBottom: 'auto'}}
+                                    //sx={{ marginTop: 'auto', marginBottom: 'auto'}}
                                     variant="contained"> Filtra
                                 </Button>
 
@@ -437,7 +481,16 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                         
                                     <Button
                                         onClick={()=>{
-                                            console.log('ciao');
+                                            setStatusAnnulla('hidden');
+                                            setBodyGetLista({
+                                                profilo:'',
+                                                prodotto:'',
+                                                anno:currentYear,
+                                                mese:currString, 
+                                                tipoNotifica:null,
+                                                statoContestazione:null,
+                                                cap:null,
+                                            });
                                         } }
                                         sx={{marginLeft:'24px'}} >
                     Annulla filtri
@@ -464,10 +517,13 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                         <TableHead>
                             <TableRow>
                                 <TableCell>
-              Codice Fiscale
+              Mese
                                 </TableCell>
                                 <TableCell>
               Regione Sociale
+                                </TableCell>
+                                <TableCell>
+              Tipo Notifica
                                 </TableCell>
                          
                                 <TableCell>
@@ -477,16 +533,21 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                         </TableHead>
                         <TableBody>
                             {notificheList.map((notifica:NotificheList) => (
-                                <TableRow key={Math.random()}>
+                                <TableRow key={notifica.idNotifica}>
                                     <TableCell>
-                                        {notifica.codiceFiscale}
+                                        {notifica.mese}
                                     </TableCell>
                                     <TableCell>
                                         {notifica.ragioneSociale}
                                     </TableCell>
-                              
                                     <TableCell>
-                                        {notifica.contestazione?.toString()}
+                                        {notifica.tipoNotifica}
+                                    </TableCell>
+                              
+                                    <TableCell sx={{color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'}}
+                                        onClick={()=> setOpen(true)}
+                                    >
+                                        {notifica.contestazione}
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -510,46 +571,13 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
               
                 </Card>
             </div>
-            {/* 
-             <div className="mt-1 mb-5" style={{ width: '100%'}}>
-                <DataGrid sx={{
-                    height:'400px',
-                    '& .MuiDataGrid-virtualScroller': {
-                        backgroundColor: 'white',
-                    }
-                   
-                }}
-                rows={gridData} 
-                columns={columns}
-                getRowId={(row) => row.key}
-                onRowClick={handleEvent}
-                onCellClick={handleOnCellClick}
-                
-                />
-                
-            </div>
 
+            <Button onClick={()=> setOpen(true)}> APRI/CHIUDI CONTESTAZIONE</Button>
 
-
-             const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
-        setPage(value);
-    };
-              <TablePagination
-                            sx={{'.MuiTablePagination-selectLabel,.MuiTablePagination-displayedRows, .MuiTablePagination-actions': {
-                                display:'none'
-                            }}}
-                            component="div"
-                            page={page}
-                            count={totalNotifiche}
-                            rowsPerPage={rowsPerPage}
-                            onPageChange={handleChangePage}
-                            onRowsPerPageChange={handleChangeRowsPerPage}
-                        />
-                        <Pagination sx={{margin:'auto'}} count={10}   onChange={handleChange} />*/}
+            {/* MODAL */}
            
-            <div>
-
-            </div>
+            <ModalContestazione open={open} setOpen={setOpen}  mainState={mainState}></ModalContestazione>
+           
         </div>
     );
 };
