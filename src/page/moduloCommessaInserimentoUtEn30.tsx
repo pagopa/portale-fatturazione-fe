@@ -8,11 +8,14 @@ import TerzoContainerInsCom from '../components/commessaInserimento/terzoContein
 import BasicModal from '../components/reusableComponents/modal';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { useNavigate } from 'react-router';
-import {insertDatiModuloCommessa, getDettaglioModuloCommessa, getModuloCommessaPagoPa, modifyDatiModuloCommessaPagoPa, manageError} from '../api/api';
+import {insertDatiModuloCommessa, getDettaglioModuloCommessa, getModuloCommessaPagoPa, modifyDatiModuloCommessaPagoPa, manageError, getDatiFatturazione, getDatiFatturazionePagoPa} from '../api/api';
 import { redirect } from '../api/api';
 import AreaPersonaleUtenteEnte from '../page/areaPersonaleUtenteEnte';
 import HorizontalLinearStepper from '../components/reusableComponents/stepper';
 import { DatiCommessa, InsModuloCommessaContext , ResponsTotaliInsModuloCommessa,ModuloCommessaInserimentoProps, TotaleNazionaleInternazionale} from '../types/typeModuloCommessaInserimento';
+import { SuccesResponseGetDatiFatturazione } from '../types/typesAreaPersonaleUtenteEnte';
+import { MainState } from '../types/typesGeneral';
+import ModalRedirect from '../components/commessaInserimento/madalRedirect';
 
 
 
@@ -71,7 +74,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     const handleOpenModalDatiFatt = () => setOpenModalDatiFatturazione(true);
 
 
-
+    const [openModalRedirect, setOpenModalRedirect] = useState(false);
    
    
 
@@ -152,6 +155,63 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 manageError(err,navigate);
             });
     };
+    // Lato self care
+    // chiamata per capire se i dati fatturazione sono stati inseriti
+    // SI.... riesco ad inserire modulo commessa
+    //No.... redirect dati fatturazione
+    // tutto gestito sul button 'continua' in base al parametro datiFatturazione del main state
+    const getDatiFat = async () =>{
+      
+        await getDatiFatturazione(token,mainState.nonce).then(( ) =>{ 
+              
+            setMainState((prev:MainState)=>({
+                ...prev, 
+                ...{datiFatturazione:true,
+                    userClickOn:'',
+                    statusPageInserimentoCommessa:'immutable'}}));
+           
+        }).catch(err =>{
+           
+            if(err.response.status === 404){
+                setMainState((prev:MainState)=>({
+                    ...prev,
+                    ...{datiFatturazione:false,
+                        userClickOn:'',
+                        statusPageInserimentoCommessa:'immutable'}}));
+            }
+        });
+
+    };
+
+    // Lato Pagopa
+    // chiamata per capire se i dati fatturazione sono stati inseriti
+    // SI.... riesco ad inserire modulo commessa
+    //No.... redirect dati fatturazione
+    // tutto gestito sul button 'continua' in base al parametro datiFatturazione del main state
+    const getDatiFatPagoPa = async () =>{
+
+        await getDatiFatturazionePagoPa(token,mainState.nonce, profilo.idEnte, profilo.prodotto ).then(() =>{   
+            setMainState((prev:MainState)=>(
+                {...prev, 
+                    ...{datiFatturazione:true,
+                        userClickOn:'',
+                        statusPageInserimentoCommessa:'immutable'}}));
+           
+        }).catch(err =>{
+           
+            if(err.response.status === 404){
+
+                setMainState((prev:MainState)=>(
+                    {...prev, 
+                        ...{datiFatturazione:false,
+                            userClickOn:'',
+                            statusPageInserimentoCommessa:'immutable'}}));
+            
+            }
+           
+           
+        });
+    };
   
     useEffect(()=>{
       
@@ -160,14 +220,14 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
             // SELFCARE
             if(profilo.auth !== 'PAGOPA'){
                 handleGetDettaglioModuloCommessa();
+                getDatiFat();
                 //PAGOPA
             }else if(profilo.auth === 'PAGOPA'){
                 handleGetDettaglioModuloCommessaPagoPa();
+                getDatiFatPagoPa();
             }
 
-            setMainState((prev:any)=>{
-                return {...prev,...{userClickOn:'',statusPageInserimentoCommessa:'immutable'}};
-            });
+          
         }
       
       
@@ -232,7 +292,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 statusPageInserimentoCommessa:'immutable',
                 statusPageDatiFatturazione:'immutable',
             }}));
-            // aggiunta ora attenzione>
+            // aggiunta in seguito
             setTotaliModuloCommessa(res.data.totale);
         }else{
             setTotaliModuloCommessa(res.data.totale);
@@ -441,7 +501,12 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                        
                                         //disabled={disableContinua}
                                         onClick={()=>{ 
-                                            OnButtonContinua();
+                                            if(mainState.datiFatturazione === true){
+                                                OnButtonContinua();
+                                            }else{
+                                                setOpenModalDatiFatturazione(true);
+                                            }
+                                            
                                         }}
                                                     
                                     >Continua</Button>
@@ -466,6 +531,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                     setMainState={setMainState}></AreaPersonaleUtenteEnte>
                 : null
             }
+
+            <ModalRedirect setOpen={setOpenModalRedirect} open={openModalRedirect}></ModalRedirect>
             
         </InserimentoModuloCommessaContext.Provider>
     );
