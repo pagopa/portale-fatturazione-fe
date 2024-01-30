@@ -279,7 +279,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
         if(profilo.auth === 'PAGOPA'){
             hendleModifyDatiModuloCommessaPagoPa();
         }else{
-            hendlePostModuloCommessa();
+            navigate('/');
+            // hendlePostModuloCommessa();
         }
     };
    

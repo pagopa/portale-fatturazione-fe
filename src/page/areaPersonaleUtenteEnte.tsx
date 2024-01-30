@@ -135,14 +135,14 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
 
         await getDatiFatturazionePagoPa(token,mainState.nonce, profilo.idEnte, profilo.prodotto ).then((res:SuccesResponseGetDatiFatturazione) =>{   
             setUser('old');
-           
+            console.log('kkkk', user);
             setDatiFatturazione(res.data); 
            
         }).catch(err =>{
            
             manageError(err, navigate);
             // navigate('/error');
-            // setUser('new');
+            setUser('new');
             setMainState((prev:MainState)=>({...prev, ...{statusPageDatiFatturazione:'mutable'}}));
             
             setDatiFatturazione({

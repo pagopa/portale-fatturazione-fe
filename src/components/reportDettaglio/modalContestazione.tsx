@@ -1,78 +1,41 @@
 import * as React from 'react';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { ModalContestazioneProps, TipoContestazione } from '../../types/typeReportDettaglio';
+import { ModalContestazioneProps, TipoContestazione, ModalBodyContestazione, Contestazione } from '../../types/typeReportDettaglio';
 import {
     TextField,
     Box, FormControl, InputLabel,Select, MenuItem, Button
 } from '@mui/material';
-import { tipologiaTipoContestazione, manageError } from '../../api/api'; 
+import { tipologiaTipoContestazione, manageError, createContestazione} from '../../api/api'; 
 import { useNavigate } from 'react-router';
 import {useState, useEffect} from 'react';
+import YupString from '../../validations/string/index';
 
 const style = {
     position: 'absolute' as const,
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: '80%',
+    width: '90%',
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
 };
 
-const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open, mainState}) => {
+const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open, mainState, contestazioneSelected, setContestazioneSelected}) => {
 /*
     PA => ente (selfcare)
  SUP=> supporto (ad)
  FIN=> finance (ad)
  RCP => recapitista (selfcare -> per cap)
 CON => consolidatore (selfcare -> tutti gli enti)
-
-[
-        {
-            "id": 1,
-            "flag": "Non Contestata"
-        },
-        {
-            "id": 2,
-            "flag": "Annullata"
-        },
-        {
-            "id": 3,
-            "flag": "Contestata Ente"
-        },
-        {
-            "id": 4,
-            "flag": "Risposta Send"
-        },
-        {
-            "id": 5,
-            "flag": "Risposta Recapitista"
-        },
-        {
-            "id": 6,
-            "flag": "Risposta Consolidatore"
-        },
-        {
-            "id": 7,
-            "flag": "Risposta Ente"
-        },
-        {
-            "id": 8,
-            "flag": "Accettata"
-        },
-        {
-            "id": 9,
-            "flag": "Rifiutata"
-        }
-    ];
-
-
 */
-    const [statoContetstazione, setStato] = useState(0);
     const [entita, setEnt] = useState('');
    
+    useEffect(()=>{
+
+        setEnt('PA');
+    },[]);
  
    
    
@@ -87,28 +50,66 @@ CON => consolidatore (selfcare -> tutti gli enti)
     const profilo =  JSON.parse(getProfilo);
 
 
-    interface ModalBodyContestazione {
-        tipoContestazione : number | null,
-        notaContestazione: string
-    }
+
+    const [enableCreaContestazione, setEnableCreaContestazione] = useState(true);
+
+    const requiredString = (string:string) =>{
+        
+        YupString.required().validate(string).then(()=>{
+            setEnableCreaContestazione(false);
+            
+        }).catch(()=>{
+            setEnableCreaContestazione(true);
+           
+        });
+    };
    
 
-
-    const [modalBody, setModalBody] = useState<ModalBodyContestazione>({
-        tipoContestazione:null,
-        notaContestazione:''
-    });
-
+    // reset dei dati del modal ogni qual volta viene chiuso 
     useEffect(()=>{
-        setStato(1);
-        setEnt('PA');
-     
-    },[]);
+        if(open === false){
+            setContestazioneSelected({
+                modifica: true,
+                accetta: true,
+                contestazione: {
+                    id: 0,
+                    tipoContestazione: 0,
+                    idNotifica: '',
+                    noteEnte: '',
+                    noteSend: null,
+                    noteRecapitista: null,
+                    noteConsolidatore: null,
+                    rispostaEnte: '',
+                    statoContestazione: 0,
+                    onere: '',
+                    dataInserimentoEnte: '',
+                    dataModificaEnte: '',
+                    dataInserimentoSend: '',
+                    dataModificaSend: '',
+                    dataInserimentoRecapitista: '',
+                    dataModificaRecapitista: '',
+                    dataInserimentoConsolidatore: '',
+                    dataModificaConsolidatore: '',
+                    dataChiusura: '',
+                    anno: 0,
+                    mese: 0
+                }
+                
+            });
+            
+            setEnableCreaContestazione(true);
+        }
+    },[open]);
 
-    console.log(entita, '999', statoContetstazione, 'ccc');
+   
+    console.log(contestazioneSelected.contestazione);
+   
+
+   
 
     const [tipoContestazioni, setTipoContestazioni] = useState<TipoContestazione[]>([]);
 
+    // get delle tipologie delle contestazioni che popolano la select 
     const getTipoConestazioni = async() => {
         await tipologiaTipoContestazione(token, mainState.nonce)
             .then((res)=>{
@@ -128,6 +129,25 @@ CON => consolidatore (selfcare -> tutti gli enti)
     },[mainState.nonce]);
 
 
+
+    const creaContestazione = async () => {
+
+        const body = {
+            idNotifica:contestazioneSelected.contestazione.idNotifica,
+            tipoContestazione:contestazioneSelected.contestazione.tipoContestazione,
+            noteEnte:contestazioneSelected.contestazione.noteEnte
+        };
+
+        
+        await createContestazione(token, mainState.nonce,body)
+            .then((res)=>{
+                setOpen(false);
+            })
+            .catch(((err)=>{
+                manageError(err,navigate);
+            }));
+    };
+
   
 
    
@@ -136,6 +156,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
         setOpen(true);
     };
     const handleClose = () => {
+        console.log('close elelel');
         setOpen(false);
     };
     return (
@@ -154,7 +175,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                     {/*BODY */}
                     <div className='container nopadding_Left '>
                         <div className='row mt-3'>
-                            <div className='col-3'>
+                            <div className='col-4'>
                                 <FormControl
                                     fullWidth
                                     size="medium"
@@ -167,19 +188,20 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                     </InputLabel>
                                     <Select
                                         id="tipoCon"
+                                        
                                         label='Tipo Contestazione'
                                         labelId="search-by-label"
                                         onChange={(e) =>{
-                                            console.log('diocane');
+                                           
                                             if(e.target.value === ''){
-                                                setModalBody((prev)=> ({...prev, ...{tipoContestazione:null}}));
+                                                setContestazioneSelected((prev:Contestazione)=> ({...prev, ...{tipoContestazione:null}}));
                                             }else{
-                                                setModalBody((prev)=> ({...prev, ...{tipoContestazione:Number(e.target.value)}}));
+                                                setContestazioneSelected((prev:Contestazione)=> ({...prev, ...{tipoContestazione:Number(e.target.value)}}));
                                             }
                                             
                                         } }
-                                        value={modalBody.tipoContestazione|| ''}
-                                        disabled= {entita !== 'PA' || statoContetstazione !== 1}
+                                        value={contestazioneSelected.contestazione.tipoContestazione|| ''}
+                                        disabled= {entita !== 'PA' || contestazioneSelected?.contestazione?.statoContestazione !== 1}
 
                                     >
                                         {tipoContestazioni.map((el) => (
@@ -199,24 +221,24 @@ CON => consolidatore (selfcare -> tutti gli enti)
                         
                             <div className='col-4'>
                                 <TextField
-                                    //required={required}
+                                    required
                                   
                                     id="outlined-basic"
                                     label='Note Contestazione'
                                     placeholder='Note Contestazione'
                                     //  disabled={makeTextInputDisable}
-                                    value={modalBody.notaContestazione}
+                                    value={contestazioneSelected.contestazione.noteEnte}
                                     fullWidth
                                     multiline
-                                    disabled= {entita !== 'PA' || (statoContetstazione !== 1 && statoContetstazione !== 3)}
+                                    disabled= {entita !== 'PA' || (contestazioneSelected?.contestazione?.statoContestazione !== 1 && contestazioneSelected?.contestazione?.statoContestazione !== 3)}
                                     // error={errorValidation}
-                                    onChange={(e) =>  setModalBody((prev)=> ({...prev, ...{notaContestazione:e.target.value}}))}
-                                    onBlur={()=> console.log('miao')}
+                                    onChange={(e) =>  setContestazioneSelected((prev:Contestazione)=> ({...prev, ...{noteEnte:e.target.value}}))}
+                                    onBlur={(e)=> requiredString(e.target.value)}
             
                                 />
                             </div>
                             
-                            {statoContetstazione === 1 ? null : 
+                            {contestazioneSelected?.contestazione?.statoContestazione === 1 ? null : 
                                 <div className='col-4'>
                                     <TextField
                                     //required={required}
@@ -224,7 +246,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         id="x"
                                         label='Risposta'
                                         placeholder='Risposta'
-                                        disabled={entita !== 'PA' || (statoContetstazione !== 3 && statoContetstazione !== 4 && statoContetstazione !== 5 && statoContetstazione !== 6 )}
+                                        disabled={entita !== 'PA' || (contestazioneSelected.contestazione.statoContestazione !== 3 && contestazioneSelected.contestazione.statoContestazione !== 4 && contestazioneSelected.contestazione.statoContestazione !== 5 && contestazioneSelected.contestazione.statoContestazione !== 6 )}
                                         value={''}
                                         fullWidth
                                         multiline
@@ -236,7 +258,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                 </div>
                             }
                         </div>
-                        {statoContetstazione === 1 ? null :
+                        {contestazioneSelected.contestazione.statoContestazione === 1 ? null :
                             <div className='row mt-5'>
                             
                                 <Typography id="modal-modal-title" variant="overline">
@@ -249,8 +271,8 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         id="outlined-basic"
                                         label='Risposta'
                                         placeholder='Risposta'
-                                        disabled={entita !== 'SUP' || (statoContetstazione !== 1 && statoContetstazione !== 2 && statoContetstazione !== 7 && statoContetstazione !== 8 && statoContetstazione !== 9 )}
-                                        value={''}
+                                        disabled={entita !== 'SUP' || (contestazioneSelected.contestazione.statoContestazione !== 1 && contestazioneSelected.contestazione.statoContestazione !== 2 && contestazioneSelected.contestazione.statoContestazione !== 7 && contestazioneSelected.contestazione.statoContestazione !== 8 && contestazioneSelected.contestazione.statoContestazione !== 9 )}
+                                        value={contestazioneSelected.contestazione.noteSend}
                                         fullWidth
                                         multiline
                                         // error={errorValidation}
@@ -262,7 +284,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
 
                             </div>
                         }
-                        {statoContetstazione === 1 ? null :
+                        {contestazioneSelected.contestazione.statoContestazione === 1 ? null :
                             <div className='row mt-5'>
                             
                                 <Typography id="modal-modal-title" variant="overline">
@@ -275,7 +297,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         id="outlined-basic"
                                         label='Risposta'
                                         placeholder='Risposta'
-                                        disabled={entita !== 'RCP' || (statoContetstazione !== 1 && statoContetstazione !== 2 && statoContetstazione !== 5 )}
+                                        disabled={entita !== 'RCP' || (contestazioneSelected.contestazione.statoContestazione !== 1 && contestazioneSelected.contestazione.statoContestazione !== 2 && contestazioneSelected.contestazione.statoContestazione !== 5 )}
                                         value={''}
                                         fullWidth
                                         multiline
@@ -289,7 +311,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                             </div>
                         }
 
-                        {statoContetstazione === 1 ? null :
+                        {contestazioneSelected.contestazione.statoContestazione === 1 ? null :
                             <div className='row mt-5'>
                             
                                 <Typography id="modal-modal-title" variant="overline">
@@ -302,7 +324,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         id="outlined-basic"
                                         label='Risposta'
                                         placeholder='Risposta'
-                                        disabled={entita !== 'RCP' || (statoContetstazione !== 1 && statoContetstazione !== 2 && statoContetstazione !== 6 && statoContetstazione !== 8 && statoContetstazione !== 9  )}
+                                        disabled={entita !== 'RCP' || (contestazioneSelected.contestazione.statoContestazione !== 1 && contestazioneSelected.contestazione.statoContestazione !== 2 && contestazioneSelected.contestazione.statoContestazione !== 6 && contestazioneSelected.contestazione.statoContestazione !== 8 && contestazioneSelected.contestazione.statoContestazione !== 9  )}
                                         value={''}
                                         fullWidth
                                         multiline
@@ -322,18 +344,23 @@ CON => consolidatore (selfcare -> tutti gli enti)
                     <div className='container mt-5'>
                         <div className='row'>
                             {
-                                statoContetstazione !== 1   ? null :
+                                contestazioneSelected.contestazione.statoContestazione !== 1   ? null :
                           
                                     <div className='col-2 me-2'>
                                         <Button 
-                                   
+                                            disabled={enableCreaContestazione || contestazioneSelected.contestazione.tipoContestazione === null}
                                             variant='outlined'
-                                            onClick={()=>handleClose()}
+                                            onClick={()=>{
+                                                creaContestazione();
+                                                handleClose();
+
+                                            }
+                                            }
                                         >Crea Contestazione</Button>
                                     </div>
                             }
                             {
-                                statoContetstazione === 1  || statoContetstazione === 2  || statoContetstazione === 8  || statoContetstazione === 9  || entita !== 'PA'  ? null :
+                                contestazioneSelected.contestazione.statoContestazione === 1  || contestazioneSelected.contestazione.statoContestazione === 2  || contestazioneSelected.contestazione.statoContestazione === 8  || contestazioneSelected.contestazione.statoContestazione === 9  || entita !== 'PA'  ? null :
                           
                                     <div className='col-2 me-2'>
                                         <Button 
@@ -343,7 +370,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         >Elimina Contestazione</Button>
                                     </div>
                             }
-                            { statoContetstazione === 1  || statoContetstazione === 2  || statoContetstazione === 8  || statoContetstazione === 9 ? null :
+                            { contestazioneSelected.contestazione.statoContestazione === 1  || contestazioneSelected.contestazione.statoContestazione === 2  || contestazioneSelected.contestazione.statoContestazione === 8  || contestazioneSelected.contestazione.statoContestazione === 9 ? null :
                                 <div className='col-2 me-2'>
                                     <Button
                                   
@@ -353,7 +380,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                 </div>
                             }
                           
-                            { (entita !== 'CON'  && entita !== 'RCP') || statoContetstazione === 1  || statoContetstazione === 2  || statoContetstazione === 8  || statoContetstazione === 9 ? null :
+                            { (entita !== 'CON'  && entita !== 'RCP') || contestazioneSelected.contestazione.statoContestazione === 1  || contestazioneSelected.contestazione.statoContestazione === 2  || contestazioneSelected.contestazione.statoContestazione === 8  || contestazioneSelected.contestazione.statoContestazione === 9 ? null :
                                 <div className='col-2 me-2'>
                                     <Button
                                    
@@ -363,7 +390,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                 </div>
                             }
 
-                            {/*'risposta Consolidatore === vuoto '  ||*/ entita === 'CON' || statoContetstazione === 1  || statoContetstazione === 2  || statoContetstazione === 3  ||statoContetstazione === 8 || statoContetstazione === 9 ? null :
+                            {/*'risposta Consolidatore === vuoto '  ||*/ entita === 'CON' || contestazioneSelected.contestazione.statoContestazione === 1  || contestazioneSelected.contestazione.statoContestazione === 2  || contestazioneSelected.contestazione.statoContestazione === 3  ||contestazioneSelected.contestazione.statoContestazione === 8 || contestazioneSelected.contestazione.statoContestazione === 9 ? null :
                                 <div className='col-2 me-2'>
                                     <Button
                                   
@@ -373,7 +400,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                 </div>
                             }
 
-                            {/*'risposta Recapitista === vuoto '  ||*/ entita === 'RCP' || statoContetstazione === 1  || statoContetstazione === 2  || statoContetstazione === 3  ||statoContetstazione === 8 || statoContetstazione === 9 ? null :
+                            {/*'risposta Recapitista === vuoto '  ||*/ entita === 'RCP' || contestazioneSelected.contestazione.statoContestazione === 1  || contestazioneSelected.contestazione.statoContestazione === 2  || contestazioneSelected.contestazione.statoContestazione === 3  ||contestazioneSelected.contestazione.statoContestazione === 8 || contestazioneSelected.contestazione.statoContestazione === 9 ? null :
                                 <div className='col-2 me-2'>
                                     <Button
                                     
@@ -383,7 +410,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                 </div>
                             }
 
-                            {entita === 'PA'|| statoContetstazione === 1  || statoContetstazione === 2  ||statoContetstazione === 8 || statoContetstazione === 9 ? null :
+                            {entita === 'PA'|| contestazioneSelected.contestazione.statoContestazione === 1  || contestazioneSelected.contestazione.statoContestazione === 2  ||contestazioneSelected.contestazione.statoContestazione === 8 || contestazioneSelected.contestazione.statoContestazione === 9 ? null :
                                 <div className='col-2 me-2'>
                                     <Button
                                     

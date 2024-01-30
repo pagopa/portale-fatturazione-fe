@@ -9,8 +9,8 @@ import {
     BodyDownloadListaCommesse,
     BodyListaNotifiche,
     ManageErrorResponse,
-    BodyCreateContestazione
 } from '../types/typesGeneral';
+import {ModalBodyContestazione} from '../types/typeReportDettaglio';
 
 export const url = process.env.REACT_APP_URL;
 export const redirect = process.env.REACT_APP_REDIRECT || '';
@@ -24,15 +24,14 @@ export const manageError = (res:ManageErrorResponse,navigate:any) =>{
         window.location.href = redirect;
       
     }else if(res?.response?.request?.status   === 404){
-        navigate('/error');
-        //alert('Non è stato possibile aggiungere i dati');
+        //navigate('/error');
+        // alert('Qualcosa è andato storto');
     }else if(res?.response?.request?.status   === 500){
         
-        navigate('/error');
+        alert('Operazione NON eseguita');
     }else if(res?.response?.request?.status  === 400){
         console.log('400 da gestire');
-    }
-    else if(res?.response?.request?.status  === 403){
+    }else if(res?.response?.request?.status  === 403){
         navigate('/error');
     }
 };
@@ -390,8 +389,29 @@ export const flagContestazione = async (token:string, nonce:string) => {
     return response;
 };
 
-export const createContestazione = async (token:string, nonce:string , body: BodyCreateContestazione) => {
+export const createContestazione = async (token:string, nonce:string , body: ModalBodyContestazione) => {
     const response =  await axios.post(`${url}/api/notifiche/contestazione?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token,
+        },
+        }
+    );
+    return response;
+};
+
+export const getContestazione = async (token:string, nonce:string , idNotifica:string) => {
+    const response =  await axios.get(`${url}/api/notifiche/contestazione/${idNotifica}?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
+export const modifyContestazioneEnte = async (token:string, nonce:string , body: ModalBodyContestazione) => {
+    const response =  await axios.put(`${url}/api/notifiche/contestazione?nonce=${nonce}`,
         body,
         { headers: {
             Authorization: 'Bearer ' + token,
