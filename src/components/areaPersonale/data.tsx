@@ -27,7 +27,7 @@ const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate}) => {
 
     const {mainState,setDatiFatturazione, datiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
 
-
+    console.log(datiFatturazione);
 
     const onChangeHandler = (e:any) => {
       
@@ -40,7 +40,7 @@ const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate}) => {
         }
     };
 
-    let valueDate;
+    let valueDate = new Date();
     if(datiFatturazione.dataDocumento){
         valueDate = new Date(datiFatturazione.dataDocumento);
     }

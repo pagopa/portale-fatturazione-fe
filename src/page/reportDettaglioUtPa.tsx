@@ -1,18 +1,18 @@
 import { Typography } from "@mui/material";
 import { } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
-import { useState, useEffect } from 'react';
+import React , { useState, useEffect } from 'react';
 import {
     Card, Table,TableHead,TableBody,
     TableRow,TableCell,TablePagination, TextField,
     Box, FormControl, InputLabel,Select, MenuItem, Button
 } from '@mui/material';
-import { manageError, getTipologiaProdotto, getTipologiaProfilo, listaNotifiche, tipologiaTipoContestazione, flagContestazione } from "../api/api";
-import { ReportDettaglioProps, NotificheList, FlagContestazione  } from "../types/typeReportDettaglio";
+import { manageError, getTipologiaProdotto, getTipologiaProfilo, listaNotifiche, tipologiaTipoContestazione, flagContestazione,  getContestazione } from "../api/api";
+import { ReportDettaglioProps, NotificheList, FlagContestazione, Contestazione  } from "../types/typeReportDettaglio";
 import { useNavigate } from "react-router";
 import { BodyListaNotifiche } from "../types/typesGeneral";
 import ModalContestazione from '../components/reportDettaglio/modalContestazione';
-import React from "react";
+
 
 const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
@@ -58,15 +58,40 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         tipoNotifica:null,
         statoContestazione:null,
         cap:null,
+        iun:null
     });
-
-    //console.log({bodyGetLista});
- 
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
 
+    const [contestazioneSelected, setContestazioneSelected] = useState<Contestazione>({ 
+        modifica: true,
+        accetta: true,
+        contestazione: {
+            id: 0,
+            tipoContestazione: 0,
+            idNotifica: '',
+            noteEnte: '',
+            noteSend: null,
+            noteRecapitista: null,
+            noteConsolidatore: null,
+            rispostaEnte: '',
+            statoContestazione: 0,
+            onere: '',
+            dataInserimentoEnte: '',
+            dataModificaEnte: '',
+            dataInserimentoSend: '',
+            dataModificaSend: '',
+            dataInserimentoRecapitista: '',
+            dataModificaRecapitista: '',
+            dataInserimentoConsolidatore: '',
+            dataModificaConsolidatore: '',
+            dataChiusura: '',
+            anno: 0,
+            mese: 0
+        }
+    });
+  
 
     useEffect(()=>{
-
         if( 
             bodyGetLista.profilo !== '' ||
             bodyGetLista.prodotto !== '' ||
@@ -75,11 +100,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             bodyGetLista.cap !== null){
             setStatusAnnulla('show');
         }else{
-            console.log('hjshjdhjjhf');
+           
             setStatusAnnulla('hidden');
         }
-        
-
     },[bodyGetLista]);
 
 
@@ -109,11 +132,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
   
     useEffect(() => {
         if(mainState.nonce !== ''){
-
             getlistaNotifiche();
-        }
-      
-      
+        } 
     }, [mainState.nonce,rowsPerPage,page]);
   
     const handleChangePage = (
@@ -172,10 +192,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     };
 
 
-   
-
-    
-
     useEffect(()=>{
         if(mainState.nonce !== ''){
             getProdotti();
@@ -189,6 +205,17 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
     const [open, setOpen] = React.useState(false);
 
+    const getContestazioneModal = async(idNotifica:string) =>{
+        await getContestazione(token, mainState.nonce , idNotifica )
+            .then((res)=>{
+                setContestazioneSelected(res.data);
+                setOpen(true);
+          
+            })
+            .catch(((err)=>{
+                manageError(err,navigate);
+            }));
+    };
    
 
     return (
@@ -468,38 +495,65 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                             />
                         </Box>
                     </div>
-                    <div className="col-3  ">
-                        <div className=" d-flex align-items-center justify-content-center h-100">
-                            <div>
-                                <Button 
-                                    onClick={()=> getlistaNotifiche()} 
-                                    //sx={{ marginTop: 'auto', marginBottom: 'auto'}}
-                                    variant="contained"> Filtra
-                                </Button>
-
-                                {statusAnnulla === 'hidden' ? null :
-                        
-                                    <Button
-                                        onClick={()=>{
-                                            setStatusAnnulla('hidden');
-                                            setBodyGetLista({
-                                                profilo:'',
-                                                prodotto:'',
-                                                anno:currentYear,
-                                                mese:currString, 
-                                                tipoNotifica:null,
-                                                statoContestazione:null,
-                                                cap:null,
-                                            });
-                                        } }
-                                        sx={{marginLeft:'24px'}} >
-                    Annulla filtri
+                    <div className="col-3 ">
+                        <Box sx={{width:'80%', marginLeft:'20px'}} >
+                            <TextField
+                                //required={required}
+                                // helperText='Cap'
+                                label='Iun'
+                                placeholder='Iun'
+                                //  disabled={makeTextInputDisable}
+                                value={bodyGetLista.iun || ''}
+                                // error={errorValidation}
+                                onChange={(e) => setBodyGetLista((prev)=>{
+                                   
+                                    if(e.target.value === ''){
+                                        return {...prev, ...{iun:null}};
+                                    }else{
+                                        return {...prev, ...{iun:e.target.value}};
+                                    }
+                                } )}
+                                onBlur={()=> console.log('miao')}
+            
+                            />
+                        </Box>
+                    </div>
+                    <div className="row">
+                        <div className="d-flex justify-content-end mt-5">
+                            <div className=" d-flex align-items-center justify-content-center h-100">
+                                <div>
+                                    <Button 
+                                        onClick={()=> getlistaNotifiche()} 
+                                        sx={{width:'200px'}}
+                                        variant="contained"> Filtra
                                     </Button>
-                                }
-                            </div>
+
+                                    {statusAnnulla === 'hidden' ? null :
+                        
+                                        <Button
+                                            onClick={()=>{
+                                                setStatusAnnulla('hidden');
+                                                setBodyGetLista({
+                                                    profilo:'',
+                                                    prodotto:'',
+                                                    anno:currentYear,
+                                                    mese:currString, 
+                                                    tipoNotifica:null,
+                                                    statoContestazione:null,
+                                                    cap:null,
+                                                    iun:null
+                                                });
+                                            } }
+                                            sx={{marginLeft:'24px'}} >
+                    Annulla filtri
+                                        </Button>
+                                    }
+                                </div>
                 
+                            </div>
                         </div>
                     </div>
+                   
                 </div>
             </div>
             {/* grid */}
@@ -545,7 +599,11 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                     </TableCell>
                               
                                     <TableCell sx={{color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'}}
-                                        onClick={()=> setOpen(true)}
+                                        onClick={()=>{
+                                            
+                                            getContestazioneModal(notifica.idNotifica);
+
+                                        } }
                                     >
                                         {notifica.contestazione}
                                     </TableCell>
@@ -576,7 +634,12 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
             {/* MODAL */}
            
-            <ModalContestazione open={open} setOpen={setOpen}  mainState={mainState}></ModalContestazione>
+            <ModalContestazione open={open} 
+                setOpen={setOpen} 
+                mainState={mainState}
+                contestazioneSelected={contestazioneSelected}
+                setContestazioneSelected={setContestazioneSelected}
+            ></ModalContestazione>
            
         </div>
     );

@@ -10,13 +10,16 @@ export interface NotificheList{
     codiceFiscale:string,
     contestazione:boolean,
     tipoNotifica:string,
-    mese:number
+    mese:number,
+    statoContestazione:number
 }
 
 export interface ModalContestazioneProps{
     open:boolean,
     setOpen:any,
-    mainState:MainState
+    mainState:MainState,
+    contestazioneSelected:Contestazione,
+    setContestazioneSelected:any
 }
 
 export interface FlagContestazione{
@@ -28,4 +31,41 @@ export interface TipoContestazione{
     
     id: number,
     tipo: string
+}
+
+export interface Contestazione {
+    modifica: boolean,
+    accetta: boolean,
+    contestazione: {
+        id: number,
+        tipoContestazione: number,
+        idNotifica: string,
+        noteEnte: string,
+        noteSend: null,
+        noteRecapitista: string | null,
+        noteConsolidatore: string | null,
+        rispostaEnte: string,
+        statoContestazione: number,
+        onere: string,
+        dataInserimentoEnte: string,
+        dataModificaEnte: string,
+        dataInserimentoSend: string,
+        dataModificaSend: string,
+        dataInserimentoRecapitista: string,
+        dataModificaRecapitista: string,
+        dataInserimentoConsolidatore: string,
+        dataModificaConsolidatore: string,
+        dataChiusura: string,
+        anno: number,
+        mese: number
+    }
+
+  
+}
+
+export interface ModalBodyContestazione {
+    tipoContestazione : number | null,
+    noteEnte: string,
+    idNotifica:string,
+    statoContestazione?: number
 }
