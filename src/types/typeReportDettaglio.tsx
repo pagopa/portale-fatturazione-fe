@@ -69,3 +69,11 @@ export interface ModalBodyContestazione {
     idNotifica:string,
     statoContestazione?: number
 }
+
+export interface ModalBodyContestazioneModify {
+    idNotifica: string,
+    noteEnte?: string,
+    rispostaEnte?: string,
+    statoContestazione: number
+}
+
