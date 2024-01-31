@@ -46,7 +46,7 @@ export const DatiFatturazioneContext = createContext<AreaPersonaleContext>({
 
 const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setMainState}) => {
    
-
+    console.log(mainState);
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
 
@@ -118,7 +118,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
             }
             //navigate('/error');
             // setUser('new');
-            setMainState((prev:MainState)=>({...prev, ...{statusPageDatiFatturazione:'mutable'}}));
+            setMainState((prev:MainState)=>({...prev, ...{statusPageDatiFatturazione:'mutable', datiFatturazione:false}}));
             
             setDatiFatturazione({
                 tipoCommessa:'',
@@ -215,7 +215,9 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
         }else{
             setMainState((prev:MainState)=>({...prev, ...{
                 statusPageDatiFatturazione:'immutable',
-                action:'SHOW_MODULO_COMMESSA'
+                action:'SHOW_MODULO_COMMESSA',
+                //agginta
+                inserisciModificaCommessa: 'MODIFY'
             }}));
         
             const statusApp = localStorage.getItem('statusApplication')||'{}';
@@ -223,7 +225,9 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
         
             localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
                 ...{ statusPageDatiFatturazione:'immutable',
-                    action:'SHOW_MODULO_COMMESSA'
+                    action:'SHOW_MODULO_COMMESSA',
+                    //agginta
+                    inserisciModificaCommessa: 'MODIFY'
                 }}));
         }
 
@@ -252,8 +256,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
 
             }else{
 
-
-            
                 modifyDatiFatturazione(datiFatturazione, token,mainState.nonce)
                     .then((res:any) =>{
 
@@ -307,7 +309,8 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
                     
                     setMainState((prev:MainState)=>({...prev, ...{
                         statusPageDatiFatturazione:'immutable',
-                        action:'SHOW_MODULO_COMMESSA'
+                        action:'SHOW_MODULO_COMMESSA',
+                        datiFatturazione:true
                     }}));
                 }).catch(err =>{
 
@@ -324,7 +327,8 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
                 insertDatiFatturazione(body, token,mainState.nonce).then(res =>{
                     setMainState((prev:MainState)=>({...prev, ...{
                         statusPageDatiFatturazione:'immutable',
-                        action:'SHOW_MODULO_COMMESSA'
+                        action:'SHOW_MODULO_COMMESSA',
+                        datiFatturazione:true
                     }}));
         
                     // commentato perche penso non serva
@@ -378,6 +382,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
 
                             <Button
                                 onClick={() =>setMainState((prev:MainState)=>({...prev, ...{statusPageDatiFatturazione:'immutable'}}))}
+                                disabled={mainState.datiFatturazione === false}
                                 variant="outlined"
                                 size="medium"
                             >

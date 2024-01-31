@@ -11,8 +11,8 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import DnsIcon from '@mui/icons-material/Dns';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
-import { getDatiModuloCommessa, getAuthProfilo} from '../../api/api';
-import { SideNavProps } from '../../types/typesGeneral';
+import { getDatiModuloCommessa, getAuthProfilo, getDatiFatturazione, getDatiFatturazionePagoPa} from '../../api/api';
+import { MainState, SideNavProps } from '../../types/typesGeneral';
 
 
 const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => {
@@ -28,7 +28,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
 
    
 
-    // questa chiamata viene eseguita esclusivamente se l'utenete fa un reload page cosi da inserire nuovamente il NONCE nel DOM
+    // questa chiamata viene eseguita esclusivamente se l'utenete fa un reload page cosi da inserire nuovamente il NONCE nel Main state
     const getProfiloToGetNonce = async () =>{
         await getAuthProfilo(profilo.jwt)
             .then((res) =>{
@@ -41,7 +41,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
                 navigate('/error');
             });
     };
-    // eseguiamo la get a riga 21 solo se il value dell'input(nonce) nel Dom è non c'è e controlliamo che nella local storage sia settatto il profilo
+    // eseguiamo la get a riga 31 solo se il nonce nel main state è presente ,controlliamo che nella local storage sia settatto il profilo
     // Object.values(profilo).length !== 0 viene fatto solo per far si che la chiamanta non venga fatta al primo rendering
     // in quel caso il get profilo viene chiamato nella page auth
   
@@ -129,32 +129,60 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
     const checkIfUserIsAutenticated = JSON.parse(getProfiloFromLocalStorage).auth;
   
 
- 
-    
-   
-
-    
-
     const [selectedIndex, setSelectedIndex] = useState(0);
-    const handleListItemClick = () => {
+    
+    const handleListItemClick = async() => {
 
         if(checkIfUserIsAutenticated === 'PAGOPA'){
            
             navigate('/pagopalistadatifatturazione');
         }else{
             navigate('/');
-            
-            setMainState((prev:any)=>({ 
-                ...prev,
-                ...{
-                    action:'DATI_FATTURAZIONE',
-                    statusPageDatiFatturazione:'immutable'
-                }}));
-    
-            localStorage.setItem('statusApplication', JSON.stringify(mainState));
+            if(mainState.datiFatturazione === true){
+                setMainState((prev:any)=>({ 
+                    ...prev,
+                    ...{
+                        action:'DATI_FATTURAZIONE',
+                        statusPageDatiFatturazione:'immutable'
+                    }}));
+        
+                localStorage.setItem('statusApplication', JSON.stringify(mainState));
+            }
+           
+           
         }
         
     };
+
+    // Lato self care
+    // chiamata per capire se i dati fatturazione sono stati inseriti
+    // SI.... riesco ad inserire modulo commessa
+    //No.... redirect dati fatturazione
+    // tutto gestito sul button 'continua' in base al parametro datiFatturazione del main state
+
+    // nella page moduloCommessInserimento questa function viene applicata sia lato selfcare che pago pa poichè se si è loggati come Pago pa
+    // viene mostrata la grid lista commesse , solo nel momento in cui l'utente va a selezionare un comune potrà essere eseguita la
+    // chiamata con i parametri necessari (id ente)
+    const getDatiFat = async () =>{
+      
+        await getDatiFatturazione(token,mainState.nonce).then(( ) =>{ 
+            console.log('dentro fffff');
+            setMainState((prev:MainState)=>({
+                ...prev, 
+                ...{datiFatturazione:true}}));
+           
+        }).catch(err =>{
+            console.log('dentro fail');
+            if(err.response.status === 404){
+                setMainState((prev:MainState)=>({
+                    ...prev,
+                    ...{datiFatturazione:false}}));
+            }
+        });
+
+    };
+
+ 
 
 
     const handleListItemClickModuloCommessa = async () => {
@@ -165,7 +193,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
 
         }else{
             //cliccando sulla side nav Modulo commessa e sono un ente qualsiasi
-
+            await getDatiFat();
             await getDatiModuloCommessa(token, mainState.nonce).then((res)=>{
 
                 if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
@@ -248,10 +276,6 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
             });
             
         }
-      
-
-      
-       
 
     };
 

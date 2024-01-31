@@ -39,20 +39,24 @@ const ModalRedirect : React.FC<ModalProps> =({setOpen, open}) => {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2">
-                    È necessario inserire i Dati di fatturazione
-                    </Typography>
+                    <div className='d-flex justify-content-center'>
+                        <Typography id="modal-modal-title" variant="h6" component="h2">
+                    Gentile cliente
+                        </Typography>
+                    </div>
+                    <div className='mt-3'>
+                        <Typography id="modal-modal-title" variant="body1" component="h2">
+                    Per poter inserire il modulo commessa è nesessario l'inserimento dei dati di fatturazione.
+                        </Typography>
+                    </div>
+                    
+                   
                    
                     <div className='container_buttons_modal d-flex justify-content-center mt-5'>
-                        <Button 
-                            sx={{marginRight:'20px'}} 
-                            variant='outlined'
-                            onClick={()=>handleClose()}
-                        >Annulla</Button>
                         <Button
                             variant='contained'
                             onClick={()=>handleGoToDatiFatturazione()}
-                        >Ok</Button>
+                        >Insrisci i Dati di fatturazione</Button>
                     </div>
                     
                 </Box>

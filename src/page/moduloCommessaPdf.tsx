@@ -174,6 +174,14 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
    
     const arrWithlabelDateMonth = replaceDate(dataPdf.datiModuloCommessa,'[data]',string );
 
+
+    const onIndietroButton = () =>{
+
+        const newStatusApp = {...statusApp, ...{userClickOn:'GRID'}};
+      
+        localStorage.setItem('statusApplication', JSON.stringify(newStatusApp));
+        navigate('/8'); 
+    };
   
 
    
@@ -189,7 +197,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
                         onFocusVisible={() => { console.log('onFocus'); }}
                         size="small"
                         startIcon={<ArrowBackIcon />}
-                        onClick={() => navigate('/8') }
+                        onClick={() => onIndietroButton() }
                    
                     >
                     Indietro

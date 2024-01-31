@@ -1,5 +1,5 @@
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { selfcareLogin, getAuthProfilo } from '../api/api';
+import { selfcareLogin, getAuthProfilo, manageError } from '../api/api';
 import {useEffect} from 'react';
 import { LoginProps, MainState } from '../types/typesGeneral';
 
@@ -38,7 +38,7 @@ const Auth : React.FC<LoginProps> = ({setCheckProfilo, setMainState}) =>{
                 navigate("/");
             } )
             .catch(err => {
-                navigate('/error');
+                manageError(err, navigate);
             });
     };
 
@@ -59,7 +59,10 @@ const Auth : React.FC<LoginProps> = ({setCheckProfilo, setMainState}) =>{
                 getProfilo(res);
                
             }
-        }).catch(err =>navigate('/error'));
+        }).catch((err) =>{
+            manageError(err,navigate);
+        }
+        );
        
     
 

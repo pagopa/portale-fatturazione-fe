@@ -102,13 +102,13 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
     const findValueNazione = (rowNumber : number) =>{
 
         
-        return datiCommessa.moduliCommessa.filter(obj => obj.idTipoSpedizione === rowNumber)[0].numeroNotificheNazionali;
+        return datiCommessa.moduliCommessa.filter(obj => obj.idTipoSpedizione === rowNumber)[0]?.numeroNotificheNazionali;
     };
     const findValueInternazionale = (rowNumber : number) =>{
-        return datiCommessa.moduliCommessa.filter(obj => obj.idTipoSpedizione === rowNumber)[0].numeroNotificheInternazionali;
+        return datiCommessa.moduliCommessa.filter(obj => obj.idTipoSpedizione === rowNumber)[0]?.numeroNotificheInternazionali;
     };
     const findValueTotaleNazInte = (rowNumber : number) =>{
-        const x = datiCommessa.moduliCommessa.filter(obj => obj.idTipoSpedizione === rowNumber)[0].totaleNotifiche;
+        const x = datiCommessa.moduliCommessa.filter(obj => obj.idTipoSpedizione === rowNumber)[0]?.totaleNotifiche;
     
         return x; 
 
