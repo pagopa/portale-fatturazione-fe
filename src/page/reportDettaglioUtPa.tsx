@@ -15,14 +15,14 @@ import ModalContestazione from '../components/reportDettaglio/modalContestazione
 
 
 const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
-
+    
     const navigate = useNavigate();
     
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
-
     
-
+    
+    
     // prendo gli ultimi 2 anni dinamicamente
     const currentYear = (new Date()).getFullYear();
     const getCurrentFinancialYear = () => {
@@ -30,14 +30,14 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         const yearArray = [0, 1].map((count) => `${thisYear - count}`);
         return yearArray;
     };
- 
+    
     //creo un array di oggetti con tutti i mesi 
     const currentMonth = (new Date()).getMonth() + 1;
     const currString = currentMonth;
     const mesi = [
         {1:'Gennaio'},{2:'Febbraio'},{3:'Marzo'},{4:'Aprile'},{5:'Maggio'},{6:'Giugno'},
         {7:'Luglio'},{8:'Agosto'},{9:'Settembre'},{10:'Ottobre'},{11:'Novembre'},{12:'Dicembre'}];
-    
+        
     const tipoNotifica = [
         {"Digitali": 1},
         {"Analogico AR Nazionali": 2}, 
@@ -45,11 +45,11 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         {"Analogico RS Nazionali": 4}, 
         {"Analogico RS Internazionali": 5}, 
         {"Analogico 890":6}];
-
-  
+            
+            
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [profili, setProfili] = useState([]);
-  
+            
     const [bodyGetLista, setBodyGetLista] = useState<BodyListaNotifiche>({
         profilo:'',
         prodotto:'',
@@ -61,7 +61,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         iun:null
     });
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
-
+            
     const [contestazioneSelected, setContestazioneSelected] = useState<Contestazione>({ 
         modifica: true,
         accetta: true,
@@ -89,53 +89,57 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             mese: 0
         }
     });
-  
-
+            
+            
     useEffect(()=>{
         if( 
             bodyGetLista.profilo !== '' ||
-            bodyGetLista.prodotto !== '' ||
-            bodyGetLista.tipoNotifica !== null ||
-            bodyGetLista.statoContestazione !== null ||
-            bodyGetLista.cap !== null){
+                    bodyGetLista.prodotto !== '' ||
+                    bodyGetLista.tipoNotifica !== null ||
+                    bodyGetLista.statoContestazione !== null ||
+                    bodyGetLista.cap !== null){
             setStatusAnnulla('show');
         }else{
-           
+                        
             setStatusAnnulla('hidden');
         }
     },[bodyGetLista]);
-
-
-
+                
+                
+                
     const [notificheList, setNotificheList] = useState<NotificheList[]>([]);
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalNotifiche, setTotalNotifiche]  = useState(0);
-
-
+                
+                
     const getlistaNotifiche = async () => {
-
+                    
         const realPageNumber = page + 1;
         const convertToNumber = Number(realPageNumber);
-
+                    
         await listaNotifiche(token,mainState.nonce,convertToNumber,rowsPerPage, bodyGetLista)
             .then((res)=>{
-             
+                        
                 setNotificheList(res.data.notifiche);
                 setTotalNotifiche(res.data.count);
-
+                        
             }).catch((error)=>{
                 manageError(error, navigate);
             });
-
+                    
     };
-  
+                
+                
+                
+                
+                
     useEffect(() => {
         if(mainState.nonce !== ''){
             getlistaNotifiche();
         } 
     }, [mainState.nonce,rowsPerPage,page]);
-  
+                
     const handleChangePage = (
         event: React.MouseEvent<HTMLButtonElement> | null,
         newPage: number,
@@ -143,55 +147,55 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         console.log({newPage}, 'changePage');
         setPage(newPage);
     };
-    
+                    
     const handleChangeRowsPerPage = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
         console.log(event.target.value, 'rowPage');
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
-        
+                            
     };
-
+                        
     const getProdotti = async() => {
         await getTipologiaProdotto(token, mainState.nonce )
             .then((res)=>{
-               
+                                
                 setProdotti(res.data);
             })
             .catch(((err)=>{
                 manageError(err,navigate);
             }));
     };
-
- 
-
+                        
+                        
+                        
     const getProfili = async() => {
         await getTipologiaProfilo(token, mainState.nonce )
             .then((res)=>{
-               
+                                
                 setProfili(res.data);
             })
             .catch(((err)=>{
                 manageError(err,navigate);
             }));
     };
-
-
+                        
+                        
     const [fgContestazione, setFgContestazione] = useState<FlagContestazione[]>([]);
-
+                        
     const getFlagContestazione =  async() => {
         await flagContestazione(token, mainState.nonce )
             .then((res)=>{
                 setFgContestazione(res.data);
-              
+                                
             })
             .catch(((err)=>{
                 manageError(err,navigate);
             }));
     };
-
-
+                        
+                        
     useEffect(()=>{
         if(mainState.nonce !== ''){
             getProdotti();
@@ -199,25 +203,35 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             getFlagContestazione();
         }
     },[mainState.nonce]);
-
-
+                        
+                        
     // modal
-
+                        
     const [open, setOpen] = React.useState(false);
-
+                        
+                        
+                        
+                        
     const getContestazioneModal = async(idNotifica:string) =>{
         await getContestazione(token, mainState.nonce , idNotifica )
             .then((res)=>{
+                setOpen(true); 
                 setContestazioneSelected(res.data);
-                setOpen(true);
-          
+                                
             })
             .catch(((err)=>{
                 manageError(err,navigate);
             }));
     };
-   
-
+                        
+                        
+    const onSelectContestazione = (notifica:NotificheList) =>{
+                      
+        getContestazioneModal(notifica.idNotifica);
+       
+    };
+                        
+                        
     return (
         <div className="mx-5">
             {/*title container start */}
@@ -236,35 +250,35 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                 <InputLabel
                                     id="sea"
                                 >
-                               Anno
-
+                            Anno
+                            
                                 </InputLabel>
                                 <Select
                                     id="sea"
                                     label='Seleziona Prodotto'
                                     labelId="search-by-label"
                                     onChange={(e) => {
-
+                                
                                         const value = Number(e.target.value);
                                         setBodyGetLista((prev)=> ({...prev, ...{anno:value}}));
                                     }}
                                     value={bodyGetLista.anno}
                                     //IconComponent={SearchIcon}
-                   
+                            
                                     disabled={status=== 'immutable' ? true : false}
-
+                            
                                 >
                                     {getCurrentFinancialYear().map((el) => (
-
+                                
                                         <MenuItem
                                             key={Math.random()}
                                             value={el}
                                         >
                                             {el}
                                         </MenuItem>
-
+                                
                                     ))}
-
+                                
                                 </Select>
                             </FormControl>
                         </Box>
@@ -278,37 +292,37 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                 <InputLabel
                                     id="sea"
                                 >
-                               Mese
-
+                                Mese
+                                
                                 </InputLabel>
                                 <Select
                                     id="sea"
                                     label='Seleziona Prodotto'
                                     labelId="search-by-label"
                                     onChange={(e) =>{
-
+                                    
                                         const value = Number(e.target.value);
                                         setBodyGetLista((prev)=> ({...prev, ...{mese:value}}));
                                     }}
-
-                              
+                                
+                                
                                     value={bodyGetLista.mese}
                                     //IconComponent={SearchIcon}
-                   
+                                
                                     disabled={status=== 'immutable' ? true : false}
-
+                                
                                 >
                                     {mesi.map((el) => (
-
+                                    
                                         <MenuItem
                                             key={Math.random()}
                                             value={Object.keys(el)[0].toString()}
                                         >
                                             {Object.values(el)[0]}
                                         </MenuItem>
-
+                                    
                                     ))}
-
+                                    
                                 </Select>
                             </FormControl>
                         </Box>
@@ -322,7 +336,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                 <InputLabel
                                     id="sea"
                                 >
-                               Seleziona Prodotto
+                                    Seleziona Prodotto
                                 </InputLabel>
                                 <Select
                                     id="prodotto"
@@ -334,16 +348,16 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                     disabled={status=== 'immutable' ? true : false}
                                 >
                                     {prodotti.map((el) => (
-
+                                        
                                         <MenuItem
                                             key={Math.random()}
                                             value={el.nome}
                                         >
                                             {el.nome}
                                         </MenuItem>
-
+                                        
                                     ))}
-
+                                        
                                 </Select>
                             </FormControl>
                         </Box>
@@ -357,8 +371,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                 <InputLabel
                                     id="sea"
                                 >
-                               Recapitista
-
+                                        Recapitista
+                                        
                                 </InputLabel>
                                 <Select
                                     id="sea"
@@ -368,7 +382,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                     value={bodyGetLista.profilo}
                                     //IconComponent={SearchIcon}
                                     disabled={status=== 'immutable' ? true : false}
-
+                                        
                                 >
                                     {profili.map((el) => (
                                         <MenuItem
@@ -377,20 +391,20 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                         >
                                             {el}
                                         </MenuItem>
-
+                                            
                                     ))}
-
+                                            
                                 </Select>
                             </FormControl>
                         </Box>
                     </div>
                 </div>
-
-               
-           
-            
+                                            
+                                            
+                                            
+                                            
                 <div className="row mt-5" >
-                
+                                            
                     <div className="col-3">
                         <Box sx={{width:'80%'}} >
                             <FormControl
@@ -400,8 +414,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                 <InputLabel
                                     id="sea"
                                 >
-                                Tipo Notifica
-
+                                            Tipo Notifica
+                                            
                                 </InputLabel>
                                 <Select
                                     id="sea"
@@ -413,20 +427,20 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                     }}
                                     value={bodyGetLista.tipoNotifica || ''}
                                     //IconComponent={SearchIcon}
-                    
+                                            
                                     disabled={status=== 'immutable' ? true : false}
                                 >
                                     {tipoNotifica.map((el) => (
-
+                                                
                                         <MenuItem
                                             key={Math.random()}
                                             value={Object.values(el)[0].toString()}
                                         >
                                             {Object.keys(el)[0].toString()}
                                         </MenuItem>
-
+                                                
                                     ))}
-
+                                                
                                 </Select>
                             </FormControl>
                         </Box>
@@ -440,8 +454,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                 <InputLabel
                                     id="contestazioni"
                                 >
-                                Contestazione
-
+                                                Contestazione
+                                                
                                 </InputLabel>
                                 <Select
                                     id="contestazioni"
@@ -453,21 +467,21 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                     } 
                                     value={bodyGetLista.statoContestazione || ''}
                                     //IconComponent={SearchIcon}
-                    
+                                                
                                     disabled={status=== 'immutable' ? true : false}
-
+                                                
                                 >
                                     {fgContestazione.map((el) => (
-
+                                                    
                                         <MenuItem
                                             key={el.id}
                                             value={el.id}
                                         >
                                             {el.flag}
                                         </MenuItem>
-
+                                                    
                                     ))}
-
+                                                    
                                 </Select>
                             </FormControl>
                         </Box>
@@ -483,7 +497,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                 value={bodyGetLista.cap || ''}
                                 // error={errorValidation}
                                 onChange={(e) => setBodyGetLista((prev)=>{
-                                   
+                                                        
                                     if(e.target.value === ''){
                                         return {...prev, ...{cap:null}};
                                     }else{
@@ -491,7 +505,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                     }
                                 } )}
                                 onBlur={()=> console.log('miao')}
-            
+                                                    
                             />
                         </Box>
                     </div>
@@ -506,7 +520,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                 value={bodyGetLista.iun || ''}
                                 // error={errorValidation}
                                 onChange={(e) => setBodyGetLista((prev)=>{
-                                   
+                                                        
                                     if(e.target.value === ''){
                                         return {...prev, ...{iun:null}};
                                     }else{
@@ -514,7 +528,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                     }
                                 } )}
                                 onBlur={()=> console.log('miao')}
-            
+                                                    
                             />
                         </Box>
                     </div>
@@ -527,9 +541,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                         sx={{width:'200px'}}
                                         variant="contained"> Filtra
                                     </Button>
-
+                                                    
                                     {statusAnnulla === 'hidden' ? null :
-                        
+                                                    
                                         <Button
                                             onClick={()=>{
                                                 setStatusAnnulla('hidden');
@@ -545,43 +559,43 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                                 });
                                             } }
                                             sx={{marginLeft:'24px'}} >
-                    Annulla filtri
+                                                    Annulla filtri
                                         </Button>
                                     }
                                 </div>
-                
+                                                
                             </div>
                         </div>
                     </div>
-                   
+                                                
                 </div>
             </div>
             {/* grid */}
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
-           
+                                                
                 <Button onClick={()=>console.log('ciao') } >
-            Download Risultati
+                                                Download Risultati
                     <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
                 </Button>
             </div>
-
+                                                
             <div className="mb-5">
                 <Card>
                     <Table>
                         <TableHead>
                             <TableRow>
                                 <TableCell>
-              Mese
+                                                Mese
                                 </TableCell>
                                 <TableCell>
-              Regione Sociale
+                                                Regione Sociale
                                 </TableCell>
                                 <TableCell>
-              Tipo Notifica
+                                                Tipo Notifica
                                 </TableCell>
-                         
+                                                
                                 <TableCell>
-              Contestazione
+                                                Contestazione
                                 </TableCell>
                             </TableRow>
                         </TableHead>
@@ -597,12 +611,12 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                     <TableCell>
                                         {notifica.tipoNotifica}
                                     </TableCell>
-                              
+                                                    
                                     <TableCell sx={{color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'}}
                                         onClick={()=>{
-                                            
-                                            getContestazioneModal(notifica.idNotifica);
-
+                                            onSelectContestazione(notifica);
+                                                        
+                                                        
                                         } }
                                     >
                                         {notifica.contestazione}
@@ -612,7 +626,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                         </TableBody>
                     </Table>
                     <div className=" mt-3">
-
+                                                    
                         <TablePagination
                             sx={{'.MuiTablePagination-selectLabel': {
                                 display:'none'
@@ -625,24 +639,23 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                             onRowsPerPageChange={handleChangeRowsPerPage}
                         />  
                     </div>
-                   
-              
+                                                    
+                                                    
                 </Card>
             </div>
-
-            <Button onClick={()=> setOpen(true)}> APRI/CHIUDI CONTESTAZIONE</Button>
-
+                                                    
+                                                    
             {/* MODAL */}
-           
+                                                    
             <ModalContestazione open={open} 
                 setOpen={setOpen} 
                 mainState={mainState}
                 contestazioneSelected={contestazioneSelected}
                 setContestazioneSelected={setContestazioneSelected}
             ></ModalContestazione>
-           
+                                                    
         </div>
     );
 };
-
+                                                
 export default ReportDettaglio;

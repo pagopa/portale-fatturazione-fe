@@ -6,7 +6,7 @@ import {
     TextField,
     Box, FormControl, InputLabel,Select, MenuItem, Button
 } from '@mui/material';
-import { tipologiaTipoContestazione, manageError, createContestazione} from '../../api/api'; 
+import { tipologiaTipoContestazione, manageError, createContestazione, modifyContestazioneEnte} from '../../api/api'; 
 import { useNavigate } from 'react-router';
 import {useState, useEffect} from 'react';
 import YupString from '../../validations/string/index';
@@ -102,7 +102,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
     },[open]);
 
    
-    console.log(contestazioneSelected.contestazione);
+    console.log(contestazioneSelected);
    
 
    
@@ -146,6 +146,26 @@ CON => consolidatore (selfcare -> tutti gli enti)
             .catch(((err)=>{
                 manageError(err,navigate);
             }));
+    };
+
+    console.log(contestazioneSelected);
+
+    const modifyContestazioneFun = async () => {
+
+        const body = {
+            idNotifica:contestazioneSelected.contestazione.idNotifica,
+            noteEnte:contestazioneSelected.contestazione.noteEnte,
+            rispostaEnte: contestazioneSelected.contestazione.rispostaEnte,
+            statoContestazione:contestazioneSelected.contestazione.statoContestazione
+        };
+        
+        await modifyContestazioneEnte(token, mainState.nonce, body).then((res)=>{
+            setOpen(false);
+            console.log({res}, 'contestazione');
+        }).catch(((err)=>{
+            manageError(err,navigate);
+        }));
+
     };
 
   
@@ -232,13 +252,17 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                     multiline
                                     disabled= {entita !== 'PA' || (contestazioneSelected?.contestazione?.statoContestazione !== 1 && contestazioneSelected?.contestazione?.statoContestazione !== 3)}
                                     // error={errorValidation}
-                                    onChange={(e) =>  setContestazioneSelected((prev:Contestazione)=> ({...prev, ...{noteEnte:e.target.value}}))}
+                                    onChange={(e) =>  setContestazioneSelected((prev:Contestazione)=> {
+                                        const newContestazione = {...prev.contestazione, ...{noteEnte:e.target.value}};
+                                        return {...prev, ...{contestazione:newContestazione}};
+                                     
+                                    })}
                                     onBlur={(e)=> requiredString(e.target.value)}
             
                                 />
                             </div>
                             
-                            {contestazioneSelected?.contestazione?.statoContestazione === 1 ? null : 
+                            {contestazioneSelected?.contestazione?.statoContestazione === 1 || contestazioneSelected?.contestazione?.statoContestazione === 3 ? null : 
                                 <div className='col-4'>
                                     <TextField
                                     //required={required}
@@ -375,8 +399,8 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                     <Button
                                   
                                         variant='contained'
-                                        onClick={()=>console.log('esci')}
-                                    >Rispondi</Button>
+                                        onClick={()=>modifyContestazioneFun()}
+                                    >{contestazioneSelected.contestazione.statoContestazione === 3 ? 'Modifica' : 'Rispondi'}</Button>
                                 </div>
                             }
                           

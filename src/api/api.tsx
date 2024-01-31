@@ -10,7 +10,7 @@ import {
     BodyListaNotifiche,
     ManageErrorResponse,
 } from '../types/typesGeneral';
-import {ModalBodyContestazione} from '../types/typeReportDettaglio';
+import {ModalBodyContestazione, ModalBodyContestazioneModify} from '../types/typeReportDettaglio';
 
 export const url = process.env.REACT_APP_URL;
 export const redirect = process.env.REACT_APP_REDIRECT || '';
@@ -410,7 +410,7 @@ export const getContestazione = async (token:string, nonce:string , idNotifica:s
     return response;
 };
 
-export const modifyContestazioneEnte = async (token:string, nonce:string , body: ModalBodyContestazione) => {
+export const modifyContestazioneEnte = async (token:string, nonce:string , body: ModalBodyContestazioneModify) => {
     const response =  await axios.put(`${url}/api/notifiche/contestazione?nonce=${nonce}`,
         body,
         { headers: {
