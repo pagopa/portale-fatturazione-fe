@@ -57,10 +57,11 @@ CON => consolidatore (selfcare -> tutti gli enti)
         
         YupString.required().validate(string).then(()=>{
             setEnableCreaContestazione(false);
+            setErrNoteEnte(false);
             
         }).catch(()=>{
             setEnableCreaContestazione(true);
-           
+            setErrNoteEnte(true);
         });
     };
    
@@ -102,7 +103,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
     },[open]);
 
    
-    console.log(contestazioneSelected);
+   
    
 
    
@@ -148,7 +149,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
             }));
     };
 
-    console.log(contestazioneSelected);
+   
 
     const modifyContestazioneFun = async () => {
 
@@ -167,6 +168,8 @@ CON => consolidatore (selfcare -> tutti gli enti)
         }));
 
     };
+
+    const [errNoteEnte, setErrNoteEnte] = useState(false);
 
   
 
@@ -251,7 +254,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                     fullWidth
                                     multiline
                                     disabled= {entita !== 'PA' || (contestazioneSelected?.contestazione?.statoContestazione !== 1 && contestazioneSelected?.contestazione?.statoContestazione !== 3)}
-                                    // error={errorValidation}
+                                    error={errNoteEnte}
                                     onChange={(e) =>  setContestazioneSelected((prev:Contestazione)=> {
                                         const newContestazione = {...prev.contestazione, ...{noteEnte:e.target.value}};
                                         return {...prev, ...{contestazione:newContestazione}};
@@ -391,13 +394,13 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                    
                                             variant='outlined'
                                             onClick={()=>handleClose()}
-                                        >Elimina Contestazione</Button>
+                                        >Annulla Contestazione</Button>
                                     </div>
                             }
                             { contestazioneSelected.contestazione.statoContestazione === 1  || contestazioneSelected.contestazione.statoContestazione === 2  || contestazioneSelected.contestazione.statoContestazione === 8  || contestazioneSelected.contestazione.statoContestazione === 9 ? null :
                                 <div className='col-2 me-2'>
                                     <Button
-                                  
+                                        disabled={enableCreaContestazione}
                                         variant='contained'
                                         onClick={()=>modifyContestazioneFun()}
                                     >{contestazioneSelected.contestazione.statoContestazione === 3 ? 'Modifica' : 'Rispondi'}</Button>
