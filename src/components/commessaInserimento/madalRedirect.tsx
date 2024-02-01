@@ -41,12 +41,20 @@ const ModalRedirect : React.FC<ModalProps> =({setOpen, open}) => {
                 <Box sx={style}>
                     <div className='d-flex justify-content-center'>
                         <Typography id="modal-modal-title" variant="h6" component="h2">
-                    Gentile cliente
+                    Gentile utente
                         </Typography>
                     </div>
-                    <div className='mt-3'>
-                        <Typography id="modal-modal-title" variant="body1" component="h2">
-                    Per poter inserire il modulo commessa è nesessario l'inserimento dei dati di fatturazione.
+                    <div className='mt-2'>
+                        <Typography id="modal-modal-title" variant="subtitle1" >
+                        Per poter inserire il modulo commessa è nesessario l'inserimento dei dati di fatturazione obbligatori:
+                            <div className='paddingLeft32'>
+                                <ul className="list-group mt-2">
+                                    <li><Typography id="modal-modal-title" variant="subtitle2" >Split Payment</Typography></li>
+                                    <li><Typography id="modal-modal-title" variant="subtitle2" >Indirizzo mail PEC</Typography></li>
+                                    <li><Typography id="modal-modal-title" variant="subtitle2" >Indirizzo mail di riferimento</Typography></li>
+                                </ul>
+                            </div>
+                            
                         </Typography>
                     </div>
                     
