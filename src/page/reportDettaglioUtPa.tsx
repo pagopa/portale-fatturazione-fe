@@ -7,11 +7,12 @@ import {
     TableRow,TableCell,TablePagination, TextField,
     Box, FormControl, InputLabel,Select, MenuItem, Button
 } from '@mui/material';
-import { manageError, getTipologiaProdotto, getTipologiaProfilo, listaNotifiche, tipologiaTipoContestazione, flagContestazione,  getContestazione } from "../api/api";
+import { manageError, getTipologiaProdotto, getTipologiaProfilo, listaNotifiche, flagContestazione,  getContestazione } from "../api/api";
 import { ReportDettaglioProps, NotificheList, FlagContestazione, Contestazione  } from "../types/typeReportDettaglio";
 import { useNavigate } from "react-router";
 import { BodyListaNotifiche } from "../types/typesGeneral";
 import ModalContestazione from '../components/reportDettaglio/modalContestazione';
+import ModalInfo from "../components/reportDettaglio/modalInfo";
 
 
 const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
@@ -117,10 +118,10 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     
         const realPageNumber = page + 1;
         const convertToNumber = Number(realPageNumber);
-                    
+       
         await listaNotifiche(token,mainState.nonce,convertToNumber,rowsPerPage, bodyGetLista)
             .then((res)=>{
-                        
+                console.log(notificheList, 'LIST', {res});
                 setNotificheList(res.data.notifiche);
                 setTotalNotifiche(res.data.count);
                         
@@ -208,6 +209,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     // modal
                         
     const [open, setOpen] = React.useState(false);
+    const [openModalInfo, setOpenModalInfo] = React.useState(false);
                         
                         
                         
@@ -215,8 +217,18 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const getContestazioneModal = async(idNotifica:string) =>{
         await getContestazione(token, mainState.nonce , idNotifica )
             .then((res)=>{
-                setOpen(true); 
-                setContestazioneSelected(res.data);
+                console.log(123);
+                //se i tempi di creazione di una contestazione sono scaduti show pop up info
+                if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
+                    setOpenModalInfo(true);
+                    console.log(0);
+                }else{
+                    // atrimenti show pop up creazione contestazione
+                    console.log(1);
+                    setOpen(true); 
+                    setContestazioneSelected(res.data);
+                }
+                
                                 
             })
             .catch(((err)=>{
@@ -571,6 +583,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 </div>
             </div>
             {/* grid */}
+            {/* 
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
                                                 
                 <Button onClick={()=>console.log('ciao') } >
@@ -578,7 +591,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
                 </Button>
             </div>
-                                                
+                  */}                              
             <div className="mb-5">
                 <Card>
                     <Table>
@@ -652,7 +665,14 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 mainState={mainState}
                 contestazioneSelected={contestazioneSelected}
                 setContestazioneSelected={setContestazioneSelected}
+                funGetNotifiche={getlistaNotifiche}
             ></ModalContestazione>
+
+            <ModalInfo
+                open={openModalInfo} 
+                setOpen={setOpenModalInfo} >
+
+            </ModalInfo>
                                                     
         </div>
     );

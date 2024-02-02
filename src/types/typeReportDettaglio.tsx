@@ -19,7 +19,8 @@ export interface ModalContestazioneProps{
     setOpen:any,
     mainState:MainState,
     contestazioneSelected:Contestazione,
-    setContestazioneSelected:any
+    setContestazioneSelected:any,
+    funGetNotifiche:any
 }
 
 export interface FlagContestazione{
