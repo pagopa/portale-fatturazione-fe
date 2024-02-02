@@ -22,7 +22,7 @@ const style = {
     p: 4,
 };
 
-const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open, mainState, contestazioneSelected, setContestazioneSelected}) => {
+const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open, mainState, contestazioneSelected, setContestazioneSelected, funGetNotifiche}) => {
 /*
     PA => ente (selfcare)
  SUP=> supporto (ad)
@@ -141,8 +141,9 @@ CON => consolidatore (selfcare -> tutti gli enti)
 
         
         await createContestazione(token, mainState.nonce,body)
-            .then((res)=>{
+            .then(()=>{
                 setOpen(false);
+                funGetNotifiche();
             })
             .catch(((err)=>{
                 manageError(err,navigate);
@@ -151,18 +152,27 @@ CON => consolidatore (selfcare -> tutti gli enti)
 
    
 
-    const modifyContestazioneFun = async () => {
-
-        const body = {
-            idNotifica:contestazioneSelected.contestazione.idNotifica,
-            noteEnte:contestazioneSelected.contestazione.noteEnte,
-            rispostaEnte: contestazioneSelected.contestazione.rispostaEnte,
-            statoContestazione:contestazioneSelected.contestazione.statoContestazione
-        };
+    const modifyContestazioneFun = async (action:string) => {
+        let body;
+        if(action === 'Annulla'){
+            body ={
+                idNotifica:contestazioneSelected.contestazione.idNotifica,
+                statoContestazione:2
+            };
+        }else{
+            body = {
+                idNotifica:contestazioneSelected.contestazione.idNotifica,
+                noteEnte:contestazioneSelected.contestazione.noteEnte,
+                rispostaEnte: contestazioneSelected.contestazione.rispostaEnte,
+                statoContestazione:contestazioneSelected.contestazione.statoContestazione
+            };
+        }
+        
         
         await modifyContestazioneEnte(token, mainState.nonce, body).then((res)=>{
             setOpen(false);
-            console.log({res}, 'contestazione');
+            funGetNotifiche();
+            
         }).catch(((err)=>{
             manageError(err,navigate);
         }));
@@ -179,7 +189,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
         setOpen(true);
     };
     const handleClose = () => {
-        console.log('close elelel');
+        
         setOpen(false);
     };
     return (
@@ -217,9 +227,16 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         onChange={(e) =>{
                                            
                                             if(e.target.value === ''){
-                                                setContestazioneSelected((prev:Contestazione)=> ({...prev, ...{tipoContestazione:null}}));
+                                                 
+                                                setContestazioneSelected((prev:Contestazione)=>{
+                                                    const newContestazione = {...prev.contestazione, tipoContestazione:null};
+                                                    return {...prev, contestazione:newContestazione};
+                                                } );
                                             }else{
-                                                setContestazioneSelected((prev:Contestazione)=> ({...prev, ...{tipoContestazione:Number(e.target.value)}}));
+                                                setContestazioneSelected((prev:Contestazione)=>{
+                                                    const newContestazione = {...prev.contestazione, tipoContestazione:Number(e.target.value)};
+                                                    return {...prev, contestazione:newContestazione};
+                                                } );
                                             }
                                             
                                         } }
@@ -256,8 +273,9 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                     disabled= {entita !== 'PA' || (contestazioneSelected?.contestazione?.statoContestazione !== 1 && contestazioneSelected?.contestazione?.statoContestazione !== 3)}
                                     error={errNoteEnte}
                                     onChange={(e) =>  setContestazioneSelected((prev:Contestazione)=> {
-                                        const newContestazione = {...prev.contestazione, ...{noteEnte:e.target.value}};
-                                        return {...prev, ...{contestazione:newContestazione}};
+                                    
+                                        const newContestazione = {...prev.contestazione, noteEnte:e.target.value};
+                                        return {...prev, contestazione:newContestazione};
                                      
                                     })}
                                     onBlur={(e)=> requiredString(e.target.value)}
@@ -285,7 +303,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                 </div>
                             }
                         </div>
-                        {contestazioneSelected.contestazione.statoContestazione === 1 ? null :
+                        {contestazioneSelected.contestazione.statoContestazione === 1 || contestazioneSelected.contestazione.statoContestazione === 3 ? null :
                             <div className='row mt-5'>
                             
                                 <Typography id="modal-modal-title" variant="overline">
@@ -311,7 +329,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
 
                             </div>
                         }
-                        {contestazioneSelected.contestazione.statoContestazione === 1 ? null :
+                        {contestazioneSelected.contestazione.statoContestazione === 1 || contestazioneSelected.contestazione.statoContestazione === 3 ? null :
                             <div className='row mt-5'>
                             
                                 <Typography id="modal-modal-title" variant="overline">
@@ -338,7 +356,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                             </div>
                         }
 
-                        {contestazioneSelected.contestazione.statoContestazione === 1 ? null :
+                        {contestazioneSelected.contestazione.statoContestazione === 1 || contestazioneSelected.contestazione.statoContestazione === 3 ? null :
                             <div className='row mt-5'>
                             
                                 <Typography id="modal-modal-title" variant="overline">
@@ -379,8 +397,6 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                             variant='outlined'
                                             onClick={()=>{
                                                 creaContestazione();
-                                                handleClose();
-
                                             }
                                             }
                                         >Crea Contestazione</Button>
@@ -393,7 +409,9 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         <Button 
                                    
                                             variant='outlined'
-                                            onClick={()=>handleClose()}
+                                            onClick={()=>{
+                                                modifyContestazioneFun('Annulla');
+                                            }}
                                         >Annulla Contestazione</Button>
                                     </div>
                             }
@@ -402,7 +420,10 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                     <Button
                                         disabled={enableCreaContestazione}
                                         variant='contained'
-                                        onClick={()=>modifyContestazioneFun()}
+                                        onClick={()=>{
+                                            modifyContestazioneFun('Modifica/Rispondi');
+                                            
+                                        }}
                                     >{contestazioneSelected.contestazione.statoContestazione === 3 ? 'Modifica' : 'Rispondi'}</Button>
                                 </div>
                             }
