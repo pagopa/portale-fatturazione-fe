@@ -45,7 +45,8 @@ const getProfilo = async (res:ParameterGetProfilo)=>{
                 dataUltimo:storeProfilo.dataUltimo,
                 dataPrimo:storeProfilo.dataPrimo,
                 prodotto:storeProfilo.prodotto,
-                jwt:res.data[0].jwt
+                jwt:res.data[0].jwt,
+                profilo:storeProfilo.profilo // profilo utilizzato per la gestione delle notifiche/contestazioni
             }));
                 
               

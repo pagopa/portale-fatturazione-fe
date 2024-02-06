@@ -65,7 +65,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             
     const [contestazioneSelected, setContestazioneSelected] = useState<Contestazione>({ 
         modifica: true,
-        accetta: true,
+        chiusura: true,
         contestazione: {
             id: 0,
             tipoContestazione: 0,

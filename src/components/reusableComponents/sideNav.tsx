@@ -302,15 +302,15 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
                             </ListItemIcon>
                             <ListItemText primary="Modulo commessa" />
                         </ListItemButton>
-
-                        <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClickNotifiche()}>
-                            <ListItemIcon>
+                        {profilo.auth !== 'SELFCARE' ? null :
+                            <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClickNotifiche()}>
+                                <ListItemIcon>
                            
-                                <MarkUnreadChatAltIcon fontSize="inherit" />
-                            </ListItemIcon>
-                            <ListItemText primary="Notifiche" />
-                        </ListItemButton>
-                       
+                                    <MarkUnreadChatAltIcon fontSize="inherit" />
+                                </ListItemIcon>
+                                <ListItemText primary="Notifiche" />
+                            </ListItemButton>
+                        }
                     </List>
                     <Divider />
                 </Box>
