@@ -29,15 +29,15 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
  FIN=> finance (ad)
  RCP => recapitista (selfcare -> per cap)
 CON => consolidatore (selfcare -> tutti gli enti)
-*/
+
     const [entita, setEnt] = useState('');
    
     useEffect(()=>{
 
-        setEnt('PA');
+        setEntita('PA');
     },[]);
  
-   
+   */
    
 
     const navigate = useNavigate();
@@ -241,7 +241,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                             
                                         } }
                                         value={contestazioneSelected.contestazione.tipoContestazione|| ''}
-                                        disabled= {entita !== 'PA' || contestazioneSelected?.contestazione?.statoContestazione !== 1}
+                                        disabled= {profilo.profilo !== 'PA' || contestazioneSelected?.contestazione?.statoContestazione !== 1}
 
                                     >
                                         {tipoContestazioni.map((el) => (
@@ -270,7 +270,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                     value={contestazioneSelected.contestazione.noteEnte}
                                     fullWidth
                                     multiline
-                                    disabled= {entita !== 'PA' || (contestazioneSelected?.contestazione?.statoContestazione !== 1 && contestazioneSelected?.contestazione?.statoContestazione !== 3)}
+                                    disabled= {profilo.profilo !== 'PA' || (contestazioneSelected?.contestazione?.statoContestazione !== 1 && contestazioneSelected?.contestazione?.statoContestazione !== 3) ||  contestazioneSelected.modifica === false}
                                     error={errNoteEnte}
                                     onChange={(e) =>  setContestazioneSelected((prev:Contestazione)=> {
                                     
@@ -291,8 +291,8 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         id="x"
                                         label='Risposta'
                                         placeholder='Risposta'
-                                        disabled={entita !== 'PA' || (contestazioneSelected.contestazione.statoContestazione !== 3 && contestazioneSelected.contestazione.statoContestazione !== 4 && contestazioneSelected.contestazione.statoContestazione !== 5 && contestazioneSelected.contestazione.statoContestazione !== 6 )}
-                                        value={''}
+                                        disabled={profilo.profilo !== 'PA' || (contestazioneSelected.contestazione.statoContestazione !== 3 && contestazioneSelected.contestazione.statoContestazione !== 4 && contestazioneSelected.contestazione.statoContestazione !== 5 && contestazioneSelected.contestazione.statoContestazione !== 6 )}
+                                        value={'ciaoaoao'}
                                         fullWidth
                                         multiline
                                         // error={errorValidation}
@@ -316,7 +316,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         id="outlined-basic"
                                         label='Risposta'
                                         placeholder='Risposta'
-                                        disabled={entita !== 'SUP' || (contestazioneSelected.contestazione.statoContestazione !== 1 && contestazioneSelected.contestazione.statoContestazione !== 2 && contestazioneSelected.contestazione.statoContestazione !== 7 && contestazioneSelected.contestazione.statoContestazione !== 8 && contestazioneSelected.contestazione.statoContestazione !== 9 )}
+                                        disabled={profilo.profilo !== 'SUP' || (contestazioneSelected.contestazione.statoContestazione !== 1 && contestazioneSelected.contestazione.statoContestazione !== 2 && contestazioneSelected.contestazione.statoContestazione !== 7 && contestazioneSelected.contestazione.statoContestazione !== 8 && contestazioneSelected.contestazione.statoContestazione !== 9 )}
                                         value={contestazioneSelected.contestazione.noteSend}
                                         fullWidth
                                         multiline
@@ -342,7 +342,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         id="outlined-basic"
                                         label='Risposta'
                                         placeholder='Risposta'
-                                        disabled={entita !== 'RCP' || (contestazioneSelected.contestazione.statoContestazione !== 1 && contestazioneSelected.contestazione.statoContestazione !== 2 && contestazioneSelected.contestazione.statoContestazione !== 5 )}
+                                        disabled={profilo.profilo !== 'RCP' || (contestazioneSelected.contestazione.statoContestazione !== 1 && contestazioneSelected.contestazione.statoContestazione !== 2 && contestazioneSelected.contestazione.statoContestazione !== 5 )}
                                         value={''}
                                         fullWidth
                                         multiline
@@ -369,7 +369,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         id="outlined-basic"
                                         label='Risposta'
                                         placeholder='Risposta'
-                                        disabled={entita !== 'RCP' || (contestazioneSelected.contestazione.statoContestazione !== 1 && contestazioneSelected.contestazione.statoContestazione !== 2 && contestazioneSelected.contestazione.statoContestazione !== 6 && contestazioneSelected.contestazione.statoContestazione !== 8 && contestazioneSelected.contestazione.statoContestazione !== 9  )}
+                                        disabled={profilo.profilo !== 'RCP' || (contestazioneSelected.contestazione.statoContestazione !== 1 && contestazioneSelected.contestazione.statoContestazione !== 2 && contestazioneSelected.contestazione.statoContestazione !== 6 && contestazioneSelected.contestazione.statoContestazione !== 8 && contestazioneSelected.contestazione.statoContestazione !== 9  )}
                                         value={''}
                                         fullWidth
                                         multiline
@@ -403,7 +403,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                     </div>
                             }
                             {
-                                contestazioneSelected.contestazione.statoContestazione === 1  || contestazioneSelected.contestazione.statoContestazione === 2  || contestazioneSelected.contestazione.statoContestazione === 8  || contestazioneSelected.contestazione.statoContestazione === 9  || entita !== 'PA'  ? null :
+                                contestazioneSelected.contestazione.statoContestazione === 1  || contestazioneSelected.contestazione.statoContestazione === 2  || contestazioneSelected.contestazione.statoContestazione === 8  || contestazioneSelected.contestazione.statoContestazione === 9  || profilo.profilo !== 'PA' || (contestazioneSelected.chiusura === false && contestazioneSelected.modifica === false)  ? null :
                           
                                     <div className='col-2 me-2'>
                                         <Button 
@@ -415,7 +415,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         >Annulla Contestazione</Button>
                                     </div>
                             }
-                            { contestazioneSelected.contestazione.statoContestazione === 1  || contestazioneSelected.contestazione.statoContestazione === 2  || contestazioneSelected.contestazione.statoContestazione === 8  || contestazioneSelected.contestazione.statoContestazione === 9 ? null :
+                            { contestazioneSelected.contestazione.statoContestazione === 1  || contestazioneSelected.contestazione.statoContestazione === 2  || contestazioneSelected.contestazione.statoContestazione === 8  || contestazioneSelected.contestazione.statoContestazione === 9  || contestazioneSelected.chiusura === false ? null :
                                 <div className='col-2 me-2'>
                                     <Button
                                         disabled={enableCreaContestazione}
@@ -428,7 +428,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                 </div>
                             }
                           
-                            { (entita !== 'CON'  && entita !== 'RCP') || contestazioneSelected.contestazione.statoContestazione === 1  || contestazioneSelected.contestazione.statoContestazione === 2  || contestazioneSelected.contestazione.statoContestazione === 8  || contestazioneSelected.contestazione.statoContestazione === 9 ? null :
+                            { (profilo.profilo !== 'CON'  && profilo.profilo !== 'RCP') || contestazioneSelected.contestazione.statoContestazione === 1  || contestazioneSelected.contestazione.statoContestazione === 2  || contestazioneSelected.contestazione.statoContestazione === 8  || contestazioneSelected.contestazione.statoContestazione === 9 ? null :
                                 <div className='col-2 me-2'>
                                     <Button
                                    
@@ -438,7 +438,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                 </div>
                             }
 
-                            {/*'risposta Consolidatore === vuoto '  ||*/ entita === 'CON' || contestazioneSelected.contestazione.statoContestazione === 1  || contestazioneSelected.contestazione.statoContestazione === 2  || contestazioneSelected.contestazione.statoContestazione === 3  ||contestazioneSelected.contestazione.statoContestazione === 8 || contestazioneSelected.contestazione.statoContestazione === 9 ? null :
+                            {/*'risposta Consolidatore === vuoto '  ||*/ profilo.profilo === 'CON' || contestazioneSelected.contestazione.statoContestazione === 1  || contestazioneSelected.contestazione.statoContestazione === 2  || contestazioneSelected.contestazione.statoContestazione === 3  ||contestazioneSelected.contestazione.statoContestazione === 8 || contestazioneSelected.contestazione.statoContestazione === 9 ? null :
                                 <div className='col-2 me-2'>
                                     <Button
                                   
@@ -448,7 +448,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                 </div>
                             }
 
-                            {/*'risposta Recapitista === vuoto '  ||*/ entita === 'RCP' || contestazioneSelected.contestazione.statoContestazione === 1  || contestazioneSelected.contestazione.statoContestazione === 2  || contestazioneSelected.contestazione.statoContestazione === 3  ||contestazioneSelected.contestazione.statoContestazione === 8 || contestazioneSelected.contestazione.statoContestazione === 9 ? null :
+                            {/*'risposta Recapitista === vuoto '  ||*/ profilo.profilo === 'RCP' || contestazioneSelected.contestazione.statoContestazione === 1  || contestazioneSelected.contestazione.statoContestazione === 2  || contestazioneSelected.contestazione.statoContestazione === 3  ||contestazioneSelected.contestazione.statoContestazione === 8 || contestazioneSelected.contestazione.statoContestazione === 9 ? null :
                                 <div className='col-2 me-2'>
                                     <Button
                                     
@@ -458,7 +458,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                 </div>
                             }
 
-                            {entita === 'PA'|| contestazioneSelected.contestazione.statoContestazione === 1  || contestazioneSelected.contestazione.statoContestazione === 2  ||contestazioneSelected.contestazione.statoContestazione === 8 || contestazioneSelected.contestazione.statoContestazione === 9 ? null :
+                            {profilo.profilo === 'PA'|| contestazioneSelected.contestazione.statoContestazione === 1  || contestazioneSelected.contestazione.statoContestazione === 2  ||contestazioneSelected.contestazione.statoContestazione === 8 || contestazioneSelected.contestazione.statoContestazione === 9 ? null :
                                 <div className='col-2 me-2'>
                                     <Button
                                     

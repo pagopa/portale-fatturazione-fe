@@ -36,7 +36,7 @@ export interface TipoContestazione{
 
 export interface Contestazione {
     modifica: boolean,
-    accetta: boolean,
+    chiusura: boolean,
     contestazione: {
         id: number,
         tipoContestazione: number,
