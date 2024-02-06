@@ -11,14 +11,15 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import DnsIcon from '@mui/icons-material/Dns';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
-import { getDatiModuloCommessa, getAuthProfilo, getDatiFatturazione, getDatiFatturazionePagoPa} from '../../api/api';
+import { getDatiModuloCommessa, getAuthProfilo, getDatiFatturazione, getDatiFatturazionePagoPa,  manageError} from '../../api/api';
+import MarkUnreadChatAltIcon from '@mui/icons-material/MarkUnreadChatAlt';
 import { MainState, SideNavProps } from '../../types/typesGeneral';
 
 
 const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => {
 
     const navigate = useNavigate();
-    const location : any = useLocation();
+    const location = useLocation();
 
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
@@ -33,7 +34,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
         await getAuthProfilo(profilo.jwt)
             .then((res) =>{
             
-                setMainState((prev:any)=>({...prev, ...{nonce:res?.data.nonce}}));
+                setMainState((prev:MainState)=>({...prev, ...{nonce:res?.data.nonce}}));
            
               
             }).catch(()=>{
@@ -66,7 +67,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
 
             if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
               
-                setMainState((prev:any)=>({
+                setMainState((prev:MainState)=>({
                     ...prev,
                     ...{
                         inserisciModificaCommessa:'INSERT',
@@ -79,7 +80,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
             }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0){
              
              
-                setMainState((prev:any)=>({ 
+                setMainState((prev:MainState)=>({ 
                     ...prev,
                     ...{
                         inserisciModificaCommessa:'MODIFY',
@@ -87,7 +88,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
                         modifica:true}}));
             }else if(res.data.modifica === false ){
               
-                setMainState((prev:any)=>({ 
+                setMainState((prev:MainState)=>({ 
                     ...prev,
                     ...{
                         inserisciModificaCommessa:'NO_ACTION',
@@ -103,12 +104,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
             localStorage.setItem('profilo', string);
 
         }).catch((err)=>{
-          
-            if(err.response.status === 401){
-                navigate('/error');
-            }else if(err.response.status === 419){
-                navigate('/error');
-            }
+            manageError(err, navigate);
             // menageError(err.response.status, navigate);
             
         });
@@ -197,7 +193,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
             await getDatiModuloCommessa(token, mainState.nonce).then((res)=>{
 
                 if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
-                    setMainState((prev:any)=>({
+                    setMainState((prev:MainState)=>({
                         ...prev,
                         ...{
                             inserisciModificaCommessa:'INSERT',
@@ -216,7 +212,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
                     navigate('/8');
                 }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0 ){
     
-                    setMainState((prev:any)=>({ 
+                    setMainState((prev:MainState)=>({ 
                         ...prev,
                         ...{
                             inserisciModificaCommessa:'MODIFY',
@@ -233,7 +229,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
                    
                     navigate('/4');
                 }else if(res.data.modifica === false && res.data.moduliCommessa.length === 0){
-                    setMainState((prev:any)=>({ 
+                    setMainState((prev:MainState)=>({ 
                         ...prev,
                         ...{
                             inserisciModificaCommessa:'NO_ACTION',
@@ -250,7 +246,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
                    
                     navigate('/4');
                 }else if(res.data.modifica === false && res.data.moduliCommessa.length > 0){
-                    setMainState((prev:any)=>({ 
+                    setMainState((prev:MainState)=>({ 
                         ...prev,
                         ...{
                             inserisciModificaCommessa:'NO_ACTION',
@@ -268,17 +264,17 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
                 }
     
             }).catch((err) =>{
-                if(err.response.status === 401){
-                    navigate('/error');
-                }else if(err.response.status === 419){
-                    navigate('/error');
-                }
+                manageError(err, navigate);
             });
             
         }
-
     };
 
+
+    const handleListItemClickNotifiche = () => {
+
+        navigate('/notifiche');
+    };
     
     
     const currentLocation = location.pathname;
@@ -296,6 +292,8 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
             setSelectedIndex(1);
         }else if(currentLocation === '/pdf'){
             setSelectedIndex(1);
+        }else if(currentLocation === '/notifiche'){
+            setSelectedIndex(2);
         }
         
     },[currentLocation]);
@@ -333,7 +331,15 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
                             </ListItemIcon>
                             <ListItemText primary="Modulo commessa" />
                         </ListItemButton>
-                       
+                        {profilo.auth !== 'SELFCARE' ? null :
+                            <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClickNotifiche()}>
+                                <ListItemIcon>
+                           
+                                    <MarkUnreadChatAltIcon fontSize="inherit" />
+                                </ListItemIcon>
+                                <ListItemText primary="Notifiche" />
+                            </ListItemButton>
+                        }
                     </List>
                     <Divider />
                 </Box>

@@ -1,11 +1,12 @@
 import { ListaModuliCommessaProps } from "../types/typeListaModuliCommessa";
+import { MainState, Params } from "../types/typesGeneral";
 import { Typography } from "@mui/material";
 import { Box, FormControl, InputLabel,Select, MenuItem, TextField, Button} from '@mui/material';
 import {getTipologiaProdotto, manageError, listaModuloCommessaPagopa, downloadDocumentoListaModuloCommessaPagoPa} from '../api/api';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { DataGrid, GridRowParams,GridEventListener,MuiEvent, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridRowParams,GridEventListener,MuiEvent, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import DownloadIcon from '@mui/icons-material/Download';
 
 
@@ -19,13 +20,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
 
-    
-    const state = localStorage.getItem('statusApplication') || '{}';
-    const statusApp =  JSON.parse(state);
-
-
-
-
+   
     // prendo gli ultimi 2 anni dinamicamente
     const currentYear = (new Date()).getFullYear().toString();
     const getCurrentFinancialYear = () => {
@@ -150,7 +145,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
 
 
     let columsSelectedGrid = '';
-    const handleOnCellClick = (params:any) =>{
+    const handleOnCellClick = (params:Params) =>{
         columsSelectedGrid  = params.field;
         
     };
@@ -188,7 +183,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
             localStorage.setItem('profilo', stringProfilo);
 
 
-            setMainState((prev:any)=>({...prev, ...{
+            setMainState((prev:MainState)=>({...prev, ...{
                 mese:params.row.mese,
                 anno:params.row.anno,
                 modifica:params.row.modifica,
@@ -231,7 +226,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
             width:70,
             headerAlign: 'left',
             disableColumnMenu :true,
-            renderCell: ((row : any) => (
+            renderCell: (() => (
     
                 <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} onClick={() => console.log('Show page details')} />
     

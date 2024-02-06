@@ -1,6 +1,6 @@
 import React, {useEffect, useState,useContext} from 'react';
 import { Grid, TextField, Typography } from '@mui/material';
-import { RowInsComProps, ModuliCommessa, DatiCommessa , DataTotaleObj} from '../../types/typeModuloCommessaInserimento';
+import { RowInsComProps, ModuliCommessa, DatiCommessa} from '../../types/typeModuloCommessaInserimento';
 import YupString from '../../validations/string/index';
 import { InsModuloCommessaContext } from '../../types/typeModuloCommessaInserimento';
 import { InserimentoModuloCommessaContext } from '../../page/moduloCommessaInserimentoUtEn30';
@@ -9,7 +9,7 @@ import { InserimentoModuloCommessaContext } from '../../page/moduloCommessaInser
 
 
 const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHidden, idTipoSpedizione, rowNumber}) => {
-    const { setDatiCommessa,setDisableContinua, datiCommessa, totale, setTotale, mainState} = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
+    const { setDatiCommessa,setDisableContinua, datiCommessa, mainState} = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
 
 
     const getStatusApplication = localStorage.getItem('statusApplication') || '{}';
@@ -84,17 +84,18 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
  
  
 
-    const hendleOnBlur = (e:any) =>{
+    const hendleOnBlur = (e:React.FocusEvent<HTMLTextAreaElement | HTMLInputElement, Element>) =>{
         e.persist();
-      
-        validationAllowNumberColumNazionale(e.target.value, setErrorNazionale);
-        validationAllowNumberColumnInternazionale(e.target.value, setErrorNazionale);
+        const num = Number(e.target.value);
+        validationAllowNumberColumNazionale(num, setErrorNazionale);
+        validationAllowNumberColumnInternazionale(num, setErrorNazionale);
     
     };
-    const hendleOnBlur2 = (e:any) =>{
+    const hendleOnBlur2 = (e:React.FocusEvent<HTMLTextAreaElement | HTMLInputElement, Element>) =>{
         e.persist();
-        validationAllowNumberColumNazionale(e.target.value, setErrorInternazionale);
-        validationAllowNumberColumnInternazionale(e.target.value, setErrorInternazionale);
+        const num = Number(e.target.value);
+        validationAllowNumberColumNazionale(num, setErrorInternazionale);
+        validationAllowNumberColumnInternazionale(num, setErrorInternazionale);
     };
 
     

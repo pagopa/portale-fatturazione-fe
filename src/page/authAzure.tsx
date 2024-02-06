@@ -1,5 +1,4 @@
 import { pagopaLogin, getAuthProfilo, manageError } from "../api/api";
-import { loginRequest } from '../authConfig';
 import {InteractionRequiredAuthError,InteractionStatus,
 } from "@azure/msal-browser";
 import { useMsal } from "@azure/msal-react";
@@ -36,13 +35,7 @@ const AuthAzure : React.FC<AuthAzureProps> = ({setMainState}) =>{
                
 
                     setTokens({access_token:accessToken, id_token:idToken});
-                    /*
-                    const stringTokens = JSON.stringify(tokens);
-                    localStorage.setItem('tokens',stringTokens);
-                    // Call your API with token
-                      callApi(accessToken).then((response) => {
-                        setApiData(response);
-                    });*/
+                  
                 })
                 .catch((error) => {
                     if (error instanceof InteractionRequiredAuthError) {
@@ -83,8 +76,15 @@ const AuthAzure : React.FC<AuthAzureProps> = ({setMainState}) =>{
     };
 
 
+    type  Jwt = {
+        jwt:string
+    }
+    interface ParameterGetProfiloAzure {
+        data:Jwt
+    }
 
-    const getProfilo = async (res:any)=>{
+
+    const getProfilo = async (res:ParameterGetProfiloAzure)=>{
       
         await getAuthProfilo(res.data.jwt)
             .then(resp =>{

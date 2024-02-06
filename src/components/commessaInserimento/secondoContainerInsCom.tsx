@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useContext} from 'react';
 import { Grid, Typography } from '@mui/material';
 import RowInserimentoCommessa from './rowInserimentoCommessa';
-import { InsModuloCommessaContext } from '../../types/typeModuloCommessaInserimento';
+import { InsModuloCommessaContext, ArrayTipologieCommesse,ResponseCategorieSpedizione   } from '../../types/typeModuloCommessaInserimento';
 import { InserimentoModuloCommessaContext } from '../../page/moduloCommessaInserimentoUtEn30';
-import { getCategoriaSpedizione} from '../../api/api';
+import { getCategoriaSpedizione, manageError} from '../../api/api';
 import { useNavigate } from 'react-router';
+import { ManageErrorResponse } from '../../types/typesGeneral';
 
 const SecondoContainerInsCom : React.FC = () => {
     const navigate = useNavigate();
@@ -12,7 +13,9 @@ const SecondoContainerInsCom : React.FC = () => {
     const token =  JSON.parse(getToken).token;
     const { totale, mainState} = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
 
-    const getIdByTipo = (string:string, array:any[]) =>{
+   
+
+    const getIdByTipo = (string:string, array:ArrayTipologieCommesse[]) =>{
       
         const getAllObjs = array.map((singleObj)=>{
             return singleObj.tipoSpedizione;
@@ -29,7 +32,8 @@ const SecondoContainerInsCom : React.FC = () => {
     });
  
     const getCategoria = async () =>{
-        await getCategoriaSpedizione(token , mainState.nonce).then((res:any) => {
+        await getCategoriaSpedizione(token , mainState.nonce).then((res:ResponseCategorieSpedizione ) => {
+         
          
             setArrTipoSpedizione({
                 idSpedizioneDigitale :getIdByTipo('Digitale',res.data),
@@ -38,12 +42,8 @@ const SecondoContainerInsCom : React.FC = () => {
             });
           
             
-        }).catch((err:any) =>{
-            if(err?.response?.status === 401){
-                navigate('/error');
-            }else if(err?.response?.status === 419){
-                navigate('/error');
-            }
+        }).catch((err:ManageErrorResponse) =>{
+            manageError(err, navigate);
         });
     };
    

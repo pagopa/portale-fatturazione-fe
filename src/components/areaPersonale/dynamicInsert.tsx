@@ -53,7 +53,7 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
         } );
     };
 
-    const handleElement = (e: any) => {
+    const handleElement = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const mail = e.target.value;
       
         setElement(mail);

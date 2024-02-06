@@ -3,7 +3,7 @@ import { Typography, Button } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
-import HorizontalLinearStepper from '../reusableComponents/stepper';
+import { MainState } from '../../types/typesGeneral';
 
 const PageTitleNavigation = () => {
 
@@ -25,6 +25,9 @@ const PageTitleNavigation = () => {
         titleNavigation = 'Inserisci dati di fatturazione ';
       
     }
+
+    console.log(mainState);
+
    
     // da usare quando si saprà bene la logica
     // const pathNewUser =  <Typography  variant="caption"> /<strong> Iserisci dati di fatturazione</strong></Typography>;
@@ -42,7 +45,7 @@ const PageTitleNavigation = () => {
                             onFocusVisible={() => { console.log('onFocus'); }}
                             size="small"
                             startIcon={<ArrowBackIcon />}
-                            onClick={() => setMainState((prev:any)=>({...prev, ...{statusPageDatiFatturazione:'immutable'}}))}
+                            onClick={() =>  setMainState((prev:MainState)=>({...prev, ...{statusPageDatiFatturazione:'immutable'}})) }
                             sx={{marginBottom:'2px'}}
                         >
                           Indietro 
@@ -60,7 +63,7 @@ const PageTitleNavigation = () => {
             
             {mainState.statusPageDatiFatturazione === 'immutable' && profilo.ruolo === 'R/W' ? (
                 <div className="text-end marginTop24">
-                    <Button onClick={() => setMainState((prev:any)=>({...prev, ...{statusPageDatiFatturazione:'mutable'}}))} variant="contained" size="small">Modifica</Button>
+                    <Button onClick={() => setMainState((prev:MainState)=>({...prev, ...{statusPageDatiFatturazione:'mutable'}}))} variant="contained" size="small">Modifica</Button>
                 </div>
             ) : null}
 
