@@ -6,26 +6,41 @@ import {DataProps, AreaPersonaleContext}  from '../../types/typesAreaPersonaleUt
 import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
 
 
+export interface DatePickerProps {
+    label: string;
+  
+    className?: string;
+    disabled?: boolean;
+    error?: string | boolean;
+    onChange?: (v: string) => void;
+    name?: string;
+    value?: string | number | Date;
+    min_date?: string | number | Date;
+    max_date?: string | number | Date;
+    placeholder?: string;
+    autocomplete: "birthday";
+}
+
 
 
 const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate}) => {
 
     const {mainState,setDatiFatturazione, datiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
 
-  
+    console.log(datiFatturazione);
 
-    const onChangeHandler = (e: any) => {
+    const onChangeHandler = (e:any) => {
       
 
         try {
             const data = new Date(e).toISOString();
             setDatiFatturazione({...datiFatturazione,...{dataDocumento:data}});
         } catch (error) {
-            setDatiFatturazione({...datiFatturazione,...{dataDocumento:null}});
+            setDatiFatturazione({...datiFatturazione,...{dataDocumento:''}});
         }
     };
 
-    let valueDate = null;
+    let valueDate = new Date();
     if(datiFatturazione.dataDocumento){
         valueDate = new Date(datiFatturazione.dataDocumento);
     }

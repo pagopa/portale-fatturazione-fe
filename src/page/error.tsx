@@ -1,7 +1,16 @@
 import { Typography, Box } from "@mui/material";
 import { IllusError } from "@pagopa/mui-italia";
 
+import { redirect } from "../api/api";
+
 const ErrorPage : React.FC = () =>{
+    const getToken = localStorage.getItem('token') || '{}';
+    const token =  JSON.parse(getToken).token || {};
+
+    if(Object.keys(token).length === 0){
+    
+        window.location.href = redirect;
+    }
 
     return(
        

@@ -12,10 +12,10 @@ import {insertDatiModuloCommessa, getDettaglioModuloCommessa, getModuloCommessaP
 import { redirect } from '../api/api';
 import AreaPersonaleUtenteEnte from '../page/areaPersonaleUtenteEnte';
 import HorizontalLinearStepper from '../components/reusableComponents/stepper';
-import { DatiCommessa, InsModuloCommessaContext , ResponsTotaliInsModuloCommessa,ModuloCommessaInserimentoProps, TotaleNazionaleInternazionale} from '../types/typeModuloCommessaInserimento';
 import { SuccesResponseGetDatiFatturazione } from '../types/typesAreaPersonaleUtenteEnte';
-import { MainState } from '../types/typesGeneral';
 import ModalRedirect from '../components/commessaInserimento/madalRedirect';
+import { DatiCommessa, ResponseDettaglioModuloCommessa, InsModuloCommessaContext ,ModuloCommessaInserimentoProps, TotaleNazionaleInternazionale, ResponsTotaliInsModuloCommessa, ModuliCommessa} from '../types/typeModuloCommessaInserimento';
+import { MainState, ManageErrorResponse } from '../types/typesGeneral';
 
 
 
@@ -50,13 +50,6 @@ export const InserimentoModuloCommessaContext = createContext<InsModuloCommessaC
 
 const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps> = ({mainState, setMainState}) => {
 
-
-
-    
-    const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre",'Gennaio'];
-
-    const navigate = useNavigate();
-
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
 
@@ -65,7 +58,11 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
    
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
+
+    const navigate = useNavigate();
+
     
+    const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre",'Gennaio'];
 
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
@@ -120,10 +117,14 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     // visualizza modulo cmmessa from grid 
    
 
+ 
+   
+
     const handleGetDettaglioModuloCommessa = async () =>{
 
         await getDettaglioModuloCommessa(token,statusApp.anno,statusApp.mese, mainState.nonce)
-            .then((response:any)=>{
+            .then((response:ResponseDettaglioModuloCommessa)=>{
+                console.log({response}, 'maledetta ');
                 const res = response.data;
                 setDataModifica(res.dataModifica);
                 setDatiCommessa({moduliCommessa:res.moduliCommessa});
@@ -134,14 +135,14 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                     , totaleNotifiche:objAboutTotale.totaleNumeroNotificheDaProcessare});
                 
                 setButtonMofica(res.modifica);
-            }).catch((err:any)=>{
+            }).catch((err:ManageErrorResponse)=>{
                 manageError(err,navigate);
             });
     };
 
     const handleGetDettaglioModuloCommessaPagoPa = async () => {
         await getModuloCommessaPagoPa(token, mainState.nonce,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto, statusApp.mese, statusApp.anno )
-            .then((response:any)=>{
+            .then((response:ResponseDettaglioModuloCommessa)=>{
                 const res = response.data;
                 setDatiCommessa({moduliCommessa:res.moduliCommessa});
                 setTotaliModuloCommessa(res.totale);
@@ -151,7 +152,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                     , totaleNotifiche:objAboutTotale.totaleNumeroNotificheDaProcessare});
                 setDataModifica(res.dataModifica);
                 setButtonMofica(res.modifica);
-            }).catch((err:any)=>{
+            }).catch((err:ManageErrorResponse)=>{
              
                 manageError(err,navigate);
             });
@@ -251,7 +252,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
    
     //const [disableContinua, setDisableContinua] = useState(false);
 
-    const calculateTot = (arr:any, string:string) =>{
+    const calculateTot = (arr:ModuliCommessa[], string:string) =>{
         return arr.reduce((a:number,b:any) =>{
     
             return a + b[string];
@@ -275,10 +276,12 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     },[datiCommessa]);
 
     // funzione utilizzata con la response sul click modifica/insert modulo commessa , sia utente selcare che pagopa
-    const toDoOnPostModifyCommessa = (res:any) =>{
+    const toDoOnPostModifyCommessa = (res:ResponseDettaglioModuloCommessa) =>{
+
+        console.log({res}, 'TOT');
         if(mainState.inserisciModificaCommessa === 'MODIFY'){
                  
-            setMainState((prev:any)=>({
+            setMainState((prev:MainState)=>({
                 ...prev,
                 ...{
                     action:'SHOW_MODULO_COMMESSA',
@@ -354,13 +357,14 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
         if(profilo.auth === 'PAGOPA'){
             hendleModifyDatiModuloCommessaPagoPa();
         }else{
-            hendlePostModuloCommessa();
+            navigate('/');
+            // hendlePostModuloCommessa();
         }
     };
    
 
     const hendleOnButtonModificaModuloCommessa = () => {
-        setMainState((prev:any)=>({...prev,...{statusPageInserimentoCommessa:'mutable'}}));
+        setMainState((prev:MainState)=>({...prev,...{statusPageInserimentoCommessa:'mutable'}}));
         setTotaliModuloCommessa([
             {
                 idCategoriaSpedizione: 0,
@@ -485,7 +489,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 {mainState.action !== "HIDE_MODULO_COMMESSA" ?
                     <div>
                         <div className="bg-white mt-3 pt-3">
-                            <PrimoContainerInsCom setMainState={setMainState} />
+                            <PrimoContainerInsCom />
                             <SecondoContainerInsCom  />
        
                         </div>

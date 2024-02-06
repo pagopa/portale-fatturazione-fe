@@ -3,18 +3,20 @@ import { Box } from '@mui/material';
 import { DataGrid, GridRowParams,GridEventListener,MuiEvent, GridColDef } from '@mui/x-data-grid';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useNavigate } from 'react-router';
+import { DataGridCommessa } from '../../types/typeModuloCommessaElenco';
+import { MainState, Params } from '../../types/typesGeneral';
 
 
 
 interface GridComponentProps {
-    data: any[],
+    data: DataGridCommessa[],
     setMainState:any,
-    mainState:any
+    mainState:MainState
    
 }
 
 const GridComponent : React.FC<GridComponentProps> = (props) => {
-    const {data, setMainState, mainState} = props;
+    const {data, setMainState} = props;
     const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre",'Gennaio'];
 
   
@@ -33,8 +35,11 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
 
     const navigate = useNavigate();
 
+   
+
     let columsSelectedGrid = '';
-    const handleOnCellClick = (params:any) =>{
+    const handleOnCellClick = (params:Params) =>{
+        console.log(params, 'params');
         columsSelectedGrid  = params.field;
         
     };
@@ -43,8 +48,7 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
 
     const handleEvent: GridEventListener<'rowClick'> = (
         params:GridRowParams,
-        event: MuiEvent<React.MouseEvent<HTMLElement>>,
-        idCommessa
+        event: MuiEvent<React.MouseEvent<HTMLElement>>
     ) => {
         event.preventDefault();
         // l'evento verrà eseguito solo se l'utente farà il clik sul mese o l'action(freccia)
@@ -62,7 +66,7 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
             const string = JSON.stringify(newState);
             localStorage.setItem('statusApplication', string);
 
-            setMainState((prev:any)=>({...prev, ...{
+            setMainState((prev:MainState)=>({...prev, ...{
                 mese:getMeseIndex+1,
                 anno:params.row.annoValidita,
                 modifica:params.row.modifica,
@@ -85,7 +89,7 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
             headerAlign: 'left',
             headerName:'Mese',
             width: 120,
-            renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.meseValidita}</a>
+            renderCell: (param:Params) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.meseValidita}</a>
             
 
         },
@@ -134,7 +138,7 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
             headerName: '',
             sortable: false,
             headerAlign: 'left',
-            renderCell: ((row : any) => (
+            renderCell: (() => (
     
                 <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} />
     

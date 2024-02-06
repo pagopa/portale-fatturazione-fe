@@ -1,16 +1,16 @@
 import { Typography } from "@mui/material";
 import { Box, FormControl, InputLabel,Select, MenuItem, TextField, Button} from '@mui/material';
 import {getTipologiaProdotto, getTipologiaProfilo, listaDatiFatturazionePagopa, downloadDocumentoListaDatiFatturazionePagoPa, manageError} from '../api/api';
-import { ListaDatiFatturazioneProps } from "../types/typeListaDatiFatturazione";
+import { ListaDatiFatturazioneProps, ResponseDownloadListaFatturazione } from "../types/typeListaDatiFatturazione";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import {BodyListaDatiFatturazione} from '../types/typesGeneral';
+import {BodyListaDatiFatturazione, Params} from '../types/typesGeneral';
 import { DataGrid, GridRowParams,GridEventListener,MuiEvent, GridColDef } from '@mui/x-data-grid';
 import DownloadIcon from '@mui/icons-material/Download';
-import { usePDF } from 'react-to-pdf';
 
-const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainState, setMainState}) =>{
+
+const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainState}) =>{
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
 
@@ -18,7 +18,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
     const profilo =  JSON.parse(getProfilo);
 
     const navigate = useNavigate();
-    const { toPDF, targetRef } = usePDF({filename: 'ModuloCommessa.pdf'});
+    
 
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [profili, setProfili] = useState(['']);
@@ -105,11 +105,15 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
         }
     }, [mainState.nonce]);
 
+   
+
+    
+
 
 
     const onDownloadButton = async() =>{
-        await downloadDocumentoListaDatiFatturazionePagoPa(token, mainState.nonce, bodyGetLista).then((res:any) => {
-   
+        await downloadDocumentoListaDatiFatturazionePagoPa(token, mainState.nonce, bodyGetLista).then((res:ResponseDownloadListaFatturazione) => {
+            console.log(res, 'documento');
             //const url = window.URL.createObjectURL(res.data.documento);
             const link = document.createElement('a');
             link.href = "data:text/plain;base64," + res.data.documento;
@@ -126,10 +130,13 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
         });
     };
 
+    
+
 
 
     let columsSelectedGrid = '';
-    const handleOnCellClick = (params:any) =>{
+    const handleOnCellClick = (params:Params) =>{
+      
         columsSelectedGrid  = params.field;
         
     };
@@ -138,7 +145,6 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
     const handleEvent: GridEventListener<'rowClick'> = (
         params:GridRowParams,
         event: MuiEvent<React.MouseEvent<HTMLElement>>,
-        idCommessa
     ) => {
         event.preventDefault();
      
@@ -181,7 +187,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
             width:70,
             headerAlign: 'left',
             disableColumnMenu :true,
-            renderCell: ((row : any) => (
+            renderCell: (() => (
     
                 <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} onClick={() => console.log('Show page details')} />
     

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, createContext  } from 'react';
 import { redirect } from '../api/api';
-import { useNavigate, useLocation } from 'react-router';
+import { useNavigate} from 'react-router';
 import '../style/areaPersonaleUtenteEnte.css';
 import { Button } from '@mui/material';
 import TabAreaPersonaleUtente from '../components/areaPersonale/tabAreaPersonaleUtente';
@@ -11,7 +11,6 @@ import {
     DatiFatturazione,
     StateEnableConferma,
     AreaPersonaleProps,
-    DatiFatturazionePost,
     SuccesResponseGetDatiFatturazione
 } from '../types/typesAreaPersonaleUtenteEnte';
 import {
@@ -46,17 +45,18 @@ export const DatiFatturazioneContext = createContext<AreaPersonaleContext>({
 
 const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setMainState}) => {
    
-   
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
 
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
 
-  
+    const navigate = useNavigate();
+
+    // set dello stato user , se l'user ha dati fatturazione === old altrimenti === new
     const [user, setUser] = useState('old');
   
-    const navigate = useNavigate();
+   
    
     const [datiFatturazione, setDatiFatturazione] = useState<DatiFatturazione>({
         tipoCommessa:'',
@@ -74,10 +74,9 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
 
     });
 
+    console.log({datiFatturazione});
 
-  
- 
-
+    // state creato per il tasto conferma , abilitato nel caso in cui tutti values sono true
     const [statusBottonConferma, setStatusButtonConferma] = useState<StateEnableConferma>({
         'CUP':false,
         'CIG':false,
@@ -86,6 +85,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
         "Codice. Commessa/Convenzione":false,
     });
    
+    // check su ogni elemento dello state statusBottonConferma
     const enableDisableConferma = Object.values(statusBottonConferma).every(element => element === false);
    
     const ifAnyTextAreaIsEmpty = (
@@ -94,9 +94,10 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
      || datiFatturazione.contatti.length === 0
     );
   
-    
-   
+  
 
+   
+    // get dati fatturazione SELFCARE
     const getDatiFat = async () =>{
       
         await getDatiFatturazione(token,mainState.nonce).then((res:SuccesResponseGetDatiFatturazione ) =>{   
@@ -135,32 +136,25 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
                 notaLegale:false
         
             });
+
+            manageError(err, navigate);
         });
 
     };
    
+    // get dati fatturazione PAGOPA
     const getDatiFatPagoPa = async () =>{
 
         await getDatiFatturazionePagoPa(token,mainState.nonce, profilo.idEnte, profilo.prodotto ).then((res:SuccesResponseGetDatiFatturazione) =>{   
             setUser('old');
-           
+            console.log('kkkk', user);
             setDatiFatturazione(res.data); 
            
         }).catch(err =>{
            
-            if(err.response.status === 401){
-                localStorage.removeItem("token");
-                localStorage.removeItem("profilo");
-                navigate('/error');
-            }else if(err.response.status === 404){
-
-                setUser('new');
-            }else if(err.response.status === 419){
-
-                navigate('/error');
-            }
+            manageError(err, navigate);
             // navigate('/error');
-            // setUser('new');
+            setUser('new');
             setMainState((prev:MainState)=>({...prev, ...{statusPageDatiFatturazione:'mutable'}}));
             
             setDatiFatturazione({
@@ -182,7 +176,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
     };
  
 
-
+    // se il nonce è presente viene chiamata la get dati fatturazione
     useEffect(()=>{
         if(mainState.nonce !== ''){
             if(profilo.auth !== 'PAGOPA'){
@@ -195,6 +189,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
         }
     }, [mainState.nonce]);
 
+    // se non c'è il token viene fatto il redirect al portale di accesso 
     useEffect(()=>{
         if(token === undefined){
             window.location.href = redirect;
@@ -206,6 +201,9 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
             window.location.href = '/pagopalistadatifatturazione';
         }
     },[]);
+
+
+    // funzione richiamata in entrambe le funzioni modify dati fatturazione lato selcare e pagopa
 
     const actionOnResponseModifyDatiFatturazione = () =>{
         if(mainState.action === 'DATI_FATTURAZIONE'){
@@ -237,16 +235,14 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
 
     const hendleSubmitDatiFatturazione = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) =>{
         e.preventDefault();
-
-       
-
+        //  1 - se l'user ha già dati fatturazione
         if(user === 'old'){
-
+            // 1 - ed è un utente PAGOPA
             if(profilo.auth === 'PAGOPA'){
 
                 const newDatiFatturazione = {...datiFatturazione, ...{idEnte:profilo.idEnte,prodotto:profilo.prodotto}};
 
-                modifyDatiFatturazionePagoPa(token,mainState.nonce, newDatiFatturazione ).then((res:any) =>{
+                modifyDatiFatturazionePagoPa(token,mainState.nonce, newDatiFatturazione ).then(() =>{
 
                     actionOnResponseModifyDatiFatturazione();
                 
@@ -255,9 +251,9 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
                 });
 
             }else{
-
+                // 1 - ed è un utente SELFCARE
                 modifyDatiFatturazione(datiFatturazione, token,mainState.nonce)
-                    .then((res:any) =>{
+                    .then(() =>{
 
                         actionOnResponseModifyDatiFatturazione();
                     
@@ -277,7 +273,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
            
            
         }else{
-            
+            // 2 - se l'user NON ha I dati fatturazione
             const body = {
                 tipoCommessa:datiFatturazione.tipoCommessa,
                 splitPayment:datiFatturazione.splitPayment,
@@ -303,9 +299,9 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
                 prodotto:profilo.prodotto
             };
               
-
+            // 2 - ed è un utente PAGOPA
             if(profilo.auth === 'PAGOPA'){
-                insertDatiFatturazionePagoPa( token,mainState.nonce, bodyPagoPa).then((res:any)  =>{
+                insertDatiFatturazionePagoPa( token,mainState.nonce, bodyPagoPa).then(()  =>{
                     
                     setMainState((prev:MainState)=>({...prev, ...{
                         statusPageDatiFatturazione:'immutable',
@@ -324,16 +320,14 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
                 });
 
             }else{
-                insertDatiFatturazione(body, token,mainState.nonce).then(res =>{
+                // 2 - ED è UN UTENTE SELFCARE
+                insertDatiFatturazione(body, token,mainState.nonce).then(() =>{
                     setMainState((prev:MainState)=>({...prev, ...{
                         statusPageDatiFatturazione:'immutable',
                         action:'SHOW_MODULO_COMMESSA',
                         datiFatturazione:true
                     }}));
-        
-                    // commentato perche penso non serva
-                    // navigate('/');
-                        
+          
                 }).catch(err =>{
                     if(err.response.status === 401){
                         navigate('/error');
@@ -351,6 +345,9 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
     
          
     };
+
+
+   
  
 
     
@@ -387,7 +384,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
                                 size="medium"
                             >
               Indietro
-
                             </Button>
                             <Button
                                 variant="contained"

@@ -1,0 +1,681 @@
+import { Typography } from "@mui/material";
+import { } from '@mui/material';
+import DownloadIcon from '@mui/icons-material/Download';
+import React , { useState, useEffect } from 'react';
+import {
+    Card, Table,TableHead,TableBody,
+    TableRow,TableCell,TablePagination, TextField,
+    Box, FormControl, InputLabel,Select, MenuItem, Button
+} from '@mui/material';
+import { manageError, getTipologiaProdotto, getTipologiaProfilo, listaNotifiche, flagContestazione,  getContestazione } from "../api/api";
+import { ReportDettaglioProps, NotificheList, FlagContestazione, Contestazione  } from "../types/typeReportDettaglio";
+import { useNavigate } from "react-router";
+import { BodyListaNotifiche } from "../types/typesGeneral";
+import ModalContestazione from '../components/reportDettaglio/modalContestazione';
+import ModalInfo from "../components/reportDettaglio/modalInfo";
+
+
+const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
+    
+    const navigate = useNavigate();
+    
+    const getToken = localStorage.getItem('token') || '{}';
+    const token =  JSON.parse(getToken).token;
+    
+    
+    
+    // prendo gli ultimi 2 anni dinamicamente
+    const currentYear = (new Date()).getFullYear();
+    const getCurrentFinancialYear = () => {
+        const thisYear = (new Date()).getFullYear();
+        const yearArray = [0, 1].map((count) => `${thisYear - count}`);
+        return yearArray;
+    };
+    
+    //creo un array di oggetti con tutti i mesi 
+    const currentMonth = (new Date()).getMonth() + 1;
+    const currString = currentMonth;
+    const mesi = [
+        {1:'Gennaio'},{2:'Febbraio'},{3:'Marzo'},{4:'Aprile'},{5:'Maggio'},{6:'Giugno'},
+        {7:'Luglio'},{8:'Agosto'},{9:'Settembre'},{10:'Ottobre'},{11:'Novembre'},{12:'Dicembre'}];
+        
+    const tipoNotifica = [
+        {"Digitali": 1},
+        {"Analogico AR Nazionali": 2}, 
+        {"Analogico AR Internazionali": 3},
+        {"Analogico RS Nazionali": 4}, 
+        {"Analogico RS Internazionali": 5}, 
+        {"Analogico 890":6}];
+            
+            
+    const [prodotti, setProdotti] = useState([{nome:''}]);
+    const [profili, setProfili] = useState([]);
+            
+    const [bodyGetLista, setBodyGetLista] = useState<BodyListaNotifiche>({
+        profilo:'',
+        prodotto:'',
+        anno:currentYear,
+        mese:currString, 
+        tipoNotifica:null,
+        statoContestazione:null,
+        cap:null,
+        iun:null
+    });
+    const [statusAnnulla, setStatusAnnulla] = useState('hidden');
+            
+    const [contestazioneSelected, setContestazioneSelected] = useState<Contestazione>({ 
+        modifica: true,
+        chiusura: true,
+        contestazione: {
+            id: 0,
+            tipoContestazione: 0,
+            idNotifica: '',
+            noteEnte: '',
+            noteSend: null,
+            noteRecapitista: null,
+            noteConsolidatore: null,
+            rispostaEnte: '',
+            statoContestazione: 0,
+            onere: '',
+            dataInserimentoEnte: '',
+            dataModificaEnte: '',
+            dataInserimentoSend: '',
+            dataModificaSend: '',
+            dataInserimentoRecapitista: '',
+            dataModificaRecapitista: '',
+            dataInserimentoConsolidatore: '',
+            dataModificaConsolidatore: '',
+            dataChiusura: '',
+            anno: 0,
+            mese: 0
+        }
+    });
+            
+            
+    useEffect(()=>{
+        if( 
+            bodyGetLista.profilo !== '' ||
+                    bodyGetLista.prodotto !== '' ||
+                    bodyGetLista.tipoNotifica !== null ||
+                    bodyGetLista.statoContestazione !== null ||
+                    bodyGetLista.cap !== null){
+            setStatusAnnulla('show');
+        }else{
+                        
+            setStatusAnnulla('hidden');
+        }
+    },[bodyGetLista]);
+                
+                
+                
+    const [notificheList, setNotificheList] = useState<NotificheList[]>([]);
+    const [page, setPage] = React.useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [totalNotifiche, setTotalNotifiche]  = useState(0);
+                
+                
+    const getlistaNotifiche = async () => {
+                    
+        const realPageNumber = page + 1;
+        const convertToNumber = Number(realPageNumber);
+       
+        await listaNotifiche(token,mainState.nonce,convertToNumber,rowsPerPage, bodyGetLista)
+            .then((res)=>{
+                console.log(notificheList, 'LIST', {res});
+                setNotificheList(res.data.notifiche);
+                setTotalNotifiche(res.data.count);
+                        
+            }).catch((error)=>{
+                manageError(error, navigate);
+            });
+                    
+    };
+                
+                
+                
+                
+                
+    useEffect(() => {
+        if(mainState.nonce !== ''){
+            getlistaNotifiche();
+        } 
+    }, [mainState.nonce,rowsPerPage,page]);
+                
+    const handleChangePage = (
+        event: React.MouseEvent<HTMLButtonElement> | null,
+        newPage: number,
+    ) => {
+        console.log({newPage}, 'changePage');
+        setPage(newPage);
+    };
+                    
+    const handleChangeRowsPerPage = (
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    ) => {
+        console.log(event.target.value, 'rowPage');
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+                            
+    };
+                        
+    const getProdotti = async() => {
+        await getTipologiaProdotto(token, mainState.nonce )
+            .then((res)=>{
+                                
+                setProdotti(res.data);
+            })
+            .catch(((err)=>{
+                manageError(err,navigate);
+            }));
+    };
+                        
+                        
+                        
+    const getProfili = async() => {
+        await getTipologiaProfilo(token, mainState.nonce )
+            .then((res)=>{
+                                
+                setProfili(res.data);
+            })
+            .catch(((err)=>{
+                manageError(err,navigate);
+            }));
+    };
+                        
+                        
+    const [fgContestazione, setFgContestazione] = useState<FlagContestazione[]>([]);
+                        
+    const getFlagContestazione =  async() => {
+        await flagContestazione(token, mainState.nonce )
+            .then((res)=>{
+                setFgContestazione(res.data);
+                                
+            })
+            .catch(((err)=>{
+                manageError(err,navigate);
+            }));
+    };
+                        
+                        
+    useEffect(()=>{
+        if(mainState.nonce !== ''){
+            getProdotti();
+            getProfili();
+            getFlagContestazione();
+        }
+    },[mainState.nonce]);
+                        
+                        
+    // modal
+                        
+    const [open, setOpen] = React.useState(false);
+    const [openModalInfo, setOpenModalInfo] = React.useState(false);
+                        
+                        
+                        
+                        
+    const getContestazioneModal = async(idNotifica:string) =>{
+        await getContestazione(token, mainState.nonce , idNotifica )
+            .then((res)=>{
+                console.log(123);
+                //se i tempi di creazione di una contestazione sono scaduti show pop up info
+                if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
+                    setOpenModalInfo(true);
+                    console.log(0);
+                }else{
+                    // atrimenti show pop up creazione contestazione
+                    console.log(1);
+                    setOpen(true); 
+                    setContestazioneSelected(res.data);
+                }
+                
+                                
+            })
+            .catch(((err)=>{
+                manageError(err,navigate);
+            }));
+    };
+                        
+                        
+    const onSelectContestazione = (notifica:NotificheList) =>{
+                      
+        getContestazioneModal(notifica.idNotifica);
+       
+    };
+                        
+                        
+    return (
+        <div className="mx-5">
+            {/*title container start */}
+            <div className="marginTop24 ">
+                <Typography variant="h4">Report Dettaglio</Typography>
+            </div>
+            {/*title container end */}
+            <div className="container  mt-5 mb-5 ">
+                <div className="row">
+                    <div className="col-3   ">
+                        <Box sx={{width:'80%'}} >
+                            <FormControl
+                                fullWidth
+                                size="medium"
+                            >
+                                <InputLabel
+                                    id="sea"
+                                >
+                            Anno
+                            
+                                </InputLabel>
+                                <Select
+                                    id="sea"
+                                    label='Seleziona Prodotto'
+                                    labelId="search-by-label"
+                                    onChange={(e) => {
+                                
+                                        const value = Number(e.target.value);
+                                        setBodyGetLista((prev)=> ({...prev, ...{anno:value}}));
+                                    }}
+                                    value={bodyGetLista.anno}
+                                    //IconComponent={SearchIcon}
+                            
+                                    disabled={status=== 'immutable' ? true : false}
+                            
+                                >
+                                    {getCurrentFinancialYear().map((el) => (
+                                
+                                        <MenuItem
+                                            key={Math.random()}
+                                            value={el}
+                                        >
+                                            {el}
+                                        </MenuItem>
+                                
+                                    ))}
+                                
+                                </Select>
+                            </FormControl>
+                        </Box>
+                    </div>
+                    <div className="col-3  ">
+                        <Box sx={{width:'80%', marginLeft:'20px'}}  >
+                            <FormControl
+                                fullWidth
+                                size="medium"
+                            >
+                                <InputLabel
+                                    id="sea"
+                                >
+                                Mese
+                                
+                                </InputLabel>
+                                <Select
+                                    id="sea"
+                                    label='Seleziona Prodotto'
+                                    labelId="search-by-label"
+                                    onChange={(e) =>{
+                                    
+                                        const value = Number(e.target.value);
+                                        setBodyGetLista((prev)=> ({...prev, ...{mese:value}}));
+                                    }}
+                                
+                                
+                                    value={bodyGetLista.mese}
+                                    //IconComponent={SearchIcon}
+                                
+                                    disabled={status=== 'immutable' ? true : false}
+                                
+                                >
+                                    {mesi.map((el) => (
+                                    
+                                        <MenuItem
+                                            key={Math.random()}
+                                            value={Object.keys(el)[0].toString()}
+                                        >
+                                            {Object.values(el)[0]}
+                                        </MenuItem>
+                                    
+                                    ))}
+                                    
+                                </Select>
+                            </FormControl>
+                        </Box>
+                    </div>
+                    <div className="col-3  ">
+                        <Box sx={{width:'80%', marginLeft:'20px'}} >
+                            <FormControl
+                                fullWidth
+                                size="medium"
+                            >
+                                <InputLabel
+                                    id="sea"
+                                >
+                                    Seleziona Prodotto
+                                </InputLabel>
+                                <Select
+                                    id="prodotto"
+                                    label='Seleziona Prodotto'
+                                    labelId="search-by-label"
+                                    onChange={(e) => setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}))}
+                                    value={bodyGetLista.prodotto}
+                                    //IconComponent={SearchIcon}
+                                    disabled={status=== 'immutable' ? true : false}
+                                >
+                                    {prodotti.map((el) => (
+                                        
+                                        <MenuItem
+                                            key={Math.random()}
+                                            value={el.nome}
+                                        >
+                                            {el.nome}
+                                        </MenuItem>
+                                        
+                                    ))}
+                                        
+                                </Select>
+                            </FormControl>
+                        </Box>
+                    </div>
+                    <div className="col-3 ">
+                        <Box  sx={{width:'80%', marginLeft:'20px'}} >
+                            <FormControl
+                                fullWidth
+                                size="medium"
+                            >
+                                <InputLabel
+                                    id="sea"
+                                >
+                                        Recapitista
+                                        
+                                </InputLabel>
+                                <Select
+                                    id="sea"
+                                    label='Recapitista'
+                                    labelId="search-by-label"
+                                    onChange={(e) => setBodyGetLista((prev)=> ({...prev, ...{profilo:e.target.value}}))}
+                                    value={bodyGetLista.profilo}
+                                    //IconComponent={SearchIcon}
+                                    disabled={status=== 'immutable' ? true : false}
+                                        
+                                >
+                                    {profili.map((el) => (
+                                        <MenuItem
+                                            key={Math.random()}
+                                            value={el}
+                                        >
+                                            {el}
+                                        </MenuItem>
+                                            
+                                    ))}
+                                            
+                                </Select>
+                            </FormControl>
+                        </Box>
+                    </div>
+                </div>
+                                            
+                                            
+                                            
+                                            
+                <div className="row mt-5" >
+                                            
+                    <div className="col-3">
+                        <Box sx={{width:'80%'}} >
+                            <FormControl
+                                fullWidth
+                                size="medium"
+                            >
+                                <InputLabel
+                                    id="sea"
+                                >
+                                            Tipo Notifica
+                                            
+                                </InputLabel>
+                                <Select
+                                    id="sea"
+                                    label='Tipo Notifica'
+                                    labelId="search-by-label"
+                                    onChange={(e) =>{
+                                        const value = Number(e.target.value);
+                                        setBodyGetLista((prev)=> ({...prev, ...{tipoNotifica:value}}));
+                                    }}
+                                    value={bodyGetLista.tipoNotifica || ''}
+                                    //IconComponent={SearchIcon}
+                                            
+                                    disabled={status=== 'immutable' ? true : false}
+                                >
+                                    {tipoNotifica.map((el) => (
+                                                
+                                        <MenuItem
+                                            key={Math.random()}
+                                            value={Object.values(el)[0].toString()}
+                                        >
+                                            {Object.keys(el)[0].toString()}
+                                        </MenuItem>
+                                                
+                                    ))}
+                                                
+                                </Select>
+                            </FormControl>
+                        </Box>
+                    </div>
+                    <div className=" col-3 ">
+                        <Box sx={{width:'80%', marginLeft:'20px'}} >
+                            <FormControl
+                                fullWidth
+                                size="medium"
+                            >
+                                <InputLabel
+                                    id="contestazioni"
+                                >
+                                                Contestazione
+                                                
+                                </InputLabel>
+                                <Select
+                                    id="contestazioni"
+                                    label='Contestazione'
+                                    labelId="search-by-label"
+                                    onChange={(e) =>{
+                                        const value = Number(e.target.value);
+                                        setBodyGetLista((prev)=> ({...prev, ...{statoContestazione:value}}));}
+                                    } 
+                                    value={bodyGetLista.statoContestazione || ''}
+                                    //IconComponent={SearchIcon}
+                                                
+                                    disabled={status=== 'immutable' ? true : false}
+                                                
+                                >
+                                    {fgContestazione.map((el) => (
+                                                    
+                                        <MenuItem
+                                            key={el.id}
+                                            value={el.id}
+                                        >
+                                            {el.flag}
+                                        </MenuItem>
+                                                    
+                                    ))}
+                                                    
+                                </Select>
+                            </FormControl>
+                        </Box>
+                    </div>
+                    <div className="col-3 ">
+                        <Box sx={{width:'80%', marginLeft:'20px'}} >
+                            <TextField
+                                //required={required}
+                                // helperText='Cap'
+                                label='Cap'
+                                placeholder='Cap'
+                                //  disabled={makeTextInputDisable}
+                                value={bodyGetLista.cap || ''}
+                                // error={errorValidation}
+                                onChange={(e) => setBodyGetLista((prev)=>{
+                                                        
+                                    if(e.target.value === ''){
+                                        return {...prev, ...{cap:null}};
+                                    }else{
+                                        return {...prev, ...{cap:e.target.value}};
+                                    }
+                                } )}
+                                onBlur={()=> console.log('miao')}
+                                                    
+                            />
+                        </Box>
+                    </div>
+                    <div className="col-3 ">
+                        <Box sx={{width:'80%', marginLeft:'20px'}} >
+                            <TextField
+                                //required={required}
+                                // helperText='Cap'
+                                label='Iun'
+                                placeholder='Iun'
+                                //  disabled={makeTextInputDisable}
+                                value={bodyGetLista.iun || ''}
+                                // error={errorValidation}
+                                onChange={(e) => setBodyGetLista((prev)=>{
+                                                        
+                                    if(e.target.value === ''){
+                                        return {...prev, ...{iun:null}};
+                                    }else{
+                                        return {...prev, ...{iun:e.target.value}};
+                                    }
+                                } )}
+                                onBlur={()=> console.log('miao')}
+                                                    
+                            />
+                        </Box>
+                    </div>
+                    <div className="row">
+                        <div className="d-flex justify-content-end mt-5">
+                            <div className=" d-flex align-items-center justify-content-center h-100">
+                                <div>
+                                    <Button 
+                                        onClick={()=> getlistaNotifiche()} 
+                                        sx={{width:'200px'}}
+                                        variant="contained"> Filtra
+                                    </Button>
+                                                    
+                                    {statusAnnulla === 'hidden' ? null :
+                                                    
+                                        <Button
+                                            onClick={()=>{
+                                                setStatusAnnulla('hidden');
+                                                setBodyGetLista({
+                                                    profilo:'',
+                                                    prodotto:'',
+                                                    anno:currentYear,
+                                                    mese:currString, 
+                                                    tipoNotifica:null,
+                                                    statoContestazione:null,
+                                                    cap:null,
+                                                    iun:null
+                                                });
+                                            } }
+                                            sx={{marginLeft:'24px'}} >
+                                                    Annulla filtri
+                                        </Button>
+                                    }
+                                </div>
+                                                
+                            </div>
+                        </div>
+                    </div>
+                                                
+                </div>
+            </div>
+            {/* grid */}
+            {/* 
+            <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
+                                                
+                <Button onClick={()=>console.log('ciao') } >
+                                                Download Risultati
+                    <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
+                </Button>
+            </div>
+                  */}                              
+            <div className="mb-5">
+                <Card>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>
+                                                Mese
+                                </TableCell>
+                                <TableCell>
+                                                Regione Sociale
+                                </TableCell>
+                                <TableCell>
+                                                Tipo Notifica
+                                </TableCell>
+                                                
+                                <TableCell>
+                                                Contestazione
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {notificheList.map((notifica:NotificheList) => (
+                                <TableRow key={notifica.idNotifica}>
+                                    <TableCell>
+                                        {notifica.mese}
+                                    </TableCell>
+                                    <TableCell>
+                                        {notifica.ragioneSociale}
+                                    </TableCell>
+                                    <TableCell>
+                                        {notifica.tipoNotifica}
+                                    </TableCell>
+                                                    
+                                    <TableCell sx={{color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'}}
+                                        onClick={()=>{
+                                            onSelectContestazione(notifica);
+                                                        
+                                                        
+                                        } }
+                                    >
+                                        {notifica.contestazione}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                    <div className=" mt-3">
+                                                    
+                        <TablePagination
+                            sx={{'.MuiTablePagination-selectLabel': {
+                                display:'none'
+                            }}}
+                            component="div"
+                            page={page}
+                            count={totalNotifiche}
+                            rowsPerPage={rowsPerPage}
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                        />  
+                    </div>
+                                                    
+                                                    
+                </Card>
+            </div>
+                                                    
+                                                    
+            {/* MODAL */}
+                                                    
+            <ModalContestazione open={open} 
+                setOpen={setOpen} 
+                mainState={mainState}
+                contestazioneSelected={contestazioneSelected}
+                setContestazioneSelected={setContestazioneSelected}
+                funGetNotifiche={getlistaNotifiche}
+            ></ModalContestazione>
+
+            <ModalInfo
+                open={openModalInfo} 
+                setOpen={setOpenModalInfo} >
+
+            </ModalInfo>
+                                                    
+        </div>
+    );
+};
+                                                
+export default ReportDettaglio;

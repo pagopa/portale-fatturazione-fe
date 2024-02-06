@@ -17,6 +17,7 @@ import HeaderNavComponent from './components/reusableComponents/headerNav';
 import AzureLogin from './page/azureLogin';
 import PagoPaListaDatiFatturazione from './page/pagoPaListaDatiFatturazione';
 import PagoPaListaModuliCommessa from './page/pagoPaListaModuliCommessa';
+import ReportDettaglio from './page/reportDettaglioUtPa';
 import AuthAzure from './page/authAzure';
 import { MsalProvider, AuthenticatedTemplate, useMsal, UnauthenticatedTemplate } from '@azure/msal-react';
 import Azure from './page/azure';
@@ -24,12 +25,6 @@ import Azure from './page/azure';
 import { Container, Button } from 'react-bootstrap';
 import { loginRequest } from './authConfig';
 import './App.css';
-
-
-
-
-
-
 
 
 const MainContent = () => {
@@ -103,9 +98,7 @@ const App = ({ instance }) => {
 
       
         <MsalProvider instance={instance}>
-
             <Router>
-           
                 <ThemeProvider theme={theme}>
                     <div className="App">
 
@@ -123,17 +116,12 @@ const App = ({ instance }) => {
 
                                 <Grid item xs={10}>
                                     <Routes>
-                                        <Route path="*" element={<Navigate to={redirectOnWrongURL} replace />} />
                                         
                                         <Route path="/auth" element={<Auth setCheckProfilo={setCheckProfilo} setMainState={setMainState} />} />
                                         
                                         <Route path="/auth/azure" element={<AuthAzure setMainState={setMainState}/>} />
                                         
                                         <Route path="azure" element={<Azure />} />
-
-                                        <Route path="/azureLogin" element={<AzureLogin />} />
-
-                                        <Route path="/error" element={<ErrorPage />} />
                                         
                                         <Route path="/" element={<AreaPersonaleUtenteEnte
                                             mainState={mainState}
@@ -149,10 +137,12 @@ const App = ({ instance }) => {
                                     
                                         <Route path="/pagopalistamodulicommessa" element={<PagoPaListaModuliCommessa mainState={mainState} setMainState={setMainState} />} />
                                    
+                                        <Route path="/notifiche" element={<ReportDettaglio mainState={mainState} />} />
 
-                                       
+                                        <Route path="*" element={<Navigate to="/error" replace />} />
 
-                                       
+                                        <Route path="/azureLogin" element={<AzureLogin />} />
+                                        <Route path="/error" element={<ErrorPage />} />
                                     </Routes>
 
 

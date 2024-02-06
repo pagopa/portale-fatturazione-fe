@@ -6,41 +6,33 @@ import {
     BodyListaDatiFatturazione,
     BodyDownloadDatiFatturazione,
     BodyListaModuloCommessa,
-    BodyDownloadListaCommesse
+    BodyDownloadListaCommesse,
+    BodyListaNotifiche,
+    ManageErrorResponse,
 } from '../types/typesGeneral';
+import {ModalBodyContestazione, ModalBodyContestazioneModify} from '../types/typeReportDettaglio';
 
+export const url = process.env.REACT_APP_URL;
+export const redirect = process.env.REACT_APP_REDIRECT || '';
 
-
-//dev
-
-//"https://portalefatturebeapi20231102162515.azurewebsites.net"
-
-export const url = "https://portalefatturebeapi20231102162515.azurewebsites.net";
-export const redirect = "https://uat.selfcare.pagopa.it/";
-
-
-//prd
-
-//export const url = "https://fat-p-app-api.azurewebsites.net";
-//export const redirect = "https://selfcare.pagopa.it/";
-
-
-export const manageError = (res:any,navigate:any) =>{
-    
-    if(res.response.status === 401){
-       
+export const manageError = (res:ManageErrorResponse,navigate:any) =>{
+    console.log({res}, 'ERROR');
+    if(res?.response?.request?.status === 401){
+        console.log('401');
         localStorage.removeItem("token");
         localStorage.removeItem("profilo");
-        navigate('/error');
+        window.location.href = redirect;
       
-    }else if(res.response.status  === 404){
-        navigate('/error');
-        //alert('Non è stato possibile aggiungere i dati');
-    }else if(res.response.status  === 500){
+    }else if(res?.response?.request?.status   === 404){
+        //navigate('/error');
+        // alert('Qualcosa è andato storto');
+    }else if(res?.response?.request?.status   === 500){
         
-        navigate('/error');
-    }else if(res.response.status  === 400){
+        alert('Operazione NON eseguita');
+    }else if(res?.response?.request?.status  === 400){
         console.log('400 da gestire');
+    }else if(res?.response?.request?.status  === 403){
+        navigate('/error');
     }
 };
 
@@ -366,7 +358,68 @@ export const downloadDocumentoListaModuloCommessaPagoPa = async (token:string, n
     return response;
 };
 
+export const listaNotifiche = async (token:string, nonce:string , page:number, pageSize:number, body: BodyListaNotifiche) => {
+    const response =  await axios.post(`${url}/api/notifiche/ente?page=${page}&pageSize=${pageSize}&nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },
+        }
+    );
+    return response;
+};
 
+export const tipologiaTipoContestazione = async (token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/tipologia/tipocontestazione?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
+export const flagContestazione = async (token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/tipologia/flagcontestazione?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
+export const createContestazione = async (token:string, nonce:string , body: ModalBodyContestazione) => {
+    const response =  await axios.post(`${url}/api/notifiche/contestazione?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token,
+        },
+        }
+    );
+    return response;
+};
+
+export const getContestazione = async (token:string, nonce:string , idNotifica:string) => {
+    const response =  await axios.get(`${url}/api/notifiche/contestazione/${idNotifica}?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
+export const modifyContestazioneEnte = async (token:string, nonce:string , body: ModalBodyContestazioneModify) => {
+    const response =  await axios.put(`${url}/api/notifiche/contestazione?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token,
+        },
+        }
+    );
+    return response;
+};
 
 
 
