@@ -208,8 +208,9 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
 
     const columns: GridColDef[] = [
         { field: 'regioneSociale', headerName: 'Regione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/8">{param.row.ragioneSociale}</a>},
+        //{ field: 'mese', headerName: 'Mese', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'prodotto', headerName: 'Prodotto', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        // { field: 'tipoSpedizioneDigitale', headerName: 'Tipo Spedizione', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        
         { field: 'numeroNotificheNazionaliDigitale', headerName: 'Num. Not. Naz.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'numeroNotificheInternazionaliDigitale', headerName: 'Num. Not. Int', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         // { field: 'tipoSpedizioneAnalogicoAR', headerName: 'Tipo spediz Anal', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },

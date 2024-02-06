@@ -166,13 +166,13 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
     const getDatiFat = async () =>{
       
         await getDatiFatturazione(token,mainState.nonce).then(( ) =>{ 
-            console.log('dentro fffff');
+            
             setMainState((prev:MainState)=>({
                 ...prev, 
                 ...{datiFatturazione:true}}));
            
         }).catch(err =>{
-            console.log('dentro fail');
+          
             if(err.response.status === 404){
                 setMainState((prev:MainState)=>({
                     ...prev,

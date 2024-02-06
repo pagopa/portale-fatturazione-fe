@@ -101,8 +101,8 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
             field: 'dataModifica',
             headerClassName: 'super-app-theme--header',
             headerAlign: 'left',
-            headerName:'Data',
-            width: 160,
+            headerName:'Data Inserimento',
+            width: 190,
 
         },
         {

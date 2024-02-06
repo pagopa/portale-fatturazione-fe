@@ -46,7 +46,7 @@ export const DatiFatturazioneContext = createContext<AreaPersonaleContext>({
 
 const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setMainState}) => {
    
-    console.log(mainState);
+   
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
 

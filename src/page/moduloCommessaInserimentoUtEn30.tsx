@@ -220,7 +220,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
             // SELFCARE
             if(profilo.auth !== 'PAGOPA'){
 
-                console.log('??????');
+                
                 handleGetDettaglioModuloCommessa();
                 getDatiFat();
                 //PAGOPA
@@ -285,7 +285,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                     statusPageInserimentoCommessa:'immutable',
                     statusPageDatiFatturazione:'immutable',
                 }}));
-            console.log(res, 'RES');
+          
             setDataModifica(res.data.dataModifica);
            
             localStorage.setItem('statusApplication',JSON.stringify({...statusApp, ...{
@@ -393,7 +393,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
         indexStepper = 2;
     }
 
-    console.log({inserisciModificaCommessa:mainState.inserisciModificaCommessa, action:mainState.action });
+  
     /*const hiddenShowHorizontalStepper = (
         mainState.inserisciModificaCommessa === 'INSERT' &&
         mainState.modifica === true) ||
@@ -403,7 +403,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     const hiddenShowHorizontalStepper = mainState.inserisciModificaCommessa === 'INSERT';
             
 
-    console.log({mainState}, indexStepper);
+   
 
     const hideShowButtonModifica =  mainState.statusPageInserimentoCommessa === 'immutable' &&
                                          mainState.action !== 'HIDE_MODULO_COMMESSA' &&
