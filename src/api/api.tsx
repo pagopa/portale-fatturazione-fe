@@ -26,12 +26,15 @@ export const manageError = (res:ManageErrorResponse,navigate:any) =>{
     }else if(res?.response?.request?.status   === 404){
         //navigate('/error');
         // alert('Qualcosa è andato storto');
-    }else if(res?.response?.request?.status   === 500){
-        
-        alert('Operazione NON eseguita');
+    }else if(res?.response?.request?.status   === 419){
+        window.location.href = redirect;
+        // alert('Qualcosa è andato storto');else if(res?.response?.request?.status   === 500){
     }else if(res?.response?.request?.status  === 400){
         console.log('400 da gestire');
     }else if(res?.response?.request?.status  === 403){
+        navigate('/error');
+    }else if(res?.response?.request?.status  === 500){
+        alert('NON è stato possibile recuperare i dati');
         navigate('/error');
     }
 };
