@@ -292,7 +292,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         label='Risposta'
                                         placeholder='Risposta'
                                         disabled={profilo.profilo !== 'PA' || (contestazioneSelected.contestazione.statoContestazione !== 3 && contestazioneSelected.contestazione.statoContestazione !== 4 && contestazioneSelected.contestazione.statoContestazione !== 5 && contestazioneSelected.contestazione.statoContestazione !== 6 )}
-                                        value={'ciaoaoao'}
+                                        value={contestazioneSelected.contestazione.rispostaEnte || ''}
                                         fullWidth
                                         multiline
                                         // error={errorValidation}
@@ -415,7 +415,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         >Annulla Contestazione</Button>
                                     </div>
                             }
-                            { contestazioneSelected.contestazione.statoContestazione === 1  || contestazioneSelected.contestazione.statoContestazione === 2  || contestazioneSelected.contestazione.statoContestazione === 8  || contestazioneSelected.contestazione.statoContestazione === 9  || contestazioneSelected.chiusura === false ? null :
+                            { contestazioneSelected.contestazione.statoContestazione === 1  || contestazioneSelected.contestazione.statoContestazione === 2  || contestazioneSelected.contestazione.statoContestazione === 8  || contestazioneSelected.contestazione.statoContestazione === 9  || contestazioneSelected.modifica === false ? null :
                                 <div className='col-2 me-2'>
                                     <Button
                                         disabled={enableCreaContestazione}

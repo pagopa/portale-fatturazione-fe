@@ -358,7 +358,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
             hendleModifyDatiModuloCommessaPagoPa();
         }else{
             navigate('/');
-            // hendlePostModuloCommessa();
+            hendlePostModuloCommessa();
         }
     };
    

@@ -242,8 +242,10 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         getContestazioneModal(notifica.idNotifica);
        
     };
+
+    const mesiGrid = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
                         
-                        
+            
     return (
         <div className="mx-5">
             {/*title container start */}
@@ -251,7 +253,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 <Typography variant="h4">Report Dettaglio</Typography>
             </div>
             {/*title container end */}
-            <div className="container  mt-5 mb-5 ">
+            <div className="mt-5 mb-5 ">
                 <div className="row">
                     <div className="col-3   ">
                         <Box sx={{width:'80%'}} >
@@ -375,6 +377,30 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                         </Box>
                     </div>
                     <div className="col-3 ">
+                        <Box sx={{width:'80%', marginLeft:'20px'}} >
+                            <TextField
+                                //required={required}
+                                // helperText='Cap'
+                                label='IUN'
+                                placeholder='IUN'
+                                //  disabled={makeTextInputDisable}
+                                value={bodyGetLista.iun || ''}
+                                // error={errorValidation}
+                                onChange={(e) => setBodyGetLista((prev)=>{
+                                                        
+                                    if(e.target.value === ''){
+                                        return {...prev, ...{iun:null}};
+                                    }else{
+                                        return {...prev, ...{iun:e.target.value}};
+                                    }
+                                } )}
+                                onBlur={()=> console.log('miao')}
+                                                    
+                            />
+                        </Box>
+                    </div>
+                    {/* 
+                    <div className="col-3 ">
                         <Box  sx={{width:'80%', marginLeft:'20px'}} >
                             <FormControl
                                 fullWidth
@@ -410,6 +436,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                             </FormControl>
                         </Box>
                     </div>
+                    */}
                 </div>
                                             
                                             
@@ -521,31 +548,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                             />
                         </Box>
                     </div>
-                    <div className="col-3 ">
-                        <Box sx={{width:'80%', marginLeft:'20px'}} >
-                            <TextField
-                                //required={required}
-                                // helperText='Cap'
-                                label='Iun'
-                                placeholder='Iun'
-                                //  disabled={makeTextInputDisable}
-                                value={bodyGetLista.iun || ''}
-                                // error={errorValidation}
-                                onChange={(e) => setBodyGetLista((prev)=>{
-                                                        
-                                    if(e.target.value === ''){
-                                        return {...prev, ...{iun:null}};
-                                    }else{
-                                        return {...prev, ...{iun:e.target.value}};
-                                    }
-                                } )}
-                                onBlur={()=> console.log('miao')}
-                                                    
-                            />
-                        </Box>
-                    </div>
-                    <div className="row">
-                        <div className="d-flex justify-content-end mt-5">
+                  
+                    <div className="">
+                        <div className="d-flex justify-content-start mt-5">
                             <div className=" d-flex align-items-center justify-content-center h-100">
                                 <div>
                                     <Button 
@@ -613,29 +618,34 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {notificheList.map((notifica:NotificheList) => (
-                                <TableRow key={notifica.idNotifica}>
-                                    <TableCell>
-                                        {notifica.mese}
-                                    </TableCell>
-                                    <TableCell>
-                                        {notifica.ragioneSociale}
-                                    </TableCell>
-                                    <TableCell>
-                                        {notifica.tipoNotifica}
-                                    </TableCell>
-                                                    
-                                    <TableCell sx={{color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'}}
-                                        onClick={()=>{
-                                            onSelectContestazione(notifica);
-                                                        
-                                                        
-                                        } }
-                                    >
-                                        {notifica.contestazione}
-                                    </TableCell>
-                                </TableRow>
-                            ))}
+                            {notificheList.map((notifica:NotificheList) =>{
+                        
+                                return (
+                                    (
+                                        <TableRow key={notifica.idNotifica}>
+                                            <TableCell>
+                                                {mesiGrid[Number(notifica.mese) - 1 ]}
+                                            </TableCell>
+                                            <TableCell>
+                                                {notifica.ragioneSociale}
+                                            </TableCell>
+                                            <TableCell>
+                                                {notifica.tipoNotifica}
+                                            </TableCell>
+                                                                
+                                            <TableCell sx={{color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'}}
+                                                onClick={()=>{
+                                                    onSelectContestazione(notifica);
+                                                                    
+                                                                    
+                                                } }
+                                            >
+                                                {notifica.contestazione}
+                                            </TableCell>
+                                        </TableRow>
+                                    )
+                                );
+                            } )}
                         </TableBody>
                     </Table>
                     <div className=" mt-3">
