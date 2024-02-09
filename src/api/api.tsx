@@ -16,9 +16,9 @@ export const url = process.env.REACT_APP_URL;
 export const redirect = process.env.REACT_APP_REDIRECT || '';
 
 export const manageError = (res:ManageErrorResponse,navigate:any) =>{
-    console.log({res}, 'ERROR');
+    
     if(res?.response?.request?.status === 401){
-        console.log('401');
+      
         localStorage.removeItem("token");
         localStorage.removeItem("profilo");
         window.location.href = redirect;

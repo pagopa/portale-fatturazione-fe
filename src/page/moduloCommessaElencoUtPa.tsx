@@ -26,7 +26,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMainS
 
     // il componente data grid ha bisogno di un id per ogni elemento
     const fixResponseForDataGrid = (arr:DataGridCommessa[]) =>{
-        console.log({arr}, 'bbbb');
+      
         const result = arr.map( (singlObj:DataGridCommessa,i:number) =>{
             
             return {

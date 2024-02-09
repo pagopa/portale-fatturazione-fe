@@ -39,7 +39,7 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
 
     let columsSelectedGrid = '';
     const handleOnCellClick = (params:Params) =>{
-        console.log(params, 'params');
+       
         columsSelectedGrid  = params.field;
         
     };

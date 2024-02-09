@@ -81,7 +81,6 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
     // richiamo questa funzione in entrambe le getPdf     selfcare     pagopa
     const toDoOnGetPdfSelfcarePagopa = (res:ResponseGetPdfPagoPa) =>{
 
-        console.log({res}, 'pdf');
 
         let final = [{
             totaleNotifiche: 0,
@@ -105,7 +104,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
         localStorage.setItem("tipo", res.data.tipoCommessa);
     };
 
-    console.log(dataPdf);
+   
 
     const getPdf = async() =>{
         getModuloCommessaPdf(token, statusApp.anno,statusApp.mese, mainState.nonce).then((res:ResponseGetPdfPagoPa)=>{
@@ -133,7 +132,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
 
     const toDoOnDownloadPdf = (res:ResponseDownloadPdf) =>{
 
-        console.log({res}, 'pippo');
+        
 
         const wrapper = document.getElementById('file_download');
         if(wrapper){
