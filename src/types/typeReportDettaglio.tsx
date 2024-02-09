@@ -11,7 +11,13 @@ export interface NotificheList{
     contestazione:boolean,
     tipoNotifica:string,
     mese:number,
-    statoContestazione:number
+    statoContestazione:number,
+    iun:string,
+    costEuroInCentesimi:string,
+    dataInvio:string,
+    anno:string,
+    cap:string,
+    statoEstero:string
 }
 
 export interface ModalContestazioneProps{
@@ -77,4 +83,21 @@ export interface ModalBodyContestazioneModify {
     rispostaEnte?: string,
     statoContestazione: number
 }
+
+export interface BodyListaEnti{
+    descrizione:string
+}
+
+export interface MultiselectNotificheProps{
+    mainState : MainState,
+    setBodyGetLista:any
+}
+
+
+export interface OptionMultiselectChackbox {
+    
+    idEnte: string,
+    descrizione:string
+}
+
 

@@ -1,18 +1,21 @@
 import { Typography } from "@mui/material";
 import { } from '@mui/material';
-import DownloadIcon from '@mui/icons-material/Download';
 import React , { useState, useEffect } from 'react';
 import {
     Card, Table,TableHead,TableBody,
     TableRow,TableCell,TablePagination, TextField,
     Box, FormControl, InputLabel,Select, MenuItem, Button
 } from '@mui/material';
-import { manageError, getTipologiaProdotto, getTipologiaProfilo, listaNotifiche, flagContestazione,  getContestazione } from "../api/api";
+import { manageError, getTipologiaProdotto, getTipologiaProfilo, listaNotifiche, flagContestazione,  getContestazione, downloadNotifche, listaEntiNotifichePage, listaNotifichePagoPa } from "../api/api";
 import { ReportDettaglioProps, NotificheList, FlagContestazione, Contestazione  } from "../types/typeReportDettaglio";
 import { useNavigate } from "react-router";
 import { BodyListaNotifiche } from "../types/typesGeneral";
 import ModalContestazione from '../components/reportDettaglio/modalContestazione';
 import ModalInfo from "../components/reportDettaglio/modalInfo";
+import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
+import DownloadIcon from '@mui/icons-material/Download';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+
 
 
 const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
@@ -21,6 +24,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
+
+    const getProfilo = localStorage.getItem('profilo') || '{}';
+    const profilo =  JSON.parse(getProfilo);
     
     
     
@@ -59,8 +65,10 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         tipoNotifica:null,
         statoContestazione:null,
         cap:null,
-        iun:null
+        iun:null,
+        idEnti:[]
     });
+    console.log({bodyGetLista});
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
             
     const [contestazioneSelected, setContestazioneSelected] = useState<Contestazione>({ 
@@ -90,6 +98,10 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             mese: 0
         }
     });
+
+    const [notificheList, setNotificheList] = useState<NotificheList[]>([]);
+
+   
             
             
     useEffect(()=>{
@@ -108,7 +120,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 
                 
                 
-    const [notificheList, setNotificheList] = useState<NotificheList[]>([]);
+    
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalNotifiche, setTotalNotifiche]  = useState(0);
@@ -118,10 +130,12 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     
         const realPageNumber = page + 1;
         const convertToNumber = Number(realPageNumber);
-       
-        await listaNotifiche(token,mainState.nonce,convertToNumber,rowsPerPage, bodyGetLista)
+
+        // elimino idEnti dal paylod della get notifiche lato selfcare
+        const {idEnti, ...newBody} = bodyGetLista;
+      
+        await listaNotifiche(token,mainState.nonce,convertToNumber,rowsPerPage, newBody)
             .then((res)=>{
-                console.log(notificheList, 'LIST', {res});
                 setNotificheList(res.data.notifiche);
                 setTotalNotifiche(res.data.count);
                         
@@ -130,16 +144,48 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             });
                     
     };
-                
-                
-                
-                
-                
+
+    const getlistaNotifichePagoPa = async () => {
+                    
+        const realPageNumber = page + 1;
+        const convertToNumber = Number(realPageNumber);
+
+        await listaNotifichePagoPa(token,mainState.nonce,convertToNumber,rowsPerPage, bodyGetLista)
+            .then((res)=>{
+                setNotificheList(res.data.notifiche);
+                setTotalNotifiche(res.data.count);
+                        
+            }).catch((error)=>{
+                manageError(error, navigate);
+            });
+                    
+    };
+
+    
+                    
     useEffect(() => {
         if(mainState.nonce !== ''){
-            getlistaNotifiche();
+            if(profilo.auth === 'SELFCARE'){
+                getlistaNotifiche();
+                
+            }
+            if(profilo.auth === 'PAGOPA'){
+                getlistaNotifichePagoPa();
+                //listaEntiNotifichePageOnSelect();
+            }
+            
+           
         } 
     }, [mainState.nonce,rowsPerPage,page]);
+
+
+    const onButtonFiltra = () =>{
+        if(profilo.auth === 'SELFCARE'){
+            getlistaNotifiche();
+        }else{
+            getlistaNotifichePagoPa();
+        }
+    };
                 
     const handleChangePage = (
         event: React.MouseEvent<HTMLButtonElement> | null,
@@ -202,6 +248,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             getProdotti();
             getProfili();
             getFlagContestazione();
+            
         }
     },[mainState.nonce]);
                         
@@ -245,6 +292,31 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
     const mesiGrid = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
                         
+    const downloadNotificheOnDownloadButton = async () =>{
+
+        await downloadNotifche(token, mainState.nonce,bodyGetLista )
+            .then((res)=>{
+
+                console.log(res,'download');
+                const link = document.createElement('a');
+                link.href = "data:text/plain;base64," + res.data.documento;
+                link.setAttribute('download', 'Lista Notifiche.xlsx'); //or any other extension
+                document.body.appendChild(link);
+              
+                link.click();
+                document.body.removeChild(link);
+                            
+            })
+            .catch(((err)=>{
+                manageError(err,navigate);
+            }));
+    };
+
+
+
+   
+
+
             
     return (
         <div className="mx-5">
@@ -377,10 +449,11 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                         </Box>
                     </div>
                     <div className="col-3 ">
-                        <Box sx={{width:'80%', marginLeft:'20px'}} >
+                        <Box sx={{marginLeft:'20px'}} >
                             <TextField
                                 //required={required}
                                 // helperText='Cap'
+                                fullWidth
                                 label='IUN'
                                 placeholder='IUN'
                                 //  disabled={makeTextInputDisable}
@@ -399,6 +472,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                             />
                         </Box>
                     </div>
+                   
                     {/* 
                     <div className="col-3 ">
                         <Box  sx={{width:'80%', marginLeft:'20px'}} >
@@ -528,6 +602,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     <div className="col-3 ">
                         <Box sx={{width:'80%', marginLeft:'20px'}} >
                             <TextField
+                                fullWidth
                                 //required={required}
                                 // helperText='Cap'
                                 label='Cap'
@@ -548,13 +623,17 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                             />
                         </Box>
                     </div>
-                  
+                    {profilo.auth === 'PAGOPA' &&
+                    <div className="col-3">
+                        <MultiselectCheckbox mainState={mainState} setBodyGetLista={setBodyGetLista}></MultiselectCheckbox>
+                    </div>
+                    }
                     <div className="">
                         <div className="d-flex justify-content-start mt-5">
                             <div className=" d-flex align-items-center justify-content-center h-100">
                                 <div>
                                     <Button 
-                                        onClick={()=> getlistaNotifiche()} 
+                                        onClick={()=> onButtonFiltra()} 
                                         sx={{width:'200px'}}
                                         variant="contained"> Filtra
                                     </Button>
@@ -588,85 +667,147 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 </div>
             </div>
             {/* grid */}
-            {/* 
+            {profilo.auth === 'SELFCARE' &&
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
                                                 
-                <Button onClick={()=>console.log('ciao') } >
+                <Button onClick={()=> downloadNotificheOnDownloadButton() } >
                                                 Download Risultati
                     <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
                 </Button>
             </div>
-                  */}                              
+            }               
             <div className="mb-5">
-                <Card>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>
-                                                Mese
-                                </TableCell>
-                                <TableCell>
-                                                Regione Sociale
-                                </TableCell>
-                                <TableCell>
-                                                Tipo Notifica
-                                </TableCell>
-                                                
-                                <TableCell>
+                <div style={{overflowX:'auto'}}>
+                    <Card sx={{width: '2000px'}}  >
+                        <Table >
+                            <TableHead sx={{backgroundColor:'#f2f2f2'}}>
+                                <TableRow>
+                                    <TableCell>
                                                 Contestazione
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {notificheList.map((notifica:NotificheList) =>{
+                                    </TableCell>
+                                    <TableCell>
+                                                Anno
+                                    </TableCell>
+                                    <TableCell>
+                                                Mese
+                                    </TableCell>
+                                    <TableCell>
+                                                Regione Sociale
+                                    </TableCell>
+                                    <TableCell>
+                                                Tipo Notifica
+                                    </TableCell>
+                                    <TableCell sx={{width:'300px'}}>
+                                                IUN
+                                    </TableCell>
+                                    <TableCell >
+                                                Data Invio
+                                    </TableCell>
+                                    <TableCell>
+                                                Stato Estero
+                                    </TableCell>
+                                    <TableCell>
+                                                Cap
+                                    </TableCell>
+                                    <TableCell>
+                                                Costo
+                                    </TableCell>
+                                    <TableCell sx={{width:'140px'}}>
+                                               
+                                    </TableCell>
+                                
+                                </TableRow>
+                            </TableHead>
+
+                            {notificheList.length === 0 ?
+                                <div className="" style={{height: '100px'}}>
+                                    
+
+                                </div> :
+                                <TableBody sx={{marginLeft:'20px'}}>
+                                    {notificheList.map((notifica:NotificheList) =>{
                         
-                                return (
-                                    (
-                                        <TableRow key={notifica.idNotifica}>
-                                            <TableCell>
-                                                {mesiGrid[Number(notifica.mese) - 1 ]}
-                                            </TableCell>
-                                            <TableCell>
-                                                {notifica.ragioneSociale}
-                                            </TableCell>
-                                            <TableCell>
-                                                {notifica.tipoNotifica}
-                                            </TableCell>
-                                                                
-                                            <TableCell sx={{color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'}}
-                                                onClick={()=>{
-                                                    onSelectContestazione(notifica);
-                                                                    
-                                                                    
-                                                } }
-                                            >
-                                                {notifica.contestazione}
-                                            </TableCell>
-                                        </TableRow>
-                                    )
-                                );
-                            } )}
-                        </TableBody>
-                    </Table>
-                    <div className=" mt-3">
+                                        return (
+                                        
+                                      
+                                            <TableRow key={notifica.idNotifica}>
+                                                <TableCell sx={{color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'}}
+                                                    onClick={()=>{
+                                                        if(profilo.auth === 'SELFCARE'){
+                                                            onSelectContestazione(notifica); 
+                                                        }
+                                                                        
+                                                    } }
+                                                >
+                                                    {notifica.contestazione}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {notifica.anno}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {mesiGrid[Number(notifica.mese) - 1 ]}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {notifica.ragioneSociale}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {notifica.tipoNotifica}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {notifica.iun}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {new Date(notifica.dataInvio).toISOString().split('T')[0]}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {notifica.cap}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {notifica.statoEstero}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {(Number(notifica.costEuroInCentesimi) / 100).toFixed(2)}€
+                                                </TableCell>
+                                                <TableCell  onClick={()=>{
+                                                    if(profilo.auth === 'SELFCARE'){
+                                                        onSelectContestazione(notifica);
+                                                    }
+                                                                     
+                                                } }>
+                                                    <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
+                                                </TableCell>
+                                                   
+                                           
+                                            </TableRow>
+                                        
+                                        );
+                                    } )}
+                                </TableBody>
+                            }
+                        </Table>
+                        
                                                     
-                        <TablePagination
-                            sx={{'.MuiTablePagination-selectLabel': {
-                                display:'none'
-                            }}}
-                            component="div"
-                            page={page}
-                            count={totalNotifiche}
-                            rowsPerPage={rowsPerPage}
-                            onPageChange={handleChangePage}
-                            onRowsPerPageChange={handleChangeRowsPerPage}
-                        />  
-                    </div>
                                                     
+                    </Card>
+                </div>
+                <div className="pt-3">
                                                     
-                </Card>
+                    <TablePagination
+                        sx={{'.MuiTablePagination-selectLabel': {
+                            display:'none',
+                            backgroundColor:'#f2f2f2'
+                           
+                        }}}
+                        component="div"
+                        page={page}
+                        count={totalNotifiche}
+                        rowsPerPage={rowsPerPage}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                    />  
+                </div>
             </div>
-                                                    
+                                         
                                                     
             {/* MODAL */}
                                                     

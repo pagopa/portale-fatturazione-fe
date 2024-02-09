@@ -89,6 +89,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                 setGridData(res.data);
             })
             .catch(((err)=>{
+                setGridData([]);
                 manageError(err,navigate);
             })); 
     };
