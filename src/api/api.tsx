@@ -10,7 +10,7 @@ import {
     BodyListaNotifiche,
     ManageErrorResponse,
 } from '../types/typesGeneral';
-import {ModalBodyContestazione, ModalBodyContestazioneModify} from '../types/typeReportDettaglio';
+import {BodyListaEnti, ModalBodyContestazione, ModalBodyContestazioneModify} from '../types/typeReportDettaglio';
 
 export const url = process.env.REACT_APP_URL;
 export const redirect = process.env.REACT_APP_REDIRECT || '';
@@ -423,6 +423,42 @@ export const modifyContestazioneEnte = async (token:string, nonce:string , body:
     );
     return response;
 };
+
+export const downloadNotifche = async (token:string, nonce:string , body: BodyListaNotifiche) => {
+    const response =  await axios.post(`${url}/api/notifiche/ente/documento/ricerca?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token,
+        },
+        }
+    );
+    return response;
+};
+
+export const listaEntiNotifichePage = async (token:string, nonce:string , body: BodyListaEnti) => {
+    const response =  await axios.post(`${url}/api/tipologia/enti/completi?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token,
+        },
+        }
+    );
+    return response;
+};
+
+
+export const listaNotifichePagoPa = async (token:string, nonce:string , page:number, pageSize:number, body: BodyListaNotifiche) => {
+    const response =  await axios.post(`${url}/api/notifiche/pagopa?page=${page}&pageSize=${pageSize}&nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },
+        }
+    );
+    return response;
+};
+
+
 
 
 
