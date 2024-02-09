@@ -26,7 +26,7 @@ const PageTitleNavigation = () => {
       
     }
 
-    console.log(mainState);
+
 
    
     // da usare quando si saprà bene la logica

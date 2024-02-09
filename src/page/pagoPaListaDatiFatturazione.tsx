@@ -114,7 +114,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
 
     const onDownloadButton = async() =>{
         await downloadDocumentoListaDatiFatturazionePagoPa(token, mainState.nonce, bodyGetLista).then((res:ResponseDownloadListaFatturazione) => {
-            console.log(res, 'documento');
+          
             //const url = window.URL.createObjectURL(res.data.documento);
             const link = document.createElement('a');
             link.href = "data:text/plain;base64," + res.data.documento;

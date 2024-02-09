@@ -26,6 +26,8 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({mainState, 
 
    
 
+   
+
 
     // servizio che popola la select con la checkbox
     const listaEntiNotifichePageOnSelect = async () =>{
@@ -42,7 +44,7 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({mainState, 
     useEffect(()=>{
 
         const timer = setTimeout(() => {
-            console.log('This will run after 1 second!');
+         
             if(textValue.length >= 3){
                 listaEntiNotifichePageOnSelect();
             }
@@ -52,7 +54,7 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({mainState, 
         
     },[textValue]);
 
-
+   
     return (
         <Autocomplete
             multiple
@@ -85,7 +87,7 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({mainState, 
             } }
             style={{ marginLeft: '20px' }}
             renderInput={(params) =>{
-                console.log({params});
+               
                 return <TextField 
                     onChange={(e)=> setTextValue(e.target.value)} 
                     {...params}

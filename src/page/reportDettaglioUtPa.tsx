@@ -68,7 +68,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         iun:null,
         idEnti:[]
     });
-    console.log({bodyGetLista});
+
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
             
     const [contestazioneSelected, setContestazioneSelected] = useState<Contestazione>({ 
@@ -191,14 +191,14 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         event: React.MouseEvent<HTMLButtonElement> | null,
         newPage: number,
     ) => {
-        console.log({newPage}, 'changePage');
+     
         setPage(newPage);
     };
                     
     const handleChangeRowsPerPage = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
-        console.log(event.target.value, 'rowPage');
+    
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
                             
@@ -264,14 +264,14 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const getContestazioneModal = async(idNotifica:string) =>{
         await getContestazione(token, mainState.nonce , idNotifica )
             .then((res)=>{
-                console.log(123);
+           
                 //se i tempi di creazione di una contestazione sono scaduti show pop up info
                 if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
                     setOpenModalInfo(true);
-                    console.log(0);
+          
                 }else{
                     // atrimenti show pop up creazione contestazione
-                    console.log(1);
+           
                     setOpen(true); 
                     setContestazioneSelected(res.data);
                 }
@@ -297,7 +297,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         await downloadNotifche(token, mainState.nonce,bodyGetLista )
             .then((res)=>{
 
-                console.log(res,'download');
+            
                 const link = document.createElement('a');
                 link.href = "data:text/plain;base64," + res.data.documento;
                 link.setAttribute('download', 'Lista Notifiche.xlsx'); //or any other extension
@@ -313,7 +313,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     };
 
 
-
+  
    
 
 
@@ -625,7 +625,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     </div>
                     {profilo.auth === 'PAGOPA' &&
                     <div className="col-3">
-                        <MultiselectCheckbox mainState={mainState} setBodyGetLista={setBodyGetLista}></MultiselectCheckbox>
+                        <MultiselectCheckbox mainState={mainState} setBodyGetLista={setBodyGetLista} ></MultiselectCheckbox>
                     </div>
                     }
                     <div className="">
@@ -651,8 +651,11 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                                     tipoNotifica:null,
                                                     statoContestazione:null,
                                                     cap:null,
-                                                    iun:null
+                                                    iun:null,
+                                                    idEnti:[]
+
                                                 });
+                                               
                                             } }
                                             sx={{marginLeft:'24px'}} >
                                                     Annulla filtri

@@ -124,7 +124,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
         await getDettaglioModuloCommessa(token,statusApp.anno,statusApp.mese, mainState.nonce)
             .then((response:ResponseDettaglioModuloCommessa)=>{
-                console.log({response}, 'maledetta ');
+             
                 const res = response.data;
                 setDataModifica(res.dataModifica);
                 setDatiCommessa({moduliCommessa:res.moduliCommessa});
@@ -278,7 +278,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     // funzione utilizzata con la response sul click modifica/insert modulo commessa , sia utente selcare che pagopa
     const toDoOnPostModifyCommessa = (res:ResponseDettaglioModuloCommessa) =>{
 
-        console.log({res}, 'TOT');
+      
         if(mainState.inserisciModificaCommessa === 'MODIFY'){
                  
             setMainState((prev:MainState)=>({
