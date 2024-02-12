@@ -10,7 +10,7 @@ import {
     BodyListaNotifiche,
     ManageErrorResponse,
 } from '../types/typesGeneral';
-import {BodyListaEnti, ModalBodyContestazione, ModalBodyContestazioneModify} from '../types/typeReportDettaglio';
+import {BodyListaEnti, ModalBodyContestazione, ModalBodyContestazioneModify, ModalBodyContestazioneModifyPagoPa} from '../types/typeReportDettaglio';
 
 export const url = process.env.REACT_APP_URL;
 export const redirect = process.env.REACT_APP_REDIRECT || '';
@@ -458,6 +458,26 @@ export const listaNotifichePagoPa = async (token:string, nonce:string , page:num
     return response;
 };
 
+export const getContestazionePagoPa = async (token:string, nonce:string , idNotifica:string) => {
+    const response =  await axios.get(`${url}/api/notifiche/pagopa/contestazione/${idNotifica}?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
+export const modifyContestazioneEntePagoPa = async (token:string, nonce:string , body: ModalBodyContestazioneModifyPagoPa) => {
+    const response =  await axios.put(`${url}/api/notifiche/pagopa/contestazione?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token,
+        },
+        }
+    );
+    return response;
+};
 
 
 
