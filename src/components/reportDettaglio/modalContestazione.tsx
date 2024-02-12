@@ -100,6 +100,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
             
             setEnableCreaContestazione(true);
         }
+        setErrNoteEnte(false);
     },[open]);
 
    
@@ -126,6 +127,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
     useEffect(()=>{
         if(mainState.nonce !== ''){
             getTipoConestazioni();
+          
         }
     },[mainState.nonce]);
 
@@ -181,10 +183,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
 
     const [errNoteEnte, setErrNoteEnte] = useState(false);
 
-  
 
-   
- 
     const handleOpen = () => {
         setOpen(true);
     };
@@ -202,11 +201,20 @@ CON => consolidatore (selfcare -> tutti gli enti)
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2">
-        Contestazione
-                    </Typography>
+                    <div className='d-flex justify-content-between'>
+                        <div>
+                            <Typography id="modal-modal-title" variant="h6" component="h2">
+                                {contestazioneSelected.contestazione.statoContestazione === 1 ? 'Crea contestazione': 'Contestazione'}
+    
+                            </Typography>
+                        </div>
+                        <div>
+                            <Button variant="contained"  onClick={()=> handleClose() }> X </Button>
+                        </div>
+                    </div>
+                   
                     {/*BODY */}
-                    <div className='container nopadding_Left '>
+                    <div className='pt-3'>
                         <div className='row mt-3'>
                             <div className='col-4'>
                                 <FormControl
@@ -386,7 +394,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                     </div>
 
                     {/*BODY */}
-                    <div className='container mt-5'>
+                    <div className='mt-5'>
                         <div className='row'>
                             {
                                 contestazioneSelected.contestazione.statoContestazione !== 1   ? null :

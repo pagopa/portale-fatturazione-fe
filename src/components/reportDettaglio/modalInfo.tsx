@@ -16,7 +16,7 @@ const style = {
     p: 4,
 };
 
-const ModalInfo : React.FC<ModalProps> =({setOpen, open}) => {
+const ModalInfo : React.FC<ModalProps> = ({setOpen, open}) => {
 
    
     const handleClose = () => setOpen(false);

@@ -88,9 +88,17 @@ export interface BodyListaEnti{
     descrizione:string
 }
 
+export interface ElementMultiSelect {
+    idEnte: string,
+    descrizione: string
+
+}
+
 export interface MultiselectNotificheProps{
     mainState : MainState,
-    setBodyGetLista:any
+    setBodyGetLista:any,
+    setDataSelect:any,
+    dataSelect:ElementMultiSelect[] 
 }
 
 
