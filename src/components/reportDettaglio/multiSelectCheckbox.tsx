@@ -9,10 +9,12 @@ import { MultiselectNotificheProps, OptionMultiselectChackbox } from '../../type
 import {useState, useEffect} from 'react';
 import { BodyListaNotifiche } from '../../types/typesGeneral';
 
-const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
-const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({mainState, setBodyGetLista}) => {
+
+const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({mainState, setBodyGetLista, dataSelect, setDataSelect}) => {
+
+    const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+    const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
     const navigate = useNavigate();
 
@@ -22,9 +24,16 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({mainState, 
 
     const [textValue, setTextValue] = useState('');
 
-    const [dataSelect, setDataSelect] = useState([]);
+    
 
-   
+    const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
+
+    useEffect(()=>{
+
+        if(dataSelect.length === 0){
+            setValueAutocomplete([]);
+        }
+    }, [dataSelect]);
 
    
 
@@ -61,14 +70,17 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({mainState, 
             onChange={(event, value) => {
                 const arrayIdEnte = value.map(obj=> obj.idEnte);
                 setBodyGetLista((prev:BodyListaNotifiche) => ({...prev,...{idEnti:arrayIdEnte}}));
+                setValueAutocomplete(value);
             }}
+            onInputChange={(event, newInputValue, reason)=>console.log({event, newInputValue, reason}, '??')}
             id="checkboxes-tags-demo"
             options={dataSelect}
             disableCloseOnSelect
             getOptionLabel={(option:OptionMultiselectChackbox) => (option.descrizione)}
-            
+            value={valueAutocomplete}
             renderOption={(props, option, { selected }) =>{
                 //settato come key l'id ente 
+                
                 const newProps = {...props,...{key:option.idEnte}};
                 return (
                     <li {...newProps}   >
@@ -92,7 +104,7 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({mainState, 
                     onChange={(e)=> setTextValue(e.target.value)} 
                     {...params}
                     label="Rag Soc. Ente" 
-                    placeholder="Rag Soc. Ente" />;
+                    placeholder="Min 3 caratteri" />;
             } 
                 
             }
@@ -102,53 +114,3 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({mainState, 
 
 export default MultiselectCheckbox;
 
-// Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
-const top100Films = [
-    { title: 'The Shawshank Redemption', year: 1994 },
-    { title: 'The Godfather', year: 1972 },
-    { title: 'The Godfather: Part II', year: 1974 },
-    { title: 'The Dark Knight', year: 2008 },
-    { title: '12 Angry Men', year: 1957 },
-    { title: "Schindler's List", year: 1993 },
-    { title: 'Pulp Fiction', year: 1994 },
-    {
-        title: 'The Lord of the Rings: The Return of the King',
-        year: 2003,
-    },
-    { title: 'The Good, the Bad and the Ugly', year: 1966 },
-    { title: 'Fight Club', year: 1999 },
-    {
-        title: 'The Lord of the Rings: The Fellowship of the Ring',
-        year: 2001,
-    },
-    {
-        title: 'Star Wars: Episode V - The Empire Strikes Back',
-        year: 1980,
-    },
-    { title: 'Forrest Gump', year: 1994 },
-    { title: 'Inception', year: 2010 },
-    {
-        title: 'The Lord of the Rings: The Two Towers',
-        year: 2002,
-    },
-    { title: "One Flew Over the Cuckoo's Nest", year: 1975 },
-    { title: 'Goodfellas', year: 1990 },
-    { title: 'The Matrix', year: 1999 },
-    { title: 'Seven Samurai', year: 1954 },
-    {
-        title: 'Star Wars: Episode IV - A New Hope',
-        year: 1977,
-    },
-    { title: 'City of God', year: 2002 },
-    { title: 'Se7en', year: 1995 },
-    { title: 'The Silence of the Lambs', year: 1991 },
-    { title: "It's a Wonderful Life", year: 1946 },
-    { title: 'Life Is Beautiful', year: 1997 },
-    { title: 'The Usual Suspects', year: 1995 },
-    { title: 'Léon: The Professional', year: 1994 },
-    { title: 'Spirited Away', year: 2001 },
-    { title: 'Saving Private Ryan', year: 1998 },
-    { title: 'Once Upon a Time in the West', year: 1968 },
-    { title: 'American History X', year: 1998 },
-    { title: 'Interstellar', year: 2014 },
-];

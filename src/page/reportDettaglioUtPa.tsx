@@ -110,15 +110,37 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     bodyGetLista.prodotto !== '' ||
                     bodyGetLista.tipoNotifica !== null ||
                     bodyGetLista.statoContestazione !== null ||
-                    bodyGetLista.cap !== null){
+                    bodyGetLista.cap !== null ||
+                    bodyGetLista?.idEnti?.length !== 0){
             setStatusAnnulla('show');
         }else{
                         
             setStatusAnnulla('hidden');
         }
     },[bodyGetLista]);
+
+
+
+    
                 
-                
+    const onAnnullaFiltri = async () =>{
+
+        setStatusAnnulla('hidden');
+        setDataSelect([]);
+        setBodyGetLista({
+            profilo:'',
+            prodotto:'',
+            anno:currentYear,
+            mese:currString, 
+            tipoNotifica:null,
+            statoContestazione:null,
+            cap:null,
+            iun:null,
+            idEnti:[]
+
+        });
+      
+    };     
                 
     
     const [page, setPage] = React.useState(0);
@@ -146,6 +168,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     };
 
     const getlistaNotifichePagoPa = async () => {
+
+     
                     
         const realPageNumber = page + 1;
         const convertToNumber = Number(realPageNumber);
@@ -313,10 +337,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     };
 
 
-  
+    // stato multiselect ragione sociale
+    const [dataSelect, setDataSelect] = useState([]);
    
-
-
             
     return (
         <div className="mx-5">
@@ -567,7 +590,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                 <InputLabel
                                     id="contestazioni"
                                 >
-                                                Contestazione
+                                             Contestazione
                                                 
                                 </InputLabel>
                                 <Select
@@ -625,7 +648,13 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     </div>
                     {profilo.auth === 'PAGOPA' &&
                     <div className="col-3">
-                        <MultiselectCheckbox mainState={mainState} setBodyGetLista={setBodyGetLista} ></MultiselectCheckbox>
+                        <MultiselectCheckbox 
+                            mainState={mainState} 
+                            setBodyGetLista={setBodyGetLista}
+                            setDataSelect={setDataSelect}
+                            dataSelect={dataSelect}
+                        ></MultiselectCheckbox>
+    
                     </div>
                     }
                     <div className="">
@@ -642,19 +671,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                                     
                                         <Button
                                             onClick={()=>{
-                                                setStatusAnnulla('hidden');
-                                                setBodyGetLista({
-                                                    profilo:'',
-                                                    prodotto:'',
-                                                    anno:currentYear,
-                                                    mese:currString, 
-                                                    tipoNotifica:null,
-                                                    statoContestazione:null,
-                                                    cap:null,
-                                                    iun:null,
-                                                    idEnti:[]
-
-                                                });
+                                                onAnnullaFiltri();
                                                
                                             } }
                                             sx={{marginLeft:'24px'}} >
@@ -670,7 +687,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 </div>
             </div>
             {/* grid */}
-            {profilo.auth === 'SELFCARE' &&
+            {(profilo.auth === 'SELFCARE' && notificheList.length > 0)  &&
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
                                                 
                 <Button onClick={()=> downloadNotificheOnDownloadButton() } >
@@ -723,7 +740,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                             </TableHead>
 
                             {notificheList.length === 0 ?
-                                <div className="" style={{height: '100px'}}>
+                                <div className="" style={{height: '50px'}}>
                                     
 
                                 </div> :
