@@ -26,7 +26,8 @@ export interface ModalContestazioneProps{
     mainState:MainState,
     contestazioneSelected:Contestazione,
     setContestazioneSelected:any,
-    funGetNotifiche:any
+    funGetNotifiche:any,
+    funGetNotifichePagoPa:any
 }
 
 export interface FlagContestazione{
@@ -106,6 +107,15 @@ export interface OptionMultiselectChackbox {
     
     idEnte: string,
     descrizione:string
+}
+
+export interface ModalBodyContestazioneModifyPagoPa{
+    
+    idNotifica?: string,
+    onere?: string,
+    noteSend?: string | null,
+    statoContestazione?: number
+      
 }
 
 

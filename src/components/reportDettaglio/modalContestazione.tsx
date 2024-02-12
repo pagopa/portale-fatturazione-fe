@@ -6,7 +6,7 @@ import {
     TextField,
     Box, FormControl, InputLabel,Select, MenuItem, Button
 } from '@mui/material';
-import { tipologiaTipoContestazione, manageError, createContestazione, modifyContestazioneEnte} from '../../api/api'; 
+import { tipologiaTipoContestazione, manageError, createContestazione, modifyContestazioneEnte, modifyContestazioneEntePagoPa} from '../../api/api'; 
 import { useNavigate } from 'react-router';
 import {useState, useEffect} from 'react';
 import YupString from '../../validations/string/index';
@@ -22,7 +22,7 @@ const style = {
     p: 4,
 };
 
-const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open, mainState, contestazioneSelected, setContestazioneSelected, funGetNotifiche}) => {
+const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open, mainState, contestazioneSelected, setContestazioneSelected, funGetNotifiche, funGetNotifichePagoPa}) => {
 /*
     PA => ente (selfcare)
  SUP=> supporto (ad)
@@ -52,16 +52,31 @@ CON => consolidatore (selfcare -> tutti gli enti)
 
 
     const [enableCreaContestazione, setEnableCreaContestazione] = useState(true);
+    const [enableRispondi_ente , setEnableRispondi_ente] = useState(true);
 
-    const requiredString = (string:string) =>{
+
+    const requiredString = (string:string , nomeTextBox:string) =>{
         
         YupString.required().validate(string).then(()=>{
-            setEnableCreaContestazione(false);
-            setErrNoteEnte(false);
+          
+            if(nomeTextBox === 'nota_ente'){
+                setErrNoteEnte(false);
+                setEnableCreaContestazione(false);
+            }else{
+                setEnableRispondi_ente(false);
+                setEnableCreaContestazione(false);
+            }
+           
             
         }).catch(()=>{
-            setEnableCreaContestazione(true);
-            setErrNoteEnte(true);
+          
+            if(nomeTextBox === 'nota_ente'){
+                setErrNoteEnte(false);
+                setEnableCreaContestazione(true);
+            }else{
+                setEnableRispondi_ente(true);
+                setEnableCreaContestazione(true);
+            }
         });
     };
    
@@ -152,7 +167,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
             }));
     };
 
-   
+    console.log(contestazioneSelected);
 
     const modifyContestazioneFun = async (action:string) => {
         let body;
@@ -161,6 +176,13 @@ CON => consolidatore (selfcare -> tutti gli enti)
                 idNotifica:contestazioneSelected.contestazione.idNotifica,
                 statoContestazione:2
             };
+        }else if(action === 'Modifica/Rispondi' && stato === 4){
+            body = {
+                idNotifica:contestazioneSelected.contestazione.idNotifica,
+                noteEnte:contestazioneSelected.contestazione.noteEnte,
+                rispostaEnte: contestazioneSelected.contestazione.rispostaEnte,
+                statoContestazione:7
+            };
         }else{
             body = {
                 idNotifica:contestazioneSelected.contestazione.idNotifica,
@@ -168,6 +190,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                 rispostaEnte: contestazioneSelected.contestazione.rispostaEnte,
                 statoContestazione:contestazioneSelected.contestazione.statoContestazione
             };
+
         }
         
         
@@ -181,6 +204,47 @@ CON => consolidatore (selfcare -> tutti gli enti)
 
     };
 
+
+
+    const modifyContestazioneFunPagoPa = async(action:string) => {
+        let body = {};
+        if(action === 'rispondi'){
+
+            body = {
+                idNotifica:contestazioneSelected.contestazione.idNotifica,
+                onere:'PA',
+                noteSend: contestazioneSelected.contestazione.noteSend,
+                statoContestazione:4
+            };
+        }
+        if(action === 'rispondi_accetta'){
+            body = {
+                idNotifica:contestazioneSelected.contestazione.idNotifica,
+                onere:'PA',
+                noteSend: contestazioneSelected.contestazione.noteSend,
+                statoContestazione:8
+            };
+        }
+        if(action === 'chiudi'){
+            body = {
+                idNotifica:contestazioneSelected.contestazione.idNotifica,
+                onere:'PA',
+                noteSend: contestazioneSelected.contestazione.noteSend,
+                statoContestazione:9
+            };
+        }
+
+       
+
+        await modifyContestazioneEntePagoPa(token, mainState.nonce, body).then((res)=>{
+            setOpen(false);
+            funGetNotifichePagoPa();
+            
+        }).catch(((err)=>{
+            manageError(err,navigate);
+        }));
+    };
+
     const [errNoteEnte, setErrNoteEnte] = useState(false);
 
 
@@ -191,6 +255,89 @@ CON => consolidatore (selfcare -> tutti gli enti)
         
         setOpen(false);
     };
+
+    // hidden show text field
+    const stato = contestazioneSelected?.contestazione?.statoContestazione;
+    const rispostaEnte = contestazioneSelected?.contestazione?.rispostaEnte;
+    const rispostaSend = contestazioneSelected?.contestazione?.noteSend;
+
+
+    const readOnlyNotaContestazione = (
+        stato !== 1 && stato !== 3) ||
+          contestazioneSelected.modifica === false;
+    
+
+    const rispostaEnteIsHidden =  stato === 1 ||
+     (stato === 2 && rispostaEnte === null ) || 
+     stato === 3 ||
+     (stato === 4  && profilo.auth === 'PAGOPA')||
+     (stato === 8 && rispostaEnte === null ) || 
+     (stato === 9 && rispostaEnte === null ); 
+
+    const readOnlyRispostaEnte =  (stato === 2 && rispostaEnte !== null) ||
+       stato === 8 ||
+       stato === 9 || 
+       profilo.auth === 'PAGOPA';
+
+    const supportoSentHidden =  stato === 1 ||
+    stato === 2 ||
+    (stato === 3 && profilo.auth === 'SELFCARE') ||
+    (stato === 8 && rispostaSend === null) ||
+    (stato === 9  && rispostaSend === null) ;
+    // stato === 3 ||
+    //(stato === 5 && rispostaSend === null)||
+    //(stato === 6 && rispostaSend === null)||
+    
+
+    const supportSendReadOnly = profilo.auth !== 'PAGOPA' ||
+     stato === 9||
+     stato === 8  ||
+     stato === 7  ||
+      stato === 2;
+
+    const hiddenRispondi_send =  stato === 1 ||
+    stato === 2 ||
+    stato === 5 ||
+    stato === 6 ||
+    stato === 7 ||
+    stato === 8 ||
+    stato === 9 ||
+    profilo.auth !== 'PAGOPA';
+
+    const hiddenRispondiAccettaEnte_send = stato === 1 ||
+    stato === 2 ||
+    stato === 5 ||
+    stato === 6 ||
+    stato === 8 ||
+    stato === 9 ||
+    profilo.auth !== 'PAGOPA';
+
+
+    const hiddenConsRec =   stato === 1 ||
+    stato === 2 ||
+    stato === 3 ||
+    stato === 5 ||
+    stato === 6 ||
+    stato === 8 ||
+    stato === 9; 
+
+    const hiddenButtonAnnullaContestazione = profilo.auth === 'PAGOPA' ||
+     stato !== 3 ||
+      (contestazioneSelected.chiusura === false && contestazioneSelected.modifica === false); 
+
+    const hiddenModificaRispondiEnte = stato === 1  ||
+       stato === 2  ||
+        stato === 8  || 
+        stato === 9 ||
+        profilo.auth === 'PAGOPA';
+
+    let stringButtonAccettaEnte_send = 'Rispondi e accetta Ente';
+    if(stato === 4 ){
+        stringButtonAccettaEnte_send = 'Modifica e accetta Ente';
+    }else if (stato === 7){
+        stringButtonAccettaEnte_send = 'Accetta Ente';
+    }
+    
     return (
         <div>
         
@@ -249,7 +396,8 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                             
                                         } }
                                         value={contestazioneSelected.contestazione.tipoContestazione|| ''}
-                                        disabled= {profilo.profilo !== 'PA' || contestazioneSelected?.contestazione?.statoContestazione !== 1}
+                                        // disabled= {profilo.profilo !== 'PA' || contestazioneSelected?.contestazione?.statoContestazione !== 1}
+                                        inputProps={{ readOnly: contestazioneSelected?.contestazione?.statoContestazione !== 1 }}
 
                                     >
                                         {tipoContestazioni.map((el) => (
@@ -278,7 +426,8 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                     value={contestazioneSelected.contestazione.noteEnte}
                                     fullWidth
                                     multiline
-                                    disabled= {profilo.profilo !== 'PA' || (contestazioneSelected?.contestazione?.statoContestazione !== 1 && contestazioneSelected?.contestazione?.statoContestazione !== 3) ||  contestazioneSelected.modifica === false}
+                                    //disabled= {profilo.profilo !== 'PA' || (contestazioneSelected?.contestazione?.statoContestazione !== 1 && contestazioneSelected?.contestazione?.statoContestazione !== 3) ||  contestazioneSelected.modifica === false}
+                                    InputProps={{ readOnly: readOnlyNotaContestazione}}
                                     error={errNoteEnte}
                                     onChange={(e) =>  setContestazioneSelected((prev:Contestazione)=> {
                                     
@@ -286,12 +435,12 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         return {...prev, contestazione:newContestazione};
                                      
                                     })}
-                                    onBlur={(e)=> requiredString(e.target.value)}
+                                    onBlur={(e)=> requiredString(e.target.value, 'nota_ente')}
             
                                 />
                             </div>
                             
-                            {contestazioneSelected?.contestazione?.statoContestazione === 1 || contestazioneSelected?.contestazione?.statoContestazione === 3 ? null : 
+                            {rispostaEnteIsHidden ? null : 
                                 <div className='col-4'>
                                     <TextField
                                     //required={required}
@@ -299,19 +448,25 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         id="x"
                                         label='Risposta'
                                         placeholder='Risposta'
-                                        disabled={profilo.profilo !== 'PA' || (contestazioneSelected.contestazione.statoContestazione !== 3 && contestazioneSelected.contestazione.statoContestazione !== 4 && contestazioneSelected.contestazione.statoContestazione !== 5 && contestazioneSelected.contestazione.statoContestazione !== 6 )}
+                                        //disabled={profilo.profilo !== 'PA' || (contestazioneSelected.contestazione.statoContestazione !== 3 && contestazioneSelected.contestazione.statoContestazione !== 4 && contestazioneSelected.contestazione.statoContestazione !== 5 && contestazioneSelected.contestazione.statoContestazione !== 6 )}
+                                        InputProps={{ readOnly:readOnlyRispostaEnte}}
                                         value={contestazioneSelected.contestazione.rispostaEnte || ''}
                                         fullWidth
                                         multiline
                                         // error={errorValidation}
-                                        onChange={(e) => console.log('')}
-                                        onBlur={()=> console.log('miao')}
+                                        onChange={(e) =>  setContestazioneSelected((prev:Contestazione)=> {
+                                    
+                                            const newContestazione = {...prev.contestazione, rispostaEnte:e.target.value};
+                                            return {...prev, contestazione:newContestazione};
+                                         
+                                        })}
+                                        onBlur={(e)=> requiredString(e.target.value, 'risposta_ente')}
             
                                     />
                                 </div>
                             }
                         </div>
-                        {contestazioneSelected.contestazione.statoContestazione === 1 || contestazioneSelected.contestazione.statoContestazione === 3 ? null :
+                        {supportoSentHidden ? null :
                             <div className='row mt-5'>
                             
                                 <Typography id="modal-modal-title" variant="overline">
@@ -321,15 +476,21 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                     <TextField
                                     //required={required}
                                     // helperText='Cap'
-                                        id="outlined-basic"
+                                        id="supporto"
                                         label='Risposta'
                                         placeholder='Risposta'
-                                        disabled={profilo.profilo !== 'SUP' || (contestazioneSelected.contestazione.statoContestazione !== 1 && contestazioneSelected.contestazione.statoContestazione !== 2 && contestazioneSelected.contestazione.statoContestazione !== 7 && contestazioneSelected.contestazione.statoContestazione !== 8 && contestazioneSelected.contestazione.statoContestazione !== 9 )}
-                                        value={contestazioneSelected.contestazione.noteSend}
+                                        //disabled={profilo.profilo !== 'SUP' || (contestazioneSelected.contestazione.statoContestazione !== 1 && contestazioneSelected.contestazione.statoContestazione !== 2 && contestazioneSelected.contestazione.statoContestazione !== 7 && contestazioneSelected.contestazione.statoContestazione !== 8 && contestazioneSelected.contestazione.statoContestazione !== 9 )}
+                                        value={contestazioneSelected.contestazione.noteSend || ''}
                                         fullWidth
                                         multiline
+                                        InputProps={{ readOnly: supportSendReadOnly }}
                                         // error={errorValidation}
-                                        onChange={(e) => console.log(e)}
+                                        onChange={(e) =>  setContestazioneSelected((prev:Contestazione)=> {
+                                    
+                                            const newContestazione = {...prev.contestazione, noteSend:e.target.value};
+                                            return {...prev, contestazione:newContestazione};
+                                         
+                                        })}
                                         onBlur={()=> console.log('miao')}
             
                                     />
@@ -337,6 +498,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
 
                             </div>
                         }
+                        { /*  nascondiamo recapitista e consolidatore 
                         {contestazioneSelected.contestazione.statoContestazione === 1 || contestazioneSelected.contestazione.statoContestazione === 3 ? null :
                             <div className='row mt-5'>
                             
@@ -390,6 +552,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
 
                             </div>
                         }
+                        */}
 
                     </div>
 
@@ -411,7 +574,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                     </div>
                             }
                             {
-                                contestazioneSelected.contestazione.statoContestazione === 1  || contestazioneSelected.contestazione.statoContestazione === 2  || contestazioneSelected.contestazione.statoContestazione === 8  || contestazioneSelected.contestazione.statoContestazione === 9  || profilo.profilo !== 'PA' || (contestazioneSelected.chiusura === false && contestazioneSelected.modifica === false)  ? null :
+                                hiddenButtonAnnullaContestazione ? null :
                           
                                     <div className='col-2 me-2'>
                                         <Button 
@@ -423,56 +586,73 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         >Annulla Contestazione</Button>
                                     </div>
                             }
-                            { contestazioneSelected.contestazione.statoContestazione === 1  || contestazioneSelected.contestazione.statoContestazione === 2  || contestazioneSelected.contestazione.statoContestazione === 8  || contestazioneSelected.contestazione.statoContestazione === 9  || contestazioneSelected.modifica === false ? null :
+                            {/* butto ENTE */}
+                            { hiddenModificaRispondiEnte ? null :
                                 <div className='col-2 me-2'>
                                     <Button
-                                        disabled={enableCreaContestazione}
+                                        disabled={enableCreaContestazione || enableRispondi_ente}
                                         variant='contained'
                                         onClick={()=>{
                                             modifyContestazioneFun('Modifica/Rispondi');
                                             
                                         }}
-                                    >{contestazioneSelected.contestazione.statoContestazione === 3 ? 'Modifica' : 'Rispondi'}</Button>
+                                    >{stato === 3 || stato === 7 ? 'Modifica Risposta' : 'Rispondi'}</Button>
                                 </div>
                             }
+                            {/* butto PAGOPA */}
+                            { hiddenRispondi_send ? null :
+                                <div className='col-2 me-2'>
+                                    <Button
+                                        disabled={contestazioneSelected.contestazione.noteSend === null}
+                                        variant='contained'
+                                        onClick={()=>{
+                                            modifyContestazioneFunPagoPa('rispondi');
+                                            
+                                        }}
+                                    >{(stato === 4) ? 'Modifica' : 'Rispondi'}</Button>
+                                </div>
+                            }
+                           
                           
                             { (profilo.profilo !== 'CON'  && profilo.profilo !== 'RCP') || contestazioneSelected.contestazione.statoContestazione === 1  || contestazioneSelected.contestazione.statoContestazione === 2  || contestazioneSelected.contestazione.statoContestazione === 8  || contestazioneSelected.contestazione.statoContestazione === 9 ? null :
                                 <div className='col-2 me-2'>
                                     <Button
                                    
                                         variant='contained'
-                                        onClick={()=>console.log('esci')}
-                                    >Ripondi e Accetta contestazione</Button>
+                                       
+                                    >dd</Button>
                                 </div>
                             }
 
-                            {/*'risposta Consolidatore === vuoto '  ||*/ profilo.profilo === 'CON' || contestazioneSelected.contestazione.statoContestazione === 1  || contestazioneSelected.contestazione.statoContestazione === 2  || contestazioneSelected.contestazione.statoContestazione === 3  ||contestazioneSelected.contestazione.statoContestazione === 8 || contestazioneSelected.contestazione.statoContestazione === 9 ? null :
+                          
+
+                            {hiddenRispondiAccettaEnte_send ? null :
                                 <div className='col-2 me-2'>
                                     <Button
-                                  
+                                        disabled={contestazioneSelected.contestazione.noteSend === null}
+                                        variant='contained'
+                                        onClick={()=>modifyContestazioneFunPagoPa('rispondi_accetta')}
+                                    >{stringButtonAccettaEnte_send}</Button>
+                                </div>
+                            }
+
+                            {hiddenConsRec ? null :
+                                <div className='col-2 me-2'>
+                                    <Button
+                                        disabled={true}
                                         variant='contained'
                                         onClick={()=>console.log('esci')}
                                     >Ripondi e Accetta Cosolidatore</Button>
                                 </div>
                             }
 
-                            {/*'risposta Recapitista === vuoto '  ||*/ profilo.profilo === 'RCP' || contestazioneSelected.contestazione.statoContestazione === 1  || contestazioneSelected.contestazione.statoContestazione === 2  || contestazioneSelected.contestazione.statoContestazione === 3  ||contestazioneSelected.contestazione.statoContestazione === 8 || contestazioneSelected.contestazione.statoContestazione === 9 ? null :
+                            { hiddenConsRec? null :
                                 <div className='col-2 me-2'>
                                     <Button
-                                    
+                                        disabled={true}
                                         variant='contained'
                                         onClick={()=>console.log('esci')}
                                     >Ripondi e Accetta recapitista</Button>
-                                </div>
-                            }
-
-                            {profilo.profilo === 'PA'|| contestazioneSelected.contestazione.statoContestazione === 1  || contestazioneSelected.contestazione.statoContestazione === 2  ||contestazioneSelected.contestazione.statoContestazione === 8 || contestazioneSelected.contestazione.statoContestazione === 9 ? null :
-                                <div className='col-2 me-2'>
-                                    <Button
-                                    
-                                        variant='contained'
-                                        onClick={()=>console.log('esci')}
-                                    >Ripondi e Accetta ente</Button>
                                 </div>
                             }
                         </div>

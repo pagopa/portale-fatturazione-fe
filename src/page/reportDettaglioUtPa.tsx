@@ -6,7 +6,7 @@ import {
     TableRow,TableCell,TablePagination, TextField,
     Box, FormControl, InputLabel,Select, MenuItem, Button
 } from '@mui/material';
-import { manageError, getTipologiaProdotto, getTipologiaProfilo, listaNotifiche, flagContestazione,  getContestazione, downloadNotifche, listaEntiNotifichePage, listaNotifichePagoPa } from "../api/api";
+import { manageError, getTipologiaProdotto, getTipologiaProfilo, listaNotifiche, flagContestazione,  getContestazione, downloadNotifche, listaEntiNotifichePage, listaNotifichePagoPa, getContestazionePagoPa } from "../api/api";
 import { ReportDettaglioProps, NotificheList, FlagContestazione, Contestazione  } from "../types/typeReportDettaglio";
 import { useNavigate } from "react-router";
 import { BodyListaNotifiche } from "../types/typesGeneral";
@@ -286,25 +286,52 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                         
                         
     const getContestazioneModal = async(idNotifica:string) =>{
-        await getContestazione(token, mainState.nonce , idNotifica )
-            .then((res)=>{
+
+        if(profilo.auth === 'SELFCARE'){
+            await getContestazione(token, mainState.nonce , idNotifica )
+                .then((res)=>{
+           
+                    //se i tempi di creazione di una contestazione sono scaduti show pop up info
+                    if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
+                        setOpenModalInfo(true);
+          
+                    }else{
+                    // atrimenti show pop up creazione contestazione
+           
+                        setOpen(true); 
+                        setContestazioneSelected(res.data);
+                    }
+                
+                                
+                })
+                .catch(((err)=>{
+                    manageError(err,navigate);
+                }));
+
+        }else{
+
+            await getContestazionePagoPa(token, mainState.nonce , idNotifica ).then((res)=>{
            
                 //se i tempi di creazione di una contestazione sono scaduti show pop up info
                 if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
                     setOpenModalInfo(true);
-          
+              
                 }else{
                     // atrimenti show pop up creazione contestazione
-           
+               
                     setOpen(true); 
                     setContestazioneSelected(res.data);
                 }
-                
-                                
+                    
+                                    
             })
-            .catch(((err)=>{
-                manageError(err,navigate);
-            }));
+                .catch(((err)=>{
+                    manageError(err,navigate);
+                }));
+        }
+
+       
+
     };
                         
                         
@@ -753,9 +780,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                             <TableRow key={notifica.idNotifica}>
                                                 <TableCell sx={{color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'}}
                                                     onClick={()=>{
-                                                        if(profilo.auth === 'SELFCARE'){
-                                                            onSelectContestazione(notifica); 
-                                                        }
+                                                       
+                                                        onSelectContestazione(notifica); 
+                                                        
                                                                         
                                                     } }
                                                 >
@@ -789,9 +816,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                                     {(Number(notifica.costEuroInCentesimi) / 100).toFixed(2)}€
                                                 </TableCell>
                                                 <TableCell  onClick={()=>{
-                                                    if(profilo.auth === 'SELFCARE'){
-                                                        onSelectContestazione(notifica);
-                                                    }
+                                                   
+                                                    onSelectContestazione(notifica);
+                                                    
                                                                      
                                                 } }>
                                                     <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
@@ -837,6 +864,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 contestazioneSelected={contestazioneSelected}
                 setContestazioneSelected={setContestazioneSelected}
                 funGetNotifiche={getlistaNotifiche}
+                funGetNotifichePagoPa={getlistaNotifichePagoPa}
             ></ModalContestazione>
 
             <ModalInfo
