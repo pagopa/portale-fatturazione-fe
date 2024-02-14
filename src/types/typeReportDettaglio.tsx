@@ -42,6 +42,7 @@ export interface TipoContestazione{
 }
 
 export interface Contestazione {
+    risposta:boolean,
     modifica: boolean,
     chiusura: boolean,
     contestazione: {
@@ -82,7 +83,8 @@ export interface ModalBodyContestazioneModify {
     idNotifica: string,
     noteEnte?: string,
     rispostaEnte?: string,
-    statoContestazione: number
+    statoContestazione: number,
+    onere?:string
 }
 
 export interface BodyListaEnti{

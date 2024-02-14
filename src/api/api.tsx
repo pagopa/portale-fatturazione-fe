@@ -34,8 +34,8 @@ export const manageError = (res:ManageErrorResponse,navigate:any) =>{
     }else if(res?.response?.request?.status  === 403){
         navigate('/error');
     }else if(res?.response?.request?.status  === 500){
-        alert('NON è stato possibile recuperare i dati');
-        navigate('/error');
+        alert('Operazione non eseguita: Internal Server Error');
+        //navigate('/error');
     }
 };
 

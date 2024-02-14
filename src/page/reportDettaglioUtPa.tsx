@@ -72,6 +72,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
             
     const [contestazioneSelected, setContestazioneSelected] = useState<Contestazione>({ 
+        risposta:true,
         modifica: true,
         chiusura: true,
         contestazione: {
@@ -111,7 +112,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     bodyGetLista.tipoNotifica !== null ||
                     bodyGetLista.statoContestazione !== null ||
                     bodyGetLista.cap !== null ||
-                    bodyGetLista?.idEnti?.length !== 0){
+                    bodyGetLista.idEnti?.length !== 0 ||
+                    bodyGetLista.mese !== currString ||
+                    bodyGetLista.anno !== currentYear){
             setStatusAnnulla('show');
         }else{
                         
@@ -139,6 +142,52 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             idEnti:[]
 
         });
+        const realPageNumber = page + 1;
+        const pageNumber = Number(realPageNumber);
+
+        if(profilo.auth === 'SELFCARE'){
+            const body = {
+                profilo:'',
+                prodotto:'',
+                anno:currentYear,
+                mese:currString, 
+                tipoNotifica:null,
+                statoContestazione:null,
+                cap:null,
+                iun:null,
+            };
+            await listaNotifiche(token,mainState.nonce,1,10, body)
+                .then((res)=>{
+                    setNotificheList(res.data.notifiche);
+                    setTotalNotifiche(res.data.count);
+                        
+                }).catch((error)=>{
+                    manageError(error, navigate);
+                });
+        }
+
+        if(profilo.auth === 'PAGOPA'){
+            const bodyPagoPa = {
+                profilo:'',
+                prodotto:'',
+                anno:currentYear,
+                mese:currString, 
+                tipoNotifica:null,
+                statoContestazione:null,
+                cap:null,
+                iun:null,
+                idEnti:[]
+    
+            };
+            await listaNotifichePagoPa(token,mainState.nonce,1,10, bodyPagoPa)
+                .then((res)=>{
+                    setNotificheList(res.data.notifiche);
+                    setTotalNotifiche(res.data.count);
+                        
+                }).catch((error)=>{
+                    manageError(error, navigate);
+                });
+        }
       
     };     
                 
@@ -146,48 +195,43 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalNotifiche, setTotalNotifiche]  = useState(0);
+    const realPageNumber = page + 1;
+    const pageNumber = Number(realPageNumber);
                 
-                
-    const getlistaNotifiche = async () => {
-                    
-        const realPageNumber = page + 1;
-        const convertToNumber = Number(realPageNumber);
-
+    const getlistaNotifiche = async (nPage:number, nRow:number) => {
         // elimino idEnti dal paylod della get notifiche lato selfcare
         const {idEnti, ...newBody} = bodyGetLista;
       
-        await listaNotifiche(token,mainState.nonce,convertToNumber,rowsPerPage, newBody)
+        await listaNotifiche(token,mainState.nonce,nPage, nRow, newBody)
             .then((res)=>{
                 setNotificheList(res.data.notifiche);
                 setTotalNotifiche(res.data.count);
                         
             }).catch((error)=>{
+                
                 manageError(error, navigate);
             });
                     
     };
 
-    const getlistaNotifichePagoPa = async () => {
+    const getlistaNotifichePagoPa = async (nPage:number, nRow:number) => {
 
-     
-                    
-        const realPageNumber = page + 1;
-        const convertToNumber = Number(realPageNumber);
-
-        await listaNotifichePagoPa(token,mainState.nonce,convertToNumber,rowsPerPage, bodyGetLista)
+        await listaNotifichePagoPa(token,mainState.nonce,nPage, nRow, bodyGetLista)
             .then((res)=>{
                 setNotificheList(res.data.notifiche);
                 setTotalNotifiche(res.data.count);
                         
             }).catch((error)=>{
+               
                 manageError(error, navigate);
             });
                     
     };
 
     
-                    
+    /*               
     useEffect(() => {
+        
         if(mainState.nonce !== ''){
             if(profilo.auth === 'SELFCARE'){
                 getlistaNotifiche();
@@ -202,13 +246,17 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         } 
     }, [mainState.nonce,rowsPerPage,page]);
 
-
+*/
     const onButtonFiltra = () =>{
+        setPage(0);
+        setRowsPerPage(10);
+        
         if(profilo.auth === 'SELFCARE'){
-            getlistaNotifiche();
+            getlistaNotifiche(1, 10);
         }else{
-            getlistaNotifichePagoPa();
+            getlistaNotifichePagoPa(1, 10);
         }
+        
     };
                 
     const handleChangePage = (
@@ -216,6 +264,15 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         newPage: number,
     ) => {
      
+        const realPage = newPage + 1;
+        if(profilo.auth === 'SELFCARE'){
+            getlistaNotifiche(realPage,rowsPerPage);
+            
+        }
+        if(profilo.auth === 'PAGOPA'){
+            getlistaNotifichePagoPa(realPage,rowsPerPage);
+            //listaEntiNotifichePageOnSelect();
+        }
         setPage(newPage);
     };
                     
@@ -225,6 +282,16 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
+        const realPage = page + 1;
+
+        if(profilo.auth === 'SELFCARE'){
+            getlistaNotifiche(realPage,parseInt(event.target.value, 10));
+            
+        }
+        if(profilo.auth === 'PAGOPA'){
+            getlistaNotifichePagoPa(realPage,parseInt(event.target.value, 10));
+            //listaEntiNotifichePageOnSelect();
+        }
                             
     };
                         
@@ -673,7 +740,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                             />
                         </Box>
                     </div>
-                    {profilo.auth === 'PAGOPA' &&
+                    {(profilo.auth === 'PAGOPA' || profilo.profilo === 'CND') &&
                     <div className="col-3">
                         <MultiselectCheckbox 
                             mainState={mainState} 
