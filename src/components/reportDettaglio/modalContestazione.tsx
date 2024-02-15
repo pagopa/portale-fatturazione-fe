@@ -148,7 +148,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
         await createContestazione(token, mainState.nonce,body)
             .then(()=>{
                 setOpen(false);
-                funGetNotifiche();
+                funGetNotifiche(1,10);
             })
             .catch(((err)=>{
                 manageError(err,navigate);
@@ -168,14 +168,14 @@ CON => consolidatore (selfcare -> tutti gli enti)
             body = {
                 idNotifica:contestazioneSelected.contestazione.idNotifica,
                 noteEnte:contestazioneSelected.contestazione.noteEnte,
-                rispostaEnte: contestazioneSelected.contestazione.rispostaEnte,
+                rispostaEnte: rispostaEnte,
                 statoContestazione:7
             };
         }else if(action === 'RispondiAccettaSend' && stato === 4){
             body = {
                 idNotifica:contestazioneSelected.contestazione.idNotifica,
                 noteEnte:contestazioneSelected.contestazione.noteEnte,
-                rispostaEnte: contestazioneSelected.contestazione.rispostaEnte,
+                rispostaEnte: rispostaEnte,
                 onere:'SEND',
                 statoContestazione:9
             };
@@ -183,7 +183,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
             body = {
                 idNotifica:contestazioneSelected.contestazione.idNotifica,
                 noteEnte:contestazioneSelected.contestazione.noteEnte,
-                rispostaEnte: contestazioneSelected.contestazione.rispostaEnte,
+                rispostaEnte: rispostaEnte,
                 statoContestazione:contestazioneSelected.contestazione.statoContestazione
             };
 
@@ -192,7 +192,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
         
         await modifyContestazioneEnte(token, mainState.nonce, body).then((res)=>{
             setOpen(false);
-            funGetNotifiche();
+            funGetNotifiche(1,10);
             
         }).catch(((err)=>{
             manageError(err,navigate);
@@ -209,7 +209,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
             body = {
                 idNotifica:contestazioneSelected.contestazione.idNotifica,
                 onere:'PA',
-                noteSend: contestazioneSelected.contestazione.noteSend,
+                noteSend: rispostaSend,
                 statoContestazione:4
             };
         }
@@ -217,7 +217,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
             body = {
                 idNotifica:contestazioneSelected.contestazione.idNotifica,
                 onere:'PA',
-                noteSend: contestazioneSelected.contestazione.noteSend,
+                noteSend: rispostaSend,
                 statoContestazione:8
             };
         }
@@ -225,7 +225,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
             body = {
                 idNotifica:contestazioneSelected.contestazione.idNotifica,
                 onere:'SEND',
-                noteSend: contestazioneSelected.contestazione.noteSend,
+                noteSend: rispostaSend,
                 statoContestazione:9
             };
         }
@@ -234,7 +234,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
 
         await modifyContestazioneEntePagoPa(token, mainState.nonce, body).then((res)=>{
             setOpen(false);
-            funGetNotifichePagoPa();
+            funGetNotifichePagoPa(1,10);
             
         }).catch(((err)=>{
             manageError(err,navigate);
@@ -257,6 +257,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
     const rispostaEnte = contestazioneSelected?.contestazione?.rispostaEnte;
     const rispostaSend = contestazioneSelected?.contestazione?.noteSend;
     const noteRecapitista = contestazioneSelected.contestazione.noteRecapitista;
+    const notaCosolidatore = contestazioneSelected.contestazione.noteConsolidatore;
 
     const noActionEnte = contestazioneSelected.modifica && contestazioneSelected.chiusura && contestazioneSelected.risposta;
 
@@ -269,6 +270,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
     const rispostaEnteIsHidden =  stato === 1 ||
      (stato === 2 && rispostaEnte === null ) || 
      stato === 3 ||
+     (contestazioneSelected?.risposta === false  && (rispostaEnte === null || rispostaEnte === '')) ||
      (stato === 4  && profilo.auth === 'PAGOPA')||
      (stato === 8 && rispostaEnte === null ) || 
      (stato === 9 && rispostaEnte === null ); 
@@ -277,7 +279,8 @@ CON => consolidatore (selfcare -> tutti gli enti)
        stato === 8 ||
        stato === 9 || 
        contestazioneSelected?.risposta === false ||
-       profilo.auth === 'PAGOPA';
+       profilo.profilo !== 'PA';
+    // stato === 7 && (rispostaSend !== '' || rispostaSend !== null || noteRecapitista !== null || noteRecapitista !== '' || notaCosolidatore !== null ||notaCosolidatore !== '' ) ||
 
     const supportoSentHidden =  stato === 1 ||
     stato === 2 ||
@@ -350,11 +353,11 @@ CON => consolidatore (selfcare -> tutti gli enti)
         disableCreaContestazioneButton = true;
     }
 
-    let stringButtonAccettaEnte_send = 'Rispondi e accetta Ente';
+    let stringButtonAccettaEnte_send = 'Rispondi e accetta ENTE';
     if(stato === 4 ){
-        stringButtonAccettaEnte_send = 'Modifica e accetta Ente';
+        stringButtonAccettaEnte_send = 'Modifica e accetta ENTE';
     }else if (stato === 7){
-        stringButtonAccettaEnte_send = 'Accetta Contestazione Ente';
+        stringButtonAccettaEnte_send = 'Accetta Contestazione ENTE';
     }
 
     let labelModificaRispondiEnte = 'Rispondi';
@@ -365,7 +368,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
     }
 
     let disableRispondiAccettaSend_rispondi = false;
-    if(profilo.profilo === 'PA' && stato === 4 && (contestazioneSelected.contestazione.rispostaEnte === '' || contestazioneSelected.contestazione.rispostaEnte === null)){
+    if(profilo.profilo === 'PA' && stato === 4 && (rispostaEnte === '' || rispostaEnte === null)){
         disableRispondiAccettaSend_rispondi = true;
     }else if(profilo.profilo === 'PA' && stato === 3 && (contestazioneSelected.contestazione.noteEnte === '' || contestazioneSelected.contestazione.noteEnte === null)){
         disableRispondiAccettaSend_rispondi = true;
@@ -483,7 +486,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         placeholder='Risposta'
                                         //disabled={profilo.profilo !== 'PA' || (contestazioneSelected.contestazione.statoContestazione !== 3 && contestazioneSelected.contestazione.statoContestazione !== 4 && contestazioneSelected.contestazione.statoContestazione !== 5 && contestazioneSelected.contestazione.statoContestazione !== 6 )}
                                         InputProps={{ readOnly:readOnlyRispostaEnte}}
-                                        value={contestazioneSelected.contestazione.rispostaEnte || ''}
+                                        value={rispostaEnte || ''}
                                         fullWidth
                                         multiline
                                         // error={errorValidation}
@@ -513,7 +516,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         label='Risposta'
                                         placeholder='Risposta'
                                         //disabled={profilo.profilo !== 'SUP' || (contestazioneSelected.contestazione.statoContestazione !== 1 && contestazioneSelected.contestazione.statoContestazione !== 2 && contestazioneSelected.contestazione.statoContestazione !== 7 && contestazioneSelected.contestazione.statoContestazione !== 8 && contestazioneSelected.contestazione.statoContestazione !== 9 )}
-                                        value={contestazioneSelected.contestazione.noteSend || ''}
+                                        value={rispostaSend || ''}
                                         fullWidth
                                         multiline
                                         InputProps={{ readOnly: supportSendReadOnly }}
@@ -622,8 +625,9 @@ CON => consolidatore (selfcare -> tutti gli enti)
                             }
                             {/* butto ENTE */}
                             { hiddenModificaRispondiEnte ? null :
-                                <div className='col-2 me-2'>
+                                <div  className='col-2 me-2'>
                                     <Button
+                                        sx={{width:'250px'}}
                                         disabled={disableRispondiAccettaSend_rispondi}
                                         variant='contained'
                                         onClick={()=>{
@@ -638,6 +642,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                             { hiddenRispondiChiudiSend ? null :
                                 <div className='col-2 me-2'>
                                     <Button
+                                        sx={{width:'250px'}}
                                         disabled={disableRispondiAccettaSend_rispondi}
                                         variant='contained'
                                         onClick={()=>{
@@ -645,14 +650,14 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                             
                                         }}
                                        
-                                    >{stato === 7 ? 'Modifica e chiudi Send' : "Rispondi e chiudi Send" }</Button>
+                                    >{stato === 7 ? 'Modifica risposta e rifiuta SEND' : "Rispondi e rifiuta SEND" }</Button>
                                 </div>
                             }
                             {/* butto PAGOPA */}
                             { hiddenRispondi_send ? null :
                                 <div className='col-1 me-2'>
                                     <Button
-                                        disabled={contestazioneSelected.contestazione.noteSend === null}
+                                        disabled={rispostaSend === null}
                                         variant='contained'
                                         onClick={()=>{
                                             modifyContestazioneFunPagoPa('rispondi');
@@ -664,7 +669,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                             {hiddenRispondiAccettaEnte_send ? null :
                                 <div className='col-2 me-2'>
                                     <Button
-                                        disabled={contestazioneSelected.contestazione.noteSend === null}
+                                        disabled={rispostaSend === null}
                                         variant='contained'
                                         onClick={()=>modifyContestazioneFunPagoPa('rispondi_accetta')}
                                     >{stringButtonAccettaEnte_send}</Button>
@@ -673,10 +678,10 @@ CON => consolidatore (selfcare -> tutti gli enti)
                             {hiddenChiudi_send ? null :
                                 <div className='col-2 '>
                                     <Button
-                                        disabled={contestazioneSelected.contestazione.noteSend === null}
+                                        disabled={rispostaSend === null}
                                         variant='contained'
                                         onClick={()=>modifyContestazioneFunPagoPa('chiudi')}
-                                    >Chiudi Contestazione Ente</Button>
+                                    >Rifiuta Contestazione SEND</Button>
                                 </div>
                             }
 
@@ -686,7 +691,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         disabled={true}
                                         variant='contained'
                                         onClick={()=>console.log('esci')}
-                                    >Ripondi e chiudi Cosolidatore</Button>
+                                    >Rifiuta contestazione CONSOLIDATORE</Button>
                                 </div>
                             }
 
@@ -696,7 +701,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         disabled={true}
                                         variant='contained'
                                         onClick={()=>console.log('esci')}
-                                    >Ripondi e Chiudi Recapitista</Button>
+                                    >Rifiuta contestazione RECAPITISTA</Button>
                                 </div>
                             }
                         </div>
