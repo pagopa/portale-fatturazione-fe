@@ -90,7 +90,7 @@ export interface BodyListaNotifiche{
     cap: string|null ,
     profilo: string,
     tipoNotifica: number | null,
-    statoContestazione: number | null,
+    statoContestazione: number[] | [],
     iun:string | null,
     idEnti?: string[]
 }

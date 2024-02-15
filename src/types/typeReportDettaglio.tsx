@@ -21,6 +21,13 @@ export interface NotificheList{
     onere:string
 }
 
+export interface MultiSelectGroupedByProps{
+    mainState:MainState,
+    setBodyGetLista:any,
+    setValueFgContestazione:any,
+    valueFgContestazione: FlagContestazione[]
+}
+
 export interface ModalContestazioneProps{
     open:boolean,
     setOpen:any,
@@ -33,7 +40,8 @@ export interface ModalContestazioneProps{
 
 export interface FlagContestazione{
     id:number,
-    flag:string
+    flag:string,
+    descrizione:string
 }
 
 export interface TipoContestazione{
