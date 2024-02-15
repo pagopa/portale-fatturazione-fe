@@ -102,6 +102,21 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
     const [notificheList, setNotificheList] = useState<NotificheList[]>([]);
 
+    const notificheListWithOnere = notificheList.map((notifica) =>{
+        
+        let newOnere = '';
+        if(notifica.onere === 'SEND_PA' || notifica.onere === 'PA_SEND' ){
+            newOnere = 'ENTE';
+        }else if(notifica.onere === 'SEND_SEND'){
+            newOnere = 'SEND';
+        }else if(notifica.onere === 'SEND_RCP'){
+            newOnere = 'RECAPITISTA';
+        }else if(notifica.onere === 'SEND_CON'){
+            newOnere = 'CONSOLIDATORE';
+        }
+        return  {...notifica,...{onere:newOnere} };
+    });
+
    
             
             
@@ -800,6 +815,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                                 Contestazione
                                     </TableCell>
                                     <TableCell>
+                                                Onere
+                                    </TableCell>
+                                    <TableCell>
                                                 Anno
                                     </TableCell>
                                     <TableCell>
@@ -839,7 +857,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
                                 </div> :
                                 <TableBody sx={{marginLeft:'20px'}}>
-                                    {notificheList.map((notifica:NotificheList) =>{
+                                    {notificheListWithOnere.map((notifica:NotificheList) =>{
                         
                                         return (
                                         
@@ -854,6 +872,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                                     } }
                                                 >
                                                     {notifica.contestazione}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {notifica.onere}
                                                 </TableCell>
                                                 <TableCell>
                                                     {notifica.anno}

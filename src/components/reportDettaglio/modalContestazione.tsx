@@ -278,6 +278,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
     const readOnlyRispostaEnte =  (stato === 2 && rispostaEnte !== null) ||
        stato === 8 ||
        stato === 9 || 
+       stato === 7 ||
        contestazioneSelected?.risposta === false ||
        profilo.profilo !== 'PA';
     // stato === 7 && (rispostaSend !== '' || rispostaSend !== null || noteRecapitista !== null || noteRecapitista !== '' || notaCosolidatore !== null ||notaCosolidatore !== '' ) ||
@@ -333,7 +334,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
     stato === 8 ||
     stato === 9; 
 
-    const hiddenButtonAnnullaContestazione = profilo.auth === 'PAGOPA' ||
+    const hiddenButtonAnnullaContestazione = profilo.profilo !== 'PA' ||
      stato !== 3 ||
       (contestazioneSelected.chiusura === false && contestazioneSelected.modifica === false); 
 
@@ -341,12 +342,12 @@ CON => consolidatore (selfcare -> tutti gli enti)
        stato === 2  ||
         stato === 8  || 
         stato === 9 ||
-    profilo.auth === 'PAGOPA';
+        stato === 7 ||
+    profilo.profilo !== 'PA';
 
-    const hiddenRispondiChiudiSend = (stato !== 4 && stato !== 7) ||
-     profilo.profilo !== 'PA'; 
+    const hiddenRispondiChiudiSend = (stato !== 4 && stato !== 7) || profilo.auth === 'PAGOPA';
 
-    const hiddenChiudi_send = profilo.auth !== 'PAGOPA' || stato !== 7;
+    const hiddenChiudi_send = profilo.auth !== 'PAGOPA' || (stato !== 7 && stato !== 3 && stato !== 4);
 
     let disableCreaContestazioneButton = false;
     if(stato === 1 && (contestazioneSelected.contestazione.tipoContestazione < 1  || contestazioneSelected.contestazione.noteEnte === null || contestazioneSelected.contestazione.noteEnte === '')){
@@ -374,6 +375,12 @@ CON => consolidatore (selfcare -> tutti gli enti)
         disableRispondiAccettaSend_rispondi = true;
     }
     
+    let labelChiusdi_send = 'Rifiuta Contestazione SEND';
+    if(stato === 3){
+        labelChiusdi_send = 'Rispondi rifiuta contestazione SEND';
+    }else if(stato === 4){
+        labelChiusdi_send = 'Modifica e rifiuta contestazione SEND';
+    }
     return (
         <div>
         
@@ -627,7 +634,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                             { hiddenModificaRispondiEnte ? null :
                                 <div  className='col-2 me-2'>
                                     <Button
-                                        sx={{width:'250px'}}
+                                        sx={{width:'207px'}}
                                         disabled={disableRispondiAccettaSend_rispondi}
                                         variant='contained'
                                         onClick={()=>{
@@ -642,7 +649,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                             { hiddenRispondiChiudiSend ? null :
                                 <div className='col-2 me-2'>
                                     <Button
-                                        sx={{width:'250px'}}
+                                       
                                         disabled={disableRispondiAccettaSend_rispondi}
                                         variant='contained'
                                         onClick={()=>{
@@ -650,20 +657,21 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                             
                                         }}
                                        
-                                    >{stato === 7 ? 'Modifica risposta e rifiuta SEND' : "Rispondi e rifiuta SEND" }</Button>
+                                    >{stato === 7  ? 'Rifiuta contestazione SEND' : "Rispondi e rifiuta contestazione SEND" }</Button>
                                 </div>
                             }
                             {/* butto PAGOPA */}
                             { hiddenRispondi_send ? null :
-                                <div className='col-1 me-2'>
+                                <div className='col-2 me-2'>
                                     <Button
+                                        sx={{width:'207px'}}
                                         disabled={rispostaSend === null}
                                         variant='contained'
                                         onClick={()=>{
                                             modifyContestazioneFunPagoPa('rispondi');
                                             
                                         }}
-                                    >{(stato === 4) ? 'Modifica' : 'Rispondi'}</Button>
+                                    >{(stato === 4) ? 'Modifica Risposta' : 'Rispondi'}</Button>
                                 </div>
                             }
                             {hiddenRispondiAccettaEnte_send ? null :
@@ -676,32 +684,35 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                 </div>
                             }
                             {hiddenChiudi_send ? null :
-                                <div className='col-2 '>
+                                <div className='col-2 me-2 '>
                                     <Button
+                                       
                                         disabled={rispostaSend === null}
                                         variant='contained'
                                         onClick={()=>modifyContestazioneFunPagoPa('chiudi')}
-                                    >Rifiuta Contestazione SEND</Button>
+                                    >{labelChiusdi_send}</Button>
                                 </div>
                             }
 
                             {hiddenConsRec ? null :
-                                <div className='col-2 me-2'>
+                                <div className='col-2 me-5'>
                                     <Button
+                                        sx={{width:'270px'}}
                                         disabled={true}
                                         variant='contained'
                                         onClick={()=>console.log('esci')}
-                                    >Rifiuta contestazione CONSOLIDATORE</Button>
+                                    >{(stato === 4 && profilo.auth === 'PAGOPA')? 'Modifica e rifiuta contestazione CONSOLIDATORE' : 'Rifiuta contestazione CONSOLIDATORE'}</Button>
                                 </div>
                             }
 
                             { hiddenConsRec? null :
                                 <div className='col-2 me-2'>
                                     <Button
+                                        sx={{width:'270px'}}
                                         disabled={true}
                                         variant='contained'
                                         onClick={()=>console.log('esci')}
-                                    >Rifiuta contestazione RECAPITISTA</Button>
+                                    >{(stato === 4 && profilo.auth === 'PAGOPA')? 'Modifica e rifiuta contestazione RECAPITISTA' : 'Rifiuta contestazione RECAPITISTA'}</Button>
                                 </div>
                             }
                         </div>

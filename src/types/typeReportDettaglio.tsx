@@ -17,7 +17,8 @@ export interface NotificheList{
     dataInvio:string,
     anno:string,
     cap:string,
-    statoEstero:string
+    statoEstero:string,
+    onere:string
 }
 
 export interface ModalContestazioneProps{
