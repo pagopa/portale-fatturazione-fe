@@ -15,6 +15,7 @@ import ModalInfo from "../components/reportDettaglio/modalInfo";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import DownloadIcon from '@mui/icons-material/Download';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import MultiSelectStatoContestazione from "../components/reportDettaglio/multiSelectGroupedBy";
 
 
 
@@ -63,7 +64,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         anno:currentYear,
         mese:currString, 
         tipoNotifica:null,
-        statoContestazione:null,
+        statoContestazione:[],
         cap:null,
         iun:null,
         idEnti:[]
@@ -125,7 +126,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             bodyGetLista.profilo !== '' ||
                     bodyGetLista.prodotto !== '' ||
                     bodyGetLista.tipoNotifica !== null ||
-                    bodyGetLista.statoContestazione !== null ||
+                    bodyGetLista.statoContestazione.length !== 0 ||
                     bodyGetLista.cap !== null ||
                     bodyGetLista.idEnti?.length !== 0 ||
                     bodyGetLista.mese !== currString ||
@@ -144,6 +145,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const onAnnullaFiltri = async () =>{
 
         setStatusAnnulla('hidden');
+        setValueFgContestazione([]);
         setDataSelect([]);
         setBodyGetLista({
             profilo:'',
@@ -151,12 +153,13 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             anno:currentYear,
             mese:currString, 
             tipoNotifica:null,
-            statoContestazione:null,
+            statoContestazione:[],
             cap:null,
             iun:null,
             idEnti:[]
 
         });
+   
         const realPageNumber = page + 1;
         const pageNumber = Number(realPageNumber);
 
@@ -167,7 +170,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 anno:currentYear,
                 mese:currString, 
                 tipoNotifica:null,
-                statoContestazione:null,
+                statoContestazione:[],
                 cap:null,
                 iun:null,
             };
@@ -188,7 +191,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 anno:currentYear,
                 mese:currString, 
                 tipoNotifica:null,
-                statoContestazione:null,
+                statoContestazione:[],
                 cap:null,
                 iun:null,
                 idEnti:[]
@@ -335,26 +338,11 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     };
                         
                         
-    const [fgContestazione, setFgContestazione] = useState<FlagContestazione[]>([]);
-                        
-    const getFlagContestazione =  async() => {
-        await flagContestazione(token, mainState.nonce )
-            .then((res)=>{
-                setFgContestazione(res.data);
-                                
-            })
-            .catch(((err)=>{
-                manageError(err,navigate);
-            }));
-    };
-                        
-                        
+                 
     useEffect(()=>{
         if(mainState.nonce !== ''){
             getProdotti();
             getProfili();
-            getFlagContestazione();
-            
         }
     },[mainState.nonce]);
                         
@@ -448,7 +436,10 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
     // stato multiselect ragione sociale
     const [dataSelect, setDataSelect] = useState([]);
-   
+    console.log({bodyGetLista});
+
+
+    const [valueFgContestazione, setValueFgContestazione] = useState<FlagContestazione[]>([]);
             
     return (
         <div className="mx-5">
@@ -692,6 +683,14 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     </div>
                     <div className=" col-3 ">
                         <Box sx={{width:'80%', marginLeft:'20px'}} >
+                            <MultiSelectStatoContestazione 
+                                mainState={mainState}
+                                setBodyGetLista={setBodyGetLista}
+                                valueFgContestazione={valueFgContestazione}
+                                setValueFgContestazione={setValueFgContestazione}></MultiSelectStatoContestazione>
+                        </Box>
+                        
+                        {/* <Box sx={{width:'80%', marginLeft:'20px'}} >
                             <FormControl
                                 fullWidth
                                 size="medium"
@@ -730,6 +729,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                 </Select>
                             </FormControl>
                         </Box>
+                        */}
                     </div>
                     <div className="col-3 ">
                         <Box sx={{width:'80%', marginLeft:'20px'}} >
@@ -804,7 +804,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
                 </Button>
             </div>
-            }               
+            }    
+
+                       
             <div className="mb-5">
                 <div style={{overflowX:'auto'}}>
                     <Card sx={{width: '2000px'}}  >

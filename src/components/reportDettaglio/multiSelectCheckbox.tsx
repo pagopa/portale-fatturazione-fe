@@ -74,6 +74,7 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({mainState, 
             }}
             onInputChange={(event, newInputValue, reason)=>console.log({event, newInputValue, reason}, '??')}
             id="checkboxes-tags-demo"
+          
             options={dataSelect}
             disableCloseOnSelect
             getOptionLabel={(option:OptionMultiselectChackbox) => (option.descrizione)}
