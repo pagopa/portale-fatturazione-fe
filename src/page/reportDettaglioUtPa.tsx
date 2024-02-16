@@ -1,12 +1,13 @@
 import { Typography } from "@mui/material";
 import { } from '@mui/material';
-import React , { useState, useEffect } from 'react';
+import React , { useState, useEffect, useRef } from 'react';
 import {
     Card, Table,TableHead,TableBody,
     TableRow,TableCell,TablePagination, TextField,
     Box, FormControl, InputLabel,Select, MenuItem, Button
 } from '@mui/material';
-import { manageError, getTipologiaProdotto, getTipologiaProfilo, listaNotifiche, flagContestazione,  getContestazione, downloadNotifche, listaEntiNotifichePage, listaNotifichePagoPa, getContestazionePagoPa } from "../api/api";
+import { CSVLink } from 'react-csv';
+import { manageError, getTipologiaProdotto, getTipologiaProfilo, listaNotifiche, getContestazione, downloadNotifche, listaNotifichePagoPa, getContestazionePagoPa, downloadNotifchePagoPa } from "../api/api";
 import { ReportDettaglioProps, NotificheList, FlagContestazione, Contestazione  } from "../types/typeReportDettaglio";
 import { useNavigate } from "react-router";
 import { BodyListaNotifiche } from "../types/typesGeneral";
@@ -16,6 +17,7 @@ import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckb
 import DownloadIcon from '@mui/icons-material/Download';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import MultiSelectStatoContestazione from "../components/reportDettaglio/multiSelectGroupedBy";
+import Loader from "../components/reusableComponents/loader";
 
 
 
@@ -364,15 +366,11 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     //se i tempi di creazione di una contestazione sono scaduti show pop up info
                     if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
                         setOpenModalInfo(true);
-          
                     }else{
                     // atrimenti show pop up creazione contestazione
-           
                         setOpen(true); 
                         setContestazioneSelected(res.data);
-                    }
-                
-                                
+                    }           
                 })
                 .catch(((err)=>{
                     manageError(err,navigate);
@@ -391,9 +389,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                
                     setOpen(true); 
                     setContestazioneSelected(res.data);
-                }
-                    
-                                    
+                }                 
             })
                 .catch(((err)=>{
                     manageError(err,navigate);
@@ -413,30 +409,56 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
     const mesiGrid = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
                         
+
+    const [transactionData, setTransactionData] = useState<any>([]);
+    const [showLoading, setShowLoading] = useState(false);
+    
     const downloadNotificheOnDownloadButton = async () =>{
 
-        await downloadNotifche(token, mainState.nonce,bodyGetLista )
-            .then((res)=>{
+        if(profilo.auth === 'SELFCARE'){
+            await downloadNotifche(token, mainState.nonce,bodyGetLista )
+                .then((res)=>{
 
             
-                const link = document.createElement('a');
-                link.href = "data:text/plain;base64," + res.data.documento;
-                link.setAttribute('download', 'Lista Notifiche.xlsx'); //or any other extension
-                document.body.appendChild(link);
+                    const link = document.createElement('a');
+                    link.href = "data:text/plain;base64," + res.data.documento;
+                    link.setAttribute('download', 'Lista Notifiche.xlsx'); //or any other extension
+                    document.body.appendChild(link);
               
-                link.click();
-                document.body.removeChild(link);
+                    link.click();
+                    document.body.removeChild(link);
                             
-            })
-            .catch(((err)=>{
-                manageError(err,navigate);
-            }));
+                })
+                .catch(((err)=>{
+                    manageError(err,navigate);
+                }));
+        }else{
+            await downloadNotifchePagoPa(token, mainState.nonce,bodyGetLista )
+                .then((res)=>{
+
+                    const blob = new Blob([res.data], { type: 'text/csv' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.setAttribute('hidden', '');
+                    a.setAttribute('href', url);
+                    a.setAttribute('download', 'Lista Notifiche.csv');
+                    document.body.appendChild(a);
+                    a.click();
+                    setShowLoading(false);
+                    document.body.removeChild(a);
+                      
+                })
+                .catch(((err)=>{
+                    manageError(err,navigate);
+                    setShowLoading(false);
+                }));
+        }
     };
 
 
     // stato multiselect ragione sociale
     const [dataSelect, setDataSelect] = useState([]);
-    console.log({bodyGetLista});
+
 
 
     const [valueFgContestazione, setValueFgContestazione] = useState<FlagContestazione[]>([]);
@@ -689,47 +711,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                 valueFgContestazione={valueFgContestazione}
                                 setValueFgContestazione={setValueFgContestazione}></MultiSelectStatoContestazione>
                         </Box>
-                        
-                        {/* <Box sx={{width:'80%', marginLeft:'20px'}} >
-                            <FormControl
-                                fullWidth
-                                size="medium"
-                            >
-                                <InputLabel
-                                    id="contestazioni"
-                                >
-                                             Contestazione
-                                                
-                                </InputLabel>
-                                <Select
-                                    id="contestazioni"
-                                    label='Contestazione'
-                                    labelId="search-by-label"
-                                    onChange={(e) =>{
-                                        const value = Number(e.target.value);
-                                        setBodyGetLista((prev)=> ({...prev, ...{statoContestazione:value}}));}
-                                    } 
-                                    value={bodyGetLista.statoContestazione || ''}
-                                    //IconComponent={SearchIcon}
-                                                
-                                    disabled={status=== 'immutable' ? true : false}
-                                                
-                                >
-                                    {fgContestazione.map((el) => (
-                                                    
-                                        <MenuItem
-                                            key={el.id}
-                                            value={el.id}
-                                        >
-                                            {el.flag}
-                                        </MenuItem>
-                                                    
-                                    ))}
-                                                    
-                                </Select>
-                            </FormControl>
-                        </Box>
-                        */}
                     </div>
                     <div className="col-3 ">
                         <Box sx={{width:'80%', marginLeft:'20px'}} >
@@ -796,13 +777,25 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 </div>
             </div>
             {/* grid */}
-            {(profilo.auth === 'SELFCARE' && notificheList.length > 0)  &&
+            { notificheList.length > 0  &&
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
-                                                
-                <Button onClick={()=> downloadNotificheOnDownloadButton() } >
-                                                Download Risultati
-                    <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
-                </Button>
+                {showLoading ?
+                    <div id='loader_download_contestazione'>
+                        <Loader></Loader> 
+                    </div>   
+                    :  
+                    <div>
+                        <Button onClick={()=> {
+                            downloadNotificheOnDownloadButton(); 
+                            setShowLoading(true); }}  >
+                                  Download Risultati 
+                            <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
+                        </Button>
+            
+                    </div>           
+                   
+                }
+               
             </div>
             }    
 
