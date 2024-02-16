@@ -155,7 +155,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
             }));
     };
 
-    console.log(contestazioneSelected);
+   
 
     const modifyContestazioneFun = async (action:string) => {
         let body;
