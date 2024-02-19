@@ -332,7 +332,9 @@ CON => consolidatore (selfcare -> tutti gli enti)
     stato === 5 ||
     stato === 6 ||
     stato === 8 ||
-    stato === 9; 
+    stato === 9 ||
+    profilo.profilo === 'RCP' ||
+    profilo.profilo === 'CON'; 
 
     const hiddenButtonAnnullaContestazione = profilo.profilo !== 'PA' ||
      stato !== 3 ||
@@ -345,7 +347,8 @@ CON => consolidatore (selfcare -> tutti gli enti)
         stato === 7 ||
     profilo.profilo !== 'PA';
 
-    const hiddenRispondiChiudiSend = (stato !== 4 && stato !== 7) || profilo.auth === 'PAGOPA';
+    // una volta settato rec e con cambierà la variabile
+    const hiddenRispondiChiudiSend = (stato !== 4 && stato !== 7) || profilo.auth === 'PAGOPA' || profilo.profilo === 'RCP' || profilo.profilo === 'CON';
 
     const hiddenChiudi_send = profilo.auth !== 'PAGOPA' || (stato !== 7 && stato !== 3 && stato !== 4);
 
@@ -602,6 +605,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                     {/*BODY */}
                     <div className='mt-5'>
                         <div className='row'>
+                            {/* butto ENTE */}
                             {
                                 contestazioneSelected.contestazione.statoContestazione !== 1   ? null :
                           
@@ -617,6 +621,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         >Crea Contestazione</Button>
                                     </div>
                             }
+                            {/* butto ENTE */}
                             {
                                 hiddenButtonAnnullaContestazione ? null :
                           
@@ -645,7 +650,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                     >{labelModificaRispondiEnte}</Button>
                                 </div>
                             }
-
+                            {/* butto ENTE recapitista consolidatore */}
                             { hiddenRispondiChiudiSend ? null :
                                 <div className='col-2 me-2'>
                                     <Button
@@ -674,6 +679,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                     >{(stato === 4) ? 'Modifica Risposta' : 'Rispondi'}</Button>
                                 </div>
                             }
+                            {/* butto PAGOPA */}
                             {hiddenRispondiAccettaEnte_send ? null :
                                 <div className='col-2 me-2'>
                                     <Button
@@ -683,6 +689,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                     >{stringButtonAccettaEnte_send}</Button>
                                 </div>
                             }
+                            {/* butto PAGOPA */}
                             {hiddenChiudi_send ? null :
                                 <div className='col-2 me-2 '>
                                     <Button
@@ -693,7 +700,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                     >{labelChiusdi_send}</Button>
                                 </div>
                             }
-
+                            {/* butto PAGOPA , ente*/}
                             {hiddenConsRec ? null :
                                 <div className='col-2 me-5'>
                                     <Button
@@ -704,7 +711,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                     >{(stato === 4 && profilo.auth === 'PAGOPA')? 'Modifica e rifiuta contestazione CONSOLIDATORE' : 'Rifiuta contestazione CONSOLIDATORE'}</Button>
                                 </div>
                             }
-
+                            {/* butto PAGOPA , ente*/}
                             { hiddenConsRec? null :
                                 <div className='col-2 me-2'>
                                     <Button
