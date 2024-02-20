@@ -75,11 +75,13 @@
 min-height: 48px;
 width: 200px;
 border:none;
+background-color:white;
 
 }
 
 #loader_download_contestazione .MuiFormControl-root .MuiBox-root p{
   color: #0073E6;
   font-weight: 600;
+  
 }
 

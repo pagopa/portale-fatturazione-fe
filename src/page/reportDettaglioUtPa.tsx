@@ -18,6 +18,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import MultiSelectStatoContestazione from "../components/reportDettaglio/multiSelectGroupedBy";
 import Loader from "../components/reusableComponents/loader";
+import ModalLoading from "../components/reusableComponents/modalLoading";
 
 
 
@@ -462,6 +463,10 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
 
     const [valueFgContestazione, setValueFgContestazione] = useState<FlagContestazione[]>([]);
+
+
+
+    
             
     return (
         <div className="mx-5">
@@ -779,22 +784,21 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             {/* grid */}
             { notificheList.length > 0  &&
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
-                {showLoading ?
-                    <div id='loader_download_contestazione'>
-                        <Loader></Loader> 
-                    </div>   
-                    :  
-                    <div>
-                        <Button onClick={()=> {
-                            downloadNotificheOnDownloadButton(); 
-                            setShowLoading(true); }}  >
+                 
+                <div>
+                    <Button onClick={()=> {
+                        downloadNotificheOnDownloadButton(); 
+                        if(profilo.auth === 'PAGOPA'){
+                            setShowLoading(true);
+                        }
+                    }}  >
                                   Download Risultati 
-                            <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
-                        </Button>
+                        <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
+                    </Button>
             
-                    </div>           
+                </div>           
                    
-                }
+               
                
             </div>
             }    
@@ -955,6 +959,12 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 setOpen={setOpenModalInfo} >
 
             </ModalInfo>
+
+            <ModalLoading 
+                open={showLoading} 
+                setOpen={setShowLoading} >
+                    
+            </ModalLoading>
                                                     
         </div>
     );
