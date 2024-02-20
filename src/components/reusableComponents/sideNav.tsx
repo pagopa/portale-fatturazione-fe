@@ -339,6 +339,13 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
                             </ListItemIcon>
                             <ListItemText primary="Notifiche" />
                         </ListItemButton>
+                        <ListItemButton selected={selectedIndex === 3} onClick={() => console.log('rel')}>
+                            <ListItemIcon>
+                           
+                                <MarkUnreadChatAltIcon fontSize="inherit" />
+                            </ListItemIcon>
+                            <ListItemText primary="Rel" />
+                        </ListItemButton>
                     </List>
                     <Divider />
                 </Box>

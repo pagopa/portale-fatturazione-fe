@@ -1,0 +1,60 @@
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { Box } from "@mui/system";
+import React from "react";
+import { SelectUltimiDueAnniProps } from "../../types/typesGeneral";
+
+const SelectUltimiDueAnni : React.FC<SelectUltimiDueAnniProps> = ({setValue, values}) =>{
+
+
+    // prendo gli ultimi 2 anni dinamicamente
+   
+    const getCurrentFinancialYear = () => {
+        const thisYear = (new Date()).getFullYear();
+        const yearArray = [0, 1].map((count) => `${thisYear - count}`);
+        return yearArray;
+    };
+    return (
+        <Box sx={{width:'80%'}} >
+            <FormControl
+                fullWidth
+                size="medium"
+            >
+                <InputLabel
+                    id="sea"
+                >
+                            Anno
+                            
+                </InputLabel>
+                <Select
+                    id="selectAnno"
+                    label='Seleziona Prodotto'
+                    labelId="search-by-label"
+                    onChange={(e) => {
+                                
+                        const value = Number(e.target.value);
+                        setValue((prev)=> ({...prev, ...{anno:value}}));
+                    }}
+                    value={values.anno}
+                    //IconComponent={SearchIcon}
+                            
+                    disabled={status=== 'immutable' ? true : false}
+                            
+                >
+                    {getCurrentFinancialYear().map((el) => (
+                                
+                        <MenuItem
+                            key={Math.random()}
+                            value={el}
+                        >
+                            {el}
+                        </MenuItem>
+                                
+                    ))}
+                                
+                </Select>
+            </FormControl>
+        </Box>
+    );
+};
+
+export default SelectUltimiDueAnni;

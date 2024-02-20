@@ -25,6 +25,7 @@ import Azure from './page/azure';
 import { Container, Button } from 'react-bootstrap';
 import { loginRequest } from './authConfig';
 import './App.css';
+import RelPage from './page/relUtPa';
 
 
 const MainContent = () => {
@@ -138,6 +139,8 @@ const App = ({ instance }) => {
                                         <Route path="/pagopalistamodulicommessa" element={<PagoPaListaModuliCommessa mainState={mainState} setMainState={setMainState} />} />
                                    
                                         <Route path="/notifiche" element={<ReportDettaglio mainState={mainState} />} />
+
+                                        <Route path="/rel" element={<RelPage/>} />
 
                                         <Route path="*" element={<Navigate to="/error" replace />} />
 
