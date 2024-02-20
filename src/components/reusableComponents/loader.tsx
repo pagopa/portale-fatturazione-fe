@@ -1,8 +1,12 @@
 import { SingleFileInput } from "@pagopa/mui-italia";
 import React, { useState } from "react";
-import DownloadIcon from '@mui/icons-material/Download';
 
-const Loader : React.FC = () => {
+
+type LoderProp = {
+    sentence : string
+}
+
+const Loader : React.FC<LoderProp> = ({sentence}) => {
     const [file, setFile] = useState<File | null>(null);
     const handleSelect = (file: File) => {
         setFile(file);
@@ -12,7 +16,7 @@ const Loader : React.FC = () => {
     };
 
     
-    return  <SingleFileInput  value={file} onFileSelected={handleSelect} onFileRemoved={handleRemove} loadingLabel='Downloading .....' loading={true} dropzoneLabel={''}/>;
+    return  <SingleFileInput  value={file} onFileSelected={handleSelect} onFileRemoved={handleRemove} loadingLabel={sentence} loading={true} dropzoneLabel={''}/>;
 
 };
 
