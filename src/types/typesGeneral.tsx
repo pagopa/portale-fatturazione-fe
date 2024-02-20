@@ -117,6 +117,18 @@ export interface BodyCreateContestazione{
     
 }
 
+export interface SelectUltimiDueAnniProps{
+    values:any,
+    setValue: (value:any) => void
+}
+
+export interface SelectMeseProps{
+    values:any,
+    setValue: (value:any) => void
+}
+
+
+
 
 
 
