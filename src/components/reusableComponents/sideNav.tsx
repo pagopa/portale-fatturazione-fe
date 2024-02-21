@@ -13,7 +13,7 @@ import DnsIcon from '@mui/icons-material/Dns';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { getDatiModuloCommessa, getAuthProfilo, getDatiFatturazione, getDatiFatturazionePagoPa,  manageError} from '../../api/api';
 import MarkUnreadChatAltIcon from '@mui/icons-material/MarkUnreadChatAlt';
-import { MainState, SideNavProps } from '../../types/typesGeneral';
+import { MainState, ManageErrorResponse, SideNavProps } from '../../types/typesGeneral';
 
 
 const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => {
@@ -37,9 +37,9 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
                 setMainState((prev:MainState)=>({...prev, ...{nonce:res?.data.nonce}}));
            
               
-            }).catch(()=>{
+            }).catch((err:ManageErrorResponse)=>{
 
-                navigate('/error');
+                manageError(err, navigate);
             });
     };
     // eseguiamo la get a riga 31 solo se il nonce nel main state è presente ,controlliamo che nella local storage sia settatto il profilo
