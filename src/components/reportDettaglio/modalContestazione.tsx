@@ -171,7 +171,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                 rispostaEnte: rispostaEnte,
                 statoContestazione:7
             };
-        }else if(action === 'RispondiAccettaSend' && stato === 4){
+        }else if(action === 'RispondiAccettaSend' && (stato === 4 || stato === 7)){
             body = {
                 idNotifica:contestazioneSelected.contestazione.idNotifica,
                 noteEnte:contestazioneSelected.contestazione.noteEnte,
@@ -378,11 +378,11 @@ CON => consolidatore (selfcare -> tutti gli enti)
         disableRispondiAccettaSend_rispondi = true;
     }
     
-    let labelChiusdi_send = 'Rifiuta Contestazione SEND';
+    let labelChiusdi_send = 'Rifiuta Contestazione';
     if(stato === 3){
-        labelChiusdi_send = 'Rispondi rifiuta contestazione SEND';
+        labelChiusdi_send = 'Rispondi e rifiuta contestazione';
     }else if(stato === 4){
-        labelChiusdi_send = 'Modifica e rifiuta contestazione SEND';
+        labelChiusdi_send = 'Modifica e rifiuta contestazione';
     }
     return (
         <div>
@@ -662,7 +662,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                             
                                         }}
                                        
-                                    >{stato === 7  ? 'Rifiuta contestazione SEND' : "Rispondi e rifiuta contestazione SEND" }</Button>
+                                    >{stato === 7  ? 'Accetta risposta SEND' : "Rispondi e accetta contestazione SEND" }</Button>
                                 </div>
                             }
                             {/* butto PAGOPA */}
@@ -708,7 +708,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         disabled={true}
                                         variant='contained'
                                         onClick={()=>console.log('esci')}
-                                    >{(stato === 4 && profilo.auth === 'PAGOPA')? 'Modifica e rifiuta contestazione CONSOLIDATORE' : 'Rifiuta contestazione CONSOLIDATORE'}</Button>
+                                    >{(stato === 4 && profilo.auth === 'PAGOPA')? 'Modifica e accetta risposta CONSOLIDATORE' : 'Accetta risposta CONSOLIDATORE'}</Button>
                                 </div>
                             }
                             {/* butto PAGOPA , ente*/}
@@ -719,7 +719,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         disabled={true}
                                         variant='contained'
                                         onClick={()=>console.log('esci')}
-                                    >{(stato === 4 && profilo.auth === 'PAGOPA')? 'Modifica e rifiuta contestazione RECAPITISTA' : 'Rifiuta contestazione RECAPITISTA'}</Button>
+                                    >{(stato === 4 && profilo.auth === 'PAGOPA')? 'Modifica e accetta risposta RECAPITISTA' : 'Accetta risposta RECAPITISTA'}</Button>
                                 </div>
                             }
                         </div>
