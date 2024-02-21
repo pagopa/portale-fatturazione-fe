@@ -17,7 +17,6 @@ import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckb
 import DownloadIcon from '@mui/icons-material/Download';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import MultiSelectStatoContestazione from "../components/reportDettaglio/multiSelectGroupedBy";
-import Loader from "../components/reusableComponents/loader";
 import ModalLoading from "../components/reusableComponents/modalLoading";
 
 
@@ -218,32 +217,43 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const [totalNotifiche, setTotalNotifiche]  = useState(0);
     const realPageNumber = page + 1;
     const pageNumber = Number(realPageNumber);
+
+    const [getNotificheWorking, setGetNotificheWorking] = useState(false);
                 
     const getlistaNotifiche = async (nPage:number, nRow:number) => {
         // elimino idEnti dal paylod della get notifiche lato selfcare
         const {idEnti, ...newBody} = bodyGetLista;
-      
+        // disable button filtra e annulla filtri nell'attesa dei dati
+        setGetNotificheWorking(true);
         await listaNotifiche(token,mainState.nonce,nPage, nRow, newBody)
             .then((res)=>{
+               
                 setNotificheList(res.data.notifiche);
                 setTotalNotifiche(res.data.count);
-                        
+                // abilita button filtra e annulla filtri all'arrivo dei dati
+                setGetNotificheWorking(false);
             }).catch((error)=>{
-                
+                // abilita button filtra e annulla filtri all'arrivo dei dati
+                setGetNotificheWorking(false);
                 manageError(error, navigate);
             });
                     
     };
 
     const getlistaNotifichePagoPa = async (nPage:number, nRow:number) => {
-
+        // disable button filtra e annulla filtri nell'attesa dei dati
+        setGetNotificheWorking(true);
         await listaNotifichePagoPa(token,mainState.nonce,nPage, nRow, bodyGetLista)
             .then((res)=>{
+                // abilita button filtra e annulla filtri all'arrivo dei dati
+                setGetNotificheWorking(false);
+
                 setNotificheList(res.data.notifiche);
                 setTotalNotifiche(res.data.count);
                         
             }).catch((error)=>{
-               
+                // abilita button filtra e annulla filtri all'arrivo dei dati
+                setGetNotificheWorking(false);
                 manageError(error, navigate);
             });
                     
@@ -411,7 +421,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const mesiGrid = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
                         
 
-    const [transactionData, setTransactionData] = useState<any>([]);
+   
     const [showLoading, setShowLoading] = useState(false);
     
     const downloadNotificheOnDownloadButton = async () =>{
@@ -463,10 +473,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
 
     const [valueFgContestazione, setValueFgContestazione] = useState<FlagContestazione[]>([]);
-
-
-
-    
             
     return (
         <div className="mx-5">
@@ -758,8 +764,10 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                 <div>
                                     <Button 
                                         onClick={()=> onButtonFiltra()} 
+                                        disabled={getNotificheWorking}
                                         sx={{width:'200px'}}
                                         variant="contained"> Filtra
+                                        
                                     </Button>
                                                     
                                     {statusAnnulla === 'hidden' ? null :
@@ -769,6 +777,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                                 onAnnullaFiltri();
                                                
                                             } }
+                                            disabled={getNotificheWorking}
                                             sx={{marginLeft:'24px'}} >
                                                     Annulla filtri
                                         </Button>
@@ -786,12 +795,14 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
                  
                 <div>
-                    <Button onClick={()=> {
-                        downloadNotificheOnDownloadButton(); 
-                        if(profilo.auth === 'PAGOPA'){
-                            setShowLoading(true);
-                        }
-                    }}  >
+                    <Button
+                        disabled={getNotificheWorking}
+                        onClick={()=> {
+                            downloadNotificheOnDownloadButton(); 
+                            if(profilo.auth === 'PAGOPA'){
+                                setShowLoading(true);
+                            }
+                        }}  >
                                   Download Risultati 
                         <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
                     </Button>
