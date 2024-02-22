@@ -108,8 +108,10 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const notificheListWithOnere = notificheList.map((notifica) =>{
         
         let newOnere = '';
-        if(notifica.onere === 'SEND_PA' || notifica.onere === 'PA_SEND' ){
+        if(notifica.onere === 'SEND_PA'){
             newOnere = 'ENTE';
+        }else if( notifica.onere === 'PA_SEND' ){
+            newOnere = 'SEND';
         }else if(notifica.onere === 'SEND_SEND'){
             newOnere = 'SEND';
         }else if(notifica.onere === 'SEND_RCP'){
@@ -765,7 +767,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                     <Button 
                                         onClick={()=> onButtonFiltra()} 
                                         disabled={getNotificheWorking}
-                                        sx={{width:'200px'}}
                                         variant="contained"> Filtra
                                         
                                     </Button>

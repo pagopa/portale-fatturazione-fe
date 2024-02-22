@@ -152,7 +152,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMainS
                 <Box sx={{ display: 'flex' }}>
                   
                     <Button
-                        size="small"
+                       
                         variant="contained"
                         disabled={valueSelect === ''}
                         sx={{ marginTop: 'auto', marginBottom: 'auto', marginLeft: '30px' }}
