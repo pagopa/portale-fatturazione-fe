@@ -753,7 +753,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                 <div>
                                     <Button 
                                         onClick={()=> onButtonFiltra()} 
-                                        sx={{width:'200px'}}
                                         variant="contained"> Filtra
                                     </Button>
                                                     
