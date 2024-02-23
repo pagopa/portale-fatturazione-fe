@@ -612,7 +612,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                         </Box>
                     </div>
                     <div className="col-3 ">
-                        <Box sx={{marginLeft:'20px'}} >
+                        <Box sx={{width:'80%',marginLeft:'20px'}} >
                             <TextField
                                 //required={required}
                                 // helperText='Cap'
@@ -754,24 +754,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                             />
                         </Box>
                     </div>
-                    {(profilo.auth === 'PAGOPA' || profilo.profilo === 'CND') &&
-                    <div className="col-3">
-                        <MultiselectCheckbox 
-                            mainState={mainState} 
-                            setBodyGetLista={setBodyGetLista}
-                            setDataSelect={setDataSelect}
-                            dataSelect={dataSelect}
-                        ></MultiselectCheckbox>
-    
-                    </div>
-                    }
-                   
-                                                
-                </div>
-
-                <div className="row mt-5" >
                     <div className="col-3 ">
-                        <Box sx={{width:'80%'}} >
+                        <Box sx={{width:'80%',  marginLeft:'20px'}} >
                             <TextField
                                 fullWidth
                                 label='Recipient ID'
@@ -789,6 +773,23 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                         </Box>
                     </div>
 
+                    
+                   
+                                                
+                </div>
+
+                <div className="row mt-5" >
+                    {(profilo.auth === 'PAGOPA' || profilo.profilo === 'CND') &&
+                    <div className="col-3">
+                        <MultiselectCheckbox 
+                            mainState={mainState} 
+                            setBodyGetLista={setBodyGetLista}
+                            setDataSelect={setDataSelect}
+                            dataSelect={dataSelect}
+                        ></MultiselectCheckbox>
+    
+                    </div>
+                    }
                 </div>
 
                 <div className="">

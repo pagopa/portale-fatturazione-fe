@@ -98,7 +98,7 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({mainState, 
                     </li>
                 );
             } }
-            style={{ marginLeft: '20px' }}
+            style={{ width: '80%' }}
             renderInput={(params) =>{
                
                 return <TextField 
