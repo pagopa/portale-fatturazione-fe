@@ -33,15 +33,17 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, elementSelected, setE
 
 
     useEffect(()=>{
-        setBody((prev:BodyRel) => ({...prev, ...{page:page,pageSize:rowsPerPage}}));
+        getlistaRelEnte();
     },[]);
 
    
 
-    const getlistaRelEnte = async (nPage:number, nRow:number) => {
+    const getlistaRelEnte = async () => {
+
+        const {ragioneSociale, ...newBody} = body;
      
       
-        await  getListaRel(token,mainState.nonce,nPage, nRow, body)
+        await  getListaRel(token,mainState.nonce,page, rowsPerPage, newBody)
             .then((res)=>{
                 console.log(res);
                         
