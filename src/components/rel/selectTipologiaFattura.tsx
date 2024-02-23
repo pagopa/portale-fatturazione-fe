@@ -4,7 +4,11 @@ import { SelectMeseProps } from "../../types/typesGeneral";
 
 const SelectTipologiaFattura : React.FC<SelectMeseProps> = ({setValue, values}) =>{
 
-    const tipologie = [{'id': 1, 'descrizione': 'tipo 1'}];
+    const tipologie = [
+        'PRIMO SALDO',
+        'SECONDO SALDO',
+        'PRIMO CONGUAGLIO',
+        'SECONDO CONGUAGLIO'];
     return (
         <Box sx={{width:'80%', marginLeft:'20px'}}  >
             <FormControl
@@ -24,16 +28,16 @@ const SelectTipologiaFattura : React.FC<SelectMeseProps> = ({setValue, values}) 
                         setValue((prev)=> ({...prev, ...{tipologiaFattura:e.target.value}}));
                     }}
                                
-                    value={values.mese}
+                    value={values.tipologiaFattura}
                              
                 >
                     {tipologie.map((el) => (
                                     
                         <MenuItem
                             key={Math.random()}
-                            value={el.id}
+                            value={el}
                         >
-                            {el.descrizione}
+                            {el}
                         </MenuItem>
                                     
                     ))}

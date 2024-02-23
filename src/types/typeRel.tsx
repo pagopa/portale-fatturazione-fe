@@ -1,11 +1,21 @@
+import { MainState } from "./typesGeneral";
+
+export interface RelPageProps{
+    mainState:MainState
+}
+
 export interface TextRegioneSocialeRelProps{
     values:any,
     setValue: (value:any) => void
 }
 
 export interface BodyRel{
-    anno:number|null,
-    mese:number|null,
+    anno:number,
+    mese:number,
     tipologiaFatture:number|null,
-    ragioneSociale:string
+    ragioneSociale?:string[] | [],
+    idContratto: string | null,
+    page:number,
+    pageSize:number
 } 
+
