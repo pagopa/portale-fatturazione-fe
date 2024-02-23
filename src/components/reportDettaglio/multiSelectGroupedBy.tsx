@@ -45,6 +45,10 @@ const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({m
 
     return (
         <Autocomplete
+            sx={{ '.MuiAutocomplete-groupLabel': {
+                backgroundColor:'#FF0000',
+                       
+            },}}
             multiple
             onChange={(event, value) => {
                 const arrayIdContestazioni = value.map(obj=> obj.id);
@@ -53,7 +57,7 @@ const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({m
                 
             }}
             value={valueFgContestazione}
-            id="grouped-demo"
+            id="contestazioneNotifiche"
             options={fgContestazione}
             groupBy={(option:FlagContestazione) => option.descrizione}
             disableCloseOnSelect
@@ -63,6 +67,7 @@ const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({m
                
                 return <TextField 
                     //onChange={(e)=> setTextValue(e.target.value)} 
+                  
                     {...params}
                     label="Contestazione" 
                     placeholder="Contestazione" />;
@@ -71,74 +76,27 @@ const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({m
             }
             renderOption={(props, option, { selected }) =>{
                 //settato come key l'id ente 
-                
+              
                 const newProps = {...props,...{key:option.id}};
                 return (
-                    <li {...newProps}   >
+                    <div>
+                        <li    {...newProps}   >
                         
-                        <Checkbox
+                            <Checkbox
                             
-                            icon={icon}
-                            checkedIcon={checkedIcon}
-                            style={{ marginRight: 8 }}
-                            checked={selected}
-                        />
+                                icon={icon}
+                                checkedIcon={checkedIcon}
+                                style={{ marginRight: 8 }}
+                                checked={selected}
+                            />
                         
-                        {option.flag}
-                    </li>
+                            {option.flag}
+                        </li>
+                    </div>
+                  
                 );
             } }
         />
     );
 };
 export default MultiSelectStatoContestazione;
-
-
-// Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
-const options = [
-    {
-        "id": 1,
-        "flag": "Non Contestata",
-        "descrizione": "Non contestata"
-    },
-    {
-        "id": 2,
-        "flag": "Annullata",
-        "descrizione": "Anullata"
-    },
-    {
-        "id": 3,
-        "flag": "Contestata Ente",
-        "descrizione": "Contestazione"
-    },
-    {
-        "id": 4,
-        "flag": "Risposta Send",
-        "descrizione": "Contestazione"
-    },
-    {
-        "id": 5,
-        "flag": "Risposta Recapitista",
-        "descrizione": "Contestazione"
-    },
-    {
-        "id": 6,
-        "flag": "Risposta Consolidatore",
-        "descrizione": "Contestazione"
-    },
-    {
-        "id": 7,
-        "flag": "Risposta Ente",
-        "descrizione": "Contestazione"
-    },
-    {
-        "id": 8,
-        "flag": "Accettata",
-        "descrizione": "Risoluzione"
-    },
-    {
-        "id": 9,
-        "flag": "Rifiutata",
-        "descrizione": "Risoluzione"
-    }
-];
