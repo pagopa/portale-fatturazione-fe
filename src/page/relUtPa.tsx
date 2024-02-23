@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SelectUltimiDueAnni from "../components/reusableComponents/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/selectMese";
 import { Button, TablePagination, Typography } from "@mui/material";
@@ -7,9 +7,16 @@ import TextRagioneSociale from "../components/rel/textFieldRegSociale";
 import GridCustom from "../components/reusableComponents/gridCustom";
 import { BodyRel, RelPageProps } from "../types/typeRel";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
+import { getListaRel, manageError } from "../api/api";
+import { useNavigate } from "react-router";
 
 
 const RelPage : React.FC<RelPageProps> = ({mainState}) =>{
+
+    const navigate = useNavigate();
+
+    const getToken = localStorage.getItem('token') || '{}';
+    const token =  JSON.parse(getToken).token;
 
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
@@ -33,49 +40,94 @@ const RelPage : React.FC<RelPageProps> = ({mainState}) =>{
         pageSize:0
     });
 
-    // data ragione sociale
-    const [dataSelect, setDataSelect] = useState([]);
+  
+   
 
-    const [data, setData] = useState([{
-        "idEnte": "08b735d2-1a95-45e1-bd50-b8fb3fa73224",
-        "ragioneSociale": "Comune di Chiavari",
-        "profilo": "PA",
-        "idContratto": "460ed965-b93b-4755-bdbe-89b8a40207d6",
-        "codiceFiscale": "ND",
-        "pIva": "ND",
-        "cap": null,
-        "statoEstero": null,
-        "numberOfPages": null,
-        "gEnvelopeWeight": null,
-        "costEuroInCentesimi": "100",
-        "timelineCategory": "NOTIFICATION_VIEWED",
-        "contestazione": "Accettata",
-        "statoContestazione": 8,
-        "tipoNotifica": "Digitale",
-        "idNotifica": "NOTIFICATION_VIEWED.IUN_DHZG-PVEQ-AXEG-202310-L-1.RECINDEX_0",
-        "iun": "DHZG-PVEQ-AXEG-202310-L-1",
-        "consolidatore": null,
-        "recapitista": null,
-        "dataInvio": "2023-10-26T09:13:46.966232253Z",
-        "data": "2023-10-26T12:39:03.140204475Z",
-        "recipientIndex": "0",
-        "recipientType": 0,
-        "recipientId": 0,
-        "anno": "2024",
-        "mese": "1",
-        "annoMeseGiorno": "20240126",
-        "itemCode": "",
-        "notificationRequestId": "",
-        "recipientTaxId": "",
-        "fatturata": false,
-        "onere": "SEND_PA"
+    const [data, setData] = useState([ {
+        "idEnte": "string",
+        "idContratto": "string",
+        "tipologiaFattura": "string",
+        "anno": "string",
+        "mese": "string",
+        "totaleAnalogico": 0,
+        "totaleDigitale": "string",
+        "totaleNotificheAnalogiche": 0,
+        "totaleNotificheDigitali": 0,
+        "totale": 0
     }]);
 
     // elemento selezionato nella grid
     const [rel, setRel] = useState({});
 
        
+    
+
+
+
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [totalNotifiche, setTotalNotifiche]  = useState(0);
+
+
+    useEffect(()=>{
+        getlistaRelEnte();
+    },[]);
+
    
+
+    const getlistaRelEnte = async () => {
+
+        const {ragioneSociale, ...newBody} = bodyRel;
+     
+      
+        await  getListaRel(token,mainState.nonce,page, rowsPerPage, newBody)
+            .then((res)=>{
+                console.log(res);
+                        
+            }).catch((error)=>{
+                
+                manageError(error, navigate);
+            });
+                    
+    };
+
+
+    const handleChangePage = (
+        event: React.MouseEvent<HTMLButtonElement> | null,
+        newPage: number,
+    ) => {
+     
+        const realPage = newPage + 1;
+        if(profilo.auth === 'SELFCARE'){
+            // getlistaNotifiche(realPage,rowsPerPage);
+            
+        }
+        if(profilo.auth === 'PAGOPA'){
+            // getlistaNotifichePagoPa(realPage,rowsPerPage);
+            //listaEntiNotifichePageOnSelect();
+        }
+        setPage(newPage);
+    };
+                    
+    const handleChangeRowsPerPage = (
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    ) => {
+    
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+        const realPage = page + 1;
+
+        if(profilo.auth === 'SELFCARE'){
+            //  getlistaNotifiche(realPage,parseInt(event.target.value, 10));
+            
+        }
+        if(profilo.auth === 'PAGOPA'){
+            // getlistaNotifichePagoPa(realPage,parseInt(event.target.value, 10));
+            //listaEntiNotifichePageOnSelect();
+        }
+                            
+    };
+
 
  
 
@@ -103,8 +155,6 @@ const RelPage : React.FC<RelPageProps> = ({mainState}) =>{
                             <MultiselectCheckbox 
                                 mainState={mainState} 
                                 setBodyGetLista={setBodyRel}
-                                setDataSelect={setDataSelect}
-                                dataSelect={dataSelect}
                             ></MultiselectCheckbox>
                         </div>
                     }

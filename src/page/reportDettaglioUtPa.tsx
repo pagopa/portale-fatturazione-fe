@@ -17,7 +17,7 @@ import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckb
 import DownloadIcon from '@mui/icons-material/Download';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import MultiSelectStatoContestazione from "../components/reportDettaglio/multiSelectGroupedBy";
-import Loader from "../components/reusableComponents/loader";
+import ModalLoading from "../components/reusableComponents/modalLoading";
 
 
 
@@ -69,7 +69,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         statoContestazione:[],
         cap:null,
         iun:null,
-        idEnti:[]
+        idEnti:[],
+        recipientId:null
     });
 
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
@@ -108,8 +109,10 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const notificheListWithOnere = notificheList.map((notifica) =>{
         
         let newOnere = '';
-        if(notifica.onere === 'SEND_PA' || notifica.onere === 'PA_SEND' ){
+        if(notifica.onere === 'SEND_PA'){
             newOnere = 'ENTE';
+        }else if( notifica.onere === 'PA_SEND' ){
+            newOnere = 'SEND';
         }else if(notifica.onere === 'SEND_SEND'){
             newOnere = 'SEND';
         }else if(notifica.onere === 'SEND_RCP'){
@@ -132,7 +135,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     bodyGetLista.cap !== null ||
                     bodyGetLista.idEnti?.length !== 0 ||
                     bodyGetLista.mese !== currString ||
-                    bodyGetLista.anno !== currentYear){
+                    bodyGetLista.anno !== currentYear||
+                    bodyGetLista.recipientId !== null){
             setStatusAnnulla('show');
         }else{
                         
@@ -158,7 +162,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             statoContestazione:[],
             cap:null,
             iun:null,
-            idEnti:[]
+            idEnti:[],
+            recipientId:null
 
         });
    
@@ -175,6 +180,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 statoContestazione:[],
                 cap:null,
                 iun:null,
+                recipientId:null
             };
             await listaNotifiche(token,mainState.nonce,1,10, body)
                 .then((res)=>{
@@ -196,7 +202,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 statoContestazione:[],
                 cap:null,
                 iun:null,
-                idEnti:[]
+                idEnti:[],
+                recipientId:null
     
             };
             await listaNotifichePagoPa(token,mainState.nonce,1,10, bodyPagoPa)
@@ -217,32 +224,43 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const [totalNotifiche, setTotalNotifiche]  = useState(0);
     const realPageNumber = page + 1;
     const pageNumber = Number(realPageNumber);
+
+    const [getNotificheWorking, setGetNotificheWorking] = useState(false);
                 
     const getlistaNotifiche = async (nPage:number, nRow:number) => {
         // elimino idEnti dal paylod della get notifiche lato selfcare
         const {idEnti, ...newBody} = bodyGetLista;
-      
+        // disable button filtra e annulla filtri nell'attesa dei dati
+        setGetNotificheWorking(true);
         await listaNotifiche(token,mainState.nonce,nPage, nRow, newBody)
             .then((res)=>{
+               
                 setNotificheList(res.data.notifiche);
                 setTotalNotifiche(res.data.count);
-                        
+                // abilita button filtra e annulla filtri all'arrivo dei dati
+                setGetNotificheWorking(false);
             }).catch((error)=>{
-                
+                // abilita button filtra e annulla filtri all'arrivo dei dati
+                setGetNotificheWorking(false);
                 manageError(error, navigate);
             });
                     
     };
 
     const getlistaNotifichePagoPa = async (nPage:number, nRow:number) => {
-
+        // disable button filtra e annulla filtri nell'attesa dei dati
+        setGetNotificheWorking(true);
         await listaNotifichePagoPa(token,mainState.nonce,nPage, nRow, bodyGetLista)
             .then((res)=>{
+                // abilita button filtra e annulla filtri all'arrivo dei dati
+                setGetNotificheWorking(false);
+
                 setNotificheList(res.data.notifiche);
                 setTotalNotifiche(res.data.count);
                         
             }).catch((error)=>{
-               
+                // abilita button filtra e annulla filtri all'arrivo dei dati
+                setGetNotificheWorking(false);
                 manageError(error, navigate);
             });
                     
@@ -410,7 +428,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const mesiGrid = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
                         
 
-    const [transactionData, setTransactionData] = useState<any>([]);
+   
     const [showLoading, setShowLoading] = useState(false);
     
     const downloadNotificheOnDownloadButton = async () =>{
@@ -747,53 +765,81 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     
                     </div>
                     }
-                    <div className="">
-                        <div className="d-flex justify-content-start mt-5">
-                            <div className=" d-flex align-items-center justify-content-center h-100">
-                                <div>
-                                    <Button 
-                                        onClick={()=> onButtonFiltra()} 
-                                        variant="contained"> Filtra
-                                    </Button>
-                                                    
-                                    {statusAnnulla === 'hidden' ? null :
-                                                    
-                                        <Button
-                                            onClick={()=>{
-                                                onAnnullaFiltri();
-                                               
-                                            } }
-                                            sx={{marginLeft:'24px'}} >
-                                                    Annulla filtri
-                                        </Button>
-                                    }
-                                </div>
+                   
                                                 
+                </div>
+
+                <div className="row mt-5" >
+                    <div className="col-3 ">
+                        <Box sx={{width:'80%'}} >
+                            <TextField
+                                fullWidth
+                                label='Recipient ID'
+                                placeholder='Recipient ID'
+                                value={bodyGetLista.recipientId || ''}
+                                onChange={(e) => setBodyGetLista((prev)=>{
+                                                        
+                                    if(e.target.value === ''){
+                                        return {...prev, ...{recipientId:null}};
+                                    }else{
+                                        return {...prev, ...{recipientId:e.target.value}};
+                                    }
+                                } )}                     
+                            />
+                        </Box>
+                    </div>
+
+                </div>
+
+                <div className="">
+                    <div className="d-flex justify-content-start mt-5">
+                        <div className=" d-flex align-items-center justify-content-center h-100">
+                            <div>
+                                <Button 
+                                    onClick={()=> onButtonFiltra()} 
+                                    disabled={getNotificheWorking}
+                                    variant="contained"> Filtra
+                                        
+                                </Button>
+                                                    
+                                {statusAnnulla === 'hidden' ? null :
+                                                    
+                                    <Button
+                                        onClick={()=>{
+                                            onAnnullaFiltri();
+                                               
+                                        } }
+                                        disabled={getNotificheWorking}
+                                        sx={{marginLeft:'24px'}} >
+                                                    Annulla filtri
+                                    </Button>
+                                }
                             </div>
+                                                
                         </div>
                     </div>
-                                                
                 </div>
             </div>
             {/* grid */}
             { notificheList.length > 0  &&
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
-                {showLoading ?
-                    <div id='loader_download_contestazione'>
-                        <Loader></Loader> 
-                    </div>   
-                    :  
-                    <div>
-                        <Button onClick={()=> {
+                 
+                <div>
+                    <Button
+                        disabled={getNotificheWorking}
+                        onClick={()=> {
                             downloadNotificheOnDownloadButton(); 
-                            setShowLoading(true); }}  >
+                            if(profilo.auth === 'PAGOPA'){
+                                setShowLoading(true);
+                            }
+                        }}  >
                                   Download Risultati 
-                            <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
-                        </Button>
+                        <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
+                    </Button>
             
-                    </div>           
+                </div>           
                    
-                }
+               
                
             </div>
             }    
@@ -954,6 +1000,12 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 setOpen={setOpenModalInfo} >
 
             </ModalInfo>
+
+            <ModalLoading 
+                open={showLoading} 
+                setOpen={setShowLoading} >
+                    
+            </ModalLoading>
                                                     
         </div>
     );
