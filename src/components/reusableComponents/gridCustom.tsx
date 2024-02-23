@@ -11,94 +11,29 @@ interface GridCustomProps {
     elements:object[],
     elementSelected:object,
     setElementSelected: any,
-    body: BodyRel,
-    mainState:MainState,
-    setBody:any
+    changePage:any,
+    changeRow:any,
+    page:number,
+    total:number,
+    rows:number,
+    headerNames:string[]
+   
 }
 
-const GridCustom : React.FC<GridCustomProps> = ({elements, elementSelected, setElementSelected, body, mainState, setBody}) =>{
+const GridCustom : React.FC<GridCustomProps> = ({elements, elementSelected, setElementSelected, changePage, changeRow, page, total, rows, headerNames}) =>{
 
 
 
-    const navigate = useNavigate();
-    const getToken = localStorage.getItem('token') || '{}';
-    const token =  JSON.parse(getToken).token;
 
-    const getProfilo = localStorage.getItem('profilo') || '{}';
-    const profilo =  JSON.parse(getProfilo);
-
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [totalNotifiche, setTotalNotifiche]  = useState(0);
-
-
-    useEffect(()=>{
-        getlistaRelEnte();
-    },[]);
-
-   
-
-    const getlistaRelEnte = async () => {
-
-        const {ragioneSociale, ...newBody} = body;
-     
-      
-        await  getListaRel(token,mainState.nonce,page, rowsPerPage, newBody)
-            .then((res)=>{
-                console.log(res);
-                        
-            }).catch((error)=>{
-                
-                manageError(error, navigate);
-            });
-                    
-    };
-
-
-    const handleChangePage = (
-        event: React.MouseEvent<HTMLButtonElement> | null,
-        newPage: number,
-    ) => {
-     
-        const realPage = newPage + 1;
-        if(profilo.auth === 'SELFCARE'){
-            // getlistaNotifiche(realPage,rowsPerPage);
-            
-        }
-        if(profilo.auth === 'PAGOPA'){
-            // getlistaNotifichePagoPa(realPage,rowsPerPage);
-            //listaEntiNotifichePageOnSelect();
-        }
-        setPage(newPage);
-    };
-                    
-    const handleChangeRowsPerPage = (
-        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    ) => {
-    
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-        const realPage = page + 1;
-
-        if(profilo.auth === 'SELFCARE'){
-            //  getlistaNotifiche(realPage,parseInt(event.target.value, 10));
-            
-        }
-        if(profilo.auth === 'PAGOPA'){
-            // getlistaNotifichePagoPa(realPage,parseInt(event.target.value, 10));
-            //listaEntiNotifichePageOnSelect();
-        }
-                            
-    };
 
     return (
         <div>
-            <div>
+            <div style={{overflowX:'auto'}}>
                 <Card sx={{width: '2000px'}}  >
                     <Table >
                         <TableHead sx={{backgroundColor:'#f2f2f2'}}>
                             <TableRow>
-                                {Object.keys(elements[0]).map((el)=>{
+                                {headerNames.map((el)=>{
                                     return (
                                         <TableCell>
                                             {el}
@@ -166,10 +101,10 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, elementSelected, setE
                     }}}
                     component="div"
                     page={page}
-                    count={totalNotifiche}
-                    rowsPerPage={rowsPerPage}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
+                    count={total}
+                    rowsPerPage={rows}
+                    onPageChange={changePage}
+                    onRowsPerPageChange={changeRow}
                 />  
             </div>
         </div>

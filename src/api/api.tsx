@@ -37,7 +37,7 @@ export const manageError = (res:ManageErrorResponse,navigate:any) =>{
         navigate('/error');
     }else if(res?.response?.request?.status  === 500){
         alert('Operazione non eseguita: Internal Server Error');
-        //navigate('/error');
+        navigate('/error');
     }
 };
 

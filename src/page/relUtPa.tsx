@@ -28,20 +28,25 @@ const RelPage : React.FC<RelPageProps> = ({mainState}) =>{
     const month = Number(currentMonth);
 
 
-    
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [totalNotifiche, setTotalNotifiche]  = useState(0);
+
+
+
+
+    const headerNamesGrid = ['ID','Tipologia Fattura','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale'];    
 
     const [bodyRel, setBodyRel] = useState<BodyRel>({
         anno:currentYear,
         mese:month,
         tipologiaFatture:null,
         ragioneSociale:[],
-        idContratto:null,
-        page:0,
-        pageSize:0
+        idContratto:null
     });
 
-  
-   
+    // data ragione sociale
+    const [dataSelect, setDataSelect] = useState([]);
 
     const [data, setData] = useState([ {
         "idEnte": "string",
@@ -64,11 +69,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState}) =>{
 
 
 
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [totalNotifiche, setTotalNotifiche]  = useState(0);
-
-
+  
     useEffect(()=>{
         getlistaRelEnte();
     },[]);
@@ -77,17 +78,21 @@ const RelPage : React.FC<RelPageProps> = ({mainState}) =>{
 
     const getlistaRelEnte = async () => {
 
-        const {ragioneSociale, ...newBody} = bodyRel;
+        if(profilo.auth === 'SELFCARE'){
+            const {ragioneSociale, ...newBody} = bodyRel;
      
       
-        await  getListaRel(token,mainState.nonce,page, rowsPerPage, newBody)
-            .then((res)=>{
-                console.log(res);
-                        
-            }).catch((error)=>{
-                
-                manageError(error, navigate);
-            });
+            await  getListaRel(token,mainState.nonce,page, rowsPerPage, newBody)
+                .then((res)=>{
+                    console.log(res);
+                            
+                }).catch((error)=>{
+                    
+                    manageError(error, navigate);
+                });
+        }
+
+       
                     
     };
 
@@ -155,6 +160,8 @@ const RelPage : React.FC<RelPageProps> = ({mainState}) =>{
                             <MultiselectCheckbox 
                                 mainState={mainState} 
                                 setBodyGetLista={setBodyRel}
+                                setDataSelect={setDataSelect}
+                                dataSelect={dataSelect}
                             ></MultiselectCheckbox>
                         </div>
                     }
@@ -166,16 +173,27 @@ const RelPage : React.FC<RelPageProps> = ({mainState}) =>{
                 <div className="row mt-5">
                     
                     <div className="col-1">
-                        <Button  variant="contained">Filtra</Button>
+                        <Button onClick={()=>{
+                            getlistaRelEnte();
+                        }} variant="contained">Filtra</Button>
                     </div>
                     <div className="col-2">
                         <Button >Annulla Filtri</Button>
                     </div>
                 </div>
                 <div className="mt-5">
-                    <div  style={{overflowX:'auto'}}>
-                        <GridCustom elements={data} elementSelected={rel} setElementSelected={setRel} mainState={mainState} body={bodyRel} setBody={setBodyRel}></GridCustom>
-                    </div>
+                    
+                    <GridCustom
+                        elements={data}
+                        elementSelected={rel}
+                        setElementSelected={setRel}
+                        changePage={handleChangePage}
+                        changeRow={handleChangeRowsPerPage} 
+                        total={totalNotifiche}
+                        page={page}
+                        rows={rowsPerPage}
+                        headerNames={headerNamesGrid}></GridCustom>
+                 
                 </div>
                
                
