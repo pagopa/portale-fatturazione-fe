@@ -858,6 +858,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                                 Onere
                                     </TableCell>
                                     <TableCell>
+                                                Recipient ID
+                                    </TableCell>
+                                    <TableCell>
                                                 Anno
                                     </TableCell>
                                     <TableCell>
@@ -915,6 +918,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                                 </TableCell>
                                                 <TableCell>
                                                     {notifica.onere}
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    {notifica.recipientId}
                                                 </TableCell>
                                                 <TableCell>
                                                     {notifica.anno}
