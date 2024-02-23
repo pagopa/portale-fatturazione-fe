@@ -48,18 +48,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState}) =>{
     // data ragione sociale
     const [dataSelect, setDataSelect] = useState([]);
 
-    const [data, setData] = useState([ {
-        "idEnte": "string",
-        "idContratto": "string",
-        "tipologiaFattura": "string",
-        "anno": "string",
-        "mese": "string",
-        "totaleAnalogico": 0,
-        "totaleDigitale": "string",
-        "totaleNotificheAnalogiche": 0,
-        "totaleNotificheDigitali": 0,
-        "totale": 0
-    }]);
+    const [data, setData] = useState([]);
 
     // elemento selezionato nella grid
     const [rel, setRel] = useState({});
@@ -71,21 +60,22 @@ const RelPage : React.FC<RelPageProps> = ({mainState}) =>{
 
   
     useEffect(()=>{
-        getlistaRelEnte();
-    },[]);
+        getlistaRelEnte(page, rowsPerPage);
+    },[page, rowsPerPage]);
 
    
 
-    const getlistaRelEnte = async () => {
+    const getlistaRelEnte = async (nPage,nRows) => {
 
         if(profilo.auth === 'SELFCARE'){
             const {ragioneSociale, ...newBody} = bodyRel;
      
       
-            await  getListaRel(token,mainState.nonce,page, rowsPerPage, newBody)
+            await  getListaRel(token,mainState.nonce,nPage, nRows, newBody)
                 .then((res)=>{
-                    console.log(res);
-                            
+                    
+                    setData(res.data.relTestate);
+                    setTotalNotifiche(res.data.count);
                 }).catch((error)=>{
                     
                     manageError(error, navigate);
@@ -104,7 +94,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState}) =>{
      
         const realPage = newPage + 1;
         if(profilo.auth === 'SELFCARE'){
-            // getlistaNotifiche(realPage,rowsPerPage);
+            getlistaRelEnte(page, rowsPerPage);
             
         }
         if(profilo.auth === 'PAGOPA'){
@@ -174,7 +164,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState}) =>{
                     
                     <div className="col-1">
                         <Button onClick={()=>{
-                            getlistaRelEnte();
+                            getlistaRelEnte(page, rowsPerPage);
                         }} variant="contained">Filtra</Button>
                     </div>
                     <div className="col-2">
