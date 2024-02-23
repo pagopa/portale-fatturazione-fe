@@ -14,8 +14,6 @@ export interface BodyRel{
     mese:number,
     tipologiaFatture:number|null,
     ragioneSociale?:string[] | [],
-    idContratto: string | null,
-    page:number,
-    pageSize:number
+    idContratto: string | null
 } 
 

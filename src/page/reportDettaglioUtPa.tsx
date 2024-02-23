@@ -17,7 +17,6 @@ import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckb
 import DownloadIcon from '@mui/icons-material/Download';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import MultiSelectStatoContestazione from "../components/reportDettaglio/multiSelectGroupedBy";
-import ModalLoading from "../components/reusableComponents/modalLoading";
 
 
 
@@ -69,8 +68,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         statoContestazione:[],
         cap:null,
         iun:null,
-        idEnti:[],
-        recipientId:null
+        idEnti:[]
     });
 
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
@@ -135,8 +133,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     bodyGetLista.cap !== null ||
                     bodyGetLista.idEnti?.length !== 0 ||
                     bodyGetLista.mese !== currString ||
-                    bodyGetLista.anno !== currentYear||
-                    bodyGetLista.recipientId !== null){
+                    bodyGetLista.anno !== currentYear){
             setStatusAnnulla('show');
         }else{
                         
@@ -162,8 +159,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             statoContestazione:[],
             cap:null,
             iun:null,
-            idEnti:[],
-            recipientId:null
+            idEnti:[]
 
         });
    
@@ -769,27 +765,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                                 
                 </div>
 
-                <div className="row mt-5" >
-                    <div className="col-3 ">
-                        <Box sx={{width:'80%'}} >
-                            <TextField
-                                fullWidth
-                                label='Recipient ID'
-                                placeholder='Recipient ID'
-                                value={bodyGetLista.recipientId || ''}
-                                onChange={(e) => setBodyGetLista((prev)=>{
-                                                        
-                                    if(e.target.value === ''){
-                                        return {...prev, ...{recipientId:null}};
-                                    }else{
-                                        return {...prev, ...{recipientId:e.target.value}};
-                                    }
-                                } )}                     
-                            />
-                        </Box>
-                    </div>
-
-                </div>
 
                 <div className="">
                     <div className="d-flex justify-content-start mt-5">
@@ -1000,12 +975,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 setOpen={setOpenModalInfo} >
 
             </ModalInfo>
-
-            <ModalLoading 
-                open={showLoading} 
-                setOpen={setShowLoading} >
-                    
-            </ModalLoading>
                                                     
         </div>
     );
