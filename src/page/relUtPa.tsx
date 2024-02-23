@@ -5,22 +5,36 @@ import { Button, TablePagination, Typography } from "@mui/material";
 import SelectTipologiaFattura from "../components/rel/selectTipologiaFattura";
 import TextRagioneSociale from "../components/rel/textFieldRegSociale";
 import GridCustom from "../components/reusableComponents/gridCustom";
-import { BodyRel } from "../types/typeRel";
+import { BodyRel, RelPageProps } from "../types/typeRel";
+import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 
 
-const RelPage : React.FC = () =>{
+const RelPage : React.FC<RelPageProps> = ({mainState}) =>{
 
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
 
     const currentYear = (new Date()).getFullYear();
 
+
+    const currentMonth = (new Date()).getMonth() + 1;
+    const month = Number(currentMonth);
+
+
+    
+
     const [bodyRel, setBodyRel] = useState<BodyRel>({
         anno:currentYear,
-        mese:null,
+        mese:month,
         tipologiaFatture:null,
-        ragioneSociale:''
+        ragioneSociale:[],
+        idContratto:null,
+        page:0,
+        pageSize:0
     });
+
+    // data ragione sociale
+    const [dataSelect, setDataSelect] = useState([]);
 
     const [data, setData] = useState([{
         "idEnte": "08b735d2-1a95-45e1-bd50-b8fb3fa73224",
@@ -56,48 +70,14 @@ const RelPage : React.FC = () =>{
         "fatturata": false,
         "onere": "SEND_PA"
     }]);
+
+    // elemento selezionato nella grid
     const [rel, setRel] = useState({});
 
        
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [totalNotifiche, setTotalNotifiche]  = useState(0);
+   
 
-    const handleChangePage = (
-        event: React.MouseEvent<HTMLButtonElement> | null,
-        newPage: number,
-    ) => {
-     
-        const realPage = newPage + 1;
-        if(profilo.auth === 'SELFCARE'){
-            // getlistaNotifiche(realPage,rowsPerPage);
-            
-        }
-        if(profilo.auth === 'PAGOPA'){
-            // getlistaNotifichePagoPa(realPage,rowsPerPage);
-            //listaEntiNotifichePageOnSelect();
-        }
-        setPage(newPage);
-    };
-                    
-    const handleChangeRowsPerPage = (
-        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    ) => {
-    
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-        const realPage = page + 1;
-
-        if(profilo.auth === 'SELFCARE'){
-            //  getlistaNotifiche(realPage,parseInt(event.target.value, 10));
-            
-        }
-        if(profilo.auth === 'PAGOPA'){
-            // getlistaNotifichePagoPa(realPage,parseInt(event.target.value, 10));
-            //listaEntiNotifichePageOnSelect();
-        }
-                            
-    };
+ 
 
 
     return (
@@ -118,9 +98,17 @@ const RelPage : React.FC = () =>{
                     <div  className="col-3">
                         <SelectTipologiaFattura values ={bodyRel} setValue={setBodyRel}></SelectTipologiaFattura>
                     </div>
-                    <div  className="col-3">
-                        <TextRagioneSociale values ={bodyRel} setValue={setBodyRel}></TextRagioneSociale>
-                    </div>
+                    { profilo.auth === 'PAGOPA' &&
+                        <div  className="col-3">
+                            <MultiselectCheckbox 
+                                mainState={mainState} 
+                                setBodyGetLista={setBodyRel}
+                                setDataSelect={setDataSelect}
+                                dataSelect={dataSelect}
+                            ></MultiselectCheckbox>
+                        </div>
+                    }
+                  
                    
                     
                 </div>
@@ -136,26 +124,11 @@ const RelPage : React.FC = () =>{
                 </div>
                 <div className="mt-5">
                     <div  style={{overflowX:'auto'}}>
-                        <GridCustom elements={data} elementSelected={rel} setElementSelected={setRel}></GridCustom>
+                        <GridCustom elements={data} elementSelected={rel} setElementSelected={setRel} mainState={mainState} body={bodyRel} setBody={setBodyRel}></GridCustom>
                     </div>
                 </div>
                
-                <div className="pt-3">
-                                                    
-                    <TablePagination
-                        sx={{'.MuiTablePagination-selectLabel': {
-                            display:'none',
-                            backgroundColor:'#f2f2f2'
-                                                           
-                        }}}
-                        component="div"
-                        page={page}
-                        count={totalNotifiche}
-                        rowsPerPage={rowsPerPage}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                    />  
-                </div>
+               
             
             </div>
             

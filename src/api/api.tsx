@@ -11,6 +11,8 @@ import {
     ManageErrorResponse,
 } from '../types/typesGeneral';
 import {BodyListaEnti, ModalBodyContestazione, ModalBodyContestazioneModify, ModalBodyContestazioneModifyPagoPa} from '../types/typeReportDettaglio';
+import { BodyRel } from '../types/typeRel';
+
 
 export const url = process.env.REACT_APP_URL;
 export const redirect = process.env.REACT_APP_REDIRECT || '';
@@ -484,6 +486,18 @@ export const downloadNotifchePagoPa = async (token:string, nonce:string , body: 
         body,
         { headers: {
             Authorization: 'Bearer ' + token,
+        },
+        }
+    );
+    return response;
+};
+
+
+export const getListaRel = async (token:string, nonce:string , page:number, pageSize:number, body: BodyRel) => {
+    const response =  await axios.post(`${url}/api/rel/ente?page=${page}&pageSize=${pageSize}&nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
         },
         }
     );
