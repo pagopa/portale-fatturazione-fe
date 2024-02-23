@@ -92,7 +92,8 @@ export interface BodyListaNotifiche{
     tipoNotifica: number | null,
     statoContestazione: number[] | [],
     iun:string | null,
-    idEnti?: string[]
+    idEnti?: string[],
+    recipientId:string|null
 }
 type RequestError = {
     status:number,

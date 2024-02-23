@@ -69,9 +69,10 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         statoContestazione:[],
         cap:null,
         iun:null,
-        idEnti:[]
+        idEnti:[],
+        recipientId:null
     });
-
+    console.log(bodyGetLista);
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
             
     const [contestazioneSelected, setContestazioneSelected] = useState<Contestazione>({ 
@@ -134,7 +135,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     bodyGetLista.cap !== null ||
                     bodyGetLista.idEnti?.length !== 0 ||
                     bodyGetLista.mese !== currString ||
-                    bodyGetLista.anno !== currentYear){
+                    bodyGetLista.anno !== currentYear||
+                    bodyGetLista.recipientId !== null){
             setStatusAnnulla('show');
         }else{
                         
@@ -160,7 +162,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             statoContestazione:[],
             cap:null,
             iun:null,
-            idEnti:[]
+            idEnti:[],
+            recipientId:null
 
         });
    
@@ -177,6 +180,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 statoContestazione:[],
                 cap:null,
                 iun:null,
+                recipientId:null
             };
             await listaNotifiche(token,mainState.nonce,1,10, body)
                 .then((res)=>{
@@ -198,7 +202,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 statoContestazione:[],
                 cap:null,
                 iun:null,
-                idEnti:[]
+                idEnti:[],
+                recipientId:null
     
             };
             await listaNotifichePagoPa(token,mainState.nonce,1,10, bodyPagoPa)
@@ -760,35 +765,59 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     
                     </div>
                     }
-                    <div className="">
-                        <div className="d-flex justify-content-start mt-5">
-                            <div className=" d-flex align-items-center justify-content-center h-100">
-                                <div>
-                                    <Button 
-                                        onClick={()=> onButtonFiltra()} 
-                                        disabled={getNotificheWorking}
-                                        variant="contained"> Filtra
-                                        
-                                    </Button>
-                                                    
-                                    {statusAnnulla === 'hidden' ? null :
-                                                    
-                                        <Button
-                                            onClick={()=>{
-                                                onAnnullaFiltri();
-                                               
-                                            } }
-                                            disabled={getNotificheWorking}
-                                            sx={{marginLeft:'24px'}} >
-                                                    Annulla filtri
-                                        </Button>
-                                    }
-                                </div>
+                   
                                                 
+                </div>
+
+                <div className="row mt-5" >
+                    <div className="col-3 ">
+                        <Box sx={{width:'80%'}} >
+                            <TextField
+                                fullWidth
+                                label='Recipient ID'
+                                placeholder='Recipient ID'
+                                value={bodyGetLista.recipientId || ''}
+                                onChange={(e) => setBodyGetLista((prev)=>{
+                                                        
+                                    if(e.target.value === ''){
+                                        return {...prev, ...{recipientId:null}};
+                                    }else{
+                                        return {...prev, ...{recipientId:e.target.value}};
+                                    }
+                                } )}                     
+                            />
+                        </Box>
+                    </div>
+
+                </div>
+
+                <div className="">
+                    <div className="d-flex justify-content-start mt-5">
+                        <div className=" d-flex align-items-center justify-content-center h-100">
+                            <div>
+                                <Button 
+                                    onClick={()=> onButtonFiltra()} 
+                                    disabled={getNotificheWorking}
+                                    variant="contained"> Filtra
+                                        
+                                </Button>
+                                                    
+                                {statusAnnulla === 'hidden' ? null :
+                                                    
+                                    <Button
+                                        onClick={()=>{
+                                            onAnnullaFiltri();
+                                               
+                                        } }
+                                        disabled={getNotificheWorking}
+                                        sx={{marginLeft:'24px'}} >
+                                                    Annulla filtri
+                                    </Button>
+                                }
                             </div>
+                                                
                         </div>
                     </div>
-                                                
                 </div>
             </div>
             {/* grid */}
