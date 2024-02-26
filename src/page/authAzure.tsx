@@ -1,4 +1,4 @@
-import { pagopaLogin, getAuthProfilo, manageError } from "../api/api";
+import { pagopaLogin, getAuthProfilo, manageError, redirect } from "../api/api";
 import {InteractionRequiredAuthError,InteractionStatus,
 } from "@azure/msal-browser";
 import { useMsal } from "@azure/msal-react";
@@ -70,7 +70,8 @@ const AuthAzure : React.FC<AuthAzureProps> = ({setMainState}) =>{
             }
 
         }).catch((err) =>{
-            manageError(err, navigate);
+            window.location.href = redirect;
+            //manageError(err, navigate);
         });
 
     };
@@ -110,7 +111,8 @@ const AuthAzure : React.FC<AuthAzureProps> = ({setMainState}) =>{
               
             } )
             .catch(err => {
-                manageError(err, navigate);
+                window.location.href = redirect;
+                //manageError(err, navigate);
             });
     };
 
