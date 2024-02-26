@@ -23,7 +23,7 @@ interface GridCustomProps {
 const GridCustom : React.FC<GridCustomProps> = ({elements, elementSelected, setElementSelected, changePage, changeRow, page, total, rows, headerNames}) =>{
 
 
-
+    
 
 
     return (
