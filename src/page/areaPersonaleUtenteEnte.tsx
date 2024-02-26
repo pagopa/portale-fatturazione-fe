@@ -29,7 +29,7 @@ export const DatiFatturazioneContext = createContext<AreaPersonaleContext>({
     datiFatturazione:{
         idEnte:'',
         tipoCommessa:'',
-        splitPayment:false,
+        splitPayment:true,
         cup: '',
         idDocumento:'',
         codCommessa:'',
@@ -61,7 +61,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
     const [datiFatturazione, setDatiFatturazione] = useState<DatiFatturazione>({
         tipoCommessa:'',
         idEnte:'',
-        splitPayment:false,
+        splitPayment:true,
         cup: '',
         idDocumento:'',
         codCommessa:'',
@@ -124,7 +124,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
             setDatiFatturazione({
                 tipoCommessa:'',
                 idEnte:'',
-                splitPayment:false,
+                splitPayment:true,
                 cup: '',
                 idDocumento:'',
                 codCommessa:'',
@@ -160,7 +160,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
             setDatiFatturazione({
                 tipoCommessa:'',
                 idEnte:'',
-                splitPayment:false,
+                splitPayment:true,
                 cup: '',
                 idDocumento:'',
                 codCommessa:'',
