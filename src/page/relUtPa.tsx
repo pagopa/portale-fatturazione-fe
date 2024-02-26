@@ -11,7 +11,7 @@ import { getListaRel, manageError } from "../api/api";
 import { useNavigate } from "react-router";
 
 
-const RelPage : React.FC<RelPageProps> = ({mainState}) =>{
+const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
 
     const mesiGrid = ["Dicembre", "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
 
@@ -37,7 +37,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState}) =>{
 
 
 
-    const headerNamesGrid = ['ID','Tipologia Fattura','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale',''];    
+    const headerNamesGrid = ['ID','Rag. Sociale','Tipologia Fattura','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale',''];    
 
     const [bodyRel, setBodyRel] = useState<BodyRel>({
         anno:currentYear,
@@ -79,6 +79,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState}) =>{
                     const orderDataCustom = res.data.relTestate.map((obj)=>{
                         return {
                             idContratto:obj.idContratto,
+                            ragioneSociale:obj.ragioneSociale,
                             tipologiaFattura:obj.tipologiaFattura,
                             anno:obj.anno,
                             mese:mesiGrid[obj.mese],
@@ -198,7 +199,8 @@ const RelPage : React.FC<RelPageProps> = ({mainState}) =>{
                         total={totalNotifiche}
                         page={page}
                         rows={rowsPerPage}
-                        headerNames={headerNamesGrid}></GridCustom>
+                        headerNames={headerNamesGrid}
+                        setMainState={setMainState}></GridCustom>
                  
                 </div>
            

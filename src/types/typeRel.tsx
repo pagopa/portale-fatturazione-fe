@@ -1,7 +1,8 @@
 import { MainState } from "./typesGeneral";
 
 export interface RelPageProps{
-    mainState:MainState
+    mainState:MainState,
+    setMainState:(value: MainState) => void,
 }
 
 export interface TextRegioneSocialeRelProps{
@@ -16,4 +17,22 @@ export interface BodyRel{
     ragioneSociale?:string[] | [],
     idContratto: string | null
 } 
+
+export interface Rel {
+    idTestata: string,
+    idEnte: string,
+    ragioneSociale: string,
+    dataDocumento: string,
+    idDocumento: string,
+    cup: string,
+    idContratto: string,
+    tipologiaFattura: string,
+    anno: string,
+    mese: string,
+    totaleAnalogico: number,
+    totaleDigitale: string,
+    totaleNotificheAnalogiche: number,
+    totaleNotificheDigitali: number,
+    totale: number
+}
 

@@ -504,6 +504,19 @@ export const getListaRel = async (token:string, nonce:string , page:number, page
     return response;
 };
 
+export const getSingleRel = async (token:string, nonce:string , id:string) => {
+    const response =  await axios.get(`${url}/api/rel/ente/${id}?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
+
+
+
 
 
 

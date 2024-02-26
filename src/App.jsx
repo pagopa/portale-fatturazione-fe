@@ -19,6 +19,7 @@ import PagoPaListaDatiFatturazione from './page/pagoPaListaDatiFatturazione';
 import PagoPaListaModuliCommessa from './page/pagoPaListaModuliCommessa';
 import ReportDettaglio from './page/reportDettaglioUtPa';
 import AuthAzure from './page/authAzure';
+import RelPdfPage from './page/relPdfUtPa';
 import { MsalProvider, AuthenticatedTemplate, useMsal, UnauthenticatedTemplate } from '@azure/msal-react';
 import Azure from './page/azure';
 
@@ -84,7 +85,8 @@ const App = ({ instance }) => {
         nonce:'',
         indexStepper:0, // index del componente setpper
         idEnte:'',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
-        prodotto: '',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
+        prodotto: '',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione,
+        idRel:'' // id della rel selezionata nella grid lista rel
     });
 
     let redirectOnWrongURL = '/';
@@ -140,7 +142,9 @@ const App = ({ instance }) => {
                                    
                                         <Route path="/notifiche" element={<ReportDettaglio mainState={mainState} />} />
 
-                                        <Route path="/rel" element={<RelPage  mainState={mainState} />} />
+                                        <Route path="/rel" element={<RelPage  mainState={mainState} setMainState={setMainState} />} />
+
+                                        <Route path="/relpdf" element={<RelPdfPage  mainState={mainState} />} />
 
                                         <Route path="*" element={<Navigate to="/error" replace />} />
 
