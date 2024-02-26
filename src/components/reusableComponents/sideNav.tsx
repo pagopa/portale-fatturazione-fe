@@ -301,6 +301,8 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
             setSelectedIndex(2);
         }else if(currentLocation === '/rel'){
             setSelectedIndex(3);
+        }else if(currentLocation === '/relpdf'){
+            setSelectedIndex(3);
         }
         
     },[currentLocation]);

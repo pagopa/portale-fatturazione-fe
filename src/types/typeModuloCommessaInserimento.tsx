@@ -65,7 +65,7 @@ export interface ModalDatiFatProps{
 
 export interface TextPdfProps{
     description: string,
-    value:string,
+    value:string|number,
 }
 
 type ContattiPdf ={

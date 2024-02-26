@@ -16,13 +16,14 @@ interface GridCustomProps {
     page:number,
     total:number,
     rows:number,
-    headerNames:string[]
+    headerNames:string[],
+    setMainState:any,
    
 }
 
-const GridCustom : React.FC<GridCustomProps> = ({elements, elementSelected, setElementSelected, changePage, changeRow, page, total, rows, headerNames}) =>{
+const GridCustom : React.FC<GridCustomProps> = ({elements, elementSelected, setElementSelected, changePage, changeRow, page, total, rows, headerNames, setMainState}) =>{
 
-
+    const navigate = useNavigate();
     
 
 
@@ -57,12 +58,17 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, elementSelected, setE
                 
                                         <TableRow key={element.idEnte}>
                                             {
-                                                Object.values(element).map((value:any)=>{
+                                                Object.values(element).map((value:any, i:number)=>{
 
                                                     return (
                                                         <TableCell 
                                                             onClick={()=>{
-                                                                console.log(element);             
+                                                                if(i === 0){
+                                                                    console.log(element);
+                                                                    setMainState((prev:MainState)=> ({...prev, ...{idRel:element.idTestata}}));
+                                                                    navigate('/relpdf');
+                                                                }
+                                                                           
                                                             } }
                                                         >
                                                             {value}
@@ -73,7 +79,8 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, elementSelected, setE
                           
                             
                                             <TableCell  onClick={()=>{
-                                                console.log('000');              
+                                                setMainState((prev:MainState)=> ({...prev, ...{idRel:element.idTestata}})); 
+                                                navigate('/relpdf');            
                                             } }>
                                                 <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
                                             </TableCell>
