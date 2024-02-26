@@ -13,6 +13,8 @@ import { useNavigate } from "react-router";
 
 const RelPage : React.FC<RelPageProps> = ({mainState}) =>{
 
+    const mesiGrid = ["Dicembre", "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
+
     const navigate = useNavigate();
 
     const getToken = localStorage.getItem('token') || '{}';
@@ -35,7 +37,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState}) =>{
 
 
 
-    const headerNamesGrid = ['ID','Tipologia Fattura','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale'];    
+    const headerNamesGrid = ['ID','Tipologia Fattura','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale',''];    
 
     const [bodyRel, setBodyRel] = useState<BodyRel>({
         anno:currentYear,
@@ -73,8 +75,22 @@ const RelPage : React.FC<RelPageProps> = ({mainState}) =>{
       
             await  getListaRel(token,mainState.nonce,nPage, nRows, newBody)
                 .then((res)=>{
+                    // ordino i dati in base all'header della grid
+                    const orderDataCustom = res.data.relTestate.map((obj)=>{
+                        return {
+                            idContratto:obj.idContratto,
+                            tipologiaFattura:obj.tipologiaFattura,
+                            anno:obj.anno,
+                            mese:mesiGrid[obj.mese],
+                            totaleAnalogico:obj.totaleAnalogico,
+                            totaleDigitale:obj.totaleDigitale,
+                            totaleNotificheAnalogiche:obj.totaleNotificheAnalogiche,
+                            totaleNotificheDigitali:obj.totaleNotificheDigitali,
+                            totale:obj.totale
+                        };
+                    });
                     
-                    setData(res.data.relTestate);
+                    setData(orderDataCustom);
                     setTotalNotifiche(res.data.count);
                 }).catch((error)=>{
                     
@@ -171,7 +187,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState}) =>{
                         <Button >Annulla Filtri</Button>
                     </div>
                 </div>
-                <div className="mt-5">
+                <div className="mt-5 mb-5">
                     
                     <GridCustom
                         elements={data}
@@ -185,14 +201,9 @@ const RelPage : React.FC<RelPageProps> = ({mainState}) =>{
                         headerNames={headerNamesGrid}></GridCustom>
                  
                 </div>
-               
-               
-            
+           
             </div>
-            
-               
-
-
+      
         </div>
 
 

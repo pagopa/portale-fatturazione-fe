@@ -1,5 +1,5 @@
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { selfcareLogin, getAuthProfilo, manageError } from '../api/api';
+import { selfcareLogin, getAuthProfilo, manageError, redirect } from '../api/api';
 import {useEffect} from 'react';
 import { LoginProps, MainState, ManageErrorResponse } from '../types/typesGeneral';
 
@@ -58,7 +58,8 @@ const getProfilo = async (res:ParameterGetProfilo)=>{
             navigate("/");
         } )
         .catch((err: ManageErrorResponse) => {
-            manageError(err,navigate);
+            window.location.href = redirect;
+            // manageError(err,navigate);
         });
 };
 
@@ -77,7 +78,8 @@ const getSelfcare = async() =>{
                
         }
     }).catch((err:ManageErrorResponse) =>{
-        manageError(err, navigate);
+        window.location.href = redirect;
+        // manageError(err, navigate);
     });
 };
 
