@@ -37,7 +37,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
 
 
 
-    const headerNamesGrid = ['ID','Rag. Sociale','Tipologia Fattura','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale',''];    
+    const headerNamesGrid = ['Rag. Sociale','Tipologia Fattura','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale',''];    
 
     const [bodyRel, setBodyRel] = useState<BodyRel>({
         anno:currentYear,
@@ -80,7 +80,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
                         // 'id serve per la chiamata get dettaglio dell'elemento selezionato nella grid
                         return {
                             idTestata:obj.idTestata,
-                            idContratto:obj.idContratto,
+                            //idContratto:obj.idContratto,
                             ragioneSociale:obj.ragioneSociale,
                             tipologiaFattura:obj.tipologiaFattura,
                             anno:obj.anno,
@@ -193,7 +193,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
                 <div className="mt-5 mb-5">
                     
                     <GridCustom
-                        nameParameterApi={'idTestata'}
+                        nameParameterApi='idTestata'
                         elements={data}
                         changePage={handleChangePage}
                         changeRow={handleChangeRowsPerPage} 

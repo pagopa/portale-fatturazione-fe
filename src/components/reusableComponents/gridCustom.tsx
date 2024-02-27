@@ -16,7 +16,7 @@ interface GridCustomProps {
     rows:number,
     headerNames:string[],
     setMainState:any,
-    nameParameterApi:string | string[]  // elemnto/i che servono alla chiamata get di dettaglio , in questo caso bisogna passare questi pametro/o nel MainState ma non posso visulizzarli nella grid
+    nameParameterApi:string  // elemnto/i che servono alla chiamata get di dettaglio , in questo caso bisogna passare questi pametro/o nel MainState ma non posso visulizzarli nella grid
    
 }
 
@@ -51,31 +51,38 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                             <TableBody sx={{marginLeft:'20px'}}>
                                 {elements.map((element:any) =>{
 
-                                    // const cssFirstColum = {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'};
-                                    console.log(nameParameterApi, 'yyy', element.nameParameterApi, element);
-                                    // const {idTestata, ...newElement} = element;
+                                    // tolgo da ogni oggetto la prima chiave valore  perchè il cliente non vuole vedere es. l'id ma serve per la chiamata get di dettaglio 
+                                    const sliced = Object.fromEntries(
+                                        Object.entries(element).slice(1)
+                                    );
                                   
-
                                     return (
                 
                                         <TableRow key={element.idEnte}>
                                             {
-                                                Object.values(element).map((value:any, i:number)=>{
-
+                                                Object.values(sliced).map((value:any, i:number)=>{
+                                                    const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
+                                                  
                                                     return (
-                                                        <TableCell 
+
+                                                        
+                                                        <TableCell
+                                                            sx={cssFirstColum} 
                                                             onClick={()=>{
                                                                 if(i === 0){
-                                                                    console.log(element);
-                                                                    setMainState((prev:MainState)=> ({...prev, ...{idRel:element.nameParameterApi}}));
+                                                                      
+                                                                    setMainState((prev:MainState)=> ({...prev, ...{idRel:element[nameParameterApi]}}));
                                                                     navigate('/relpdf');
                                                                 }
-                                                                           
+                                                                               
                                                             } }
                                                         >
                                                             {value}
                                                         </TableCell>
                                                     );
+                                                   
+
+                                                   
                                                 })
                                             }
                           

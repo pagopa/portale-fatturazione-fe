@@ -96,6 +96,8 @@ const App = ({ instance }) => {
     }
  
 
+    console.log(mainState);
+
     return (
 
       
