@@ -349,12 +349,14 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
                             </ListItemIcon>
                             <ListItemText primary="Notifiche" />
                         </ListItemButton>
+                        {profilo.auth === 'SELFCARE' && 
                         <ListItemButton selected={selectedIndex === 3} onClick={() => handleListItemClickRel()}>
                             <ListItemIcon>
                                 <ManageAccountsIcon fontSize="inherit" />
                             </ListItemIcon>
                             <ListItemText primary="Rel" />
                         </ListItemButton>
+                        }
                     </List>
                     <Divider />
                 </Box>
