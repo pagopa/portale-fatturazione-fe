@@ -17,7 +17,7 @@ const style = {
     p: 4,
 };
 
-const ModalRedirect : React.FC<ModalProps> =({setOpen, open}) => {
+const ModalRedirect : React.FC<ModalProps> =({setOpen, open, sentence}) => {
 
     const navigate = useNavigate();
    
@@ -46,7 +46,7 @@ const ModalRedirect : React.FC<ModalProps> =({setOpen, open}) => {
                     </div>
                     <div className='mt-2'>
                         <Typography id="modal-modal-title" variant="subtitle1" >
-                        Per poter inserire il modulo commessa è nesessario l'inserimento dei dati di fatturazione obbligatori:
+                            {sentence}
                             <div className='paddingLeft32'>
                                 <ul className="list-group mt-2">
                                     <li><Typography id="modal-modal-title" variant="subtitle2" >Split Payment</Typography></li>

@@ -514,6 +514,16 @@ export const getSingleRel = async (token:string, nonce:string , id:string) => {
     return response;
 };
 
+export const getRelPdf = async ( token:string ,nonce:string , id:string) => {
+    const response =  await axios.get(`${url}/api/rel/ente/download/${id}?nonce=${nonce}`,  
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
 
 
 

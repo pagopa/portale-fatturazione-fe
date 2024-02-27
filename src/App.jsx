@@ -22,7 +22,6 @@ import AuthAzure from './page/authAzure';
 import RelPdfPage from './page/relPdfUtPa';
 import { MsalProvider, AuthenticatedTemplate, useMsal, UnauthenticatedTemplate } from '@azure/msal-react';
 import Azure from './page/azure';
-
 import { Container, Button } from 'react-bootstrap';
 import { loginRequest } from './authConfig';
 import './App.css';
@@ -86,7 +85,7 @@ const App = ({ instance }) => {
         indexStepper:0, // index del componente setpper
         idEnte:'',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
         prodotto: '',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione,
-        idRel:'' // id della rel selezionata nella grid lista rel
+        relSelected: null // rel selezionata nella grid in page rel
     });
 
     let redirectOnWrongURL = '/';
@@ -96,7 +95,7 @@ const App = ({ instance }) => {
     }
  
 
-    console.log(mainState);
+  
 
     return (
 

@@ -542,7 +542,10 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 : null
             }
 
-            <ModalRedirect setOpen={setOpenModalRedirect} open={openModalRedirect}></ModalRedirect>
+            <ModalRedirect 
+                setOpen={setOpenModalRedirect}
+                open={openModalRedirect}
+                sentence={`Per poter inserire il modulo commessa è nesessario l'inserimento dei dati di fatturazione obbligatori:`}></ModalRedirect>
             
         </InserimentoModuloCommessaContext.Provider>
     );

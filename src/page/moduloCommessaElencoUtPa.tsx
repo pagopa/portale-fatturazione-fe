@@ -103,7 +103,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMainS
         });
       
     };
-
+  
 
     return (
 

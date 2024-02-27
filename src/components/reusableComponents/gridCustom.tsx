@@ -15,12 +15,11 @@ interface GridCustomProps {
     total:number,
     rows:number,
     headerNames:string[],
-    setMainState:any,
-    nameParameterApi:string  // elemnto/i che servono alla chiamata get di dettaglio , in questo caso bisogna passare questi pametro/o nel MainState ma non posso visulizzarli nella grid
-   
+    nameParameterApi:string,  // elemnto/i che servono alla chiamata get di dettaglio , in questo caso bisogna passare questi pametro/o nel MainState ma non posso visulizzarli nella grid
+    apiGet:any
 }
 
-const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, setMainState, nameParameterApi}) =>{
+const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, nameParameterApi, apiGet}) =>{
 
     const navigate = useNavigate();
     
@@ -70,9 +69,9 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                                             sx={cssFirstColum} 
                                                             onClick={()=>{
                                                                 if(i === 0){
-                                                                      
-                                                                    setMainState((prev:MainState)=> ({...prev, ...{idRel:element[nameParameterApi]}}));
-                                                                    navigate('/relpdf');
+                                                                    apiGet(element[nameParameterApi]);
+                                                                    //setMainState((prev:MainState)=> ({...prev, ...{idRel:element[nameParameterApi]}}));
+                                                                    // navigate('/relpdf');
                                                                 }
                                                                                
                                                             } }
@@ -88,8 +87,9 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                           
                             
                                             <TableCell  onClick={()=>{
-                                                setMainState((prev:MainState)=> ({...prev, ...{idRel:element.idTestata}})); 
-                                                navigate('/relpdf');            
+                                                apiGet(element[nameParameterApi]);
+                                                // setMainState((prev:MainState)=> ({...prev, ...{idRel:element.idTestata}})); 
+                                                //navigate('/relpdf');            
                                             } }>
                                                 <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
                                             </TableCell>

@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import SelectUltimiDueAnni from "../components/reusableComponents/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/selectMese";
-import { Button, TablePagination, Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import SelectTipologiaFattura from "../components/rel/selectTipologiaFattura";
-import TextRagioneSociale from "../components/rel/textFieldRegSociale";
 import GridCustom from "../components/reusableComponents/gridCustom";
-import { BodyRel, RelPageProps } from "../types/typeRel";
+import { BodyRel, Rel, RelPageProps } from "../types/typeRel";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
-import { getListaRel, manageError } from "../api/api";
+import { getListaRel, getSingleRel, manageError } from "../api/api";
 import { useNavigate } from "react-router";
+import { MainState } from "../types/typesGeneral";
+import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 
 
 const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
@@ -37,8 +38,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
 
 
 
-    const headerNamesGrid = ['Rag. Sociale','Tipologia Fattura','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale',''];    
-
+    
     const [bodyRel, setBodyRel] = useState<BodyRel>({
         anno:currentYear,
         mese:month,
@@ -50,12 +50,9 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
     // data ragione sociale
     const [dataSelect, setDataSelect] = useState([]);
 
+    const headerNamesGrid = ['Rag. Sociale','Tipologia Fattura','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale',''];    
+
     const [data, setData] = useState([]);
-
-
-       
-    
-
 
 
   
@@ -132,8 +129,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
         const realPage = page + 1;
 
         if(profilo.auth === 'SELFCARE'){
-            //  getlistaNotifiche(realPage,parseInt(event.target.value, 10));
-            
+            getlistaRelEnte(realPage,parseInt(event.target.value, 10));
         }
         if(profilo.auth === 'PAGOPA'){
             // getlistaNotifichePagoPa(realPage,parseInt(event.target.value, 10));
@@ -141,8 +137,29 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
         }
                             
     };
+   
+    const getRel = async(idRel) => {
+        getSingleRel(token,mainState.nonce,idRel).then((res) =>{
+          
+            setMainState((prev:MainState) => ({...prev,...{relSelected:res.data}}));
+            if(res.data.datiFatturazione === true){
+                navigate('/relpdf');
+            }else{
+                console.log('pop up');
+            }
+           
+           
+            // setMainState((prev) => ({...prev,...{relSelected:res.data}}));
+        }).catch((err)=>{
+            manageError(err, navigate);
+        }
+          
+        );
+    };  
 
+    
 
+    const [openModalRedirect, setOpenModalRedirect] = useState(false);
  
 
 
@@ -201,11 +218,15 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
                         page={page}
                         rows={rowsPerPage}
                         headerNames={headerNamesGrid}
-                        setMainState={setMainState}></GridCustom>
+                        apiGet={getRel}></GridCustom>
                  
                 </div>
            
             </div>
+            <ModalRedirect
+                setOpen={setOpenModalRedirect} 
+                open={openModalRedirect}
+                sentence={`Per poter visulazzare il dettaglio REL è nesessario l'inserimento dei dati di fatturazione obbligatori:`}></ModalRedirect>
       
         </div>
 
