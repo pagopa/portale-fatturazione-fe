@@ -277,8 +277,12 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
         navigate('/notifiche');
     };
 
-    const handleListItemClickRel = () => {
+    const handleListItemClickRel = async () => {
         navigate('/rel');
+        if(profilo.auth === 'SELFCARE'){
+            await getDatiFat();
+        }
+        
     };
     
     
