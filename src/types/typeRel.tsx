@@ -2,7 +2,7 @@ import { MainState } from "./typesGeneral";
 
 export interface RelPageProps{
     mainState:MainState,
-    setMainState:(value: MainState) => void,
+    setMainState:any,
 }
 
 export interface TextRegioneSocialeRelProps{

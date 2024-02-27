@@ -279,10 +279,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
 
     const handleListItemClickRel = async () => {
         navigate('/rel');
-        if(profilo.auth === 'SELFCARE'){
-            await getDatiFat();
-        }
-        
+     
     };
     
     

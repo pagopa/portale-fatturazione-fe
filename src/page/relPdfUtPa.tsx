@@ -5,58 +5,65 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { Rel, RelPageProps } from "../types/typeRel";
 import { Button, Typography } from "@mui/material";
 import { useNavigate } from 'react-router';
-import { getSingleRel, manageError } from '../api/api';
+import { getRelPdf, getSingleRel, manageError } from '../api/api';
 import { useEffect, useState } from 'react';
 import TextDettaglioPdf from '../components/commessaPdf/textDettaglioPdf';
+import { usePDF } from 'react-to-pdf';
+import { ResponseDownloadPdf } from '../types/typeModuloCommessaInserimento';
 
 const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
-
-    const mesi = ["Dicembre", "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
 
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
 
+    const getProfilo = localStorage.getItem('profilo') || '{}';
+    const profilo =  JSON.parse(getProfilo);
+
+    const { toPDF, targetRef } = usePDF({filename: 'Rel.pdf'});
+
+    const mesi = ["Dicembre", "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
+
+ 
+
     const navigate = useNavigate();
 
-    const [rel,setRel] = useState<Rel>({
-        idTestata: '',
-        idEnte: '',
-        ragioneSociale: '',
-        dataDocumento: '',
-        idDocumento: '',
-        cup: '',
-        idContratto: '',
-        tipologiaFattura: '',
-        anno: '',
-        mese: '',
-        totaleAnalogico: 0,
-        totaleDigitale: '',
-        totaleNotificheAnalogiche: 0,
-        totaleNotificheDigitali: 0,
-        totale: 0
-    });
+    const rel = mainState.relSelected;
 
+    const downloadPdfRel = async() =>{
 
-    const getRel = async() => {
-        getSingleRel(token,mainState.nonce,mainState.idRel).then((res) =>{
-           
-            setRel(res.data);
-        }).catch((err)=>{
-            manageError(err, navigate);
+        if( mainState.relSelected !== null){
+            await getRelPdf(token, mainState.nonce, mainState.relSelected.idTestata).then((res: ResponseDownloadPdf)=>{
+                toDoOnDownloadPdf(res);
+       
+            }).catch((err)=>{
+                console.log(err);
+            });  
         }
-          
-        );
-    };  
+
+        
+    };
+    
+    const toDoOnDownloadPdf = (res:ResponseDownloadPdf) =>{
+
+        
+
+        const wrapper = document.getElementById('file_download_rel');
+        if(wrapper){
+            wrapper.innerHTML = res.data;
+        }
+    };
 
     useEffect(()=>{
-        console.log(mainState);
-        if(mainState.nonce !== '' && mainState.idRel !== '' ){
-            getRel();
+
+      
+        if(profilo.auth === 'PAGOPA'){
+            console.log('nada');
+        }else{
+            downloadPdfRel();
         }
       
-    },[mainState]);
 
-
+    },[]);
 
     return (
         <div>
@@ -90,28 +97,32 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
             </div>
             <div className="bg-white m-5">
                 <div className="pt-5 pb-5 ">
-                    {/* nascondo il pdf
-                    <div style={{ position:'absolute',zIndex:-1}}  id='file_download' ref={targetRef}>
+                
+                    <div style={{ position:'absolute',zIndex:-1}}  id='file_download_rel' ref={targetRef}>
 
                     </div>
- */}
+
+                    {rel !== null &&
 
                     <div className="container text-center">
                         <TextDettaglioPdf description={'Soggetto aderente'} value={rel.ragioneSociale}></TextDettaglioPdf>
                         <TextDettaglioPdf description={'Tipologia Fattura'} value={rel.tipologiaFattura}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'ID Documento'} value={rel.idDocumento}></TextDettaglioPdf>
                         <TextDettaglioPdf description={'Anno'} value={rel.anno}></TextDettaglioPdf>
                         <TextDettaglioPdf description={'Mese'} value={mesi[rel.mese]}></TextDettaglioPdf>
                         <TextDettaglioPdf description={'Cup'} value={rel.cup}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Tot. Analogico'} value={rel.totaleAnalogico}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Tot. Digitale'} value={rel.totaleDigitale}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Tot. Analogico'} value={Number(rel.totaleAnalogico).toFixed(2)+' €'}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Tot. Digitale'} value={Number(rel.totaleDigitale).toFixed(2)+' €'}></TextDettaglioPdf>
                         <TextDettaglioPdf description={'Tot. Not. Analogico'} value={rel.totaleNotificheAnalogiche}></TextDettaglioPdf>
                         <TextDettaglioPdf description={'Tot. Not. Digitali'} value={rel.totaleNotificheDigitali}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Totale'} value={Number(rel.totale).toFixed(2)+' €'}></TextDettaglioPdf>
                     </div>
+                    }
                 </div>
             </div>
 
             <div className="d-flex justify-content-center mb-5">
-                <Button onClick={()=> console.log('scarica')}  variant="contained">Scarica</Button>
+                <Button onClick={()=> toPDF()}  variant="contained">Scarica</Button>
             </div>
         </div>
        
