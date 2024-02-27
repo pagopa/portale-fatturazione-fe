@@ -9,8 +9,6 @@ import { BodyRel } from "../../types/typeRel";
 
 interface GridCustomProps {
     elements:object[],
-    elementSelected:object,
-    setElementSelected: any,
     changePage:any,
     changeRow:any,
     page:number,
@@ -18,10 +16,11 @@ interface GridCustomProps {
     rows:number,
     headerNames:string[],
     setMainState:any,
+    nameParameterApi:string | string[]  // elemnto/i che servono alla chiamata get di dettaglio , in questo caso bisogna passare questi pametro/o nel MainState ma non posso visulizzarli nella grid
    
 }
 
-const GridCustom : React.FC<GridCustomProps> = ({elements, elementSelected, setElementSelected, changePage, changeRow, page, total, rows, headerNames, setMainState}) =>{
+const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, setMainState, nameParameterApi}) =>{
 
     const navigate = useNavigate();
     
@@ -52,7 +51,10 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, elementSelected, setE
                             <TableBody sx={{marginLeft:'20px'}}>
                                 {elements.map((element:any) =>{
 
-                                    const cssFirstColum = {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'};
+                                    // const cssFirstColum = {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'};
+                                    console.log(nameParameterApi, 'yyy', element.nameParameterApi, element);
+                                    // const {idTestata, ...newElement} = element;
+                                  
 
                                     return (
                 
@@ -65,7 +67,7 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, elementSelected, setE
                                                             onClick={()=>{
                                                                 if(i === 0){
                                                                     console.log(element);
-                                                                    setMainState((prev:MainState)=> ({...prev, ...{idRel:element.idTestata}}));
+                                                                    setMainState((prev:MainState)=> ({...prev, ...{idRel:element.nameParameterApi}}));
                                                                     navigate('/relpdf');
                                                                 }
                                                                            

@@ -52,8 +52,6 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
 
     const [data, setData] = useState([]);
 
-    // elemento selezionato nella grid
-    const [rel, setRel] = useState({});
 
        
     
@@ -77,7 +75,11 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
                 .then((res)=>{
                     // ordino i dati in base all'header della grid
                     const orderDataCustom = res.data.relTestate.map((obj)=>{
+
+                        // inserire come prima chiave l'id se non si vuol renderlo visibile nella grid
+                        // 'id serve per la chiamata get dettaglio dell'elemento selezionato nella grid
                         return {
+                            idTestata:obj.idTestata,
                             idContratto:obj.idContratto,
                             ragioneSociale:obj.ragioneSociale,
                             tipologiaFattura:obj.tipologiaFattura,
@@ -191,9 +193,8 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
                 <div className="mt-5 mb-5">
                     
                     <GridCustom
+                        nameParameterApi={'idTestata'}
                         elements={data}
-                        elementSelected={rel}
-                        setElementSelected={setRel}
                         changePage={handleChangePage}
                         changeRow={handleChangeRowsPerPage} 
                         total={totalNotifiche}

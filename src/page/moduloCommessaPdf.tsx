@@ -251,7 +251,6 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
                     <div className=" ">
                         {/* nascondo il pdf */}
                         <div style={{ position:'absolute',zIndex:-1}}  id='file_download' ref={targetRef}>
-                            <h1>ciao mondo</h1>
 
                         </div>
 

@@ -94,8 +94,7 @@ const App = ({ instance }) => {
     if(profilo.auth === 'PAGOPA'){
         redirectOnWrongURL = '/pagopalistadatifatturazione';
     }
-   
-
+ 
 
     return (
 
