@@ -107,12 +107,12 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMainS
 
     return (
 
-        <div className="m-5">
-            <div>
+        <div className="mx-5">
+            <div className='marginTop24'>
                 <Typography variant="h4">Modulo commessa</Typography>
             </div>
         
-            <div className=" marginTop24 d-flex mb-5">
+            <div className=" mt-5 d-flex mb-5">
                 <Box sx={{ width: 300 }}>
                     <FormControl
                         fullWidth

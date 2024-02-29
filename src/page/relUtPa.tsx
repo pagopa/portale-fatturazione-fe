@@ -209,13 +209,13 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
                     {!hiddenAnnullaFiltri && 
                     <div className="col-2">
                         <Button onClick={()=>{
-                            setBodyRel((prev:BodyRel)=> ({
+                            setBodyRel({
                                 anno:currentYear,
                                 mese:month,
                                 tipologiaFatture:null,
                                 ragioneSociale:[],
                                 idContratto:null
-                            }));
+                            });
                         }} >Annulla Filtri</Button>
                     </div>
                     }
