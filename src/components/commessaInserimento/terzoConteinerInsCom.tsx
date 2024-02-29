@@ -139,7 +139,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                         variant="caption-semibold"
                         sx={{fontSize:'18px'}}
                     >
-                        {valueDigitale[0]?.totaleValoreCategoriaSpedizione.toFixed(2).toString().replace('.',',')} €
+                        {valueDigitale[0]?.totaleValoreCategoriaSpedizione.toFixed(2).toString().replace('.',',')|| 0} €
                     </Typography>
                 </Grid>
   
@@ -176,7 +176,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                         variant="caption-semibold"
                         sx={{fontSize:'18px', textAlign:'center'}}
                     >
-                        {valueAnalogico[0]?.totaleValoreCategoriaSpedizione.toFixed(2).toString().replace('.',',')} €
+                        {valueAnalogico[0]?.totaleValoreCategoriaSpedizione.toFixed(2).toString().replace('.',',') || 0} €
                     </Typography>
                 </Grid>
 
