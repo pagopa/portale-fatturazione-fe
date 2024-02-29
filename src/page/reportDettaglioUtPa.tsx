@@ -6,7 +6,7 @@ import {
     TableRow,TableCell,TablePagination, TextField,
     Box, FormControl, InputLabel,Select, MenuItem, Button
 } from '@mui/material';
-import { CSVLink } from 'react-csv';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import { manageError, getTipologiaProdotto, getTipologiaProfilo, listaNotifiche, getContestazione, downloadNotifche, listaNotifichePagoPa, getContestazionePagoPa, downloadNotifchePagoPa } from "../api/api";
 import { ReportDettaglioProps, NotificheList, FlagContestazione, Contestazione  } from "../types/typeReportDettaglio";
 import { useNavigate } from "react-router";
@@ -18,6 +18,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import MultiSelectStatoContestazione from "../components/reportDettaglio/multiSelectGroupedBy";
 import ModalLoading from "../components/reusableComponents/modalLoading";
+import ModalScadenziario from "../components/reportDettaglio/modalScadenziario";
 
 
 
@@ -72,7 +73,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         idEnti:[],
         recipientId:null
     });
-    console.log(bodyGetLista);
+
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
             
     const [contestazioneSelected, setContestazioneSelected] = useState<Contestazione>({ 
@@ -367,10 +368,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     },[mainState.nonce]);
                         
                         
-    // modal
-                        
-    const [open, setOpen] = React.useState(false);
-    const [openModalInfo, setOpenModalInfo] = React.useState(false);
+    
                         
                         
                         
@@ -429,7 +427,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                         
 
    
-    const [showLoading, setShowLoading] = useState(false);
     
     const downloadNotificheOnDownloadButton = async () =>{
 
@@ -480,12 +477,36 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
 
     const [valueFgContestazione, setValueFgContestazione] = useState<FlagContestazione[]>([]);
+
+
+
+    // modal
+                        
+    const [open, setOpen] = useState(false);
+    const [openModalInfo, setOpenModalInfo] = useState(false);
+    const [showLoading, setShowLoading] = useState(false);
+    const [showModalScadenziario, setShowModalScadenziario ] = useState(false);
+    
             
     return (
         <div className="mx-5">
             {/*title container start */}
-            <div className="marginTop24 ">
-                <Typography variant="h4">Report Dettaglio</Typography>
+            <div className="d-flex   marginTop24 ">
+                <div className="col-9">
+                    <Typography variant="h4">Report Dettaglio</Typography>
+                </div>
+                <div className="col-3 ">
+                    <Box sx={{width:'80%', marginLeft:'20px', display:'flex', justifyContent:'end'}}  >
+                        <Button onClick={()=> setShowModalScadenziario(true)} variant="contained">
+                            <VisibilityIcon sx={{marginRight:'10px'}}></VisibilityIcon>
+                    Scadenzario
+                        </Button>
+                    </Box>
+                  
+                </div>
+               
+              
+                
             </div>
             {/*title container end */}
             <div className="mt-5 mb-5 ">
@@ -1013,6 +1034,11 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 setOpen={setShowLoading} >
                     
             </ModalLoading>
+         
+            <ModalScadenziario
+                open={showModalScadenziario} 
+                setOpen={setShowModalScadenziario}
+                nonce={mainState.nonce}></ModalScadenziario>
                                                     
         </div>
     );

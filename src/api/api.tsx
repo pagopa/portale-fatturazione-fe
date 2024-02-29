@@ -491,6 +491,17 @@ export const downloadNotifchePagoPa = async (token:string, nonce:string , body: 
 };
 
 
+export const getTipologieScadenziario = async (token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/tipologia/scadenziariocontestazioni?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
+
 
 
 
