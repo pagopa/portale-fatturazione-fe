@@ -47,6 +47,9 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
         idContratto:null
     });
 
+    const  hiddenAnnullaFiltri = bodyRel.tipologiaFatture === null ; 
+    console.log(bodyRel.tipologiaFatture);
+
     // data ragione sociale
     const [dataSelect, setDataSelect] = useState([]);
 
@@ -167,19 +170,19 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
 
        
         <div className="mx-5">
-            <div className="marginTop24">
-                <Typography variant="h4">Rel</Typography>
+            <div className="marginTop24 ">
+                <Typography variant="h4">Regolare Esecuzione</Typography>
             </div>
-            <div className="marginTop24">
+            <div className="mt-5">
                 <div className="row">
                     <div className="col-3">
                         <SelectUltimiDueAnni values ={bodyRel} setValue={setBodyRel}></SelectUltimiDueAnni>
                     </div>
                     <div  className="col-3">
-                        <SelectMese values ={bodyRel} setValue={setBodyRel}></SelectMese>
+                        <SelectMese values={bodyRel} setValue={setBodyRel}></SelectMese>
                     </div>
                     <div  className="col-3">
-                        <SelectTipologiaFattura values ={bodyRel} setValue={setBodyRel}></SelectTipologiaFattura>
+                        <SelectTipologiaFattura values={bodyRel} setValue={setBodyRel}></SelectTipologiaFattura>
                     </div>
                     { profilo.auth === 'PAGOPA' &&
                         <div  className="col-3">
@@ -203,9 +206,19 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
                             getlistaRelEnte(page, rowsPerPage);
                         }} variant="contained">Filtra</Button>
                     </div>
+                    {!hiddenAnnullaFiltri && 
                     <div className="col-2">
-                        <Button >Annulla Filtri</Button>
+                        <Button onClick={()=>{
+                            setBodyRel((prev:BodyRel)=> ({
+                                anno:currentYear,
+                                mese:month,
+                                tipologiaFatture:null,
+                                ragioneSociale:[],
+                                idContratto:null
+                            }));
+                        }} >Annulla Filtri</Button>
                     </div>
+                    }
                 </div>
                 <div className="mt-5 mb-5">
                     

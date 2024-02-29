@@ -1,8 +1,14 @@
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { Box } from "@mui/system";
-import { SelectMeseProps } from "../../types/typesGeneral";
+import { BodyRel } from "../../types/typeRel";
+interface SelecTipologiaProps{
+    setValue: any,
+    values:BodyRel
+}
 
-const SelectTipologiaFattura : React.FC<SelectMeseProps> = ({setValue, values}) =>{
+
+
+const SelectTipologiaFattura : React.FC<SelecTipologiaProps> = ({setValue, values}) =>{
 
     const tipologie = [
         'PRIMO SALDO',
@@ -25,10 +31,10 @@ const SelectTipologiaFattura : React.FC<SelectMeseProps> = ({setValue, values}) 
                     label='Seleziona Prodotto'
                     labelId="search-by-label"
                     onChange={(e) =>{
-                        setValue((prev)=> ({...prev, ...{tipologiaFattura:e.target.value}}));
+                        setValue((prev)=> ({...prev, ...{tipologiaFatture:e.target.value}}));
                     }}
                                
-                    value={values.tipologiaFattura}
+                    value={values.tipologiaFatture || ''}
                              
                 >
                     {tipologie.map((el) => (
