@@ -95,7 +95,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
     const valueDigitale = valueTotali.filter((obj) => obj.idCategoriaSpedizione === 2);
     const valueAnalogico = valueTotali.filter((obj) => obj.idCategoriaSpedizione === 1);
 
-    const sum = valueTotali[0]?.totaleValoreCategoriaSpedizione + valueTotali[1]?.totaleValoreCategoriaSpedizione;
+    const sum = (valueTotali[0]?.totaleValoreCategoriaSpedizione || 0) + (valueTotali[1]?.totaleValoreCategoriaSpedizione || 0);
     const sumFixed2Decimal = sum.toFixed(2).toString().replace('.', ',');
  
 
