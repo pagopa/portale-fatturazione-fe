@@ -1,5 +1,5 @@
 import { DataGridCommessa } from "./typeModuloCommessaElenco";
-import { Rel } from "./typeRel";
+import { BodyRel, Rel } from "./typeRel";
 export interface ModalProps {
     setOpen : any,
     open: boolean,
@@ -127,7 +127,7 @@ export interface SelectUltimiDueAnniProps{
 }
 
 export interface SelectMeseProps{
-    values:any,
+    values:BodyRel,
     setValue: (value:any) => void
 }
 

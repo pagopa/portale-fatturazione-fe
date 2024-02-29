@@ -82,7 +82,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
               
                 <Typography sx={{ fontWeight:'bold', marginLeft:'20px'}} variant="caption">
                     <ManageAccountsIcon sx={{paddingBottom:'3px'}}  fontSize='small'></ManageAccountsIcon>
-                      Rel /
+                      Regolare Esecuzione /
                     
                 </Typography>
                 <Typography sx={{fontWeight:'bold', marginLeft:'5px'}} variant="caption">

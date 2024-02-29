@@ -354,7 +354,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
                             <ListItemIcon>
                                 <ManageAccountsIcon fontSize="inherit" />
                             </ListItemIcon>
-                            <ListItemText primary="Rel" />
+                            <ListItemText primary="Regolare Esecuzione" />
                         </ListItemButton>
                         }
                     </List>
