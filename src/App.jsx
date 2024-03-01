@@ -87,14 +87,14 @@ const App = ({ instance }) => {
         prodotto: '',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione,
         relSelected: null // rel selezionata nella grid in page rel
     });
-
+    /*
     let redirectOnWrongURL = '/';
 
     if(profilo.auth === 'PAGOPA'){
         redirectOnWrongURL = '/pagopalistadatifatturazione';
     }
  
-
+*/
   
 
     return (
