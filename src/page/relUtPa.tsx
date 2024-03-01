@@ -48,12 +48,12 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
     });
 
     const  hiddenAnnullaFiltri = bodyRel.tipologiaFatture === null ; 
-    console.log(bodyRel.tipologiaFatture);
+
 
     // data ragione sociale
     const [dataSelect, setDataSelect] = useState([]);
 
-    const headerNamesGrid = ['Rag. Sociale','Tipologia Fattura','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale',''];    
+    const headerNamesGrid = ['Rag. Sociale','Tipologia Fattura', 'ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale',''];    
 
     const [data, setData] = useState([]);
 
@@ -80,16 +80,16 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
                         // 'id serve per la chiamata get dettaglio dell'elemento selezionato nella grid
                         return {
                             idTestata:obj.idTestata,
-                            //idContratto:obj.idContratto,
                             ragioneSociale:obj.ragioneSociale,
                             tipologiaFattura:obj.tipologiaFattura,
+                            idContratto:obj.idContratto,
                             anno:obj.anno,
                             mese:mesiGrid[obj.mese],
-                            totaleAnalogico:obj.totaleAnalogico,
-                            totaleDigitale:obj.totaleDigitale,
+                            totaleAnalogico:Number(obj.totaleAnalogico).toFixed(2)+' €',
+                            totaleDigitale:Number(obj.totaleDigitale).toFixed(2)+' €',
                             totaleNotificheAnalogiche:obj.totaleNotificheAnalogiche,
                             totaleNotificheDigitali:obj.totaleNotificheDigitali,
-                            totale:obj.totale
+                            totale:Number(obj.totale).toFixed(2)+' €'
                         };
                     });
                     
