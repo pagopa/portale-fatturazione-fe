@@ -80,7 +80,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
  
                 </ButtonNaked>
               
-                <Typography sx={{ fontWeight:'bold', marginLeft:'20px'}} variant="caption">
+                <Typography sx={{marginLeft:'20px'}} variant="caption">
                     <ManageAccountsIcon sx={{paddingBottom:'3px'}}  fontSize='small'></ManageAccountsIcon>
                       Regolare Esecuzione /
                     
