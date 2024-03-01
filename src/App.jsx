@@ -1,6 +1,6 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { ThemeProvider, Grid } from '@mui/material';
 import {theme} from '@pagopa/mui-italia';
@@ -65,9 +65,9 @@ const MainContent = () => {
 
 const App = ({ instance }) => {
 
-    const getProfilo = localStorage.getItem('profilo') || '{}';
+    /* const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
-
+*/
     const [checkProfilo,setCheckProfilo] = useState(false);
     // set status page abilita e disabilita le modifiche al componente dati fatturazione
    
@@ -85,13 +85,13 @@ const App = ({ instance }) => {
         idEnte:'',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
         prodotto: '',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
     });
-
+    /*
     let redirectOnWrongURL = '/';
 
     if(profilo.auth === 'PAGOPA'){
         redirectOnWrongURL = '/pagopalistadatifatturazione';
     }
-   
+   */
 
 
     return (
