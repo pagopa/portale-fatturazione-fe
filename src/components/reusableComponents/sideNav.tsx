@@ -31,6 +31,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
 
     // questa chiamata viene eseguita esclusivamente se l'utenete fa un reload page cosi da inserire nuovamente il NONCE nel Main state
     const getProfiloToGetNonce = async () =>{
+        
         await getAuthProfilo(profilo.jwt)
             .then((res) =>{
             
@@ -112,7 +113,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
 
    
     useEffect(()=>{
-        if(token !== undefined && mainState.nonce !== '' && profilo.auth !== 'PAGOPA' ){
+        if(token !== undefined && mainState.nonce !== '' && profilo.auth === 'SELFCARE' ){
             getCommessa();
         }
     },[token,mainState.nonce]);

@@ -3,6 +3,7 @@ import { selfcareLogin, getAuthProfilo, manageError, redirect } from '../api/api
 import {useEffect} from 'react';
 import { LoginProps, MainState, ManageErrorResponse } from '../types/typesGeneral';
 
+
 // Blank page utilizzata per l'accesso degli utenti tramite  Selfcare
 
 /*quando l'utente SELFCARE va al link https://uat.selfcare.pagopa.it/auth/login , procede con login es. (comune di Erba ) , viene fatto un redirect
@@ -15,7 +16,8 @@ da parte dell'utente SELFCARE
 const Auth : React.FC<LoginProps> = ({setCheckProfilo, setMainState}) =>{
  
     
-    localStorage.removeItem('profilo');
+    // localStorage.removeItem('profilo');
+    // localStorage.removeItem('token');
   
     const [searchParams] = useSearchParams();
     const token = searchParams.get('selfcareToken');

@@ -32,7 +32,8 @@ export const manageError = (res:ManageErrorResponse,navigate:any) =>{
     }else if(res?.response?.request?.status  === 400){
         console.log('400 da gestire');
     }else if(res?.response?.request?.status  === 403){
-        navigate('/error');
+        window.location.href = redirect;
+        //navigate('/error');
     }else if(res?.response?.request?.status  === 500){
         alert('Operazione non eseguita: Internal Server Error');
         //navigate('/error');
