@@ -27,7 +27,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
 
-   
+    /*
 
     // questa chiamata viene eseguita esclusivamente se l'utenete fa un reload page cosi da inserire nuovamente il NONCE nel Main state
     const getProfiloToGetNonce = async () =>{
@@ -48,23 +48,22 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
     // in quel caso il get profilo viene chiamato nella page auth
   
     useEffect(()=>{
-        /*
-        const x = Object.values(profilo).length;
-   */
+       
+    
+ 
 
-        if(mainState.nonce === '' && Object.values(profilo).length !== 0){
+        if(profilo.nonce === '' && Object.values(profilo).length !== 0){
           
             getProfiloToGetNonce();
         }
          
-    },[mainState.nonce]);
+    },[profilo.nonce]);
 
-    
 
-  
+  */
 
     const getCommessa = async () =>{
-        await getDatiModuloCommessa(token, mainState.nonce).then((res)=>{
+        await getDatiModuloCommessa(token, profilo.nonce).then((res)=>{
 
             if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
               
@@ -113,10 +112,10 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
 
    
     useEffect(()=>{
-        if(token !== undefined && mainState.nonce !== '' && profilo.auth === 'SELFCARE' ){
+        if(token !== undefined && profilo.nonce !== undefined && profilo.auth === 'SELFCARE' ){
             getCommessa();
         }
-    },[token,mainState.nonce]);
+    },[token,profilo.nonce]);
 
   
 
@@ -162,7 +161,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
     // chiamata con i parametri necessari (id ente)
     const getDatiFat = async () =>{
       
-        await getDatiFatturazione(token,mainState.nonce).then(( ) =>{ 
+        await getDatiFatturazione(token,profilo.nonce).then(( ) =>{ 
             
             setMainState((prev:MainState)=>({
                 ...prev, 
@@ -191,7 +190,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
         }else{
             //cliccando sulla side nav Modulo commessa e sono un ente qualsiasi
             await getDatiFat();
-            await getDatiModuloCommessa(token, mainState.nonce).then((res)=>{
+            await getDatiModuloCommessa(token, profilo.nonce).then((res)=>{
 
                 if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
                     setMainState((prev:MainState)=>({

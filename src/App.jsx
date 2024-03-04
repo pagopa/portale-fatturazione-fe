@@ -80,7 +80,6 @@ const App = ({ instance }) => {
         action:'DATI_FATTURAZIONE', // le action possono essere HIDE_MODULO_COMMESSA / SHOW_MODULO_COMMESSA / DATI_FATTURAZIOne
         statusPageDatiFatturazione:'immutable',
         statusPageInserimentoCommessa:'immutable',
-        nonce:'',
         indexStepper:0, // index del componente setpper
         idEnte:'',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
         prodotto: '',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione

@@ -22,6 +22,9 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({mainState, 
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
 
+    const getProfilo = localStorage.getItem('profilo') || '{}';
+    const profilo =  JSON.parse(getProfilo);
+
     const [textValue, setTextValue] = useState('');
 
     
@@ -40,7 +43,7 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({mainState, 
 
     // servizio che popola la select con la checkbox
     const listaEntiNotifichePageOnSelect = async () =>{
-        await listaEntiNotifichePage(token, mainState.nonce, {descrizione:textValue} )
+        await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} )
             .then((res)=>{
                 setDataSelect(res.data);
                 

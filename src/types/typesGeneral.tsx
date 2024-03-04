@@ -57,7 +57,6 @@ export interface MainState{
     statusPageDatiFatturazione:string,
     statusPageInserimentoCommessa:string,
     path:string,
-    nonce:string,
     indexStepper:0, // in che pat sono al momento del reload?
     idEnte:string,// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
     prodotto: string,// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione

@@ -12,6 +12,8 @@ import { ManageErrorResponse } from '../types/typesGeneral';
 
 const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMainState,mainState}) => {
    
+    const getProfilo = localStorage.getItem('profilo') || '{}';
+    const profilo =  JSON.parse(getProfilo);
   
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
@@ -42,7 +44,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMainS
     // servizio che  popola la select anni
     const getAnniSelect = async () =>{
 
-        await getAnni(token, mainState.nonce).then((res:GetAnniResponse)=>{
+        await getAnni(token, profilo.nonce).then((res:GetAnniResponse)=>{
            
             setAnni(res.data);
         }).catch((err:ManageErrorResponse)=>{
@@ -53,7 +55,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMainS
     // servizio che popola la grid con la lista commesse
     const getListaCommessaGrid = async () =>{
 
-        await getListaCommessa(token , mainState.nonce).then((res:ResponseGetListaCommesse)=>{
+        await getListaCommessa(token , profilo.nonce).then((res:ResponseGetListaCommesse)=>{
             
             const finalData = fixResponseForDataGrid(res.data);
             setGridData(finalData);
@@ -65,12 +67,12 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMainS
     // nel caso in cui un utente apre un altra tab e accede come un utente diverso le chiamate andranno in errore
     // nel beck è stato implementato un controllo basato sul nonce
     useEffect(()=>{
-        if(mainState.nonce !== ''){
+        if(profilo.nonce !== undefined){
             getAnniSelect();
             getListaCommessaGrid();
         }
         
-    },[mainState.nonce]);
+    },[profilo.nonce]);
     
     // se il token non c'è viene fatto il redirect al portale di accesso
     useEffect(()=>{
@@ -81,7 +83,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMainS
   
   
     const handleButtonFiltra = () => {
-        getListaCommessaFiltered(token , mainState.nonce, valueSelect).then((res:ResponseGetListaCommesse)=>{
+        getListaCommessaFiltered(token , profilo.nonce, valueSelect).then((res:ResponseGetListaCommesse)=>{
             const finalData = fixResponseForDataGrid(res.data);
             setGridData(finalData);
            
@@ -94,7 +96,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMainS
     // on click sul button annulla filtri
     const handleButtonAnnullaFiltri = () => {
 
-        getListaCommessaOnAnnulla(token, mainState.nonce).then((res:ResponseGetListaCommesse)=>{
+        getListaCommessaOnAnnulla(token, profilo.nonce).then((res:ResponseGetListaCommesse)=>{
             const finalData = fixResponseForDataGrid(res.data);
             setGridData(finalData);
            
