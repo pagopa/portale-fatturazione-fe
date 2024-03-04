@@ -1,12 +1,11 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked} from '@pagopa/mui-italia';
-import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import { Rel, RelPageProps } from "../types/typeRel";
+import { RelPageProps } from "../types/typeRel";
 import { Button, Typography } from "@mui/material";
 import { useNavigate } from 'react-router';
-import { getRelPdf, getSingleRel, manageError } from '../api/api';
-import { useEffect, useState } from 'react';
+import { getRelPdf, getRelExel } from '../api/api';
+import { useEffect} from 'react';
 import TextDettaglioPdf from '../components/commessaPdf/textDettaglioPdf';
 import { usePDF } from 'react-to-pdf';
 import { ResponseDownloadPdf } from '../types/typeModuloCommessaInserimento';
@@ -23,9 +22,24 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
 
     const mesi = ["Dicembre", "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
 
- 
-
     const navigate = useNavigate();
+
+
+
+    const downloadRelExel = async() =>{
+
+        if( mainState.relSelected !== null){
+            await getRelExel(token, mainState.nonce, mainState.relSelected.idTestata).then((res)=>{
+                
+                console.log('prova');
+       
+            }).catch((err)=>{
+                console.log(err);
+            });  
+        }
+
+        
+    };
 
     const rel = mainState.relSelected;
 
@@ -42,11 +56,9 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
 
         
     };
+
     
     const toDoOnDownloadPdf = (res:ResponseDownloadPdf) =>{
-
-        
-
         const wrapper = document.getElementById('file_download_rel');
         if(wrapper){
             wrapper.innerHTML = res.data;
@@ -54,8 +66,6 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
     };
 
     useEffect(()=>{
-
-      
         if(profilo.auth === 'PAGOPA'){
             console.log('nada');
         }else{
@@ -122,9 +132,13 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
             </div>
 
             <div className="d-flex justify-content-center mb-5">
-                <Button onClick={()=> toPDF()}  variant="contained">Scarica</Button>
+                <Button onClick={()=> toPDF()}  variant="contained">Scarica Pdf</Button>
+            </div>
+            <div className="d-flex justify-content-center mb-5">
+                <Button onClick={()=> downloadRelExel()}  variant="contained">Scarica Lista Rel</Button>
             </div>
         </div>
+       
        
     );
 };
