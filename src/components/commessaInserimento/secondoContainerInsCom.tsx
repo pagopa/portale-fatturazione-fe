@@ -52,7 +52,7 @@ const SecondoContainerInsCom : React.FC = () => {
     };
    
     useEffect(()=>{
-        if(profilo.nonce !== ''){
+        if(profilo.nonce !== undefined){
             getCategoria();
         }
         
