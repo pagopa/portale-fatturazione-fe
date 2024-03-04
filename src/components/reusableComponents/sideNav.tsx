@@ -11,9 +11,9 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import DnsIcon from '@mui/icons-material/Dns';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
-import { getDatiModuloCommessa, getAuthProfilo, getDatiFatturazione, getDatiFatturazionePagoPa,  manageError} from '../../api/api';
+import { getDatiModuloCommessa, getDatiFatturazione,  manageError} from '../../api/api';
 import MarkUnreadChatAltIcon from '@mui/icons-material/MarkUnreadChatAlt';
-import { MainState, ManageErrorResponse, SideNavProps } from '../../types/typesGeneral';
+import { MainState, SideNavProps } from '../../types/typesGeneral';
 
 
 const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => {
@@ -27,98 +27,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
 
-    /*
-
-    // questa chiamata viene eseguita esclusivamente se l'utenete fa un reload page cosi da inserire nuovamente il NONCE nel Main state
-    const getProfiloToGetNonce = async () =>{
-        
-        await getAuthProfilo(profilo.jwt)
-            .then((res) =>{
-            
-                setMainState((prev:MainState)=>({...prev, ...{nonce:res?.data.nonce}}));
-           
-              
-            }).catch((err:ManageErrorResponse)=>{
-
-                manageError(err, navigate);
-            });
-    };
-    // eseguiamo la get a riga 31 solo se il nonce nel main state è presente ,controlliamo che nella local storage sia settatto il profilo
-    // Object.values(profilo).length !== 0 viene fatto solo per far si che la chiamanta non venga fatta al primo rendering
-    // in quel caso il get profilo viene chiamato nella page auth
-  
-    useEffect(()=>{
-       
     
- 
-
-        if(profilo.nonce === '' && Object.values(profilo).length !== 0){
-          
-            getProfiloToGetNonce();
-        }
-         
-    },[profilo.nonce]);
-
-
-  */
-
-    const getCommessa = async () =>{
-        await getDatiModuloCommessa(token, profilo.nonce).then((res)=>{
-
-            if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
-              
-                setMainState((prev:MainState)=>({
-                    ...prev,
-                    ...{
-                        inserisciModificaCommessa:'INSERT',
-                        statusPageInserimentoCommessa:'mutable',
-                        modifica:true
-                    }}));
-
-               
-                // ci sono commesse inserite nel mese corrente e posso modificarle
-            }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0){
-             
-             
-                setMainState((prev:MainState)=>({ 
-                    ...prev,
-                    ...{
-                        inserisciModificaCommessa:'MODIFY',
-                        statusPageInserimentoCommessa:'immutable',
-                        modifica:true}}));
-            }else if(res.data.modifica === false ){
-              
-                setMainState((prev:MainState)=>({ 
-                    ...prev,
-                    ...{
-                        inserisciModificaCommessa:'NO_ACTION',
-                        statusPageInserimentoCommessa:'immutable',
-                        modifica:false}}));
-            }
-
-            const getProfilo = localStorage.getItem('profilo') || '{}';
-            const profilo =  JSON.parse(getProfilo);
-            const newProfilo = {...profilo, ...{idTipoContratto:res.data.idTipoContratto}};
-
-            const string = JSON.stringify(newProfilo);
-            localStorage.setItem('profilo', string);
-
-        }).catch((err)=>{
-            manageError(err, navigate);
-            // menageError(err.response.status, navigate);
-            
-        });
-    };
-
-   
-    useEffect(()=>{
-        if(token !== undefined && profilo.nonce !== undefined && profilo.auth === 'SELFCARE' ){
-            getCommessa();
-        }
-    },[token,profilo.nonce]);
-
-  
-
   
     const getProfiloFromLocalStorage = localStorage.getItem('profilo') || '{}';
 
