@@ -116,7 +116,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
 
     // get delle tipologie delle contestazioni che popolano la select 
     const getTipoConestazioni = async() => {
-        await tipologiaTipoContestazione(token, mainState.nonce)
+        await tipologiaTipoContestazione(token, profilo.nonce)
             .then((res)=>{
                 setTipoContestazioni(res.data);
           
@@ -128,11 +128,11 @@ CON => consolidatore (selfcare -> tutti gli enti)
 
 
     useEffect(()=>{
-        if(mainState.nonce !== ''){
+        if(profilo.nonce !== undefined){
             getTipoConestazioni();
           
         }
-    },[mainState.nonce]);
+    },[profilo.nonce]);
 
 
 
@@ -145,7 +145,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
         };
 
         
-        await createContestazione(token, mainState.nonce,body)
+        await createContestazione(token, profilo.nonce,body)
             .then(()=>{
                 setOpen(false);
                 funGetNotifiche(1,10);
@@ -190,7 +190,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
         }
         
         
-        await modifyContestazioneEnte(token, mainState.nonce, body).then((res)=>{
+        await modifyContestazioneEnte(token, profilo.nonce, body).then((res)=>{
             setOpen(false);
             funGetNotifiche(1,10);
             
@@ -232,7 +232,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
 
        
 
-        await modifyContestazioneEntePagoPa(token, mainState.nonce, body).then((res)=>{
+        await modifyContestazioneEntePagoPa(token, profilo.nonce, body).then((res)=>{
             setOpen(false);
             funGetNotifichePagoPa(1,10);
             

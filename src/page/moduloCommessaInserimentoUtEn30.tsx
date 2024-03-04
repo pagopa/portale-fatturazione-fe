@@ -122,7 +122,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
     const handleGetDettaglioModuloCommessa = async () =>{
 
-        await getDettaglioModuloCommessa(token,statusApp.anno,statusApp.mese, mainState.nonce)
+        await getDettaglioModuloCommessa(token,statusApp.anno,statusApp.mese, profilo.nonce)
             .then((response:ResponseDettaglioModuloCommessa)=>{
              
                 const res = response.data;
@@ -141,7 +141,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     };
 
     const handleGetDettaglioModuloCommessaPagoPa = async () => {
-        await getModuloCommessaPagoPa(token, mainState.nonce,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto, statusApp.mese, statusApp.anno )
+        await getModuloCommessaPagoPa(token, profilo.nonce,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto, statusApp.mese, statusApp.anno )
             .then((response:ResponseDettaglioModuloCommessa)=>{
                 const res = response.data;
                 setDatiCommessa({moduliCommessa:res.moduliCommessa});
@@ -164,7 +164,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     // tutto gestito sul button 'continua' in base al parametro datiFatturazione del main state
     const getDatiFat = async () =>{
       
-        await getDatiFatturazione(token,mainState.nonce).then(( ) =>{ 
+        await getDatiFatturazione(token,profilo.nonce).then(( ) =>{ 
               
             setMainState((prev:MainState)=>({
                 ...prev, 
@@ -192,7 +192,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     // tutto gestito sul button 'continua' in base al parametro datiFatturazione del main state
     const getDatiFatPagoPa = async () =>{
 
-        await getDatiFatturazionePagoPa(token,mainState.nonce, profilo.idEnte, profilo.prodotto ).then(() =>{   
+        await getDatiFatturazionePagoPa(token,profilo.nonce, profilo.idEnte, profilo.prodotto ).then(() =>{   
             setMainState((prev:MainState)=>(
                 {...prev, 
                     ...{datiFatturazione:true,
@@ -216,7 +216,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
   
     useEffect(()=>{
         // 
-        if(statusApp.userClickOn === 'GRID' && mainState.nonce !== '' ){
+        if(statusApp.userClickOn === 'GRID' && profilo.nonce !== undefined){
 
             // SELFCARE
             if(profilo.auth !== 'PAGOPA'){
@@ -232,7 +232,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
           
         }
       
-    },[mainState.nonce]);
+    },[profilo.nonce]);
    
 
     useEffect(()=>{
@@ -323,7 +323,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
     const hendlePostModuloCommessa = async () =>{
 
-        await insertDatiModuloCommessa(datiCommessa, token, mainState.nonce)
+        await insertDatiModuloCommessa(datiCommessa, token, profilo.nonce)
             .then(res =>{
                 toDoOnPostModifyCommessa(res);
                  
@@ -344,7 +344,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 idEnte:profilo.idEnte,
                 fatturabile:true }};
 
-        await modifyDatiModuloCommessaPagoPa(datiCommessaPlusIdTpcProIdE, token, mainState.nonce)
+        await modifyDatiModuloCommessaPagoPa(datiCommessaPlusIdTpcProIdE, token, profilo.nonce)
             .then((res)=>{
                 toDoOnPostModifyCommessa(res);
             }).catch(err => {

@@ -100,7 +100,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
     // get dati fatturazione SELFCARE
     const getDatiFat = async () =>{
       
-        await getDatiFatturazione(token,mainState.nonce).then((res:SuccesResponseGetDatiFatturazione ) =>{   
+        await getDatiFatturazione(token,profilo.nonce).then((res:SuccesResponseGetDatiFatturazione ) =>{   
             setUser('old');
             setDatiFatturazione(res.data); 
            
@@ -145,7 +145,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
     // get dati fatturazione PAGOPA
     const getDatiFatPagoPa = async () =>{
 
-        await getDatiFatturazionePagoPa(token,mainState.nonce, profilo.idEnte, profilo.prodotto ).then((res:SuccesResponseGetDatiFatturazione) =>{   
+        await getDatiFatturazionePagoPa(token,profilo.nonce, profilo.idEnte, profilo.prodotto ).then((res:SuccesResponseGetDatiFatturazione) =>{   
             setUser('old');
         
             setDatiFatturazione(res.data); 
@@ -178,7 +178,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
 
     // se il nonce è presente viene chiamata la get dati fatturazione
     useEffect(()=>{
-        if(mainState.nonce !== ''){
+        if(profilo.nonce !== undefined){
             if(profilo.auth !== 'PAGOPA'){
                 // se l'utente NON è pagopa
                 getDatiFat();
@@ -187,7 +187,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
                 getDatiFatPagoPa();
             }
         }
-    }, [mainState.nonce]);
+    }, [profilo.nonce]);
 
     // se non c'è il token viene fatto il redirect al portale di accesso 
     useEffect(()=>{
@@ -242,7 +242,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
 
                 const newDatiFatturazione = {...datiFatturazione, ...{idEnte:profilo.idEnte,prodotto:profilo.prodotto}};
 
-                modifyDatiFatturazionePagoPa(token,mainState.nonce, newDatiFatturazione ).then(() =>{
+                modifyDatiFatturazionePagoPa(token,profilo.nonce, newDatiFatturazione ).then(() =>{
 
                     actionOnResponseModifyDatiFatturazione();
                 
@@ -252,7 +252,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
 
             }else{
                 // 1 - ed è un utente SELFCARE
-                modifyDatiFatturazione(datiFatturazione, token,mainState.nonce)
+                modifyDatiFatturazione(datiFatturazione, token,profilo.nonce)
                     .then(() =>{
 
                         actionOnResponseModifyDatiFatturazione();
@@ -301,7 +301,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
               
             // 2 - ed è un utente PAGOPA
             if(profilo.auth === 'PAGOPA'){
-                insertDatiFatturazionePagoPa( token,mainState.nonce, bodyPagoPa).then(()  =>{
+                insertDatiFatturazionePagoPa( token,profilo.nonce, bodyPagoPa).then(()  =>{
                     
                     setMainState((prev:MainState)=>({...prev, ...{
                         statusPageDatiFatturazione:'immutable',
@@ -321,7 +321,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
 
             }else{
                 // 2 - ED è UN UTENTE SELFCARE
-                insertDatiFatturazione(body, token,mainState.nonce).then(() =>{
+                insertDatiFatturazione(body, token,profilo.nonce).then(() =>{
                     setMainState((prev:MainState)=>({...prev, ...{
                         statusPageDatiFatturazione:'immutable',
                         action:'SHOW_MODULO_COMMESSA',

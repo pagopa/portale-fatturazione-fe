@@ -79,7 +79,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
     
 
     const getProdotti = async() => {
-        await getTipologiaProdotto(token, mainState.nonce )
+        await getTipologiaProdotto(token, profilo.nonce )
             .then((res)=>{
                
                 setProdotti(res.data);
@@ -92,15 +92,15 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
  
 
     useEffect(()=>{
-        if(mainState.nonce !== ''){
+        if(profilo.nonce !== undefined){
             getProdotti();
             getListaCommesse();
         }
-    }, [mainState.nonce]);
+    }, [profilo.nonce]);
 
 
     const getListaCommesse = async() =>{
-        await listaModuloCommessaPagopa(bodyGetLista ,token, mainState.nonce)
+        await listaModuloCommessaPagopa(bodyGetLista ,token, profilo.nonce)
             .then((res)=>{
                
                 setGridData(res.data);
@@ -111,7 +111,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
     };
 
     const getListaCommesseOnAnnulla = async() =>{
-        await listaModuloCommessaPagopa({descrizione:'',prodotto:'', anno:currentYear, mese:currString} ,token, mainState.nonce)
+        await listaModuloCommessaPagopa({descrizione:'',prodotto:'', anno:currentYear, mese:currString} ,token, profilo.nonce)
             .then((res)=>{
              
                 setBodyGetLista({descrizione:'',prodotto:'', anno:currentYear, mese:currString});
@@ -124,7 +124,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
 
 
     const downloadExelListaCommessa = async () =>{
-        await downloadDocumentoListaModuloCommessaPagoPa(token, mainState.nonce,bodyGetLista)
+        await downloadDocumentoListaModuloCommessaPagoPa(token, profilo.nonce,bodyGetLista)
             .then((res)=>{
              
                 //const url = window.URL.createObjectURL(res.data.documento);

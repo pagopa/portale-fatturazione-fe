@@ -100,7 +100,8 @@ const AuthAzure : React.FC<AuthAzureProps> = ({setMainState}) =>{
                     dataUltimo:storeProfilo.dataUltimo,
                     dataPrimo:storeProfilo.dataPrimo,
                     prodotto:storeProfilo.prodotto,
-                    jwt:res.data.jwt
+                    jwt:res.data.jwt,
+                    nonce: storeProfilo.nonce
                 }));
                 
               

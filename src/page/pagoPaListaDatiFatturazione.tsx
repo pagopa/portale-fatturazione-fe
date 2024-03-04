@@ -59,7 +59,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
     
 
     const getProdotti = async() => {
-        await getTipologiaProdotto(token, mainState.nonce )
+        await getTipologiaProdotto(token,profilo.nonce )
             .then((res)=>{
                
                 setProdotti(res.data);
@@ -70,7 +70,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
     };
 
     const getProfili = async() => {
-        await getTipologiaProfilo(token, mainState.nonce)
+        await getTipologiaProfilo(token,profilo.nonce)
             .then((res)=>{
                
                 setProfili(res.data);
@@ -83,7 +83,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
     
 
     const getListaDatifatturazione = async(body:BodyListaDatiFatturazione) =>{
-        await listaDatiFatturazionePagopa(body ,token, mainState.nonce)
+        await listaDatiFatturazionePagopa(body ,token,profilo.nonce)
             .then((res)=>{
               
                 setGridData(res.data);
@@ -96,15 +96,15 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
 
 
     useEffect(()=>{
-        
-        if(mainState.nonce !== ''){
+        console.log(profilo, 'profilo');
+        if(profilo.nonce !== undefined){
 
             getProdotti();
             getProfili();
             getListaDatifatturazione(bodyGetLista);
        
         }
-    }, [mainState.nonce]);
+    }, [profilo.nonce]);
 
    
 
@@ -113,7 +113,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
 
 
     const onDownloadButton = async() =>{
-        await downloadDocumentoListaDatiFatturazionePagoPa(token, mainState.nonce, bodyGetLista).then((res:ResponseDownloadListaFatturazione) => {
+        await downloadDocumentoListaDatiFatturazionePagoPa(token,profilo.nonce, bodyGetLista).then((res:ResponseDownloadListaFatturazione) => {
           
             //const url = window.URL.createObjectURL(res.data.documento);
             const link = document.createElement('a');

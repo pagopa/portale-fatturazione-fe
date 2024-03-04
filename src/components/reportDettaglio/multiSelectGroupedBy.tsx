@@ -18,6 +18,9 @@ const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({m
 
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
+
+    const getProfilo = localStorage.getItem('profilo') || '{}';
+    const profilo =  JSON.parse(getProfilo);
  
     const navigate = useNavigate();
 
@@ -26,7 +29,7 @@ const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({m
     
 
     const getFlagContestazione =  async() => {
-        await flagContestazione(token, mainState.nonce )
+        await flagContestazione(token, profilo.nonce )
             .then((res)=>{
                 setFgContestazione(res.data);
                                 
@@ -37,11 +40,11 @@ const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({m
     };
 
     useEffect(()=>{
-        if(mainState.nonce !== ''){
+        if(profilo.nonce !== undefined){
             getFlagContestazione();
             
         }
-    },[mainState.nonce]);
+    },[profilo.nonce]);
 
     return (
         <Autocomplete

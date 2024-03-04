@@ -37,7 +37,7 @@ const getProfilo = async (res:ParameterGetProfilo)=>{
       
     await getAuthProfilo(res.data[0].jwt)
         .then(resp =>{
-               
+            console.log(res.data, 'ciao mondo');
             const storeProfilo = resp.data;
             localStorage.setItem('profilo', JSON.stringify({
                 auth:storeProfilo.auth,
@@ -48,7 +48,8 @@ const getProfilo = async (res:ParameterGetProfilo)=>{
                 dataPrimo:storeProfilo.dataPrimo,
                 prodotto:storeProfilo.prodotto,
                 jwt:res.data[0].jwt,
-                profilo:storeProfilo.profilo // profilo utilizzato per la gestione delle notifiche/contestazioni
+                profilo:storeProfilo.profilo, // profilo utilizzato per la gestione delle notifiche/contestazioni
+                nonce: storeProfilo.nonce
             }));
                 
               

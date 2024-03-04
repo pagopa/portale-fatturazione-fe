@@ -67,7 +67,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
 
 
     const getConfigurazione = async() =>{
-        getDatiConfigurazioneCommessa(token, profilo.idTipoContratto, profilo.prodotto, mainState.nonce)
+        getDatiConfigurazioneCommessa(token, profilo.idTipoContratto, profilo.prodotto, profilo.nonce)
             .then((res)=>{
                 const newCategorie = replaceDate(res.data.categorie,'[data]', '');
                 setLabelCategorie(newCategorie);
@@ -81,7 +81,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
     };
 
     useEffect(()=>{
-        if(mainState.nonce !== ''){
+        if(profilo.nonce !== undefined){
             getConfigurazione();
         }
         
