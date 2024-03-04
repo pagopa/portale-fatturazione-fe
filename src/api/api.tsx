@@ -524,6 +524,16 @@ export const getRelPdf = async ( token:string ,nonce:string , id:string) => {
     return response;
 };
 
+export const getRelExel = async ( token:string ,nonce:string , id:string) => {
+    const response =  await axios.get(`${url}/api/rel/ente/righe/${id}?binary=false&nonce=${nonce}`,  
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
 
 
 
