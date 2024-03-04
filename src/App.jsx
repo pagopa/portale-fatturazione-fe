@@ -21,7 +21,6 @@ import ReportDettaglio from './page/reportDettaglioUtPa';
 import AuthAzure from './page/authAzure';
 import { MsalProvider, AuthenticatedTemplate, useMsal, UnauthenticatedTemplate } from '@azure/msal-react';
 import Azure from './page/azure';
-
 import { Container, Button } from 'react-bootstrap';
 import { loginRequest } from './authConfig';
 import './App.css';
@@ -92,6 +91,8 @@ const App = ({ instance }) => {
     }
    */
 
+   
+
 
     return (
 
@@ -107,10 +108,12 @@ const App = ({ instance }) => {
                             <HeaderNavComponent />
 
                             <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
+                             
                                 <Grid item xs={2}>
                                     <SideNavComponent setMainState={setMainState}
                                         mainState={mainState} />
-                                </Grid>
+                                </Grid> 
+                               
 
 
                                 <Grid item xs={10}>

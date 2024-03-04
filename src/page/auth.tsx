@@ -1,5 +1,5 @@
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { selfcareLogin, getAuthProfilo, manageError, redirect } from '../api/api';
+import { selfcareLogin, getAuthProfilo, manageError, redirect, getDatiModuloCommessa } from '../api/api';
 import {useEffect} from 'react';
 import { LoginProps, MainState, ManageErrorResponse } from '../types/typesGeneral';
 
@@ -32,12 +32,62 @@ interface ParameterGetProfilo {
     data:Jwt[]
 }
 
+
+// terza chiamata fatta per verificare lo stato della commessa e eseguire azioni diverse a seconda del risultato 
+const getCommessa = async (tokenC, nonceC) =>{
+      
+    await getDatiModuloCommessa(tokenC, nonceC).then((res)=>{
+
+        if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
+          
+            setMainState((prev:MainState)=>({
+                ...prev,
+                ...{
+                    inserisciModificaCommessa:'INSERT',
+                    statusPageInserimentoCommessa:'mutable',
+                    modifica:true
+                }}));
+
+           
+            // ci sono commesse inserite nel mese corrente e posso modificarle
+        }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0){
+         
+         
+            setMainState((prev:MainState)=>({ 
+                ...prev,
+                ...{
+                    inserisciModificaCommessa:'MODIFY',
+                    statusPageInserimentoCommessa:'immutable',
+                    modifica:true}}));
+        }else if(res.data.modifica === false ){
+          
+            setMainState((prev:MainState)=>({ 
+                ...prev,
+                ...{
+                    inserisciModificaCommessa:'NO_ACTION',
+                    statusPageInserimentoCommessa:'immutable',
+                    modifica:false}}));
+        }
+
+        const getProfilo = localStorage.getItem('profilo') || '{}';
+        const profilo =  JSON.parse(getProfilo);
+        const newProfilo = {...profilo, ...{idTipoContratto:res.data.idTipoContratto}};
+
+        const string = JSON.stringify(newProfilo);
+        localStorage.setItem('profilo', string);
+
+    }).catch((err)=>{
+        manageError(err, navigate);
+        // menageError(err.response.status, navigate);
+        
+    });
+};
+
 //  seconda chiamata
 const getProfilo = async (res:ParameterGetProfilo)=>{
       
     await getAuthProfilo(res.data[0].jwt)
         .then(resp =>{
-            console.log(res.data, 'ciao mondo');
             const storeProfilo = resp.data;
             localStorage.setItem('profilo', JSON.stringify({
                 auth:storeProfilo.auth,
@@ -53,11 +103,11 @@ const getProfilo = async (res:ParameterGetProfilo)=>{
             }));
                 
               
-              
+            getCommessa(res.data[0].jwt, storeProfilo.nonce);
             setCheckProfilo(true);
                
-            // setto il nonce nello state di riferimento globale
-            setMainState((prev: MainState)=>({...prev, ...{nonce:resp?.data.nonce,ruolo:resp.data.ruolo}}));
+            // setto il ruolo nello state di riferimento globale
+            setMainState((prev: MainState)=>({...prev, ...{ruolo:resp.data.ruolo}}));
             navigate("/");
         } )
         .catch((err: ManageErrorResponse) => {
