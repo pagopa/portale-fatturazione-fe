@@ -182,7 +182,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMainS
 
             </div>
 
-            <div>
+            <div className='mb-5'>
                 <GridComponent data={gridData} setMainState={setMainState} mainState={mainState} />
                 
             </div>
