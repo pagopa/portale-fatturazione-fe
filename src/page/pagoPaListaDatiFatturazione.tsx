@@ -173,7 +173,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
     
       
     const columns: GridColDef[] = [
-        { field: 'ragioneSociale', headerName: 'Regione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.ragioneSociale}</a>},
+        { field: 'ragioneSociale', headerName: 'Ragione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.ragioneSociale}</a>},
         { field: 'cup', headerName: 'Cup', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'splitPayment', headerName: 'Split payment', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'idDocumento', headerName: 'ID. Documento', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
