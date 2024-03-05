@@ -757,8 +757,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                 fullWidth
                                 //required={required}
                                 // helperText='Cap'
-                                label='Cap'
-                                placeholder='Cap'
+                                label='CAP'
+                                placeholder='CAP'
                                 //  disabled={makeTextInputDisable}
                                 value={bodyGetLista.cap || ''}
                                 // error={errorValidation}
@@ -889,7 +889,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                                 Mese
                                     </TableCell>
                                     <TableCell>
-                                                Regione Sociale
+                                                Ragione Sociale
                                     </TableCell>
                                     <TableCell>
                                                 Tipo Notifica
@@ -904,7 +904,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                                 Stato Estero
                                     </TableCell>
                                     <TableCell>
-                                                Cap
+                                                CAP
                                     </TableCell>
                                     <TableCell>
                                                 Costo
