@@ -838,7 +838,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                                 Mese
                                     </TableCell>
                                     <TableCell>
-                                                Regione Sociale
+                                                Ragione Sociale
                                     </TableCell>
                                     <TableCell>
                                                 Tipo Notifica
