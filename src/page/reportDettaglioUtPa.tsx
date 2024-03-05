@@ -440,8 +440,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     document.body.appendChild(link);
               
                     link.click();
-                    document.body.removeChild(link);
-                            
+                    document.body.removeChild(link);           
                 })
                 .catch(((err)=>{
                     manageError(err,navigate);

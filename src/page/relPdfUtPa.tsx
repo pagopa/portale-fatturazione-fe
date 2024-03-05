@@ -12,17 +12,26 @@ import { ResponseDownloadPdf } from '../types/typeModuloCommessaInserimento';
 
 const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
 
+    const navigate = useNavigate();
+
+    if(mainState.relSelected === null){
+        navigate('/rel');
+    }
+
+    const { toPDF, targetRef } = usePDF({filename: 'Regolare Es.pdf'});
+  
+
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
 
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
 
-    const { toPDF, targetRef } = usePDF({filename: 'Rel.pdf'});
+    
 
     const mesi = ["Dicembre", "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
 
-    const navigate = useNavigate();
+    
 
 
 
@@ -31,7 +40,14 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
         if( mainState.relSelected !== null){
             await getRelExel(token, mainState.nonce, mainState.relSelected.idTestata).then((res)=>{
                 
-                console.log('prova');
+               
+                const link = document.createElement('a');
+                link.href = "data:text/plain;base64," + res.data.documento;
+                link.setAttribute('download', 'Lista Regolare esecuzione.xlsx'); //or any other extension
+                document.body.appendChild(link);
+          
+                link.click();
+                document.body.removeChild(link);
        
             }).catch((err)=>{
                 console.log(err);
@@ -126,17 +142,24 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
                         <TextDettaglioPdf description={'Tot. Not. Analogico'} value={rel.totaleNotificheAnalogiche}></TextDettaglioPdf>
                         <TextDettaglioPdf description={'Tot. Not. Digitali'} value={rel.totaleNotificheDigitali}></TextDettaglioPdf>
                         <TextDettaglioPdf description={'Totale'} value={Number(rel.totale).toFixed(2)+' €'}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Iva'} value={rel.iva +' %'}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Iva Totale Analogico'} value={Number(rel.totaleAnalogicoIva).toFixed(2)+' €'}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Iva Totale Digitale'} value={Number(rel.totaleDigitaleIva).toFixed(2)+' €'}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Iva Totale'} value={Number(rel.totaleIva).toFixed(2)+' €'}></TextDettaglioPdf>
                     </div>
                     }
                 </div>
             </div>
+            <div className='d-flex justify-content-around m-5'>
+                <div className="">
+                    <Button onClick={()=> toPDF()}  variant="contained">Scarica Pdf</Button>
+                </div>
+                <div className="">
+                    <Button onClick={()=> downloadRelExel()}  variant="contained">Scarica Lista Rel</Button>
+                </div>
+            </div>
 
-            <div className="d-flex justify-content-center mb-5">
-                <Button onClick={()=> toPDF()}  variant="contained">Scarica Pdf</Button>
-            </div>
-            <div className="d-flex justify-content-center mb-5">
-                <Button onClick={()=> downloadRelExel()}  variant="contained">Scarica Lista Rel</Button>
-            </div>
+            
         </div>
        
        

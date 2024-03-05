@@ -6,10 +6,11 @@ import SelectTipologiaFattura from "../components/rel/selectTipologiaFattura";
 import GridCustom from "../components/reusableComponents/gridCustom";
 import { BodyRel, Rel, RelPageProps } from "../types/typeRel";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
-import { getListaRel, getSingleRel, manageError } from "../api/api";
+import { getListaRel, getSingleRel, manageError,downloadListaRel } from "../api/api";
 import { useNavigate } from "react-router";
 import { MainState } from "../types/typesGeneral";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
+import DownloadIcon from '@mui/icons-material/Download';
 
 
 const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
@@ -163,6 +164,29 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
     
 
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
+
+
+    const downloadListaRelExel = async() =>{
+
+        const {ragioneSociale, ...newBody} = bodyRel;
+        await downloadListaRel(token,mainState.nonce,newBody).then((res)=>{
+                
+               
+            const link = document.createElement('a');
+            link.href = "data:text/plain;base64," + res.data.documento;
+            link.setAttribute('download', 'Lista Documento Regolare esecuzione.xlsx'); //or any other extension
+            document.body.appendChild(link);
+          
+            link.click();
+            document.body.removeChild(link);
+       
+        }).catch((err)=>{
+            console.log(err);
+        });  
+      
+
+        
+    };
  
 
 
@@ -216,11 +240,32 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
                                 ragioneSociale:[],
                                 idContratto:null
                             });
+                            setData([]);
                         }} >Annulla Filtri</Button>
                     </div>
                     }
                 </div>
                 <div className="mt-5 mb-5">
+                    { data.length > 0  &&
+            <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
+                 
+                <div>
+                    <Button
+                        disabled={false}
+                        onClick={()=> {
+                            downloadListaRelExel();
+                          
+                        }}  >
+                                  Download Risultati 
+                        <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
+                    </Button>
+            
+                </div>           
+                   
+               
+               
+            </div>
+                    }    
                     
                     <GridCustom
                         nameParameterApi='idTestata'

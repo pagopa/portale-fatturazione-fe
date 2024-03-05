@@ -525,12 +525,22 @@ export const getRelPdf = async ( token:string ,nonce:string , id:string) => {
 };
 
 export const getRelExel = async ( token:string ,nonce:string , id:string) => {
-    const response =  await axios.get(`${url}/api/rel/ente/righe/${id}?binary=false&nonce=${nonce}`,  
+    const response =  await axios.get(`${url}/api/rel/ente/righe/${id}?nonce=${nonce}`,  
         { headers: {
             Authorization: 'Bearer ' + token
         },}
     );
 
+    return response;
+};
+export const downloadListaRel = async (token:string, nonce:string , body: BodyRel) => {
+    const response =  await axios.post(`${url}/api/rel/ente/documento/ricerca?&nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },
+        }
+    );
     return response;
 };
 
