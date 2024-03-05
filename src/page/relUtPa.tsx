@@ -141,6 +141,8 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
         }
                             
     };
+    // visulizzazione del pop up redirect dati di fatturazione
+    const [openModalRedirect, setOpenModalRedirect] = useState(false);
    
     const getRel = async(idRel) => {
         getSingleRel(token,mainState.nonce,idRel).then((res) =>{
@@ -149,7 +151,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
             if(res.data.datiFatturazione === true){
                 navigate('/relpdf');
             }else{
-                console.log('pop up');
+                setOpenModalRedirect(false);
             }
            
            
@@ -163,7 +165,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
 
     
 
-    const [openModalRedirect, setOpenModalRedirect] = useState(false);
+  
 
 
     const downloadListaRelExel = async() =>{
