@@ -54,7 +54,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
     // data ragione sociale
     const [dataSelect, setDataSelect] = useState([]);
 
-    const headerNamesGrid = ['Rag. Sociale','Tipologia Fattura', 'ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale',''];    
+    const headerNamesGrid = ['Ragione Sociale','Tipologia Fattura', 'ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale',''];    
 
     const [data, setData] = useState([]);
 
@@ -176,7 +176,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
                
             const link = document.createElement('a');
             link.href = "data:text/plain;base64," + res.data.documento;
-            link.setAttribute('download', 'Lista Documento Regolare esecuzione.xlsx'); //or any other extension
+            link.setAttribute('download', `Lista Regolare esecuzione mese di riferimento ${mesiGrid[bodyRel.mese]}.xlsx`); //or any other extension
             document.body.appendChild(link);
           
             link.click();
