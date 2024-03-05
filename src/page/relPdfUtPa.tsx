@@ -20,7 +20,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
         navigate('/rel');
     }
 
-    const { toPDF, targetRef } = usePDF({filename: 'Regolare Es.pdf'});
+    const { toPDF, targetRef } = usePDF({filename: 'Regolare Esecuzione.pdf'});
   
 
     const getToken = localStorage.getItem('token') || '{}';
@@ -139,25 +139,27 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
                         <TextDettaglioPdf description={'Anno'} value={rel.anno}></TextDettaglioPdf>
                         <TextDettaglioPdf description={'Mese'} value={mesi[rel.mese]}></TextDettaglioPdf>
                         <TextDettaglioPdf description={'Cup'} value={rel.cup}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Tot. Analogico'} value={Number(rel.totaleAnalogico).toFixed(2)+' €'}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Tot. Digitale'} value={Number(rel.totaleDigitale).toFixed(2)+' €'}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Tot. Not. Analogico'} value={rel.totaleNotificheAnalogiche}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Tot. Not. Digitali'} value={rel.totaleNotificheDigitali}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Totale'} value={Number(rel.totale).toFixed(2)+' €'}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'N. Notifiche Analogiche'} value={rel.totaleNotificheAnalogiche}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'N. Notifiche Digitali'} value={rel.totaleNotificheDigitali}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'N. Tototale Notifiche'} value={rel.totaleNotificheDigitali + rel.totaleNotificheAnalogiche }></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Totale Imponibile Analogico'} value={Number(rel.totaleAnalogico).toFixed(2)+' €'}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Totale Imponibile Digitale'} value={Number(rel.totaleDigitale).toFixed(2)+' €'}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Totale Imponibile'} value={Number(rel.totale).toFixed(2)+' €'}></TextDettaglioPdf>
                         <TextDettaglioPdf description={'Iva'} value={rel.iva +' %'}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Iva Totale Analogico'} value={Number(rel.totaleAnalogicoIva).toFixed(2)+' €'}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Iva Totale Digitale'} value={Number(rel.totaleDigitaleIva).toFixed(2)+' €'}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Iva Totale'} value={Number(rel.totaleIva).toFixed(2)+' €'}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Totale Ivato Analogico '} value={Number(rel.totaleAnalogicoIva).toFixed(2)+' €'}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Totale Ivato Digitale'} value={Number(rel.totaleDigitaleIva).toFixed(2)+' €'}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Totale Ivato'} value={Number(rel.totaleIva).toFixed(2)+' €'}></TextDettaglioPdf>
+                        
                     </div>
                     }
                 </div>
             </div>
             <div className='d-flex justify-content-around m-5'>
                 <div className="">
-                    <Button onClick={()=> toPDF()}  variant="contained">Scarica Pdf</Button>
+                    <Button sx={{width:'274px'}} onClick={()=> toPDF()}  variant="contained">Scarica Pdf Regolare Esecuzione</Button>
                 </div>
                 <div className="">
-                    <Button onClick={()=> downloadRelExel()}  variant="contained">Scarica Lista Rel</Button>
+                    <Button sx={{width:'274px'}} onClick={()=> downloadRelExel()}  variant="contained">Scarica lista Regolare Esecuzione</Button>
                 </div>
             </div>
 
