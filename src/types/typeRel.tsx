@@ -33,6 +33,13 @@ export interface Rel {
     totaleDigitale: string,
     totaleNotificheAnalogiche: number,
     totaleNotificheDigitali: number,
-    totale: number
+    totale: number,
+    iva:number,
+    totaleAnalogicoIva:number,
+    totaleDigitaleIva:number,
+    totaleIva:number
+
+
+
 }
 
