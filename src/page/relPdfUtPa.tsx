@@ -12,9 +12,11 @@ import { ResponseDownloadPdf } from '../types/typeModuloCommessaInserimento';
 
 const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
 
+    const rel = mainState.relSelected;
+
     const navigate = useNavigate();
 
-    if(mainState.relSelected === null){
+    if(rel === null){
         navigate('/rel');
     }
 
@@ -57,7 +59,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
         
     };
 
-    const rel = mainState.relSelected;
+    
 
     const downloadPdfRel = async() =>{
 
