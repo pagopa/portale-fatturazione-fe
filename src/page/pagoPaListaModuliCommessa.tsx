@@ -209,8 +209,8 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
         { field: 'prodotto', headerName: 'Prodotto', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         
         { field: 'numeroNotificheNazionaliDigitale', headerName: 'Num. Not. Naz.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'tipoSpedizioneAnalogicoAR', headerName: 'Tipo spediz Analog', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'numeroNotificheInternazionaliDigitale', headerName: 'Num. Not. Int', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        { field: 'tipoSpedizioneAnalogicoAR', headerName: 'Tipo spediz. Analog.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        { field: 'numeroNotificheInternazionaliDigitale', headerName: 'Num. Not. Int.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'numeroNotificheNazionaliAnalogicoAR', headerName: 'Num. Not. Naz. AR', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'numeroNotificheInternazionaliAnalogicoAR', headerName: 'Num. Not. Int. AR', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         // { field: 'tipoSpedizioneAnalogicoAR', headerName: 'Tipo spediz Anal', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
