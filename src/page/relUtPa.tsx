@@ -6,7 +6,7 @@ import SelectTipologiaFattura from "../components/rel/selectTipologiaFattura";
 import GridCustom from "../components/reusableComponents/gridCustom";
 import { BodyRel, Rel, RelPageProps } from "../types/typeRel";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
-import { getListaRel, getSingleRel, manageError,downloadListaRel } from "../api/api";
+import { getListaRel, getSingleRel, manageError,downloadListaRel, getListaRelPagoPa, getSingleRelPagopa, downloadListaRelPagopa } from "../api/api";
 import { useNavigate } from "react-router";
 import { MainState } from "../types/typesGeneral";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
@@ -32,9 +32,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
     const month = Number(currentMonth);
 
 
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [totalNotifiche, setTotalNotifiche]  = useState(0);
+   
 
 
 
@@ -44,7 +42,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
         anno:currentYear,
         mese:month,
         tipologiaFatture:null,
-        ragioneSociale:[],
+        entiIds:[],
         idContratto:null
     });
 
@@ -52,24 +50,23 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
 
 
     // data ragione sociale
+
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [totalNotifiche, setTotalNotifiche]  = useState(0);
+       
     const [dataSelect, setDataSelect] = useState([]);
-
+   
     const headerNamesGrid = ['Ragione Sociale','Tipologia Fattura', 'ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale',''];    
-
+   
     const [data, setData] = useState([]);
-
-
-  
-    useEffect(()=>{
-        getlistaRelEnte(page, rowsPerPage);
-    },[page, rowsPerPage]);
 
    
 
     const getlistaRelEnte = async (nPage,nRows) => {
 
         if(profilo.auth === 'SELFCARE'){
-            const {ragioneSociale, ...newBody} = bodyRel;
+            const {entiIds, ...newBody} = bodyRel;
      
       
             await  getListaRel(token,mainState.nonce,nPage, nRows, newBody)
@@ -100,11 +97,42 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
                     
                     manageError(error, navigate);
                 });
-        }
+        }else{
+            await  getListaRelPagoPa(token,mainState.nonce,nPage, nRows, bodyRel)
+                .then((res)=>{
+                // ordino i dati in base all'header della grid
+                    const orderDataCustom = res.data.relTestate.map((obj)=>{
 
-       
-                    
+                        // inserire come prima chiave l'id se non si vuol renderlo visibile nella grid
+                        // 'id serve per la chiamata get dettaglio dell'elemento selezionato nella grid
+                        return {
+                            idTestata:obj.idTestata,
+                            ragioneSociale:obj.ragioneSociale,
+                            tipologiaFattura:obj.tipologiaFattura,
+                            idContratto:obj.idContratto,
+                            anno:obj.anno,
+                            mese:mesiGrid[obj.mese],
+                            totaleAnalogico:Number(obj.totaleAnalogico).toFixed(2)+' €',
+                            totaleDigitale:Number(obj.totaleDigitale).toFixed(2)+' €',
+                            totaleNotificheAnalogiche:obj.totaleNotificheAnalogiche,
+                            totaleNotificheDigitali:obj.totaleNotificheDigitali,
+                            totale:Number(obj.totale).toFixed(2)+' €'
+                        };
+                    });
+                
+                    setData(orderDataCustom);
+                    setTotalNotifiche(res.data.count);
+                }).catch((error)=>{
+                
+                    manageError(error, navigate);
+                });
+        }            
     };
+
+    useEffect(()=>{
+        const realPage = page + 1;
+        getlistaRelEnte(realPage, rowsPerPage);
+    },[page, rowsPerPage]);
 
 
     const handleChangePage = (
@@ -114,7 +142,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
      
         const realPage = newPage + 1;
         if(profilo.auth === 'SELFCARE'){
-            getlistaRelEnte(page, rowsPerPage);
+            getlistaRelEnte(realPage, rowsPerPage);
             
         }
         if(profilo.auth === 'PAGOPA'){
@@ -136,31 +164,51 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
             getlistaRelEnte(realPage,parseInt(event.target.value, 10));
         }
         if(profilo.auth === 'PAGOPA'){
+           
             // getlistaNotifichePagoPa(realPage,parseInt(event.target.value, 10));
             //listaEntiNotifichePageOnSelect();
         }
                             
     };
+  
+
+
     // visulizzazione del pop up redirect dati di fatturazione
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
    
     const getRel = async(idRel) => {
-        getSingleRel(token,mainState.nonce,idRel).then((res) =>{
+
+        if(profilo.auth === 'SELFCARE'){
+            getSingleRel(token,mainState.nonce,idRel).then((res) =>{
           
-            setMainState((prev:MainState) => ({...prev,...{relSelected:res.data}}));
-            if(res.data.datiFatturazione === true){
-                navigate('/relpdf');
-            }else{
-                setOpenModalRedirect(false);
+                setMainState((prev:MainState) => ({...prev,...{relSelected:res.data}}));
+                if(res.data.datiFatturazione === true){
+                    navigate('/relpdf');
+                }else{
+                    setOpenModalRedirect(false);
+                }
+            }).catch((err)=>{
+                manageError(err, navigate);
             }
-           
-           
-            // setMainState((prev) => ({...prev,...{relSelected:res.data}}));
-        }).catch((err)=>{
-            manageError(err, navigate);
-        }
+              
+            );
+        }else{
+            getSingleRelPagopa(token,mainState.nonce,idRel).then((res) =>{
           
-        );
+                setMainState((prev:MainState) => ({...prev,...{relSelected:res.data}}));
+                if(res.data.datiFatturazione === true){
+                    navigate('/relpdf');
+                }else{
+                    setOpenModalRedirect(false);
+                }
+            }).catch((err)=>{
+                manageError(err, navigate);
+            }
+              
+            );
+        }
+       
+        
     };  
 
     
@@ -170,22 +218,36 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
 
     const downloadListaRelExel = async() =>{
 
-        const {ragioneSociale, ...newBody} = bodyRel;
-        await downloadListaRel(token,mainState.nonce,newBody).then((res)=>{
-                
-               
-            const link = document.createElement('a');
-            link.href = "data:text/plain;base64," + res.data.documento;
-            link.setAttribute('download', `Lista Regolare esecuzione mese di riferimento ${mesiGrid[bodyRel.mese]}.xlsx`); //or any other extension
-            document.body.appendChild(link);
-          
-            link.click();
-            document.body.removeChild(link);
-       
-        }).catch((err)=>{
-            console.log(err);
-        });  
-      
+        if(profilo.auth === 'SELFCARE'){
+
+            const {entiIds, ...newBody} = bodyRel;
+            await downloadListaRel(token,mainState.nonce,newBody).then((res)=>{
+                const link = document.createElement('a');
+                link.href = "data:text/plain;base64," + res.data.documento;
+                link.setAttribute('download', `Lista Regolare esecuzione mese di riferimento ${mesiGrid[bodyRel.mese]}.xlsx`); //or any other extension
+                document.body.appendChild(link);
+              
+                link.click();
+                document.body.removeChild(link);
+           
+            }).catch((err)=>{
+                console.log(err);
+            }); 
+        }else{
+            await downloadListaRelPagopa(token,mainState.nonce,bodyRel).then((res)=>{
+                const link = document.createElement('a');
+                link.href = "data:text/plain;base64," + res.data.documento;
+                link.setAttribute('download', `Lista Regolare esecuzione mese di riferimento ${mesiGrid[bodyRel.mese]}.xlsx`); //or any other extension
+                document.body.appendChild(link);
+              
+                link.click();
+                document.body.removeChild(link);
+           
+            }).catch((err)=>{
+                console.log(err);
+            }); 
+            
+        }
 
         
     };
@@ -229,7 +291,8 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
                     
                     <div className="col-1">
                         <Button onClick={()=>{
-                            getlistaRelEnte(page, rowsPerPage);
+                            const realPage = page + 1;
+                            getlistaRelEnte(realPage, rowsPerPage);
                         }} variant="contained">Filtra</Button>
                     </div>
                     {!hiddenAnnullaFiltri && 
@@ -239,7 +302,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
                                 anno:currentYear,
                                 mese:month,
                                 tipologiaFatture:null,
-                                ragioneSociale:[],
+                                entiIds:[],
                                 idContratto:null
                             });
                             setData([]);
