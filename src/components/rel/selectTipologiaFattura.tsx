@@ -24,17 +24,17 @@ const SelectTipologiaFattura : React.FC<SelecTipologiaProps> = ({setValue, value
                 <InputLabel
                     id="sea"
                 >
-                                Tipologia Fatture  
+                                Tipologia Fattura  
                 </InputLabel>
                 <Select
                     id="sea"
                     label='Seleziona Prodotto'
                     labelId="search-by-label"
                     onChange={(e) =>{
-                        setValue((prev)=> ({...prev, ...{tipologiaFatture:e.target.value}}));
+                        setValue((prev)=> ({...prev, ...{tipologiaFattura:e.target.value}}));
                     }}
                                
-                    value={values.tipologiaFatture || ''}
+                    value={values.tipologiaFattura || ''}
                              
                 >
                     {tipologie.map((el) => (
