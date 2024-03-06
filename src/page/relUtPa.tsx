@@ -42,7 +42,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
         anno:currentYear,
         mese:month,
         tipologiaFatture:null,
-        entiIds:[],
+        idEnti:[],
         idContratto:null
     });
 
@@ -66,7 +66,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
     const getlistaRelEnte = async (nPage,nRows) => {
 
         if(profilo.auth === 'SELFCARE'){
-            const {entiIds, ...newBody} = bodyRel;
+            const {idEnti, ...newBody} = bodyRel;
      
       
             await  getListaRel(token,mainState.nonce,nPage, nRows, newBody)
@@ -220,7 +220,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
 
         if(profilo.auth === 'SELFCARE'){
 
-            const {entiIds, ...newBody} = bodyRel;
+            const {idEnti, ...newBody} = bodyRel;
             await downloadListaRel(token,mainState.nonce,newBody).then((res)=>{
                 const link = document.createElement('a');
                 link.href = "data:text/plain;base64," + res.data.documento;
@@ -302,7 +302,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
                                 anno:currentYear,
                                 mese:month,
                                 tipologiaFatture:null,
-                                entiIds:[],
+                                idEnti:[],
                                 idContratto:null
                             });
                             setData([]);
