@@ -39,7 +39,7 @@ export default function HeaderPostLogin() {
     // start actions sul manuale operativo , download del manuale
 
     const onButtonClick = () => {
-        const pdfUrl = "/ManualeUtentePortaleFatturazione2.pdf";
+        const pdfUrl = "/ManualeUtentePortaleFatturazione3.pdf";
         const link = document.createElement("a");
         link.href = pdfUrl;
         link.download = "ManualeUtentePortaleFatturazione.pdf";
