@@ -14,7 +14,7 @@ export interface BodyRel{
     anno:number,
     mese:number,
     tipologiaFatture:string|null,
-    entiIds?:string[] | [],
+    idEnti?:string[] | [],
     idContratto: string | null
 } 
 
