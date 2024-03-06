@@ -13,6 +13,7 @@ import DnsIcon from '@mui/icons-material/Dns';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { getDatiModuloCommessa, getDatiFatturazione,  manageError} from '../../api/api';
 import MarkUnreadChatAltIcon from '@mui/icons-material/MarkUnreadChatAlt';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { MainState, SideNavProps } from '../../types/typesGeneral';
 
 
@@ -184,6 +185,11 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
 
         navigate('/notifiche');
     };
+
+    const handleListItemClickRel = async () => {
+        navigate('/rel');
+     
+    };
     
     
     const currentLocation = location.pathname;
@@ -203,6 +209,10 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
             setSelectedIndex(1);
         }else if(currentLocation === '/notifiche'){
             setSelectedIndex(2);
+        }else if(currentLocation === '/rel'){
+            setSelectedIndex(3);
+        }else if(currentLocation === '/relpdf'){
+            setSelectedIndex(3);
         }
         
     },[currentLocation]);
@@ -248,6 +258,13 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
                             </ListItemIcon>
                             <ListItemText primary="Notifiche" />
                         </ListItemButton>
+                        <ListItemButton selected={selectedIndex === 3} onClick={() => handleListItemClickRel()}>
+                            <ListItemIcon>
+                                <ManageAccountsIcon fontSize="inherit" />
+                            </ListItemIcon>
+                            <ListItemText primary="Regolare Esecuzione" />
+                        </ListItemButton>
+                        
                     </List>
                     <Divider />
                 </Box>

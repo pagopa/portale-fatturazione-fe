@@ -14,6 +14,7 @@ const AuthAzure : React.FC<AuthAzureProps> = ({setMainState}) =>{
     localStorage.removeItem('profilo');
     localStorage.removeItem('token');
  
+    
     const navigate = useNavigate();
 
     const { instance, inProgress, accounts } = useMsal();

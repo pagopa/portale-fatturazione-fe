@@ -268,16 +268,16 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     };
 
     
-    /*               
+                
     useEffect(() => {
         
         if(profilo.nonce !== ''){
             if(profilo.auth === 'SELFCARE'){
-                getlistaNotifiche();
+                getlistaNotifiche( realPageNumber, rowsPerPage);
                 
             }
             if(profilo.auth === 'PAGOPA'){
-                getlistaNotifichePagoPa();
+                getlistaNotifichePagoPa( realPageNumber, rowsPerPage);
                 //listaEntiNotifichePageOnSelect();
             }
             
@@ -285,7 +285,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         } 
     }, [profilo.nonce,rowsPerPage,page]);
 
-*/
+
     const onButtonFiltra = () =>{
         setPage(0);
         setRowsPerPage(10);
@@ -441,8 +441,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     document.body.appendChild(link);
               
                     link.click();
-                    document.body.removeChild(link);
-                            
+                    document.body.removeChild(link);           
                 })
                 .catch(((err)=>{
                     manageError(err,navigate);
