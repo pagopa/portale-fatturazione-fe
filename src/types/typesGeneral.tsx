@@ -1,7 +1,9 @@
 import { DataGridCommessa } from "./typeModuloCommessaElenco";
+import { BodyRel, Rel } from "./typeRel";
 export interface ModalProps {
     setOpen : any,
-    open: boolean
+    open: boolean,
+    sentence:string
 }
 
 
@@ -12,7 +14,8 @@ export interface LocationState {
 
 export interface LoginProps {
     setCheckProfilo:any,
-    setMainState:any
+    setMainState:any,
+
 
 }
 
@@ -60,7 +63,8 @@ export interface MainState{
     indexStepper:0, // in che pat sono al momento del reload?
     idEnte:string,// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
     prodotto: string,// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
-    datiFatturazione:boolean // parametro utilizato in modulo commessa per capire se accettare l'inserimento commessa o fare il redirect t dati fatturazione se non sono stati inseriti
+    datiFatturazione:boolean, // parametro utilizato in modulo commessa per capire se accettare l'inserimento commessa o fare il redirect t dati fatturazione se non sono stati inseriti
+    relSelected:Rel|null // rel selezionata nella grid in page rel
 }
 
 export interface BodyDownloadDatiFatturazione{
@@ -116,6 +120,18 @@ export interface BodyCreateContestazione{
     noteEnte: string
     
 }
+
+export interface SelectUltimiDueAnniProps{
+    values:any,
+    setValue: (value:any) => void
+}
+
+export interface SelectMeseProps{
+    values:BodyRel,
+    setValue: (value:any) => void
+}
+
+
 
 
 

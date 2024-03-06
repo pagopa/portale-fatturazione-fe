@@ -19,11 +19,13 @@ import PagoPaListaDatiFatturazione from './page/pagoPaListaDatiFatturazione';
 import PagoPaListaModuliCommessa from './page/pagoPaListaModuliCommessa';
 import ReportDettaglio from './page/reportDettaglioUtPa';
 import AuthAzure from './page/authAzure';
+import RelPdfPage from './page/relPdfUtPa';
 import { MsalProvider, AuthenticatedTemplate, useMsal, UnauthenticatedTemplate } from '@azure/msal-react';
 import Azure from './page/azure';
 import { Container, Button } from 'react-bootstrap';
 import { loginRequest } from './authConfig';
 import './App.css';
+import RelPage from './page/relUtPa';
 
 
 const MainContent = () => {
@@ -81,7 +83,8 @@ const App = ({ instance }) => {
         statusPageInserimentoCommessa:'immutable',
         indexStepper:0, // index del componente setpper
         idEnte:'',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
-        prodotto: '',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
+        prodotto: '',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione,
+        relSelected: null // rel selezionata nella grid in page rel
     });
     /*
     let redirectOnWrongURL = '/';
@@ -89,10 +92,9 @@ const App = ({ instance }) => {
     if(profilo.auth === 'PAGOPA'){
         redirectOnWrongURL = '/pagopalistadatifatturazione';
     }
-   */
-
-   
-
+ 
+*/
+  
 
     return (
 
@@ -140,6 +142,10 @@ const App = ({ instance }) => {
                                         <Route path="/pagopalistamodulicommessa" element={<PagoPaListaModuliCommessa mainState={mainState} setMainState={setMainState} />} />
                                    
                                         <Route path="/notifiche" element={<ReportDettaglio mainState={mainState} />} />
+
+                                        <Route path="/rel" element={<RelPage  mainState={mainState} setMainState={setMainState} />} />
+
+                                        <Route path="/relpdf" element={<RelPdfPage  mainState={mainState} />} />
 
                                         <Route path="*" element={<Navigate to="/error" replace />} />
 

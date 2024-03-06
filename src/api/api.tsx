@@ -11,6 +11,8 @@ import {
     ManageErrorResponse,
 } from '../types/typesGeneral';
 import {BodyListaEnti, ModalBodyContestazione, ModalBodyContestazioneModify, ModalBodyContestazioneModifyPagoPa} from '../types/typeReportDettaglio';
+import { BodyRel } from '../types/typeRel';
+
 
 export const url = process.env.REACT_APP_URL;
 export const redirect = process.env.REACT_APP_REDIRECT || '';
@@ -36,7 +38,7 @@ export const manageError = (res:ManageErrorResponse,navigate:any) =>{
         //navigate('/error');
     }else if(res?.response?.request?.status  === 500){
         alert('Operazione non eseguita: Internal Server Error');
-        //navigate('/error');
+        navigate('/error');
     }
 };
 
@@ -488,17 +490,6 @@ export const downloadNotifchePagoPa = async (token:string, nonce:string , body: 
         },
         }
     );
-    return response;
-};
-
-
-export const getTipologieScadenziario = async (token:string, nonce:string) => {
-    const response =  await axios.get(`${url}/api/tipologia/scadenziariocontestazioni?nonce=${nonce}`,
-        { headers: {
-            Authorization: 'Bearer ' + token
-        },}
-    );
-
     return response;
 };
 
