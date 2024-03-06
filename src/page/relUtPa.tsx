@@ -41,12 +41,12 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
     const [bodyRel, setBodyRel] = useState<BodyRel>({
         anno:currentYear,
         mese:month,
-        tipologiaFatture:null,
+        tipologiaFattura:null,
         idEnti:[],
         idContratto:null
     });
 
-    const  hiddenAnnullaFiltri = bodyRel.tipologiaFatture === null ; 
+    const  hiddenAnnullaFiltri = bodyRel.tipologiaFattura === null ; 
 
 
     // data ragione sociale
@@ -301,7 +301,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
                             setBodyRel({
                                 anno:currentYear,
                                 mese:month,
-                                tipologiaFatture:null,
+                                tipologiaFattura:null,
                                 idEnti:[],
                                 idContratto:null
                             });
