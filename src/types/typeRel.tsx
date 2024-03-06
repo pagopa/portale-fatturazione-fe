@@ -13,8 +13,8 @@ export interface TextRegioneSocialeRelProps{
 export interface BodyRel{
     anno:number,
     mese:number,
-    tipologiaFatture:number|null,
-    ragioneSociale?:string[] | [],
+    tipologiaFatture:string|null,
+    entiIds?:string[] | [],
     idContratto: string | null
 } 
 

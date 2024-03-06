@@ -4,7 +4,7 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { RelPageProps } from "../types/typeRel";
 import { Button, Typography } from "@mui/material";
 import { useNavigate } from 'react-router';
-import { getRelPdf, getRelExel } from '../api/api';
+import { getRelPdf, getRelExel, manageError, getRelExelPagoPa } from '../api/api';
 import { useEffect} from 'react';
 import TextDettaglioPdf from '../components/commessaPdf/textDettaglioPdf';
 import { usePDF } from 'react-to-pdf';
@@ -40,20 +40,40 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
     const downloadRelExel = async() =>{
 
         if( mainState.relSelected !== null){
-            await getRelExel(token, mainState.nonce, mainState.relSelected.idTestata).then((res)=>{
+
+            if(profilo.auth === 'SELFCARE'){
+                await getRelExel(token, mainState.nonce, mainState.relSelected.idTestata).then((res)=>{
                 
                
-                const link = document.createElement('a');
-                link.href = "data:text/plain;base64," + res.data.documento;
-                link.setAttribute('download', 'Lista Regolare esecuzione.xlsx'); //or any other extension
-                document.body.appendChild(link);
-          
-                link.click();
-                document.body.removeChild(link);
-       
-            }).catch((err)=>{
-                console.log(err);
-            });  
+                    const link = document.createElement('a');
+                    link.href = "data:text/plain;base64," + res.data.documento;
+                    link.setAttribute('download', 'Lista Regolare esecuzione.xlsx'); //or any other extension
+                    document.body.appendChild(link);
+              
+                    link.click();
+                    document.body.removeChild(link);
+           
+                }).catch((err)=>{
+                    manageError(err,navigate);
+                });
+            }else{
+                await getRelExelPagoPa(token, mainState.nonce, mainState.relSelected.idTestata).then((res)=>{
+                
+               
+                    const link = document.createElement('a');
+                    link.href = "data:text/plain;base64," + res.data.documento;
+                    link.setAttribute('download', 'Lista Regolare esecuzione.xlsx'); //or any other extension
+                    document.body.appendChild(link);
+              
+                    link.click();
+                    document.body.removeChild(link);
+           
+                }).catch((err)=>{
+                    manageError(err,navigate);
+                });
+                
+            }
+             
         }
 
         
@@ -64,12 +84,14 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
     const downloadPdfRel = async() =>{
 
         if( mainState.relSelected !== null){
-            await getRelPdf(token, mainState.nonce, mainState.relSelected.idTestata).then((res: ResponseDownloadPdf)=>{
-                toDoOnDownloadPdf(res);
-       
-            }).catch((err)=>{
-                console.log(err);
-            });  
+            if(profilo.auth === 'SELFCARE'){
+                await getRelPdf(token, mainState.nonce, mainState.relSelected.idTestata).then((res: ResponseDownloadPdf)=>{
+                    toDoOnDownloadPdf(res);
+               
+                }).catch((err)=>{
+                    manageError(err,navigate);
+                });
+            }  
         }
 
         
@@ -84,13 +106,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
     };
 
     useEffect(()=>{
-        if(profilo.auth === 'PAGOPA'){
-            console.log('nada');
-        }else{
-            downloadPdfRel();
-        }
-      
-
+        downloadPdfRel();
     },[]);
 
     return (
@@ -155,9 +171,12 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
                 </div>
             </div>
             <div className='d-flex justify-content-around m-5'>
-                <div className="">
-                    <Button sx={{width:'274px'}} onClick={()=> toPDF()}  variant="contained">Scarica Pdf Regolare Esecuzione</Button>
-                </div>
+                {profilo.auth === 'SELFCARE' &&
+                 <div className="">
+                     <Button sx={{width:'274px'}} onClick={()=> toPDF()}  variant="contained">Scarica Pdf Regolare Esecuzione</Button>
+                 </div>
+                }
+               
                 <div className="">
                     <Button sx={{width:'274px'}} onClick={()=> downloadRelExel()}  variant="contained">Scarica lista Regolare Esecuzione</Button>
                 </div>

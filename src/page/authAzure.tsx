@@ -1,4 +1,4 @@
-import { pagopaLogin, getAuthProfilo, manageError, redirect } from "../api/api";
+import { pagopaLogin, getAuthProfilo, redirect } from "../api/api";
 import {InteractionRequiredAuthError,InteractionStatus,
 } from "@azure/msal-browser";
 import { useMsal } from "@azure/msal-react";
@@ -11,6 +11,8 @@ import { AuthAzureProps, MainState } from "../types/typesGeneral";
 // e salvataggio del profilo nlla local storage
 const AuthAzure : React.FC<AuthAzureProps> = ({setMainState}) =>{
 
+    localStorage.removeItem('profilo');
+    localStorage.removeItem('token');
     
     const navigate = useNavigate();
 

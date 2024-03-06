@@ -263,16 +263,16 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     };
 
     
-    /*               
+                
     useEffect(() => {
         
         if(mainState.nonce !== ''){
             if(profilo.auth === 'SELFCARE'){
-                getlistaNotifiche();
+                getlistaNotifiche( realPageNumber, rowsPerPage);
                 
             }
             if(profilo.auth === 'PAGOPA'){
-                getlistaNotifichePagoPa();
+                getlistaNotifichePagoPa( realPageNumber, rowsPerPage);
                 //listaEntiNotifichePageOnSelect();
             }
             
@@ -280,7 +280,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         } 
     }, [mainState.nonce,rowsPerPage,page]);
 
-*/
+
     const onButtonFiltra = () =>{
         setPage(0);
         setRowsPerPage(10);
