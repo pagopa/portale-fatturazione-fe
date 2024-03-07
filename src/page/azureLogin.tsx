@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router";
 
 
@@ -7,25 +8,30 @@ import { useNavigate } from "react-router";
 const AzureLogin : React.FC = () =>{
 
     const navigate = useNavigate();
-    /*
+   
 
     const getProfiloFromLocalStorage = localStorage.getItem('profilo') || '{}';
 
     const checkIfUserIsAutenticated = JSON.parse(getProfiloFromLocalStorage).auth;
 
-    if(checkIfUserIsAutenticated === 'PAGOPA'){
-        navigate('/pagopalistadatifatturazione');
-    }
-    if(checkIfUserIsAutenticated === 'SELFCARE'){
-        localStorage.removeItem('profilo');
-        localStorage.removeItem('token');
+    useEffect(()=>{
+        if(checkIfUserIsAutenticated === 'PAGOPA'){
+            navigate('/pagopalistadatifatturazione');
+        }
+        if(checkIfUserIsAutenticated === 'SELFCARE'){
+            localStorage.removeItem('profilo');
+            localStorage.removeItem('token');
+    
+        }
 
-    }
-    */
+    },[checkIfUserIsAutenticated]);
 
+  
+  
+    /*
     localStorage.removeItem('profilo');
     localStorage.removeItem('token');
-
+*/
 
 
     return (
