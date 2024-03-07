@@ -11,8 +11,7 @@ import { AuthAzureProps, MainState } from "../types/typesGeneral";
 // e salvataggio del profilo nlla local storage
 const AuthAzure : React.FC<AuthAzureProps> = ({setMainState}) =>{
 
-    localStorage.removeItem('profilo');
-    localStorage.removeItem('token');
+   
  
     
     const navigate = useNavigate();

@@ -7,6 +7,7 @@ import { useNavigate } from "react-router";
 const AzureLogin : React.FC = () =>{
 
     const navigate = useNavigate();
+    /*
 
     const getProfiloFromLocalStorage = localStorage.getItem('profilo') || '{}';
 
@@ -20,6 +21,10 @@ const AzureLogin : React.FC = () =>{
         localStorage.removeItem('token');
 
     }
+    */
+
+    localStorage.removeItem('profilo');
+    localStorage.removeItem('token');
 
 
 
