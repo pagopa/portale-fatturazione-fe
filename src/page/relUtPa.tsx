@@ -6,14 +6,16 @@ import SelectTipologiaFattura from "../components/rel/selectTipologiaFattura";
 import GridCustom from "../components/reusableComponents/gridCustom";
 import { BodyRel, Rel, RelPageProps } from "../types/typeRel";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
-import { getListaRel, getSingleRel, manageError,downloadListaRel, getListaRelPagoPa, getSingleRelPagopa, downloadListaRelPagopa } from "../api/api";
+import { manageError} from "../api/api";
 import { useNavigate } from "react-router";
 import { MainState } from "../types/typesGeneral";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 import DownloadIcon from '@mui/icons-material/Download';
+import { downloadListaRel, getListaRel, getSingleRel } from "../api/apiSelfcare/relSE/api";
+import { downloadListaRelPagopa, getListaRelPagoPa, getSingleRelPagopa } from "../api/apiPagoPa/relPA/api";
 
 
-const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
+const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
     const mesiGrid = ["Dicembre", "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
 
@@ -24,6 +26,13 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
 
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
+
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
 
     const currentYear = (new Date()).getFullYear();
 
@@ -180,8 +189,8 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
 
         if(profilo.auth === 'SELFCARE'){
             getSingleRel(token,profilo.nonce,idRel).then((res) =>{
-          
-                setMainState((prev:MainState) => ({...prev,...{relSelected:res.data}}));
+                handleModifyMainState({relSelected:res.data});
+               
                 if(res.data.datiFatturazione === true){
                     navigate('/relpdf');
                 }else{
@@ -194,8 +203,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
             );
         }else{
             getSingleRelPagopa(token,profilo.nonce,idRel).then((res) =>{
-          
-                setMainState((prev:MainState) => ({...prev,...{relSelected:res.data}}));
+                handleModifyMainState({relSelected:res.data});
                 if(res.data.datiFatturazione === true){
                     navigate('/relpdf');
                 }else{

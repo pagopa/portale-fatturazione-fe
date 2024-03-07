@@ -9,7 +9,7 @@ export type Contatti = {
 
 export interface AreaPersonaleProps{ 
     mainState?:any,
-    setMainState:any
+    dispatchMainState:any
 }
 export interface DatiFatturazione{
     id?:string,
@@ -59,7 +59,7 @@ export interface DatiFatturazionePostPagopa {
 export interface AreaPersonaleContext {
     datiFatturazione:DatiFatturazione, 
     setDatiFatturazione?:any,
-    setMainState?:any,
+    dispatchMainState?:any,
     setStatusButtonConferma?:any,
     user?:string,
     mainState?:any

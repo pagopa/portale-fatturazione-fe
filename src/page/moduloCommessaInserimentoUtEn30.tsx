@@ -8,14 +8,17 @@ import TerzoContainerInsCom from '../components/commessaInserimento/terzoContein
 import BasicModal from '../components/reusableComponents/modal';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { useNavigate } from 'react-router';
-import {insertDatiModuloCommessa, getDettaglioModuloCommessa, getModuloCommessaPagoPa, modifyDatiModuloCommessaPagoPa, manageError, getDatiFatturazione, getDatiFatturazionePagoPa} from '../api/api';
+import {manageError} from '../api/api';
 import { redirect } from '../api/api';
 import AreaPersonaleUtenteEnte from '../page/areaPersonaleUtenteEnte';
 import HorizontalLinearStepper from '../components/reusableComponents/stepper';
-import { SuccesResponseGetDatiFatturazione } from '../types/typesAreaPersonaleUtenteEnte';
 import ModalRedirect from '../components/commessaInserimento/madalRedirect';
 import { DatiCommessa, ResponseDettaglioModuloCommessa, InsModuloCommessaContext ,ModuloCommessaInserimentoProps, TotaleNazionaleInternazionale, ResponsTotaliInsModuloCommessa, ModuliCommessa} from '../types/typeModuloCommessaInserimento';
 import { MainState, ManageErrorResponse } from '../types/typesGeneral';
+import { getDettaglioModuloCommessa, insertDatiModuloCommessa } from '../api/apiSelfcare/moduloCommessaSE/api';
+import { getModuloCommessaPagoPa, modifyDatiModuloCommessaPagoPa } from '../api/apiPagoPa/moduloComessaPA/api';
+import { getDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
+import { getDatiFatturazionePagoPa } from '../api/apiPagoPa/datiDiFatturazionePA/api';
 
 
 
@@ -48,7 +51,7 @@ export const InserimentoModuloCommessaContext = createContext<InsModuloCommessaC
 });
 
 
-const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps> = ({mainState, setMainState}) => {
+const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps> = ({mainState, dispatchMainState}) => {
 
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
@@ -60,6 +63,13 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     const profilo =  JSON.parse(getProfilo);
 
     const navigate = useNavigate();
+
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
 
     
     const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre",'Gennaio'];
@@ -166,20 +176,20 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
       
         await getDatiFatturazione(token,profilo.nonce).then(( ) =>{ 
               
-            setMainState((prev:MainState)=>({
-                ...prev, 
-                ...{datiFatturazione:true,
-                    userClickOn:'',
-                    statusPageInserimentoCommessa:'immutable'}}));
+            handleModifyMainState({
+                datiFatturazione:true,
+                userClickOn:'',
+                statusPageInserimentoCommessa:'immutable'
+            });
            
         }).catch(err =>{
            
             if(err.response.status === 404){
-                setMainState((prev:MainState)=>({
-                    ...prev,
-                    ...{datiFatturazione:false,
-                        userClickOn:'',
-                        statusPageInserimentoCommessa:'immutable'}}));
+                handleModifyMainState({
+                    datiFatturazione:false,
+                    userClickOn:'',
+                    statusPageInserimentoCommessa:'immutable'});
+                
             }
         });
 
@@ -193,21 +203,21 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     const getDatiFatPagoPa = async () =>{
 
         await getDatiFatturazionePagoPa(token,profilo.nonce, profilo.idEnte, profilo.prodotto ).then(() =>{   
-            setMainState((prev:MainState)=>(
-                {...prev, 
-                    ...{datiFatturazione:true,
-                        userClickOn:'',
-                        statusPageInserimentoCommessa:'immutable'}}));
+            
+            handleModifyMainState({
+                datiFatturazione:true,
+                userClickOn:'',
+                statusPageInserimentoCommessa:'immutable'});
            
         }).catch(err =>{
            
             if(err.response.status === 404){
-
-                setMainState((prev:MainState)=>(
-                    {...prev, 
-                        ...{datiFatturazione:false,
-                            userClickOn:'',
-                            statusPageInserimentoCommessa:'immutable'}}));
+                handleModifyMainState({
+                    datiFatturazione:false,
+                    userClickOn:'',
+                    statusPageInserimentoCommessa:'immutable'
+                });
+               
             }
         });
     };
@@ -280,14 +290,12 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
       
         if(mainState.inserisciModificaCommessa === 'MODIFY'){
-                 
-            setMainState((prev:MainState)=>({
-                ...prev,
-                ...{
-                    action:'SHOW_MODULO_COMMESSA',
-                    statusPageInserimentoCommessa:'immutable',
-                    statusPageDatiFatturazione:'immutable',
-                }}));
+            handleModifyMainState({
+                action:'SHOW_MODULO_COMMESSA',
+                statusPageInserimentoCommessa:'immutable',
+                statusPageDatiFatturazione:'immutable',
+            });
+           
           
             setDataModifica(res.data.dataModifica);
            
@@ -301,14 +309,13 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
         }else{
             setTotaliModuloCommessa(res.data.totale);
             setDataModifica(res.data.dataModifica);
-            setMainState((prev:any)=>({
-                ...prev,
-                ...{action:'HIDE_MODULO_COMMESSA',
-                    statusPageInserimentoCommessa:'immutable',
-                    statusPageDatiFatturazione:'mutable',
-                    mese:res.data.mese,
-                    anno:res.data.anno
-                }}));
+            handleModifyMainState({
+                action:'HIDE_MODULO_COMMESSA',
+                statusPageInserimentoCommessa:'immutable',
+                statusPageDatiFatturazione:'mutable',
+                mese:res.data.mese,
+                anno:res.data.anno
+            });
 
             localStorage.setItem('statusApplication',JSON.stringify({...statusApp,
                 ...{action:'HIDE_MODULO_COMMESSA',
@@ -364,7 +371,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
    
 
     const hendleOnButtonModificaModuloCommessa = () => {
-        setMainState((prev:MainState)=>({...prev,...{statusPageInserimentoCommessa:'mutable'}}));
+        handleModifyMainState({statusPageInserimentoCommessa:'mutable'});
+     
         setTotaliModuloCommessa([
             {
                 idCategoriaSpedizione: 0,
@@ -424,7 +432,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 setTotale,
                 totale,
                 mainState,
-                setMainState
+                dispatchMainState
             }}>
             <BasicModal setOpen={setOpen} open={open}></BasicModal>
             {/*Hide   modulo commessa sul click contina , save del modulo commessa cosi da mostrare dati fatturazione,
@@ -444,7 +452,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                             }else if(mainState.statusPageInserimentoCommessa === 'immutable' && profilo.auth === 'PAGOPA'){
                                 navigate('/pagopalistamodulicommessa');
                             }else{
-                                setMainState((prev:any)=>({...prev,...{statusPageInserimentoCommessa:'immutable'}}));
+                                handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
                             }
                             
                         } }
@@ -538,7 +546,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
             {mainState.action === 'HIDE_MODULO_COMMESSA' ?
                 <AreaPersonaleUtenteEnte 
                     mainState={mainState}
-                    setMainState={setMainState}></AreaPersonaleUtenteEnte>
+                    dispatchMainState={dispatchMainState}></AreaPersonaleUtenteEnte>
                 : null
             }
 

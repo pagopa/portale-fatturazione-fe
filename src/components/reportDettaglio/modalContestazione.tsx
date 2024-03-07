@@ -6,10 +6,12 @@ import {
     TextField,
     Box, FormControl, InputLabel,Select, MenuItem, Button
 } from '@mui/material';
-import { tipologiaTipoContestazione, manageError, createContestazione, modifyContestazioneEnte, modifyContestazioneEntePagoPa} from '../../api/api'; 
+import { manageError } from '../../api/api'; 
 import { useNavigate } from 'react-router';
 import {useState, useEffect} from 'react';
 import YupString from '../../validations/string/index';
+import { createContestazione, modifyContestazioneEnte, tipologiaTipoContestazione } from '../../api/apiSelfcare/notificheSE/api';
+import { modifyContestazioneEntePagoPa } from '../../api/apiPagoPa/notificheSE/api';
 
 const style = {
     position: 'absolute' as const,

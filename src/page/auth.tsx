@@ -1,7 +1,8 @@
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { selfcareLogin, getAuthProfilo, manageError, redirect, getDatiModuloCommessa } from '../api/api';
+import { selfcareLogin, getAuthProfilo, manageError, redirect } from '../api/api';
 import {useEffect} from 'react';
 import { LoginProps, MainState, ManageErrorResponse } from '../types/typesGeneral';
+import { getDatiModuloCommessa } from '../api/apiSelfcare/moduloCommessaSE/api';
 
 
 // Blank page utilizzata per l'accesso degli utenti tramite  Selfcare
@@ -13,11 +14,15 @@ Nella risposta della chiamata getProfilo noi andiamo ad estrapolare il jwt, salv
 da parte dell'utente SELFCARE
 
 */
-const Auth : React.FC<LoginProps> = ({setCheckProfilo, setMainState}) =>{
+const Auth : React.FC<LoginProps> = ({setCheckProfilo, dispatchMainState}) =>{
  
     
-    // localStorage.removeItem('profilo');
-    // localStorage.removeItem('token');
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
   
     const [searchParams] = useSearchParams();
     const token = searchParams.get('selfcareToken');
@@ -40,33 +45,24 @@ const getCommessa = async (tokenC, nonceC) =>{
 
         if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
           
-            setMainState((prev:MainState)=>({
-                ...prev,
-                ...{
-                    inserisciModificaCommessa:'INSERT',
-                    statusPageInserimentoCommessa:'mutable',
-                    modifica:true
-                }}));
-
-           
+            handleModifyMainState({
+                inserisciModificaCommessa:'INSERT',
+                statusPageInserimentoCommessa:'mutable',
+                modifica:true
+            });
             // ci sono commesse inserite nel mese corrente e posso modificarle
         }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0){
+            handleModifyMainState({
+                inserisciModificaCommessa:'MODIFY',
+                statusPageInserimentoCommessa:'immutable',
+                modifica:true});
          
-         
-            setMainState((prev:MainState)=>({ 
-                ...prev,
-                ...{
-                    inserisciModificaCommessa:'MODIFY',
-                    statusPageInserimentoCommessa:'immutable',
-                    modifica:true}}));
         }else if(res.data.modifica === false ){
+            handleModifyMainState({
+                inserisciModificaCommessa:'NO_ACTION',
+                statusPageInserimentoCommessa:'immutable',
+                modifica:false});
           
-            setMainState((prev:MainState)=>({ 
-                ...prev,
-                ...{
-                    inserisciModificaCommessa:'NO_ACTION',
-                    statusPageInserimentoCommessa:'immutable',
-                    modifica:false}}));
         }
 
         const getProfilo = localStorage.getItem('profilo') || '{}';
@@ -107,7 +103,8 @@ const getProfilo = async (res:ParameterGetProfilo)=>{
             setCheckProfilo(true);
                
             // setto il ruolo nello state di riferimento globale
-            setMainState((prev: MainState)=>({...prev, ...{ruolo:resp.data.ruolo}}));
+            handleModifyMainState({ruolo:resp.data.ruolo});
+           
             navigate("/");
         } )
         .catch((err: ManageErrorResponse) => {

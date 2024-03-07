@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Grid, Typography, InputLabel } from '@mui/material';
 import { TerzoContainerModCommessa, CategorieTotali} from '../../types/typeModuloCommessaInserimento';
-import { getDatiConfigurazioneCommessa } from '../../api/api';
 import { useNavigate } from 'react-router';
+import { getDatiConfigurazioneCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
 
 const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali, dataModifica, mainState}) => {
 

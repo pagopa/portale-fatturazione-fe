@@ -11,13 +11,15 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import DnsIcon from '@mui/icons-material/Dns';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
-import { getDatiModuloCommessa, getDatiFatturazione,  manageError} from '../../api/api';
+import {manageError} from '../../api/api';
 import MarkUnreadChatAltIcon from '@mui/icons-material/MarkUnreadChatAlt';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { MainState, SideNavProps } from '../../types/typesGeneral';
+import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
+import { getDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
 
 
-const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => {
+const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}) => {
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -28,7 +30,12 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
 
-    
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
   
     const getProfiloFromLocalStorage = localStorage.getItem('profilo') || '{}';
 
@@ -45,13 +52,10 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
         }else{
             navigate('/');
             if(mainState.datiFatturazione === true){
-                setMainState((prev:any)=>({ 
-                    ...prev,
-                    ...{
-                        action:'DATI_FATTURAZIONE',
-                        statusPageDatiFatturazione:'immutable'
-                    }}));
-        
+                handleModifyMainState({
+                    action:'DATI_FATTURAZIONE',
+                    statusPageDatiFatturazione:'immutable'
+                });
                 localStorage.setItem('statusApplication', JSON.stringify(mainState));
             }
            
@@ -73,16 +77,12 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
       
         await getDatiFatturazione(token,profilo.nonce).then(( ) =>{ 
             
-            setMainState((prev:MainState)=>({
-                ...prev, 
-                ...{datiFatturazione:true}}));
-           
+            handleModifyMainState({datiFatturazione:true});
+
         }).catch(err =>{
           
             if(err.response.status === 404){
-                setMainState((prev:MainState)=>({
-                    ...prev,
-                    ...{datiFatturazione:false}}));
+                handleModifyMainState({datiFatturazione:false});
             }
         });
 
@@ -103,14 +103,12 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
             await getDatiModuloCommessa(token, profilo.nonce).then((res)=>{
 
                 if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
-                    setMainState((prev:MainState)=>({
-                        ...prev,
-                        ...{
-                            inserisciModificaCommessa:'INSERT',
-                            statusPageInserimentoCommessa:'mutable',
-                            modifica:true
-                        }}));
-               
+                    handleModifyMainState({
+                        inserisciModificaCommessa:'INSERT',
+                        statusPageInserimentoCommessa:'mutable',
+                        modifica:true
+                    });
+                 
                     const newState = {
                         path:'/8',
                         mese:res.data.mese,
@@ -122,50 +120,40 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
                     navigate('/8');
                 }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0 ){
     
-                    setMainState((prev:MainState)=>({ 
-                        ...prev,
-                        ...{
-                            inserisciModificaCommessa:'MODIFY',
-                            statusPageInserimentoCommessa:'immutable',
-                            modifica:true}}));
+                    handleModifyMainState({
+                        inserisciModificaCommessa:'MODIFY',
+                        statusPageInserimentoCommessa:'immutable',
+                        modifica:true});
     
                     const newState = {
                         path:'/4',
-                        // mese:res.data.mese,
-                        // anno:res.data.anno,
                         inserisciModificaCommessa:'MODIFY'
                     };
                     localStorage.setItem('statusApplication', JSON.stringify(newState));
                    
                     navigate('/4');
                 }else if(res.data.modifica === false && res.data.moduliCommessa.length === 0){
-                    setMainState((prev:MainState)=>({ 
-                        ...prev,
-                        ...{
-                            inserisciModificaCommessa:'NO_ACTION',
-                            statusPageInserimentoCommessa:'immutable',
-                            modifica:false}}));
-    
+
+                    handleModifyMainState({
+                        inserisciModificaCommessa:'NO_ACTION',
+                        statusPageInserimentoCommessa:'immutable',
+                        modifica:false});
+                
                     const newState = {
                         path:'/4',
-                        // mese:res.data.mese,
-                        // anno:res.data.anno,
                         inserisciModificaCommessa:'NO_ACTION'
                     };
                     localStorage.setItem('statusApplication', JSON.stringify(newState));
                    
                     navigate('/4');
                 }else if(res.data.modifica === false && res.data.moduliCommessa.length > 0){
-                    setMainState((prev:MainState)=>({ 
-                        ...prev,
-                        ...{
-                            inserisciModificaCommessa:'NO_ACTION',
-                            statusPageInserimentoCommessa:'immutable',
-                            modifica:false}})); 
+                    handleModifyMainState({
+                        inserisciModificaCommessa:'NO_ACTION',
+                        statusPageInserimentoCommessa:'immutable',
+                        modifica:false}); 
+
                     const newState = {
                         path:'/8',
-                        // mese:res.data.mese,
-                        // anno:res.data.anno,
                         inserisciModificaCommessa:'NO_ACTION'
                     };
                     localStorage.setItem('statusApplication', JSON.stringify(newState));

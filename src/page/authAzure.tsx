@@ -9,9 +9,14 @@ import { AuthAzureProps, MainState } from "../types/typesGeneral";
 
 // Blank Page utilizzata per l'autenticazione Azure e le conseguenti chiamate di accesso pagoPA
 // e salvataggio del profilo nlla local storage
-const AuthAzure : React.FC<AuthAzureProps> = ({setMainState}) =>{
+const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
 
-   
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
  
     
     const navigate = useNavigate();
@@ -107,8 +112,8 @@ const AuthAzure : React.FC<AuthAzureProps> = ({setMainState}) =>{
                 }));
                 
               
-              
-                setMainState((prev:MainState)=>({...prev, ...{nonce:resp?.data.nonce,ruolo:resp.data.ruolo,action:'LISTA_DATI_FATTURAZIONE'}}));
+                handleModifyMainState({ruolo:resp.data.ruolo,action:'LISTA_DATI_FATTURAZIONE'});
+
                 navigate('/pagopalistadatifatturazione');
                 // setto il nonce nello state di riferimento globale
               

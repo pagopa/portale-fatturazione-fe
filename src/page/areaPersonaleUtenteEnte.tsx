@@ -1,5 +1,5 @@
 import React, { useState, useEffect, createContext  } from 'react';
-import { redirect } from '../api/api';
+import { manageError, redirect } from '../api/api';
 import { useNavigate} from 'react-router';
 import '../style/areaPersonaleUtenteEnte.css';
 import { Button } from '@mui/material';
@@ -13,15 +13,13 @@ import {
     AreaPersonaleProps,
     SuccesResponseGetDatiFatturazione
 } from '../types/typesAreaPersonaleUtenteEnte';
-import {
-    getDatiFatturazione,
+import {  getDatiFatturazione,
     modifyDatiFatturazione,
-    insertDatiFatturazione,
-    getDatiFatturazionePagoPa,
+    insertDatiFatturazione,} from '../api/apiSelfcare/datiDiFatturazioneSE/api';
+import {  getDatiFatturazionePagoPa,
     modifyDatiFatturazionePagoPa,
-    insertDatiFatturazionePagoPa,
-    manageError
-} from '../api/api';
+    insertDatiFatturazionePagoPa, } from '../api/apiPagoPa/datiDiFatturazionePA/api';
+
 
 
 
@@ -43,7 +41,7 @@ export const DatiFatturazioneContext = createContext<AreaPersonaleContext>({
     }
 });
 
-const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setMainState}) => {
+const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, dispatchMainState}) => {
    
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
@@ -53,6 +51,13 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
 
     const navigate = useNavigate();
 
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
+    console.log(mainState, 'DATI FATTURAZIONE');
     // set dello stato user , se l'user ha dati fatturazione === old altrimenti === new
     const [user, setUser] = useState('old');
   
@@ -117,9 +122,9 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
 
                 navigate('/error');
             }
-            //navigate('/error');
-            // setUser('new');
-            setMainState((prev:MainState)=>({...prev, ...{statusPageDatiFatturazione:'mutable', datiFatturazione:false}}));
+           
+            handleModifyMainState({statusPageDatiFatturazione:'mutable', datiFatturazione:false});
+            
             
             setDatiFatturazione({
                 tipoCommessa:'',
@@ -155,7 +160,9 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
             manageError(err, navigate);
             // navigate('/error');
             setUser('new');
-            setMainState((prev:MainState)=>({...prev, ...{statusPageDatiFatturazione:'mutable'}}));
+
+            handleModifyMainState({statusPageDatiFatturazione:'mutable'});
+           
             
             setDatiFatturazione({
                 tipoCommessa:'',
@@ -207,16 +214,17 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
 
     const actionOnResponseModifyDatiFatturazione = () =>{
         if(mainState.action === 'DATI_FATTURAZIONE'){
-            setMainState((prev:MainState)=>({...prev, ...{
+            handleModifyMainState({
                 statusPageDatiFatturazione:'immutable',
-            }}));
+            });
+           
         }else{
-            setMainState((prev:MainState)=>({...prev, ...{
+            handleModifyMainState({
                 statusPageDatiFatturazione:'immutable',
                 action:'SHOW_MODULO_COMMESSA',
-                //agginta
                 inserisciModificaCommessa: 'MODIFY'
-            }}));
+            });
+           
         
             const statusApp = localStorage.getItem('statusApplication')||'{}';
             const parseStatusApp = JSON.parse(statusApp);
@@ -303,11 +311,13 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
             if(profilo.auth === 'PAGOPA'){
                 insertDatiFatturazionePagoPa( token,profilo.nonce, bodyPagoPa).then(()  =>{
                     
-                    setMainState((prev:MainState)=>({...prev, ...{
+                    handleModifyMainState({
                         statusPageDatiFatturazione:'immutable',
                         action:'SHOW_MODULO_COMMESSA',
                         datiFatturazione:true
-                    }}));
+                    });
+                    
+                 
                 }).catch(err =>{
 
                     if(err.response.status === 401){
@@ -322,12 +332,12 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
             }else{
                 // 2 - ED è UN UTENTE SELFCARE
                 insertDatiFatturazione(body, token,profilo.nonce).then(() =>{
-                    setMainState((prev:MainState)=>({...prev, ...{
+                    handleModifyMainState({
                         statusPageDatiFatturazione:'immutable',
                         action:'SHOW_MODULO_COMMESSA',
                         datiFatturazione:true
-                    }}));
-          
+                    });
+                 
                 }).catch(err =>{
                     if(err.response.status === 401){
                         navigate('/error');
@@ -357,7 +367,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
             value={{
                 datiFatturazione,
                 setDatiFatturazione,
-                setMainState,
                 setStatusButtonConferma,
                 user,
                 mainState}}>
@@ -365,7 +374,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
             <div >
                 
                 {mainState.action !== "HIDE_MODULO_COMMESSA" ?
-                    <PageTitleNavigation /> : null
+                    <PageTitleNavigation dispatchMainState={dispatchMainState} /> : null
                 }
                 
                 {/* tab 1 e 2 start */}
@@ -378,7 +387,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, setM
                         <div className="d-flex justify-content-between m-5 ">
 
                             <Button
-                                onClick={() =>setMainState((prev:MainState)=>({...prev, ...{statusPageDatiFatturazione:'immutable'}}))}
+                                onClick={() => handleModifyMainState({statusPageDatiFatturazione:'immutable'})}
                                 disabled={mainState.datiFatturazione === false}
                                 variant="outlined"
                                 size="medium"

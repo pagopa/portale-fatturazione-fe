@@ -12,7 +12,7 @@ export interface DatiCommessa  {
 }
 export  interface ModuloCommessaInserimentoProps{
     mainState:any,
-    setMainState:any
+    dispatchMainState:any
 }
 export interface TotaleNazionaleInternazionale{
     totaleNazionale:number,
@@ -28,7 +28,7 @@ export interface InsModuloCommessaContext {
     setTotale?:any,
     totale:TotaleNazionaleInternazionale
     mainState?:any,
-    setMainState?:any
+    dispatchMainState?:any
 }
 export interface RowInsComProps {
     sentence : string,
@@ -121,7 +121,7 @@ export interface ModComPdfProps{
 }
 
 export interface PrimoContainerInsComProps{
-    setMainState?: any
+    dispatchMainState?: any
 }
 
 export  interface ArrayTipologieCommesse {

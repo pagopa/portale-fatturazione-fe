@@ -3,11 +3,12 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import { listaEntiNotifichePage, manageError } from '../../api/api';
+import { manageError } from '../../api/api';
 import { useNavigate } from 'react-router';
 import { MultiselectNotificheProps, OptionMultiselectChackbox } from '../../types/typeReportDettaglio';
 import {useState, useEffect} from 'react';
 import { BodyListaNotifiche } from '../../types/typesGeneral';
+import { listaEntiNotifichePage } from '../../api/apiSelfcare/notificheSE/api';
 
 
 

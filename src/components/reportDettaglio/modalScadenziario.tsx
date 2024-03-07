@@ -3,12 +3,12 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { ModalProps } from 'react-bootstrap';
-import { getTipologieScadenziario, manageError } from '../../api/api';
+import { manageError } from '../../api/api';
 import { useNavigate } from 'react-router';
 import { useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import Paper from '@mui/material/Paper';
+import { getTipologieScadenziario } from '../../api/apiPagoPa/notificheSE/api';
 
 const style = {
     position: 'absolute' as const,
