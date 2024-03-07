@@ -69,7 +69,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
             const {idEnti, ...newBody} = bodyRel;
      
       
-            await  getListaRel(token,mainState.nonce,nPage, nRows, newBody)
+            await  getListaRel(token,profilo.nonce,nPage, nRows, newBody)
                 .then((res)=>{
                     // ordino i dati in base all'header della grid
                     const orderDataCustom = res.data.relTestate.map((obj)=>{
@@ -98,7 +98,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
                     manageError(error, navigate);
                 });
         }else{
-            await  getListaRelPagoPa(token,mainState.nonce,nPage, nRows, bodyRel)
+            await  getListaRelPagoPa(token,profilo.nonce,nPage, nRows, bodyRel)
                 .then((res)=>{
                 // ordino i dati in base all'header della grid
                     const orderDataCustom = res.data.relTestate.map((obj)=>{
@@ -179,7 +179,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
     const getRel = async(idRel) => {
 
         if(profilo.auth === 'SELFCARE'){
-            getSingleRel(token,mainState.nonce,idRel).then((res) =>{
+            getSingleRel(token,profilo.nonce,idRel).then((res) =>{
           
                 setMainState((prev:MainState) => ({...prev,...{relSelected:res.data}}));
                 if(res.data.datiFatturazione === true){
@@ -193,7 +193,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
               
             );
         }else{
-            getSingleRelPagopa(token,mainState.nonce,idRel).then((res) =>{
+            getSingleRelPagopa(token,profilo.nonce,idRel).then((res) =>{
           
                 setMainState((prev:MainState) => ({...prev,...{relSelected:res.data}}));
                 if(res.data.datiFatturazione === true){
@@ -221,7 +221,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
         if(profilo.auth === 'SELFCARE'){
 
             const {idEnti, ...newBody} = bodyRel;
-            await downloadListaRel(token,mainState.nonce,newBody).then((res)=>{
+            await downloadListaRel(token,profilo.nonce,newBody).then((res)=>{
                 const link = document.createElement('a');
                 link.href = "data:text/plain;base64," + res.data.documento;
                 link.setAttribute('download', `Lista Regolare esecuzione mese di riferimento ${mesiGrid[bodyRel.mese]}.xlsx`); //or any other extension
@@ -234,7 +234,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
                 console.log(err);
             }); 
         }else{
-            await downloadListaRelPagopa(token,mainState.nonce,bodyRel).then((res)=>{
+            await downloadListaRelPagopa(token,profilo.nonce,bodyRel).then((res)=>{
                 const link = document.createElement('a');
                 link.href = "data:text/plain;base64," + res.data.documento;
                 link.setAttribute('download', `Lista Regolare esecuzione mese di riferimento ${mesiGrid[bodyRel.mese]}.xlsx`); //or any other extension
