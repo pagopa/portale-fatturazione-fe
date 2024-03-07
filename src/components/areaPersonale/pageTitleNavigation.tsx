@@ -5,13 +5,25 @@ import { ButtonNaked } from '@pagopa/mui-italia';
 import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
 import { MainState } from '../../types/typesGeneral';
 
-const PageTitleNavigation = () => {
+interface PageTitleProps {
+    dispatchMainState:any
+}
+
+const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState}) => {
 
 
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
 
-    const {mainState, setMainState, user} = useContext(DatiFatturazioneContext);
+    const {mainState, user} = useContext(DatiFatturazioneContext);
+
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
+  
  
     let titleNavigation;
   
@@ -32,7 +44,8 @@ const PageTitleNavigation = () => {
     // da usare quando si saprà bene la logica
     // const pathNewUser =  <Typography  variant="caption"> /<strong> Iserisci dati di fatturazione</strong></Typography>;
     const pathOldUser = <Typography sx={{ marginLeft: '10px' }} variant="caption">Dati di fatturazione <strong>/ Modifica</strong></Typography>;
-  
+
+   
 
     return (
         <div className="mx-5 mt-2">
@@ -45,7 +58,7 @@ const PageTitleNavigation = () => {
                             onFocusVisible={() => { console.log('onFocus'); }}
                             size="small"
                             startIcon={<ArrowBackIcon />}
-                            onClick={() =>  setMainState((prev:MainState)=>({...prev, ...{statusPageDatiFatturazione:'immutable'}})) }
+                            onClick={() => handleModifyMainState({statusPageDatiFatturazione:'immutable'})}
                             sx={{marginBottom:'2px'}}
                         >
                           Indietro 
@@ -63,7 +76,8 @@ const PageTitleNavigation = () => {
             
             {mainState.statusPageDatiFatturazione === 'immutable' && profilo.ruolo === 'R/W' ? (
                 <div className="text-end marginTop24">
-                    <Button onClick={() => setMainState((prev:MainState)=>({...prev, ...{statusPageDatiFatturazione:'mutable'}}))} variant="contained" size="small">Modifica</Button>
+                    <Button onClick={() => handleModifyMainState({statusPageDatiFatturazione:'mutable'})}
+                        variant="contained" size="small">Modifica</Button>
                 </div>
             ) : null}
 

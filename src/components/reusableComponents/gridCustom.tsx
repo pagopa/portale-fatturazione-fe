@@ -1,11 +1,6 @@
 import { Card, Table, TableBody, TableCell, TableHead, TablePagination, TableRow } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { MainState } from "../../types/typesGeneral";
-import { getListaRel, manageError } from "../../api/api";
 import { useNavigate } from "react-router";
-
-import { useEffect, useState } from "react";
-import { BodyRel } from "../../types/typeRel";
 
 interface GridCustomProps {
     elements:object[],

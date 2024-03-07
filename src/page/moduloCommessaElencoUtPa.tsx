@@ -1,16 +1,17 @@
 import React, {useState, useEffect} from 'react';
 import { manageError, redirect } from '../api/api';
-import { getAnni, getListaCommessa, getListaCommessaFiltered,getListaCommessaOnAnnulla} from '../api/api';
 import { Button, Box, Typography, FormControl, InputLabel,Select, MenuItem,} from '@mui/material';
 import GridComponent from '../components/commessaElenco/grid';
 import { useNavigate } from 'react-router';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { VisualModuliCommessaProps,  DataGridCommessa , GetAnniResponse, ResponseGetListaCommesse} from '../types/typeModuloCommessaElenco';
 import { ManageErrorResponse } from '../types/typesGeneral';
+import { getAnni, getListaCommessa, getListaCommessaFiltered, getListaCommessaOnAnnulla } from '../api/apiSelfcare/moduloCommessaSE/api';
 
 
 
-const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMainState,mainState}) => {
+const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatchMainState,mainState}) => {
+
    
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
@@ -185,7 +186,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({setMainS
             </div>
 
             <div className='mb-5'>
-                <GridComponent data={gridData} setMainState={setMainState} mainState={mainState} />
+                <GridComponent data={gridData} dispatchMainState={dispatchMainState} mainState={mainState} />
                 
             </div>
 

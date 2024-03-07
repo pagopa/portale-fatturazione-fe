@@ -14,13 +14,13 @@ export interface LocationState {
 
 export interface LoginProps {
     setCheckProfilo:any,
-    setMainState:any,
+    dispatchMainState:any,
 
 
 }
 
 export interface SideNavProps{
-    setMainState:any,
+    dispatchMainState:any,
     mainState:any
 }
 
@@ -34,7 +34,7 @@ export type TokenObject = {
 }
 
 export type AuthAzureProps = {
-    setMainState:any,
+    dispatchMainState:any,
 }
 
 export type BodyListaDatiFatturazione = {

@@ -1,6 +1,6 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import {useEffect, useState} from 'react';
+import {useState, useReducer} from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { ThemeProvider, Grid } from '@mui/material';
 import {theme} from '@pagopa/mui-italia';
@@ -26,6 +26,7 @@ import { Container, Button } from 'react-bootstrap';
 import { loginRequest } from './authConfig';
 import './App.css';
 import RelPage from './page/relUtPa';
+import { reducerMainState } from './reducer/reducerMainState';
 
 
 const MainContent = () => {
@@ -71,8 +72,8 @@ const App = ({ instance }) => {
 */
     const [checkProfilo,setCheckProfilo] = useState(false);
     // set status page abilita e disabilita le modifiche al componente dati fatturazione
-   
-    const [mainState, setMainState] = useState({
+
+    const [mainState, dispatchMainState] = useReducer(reducerMainState, {
         mese:'',
         anno:'',
         modifica:undefined, // se la commessa selezionata è modificabile
@@ -86,7 +87,24 @@ const App = ({ instance }) => {
         prodotto: '',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione,
         relSelected: null // rel selezionata nella grid in page rel
     });
+
+    console.log(mainState);
     /*
+    const [mainState,  dispatchMainState] = useState({
+        mese:'',
+        anno:'',
+        modifica:undefined, // se la commessa selezionata è modificabile
+        userClickOn:undefined, // se l'utente clicca su un elemento di lista commesse setto GRID
+        inserisciModificaCommessa:undefined, // INSERT MODIFY  se il sevizio get commessa mi restituisce true []
+        action:'DATI_FATTURAZIONE', // le action possono essere HIDE_MODULO_COMMESSA / SHOW_MODULO_COMMESSA / DATI_FATTURAZIOne
+        statusPageDatiFatturazione:'immutable',
+        statusPageInserimentoCommessa:'immutable',
+        indexStepper:0, // index del componente setpper
+        idEnte:'',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
+        prodotto: '',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione,
+        relSelected: null // rel selezionata nella grid in page rel
+    });
+   
     let redirectOnWrongURL = '/';
 
     if(profilo.auth === 'PAGOPA'){
@@ -112,7 +130,7 @@ const App = ({ instance }) => {
                             <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
                              
                                 <Grid item xs={2}>
-                                    <SideNavComponent setMainState={setMainState}
+                                    <SideNavComponent  dispatchMainState={ dispatchMainState}
                                         mainState={mainState} />
                                 </Grid> 
                                
@@ -121,29 +139,29 @@ const App = ({ instance }) => {
                                 <Grid item xs={10}>
                                     <Routes>
                                         
-                                        <Route path="/auth" element={<Auth setCheckProfilo={setCheckProfilo} setMainState={setMainState} />} />
+                                        <Route path="/auth" element={<Auth setCheckProfilo={setCheckProfilo}  dispatchMainState={ dispatchMainState} />} />
                                         
-                                        <Route path="/auth/azure" element={<AuthAzure setMainState={setMainState}/>} />
+                                        <Route path="/auth/azure" element={<AuthAzure  dispatchMainState={ dispatchMainState}/>} />
                                         
                                         <Route path="azure" element={<Azure />} />
                                         
                                         <Route path="/" element={<AreaPersonaleUtenteEnte
                                             mainState={mainState}
-                                            setMainState={setMainState} />} />
+                                            dispatchMainState={ dispatchMainState} />} />
                                    
-                                        <Route path="/4" element={<ModuloCommessaElencoUtPa mainState={mainState} setMainState={setMainState} />} />
+                                        <Route path="/4" element={<ModuloCommessaElencoUtPa mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
                                   
-                                        <Route path="/8" element={<ModuloCommessaInserimentoUtEn30 mainState={mainState} setMainState={setMainState} />} />
+                                        <Route path="/8" element={<ModuloCommessaInserimentoUtEn30 mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
                                   
                                         <Route path="/pdf" element={<ModuloCommessaPdf mainState={mainState} />} />
                                   
-                                        <Route path="/pagopalistadatifatturazione" element={<PagoPaListaDatiFatturazione mainState={mainState} setMainState={setMainState} />} />
+                                        <Route path="/pagopalistadatifatturazione" element={<PagoPaListaDatiFatturazione mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
                                     
-                                        <Route path="/pagopalistamodulicommessa" element={<PagoPaListaModuliCommessa mainState={mainState} setMainState={setMainState} />} />
+                                        <Route path="/pagopalistamodulicommessa" element={<PagoPaListaModuliCommessa mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
                                    
                                         <Route path="/notifiche" element={<ReportDettaglio mainState={mainState} />} />
 
-                                        <Route path="/rel" element={<RelPage  mainState={mainState} setMainState={setMainState} />} />
+                                        <Route path="/rel" element={<RelPage  mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
 
                                         <Route path="/relpdf" element={<RelPdfPage  mainState={mainState} />} />
 

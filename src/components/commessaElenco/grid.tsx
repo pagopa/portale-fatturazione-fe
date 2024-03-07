@@ -10,13 +10,22 @@ import { MainState, Params } from '../../types/typesGeneral';
 
 interface GridComponentProps {
     data: DataGridCommessa[],
-    setMainState:any,
+    dispatchMainState:any,
     mainState:MainState
    
 }
 
 const GridComponent : React.FC<GridComponentProps> = (props) => {
-    const {data, setMainState} = props;
+    const {data, dispatchMainState} = props;
+
+    const navigate = useNavigate();
+
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
     const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre",'Gennaio'];
 
   
@@ -25,17 +34,8 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
         const newObj = {
             meseValidita: mese,
         };
-      
-       
-
         return {...singleObj, ...newObj};
-       
     });
-
-
-    const navigate = useNavigate();
-
-   
 
     let columsSelectedGrid = '';
     const handleOnCellClick = (params:Params) =>{
@@ -66,14 +66,13 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
             const string = JSON.stringify(newState);
             localStorage.setItem('statusApplication', string);
 
-            setMainState((prev:MainState)=>({...prev, ...{
+            handleModifyMainState({
                 mese:getMeseIndex+1,
                 anno:params.row.annoValidita,
                 modifica:params.row.modifica,
                 userClickOn:'GRID',
                 inserisciModificaCommessa:"MODIFY"
-            }}));
-            // localStorage.removeItem('statusApplication');
+            });
            
             navigate('/8');
         }

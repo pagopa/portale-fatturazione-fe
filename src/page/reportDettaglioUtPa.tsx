@@ -7,7 +7,7 @@ import {
     Box, FormControl, InputLabel,Select, MenuItem, Button
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { manageError, getTipologiaProdotto, getTipologiaProfilo, listaNotifiche, getContestazione, downloadNotifche, listaNotifichePagoPa, getContestazionePagoPa, downloadNotifchePagoPa } from "../api/api";
+import { getTipologiaProfilo, manageError } from "../api/api";
 import { ReportDettaglioProps, NotificheList, FlagContestazione, Contestazione  } from "../types/typeReportDettaglio";
 import { useNavigate } from "react-router";
 import { BodyListaNotifiche } from "../types/typesGeneral";
@@ -19,6 +19,9 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import MultiSelectStatoContestazione from "../components/reportDettaglio/multiSelectGroupedBy";
 import ModalLoading from "../components/reusableComponents/modalLoading";
 import ModalScadenziario from "../components/reportDettaglio/modalScadenziario";
+import { downloadNotifche, getContestazione, listaNotifiche } from "../api/apiSelfcare/notificheSE/api";
+import { downloadNotifchePagoPa, getContestazionePagoPa, listaNotifichePagoPa } from "../api/apiPagoPa/notificheSE/api";
+import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 
 
 

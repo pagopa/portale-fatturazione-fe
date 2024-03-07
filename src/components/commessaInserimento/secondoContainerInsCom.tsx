@@ -3,9 +3,10 @@ import { Grid, Typography } from '@mui/material';
 import RowInserimentoCommessa from './rowInserimentoCommessa';
 import { InsModuloCommessaContext, ArrayTipologieCommesse,ResponseCategorieSpedizione   } from '../../types/typeModuloCommessaInserimento';
 import { InserimentoModuloCommessaContext } from '../../page/moduloCommessaInserimentoUtEn30';
-import { getCategoriaSpedizione, manageError} from '../../api/api';
+import { manageError } from '../../api/api';
 import { useNavigate } from 'react-router';
 import { ManageErrorResponse } from '../../types/typesGeneral';
+import { getCategoriaSpedizione } from '../../api/apiSelfcare/moduloCommessaSE/api';
 
 const SecondoContainerInsCom : React.FC = () => {
     const navigate = useNavigate();
@@ -15,7 +16,7 @@ const SecondoContainerInsCom : React.FC = () => {
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
 
-    const { totale, mainState} = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
+    const { totale } = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
 
    
 

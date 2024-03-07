@@ -4,11 +4,13 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { RelPageProps } from "../types/typeRel";
 import { Button, Typography } from "@mui/material";
 import { useNavigate } from 'react-router';
-import { getRelPdf, getRelExel, manageError, getRelExelPagoPa } from '../api/api';
+import { manageError } from '../api/api';
 import { useEffect} from 'react';
 import TextDettaglioPdf from '../components/commessaPdf/textDettaglioPdf';
 import { usePDF } from 'react-to-pdf';
 import { ResponseDownloadPdf } from '../types/typeModuloCommessaInserimento';
+import { getRelExel, getRelPdf } from '../api/apiSelfcare/relSE/api';
+import { getRelExelPagoPa } from '../api/apiPagoPa/relPA/api';
 
 const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
 

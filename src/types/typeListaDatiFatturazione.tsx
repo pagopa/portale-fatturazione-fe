@@ -1,6 +1,6 @@
 export interface ListaDatiFatturazioneProps{
     mainState:any,
-    setMainState:any,
+    dispatchMainState:any,
 }
 
 export interface ResponseDownloadListaFatturazione {

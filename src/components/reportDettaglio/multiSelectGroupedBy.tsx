@@ -4,11 +4,12 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { Checkbox } from '@mui/material';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import { flagContestazione, manageError } from '../../api/api';
+import { manageError } from '../../api/api';
 import { useNavigate } from 'react-router';
 import { FlagContestazione, MultiSelectGroupedByProps } from '../../types/typeReportDettaglio';
 import { useEffect , useState} from 'react';
 import { BodyListaNotifiche } from '../../types/typesGeneral';
+import { flagContestazione } from '../../api/apiSelfcare/notificheSE/api';
 
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;

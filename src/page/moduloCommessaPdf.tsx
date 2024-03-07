@@ -1,4 +1,4 @@
-import { getModuloCommessaPdf, downloadModuloCommessaPdf,getModuloCommessaPagoPaPdf,downloadModuloCommessaPagoPaPdf,manageError } from "../api/api";
+import { manageError } from "../api/api";
 import {useEffect, useState} from 'react';
 import {Typography, Button} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -9,6 +9,8 @@ import TextDettaglioPdf from '../components/commessaPdf/textDettaglioPdf';
 import { DataPdf } from "../types/typeModuloCommessaInserimento";
 import { usePDF } from 'react-to-pdf';
 import { DatiModuloCommessaPdf,ModComPdfProps, ResponseDownloadPdf } from "../types/typeModuloCommessaInserimento";
+import { downloadModuloCommessaPdf, getModuloCommessaPdf } from "../api/apiSelfcare/moduloCommessaSE/api";
+import { downloadModuloCommessaPagoPaPdf, getModuloCommessaPagoPaPdf } from "../api/apiPagoPa/moduloComessaPA/api";
 
 
 const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{

@@ -2,15 +2,17 @@ import { ListaModuliCommessaProps } from "../types/typeListaModuliCommessa";
 import { MainState, Params } from "../types/typesGeneral";
 import { Typography } from "@mui/material";
 import { Box, FormControl, InputLabel,Select, MenuItem, TextField, Button} from '@mui/material';
-import {getTipologiaProdotto, manageError, listaModuloCommessaPagopa, downloadDocumentoListaModuloCommessaPagoPa} from '../api/api';
+import { manageError } from '../api/api';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { DataGrid, GridRowParams,GridEventListener,MuiEvent, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import DownloadIcon from '@mui/icons-material/Download';
+import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
+import { downloadDocumentoListaModuloCommessaPagoPa, listaModuloCommessaPagopa } from "../api/apiPagoPa/moduloComessaPA/api";
 
 
-const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState,setMainState}) =>{
+const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchMainState}) =>{
 
     const navigate = useNavigate();
 
@@ -20,7 +22,13 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
 
-   
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
+
     // prendo gli ultimi 2 anni dinamicamente
     const currentYear = (new Date()).getFullYear().toString();
     const getCurrentFinancialYear = () => {
@@ -182,15 +190,13 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
             const stringProfilo = JSON.stringify(newProfilo);
             localStorage.setItem('profilo', stringProfilo);
 
-
-            setMainState((prev:MainState)=>({...prev, ...{
+            handleModifyMainState({
                 mese:params.row.mese,
                 anno:params.row.anno,
                 modifica:params.row.modifica,
                 userClickOn:'GRID',
                 inserisciModificaCommessa:"MODIFY"
-            }}));
-            // localStorage.removeItem('statusApplication');
+            });
            
             navigate('/8');
            
