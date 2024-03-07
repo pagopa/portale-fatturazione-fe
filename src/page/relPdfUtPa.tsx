@@ -42,7 +42,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
         if( mainState.relSelected !== null){
 
             if(profilo.auth === 'SELFCARE'){
-                await getRelExel(token, mainState.nonce, mainState.relSelected.idTestata).then((res)=>{
+                await getRelExel(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
                 
                
                     const link = document.createElement('a');
@@ -57,7 +57,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
                     manageError(err,navigate);
                 });
             }else{
-                await getRelExelPagoPa(token, mainState.nonce, mainState.relSelected.idTestata).then((res)=>{
+                await getRelExelPagoPa(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
                 
                
                     const link = document.createElement('a');
@@ -85,7 +85,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
 
         if( mainState.relSelected !== null){
             if(profilo.auth === 'SELFCARE'){
-                await getRelPdf(token, mainState.nonce, mainState.relSelected.idTestata).then((res: ResponseDownloadPdf)=>{
+                await getRelPdf(token, profilo.nonce, mainState.relSelected.idTestata).then((res: ResponseDownloadPdf)=>{
                     toDoOnDownloadPdf(res);
                
                 }).catch((err)=>{
