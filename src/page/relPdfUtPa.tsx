@@ -5,12 +5,13 @@ import { RelPageProps } from "../types/typeRel";
 import { Button, Typography } from "@mui/material";
 import { useNavigate } from 'react-router';
 import { manageError } from '../api/api';
-import { useEffect} from 'react';
+import { useEffect, useState} from 'react';
 import TextDettaglioPdf from '../components/commessaPdf/textDettaglioPdf';
 import { usePDF } from 'react-to-pdf';
 import { ResponseDownloadPdf } from '../types/typeModuloCommessaInserimento';
-import { getRelExel, getRelPdf } from '../api/apiSelfcare/relSE/api';
+import { getRelExel, getRelPdf, uploadPdfRel } from '../api/apiSelfcare/relSE/api';
 import { getRelExelPagoPa } from '../api/apiPagoPa/relPA/api';
+import { Document, Page } from 'react-pdf';
 
 const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
 
@@ -18,9 +19,13 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
 
     const navigate = useNavigate();
 
-    if(rel === null){
-        navigate('/rel');
-    }
+    
+
+    useEffect(()=>{
+        if(rel === null){
+            navigate('/rel');
+        }
+    },[]);
 
     const { toPDF, targetRef } = usePDF({filename: 'Regolare Esecuzione.pdf'});
   
@@ -111,6 +116,32 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
         downloadPdfRel();
     },[]);
 
+    const [pdfData, setPdfData] = useState();
+ 
+
+
+    const handleLoadPdf = (e) =>{
+       
+        setPdfData(e.target.files[0]);
+        
+    };
+
+    const uploadPdf = async () =>{
+
+    
+        if(rel){
+            await uploadPdfRel(token, profilo.nonce, rel.idTestata, {file:pdfData} ).then((res)=>{
+                console.log(res);
+           
+            }).catch((err)=>{
+                manageError(err,navigate);
+            });
+        }
+      
+    };
+
+  
+
     return (
         <div>
             <div className='d-flex marginTop24 ms-5 '>
@@ -183,8 +214,11 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
                     <Button sx={{width:'274px'}} onClick={()=> downloadRelExel()}  variant="contained">Scarica lista Regolare Esecuzione</Button>
                 </div>
             </div>
-
-            
+            <input type="file" accept=".pdf" id='cazzo' onChange={(event) => handleLoadPdf(event)} />
+            <div className="">
+                <Button sx={{width:'274px'}} onClick={()=> uploadPdf()}  variant="contained">Upload</Button>
+            </div>
+        
         </div>
        
        
