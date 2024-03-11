@@ -146,6 +146,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     },[]);
 
     const [file, setFile] = useState<File | null>(null);
+    const [loadingUpload, setLoadingUpload] = useState<boolean>(false);
 
     const handleSelect = (e) => {
         setFile(e);
@@ -165,12 +166,13 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
   
     const uploadPdf = async () =>{
-
+        setLoadingUpload(true);
         if(rel){
             await uploadPdfRel(token, profilo.nonce, rel.idTestata, {file:file} ).then((res)=>{
+                
                 getRel(rel.idTestata);
                 setFile(null);
-           
+                setLoadingUpload(false);
             }).catch((err)=>{
                 manageError(err,navigate);
             });
@@ -284,7 +286,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                
                      <div>
                          <div id='singleInputRel' style={{minWidth: '300px', height:'40px'}}>
-                             <SingleFileInput  value={file} accept={[".pdf"]} onFileSelected={(e)=>handleSelect(e)} onFileRemoved={handleRemove} dropzoneLabel={(rel?.caricata === 1 ||rel?.caricata === 2) ? 'Reinserisci nuovo PDF Reg. Es. firmato':"Inserisci PDF Reg. Es.  firmato"} rejectedLabel="Tipo file non supportato" ></SingleFileInput>
+                             <SingleFileInput  value={file} loading={loadingUpload} accept={[".pdf"]} onFileSelected={(e)=>handleSelect(e)} onFileRemoved={handleRemove} dropzoneLabel={(rel?.caricata === 1 ||rel?.caricata === 2) ? 'Reinserisci nuovo PDF Reg. Es. firmato':"Inserisci PDF Reg. Es.  firmato"} rejectedLabel="Tipo file non supportato" ></SingleFileInput>
                          </div> 
                      </div>
                      {rel?.caricata === 1 &&
