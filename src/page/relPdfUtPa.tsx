@@ -1,19 +1,21 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { ButtonNaked} from '@pagopa/mui-italia';
+import { ButtonNaked, SingleFileInput} from '@pagopa/mui-italia';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { RelPageProps } from "../types/typeRel";
 import { Button, Typography } from "@mui/material";
 import { useNavigate } from 'react-router';
 import { manageError } from '../api/api';
-import { useEffect, useState} from 'react';
+import { useEffect, useRef, useState} from 'react';
 import TextDettaglioPdf from '../components/commessaPdf/textDettaglioPdf';
-import { usePDF } from 'react-to-pdf';
 import { ResponseDownloadPdf } from '../types/typeModuloCommessaInserimento';
-import { getRelExel, getRelPdf, uploadPdfRel } from '../api/apiSelfcare/relSE/api';
+import { getRelExel, getRelPdf, uploadPdfRel ,getRelPdfFirmato, getSingleRel } from '../api/apiSelfcare/relSE/api';
 import { getRelExelPagoPa } from '../api/apiPagoPa/relPA/api';
-import { Document, Page } from 'react-pdf';
+import DownloadIcon from '@mui/icons-material/Download';
 
-const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
+import generatePDF from 'react-to-pdf';
+
+
+const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
     const rel = mainState.relSelected;
 
@@ -27,7 +29,9 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
         }
     },[]);
 
-    const { toPDF, targetRef } = usePDF({filename: 'Regolare Esecuzione.pdf'});
+    const targetRef  = useRef<HTMLInputElement>(null);
+
+    const targetRefFirmata = useRef<HTMLInputElement>(null); 
   
 
     const getToken = localStorage.getItem('token') || '{}';
@@ -36,7 +40,12 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
 
-    
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
 
     const mesi = ["Dicembre", "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
 
@@ -104,6 +113,22 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
         
     };
 
+    const downloadPdfRelFirmato = async() =>{
+
+        if( mainState.relSelected !== null){
+            if(profilo.auth === 'SELFCARE'){
+                await getRelPdfFirmato(token, profilo.nonce, mainState.relSelected.idTestata).then((res: ResponseDownloadPdf)=>{
+                    toDoOnDownloadPdf(res);
+               
+                }).catch((err)=>{
+                    manageError(err,navigate);
+                });
+            }  
+        }
+
+        
+    };
+
     
     const toDoOnDownloadPdf = (res:ResponseDownloadPdf) =>{
         const wrapper = document.getElementById('file_download_rel');
@@ -114,24 +139,37 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
 
     useEffect(()=>{
         downloadPdfRel();
+        if(rel?.caricata === 1){
+            downloadPdfRelFirmato();
+        }
+        
     },[]);
 
-    const [pdfData, setPdfData] = useState();
+    const [file, setFile] = useState<File | null>(null);
+
+    const handleSelect = (e) => {
+        setFile(e);
+    };
+    const handleRemove = () => {
+        setFile(null);
+    };
+
+   
+    useEffect(()=>{
+        if(file !== null){
+            uploadPdf();
+        }
+    },[file]);
  
 
 
-    const handleLoadPdf = (e) =>{
-       
-        setPdfData(e.target.files[0]);
-        
-    };
-
+  
     const uploadPdf = async () =>{
 
-    
         if(rel){
-            await uploadPdfRel(token, profilo.nonce, rel.idTestata, {file:pdfData} ).then((res)=>{
-                console.log(res);
+            await uploadPdfRel(token, profilo.nonce, rel.idTestata, {file:file} ).then((res)=>{
+                getRel(rel.idTestata);
+                setFile(null);
            
             }).catch((err)=>{
                 manageError(err,navigate);
@@ -140,35 +178,64 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
       
     };
 
+    const getRel = async(idRel) => {
+
+     
+        getSingleRel(token,profilo.nonce,idRel).then((res) =>{
+            handleModifyMainState({relSelected:res.data});
+               
+           
+        }).catch((err)=>{
+            manageError(err, navigate);
+        }
+              
+        );
+    };
+
+
+
+
   
 
     return (
         <div>
-            <div className='d-flex marginTop24 ms-5 '>
-                <ButtonNaked
-                    color="primary"
-                    onFocusVisible={() => { console.log('onFocus'); }}
-                    size="small"
-                    startIcon={<ArrowBackIcon />}
-                    onClick={() => navigate('/rel')}
+            <div className='d-flex justify-content-between marginTop24  '>
+                <div className='ms-5'>
+                    <ButtonNaked
+                        color="primary"
+                        onFocusVisible={() => { console.log('onFocus'); }}
+                        size="small"
+                        startIcon={<ArrowBackIcon />}
+                        onClick={() => navigate('/rel')}
                    
-                >
+                    >
                     Indietro
  
-                </ButtonNaked>
+                    </ButtonNaked>
               
-                <Typography sx={{marginLeft:'20px'}} variant="caption">
-                    <ManageAccountsIcon sx={{paddingBottom:'3px'}}  fontSize='small'></ManageAccountsIcon>
+                    <Typography sx={{marginLeft:'20px'}} variant="caption">
+                        <ManageAccountsIcon sx={{paddingBottom:'3px'}}  fontSize='small'></ManageAccountsIcon>
                       Regolare Esecuzione /
                     
-                </Typography>
-                <Typography sx={{fontWeight:'bold', marginLeft:'5px'}} variant="caption">
+                    </Typography>
+                    <Typography sx={{fontWeight:'bold', marginLeft:'5px'}} variant="caption">
                    
                       Dettaglio
                     
-                </Typography>
+                    </Typography>
+                </div>
+                
                
-                 
+                
+                <div className='me-5'>
+                
+                    <Button sx={{width:'274px'}} onClick={()=> downloadRelExel()}  variant="contained"><DownloadIcon sx={{marginRight:'20px'}}></DownloadIcon>Scarica report di dettaglio notifiche Reg. Es.</Button>
+             
+                </div>
+                
+                
+               
+                
                  
                 
             </div>
@@ -178,6 +245,10 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
                     <div style={{ position:'absolute',zIndex:-1}}  id='file_download_rel' ref={targetRef}>
 
                     </div>
+                    <div style={{ position:'absolute',zIndex:-1}}  id='file_download_rel_firmata' ref={targetRefFirmata}>
+
+                    </div>
+                
 
                     {rel !== null &&
 
@@ -203,22 +274,30 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState}) =>{
                     }
                 </div>
             </div>
-            <div className='d-flex justify-content-around m-5'>
-                {profilo.auth === 'SELFCARE' &&
-                 <div className="">
-                     <Button sx={{width:'274px'}} onClick={()=> toPDF()}  variant="contained">Scarica Pdf Regolare Esecuzione</Button>
-                 </div>
-                }
+           
+            {profilo.auth === 'SELFCARE' &&
+                 <div className='d-flex justify-content-between m-5'>
+                     <div className="">
+                         <Button sx={{width:'274px'}} onClick={() => generatePDF(targetRef, {filename: 'Regolare Esecuzione.pdf'})}  variant="contained"><DownloadIcon sx={{marginRight:'20px'}}></DownloadIcon>Scarica PDF Reg. Es.</Button>
+                     </div>
+              
                
-                <div className="">
-                    <Button sx={{width:'274px'}} onClick={()=> downloadRelExel()}  variant="contained">Scarica lista Regolare Esecuzione</Button>
+                     <div>
+                         <div id='singleInputRel' style={{minWidth: '300px', height:'40px'}}>
+                             <SingleFileInput  value={file} accept={[".pdf"]} onFileSelected={(e)=>handleSelect(e)} onFileRemoved={handleRemove} dropzoneLabel={(rel?.caricata === 1 ||rel?.caricata === 2) ? 'Reinserisci nuovo PDF Reg. Es. firmato':"Inserisci PDF Reg. Es.  firmato"} rejectedLabel="Tipo file non supportato" ></SingleFileInput>
+                         </div> 
+                     </div>
+                     {rel?.caricata === 1 &&
+                <div>
+                    <Button sx={{width:'300px'}} onClick={() => generatePDF(targetRefFirmata, {filename: 'Regolare Esecuzione Firmato.pdf'})}   variant="contained"> <DownloadIcon sx={{marginRight:'20px'}}></DownloadIcon>Scarica PDF Firmato</Button>
                 </div>
-            </div>
-            <input type="file" accept=".pdf" id='cazzo' onChange={(event) => handleLoadPdf(event)} />
-            <div className="">
-                <Button sx={{width:'274px'}} onClick={()=> uploadPdf()}  variant="contained">Upload</Button>
-            </div>
-        
+                     }
+                 </div>
+            }
+           
+            
+           
+            
         </div>
        
        

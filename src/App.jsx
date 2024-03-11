@@ -161,9 +161,9 @@ const App = ({ instance }) => {
                                    
                                         <Route path="/notifiche" element={<ReportDettaglio mainState={mainState} />} />
 
-                                        <Route path="/rel" element={<RelPage  mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
+                                        <Route path="/rel" element={<RelPage  mainState={mainState}  dispatchMainState={dispatchMainState} />} />
 
-                                        <Route path="/relpdf" element={<RelPdfPage  mainState={mainState} />} />
+                                        <Route path="/relpdf" element={<RelPdfPage  mainState={mainState}  dispatchMainState={dispatchMainState}/>} />
 
                                         <Route path="*" element={<Navigate to="/error" replace />} />
 
