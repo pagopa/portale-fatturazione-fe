@@ -85,3 +85,16 @@ background-color:white;
   
 }
 
+#singleInputRel .MuiFormControl-root .MuiFormLabel-root{
+  margin-bottom: 0px;
+
+
+}
+
+#singleInputRel .MuiFormControl-root .MuiBox-root .MuiBox-root, #singleInputRel .MuiFormControl-root .MuiBox-root{
+height: 48px;
+}
+ #singleInputRel .MuiFormControl-root .MuiBox-root{
+  min-height: 48px;
+  }
+

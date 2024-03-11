@@ -66,7 +66,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
        
     const [dataSelect, setDataSelect] = useState([]);
    
-    const headerNamesGrid = ['Ragione Sociale','Tipologia Fattura', 'ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale',''];    
+    const headerNamesGrid = ['Ragione Sociale','Tipologia Fattura', 'Reg. Es. Pdf','ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale',''];    
    
     const [data, setData] = useState([]);
 
@@ -89,6 +89,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                             idTestata:obj.idTestata,
                             ragioneSociale:obj.ragioneSociale,
                             tipologiaFattura:obj.tipologiaFattura,
+                            firmata:obj.firmata,
                             idContratto:obj.idContratto,
                             anno:obj.anno,
                             mese:mesiGrid[obj.mese],
@@ -118,6 +119,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                             idTestata:obj.idTestata,
                             ragioneSociale:obj.ragioneSociale,
                             tipologiaFattura:obj.tipologiaFattura,
+                            firmata:obj.firmata,
                             idContratto:obj.idContratto,
                             anno:obj.anno,
                             mese:mesiGrid[obj.mese],

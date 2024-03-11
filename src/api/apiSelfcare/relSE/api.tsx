@@ -56,7 +56,7 @@ export const downloadListaRel = async (token:string, nonce:string , body: BodyRe
 
 
 export const uploadPdfRel = async (token:string, nonce:string , id:string, body: any) => {
-    const response =  await axios.post(`${url}/api/rel/upload/${id}?nonce=${nonce}`,
+    const response =  await axios.post(`${url}/api/rel/firma/upload/${id}?nonce=${nonce}`,
         body,
         { headers: {
             Authorization: 'Bearer ' + token,
@@ -64,5 +64,15 @@ export const uploadPdfRel = async (token:string, nonce:string , id:string, body:
         },
         }
     );
+    return response;
+};
+
+export const getRelPdfFirmato = async ( token:string ,nonce:string , id:string) => {
+    const response =  await axios.get(`${url}/api/rel/firma/download/${id}?nonce=${nonce}`,  
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
     return response;
 };

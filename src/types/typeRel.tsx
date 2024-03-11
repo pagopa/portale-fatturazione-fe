@@ -21,6 +21,7 @@ export interface BodyRel{
 export interface Rel {
     idTestata: string,
     idEnte: string,
+    caricata:number,
     ragioneSociale: string,
     dataDocumento: string,
     idDocumento: string,
