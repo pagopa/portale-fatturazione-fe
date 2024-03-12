@@ -24,45 +24,7 @@ const style = {
 
 const ModalLoading : React.FC<ModalProps> = ({setOpen, open}) => {
 
-    const location = useLocation();
-    const navigate = useNavigate();
-
-    
-
-   
-    /*
-     window.history.go(1);
-    useEffect(() => {
-        
-        window.addEventListener("popstate", handlePopstate);
-        return () => window.removeEventListener("popstate",handlePopstate);
-        
-    }, [open]);
-   
-   
-    
-    
-
-    
-    if(open === true && location.pathname === '/notifiche'){
-        window.history.pushState(null, '', window.location.href);
-        window.onpopstate = function () {
-            window.history.go(1);
-        };
-    }else if(open === false && location.pathname === '/notifiche'){
-        window.history.pushState(null, '', window.location.href);
-        window.onpopstate = function () {
-            window.history.go(-1);
-        };
-    }
-
-*/
-   
-    
   
-  
-   
-
     const handleClose = (event:object, reason: string) =>{
        
         if(reason !== 'backdropClick'){

@@ -11,6 +11,7 @@ import { ResponseDownloadPdf } from '../types/typeModuloCommessaInserimento';
 import { getRelExel, getRelPdf, uploadPdfRel ,getRelPdfFirmato, getSingleRel } from '../api/apiSelfcare/relSE/api';
 import { getRelExelPagoPa } from '../api/apiPagoPa/relPA/api';
 import DownloadIcon from '@mui/icons-material/Download';
+import ModalUploadPdf from '../components/rel/modalUploadPdf';
 
 import generatePDF from 'react-to-pdf';
 
@@ -117,9 +118,17 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
         if( mainState.relSelected !== null){
             if(profilo.auth === 'SELFCARE'){
-                await getRelPdfFirmato(token, profilo.nonce, mainState.relSelected.idTestata).then((res: ResponseDownloadPdf)=>{
-                    toDoOnDownloadPdf(res);
-               
+                await getRelPdfFirmato(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
+                  
+                  
+                    const link = document.createElement('a');
+                    link.href = "data:text/plain;base64," + res.data.documento;
+                    link.setAttribute('download', 'Regolare Esecuzione Firmato.pdf'); //or any other extension
+                    document.body.appendChild(link);
+              
+                    link.click();
+                    document.body.removeChild(link);
+          
                 }).catch((err)=>{
                     manageError(err,navigate);
                 });
@@ -138,16 +147,13 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     };
 
     useEffect(()=>{
-        downloadPdfRel();
-        if(rel?.caricata === 1){
-            downloadPdfRelFirmato();
-        }
-        
+        downloadPdfRel();  
     },[]);
 
     const [file, setFile] = useState<File | null>(null);
     const [loadingUpload, setLoadingUpload] = useState<boolean>(false);
     const [errorUpload, setErrorUpload] = useState<boolean>(false);
+    const [openModalConfirmUploadPdf, setOpenModalConfirmUploadPdf] = useState<boolean>(false);
 
     const handleSelect = (e) => {
         setFile(e);
@@ -171,11 +177,14 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         setErrorUpload(false);
         if(rel){
             await uploadPdfRel(token, profilo.nonce, rel.idTestata, {file:file} ).then((res)=>{
-                
+                console.log({res});
                 getRel(rel.idTestata);
                 setFile(null);
                 setLoadingUpload(false);
-            }).catch((err)=>{
+                if(res.status === 200){
+                    setOpenModalConfirmUploadPdf(true);
+                }
+            }).catch(()=>{
                 setLoadingUpload(false);
                 setErrorUpload(true);
                
@@ -286,15 +295,16 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                      </div>
                      {rel?.caricata === 1 &&
                 <div>
-                    <Button sx={{width:'300px'}} onClick={() => generatePDF(targetRefFirmata, {filename: 'Regolare Esecuzione Firmato.pdf'})}   variant="contained">Scarica PDF Firmato <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+                    <Button sx={{width:'300px'}} onClick={() => downloadPdfRelFirmato()}   variant="contained">Scarica PDF Firmato <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
                 </div>
                      }
                  </div>
             }
            
             
-           
-            
+            {openModalConfirmUploadPdf &&
+            <ModalUploadPdf setOpen={setOpenModalConfirmUploadPdf} open={openModalConfirmUploadPdf}></ModalUploadPdf>
+            }
         </div>
        
        
