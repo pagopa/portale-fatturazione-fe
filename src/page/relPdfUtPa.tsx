@@ -205,7 +205,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
     return (
         <div>
-            <div className='d-flex justify-content-between marginTop24  '>
+            <div className=' marginTop24  '>
                 <div className='ms-5'>
                     <ButtonNaked
                         color="primary"
@@ -230,22 +230,13 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                     
                     </Typography>
                 </div>
-                
                
-                
-                <div className='me-5'>
-                
-                    <Button sx={{width:'274px'}} onClick={()=> downloadRelExel()}  variant="contained"><DownloadIcon sx={{marginRight:'20px'}}></DownloadIcon>Scarica report di dettaglio notifiche Reg. Es.</Button>
-             
-                </div>
-                
-                
-               
-                
-                 
-                
             </div>
-            <div className="bg-white m-5">
+            <div className='d-flex justify-content-end mt-4 me-5'>
+                <Button  onClick={()=> downloadRelExel()} >Scarica report di dettaglio notifiche Reg. Es. <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+            </div>
+            <div className="bg-white mb-5 me-5 ms-5">
+              
                 <div className="pt-5 pb-5 ">
                 
                     <div style={{ position:'absolute',zIndex:-1}}  id='file_download_rel' ref={targetRef}>
@@ -284,7 +275,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             {profilo.auth === 'SELFCARE' &&
                  <div className='d-flex justify-content-between m-5'>
                      <div className="">
-                         <Button sx={{width:'274px'}} onClick={() => generatePDF(targetRef, {filename: 'Regolare Esecuzione.pdf'})}  variant="contained"><DownloadIcon sx={{marginRight:'20px'}}></DownloadIcon>Scarica PDF Reg. Es.</Button>
+                         <Button sx={{width:'274px'}} onClick={() => generatePDF(targetRef, {filename: 'Regolare Esecuzione.pdf'})}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
                      </div>
               
                
@@ -295,7 +286,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                      </div>
                      {rel?.caricata === 1 &&
                 <div>
-                    <Button sx={{width:'300px'}} onClick={() => generatePDF(targetRefFirmata, {filename: 'Regolare Esecuzione Firmato.pdf'})}   variant="contained"> <DownloadIcon sx={{marginRight:'20px'}}></DownloadIcon>Scarica PDF Firmato</Button>
+                    <Button sx={{width:'300px'}} onClick={() => generatePDF(targetRefFirmata, {filename: 'Regolare Esecuzione Firmato.pdf'})}   variant="contained">Scarica PDF Firmato <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
                 </div>
                      }
                  </div>
