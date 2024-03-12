@@ -1,21 +1,16 @@
 import { Typography } from "@mui/material";
 import { } from '@mui/material';
-import React , { useState, useEffect, useRef } from 'react';
-import {
-    Card, Table,TableHead,TableBody,
-    TableRow,TableCell,TablePagination, TextField,
-    Box, FormControl, InputLabel,Select, MenuItem, Button
-} from '@mui/material';
+import React , { useState, useEffect} from 'react';
+import { TextField,Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { getTipologiaProfilo, manageError } from "../api/api";
-import { ReportDettaglioProps, NotificheList, FlagContestazione, Contestazione  } from "../types/typeReportDettaglio";
+import { ReportDettaglioProps, NotificheList, FlagContestazione, Contestazione, ElementMultiSelect  } from "../types/typeReportDettaglio";
 import { useNavigate } from "react-router";
 import { BodyListaNotifiche } from "../types/typesGeneral";
 import ModalContestazione from '../components/reportDettaglio/modalContestazione';
 import ModalInfo from "../components/reportDettaglio/modalInfo";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import DownloadIcon from '@mui/icons-material/Download';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import MultiSelectStatoContestazione from "../components/reportDettaglio/multiSelectGroupedBy";
 import ModalLoading from "../components/reusableComponents/modalLoading";
 import ModalScadenziario from "../components/reportDettaglio/modalScadenziario";
@@ -35,8 +30,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
-    
-    
     
     // prendo gli ultimi 2 anni dinamicamente
     const currentYear = (new Date()).getFullYear();
@@ -67,6 +60,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [profili, setProfili] = useState([]);
+    const [statusAnnulla, setStatusAnnulla] = useState('hidden');
+    const [notificheList, setNotificheList] = useState<NotificheList[]>([]);
             
     const [bodyGetLista, setBodyGetLista] = useState<BodyListaNotifiche>({
         profilo:'',
@@ -81,7 +76,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         recipientId:null
     });
 
-    const [statusAnnulla, setStatusAnnulla] = useState('hidden');
+   
             
     const [contestazioneSelected, setContestazioneSelected] = useState<Contestazione>({ 
         risposta:true,
@@ -112,8 +107,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         }
     });
 
-    const [notificheList, setNotificheList] = useState<NotificheList[]>([]);
-
+    
+    // Modifico l'oggetto notifica per fare il binding dei dati nel componente GRIDCUSTOM
     const notificheListWithOnere = notificheList.map((notifica) =>{
         
         let newOnere = '';
@@ -144,10 +139,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             costEuroInCentesimi:(Number(notifica.costEuroInCentesimi) / 100).toFixed(2)+'€'
         };
     });
-
-   
-            
-            
+  
+    // visualizzare il tasto annulla filtri      
     useEffect(()=>{
         if( 
             bodyGetLista.profilo !== '' ||
@@ -160,22 +153,15 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     bodyGetLista.anno !== currentYear||
                     bodyGetLista.recipientId !== null){
             setStatusAnnulla('show');
-        }else{
-                        
+        }else{           
             setStatusAnnulla('hidden');
         }
     },[bodyGetLista]);
 
-
-
-    
-                
+    // action sul tasto annulla filtri
     const onAnnullaFiltri = async () =>{
 
-        setStatusAnnulla('hidden');
-        setValueFgContestazione([]);
-        setDataSelect([]);
-        setBodyGetLista({
+        const newBody = {
             profilo:'',
             prodotto:'',
             anno:currentYear,
@@ -187,23 +173,15 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             idEnti:[],
             recipientId:null
 
-        });
-   
-        const realPageNumber = page + 1;
-        const pageNumber = Number(realPageNumber);
+        };
+
+        setStatusAnnulla('hidden');
+        setValueFgContestazione([]);
+        setDataSelect([]);
+        setBodyGetLista(newBody);
 
         if(profilo.auth === 'SELFCARE'){
-            const body = {
-                profilo:'',
-                prodotto:'',
-                anno:currentYear,
-                mese:currString, 
-                tipoNotifica:null,
-                statoContestazione:[],
-                cap:null,
-                iun:null,
-                recipientId:null
-            };
+            const {idEnti, ...body} = newBody;
             await listaNotifiche(token,profilo.nonce,1,10, body)
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
@@ -212,23 +190,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 }).catch((error)=>{
                     manageError(error, navigate);
                 });
-        }
-
-        if(profilo.auth === 'PAGOPA'){
-            const bodyPagoPa = {
-                profilo:'',
-                prodotto:'',
-                anno:currentYear,
-                mese:currString, 
-                tipoNotifica:null,
-                statoContestazione:[],
-                cap:null,
-                iun:null,
-                idEnti:[],
-                recipientId:null
-    
-            };
-            await listaNotifichePagoPa(token,profilo.nonce,1,10, bodyPagoPa)
+        }else if(profilo.auth === 'PAGOPA'){
+        
+            await listaNotifichePagoPa(token,profilo.nonce,1,10, newBody)
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
                     setTotalNotifiche(res.data.count);
@@ -239,16 +203,15 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         }
       
     };     
-                
-    
+        // disable tutti i button fino a che il servizio lista notifiche non mi dia un 200K , questo perchè c'è un numero di notifiche elevato
+        // con delle tempistiche lunghissime        
+    const [getNotificheWorking, setGetNotificheWorking] = useState(false);
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalNotifiche, setTotalNotifiche]  = useState(0);
     const realPageNumber = page + 1;
-    const pageNumber = Number(realPageNumber);
-
-    const [getNotificheWorking, setGetNotificheWorking] = useState(false);
-                
+    
+         
     const getlistaNotifiche = async (nPage:number, nRow:number) => {
         // elimino idEnti dal paylod della get notifiche lato selfcare
         const {idEnti, ...newBody} = bodyGetLista;
@@ -256,7 +219,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         setGetNotificheWorking(true);
         await listaNotifiche(token,profilo.nonce,nPage, nRow, newBody)
             .then((res)=>{
-               
                 setNotificheList(res.data.notifiche);
                 setTotalNotifiche(res.data.count);
                 // abilita button filtra e annulla filtri all'arrivo dei dati
@@ -276,10 +238,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             .then((res)=>{
                 // abilita button filtra e annulla filtri all'arrivo dei dati
                 setGetNotificheWorking(false);
-
                 setNotificheList(res.data.notifiche);
-                setTotalNotifiche(res.data.count);
-                        
+                setTotalNotifiche(res.data.count); 
             }).catch((error)=>{
                 // abilita button filtra e annulla filtri all'arrivo dei dati
                 setGetNotificheWorking(false);
@@ -287,53 +247,41 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             });
                     
     };
-
-   
-                
+            
     useEffect(() => {
       
         if(profilo.nonce !== ''){
             getProdotti();
             getProfili();
+
             if(profilo.auth === 'SELFCARE'){
-                getlistaNotifiche( realPageNumber, rowsPerPage);
-                
-            }
-            if(profilo.auth === 'PAGOPA'){
+                getlistaNotifiche( realPageNumber, rowsPerPage); 
+            }else if(profilo.auth === 'PAGOPA'){
                 getlistaNotifichePagoPa( realPageNumber, rowsPerPage);
-                //listaEntiNotifichePageOnSelect();
             }
-            
-           
         } 
     }, [profilo.nonce]);
 
-
+    // logica sul button filtra
     const onButtonFiltra = () =>{
         setPage(0);
         setRowsPerPage(10);
-        
         if(profilo.auth === 'SELFCARE'){
             getlistaNotifiche(1, 10);
         }else{
             getlistaNotifichePagoPa(1, 10);
-        }
-        
+        }  
     };
                 
     const handleChangePage = (
         event: React.MouseEvent<HTMLButtonElement> | null,
         newPage: number,
     ) => {
-     
         const realPage = newPage + 1;
         if(profilo.auth === 'SELFCARE'){
             getlistaNotifiche(realPage,rowsPerPage);
-            
-        }
-        if(profilo.auth === 'PAGOPA'){
+        }else if(profilo.auth === 'PAGOPA'){
             getlistaNotifichePagoPa(realPage,rowsPerPage);
-            //listaEntiNotifichePageOnSelect();
         }
         setPage(newPage);
     };
@@ -348,32 +296,24 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
         if(profilo.auth === 'SELFCARE'){
             getlistaNotifiche(realPage,parseInt(event.target.value, 10));
-            
-        }
-        if(profilo.auth === 'PAGOPA'){
+        }else if(profilo.auth === 'PAGOPA'){
             getlistaNotifichePagoPa(realPage,parseInt(event.target.value, 10));
-            //listaEntiNotifichePageOnSelect();
-        }
-                            
+        }                    
     };
                         
     const getProdotti = async() => {
         await getTipologiaProdotto(token, profilo.nonce )
-            .then((res)=>{
-                                
+            .then((res)=>{          
                 setProdotti(res.data);
             })
             .catch(((err)=>{
                 manageError(err,navigate);
             }));
     };
-                        
-                        
-                        
+                                            
     const getProfili = async() => {
         await getTipologiaProfilo(token, profilo.nonce )
-            .then((res)=>{
-                                
+            .then((res)=>{              
                 setProfili(res.data);
             })
             .catch(((err)=>{
@@ -381,22 +321,12 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             }));
     };
                         
-                        
-                 
-   
-                        
-                        
-    
-                        
-                        
-                        
-                        
+                
     const getContestazioneModal = async(idNotifica:string) =>{
 
         if(profilo.auth === 'SELFCARE'){
             await getContestazione(token, profilo.nonce , idNotifica )
                 .then((res)=>{
-           
                     //se i tempi di creazione di una contestazione sono scaduti show pop up info
                     if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
                         setOpenModalInfo(true);
@@ -409,49 +339,31 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 .catch(((err)=>{
                     manageError(err,navigate);
                 }));
-
         }else{
-
             await getContestazionePagoPa(token, profilo.nonce , idNotifica ).then((res)=>{
-           
                 //se i tempi di creazione di una contestazione sono scaduti show pop up info
                 if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
                     setOpenModalInfo(true);
-              
                 }else{
                     // atrimenti show pop up creazione contestazione
-               
                     setOpen(true); 
                     setContestazioneSelected(res.data);
                 }                 
-            })
-                .catch(((err)=>{
-                    manageError(err,navigate);
-                }));
+            }).catch(((err)=>{
+                manageError(err,navigate);
+            }));
         }
-
-       
-
     };
                         
 
-    
-                        
-
-   
-    
     const downloadNotificheOnDownloadButton = async () =>{
-
         if(profilo.auth === 'SELFCARE'){
             await downloadNotifche(token, profilo.nonce,bodyGetLista )
                 .then((res)=>{
-
-            
                     const link = document.createElement('a');
                     link.href = "data:text/plain;base64," + res.data.documento;
                     link.setAttribute('download', 'Lista Notifiche.xlsx'); //or any other extension
                     document.body.appendChild(link);
-              
                     link.click();
                     document.body.removeChild(link);           
                 })
@@ -461,7 +373,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         }else{
             await downloadNotifchePagoPa(token, profilo.nonce,bodyGetLista )
                 .then((res)=>{
-
                     const blob = new Blob([res.data], { type: 'text/csv' });
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
@@ -471,8 +382,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     document.body.appendChild(a);
                     a.click();
                     setShowLoading(false);
-                    document.body.removeChild(a);
-                      
+                    document.body.removeChild(a); 
                 })
                 .catch(((err)=>{
                     manageError(err,navigate);
@@ -481,18 +391,11 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         }
     };
 
-
-    // stato multiselect ragione sociale
-    const [dataSelect, setDataSelect] = useState([]);
-
-
-
+    // stato multiselect ragione sociale 
+    const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
     const [valueFgContestazione, setValueFgContestazione] = useState<FlagContestazione[]>([]);
 
-
-
-    // modal
-                        
+    // modal             
     const [open, setOpen] = useState(false);
     const [openModalInfo, setOpenModalInfo] = useState(false);
     const [showLoading, setShowLoading] = useState(false);
@@ -513,11 +416,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     Scadenzario
                         </Button>
                     </Box>
-                  
                 </div>
-               
-              
-                
             </div>
             {/*title container end */}
             <div className="mt-5 mb-5 ">
@@ -532,34 +431,26 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                     id="sea"
                                 >
                             Anno
-                            
                                 </InputLabel>
                                 <Select
                                     id="sea"
                                     label='Seleziona Prodotto'
                                     labelId="search-by-label"
                                     onChange={(e) => {
-                                
                                         const value = Number(e.target.value);
                                         setBodyGetLista((prev)=> ({...prev, ...{anno:value}}));
                                     }}
                                     value={bodyGetLista.anno}
-                                    //IconComponent={SearchIcon}
-                            
                                     disabled={status=== 'immutable' ? true : false}
-                            
                                 >
                                     {getCurrentFinancialYear().map((el) => (
-                                
                                         <MenuItem
                                             key={Math.random()}
                                             value={el}
                                         >
                                             {el}
                                         </MenuItem>
-                                
                                     ))}
-                                
                                 </Select>
                             </FormControl>
                         </Box>
@@ -581,29 +472,20 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                     label='Seleziona Prodotto'
                                     labelId="search-by-label"
                                     onChange={(e) =>{
-                                    
                                         const value = Number(e.target.value);
                                         setBodyGetLista((prev)=> ({...prev, ...{mese:value}}));
                                     }}
-                                
-                                
                                     value={bodyGetLista.mese}
-                                    //IconComponent={SearchIcon}
-                                
                                     disabled={status=== 'immutable' ? true : false}
-                                
                                 >
                                     {mesi.map((el) => (
-                                    
                                         <MenuItem
                                             key={Math.random()}
                                             value={Object.keys(el)[0].toString()}
                                         >
                                             {Object.values(el)[0]}
                                         </MenuItem>
-                                    
                                     ))}
-                                    
                                 </Select>
                             </FormControl>
                         </Box>
@@ -625,11 +507,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                     labelId="search-by-label"
                                     onChange={(e) => setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}))}
                                     value={bodyGetLista.prodotto}
-                                    //IconComponent={SearchIcon}
                                     disabled={status=== 'immutable' ? true : false}
                                 >
                                     {prodotti.map((el) => (
-                                        
                                         <MenuItem
                                             key={Math.random()}
                                             value={el.nome}
@@ -638,7 +518,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                         </MenuItem>
                                         
                                     ))}
-                                        
                                 </Select>
                             </FormControl>
                         </Box>
@@ -650,23 +529,18 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                 label='IUN'
                                 placeholder='IUN'
                                 value={bodyGetLista.iun || ''}
-                                onChange={(e) => setBodyGetLista((prev)=>{
-                                                        
+                                onChange={(e) => setBodyGetLista((prev)=>{             
                                     if(e.target.value === ''){
                                         return {...prev, ...{iun:null}};
                                     }else{
                                         return {...prev, ...{iun:e.target.value}};
                                     }
-                                } )}
-                                onBlur={()=> console.log('miao')}
-                                                    
+                                } )}            
                             />
                         </Box>
                     </div>
-                </div>
-                                                                        
-                <div className="row mt-5" >
-                                            
+                </div>                                         
+                <div className="row mt-5" >           
                     <div className="col-3">
                         <Box sx={{width:'80%'}} >
                             <FormControl
@@ -676,8 +550,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                 <InputLabel
                                     id="sea"
                                 >
-                                            Tipo Notifica
-                                            
+                                            Tipo Notifica     
                                 </InputLabel>
                                 <Select
                                     id="sea"
@@ -687,22 +560,17 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                         const value = Number(e.target.value);
                                         setBodyGetLista((prev)=> ({...prev, ...{tipoNotifica:value}}));
                                     }}
-                                    value={bodyGetLista.tipoNotifica || ''}
-                                    //IconComponent={SearchIcon}
-                                            
+                                    value={bodyGetLista.tipoNotifica || ''}        
                                     disabled={status=== 'immutable' ? true : false}
                                 >
-                                    {tipoNotifica.map((el) => (
-                                                
+                                    {tipoNotifica.map((el) => (     
                                         <MenuItem
                                             key={Math.random()}
                                             value={Object.values(el)[0].toString()}
                                         >
                                             {Object.keys(el)[0].toString()}
-                                        </MenuItem>
-                                                
-                                    ))}
-                                                
+                                        </MenuItem>      
+                                    ))}       
                                 </Select>
                             </FormControl>
                         </Box>
@@ -720,23 +588,16 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                         <Box sx={{width:'80%', marginLeft:'20px'}} >
                             <TextField
                                 fullWidth
-                                //required={required}
-                                // helperText='Cap'
                                 label='CAP'
                                 placeholder='CAP'
-                                //  disabled={makeTextInputDisable}
                                 value={bodyGetLista.cap || ''}
-                                // error={errorValidation}
-                                onChange={(e) => setBodyGetLista((prev)=>{
-                                                        
+                                onChange={(e) => setBodyGetLista((prev)=>{               
                                     if(e.target.value === ''){
                                         return {...prev, ...{cap:null}};
                                     }else{
                                         return {...prev, ...{cap:e.target.value}};
                                     }
                                 } )}
-                                onBlur={()=> console.log('miao')}
-                                                    
                             />
                         </Box>
                     </div>
@@ -747,8 +608,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                 label='Recipient ID'
                                 placeholder='Recipient ID'
                                 value={bodyGetLista.recipientId || ''}
-                                onChange={(e) => setBodyGetLista((prev)=>{
-                                                        
+                                onChange={(e) => setBodyGetLista((prev)=>{                
                                     if(e.target.value === ''){
                                         return {...prev, ...{recipientId:null}};
                                     }else{
@@ -757,13 +617,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                 } )}                     
                             />
                         </Box>
-                    </div>
-
-                    
-                   
-                                                
+                    </div>                         
                 </div>
-
                 <div className="row mt-5" >
                     {(profilo.auth === 'PAGOPA' || profilo.profilo === 'CND') &&
                     <div className="col-3">
@@ -773,11 +628,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                             setDataSelect={setDataSelect}
                             dataSelect={dataSelect}
                         ></MultiselectCheckbox>
-    
                     </div>
                     }
                 </div>
-
                 <div className="">
                     <div className="d-flex justify-content-start mt-5">
                         <div className=" d-flex align-items-center justify-content-center h-100">
@@ -785,32 +638,25 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                 <Button 
                                     onClick={()=> onButtonFiltra()} 
                                     disabled={getNotificheWorking}
-                                    variant="contained"> Filtra
-                                        
-                                </Button>
-                                                    
+                                    variant="contained"> Filtra  
+                                </Button>                
                                 {statusAnnulla === 'hidden' ? null :
-                                                    
                                     <Button
                                         onClick={()=>{
-                                            onAnnullaFiltri();
-                                               
+                                            onAnnullaFiltri();   
                                         } }
                                         disabled={getNotificheWorking}
                                         sx={{marginLeft:'24px'}} >
                                                     Annulla filtri
                                     </Button>
                                 }
-                            </div>
-                                                
+                            </div>               
                         </div>
                     </div>
                 </div>
             </div>
-            {/* grid */}
             { notificheList.length > 0  &&
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
-                 
                 <div>
                     <Button
                         disabled={getNotificheWorking}
@@ -823,15 +669,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                   Download Risultati 
                         <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
                     </Button>
-            
                 </div>           
-                   
-               
-               
             </div>
-            }    
-
-                       
+            }            
             <div className="mb-5">
                 <GridCustom
                     nameParameterApi='idNotifica'
@@ -843,10 +683,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     rows={rowsPerPage}
                     headerNames={['Contestazione', 'Onere', 'Recipient ID','Anno', 'Mese','Ragione Sociale', 'Tipo Notifica','IUN', 'Data invio','Stato estero', 'CAP', 'Costo', '']}
                     apiGet={getContestazioneModal}></GridCustom>
-
             </div>             
-            {/* MODAL */}
-                                                    
+            {/* MODAL */}                                 
             <ModalContestazione open={open} 
                 setOpen={setOpen} 
                 mainState={mainState}
@@ -859,20 +697,17 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             <ModalInfo
                 open={openModalInfo} 
                 setOpen={setOpenModalInfo} >
-
             </ModalInfo>
 
             <ModalLoading 
                 open={showLoading} 
                 setOpen={setShowLoading} >
-                    
             </ModalLoading>
          
             <ModalScadenziario
                 open={showModalScadenziario} 
                 setOpen={setShowModalScadenziario}
-                nonce={profilo.nonce}></ModalScadenziario>
-                                                    
+                nonce={profilo.nonce}></ModalScadenziario>                                    
         </div>
     );
 };
