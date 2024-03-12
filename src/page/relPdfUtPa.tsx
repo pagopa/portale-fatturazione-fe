@@ -32,9 +32,6 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
     const targetRef  = useRef<HTMLInputElement>(null);
 
-    const targetRefFirmata = useRef<HTMLInputElement>(null); 
-  
-
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
 
@@ -251,11 +248,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                     <div style={{ position:'absolute',zIndex:-1}}  id='file_download_rel' ref={targetRef}>
 
                     </div>
-                    <div style={{ position:'absolute',zIndex:-1}}  id='file_download_rel_firmata' ref={targetRefFirmata}>
-
-                    </div>
                 
-
                     {rel !== null &&
 
                     <div className="container text-center">
