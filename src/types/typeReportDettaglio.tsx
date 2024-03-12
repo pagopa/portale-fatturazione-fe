@@ -7,11 +7,11 @@ export interface ReportDettaglioProps {
 export interface NotificheList{
     idNotifica:string
     ragioneSociale:string,
-    codiceFiscale:string,
+    codiceFiscale?:string,
     contestazione:boolean,
     tipoNotifica:string,
-    mese:number,
-    statoContestazione:number,
+    mese:number|string,
+    statoContestazione?:number,
     iun:string,
     costEuroInCentesimi:string,
     dataInvio:string,
