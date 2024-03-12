@@ -66,7 +66,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
        
     const [dataSelect, setDataSelect] = useState([]);
    
-    const headerNamesGrid = ['Ragione Sociale','Tipologia Fattura', 'Reg. Es. Pdf','ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale',''];    
+      
    
     const [data, setData] = useState([]);
 
@@ -335,10 +335,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                         <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
                     </Button>
             
-                </div>           
-                   
-               
-               
+                </div>            
             </div>
                     }    
                     
@@ -350,7 +347,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                         total={totalNotifiche}
                         page={page}
                         rows={rowsPerPage}
-                        headerNames={headerNamesGrid}
+                        headerNames={['Ragione Sociale','Tipologia Fattura', 'Reg. Es. Pdf','ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale','']}
                         apiGet={getRel}></GridCustom>
                  
                 </div>

@@ -65,8 +65,6 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                                             onClick={()=>{
                                                                 if(i === 0){
                                                                     apiGet(element[nameParameterApi]);
-                                                                    //setMainState((prev:MainState)=> ({...prev, ...{idRel:element[nameParameterApi]}}));
-                                                                    // navigate('/relpdf');
                                                                 }
                                                                                
                                                             } }

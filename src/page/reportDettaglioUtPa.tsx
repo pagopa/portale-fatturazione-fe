@@ -22,6 +22,7 @@ import ModalScadenziario from "../components/reportDettaglio/modalScadenziario";
 import { downloadNotifche, getContestazione, listaNotifiche } from "../api/apiSelfcare/notificheSE/api";
 import { downloadNotifchePagoPa, getContestazionePagoPa, listaNotifichePagoPa } from "../api/apiPagoPa/notificheSE/api";
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
+import GridCustom from "../components/reusableComponents/gridCustom";
 
 
 
@@ -51,6 +52,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const mesi = [
         {1:'Gennaio'},{2:'Febbraio'},{3:'Marzo'},{4:'Aprile'},{5:'Maggio'},{6:'Giugno'},
         {7:'Luglio'},{8:'Agosto'},{9:'Settembre'},{10:'Ottobre'},{11:'Novembre'},{12:'Dicembre'}];
+
+
+    const mesiGrid = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
         
     const tipoNotifica = [
         {"Digitali": 1},
@@ -124,7 +128,21 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         }else if(notifica.onere === 'SEND_CON'){
             newOnere = 'CONSOLIDATORE';
         }
-        return  {...notifica,...{onere:newOnere} };
+     
+        return {idNotifica:notifica.idNotifica,
+            contestazione:notifica.contestazione,
+            onere:notifica.onere,
+            recipientId:notifica.recipientId,
+            anno:notifica.anno,
+            mese:mesiGrid[Number(notifica.mese) - 1 ],
+            ragioneSociale:notifica.ragioneSociale,
+            tipoNotifica:notifica.tipoNotifica,
+            iun:notifica.iun,
+            dataInvio:new Date(notifica.dataInvio).toISOString().split('T')[0],
+            statoEstero:notifica.statoEstero,
+            cap:notifica.cap,
+            costEuroInCentesimi:(Number(notifica.costEuroInCentesimi) / 100).toFixed(2)+'€'
+        };
     });
 
    
@@ -270,11 +288,13 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     
     };
 
-    
+   
                 
     useEffect(() => {
-        
+      
         if(profilo.nonce !== ''){
+            getProdotti();
+            getProfili();
             if(profilo.auth === 'SELFCARE'){
                 getlistaNotifiche( realPageNumber, rowsPerPage);
                 
@@ -286,7 +306,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             
            
         } 
-    }, [profilo.nonce,rowsPerPage,page]);
+    }, [profilo.nonce]);
 
 
     const onButtonFiltra = () =>{
@@ -363,12 +383,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                         
                         
                  
-    useEffect(()=>{
-        if(profilo.nonce !== undefined){
-            getProdotti();
-            getProfili();
-        }
-    },[profilo.nonce]);
+   
                         
                         
     
@@ -419,14 +434,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
     };
                         
-                        
-    const onSelectContestazione = (notifica:NotificheList) =>{
-                      
-        getContestazioneModal(notifica.idNotifica);
-       
-    };
 
-    const mesiGrid = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
+    
                         
 
    
@@ -637,14 +646,10 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     <div className="col-3 ">
                         <Box sx={{width:'80%',marginLeft:'20px'}} >
                             <TextField
-                                //required={required}
-                                // helperText='Cap'
                                 fullWidth
                                 label='IUN'
                                 placeholder='IUN'
-                                //  disabled={makeTextInputDisable}
                                 value={bodyGetLista.iun || ''}
-                                // error={errorValidation}
                                 onChange={(e) => setBodyGetLista((prev)=>{
                                                         
                                     if(e.target.value === ''){
@@ -658,50 +663,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                             />
                         </Box>
                     </div>
-                   
-                    {/* 
-                    <div className="col-3 ">
-                        <Box  sx={{width:'80%', marginLeft:'20px'}} >
-                            <FormControl
-                                fullWidth
-                                size="medium"
-                            >
-                                <InputLabel
-                                    id="sea"
-                                >
-                                        Recapitista
-                                        
-                                </InputLabel>
-                                <Select
-                                    id="sea"
-                                    label='Recapitista'
-                                    labelId="search-by-label"
-                                    onChange={(e) => setBodyGetLista((prev)=> ({...prev, ...{profilo:e.target.value}}))}
-                                    value={bodyGetLista.profilo}
-                                    //IconComponent={SearchIcon}
-                                    disabled={status=== 'immutable' ? true : false}
-                                        
-                                >
-                                    {profili.map((el) => (
-                                        <MenuItem
-                                            key={Math.random()}
-                                            value={el}
-                                        >
-                                            {el}
-                                        </MenuItem>
-                                            
-                                    ))}
-                                            
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </div>
-                    */}
                 </div>
-                                            
-                                            
-                                            
-                                            
+                                                                        
                 <div className="row mt-5" >
                                             
                     <div className="col-3">
@@ -870,150 +833,18 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
                        
             <div className="mb-5">
-                <div style={{overflowX:'auto'}}>
-                    <Card sx={{width: '2000px'}}  >
-                        <Table >
-                            <TableHead sx={{backgroundColor:'#f2f2f2'}}>
-                                <TableRow>
-                                    <TableCell>
-                                                Contestazione
-                                    </TableCell>
-                                    <TableCell>
-                                                Onere
-                                    </TableCell>
-                                    <TableCell>
-                                                Recipient ID
-                                    </TableCell>
-                                    <TableCell>
-                                                Anno
-                                    </TableCell>
-                                    <TableCell>
-                                                Mese
-                                    </TableCell>
-                                    <TableCell>
-                                                Ragione Sociale
-                                    </TableCell>
-                                    <TableCell>
-                                                Tipo Notifica
-                                    </TableCell>
-                                    <TableCell sx={{width:'300px'}}>
-                                                IUN
-                                    </TableCell>
-                                    <TableCell >
-                                                Data Invio
-                                    </TableCell>
-                                    <TableCell>
-                                                Stato Estero
-                                    </TableCell>
-                                    <TableCell>
-                                                CAP
-                                    </TableCell>
-                                    <TableCell>
-                                                Costo
-                                    </TableCell>
-                                    <TableCell sx={{width:'140px'}}>
-                                               
-                                    </TableCell>
-                                
-                                </TableRow>
-                            </TableHead>
+                <GridCustom
+                    nameParameterApi='idNotifica'
+                    elements={notificheListWithOnere}
+                    changePage={handleChangePage}
+                    changeRow={handleChangeRowsPerPage} 
+                    total={totalNotifiche}
+                    page={page}
+                    rows={rowsPerPage}
+                    headerNames={['Contestazione', 'Onere', 'Recipient ID','Anno', 'Mese','Ragione Sociale', 'Tipo Notifica','IUN', 'Data invio','Stato estero', 'CAP', 'Costo', '']}
+                    apiGet={getContestazioneModal}></GridCustom>
 
-                            {notificheList.length === 0 ?
-                                <div className="" style={{height: '50px'}}>
-                                    
-
-                                </div> :
-                                <TableBody sx={{marginLeft:'20px'}}>
-                                    {notificheListWithOnere.map((notifica:NotificheList) =>{
-                        
-                                        return (
-                                        
-                                      
-                                            <TableRow key={notifica.idNotifica}>
-                                                <TableCell sx={{color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'}}
-                                                    onClick={()=>{
-                                                       
-                                                        onSelectContestazione(notifica); 
-                                                        
-                                                                        
-                                                    } }
-                                                >
-                                                    {notifica.contestazione}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {notifica.onere}
-                                                </TableCell>
-                                                <TableCell align="center">
-                                                    {notifica.recipientId}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {notifica.anno}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {mesiGrid[Number(notifica.mese) - 1 ]}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {notifica.ragioneSociale}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {notifica.tipoNotifica}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {notifica.iun}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {new Date(notifica.dataInvio).toISOString().split('T')[0]}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {notifica.cap}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {notifica.statoEstero}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {(Number(notifica.costEuroInCentesimi) / 100).toFixed(2)}€
-                                                </TableCell>
-                                                <TableCell  onClick={()=>{
-                                                   
-                                                    onSelectContestazione(notifica);
-                                                    
-                                                                     
-                                                } }>
-                                                    <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
-                                                </TableCell>
-                                                   
-                                           
-                                            </TableRow>
-                                        
-                                        );
-                                    } )}
-                                </TableBody>
-                            }
-                        </Table>
-                        
-                                                    
-                                                    
-                    </Card>
-                </div>
-                <div className="pt-3">
-                                                    
-                    <TablePagination
-                        sx={{'.MuiTablePagination-selectLabel': {
-                            display:'none',
-                            backgroundColor:'#f2f2f2'
-                           
-                        }}}
-                        component="div"
-                        page={page}
-                        count={totalNotifiche}
-                        rowsPerPage={rowsPerPage}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                    />  
-                </div>
-            </div>
-                                         
-                                                    
+            </div>             
             {/* MODAL */}
                                                     
             <ModalContestazione open={open} 
