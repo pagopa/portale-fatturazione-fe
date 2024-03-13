@@ -4,16 +4,15 @@ import SelectMese from "../components/reusableComponents/selectMese";
 import { Button, Typography } from "@mui/material";
 import SelectTipologiaFattura from "../components/rel/selectTipologiaFattura";
 import GridCustom from "../components/reusableComponents/gridCustom";
-import { BodyRel, Rel, RelPageProps } from "../types/typeRel";
+import { BodyRel, RelPageProps } from "../types/typeRel";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { manageError} from "../api/api";
 import { useNavigate } from "react-router";
-import { MainState } from "../types/typesGeneral";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 import DownloadIcon from '@mui/icons-material/Download';
 import { downloadListaRel, getListaRel, getSingleRel } from "../api/apiSelfcare/relSE/api";
 import { downloadListaRelPagopa, getListaRelPagoPa, getSingleRelPagopa } from "../api/apiPagoPa/relPA/api";
-
+import SelectStatoPdf from "../components/rel/selectStatoPdf";
 
 const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
@@ -35,28 +34,19 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     };
 
     const currentYear = (new Date()).getFullYear();
-
-
     const currentMonth = (new Date()).getMonth() + 1;
     const month = Number(currentMonth);
 
-
-   
-
-
-
-
-    
     const [bodyRel, setBodyRel] = useState<BodyRel>({
         anno:currentYear,
         mese:month,
         tipologiaFattura:null,
         idEnti:[],
-        idContratto:null
+        idContratto:null,
+        caricata:null
     });
 
     const  hiddenAnnullaFiltri = bodyRel.tipologiaFattura === null ; 
-
 
     // data ragione sociale
 
@@ -65,19 +55,12 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     const [totalNotifiche, setTotalNotifiche]  = useState(0);
        
     const [dataSelect, setDataSelect] = useState([]);
-   
-      
-   
     const [data, setData] = useState([]);
-
-   
 
     const getlistaRelEnte = async (nPage,nRows) => {
 
         if(profilo.auth === 'SELFCARE'){
             const {idEnti, ...newBody} = bodyRel;
-     
-      
             await  getListaRel(token,profilo.nonce,nPage, nRows, newBody)
                 .then((res)=>{
                     // ordino i dati in base all'header della grid
@@ -139,12 +122,14 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 });
         }            
     };
-
+   
     useEffect(()=>{
-        const realPage = page + 1;
-        getlistaRelEnte(realPage, rowsPerPage);
-    },[page, rowsPerPage]);
-
+        if(profilo.nonce !== ''){
+            const realPage = page + 1;
+            getlistaRelEnte(realPage, rowsPerPage);
+        }
+        
+    },[profilo.nonce]);
 
     const handleChangePage = (
         event: React.MouseEvent<HTMLButtonElement> | null,
@@ -152,14 +137,8 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     ) => {
      
         const realPage = newPage + 1;
-        if(profilo.auth === 'SELFCARE'){
-            getlistaRelEnte(realPage, rowsPerPage);
-            
-        }
-        if(profilo.auth === 'PAGOPA'){
-            // getlistaNotifichePagoPa(realPage,rowsPerPage);
-            //listaEntiNotifichePageOnSelect();
-        }
+       
+        getlistaRelEnte(realPage, rowsPerPage);
         setPage(newPage);
     };
                     
@@ -171,18 +150,9 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         setPage(0);
         const realPage = page + 1;
 
-        if(profilo.auth === 'SELFCARE'){
-            getlistaRelEnte(realPage,parseInt(event.target.value, 10));
-        }
-        if(profilo.auth === 'PAGOPA'){
-           
-            // getlistaNotifichePagoPa(realPage,parseInt(event.target.value, 10));
-            //listaEntiNotifichePageOnSelect();
-        }
-                            
+        getlistaRelEnte(realPage,parseInt(event.target.value, 10));
+                          
     };
-  
-
 
     // visulizzazione del pop up redirect dati di fatturazione
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
@@ -217,14 +187,8 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
               
             );
         }
-       
         
     };  
-
-    
-
-  
-
 
     const downloadListaRelExel = async() =>{
 
@@ -258,14 +222,10 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             }); 
             
         }
-
         
     };
- 
-
 
     return (
-
        
         <div className="mx-5">
             <div className="marginTop24 ">
@@ -282,6 +242,11 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                     <div  className="col-3">
                         <SelectTipologiaFattura values={bodyRel} setValue={setBodyRel}></SelectTipologiaFattura>
                     </div>
+                    <div className="col-3">
+                        <SelectStatoPdf values={bodyRel} setValue={setBodyRel}></SelectStatoPdf>
+                    </div>
+                </div>
+                <div className="row">
                     { profilo.auth === 'PAGOPA' &&
                         <div  className="col-3">
                             <MultiselectCheckbox 
@@ -292,13 +257,9 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                             ></MultiselectCheckbox>
                         </div>
                     }
-                  
-                   
-                    
                 </div>
                 
                 <div className="row mt-5">
-                    
                     <div className="col-1">
                         <Button onClick={()=>{
                             const realPage = page + 1;
@@ -313,7 +274,8 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                                 mese:month,
                                 tipologiaFattura:null,
                                 idEnti:[],
-                                idContratto:null
+                                idContratto:null,
+                                caricata:null
                             });
                             setData([]);
                         }} >Annulla Filtri</Button>
@@ -323,22 +285,18 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 <div className="mt-5 mb-5">
                     { data.length > 0  &&
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
-                 
                 <div>
                     <Button
                         disabled={false}
                         onClick={()=> {
                             downloadListaRelExel();
-                          
                         }}  >
                                   Download Risultati 
                         <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
                     </Button>
-            
                 </div>            
             </div>
                     }    
-                    
                     <GridCustom
                         nameParameterApi='idTestata'
                         elements={data}
@@ -349,17 +307,13 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                         rows={rowsPerPage}
                         headerNames={['Ragione Sociale','Tipologia Fattura', 'Reg. Es. Pdf','ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale','']}
                         apiGet={getRel}></GridCustom>
-                 
                 </div>
-           
             </div>
             <ModalRedirect
                 setOpen={setOpenModalRedirect} 
                 open={openModalRedirect}
                 sentence={`Per poter visulazzare il dettaglio REL è nesessario l'inserimento dei dati di fatturazione obbligatori:`}></ModalRedirect>
-      
         </div>
-
 
     );
 };

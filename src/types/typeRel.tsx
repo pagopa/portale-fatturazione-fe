@@ -15,7 +15,8 @@ export interface BodyRel{
     mese:number,
     tipologiaFattura:string|null,
     idEnti?:string[] | [],
-    idContratto: string | null
+    idContratto: string | null,
+    caricata: number|null
 } 
 
 export interface Rel {
