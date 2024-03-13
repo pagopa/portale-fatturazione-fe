@@ -39,7 +39,6 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
     }; 
 
     const validationTextAreaEmail = (element:string)=>{
-
         
         _YupPec.validate(element)
             .then(()=>{
@@ -52,7 +51,6 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
             } );
     }; 
 
-
     const hendleOnMouseOut = (e: React.SyntheticEvent<EventTarget>) =>{
         e.persist();
         if(label === 'Mail Pec'){
@@ -64,7 +62,6 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
         }
 
     };
-
 
     let makeTextInputDisable = true;
     if(mainState.statusPageDatiFatturazione === 'immutable'){
@@ -95,11 +92,6 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
                 return newState;
             } );}}
             onBlur={(e)=> hendleOnMouseOut(e)}
-            
-           
-      
-    
-      
         />
 
     );

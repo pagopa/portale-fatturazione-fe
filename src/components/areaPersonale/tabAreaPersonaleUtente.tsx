@@ -1,4 +1,4 @@
-import React, {useContext } from 'react';
+import {useContext } from 'react';
 import '../../style/areaPersonaleUtenteEnte.css';
 import { Box, InputLabel, Typography, Checkbox, FormControlLabel } from '@mui/material';
 import { red } from '@mui/material/colors';
@@ -7,12 +7,7 @@ import DataComponent from './data';
 import DynamicInsert from './dynamicInsert';
 import TextFieldComponent from './textField';
 import {AreaPersonaleContext} from '../../types/typesAreaPersonaleUtenteEnte';
-
 import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
-
-
-
-
 
 const TabAreaPersonaleUtente = () => {
     const {mainState,datiFatturazione,setDatiFatturazione, user} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
@@ -26,10 +21,6 @@ const TabAreaPersonaleUtente = () => {
 
         return getGiorno+'/'+getMese+'/'+getAnno;
     }
-
-
-    
-   
 
     const valueOptionRadioTipoOrdine = [
         {descrizione:'Dati ordine d\'acquisto', id:"1"},
@@ -49,15 +40,12 @@ const TabAreaPersonaleUtente = () => {
     return (
 
         <div className="ms-5 me-5 mb-5  bg-white rounded">
-            
             <div className="ms-4  me-4 pt-4 marginTop24">
-
                 <div>
                     <RadioComponent
                         options={valueOptionRadioTipoOrdine}
                         valueRadio={datiFatturazione.tipoCommessa}
                         keyObject='tipoCommessa'
-                      
                     />
                 </div>
 
@@ -76,22 +64,8 @@ const TabAreaPersonaleUtente = () => {
                                 keyObject='cup'
                                 dataValidation={{max:15,validation:'Validazione Mail'}}
                             />
-
                         </div>
                         {/* CUP end */}
-                        {/* CIG start 
-                    <div>
-                        <TextFieldComponent
-                            helperText="max 10 caratteri alfanumerici"
-                            label="CIG"
-                            placeholder="Inserisci il CIG"
-                            fullWidth={false}
-                            value={datiFatturazione.cig}
-                            keyObject='cig'
-                            dataValidation={{max:10,validation:'Max 10 caratteri'}}
-                        />
-                    </div>
-                    CIG end */}
                         {/* radio start  */}
                         <div>
                             <RadioComponent
@@ -102,12 +76,7 @@ const TabAreaPersonaleUtente = () => {
                             />
                         </div>
                     </Box>
-                  
-         
                     {/* radio start */}
-                    {/* Box tipo contratto start    
-          <SelectComponet inputLabel="Tipo Contratto:"  showIcon={false} status={statusPage} />
-           Box tipo contratto end */}
                     <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(1, 2fr)' }}>
                         <div>
                             <TextFieldComponent
@@ -119,13 +88,9 @@ const TabAreaPersonaleUtente = () => {
                                 value={datiFatturazione.pec}
                                 keyObject='pec'
                                 dataValidation={{max:15,validation:'Max 15 caratteri'}}
-                            
                             />
                         </div>
                     </Box>
-                   
-                   
-          
                 </Box>
                 <div />
                 {/* first box cap cig split radio  end */}
@@ -178,10 +143,8 @@ const TabAreaPersonaleUtente = () => {
                 <div className="mt-3">
                     <DynamicInsert status={mainState?.statusPageDatiFatturazione} arrElement={datiFatturazione.contatti} setData={setDatiFatturazione} />
                 </div>
-
                 {/* terzo box   end */}
                 {/*checkbox start */}
-                
                 <FormControlLabel  sx={{
                     marginTop:'24px',
                     '& .MuiFormControlLabel-label': {
@@ -213,18 +176,12 @@ const TabAreaPersonaleUtente = () => {
                         <InputLabel  sx={{ marginRight:'20px'}}  size={"normal"}>Data primo accesso</InputLabel>
                         {user === 'old' ? <Typography >{createDateFromString(parseProfilo.dataPrimo)}</Typography>: null}
                     </div>
-
                     <div className='d-flex'>
                         <InputLabel sx={{ marginRight:'20px'}}  size={"normal"}>Data ultimo accesso</InputLabel>
                         {user === 'old' ? <Typography >{createDateFromString(parseProfilo.dataUltimo)}</Typography>: null}
-                        
                     </div>
-        
-        
                 </div>
-
             </div>
-
         </div>
     );
 };

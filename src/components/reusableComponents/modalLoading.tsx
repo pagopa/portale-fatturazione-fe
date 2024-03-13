@@ -4,12 +4,6 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { ModalProps } from 'react-bootstrap';
 import Loader from './loader';
-import { useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router';
-
-
-
-
 
 const style = {
     position: 'absolute' as const,
@@ -30,7 +24,6 @@ const ModalLoading : React.FC<ModalProps> = ({setOpen, open}) => {
         if(reason !== 'backdropClick'){
             setOpen(false);
         }
-       
     };
         
     return (
@@ -41,8 +34,6 @@ const ModalLoading : React.FC<ModalProps> = ({setOpen, open}) => {
                 aria-describedby="transition-modal-description"
                 open={open}
                 onClose={handleClose}
-                
-               
             >
                 <Box sx={style}>
                     <div className='d-flex justify-content-center'>
