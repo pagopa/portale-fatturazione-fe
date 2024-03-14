@@ -4,7 +4,6 @@ import {useEffect} from 'react';
 import { LoginProps, MainState, ManageErrorResponse } from '../types/typesGeneral';
 import { getDatiModuloCommessa } from '../api/apiSelfcare/moduloCommessaSE/api';
 
-
 // Blank page utilizzata per l'accesso degli utenti tramite  Selfcare
 
 /*quando l'utente SELFCARE va al link https://uat.selfcare.pagopa.it/auth/login , procede con login es. (comune di Erba ) , viene fatto un redirect
@@ -15,7 +14,6 @@ da parte dell'utente SELFCARE
 
 */
 const Auth : React.FC<LoginProps> = ({setCheckProfilo, dispatchMainState}) =>{
- 
     
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -27,7 +25,6 @@ const Auth : React.FC<LoginProps> = ({setCheckProfilo, dispatchMainState}) =>{
     const [searchParams] = useSearchParams();
     const token = searchParams.get('selfcareToken');
 
-
     const navigate = useNavigate();
 
 type  Jwt = {
@@ -36,7 +33,6 @@ type  Jwt = {
 interface ParameterGetProfilo {
     data:Jwt[]
 }
-
 
 // terza chiamata fatta per verificare lo stato della commessa e eseguire azioni diverse a seconda del risultato 
 const getCommessa = async (tokenC, nonceC) =>{
@@ -97,7 +93,6 @@ const getProfilo = async (res:ParameterGetProfilo)=>{
                 profilo:storeProfilo.profilo, // profilo utilizzato per la gestione delle notifiche/contestazioni
                 nonce: storeProfilo.nonce
             }));
-                
               
             getCommessa(res.data[0].jwt, storeProfilo.nonce);
             setCheckProfilo(true);
@@ -113,7 +108,6 @@ const getProfilo = async (res:ParameterGetProfilo)=>{
             // manageError(err,navigate);
         });
 };
-
  
 // prima chiamata 
 const getSelfcare = async() =>{
@@ -134,12 +128,9 @@ const getSelfcare = async() =>{
     });
 };
 
-  
-
 useEffect(()=>{
     getSelfcare();
 },[]);
-    
    
 return (
     <></>

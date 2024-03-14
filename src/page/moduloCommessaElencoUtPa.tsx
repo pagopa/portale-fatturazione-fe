@@ -8,10 +8,7 @@ import { VisualModuliCommessaProps,  DataGridCommessa , GetAnniResponse, Respons
 import { ManageErrorResponse } from '../types/typesGeneral';
 import { getAnni, getListaCommessa, getListaCommessaFiltered, getListaCommessaOnAnnulla } from '../api/apiSelfcare/moduloCommessaSE/api';
 
-
-
 const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatchMainState,mainState}) => {
-
    
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
@@ -26,7 +23,6 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
 
     const [gridData, setGridData] = useState<DataGridCommessa[]>([]);
 
-
     // il componente data grid ha bisogno di un id per ogni elemento
     const fixResponseForDataGrid = (arr:DataGridCommessa[]) =>{
       
@@ -39,8 +35,6 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
         } );
         return result;
     };
-
-  
 
     // servizio che  popola la select anni
     const getAnniSelect = async () =>{
@@ -82,7 +76,6 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
         }
     },[]);
   
-  
     const handleButtonFiltra = () => {
         getListaCommessaFiltered(token , profilo.nonce, valueSelect).then((res:ResponseGetListaCommesse)=>{
             const finalData = fixResponseForDataGrid(res.data);
@@ -92,7 +85,6 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
             manageError(err, navigate);
         });
     };
-
 
     // on click sul button annulla filtri
     const handleButtonAnnullaFiltri = () => {
@@ -106,7 +98,6 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
         });
       
     };
-  
 
     return (
 
@@ -194,104 +185,3 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
     );
 };
 export default  ModuloCommessaElencoUtPa;
-
-/*
-const gridData:GridData[] = [{
-    id: 0,
-    Mese: 'Gennaio',
-    Lavorazione: 'aperta',
-    Stato: 'aperta/caricato',
-    'Not. Digitali': 1000,
-    'Not. Analog. AR. Naz.': 123,
-    'Not. Analog. AR. No Naz.': 234,
-    'Not. Analog. 890/1982': 1982,
-    'Tot. Mod. Commessa': '1200 €',
-},
-{
-    id: 1,
-    Mese: 'Gennaio',
-    Lavorazione: 'aperta',
-    Stato: 'aperta/caricato',
-    'Not. Digitali': 1000,
-    'Not. Analog. AR. Naz.': 123,
-    'Not. Analog. AR. No Naz.': 234,
-    'Not. Analog. 890/1982': 1982,
-    'Tot. Mod. Commessa': '1200 €',
-},
-{
-    id: 2,
-    Mese: 'Gennaio',
-    Lavorazione: 'aperta',
-    Stato: 'aperta/caricato',
-    'Not. Digitali': 1000,
-    'Not. Analog. AR. Naz.': 123,
-    'Not. Analog. AR. No Naz.': 234,
-    'Not. Analog. 890/1982': 1982,
-    'Tot. Mod. Commessa': '1200 €',
-},
-{
-    id: 4,
-    Mese: 'Gennaio',
-    Lavorazione: 'aperta',
-    Stato: 'aperta/caricato',
-    'Not. Digitali': 1000,
-    'Not. Analog. AR. Naz.': 123,
-    'Not. Analog. AR. No Naz.': 234,
-    'Not. Analog. 890/1982': 1982,
-    'Tot. Mod. Commessa': '1200 €',
-},
-{
-    id: 5,
-    Mese: 'Gennaio',
-    Lavorazione: 'aperta',
-    Stato: 'aperta/caricato',
-    'Not. Digitali': 1000,
-    'Not. Analog. AR. Naz.': 123,
-    'Not. Analog. AR. No Naz.': 234,
-    'Not. Analog. 890/1982': 1982,
-    'Tot. Mod. Commessa': '1200 €',
-},
-{
-    id: 6,
-    Mese: 'Gennaio',
-    Lavorazione: 'aperta',
-    Stato: 'aperta/caricato',
-    'Not. Digitali': 1000,
-    'Not. Analog. AR. Naz.': 123,
-    'Not. Analog. AR. No Naz.': 234,
-    'Not. Analog. 890/1982': 1982,
-    'Tot. Mod. Commessa': '1200 €',
-},{
-    id: 22,
-    Mese: 'Gennaio',
-    Lavorazione: 'aperta',
-    Stato: 'aperta/caricato',
-    'Not. Digitali': 1000,
-    'Not. Analog. AR. Naz.': 123,
-    'Not. Analog. AR. No Naz.': 234,
-    'Not. Analog. 890/1982': 1982,
-    'Tot. Mod. Commessa': '1200 €',
-},
-{
-    id: 7,
-    Mese: 'Gennaio',
-    Lavorazione: 'aperta',
-    Stato: 'aperta/caricato',
-    'Not. Digitali': 1000,
-    'Not. Analog. AR. Naz.': 123,
-    'Not. Analog. AR. No Naz.': 234,
-    'Not. Analog. 890/1982': 1982,
-    'Tot. Mod. Commessa': '1200 €',
-},
-{
-    id: 8,
-    Mese: 'Gennaio',
-    Lavorazione: 'aperta',
-    Stato: 'aperta/caricato',
-    'Not. Digitali': 1000,
-    'Not. Analog. AR. Naz.': 123,
-    'Not. Analog. AR. No Naz.': 234,
-    'Not. Analog. 890/1982': 1982,
-    'Tot. Mod. Commessa': '1200 €',
-}];
-*/

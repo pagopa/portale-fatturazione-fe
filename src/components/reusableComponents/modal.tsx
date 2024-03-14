@@ -5,7 +5,6 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { ModalProps } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
-
 const style = {
     position: 'absolute' as const,
     top: '50%',
@@ -16,14 +15,12 @@ const style = {
     boxShadow: 24,
     p: 4,
 };
-
 const BasicModal : React.FC<ModalProps> =({setOpen, open}) => {
-
+    
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
 
     const navigate = useNavigate();
-   
 
     const handleClose = () => setOpen(false);
 
@@ -33,12 +30,9 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open}) => {
         }else{
             navigate('/');
         }
-        
     };
-
     return (
         <div>
-        
             <Modal
                 open={open}
                 onClose={handleClose}
@@ -63,9 +57,7 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open}) => {
                             onClick={()=>handleEsci()}
                         >Esci</Button>
                     </div>
-                    
                 </Box>
-                
             </Modal>
         </div>
     );

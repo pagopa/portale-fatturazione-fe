@@ -6,8 +6,6 @@ interface SelecTipologiaProps{
     values:BodyRel
 }
 
-
-
 const SelectTipologiaFattura : React.FC<SelecTipologiaProps> = ({setValue, values}) =>{
 
     const tipologie = [
@@ -55,6 +53,3 @@ const SelectTipologiaFattura : React.FC<SelecTipologiaProps> = ({setValue, value
 };
 
 export default SelectTipologiaFattura;
-
-
-

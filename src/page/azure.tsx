@@ -26,15 +26,11 @@ const Azure : React.FC = () =>{
         await  instance.loginRedirect(loginRequest).catch((error) => console.log(error));
     };
 
-
- 
-
     useEffect(()=>{
         if ( inProgress === InteractionStatus.None && checkIfUserIsAutenticated !== 'PAGOPA' ) {
 
             handleLoginRedirect();
         }
-       
 
     },[instance, accounts, inProgress]);
 

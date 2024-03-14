@@ -28,9 +28,6 @@ const HeaderNavigationRel : React.FC = () =>{
               Rel 
             
             </Typography>
-       
-         
-         
         
         </div>
     );

@@ -20,9 +20,6 @@ import {  getDatiFatturazionePagoPa,
     modifyDatiFatturazionePagoPa,
     insertDatiFatturazionePagoPa, } from '../api/apiPagoPa/datiDiFatturazionePA/api';
 
-
-
-
 export const DatiFatturazioneContext = createContext<AreaPersonaleContext>({
     datiFatturazione:{
         idEnte:'',
@@ -60,8 +57,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
     console.log(mainState, 'DATI FATTURAZIONE');
     // set dello stato user , se l'user ha dati fatturazione === old altrimenti === new
     const [user, setUser] = useState('old');
-  
-   
    
     const [datiFatturazione, setDatiFatturazione] = useState<DatiFatturazione>({
         tipoCommessa:'',
@@ -78,8 +73,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         notaLegale:false
 
     });
-
-    
 
     // state creato per il tasto conferma , abilitato nel caso in cui tutti values sono true
     const [statusBottonConferma, setStatusButtonConferma] = useState<StateEnableConferma>({
@@ -98,9 +91,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
      || datiFatturazione.pec === ''
      || datiFatturazione.contatti.length === 0
     );
-  
-  
-
    
     // get dati fatturazione SELFCARE
     const getDatiFat = async () =>{
@@ -124,7 +114,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
             }
            
             handleModifyMainState({statusPageDatiFatturazione:'mutable', datiFatturazione:false});
-            
             
             setDatiFatturazione({
                 tipoCommessa:'',
@@ -162,7 +151,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
             setUser('new');
 
             handleModifyMainState({statusPageDatiFatturazione:'mutable'});
-           
             
             setDatiFatturazione({
                 tipoCommessa:'',
@@ -181,7 +169,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
             });
         });
     };
- 
 
     // se il nonce è presente viene chiamata la get dati fatturazione
     useEffect(()=>{
@@ -209,7 +196,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         }
     },[]);
 
-
     // funzione richiamata in entrambe le funzioni modify dati fatturazione lato selcare e pagopa
 
     const actionOnResponseModifyDatiFatturazione = () =>{
@@ -224,7 +210,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 action:'SHOW_MODULO_COMMESSA',
                 inserisciModificaCommessa: 'MODIFY'
             });
-           
         
             const statusApp = localStorage.getItem('statusApplication')||'{}';
             const parseStatusApp = JSON.parse(statusApp);
@@ -238,8 +223,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         }
 
     };
-
-   
 
     const hendleSubmitDatiFatturazione = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) =>{
         e.preventDefault();
@@ -274,11 +257,8 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                             navigate('/error');
                         }
                     });
-         
-
 
             }
-           
            
         }else{
             // 2 - se l'user NON ha I dati fatturazione
@@ -316,7 +296,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                         action:'SHOW_MODULO_COMMESSA',
                         datiFatturazione:true
                     });
-                    
                  
                 }).catch(err =>{
 
@@ -348,19 +327,10 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 });
                     
             }
-
-          
             
         }
-    
          
     };
-
-
-   
- 
-
-    
 
     return (
         <DatiFatturazioneContext.Provider
@@ -404,7 +374,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
               Conferma
 
                             </Button>
-
 
                         </div>
                     )}

@@ -7,16 +7,12 @@ import FormLabel from '@mui/material/FormLabel';
 import { RadioComponentProps,DatiFatturazione,OptinsRadio,AreaPersonaleContext }  from '../../types/typesAreaPersonaleUtenteEnte';
 import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
 
-
-
-
 const  RadioComponent: React.FC<RadioComponentProps> = (props) => {
     const {
         label, options, valueRadio,keyObject,
     } = props;
 
     const {mainState ,setDatiFatturazione, datiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
-
 
     let makeSplitRadioDisable = true;
     if(label ==='Split Paymet'){
@@ -37,10 +33,6 @@ const  RadioComponent: React.FC<RadioComponentProps> = (props) => {
             makeSplitRadioDisable = false;
         }
     }
- 
-   
-    
-
 
     return (
         <FormControl>

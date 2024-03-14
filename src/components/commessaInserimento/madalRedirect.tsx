@@ -20,7 +20,6 @@ const style = {
 const ModalRedirect : React.FC<ModalProps> =({setOpen, open, sentence}) => {
 
     const navigate = useNavigate();
-   
 
     const handleClose = () => setOpen(false);
 
@@ -57,8 +56,6 @@ const ModalRedirect : React.FC<ModalProps> =({setOpen, open, sentence}) => {
                             
                         </Typography>
                     </div>
-                    
-                   
                    
                     <div className='container_buttons_modal d-flex justify-content-center mt-5'>
                         <Button

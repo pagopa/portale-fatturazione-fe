@@ -27,14 +27,9 @@ const SelectMese : React.FC<SelectMeseProps> = ({setValue, values}) =>{
                                     
                         const value = Number(e.target.value);
                         setValue((prev)=> ({...prev, ...{mese:value}}));
-                    }}
-                                
-                                
-                    value={values.mese}
-                    //IconComponent={SearchIcon}
-                                
-                    disabled={status=== 'immutable' ? true : false}
-                                
+                    }}         
+                    value={values.mese}  
+                    disabled={status=== 'immutable' ? true : false}            
                 >
                     {mesi.map((el) => (
                                     
@@ -54,6 +49,3 @@ const SelectMese : React.FC<SelectMeseProps> = ({setValue, values}) =>{
 };
 
 export default SelectMese;
-
-
-

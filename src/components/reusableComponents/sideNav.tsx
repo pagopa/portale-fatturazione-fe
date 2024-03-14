@@ -18,7 +18,6 @@ import { MainState, SideNavProps } from '../../types/typesGeneral';
 import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
 import { getDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
 
-
 const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}) => {
 
     const navigate = useNavigate();
@@ -40,7 +39,6 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
     const getProfiloFromLocalStorage = localStorage.getItem('profilo') || '{}';
 
     const checkIfUserIsAutenticated = JSON.parse(getProfiloFromLocalStorage).auth;
-  
 
     const [selectedIndex, setSelectedIndex] = useState(0);
     
@@ -58,7 +56,6 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
                 });
                 localStorage.setItem('statusApplication', JSON.stringify(mainState));
             }
-           
            
         }
         
@@ -87,9 +84,6 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
         });
 
     };
-
- 
-
 
     const handleListItemClickModuloCommessa = async () => {
        
@@ -168,7 +162,6 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
         }
     };
 
-
     const handleListItemClickNotifiche = () => {
 
         navigate('/notifiche');
@@ -178,7 +171,6 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
         navigate('/rel');
      
     };
-    
     
     const currentLocation = location.pathname;
 
@@ -204,16 +196,12 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
         }
         
     },[currentLocation]);
-
-    
    
     const hideShowSidenav = location.pathname === '/auth' ||
                             location.pathname === '/azure' ||
                             location.pathname === '/auth/azure'||
                             location.pathname === '/azureLogin'||
                             !profilo.auth;
- 
-
 
     return (
         <>

@@ -6,8 +6,6 @@ import { useNavigate } from 'react-router';
 import { DataGridCommessa } from '../../types/typeModuloCommessaElenco';
 import { MainState, Params } from '../../types/typesGeneral';
 
-
-
 interface GridComponentProps {
     data: DataGridCommessa[],
     dispatchMainState:any,
@@ -27,7 +25,6 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
         });
     };
     const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre",'Gennaio'];
-
   
     const dataWithLabelFixed = data.map((singleObj)=>{
         const mese = month[singleObj.meseValidita -1 ];
@@ -43,8 +40,6 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
         columsSelectedGrid  = params.field;
         
     };
-
-
 
     const handleEvent: GridEventListener<'rowClick'> = (
         params:GridRowParams,
@@ -78,7 +73,6 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
         }
        
     };
-
     
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID', width: 90 },
@@ -89,7 +83,6 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
             headerName:'Mese',
             width: 120,
             renderCell: (param:Params) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.meseValidita}</a>
-            
 
         },
         {
@@ -145,9 +138,6 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
             ),
         }
     ];
-  
-   
-   
 
     return (
 

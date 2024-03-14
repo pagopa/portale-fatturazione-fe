@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useLocation } from 'react-router';
 import '../../style/areaPersonaleUtenteEnte.css';
 
-
 type LangCode = "it" | "en";
 type LinkType = "internal" | "external";
 type FooterLinksType = {
@@ -46,7 +45,6 @@ export default function FooterPostLogin() {
     
     const [ lang, setLang ] = useState<LangCode>("it"); 
     const location = useLocation();
- 
 
     const LANGUAGES = {
         it: {
@@ -84,8 +82,6 @@ export default function FooterPostLogin() {
         </>
     );
 
- 
-
     const postLoginLinks: Array<FooterLinksType> = [
         {
             label: "Informativa Privacy",
@@ -112,7 +108,6 @@ export default function FooterPostLogin() {
             linkType: "internal",
         },
     ];
-
 
     const preLoginLinks: PreLoginFooterLinksType = {
     // First column
@@ -288,4 +283,3 @@ export default function FooterPostLogin() {
 
     );
 }
-

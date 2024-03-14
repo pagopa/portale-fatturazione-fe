@@ -5,18 +5,13 @@ import YupString from '../../validations/string/index';
 import { InsModuloCommessaContext } from '../../types/typeModuloCommessaInserimento';
 import { InserimentoModuloCommessaContext } from '../../page/moduloCommessaInserimentoUtEn30';
 
-
-
-
 const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHidden, idTipoSpedizione, rowNumber}) => {
     const { setDatiCommessa,setDisableContinua, datiCommessa, mainState} = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
-
 
     const getStatusApplication = localStorage.getItem('statusApplication') || '{}';
     const statusApplication =  JSON.parse(getStatusApplication);
    
     const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre",'Gennaio'];
-    
     
     let mese = '';
     let anno = 2000;
@@ -37,7 +32,6 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
         mese = month[mon + 1 ];
 
     }
-    
 
     const meseAnno = <span className="fw-semibold"> {mese}/{anno}</span>;
 
@@ -49,7 +43,6 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
     useEffect(()=>{
         setTotaleNotifiche(input.nazionale + input.internazionale);
     },[input]);
- 
    
     const validationAllowNumberColumNazionale = (input:number, set:any) =>{
         YupString.matches(/^[0-9]*$/,  {
@@ -66,7 +59,6 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
             } );
     };
 
-
     const validationAllowNumberColumnInternazionale = (input:number, set:any) =>{
         YupString.matches(/^[0-9]*$/,  {
             message: "Non è possibile inserire numeri negatii",
@@ -81,8 +73,6 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
       
             } );
     };
- 
- 
 
     const hendleOnBlur = (e:React.FocusEvent<HTMLTextAreaElement | HTMLInputElement, Element>) =>{
         e.persist();
@@ -98,10 +88,7 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
         validationAllowNumberColumnInternazionale(num, setErrorInternazionale);
     };
 
-    
-
     const findValueNazione = (rowNumber : number) =>{
-
         
         return datiCommessa.moduliCommessa.filter(obj => obj.idTipoSpedizione === rowNumber)[0]?.numeroNotificheNazionali;
     };
@@ -114,10 +101,6 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
         return x; 
 
     };
-
-    
-   
-   
   
     return (
         <Grid
@@ -161,7 +144,6 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
                             value = 0;
                         }
                         setInput({...input, ...{nazionale: value}});
-
                       
                         setDatiCommessa((prevState:DatiCommessa)=>{
 
@@ -171,7 +153,6 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
                             const getsingleIdTipoSpedizione = prevState.moduliCommessa.filter((singleObj: ModuliCommessa)=>{
                                 return singleObj.idTipoSpedizione === idTipoSpedizione; 
                             });
-
                         
                             const setNotificheNazionali = {
                                 numeroNotificheNazionali: value,
@@ -184,8 +165,6 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
                             return newState;
 
                         });
-
-                       
                         
                     }}
                 />
@@ -221,7 +200,6 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
                                     const getsingleIdTipoSpedizione = prevState.moduliCommessa.filter((singleObj: ModuliCommessa)=>{
                                         return singleObj.idTipoSpedizione === idTipoSpedizione; 
                                     });
-        
                                 
                                     const setNotificheInternazionali = {
                                         numeroNotificheNazionali: getsingleIdTipoSpedizione[0].numeroNotificheNazionali,

@@ -7,7 +7,6 @@ import { getDatiConfigurazioneCommessa } from '../../api/apiSelfcare/moduloComme
 const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali, dataModifica, mainState}) => {
 
     const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre","Gennaio"];
-   
     
     const navigate = useNavigate();
     
@@ -39,9 +38,6 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
         mese = month[mon + 1 ];
 
     }
-   
-    
-    
   
     const [labelCategorie, setLabelCategorie] = useState<CategorieTotali[]>([
         {
@@ -55,7 +51,6 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
             descrizione: ''
         }]);
     const dataToInsert = <span className="fw-semibold"> {mese}/{anno}</span>;
-   
 
     const replaceDate = (arr:[], stringToRepace:string, stringToInsert:string) =>{
   
@@ -64,7 +59,6 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
             return singleObj;
         });
     };
-
 
     const getConfigurazione = async() =>{
         getDatiConfigurazioneCommessa(token, profilo.idTipoContratto, profilo.prodotto, profilo.nonce)
@@ -87,8 +81,6 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
         
     },[]);
 
-  
-
     const labelDigitale = labelCategorie.filter((obj) => obj.idCategoriaSpedizione === 2);
     const labelAnalogica = labelCategorie.filter((obj) => obj.idCategoriaSpedizione === 1);
 
@@ -97,8 +89,6 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
 
     const sum = (valueTotali[0]?.totaleValoreCategoriaSpedizione || 0) + (valueTotali[1]?.totaleValoreCategoriaSpedizione || 0);
     const sumFixed2Decimal = sum.toFixed(2).toString().replace('.', ',');
- 
-
 
     function createDateFromString(string:string){
         const getGiorno = new Date(string).getDate();
@@ -197,7 +187,6 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                     <div className='d-flex justify-content-end'>
                         <Typography sx={{fontWeight:'bold'}} >TOTALE MODULO COMMESSA NETTO IVA</Typography>
                     </div>
-
                     
                 </Grid>
                 <Grid
@@ -226,9 +215,6 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                         </div>
                     </div>
             }
-          
-
-
 
         </div>
     );

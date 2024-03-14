@@ -12,7 +12,6 @@ import { DatiModuloCommessaPdf,ModComPdfProps, ResponseDownloadPdf } from "../ty
 import { downloadModuloCommessaPdf, getModuloCommessaPdf } from "../api/apiSelfcare/moduloCommessaSE/api";
 import { downloadModuloCommessaPagoPaPdf, getModuloCommessaPagoPaPdf } from "../api/apiPagoPa/moduloComessaPA/api";
 
-
 const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
 
     const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre","Gennaio"];
@@ -78,11 +77,9 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
     interface ResponseGetPdfPagoPa {
         data:DataPdf
     }
-
  
     // richiamo questa funzione in entrambe le getPdf     selfcare     pagopa
     const toDoOnGetPdfSelfcarePagopa = (res:ResponseGetPdfPagoPa) =>{
-
 
         let final = [{
             totaleNotifiche: 0,
@@ -91,7 +88,6 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
             tipo:"",
             idTipoSpedizione: 0
         }];
-     
        
         const primo = res.data.datiModuloCommessa.find((obj:DatiCommessaPdf)=>obj.idTipoSpedizione === 3);
         const secondo = res.data.datiModuloCommessa.find((obj:DatiCommessaPdf)=>obj.idTipoSpedizione === 1);
@@ -106,8 +102,6 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
         localStorage.setItem("tipo", res.data.tipoCommessa);
     };
 
-   
-
     const getPdf = async() =>{
         getModuloCommessaPdf(token, statusApp.anno,statusApp.mese, profilo.nonce).then((res:ResponseGetPdfPagoPa)=>{
 
@@ -117,7 +111,6 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
             manageError(err, navigate);
         });  
     };
-
 
     const getPagoPdf = async() =>{
         getModuloCommessaPagoPaPdf(token, profilo.nonce,statusApp.mese,statusApp.anno,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto)
@@ -130,11 +123,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
             });  
     };
 
-  
-
     const toDoOnDownloadPdf = (res:ResponseDownloadPdf) =>{
-
-        
 
         const wrapper = document.getElementById('file_download');
         if(wrapper){
@@ -152,7 +141,6 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
         });   
     };
 
-
     const downlodPagoPaPdf = async()=>{
         downloadModuloCommessaPagoPaPdf(token,  profilo.nonce,statusApp.mese,statusApp.anno,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto,tipoCommessa).then((res:ResponseDownloadPdf)=>{
          
@@ -161,7 +149,6 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
             manageError(err, navigate);
         }); 
     };
-
  
     useEffect(()=>{
 
@@ -176,7 +163,6 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
             }
           
         }
-      
       
     },[profilo.nonce]);
 
@@ -205,7 +191,6 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
    
     const arrWithlabelDateMonth = replaceDate(dataPdf.datiModuloCommessa,'[data]',string );
 
-
     const onIndietroButton = () =>{
 
         const newStatusApp = {...statusApp, ...{userClickOn:'GRID'}};
@@ -213,9 +198,6 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
         localStorage.setItem('statusApplication', JSON.stringify(newStatusApp));
         navigate('/8'); 
     };
-  
-
-   
 
     return (
         <>
@@ -242,13 +224,9 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
                     
                     </Typography>
                     <Typography  variant="caption">/ {mese}</Typography>
-                 
-                 
                 
                 </div>
                 <div className="bg-white m-5 p-5">
-
-            
 
                     <div className=" ">
                         {/* nascondo il pdf */}
@@ -291,7 +269,6 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
                                 </div>
                        
                             </div>
-
                     
                             {arrWithlabelDateMonth.map((singleObj:DatiModuloCommessaPdf)=>{
                                 return (
@@ -299,7 +276,6 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
                                         <div className="col-7">
                                       
                                             <Typography sx={{display:'flex',textAlign:'left'}} variant="caption">{singleObj.tipo}</Typography>
-                                     
                                         
                                         </div>
                                         <div className="col-5">
@@ -326,7 +302,6 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
                                         <div className="col-7">
       
                                             <Typography sx={{display:'flex',textAlign:'left'}} variant="caption">{singleObj.descrizione}</Typography>
-     
         
                                         </div>
                                         <div className="col-5">
@@ -343,7 +318,6 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
                                                         <Typography  variant="caption">{singleObj.Totale}</Typography>
                                                     </div>
                                                 </div>
-                                               
                                               
                                             </div>
                                         </div>
@@ -353,17 +327,11 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
                     
                         </div>
                     </div>
-               
 
                 </div>
                 <div className="d-flex justify-content-center mb-5">
                     <Button onClick={()=> toPDF()}  variant="contained">Scarica</Button>
                 </div>
-
-
-               
-                
-            
 
             </div>
            
@@ -371,4 +339,3 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
     );
 };
 export default ModuloCommessaPdf;
-

@@ -11,7 +11,6 @@ import { useEffect , useState} from 'react';
 import { BodyListaNotifiche } from '../../types/typesGeneral';
 import { flagContestazione } from '../../api/apiSelfcare/notificheSE/api';
 
-
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
@@ -26,8 +25,6 @@ const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({m
     const navigate = useNavigate();
 
     const [fgContestazione, setFgContestazione] = useState<FlagContestazione[]>([]);
-    
-    
 
     const getFlagContestazione =  async() => {
         await flagContestazione(token, profilo.nonce )

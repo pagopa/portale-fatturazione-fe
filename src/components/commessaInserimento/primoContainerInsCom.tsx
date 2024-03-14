@@ -3,7 +3,6 @@ import { Grid , Typography} from '@mui/material';
 import LabelComponent from './label';
 import { PrimoContainerInsComProps } from '../../types/typeModuloCommessaInserimento';
 
-
 const PrimoContainerInsCom : React.FC<PrimoContainerInsComProps> = () => {
 
     const getStatusApplication = localStorage.getItem('statusApplication') || '{}';
@@ -13,7 +12,6 @@ const PrimoContainerInsCom : React.FC<PrimoContainerInsComProps> = () => {
     const profilo =  JSON.parse(getProfilo);
    
     const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre", "Gennaio"];
-    
 
     let mese = '';
     let anno = 2000;
@@ -35,14 +33,10 @@ const PrimoContainerInsCom : React.FC<PrimoContainerInsComProps> = () => {
             mese = month[mon + 1 ];
             // setMainState((prev:any) =>({...prev, ...{mese:mese,anno:anno}}));
         }
-     
 
     }
-    
-   
 
     const data = `${mese}/${anno}`;
-
    
     let exampleTipoContratto = "PAC";
     if(profilo.idTipoContratto === 1){

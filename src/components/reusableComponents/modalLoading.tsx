@@ -4,7 +4,6 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { ModalProps } from 'react-bootstrap';
 import Loader from './loader';
-
 const style = {
     position: 'absolute' as const,
     top: '50%',
@@ -15,20 +14,14 @@ const style = {
     boxShadow: 24,
     p: 4,
 };
-
 const ModalLoading : React.FC<ModalProps> = ({setOpen, open}) => {
-
-  
     const handleClose = (event:object, reason: string) =>{
-       
         if(reason !== 'backdropClick'){
             setOpen(false);
         }
     };
-        
     return (
         <div>
-        
             <Modal
                 aria-labelledby="transition-modal-title"
                 aria-describedby="transition-modal-description"
@@ -51,13 +44,7 @@ const ModalLoading : React.FC<ModalProps> = ({setOpen, open}) => {
                             <Loader sentence={'Downloading...'}></Loader> 
                         </div> 
                     </div>
-                  
-                  
-                  
-                  
-                    
                 </Box>
-                
             </Modal>
         </div>
     );
