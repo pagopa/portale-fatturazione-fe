@@ -13,6 +13,8 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { downloadListaRel, getListaRel, getSingleRel } from "../api/apiSelfcare/relSE/api";
 import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, getListaRelPagoPa, getSingleRelPagopa } from "../api/apiPagoPa/relPA/api";
 import SelectStatoPdf from "../components/rel/selectStatoPdf";
+import ModalLoading from "../components/reusableComponents/modalLoading";
+import { saveAs } from "file-saver";
 
 const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
@@ -57,8 +59,10 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     const [dataSelect, setDataSelect] = useState([]);
     const [data, setData] = useState([]);
 
-    const getlistaRelEnte = async (nPage,nRows) => {
+    const [getListaRelRunning, setGetListaRelRunning] = useState(false);
 
+    const getlistaRel = async (nPage,nRows) => {
+        setGetListaRelRunning(true);
         if(profilo.auth === 'SELFCARE'){
             const {idEnti, ...newBody} = bodyRel;
             await  getListaRel(token,profilo.nonce,nPage, nRows, newBody)
@@ -85,6 +89,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                     
                     setData(orderDataCustom);
                     setTotalNotifiche(res.data.count);
+                    setGetListaRelRunning(false);
                 }).catch((error)=>{
                     
                     manageError(error, navigate);
@@ -115,6 +120,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 
                     setData(orderDataCustom);
                     setTotalNotifiche(res.data.count);
+                    setGetListaRelRunning(false);
                 }).catch((error)=>{
                 
                     manageError(error, navigate);
@@ -125,7 +131,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     useEffect(()=>{
         if(profilo.nonce !== ''){
             const realPage = page + 1;
-            getlistaRelEnte(realPage, rowsPerPage);
+            getlistaRel(realPage, rowsPerPage);
         }
         
     },[profilo.nonce]);
@@ -137,7 +143,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
      
         const realPage = newPage + 1;
        
-        getlistaRelEnte(realPage, rowsPerPage);
+        getlistaRel(realPage, rowsPerPage);
         setPage(newPage);
     };
                     
@@ -149,12 +155,10 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         setPage(0);
         const realPage = page + 1;
 
-        getlistaRelEnte(realPage,parseInt(event.target.value, 10));
+        getlistaRel(realPage,parseInt(event.target.value, 10));
                           
     };
 
-    // visulizzazione del pop up redirect dati di fatturazione
-    const [openModalRedirect, setOpenModalRedirect] = useState(false);
    
     const getRel = async(idRel) => {
 
@@ -190,40 +194,47 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     };  
 
     const downloadListaRelExel = async() =>{
-
+        setShowLoading(true);
         if(profilo.auth === 'SELFCARE'){
 
             const {idEnti, ...newBody} = bodyRel;
             await downloadListaRel(token,profilo.nonce,newBody).then((res)=>{
-                const link = document.createElement('a');
-                link.href = "data:text/plain;base64," + res.data.documento;
-                link.setAttribute('download', `Lista Regolare esecuzione mese di riferimento ${mesiGrid[bodyRel.mese]}.xlsx`); //or any other extension
-                document.body.appendChild(link);
-              
-                link.click();
-                document.body.removeChild(link);
-           
+                saveAs("data:text/plain;base64," + res.data.documento,`Lista Regolare esecuzione mese di riferimento ${mesiGrid[bodyRel.mese]}.xlsx` );
+                setShowLoading(false);
             }).catch((err)=>{
-                console.log(err);
+                manageError(err,navigate);
             }); 
         }else{
             await downloadListaRelPagopa(token,profilo.nonce,bodyRel).then((res)=>{
-                const link = document.createElement('a');
-                link.href = "data:text/plain;base64," + res.data.documento;
-                link.setAttribute('download', `Lista Regolare esecuzione mese di riferimento ${mesiGrid[bodyRel.mese]}.xlsx`); //or any other extension
-                document.body.appendChild(link);
-              
-                link.click();
-                document.body.removeChild(link);
-           
+                saveAs("data:text/plain;base64," + res.data.documento,`Lista Regolare esecuzione mese di riferimento ${mesiGrid[bodyRel.mese]}.xlsx` );
+                setShowLoading(false);
             }).catch((err)=>{
-                console.log(err);
+                manageError(err,navigate);
             }); 
             
         }
         
     };
 
+
+
+    const downloadListaPdfPagopa = async() =>{
+        setShowLoading(true);
+        await downloadListaRelPdfZipPagopa(token,profilo.nonce,bodyRel)
+            .then(response => response.blob())
+            .then(blob => {
+                saveAs(blob,'Lista PDF Reg. Es..zip' );
+                setShowLoading(false);
+            })
+            .catch(err => {
+                manageError(err,navigate);
+            });
+    };
+
+    
+    // visulizzazione del pop up redirect dati di fatturazione
+    const [openModalRedirect, setOpenModalRedirect] = useState(false);
+    const [showLoading, setShowLoading] = useState(false);
  
     return (
        
@@ -261,10 +272,13 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 
                 <div className="row mt-5">
                     <div className="col-1">
-                        <Button onClick={()=>{
-                            const realPage = page + 1;
-                            getlistaRelEnte(realPage, rowsPerPage);
-                        }} variant="contained">Filtra</Button>
+                        <Button
+                            onClick={()=>{
+                                const realPage = page + 1;
+                                getlistaRel(realPage, rowsPerPage);
+                            }}
+                            variant="contained"
+                            disabled={getListaRelRunning}>Filtra</Button>
                     </div>
                     {!hiddenAnnullaFiltri && 
                     <div className="col-2">
@@ -278,7 +292,9 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                                 caricata:null
                             });
                             setData([]);
-                        }} >Annulla Filtri</Button>
+                        }} 
+                        disabled={getListaRelRunning}
+                        >Annulla Filtri</Button>
                     </div>
                     }
                 </div>
@@ -288,20 +304,20 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 <div>
                     {profilo.auth === 'PAGOPA'&&  
                     <Button
-                        disabled={false}
+                        disabled={getListaRelRunning}
                         onClick={()=> {
-                            downloadListaRelPdfZipPagopa(token,profilo.nonce,bodyRel);
+                            downloadListaPdfPagopa();
                         }}  >
-                                  Download Lista PDF 
+                                  Download documenti firmati 
                         <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
                     </Button>
                     }
                     <Button
-                        disabled={false}
+                        disabled={getListaRelRunning}
                         onClick={()=> {
                             downloadListaRelExel();
                         }}  >
-                                  Download Risultati 
+                                  Download risultati 
                         <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
                     </Button>
                 </div>            
@@ -316,18 +332,26 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                         page={page}
                         rows={rowsPerPage}
                         headerNames={['Ragione Sociale','Tipologia Fattura', 'Reg. Es. Pdf','ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale','']}
-                        apiGet={getRel}></GridCustom>
+                        apiGet={getRel}
+                        disabled={getListaRelRunning}></GridCustom>
                 </div>
             </div>
             <ModalRedirect
                 setOpen={setOpenModalRedirect} 
                 open={openModalRedirect}
-                sentence={`Per poter visulazzare il dettaglio REL è nesessario l'inserimento dei dati di fatturazione obbligatori:`}></ModalRedirect>
+                sentence={`Per poter visulazzare il dettaglio REL è nesessario l'inserimento dei dati di fatturazione obbligatori:`}>
+            </ModalRedirect>
+
+            <ModalLoading 
+                open={showLoading} 
+                setOpen={setShowLoading} >
+            </ModalLoading>
         </div>
 
     );
 };
 
 export default RelPage;
+
 
 

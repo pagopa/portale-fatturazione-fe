@@ -1,7 +1,7 @@
 import axios from "axios";
 import { url } from "../../api";
 import { BodyRel } from "../../../types/typeRel";
-import { saveAs } from "file-saver";
+
 
 export const getListaRelPagoPa = async (token:string, nonce:string , page:number, pageSize:number, body: BodyRel) => {
     const response =  await axios.post(`${url}/api/rel/pagopa?page=${page}&pageSize=${pageSize}&nonce=${nonce}`,
@@ -54,42 +54,19 @@ export const getRelPdfFirmatoPagoPa = async ( token:string ,nonce:string , id:st
     return response;
 };
 
-/*export const downloadListaRelPdfZipPagopa = async (token:string, nonce:string , body: BodyRel) => {
-    const response =  await axios.post(`${url}/api/rel/pagopa/firma/download?nonce=${nonce}`,
-        body,
-        {responseType: 'arraybuffer',
-            headers: {
-                Authorization: 'Bearer ' + token,
-                Accept:"application/zip",
-            },
-       
-        }
-    );
-    return response;
-};*/
 
-export const downloadListaRelPdfZipPagopa = (token:string, nonce:string , body: any) => {
-   
-    fetch(`${url}/api/rel/pagopa/firma/download?nonce=${nonce}`, 
+export const downloadListaRelPdfZipPagopa = async (token:string, nonce:string , body: any) => {
+  
+    const response = await fetch(`${url}/api/rel/pagopa/firma/download?nonce=${nonce}`, 
         {
-            headers: {Authorization: 'Bearer '+token, 'Content-type':'application/json'},
+            headers: {
+                Authorization: 'Bearer '+token,
+                'Content-type':'application/json'
+            },
             method: 'POST',
             body:JSON.stringify(body),
-        })
-        .then(response => response.blob())
-        .then(blob => {
-
-            saveAs(blob,'Lista PDF Reg. Es..zip' );
-            /* const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.download = 'Lista PDF Reg. Es..zip'; 
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            */
-        })
-        .catch(error => {
-            console.error('Error:', error);
         });
+    
+    return response;
 };
 
