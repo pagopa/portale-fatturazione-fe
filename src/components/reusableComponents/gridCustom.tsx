@@ -1,6 +1,5 @@
 import { Card, Table, TableBody, TableCell, TableHead, TablePagination, TableRow } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { useNavigate } from "react-router";
 
 interface GridCustomProps {
     elements:object[],
@@ -88,8 +87,7 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                             
                 </Card>
             </div>
-            <div className="pt-3">
-                                                    
+            <div className="pt-3">                           
                 <TablePagination
                     sx={{'.MuiTablePagination-selectLabel': {
                         display:'none',
@@ -102,8 +100,24 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                     rowsPerPage={rows}
                     onPageChange={changePage}
                     onRowsPerPageChange={changeRow}
-                    disabled={disabled}
-                />  
+                    SelectProps={{
+                        disabled: disabled
+                    }}
+                    backIconButtonProps={
+                        disabled
+                            ? {
+                                disabled: disabled
+                            }
+                            : undefined
+                    }
+                    nextIconButtonProps={
+                        disabled
+                            ? {
+                                disabled: disabled
+                            }
+                            : undefined
+                    }
+                ></TablePagination>
             </div>
         </div>
         

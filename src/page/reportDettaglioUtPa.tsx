@@ -8,7 +8,7 @@ import { ReportDettaglioProps, NotificheList, FlagContestazione, Contestazione, 
 import { useNavigate } from "react-router";
 import { BodyListaNotifiche } from "../types/typesGeneral";
 import ModalContestazione from '../components/reportDettaglio/modalContestazione';
-import ModalInfo from "../components/reportDettaglio/modalInfo";
+import ModalInfo from "../components/reusableComponents/modalInfo";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import DownloadIcon from '@mui/icons-material/Download';
 import MultiSelectStatoContestazione from "../components/reportDettaglio/multiSelectGroupedBy";
@@ -671,7 +671,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     rows={rowsPerPage}
                     headerNames={['Contestazione', 'Onere', 'Recipient ID','Anno', 'Mese','Ragione Sociale', 'Tipo Notifica','IUN', 'Data invio','Stato estero', 'CAP', 'Costo', '']}
                     apiGet={getContestazioneModal}
-                    disabled={false}></GridCustom>
+                    disabled={getNotificheWorking}></GridCustom>
             </div>             
             {/* MODAL */}                                 
             <ModalContestazione open={open} 
@@ -685,7 +685,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
             <ModalInfo
                 open={openModalInfo} 
-                setOpen={setOpenModalInfo} >
+                setOpen={setOpenModalInfo}
+                sentence={'Non è possibile creare una contestazione.'} >
             </ModalInfo>
 
             <ModalLoading 
