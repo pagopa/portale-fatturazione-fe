@@ -10,15 +10,12 @@ import {useState, useEffect} from 'react';
 import { BodyListaNotifiche } from '../../types/typesGeneral';
 import { listaEntiNotifichePage } from '../../api/apiSelfcare/notificheSE/api';
 
-
-
-const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({mainState, setBodyGetLista, dataSelect, setDataSelect}) => {
+const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetLista, dataSelect, setDataSelect}) => {
 
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
     const navigate = useNavigate();
-
     
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
@@ -28,8 +25,6 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({mainState, 
 
     const [textValue, setTextValue] = useState('');
 
-    
-
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
 
     useEffect(()=>{
@@ -38,9 +33,6 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({mainState, 
             setValueAutocomplete([]);
         }
     }, [dataSelect]);
-
-   
-
 
     // servizio che popola la select con la checkbox
     const listaEntiNotifichePageOnSelect = async () =>{
@@ -63,10 +55,8 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({mainState, 
             }
         }, 800);
         return () => clearTimeout(timer);
-
         
     },[textValue]);
-
    
     return (
         <Autocomplete
@@ -118,4 +108,3 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({mainState, 
 };
 
 export default MultiselectCheckbox;
-

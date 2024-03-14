@@ -15,6 +15,7 @@ import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, getListaRelPagoPa
 import SelectStatoPdf from "../components/rel/selectStatoPdf";
 import ModalLoading from "../components/reusableComponents/modalLoading";
 import { saveAs } from "file-saver";
+import ModalInfo from "../components/reusableComponents/modalInfo";
 
 const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
@@ -60,6 +61,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     const [data, setData] = useState([]);
 
     const [getListaRelRunning, setGetListaRelRunning] = useState(false);
+    const [disableDownloadListaPdf, setDisableListaPdf] = useState(true);
 
     const getlistaRel = async (nPage,nRows) => {
         setGetListaRelRunning(true);
@@ -97,7 +99,10 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         }else{
             await  getListaRelPagoPa(token,profilo.nonce,nPage, nRows, bodyRel)
                 .then((res)=>{
-                // ordino i dati in base all'header della grid
+                    // controllo che tutte le rel abbiano il pdf caricato, se TRUE abilito il button download
+                    const checkIfAllCaricata = res.data.relTestate.every(v => v.caricata === 1);
+                    setDisableListaPdf(checkIfAllCaricata);
+                    // ordino i dati in base all'header della grid
                     const orderDataCustom = res.data.relTestate.map((obj)=>{
 
                         // inserire come prima chiave l'id se non si vuol renderlo visibile nella grid
@@ -136,6 +141,12 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         
     },[profilo.nonce]);
 
+    const onButtonFiltra = () =>{
+        setPage(0);
+        setRowsPerPage(10);
+        getlistaRel(1,10); 
+    };
+
     const handleChangePage = (
         event: React.MouseEvent<HTMLButtonElement> | null,
         newPage: number,
@@ -169,7 +180,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 if(res.data.datiFatturazione === true){
                     navigate('/relpdf');
                 }else{
-                    setOpenModalRedirect(false);
+                    setOpenModalRedirect(true);
                 }
             }).catch((err)=>{
                 manageError(err, navigate);
@@ -182,7 +193,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 if(res.data.datiFatturazione === true){
                     navigate('/relpdf');
                 }else{
-                    setOpenModalRedirect(false);
+                    setOpenModalInfo(true);
                 }
             }).catch((err)=>{
                 manageError(err, navigate);
@@ -217,7 +228,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     };
 
 
-
+  
     const downloadListaPdfPagopa = async() =>{
         setShowLoading(true);
         await downloadListaRelPdfZipPagopa(token,profilo.nonce,bodyRel)
@@ -231,10 +242,14 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             });
     };
 
+  
+
     
     // visulizzazione del pop up redirect dati di fatturazione
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
     const [showLoading, setShowLoading] = useState(false);
+    const [openModalInfo, setOpenModalInfo] = useState(false);
+
  
     return (
        
@@ -274,8 +289,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                     <div className="col-1">
                         <Button
                             onClick={()=>{
-                                const realPage = page + 1;
-                                getlistaRel(realPage, rowsPerPage);
+                                onButtonFiltra();
                             }}
                             variant="contained"
                             disabled={getListaRelRunning}>Filtra</Button>
@@ -304,7 +318,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 <div>
                     {profilo.auth === 'PAGOPA'&&  
                     <Button
-                        disabled={getListaRelRunning}
+                        disabled={getListaRelRunning  || !disableDownloadListaPdf}
                         onClick={()=> {
                             downloadListaPdfPagopa();
                         }}  >
@@ -346,6 +360,12 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 open={showLoading} 
                 setOpen={setShowLoading} >
             </ModalLoading>
+
+            <ModalInfo  
+                open={openModalInfo} 
+                setOpen={setOpenModalInfo}
+                sentence={`Non è possibile visualizzare il dettaglio dell'elemento selezionato `}>
+            </ModalInfo>
         </div>
 
     );

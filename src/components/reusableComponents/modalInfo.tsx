@@ -16,11 +16,9 @@ const style = {
     p: 4,
 };
 
-const ModalInfo : React.FC<ModalProps> = ({setOpen, open}) => {
-
+const ModalInfo : React.FC<ModalProps> = ({setOpen, open, sentence}) => {
    
     const handleClose = () => setOpen(false);
-
 
     return (
         <div>
@@ -38,12 +36,11 @@ const ModalInfo : React.FC<ModalProps> = ({setOpen, open}) => {
                         </Typography>
                         
                     </div>
-                    <div className='d-flex justify-content-center'>
+                    <div className='d-flex justify-content-center text-center'>
                         <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Non è possibile creare una contestazione.
+                            {sentence}
                         </Typography>
                     </div>
-                   
                    
                     <div className='container_buttons_modal d-flex justify-content-center mt-3'>
                         <Button 
