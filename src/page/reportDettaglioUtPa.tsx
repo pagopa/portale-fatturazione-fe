@@ -20,7 +20,7 @@ import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import GridCustom from "../components/reusableComponents/gridCustom";
 
 const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
-    
+
     const navigate = useNavigate();
     
     const getToken = localStorage.getItem('token') || '{}';
@@ -44,7 +44,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         {1:'Gennaio'},{2:'Febbraio'},{3:'Marzo'},{4:'Aprile'},{5:'Maggio'},{6:'Giugno'},
         {7:'Luglio'},{8:'Agosto'},{9:'Settembre'},{10:'Ottobre'},{11:'Novembre'},{12:'Dicembre'}];
 
-
     const mesiGrid = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
         
     const tipoNotifica = [
@@ -54,7 +53,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         {"Analogico RS Nazionali": 4}, 
         {"Analogico RS Internazionali": 5}, 
         {"Analogico 890":6}];
-            
             
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [profili, setProfili] = useState([]);
@@ -73,8 +71,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         idEnti:[],
         recipientId:null
     });
-
-   
             
     const [contestazioneSelected, setContestazioneSelected] = useState<Contestazione>({ 
         risposta:true,
@@ -104,7 +100,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             mese: 0
         }
     });
-
     
     // Modifico l'oggetto notifica per fare il binding dei dati nel componente GRIDCUSTOM
     const notificheListWithOnere = notificheList.map((notifica) =>{
@@ -208,7 +203,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalNotifiche, setTotalNotifiche]  = useState(0);
     const realPageNumber = page + 1;
-    
          
     const getlistaNotifiche = async (nPage:number, nRow:number) => {
         // elimino idEnti dal paylod della get notifiche lato selfcare
@@ -318,7 +312,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 manageError(err,navigate);
             }));
     };
-                        
                 
     const getContestazioneModal = async(idNotifica:string) =>{
 
@@ -352,7 +345,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             }));
         }
     };
-                        
 
     const downloadNotificheOnDownloadButton = async () =>{
         if(profilo.auth === 'SELFCARE'){
@@ -397,9 +389,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const [open, setOpen] = useState(false);
     const [openModalInfo, setOpenModalInfo] = useState(false);
     const [showLoading, setShowLoading] = useState(false);
-    const [showModalScadenziario, setShowModalScadenziario ] = useState(false);
-    
-            
+    const [showModalScadenziario, setShowModalScadenziario ] = useState(false);   
     return (
         <div className="mx-5">
             {/*title container start */}
@@ -680,7 +670,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     page={page}
                     rows={rowsPerPage}
                     headerNames={['Contestazione', 'Onere', 'Recipient ID','Anno', 'Mese','Ragione Sociale', 'Tipo Notifica','IUN', 'Data invio','Stato estero', 'CAP', 'Costo', '']}
-                    apiGet={getContestazioneModal}></GridCustom>
+                    apiGet={getContestazioneModal}
+                    disabled={false}></GridCustom>
             </div>             
             {/* MODAL */}                                 
             <ModalContestazione open={open} 
