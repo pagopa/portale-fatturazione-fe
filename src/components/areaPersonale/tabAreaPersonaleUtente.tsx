@@ -11,7 +11,6 @@ import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
 
 const TabAreaPersonaleUtente = () => {
     const {mainState,datiFatturazione,setDatiFatturazione, user} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
-
    
     function createDateFromString(string:string){
         const getGiorno = new Date(string).getDate();
@@ -34,8 +33,6 @@ const TabAreaPersonaleUtente = () => {
 
     const getProfilo =  localStorage.getItem('profilo') || '{}';
     const parseProfilo = JSON.parse(getProfilo);
-  
-  
 
     return (
 

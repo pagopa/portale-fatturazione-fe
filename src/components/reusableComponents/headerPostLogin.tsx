@@ -14,12 +14,9 @@ type JwtUser = {
 
 export default function HeaderPostLogin() {
 
-
     const location  = useLocation();
-    
 
     const getDataUser = localStorage.getItem('profilo')|| '{}';
-    
 
     const dataUser = JSON.parse(getDataUser);
     const pagoPALink = {
@@ -60,13 +57,10 @@ export default function HeaderPostLogin() {
         instance.loginRedirect(loginRequest).catch((error) => console.log(error));
     };
 
-
     const handleLogoutRedirect = () => {
         
         instance.logoutRedirect().catch((error) => console.log(error));
     };
-
-
 
     const navigate = useNavigate();
 
@@ -74,12 +68,9 @@ export default function HeaderPostLogin() {
 
     const checkIfUserIsAutenticated = JSON.parse(getProfiloFromLocalStorage).auth;
 
-   
-
     const hideShowHeaderLogin =  location.pathname === '/auth' ||
                                  location.pathname === '/azure' ||
                                  location.pathname === '/auth/azure'; 
-  
     
     const statusUser = getDataUser === '{}' ? false : user;
     return (
@@ -96,10 +87,6 @@ export default function HeaderPostLogin() {
                     
                     onLogin={handleLoginRedirect}
                     onLogout={() => {
-
-
-                        
-                        
 
                         if(checkIfUserIsAutenticated === 'PAGOPA'){
                             // handleLogoutRedirect();

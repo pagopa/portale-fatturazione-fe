@@ -18,8 +18,6 @@ const SecondoContainerInsCom : React.FC = () => {
 
     const { totale } = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
 
-   
-
     const getIdByTipo = (string:string, array:ArrayTipologieCommesse[]) =>{
       
         const getAllObjs = array.map((singleObj)=>{
@@ -39,13 +37,11 @@ const SecondoContainerInsCom : React.FC = () => {
     const getCategoria = async () =>{
         await getCategoriaSpedizione(token , profilo.nonce).then((res:ResponseCategorieSpedizione ) => {
          
-         
             setArrTipoSpedizione({
                 idSpedizioneDigitale :getIdByTipo('Digitale',res.data),
                 idSpedizioneAnalog890 :  getIdByTipo('Analog. L. 890/82',res.data),
                 idSpedizioneAnalogAR : getIdByTipo('Analog. A/R',res.data),
             });
-          
             
         }).catch((err:ManageErrorResponse) =>{
             manageError(err, navigate);
@@ -58,10 +54,6 @@ const SecondoContainerInsCom : React.FC = () => {
         }
         
     },[profilo.nonce]);
-
-  
-
-
   
     return (
         <div className="m-3 pl-5 ">
@@ -115,7 +107,6 @@ const SecondoContainerInsCom : React.FC = () => {
                     <div className='d-flex justify-content-end'>
                         <Typography sx={{fontWeight:'bold'}}> TOTALE</Typography >
                     </div>
-
                     
                 </Grid>
 

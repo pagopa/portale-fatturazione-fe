@@ -11,7 +11,6 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import { downloadDocumentoListaDatiFatturazionePagoPa, listaDatiFatturazionePagopa } from "../api/apiPagoPa/datiDiFatturazionePA/api";
 
-
 const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainState}) =>{
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
@@ -20,7 +19,6 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
     const profilo =  JSON.parse(getProfilo);
 
     const navigate = useNavigate();
-    
 
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [profili, setProfili] = useState(['']);
@@ -29,7 +27,6 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
     const [gridData, setGridData] = useState([]);
 
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
-
 
     useEffect(()=>{
 
@@ -47,7 +44,6 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
 
     },[]);
 
-
     useEffect(()=>{
         if(bodyGetLista.descrizione !== '' || bodyGetLista.prodotto !== '' || bodyGetLista.profilo !== ''){
             setStatusAnnulla('show');
@@ -55,10 +51,6 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
             setStatusAnnulla('hidden');
         }
     },[bodyGetLista]);
-
-   
-
-    
 
     const getProdotti = async() => {
         await getTipologiaProdotto(token,profilo.nonce )
@@ -82,8 +74,6 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
             }));
     };
 
-    
-
     const getListaDatifatturazione = async(body:BodyListaDatiFatturazione) =>{
         await listaDatiFatturazionePagopa(body ,token,profilo.nonce)
             .then((res)=>{
@@ -96,7 +86,6 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
             })); 
     };
 
-
     useEffect(()=>{
         console.log(profilo, 'profilo');
         if(profilo.nonce !== undefined){
@@ -107,12 +96,6 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
        
         }
     }, [profilo.nonce]);
-
-   
-
-    
-
-
 
     const onDownloadButton = async() =>{
         await downloadDocumentoListaDatiFatturazionePagoPa(token,profilo.nonce, bodyGetLista).then((res:ResponseDownloadListaFatturazione) => {
@@ -133,17 +116,12 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
         });
     };
 
-    
-
-
-
     let columsSelectedGrid = '';
     const handleOnCellClick = (params:Params) =>{
       
         columsSelectedGrid  = params.field;
         
     };
-
 
     const handleEvent: GridEventListener<'rowClick'> = (
         params:GridRowParams,
@@ -153,8 +131,6 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
      
         // l'evento verrà eseguito solo se l'utente farà il clik sul 
         if(columsSelectedGrid  === 'ragioneSociale' || columsSelectedGrid === 'action' ){
-
-        
 
             localStorage.setItem('profilo', JSON.stringify({
                 ...profilo,
@@ -169,10 +145,6 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
         }
        
     };
-
-
-    
-    
       
     const columns: GridColDef[] = [
         { field: 'ragioneSociale', headerName: 'Ragione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.ragioneSociale}</a>},
@@ -199,7 +171,6 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
         }
 
     ];
-
 
     return(
         <div className="mx-5">

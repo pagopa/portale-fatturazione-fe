@@ -16,7 +16,6 @@ const ErrorPage : React.FC = () =>{
        
         <div className='container d-flex align-items-center justify-content-center ' style={{height: '400px'}}>
             <div>
-
            
                 <div >
                     <Box sx={{textAlign:'center', paddingTop:'24px'}} >
@@ -35,7 +34,6 @@ const ErrorPage : React.FC = () =>{
             </div>
     
         </div>
-    
       
     );
 };

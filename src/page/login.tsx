@@ -7,9 +7,7 @@ import {MonogramPagoPACompany} from '@pagopa/mui-italia';
 
 import { LoginProps } from '../types/typesGeneral';
 
-
 // pagina non utilizzata nell'applicazione, probabilmete verra utilizzata in seguito
-
 
 const LoginPage : React.FC<LoginProps> = () =>{
 
@@ -17,8 +15,6 @@ const LoginPage : React.FC<LoginProps> = () =>{
 
     const getDataUser = localStorage.getItem('dati')|| '{}';
     const dataUser = JSON.parse(getDataUser);
-   
-  
  
     return (
         <div className='"d-flex justify-content-center"'>
@@ -67,10 +63,7 @@ const LoginPage : React.FC<LoginProps> = () =>{
                 
                 <Button variant="outlined">Continua</Button>
                
-                
-               
             </div>
-           
 
         </div>
     );

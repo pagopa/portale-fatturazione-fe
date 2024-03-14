@@ -10,7 +10,6 @@ import {DynamicInsertProps,DatiFatturazione,Email,AreaPersonaleContext}  from '.
 import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
 import { _YupEmail} from '../../validations/email/index';
 
-
 const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
 
     const {datiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
@@ -18,7 +17,6 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
     const {status, arrElement, setData} = props;
     const [element, setElement] = useState('');
     const [validation, setValidation] = useState(false);
-
 
     const handleSubmit = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
@@ -40,7 +38,6 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
         e.persist();
        
         _YupEmail.validate(element).then(( )=>{
-              
           
             if(arrElement.length === 0 && element === ''){
                 setValidation(true);
@@ -99,7 +96,6 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
 
     return (
         <div>
-
 
             <div className='d-flex'>
              
@@ -177,8 +173,6 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
                     );
                 })}
             </div>
-
-        
 
         </div>
 

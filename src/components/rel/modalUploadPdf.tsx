@@ -18,9 +18,6 @@ const style = {
 
 const ModalUploadPdf : React.FC<ModalProps> =({setOpen, open}) => {
 
-
-  
-
     const handleClose = () =>{
        
         setOpen(false);

@@ -5,7 +5,6 @@ import { SelectUltimiDueAnniProps } from "../../types/typesGeneral";
 
 const SelectUltimiDueAnni : React.FC<SelectUltimiDueAnniProps> = ({setValue, values}) =>{
 
-
     // prendo gli ultimi 2 anni dinamicamente
    
     const getCurrentFinancialYear = () => {

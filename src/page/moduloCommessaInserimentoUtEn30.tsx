@@ -20,8 +20,6 @@ import { getModuloCommessaPagoPa, modifyDatiModuloCommessaPagoPa } from '../api/
 import { getDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
 import { getDatiFatturazionePagoPa } from '../api/apiPagoPa/datiDiFatturazionePA/api';
 
-
-
 export const InserimentoModuloCommessaContext = createContext<InsModuloCommessaContext>({
     datiCommessa: {
         moduliCommessa: [
@@ -50,7 +48,6 @@ export const InserimentoModuloCommessaContext = createContext<InsModuloCommessaC
    
 });
 
-
 const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps> = ({mainState, dispatchMainState}) => {
 
     const getToken = localStorage.getItem('token') || '{}';
@@ -70,7 +67,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
             value:valueObj
         });
     };
-
     
     const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre",'Gennaio'];
 
@@ -80,10 +76,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     const [openModalDatiFatturazione, setOpenModalDatiFatturazione] = useState(false);
     const handleOpenModalDatiFatt = () => setOpenModalDatiFatturazione(true);
 
-
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
-   
-   
 
     const [datiCommessa, setDatiCommessa] = useState<DatiCommessa>( {
         moduliCommessa: [
@@ -108,7 +101,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
           
         ]
     });
-  
     
     const [totaliModuloCommessa, setTotaliModuloCommessa] = useState<ResponsTotaliInsModuloCommessa[]>([
         {
@@ -125,10 +117,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     const [dataMod, setDataModifica] = useState('');
     const [buttonModifica, setButtonMofica] = useState(false);
     // visualizza modulo cmmessa from grid 
-   
-
- 
-   
 
     const handleGetDettaglioModuloCommessa = async () =>{
 
@@ -221,8 +209,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
             }
         });
     };
-
-   
   
     useEffect(()=>{
         // 
@@ -230,7 +216,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
             // SELFCARE
             if(profilo.auth !== 'PAGOPA'){
-
                 
                 handleGetDettaglioModuloCommessa();
                 getDatiFat();
@@ -243,7 +228,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
         }
       
     },[profilo.nonce]);
-   
 
     useEffect(()=>{
         if(token === undefined){
@@ -287,7 +271,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
     // funzione utilizzata con la response sul click modifica/insert modulo commessa , sia utente selcare che pagopa
     const toDoOnPostModifyCommessa = (res:ResponseDettaglioModuloCommessa) =>{
-
       
         if(mainState.inserisciModificaCommessa === 'MODIFY'){
             handleModifyMainState({
@@ -295,7 +278,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 statusPageInserimentoCommessa:'immutable',
                 statusPageDatiFatturazione:'immutable',
             });
-           
           
             setDataModifica(res.data.dataModifica);
            
@@ -327,7 +309,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
         }  
     };
 
-
     const hendlePostModuloCommessa = async () =>{
 
         await insertDatiModuloCommessa(datiCommessa, token, profilo.nonce)
@@ -339,7 +320,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 manageError(err, navigate); 
             });
     };
-
 
     const hendleModifyDatiModuloCommessaPagoPa = async() =>{
         // probabilmente questo verra modificato con l'agginta del flag fatturabile
@@ -359,7 +339,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
             });
     };
 
-
     const OnButtonContinua = () =>{
         if(profilo.auth === 'PAGOPA'){
             hendleModifyDatiModuloCommessaPagoPa();
@@ -368,7 +347,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
             hendlePostModuloCommessa();
         }
     };
-   
 
     const hendleOnButtonModificaModuloCommessa = () => {
         handleModifyMainState({statusPageInserimentoCommessa:'mutable'});
@@ -396,15 +374,12 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
         actionTitle =  <Typography variant="h4"> Modifica modulo commessa</Typography>;
     }
    
-
-   
     let indexStepper = 0;
     if(mainState.inserisciModificaCommessa === 'INSERT' && mainState.action !== 'HIDE_MODULO_COMMESSA' ){
         indexStepper = 1;
     }else if(mainState.action === 'HIDE_MODULO_COMMESSA'){
         indexStepper = 2;
     }
-
   
     /*const hiddenShowHorizontalStepper = (
         mainState.inserisciModificaCommessa === 'INSERT' &&
@@ -413,9 +388,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
          mainState.inserisciModificaCommessa === 'MODIFY' && 
          mainState.modifica === true);*/
     const hiddenShowHorizontalStepper = mainState.inserisciModificaCommessa === 'INSERT';
-            
-
-   
 
     const hideShowButtonModifica =  mainState.statusPageInserimentoCommessa === 'immutable' &&
                                          mainState.action !== 'HIDE_MODULO_COMMESSA' &&
@@ -461,8 +433,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                         Indietro
     
                     </ButtonNaked>
-                    
-                    
                     
                     <Typography sx={{ fontWeight:cssPathModuloComm, marginLeft:'20px'}} variant="caption">
                         <ViewModuleIcon sx={{paddingBottom:'3px'}}  fontSize='small'></ViewModuleIcon>
@@ -540,7 +510,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                     <Button onClick={()=>navigate('/pdf')} variant="contained">Vedi anteprima</Button>
                 </div> : null
             }
-          
            
             {/* Nascondo il dettaglio fatturazione fino al click continua */}
             {mainState.action === 'HIDE_MODULO_COMMESSA' ?

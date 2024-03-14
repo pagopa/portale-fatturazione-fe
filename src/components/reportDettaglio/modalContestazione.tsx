@@ -40,22 +40,16 @@ CON => consolidatore (selfcare -> tutti gli enti)
     },[]);
  
    */
-   
 
     const navigate = useNavigate();
     
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
 
-
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
 
-
-
     const [enableCreaContestazione, setEnableCreaContestazione] = useState(true);
-    
- 
 
     const requiredString = (string:string , nomeTextBox:string) =>{
         
@@ -69,7 +63,6 @@ CON => consolidatore (selfcare -> tutti gli enti)
          
         });
     };
-   
 
     // reset dei dati del modal ogni qual volta viene chiuso 
     useEffect(()=>{
@@ -108,12 +101,6 @@ CON => consolidatore (selfcare -> tutti gli enti)
         setErrNoteEnte(false);
     },[open]);
 
-   
-   
-   
-
-   
-
     const [tipoContestazioni, setTipoContestazioni] = useState<TipoContestazione[]>([]);
 
     // get delle tipologie delle contestazioni che popolano la select 
@@ -128,15 +115,12 @@ CON => consolidatore (selfcare -> tutti gli enti)
             }));
     };
 
-
     useEffect(()=>{
         if(profilo.nonce !== undefined){
             getTipoConestazioni();
           
         }
     },[profilo.nonce]);
-
-
 
     const creaContestazione = async () => {
 
@@ -145,7 +129,6 @@ CON => consolidatore (selfcare -> tutti gli enti)
             tipoContestazione:contestazioneSelected.contestazione.tipoContestazione,
             noteEnte:contestazioneSelected.contestazione.noteEnte
         };
-
         
         await createContestazione(token, profilo.nonce,body)
             .then(()=>{
@@ -156,8 +139,6 @@ CON => consolidatore (selfcare -> tutti gli enti)
                 manageError(err,navigate);
             }));
     };
-
-   
 
     const modifyContestazioneFun = async (action:string) => {
         let body;
@@ -191,7 +172,6 @@ CON => consolidatore (selfcare -> tutti gli enti)
 
         }
         
-        
         await modifyContestazioneEnte(token, profilo.nonce, body).then((res)=>{
             setOpen(false);
             funGetNotifiche(1,10);
@@ -201,8 +181,6 @@ CON => consolidatore (selfcare -> tutti gli enti)
         }));
 
     };
-
-
 
     const modifyContestazioneFunPagoPa = async(action:string) => {
         let body = {};
@@ -232,8 +210,6 @@ CON => consolidatore (selfcare -> tutti gli enti)
             };
         }
 
-       
-
         await modifyContestazioneEntePagoPa(token, profilo.nonce, body).then((res)=>{
             setOpen(false);
             funGetNotifichePagoPa(1,10);
@@ -244,7 +220,6 @@ CON => consolidatore (selfcare -> tutti gli enti)
     };
 
     const [errNoteEnte, setErrNoteEnte] = useState(false);
-
 
     const handleOpen = () => {
         setOpen(true);
@@ -270,11 +245,9 @@ CON => consolidatore (selfcare -> tutti gli enti)
     // ente puo modificare la nota ente?
     const noModifica = contestazioneSelected.modifica;
 
-
     const readOnlyNotaContestazione = (
         stato !== 1 && stato !== 3) ||
           contestazioneSelected.modifica === false;
-    
 
     const rispostaEnteIsHidden =  stato === 1 ||
      (stato === 2 && rispostaEnte === null ) || 
@@ -310,7 +283,6 @@ CON => consolidatore (selfcare -> tutti gli enti)
     (stato === 7 && noteRecapitista === null) ||
     (stato === 8 && noteRecapitista === null) ||
     (stato === 9 && noteRecapitista === null); 
-    
 
     const supportSendReadOnly = profilo.auth !== 'PAGOPA' ||
      stato === 9||
@@ -336,7 +308,6 @@ CON => consolidatore (selfcare -> tutti gli enti)
     stato === 8 ||
     stato === 9 ||
     profilo.auth !== 'PAGOPA';
-
 
     const hiddenConsRec =   stato === 1 ||
     stato === 2 ||
@@ -401,14 +372,12 @@ CON => consolidatore (selfcare -> tutti gli enti)
         labelChiusdi_send = 'Modifica e rifiuta contestazione';
     }
 
-
     let labelRispondiAccettaEnteRecCons = "Rispondi e accetta contestazione SEND";
     if(stato === 7 ){
         labelRispondiAccettaEnteRecCons = 'Accetta risposta SEND';
     }else if(noRisposta === false){
         labelRispondiAccettaEnteRecCons = 'Accetta risposta SEND';
     }
-    
    
     return (
         <div>

@@ -33,8 +33,7 @@ const SelectStatoPdf : React.FC<SelecTipologiaPdf> = ({setValue, values}) =>{
                     }}         
                     value={values.caricata ? values.caricata.toString() :''}                  
                 >
-                    {statoPdf.map((el,i) => (
-                                    
+                    {statoPdf.map((el,i) => (       
                         <MenuItem
                             key={i}
                             value={i.toString()}

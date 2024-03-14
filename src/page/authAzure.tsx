@@ -6,7 +6,6 @@ import {useState, useEffect} from 'react';
 import { useNavigate } from "react-router";
 import { AuthAzureProps, MainState } from "../types/typesGeneral";
 
-
 // Blank Page utilizzata per l'autenticazione Azure e le conseguenti chiamate di accesso pagoPA
 // e salvataggio del profilo nlla local storage
 const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
@@ -17,12 +16,10 @@ const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
             value:valueObj
         });
     };
- 
     
     const navigate = useNavigate();
 
     const { instance, inProgress, accounts } = useMsal();
-   
    
     const [apiData, setApiData] = useState(null);
     const [tokens, setTokens] = useState({});
@@ -39,7 +36,6 @@ const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
                     // Acquire token silent success
                     const accessToken = accessTokenResponse.accessToken;
                     const idToken = accessTokenResponse.idToken;
-               
 
                     setTokens({access_token:accessToken, id_token:idToken});
                   
@@ -53,15 +49,12 @@ const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
         }
     }, [instance, accounts, inProgress, apiData]);
 
-
     useEffect(()=>{
         if(Object.values(tokens).length > 0){
             postPagoPa();
         }
 
     },[tokens]);
-
-
   
     const postPagoPa = () =>{
         pagopaLogin(tokens).then((res)=>{
@@ -83,7 +76,6 @@ const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
 
     };
 
-
     type  Jwt = {
         jwt:string
     }
@@ -91,12 +83,10 @@ const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
         data:Jwt
     }
 
-
     const getProfilo = async (res:ParameterGetProfiloAzure)=>{
       
         await getAuthProfilo(res.data.jwt)
             .then(resp =>{
-              
                
                 const storeProfilo = resp.data;
                 localStorage.setItem('profilo', JSON.stringify({
@@ -110,7 +100,6 @@ const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
                     jwt:res.data.jwt,
                     nonce: storeProfilo.nonce
                 }));
-                
               
                 handleModifyMainState({ruolo:resp.data.ruolo,action:'LISTA_DATI_FATTURAZIONE'});
 
@@ -123,7 +112,6 @@ const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
                 //manageError(err, navigate);
             });
     };
-
   
     return (
         <>

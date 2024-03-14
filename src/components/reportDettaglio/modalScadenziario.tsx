@@ -21,13 +21,11 @@ const style = {
     p: 4,
 };
 
-
 interface ModalScadenziario {
     setOpen:any,
     open:boolean,
     nonce:string
 }
-
 
 interface Scadenziario {
     annoContestazione: number,
@@ -46,7 +44,6 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce})
     const handleClose = () => setOpen(false);
 
     const [datiScadenziario, setDatiScadenziario] = useState<Scadenziario[] | []>([]);
-
     
     const getScadenziario = async () => {
 
@@ -64,7 +61,6 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce})
         getScadenziario();
     },[]);
 
-
     return (
         <div>
         
@@ -81,7 +77,6 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce})
                             <Typography  id="modal-modal-title" variant="h6" component="h2">
                                 Scadenzario
                             </Typography>
-                   
                           
                         </div>
                         <div>
@@ -121,7 +116,6 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce})
                     </div>
                     
                 </Box>
-             
                 
             </Modal>
         </div>
