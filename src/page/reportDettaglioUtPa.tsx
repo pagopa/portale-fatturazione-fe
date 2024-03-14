@@ -19,8 +19,6 @@ import { downloadNotifchePagoPa, getContestazionePagoPa, listaNotifichePagoPa } 
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import GridCustom from "../components/reusableComponents/gridCustom";
 
-
-
 const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     
     const navigate = useNavigate();

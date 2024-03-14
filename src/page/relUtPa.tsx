@@ -11,8 +11,12 @@ import { useNavigate } from "react-router";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 import DownloadIcon from '@mui/icons-material/Download';
 import { downloadListaRel, getListaRel, getSingleRel } from "../api/apiSelfcare/relSE/api";
-import { downloadListaRelPagopa, getListaRelPagoPa, getSingleRelPagopa } from "../api/apiPagoPa/relPA/api";
+import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, getListaRelPagoPa, getSingleRelPagopa } from "../api/apiPagoPa/relPA/api";
 import SelectStatoPdf from "../components/rel/selectStatoPdf";
+import FileSaver from 'file-saver';
+import { saveAs } from "file-saver";
+import JSZip from 'jszip';
+import JSZipUtils from "jszip-utils";
 
 const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
@@ -46,7 +50,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         caricata:null
     });
 
-    const  hiddenAnnullaFiltri = bodyRel.tipologiaFattura === null ; 
+    const  hiddenAnnullaFiltri = bodyRel.tipologiaFattura === null && bodyRel.idEnti?.length === 0 && bodyRel.caricata === null; 
 
     // data ragione sociale
 
@@ -65,7 +69,6 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 .then((res)=>{
                     // ordino i dati in base all'header della grid
                     const orderDataCustom = res.data.relTestate.map((obj)=>{
-
                         // inserire come prima chiave l'id se non si vuol renderlo visibile nella grid
                         // 'id serve per la chiamata get dettaglio dell'elemento selezionato nella grid
                         return {
@@ -225,6 +228,38 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         
     };
 
+   
+
+    const downloadPdfZipPagopa = async() =>{
+        await downloadListaRelPdfZipPagopa(token,profilo.nonce,bodyRel).then((res)=>{
+            console.log('working in progress');
+            /*
+            const base64EncodedStr = btoa(unescape(encodeURIComponent(res.data)));
+            const zip = new JSZip(base64EncodedStr);
+            const fileContent = zip.file("someFileInZip.pdf").asText();
+            console.log({base64EncodedStr });
+           
+            const blob = new Blob([res.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+            // Use FileSaver.js to save the Blob as a file
+            FileSaver.saveAs(blob, 'WorkSheet.zip');
+     
+           
+            const zip = new JSZip();
+            zip.file("Hello.pdf", "data:text/plain;base64,"+res.data);
+           
+        
+            zip.generateAsync({type:"blob"})
+                .then(function(content) {
+                // see FileSaver.js
+                    saveAs(content, "example.zip");
+                });
+         */
+        }).catch((err)=>{
+            console.log(err);
+        }); 
+    };
+
     return (
        
         <div className="mx-5">
@@ -246,7 +281,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                         <SelectStatoPdf values={bodyRel} setValue={setBodyRel}></SelectStatoPdf>
                     </div>
                 </div>
-                <div className="row">
+                <div className="row mt-5">
                     { profilo.auth === 'PAGOPA' &&
                         <div  className="col-3">
                             <MultiselectCheckbox 
@@ -289,6 +324,14 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                     <Button
                         disabled={false}
                         onClick={()=> {
+                            downloadPdfZipPagopa();
+                        }}  >
+                                  Download Lista PDF 
+                        <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
+                    </Button>
+                    <Button
+                        disabled={false}
+                        onClick={()=> {
                             downloadListaRelExel();
                         }}  >
                                   Download Risultati 
@@ -319,3 +362,5 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 };
 
 export default RelPage;
+
+

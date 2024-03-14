@@ -8,11 +8,11 @@ interface SelecTipologiaPdf{
 
 const SelectStatoPdf : React.FC<SelecTipologiaPdf> = ({setValue, values}) =>{
 
-    const statoPdf = {
-        1: 'Non Firmato',
-        2: 'Caricato',
-        3: 'Invalidato'
-    };
+    const statoPdf = [
+        'Non Caricata',
+        'Firmata',
+        'Invalidato'
+    ];
     return (
         <Box sx={{width:'80%', marginLeft:'20px'}}  >
             <FormControl
@@ -22,24 +22,22 @@ const SelectStatoPdf : React.FC<SelecTipologiaPdf> = ({setValue, values}) =>{
                 <InputLabel
                     id="sea"
                 >
-                                Reg. Es. Pdf  
+                               Stato Pdf Reg. Es. 
                 </InputLabel>
                 <Select
                     id="RegPdf"
                     label='Seleziona Prodotto'
                     labelId="search-by-label"
                     onChange={(e) =>{
-                        setValue((prev)=> ({...prev, ...{caricata:e.target.value}}));
-                    }}
-                               
-                    value={values.caricata || ''}
-                             
+                        setValue((prev)=> ({...prev, ...{caricata:Number(e.target.value)}}));
+                    }}         
+                    value={values.caricata ? values.caricata.toString() :''}                  
                 >
-                    {Object.values(statoPdf).map((el,i) => (
+                    {statoPdf.map((el,i) => (
                                     
                         <MenuItem
                             key={i}
-                            value={el}
+                            value={i.toString()}
                         >
                             {el}
                         </MenuItem>
