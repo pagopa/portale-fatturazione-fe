@@ -13,10 +13,6 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { downloadListaRel, getListaRel, getSingleRel } from "../api/apiSelfcare/relSE/api";
 import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, getListaRelPagoPa, getSingleRelPagopa } from "../api/apiPagoPa/relPA/api";
 import SelectStatoPdf from "../components/rel/selectStatoPdf";
-import FileSaver from 'file-saver';
-import { saveAs } from "file-saver";
-import JSZip from 'jszip';
-import JSZipUtils from "jszip-utils";
 
 const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
@@ -228,38 +224,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         
     };
 
-   
-
-    const downloadPdfZipPagopa = async() =>{
-        await downloadListaRelPdfZipPagopa(token,profilo.nonce,bodyRel).then((res)=>{
-            console.log('working in progress');
-            /*
-            const base64EncodedStr = btoa(unescape(encodeURIComponent(res.data)));
-            const zip = new JSZip(base64EncodedStr);
-            const fileContent = zip.file("someFileInZip.pdf").asText();
-            console.log({base64EncodedStr });
-           
-            const blob = new Blob([res.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-
-            // Use FileSaver.js to save the Blob as a file
-            FileSaver.saveAs(blob, 'WorkSheet.zip');
-     
-           
-            const zip = new JSZip();
-            zip.file("Hello.pdf", "data:text/plain;base64,"+res.data);
-           
-        
-            zip.generateAsync({type:"blob"})
-                .then(function(content) {
-                // see FileSaver.js
-                    saveAs(content, "example.zip");
-                });
-         */
-        }).catch((err)=>{
-            console.log(err);
-        }); 
-    };
-
+ 
     return (
        
         <div className="mx-5">
@@ -321,14 +286,16 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                     { data.length > 0  &&
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
                 <div>
+                    {profilo.auth === 'PAGOPA'&&  
                     <Button
                         disabled={false}
                         onClick={()=> {
-                            downloadPdfZipPagopa();
+                            downloadListaRelPdfZipPagopa(token,profilo.nonce,bodyRel);
                         }}  >
                                   Download Lista PDF 
                         <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
                     </Button>
+                    }
                     <Button
                         disabled={false}
                         onClick={()=> {
