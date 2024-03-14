@@ -9,20 +9,17 @@ import { useEffect, useRef, useState} from 'react';
 import TextDettaglioPdf from '../components/commessaPdf/textDettaglioPdf';
 import { ResponseDownloadPdf } from '../types/typeModuloCommessaInserimento';
 import { getRelExel, getRelPdf, uploadPdfRel ,getRelPdfFirmato, getSingleRel } from '../api/apiSelfcare/relSE/api';
-import { getRelExelPagoPa } from '../api/apiPagoPa/relPA/api';
+import { getRelExelPagoPa, getRelPdfFirmatoPagoPa } from '../api/apiPagoPa/relPA/api';
 import DownloadIcon from '@mui/icons-material/Download';
 import ModalUploadPdf from '../components/rel/modalUploadPdf';
 
 import generatePDF from 'react-to-pdf';
-
 
 const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
     const rel = mainState.relSelected;
 
     const navigate = useNavigate();
-
-    
 
     useEffect(()=>{
         if(rel === null){
@@ -47,17 +44,12 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
     const mesi = ["Dicembre", "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
 
-    
-
-
-
     const downloadRelExel = async() =>{
 
         if( mainState.relSelected !== null){
 
             if(profilo.auth === 'SELFCARE'){
                 await getRelExel(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
-                
                
                     const link = document.createElement('a');
                     link.href = "data:text/plain;base64," + res.data.documento;
@@ -72,7 +64,6 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 });
             }else{
                 await getRelExelPagoPa(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
-                
                
                     const link = document.createElement('a');
                     link.href = "data:text/plain;base64," + res.data.documento;
@@ -89,11 +80,8 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             }
              
         }
-
         
     };
-
-    
 
     const downloadPdfRel = async() =>{
 
@@ -107,7 +95,6 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 });
             }  
         }
-
         
     };
 
@@ -116,7 +103,6 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         if( mainState.relSelected !== null){
             if(profilo.auth === 'SELFCARE'){
                 await getRelPdfFirmato(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
-                  
                   
                     const link = document.createElement('a');
                     link.href = "data:text/plain;base64," + res.data.documento;
@@ -129,12 +115,25 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 }).catch((err)=>{
                     manageError(err,navigate);
                 });
-            }  
+            }else{
+                await getRelPdfFirmatoPagoPa(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
+                    console.log(res.data.documento);
+                    const link = document.createElement('a');
+                    link.href = "data:text/plain;base64," + res.data.documento;
+                    link.setAttribute('download', 'Regolare Esecuzione Firmato.pdf'); //or any other extension
+                    document.body.appendChild(link);
+              
+                    link.click();
+                    document.body.removeChild(link);
+          
+                }).catch((err)=>{
+                    manageError(err,navigate);
+                });
+                
+            } 
         }
-
         
     };
-
     
     const toDoOnDownloadPdf = (res:ResponseDownloadPdf) =>{
         const wrapper = document.getElementById('file_download_rel');
@@ -158,16 +157,12 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     const handleRemove = () => {
         setFile(null);
     };
-
    
     useEffect(()=>{
         if(file !== null){
             uploadPdf();
         }
     },[file]);
- 
-
-
   
     const uploadPdf = async () =>{
         setLoadingUpload(true);
@@ -191,11 +186,9 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     };
 
     const getRel = async(idRel) => {
-
      
         getSingleRel(token,profilo.nonce,idRel).then((res) =>{
             handleModifyMainState({relSelected:res.data});
-               
            
         }).catch((err)=>{
             manageError(err, navigate);
@@ -203,11 +196,6 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
               
         );
     };
-
-
-
-
-  
 
     return (
         <div>
@@ -274,32 +262,32 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 </div>
             </div>
            
-            {profilo.auth === 'SELFCARE' &&
-                 <div className='d-flex justify-content-between m-5'>
+           
+            <div className='d-flex justify-content-between m-5'>
+                {profilo.auth === 'SELFCARE' &&
+                 <>
                      <div className="">
                          <Button sx={{width:'274px'}} onClick={() => generatePDF(targetRef, {filename: 'Regolare Esecuzione.pdf'})}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
                      </div>
-              
                
-                     <div>
-                         <div id='singleInputRel' style={{minWidth: '300px', height:'40px'}}>
-                             <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".pdf"]} onFileSelected={(e)=>handleSelect(e)} onFileRemoved={handleRemove} dropzoneLabel={(rel?.caricata === 1 ||rel?.caricata === 2) ? 'Reinserisci nuovo PDF Reg. Es. firmato':"Inserisci PDF Reg. Es.  firmato"} rejectedLabel="Tipo file non supportato" ></SingleFileInput>
-                         </div> 
-                     </div>
-                     {rel?.caricata === 1 &&
+                     
+                     <div id='singleInputRel' style={{minWidth: '300px', height:'40px'}}>
+                         <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".pdf"]} onFileSelected={(e)=>handleSelect(e)} onFileRemoved={handleRemove} dropzoneLabel={(rel?.caricata === 1 ||rel?.caricata === 2) ? 'Reinserisci nuovo PDF Reg. Es. firmato':"Inserisci PDF Reg. Es.  firmato"} rejectedLabel="Tipo file non supportato" ></SingleFileInput>
+                     </div> 
+                 </>
+                }
+                {rel?.caricata === 1 &&
                 <div>
                     <Button sx={{width:'300px'}} onClick={() => downloadPdfRelFirmato()}   variant="contained">Scarica PDF Firmato <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
                 </div>
-                     }
-                 </div>
-            }
+                }
+            </div>
            
             
             {openModalConfirmUploadPdf &&
             <ModalUploadPdf setOpen={setOpenModalConfirmUploadPdf} open={openModalConfirmUploadPdf}></ModalUploadPdf>
             }
         </div>
-       
        
     );
 };

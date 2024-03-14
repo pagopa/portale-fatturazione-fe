@@ -1,16 +1,15 @@
 import { ListaModuliCommessaProps } from "../types/typeListaModuliCommessa";
-import { MainState, Params } from "../types/typesGeneral";
+import { Params } from "../types/typesGeneral";
 import { Typography } from "@mui/material";
 import { Box, FormControl, InputLabel,Select, MenuItem, TextField, Button} from '@mui/material';
 import { manageError } from '../api/api';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { DataGrid, GridRowParams,GridEventListener,MuiEvent, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { DataGrid, GridRowParams,GridEventListener,MuiEvent, GridColDef} from '@mui/x-data-grid';
 import DownloadIcon from '@mui/icons-material/Download';
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import { downloadDocumentoListaModuloCommessaPagoPa, listaModuloCommessaPagopa } from "../api/apiPagoPa/moduloComessaPA/api";
-
 
 const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchMainState}) =>{
 
@@ -45,12 +44,10 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
         const currentMonth = (new Date()).getMonth() + 2;
         currString = currentMonth.toString();
     }
-   
  
     const mesi = [
         {1:'Gennaio'},{2:'Febbraio'},{3:'Marzo'},{4:'Aprile'},{5:'Maggio'},{6:'Giugno'},
         {7:'Luglio'},{8:'Agosto'},{9:'Settembre'},{10:'Ottobre'},{11:'Novembre'},{12:'Dicembre'}];
-   
 
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [gridData, setGridData] = useState([]);
@@ -82,10 +79,6 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
         }
     },[bodyGetLista]);
 
-   
-
-    
-
     const getProdotti = async() => {
         await getTipologiaProdotto(token, profilo.nonce )
             .then((res)=>{
@@ -97,15 +90,12 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
             }));
     };
 
- 
-
     useEffect(()=>{
         if(profilo.nonce !== undefined){
             getProdotti();
             getListaCommesse();
         }
     }, [profilo.nonce]);
-
 
     const getListaCommesse = async() =>{
         await listaModuloCommessaPagopa(bodyGetLista ,token, profilo.nonce)
@@ -130,7 +120,6 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
             }); 
     };
 
-
     const downloadExelListaCommessa = async () =>{
         await downloadDocumentoListaModuloCommessaPagoPa(token, profilo.nonce,bodyGetLista)
             .then((res)=>{
@@ -150,14 +139,11 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
             });
     };
 
-
-
     let columsSelectedGrid = '';
     const handleOnCellClick = (params:Params) =>{
         columsSelectedGrid  = params.field;
         
     };
-
 
     const handleEvent: GridEventListener<'rowClick'> = (
         params:GridRowParams,
@@ -168,8 +154,6 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
        
         // l'evento verrà eseguito solo se l'utente farà il clik sul  mese e action
         if(columsSelectedGrid  === 'regioneSociale' ||columsSelectedGrid  === 'action' ){
-            
-        
           
             const newState = {
                 path:'/8',
@@ -180,7 +164,6 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
             };
             const string = JSON.stringify(newState);
             localStorage.setItem('statusApplication', string);
-
 
             const newProfilo = {...profilo,...{
                 idTipoContratto: params.row.idTipoContratto,
@@ -204,10 +187,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
        
     };
 
-
     const mesiGrid = ["Dicembre", "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
-    
-
 
     const columns: GridColDef[] = [
         { field: 'regioneSociale', headerName: 'Ragione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/8">{param.row.ragioneSociale}</a>},
@@ -241,9 +221,6 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
         }
 
     ];
-
-
-
     
     return (
         <div className="mx-5">
@@ -312,7 +289,6 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
                                 onChange={(e) =>{
                                     setBodyGetLista((prev)=> ({...prev, ...{mese:e.target.value}}));
                                 }}
-
                                
                                 value={bodyGetLista.mese}
                                 //IconComponent={SearchIcon}
