@@ -190,11 +190,9 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         }else{
             getSingleRelPagopa(token,profilo.nonce,idRel).then((res) =>{
                 handleModifyMainState({relSelected:res.data});
-                if(res.data.datiFatturazione === true){
-                    navigate('/relpdf');
-                }else{
-                    setOpenModalInfo(true);
-                }
+            
+                navigate('/relpdf');
+              
             }).catch((err)=>{
                 manageError(err, navigate);
             }
@@ -248,7 +246,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     // visulizzazione del pop up redirect dati di fatturazione
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
     const [showLoading, setShowLoading] = useState(false);
-    const [openModalInfo, setOpenModalInfo] = useState(false);
+   
 
  
     return (
@@ -360,12 +358,6 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 open={showLoading} 
                 setOpen={setShowLoading} >
             </ModalLoading>
-
-            <ModalInfo  
-                open={openModalInfo} 
-                setOpen={setOpenModalInfo}
-                sentence={`Non è possibile visualizzare il dettaglio dell'elemento selezionato `}>
-            </ModalInfo>
         </div>
 
     );
