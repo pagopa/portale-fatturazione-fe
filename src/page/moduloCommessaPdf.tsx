@@ -27,7 +27,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
 
     const tipoCommessa =  localStorage.getItem('tipo') || '';
 
-    const { toPDF, targetRef } = usePDF({filename: 'ModuloCommessa.pdf'});
+    
 
     const navigate = useNavigate();
 
@@ -65,7 +65,8 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
                 descrizione:''}
         ]
     });
-
+    
+    const { toPDF, targetRef } = usePDF({filename: `ModuloCommessa ${dataPdf.meseAttivita}.pdf`});
     interface DatiCommessaPdf {
         totaleNotifiche?: number,
         numeroNotificheNazionali?: number,

@@ -352,7 +352,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 .then((res)=>{
                     const link = document.createElement('a');
                     link.href = "data:text/plain;base64," + res.data.documento;
-                    link.setAttribute('download', 'Lista Notifiche.xlsx'); //or any other extension
+                    link.setAttribute('download',`Lista Modulo Commessa ${mesiGrid[bodyGetLista.mese-1]} ${bodyGetLista.anno}.xlsx`); //or any other extension
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);           
@@ -368,7 +368,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     const a = document.createElement('a');
                     a.setAttribute('hidden', '');
                     a.setAttribute('href', url);
-                    a.setAttribute('download', 'Lista Notifiche.csv');
+                    a.setAttribute('download',`Lista Modulo Commessa ${mesiGrid[bodyGetLista.mese-1]} ${bodyGetLista.anno}.csv`);
                     document.body.appendChild(a);
                     a.click();
                     setShowLoading(false);

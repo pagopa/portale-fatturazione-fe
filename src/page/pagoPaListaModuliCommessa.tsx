@@ -127,7 +127,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
                 //const url = window.URL.createObjectURL(res.data.documento);
                 const link = document.createElement('a');
                 link.href = "data:text/plain;base64," + res.data.documento;
-                link.setAttribute('download', 'Lista Modulo Commessa.xlsx'); //or any other extension
+                link.setAttribute('download', `Lista Modulo Commessa ${mesiGrid[bodyGetLista.mese]} ${bodyGetLista.anno}.xlsx`); //or any other extension
                 document.body.appendChild(link);
               
                 link.click();
