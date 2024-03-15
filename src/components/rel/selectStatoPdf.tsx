@@ -13,6 +13,8 @@ const SelectStatoPdf : React.FC<SelecTipologiaPdf> = ({setValue, values}) =>{
         'Firmata',
         'Invalidato'
     ];
+    console.log(values, statoPdf[0]);
+    const caricata = values.caricata || null;
     return (
         <Box sx={{width:'80%', marginLeft:'20px'}}  >
             <FormControl
@@ -29,9 +31,9 @@ const SelectStatoPdf : React.FC<SelecTipologiaPdf> = ({setValue, values}) =>{
                     label='Seleziona Prodotto'
                     labelId="search-by-label"
                     onChange={(e) =>{
-                        setValue((prev)=> ({...prev, ...{caricata:Number(e.target.value)}}));
+                        setValue((prev)=> ({...prev, ...{caricata:e.target.value}}));
                     }}         
-                    value={values.caricata ? values.caricata.toString() :''}                  
+                    value={caricata?.toString() ||  ''}                  
                 >
                     {statoPdf.map((el,i) => (       
                         <MenuItem
