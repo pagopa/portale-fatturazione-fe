@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { ModalProps } from 'react-bootstrap';
-import Loader from './loader';
+import Loader from '../loader';
 const style = {
     position: 'absolute' as const,
     top: '50%',

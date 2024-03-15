@@ -1,0 +1,49 @@
+import * as React from 'react';
+import Alert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
+import { useState } from 'react';
+
+type AlertProps = {
+    typeAlert : string,
+    setVisible:any,
+    visible:boolean
+}
+
+const BasicAlerts:React.FC <AlertProps> =  ({typeAlert, setVisible , visible}) => {
+
+
+
+
+    const [css, setCss] = useState('main_container_alert_component_hidden');
+
+    React.useEffect(()=>{
+        if(visible === true){
+
+            setCss('main_container_alert_component_show');
+            const timer = setTimeout(() => {
+         
+           
+                setCss('main_container_alert_component_hidden');
+        
+            }, 5000);
+            return () =>{
+            
+                setVisible(false);
+                clearTimeout(timer);
+            }; 
+    
+        }
+      
+    },[visible]);
+
+    console.log(typeAlert);
+    return (
+        <div className={css}>
+            <Stack sx={{ width: '100%' }} spacing={2}>
+                <Alert severity="error">This is an error Alert.</Alert>
+            </Stack>
+        </div>
+    );
+};
+
+export default BasicAlerts;

@@ -94,7 +94,28 @@ background-color:white;
 #singleInputRel .MuiFormControl-root .MuiBox-root .MuiBox-root, #singleInputRel .MuiFormControl-root .MuiBox-root{
 height: 48px;
 }
+
  #singleInputRel .MuiFormControl-root .MuiBox-root{
   min-height: 48px;
+}
+
+/* css Alert component */
+@keyframes smooth-appear {
+  to{
+    top: 10px;
+    opacity:1;
   }
+}
+.main_container_alert_component_show {
+  position: fixed;
+  top: -100%;
+  opacity:0;
+  left: 50%;
+  z-index: 2;
+  transform: translateX(-50%);
+  animation: smooth-appear 1s ease forwards;
+}
+.main_container_alert_component_hidden{
+  display: none;
+}
 
