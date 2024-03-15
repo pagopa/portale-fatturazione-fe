@@ -12,6 +12,7 @@ import { getRelExel, getRelPdf, uploadPdfRel ,getRelPdfFirmato, getSingleRel } f
 import { getRelExelPagoPa, getRelPdfFirmatoPagoPa } from '../api/apiPagoPa/relPA/api';
 import DownloadIcon from '@mui/icons-material/Download';
 import ModalUploadPdf from '../components/rel/modalUploadPdf';
+import { saveAs } from "file-saver";
 
 import generatePDF from 'react-to-pdf';
 
@@ -43,7 +44,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     };
 
     const mesi = ["Dicembre", "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
-
+    
     const downloadRelExel = async() =>{
 
         if( mainState.relSelected !== null){
@@ -51,27 +52,14 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             if(profilo.auth === 'SELFCARE'){
                 await getRelExel(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
                
-                    const link = document.createElement('a');
-                    link.href = "data:text/plain;base64," + res.data.documento;
-                    link.setAttribute('download', 'Lista Regolare esecuzione.xlsx'); //or any other extension
-                    document.body.appendChild(link);
-              
-                    link.click();
-                    document.body.removeChild(link);
-           
+                    saveAs("data:text/plain;base64," + res.data.documento,`Lista Regolare esecuzione.xlsx` );
                 }).catch((err)=>{
                     manageError(err,navigate);
                 });
             }else{
                 await getRelExelPagoPa(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
-               
-                    const link = document.createElement('a');
-                    link.href = "data:text/plain;base64," + res.data.documento;
-                    link.setAttribute('download', 'Lista Regolare esecuzione.xlsx'); //or any other extension
-                    document.body.appendChild(link);
-              
-                    link.click();
-                    document.body.removeChild(link);
+                    saveAs("data:text/plain;base64," + res.data.documento,'Lista Regolare esecuzione.xlsx' );
+                    
            
                 }).catch((err)=>{
                     manageError(err,navigate);
@@ -103,29 +91,13 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         if( mainState.relSelected !== null){
             if(profilo.auth === 'SELFCARE'){
                 await getRelPdfFirmato(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
-                  
-                    const link = document.createElement('a');
-                    link.href = "data:text/plain;base64," + res.data.documento;
-                    link.setAttribute('download', 'Regolare Esecuzione Firmato.pdf'); //or any other extension
-                    document.body.appendChild(link);
-              
-                    link.click();
-                    document.body.removeChild(link);
-          
+                    saveAs("data:text/plain;base64," + res.data.documento,`Regolare Esecuzione Firmato.pdf` );
                 }).catch((err)=>{
                     manageError(err,navigate);
                 });
             }else{
                 await getRelPdfFirmatoPagoPa(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
-                    console.log(res.data.documento);
-                    const link = document.createElement('a');
-                    link.href = "data:text/plain;base64," + res.data.documento;
-                    link.setAttribute('download', 'Regolare Esecuzione Firmato.pdf'); //or any other extension
-                    document.body.appendChild(link);
-              
-                    link.click();
-                    document.body.removeChild(link);
-          
+                    saveAs("data:text/plain;base64," + res.data.documento,`Regolare Esecuzione Firmato.pdf` );
                 }).catch((err)=>{
                     manageError(err,navigate);
                 });

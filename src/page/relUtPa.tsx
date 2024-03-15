@@ -234,7 +234,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         await downloadListaRelPdfZipPagopa(token,profilo.nonce,bodyRel)
             .then(response => response.blob())
             .then(blob => {
-                saveAs(blob,'Lista PDF Reg. Es..zip' );
+                saveAs(blob,`Lista documenti firmati Reg. Es. ${mesiGrid[bodyRel.mese]}.zip` );
                 setShowLoading(false);
             })
             .catch(err => {
