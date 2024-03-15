@@ -15,6 +15,7 @@ import ModalUploadPdf from '../components/rel/modalUploadPdf';
 import { saveAs } from "file-saver";
 
 import generatePDF from 'react-to-pdf';
+import BasicAlerts from '../components/reusableComponents/alert';
 
 const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
@@ -169,10 +170,15 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         );
     };
 
+    const [visible, setVisible] = useState(false);
+
     return (
         <div>
+           
             <div className=' marginTop24  '>
+                <BasicAlerts setVisible={setVisible} visible={visible} typeAlert={''}></BasicAlerts>
                 <div className='ms-5'>
+                    <Button onClick={() => setVisible(true)}>ciao</Button>
                     <ButtonNaked
                         color="primary"
                         onFocusVisible={() => { console.log('onFocus'); }}

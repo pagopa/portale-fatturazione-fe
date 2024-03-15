@@ -13,9 +13,9 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { downloadListaRel, getListaRel, getSingleRel } from "../api/apiSelfcare/relSE/api";
 import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, getListaRelPagoPa, getSingleRelPagopa } from "../api/apiPagoPa/relPA/api";
 import SelectStatoPdf from "../components/rel/selectStatoPdf";
-import ModalLoading from "../components/reusableComponents/modalLoading";
+import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { saveAs } from "file-saver";
-import ModalInfo from "../components/reusableComponents/modalInfo";
+import ModalInfo from "../components/reusableComponents/modals/modalInfo";
 
 const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 

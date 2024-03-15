@@ -8,11 +8,11 @@ import { ReportDettaglioProps, NotificheList, FlagContestazione, Contestazione, 
 import { useNavigate } from "react-router";
 import { BodyListaNotifiche } from "../types/typesGeneral";
 import ModalContestazione from '../components/reportDettaglio/modalContestazione';
-import ModalInfo from "../components/reusableComponents/modalInfo";
+import ModalInfo from "../components/reusableComponents/modals/modalInfo";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import DownloadIcon from '@mui/icons-material/Download';
 import MultiSelectStatoContestazione from "../components/reportDettaglio/multiSelectGroupedBy";
-import ModalLoading from "../components/reusableComponents/modalLoading";
+import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import ModalScadenziario from "../components/reportDettaglio/modalScadenziario";
 import { downloadNotifche, getContestazione, listaNotifiche } from "../api/apiSelfcare/notificheSE/api";
 import { downloadNotifchePagoPa, getContestazionePagoPa, listaNotifichePagoPa } from "../api/apiPagoPa/notificheSE/api";
