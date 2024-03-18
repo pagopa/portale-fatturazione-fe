@@ -443,6 +443,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                                 navigate('/4');
                             }else if(mainState.statusPageInserimentoCommessa === 'immutable' && profilo.auth === 'PAGOPA'){
                                 navigate('/pagopalistamodulicommessa');
+                            }else if(mainState.inserisciModificaCommessa === 'INSERT' && profilo.auth === 'SELFCARE'){
+                                navigate('/4');
                             }else{
                                 setMainState((prev:any)=>({...prev,...{statusPageInserimentoCommessa:'immutable'}}));
                             }
