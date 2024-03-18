@@ -14,7 +14,7 @@ const BasicAlerts:React.FC <AlertProps> =  ({typeAlert, setVisible , visible}) =
 
 
 
-    const [css, setCss] = useState('main_container_alert_component_hidden');
+    const [css, setCss] = useState('main_container_alert_component');
 
     React.useEffect(()=>{
         if(visible === true){
@@ -24,11 +24,9 @@ const BasicAlerts:React.FC <AlertProps> =  ({typeAlert, setVisible , visible}) =
          
            
                 setCss('main_container_alert_component_hidden');
-        
-            }, 5000);
-            return () =>{
-            
                 setVisible(false);
+            }, 3000);
+            return () =>{
                 clearTimeout(timer);
             }; 
     
@@ -36,7 +34,7 @@ const BasicAlerts:React.FC <AlertProps> =  ({typeAlert, setVisible , visible}) =
       
     },[visible]);
 
-    console.log(typeAlert);
+    console.log(visible);
     return (
         <div className={css}>
             <Stack sx={{ width: '100%' }} spacing={2}>

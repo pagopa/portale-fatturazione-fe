@@ -50,6 +50,8 @@ export const InserimentoModuloCommessaContext = createContext<InsModuloCommessaC
 
 const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps> = ({mainState, dispatchMainState}) => {
 
+    console.log(mainState, 'inserimento');
+
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
 
@@ -423,6 +425,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                                 navigate('/4');
                             }else if(mainState.statusPageInserimentoCommessa === 'immutable' && profilo.auth === 'PAGOPA'){
                                 navigate('/pagopalistamodulicommessa');
+                            }else if(mainState.inserisciModificaCommessa === 'INSERT' && profilo.auth === 'SELFCARE'){
+                                navigate('/4');
                             }else{
                                 handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
                             }
