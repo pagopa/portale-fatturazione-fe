@@ -110,12 +110,28 @@ height: 48px;
   position: fixed;
   top: -100%;
   opacity:0;
-  left: 50%;
   z-index: 2;
+  left: 50%;
   transform: translateX(-50%);
   animation: smooth-appear 1s ease forwards;
 }
-.main_container_alert_component_hidden{
+.main_container_alert_component{
   display: none;
+}
+
+@keyframes smooth-hidden {
+  to{
+    opacity:0;
+    top: -100%;
+  }
+}
+.main_container_alert_component_hidden{
+  position: fixed;
+  opacity:1;
+  top: 10px;
+  left: 50%;
+  z-index: 2;
+  transform: translateX(-50%);
+  animation: smooth-hidden 3s ease forwards;
 }
 
