@@ -169,16 +169,18 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
               
         );
     };
-
+    /*
     const [visible, setVisible] = useState(false);
-
+    <Button onClick={() => setVisible(true)}>ciao</Button>
+    <BasicAlerts setVisible={setVisible} visible={visible} typeAlert={''}></BasicAlerts>
+*/
     return (
         <div>
            
             <div className=' marginTop24  '>
-                <BasicAlerts setVisible={setVisible} visible={visible} typeAlert={''}></BasicAlerts>
+                
                 <div className='ms-5'>
-                    <Button onClick={() => setVisible(true)}>ciao</Button>
+             
                     <ButtonNaked
                         color="primary"
                         onFocusVisible={() => { console.log('onFocus'); }}
