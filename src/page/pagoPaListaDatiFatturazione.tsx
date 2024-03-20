@@ -87,7 +87,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
     };
 
     useEffect(()=>{
-        console.log(profilo, 'profilo');
+       
         if(profilo.nonce !== undefined){
 
             getProdotti();
