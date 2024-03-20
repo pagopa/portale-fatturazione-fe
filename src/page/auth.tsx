@@ -3,6 +3,8 @@ import { selfcareLogin, getAuthProfilo, manageError, redirect } from '../api/api
 import {useEffect} from 'react';
 import { LoginProps, MainState, ManageErrorResponse } from '../types/typesGeneral';
 import { getDatiModuloCommessa } from '../api/apiSelfcare/moduloCommessaSE/api';
+import { getDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
+import { SuccesResponseGetDatiFatturazione } from '../types/typesAreaPersonaleUtenteEnte';
 
 // Blank page utilizzata per l'accesso degli utenti tramite  Selfcare
 
@@ -38,29 +40,35 @@ interface ParameterGetProfilo {
 const getCommessa = async (tokenC, nonceC) =>{
       
     await getDatiModuloCommessa(tokenC, nonceC).then((res)=>{
+       
+    
+        
 
         if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
           
-            handleModifyMainState({
+            localStorage.setItem('statusApplication',JSON.stringify({
                 inserisciModificaCommessa:'INSERT',
                 statusPageInserimentoCommessa:'mutable',
-                modifica:true
-            });
+                primoInserimetoCommessa:true
+            
+            }));
             // ci sono commesse inserite nel mese corrente e posso modificarle
         }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0){
-            handleModifyMainState({
+
+            localStorage.setItem('statusApplication',JSON.stringify({
                 inserisciModificaCommessa:'MODIFY',
                 statusPageInserimentoCommessa:'immutable',
-                modifica:true});
-         
+                primoInserimetoCommessa:false
+            }));
+    
         }else if(res.data.modifica === false ){
-            handleModifyMainState({
+
+            localStorage.setItem('statusApplication',JSON.stringify({
                 inserisciModificaCommessa:'NO_ACTION',
                 statusPageInserimentoCommessa:'immutable',
-                modifica:false});
-          
+                primoInserimetoCommessa:false
+            }));
         }
-
         const getProfilo = localStorage.getItem('profilo') || '{}';
         const profilo =  JSON.parse(getProfilo);
         const newProfilo = {...profilo, ...{idTipoContratto:res.data.idTipoContratto}};
@@ -70,10 +78,11 @@ const getCommessa = async (tokenC, nonceC) =>{
 
     }).catch((err)=>{
         manageError(err, navigate);
-        // menageError(err.response.status, navigate);
+        
         
     });
 };
+
 
 //  seconda chiamata
 const getProfilo = async (res:ParameterGetProfilo)=>{
@@ -102,10 +111,8 @@ const getProfilo = async (res:ParameterGetProfilo)=>{
            
             navigate("/");
         } )
-        .catch((err: ManageErrorResponse) => {
-
+        .catch(() => {
             window.location.href = redirect;
-            // manageError(err,navigate);
         });
 };
  

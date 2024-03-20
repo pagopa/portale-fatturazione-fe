@@ -51,8 +51,16 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
 
             const getMeseIndex :number = month.findIndex(x => x == params.row.meseValidita); 
           
+
+            handleModifyMainState({
+                mese:getMeseIndex+1,
+                anno:params.row.annoValidita,
+                // modifica:params.row.modifica,
+                userClickOn:'GRID',
+                inserisciModificaCommessa:"MODIFY"
+            });
+
             const newState = {
-                path:'/8',
                 mese:getMeseIndex+1,
                 anno:params.row.annoValidita,
                 userClickOn:'GRID',
@@ -61,13 +69,6 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
             const string = JSON.stringify(newState);
             localStorage.setItem('statusApplication', string);
 
-            handleModifyMainState({
-                mese:getMeseIndex+1,
-                anno:params.row.annoValidita,
-                modifica:params.row.modifica,
-                userClickOn:'GRID',
-                inserisciModificaCommessa:"MODIFY"
-            });
            
             navigate('/8');
         }

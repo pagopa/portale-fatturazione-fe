@@ -76,13 +76,14 @@ const App = ({ instance }) => {
     const [mainState, dispatchMainState] = useReducer(reducerMainState, {
         mese:'',
         anno:'',
-        modifica:undefined, // se la commessa selezionata è modificabile
+        //modifica:undefined, // se la commessa selezionata è modificabile
+        datiFatturazione:false,// l'ente ha i dati di fatturazione?
         userClickOn:undefined, // se l'utente clicca su un elemento di lista commesse setto GRID
         inserisciModificaCommessa:undefined, // INSERT MODIFY  se il sevizio get commessa mi restituisce true []
-        action:'DATI_FATTURAZIONE', // le action possono essere HIDE_MODULO_COMMESSA / SHOW_MODULO_COMMESSA / DATI_FATTURAZIOne
+        primoInserimetoCommessa:true,
+        // action:'DATI_FATTURAZIONE', // le action possono essere HIDE_MODULO_COMMESSA / SHOW_MODULO_COMMESSA / DATI_FATTURAZIOne
         statusPageDatiFatturazione:'immutable',
         statusPageInserimentoCommessa:'immutable',
-        indexStepper:0, // index del componente setpper
         idEnte:'',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
         prodotto: '',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione,
         relSelected: null // rel selezionata nella grid in page rel

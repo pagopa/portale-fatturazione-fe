@@ -17,6 +17,7 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { MainState, SideNavProps } from '../../types/typesGeneral';
 import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
 import { getDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
+import ModalRedirect from '../commessaInserimento/madalRedirect';
 
 const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}) => {
 
@@ -36,19 +37,18 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
         });
     };
   
-    const getProfiloFromLocalStorage = localStorage.getItem('profilo') || '{}';
-
-    const checkIfUserIsAutenticated = JSON.parse(getProfiloFromLocalStorage).auth;
 
     const [selectedIndex, setSelectedIndex] = useState(0);
+    //const [openModalRedirectDatiFatturazione,setOpenModalRedirectDatiFatturazione] = useState(false);
     
     const handleListItemClick = async() => {
 
-        if(checkIfUserIsAutenticated === 'PAGOPA'){
+        if(profilo.auth === 'PAGOPA'){
            
             navigate('/pagopalistadatifatturazione');
         }else{
             navigate('/');
+            /*
             if(mainState.datiFatturazione === true){
                 handleModifyMainState({
                     action:'DATI_FATTURAZIONE',
@@ -56,7 +56,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
                 });
                 localStorage.setItem('statusApplication', JSON.stringify(mainState));
             }
-           
+           */
         }
         
     };
@@ -75,11 +75,13 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
         await getDatiFatturazione(token,profilo.nonce).then(( ) =>{ 
             
             handleModifyMainState({datiFatturazione:true});
+         
 
         }).catch(err =>{
           
-            if(err.response.status === 404){
+            if(err.response?.status === 404){
                 handleModifyMainState({datiFatturazione:false});
+              
             }
         });
 
@@ -100,30 +102,43 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
                     handleModifyMainState({
                         inserisciModificaCommessa:'INSERT',
                         statusPageInserimentoCommessa:'mutable',
-                        modifica:true
+                        userClickOn:undefined,
+                        primoInserimetoCommessa:true
                     });
                  
                     const newState = {
-                        path:'/8',
                         mese:res.data.mese,
                         anno:res.data.anno,
-                        inserisciModificaCommessa:'INSERT'
+                        inserisciModificaCommessa:'INSERT',
+                        datiFatturazione:mainState.datiFatturazione,
+                        userClickOn:undefined,
+                        primoInserimetoCommessa:true
                     };
-                    localStorage.setItem('statusApplication', JSON.stringify(newState));
-                  
+
+                    const statusApp = localStorage.getItem('statusApplication')||'{}';
+                    const parseStatusApp = JSON.parse(statusApp);
+            
+                    localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
+                        ...newState}));
+                    console.log('ddd');
                     navigate('/8');
                 }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0 ){
     
                     handleModifyMainState({
                         inserisciModificaCommessa:'MODIFY',
                         statusPageInserimentoCommessa:'immutable',
-                        modifica:true});
+                        primoInserimetoCommessa:false});
     
                     const newState = {
-                        path:'/4',
-                        inserisciModificaCommessa:'MODIFY'
+                        inserisciModificaCommessa:'MODIFY',
+                        datiFatturazione:mainState.datiFatturazione,
+                        primoInserimetoCommessa:false
                     };
-                    localStorage.setItem('statusApplication', JSON.stringify(newState));
+                    const statusApp = localStorage.getItem('statusApplication')||'{}';
+                    const parseStatusApp = JSON.parse(statusApp);
+            
+                    localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
+                        ...newState}));
                    
                     navigate('/4');
                 }else if(res.data.modifica === false && res.data.moduliCommessa.length === 0){
@@ -131,26 +146,36 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
                     handleModifyMainState({
                         inserisciModificaCommessa:'NO_ACTION',
                         statusPageInserimentoCommessa:'immutable',
-                        modifica:false});
+                        primoInserimetoCommessa:false});
                 
                     const newState = {
-                        path:'/4',
-                        inserisciModificaCommessa:'NO_ACTION'
+                        inserisciModificaCommessa:'NO_ACTION',
+                        datiFatturazione:mainState.datiFatturazione,
+                        primoInserimetoCommessa:false
                     };
-                    localStorage.setItem('statusApplication', JSON.stringify(newState));
+                    const statusApp = localStorage.getItem('statusApplication')||'{}';
+                    const parseStatusApp = JSON.parse(statusApp);
+            
+                    localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
+                        ...newState}));
                    
                     navigate('/4');
                 }else if(res.data.modifica === false && res.data.moduliCommessa.length > 0){
                     handleModifyMainState({
                         inserisciModificaCommessa:'NO_ACTION',
                         statusPageInserimentoCommessa:'immutable',
-                        modifica:false}); 
+                        primoInserimetoCommessa:false}); 
 
                     const newState = {
-                        path:'/8',
-                        inserisciModificaCommessa:'NO_ACTION'
+                        inserisciModificaCommessa:'NO_ACTION',
+                        datiFatturazione:mainState.datiFatturazione,
+                        primoInserimetoCommessa:false
                     };
-                    localStorage.setItem('statusApplication', JSON.stringify(newState));
+                    const statusApp = localStorage.getItem('statusApplication')||'{}';
+                    const parseStatusApp = JSON.parse(statusApp);
+            
+                    localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
+                        ...newState}));
                    
                     navigate('/4');
                 }
@@ -203,6 +228,9 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
                             location.pathname === '/azureLogin'||
                             !profilo.auth;
 
+
+   
+
     return (
         <>
             {hideShowSidenav ? null :
@@ -245,7 +273,14 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
                     <Divider />
                 </Box>
             }
+            {/* 
+            <ModalRedirect 
+                setOpen={setOpenModalRedirectDatiFatturazione}
+                open={openModalRedirectDatiFatturazione}
+                sentence={`Per poter inserire il modulo commessa è nesessario l'inserimento dei dati di fatturazione obbligatori:`}></ModalRedirect>
+                 */}
         </>
+       
 
     );
 };

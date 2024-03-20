@@ -21,7 +21,12 @@ const ModalRedirect : React.FC<ModalProps> =({setOpen, open, sentence}) => {
 
     const navigate = useNavigate();
 
-    const handleClose = () => setOpen(false);
+
+    const handleClose = (event:object, reason: string) =>{
+        if(reason !== 'backdropClick'){
+            setOpen(false);
+        }
+    };
 
     const handleGoToDatiFatturazione = () =>{
         navigate('/');

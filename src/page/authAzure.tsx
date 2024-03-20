@@ -59,19 +59,16 @@ const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
     const postPagoPa = () =>{
         pagopaLogin(tokens).then((res)=>{
             if(res.status === 200){
-            
                 // store del token nella local storage per tutte le successive chiamate START
                 const storeJwt = {token:res.data.jwt};
                 localStorage.setItem('token', JSON.stringify(storeJwt));
            
                 // store del token nella local storage per tutte le successive chiamate END
                 getProfilo(res);
-               
             }
-
-        }).catch((err) =>{
+        }).catch(() =>{
             window.location.href = redirect;
-            //manageError(err, navigate);
+
         });
 
     };
@@ -104,12 +101,10 @@ const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
                 handleModifyMainState({ruolo:resp.data.ruolo,action:'LISTA_DATI_FATTURAZIONE'});
 
                 navigate('/pagopalistadatifatturazione');
-                // setto il nonce nello state di riferimento globale
               
             } )
-            .catch(err => {
+            .catch(()=> {
                 window.location.href = redirect;
-                //manageError(err, navigate);
             });
     };
   

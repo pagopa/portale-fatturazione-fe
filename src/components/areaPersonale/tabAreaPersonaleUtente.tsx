@@ -160,10 +160,10 @@ const TabAreaPersonaleUtente = () => {
                     checked={datiFatturazione.notaLegale || false}
                     onChange={()=> setDatiFatturazione((prev:any)=>({...prev,...{notaLegale:!datiFatturazione.notaLegale}}))}/>}
                 disabled={mainState.statusPageDatiFatturazione === 'immutable'}
-                label="Gli accordi di adesione a SEND sono esclusi dall`applicazione del Codice dei Contratti Pubblici ai
-                 sensi dell`art. 56, comma 1, lett a) del D.lgs. 36/2023 pertanto non sono sottoposti alla disciplina della
-                  tracciabilità dei flussi finanziari di cui alla L. 136/2010, come indicato dall`ANAC nelle relative Linee Guida.
-                Conseguentemente, il CIG non deve essere acquisito e riportato nelle fatture "
+                label="Gli accordi di adesione a SEND sono esclusi dall'applicazione del Codice dei Contratti Pubblici ai
+                 sensi dell'art. 56, comma 1, lett a) del D.lgs. 36/2023 pertanto non sono sottoposti alla disciplina della
+                  tracciabilità dei flussi finanziari di cui alla L. 136/2010, come indicato dall'ANAC nelle relative Linee Guida.
+                Conseguentemente, il CIG non deve essere acquisito e riportato nelle fatture"
                 />
 
                 {/*checkbox start */}

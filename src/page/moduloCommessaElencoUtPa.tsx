@@ -7,6 +7,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { VisualModuliCommessaProps,  DataGridCommessa , GetAnniResponse, ResponseGetListaCommesse} from '../types/typeModuloCommessaElenco';
 import { ManageErrorResponse } from '../types/typesGeneral';
 import { getAnni, getListaCommessa, getListaCommessaFiltered, getListaCommessaOnAnnulla } from '../api/apiSelfcare/moduloCommessaSE/api';
+import ModalRedirect from '../components/commessaInserimento/madalRedirect';
 
 const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatchMainState,mainState}) => {
    
@@ -15,18 +16,37 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
   
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
+
+    const state = localStorage.getItem('statusApplication') || '{}';
+    const statusApp =  JSON.parse(state);
    
     const navigate = useNavigate();
+
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
+
+    useEffect(()=>{
+        handleModifyMainState(statusApp);
+        if(statusApp.datiFatturazione === false){
+            setOpenModalRedirect(true);
+        }
+  
+    },[]);
 
     const [anni, setAnni] = useState<string[]>([]);
     const [valueSelect, setValueSelect] = useState<string>('');
 
     const [gridData, setGridData] = useState<DataGridCommessa[]>([]);
-
+    
+    const [openModalRedirect, setOpenModalRedirect] = useState(false);
     // il componente data grid ha bisogno di un id per ogni elemento
     const fixResponseForDataGrid = (arr:DataGridCommessa[]) =>{
       
-        const result = arr.map( (singlObj:DataGridCommessa,i:number) =>{
+        const result = arr.map( (singlObj:DataGridCommessa) =>{
             
             return {
                 id : Math.random(),
@@ -104,75 +124,84 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
         <div className="mx-5">
             <div className='marginTop24'>
                 <Typography variant="h4">Modulo commessa</Typography>
+                
             </div>
         
-            <div className=" mt-5 d-flex mb-5">
-                <Box sx={{ width: 300 }}>
-                    <FormControl
-                        fullWidth
-                        size="medium"
+            <div className=" d-flex justify-content-between mb-5  mt-5">
+                <div className='d-flex'>
+
+               
+                    <Box sx={{ width: 300 }}>
+                        <FormControl
+                            fullWidth
+                            size="medium"
                         
-                    >
-                        <InputLabel
-                            id="Filtra per anno"
-                            
                         >
+                            <InputLabel
+                                id="Filtra per anno"
+                            
+                            >
                             Filtra per anno
 
-                        </InputLabel>
-                        <Select
-                            id="sea"
-                            label="Anno"
-                            labelId="search-by-label"
-                            onChange={(e) =>{setValueSelect(e.target.value);}  }
-                            value={valueSelect}
-                            IconComponent={ArrowDropDownIcon}
-                        >
-                            {anni.map((el) => (
+                            </InputLabel>
+                            <Select
+                                id="sea"
+                                label="Anno"
+                                labelId="search-by-label"
+                                onChange={(e) =>{setValueSelect(e.target.value);}  }
+                                value={valueSelect}
+                                IconComponent={ArrowDropDownIcon}
+                            >
+                                {anni.map((el) => (
 
-                                <MenuItem
-                                    key={Math.random()}
-                                    value={el}
-                                >
-                                    {el}
-                                </MenuItem>
+                                    <MenuItem
+                                        key={Math.random()}
+                                        value={el}
+                                    >
+                                        {el}
+                                    </MenuItem>
 
-                            ))}
+                                ))}
 
-                        </Select>
-                    </FormControl>
-                </Box>
+                            </Select>
+                        </FormControl>
+                    </Box>
 
-                <Box sx={{ display: 'flex' }}>
+                    <Box sx={{ display: 'flex' }}>
                   
-                    <Button
+                        <Button
                        
-                        variant="contained"
-                        disabled={valueSelect === ''}
-                        sx={{ marginTop: 'auto', marginBottom: 'auto', marginLeft: '30px' }}
-                        onClick={()=>handleButtonFiltra()}
+                            variant="contained"
+                            disabled={valueSelect === ''}
+                            sx={{ marginTop: 'auto', marginBottom: 'auto', marginLeft: '30px' }}
+                            onClick={()=>handleButtonFiltra()}
                      
-                    >
+                        >
             Filtra 
 
-                    </Button>
-                    {valueSelect !== '' ? 
-                        <Typography
-                            variant="caption-semibold"
-                            onClick={()=>{setValueSelect(''); handleButtonAnnullaFiltri();}}
-                            sx={{
-                                marginTop: 'auto',
-                                marginBottom: 'auto',
-                                marginLeft: '30px',
-                                cursor: 'pointer',
-                                color: '#0062C3',
-                            }}
-                        >
+                        </Button>
+                        {valueSelect !== '' ? 
+                            <Typography
+                                variant="caption-semibold"
+                                onClick={()=>{setValueSelect(''); handleButtonAnnullaFiltri();}}
+                                sx={{
+                                    marginTop: 'auto',
+                                    marginBottom: 'auto',
+                                    marginLeft: '30px',
+                                    cursor: 'pointer',
+                                    color: '#0062C3',
+                                }}
+                            >
             Annulla filtri
 
-                        </Typography>
-                        : null}
-                </Box>
+                            </Typography>
+                            : null}
+                    </Box>
+                </div>
+
+                {(mainState.primoInserimetoCommessa && profilo.auth === 'SELFCARE') &&
+                <Button variant="contained" onClick={()=> navigate('/8')}>Inserisci modulo commessa</Button>
+                }
 
             </div>
 
@@ -180,6 +209,10 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
                 <GridComponent data={gridData} dispatchMainState={dispatchMainState} mainState={mainState} />
                 
             </div>
+            <ModalRedirect 
+                setOpen={setOpenModalRedirect}
+                open={openModalRedirect}
+                sentence={`Per poter inserire il modulo commessa è nesessario l'inserimento dei dati di fatturazione obbligatori:`}></ModalRedirect>
 
         </div>
     );
