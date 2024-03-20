@@ -3,7 +3,8 @@ import { Typography, Button } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
-import { MainState } from '../../types/typesGeneral';
+import DnsIcon from '@mui/icons-material/Dns';
+import { useNavigate } from 'react-router';
 
 interface PageTitleProps {
     dispatchMainState:any
@@ -15,7 +16,9 @@ const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState}) =
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
 
-    const {mainState, user} = useContext(DatiFatturazioneContext);
+    const navigate = useNavigate();
+
+    const {mainState} = useContext(DatiFatturazioneContext);
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -26,50 +29,51 @@ const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState}) =
   
  
     let titleNavigation;
-  
-    if (mainState.statusPageDatiFatturazione === 'immutable' &&  user !== 'new') {
-       
+    if (!mainState.datiFatturazione) {
+        titleNavigation = 'Inserisci i dati di fatturazione ';
+    }else if (mainState.statusPageDatiFatturazione === 'immutable' && mainState.datiFatturazione) {
         titleNavigation = 'Dati di fatturazione';
-    }else if(mainState.statusPageDatiFatturazione === 'mutable' &&  user === 'old'){
+    }else if(mainState.statusPageDatiFatturazione === 'mutable' &&   mainState.datiFatturazione ){
         titleNavigation = 'Modifica dati di fatturazione';
-       
-    }else {
-        titleNavigation = 'Inserisci dati di fatturazione ';
-      
     }
 
+    
 
-
-   
-    // da usare quando si saprà bene la logica
-    // const pathNewUser =  <Typography  variant="caption"> /<strong> Iserisci dati di fatturazione</strong></Typography>;
-    const pathOldUser = <Typography sx={{ marginLeft: '10px' }} variant="caption">Dati di fatturazione <strong>/ Modifica</strong></Typography>;
+    const onIndietroButtonPagoPa = () =>{
+        if(mainState.statusPageDatiFatturazione === 'immutable' || mainState.datiFatturazione === false){
+            navigate('/pagopalistadatifatturazione');
+        }else{
+            handleModifyMainState({statusPageDatiFatturazione:'immutable'});
+        }
+    
+    };
 
    
 
     return (
-        <div className="mx-5 mt-2">
+        <div className="mx-5 marginTop24">
            
-            {(mainState.statusPageDatiFatturazione === 'mutable' && user === 'old')
-                ? (
+            {((mainState.statusPageDatiFatturazione === 'mutable' && mainState.datiFatturazione) || profilo.auth === 'PAGOPA')
+                &&
                     <div>
                         <ButtonNaked
                             color="primary"
                             onFocusVisible={() => { console.log('onFocus'); }}
                             size="small"
                             startIcon={<ArrowBackIcon />}
-                            onClick={() => handleModifyMainState({statusPageDatiFatturazione:'immutable'})}
+                            onClick={() => onIndietroButtonPagoPa()}
                             sx={{marginBottom:'2px'}}
                         >
                           Indietro 
                         </ButtonNaked>
-                        {pathOldUser}
-                        
-
-                    </div>
+                        <Typography sx={{ marginLeft: '20px' }} variant="caption">
+                            <DnsIcon fontSize="inherit" sx={{marginRight:'5px'}}></DnsIcon>
+                              Dati di fatturazione 
+                            <strong>/ {!mainState.datiFatturazione ? 'Inserisci i dati di fatturazione':'Modifica i dati di fatturazione'}</strong>
+                        </Typography>
                      
-                      
-                ) : null}
+                    </div>
+            }
             <div className="marginTop24">
                 <Typography variant="h4">{titleNavigation}</Typography>
             </div>
