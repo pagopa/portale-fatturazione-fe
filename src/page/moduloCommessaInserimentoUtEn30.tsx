@@ -311,6 +311,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
         await insertDatiModuloCommessa(datiCommessa, token, profilo.nonce)
             .then(res =>{
+                setButtonMofica(true);
                 toDoOnPostModifyCommessa(res);
                  
             } )
@@ -331,6 +332,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
         await modifyDatiModuloCommessaPagoPa(datiCommessaPlusIdTpcProIdE, token, profilo.nonce)
             .then((res)=>{
+                setButtonMofica(true);
                 toDoOnPostModifyCommessa(res);
             }).catch(err => {
                 manageError(err, navigate); 
@@ -349,6 +351,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
     const hendleOnButtonModificaModuloCommessa = () => {
         handleModifyMainState({statusPageInserimentoCommessa:'mutable'});
+        setButtonMofica(false);
      
         setTotaliModuloCommessa([
             {
@@ -417,6 +420,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                         size="small"
                         startIcon={<ArrowBackIcon />}
                         onClick={() =>{
+                            setButtonMofica(true);
                             if(mainState.statusPageInserimentoCommessa === 'immutable' && profilo.auth !== 'PAGOPA'){
                                 navigate('/4');
                             }else if(mainState.statusPageInserimentoCommessa === 'immutable' && profilo.auth === 'PAGOPA'){

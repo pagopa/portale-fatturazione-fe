@@ -45,10 +45,10 @@ const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState}) =
         }else{
             handleModifyMainState({statusPageDatiFatturazione:'immutable'});
         }
-    
     };
 
-   
+    const cssPath1 = mainState.statusPageDatiFatturazione === 'immutable'?'bold':'normal';
+    const cssPath2 = mainState.statusPageDatiFatturazione === 'mutable'?'bold':'normal';
 
     return (
         <div className="mx-5 marginTop24">
@@ -66,12 +66,13 @@ const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState}) =
                         >
                           Indietro 
                         </ButtonNaked>
-                        <Typography sx={{ marginLeft: '20px' }} variant="caption">
+                        <Typography sx={{ marginLeft: '20px',fontWeight:cssPath1 }} variant="caption">
                             <DnsIcon fontSize="inherit" sx={{marginRight:'5px'}}></DnsIcon>
-                              Dati di fatturazione 
-                            <strong>/ {!mainState.datiFatturazione ? 'Inserisci i dati di fatturazione':'Modifica i dati di fatturazione'}</strong>
+                              Dati di fatturazione /
                         </Typography>
-                     
+                        <Typography sx={{fontWeight:cssPath2 }} variant="caption">
+                            {!mainState.datiFatturazione ? 'Inserisci i dati di fatturazione':'Modifica i dati di fatturazione'}
+                        </Typography>
                     </div>
             }
             <div className="marginTop24">
