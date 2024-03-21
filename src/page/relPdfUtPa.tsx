@@ -142,7 +142,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         setErrorUpload(false);
         if(rel){
             await uploadPdfRel(token, profilo.nonce, rel.idTestata, {file:file} ).then((res)=>{
-                console.log({res});
+              
                 getRel(rel.idTestata);
                 setFile(null);
                 setLoadingUpload(false);

@@ -165,7 +165,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     const getDatiFat = async () =>{
       
         await getDatiFatturazione(token,profilo.nonce).then(( ) =>{ 
-            console.log(9999);
+         
             handleModifyMainState({
                 datiFatturazione:true,
                 statusPageInserimentoCommessa:'immutable'

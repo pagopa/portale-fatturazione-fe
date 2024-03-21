@@ -34,7 +34,7 @@ const BasicAlerts:React.FC <AlertProps> =  ({typeAlert, setVisible , visible}) =
       
     },[visible]);
 
-    console.log(visible);
+  
     return (
         <div className={css}>
             <Stack sx={{ width: '100%' }} spacing={2}>

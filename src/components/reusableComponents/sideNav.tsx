@@ -78,12 +78,12 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
          
 
         }).catch(err =>{
-            if(err){
-                if(err?.response?.status === 404){
-                    handleModifyMainState({datiFatturazione:false});
+          
+            if(err?.response?.status === 404){
+                handleModifyMainState({datiFatturazione:false});
               
-                }
             }
+           
            
         });
 
@@ -122,7 +122,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
             
                     localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
                         ...newState}));
-                    console.log('ddd');
+                 
                     navigate('/8');
                 }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0 ){
     
