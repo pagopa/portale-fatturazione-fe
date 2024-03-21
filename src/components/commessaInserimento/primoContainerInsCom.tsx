@@ -21,17 +21,12 @@ const PrimoContainerInsCom : React.FC<PrimoContainerInsComProps> = () => {
     }else if(statusApplication.inserisciModificaCommessa === 'INSERT'){
         const mon = new Date().getMonth();
         const date = new Date();
-      
         if(mon === 11){
-           
             anno = date.getFullYear()+1;
             mese = month[mon + 1 ];
-            //setMainState((prev:any) =>({...prev, ...{mese:mese,anno:anno}}));
-           
         }else{
             anno = date.getFullYear();
             mese = month[mon + 1 ];
-            // setMainState((prev:any) =>({...prev, ...{mese:mese,anno:anno}}));
         }
 
     }

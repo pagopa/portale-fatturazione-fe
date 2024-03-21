@@ -154,7 +154,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
        
         // l'evento verrà eseguito solo se l'utente farà il clik sul  mese e action
         if(columsSelectedGrid  === 'regioneSociale' ||columsSelectedGrid  === 'action' ){
-            console.log(params.row.ragioneSociale);
+          
             const newState = {
                 mese:params.row.mese,
                 anno:params.row.anno,
