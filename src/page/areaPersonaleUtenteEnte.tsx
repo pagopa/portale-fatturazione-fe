@@ -72,7 +72,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
 
     });
   
-
+    console.log({datiFatturazione});
     // state creato per il tasto conferma , abilitato nel caso in cui tutti values sono true
     const [statusBottonConferma, setStatusButtonConferma] = useState<StateEnableConferma>({
         'CUP':false,
@@ -216,33 +216,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         }
     },[]);
 
-    /* funzione richiamata in entrambe le funzioni modify dati fatturazione lato selcare e pagopa
-
-    const actionOnResponseModifyDatiFatturazione = () =>{
-        if(mainState.action === 'DATI_FATTURAZIONE'){
-            handleModifyMainState({
-                statusPageDatiFatturazione:'immutable',
-            });
-           
-        }else{
-            handleModifyMainState({
-                statusPageDatiFatturazione:'immutable',
-                action:'SHOW_MODULO_COMMESSA',
-                inserisciModificaCommessa: 'MODIFY'
-            });
-        
-            const statusApp = localStorage.getItem('statusApplication')||'{}';
-            const parseStatusApp = JSON.parse(statusApp);
-        
-            localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
-                ...{ statusPageDatiFatturazione:'immutable',
-                    action:'SHOW_MODULO_COMMESSA',
-                    inserisciModificaCommessa: 'MODIFY'
-                }}));
-        }
-
-    };
-*/ 
+   
     const hendleSubmitDatiFatturazione = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) =>{
         e.preventDefault();
         const statusApp = localStorage.getItem('statusApplication')||'{}';

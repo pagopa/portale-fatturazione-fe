@@ -18,6 +18,8 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
     const [element, setElement] = useState('');
     const [validation, setValidation] = useState(false);
 
+    console.log({element, arrElement});
+
     const handleSubmit = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
         if (element) {
@@ -36,10 +38,12 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
  
     const hendleOnMouseOut = (e: React.SyntheticEvent<EventTarget>) =>{
         e.persist();
+        const emailAlreadyExist = arrElement.map(obj => Object.values(obj)).flat().every(el => el !== element);
        
         _YupEmail.validate(element).then(( )=>{
-          
             if(arrElement.length === 0 && element === ''){
+                setValidation(true);
+            }else if(!emailAlreadyExist){
                 setValidation(true);
             }else{
                 setValidation(false);
