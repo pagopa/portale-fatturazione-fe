@@ -110,11 +110,11 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
            
         }).catch(err =>{
            
-            if(err.response.status === 401){
+            if(err?.response?.status === 401){
                 localStorage.removeItem("token");
                 localStorage.removeItem("profilo");
                 navigate('/error');
-            }else if(err.response.status === 404){
+            }else if(err?.response?.status === 404){
                 const statusApp = localStorage.getItem('statusApplication')||'{}';
                 const parseStatusApp = JSON.parse(statusApp);
             
@@ -125,7 +125,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                     datiFatturazione:false,
                     statusPageDatiFatturazione:'mutable'
                 }});
-            }else if(err.response.status === 419){
+            }else if(err?.response?.status === 419){
 
                 navigate('/error');
             }
@@ -318,9 +318,9 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                     });
                  
                 }).catch(err =>{
-                    if(err.response.status === 401){
+                    if(err?.response?.status === 401){
                         navigate('/error');
-                    }else if(err.response.status === 419){
+                    }else if(err?.response?.status === 419){
                         navigate('/error');
                     }
                 });
