@@ -66,7 +66,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
         ]
     });
     
-    const { toPDF, targetRef } = usePDF({filename: `ModuloCommessa ${dataPdf.meseAttivita}.pdf`});
+    const { toPDF, targetRef } = usePDF({filename: `ModuloCommessa ${profilo.auth === 'PAGOPA' && statusApp.nomeEnteClickOn} ${dataPdf.meseAttivita}.pdf`});
     interface DatiCommessaPdf {
         totaleNotifiche?: number,
         numeroNotificheNazionali?: number,

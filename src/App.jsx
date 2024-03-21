@@ -72,10 +72,11 @@ const App = ({ instance }) => {
 */
     const [checkProfilo,setCheckProfilo] = useState(false);
     // set status page abilita e disabilita le modifiche al componente dati fatturazione
-
+    
     const [mainState, dispatchMainState] = useReducer(reducerMainState, {
         mese:'',
         anno:'',
+        //nomeEnteClickOn:'',  // lato pagopa sul click della grid lista ModuloCommessa/dati fatturazione vado a soricizzare il nome da mostrare nel dettaglio
         //modifica:undefined, // se la commessa selezionata è modificabile
         datiFatturazione:false,// l'ente ha i dati di fatturazione?
         userClickOn:undefined, // se l'utente clicca su un elemento di lista commesse setto GRID
@@ -84,37 +85,13 @@ const App = ({ instance }) => {
         // action:'DATI_FATTURAZIONE', // le action possono essere HIDE_MODULO_COMMESSA / SHOW_MODULO_COMMESSA / DATI_FATTURAZIOne
         statusPageDatiFatturazione:'immutable',
         statusPageInserimentoCommessa:'immutable',
-        idEnte:'',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
-        prodotto: '',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione,
+        // idEnte:'',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
+        // prodotto: '',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione,
         relSelected: null // rel selezionata nella grid in page rel
     });
 
-  
-    /*
-    const [mainState,  dispatchMainState] = useState({
-        mese:'',
-        anno:'',
-        modifica:undefined, // se la commessa selezionata è modificabile
-        userClickOn:undefined, // se l'utente clicca su un elemento di lista commesse setto GRID
-        inserisciModificaCommessa:undefined, // INSERT MODIFY  se il sevizio get commessa mi restituisce true []
-        action:'DATI_FATTURAZIONE', // le action possono essere HIDE_MODULO_COMMESSA / SHOW_MODULO_COMMESSA / DATI_FATTURAZIOne
-        statusPageDatiFatturazione:'immutable',
-        statusPageInserimentoCommessa:'immutable',
-        indexStepper:0, // index del componente setpper
-        idEnte:'',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
-        prodotto: '',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione,
-        relSelected: null // rel selezionata nella grid in page rel
-    });
+    console.log(mainState);
    
-    let redirectOnWrongURL = '/';
-
-    if(profilo.auth === 'PAGOPA'){
-        redirectOnWrongURL = '/pagopalistadatifatturazione';
-    }
- 
-*/
-  
-
     return (
 
       

@@ -12,13 +12,17 @@ interface PageTitleProps {
 
 const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState}) => {
 
+    const {mainState} = useContext(DatiFatturazioneContext);
 
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
 
+    const getStatusApplication = localStorage.getItem('statusApplication') || '{}';
+    const statusApp =  JSON.parse(getStatusApplication);
+
     const navigate = useNavigate();
 
-    const {mainState} = useContext(DatiFatturazioneContext);
+   
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -32,9 +36,9 @@ const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState}) =
     if (!mainState.datiFatturazione) {
         titleNavigation = 'Inserisci i dati di fatturazione ';
     }else if (mainState.statusPageDatiFatturazione === 'immutable' && mainState.datiFatturazione) {
-        titleNavigation = 'Dati di fatturazione';
+        titleNavigation = 'Dati di fatturazione ';
     }else if(mainState.statusPageDatiFatturazione === 'mutable' &&   mainState.datiFatturazione ){
-        titleNavigation = 'Modifica dati di fatturazione';
+        titleNavigation = 'Modifica dati di fatturazione ';
     }
 
     
@@ -76,11 +80,11 @@ const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState}) =
                     </div>
             }
             <div className="marginTop24">
-                <Typography variant="h4">{titleNavigation}</Typography>
+                <Typography variant="h4">{titleNavigation} {profilo.auth === 'PAGOPA' && `/ ${statusApp.nomeEnteClickOn}`} </Typography>
             </div>
             
             {mainState.statusPageDatiFatturazione === 'immutable' && profilo.ruolo === 'R/W' ? (
-                <div className="text-end marginTop24">
+                <div className="text-end">
                     <Button onClick={() => handleModifyMainState({statusPageDatiFatturazione:'mutable'})}
                         variant="contained" size="small">Modifica</Button>
                 </div>

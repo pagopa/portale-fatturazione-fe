@@ -11,12 +11,19 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import { downloadDocumentoListaDatiFatturazionePagoPa, listaDatiFatturazionePagopa } from "../api/apiPagoPa/datiDiFatturazionePA/api";
 
-const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainState}) =>{
+const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainState, dispatchMainState}) =>{
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
 
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
+
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
 
     const navigate = useNavigate();
 
@@ -136,10 +143,12 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                 ...profilo,
                 ...{
                     idEnte:params.row.idEnte,
-                    prodotto:params.row.prodotto
+                    prodotto:params.row.prodotto,
                 }
-               
             }));
+
+            const string = JSON.stringify({nomeEnteClickOn:params.row.ragioneSociale});
+            localStorage.setItem('statusApplication', string);
 
             navigate('/');
         }

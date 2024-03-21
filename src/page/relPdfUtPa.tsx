@@ -37,6 +37,9 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
 
+    const state = localStorage.getItem('statusApplication') || '{}';
+    const statusApp =  JSON.parse(state);
+
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
             type:'MODIFY_MAIN_STATE',
@@ -53,13 +56,13 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             if(profilo.auth === 'SELFCARE'){
                 await getRelExel(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
                
-                    saveAs("data:text/plain;base64," + res.data.documento,`Lista Regolare esecuzione.xlsx` );
+                    saveAs("data:text/plain;base64," + res.data.documento,`Lista Regolare esecuzione ${statusApp.mese}/${statusApp.anno}.xlsx` );
                 }).catch((err)=>{
                     manageError(err,navigate);
                 });
             }else{
                 await getRelExelPagoPa(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
-                    saveAs("data:text/plain;base64," + res.data.documento,'Lista Regolare esecuzione.xlsx' );
+                    saveAs("data:text/plain;base64," + res.data.documento,`Lista Regolare esecuzione ${statusApp.nomeEnteClickOn} ${statusApp.mese}/${statusApp.anno}.xlsx` );
                     
            
                 }).catch((err)=>{
@@ -92,13 +95,13 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         if( mainState.relSelected !== null){
             if(profilo.auth === 'SELFCARE'){
                 await getRelPdfFirmato(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
-                    saveAs("data:text/plain;base64," + res.data.documento,`Regolare Esecuzione Firmato.pdf` );
+                    saveAs("data:text/plain;base64," + res.data.documento,`Regolare Esecuzione Firmato ${statusApp.mese}/${statusApp.anno}.pdf` );
                 }).catch((err)=>{
                     manageError(err,navigate);
                 });
             }else{
                 await getRelPdfFirmatoPagoPa(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
-                    saveAs("data:text/plain;base64," + res.data.documento,`Regolare Esecuzione Firmato.pdf` );
+                    saveAs("data:text/plain;base64," + res.data.documento,`Regolare Esecuzione Firmato ${statusApp.nomeEnteClickOn} ${statusApp.mese}/${statusApp.anno}.pdf` );
                 }).catch((err)=>{
                     manageError(err,navigate);
                 });

@@ -371,36 +371,22 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     if(mainState.inserisciModificaCommessa === 'INSERT'){
         actionTitle =  <Typography variant="h4"> Aggiungi modulo commessa</Typography>;
     }else if(mainState.inserisciModificaCommessa  === 'MODIFY' && mainState.statusPageInserimentoCommessa === 'immutable' ){
-        actionTitle =  <Typography variant="h4">{month[statusApp.mese - 1]}</Typography>;
+        actionTitle = <Typography variant="h4">{month[statusApp.mese - 1]} {profilo.auth === 'PAGOPA' && `/ ${statusApp.nomeEnteClickOn}`}</Typography>;
     }else if(mainState.inserisciModificaCommessa  === 'MODIFY' && mainState.statusPageInserimentoCommessa === 'mutable'  ){
-        actionTitle =  <Typography variant="h4"> Modifica modulo commessa</Typography>;
+        actionTitle = <div className='d-flex'>
+            <Typography variant="h4"> Modifica modulo commessa {profilo.auth === 'PAGOPA' && `/ ${statusApp.nomeEnteClickOn}`}</Typography>
+        </div>; 
     }else{
         actionTitle = <Typography variant="h4">Modulo commessa</Typography>;
     }
-    /*
-    let indexStepper = 0;
-    if(mainState.inserisciModificaCommessa === 'INSERT' && mainState.action !== 'HIDE_MODULO_COMMESSA' ){
-        indexStepper = 1;
-    }else if(mainState.action === 'HIDE_MODULO_COMMESSA'){
-        indexStepper = 2;
-    }
+   
   
-    const hiddenShowHorizontalStepper = (
-        mainState.inserisciModificaCommessa === 'INSERT' &&
-        mainState.modifica === true) ||
-        (mainState.action === 'HIDE_MODULO_COMMESSA' && 
-         mainState.inserisciModificaCommessa === 'MODIFY' && 
-         mainState.modifica === true);
-    const hiddenShowHorizontalStepper = mainState.inserisciModificaCommessa === 'INSERT';
-*/
-    const hideShowButtonModifica =  mainState.statusPageInserimentoCommessa === 'immutable';// &&  buttonModifica;
 
     return (
         <InserimentoModuloCommessaContext.Provider
             value={{
                 setDatiCommessa,
                 datiCommessa,
-                // setDisableContinua,
                 totaliModuloCommessa,
                 setTotale,
                 totale,

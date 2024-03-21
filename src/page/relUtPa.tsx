@@ -189,6 +189,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             );
         }else{
             getSingleRelPagopa(token,profilo.nonce,idRel).then((res) =>{
+    
                 handleModifyMainState({relSelected:res.data});
             
                 navigate('/relpdf');
@@ -232,7 +233,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         await downloadListaRelPdfZipPagopa(token,profilo.nonce,bodyRel)
             .then(response => response.blob())
             .then(blob => {
-                saveAs(blob,`Lista documenti firmati Reg. Es. ${mesiGrid[bodyRel.mese]}.zip` );
+                saveAs(blob,`Lista documenti firmati Reg. Es.Mese di riferimento ${mesiGrid[bodyRel.mese]}.zip` );
                 setShowLoading(false);
             })
             .catch(err => {
