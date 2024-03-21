@@ -154,13 +154,13 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
        
         // l'evento verrà eseguito solo se l'utente farà il clik sul  mese e action
         if(columsSelectedGrid  === 'regioneSociale' ||columsSelectedGrid  === 'action' ){
-          
+            console.log(params.row.ragioneSociale);
             const newState = {
-                path:'/8',
                 mese:params.row.mese,
                 anno:params.row.anno,
                 userClickOn:'GRID',
-                inserisciModificaCommessa:"MODIFY"
+                inserisciModificaCommessa:"MODIFY",
+                nomeEnteClickOn:params.row.ragioneSociale
             };
             const string = JSON.stringify(newState);
             localStorage.setItem('statusApplication', string);
@@ -173,13 +173,6 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
             const stringProfilo = JSON.stringify(newProfilo);
             localStorage.setItem('profilo', stringProfilo);
 
-            handleModifyMainState({
-                mese:params.row.mese,
-                anno:params.row.anno,
-                modifica:params.row.modifica,
-                userClickOn:'GRID',
-                inserisciModificaCommessa:"MODIFY"
-            });
            
             navigate('/8');
            

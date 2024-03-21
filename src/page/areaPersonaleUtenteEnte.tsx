@@ -326,16 +326,13 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                             datiFatturazione:true,
                         });
 
-                    
                         localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
                             ...{
                                 statusPageDatiFatturazione:'immutable',
                                 datiFatturazione:true,
                             }}));
                         navigate('/4');
-                    }
-                   
-                    
+                    }  
                 }).catch(err =>{
                     if(err.response.status === 401){
                         navigate('/error');
@@ -363,9 +360,9 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 
                 <PageTitleNavigation dispatchMainState={dispatchMainState} /> 
                 {/* tab 1 e 2 start */}
-               
-                <TabAreaPersonaleUtente />
-
+                <div className='mt-5'>
+                    <TabAreaPersonaleUtente />
+                </div>
                 <div>
 
                     {mainState.statusPageDatiFatturazione === 'immutable' ? null : (

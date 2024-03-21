@@ -53,16 +53,13 @@ export type BodyListaModuloCommessa = {
 export interface MainState{
     mese:string,
     anno:string,
-    modifica:undefined, // se la commessa selezionata è modificabile
+    // nomeEnteClickOn:string, // lato pagopa sul click della grid lista ModuloCommessa/dati fatturazione vado a soricizzare il nome da mostrare nel dettaglio 
     userClickOn:undefined, // se l'utente clicca su un elemento di lista commesse setto GRID
     inserisciModificaCommessa:string |undefined, // INSERT MODIFY  se il sevizio get commessa mi restituisce true []
-    action:string, // le action possono essere HIDE_MODULO_COMMESSA / SHOW_MODULO_COMMESSA / DATI_FATTURAZIOne
     statusPageDatiFatturazione:string,
     statusPageInserimentoCommessa:string,
-    path:string,
-    indexStepper:0, // in che pat sono al momento del reload?
-    idEnte:string,// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
-    prodotto: string,// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
+    // idEnte:string,// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
+    //prodotto: string,// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
     datiFatturazione:boolean, // parametro utilizato in modulo commessa per capire se accettare l'inserimento commessa o fare il redirect t dati fatturazione se non sono stati inseriti
     relSelected:Rel|null // rel selezionata nella grid in page rel
 }

@@ -16,6 +16,17 @@ interface GridCustomProps {
 
 const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, nameParameterApi, apiGet, disabled}) =>{
 
+    const handleClickOnGrid = (element) =>{
+    
+        const string = JSON.stringify({
+            nomeEnteClickOn:element.ragioneSociale,
+            mese:element.mese,
+            anno:element.anno
+        });
+        localStorage.setItem('statusApplication', string);
+        apiGet(element[nameParameterApi]);
+    };
+   
 
     return (
         <div>
@@ -59,9 +70,8 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                                             sx={cssFirstColum} 
                                                             onClick={()=>{
                                                                 if(i === 0){
-                                                                    apiGet(element[nameParameterApi]);
-                                                                }
-                                                                               
+                                                                    handleClickOnGrid(element);
+                                                                }            
                                                             } }
                                                         >
                                                             {value}
