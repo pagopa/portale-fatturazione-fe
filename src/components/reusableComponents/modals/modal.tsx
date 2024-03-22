@@ -40,13 +40,16 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open}) => {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                    <div className='text-center'>
+                        <Typography id="modal-modal-title" variant="h6" component="h2">
         Vuoi davvero uscire ?
-                    </Typography>
-                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                        </Typography>
+                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             Se esci le modifiche andranno perse
-                    </Typography>
-                    <div className='container_buttons_modal d-flex justify-content-end'>
+                        </Typography>
+                    </div>
+                   
+                    <div className='container_buttons_modal d-flex justify-content-center'>
                         <Button 
                             sx={{marginRight:'20px'}} 
                             variant='outlined'

@@ -506,7 +506,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
             <ModalRedirect 
                 setOpen={setOpenModalRedirect}
                 open={openModalRedirect}
-                sentence={`Per poter inserire il modulo commessa è nesessario l'inserimento dei dati di fatturazione obbligatori:`}></ModalRedirect>
+                sentence={`Per poter inserire il modulo commessa è necessario l'inserimento dei dati di fatturazione obbligatori:`}></ModalRedirect>
             
         </InserimentoModuloCommessaContext.Provider>
     );

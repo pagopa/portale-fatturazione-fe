@@ -352,7 +352,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             <ModalRedirect
                 setOpen={setOpenModalRedirect} 
                 open={openModalRedirect}
-                sentence={`Per poter visulazzare il dettaglio REL è nesessario l'inserimento dei dati di fatturazione obbligatori:`}>
+                sentence={`Per poter visualilazzare il dettaglio REL è necessario l'inserimento dei dati di fatturazione obbligatori:`}>
             </ModalRedirect>
 
             <ModalLoading 
