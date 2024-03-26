@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { TokenObject,ManageErrorResponse} from '../types/typesGeneral';
+import { BodyRel, BodyRelLog } from '../types/typeRel';
 
 
 export const url = process.env.REACT_APP_URL;
@@ -69,6 +70,10 @@ export const getTipologiaProfilo = async (token:string, nonce:string) => {
     );
     return response;
 };
+
+
+
+
 
 
 

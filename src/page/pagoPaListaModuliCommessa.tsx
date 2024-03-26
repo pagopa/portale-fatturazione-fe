@@ -120,6 +120,8 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
             }); 
     };
 
+    const mesiWithZero = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+
     const downloadExelListaCommessa = async () =>{
         await downloadDocumentoListaModuloCommessaPagoPa(token, profilo.nonce,bodyGetLista)
             .then((res)=>{
@@ -127,7 +129,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
                 //const url = window.URL.createObjectURL(res.data.documento);
                 const link = document.createElement('a');
                 link.href = "data:text/plain;base64," + res.data.documento;
-                link.setAttribute('download', `Lista Modulo Commessa ${mesiGrid[bodyGetLista.mese]} ${bodyGetLista.anno}.xlsx`); //or any other extension
+                link.setAttribute('download', `Moduli Commessa/${mesiWithZero[Number(bodyGetLista.mese) -1]}/${bodyGetLista.anno}.xlsx`); //or any other extension
                 document.body.appendChild(link);
               
                 link.click();
@@ -195,8 +197,8 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
         // { field: 'tipoSpedizioneAnalogicoAR', headerName: 'Tipo spediz Anal', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'numeroNotificheNazionaliAnalogico890', headerName: 'Num. Not. Naz. 890', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'numeroNotificheInternazionaliAnalogico890', headerName: 'Num. Not. Naz. AR 890', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'totaleAnalogicoLordo', headerName: 'Tot. Spedizioni A.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',  valueFormatter: ({ value }) => value.toFixed(2)},
-        { field: 'totaleDigitaleLordo', headerName: 'Tot. Spedizioni D', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left', valueFormatter: ({ value }) => value.toFixed(2) },
+        { field: 'totaleAnalogicoLordo', headerName: 'Tot. Spedizioni A.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',  valueFormatter: ({ value }) => value.toLocaleString("de-DE", { style: "currency", currency: "EUR" })},
+        { field: 'totaleDigitaleLordo', headerName: 'Tot. Spedizioni D', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left', valueFormatter: ({ value }) => value.toLocaleString("de-DE", { style: "currency", currency: "EUR" }) },
     
         {
             field: 'action',

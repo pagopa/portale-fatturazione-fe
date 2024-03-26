@@ -88,7 +88,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
     const valueAnalogico = valueTotali.filter((obj) => obj.idCategoriaSpedizione === 1);
 
     const sum = (valueTotali[0]?.totaleValoreCategoriaSpedizione || 0) + (valueTotali[1]?.totaleValoreCategoriaSpedizione || 0);
-    const sumFixed2Decimal = sum.toFixed(2).toString().replace('.', ',');
+    const sumFixed2Decimal = sum.toLocaleString("de-DE", { style: "currency", currency: "EUR" });
 
     function createDateFromString(string:string){
         const getGiorno = new Date(string).getDate();
@@ -129,7 +129,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                         variant="caption-semibold"
                         sx={{fontSize:'18px'}}
                     >
-                        {valueDigitale[0]?.totaleValoreCategoriaSpedizione.toFixed(2).toString().replace('.',',')|| 0} €
+                        {valueDigitale[0]?.totaleValoreCategoriaSpedizione.toLocaleString("de-DE", { style: "currency", currency: "EUR" })|| '0 €'} 
                     </Typography>
                 </Grid>
   
@@ -166,7 +166,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                         variant="caption-semibold"
                         sx={{fontSize:'18px', textAlign:'center'}}
                     >
-                        {valueAnalogico[0]?.totaleValoreCategoriaSpedizione.toFixed(2).toString().replace('.',',') || 0} €
+                        {valueAnalogico[0]?.totaleValoreCategoriaSpedizione.toLocaleString("de-DE", { style: "currency", currency: "EUR" })|| '0 €'}
                     </Typography>
                 </Grid>
 
@@ -198,7 +198,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                         variant="caption-semibold"
                         sx={{fontSize:'18px'}}
                     >
-                        {sumFixed2Decimal} €
+                        {sumFixed2Decimal}
                     </Typography>
                 </Grid>
 

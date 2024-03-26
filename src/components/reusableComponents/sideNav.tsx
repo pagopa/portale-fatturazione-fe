@@ -14,10 +14,10 @@ import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import {manageError} from '../../api/api';
 import MarkUnreadChatAltIcon from '@mui/icons-material/MarkUnreadChatAlt';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import { MainState, SideNavProps } from '../../types/typesGeneral';
+import { SideNavProps } from '../../types/typesGeneral';
 import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
 import { getDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
-import ModalRedirect from '../commessaInserimento/madalRedirect';
+
 
 const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}) => {
 
@@ -39,7 +39,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
   
 
     const [selectedIndex, setSelectedIndex] = useState(0);
-    //const [openModalRedirectDatiFatturazione,setOpenModalRedirectDatiFatturazione] = useState(false);
+
     
     const handleListItemClick = async() => {
 
@@ -275,12 +275,6 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
                     <Divider />
                 </Box>
             }
-            {/* 
-            <ModalRedirect 
-                setOpen={setOpenModalRedirectDatiFatturazione}
-                open={openModalRedirectDatiFatturazione}
-                sentence={`Per poter inserire il modulo commessa è nesessario l'inserimento dei dati di fatturazione obbligatori:`}></ModalRedirect>
-                 */}
         </>
        
 

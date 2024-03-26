@@ -4,18 +4,18 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { RelPageProps } from "../types/typeRel";
 import { Button, Typography } from "@mui/material";
 import { useNavigate } from 'react-router';
-import { manageError } from '../api/api';
+import {manageError } from '../api/api';
 import { useEffect, useRef, useState} from 'react';
 import TextDettaglioPdf from '../components/commessaPdf/textDettaglioPdf';
 import { ResponseDownloadPdf } from '../types/typeModuloCommessaInserimento';
-import { getRelExel, getRelPdf, uploadPdfRel ,getRelPdfFirmato, getSingleRel } from '../api/apiSelfcare/relSE/api';
-import { getRelExelPagoPa, getRelPdfFirmatoPagoPa } from '../api/apiPagoPa/relPA/api';
+import { getRelExel, getRelPdf, uploadPdfRel ,getRelPdfFirmato, getSingleRel, getLogRelDocumentoFirmato } from '../api/apiSelfcare/relSE/api';
+import { getLogPagoPaRelDocumentoFirmato, getRelExelPagoPa, getRelPdfFirmatoPagoPa } from '../api/apiPagoPa/relPA/api';
 import DownloadIcon from '@mui/icons-material/Download';
 import ModalUploadPdf from '../components/rel/modalUploadPdf';
 import { saveAs } from "file-saver";
-
 import generatePDF from 'react-to-pdf';
 import BasicAlerts from '../components/reusableComponents/alert';
+import { height } from '@mui/system';
 
 const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
@@ -63,8 +63,6 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             }else{
                 await getRelExelPagoPa(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
                     saveAs("data:text/plain;base64," + res.data.documento,`Lista Regolare esecuzione ${statusApp.nomeEnteClickOn} ${statusApp.mese}/${statusApp.anno}.xlsx` );
-                    
-           
                 }).catch((err)=>{
                     manageError(err,navigate);
                 });
@@ -81,7 +79,6 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             if(profilo.auth === 'SELFCARE'){
                 await getRelPdf(token, profilo.nonce, mainState.relSelected.idTestata).then((res: ResponseDownloadPdf)=>{
                     toDoOnDownloadPdf(res);
-               
                 }).catch((err)=>{
                     manageError(err,navigate);
                 });
@@ -110,6 +107,43 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         }
         
     };
+
+
+    const [lastUpdateDocFirmato, setLastUpdateDocFirmato] = useState('');
+
+    
+    const getDateLastDownloadPdfFirmato = async() =>{
+        if(rel){
+            const bodyPagopa = {
+                anno: Number(rel.anno),
+                mese: Number(rel.mese),
+                tipologiaFattura: rel.tipologiaFattura,
+                idContratto: rel.idContratto,
+                idEnte:rel.idEnte
+            };
+
+            const {idEnte, ...bodySelf} = bodyPagopa;
+
+            if(profilo.auth === 'SELFCARE'){
+                await getLogRelDocumentoFirmato(token, profilo.nonce,bodySelf).then((res) =>{
+                    setLastUpdateDocFirmato(res.data[0].dataEvento);
+                    console.log(res, 'new');
+                }).catch((err)=>{
+                   
+                    //manageError(err, navigate);
+                });
+            }else if(profilo.auth === 'PAGOPA'){
+                await getLogPagoPaRelDocumentoFirmato(token, profilo.nonce,bodyPagopa).then((res) =>{
+                    setLastUpdateDocFirmato(res.data[0].dataEvento);
+                    console.log(res, 'new');
+                }).catch((err)=>{
+                   
+                    //manageError(err, navigate);
+                });
+            }
+           
+        }
+    };
     
     const toDoOnDownloadPdf = (res:ResponseDownloadPdf) =>{
         const wrapper = document.getElementById('file_download_rel');
@@ -119,7 +153,8 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     };
 
     useEffect(()=>{
-        downloadPdfRel();  
+        downloadPdfRel(); 
+        getDateLastDownloadPdfFirmato();  
     },[]);
 
     const [file, setFile] = useState<File | null>(null);
@@ -172,11 +207,24 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
               
         );
     };
+
+
+
     /*
     const [visible, setVisible] = useState(false);
     <Button onClick={() => setVisible(true)}>ciao</Button>
     <BasicAlerts setVisible={setVisible} visible={visible} typeAlert={''}></BasicAlerts>
 */
+    function createDateFromString(string:string){
+        const getGiorno = new Date(string).getDate();
+  
+        const getMese = new Date(string).getMonth() + 1;
+        const getAnno = new Date(string).getFullYear();
+
+        return getGiorno+'/'+getMese+'/'+getAnno;
+    }
+
+
     return (
         <div>
            
@@ -232,13 +280,13 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                         <TextDettaglioPdf description={'N. Notifiche Analogiche'} value={rel.totaleNotificheAnalogiche}></TextDettaglioPdf>
                         <TextDettaglioPdf description={'N. Notifiche Digitali'} value={rel.totaleNotificheDigitali}></TextDettaglioPdf>
                         <TextDettaglioPdf description={'N. Tototale Notifiche'} value={rel.totaleNotificheDigitali + rel.totaleNotificheAnalogiche }></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Totale Imponibile Analogico'} value={Number(rel.totaleAnalogico).toFixed(2)+' €'}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Totale Imponibile Digitale'} value={Number(rel.totaleDigitale).toFixed(2)+' €'}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Totale Imponibile'} value={Number(rel.totale).toFixed(2)+' €'}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Totale Imponibile Analogico'} value={Number(rel.totaleAnalogico).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Totale Imponibile Digitale'} value={Number(rel.totaleDigitale).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Totale Imponibile'} value={Number(rel.totale).toLocaleString()+' €'}></TextDettaglioPdf>
                         <TextDettaglioPdf description={'Iva'} value={rel.iva +' %'}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Totale Ivato Analogico '} value={Number(rel.totaleAnalogicoIva).toFixed(2)+' €'}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Totale Ivato Digitale'} value={Number(rel.totaleDigitaleIva).toFixed(2)+' €'}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Totale Ivato'} value={Number(rel.totaleIva).toFixed(2)+' €'}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Totale Ivato Analogico '} value={Number(rel.totaleAnalogicoIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Totale Ivato Digitale'} value={Number(rel.totaleDigitaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Totale Ivato'} value={Number(rel.totaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                         
                     </div>
                     }
@@ -261,7 +309,16 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 }
                 {rel?.caricata === 1 &&
                 <div>
-                    <Button sx={{width:'300px'}} onClick={() => downloadPdfRelFirmato()}   variant="contained">Scarica PDF Firmato <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+                    <div>
+                        <Button sx={{width:'300px'}} onClick={() => downloadPdfRelFirmato()}   variant="contained">Scarica PDF Firmato <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+                    </div>
+                    <div className='text-center mt-2'>
+                        <Typography variant="overline" >{createDateFromString(lastUpdateDocFirmato)}</Typography>
+                    </div>
+                    
+                  
+                
+                   
                 </div>
                 }
             </div>

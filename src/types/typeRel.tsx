@@ -32,7 +32,7 @@ export interface Rel {
     anno: string,
     mese: string,
     totaleAnalogico: number,
-    totaleDigitale: string,
+    totaleDigitale: number,
     totaleNotificheAnalogiche: number,
     totaleNotificheDigitali: number,
     totale: number,
@@ -40,8 +40,13 @@ export interface Rel {
     totaleAnalogicoIva:number,
     totaleDigitaleIva:number,
     totaleIva:number
+}
 
-
-
+export interface BodyRelLog {
+    anno: number,
+    mese: number,
+    tipologiaFattura: string,
+    idContratto: string,
+    idEnte?:string
 }
 

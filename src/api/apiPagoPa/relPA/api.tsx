@@ -1,6 +1,6 @@
 import axios from "axios";
 import { url } from "../../api";
-import { BodyRel } from "../../../types/typeRel";
+import { BodyRel, BodyRelLog } from "../../../types/typeRel";
 
 
 export const getListaRelPagoPa = async (token:string, nonce:string , page:number, pageSize:number, body: BodyRel) => {
@@ -67,6 +67,16 @@ export const downloadListaRelPdfZipPagopa = async (token:string, nonce:string , 
             body:JSON.stringify(body),
         });
     
+    return response;
+};
+
+export const getLogPagoPaRelDocumentoFirmato = async (token:string, nonce:string , body: BodyRelLog) => {
+    const response =  await axios.post(`${url}/api/rel/pagopa/firma/log?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
     return response;
 };
 

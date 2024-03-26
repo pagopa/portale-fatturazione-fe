@@ -5,7 +5,6 @@ import '../style/areaPersonaleUtenteEnte.css';
 import { Button } from '@mui/material';
 import TabAreaPersonaleUtente from '../components/areaPersonale/tabAreaPersonaleUtente';
 import PageTitleNavigation from '../components/areaPersonale/pageTitleNavigation';
-import { MainState } from '../types/typesGeneral';
 import {
     AreaPersonaleContext,
     DatiFatturazione,
@@ -154,7 +153,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
    
     // get dati fatturazione PAGOPA
     const getDatiFatPagoPa = async () =>{
-
         await getDatiFatturazionePagoPa(token,profilo.nonce, profilo.idEnte, profilo.prodotto ).then((res:SuccesResponseGetDatiFatturazione) =>{   
             handleModifyMainState({
                 datiFatturazione:true,
@@ -164,8 +162,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
             setDatiFatturazione(res.data); 
            
         }).catch(err =>{
-            
-            
             handleModifyMainState({
                 datiFatturazione:false,
                 statusPageDatiFatturazione:'mutable'
@@ -303,7 +299,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
             }else{
                 // 2 - ED è UN UTENTE SELFCARE
                 insertDatiFatturazione(body, token,profilo.nonce).then(() =>{
-                  
                   
                     if(parseStatusApp.inserisciModificaCommessa === 'INSERT'){
                         handleModifyMainState({
