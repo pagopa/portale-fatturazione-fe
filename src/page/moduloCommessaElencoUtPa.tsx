@@ -212,7 +212,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
             <ModalRedirect 
                 setOpen={setOpenModalRedirect}
                 open={openModalRedirect}
-                sentence={`Per poter inserire il modulo commessa è necessario l'inserimento dei dati di fatturazione obbligatori:`}></ModalRedirect>
+                sentence={`Per poter inserire il modulo commessa è obbligatorio fornire  i seguenti dati di fatturazione:`}></ModalRedirect>
 
         </div>
     );

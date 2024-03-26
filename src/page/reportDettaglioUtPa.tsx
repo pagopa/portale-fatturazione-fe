@@ -44,6 +44,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         {1:'Gennaio'},{2:'Febbraio'},{3:'Marzo'},{4:'Aprile'},{5:'Maggio'},{6:'Giugno'},
         {7:'Luglio'},{8:'Agosto'},{9:'Settembre'},{10:'Ottobre'},{11:'Novembre'},{12:'Dicembre'}];
 
+    const mesiWithZero = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+        
+
     const mesiGrid = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
         
     const tipoNotifica = [
@@ -129,7 +132,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             dataInvio:new Date(notifica.dataInvio).toISOString().split('T')[0],
             statoEstero:notifica.statoEstero,
             cap:notifica.cap,
-            costEuroInCentesimi:(Number(notifica.costEuroInCentesimi) / 100).toFixed(2)+'€'
+            costEuroInCentesimi:(Number(notifica.costEuroInCentesimi) / 100).toLocaleString("de-DE", { style: "currency", currency: "EUR" })
         };
     });
   
@@ -352,7 +355,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 .then((res)=>{
                     const link = document.createElement('a');
                     link.href = "data:text/plain;base64," + res.data.documento;
-                    link.setAttribute('download',`Lista Modulo Commessa ${mesiGrid[bodyGetLista.mese-1]} ${bodyGetLista.anno}.xlsx`); //or any other extension
+                    link.setAttribute('download',`Notifiche /${notificheListWithOnere[0].ragioneSociale}/${mesiWithZero[bodyGetLista.mese-1]} /${bodyGetLista.anno}.xlsx`); //or any other extension
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);           
@@ -368,7 +371,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     const a = document.createElement('a');
                     a.setAttribute('hidden', '');
                     a.setAttribute('href', url);
-                    a.setAttribute('download',`Lista Modulo Commessa ${mesiGrid[bodyGetLista.mese-1]} ${bodyGetLista.anno}.csv`);
+                    a.setAttribute('download',`Notifiche /${mesiWithZero[bodyGetLista.mese-1]} /${bodyGetLista.anno}.csv`);
                     document.body.appendChild(a);
                     a.click();
                     setShowLoading(false);

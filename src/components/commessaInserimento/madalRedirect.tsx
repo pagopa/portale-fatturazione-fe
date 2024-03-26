@@ -66,7 +66,7 @@ const ModalRedirect : React.FC<ModalProps> =({setOpen, open, sentence}) => {
                         <Button
                             variant='contained'
                             onClick={()=>handleGoToDatiFatturazione()}
-                        >Inserisci i Dati di fatturazione</Button>
+                        >Vai ai dati di fatturazione</Button>
                     </div>
                     
                 </Box>

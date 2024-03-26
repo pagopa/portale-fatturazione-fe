@@ -62,7 +62,7 @@ const PrimoContainerInsCom : React.FC<PrimoContainerInsComProps> = () => {
                     item
                     xs={2}
                 >
-                    <Typography sx={{fontWeight:'bold', textAlign:'center'}}>Territorio Nazionale</Typography>
+                    <Typography sx={{fontWeight:'bold', textAlign:'center'}}>Territorio nazionale</Typography>
                 </Grid>
                 <Grid
                     item

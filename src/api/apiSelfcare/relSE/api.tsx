@@ -1,5 +1,5 @@
 import axios from "axios";
-import { BodyRel } from "../../../types/typeRel";
+import { BodyRel, BodyRelLog } from "../../../types/typeRel";
 import { url } from "../../api";
 
 export const getListaRel = async (token:string, nonce:string , page:number, pageSize:number, body: BodyRel) => {
@@ -74,5 +74,15 @@ export const getRelPdfFirmato = async ( token:string ,nonce:string , id:string) 
         },}
     );
 
+    return response;
+};
+
+export const getLogRelDocumentoFirmato = async (token:string, nonce:string , body: BodyRelLog) => {
+    const response =  await axios.post(`${url}/api/rel/firma/log?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
     return response;
 };

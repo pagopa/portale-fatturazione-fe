@@ -81,11 +81,11 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                             idContratto:obj.idContratto,
                             anno:obj.anno,
                             mese:mesiGrid[obj.mese],
-                            totaleAnalogico:Number(obj.totaleAnalogico).toFixed(2)+' €',
-                            totaleDigitale:Number(obj.totaleDigitale).toFixed(2)+' €',
+                            totaleAnalogico:obj.totaleAnalogico.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
+                            totaleDigitale:obj.totaleDigitale.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
                             totaleNotificheAnalogiche:obj.totaleNotificheAnalogiche,
                             totaleNotificheDigitali:obj.totaleNotificheDigitali,
-                            totale:Number(obj.totale).toFixed(2)+' €'
+                            totale:obj.totale.toLocaleString("de-DE", { style: "currency", currency: "EUR" })
                         };
                     });
                     
@@ -115,11 +115,11 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                             idContratto:obj.idContratto,
                             anno:obj.anno,
                             mese:mesiGrid[obj.mese],
-                            totaleAnalogico:Number(obj.totaleAnalogico).toFixed(2)+' €',
-                            totaleDigitale:Number(obj.totaleDigitale).toFixed(2)+' €',
+                            totaleAnalogico:obj.totaleAnalogico.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
+                            totaleDigitale:obj.totaleDigitale.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
                             totaleNotificheAnalogiche:obj.totaleNotificheAnalogiche,
                             totaleNotificheDigitali:obj.totaleNotificheDigitali,
-                            totale:Number(obj.totale).toFixed(2)+' €'
+                            totale:obj.totale.toLocaleString("de-DE", { style: "currency", currency: "EUR" })
                         };
                     });
                 
@@ -203,20 +203,22 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         
     };  
 
+    const mesiWithZero = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+
     const downloadListaRelExel = async() =>{
         setShowLoading(true);
         if(profilo.auth === 'SELFCARE'){
 
             const {idEnti, ...newBody} = bodyRel;
             await downloadListaRel(token,profilo.nonce,newBody).then((res)=>{
-                saveAs("data:text/plain;base64," + res.data.documento,`Lista Regolare esecuzione mese di riferimento ${mesiGrid[bodyRel.mese]}.xlsx` );
+                saveAs("data:text/plain;base64," + res.data.documento,`Regolare esecuzione / ${mesiWithZero[bodyRel.mese-1]}.xlsx` );
                 setShowLoading(false);
             }).catch((err)=>{
                 manageError(err,navigate);
             }); 
         }else{
             await downloadListaRelPagopa(token,profilo.nonce,bodyRel).then((res)=>{
-                saveAs("data:text/plain;base64," + res.data.documento,`Lista Regolare esecuzione mese di riferimento ${mesiGrid[bodyRel.mese]}.xlsx` );
+                saveAs("data:text/plain;base64," + res.data.documento,`Regolari esecuzioni /${mesiWithZero[bodyRel.mese-1]}/ ${bodyRel.anno}.xlsx` );
                 setShowLoading(false);
             }).catch((err)=>{
                 manageError(err,navigate);
@@ -233,7 +235,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         await downloadListaRelPdfZipPagopa(token,profilo.nonce,bodyRel)
             .then(response => response.blob())
             .then(blob => {
-                saveAs(blob,`Lista documenti firmati Reg. Es.Mese di riferimento ${mesiGrid[bodyRel.mese]}.zip` );
+                saveAs(blob,`Documenti firmati regolare esecuzione / ${mesiWithZero[bodyRel.mese -1]} / ${bodyRel.anno}.zip` );
                 setShowLoading(false);
             })
             .catch(err => {
@@ -352,7 +354,8 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             <ModalRedirect
                 setOpen={setOpenModalRedirect} 
                 open={openModalRedirect}
-                sentence={`Per poter visualilazzare il dettaglio REL è necessario l'inserimento dei dati di fatturazione obbligatori:`}>
+                sentence={`Per poter visualizzare il dettaglio REL  è obbligatorio fornire i seguenti dati di fatturazione:`}>
+                    
             </ModalRedirect>
 
             <ModalLoading 

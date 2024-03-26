@@ -10,7 +10,7 @@ import {AreaPersonaleContext} from '../../types/typesAreaPersonaleUtenteEnte';
 import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
 
 const TabAreaPersonaleUtente = () => {
-    const {mainState,datiFatturazione,setDatiFatturazione, user} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
+    const {mainState,datiFatturazione,setDatiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
    
     function createDateFromString(string:string){
         const getGiorno = new Date(string).getDate();
@@ -33,6 +33,8 @@ const TabAreaPersonaleUtente = () => {
 
     const getProfilo =  localStorage.getItem('profilo') || '{}';
     const parseProfilo = JSON.parse(getProfilo);
+
+    const colorAsterisco = mainState.statusPageDatiFatturazione === 'immutable' ? '#C3CAD1': 'black'; 
 
     return (
 
@@ -142,40 +144,42 @@ const TabAreaPersonaleUtente = () => {
                 </div>
                 {/* terzo box   end */}
                 {/*checkbox start */}
-                <FormControlLabel  sx={{
-                    marginTop:'24px',
-                    '& .MuiFormControlLabel-label': {
-                        fontSize: '0.8rem',
+                <div className='d-flex marginTop24'>
+                    <Typography sx={{marginRight:'10px', color:colorAsterisco}}  variant="h6">*</Typography>
+               
+                    <FormControlLabel  sx={{
+                        '& .MuiFormControlLabel-label': {
+                            fontSize: '0.8rem',
                        
-                    },
-                    '&.MuiFormControlLabel-root': {
-                        marginLeft:'0',
-                        marginRight:'0'
-                    }
-                }}  
-                required
-                labelPlacement="start"
-                control={<Checkbox 
-                    sx={{color: red[800]}}
-                    checked={datiFatturazione.notaLegale || false}
-                    onChange={()=> setDatiFatturazione((prev:any)=>({...prev,...{notaLegale:!datiFatturazione.notaLegale}}))}/>}
-                disabled={mainState.statusPageDatiFatturazione === 'immutable'}
-                label="Gli accordi di adesione a SEND sono esclusi dall'applicazione del Codice dei Contratti Pubblici ai
+                        },
+                        '&.MuiFormControlLabel-root': {
+                            marginLeft:'0',
+                            marginRight:'0'
+                        }
+                    }}  
+                
+                    labelPlacement="start"
+                    control={<Checkbox 
+                        sx={{color: red[800]}}
+                        checked={datiFatturazione.notaLegale || false}
+                        onChange={()=> setDatiFatturazione((prev:any)=>({...prev,...{notaLegale:!datiFatturazione.notaLegale}}))}/>}
+                    disabled={mainState.statusPageDatiFatturazione === 'immutable'}
+                    label="Gli accordi di adesione a SEND sono esclusi dall'applicazione del Codice dei Contratti Pubblici ai
                  sensi dell'art. 56, comma 1, lett a) del D.lgs. 36/2023 pertanto non sono sottoposti alla disciplina della
                   tracciabilità dei flussi finanziari di cui alla L. 136/2010, come indicato dall'ANAC nelle relative Linee Guida.
                 Conseguentemente, il CIG non deve essere acquisito e riportato nelle fatture"
-                />
-
+                    />
+                </div>
                 {/*checkbox start */}
                 <hr className="mx-3 mt-5" />
                 <div className="d-flex justify-content-around marginTopBottom24">
                     <div className='d-flex'>
                         <InputLabel  sx={{ marginRight:'20px'}}  size={"normal"}>Data primo accesso</InputLabel>
-                        {user === 'old' ? <Typography >{createDateFromString(parseProfilo.dataPrimo)}</Typography>: null}
+                        {mainState.datiFatturazione && <Typography >{createDateFromString(parseProfilo.dataPrimo)}</Typography>}
                     </div>
                     <div className='d-flex'>
                         <InputLabel sx={{ marginRight:'20px'}}  size={"normal"}>Data ultimo accesso</InputLabel>
-                        {user === 'old' ? <Typography >{createDateFromString(parseProfilo.dataUltimo)}</Typography>: null}
+                        {mainState.datiFatturazione && <Typography >{createDateFromString(parseProfilo.dataUltimo)}</Typography>}
                     </div>
                 </div>
             </div>

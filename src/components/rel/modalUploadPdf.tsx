@@ -40,7 +40,7 @@ const ModalUploadPdf : React.FC<ModalProps> =({setOpen, open}) => {
                     </div>
                     <div className='text-center'>
                         <Typography id="modal-modal-description" sx={{ mt: 3 }}>
-                    Il salvataggio del documento è stato completato
+                        L'inserimento del documento è stato completato
                         </Typography>
                     </div>
                   

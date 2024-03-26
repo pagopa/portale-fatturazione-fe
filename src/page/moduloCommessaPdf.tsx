@@ -15,6 +15,7 @@ import { downloadModuloCommessaPagoPaPdf, getModuloCommessaPagoPaPdf } from "../
 const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
 
     const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre","Gennaio"];
+    const mesiWithZero = ['01','02','03','04','05','06','07','08','09','10','11','12'];
 
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
@@ -27,6 +28,15 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
 
     const tipoCommessa =  localStorage.getItem('tipo') || '';
 
+   
+    function createDateFromString(string:string){
+        const getGiorno = new Date(string).getDate();
+      
+        const getMese = new Date(string).getMonth() + 1;
+        const getAnno = new Date(string).getFullYear();
+
+        return getGiorno+'/'+getMese+'/'+getAnno;
+    }
     
 
     const navigate = useNavigate();
@@ -65,8 +75,8 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
                 descrizione:''}
         ]
     });
-    
-    const { toPDF, targetRef } = usePDF({filename: `ModuloCommessa ${profilo.auth === 'PAGOPA' && statusApp.nomeEnteClickOn} ${dataPdf.meseAttivita}.pdf`});
+   
+    const { toPDF, targetRef } = usePDF({filename: `Modulo Commessa /${dataPdf.descrizione} /${mesiWithZero[statusApp.mese -1]}/ ${statusApp.anno}.pdf`});
     interface DatiCommessaPdf {
         totaleNotifiche?: number,
         numeroNotificheNazionali?: number,
@@ -244,7 +254,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
                             <TextDettaglioPdf description={'Soggetto Split Payment'} value={dataPdf.splitPayment}></TextDettaglioPdf>
                             <TextDettaglioPdf description={'PEC'} value={dataPdf.pec}></TextDettaglioPdf>
                             <TextDettaglioPdf description={'Email riferimento contatti'} value={dataPdf?.contatti[0]?.email}></TextDettaglioPdf>
-                            <TextDettaglioPdf description={'Data di compilazione'} value={dataPdf.dataModifica}></TextDettaglioPdf>
+                            <TextDettaglioPdf description={'Data di compilazione'} value={createDateFromString(dataPdf.dataModifica)|| ''}></TextDettaglioPdf>
                         </div>
                     </div>
 
