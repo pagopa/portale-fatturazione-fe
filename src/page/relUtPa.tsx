@@ -58,7 +58,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     const [totalNotifiche, setTotalNotifiche]  = useState(0);
        
     const [dataSelect, setDataSelect] = useState([]);
-    const [data, setData] = useState([]);
+    const [data, setData] = useState<any>([]);
 
     const [getListaRelRunning, setGetListaRelRunning] = useState(false);
     const [disableDownloadListaPdf, setDisableListaPdf] = useState(true);
@@ -204,14 +204,14 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     };  
 
     const mesiWithZero = ['01','02','03','04','05','06','07','08','09','10','11','12'];
-
+    console.log(data,'ooo');
     const downloadListaRelExel = async() =>{
         setShowLoading(true);
         if(profilo.auth === 'SELFCARE'){
 
             const {idEnti, ...newBody} = bodyRel;
             await downloadListaRel(token,profilo.nonce,newBody).then((res)=>{
-                saveAs("data:text/plain;base64," + res.data.documento,`Regolare esecuzione / ${mesiWithZero[bodyRel.mese-1]}.xlsx` );
+                saveAs("data:text/plain;base64," + res.data.documento,`Regolari esecuzioni /${data[0]?.ragioneSociale}/ ${mesiWithZero[bodyRel.mese-1]}/ ${bodyRel.anno}.xlsx` );
                 setShowLoading(false);
             }).catch((err)=>{
                 manageError(err,navigate);
@@ -235,7 +235,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         await downloadListaRelPdfZipPagopa(token,profilo.nonce,bodyRel)
             .then(response => response.blob())
             .then(blob => {
-                saveAs(blob,`Documenti firmati regolare esecuzione / ${mesiWithZero[bodyRel.mese -1]} / ${bodyRel.anno}.zip` );
+                saveAs(blob,`REL /Frimate / ${mesiWithZero[bodyRel.mese -1]} / ${bodyRel.anno}.zip` );
                 setShowLoading(false);
             })
             .catch(err => {
@@ -244,7 +244,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     };
 
   
-
+    
     
     // visulizzazione del pop up redirect dati di fatturazione
     const [openModalRedirect, setOpenModalRedirect] = useState(false);

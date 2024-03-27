@@ -15,10 +15,11 @@ import ModalUploadPdf from '../components/rel/modalUploadPdf';
 import { saveAs } from "file-saver";
 import generatePDF from 'react-to-pdf';
 import BasicAlerts from '../components/reusableComponents/alert';
-import { height } from '@mui/system';
+
 
 const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
+    const mesiWithZero = ['01','02','03','04','05','06','07','08','09','10','11','12'];
     const rel = mainState.relSelected;
 
     const navigate = useNavigate();
@@ -56,13 +57,13 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             if(profilo.auth === 'SELFCARE'){
                 await getRelExel(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
                
-                    saveAs("data:text/plain;base64," + res.data.documento,`Lista Regolare esecuzione ${statusApp.mese}/${statusApp.anno}.xlsx` );
+                    saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report dettaglio/ ${ mainState.relSelected?.ragioneSociale} /${statusApp.mese}/${statusApp.anno}.xlsx` );
                 }).catch((err)=>{
                     manageError(err,navigate);
                 });
             }else{
                 await getRelExelPagoPa(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
-                    saveAs("data:text/plain;base64," + res.data.documento,`Lista Regolare esecuzione ${statusApp.nomeEnteClickOn} ${statusApp.mese}/${statusApp.anno}.xlsx` );
+                    saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report dettaglio / ${ mainState.relSelected?.ragioneSociale} / ${statusApp.mese} / ${statusApp.anno}.xlsx` );
                 }).catch((err)=>{
                     manageError(err,navigate);
                 });
@@ -89,16 +90,17 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
     const downloadPdfRelFirmato = async() =>{
 
+        const meseOnDoc = mainState.relSelected?.mese || 0;
         if( mainState.relSelected !== null){
             if(profilo.auth === 'SELFCARE'){
                 await getRelPdfFirmato(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
-                    saveAs("data:text/plain;base64," + res.data.documento,`Regolare Esecuzione Firmato ${statusApp.mese}/${statusApp.anno}.pdf` );
+                    saveAs("data:text/plain;base64," + res.data.documento,`REL firmata / ${ mainState.relSelected?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${statusApp.anno}.pdf` );
                 }).catch((err)=>{
                     manageError(err,navigate);
                 });
             }else{
                 await getRelPdfFirmatoPagoPa(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
-                    saveAs("data:text/plain;base64," + res.data.documento,`Regolare Esecuzione Firmato ${statusApp.nomeEnteClickOn} ${statusApp.mese}/${statusApp.anno}.pdf` );
+                    saveAs("data:text/plain;base64," + res.data.documento,`REL firmata / ${ mainState.relSelected?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${statusApp.anno}.pdf` );
                 }).catch((err)=>{
                     manageError(err,navigate);
                 });
@@ -127,18 +129,18 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             if(profilo.auth === 'SELFCARE'){
                 await getLogRelDocumentoFirmato(token, profilo.nonce,bodySelf).then((res) =>{
                     setLastUpdateDocFirmato(res.data[0].dataEvento);
-                    console.log(res, 'new');
+               
                 }).catch((err)=>{
                    
-                    //manageError(err, navigate);
+                    manageError(err, navigate);
                 });
             }else if(profilo.auth === 'PAGOPA'){
                 await getLogPagoPaRelDocumentoFirmato(token, profilo.nonce,bodyPagopa).then((res) =>{
                     setLastUpdateDocFirmato(res.data[0].dataEvento);
-                    console.log(res, 'new');
+                   
                 }).catch((err)=>{
                    
-                    //manageError(err, navigate);
+                    manageError(err, navigate);
                 });
             }
            
@@ -186,6 +188,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 setLoadingUpload(false);
                 if(res.status === 200){
                     setOpenModalConfirmUploadPdf(true);
+                    getDateLastDownloadPdfFirmato();
                 }
             }).catch(()=>{
                 setLoadingUpload(false);
