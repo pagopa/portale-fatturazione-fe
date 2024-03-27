@@ -346,7 +346,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                         total={totalNotifiche}
                         page={page}
                         rows={rowsPerPage}
-                        headerNames={['Ragione Sociale','Tipologia Fattura', 'Reg. Es. Pdf','ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale','']}
+                        headerNames={['Ragione Sociale','Tipologia Fattura', 'Reg. Es. PDF','ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale','']}
                         apiGet={getRel}
                         disabled={getListaRelRunning}></GridCustom>
                 </div>

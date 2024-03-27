@@ -11,7 +11,7 @@ const SelectStatoPdf : React.FC<SelecTipologiaPdf> = ({setValue, values}) =>{
     const statoPdf = [
         'Non Caricata',
         'Firmata',
-        'Invalidato'
+        'Invalidata'
     ];
     console.log(values, statoPdf[0]);
     const caricata = values.caricata || null;
@@ -24,7 +24,7 @@ const SelectStatoPdf : React.FC<SelecTipologiaPdf> = ({setValue, values}) =>{
                 <InputLabel
                     id="sea"
                 >
-                               Stato Pdf Reg. Es. 
+                               Stato PDF Reg. Es. 
                 </InputLabel>
                 <Select
                     id="RegPdf"
