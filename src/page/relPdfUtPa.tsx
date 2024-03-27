@@ -14,21 +14,11 @@ import DownloadIcon from '@mui/icons-material/Download';
 import ModalUploadPdf from '../components/rel/modalUploadPdf';
 import { saveAs } from "file-saver";
 import generatePDF from 'react-to-pdf';
+import { redirect } from '../api/api';
 import BasicAlerts from '../components/reusableComponents/alert';
 
 
 const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
-
-    const mesiWithZero = ['01','02','03','04','05','06','07','08','09','10','11','12'];
-    const rel = mainState.relSelected;
-
-    const navigate = useNavigate();
-
-    useEffect(()=>{
-        if(rel === null){
-            navigate('/rel');
-        }
-    },[]);
 
     const targetRef  = useRef<HTMLInputElement>(null);
 
@@ -40,6 +30,21 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
     const state = localStorage.getItem('statusApplication') || '{}';
     const statusApp =  JSON.parse(state);
+
+    const mesiWithZero = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+    const rel = mainState.relSelected;
+
+    const navigate = useNavigate();
+
+    useEffect(()=>{
+        if(rel === null){
+            navigate('/rel');
+        }
+
+        if(!token){
+            window.location.href = redirect;
+        }
+    },[]);
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
