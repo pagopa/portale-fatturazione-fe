@@ -85,18 +85,19 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
     };
 
     let dynamicInsertDisable = true;
-
+  
     if(arrElement.length >= 3){
         dynamicInsertDisable = true;
-  
+     
     }else if(status === 'mutable' && datiFatturazione.tipoCommessa === ''){
-      
         dynamicInsertDisable = true;
+    
     }else if((status === 'mutable' && datiFatturazione.tipoCommessa !== '' )){
-  
         dynamicInsertDisable = false;
-
+         
     }
+
+    const colorEmailInserted = status === 'immutable' ? '#C3CAD1': 'black';
 
     return (
         <div>
@@ -144,6 +145,7 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
                                 <Typography
                                     variant="caption-semibold"
                                     fontSize="large"
+                                    sx={{color:colorEmailInserted }}
                                 >
                                     {email}
 
