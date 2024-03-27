@@ -62,13 +62,13 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             if(profilo.auth === 'SELFCARE'){
                 await getRelExel(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
                
-                    saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio/ ${ mainState.relSelected?.ragioneSociale} /${statusApp.mese}/${statusApp.anno}.xlsx` );
+                    saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio/ ${ mainState.relSelected?.ragioneSociale} /${mainState.relSelected?.mese}/${mainState.relSelected?.anno}.xlsx` );
                 }).catch((err)=>{
                     manageError(err,navigate);
                 });
             }else{
                 await getRelExelPagoPa(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
-                    saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio / ${ mainState.relSelected?.ragioneSociale} / ${statusApp.mese} / ${statusApp.anno}.xlsx` );
+                    saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio / ${ mainState.relSelected?.ragioneSociale} / ${mainState.relSelected?.mese} / ${mainState.relSelected?.anno}.xlsx` );
                 }).catch((err)=>{
                     manageError(err,navigate);
                 });
@@ -100,13 +100,13 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         if( mainState.relSelected !== null){
             if(profilo.auth === 'SELFCARE'){
                 await getRelPdfFirmato(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
-                    saveAs("data:text/plain;base64," + res.data.documento,`REL firmata / ${ mainState.relSelected?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${statusApp.anno}.pdf` );
+                    saveAs("data:text/plain;base64," + res.data.documento,`REL firmata / ${ mainState.relSelected?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${mainState.relSelected?.anno}.pdf` );
                 }).catch((err)=>{
                     manageError(err,navigate);
                 });
             }else{
                 await getRelPdfFirmatoPagoPa(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
-                    saveAs("data:text/plain;base64," + res.data.documento,`REL firmata / ${ mainState.relSelected?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${statusApp.anno}.pdf` );
+                    saveAs("data:text/plain;base64," + res.data.documento,`REL firmata / ${ mainState.relSelected?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${mainState.relSelected?.anno}.pdf` );
                 }).catch((err)=>{
                     manageError(err,navigate);
                 });
