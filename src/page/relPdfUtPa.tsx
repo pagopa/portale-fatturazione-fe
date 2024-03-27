@@ -62,13 +62,13 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             if(profilo.auth === 'SELFCARE'){
                 await getRelExel(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
                
-                    saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report dettaglio/ ${ mainState.relSelected?.ragioneSociale} /${statusApp.mese}/${statusApp.anno}.xlsx` );
+                    saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio/ ${ mainState.relSelected?.ragioneSociale} /${statusApp.mese}/${statusApp.anno}.xlsx` );
                 }).catch((err)=>{
                     manageError(err,navigate);
                 });
             }else{
                 await getRelExelPagoPa(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
-                    saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report dettaglio / ${ mainState.relSelected?.ragioneSociale} / ${statusApp.mese} / ${statusApp.anno}.xlsx` );
+                    saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio / ${ mainState.relSelected?.ragioneSociale} / ${statusApp.mese} / ${statusApp.anno}.xlsx` );
                 }).catch((err)=>{
                     manageError(err,navigate);
                 });
@@ -233,6 +233,8 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     }
 
 
+    const classContainerButtons = profilo.auth === 'SELFCARE' ? 'd-flex justify-content-between m-5': 'd-flex justify-content-end m-5';
+
     return (
         <div>
            
@@ -287,7 +289,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                         <TextDettaglioPdf description={'Cup'} value={rel.cup}></TextDettaglioPdf>
                         <TextDettaglioPdf description={'N. Notifiche Analogiche'} value={rel.totaleNotificheAnalogiche}></TextDettaglioPdf>
                         <TextDettaglioPdf description={'N. Notifiche Digitali'} value={rel.totaleNotificheDigitali}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'N. Tototale Notifiche'} value={rel.totaleNotificheDigitali + rel.totaleNotificheAnalogiche }></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'N. Totale Notifiche'} value={rel.totaleNotificheDigitali + rel.totaleNotificheAnalogiche }></TextDettaglioPdf>
                         <TextDettaglioPdf description={'Totale Imponibile Analogico'} value={Number(rel.totaleAnalogico).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                         <TextDettaglioPdf description={'Totale Imponibile Digitale'} value={Number(rel.totaleDigitale).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                         <TextDettaglioPdf description={'Totale Imponibile'} value={Number(rel.totale).toLocaleString()+' €'}></TextDettaglioPdf>
@@ -302,7 +304,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             </div>
            
            
-            <div className='d-flex justify-content-between m-5'>
+            <div className={classContainerButtons}>
                 {profilo.auth === 'SELFCARE' &&
                  <>
                      <div className="">
