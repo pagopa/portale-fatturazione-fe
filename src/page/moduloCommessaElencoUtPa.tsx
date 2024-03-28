@@ -22,6 +22,8 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
    
     const navigate = useNavigate();
 
+    const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre",'Gennaio'];
+
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
             type:'MODIFY_MAIN_STATE',
@@ -203,6 +205,9 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
                 <Button variant="contained" onClick={()=> navigate('/8')}>Inserisci modulo commessa</Button>
                 }
 
+            </div>
+            <div className='mb-5'>
+                <Typography variant="caption-semibold">{`N.B. il Modulo Commessa per le previsioni di ${month[new Date().getMonth()+1]} ${new Date().getMonth() < 11 ? new Date().getFullYear():new Date().getFullYear()+1} deve essere inserito dal giorno 1 al giorno 15 del mese di ${month[new Date().getMonth()]} ${new Date().getFullYear()}`}</Typography>
             </div>
 
             <div className='mb-5'>
