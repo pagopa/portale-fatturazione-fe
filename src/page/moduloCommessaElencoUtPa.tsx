@@ -207,7 +207,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
 
             </div>
             <div className='mb-5'>
-                <Typography variant="caption-semibold">{`N.B. il Modulo Commessa per le previsioni di ${month[new Date().getMonth()+1]} ${new Date().getMonth() < 11 ? new Date().getFullYear():new Date().getFullYear()+1} deve essere inserito dal giorno 1 al giorno 15 del mese di ${month[new Date().getMonth()]} ${new Date().getFullYear()}`}</Typography>
+                <Typography variant="caption-semibold">N.B. il Modulo Commessa per le previsioni dei consumi deve essere inserito dal giorno 1 al giorno 15 di ogni mese</Typography>
             </div>
 
             <div className='mb-5'>
