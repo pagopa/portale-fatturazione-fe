@@ -16,6 +16,7 @@ import { saveAs } from "file-saver";
 import generatePDF from 'react-to-pdf';
 import { redirect } from '../api/api';
 import BasicAlerts from '../components/reusableComponents/alert';
+import { display } from '@mui/system';
 
 
 const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
@@ -85,6 +86,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             if(profilo.auth === 'SELFCARE'){
                 await getRelPdf(token, profilo.nonce, mainState.relSelected.idTestata).then((res: ResponseDownloadPdf)=>{
                     toDoOnDownloadPdf(res);
+
                 }).catch((err)=>{
                     manageError(err,navigate);
                 });
@@ -92,6 +94,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         }
         
     };
+
 
     const meseOnDoc = mainState.relSelected?.mese || 0;
     const downloadPdfRelFirmato = async() =>{
@@ -236,6 +239,8 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
     const classContainerButtons = profilo.auth === 'SELFCARE' ? 'd-flex justify-content-between m-5': 'd-flex justify-content-end m-5';
 
+
+
     return (
         <div>
            
@@ -274,7 +279,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             <div className="bg-white mb-5 me-5 ms-5">
               
                 <div className="pt-5 pb-5 ">
-                
+                   
                     <div style={{ position:'absolute',zIndex:-1}}  id='file_download_rel' ref={targetRef}>
 
                     </div>

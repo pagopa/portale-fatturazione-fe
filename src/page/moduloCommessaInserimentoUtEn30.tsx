@@ -345,8 +345,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
         }else{
             hendlePostModuloCommessa();
         }
-        // navigate('/4')
-
     };
 
     const hendleOnButtonModificaModuloCommessa = () => {
@@ -415,8 +413,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                                 navigate('/4');
                             }else{
                                 handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
-                            }
-                            
+                            } 
                         } }
                       
                     >
@@ -435,14 +432,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                     }
                  
                 </div>
-
-                {/* { hiddenShowHorizontalStepper
-                    ? 
-                    <div className="marginTop24">
-                        <HorizontalLinearStepper indexStepper={indexStepper}></HorizontalLinearStepper>
-                    </div> :null
-                } */}
-               
            
                 <div className="marginTop24 marginTopBottom24">
                     {actionTitle}
@@ -495,14 +484,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 </div> 
             }
            
-            {/* Nascondo il dettaglio fatturazione fino al click continua 
-            {mainState.action === 'HIDE_MODULO_COMMESSA' ?
-                <AreaPersonaleUtenteEnte 
-                    mainState={mainState}
-                    dispatchMainState={dispatchMainState}></AreaPersonaleUtenteEnte>
-                : null
-            }
-*/}
             <ModalRedirect 
                 setOpen={setOpenModalRedirect}
                 open={openModalRedirect}

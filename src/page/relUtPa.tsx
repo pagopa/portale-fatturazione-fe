@@ -204,7 +204,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     };  
 
     const mesiWithZero = ['01','02','03','04','05','06','07','08','09','10','11','12'];
-    console.log(data,'ooo');
+
     const downloadListaRelExel = async() =>{
         setShowLoading(true);
         if(profilo.auth === 'SELFCARE'){

@@ -18,6 +18,7 @@ import { downloadNotifche, getContestazione, listaNotifiche } from "../api/apiSe
 import { downloadNotifchePagoPa, getContestazionePagoPa, listaNotifichePagoPa } from "../api/apiPagoPa/notificheSE/api";
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import GridCustom from "../components/reusableComponents/gridCustom";
+import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 
 const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
@@ -28,6 +29,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
+
+    const state = localStorage.getItem('statusApplication') || '{}';
+    const statusApp =  JSON.parse(state);
     
     // prendo gli ultimi 2 anni dinamicamente
     const currentYear = (new Date()).getFullYear();
@@ -393,6 +397,15 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const [openModalInfo, setOpenModalInfo] = useState(false);
     const [showLoading, setShowLoading] = useState(false);
     const [showModalScadenziario, setShowModalScadenziario ] = useState(false);   
+    // visulizzazione del pop up redirect dati di fatturazione
+    const [openModalRedirect, setOpenModalRedirect] = useState(false);
+
+    useEffect(()=>{
+        if(statusApp.datiFatturazione === false){
+            setOpenModalRedirect(true);
+        }
+   
+    },[]);
     return (
         <div className="mx-5">
             {/*title container start */}
@@ -685,6 +698,13 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 funGetNotifiche={getlistaNotifiche}
                 funGetNotifichePagoPa={getlistaNotifichePagoPa}
             ></ModalContestazione>
+
+            <ModalRedirect
+                setOpen={setOpenModalRedirect} 
+                open={openModalRedirect}
+                sentence={`Per poter visualizzare la lista delle Notifiche è obbligatorio fornire i seguenti dati di fatturazione:`}>
+                    
+            </ModalRedirect>
 
             <ModalInfo
                 open={openModalInfo} 
