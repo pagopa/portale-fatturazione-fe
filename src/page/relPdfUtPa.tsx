@@ -84,9 +84,10 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
         if( mainState.relSelected !== null){
             if(profilo.auth === 'SELFCARE'){
+
                 await getRelPdf(token, profilo.nonce, mainState.relSelected.idTestata).then((res: ResponseDownloadPdf)=>{
                     toDoOnDownloadPdf(res);
-
+                   
                 }).catch((err)=>{
                     manageError(err,navigate);
                 });
@@ -94,6 +95,8 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         }
         
     };
+
+
 
 
     const meseOnDoc = mainState.relSelected?.mese || 0;
@@ -157,11 +160,14 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     };
     
     const toDoOnDownloadPdf = (res:ResponseDownloadPdf) =>{
+     
         const wrapper = document.getElementById('file_download_rel');
         if(wrapper){
             wrapper.innerHTML = res.data;
         }
+    
     };
+
 
     useEffect(()=>{
         downloadPdfRel(); 
@@ -243,7 +249,9 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
     return (
         <div>
-           
+            <div style={{ position:'absolute',zIndex:-1, top:'-1000px'}}  id='file_download_rel' ref={targetRef}>
+
+            </div>
             <div className=' marginTop24  '>
                 
                 <div className='ms-5'>
@@ -279,11 +287,6 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             <div className="bg-white mb-5 me-5 ms-5">
               
                 <div className="pt-5 pb-5 ">
-                   
-                    <div style={{ position:'absolute',zIndex:-1}}  id='file_download_rel' ref={targetRef}>
-
-                    </div>
-                
                     {rel !== null &&
 
                     <div className="container text-center">
