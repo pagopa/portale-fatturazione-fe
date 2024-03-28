@@ -126,7 +126,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
      
         return {idNotifica:notifica.idNotifica,
             contestazione:notifica.contestazione,
-            onere:notifica.onere,
+            onere:newOnere,
             recipientId:notifica.recipientId,
             anno:notifica.anno,
             mese:mesiGrid[Number(notifica.mese) - 1 ],
