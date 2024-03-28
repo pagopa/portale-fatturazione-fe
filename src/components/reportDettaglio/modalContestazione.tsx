@@ -330,7 +330,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
         stato === 7 ||
     profilo.profilo !== 'PA' ||
     // aggiunta 22/02
-    noRisposta === false;
+    (noRisposta === false && noModifica === false);
 
     // una volta settato rec e con cambierà la variabile
     const hiddenRispondiChiudiSend = (stato !== 4 && stato !== 7) || profilo.auth === 'PAGOPA' || profilo.profilo === 'RCP' || profilo.profilo === 'CON';
@@ -625,7 +625,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                     </div>
                             }
                             {/* butto ENTE */}
-                            { hiddenModificaRispondiEnte ? null :
+                            { !hiddenModificaRispondiEnte &&
                                 <div  className='col-2 me-2'>
                                     <Button
                                         sx={{width:'207px'}}
