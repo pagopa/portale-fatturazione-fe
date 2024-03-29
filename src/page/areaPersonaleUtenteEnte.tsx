@@ -71,7 +71,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
 
     });
   
-    console.log({datiFatturazione});
+  
     // state creato per il tasto conferma , abilitato nel caso in cui tutti values sono true
     const [statusBottonConferma, setStatusButtonConferma] = useState<StateEnableConferma>({
         'CUP':false,
