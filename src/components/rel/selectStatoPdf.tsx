@@ -13,7 +13,7 @@ const SelectStatoPdf : React.FC<SelecTipologiaPdf> = ({setValue, values}) =>{
         'Firmata',
         'Invalidata'
     ];
-    console.log(values, statoPdf[0]);
+
     const caricata = values.caricata || null;
     return (
         <Box sx={{width:'80%', marginLeft:'20px'}}  >
