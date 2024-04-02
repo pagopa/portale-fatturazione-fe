@@ -122,7 +122,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
     const handleGetDettaglioModuloCommessa = async () =>{
        
-        console.log('dio');
+    
         await getDettaglioModuloCommessa(token,statusApp.anno,statusApp.mese, profilo.nonce)
             .then((response:ResponseDettaglioModuloCommessa)=>{
              

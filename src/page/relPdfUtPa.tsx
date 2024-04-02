@@ -228,11 +228,9 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
 
 
-    /*
-    const [visible, setVisible] = useState(false);
-    <Button onClick={() => setVisible(true)}>ciao</Button>
-    <BasicAlerts setVisible={setVisible} visible={visible} typeAlert={''}></BasicAlerts>
-*/
+   
+  
+
     function createDateFromString(string:string){
         const getGiorno = new Date(string).getDate();
   
