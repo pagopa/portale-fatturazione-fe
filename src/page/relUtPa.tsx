@@ -16,6 +16,7 @@ import SelectStatoPdf from "../components/rel/selectStatoPdf";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { saveAs } from "file-saver";
 import ModalInfo from "../components/reusableComponents/modals/modalInfo";
+import BasicAlerts from "../components/reusableComponents/alert";
 
 const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
@@ -250,7 +251,11 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
     const [showLoading, setShowLoading] = useState(false);
    
-
+    /*
+    <Button onClick={() => setVisible(true)}>SHOW ALERT</Button>
+    <BasicAlerts setVisible={setVisible} visible={visible} typeAlert={''}></BasicAlerts>
+    const [visible, setVisible] = useState(false);
+*/
  
     return (
        
@@ -259,6 +264,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 <Typography variant="h4">Regolare Esecuzione</Typography>
             </div>
             <div className="mt-5">
+               
                 <div className="row">
                     <div className="col-3">
                         <SelectUltimiDueAnni values ={bodyRel} setValue={setBodyRel}></SelectUltimiDueAnni>

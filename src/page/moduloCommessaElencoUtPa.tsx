@@ -6,8 +6,9 @@ import { useNavigate } from 'react-router';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { VisualModuliCommessaProps,  DataGridCommessa , GetAnniResponse, ResponseGetListaCommesse} from '../types/typeModuloCommessaElenco';
 import { ManageErrorResponse } from '../types/typesGeneral';
-import { getAnni, getListaCommessa, getListaCommessaFiltered, getListaCommessaOnAnnulla } from '../api/apiSelfcare/moduloCommessaSE/api';
+import { getAnni, getDatiModuloCommessa, getListaCommessa, getListaCommessaFiltered, getListaCommessaOnAnnulla } from '../api/apiSelfcare/moduloCommessaSE/api';
 import ModalRedirect from '../components/commessaInserimento/madalRedirect';
+import { getDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
 
 const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatchMainState,mainState}) => {
    
@@ -121,6 +122,126 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
       
     };
 
+    const getDatiFat = async () =>{
+      
+        await getDatiFatturazione(token,profilo.nonce).then(( ) =>{ 
+            
+            handleModifyMainState({datiFatturazione:true});
+         
+
+        }).catch(err =>{
+          
+            if(err?.response?.status === 404){
+                handleModifyMainState({datiFatturazione:false});
+              
+            }
+           
+           
+        });
+
+    };
+
+
+
+    const handleListItemClickModuloCommessa = async () => {
+       
+        if(profilo.auth === 'PAGOPA'){
+            //cliccando sulla side nav Modulo commessa e sono l'ente PAGOPA
+            navigate('/pagopalistamodulicommessa');
+
+        }else{
+            //cliccando sulla side nav Modulo commessa e sono un ente qualsiasi
+            await getDatiFat();
+            await getDatiModuloCommessa(token, profilo.nonce).then((res)=>{
+
+                if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
+                    handleModifyMainState({
+                        inserisciModificaCommessa:'INSERT',
+                        statusPageInserimentoCommessa:'mutable',
+                        userClickOn:undefined,
+                        primoInserimetoCommessa:true
+                    });
+                 
+                    const newState = {
+                        mese:res.data.mese,
+                        anno:res.data.anno,
+                        inserisciModificaCommessa:'INSERT',
+                        datiFatturazione:mainState.datiFatturazione,
+                        userClickOn:undefined,
+                        primoInserimetoCommessa:true
+                    };
+
+                    const statusApp = localStorage.getItem('statusApplication')||'{}';
+                    const parseStatusApp = JSON.parse(statusApp);
+            
+                    localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
+                        ...newState}));
+                 
+                    navigate('/8');
+                }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0 ){
+    
+                    handleModifyMainState({
+                        inserisciModificaCommessa:'MODIFY',
+                        statusPageInserimentoCommessa:'immutable',
+                        primoInserimetoCommessa:false});
+    
+                    const newState = {
+                        inserisciModificaCommessa:'MODIFY',
+                        datiFatturazione:mainState.datiFatturazione,
+                        primoInserimetoCommessa:false
+                    };
+                    const statusApp = localStorage.getItem('statusApplication')||'{}';
+                    const parseStatusApp = JSON.parse(statusApp);
+            
+                    localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
+                        ...newState}));
+                   
+                    navigate('/4');
+                }else if(res.data.modifica === false && res.data.moduliCommessa.length === 0){
+
+                    handleModifyMainState({
+                        inserisciModificaCommessa:'NO_ACTION',
+                        statusPageInserimentoCommessa:'immutable',
+                        primoInserimetoCommessa:false});
+                
+                    const newState = {
+                        inserisciModificaCommessa:'NO_ACTION',
+                        datiFatturazione:mainState.datiFatturazione,
+                        primoInserimetoCommessa:false
+                    };
+                    const statusApp = localStorage.getItem('statusApplication')||'{}';
+                    const parseStatusApp = JSON.parse(statusApp);
+            
+                    localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
+                        ...newState}));
+                   
+                    navigate('/4');
+                }else if(res.data.modifica === false && res.data.moduliCommessa.length > 0){
+                    handleModifyMainState({
+                        inserisciModificaCommessa:'NO_ACTION',
+                        statusPageInserimentoCommessa:'immutable',
+                        primoInserimetoCommessa:false}); 
+
+                    const newState = {
+                        inserisciModificaCommessa:'NO_ACTION',
+                        datiFatturazione:mainState.datiFatturazione,
+                        primoInserimetoCommessa:false
+                    };
+                    const statusApp = localStorage.getItem('statusApplication')||'{}';
+                    const parseStatusApp = JSON.parse(statusApp);
+            
+                    localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
+                        ...newState}));
+                   
+                    navigate('/4');
+                }
+    
+            }).catch((err) =>{
+                manageError(err, navigate);
+            });
+            
+        }
+    };
     return (
 
         <div className="mx-5">
@@ -202,7 +323,9 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
                 </div>
 
                 {(mainState.primoInserimetoCommessa && profilo.auth === 'SELFCARE') &&
-                <Button variant="contained" onClick={()=> navigate('/8')}>Inserisci modulo commessa</Button>
+                <Button variant="contained" onClick={()=>{
+                    handleListItemClickModuloCommessa();
+                }}>Inserisci modulo commessa</Button>
                 }
 
             </div>
