@@ -14,7 +14,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import MultiSelectStatoContestazione from "../components/reportDettaglio/multiSelectGroupedBy";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import ModalScadenziario from "../components/reportDettaglio/modalScadenziario";
-import { downloadNotifche, getContestazione, listaNotifiche } from "../api/apiSelfcare/notificheSE/api";
+import { downloadNotifche, getContestazione, getContestazioneRecapitista, listaNotifiche, listaNotificheRecapitista } from "../api/apiSelfcare/notificheSE/api";
 import { downloadNotifchePagoPa, getContestazionePagoPa, listaNotifichePagoPa } from "../api/apiPagoPa/notificheSE/api";
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import GridCustom from "../components/reusableComponents/gridCustom";
@@ -216,17 +216,32 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         const {idEnti, ...newBody} = bodyGetLista;
         // disable button filtra e annulla filtri nell'attesa dei dati
         setGetNotificheWorking(true);
-        await listaNotifiche(token,profilo.nonce,nPage, nRow, newBody)
-            .then((res)=>{
-                setNotificheList(res.data.notifiche);
-                setTotalNotifiche(res.data.count);
+        if(profilo.profilo === 'PA'){
+            await listaNotifiche(token,profilo.nonce,nPage, nRow, newBody)
+                .then((res)=>{
+                    setNotificheList(res.data.notifiche);
+                    setTotalNotifiche(res.data.count);
+                    // abilita button filtra e annulla filtri all'arrivo dei dati
+                    setGetNotificheWorking(false);
+                }).catch((error)=>{
                 // abilita button filtra e annulla filtri all'arrivo dei dati
-                setGetNotificheWorking(false);
-            }).catch((error)=>{
-                // abilita button filtra e annulla filtri all'arrivo dei dati
-                setGetNotificheWorking(false);
-                manageError(error, navigate);
-            });
+                    setGetNotificheWorking(false);
+                    manageError(error, navigate);
+                });
+        }else if(profilo.profilo === 'REC'){
+            await listaNotificheRecapitista(token,profilo.nonce,nPage, nRow, newBody)
+                .then((res)=>{
+                    setNotificheList(res.data.notifiche);
+                    setTotalNotifiche(res.data.count);
+                    // abilita button filtra e annulla filtri all'arrivo dei dati
+                    setGetNotificheWorking(false);
+                }).catch((error)=>{
+                    // abilita button filtra e annulla filtri all'arrivo dei dati
+                    setGetNotificheWorking(false);
+                    manageError(error, navigate);
+                });
+        }
+       
                     
     };
 
@@ -322,7 +337,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 
     const getContestazioneModal = async(idNotifica:string) =>{
 
-        if(profilo.auth === 'SELFCARE'){
+        if(profilo.auth === 'SELFCARE' && profilo.profilo === 'PA'){
             await getContestazione(token, profilo.nonce , idNotifica )
                 .then((res)=>{
                     //se i tempi di creazione di una contestazione sono scaduti show pop up info
@@ -330,6 +345,21 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                         setOpenModalInfo(true);
                     }else{
                     // atrimenti show pop up creazione contestazione
+                        setOpen(true); 
+                        setContestazioneSelected(res.data);
+                    }           
+                })
+                .catch(((err)=>{
+                    manageError(err,navigate);
+                }));
+        }else if(profilo.auth === 'SELFCARE' && profilo.profilo === 'REC'){
+            await getContestazioneRecapitista(token, profilo.nonce , idNotifica )
+                .then((res)=>{
+                //se i tempi di creazione di una contestazione sono scaduti show pop up info
+                    if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
+                        setOpenModalInfo(true);
+                    }else{
+                        // atrimenti show pop up creazione contestazione
                         setOpen(true); 
                         setContestazioneSelected(res.data);
                     }           

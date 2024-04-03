@@ -243,20 +243,20 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
                 }}
                 >
                     <List component="nav" aria-label="main piattaforma-notifiche sender">
-                        <ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick()}>
+                        {profilo.profilo !== 'REC' &&
+                        <><ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick()}>
                             <ListItemIcon>
                                 <DnsIcon fontSize="inherit"></DnsIcon>
-                      
+
                             </ListItemIcon>
                             <ListItemText primary="Dati di fatturazione" />
-                        </ListItemButton>
-                        <ListItemButton selected={selectedIndex === 1} onClick={() => handleListItemClickModuloCommessa()}>
+                        </ListItemButton><ListItemButton selected={selectedIndex === 1} onClick={() => handleListItemClickModuloCommessa()}>
                             <ListItemIcon>
                                 <ViewModuleIcon fontSize="inherit" />
                             </ListItemIcon>
                             <ListItemText primary="Modulo commessa" />
-                        </ListItemButton>
-                       
+                        </ListItemButton></>
+                        }
                         <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClickNotifiche()}>
                             <ListItemIcon>
                            
@@ -264,13 +264,14 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
                             </ListItemIcon>
                             <ListItemText primary="Notifiche" />
                         </ListItemButton>
+                        {profilo.profilo !== 'REC' &&
                         <ListItemButton selected={selectedIndex === 3} onClick={() => handleListItemClickRel()}>
                             <ListItemIcon>
                                 <ManageAccountsIcon fontSize="inherit" />
                             </ListItemIcon>
                             <ListItemText primary="Regolare Esecuzione" />
                         </ListItemButton>
-                        
+                        }
                     </List>
                     <Divider />
                 </Box>
