@@ -1,10 +1,9 @@
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { selfcareLogin, getAuthProfilo, manageError, redirect } from '../api/api';
 import {useEffect} from 'react';
-import { LoginProps, MainState, ManageErrorResponse } from '../types/typesGeneral';
+import { LoginProps, ManageErrorResponse } from '../types/typesGeneral';
 import { getDatiModuloCommessa } from '../api/apiSelfcare/moduloCommessaSE/api';
-import { getDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
-import { SuccesResponseGetDatiFatturazione } from '../types/typesAreaPersonaleUtenteEnte';
+
 
 // Blank page utilizzata per l'accesso degli utenti tramite  Selfcare
 
@@ -102,14 +101,17 @@ const getProfilo = async (res:ParameterGetProfilo)=>{
                 profilo:storeProfilo.profilo, // profilo utilizzato per la gestione delle notifiche/contestazioni
                 nonce: storeProfilo.nonce
             }));
-              
-            getCommessa(res.data[0].jwt, storeProfilo.nonce);
-            setCheckProfilo(true);
-               
-            // setto il ruolo nello state di riferimento globale
-            handleModifyMainState({ruolo:resp.data.ruolo});
+            
+            if(resp.data.profilo === "REC"){
+                navigate('/notifiche');
+            }else{
+                getCommessa(res.data[0].jwt, storeProfilo.nonce);
+                setCheckProfilo(true);
+                // setto il ruolo nello state di riferimento globale
+                handleModifyMainState({ruolo:resp.data.ruolo});
+                navigate("/");
+            }
            
-            navigate("/");
         } )
         .catch(() => {
             window.location.href = redirect;

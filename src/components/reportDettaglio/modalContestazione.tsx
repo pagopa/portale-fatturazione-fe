@@ -10,7 +10,7 @@ import { manageError } from '../../api/api';
 import { useNavigate } from 'react-router';
 import {useState, useEffect} from 'react';
 import YupString from '../../validations/string/index';
-import { createContestazione, modifyContestazioneEnte, tipologiaTipoContestazione } from '../../api/apiSelfcare/notificheSE/api';
+import { createContestazione, modifyContestazioneEnte,modifyContestazioneRecapitista, tipologiaTipoContestazione } from '../../api/apiSelfcare/notificheSE/api';
 import { modifyContestazioneEntePagoPa } from '../../api/apiPagoPa/notificheSE/api';
 
 const style = {
@@ -162,6 +162,12 @@ CON => consolidatore (selfcare -> tutti gli enti)
                 onere:'SEND',
                 statoContestazione:9
             };
+        }else if(action === 'Rispondi_Recapitista'){
+            body = {
+                idNotifica:contestazioneSelected.contestazione.idNotifica,
+                risposta:contestazioneSelected.contestazione.noteRecapitista
+            };
+
         }else{
             body = {
                 idNotifica:contestazioneSelected.contestazione.idNotifica,
@@ -171,15 +177,24 @@ CON => consolidatore (selfcare -> tutti gli enti)
             };
 
         }
-        
-        await modifyContestazioneEnte(token, profilo.nonce, body).then((res)=>{
-            setOpen(false);
-            funGetNotifiche(1,10);
-            
-        }).catch(((err)=>{
-            manageError(err,navigate);
-        }));
+        if(profilo.profilo === 'PA'){
+            await modifyContestazioneEnte(token, profilo.nonce, body).then((res)=>{
+                setOpen(false);
+                funGetNotifiche(1,10);
 
+            }).catch(((err)=>{
+                manageError(err,navigate);
+            }));
+        }else if(profilo.profilo === 'REC'){
+            await modifyContestazioneRecapitista(token, profilo.nonce, body).then((res)=>{
+                setOpen(false);
+                funGetNotifiche(1,10);
+                
+            }).catch(((err)=>{
+                manageError(err,navigate);
+            }));
+        }
+  
     };
 
     const modifyContestazioneFunPagoPa = async(action:string) => {
@@ -332,8 +347,8 @@ CON => consolidatore (selfcare -> tutti gli enti)
     // aggiunta 22/02
     (noRisposta === false && noModifica === false);
 
-    // una volta settato rec e con cambierà la variabile
-    const hiddenRispondiChiudiSend = (stato !== 4 && stato !== 7) || profilo.auth === 'PAGOPA' || profilo.profilo === 'RCP' || profilo.profilo === 'CON';
+    
+    const hiddenRispondiChiudiSend_Ente = (stato !== 4 && stato !== 7) || profilo.auth === 'PAGOPA' || profilo.profilo === 'RCP' || profilo.profilo === 'CON';
 
     const hiddenChiudi_send = profilo.auth !== 'PAGOPA' || (stato !== 7 && stato !== 3 && stato !== 4);
 
@@ -372,11 +387,22 @@ CON => consolidatore (selfcare -> tutti gli enti)
         labelChiusdi_send = 'Modifica e rifiuta contestazione';
     }
 
-    let labelRispondiAccettaEnteRecCons = "Rispondi e accetta contestazione SEND";
+    let labelRispondiAccetta_Ente = "Rispondi e accetta contestazione SEND";
     if(stato === 7 ){
-        labelRispondiAccettaEnteRecCons = 'Accetta risposta SEND';
+        labelRispondiAccetta_Ente = 'Accetta risposta SEND';
     }else if(noRisposta === false){
-        labelRispondiAccettaEnteRecCons = 'Accetta risposta SEND';
+        labelRispondiAccetta_Ente = 'Accetta risposta SEND';
+    }
+
+
+    let showButton_Recapitista = false;
+    if(profilo.profilo === 'REC' && noRisposta){
+        showButton_Recapitista = true;
+    }
+
+    let labelButton_Recapitista = 'Rispondi';
+    if(stato === 5){
+        labelButton_Recapitista = 'Modifica risposta';
     }
    
     return (
@@ -639,8 +665,8 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                     >{labelModificaRispondiEnte}</Button>
                                 </div>
                             }
-                            {/* butto ENTE recapitista consolidatore */}
-                            { hiddenRispondiChiudiSend ? null :
+                            {/* butto ENTE  */}
+                            { hiddenRispondiChiudiSend_Ente ? null :
                                 <div className='col-2 me-2'>
                                     <Button
                                        
@@ -651,7 +677,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                             
                                         }}
                                        
-                                    >{labelRispondiAccettaEnteRecCons}</Button>
+                                    >{labelRispondiAccetta_Ente}</Button>
                                 </div>
                             }
                             {/* butto PAGOPA */}
@@ -709,6 +735,17 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         variant='contained'
                                         onClick={()=>console.log('esci')}
                                     >{(stato === 4 && profilo.auth === 'PAGOPA')? 'Modifica e accetta risposta RECAPITISTA' : 'Accetta risposta RECAPITISTA'}</Button>
+                                </div>
+                            }
+                            {/* butto RECAPITISTA*/} 
+                            { showButton_Recapitista &&
+                                <div className='col-2 me-2'>
+                                    <Button
+                                        sx={{width:'220px'}}
+                                        disabled={true}
+                                        variant='contained'
+                                        onClick={()=>modifyContestazioneFun('Rispondi_Recapitista')}
+                                    >{labelButton_Recapitista}</Button>
                                 </div>
                             }
                         </div>

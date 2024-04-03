@@ -67,6 +67,8 @@ const MainContent = () => {
 
 const App = ({ instance }) => {
 
+    
+
     /* const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
 */

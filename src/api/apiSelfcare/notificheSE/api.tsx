@@ -14,6 +14,17 @@ export const listaNotifiche = async (token:string, nonce:string , page:number, p
     return response;
 };
 
+export const listaNotificheRecapitista = async (token:string, nonce:string , page:number, pageSize:number, body: BodyListaNotifiche) => {
+    const response =  await axios.post(`${url}/api/notifiche/recapitista?page=${page}&pageSize=${pageSize}&nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },
+        }
+    );
+    return response;
+};
+
 export const tipologiaTipoContestazione = async (token:string, nonce:string) => {
     const response =  await axios.get(`${url}/api/tipologia/tipocontestazione?nonce=${nonce}`,
         { headers: {
@@ -55,6 +66,16 @@ export const getContestazione = async (token:string, nonce:string , idNotifica:s
     return response;
 };
 
+export const getContestazioneRecapitista = async (token:string, nonce:string , idNotifica:string) => {
+    const response =  await axios.get(`${url}/api/notifiche/recapitista/contestazione/${idNotifica}?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
 export const modifyContestazioneEnte = async (token:string, nonce:string , body: ModalBodyContestazioneModify) => {
     const response =  await axios.put(`${url}/api/notifiche/contestazione?nonce=${nonce}`,
         body,
@@ -65,6 +86,19 @@ export const modifyContestazioneEnte = async (token:string, nonce:string , body:
     );
     return response;
 };
+
+export const modifyContestazioneRecapitista = async (token:string, nonce:string , body: ModalBodyContestazioneModify) => {
+    const response =  await axios.put(`${url}/api/notifiche/recapitista/contestazione?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token,
+        },
+        }
+    );
+    return response;
+};
+
+
 
 export const downloadNotifche = async (token:string, nonce:string , body: BodyListaNotifiche) => {
     const response =  await axios.post(`${url}/api/notifiche/ente/documento/ricerca?nonce=${nonce}`,
