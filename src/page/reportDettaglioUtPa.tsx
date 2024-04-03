@@ -249,7 +249,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             
     useEffect(() => {
       
-        if(mainState.nonce !== ''){
+        if(mainState.nonce !== undefined){
             getProdotti();
             getProfili();
 

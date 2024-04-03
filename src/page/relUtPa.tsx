@@ -135,7 +135,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     };
    
     useEffect(()=>{
-        if(mainState.nonce !== ''){
+        if(mainState.nonce !== undefined){
             const realPage = page + 1;
             getlistaRel(realPage, rowsPerPage);
         }
