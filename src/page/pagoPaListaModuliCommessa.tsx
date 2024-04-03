@@ -91,7 +91,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
     };
 
     useEffect(()=>{
-        if(mainState.nonce !== undefined){
+        if(mainState.nonce !== ''){
             getProdotti();
             getListaCommesse();
         }

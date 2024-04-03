@@ -213,7 +213,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
   
     useEffect(()=>{
         // 
-        if(statusApp.userClickOn === 'GRID' && mainState.nonce !== undefined){
+        if(statusApp.userClickOn === 'GRID' && mainState.nonce !== ''){
 
             // SELFCARE
             if(profilo.auth === 'SELFCARE'){

@@ -75,7 +75,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
     };
 
     useEffect(()=>{
-        if(mainState.nonce !== undefined){
+        if(mainState.nonce !== ''){
             getConfigurazione();
         }
         

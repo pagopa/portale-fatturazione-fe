@@ -38,7 +38,7 @@ const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({m
     };
 
     useEffect(()=>{
-        if(mainState.nonce !== undefined){
+        if(mainState.nonce !== ''){
             getFlagContestazione();
             
         }
