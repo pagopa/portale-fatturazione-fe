@@ -19,9 +19,7 @@ const AzureLogin : React.FC = () =>{
         if(checkIfUserIsAutenticated === 'SELFCARE'){
             localStorage.removeItem('profilo');
             localStorage.removeItem('token');
-    
         }
-
     },[checkIfUserIsAutenticated]);
   
     return (
