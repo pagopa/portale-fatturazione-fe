@@ -328,7 +328,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
     let labelButtonAccettaRecapitista_Send = 'Accetta risposta Recapitista';
   
     // (stato === 4 && profilo.auth === 'PAGOPA')? 'Modifica e accetta risposta RECAPITISTA' : 'Accetta risposta RECAPITISTA'
-    if((stato === 4 && profilo.auth === 'PAGOPA') || ((stato === 3 || stato === 7) && profilo.profilo === 'PA')){
+    if((stato === 4 && profilo.auth === 'PAGOPA') || (stato === 3  && profilo.profilo === 'PA')){
         labelButtonAccettaRecapitista_Send = 'Modifica e accetta risposta Recapitista';
     } 
 
