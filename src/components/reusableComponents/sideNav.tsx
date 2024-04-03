@@ -11,7 +11,7 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import DnsIcon from '@mui/icons-material/Dns';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
-import {manageError} from '../../api/api';
+import {getAuthProfilo, manageError} from '../../api/api';
 import MarkUnreadChatAltIcon from '@mui/icons-material/MarkUnreadChatAlt';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { SideNavProps } from '../../types/typesGeneral';
@@ -30,12 +30,44 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
 
+
+    
+
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
             type:'MODIFY_MAIN_STATE',
             value:valueObj
         });
     };
+
+
+
+    // questa chiamata viene eseguita esclusivamente se l'utenete fa un reload page cosi da inserire nuovamente il NONCE nel DOM
+    const getProfiloToGetNonce = async () =>{
+        await getAuthProfilo(profilo.jwt)
+            .then((res) =>{
+                handleModifyMainState({nonce:res?.data.nonce});
+            
+            }).catch(()=>{
+
+                navigate('/error');
+            });
+    };
+    // eseguiamo la get a riga 21 solo se il value dell'input(nonce) nel Dom è non c'è e controlliamo che nella local storage sia settatto il profilo
+    // Object.values(profilo).length !== 0 viene fatto solo per far si che la chiamanta non venga fatta al primo rendering
+    // in quel caso il get profilo viene chiamato nella page auth
+  
+    useEffect(()=>{
+        /*
+        const x = Object.values(profilo).length;
+   */
+
+        if(mainState.nonce === '' && Object.values(profilo).length !== 0){
+          
+            getProfiloToGetNonce();
+        }
+         
+    },[mainState.nonce]);
   
 
     const [selectedIndex, setSelectedIndex] = useState(0);
