@@ -62,7 +62,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
     // servizio che  popola la select anni
     const getAnniSelect = async () =>{
 
-        await getAnni(token, profilo.nonce).then((res:GetAnniResponse)=>{
+        await getAnni(token, mainState.nonce).then((res:GetAnniResponse)=>{
            
             setAnni(res.data);
         }).catch((err:ManageErrorResponse)=>{
@@ -73,7 +73,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
     // servizio che popola la grid con la lista commesse
     const getListaCommessaGrid = async () =>{
 
-        await getListaCommessa(token , profilo.nonce).then((res:ResponseGetListaCommesse)=>{
+        await getListaCommessa(token , mainState.nonce).then((res:ResponseGetListaCommesse)=>{
             
             const finalData = fixResponseForDataGrid(res.data);
             setGridData(finalData);
@@ -85,12 +85,12 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
     // nel caso in cui un utente apre un altra tab e accede come un utente diverso le chiamate andranno in errore
     // nel beck è stato implementato un controllo basato sul nonce
     useEffect(()=>{
-        if(profilo.nonce !== undefined){
+        if(mainState.nonce !== undefined){
             getAnniSelect();
             getListaCommessaGrid();
         }
         
-    },[profilo.nonce]);
+    },[mainState.nonce]);
     
     // se il token non c'è viene fatto il redirect al portale di accesso
     useEffect(()=>{
@@ -100,7 +100,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
     },[]);
   
     const handleButtonFiltra = () => {
-        getListaCommessaFiltered(token , profilo.nonce, valueSelect).then((res:ResponseGetListaCommesse)=>{
+        getListaCommessaFiltered(token , mainState.nonce, valueSelect).then((res:ResponseGetListaCommesse)=>{
             const finalData = fixResponseForDataGrid(res.data);
             setGridData(finalData);
            
@@ -112,7 +112,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
     // on click sul button annulla filtri
     const handleButtonAnnullaFiltri = () => {
 
-        getListaCommessaOnAnnulla(token, profilo.nonce).then((res:ResponseGetListaCommesse)=>{
+        getListaCommessaOnAnnulla(token, mainState.nonce).then((res:ResponseGetListaCommesse)=>{
             const finalData = fixResponseForDataGrid(res.data);
             setGridData(finalData);
            
@@ -124,7 +124,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
 
     const getDatiFat = async () =>{
       
-        await getDatiFatturazione(token,profilo.nonce).then(( ) =>{ 
+        await getDatiFatturazione(token,mainState.nonce).then(( ) =>{ 
             
             handleModifyMainState({datiFatturazione:true});
          
@@ -152,7 +152,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
         }else{
             //cliccando sulla side nav Modulo commessa e sono un ente qualsiasi
             await getDatiFat();
-            await getDatiModuloCommessa(token, profilo.nonce).then((res)=>{
+            await getDatiModuloCommessa(token, mainState.nonce).then((res)=>{
 
                 if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
                     handleModifyMainState({

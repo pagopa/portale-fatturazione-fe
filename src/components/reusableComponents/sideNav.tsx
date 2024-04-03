@@ -72,7 +72,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
     // chiamata con i parametri necessari (id ente)
     const getDatiFat = async () =>{
       
-        await getDatiFatturazione(token,profilo.nonce).then(( ) =>{ 
+        await getDatiFatturazione(token,mainState.nonce).then(( ) =>{ 
             
             handleModifyMainState({datiFatturazione:true});
          
@@ -98,7 +98,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
         }else{
             //cliccando sulla side nav Modulo commessa e sono un ente qualsiasi
             await getDatiFat();
-            await getDatiModuloCommessa(token, profilo.nonce).then((res)=>{
+            await getDatiModuloCommessa(token, mainState.nonce).then((res)=>{
 
                 if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
                     handleModifyMainState({
