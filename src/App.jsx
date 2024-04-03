@@ -76,6 +76,7 @@ const App = ({ instance }) => {
     const [mainState, dispatchMainState] = useReducer(reducerMainState, {
         mese:'',
         anno:'',
+        nonce:'',
         //nomeEnteClickOn:'',  // lato pagopa sul click della grid lista ModuloCommessa/dati fatturazione vado a soricizzare il nome da mostrare nel dettaglio
         //modifica:undefined, // se la commessa selezionata è modificabile
         datiFatturazione:false,// l'ente ha i dati di fatturazione?

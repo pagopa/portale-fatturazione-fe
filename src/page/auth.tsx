@@ -107,7 +107,7 @@ const getProfilo = async (res:ParameterGetProfilo)=>{
             setCheckProfilo(true);
                
             // setto il ruolo nello state di riferimento globale
-            handleModifyMainState({ruolo:resp.data.ruolo});
+            handleModifyMainState({ruolo:resp.data.ruolo,nonce: storeProfilo.nonce});
            
             navigate("/");
         } )

@@ -10,7 +10,7 @@ import {useState, useEffect} from 'react';
 import { BodyListaNotifiche } from '../../types/typesGeneral';
 import { listaEntiNotifichePage } from '../../api/apiSelfcare/notificheSE/api';
 
-const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetLista, dataSelect, setDataSelect}) => {
+const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetLista, dataSelect, setDataSelect,mainState}) => {
 
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -36,7 +36,7 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
 
     // servizio che popola la select con la checkbox
     const listaEntiNotifichePageOnSelect = async () =>{
-        await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} )
+        await listaEntiNotifichePage(token, mainState.nonce, {descrizione:textValue} )
             .then((res)=>{
                 setDataSelect(res.data);
                 

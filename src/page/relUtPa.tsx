@@ -68,7 +68,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         setGetListaRelRunning(true);
         if(profilo.auth === 'SELFCARE'){
             const {idEnti, ...newBody} = bodyRel;
-            await  getListaRel(token,profilo.nonce,nPage, nRows, newBody)
+            await  getListaRel(token,mainState.nonce,nPage, nRows, newBody)
                 .then((res)=>{
                     // ordino i dati in base all'header della grid
                     const orderDataCustom = res.data.relTestate.map((obj)=>{
@@ -98,7 +98,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                     manageError(error, navigate);
                 });
         }else{
-            await  getListaRelPagoPa(token,profilo.nonce,nPage, nRows, bodyRel)
+            await  getListaRelPagoPa(token,mainState.nonce,nPage, nRows, bodyRel)
                 .then((res)=>{
                     // controllo che tutte le rel abbiano il pdf caricato, se TRUE abilito il button download
                     const checkIfAllCaricata = res.data.relTestate.every(v => v.caricata === 1);
@@ -135,12 +135,12 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     };
    
     useEffect(()=>{
-        if(profilo.nonce !== ''){
+        if(mainState.nonce !== ''){
             const realPage = page + 1;
             getlistaRel(realPage, rowsPerPage);
         }
         
-    },[profilo.nonce]);
+    },[mainState.nonce]);
 
     const onButtonFiltra = () =>{
         setPage(0);
@@ -175,7 +175,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     const getRel = async(idRel) => {
 
         if(profilo.auth === 'SELFCARE'){
-            getSingleRel(token,profilo.nonce,idRel).then((res) =>{
+            getSingleRel(token,mainState.nonce,idRel).then((res) =>{
                 handleModifyMainState({relSelected:res.data});
                
                 if(res.data.datiFatturazione === true){
@@ -189,7 +189,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
               
             );
         }else{
-            getSingleRelPagopa(token,profilo.nonce,idRel).then((res) =>{
+            getSingleRelPagopa(token,mainState.nonce,idRel).then((res) =>{
     
                 handleModifyMainState({relSelected:res.data});
             
@@ -211,14 +211,14 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         if(profilo.auth === 'SELFCARE'){
 
             const {idEnti, ...newBody} = bodyRel;
-            await downloadListaRel(token,profilo.nonce,newBody).then((res)=>{
+            await downloadListaRel(token,mainState.nonce,newBody).then((res)=>{
                 saveAs("data:text/plain;base64," + res.data.documento,`Regolari esecuzioni /${data[0]?.ragioneSociale}/ ${mesiWithZero[bodyRel.mese-1]}/ ${bodyRel.anno}.xlsx` );
                 setShowLoading(false);
             }).catch((err)=>{
                 manageError(err,navigate);
             }); 
         }else{
-            await downloadListaRelPagopa(token,profilo.nonce,bodyRel).then((res)=>{
+            await downloadListaRelPagopa(token,mainState.nonce,bodyRel).then((res)=>{
                 saveAs("data:text/plain;base64," + res.data.documento,`Regolari esecuzioni /${mesiWithZero[bodyRel.mese-1]}/ ${bodyRel.anno}.xlsx` );
                 setShowLoading(false);
             }).catch((err)=>{
@@ -233,7 +233,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
   
     const downloadListaPdfPagopa = async() =>{
         setShowLoading(true);
-        await downloadListaRelPdfZipPagopa(token,profilo.nonce,bodyRel)
+        await downloadListaRelPdfZipPagopa(token,mainState.nonce,bodyRel)
             .then(response => response.blob())
             .then(blob => {
                 saveAs(blob,`REL /Frimate / ${mesiWithZero[bodyRel.mese -1]} / ${bodyRel.anno}.zip` );

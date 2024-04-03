@@ -182,7 +182,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
         if(profilo.auth === 'SELFCARE'){
             const {idEnti, ...body} = newBody;
-            await listaNotifiche(token,profilo.nonce,1,10, body)
+            await listaNotifiche(token,mainState.nonce,1,10, body)
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
                     setTotalNotifiche(res.data.count);
@@ -192,7 +192,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 });
         }else if(profilo.auth === 'PAGOPA'){
         
-            await listaNotifichePagoPa(token,profilo.nonce,1,10, newBody)
+            await listaNotifichePagoPa(token,mainState.nonce,1,10, newBody)
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
                     setTotalNotifiche(res.data.count);
@@ -216,7 +216,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         const {idEnti, ...newBody} = bodyGetLista;
         // disable button filtra e annulla filtri nell'attesa dei dati
         setGetNotificheWorking(true);
-        await listaNotifiche(token,profilo.nonce,nPage, nRow, newBody)
+        await listaNotifiche(token,mainState.nonce,nPage, nRow, newBody)
             .then((res)=>{
                 setNotificheList(res.data.notifiche);
                 setTotalNotifiche(res.data.count);
@@ -233,7 +233,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const getlistaNotifichePagoPa = async (nPage:number, nRow:number) => {
         // disable button filtra e annulla filtri nell'attesa dei dati
         setGetNotificheWorking(true);
-        await listaNotifichePagoPa(token,profilo.nonce,nPage, nRow, bodyGetLista)
+        await listaNotifichePagoPa(token,mainState.nonce,nPage, nRow, bodyGetLista)
             .then((res)=>{
                 // abilita button filtra e annulla filtri all'arrivo dei dati
                 setGetNotificheWorking(false);
@@ -249,7 +249,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             
     useEffect(() => {
       
-        if(profilo.nonce !== ''){
+        if(mainState.nonce !== ''){
             getProdotti();
             getProfili();
 
@@ -259,7 +259,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 getlistaNotifichePagoPa( realPageNumber, rowsPerPage);
             }
         } 
-    }, [profilo.nonce]);
+    }, [mainState.nonce]);
 
     // logica sul button filtra
     const onButtonFiltra = () =>{
@@ -301,7 +301,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     };
                         
     const getProdotti = async() => {
-        await getTipologiaProdotto(token, profilo.nonce )
+        await getTipologiaProdotto(token, mainState.nonce )
             .then((res)=>{          
                 setProdotti(res.data);
             })
@@ -311,7 +311,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     };
                                             
     const getProfili = async() => {
-        await getTipologiaProfilo(token, profilo.nonce )
+        await getTipologiaProfilo(token, mainState.nonce )
             .then((res)=>{              
                 setProfili(res.data);
             })
@@ -323,7 +323,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const getContestazioneModal = async(idNotifica:string) =>{
 
         if(profilo.auth === 'SELFCARE'){
-            await getContestazione(token, profilo.nonce , idNotifica )
+            await getContestazione(token, mainState.nonce , idNotifica )
                 .then((res)=>{
                     //se i tempi di creazione di una contestazione sono scaduti show pop up info
                     if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
@@ -338,7 +338,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     manageError(err,navigate);
                 }));
         }else{
-            await getContestazionePagoPa(token, profilo.nonce , idNotifica ).then((res)=>{
+            await getContestazionePagoPa(token, mainState.nonce , idNotifica ).then((res)=>{
                 //se i tempi di creazione di una contestazione sono scaduti show pop up info
                 if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
                     setOpenModalInfo(true);
@@ -355,7 +355,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
     const downloadNotificheOnDownloadButton = async () =>{
         if(profilo.auth === 'SELFCARE'){
-            await downloadNotifche(token, profilo.nonce,bodyGetLista )
+            await downloadNotifche(token, mainState.nonce,bodyGetLista )
                 .then((res)=>{
                     const link = document.createElement('a');
                     link.href = "data:text/plain;base64," + res.data.documento;
@@ -368,7 +368,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     manageError(err,navigate);
                 }));
         }else{
-            await downloadNotifchePagoPa(token, profilo.nonce,bodyGetLista )
+            await downloadNotifchePagoPa(token, mainState.nonce,bodyGetLista )
                 .then((res)=>{
                     const blob = new Blob([res.data], { type: 'text/csv' });
                     const url = window.URL.createObjectURL(blob);
@@ -720,7 +720,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             <ModalScadenziario
                 open={showModalScadenziario} 
                 setOpen={setShowModalScadenziario}
-                nonce={profilo.nonce}></ModalScadenziario>                                    
+                nonce={mainState.nonce}></ModalScadenziario>                                    
         </div>
     );
 };

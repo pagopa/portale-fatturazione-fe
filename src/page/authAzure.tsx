@@ -98,7 +98,10 @@ const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
                     nonce: storeProfilo.nonce
                 }));
               
-                handleModifyMainState({ruolo:resp.data.ruolo,action:'LISTA_DATI_FATTURAZIONE'});
+                handleModifyMainState({
+                    ruolo:resp.data.ruolo,
+                    action:'LISTA_DATI_FATTURAZIONE',
+                    nonce: storeProfilo.nonce});
 
                 navigate('/pagopalistadatifatturazione');
               
