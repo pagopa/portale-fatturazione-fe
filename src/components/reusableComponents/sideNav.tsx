@@ -58,9 +58,6 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
     // in quel caso il get profilo viene chiamato nella page auth
   
     useEffect(()=>{
-        /*
-        const x = Object.values(profilo).length;
-   */
 
         if(mainState.nonce === '' && Object.values(profilo).length !== 0){
           
