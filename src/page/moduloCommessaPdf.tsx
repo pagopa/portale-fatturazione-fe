@@ -163,7 +163,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
  
     useEffect(()=>{
 
-        if(mainState.nonce !== undefined){
+        if(mainState.nonce !== ''){
 
             if(profilo.auth === 'PAGOPA'){
                 getPagoPdf();

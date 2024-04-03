@@ -85,7 +85,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
     // nel caso in cui un utente apre un altra tab e accede come un utente diverso le chiamate andranno in errore
     // nel beck è stato implementato un controllo basato sul nonce
     useEffect(()=>{
-        if(mainState.nonce !== undefined){
+        if(mainState.nonce !== ''){
             getAnniSelect();
             getListaCommessaGrid();
         }

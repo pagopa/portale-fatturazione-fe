@@ -116,7 +116,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
     };
 
     useEffect(()=>{
-        if(mainState.nonce !== undefined){
+        if(mainState.nonce !== ''){
             getTipoConestazioni();
           
         }
