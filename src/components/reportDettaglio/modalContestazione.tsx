@@ -290,14 +290,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
     //(stato === 5 && rispostaSend === null)||
     //(stato === 6 && rispostaSend === null)||
 
-    const recapitistaHidden = stato === 1 ||
-     (stato === 2 && noteRecapitista === null) || 
-     stato === 3 ||
-    (stato === 4 && noteRecapitista === null) ||
-    (stato === 6 && noteRecapitista === null) ||
-    (stato === 7 && noteRecapitista === null) ||
-    (stato === 8 && noteRecapitista === null) ||
-    (stato === 9 && noteRecapitista === null); 
+   
 
     const supportSendReadOnly = profilo.auth !== 'PAGOPA' ||
      stato === 9||
@@ -308,7 +301,6 @@ CON => consolidatore (selfcare -> tutti gli enti)
 
     const hiddenRispondi_send =  stato === 1 ||
     stato === 2 ||
-    stato === 5 ||
     stato === 6 ||
     stato === 7 ||
     stato === 8 ||
@@ -318,7 +310,6 @@ CON => consolidatore (selfcare -> tutti gli enti)
 
     const hiddenRispondiAccettaEnte_send = stato === 1 ||
     stato === 2 ||
-    stato === 5 ||
     stato === 6 ||
     stato === 8 ||
     stato === 9 ||
@@ -327,16 +318,35 @@ CON => consolidatore (selfcare -> tutti gli enti)
     const hiddenConsRec =   stato === 1 ||
     stato === 2 ||
     stato === 3 ||
-    stato === 5 ||
-    stato === 6 ||
+    // stato === 6 ||
     stato === 8 ||
     stato === 9 ||
-    profilo.profilo === 'RCP' ||
+    profilo.profilo === 'REC' ||
     profilo.profilo === 'CON'; 
+
+    const showButtonAccettaRecapitista_Send = (profilo.auth === 'PAGOPA' || profilo.profilo === 'PA') && noteRecapitista;
+    let labelButtonAccettaRecapitista_Send = 'Accetta risposta Recapitista';
+  
+    // (stato === 4 && profilo.auth === 'PAGOPA')? 'Modifica e accetta risposta RECAPITISTA' : 'Accetta risposta RECAPITISTA'
+    if((stato === 4 && profilo.auth === 'PAGOPA') || ((stato === 3 || stato === 7) && profilo.profilo === 'PA')){
+        labelButtonAccettaRecapitista_Send = 'Modifica e accetta risposta Recapitista';
+    } 
+
+    let disableButtonAccettaRecapitista_Send_Ente = false;
+    
+    if(profilo.auth === 'PAGOPA' && (rispostaSend === null || rispostaSend === '')){
+        disableButtonAccettaRecapitista_Send_Ente = true;
+    }
+    if(profilo.profilo === 'PA' && (rispostaEnte === null || rispostaEnte === '')){
+        disableButtonAccettaRecapitista_Send_Ente = true;
+    }
+
+    
+
 
     const hiddenButtonAnnullaContestazione = profilo.profilo !== 'PA' ||
      stato !== 3 ||
-       contestazioneSelected.modifica === false; 
+    contestazioneSelected.modifica === false; 
 
     const hiddenModificaRispondiEnte = stato === 1  ||
        stato === 2  ||
@@ -394,6 +404,15 @@ CON => consolidatore (selfcare -> tutti gli enti)
         labelRispondiAccetta_Ente = 'Accetta risposta SEND';
     }
 
+    const showTextBox_Recapitista = profilo.profilo === 'REC' || noteRecapitista;
+    /*stato === 1 ||
+     (stato === 2 && noteRecapitista === null) || 
+     stato === 3 ||
+    (stato === 4 && noteRecapitista === null) ||
+    (stato === 6 && noteRecapitista === null) ||
+    (stato === 7 && noteRecapitista === null) ||
+    (stato === 8 && noteRecapitista === null) ||
+    (stato === 9 && noteRecapitista === null); */
 
     let showButton_Recapitista = false;
     if(profilo.profilo === 'REC' && noRisposta){
@@ -403,6 +422,10 @@ CON => consolidatore (selfcare -> tutti gli enti)
     let labelButton_Recapitista = 'Rispondi';
     if(stato === 5){
         labelButton_Recapitista = 'Modifica risposta';
+    }
+    let disableButton_Recapitista = false;
+    if(noteRecapitista === '' || noteRecapitista === null){
+        disableButton_Recapitista = true;
     }
    
     return (
@@ -560,7 +583,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                             </div>
                         }
                         { /*  nascondiamo recapitista e consolidatore */}
-                        {recapitistaHidden ? null :
+                        {showTextBox_Recapitista &&
                             <div className='row mt-5'>
                             
                                 <Typography id="modal-modal-title" variant="overline">
@@ -568,17 +591,19 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                 </Typography>
                                 <div className='col-4 mt-2'>
                                     <TextField
-                                    //required={required}
-                                    // helperText='Cap'
                                         id="outlined-basic"
                                         label='Risposta'
                                         placeholder='Risposta'
-                                        disabled={profilo.profilo !== 'RCP' || (contestazioneSelected.contestazione.statoContestazione !== 1 && contestazioneSelected.contestazione.statoContestazione !== 2 && contestazioneSelected.contestazione.statoContestazione !== 5 )}
-                                        value={''}
+                                        InputProps={{ readOnly: profilo.profilo !== 'REC' || !noRisposta}}
+                                        value={noteRecapitista}
                                         fullWidth
                                         multiline
-                                        // error={errorValidation}
-                                        onChange={(e) => console.log(e)}
+                                        onChange={(e) =>  setContestazioneSelected((prev:Contestazione)=> {
+                                    
+                                            const newContestazione = {...prev.contestazione, noteRecapitista:e.target.value};
+                                            return {...prev, contestazione:newContestazione};
+                                         
+                                        })}
                                         onBlur={()=> console.log('miao')}
             
                                     />
@@ -685,7 +710,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                 <div className='col-2 me-2'>
                                     <Button
                                         sx={{width:'207px'}}
-                                        disabled={rispostaSend === null}
+                                        disabled={rispostaSend === null  || rispostaSend === ''}
                                         variant='contained'
                                         onClick={()=>{
                                             modifyContestazioneFunPagoPa('rispondi');
@@ -698,7 +723,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                             {hiddenRispondiAccettaEnte_send ? null :
                                 <div className='col-2 me-2'>
                                     <Button
-                                        disabled={rispostaSend === null}
+                                        disabled={rispostaSend === null || rispostaSend === ''}
                                         variant='contained'
                                         onClick={()=>modifyContestazioneFunPagoPa('rispondi_accetta')}
                                     >{stringButtonAccettaEnte_send}</Button>
@@ -727,14 +752,14 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                 </div>
                             }
                             {/* butto PAGOPA , ente*/}
-                            { hiddenConsRec? null :
+                            { showButtonAccettaRecapitista_Send &&
                                 <div className='col-2 me-2'>
                                     <Button
                                         sx={{width:'220px'}}
-                                        disabled={true}
+                                        disabled={disableButtonAccettaRecapitista_Send_Ente}
                                         variant='contained'
                                         onClick={()=>console.log('esci')}
-                                    >{(stato === 4 && profilo.auth === 'PAGOPA')? 'Modifica e accetta risposta RECAPITISTA' : 'Accetta risposta RECAPITISTA'}</Button>
+                                    >{labelButtonAccettaRecapitista_Send}</Button>
                                 </div>
                             }
                             {/* butto RECAPITISTA*/} 
@@ -742,7 +767,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                 <div className='col-2 me-2'>
                                     <Button
                                         sx={{width:'220px'}}
-                                        disabled={true}
+                                        disabled={disableButton_Recapitista}
                                         variant='contained'
                                         onClick={()=>modifyContestazioneFun('Rispondi_Recapitista')}
                                     >{labelButton_Recapitista}</Button>
