@@ -100,14 +100,14 @@ const getProfilo = async (res:ParameterGetProfilo)=>{
                 prodotto:storeProfilo.prodotto,
                 jwt:res.data[0].jwt,
                 profilo:storeProfilo.profilo, // profilo utilizzato per la gestione delle notifiche/contestazioni
-                nonce: storeProfilo.nonce
+                nonce:storeProfilo.nonce
             }));
               
             getCommessa(res.data[0].jwt, storeProfilo.nonce);
             setCheckProfilo(true);
                
             // setto il ruolo nello state di riferimento globale
-            handleModifyMainState({ruolo:resp.data.ruolo,nonce: storeProfilo.nonce});
+            handleModifyMainState({ruolo:resp.data.ruolo,nonce:storeProfilo.nonce});
            
             navigate("/");
         } )
