@@ -91,8 +91,7 @@ const App = ({ instance }) => {
         relSelected: null // rel selezionata nella grid in page rel
     });
 
-    console.log(mainState);
-   
+     
     return (
 
       
