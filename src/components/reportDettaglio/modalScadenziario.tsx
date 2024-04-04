@@ -58,8 +58,11 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce})
     };
 
     useEffect(()=>{
-        getScadenziario();
-    },[]);
+        if(nonce !== ''){
+            getScadenziario();
+        }
+       
+    },[nonce]);
 
     return (
         <div>

@@ -225,7 +225,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         // disable button filtra e annulla filtri nell'attesa dei dati
         setGetNotificheWorking(true);
         if(profilo.profilo === 'PA'){
-            await listaNotifiche(token,profilo.nonce,nPage, nRow, newBody)
+            await listaNotifiche(token,mainState.nonce,nPage, nRow, newBody)
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
                     setTotalNotifiche(res.data.count);
@@ -237,7 +237,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     manageError(error, navigate);
                 });
         }else if(profilo.profilo === 'REC'){
-            await listaNotificheRecapitista(token,profilo.nonce,nPage, nRow, newBody)
+            await listaNotificheRecapitista(token,mainState.nonce,nPage, nRow, newBody)
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
                     setTotalNotifiche(res.data.count);
@@ -346,7 +346,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const getContestazioneModal = async(idNotifica:string) =>{
 
         if(profilo.auth === 'SELFCARE' && profilo.profilo === 'PA'){
-            await getContestazione(token, profilo.nonce , idNotifica )
+            await getContestazione(token, mainState.nonce , idNotifica )
                 .then((res)=>{
                     //se i tempi di creazione di una contestazione sono scaduti show pop up info
                     if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
@@ -361,7 +361,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     manageError(err,navigate);
                 }));
         }else if(profilo.auth === 'SELFCARE' && profilo.profilo === 'REC'){
-            await getContestazioneRecapitista(token, profilo.nonce , idNotifica )
+            await getContestazioneRecapitista(token, mainState.nonce , idNotifica )
                 .then((res)=>{
                 //se i tempi di creazione di una contestazione sono scaduti show pop up info
                     if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
@@ -394,7 +394,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const downloadNotificheOnDownloadButton = async () =>{
         setShowLoading(true);
         if(profilo.profilo === 'PA'){
-            await downloadNotifche(token, profilo.nonce,bodyGetLista )
+            await downloadNotifche(token, mainState.nonce,bodyGetLista )
                 .then((res)=>{
                     const link = document.createElement('a');
                     link.href = "data:text/plain;base64," + res.data.documento;
@@ -408,7 +408,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     manageError(err,navigate);
                 }));
         }else if(profilo.profilo === 'REC'){
-            await downloadNotifcheRecapitista(token, profilo.nonce,bodyGetLista )
+            await downloadNotifcheRecapitista(token, mainState.nonce,bodyGetLista )
                 .then((res)=>{
                     const blob = new Blob([res.data], { type: 'text/csv' });
                     const url = window.URL.createObjectURL(blob);
