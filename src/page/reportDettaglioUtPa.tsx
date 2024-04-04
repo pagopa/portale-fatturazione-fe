@@ -188,7 +188,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         setDataSelect([]);
         setBodyGetLista(newBody);
 
-        if(profilo.auth === 'SELFCARE'){
+        if(profilo.profilo === 'PA'){
             const {idEnti, ...body} = newBody;
             await listaNotifiche(token,mainState.nonce,1,10, body)
                 .then((res)=>{
@@ -196,6 +196,18 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     setTotalNotifiche(res.data.count);
                         
                 }).catch((error)=>{
+                    manageError(error, navigate);
+                });
+        }else if(profilo.profilo === 'REC'){
+            await listaNotificheRecapitista(token,mainState.nonce,1, 10, newBody)
+                .then((res)=>{
+                    setNotificheList(res.data.notifiche);
+                    setTotalNotifiche(res.data.count);
+                    // abilita button filtra e annulla filtri all'arrivo dei dati
+                    setGetNotificheWorking(false);
+                }).catch((error)=>{
+                // abilita button filtra e annulla filtri all'arrivo dei dati
+                    setGetNotificheWorking(false);
                     manageError(error, navigate);
                 });
         }else if(profilo.auth === 'PAGOPA'){
@@ -218,7 +230,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalNotifiche, setTotalNotifiche]  = useState(0);
     const realPageNumber = page + 1;
-         
+    console.log(profilo.profilo, mainState.nonce);
     const getlistaNotifiche = async (nPage:number, nRow:number) => {
         // elimino idEnti dal paylod della get notifiche lato selfcare
         const {idEnti, ...newBody} = bodyGetLista;
