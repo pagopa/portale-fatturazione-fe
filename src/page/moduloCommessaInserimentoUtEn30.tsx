@@ -19,6 +19,7 @@ import { getDettaglioModuloCommessa, insertDatiModuloCommessa } from '../api/api
 import { getModuloCommessaPagoPa, modifyDatiModuloCommessaPagoPa } from '../api/apiPagoPa/moduloComessaPA/api';
 import { getDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
 import { getDatiFatturazionePagoPa } from '../api/apiPagoPa/datiDiFatturazionePA/api';
+import useIsTabActive from '../reusableFunctin/tabIsActiv';
 
 export const InserimentoModuloCommessaContext = createContext<InsModuloCommessaContext>({
     datiCommessa: {
@@ -58,6 +59,13 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
+
+    const tabActive = useIsTabActive();
+    useEffect(()=>{
+        if(tabActive === true && (mainState.nonce !== profilo.nonce)){
+            window.location.href = redirect;
+        }
+    },[tabActive, mainState.nonce]);
 
     const navigate = useNavigate();
 

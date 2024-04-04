@@ -6,7 +6,7 @@ import SelectTipologiaFattura from "../components/rel/selectTipologiaFattura";
 import GridCustom from "../components/reusableComponents/gridCustom";
 import { BodyRel, RelPageProps } from "../types/typeRel";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
-import { manageError} from "../api/api";
+import { manageError, redirect} from "../api/api";
 import { useNavigate } from "react-router";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 import DownloadIcon from '@mui/icons-material/Download';
@@ -17,6 +17,7 @@ import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { saveAs } from "file-saver";
 import ModalInfo from "../components/reusableComponents/modals/modalInfo";
 import BasicAlerts from "../components/reusableComponents/alert";
+import useIsTabActive from "../reusableFunctin/tabIsActiv";
 
 const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
@@ -29,6 +30,13 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
+
+    const tabActive = useIsTabActive();
+    useEffect(()=>{
+        if(tabActive === true && (mainState.nonce !== profilo.nonce)){
+            window.location.href = redirect;
+        }
+    },[tabActive, mainState.nonce]);
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({

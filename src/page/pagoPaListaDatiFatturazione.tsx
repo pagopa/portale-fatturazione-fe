@@ -1,6 +1,6 @@
 import { Typography } from "@mui/material";
 import { Box, FormControl, InputLabel,Select, MenuItem, TextField, Button} from '@mui/material';
-import { getTipologiaProfilo, manageError} from '../api/api';
+import { getTipologiaProfilo, manageError, redirect} from '../api/api';
 import { ListaDatiFatturazioneProps, ResponseDownloadListaFatturazione } from "../types/typeListaDatiFatturazione";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
@@ -10,6 +10,7 @@ import { DataGrid, GridRowParams,GridEventListener,MuiEvent, GridColDef } from '
 import DownloadIcon from '@mui/icons-material/Download';
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import { downloadDocumentoListaDatiFatturazionePagoPa, listaDatiFatturazionePagopa } from "../api/apiPagoPa/datiDiFatturazionePA/api";
+import useIsTabActive from "../reusableFunctin/tabIsActiv";
 
 const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainState, dispatchMainState}) =>{
     const getToken = localStorage.getItem('token') || '{}';
@@ -17,6 +18,13 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
 
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
+
+    const tabActive = useIsTabActive();
+    useEffect(()=>{
+        if(tabActive === true && (mainState.nonce !== profilo.nonce)){
+            window.location.href = redirect;
+        }
+    },[tabActive, mainState.nonce]);
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({

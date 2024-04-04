@@ -3,7 +3,7 @@ import { } from '@mui/material';
 import React , { useState, useEffect} from 'react';
 import { TextField,Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { getTipologiaProfilo, manageError } from "../api/api";
+import { getTipologiaProfilo, manageError, redirect } from "../api/api";
 import { ReportDettaglioProps, NotificheList, FlagContestazione, Contestazione, ElementMultiSelect  } from "../types/typeReportDettaglio";
 import { useNavigate } from "react-router";
 import { BodyListaNotifiche } from "../types/typesGeneral";
@@ -19,6 +19,7 @@ import { downloadNotifchePagoPa, getContestazionePagoPa, listaNotifichePagoPa } 
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import GridCustom from "../components/reusableComponents/gridCustom";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
+import useIsTabActive from "../reusableFunctin/tabIsActiv";
 
 const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
@@ -32,6 +33,13 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
     const state = localStorage.getItem('statusApplication') || '{}';
     const statusApp =  JSON.parse(state);
+
+    const tabActive = useIsTabActive();
+    useEffect(()=>{
+        if(tabActive === true && (mainState.nonce !== profilo.nonce)){
+            window.location.href = redirect;
+        }
+    },[tabActive, mainState.nonce]);
     
     // prendo gli ultimi 2 anni dinamicamente
     const currentYear = (new Date()).getFullYear();

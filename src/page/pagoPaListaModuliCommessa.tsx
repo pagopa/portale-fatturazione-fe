@@ -2,7 +2,7 @@ import { ListaModuliCommessaProps } from "../types/typeListaModuliCommessa";
 import { Params } from "../types/typesGeneral";
 import { Typography } from "@mui/material";
 import { Box, FormControl, InputLabel,Select, MenuItem, TextField, Button} from '@mui/material';
-import { manageError } from '../api/api';
+import { manageError, redirect } from '../api/api';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -10,6 +10,7 @@ import { DataGrid, GridRowParams,GridEventListener,MuiEvent, GridColDef} from '@
 import DownloadIcon from '@mui/icons-material/Download';
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import { downloadDocumentoListaModuloCommessaPagoPa, listaModuloCommessaPagopa } from "../api/apiPagoPa/moduloComessaPA/api";
+import useIsTabActive from "../reusableFunctin/tabIsActiv";
 
 const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchMainState, mainState}) =>{
 
@@ -20,6 +21,13 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
 
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
+
+    const tabActive = useIsTabActive();
+    useEffect(()=>{
+        if(tabActive === true && (mainState.nonce !== profilo.nonce)){
+            window.location.href = redirect;
+        }
+    },[tabActive, mainState.nonce]);
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
