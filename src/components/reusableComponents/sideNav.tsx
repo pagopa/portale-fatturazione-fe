@@ -260,7 +260,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
                             location.pathname === '/azureLogin'||
                             !profilo.auth;
 
-
+    const recOrConsIsLogged = profilo.profilo === 'REC' || profilo.profilo ==='CON';
    
 
     return (
@@ -273,7 +273,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
                 }}
                 >
                     <List component="nav" aria-label="main piattaforma-notifiche sender">
-                        {profilo.profilo !== 'REC' &&
+                        {!recOrConsIsLogged &&
                         <><ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick()}>
                             <ListItemIcon>
                                 <DnsIcon fontSize="inherit"></DnsIcon>
@@ -294,7 +294,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
                             </ListItemIcon>
                             <ListItemText primary="Notifiche" />
                         </ListItemButton>
-                        {profilo.profilo !== 'REC' &&
+                        {!recOrConsIsLogged &&
                         <ListItemButton selected={selectedIndex === 3} onClick={() => handleListItemClickRel()}>
                             <ListItemIcon>
                                 <ManageAccountsIcon fontSize="inherit" />

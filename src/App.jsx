@@ -91,7 +91,7 @@ const App = ({ instance }) => {
         relSelected: null // rel selezionata nella grid in page rel
     });
 
-    const recapitistaIsLogged = profilo.profilo === 'REC';
+    const recOrConsIsLogged = profilo.profilo === 'REC' || profilo.profilo ==='CON';
 
   
     return (
@@ -125,7 +125,7 @@ const App = ({ instance }) => {
                                         
                                         <Route path="azure" element={<Azure />} />
                                         
-                                        {!recapitistaIsLogged && <Route path="/" element={<AreaPersonaleUtenteEnte
+                                        {!recOrConsIsLogged && <Route path="/" element={<AreaPersonaleUtenteEnte
                                             mainState={mainState}
                                             dispatchMainState={ dispatchMainState} />} />
                                         }

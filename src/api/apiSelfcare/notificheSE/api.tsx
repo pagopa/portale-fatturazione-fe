@@ -25,6 +25,17 @@ export const listaNotificheRecapitista = async (token:string, nonce:string , pag
     return response;
 };
 
+export const listaNotificheConsolidatore = async (token:string, nonce:string , page:number, pageSize:number, body: BodyListaNotifiche) => {
+    const response =  await axios.post(`${url}/api/notifiche/consolidatore?page=${page}&pageSize=${pageSize}&nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },
+        }
+    );
+    return response;
+};
+
 export const tipologiaTipoContestazione = async (token:string, nonce:string) => {
     const response =  await axios.get(`${url}/api/tipologia/tipocontestazione?nonce=${nonce}`,
         { headers: {
@@ -76,6 +87,16 @@ export const getContestazioneRecapitista = async (token:string, nonce:string , i
     return response;
 };
 
+export const getContestazioneCosolidatore = async (token:string, nonce:string , idNotifica:string) => {
+    const response =  await axios.get(`${url}/api/notifiche/consolidatore/contestazione/${idNotifica}?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
 export const modifyContestazioneEnte = async (token:string, nonce:string , body: ModalBodyContestazioneModify) => {
     const response =  await axios.put(`${url}/api/notifiche/contestazione?nonce=${nonce}`,
         body,
@@ -113,6 +134,17 @@ export const downloadNotifche = async (token:string, nonce:string , body: BodyLi
 
 export const downloadNotifcheRecapitista = async (token:string, nonce:string , body: BodyListaNotifiche) => {
     const response =  await axios.post(`${url}/api/notifiche/recapitista/documento/ricerca?binary=false&nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token,
+        },
+        }
+    );
+    return response;
+};
+
+export const downloadNotifcheConsolidatore = async (token:string, nonce:string , body: BodyListaNotifiche) => {
+    const response =  await axios.post(`${url}/api/notifiche/consolidatore/documento/ricerca?binary=false&nonce=${nonce}`,
         body,
         { headers: {
             Authorization: 'Bearer ' + token,

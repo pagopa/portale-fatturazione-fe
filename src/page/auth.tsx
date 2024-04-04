@@ -102,7 +102,7 @@ const getProfilo = async (res:ParameterGetProfilo)=>{
                 nonce:storeProfilo.nonce
             }));
            
-            if(resp.data.profilo === "REC"){
+            if(resp.data.profilo === "REC" || resp.data.profilo === "CON"){
                 handleModifyMainState({ruolo:resp.data.ruolo,nonce:storeProfilo.nonce});
                 navigate('/notifiche');
             }else{
