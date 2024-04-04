@@ -285,7 +285,8 @@ CON => consolidatore (selfcare -> tutti gli enti)
     (stato === 3 && profilo.profilo === 'PA') ||
     (stato === 8 && rispostaSend === null) ||
     (stato === 9  && rispostaSend === null) ||
-    (rispostaSend === null && noRisposta === false) ;
+    (rispostaSend === null && noRisposta === false) ||
+    (profilo.profilo === 'REC' && (rispostaSend === null || rispostaSend === ''));  // add 04/04
     // stato === 3 ||
     //(stato === 5 && rispostaSend === null)||
     //(stato === 6 && rispostaSend === null)||

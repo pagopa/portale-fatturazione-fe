@@ -111,6 +111,17 @@ export const downloadNotifche = async (token:string, nonce:string , body: BodyLi
     return response;
 };
 
+export const downloadNotifcheRecapitista = async (token:string, nonce:string , body: BodyListaNotifiche) => {
+    const response =  await axios.post(`${url}/api/notifiche/recapitista/documento/ricerca?binary=false&nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token,
+        },
+        }
+    );
+    return response;
+};
+
 export const listaEntiNotifichePage = async (token:string, nonce:string , body: BodyListaEnti) => {
     const response =  await axios.post(`${url}/api/tipologia/enti/completi?nonce=${nonce}`,
         body,
