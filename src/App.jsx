@@ -1,6 +1,6 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import {useState, useReducer} from 'react';
+import {useState,useEffect, useReducer, useCallback} from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { ThemeProvider, Grid } from '@mui/material';
 import {theme} from '@pagopa/mui-italia';
@@ -67,6 +67,7 @@ const MainContent = () => {
 
 const App = ({ instance }) => {
 
+   
     /* const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
 */

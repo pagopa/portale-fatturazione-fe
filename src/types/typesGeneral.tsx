@@ -1,5 +1,6 @@
 import { DataGridCommessa } from "./typeModuloCommessaElenco";
 import { BodyRel, Rel } from "./typeRel";
+
 export interface ModalProps {
     setOpen : any,
     open: boolean,

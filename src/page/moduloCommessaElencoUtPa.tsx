@@ -9,6 +9,7 @@ import { ManageErrorResponse } from '../types/typesGeneral';
 import { getAnni, getDatiModuloCommessa, getListaCommessa, getListaCommessaFiltered, getListaCommessaOnAnnulla } from '../api/apiSelfcare/moduloCommessaSE/api';
 import ModalRedirect from '../components/commessaInserimento/madalRedirect';
 import { getDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
+import useIsTabActive from '../reusableFunctin/tabIsActiv';
 
 const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatchMainState,mainState}) => {
    
@@ -20,6 +21,13 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
 
     const state = localStorage.getItem('statusApplication') || '{}';
     const statusApp =  JSON.parse(state);
+
+    const tabActive = useIsTabActive();
+    useEffect(()=>{
+        if(tabActive === true && (mainState.nonce !== profilo.nonce)){
+            window.location.href = redirect;
+        }
+    },[tabActive, mainState.nonce]);
    
     const navigate = useNavigate();
 
