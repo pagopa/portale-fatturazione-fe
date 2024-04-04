@@ -14,12 +14,13 @@ import DownloadIcon from '@mui/icons-material/Download';
 import MultiSelectStatoContestazione from "../components/reportDettaglio/multiSelectGroupedBy";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import ModalScadenziario from "../components/reportDettaglio/modalScadenziario";
-import { downloadNotifche, downloadNotifcheRecapitista, getContestazione, getContestazioneRecapitista, listaNotifiche, listaNotificheRecapitista } from "../api/apiSelfcare/notificheSE/api";
+import { downloadNotifche, downloadNotifcheConsolidatore, downloadNotifcheRecapitista, getContestazione, getContestazioneCosolidatore, getContestazioneRecapitista, listaNotifiche, listaNotificheConsolidatore, listaNotificheRecapitista } from "../api/apiSelfcare/notificheSE/api";
 import { downloadNotifchePagoPa, getContestazionePagoPa, listaNotifichePagoPa } from "../api/apiPagoPa/notificheSE/api";
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import GridCustom from "../components/reusableComponents/gridCustom";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 import useIsTabActive from "../reusableFunctin/tabIsActiv";
+import { saveAs } from "file-saver";
 
 const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
@@ -188,8 +189,10 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         setDataSelect([]);
         setBodyGetLista(newBody);
 
+        const {idEnti, ...body} = newBody;
+
         if(profilo.profilo === 'PA'){
-            const {idEnti, ...body} = newBody;
+           
             await listaNotifiche(token,mainState.nonce,1,10, body)
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
@@ -199,7 +202,19 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     manageError(error, navigate);
                 });
         }else if(profilo.profilo === 'REC'){
-            await listaNotificheRecapitista(token,mainState.nonce,1, 10, newBody)
+            await listaNotificheRecapitista(token,mainState.nonce,1, 10, body)
+                .then((res)=>{
+                    setNotificheList(res.data.notifiche);
+                    setTotalNotifiche(res.data.count);
+                    // abilita button filtra e annulla filtri all'arrivo dei dati
+                    setGetNotificheWorking(false);
+                }).catch((error)=>{
+                // abilita button filtra e annulla filtri all'arrivo dei dati
+                    setGetNotificheWorking(false);
+                    manageError(error, navigate);
+                });
+        }else if(profilo.profilo === 'CON'){
+            await listaNotificheConsolidatore(token,mainState.nonce,1, 10, newBody)
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
                     setTotalNotifiche(res.data.count);
@@ -260,6 +275,18 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     setGetNotificheWorking(false);
                     manageError(error, navigate);
                 });
+        }else if(profilo.profilo === 'CON'){
+            await listaNotificheConsolidatore(token,mainState.nonce,nPage, nRow, bodyGetLista)
+                .then((res)=>{
+                    setNotificheList(res.data.notifiche);
+                    setTotalNotifiche(res.data.count);
+                    // abilita button filtra e annulla filtri all'arrivo dei dati
+                    setGetNotificheWorking(false);
+                }).catch((error)=>{
+                    // abilita button filtra e annulla filtri all'arrivo dei dati
+                    setGetNotificheWorking(false);
+                    manageError(error, navigate);
+                });
         }
        
                     
@@ -288,7 +315,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             getProdotti();
             getProfili();
 
-            if(profilo.auth === 'SELFCARE'){
+            if(profilo.profilo === 'SELFCARE'){
                 getlistaNotifiche( realPageNumber, rowsPerPage); 
             }else if(profilo.auth === 'PAGOPA'){
                 getlistaNotifichePagoPa( realPageNumber, rowsPerPage);
@@ -357,7 +384,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 
     const getContestazioneModal = async(idNotifica:string) =>{
 
-        if(profilo.auth === 'SELFCARE' && profilo.profilo === 'PA'){
+        if( profilo.profilo === 'PA'){
             await getContestazione(token, mainState.nonce , idNotifica )
                 .then((res)=>{
                     //se i tempi di creazione di una contestazione sono scaduti show pop up info
@@ -372,7 +399,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 .catch(((err)=>{
                     manageError(err,navigate);
                 }));
-        }else if(profilo.auth === 'SELFCARE' && profilo.profilo === 'REC'){
+        }else if( profilo.profilo === 'REC'){
             await getContestazioneRecapitista(token, mainState.nonce , idNotifica )
                 .then((res)=>{
                 //se i tempi di creazione di una contestazione sono scaduti show pop up info
@@ -387,7 +414,22 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 .catch(((err)=>{
                     manageError(err,navigate);
                 }));
-        }else{
+        }else if( profilo.profilo === 'CON'){
+            await getContestazioneCosolidatore(token, mainState.nonce , idNotifica )
+                .then((res)=>{
+                //se i tempi di creazione di una contestazione sono scaduti show pop up info
+                    if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
+                        setOpenModalInfo(true);
+                    }else{
+                        // atrimenti show pop up creazione contestazione
+                        setOpen(true); 
+                        setContestazioneSelected(res.data);
+                    }           
+                })
+                .catch(((err)=>{
+                    manageError(err,navigate);
+                }));
+        }else if(profilo.auth === 'PAGOPA'){
             await getContestazionePagoPa(token, mainState.nonce , idNotifica ).then((res)=>{
                 //se i tempi di creazione di una contestazione sono scaduti show pop up info
                 if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
@@ -408,13 +450,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         if(profilo.profilo === 'PA'){
             await downloadNotifche(token, mainState.nonce,bodyGetLista )
                 .then((res)=>{
-                    const link = document.createElement('a');
-                    link.href = "data:text/plain;base64," + res.data.documento;
-                    link.setAttribute('download',`Notifiche /${notificheListWithOnere[0].ragioneSociale}/${mesiWithZero[bodyGetLista.mese-1]} /${bodyGetLista.anno}.xlsx`); //or any other extension
-                    document.body.appendChild(link);
-                    link.click();
-                    setShowLoading(false);
-                    document.body.removeChild(link);           
+                    saveAs("data:text/plain;base64," + res.data.documento,`Notifiche /${notificheListWithOnere[0].ragioneSociale}/${mesiWithZero[bodyGetLista.mese-1]} /${bodyGetLista.anno}.xlsx` );
+                    setShowLoading(false);         
                 })
                 .catch(((err)=>{
                     manageError(err,navigate);
@@ -437,7 +474,27 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     manageError(err,navigate);
                     setShowLoading(false);
                 }));
-        }else{
+        }else if(profilo.profilo === 'CON'){
+            await downloadNotifcheConsolidatore(token, mainState.nonce,bodyGetLista )
+                .then((res)=>{
+
+                    const blob = new Blob([res.data], { type: 'text/csv' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.setAttribute('hidden', '');
+                    a.setAttribute('href', url);
+                    a.setAttribute('download',`Notifiche /${mesiWithZero[bodyGetLista.mese-1]} /${bodyGetLista.anno}.csv`);
+                    document.body.appendChild(a);
+                    a.click();
+                    setShowLoading(false);
+                    document.body.removeChild(a);
+                   
+                })
+                .catch(((err)=>{
+                    manageError(err,navigate);
+                    setShowLoading(false);
+                }));
+        }else if(profilo.auth === 'PAGOPA'){
             await downloadNotifchePagoPa(token, mainState.nonce,bodyGetLista )
                 .then((res)=>{
                     const blob = new Blob([res.data], { type: 'text/csv' });
@@ -694,7 +751,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     </div>                         
                 </div>
                 <div className="row mt-5" >
-                    {(profilo.auth === 'PAGOPA' || profilo.profilo === 'CND') &&
+                    {(profilo.auth === 'PAGOPA' || profilo.profilo === 'CON') &&
                     <div className="col-3">
                         <MultiselectCheckbox 
                             mainState={mainState} 
