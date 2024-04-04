@@ -2,7 +2,7 @@ import { ListaModuliCommessaProps } from "../types/typeListaModuliCommessa";
 import { Params } from "../types/typesGeneral";
 import { Typography } from "@mui/material";
 import { Box, FormControl, InputLabel,Select, MenuItem, TextField, Button} from '@mui/material';
-import { manageError } from '../api/api';
+import { manageError, redirect } from '../api/api';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -10,8 +10,9 @@ import { DataGrid, GridRowParams,GridEventListener,MuiEvent, GridColDef} from '@
 import DownloadIcon from '@mui/icons-material/Download';
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import { downloadDocumentoListaModuloCommessaPagoPa, listaModuloCommessaPagopa } from "../api/apiPagoPa/moduloComessaPA/api";
+import useIsTabActive from "../reusableFunctin/tabIsActiv";
 
-const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchMainState}) =>{
+const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchMainState, mainState}) =>{
 
     const navigate = useNavigate();
 
@@ -20,6 +21,13 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
 
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
+    
+    const tabActive = useIsTabActive();
+    useEffect(()=>{
+        if(tabActive === true && (mainState.nonce !== profilo.nonce)){
+            window.location.href = redirect;
+        }
+    },[tabActive, mainState.nonce]);
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -80,7 +88,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
     },[bodyGetLista]);
 
     const getProdotti = async() => {
-        await getTipologiaProdotto(token, profilo.nonce )
+        await getTipologiaProdotto(token, mainState.nonce )
             .then((res)=>{
                
                 setProdotti(res.data);
@@ -91,14 +99,14 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
     };
 
     useEffect(()=>{
-        if(profilo.nonce !== undefined){
+        if(mainState.nonce !== ''){
             getProdotti();
             getListaCommesse();
         }
-    }, [profilo.nonce]);
+    }, [mainState.nonce]);
 
     const getListaCommesse = async() =>{
-        await listaModuloCommessaPagopa(bodyGetLista ,token, profilo.nonce)
+        await listaModuloCommessaPagopa(bodyGetLista ,token, mainState.nonce)
             .then((res)=>{
                
                 setGridData(res.data);
@@ -109,7 +117,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
     };
 
     const getListaCommesseOnAnnulla = async() =>{
-        await listaModuloCommessaPagopa({descrizione:'',prodotto:'', anno:currentYear, mese:currString} ,token, profilo.nonce)
+        await listaModuloCommessaPagopa({descrizione:'',prodotto:'', anno:currentYear, mese:currString} ,token, mainState.nonce)
             .then((res)=>{
              
                 setBodyGetLista({descrizione:'',prodotto:'', anno:currentYear, mese:currString});
@@ -123,7 +131,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
     const mesiWithZero = ['01','02','03','04','05','06','07','08','09','10','11','12'];
 
     const downloadExelListaCommessa = async () =>{
-        await downloadDocumentoListaModuloCommessaPagoPa(token, profilo.nonce,bodyGetLista)
+        await downloadDocumentoListaModuloCommessaPagoPa(token, mainState.nonce,bodyGetLista)
             .then((res)=>{
              
                 //const url = window.URL.createObjectURL(res.data.documento);

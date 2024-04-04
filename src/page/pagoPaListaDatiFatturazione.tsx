@@ -1,6 +1,6 @@
 import { Typography } from "@mui/material";
 import { Box, FormControl, InputLabel,Select, MenuItem, TextField, Button} from '@mui/material';
-import { getTipologiaProfilo, manageError} from '../api/api';
+import { getTipologiaProfilo, manageError, redirect} from '../api/api';
 import { ListaDatiFatturazioneProps, ResponseDownloadListaFatturazione } from "../types/typeListaDatiFatturazione";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
@@ -10,6 +10,7 @@ import { DataGrid, GridRowParams,GridEventListener,MuiEvent, GridColDef } from '
 import DownloadIcon from '@mui/icons-material/Download';
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import { downloadDocumentoListaDatiFatturazionePagoPa, listaDatiFatturazionePagopa } from "../api/apiPagoPa/datiDiFatturazionePA/api";
+import useIsTabActive from "../reusableFunctin/tabIsActiv";
 
 const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainState, dispatchMainState}) =>{
     const getToken = localStorage.getItem('token') || '{}';
@@ -17,6 +18,14 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
 
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
+    
+    const tabActive = useIsTabActive();
+    useEffect(()=>{
+        if(tabActive === true && (mainState.nonce !== profilo.nonce)){
+            window.location.href = redirect;
+        }
+    },[tabActive, mainState.nonce]);
+   
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -60,7 +69,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
     },[bodyGetLista]);
 
     const getProdotti = async() => {
-        await getTipologiaProdotto(token,profilo.nonce )
+        await getTipologiaProdotto(token,mainState.nonce )
             .then((res)=>{
                
                 setProdotti(res.data);
@@ -71,7 +80,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
     };
 
     const getProfili = async() => {
-        await getTipologiaProfilo(token,profilo.nonce)
+        await getTipologiaProfilo(token,mainState.nonce)
             .then((res)=>{
                
                 setProfili(res.data);
@@ -82,7 +91,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
     };
 
     const getListaDatifatturazione = async(body:BodyListaDatiFatturazione) =>{
-        await listaDatiFatturazionePagopa(body ,token,profilo.nonce)
+        await listaDatiFatturazionePagopa(body ,token,mainState.nonce)
             .then((res)=>{
               
                 setGridData(res.data);
@@ -95,17 +104,17 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
 
     useEffect(()=>{
        
-        if(profilo.nonce !== undefined){
+        if(mainState.nonce !== ''){
 
             getProdotti();
             getProfili();
             getListaDatifatturazione(bodyGetLista);
        
         }
-    }, [profilo.nonce]);
+    }, [mainState.nonce]);
 
     const onDownloadButton = async() =>{
-        await downloadDocumentoListaDatiFatturazionePagoPa(token,profilo.nonce, bodyGetLista).then((res:ResponseDownloadListaFatturazione) => {
+        await downloadDocumentoListaDatiFatturazionePagoPa(token,mainState.nonce, bodyGetLista).then((res:ResponseDownloadListaFatturazione) => {
           
             //const url = window.URL.createObjectURL(res.data.documento);
             const link = document.createElement('a');

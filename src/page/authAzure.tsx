@@ -95,10 +95,13 @@ const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
                     dataPrimo:storeProfilo.dataPrimo,
                     prodotto:storeProfilo.prodotto,
                     jwt:res.data.jwt,
-                    nonce: storeProfilo.nonce
+                    nonce:storeProfilo.nonce
                 }));
               
-                handleModifyMainState({ruolo:resp.data.ruolo,action:'LISTA_DATI_FATTURAZIONE'});
+                handleModifyMainState({
+                    ruolo:resp.data.ruolo,
+                    action:'LISTA_DATI_FATTURAZIONE',
+                    nonce:storeProfilo.nonce});
 
                 navigate('/pagopalistadatifatturazione');
               
