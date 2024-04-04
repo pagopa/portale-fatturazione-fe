@@ -14,7 +14,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import MultiSelectStatoContestazione from "../components/reportDettaglio/multiSelectGroupedBy";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import ModalScadenziario from "../components/reportDettaglio/modalScadenziario";
-import { downloadNotifche, getContestazione, getContestazioneRecapitista, listaNotifiche, listaNotificheRecapitista } from "../api/apiSelfcare/notificheSE/api";
+import { downloadNotifche, downloadNotifcheRecapitista, getContestazione, getContestazioneRecapitista, listaNotifiche, listaNotificheRecapitista } from "../api/apiSelfcare/notificheSE/api";
 import { downloadNotifchePagoPa, getContestazionePagoPa, listaNotifichePagoPa } from "../api/apiPagoPa/notificheSE/api";
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import GridCustom from "../components/reusableComponents/gridCustom";
@@ -384,7 +384,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     };
 
     const downloadNotificheOnDownloadButton = async () =>{
-        if(profilo.auth === 'SELFCARE'){
+        setShowLoading(true);
+        if(profilo.profilo === 'PA'){
             await downloadNotifche(token, profilo.nonce,bodyGetLista )
                 .then((res)=>{
                     const link = document.createElement('a');
@@ -392,10 +393,29 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     link.setAttribute('download',`Notifiche /${notificheListWithOnere[0].ragioneSociale}/${mesiWithZero[bodyGetLista.mese-1]} /${bodyGetLista.anno}.xlsx`); //or any other extension
                     document.body.appendChild(link);
                     link.click();
+                    setShowLoading(false);
                     document.body.removeChild(link);           
                 })
                 .catch(((err)=>{
                     manageError(err,navigate);
+                }));
+        }else if(profilo.profilo === 'REC'){
+            await downloadNotifcheRecapitista(token, profilo.nonce,bodyGetLista )
+                .then((res)=>{
+                    const blob = new Blob([res.data], { type: 'text/csv' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.setAttribute('hidden', '');
+                    a.setAttribute('href', url);
+                    a.setAttribute('download',`Notifiche /${mesiWithZero[bodyGetLista.mese-1]} /${bodyGetLista.anno}.csv`);
+                    document.body.appendChild(a);
+                    a.click();
+                    setShowLoading(false);
+                    document.body.removeChild(a); 
+                })
+                .catch(((err)=>{
+                    manageError(err,navigate);
+                    setShowLoading(false);
                 }));
         }else{
             await downloadNotifchePagoPa(token, profilo.nonce,bodyGetLista )
@@ -695,10 +715,11 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     <Button
                         disabled={getNotificheWorking}
                         onClick={()=> {
+                
+                            
                             downloadNotificheOnDownloadButton(); 
-                            if(profilo.auth === 'PAGOPA'){
-                                setShowLoading(true);
-                            }
+                           
+                           
                         }}  >
                                   Download Risultati 
                         <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
