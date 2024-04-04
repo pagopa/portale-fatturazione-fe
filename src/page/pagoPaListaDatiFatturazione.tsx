@@ -18,13 +18,14 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
 
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
-
+    
     const tabActive = useIsTabActive();
     useEffect(()=>{
         if(tabActive === true && (mainState.nonce !== profilo.nonce)){
             window.location.href = redirect;
         }
     },[tabActive, mainState.nonce]);
+   
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
