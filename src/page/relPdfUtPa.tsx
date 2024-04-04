@@ -61,14 +61,14 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         if( mainState.relSelected !== null){
 
             if(profilo.auth === 'SELFCARE'){
-                await getRelExel(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
+                await getRelExel(token, mainState.nonce, mainState.relSelected.idTestata).then((res)=>{
                
                     saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio/ ${ mainState.relSelected?.ragioneSociale} /${mainState.relSelected?.mese}/${mainState.relSelected?.anno}.xlsx` );
                 }).catch((err)=>{
                     manageError(err,navigate);
                 });
             }else{
-                await getRelExelPagoPa(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
+                await getRelExelPagoPa(token, mainState.nonce, mainState.relSelected.idTestata).then((res)=>{
                     saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio / ${ mainState.relSelected?.ragioneSociale} / ${mainState.relSelected?.mese} / ${mainState.relSelected?.anno}.xlsx` );
                 }).catch((err)=>{
                     manageError(err,navigate);
@@ -85,7 +85,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         if( mainState.relSelected !== null){
             if(profilo.auth === 'SELFCARE'){
 
-                await getRelPdf(token, profilo.nonce, mainState.relSelected.idTestata).then((res: ResponseDownloadPdf)=>{
+                await getRelPdf(token, mainState.nonce, mainState.relSelected.idTestata).then((res: ResponseDownloadPdf)=>{
                     toDoOnDownloadPdf(res);
                    
                 }).catch((err)=>{
@@ -105,13 +105,13 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
       
         if( mainState.relSelected !== null){
             if(profilo.auth === 'SELFCARE'){
-                await getRelPdfFirmato(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
+                await getRelPdfFirmato(token, mainState.nonce, mainState.relSelected.idTestata).then((res)=>{
                     saveAs("data:text/plain;base64," + res.data.documento,`REL firmata / ${ mainState.relSelected?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${mainState.relSelected?.anno}.pdf` );
                 }).catch((err)=>{
                     manageError(err,navigate);
                 });
             }else{
-                await getRelPdfFirmatoPagoPa(token, profilo.nonce, mainState.relSelected.idTestata).then((res)=>{
+                await getRelPdfFirmatoPagoPa(token, mainState.nonce, mainState.relSelected.idTestata).then((res)=>{
                     saveAs("data:text/plain;base64," + res.data.documento,`REL firmata / ${ mainState.relSelected?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${mainState.relSelected?.anno}.pdf` );
                 }).catch((err)=>{
                     manageError(err,navigate);
@@ -139,7 +139,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             const {idEnte, ...bodySelf} = bodyPagopa;
 
             if(profilo.auth === 'SELFCARE'){
-                await getLogRelDocumentoFirmato(token, profilo.nonce,bodySelf).then((res) =>{
+                await getLogRelDocumentoFirmato(token, mainState.nonce,bodySelf).then((res) =>{
                     setLastUpdateDocFirmato(res.data[0].dataEvento);
                
                 }).catch((err)=>{
@@ -147,7 +147,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                     manageError(err, navigate);
                 });
             }else if(profilo.auth === 'PAGOPA'){
-                await getLogPagoPaRelDocumentoFirmato(token, profilo.nonce,bodyPagopa).then((res) =>{
+                await getLogPagoPaRelDocumentoFirmato(token, mainState.nonce,bodyPagopa).then((res) =>{
                     setLastUpdateDocFirmato(res.data[0].dataEvento);
                    
                 }).catch((err)=>{
@@ -196,7 +196,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         setLoadingUpload(true);
         setErrorUpload(false);
         if(rel){
-            await uploadPdfRel(token, profilo.nonce, rel.idTestata, {file:file} ).then((res)=>{
+            await uploadPdfRel(token, mainState.nonce, rel.idTestata, {file:file} ).then((res)=>{
               
                 getRel(rel.idTestata);
                 setFile(null);
@@ -216,7 +216,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
     const getRel = async(idRel) => {
      
-        getSingleRel(token,profilo.nonce,idRel).then((res) =>{
+        getSingleRel(token,mainState.nonce,idRel).then((res) =>{
             handleModifyMainState({relSelected:res.data});
            
         }).catch((err)=>{

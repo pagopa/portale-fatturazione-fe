@@ -3,7 +3,7 @@ import { } from '@mui/material';
 import React , { useState, useEffect} from 'react';
 import { TextField,Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { getTipologiaProfilo, manageError } from "../api/api";
+import { getTipologiaProfilo, manageError, redirect } from "../api/api";
 import { ReportDettaglioProps, NotificheList, FlagContestazione, Contestazione, ElementMultiSelect  } from "../types/typeReportDettaglio";
 import { useNavigate } from "react-router";
 import { BodyListaNotifiche } from "../types/typesGeneral";
@@ -19,6 +19,7 @@ import { downloadNotifchePagoPa, getContestazionePagoPa, listaNotifichePagoPa } 
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import GridCustom from "../components/reusableComponents/gridCustom";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
+import useIsTabActive from "../reusableFunctin/tabIsActiv";
 
 const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
@@ -32,6 +33,13 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
     const state = localStorage.getItem('statusApplication') || '{}';
     const statusApp =  JSON.parse(state);
+
+    const tabActive = useIsTabActive();
+    useEffect(()=>{
+        if(tabActive === true && (mainState.nonce !== profilo.nonce)){
+            window.location.href = redirect;
+        }
+    },[tabActive, mainState.nonce]);
     
     // prendo gli ultimi 2 anni dinamicamente
     const currentYear = (new Date()).getFullYear();
@@ -182,7 +190,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
         if(profilo.auth === 'SELFCARE'){
             const {idEnti, ...body} = newBody;
-            await listaNotifiche(token,profilo.nonce,1,10, body)
+            await listaNotifiche(token,mainState.nonce,1,10, body)
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
                     setTotalNotifiche(res.data.count);
@@ -192,7 +200,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 });
         }else if(profilo.auth === 'PAGOPA'){
         
-            await listaNotifichePagoPa(token,profilo.nonce,1,10, newBody)
+            await listaNotifichePagoPa(token,mainState.nonce,1,10, newBody)
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
                     setTotalNotifiche(res.data.count);
@@ -248,7 +256,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const getlistaNotifichePagoPa = async (nPage:number, nRow:number) => {
         // disable button filtra e annulla filtri nell'attesa dei dati
         setGetNotificheWorking(true);
-        await listaNotifichePagoPa(token,profilo.nonce,nPage, nRow, bodyGetLista)
+        await listaNotifichePagoPa(token,mainState.nonce,nPage, nRow, bodyGetLista)
             .then((res)=>{
                 // abilita button filtra e annulla filtri all'arrivo dei dati
                 setGetNotificheWorking(false);
@@ -264,7 +272,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             
     useEffect(() => {
       
-        if(profilo.nonce !== ''){
+        if(mainState.nonce !== ''){
             getProdotti();
             getProfili();
 
@@ -274,7 +282,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 getlistaNotifichePagoPa( realPageNumber, rowsPerPage);
             }
         } 
-    }, [profilo.nonce]);
+    }, [mainState.nonce]);
 
     // logica sul button filtra
     const onButtonFiltra = () =>{
@@ -316,7 +324,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     };
                         
     const getProdotti = async() => {
-        await getTipologiaProdotto(token, profilo.nonce )
+        await getTipologiaProdotto(token, mainState.nonce )
             .then((res)=>{          
                 setProdotti(res.data);
             })
@@ -326,7 +334,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     };
                                             
     const getProfili = async() => {
-        await getTipologiaProfilo(token, profilo.nonce )
+        await getTipologiaProfilo(token, mainState.nonce )
             .then((res)=>{              
                 setProfili(res.data);
             })
@@ -368,7 +376,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     manageError(err,navigate);
                 }));
         }else{
-            await getContestazionePagoPa(token, profilo.nonce , idNotifica ).then((res)=>{
+            await getContestazionePagoPa(token, mainState.nonce , idNotifica ).then((res)=>{
                 //se i tempi di creazione di una contestazione sono scaduti show pop up info
                 if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
                     setOpenModalInfo(true);
@@ -418,7 +426,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     setShowLoading(false);
                 }));
         }else{
-            await downloadNotifchePagoPa(token, profilo.nonce,bodyGetLista )
+            await downloadNotifchePagoPa(token, mainState.nonce,bodyGetLista )
                 .then((res)=>{
                     const blob = new Blob([res.data], { type: 'text/csv' });
                     const url = window.URL.createObjectURL(blob);
@@ -771,7 +779,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             <ModalScadenziario
                 open={showModalScadenziario} 
                 setOpen={setShowModalScadenziario}
-                nonce={profilo.nonce}></ModalScadenziario>                                    
+                nonce={mainState.nonce}></ModalScadenziario>                                    
         </div>
     );
 };

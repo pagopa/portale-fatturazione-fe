@@ -27,7 +27,7 @@ const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({m
     const [fgContestazione, setFgContestazione] = useState<FlagContestazione[]>([]);
 
     const getFlagContestazione =  async() => {
-        await flagContestazione(token, profilo.nonce )
+        await flagContestazione(token, mainState.nonce )
             .then((res)=>{
                 setFgContestazione(res.data);
                                 
@@ -38,11 +38,11 @@ const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({m
     };
 
     useEffect(()=>{
-        if(profilo.nonce !== undefined){
+        if(mainState.nonce !== ''){
             getFlagContestazione();
             
         }
-    },[profilo.nonce]);
+    },[mainState.nonce]);
 
     return (
         <Autocomplete

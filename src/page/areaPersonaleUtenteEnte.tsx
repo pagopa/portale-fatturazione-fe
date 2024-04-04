@@ -18,6 +18,7 @@ import {  getDatiFatturazione,
 import {  getDatiFatturazionePagoPa,
     modifyDatiFatturazionePagoPa,
     insertDatiFatturazionePagoPa, } from '../api/apiPagoPa/datiDiFatturazionePA/api';
+import useIsTabActive from '../reusableFunctin/tabIsActiv';
 
 export const DatiFatturazioneContext = createContext<AreaPersonaleContext>({
     datiFatturazione:{
@@ -38,12 +39,21 @@ export const DatiFatturazioneContext = createContext<AreaPersonaleContext>({
 });
 
 const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, dispatchMainState}) => {
+
+    
    
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
 
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
+
+    const tabActive = useIsTabActive();
+    useEffect(()=>{
+        if(tabActive === true && (mainState.nonce !== profilo.nonce)){
+            window.location.href = redirect;
+        }
+    },[tabActive, mainState.nonce]);
 
     const navigate = useNavigate();
 
@@ -70,7 +80,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         notaLegale:false
 
     });
-  
+   
   
     // state creato per il tasto conferma , abilitato nel caso in cui tutti values sono true
     const [statusBottonConferma, setStatusButtonConferma] = useState<StateEnableConferma>({
@@ -93,7 +103,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
     // get dati fatturazione SELFCARE
     const getDatiFat = async () =>{
       
-        await getDatiFatturazione(token,profilo.nonce).then((res:SuccesResponseGetDatiFatturazione ) =>{   
+        await getDatiFatturazione(token,mainState.nonce).then((res:SuccesResponseGetDatiFatturazione ) =>{   
            
             setDatiFatturazione(res.data); 
 
@@ -153,7 +163,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
    
     // get dati fatturazione PAGOPA
     const getDatiFatPagoPa = async () =>{
-        await getDatiFatturazionePagoPa(token,profilo.nonce, profilo.idEnte, profilo.prodotto ).then((res:SuccesResponseGetDatiFatturazione) =>{   
+        await getDatiFatturazionePagoPa(token,mainState.nonce, profilo.idEnte, profilo.prodotto ).then((res:SuccesResponseGetDatiFatturazione) =>{   
             handleModifyMainState({
                 datiFatturazione:true,
                 statusPageDatiFatturazione:'immutable'
@@ -188,7 +198,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
 
     // se il nonce è presente viene chiamata la get dati fatturazione
     useEffect(()=>{
-        if(profilo.nonce !== undefined){
+        if(mainState.nonce !== ''){
             if(profilo.auth === 'SELFCARE'){
                 // se l'utente NON è pagopa
                 getDatiFat();
@@ -197,7 +207,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 getDatiFatPagoPa();
             }
         }
-    }, [profilo.nonce]);
+    }, [mainState.nonce]);
 
     // se non c'è il token viene fatto il redirect al portale di accesso 
     useEffect(()=>{
@@ -224,7 +234,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
 
                 const newDatiFatturazione = {...datiFatturazione, ...{idEnte:profilo.idEnte,prodotto:profilo.prodotto}};
 
-                modifyDatiFatturazionePagoPa(token,profilo.nonce, newDatiFatturazione ).then(() =>{
+                modifyDatiFatturazionePagoPa(token,mainState.nonce, newDatiFatturazione ).then(() =>{
 
                     handleModifyMainState({
                         statusPageDatiFatturazione:'immutable',
@@ -236,7 +246,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
 
             }else{
                 // 1 - ed è un utente SELFCARE
-                modifyDatiFatturazione(datiFatturazione, token,profilo.nonce)
+                modifyDatiFatturazione(datiFatturazione, token,mainState.nonce)
                     .then(() =>{
                        
                         handleModifyMainState({
@@ -281,7 +291,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
               
             // 2 - ed è un utente PAGOPA
             if(profilo.auth === 'PAGOPA'){
-                insertDatiFatturazionePagoPa( token,profilo.nonce, bodyPagoPa).then(()  =>{
+                insertDatiFatturazionePagoPa( token,mainState.nonce, bodyPagoPa).then(()  =>{
                     
                     handleModifyMainState({
                         statusPageDatiFatturazione:'immutable',
@@ -298,7 +308,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
 
             }else{
                 // 2 - ED è UN UTENTE SELFCARE
-                insertDatiFatturazione(body, token,profilo.nonce).then(() =>{
+                insertDatiFatturazione(body, token,mainState.nonce).then(() =>{
                   
                     if(parseStatusApp.inserisciModificaCommessa === 'INSERT'){
                         handleModifyMainState({

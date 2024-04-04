@@ -67,17 +67,13 @@ const MainContent = () => {
 
 const App = ({ instance }) => {
 
-    
-
-    /* const getProfilo = localStorage.getItem('profilo') || '{}';
-    const profilo =  JSON.parse(getProfilo);
-*/
     const [checkProfilo,setCheckProfilo] = useState(false);
     // set status page abilita e disabilita le modifiche al componente dati fatturazione
     
     const [mainState, dispatchMainState] = useReducer(reducerMainState, {
         mese:'',
         anno:'',
+        nonce:'',
         //nomeEnteClickOn:'',  // lato pagopa sul click della grid lista ModuloCommessa/dati fatturazione vado a soricizzare il nome da mostrare nel dettaglio
         //modifica:undefined, // se la commessa selezionata è modificabile
         datiFatturazione:false,// l'ente ha i dati di fatturazione?
@@ -92,8 +88,7 @@ const App = ({ instance }) => {
         relSelected: null // rel selezionata nella grid in page rel
     });
 
-    console.log(mainState);
-   
+  
     return (
 
       

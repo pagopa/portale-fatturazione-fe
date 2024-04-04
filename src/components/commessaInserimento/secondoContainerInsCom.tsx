@@ -16,7 +16,7 @@ const SecondoContainerInsCom : React.FC = () => {
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
 
-    const { totale } = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
+    const { totale, mainState } = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
 
     const getIdByTipo = (string:string, array:ArrayTipologieCommesse[]) =>{
       
@@ -35,7 +35,7 @@ const SecondoContainerInsCom : React.FC = () => {
     });
  
     const getCategoria = async () =>{
-        await getCategoriaSpedizione(token , profilo.nonce).then((res:ResponseCategorieSpedizione ) => {
+        await getCategoriaSpedizione(token , mainState.nonce).then((res:ResponseCategorieSpedizione ) => {
          
             setArrTipoSpedizione({
                 idSpedizioneDigitale :getIdByTipo('Digitale',res.data),
@@ -49,11 +49,11 @@ const SecondoContainerInsCom : React.FC = () => {
     };
    
     useEffect(()=>{
-        if(profilo.nonce !== undefined){
+        if(mainState.nonce !== ''){
             getCategoria();
         }
         
-    },[profilo.nonce]);
+    },[mainState.nonce]);
   
     return (
         <div className="m-3 pl-5 ">
