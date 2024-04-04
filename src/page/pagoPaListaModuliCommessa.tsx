@@ -21,7 +21,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
 
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
-
+    
     const tabActive = useIsTabActive();
     useEffect(()=>{
         if(tabActive === true && (mainState.nonce !== profilo.nonce)){

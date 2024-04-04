@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 
 export default function useIsTabActive (){
-    const [isTabVisible, setIsTabVisible] = useState(true);
-  
+    const [isTabVisible, setIsTabVisible] = useState(false);
+    console.log(isTabVisible);
     const handleVisibilityChange = useCallback(() => {
         // eslint-disable-next-line no-undef
         setIsTabVisible(document.visibilityState === 'visible');

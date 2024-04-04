@@ -44,6 +44,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
 
     // questa chiamata viene eseguita esclusivamente se l'utenete fa un reload page cosi da inserire nuovamente il NONCE nel DOM
     const getProfiloToGetNonce = async () =>{
+    
         await getAuthProfilo(profilo.jwt)
             .then((res) =>{
                 handleModifyMainState({nonce:res?.data.nonce});
