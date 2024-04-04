@@ -199,10 +199,10 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
     // se il nonce è presente viene chiamata la get dati fatturazione
     useEffect(()=>{
         if(mainState.nonce !== ''){
-            if(profilo.auth === 'SELFCARE'){
+            if(profilo.profilo === 'PA'){
                 // se l'utente NON è pagopa
                 getDatiFat();
-            }else{
+            }else if(profilo.auth === 'PAGOPA'){
                 //se l'utente è pagoPa
                 getDatiFatPagoPa();
             }

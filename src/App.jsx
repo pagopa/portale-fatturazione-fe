@@ -66,6 +66,9 @@ const MainContent = () => {
 
 
 const App = ({ instance }) => {
+    // eslint-disable-next-line no-undef
+    const getProfilo = localStorage.getItem('profilo') || '{}';
+    const profilo =  JSON.parse(getProfilo);
 
     const [checkProfilo,setCheckProfilo] = useState(false);
     // set status page abilita e disabilita le modifiche al componente dati fatturazione
@@ -87,6 +90,8 @@ const App = ({ instance }) => {
         // prodotto: '',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione,
         relSelected: null // rel selezionata nella grid in page rel
     });
+
+    const recapitistaIsLogged = profilo.profilo === 'REC';
 
   
     return (
@@ -120,9 +125,10 @@ const App = ({ instance }) => {
                                         
                                         <Route path="azure" element={<Azure />} />
                                         
-                                        <Route path="/" element={<AreaPersonaleUtenteEnte
+                                        {!recapitistaIsLogged && <Route path="/" element={<AreaPersonaleUtenteEnte
                                             mainState={mainState}
                                             dispatchMainState={ dispatchMainState} />} />
+                                        }
                                    
                                         <Route path="/4" element={<ModuloCommessaElencoUtPa mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
                                   

@@ -101,8 +101,9 @@ const getProfilo = async (res:ParameterGetProfilo)=>{
                 profilo:storeProfilo.profilo, // profilo utilizzato per la gestione delle notifiche/contestazioni
                 nonce:storeProfilo.nonce
             }));
-            
+           
             if(resp.data.profilo === "REC"){
+                handleModifyMainState({ruolo:resp.data.ruolo,nonce:storeProfilo.nonce});
                 navigate('/notifiche');
             }else{
                 getCommessa(res.data[0].jwt, storeProfilo.nonce);
