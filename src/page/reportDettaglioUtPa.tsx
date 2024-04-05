@@ -127,9 +127,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             newOnere = 'SEND';
         }else if(notifica.onere === 'SEND_SEND'){
             newOnere = 'SEND';
-        }else if(notifica.onere === 'SEND_RCP'){
+        }else if(notifica.onere === 'REC'){
             newOnere = 'RECAPITISTA';
-        }else if(notifica.onere === 'SEND_CON'){
+        }else if(notifica.onere === 'CON'){
             newOnere = 'CONSOLIDATORE';
         }
      

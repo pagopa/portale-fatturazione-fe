@@ -49,7 +49,8 @@ const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({m
             sx={{ '.MuiAutocomplete-groupLabel': {
                 backgroundColor:'#FF0000',
                        
-            },}}
+            },
+            height:'60px'}}
             multiple
             onChange={(event, value) => {
                 const arrayIdContestazioni = value.map(obj=> obj.id);
