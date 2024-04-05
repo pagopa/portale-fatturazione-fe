@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router';
 import { MultiselectNotificheProps, OptionMultiselectChackbox } from '../../types/typeReportDettaglio';
 import {useState, useEffect} from 'react';
 import { BodyListaNotifiche } from '../../types/typesGeneral';
-import { listaEntiNotifichePage } from '../../api/apiSelfcare/notificheSE/api';
+import { listaEntiNotifichePage, listaEntiNotifichePageConsolidatore } from '../../api/apiSelfcare/notificheSE/api';
 
 const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetLista, dataSelect, setDataSelect,mainState}) => {
 
@@ -36,14 +36,28 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
 
     // servizio che popola la select con la checkbox
     const listaEntiNotifichePageOnSelect = async () =>{
-        await listaEntiNotifichePage(token, mainState.nonce, {descrizione:textValue} )
-            .then((res)=>{
-                setDataSelect(res.data);
+
+        if(profilo.profilo === 'CON'){
+            await listaEntiNotifichePageConsolidatore(token, mainState.nonce, {descrizione:textValue} )
+                .then((res)=>{
+                    setDataSelect(res.data);
+            
+                })
+                .catch(((err)=>{
+                    manageError(err,navigate);
+                }));
+
+        }else if(profilo.auth === 'PAGOPA'){
+            await listaEntiNotifichePage(token, mainState.nonce, {descrizione:textValue} )
+                .then((res)=>{
+                    setDataSelect(res.data);
                 
-            })
-            .catch(((err)=>{
-                manageError(err,navigate);
-            }));
+                })
+                .catch(((err)=>{
+                    manageError(err,navigate);
+                }));
+        }
+      
     };
 
     useEffect(()=>{

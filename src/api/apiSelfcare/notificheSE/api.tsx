@@ -119,6 +119,17 @@ export const modifyContestazioneRecapitista = async (token:string, nonce:string 
     return response;
 };
 
+export const modifyContestazioneConsolidatore = async (token:string, nonce:string , body: ModalBodyContestazioneModify) => {
+    const response =  await axios.put(`${url}/api/notifiche/consolidatore/contestazione?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token,
+        },
+        }
+    );
+    return response;
+};
+
 
 
 export const downloadNotifche = async (token:string, nonce:string , body: BodyListaNotifiche) => {
@@ -145,6 +156,16 @@ export const downloadNotifcheRecapitista = async (token:string, nonce:string , b
 
 export const downloadNotifcheConsolidatore = async (token:string, nonce:string , body: BodyListaNotifiche) => {
     const response =  await axios.post(`${url}/api/notifiche/consolidatore/documento/ricerca?binary=false&nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token,
+        },
+        }
+    );
+    return response;
+};
+export const listaEntiNotifichePageConsolidatore = async (token:string, nonce:string , body: BodyListaEnti) => {
+    const response =  await axios.post(`${url}/api/tipologia/enti/consolidatore/completi?nonce=${nonce}`,
         body,
         { headers: {
             Authorization: 'Bearer ' + token,

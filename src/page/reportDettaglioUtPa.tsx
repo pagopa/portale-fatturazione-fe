@@ -486,9 +486,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     a.setAttribute('download',`Notifiche /${mesiWithZero[bodyGetLista.mese-1]} /${bodyGetLista.anno}.csv`);
                     document.body.appendChild(a);
                     a.click();
-                    setShowLoading(false);
                     document.body.removeChild(a);
-                   
+                    setShowLoading(false);
                 })
                 .catch(((err)=>{
                     manageError(err,navigate);
