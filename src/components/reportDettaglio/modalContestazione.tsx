@@ -10,7 +10,7 @@ import { manageError } from '../../api/api';
 import { useNavigate } from 'react-router';
 import {useState, useEffect} from 'react';
 import YupString from '../../validations/string/index';
-import { createContestazione, modifyContestazioneEnte,modifyContestazioneRecapitista, tipologiaTipoContestazione } from '../../api/apiSelfcare/notificheSE/api';
+import { createContestazione, modifyContestazioneConsolidatore, modifyContestazioneEnte,modifyContestazioneRecapitista, tipologiaTipoContestazione } from '../../api/apiSelfcare/notificheSE/api';
 import { modifyContestazioneEntePagoPa } from '../../api/apiPagoPa/notificheSE/api';
 
 const style = {
@@ -168,6 +168,11 @@ CON => consolidatore (selfcare -> tutti gli enti)
                 risposta:contestazioneSelected.contestazione.noteRecapitista
             };
 
+        }else if(action === 'Rispondi_Consolidatore'){
+            body = {
+                idNotifica:contestazioneSelected.contestazione.idNotifica,
+                risposta:contestazioneSelected.contestazione.noteConsolidatore
+            };
         }else{
             body = {
                 idNotifica:contestazioneSelected.contestazione.idNotifica,
@@ -178,14 +183,22 @@ CON => consolidatore (selfcare -> tutti gli enti)
 
         }
         if(profilo.profilo === 'PA'){
-            await modifyContestazioneEnte(token, profilo.nonce, body).then((res)=>{
+            await modifyContestazioneEnte(token, profilo.nonce, body).then(()=>{
                 setOpen(false);
                 funGetNotifiche(1,10);
             }).catch(((err)=>{
                 manageError(err,navigate);
             }));
         }else if(profilo.profilo === 'REC'){
-            await modifyContestazioneRecapitista(token, profilo.nonce, body).then((res)=>{
+            await modifyContestazioneRecapitista(token, profilo.nonce, body).then(()=>{
+                setOpen(false);
+                funGetNotifiche(1,10);
+                
+            }).catch(((err)=>{
+                manageError(err,navigate);
+            }));
+        }else if(profilo.profilo === 'CON'){
+            await modifyContestazioneConsolidatore(token, profilo.nonce, body).then(()=>{
                 setOpen(false);
                 funGetNotifiche(1,10);
                 
@@ -248,7 +261,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
     const rispostaEnte = contestazioneSelected?.contestazione?.rispostaEnte;
     const rispostaSend = contestazioneSelected?.contestazione?.noteSend;
     const noteRecapitista = contestazioneSelected.contestazione.noteRecapitista;
-    const notaCosolidatore = contestazioneSelected.contestazione.noteConsolidatore;
+    const noteConsolidatore = contestazioneSelected.contestazione.noteConsolidatore;
 
     const noActionEnte = !contestazioneSelected.modifica && !contestazioneSelected.chiusura && !contestazioneSelected.risposta;
 
@@ -285,7 +298,8 @@ CON => consolidatore (selfcare -> tutti gli enti)
     (stato === 8 && rispostaSend === null) ||
     (stato === 9  && rispostaSend === null) ||
     (rispostaSend === null && noRisposta === false) ||
-    (profilo.profilo === 'REC' && (rispostaSend === null || rispostaSend === ''));  // add 04/04
+    (profilo.profilo === 'REC' && (rispostaSend === null || rispostaSend === '')) || // add 04/04
+    (profilo.profilo === 'CON' && (rispostaSend === null || rispostaSend === '')) ;  // add 05/04
     // stato === 3 ||
     //(stato === 5 && rispostaSend === null)||
     //(stato === 6 && rispostaSend === null)||
@@ -342,6 +356,23 @@ CON => consolidatore (selfcare -> tutti gli enti)
     }
 
     
+    // logica button accetta risposa consolidatore_SEND_ENTE
+    const showButtonAccettaConsolidatore_Send = (profilo.auth === 'PAGOPA' || profilo.profilo === 'PA') && noteConsolidatore;
+    let labelButtonAccettaConsolidatore_Send = 'Accetta risposta Consolidatore';
+  
+    
+    if((stato === 4 && profilo.auth === 'PAGOPA') || (stato === 3  && profilo.profilo === 'PA')){
+        labelButtonAccettaConsolidatore_Send = 'Modifica e accetta risposta Consolidatore';
+    } 
+
+    let disableButtonAccettaConsolidatore_Send_Ente = false;
+    
+    if(profilo.auth === 'PAGOPA' && (rispostaSend === null || rispostaSend === '')){
+        disableButtonAccettaConsolidatore_Send_Ente = true;
+    }
+    if(profilo.profilo === 'PA' && (rispostaEnte === null || rispostaEnte === '')){
+        disableButtonAccettaConsolidatore_Send_Ente = true;
+    }
 
 
     const hiddenButtonAnnullaContestazione = profilo.profilo !== 'PA' ||
@@ -405,6 +436,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
     }
 
     const showTextBox_Recapitista = profilo.profilo === 'REC' || noteRecapitista;
+    const showTextBox_Consolidatore = profilo.profilo === 'CON' || noteConsolidatore;
     /*stato === 1 ||
      (stato === 2 && noteRecapitista === null) || 
      stato === 3 ||
@@ -413,7 +445,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
     (stato === 7 && noteRecapitista === null) ||
     (stato === 8 && noteRecapitista === null) ||
     (stato === 9 && noteRecapitista === null); */
-
+    // RECAPITISTA
     let showButton_Recapitista = false;
     if(profilo.profilo === 'REC' && noRisposta){
         showButton_Recapitista = true;
@@ -428,6 +460,19 @@ CON => consolidatore (selfcare -> tutti gli enti)
         disableButton_Recapitista = true;
     }
    
+    // CONSOLIDATORE
+    let showButton_Consolidatore = false;
+    if(profilo.profilo === 'CON' && noRisposta){
+        showButton_Consolidatore = true;
+    }
+    let labelButton_Consolidatore = 'Rispondi';
+    if(stato === 6){
+        labelButton_Consolidatore = 'Modifica risposta';
+    }
+    let disableButton_Consolidatore = false;
+    if(noteConsolidatore === '' || noteConsolidatore === null){
+        disableButton_Consolidatore = true;
+    }
     return (
         <div>
         
@@ -582,7 +627,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
 
                             </div>
                         }
-                        { /*  nascondiamo recapitista e consolidatore */}
+                        { /*  recapitista textfield */}
                         {showTextBox_Recapitista &&
                             <div className='row mt-5'>
                             
@@ -611,8 +656,8 @@ CON => consolidatore (selfcare -> tutti gli enti)
 
                             </div>
                         }
-                        {/* 
-                        {contestazioneSelected.contestazione.statoContestazione === 1 || contestazioneSelected.contestazione.statoContestazione === 3 ? null :
+                        {/*consolidatore text field */}
+                        {showTextBox_Consolidatore &&
                             <div className='row mt-5'>
                             
                                 <Typography id="modal-modal-title" variant="overline">
@@ -620,25 +665,23 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                 </Typography>
                                 <div className='col-4 mt-2'>
                                     <TextField
-                                    //required={required}
-                                    // helperText='Cap'
                                         id="outlined-basic"
                                         label='Risposta'
                                         placeholder='Risposta'
-                                        disabled={profilo.profilo !== 'RCP' || (contestazioneSelected.contestazione.statoContestazione !== 1 && contestazioneSelected.contestazione.statoContestazione !== 2 && contestazioneSelected.contestazione.statoContestazione !== 6 && contestazioneSelected.contestazione.statoContestazione !== 8 && contestazioneSelected.contestazione.statoContestazione !== 9  )}
-                                        value={''}
+                                        InputProps={{ readOnly: profilo.profilo !== 'CON' || !noRisposta}}
+                                        value={noteConsolidatore || ''}
                                         fullWidth
                                         multiline
-                                        // error={errorValidation}
-                                        onChange={(e) => console.log(e)}
+                                        onChange={(e) =>  setContestazioneSelected((prev:Contestazione)=> {
+                                            const newContestazione = {...prev.contestazione, noteConsolidatore:e.target.value};
+                                            return {...prev, contestazione:newContestazione};
+                                        })}
                                         onBlur={()=> console.log('miao')}
-            
                                     />
                                 </div>
-
                             </div>
                         }
-                        */}
+                      
 
                     </div>
 
@@ -741,14 +784,14 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                 </div>
                             }
                             {/* butto PAGOPA , ente*/}
-                            {hiddenConsRec ? null :
+                            {showButtonAccettaConsolidatore_Send &&
                                 <div className='col-2 me-5'>
                                     <Button
                                         sx={{width:'220px'}}
-                                        disabled={true}
+                                        disabled={disableButtonAccettaConsolidatore_Send_Ente}
                                         variant='contained'
                                         onClick={()=>console.log('esci')}
-                                    >{(stato === 4 && profilo.auth === 'PAGOPA')? 'Modifica e accetta risposta CONSOLIDATORE' : 'Accetta risposta CONSOLIDATORE'}</Button>
+                                    >{labelButtonAccettaRecapitista_Send}</Button>
                                 </div>
                             }
                             {/* butto PAGOPA , ente*/}
@@ -771,6 +814,17 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         variant='contained'
                                         onClick={()=>modifyContestazioneFun('Rispondi_Recapitista')}
                                     >{labelButton_Recapitista}</Button>
+                                </div>
+                            }
+                            {/* butto CONSOLIDATORE*/} 
+                            { showButton_Consolidatore &&
+                                <div className='col-2 me-2'>
+                                    <Button
+                                        sx={{width:'220px'}}
+                                        disabled={disableButton_Consolidatore}
+                                        variant='contained'
+                                        onClick={()=>modifyContestazioneFun('Rispondi_Consolidatore')}
+                                    >{labelButton_Consolidatore}</Button>
                                 </div>
                             }
                         </div>
