@@ -36,7 +36,8 @@ export interface ModalContestazioneProps{
     contestazioneSelected:Contestazione,
     setContestazioneSelected:any,
     funGetNotifiche:any,
-    funGetNotifichePagoPa:any
+    funGetNotifichePagoPa:any,
+    openModalLoading:any
 }
 
 export interface FlagContestazione{

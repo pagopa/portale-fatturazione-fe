@@ -374,7 +374,8 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
             <ModalLoading 
                 open={showLoading} 
-                setOpen={setShowLoading} >
+                setOpen={setShowLoading} 
+                sentence={'Downloading...'}>
             </ModalLoading>
         </div>
 

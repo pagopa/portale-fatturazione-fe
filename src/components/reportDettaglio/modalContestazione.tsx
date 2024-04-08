@@ -24,7 +24,7 @@ const style = {
     p: 4,
 };
 
-const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open, mainState, contestazioneSelected, setContestazioneSelected, funGetNotifiche, funGetNotifichePagoPa}) => {
+const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open, mainState, contestazioneSelected, setContestazioneSelected, funGetNotifiche, funGetNotifichePagoPa, openModalLoading}) => {
 /*
     PA => ente (selfcare)
  SUP=> supporto (ad)
@@ -123,7 +123,8 @@ CON => consolidatore (selfcare -> tutti gli enti)
     },[mainState.nonce]);
 
     const creaContestazione = async () => {
-
+        setOpen(false);
+        openModalLoading(true);
         const body = {
             idNotifica:contestazioneSelected.contestazione.idNotifica,
             tipoContestazione:contestazioneSelected.contestazione.tipoContestazione,
@@ -132,7 +133,6 @@ CON => consolidatore (selfcare -> tutti gli enti)
         
         await createContestazione(token, mainState.nonce,body)
             .then(()=>{
-                setOpen(false);
                 funGetNotifiche(1,10);
             })
             .catch(((err)=>{
@@ -141,6 +141,8 @@ CON => consolidatore (selfcare -> tutti gli enti)
     };
 
     const modifyContestazioneFun = async (action:string) => {
+        setOpen(false);
+        openModalLoading(true);
         let body;
         if(action === 'Annulla'){
             body ={
@@ -215,14 +217,13 @@ CON => consolidatore (selfcare -> tutti gli enti)
         
         if(profilo.profilo === 'PA'){
             await modifyContestazioneEnte(token, profilo.nonce, body).then(()=>{
-                setOpen(false);
+               
                 funGetNotifiche(1,10);
             }).catch(((err)=>{
                 manageError(err,navigate);
             }));
         }else if(profilo.profilo === 'REC'){
             await modifyContestazioneRecapitista(token, profilo.nonce, body).then(()=>{
-                setOpen(false);
                 funGetNotifiche(1,10);
                 
             }).catch(((err)=>{
@@ -230,7 +231,6 @@ CON => consolidatore (selfcare -> tutti gli enti)
             }));
         }else if(profilo.profilo === 'CON'){
             await modifyContestazioneConsolidatore(token, profilo.nonce, body).then(()=>{
-                setOpen(false);
                 funGetNotifiche(1,10);
                 
             }).catch(((err)=>{
@@ -241,6 +241,8 @@ CON => consolidatore (selfcare -> tutti gli enti)
     };
 
     const modifyContestazioneFunPagoPa = async(action:string) => {
+        setOpen(false);
+        openModalLoading(true);
         let body = {};
         if(action === 'rispondi'){
 
@@ -285,7 +287,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
         }
         
         await modifyContestazioneEntePagoPa(token, mainState.nonce, body).then((res)=>{
-            setOpen(false);
+            
             funGetNotifichePagoPa(1,10);
             
         }).catch(((err)=>{
