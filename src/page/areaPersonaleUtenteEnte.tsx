@@ -19,6 +19,7 @@ import {  getDatiFatturazionePagoPa,
     modifyDatiFatturazionePagoPa,
     insertDatiFatturazionePagoPa, } from '../api/apiPagoPa/datiDiFatturazionePA/api';
 import useIsTabActive from '../reusableFunctin/tabIsActiv';
+import BasicModal from '../components/reusableComponents/modals/modal';
 
 export const DatiFatturazioneContext = createContext<AreaPersonaleContext>({
     datiFatturazione:{
@@ -64,7 +65,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         });
     };
   
-   
+    const [open, setOpen] = useState(false);
     const [datiFatturazione, setDatiFatturazione] = useState<DatiFatturazione>({
         tipoCommessa:'',
         idEnte:'',
@@ -90,7 +91,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         'ID Documento':false,
         "Codice. Commessa/Convenzione":false,
     });
-   
+    console.log(statusBottonConferma);
     // check su ogni elemento dello state statusBottonConferma
     const enableDisableConferma = Object.values(statusBottonConferma).every(element => element === false);
    
@@ -353,6 +354,8 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
          
     };
 
+  
+
     return (
         <DatiFatturazioneContext.Provider
             value={{
@@ -363,7 +366,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
 
             <div >
                 
-                <PageTitleNavigation dispatchMainState={dispatchMainState} /> 
+                <PageTitleNavigation dispatchMainState={dispatchMainState} setOpen={setOpen} /> 
                 {/* tab 1 e 2 start */}
                 <div className='mt-5'>
                     <TabAreaPersonaleUtente />
@@ -374,7 +377,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                         <div className="d-flex justify-content-between m-5 ">
 
                             <Button
-                                onClick={() => handleModifyMainState({statusPageDatiFatturazione:'immutable'})}
+                                onClick={() => setOpen(true)}
                                 disabled={mainState.datiFatturazione === false || mainState.statusPageDatiFatturazione === 'immutable' }
                                 variant="outlined"
                                 size="medium"
@@ -395,6 +398,8 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                     )}
 
                 </div>
+
+                <BasicModal setOpen={setOpen} open={open} dispatchMainState={dispatchMainState} getDatiFat={getDatiFat} ></BasicModal>
 
             </div>
         </DatiFatturazioneContext.Provider>

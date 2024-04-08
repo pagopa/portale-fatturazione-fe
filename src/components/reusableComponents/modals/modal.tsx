@@ -15,19 +15,31 @@ const style = {
     boxShadow: 24,
     p: 4,
 };
-const BasicModal : React.FC<ModalProps> =({setOpen, open}) => {
+
+const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, getDatiFat}) => {
     
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
 
     const navigate = useNavigate();
 
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
+
     const handleClose = () => setOpen(false);
 
     const handleEsci = () =>{
         if(profilo.auth === 'PAGOPA'){
+            setOpen(false);
             navigate('/pagopalistadatifatturazione');
         }else{
+            getDatiFat();
+            handleModifyMainState({statusPageDatiFatturazione:'immutable'});
+            setOpen(false);
             navigate('/');
         }
     };

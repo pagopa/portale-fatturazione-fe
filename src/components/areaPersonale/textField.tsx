@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {TextField,} from '@mui/material';
 import {DatiFatturazione, TextFieldProps, StateEnableConferma,AreaPersonaleContext}  from '../../types/typesAreaPersonaleUtenteEnte';
 import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
@@ -7,13 +7,20 @@ import YupString from '../../validations/string/index';
 
 const TextFieldComponent : React.FC<TextFieldProps> = props => {
     const {mainState,setDatiFatturazione,setStatusButtonConferma, datiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
-
+  
     const [errorValidation, setErrorValidation] = useState(false);
+
+    // ogni qual volta csul click indietro richaimo i dati di fatturazione e setto tutti gli errori a false
+    useEffect(()=>{
+        setErrorValidation(false);
+    },[mainState]);
+    
     const {
         helperText, label, placeholder, fullWidth,value,keyObject, dataValidation, required
     } = props;
 
     const validationTextArea = (max: number, validation:string, input:string|number)=>{
+        
         YupString.max(max, validation)
             .validate(input)
             .then(()=>{
