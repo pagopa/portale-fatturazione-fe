@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     TextField, Button, Typography, IconButton,
 } from '@mui/material';
@@ -12,11 +12,15 @@ import { _YupEmail} from '../../validations/email/index';
 
 const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
 
-    const {datiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
+    const {datiFatturazione, mainState} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
 
     const {status, arrElement, setData} = props;
     const [element, setElement] = useState('');
     const [validation, setValidation] = useState(false);
+
+    useEffect(()=>{
+        setValidation(false);
+    },[mainState]);
 
 
 

@@ -1,16 +1,18 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import { Typography, Button } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
 import DnsIcon from '@mui/icons-material/Dns';
 import { useNavigate } from 'react-router';
+import BasicModal from '../reusableComponents/modals/modal';
 
 interface PageTitleProps {
-    dispatchMainState:any
+    dispatchMainState:any,
+    setOpen:any
 }
 
-const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState}) => {
+const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState, setOpen}) => {
 
     const {mainState} = useContext(DatiFatturazioneContext);
 
@@ -22,7 +24,7 @@ const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState}) =
 
     const navigate = useNavigate();
 
-   
+    
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -47,7 +49,7 @@ const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState}) =
         if(mainState.statusPageDatiFatturazione === 'immutable' || mainState.datiFatturazione === false){
             navigate('/pagopalistadatifatturazione');
         }else{
-            handleModifyMainState({statusPageDatiFatturazione:'immutable'});
+            setOpen(true);
         }
     };
 
@@ -62,7 +64,6 @@ const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState}) =
                     <div>
                         <ButtonNaked
                             color="primary"
-                            onFocusVisible={() => { console.log('onFocus'); }}
                             size="small"
                             startIcon={<ArrowBackIcon />}
                             onClick={() => onIndietroButtonPagoPa()}
@@ -89,6 +90,8 @@ const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState}) =
                         variant="contained" size="small">Modifica</Button>
                 </div>
             ) : null}
+
+            
 
         </div>
 

@@ -4,7 +4,8 @@ import { BodyRel, Rel } from "./typeRel";
 export interface ModalProps {
     setOpen : any,
     open: boolean,
-    sentence?:string
+    sentence?:string,
+    getDatiFat?:any
 }
 
 
