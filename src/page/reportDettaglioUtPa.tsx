@@ -245,8 +245,10 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalNotifiche, setTotalNotifiche]  = useState(0);
     const realPageNumber = page + 1;
-    console.log(profilo.profilo, mainState.nonce);
+ 
+
     const getlistaNotifiche = async (nPage:number, nRow:number) => {
+        setShowLoadingGrid(true);
         // elimino idEnti dal paylod della get notifiche lato selfcare
         const {idEnti, ...newBody} = bodyGetLista;
         // disable button filtra e annulla filtri nell'attesa dei dati
@@ -258,10 +260,13 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     setTotalNotifiche(res.data.count);
                     // abilita button filtra e annulla filtri all'arrivo dei dati
                     setGetNotificheWorking(false);
+                    setShowLoadingGrid(false);
                 }).catch((error)=>{
                 // abilita button filtra e annulla filtri all'arrivo dei dati
                     setGetNotificheWorking(false);
+                    setShowLoadingGrid(false);
                     manageError(error, navigate);
+                   
                 });
         }else if(profilo.profilo === 'REC'){
             await listaNotificheRecapitista(token,mainState.nonce,nPage, nRow, newBody)
@@ -270,9 +275,11 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     setTotalNotifiche(res.data.count);
                     // abilita button filtra e annulla filtri all'arrivo dei dati
                     setGetNotificheWorking(false);
+                    setShowLoadingGrid(false);
                 }).catch((error)=>{
                     // abilita button filtra e annulla filtri all'arrivo dei dati
                     setGetNotificheWorking(false);
+                    setShowLoadingGrid(false);
                     manageError(error, navigate);
                 });
         }else if(profilo.profilo === 'CON'){
@@ -282,9 +289,11 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     setTotalNotifiche(res.data.count);
                     // abilita button filtra e annulla filtri all'arrivo dei dati
                     setGetNotificheWorking(false);
+                    setShowLoadingGrid(false);
                 }).catch((error)=>{
                     // abilita button filtra e annulla filtri all'arrivo dei dati
                     setGetNotificheWorking(false);
+                    setShowLoadingGrid(false);
                     manageError(error, navigate);
                 });
         }
@@ -295,15 +304,18 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const getlistaNotifichePagoPa = async (nPage:number, nRow:number) => {
         // disable button filtra e annulla filtri nell'attesa dei dati
         setGetNotificheWorking(true);
+        setShowLoadingGrid(true);
         await listaNotifichePagoPa(token,mainState.nonce,nPage, nRow, bodyGetLista)
             .then((res)=>{
                 // abilita button filtra e annulla filtri all'arrivo dei dati
                 setGetNotificheWorking(false);
                 setNotificheList(res.data.notifiche);
                 setTotalNotifiche(res.data.count); 
+                setShowLoadingGrid(false);
             }).catch((error)=>{
                 // abilita button filtra e annulla filtri all'arrivo dei dati
                 setGetNotificheWorking(false);
+                setShowLoadingGrid(false);
                 manageError(error, navigate);
             });
                     
@@ -383,26 +395,31 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     };
                 
     const getContestazioneModal = async(idNotifica:string) =>{
+        setShowLoadingGrid(true);
 
         if( profilo.profilo === 'PA'){
             await getContestazione(token, mainState.nonce , idNotifica )
                 .then((res)=>{
                     //se i tempi di creazione di una contestazione sono scaduti show pop up info
                     if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
+                        setShowLoadingGrid(false);
                         setOpenModalInfo(true);
                     }else{
                     // atrimenti show pop up creazione contestazione
+                        setShowLoadingGrid(false);
                         setOpen(true); 
                         setContestazioneSelected(res.data);
                     }           
                 })
                 .catch(((err)=>{
+                    setShowLoadingGrid(false);
                     manageError(err,navigate);
                 }));
         }else if( profilo.profilo === 'REC'){
             await getContestazioneRecapitista(token, mainState.nonce , idNotifica )
                 .then((res)=>{
-                //se i tempi di creazione di una contestazione sono scaduti show pop up info
+                    setShowLoadingGrid(false);
+                    //se i tempi di creazione di una contestazione sono scaduti show pop up info
                     if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
                         setOpenModalInfo(true);
                     }else{
@@ -412,12 +429,14 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     }           
                 })
                 .catch(((err)=>{
+                    setShowLoadingGrid(false);
                     manageError(err,navigate);
                 }));
         }else if( profilo.profilo === 'CON'){
             await getContestazioneCosolidatore(token, mainState.nonce , idNotifica )
                 .then((res)=>{
-                //se i tempi di creazione di una contestazione sono scaduti show pop up info
+                    setShowLoadingGrid(false);
+                    //se i tempi di creazione di una contestazione sono scaduti show pop up info
                     if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
                         setOpenModalInfo(true);
                     }else{
@@ -427,10 +446,12 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     }           
                 })
                 .catch(((err)=>{
+                    setShowLoadingGrid(false);
                     manageError(err,navigate);
                 }));
         }else if(profilo.auth === 'PAGOPA'){
             await getContestazionePagoPa(token, mainState.nonce , idNotifica ).then((res)=>{
+                setShowLoadingGrid(false);
                 //se i tempi di creazione di una contestazione sono scaduti show pop up info
                 if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
                     setOpenModalInfo(true);
@@ -440,6 +461,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     setContestazioneSelected(res.data);
                 }                 
             }).catch(((err)=>{
+                setShowLoadingGrid(false);
                 manageError(err,navigate);
             }));
         }
@@ -522,6 +544,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const [open, setOpen] = useState(false);
     const [openModalInfo, setOpenModalInfo] = useState(false);
     const [showLoading, setShowLoading] = useState(false);
+    const [showLoadingGrid, setShowLoadingGrid] = useState(false);
+    
     const [showModalScadenziario, setShowModalScadenziario ] = useState(false);   
     // visulizzazione del pop up redirect dati di fatturazione
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
@@ -824,6 +848,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 setContestazioneSelected={setContestazioneSelected}
                 funGetNotifiche={getlistaNotifiche}
                 funGetNotifichePagoPa={getlistaNotifichePagoPa}
+                openModalLoading={setShowLoadingGrid}
             ></ModalContestazione>
 
             <ModalRedirect
@@ -841,7 +866,14 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
             <ModalLoading 
                 open={showLoading} 
-                setOpen={setShowLoading} >
+                setOpen={setShowLoading}
+                sentence={'Downloading...'} >
+            </ModalLoading>
+
+            <ModalLoading 
+                open={showLoadingGrid} 
+                setOpen={setShowLoadingGrid}
+                sentence={'Loading...'} >
             </ModalLoading>
          
             <ModalScadenziario

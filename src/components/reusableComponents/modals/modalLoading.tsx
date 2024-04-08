@@ -14,7 +14,7 @@ const style = {
     boxShadow: 24,
     p: 4,
 };
-const ModalLoading : React.FC<ModalProps> = ({setOpen, open}) => {
+const ModalLoading : React.FC<ModalProps> = ({setOpen, open, sentence}) => {
     const handleClose = (event:object, reason: string) =>{
         if(reason !== 'backdropClick'){
             setOpen(false);
@@ -41,7 +41,7 @@ const ModalLoading : React.FC<ModalProps> = ({setOpen, open}) => {
                     </div>
                     <div className='d-flex justify-content-center mt-3'>
                         <div   id='loader_download_contestazione'>
-                            <Loader sentence={'Downloading...'}></Loader> 
+                            <Loader sentence={sentence}></Loader> 
                         </div> 
                     </div>
                 </Box>
