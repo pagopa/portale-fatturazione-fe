@@ -400,7 +400,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 mainState,
                 dispatchMainState
             }}>
-            <BasicModal setOpen={setOpen} open={open}></BasicModal>
+            <BasicModal setOpen={setOpen} open={open} dispatchMainState={dispatchMainState} handleGetDettaglioModuloCommessa={handleGetDettaglioModuloCommessa} handleGetDettaglioModuloCommessaPagoPa={handleGetDettaglioModuloCommessaPagoPa} mainState={mainState}></BasicModal>
             {/*Hide   modulo commessa sul click contina , save del modulo commessa cosi da mostrare dati fatturazione,
             il componente visualizzato è AreaPersonaleUtenteEnte  */}
            
@@ -413,6 +413,16 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                         size="small"
                         startIcon={<ArrowBackIcon />}
                         onClick={() =>{
+                            if(mainState.statusPageInserimentoCommessa === 'immutable' && profilo.auth !== 'PAGOPA'){
+                                navigate('/4');
+                            }else if(mainState.statusPageInserimentoCommessa === 'immutable' && profilo.auth === 'PAGOPA'){
+                                navigate('/pagopalistamodulicommessa');
+                            }else if(mainState.inserisciModificaCommessa === 'INSERT' && profilo.auth === 'SELFCARE'){
+                                setOpen(true);
+                            }else{
+                                setOpen(true);
+                            } 
+                            /*
                             setButtonMofica(true);
                             if(mainState.statusPageInserimentoCommessa === 'immutable' && profilo.auth !== 'PAGOPA'){
                                 navigate('/4');
@@ -423,6 +433,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                             }else{
                                 handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
                             } 
+                            */
                         } }
                       
                     >

@@ -5,7 +5,12 @@ export interface ModalProps {
     setOpen : any,
     open: boolean,
     sentence?:string,
-    getDatiFat?:any
+    dispatchMainState:any,
+    getDatiFat?:any,
+    getDatiFatPagoPa?:any,
+    handleGetDettaglioModuloCommessa?:any,
+    handleGetDettaglioModuloCommessaPagoPa?:any,
+    mainState?:MainState
 }
 
 

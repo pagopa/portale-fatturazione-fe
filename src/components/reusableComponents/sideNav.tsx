@@ -60,7 +60,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
   
     useEffect(()=>{
 
-        if(mainState.nonce === '' && Object.values(profilo).length !== 0){
+        if(mainState.nonce === '' && Object.values(profilo).length !== 0 && location.pathname !== '/auth' ){
           
             getProfiloToGetNonce();
         }
