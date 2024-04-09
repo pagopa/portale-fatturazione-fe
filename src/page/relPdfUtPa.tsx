@@ -17,6 +17,7 @@ import generatePDF from 'react-to-pdf';
 import { redirect } from '../api/api';
 import BasicAlerts from '../components/reusableComponents/alert';
 import { display } from '@mui/system';
+import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 
 
 const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
@@ -56,22 +57,28 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
     const mesi = ["Dicembre", "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
     
+    const [showDownloading, setShowDownloading] = useState(false);
+
     const downloadRelExel = async() =>{
 
         if( mainState.relSelected !== null){
-
+            setShowDownloading(true);
             if(profilo.auth === 'SELFCARE'){
                 await getRelExel(token, mainState.nonce, mainState.relSelected.idTestata).then((res)=>{
                
                     saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio/ ${ mainState.relSelected?.ragioneSociale} /${mainState.relSelected?.mese}/${mainState.relSelected?.anno}.xlsx` );
+                    setShowDownloading(false);
                 }).catch((err)=>{
                     manageError(err,navigate);
+                    setShowDownloading(false);
                 });
             }else{
                 await getRelExelPagoPa(token, mainState.nonce, mainState.relSelected.idTestata).then((res)=>{
                     saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio / ${ mainState.relSelected?.ragioneSociale} / ${mainState.relSelected?.mese} / ${mainState.relSelected?.anno}.xlsx` );
+                    setShowDownloading(false);
                 }).catch((err)=>{
                     manageError(err,navigate);
+                    setShowDownloading(false);
                 });
                 
             }
@@ -81,40 +88,39 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     };
 
     const downloadPdfRel = async() =>{
-
+        setShowDownloading(true);
         if( mainState.relSelected !== null){
             if(profilo.auth === 'SELFCARE'){
-
                 await getRelPdf(token, mainState.nonce, mainState.relSelected.idTestata).then((res: ResponseDownloadPdf)=>{
                     toDoOnDownloadPdf(res);
-                   
                 }).catch((err)=>{
                     manageError(err,navigate);
                 });
             }  
-        }
-        
+        }  
     };
-
-
-
 
     const meseOnDoc = mainState.relSelected?.mese || 0;
     const downloadPdfRelFirmato = async() =>{
 
-      
         if( mainState.relSelected !== null){
+            setShowDownloading(true);
             if(profilo.auth === 'SELFCARE'){
                 await getRelPdfFirmato(token, mainState.nonce, mainState.relSelected.idTestata).then((res)=>{
                     saveAs("data:text/plain;base64," + res.data.documento,`REL firmata / ${ mainState.relSelected?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${mainState.relSelected?.anno}.pdf` );
+                    setShowDownloading(false);
                 }).catch((err)=>{
+
                     manageError(err,navigate);
+                    setShowDownloading(false);
                 });
             }else{
                 await getRelPdfFirmatoPagoPa(token, mainState.nonce, mainState.relSelected.idTestata).then((res)=>{
                     saveAs("data:text/plain;base64," + res.data.documento,`REL firmata / ${ mainState.relSelected?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${mainState.relSelected?.anno}.pdf` );
+                    setShowDownloading(false);
                 }).catch((err)=>{
                     manageError(err,navigate);
+                    setShowDownloading(false);
                 });
                 
             } 
@@ -164,13 +170,15 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         const wrapper = document.getElementById('file_download_rel');
         if(wrapper){
             wrapper.innerHTML = res.data;
+            generatePDF(targetRef, {filename: `Regolare Esecuzione / ${ mainState.relSelected?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${statusApp.anno} .pdf`});
+            setShowDownloading(false);
         }
     
     };
 
 
     useEffect(()=>{
-        downloadPdfRel(); 
+        //downloadPdfRel(); 
         getDateLastDownloadPdfFirmato();  
     },[]);
 
@@ -178,6 +186,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     const [loadingUpload, setLoadingUpload] = useState<boolean>(false);
     const [errorUpload, setErrorUpload] = useState<boolean>(false);
     const [openModalConfirmUploadPdf, setOpenModalConfirmUploadPdf] = useState<boolean>(false);
+    
 
     const handleSelect = (e) => {
         setFile(e);
@@ -227,10 +236,6 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     };
 
 
-
-   
-  
-
     function createDateFromString(string:string){
         const getGiorno = new Date(string).getDate();
   
@@ -243,7 +248,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
     const classContainerButtons = profilo.auth === 'SELFCARE' ? 'd-flex justify-content-between m-5': 'd-flex justify-content-end m-5';
 
-
+    
 
     return (
         <div>
@@ -315,7 +320,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 {profilo.auth === 'SELFCARE' &&
                  <>
                      <div className="">
-                         <Button sx={{width:'274px'}} onClick={() => generatePDF(targetRef, {filename: `Regolare Esecuzione / ${ mainState.relSelected?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${statusApp.anno} .pdf`})}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+                         <Button sx={{width:'274px'}} onClick={() => downloadPdfRel()}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
                      </div>
                
                      
@@ -344,6 +349,14 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             {openModalConfirmUploadPdf &&
             <ModalUploadPdf setOpen={setOpenModalConfirmUploadPdf} open={openModalConfirmUploadPdf}></ModalUploadPdf>
             }
+
+            <ModalLoading 
+                open={showDownloading} 
+                setOpen={setShowDownloading}
+                sentence={'Downloading...'} >
+            </ModalLoading>
+            
+
         </div>
        
     );

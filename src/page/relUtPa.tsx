@@ -15,11 +15,9 @@ import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, getListaRelPagoPa
 import SelectStatoPdf from "../components/rel/selectStatoPdf";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { saveAs } from "file-saver";
-import ModalInfo from "../components/reusableComponents/modals/modalInfo";
-import BasicAlerts from "../components/reusableComponents/alert";
 import useIsTabActive from "../reusableFunctin/tabIsActiv";
 
-const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
+const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel, setBodyRel, page, setPage, rowsPerPage, setRowsPerPage}) =>{
 
     const mesiGrid = ["Dicembre", "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
 
@@ -49,21 +47,11 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     const currentMonth = (new Date()).getMonth() + 1;
     const month = Number(currentMonth);
 
-    const [bodyRel, setBodyRel] = useState<BodyRel>({
-        anno:currentYear,
-        mese:month,
-        tipologiaFattura:null,
-        idEnti:[],
-        idContratto:null,
-        caricata:null
-    });
-
+  
     const  hiddenAnnullaFiltri = bodyRel.tipologiaFattura === null && bodyRel.idEnti?.length === 0 && bodyRel.caricata === null; 
 
     // data ragione sociale
 
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalNotifiche, setTotalNotifiche]  = useState(0);
        
     const [dataSelect, setDataSelect] = useState([]);
@@ -258,7 +246,6 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     // visulizzazione del pop up redirect dati di fatturazione
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
     const [showLoading, setShowLoading] = useState(false);
-   
     /*
     <Button onClick={() => setVisible(true)}>SHOW ALERT</Button>
     <BasicAlerts setVisible={setVisible} visible={visible} typeAlert={''}></BasicAlerts>
@@ -321,6 +308,8 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                                 caricata:null
                             });
                             setData([]);
+                            setPage(0);
+                            setRowsPerPage(10);
                         }} 
                         disabled={getListaRelRunning}
                         >Annulla Filtri</Button>
@@ -376,6 +365,12 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 open={showLoading} 
                 setOpen={setShowLoading} 
                 sentence={'Downloading...'}>
+            </ModalLoading>
+
+            <ModalLoading 
+                open={getListaRelRunning} 
+                setOpen={setGetListaRelRunning} 
+                sentence={'Loading...'}>
             </ModalLoading>
         </div>
 

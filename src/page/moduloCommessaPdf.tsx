@@ -11,6 +11,7 @@ import { usePDF } from 'react-to-pdf';
 import { DatiModuloCommessaPdf,ModComPdfProps, ResponseDownloadPdf } from "../types/typeModuloCommessaInserimento";
 import { downloadModuloCommessaPdf, getModuloCommessaPdf } from "../api/apiSelfcare/moduloCommessaSE/api";
 import { downloadModuloCommessaPagoPaPdf, getModuloCommessaPagoPaPdf } from "../api/apiPagoPa/moduloComessaPA/api";
+import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 
 const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
 
@@ -88,7 +89,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
     interface ResponseGetPdfPagoPa {
         data:DataPdf
     }
- 
+    
     // richiamo questa funzione in entrambe le getPdf     selfcare     pagopa
     const toDoOnGetPdfSelfcarePagopa = (res:ResponseGetPdfPagoPa) =>{
 
@@ -139,11 +140,13 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
         const wrapper = document.getElementById('file_download');
         if(wrapper){
             wrapper.innerHTML = res.data;
+            toPDF();
+            setShowLoading(false);
         }
     };
  
     const downloadPdf = async()=>{
-       
+        setShowLoading(true);
         downloadModuloCommessaPdf(token, statusApp.anno,statusApp.mese, tipoCommessa, mainState.nonce).then((res: ResponseDownloadPdf)=>{
             toDoOnDownloadPdf(res);
            
@@ -153,6 +156,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
     };
 
     const downlodPagoPaPdf = async()=>{
+        setShowLoading(true);
         downloadModuloCommessaPagoPaPdf(token,  mainState.nonce,statusApp.mese,statusApp.anno,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto,tipoCommessa).then((res:ResponseDownloadPdf)=>{
          
             toDoOnDownloadPdf(res);
@@ -160,22 +164,31 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
             manageError(err, navigate);
         }); 
     };
- 
+    //_______________________________________________
     useEffect(()=>{
 
         if(mainState.nonce !== ''){
 
             if(profilo.auth === 'PAGOPA'){
                 getPagoPdf();
-                downlodPagoPaPdf();
+                // downlodPagoPaPdf();
             }else{
                 getPdf();
-                downloadPdf();
+                //downloadPdf();
             }
           
         }
       
     },[mainState.nonce]);
+
+    const onButtonScarica  = ( ) =>{
+        
+        if(profilo.auth === 'PAGOPA'){
+            downlodPagoPaPdf();
+        }else if(profilo.auth === 'SELFCARE'){
+            downloadPdf();
+        }
+    };
 
     let mese = '';
     let anno = 2000;
@@ -209,6 +222,9 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
         localStorage.setItem('statusApplication', JSON.stringify(newStatusApp));
         navigate('/8'); 
     };
+
+
+    const [showLoading, setShowLoading] = useState(false);
 
     return (
         <>
@@ -341,8 +357,14 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
 
                 </div>
                 <div className="d-flex justify-content-center mb-5">
-                    <Button onClick={()=> toPDF()}  variant="contained">Scarica</Button>
+                    <Button onClick={()=> onButtonScarica()}  variant="contained">Scarica</Button>
                 </div>
+
+                <ModalLoading 
+                    open={showLoading} 
+                    setOpen={setShowLoading}
+                    sentence={'Downloading...'} >
+                </ModalLoading>
 
             </div>
            

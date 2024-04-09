@@ -37,7 +37,9 @@ export interface ModalContestazioneProps{
     setContestazioneSelected:any,
     funGetNotifiche:any,
     funGetNotifichePagoPa:any,
-    openModalLoading:any
+    openModalLoading:any,
+    page:number,
+    rows:number,
 }
 
 export interface FlagContestazione{

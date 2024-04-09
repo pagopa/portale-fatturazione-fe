@@ -4,7 +4,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
 import DnsIcon from '@mui/icons-material/Dns';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import BasicModal from '../reusableComponents/modals/modal';
 
 interface PageTitleProps {
@@ -43,14 +43,16 @@ const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState, se
         titleNavigation = 'Modifica dati di fatturazione ';
     }
 
-    
+  
 
     const onIndietroButtonPagoPa = () =>{
-        if(mainState.statusPageDatiFatturazione === 'immutable' || mainState.datiFatturazione === false){
+        if(mainState.statusPageDatiFatturazione === 'immutable' &&  profilo.auth === 'PAGOPA'){
             navigate('/pagopalistadatifatturazione');
         }else{
             setOpen(true);
         }
+          
+        
     };
 
     const cssPath1 = mainState.statusPageDatiFatturazione === 'immutable'?'bold':'normal';

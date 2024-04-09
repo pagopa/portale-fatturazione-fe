@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { VisualModuliCommessaProps,  DataGridCommessa , GetAnniResponse, ResponseGetListaCommesse} from '../types/typeModuloCommessaElenco';
 import { ManageErrorResponse } from '../types/typesGeneral';
-import { getAnni, getDatiModuloCommessa, getListaCommessa, getListaCommessaFiltered, getListaCommessaOnAnnulla } from '../api/apiSelfcare/moduloCommessaSE/api';
+import { getAnni, getDatiModuloCommessa, getListaCommessaFiltered } from '../api/apiSelfcare/moduloCommessaSE/api';
 import ModalRedirect from '../components/commessaInserimento/madalRedirect';
 import { getDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
 import useIsTabActive from '../reusableFunctin/tabIsActiv';
@@ -22,6 +22,14 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
     const state = localStorage.getItem('statusApplication') || '{}';
     const statusApp =  JSON.parse(state);
 
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
+
+
     const tabActive = useIsTabActive();
     useEffect(()=>{
         if(tabActive === true && (mainState.nonce !== profilo.nonce)){
@@ -33,13 +41,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
 
     const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre",'Gennaio'];
 
-    const handleModifyMainState = (valueObj) => {
-        dispatchMainState({
-            type:'MODIFY_MAIN_STATE',
-            value:valueObj
-        });
-    };
-
+  
     useEffect(()=>{
         handleModifyMainState(statusApp);
         if(statusApp.datiFatturazione === false){
@@ -79,9 +81,9 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
     };
 
     // servizio che popola la grid con la lista commesse
-    const getListaCommessaGrid = async () =>{
+    const getListaCommessaGrid = async (valueAnno) =>{
 
-        await getListaCommessa(token , mainState.nonce).then((res:ResponseGetListaCommesse)=>{
+        await getListaCommessaFiltered(token , mainState.nonce,valueAnno).then((res:ResponseGetListaCommesse)=>{
             
             const finalData = fixResponseForDataGrid(res.data);
             setGridData(finalData);
@@ -95,7 +97,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
     useEffect(()=>{
         if(mainState.nonce !== ''){
             getAnniSelect();
-            getListaCommessaGrid();
+            getListaCommessaGrid('');
         }
         
     },[mainState.nonce]);
@@ -107,44 +109,16 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
         }
     },[]);
   
-    const handleButtonFiltra = () => {
-        getListaCommessaFiltered(token , mainState.nonce, valueSelect).then((res:ResponseGetListaCommesse)=>{
-            const finalData = fixResponseForDataGrid(res.data);
-            setGridData(finalData);
-           
-        }).catch((err:ManageErrorResponse)=>{
-            manageError(err, navigate);
-        });
-    };
-
-    // on click sul button annulla filtri
-    const handleButtonAnnullaFiltri = () => {
-
-        getListaCommessaOnAnnulla(token, mainState.nonce).then((res:ResponseGetListaCommesse)=>{
-            const finalData = fixResponseForDataGrid(res.data);
-            setGridData(finalData);
-           
-        }).catch((err:ManageErrorResponse)=>{
-            manageError(err, navigate);
-        });
-      
-    };
 
     const getDatiFat = async () =>{
-      
-        await getDatiFatturazione(token,mainState.nonce).then(( ) =>{ 
-            
+        await getDatiFatturazione(token,mainState.nonce).then(( ) =>{      
             handleModifyMainState({datiFatturazione:true});
-         
-
         }).catch(err =>{
           
             if(err?.response?.status === 404){
                 handleModifyMainState({datiFatturazione:false});
               
             }
-           
-           
         });
 
     };
@@ -305,7 +279,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
                             variant="contained"
                             disabled={valueSelect === ''}
                             sx={{ marginTop: 'auto', marginBottom: 'auto', marginLeft: '30px' }}
-                            onClick={()=>handleButtonFiltra()}
+                            onClick={()=>getListaCommessaGrid(valueSelect)}
                      
                         >
             Filtra 
@@ -314,7 +288,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
                         {valueSelect !== '' ? 
                             <Typography
                                 variant="caption-semibold"
-                                onClick={()=>{setValueSelect(''); handleButtonAnnullaFiltri();}}
+                                onClick={()=>{setValueSelect(''); getListaCommessaGrid('');}}
                                 sx={{
                                     marginTop: 'auto',
                                     marginBottom: 'auto',

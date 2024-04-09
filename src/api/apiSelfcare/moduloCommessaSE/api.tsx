@@ -26,7 +26,7 @@ export const getAnni = async (token:string , nonce:string) =>{
         }});
     return response;
 };
-
+/*
 export const getListaCommessa = async(token:string , nonce:string) =>{
     const response = await axios.get(
         `${url}/api/modulocommessa/lista?nonce=${nonce}`,
@@ -35,16 +35,26 @@ export const getListaCommessa = async(token:string , nonce:string) =>{
         }});
     return response;
 };
-
+*/
 export const getListaCommessaFiltered = async (token:string, nonce:string, valueSelect:string) =>{
-    const response = await axios.get(
-        `${url}/api/modulocommessa/lista/${valueSelect}?nonce=${nonce}`,
-        { headers: {
-            Authorization: 'Bearer ' + token
-        }});
-    return response;
+    if(valueSelect){
+        const response = await axios.get(
+            `${url}/api/modulocommessa/lista/${valueSelect}?nonce=${nonce}`,
+            { headers: {
+                Authorization: 'Bearer ' + token
+            }});
+        return response;
+    }else{
+        const response = await axios.get(
+            `${url}/api/modulocommessa/lista?nonce=${nonce}`,
+            { headers: {
+                Authorization: 'Bearer ' + token
+            }});
+        return response;
+    }
+   
 };
-
+/*
 export const getListaCommessaOnAnnulla = async (token:string ,nonce:string) =>{
     const response = await axios.get(
         `${url}/api/modulocommessa/lista?nonce=${nonce}`,
@@ -53,7 +63,7 @@ export const getListaCommessaOnAnnulla = async (token:string ,nonce:string) =>{
         }});
     return response;
 };
-
+*/
 export const getCategoriaSpedizione =  async (token:string, nonce:string) =>{
     const response = await axios.get(
         `${url}/api/tipologia/categoriaspedizione?nonce=${nonce}`,

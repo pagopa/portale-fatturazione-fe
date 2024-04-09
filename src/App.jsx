@@ -91,6 +91,22 @@ const App = ({ instance }) => {
         relSelected: null // rel selezionata nella grid in page rel
     });
 
+    const currentYear = (new Date()).getFullYear();
+    const currentMonth = (new Date()).getMonth() + 1;
+    const month = Number(currentMonth);
+
+    const [bodyRel, setBodyRel] = useState({
+        anno:currentYear,
+        mese:month,
+        tipologiaFattura:null,
+        idEnti:[],
+        idContratto:null,
+        caricata:null
+    });
+    const [pageGridRel, setPageGridRel] = useState(0);
+    const [rowsPerPageGridRel, setRowsPerPageGridRel] = useState(10);
+    console.log({bodyRel});
+
     const recOrConsIsLogged = profilo.profilo === 'REC' || profilo.profilo ==='CON';
 
   
@@ -142,7 +158,7 @@ const App = ({ instance }) => {
                                    
                                         <Route path="/notifiche" element={<ReportDettaglio mainState={mainState} />} />
 
-                                        <Route path="/rel" element={<RelPage  mainState={mainState}  dispatchMainState={dispatchMainState} />} />
+                                        <Route path="/rel" element={<RelPage  mainState={mainState}  dispatchMainState={dispatchMainState}  bodyRel={bodyRel} setBodyRel={setBodyRel} page={pageGridRel} setPage={setPageGridRel} rowsPerPage={rowsPerPageGridRel} setRowsPerPage={setRowsPerPageGridRel} />} />
 
                                         <Route path="/relpdf" element={<RelPdfPage  mainState={mainState}  dispatchMainState={dispatchMainState}/>} />
 

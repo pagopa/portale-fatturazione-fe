@@ -11,6 +11,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import { downloadDocumentoListaModuloCommessaPagoPa, listaModuloCommessaPagopa } from "../api/apiPagoPa/moduloComessaPA/api";
 import useIsTabActive from "../reusableFunctin/tabIsActiv";
+import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 
 const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchMainState, mainState}) =>{
 
@@ -131,9 +132,10 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
     const mesiWithZero = ['01','02','03','04','05','06','07','08','09','10','11','12'];
 
     const downloadExelListaCommessa = async () =>{
+        setShowLoading(true);
         await downloadDocumentoListaModuloCommessaPagoPa(token, mainState.nonce,bodyGetLista)
             .then((res)=>{
-             
+               
                 //const url = window.URL.createObjectURL(res.data.documento);
                 const link = document.createElement('a');
                 link.href = "data:text/plain;base64," + res.data.documento;
@@ -142,7 +144,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
               
                 link.click();
                 document.body.removeChild(link);
-
+                setShowLoading(false);
             })
             .catch((err)=>{
                 manageError(err,navigate);
@@ -224,6 +226,8 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
         }
 
     ];
+
+    const [showLoading,setShowLoading] = useState(false);
     
     return (
         <div className="mx-5">
@@ -414,6 +418,12 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
             <div>
 
             </div>
+
+            <ModalLoading 
+                open={showLoading} 
+                setOpen={setShowLoading}
+                sentence={'Downloading...'} >
+            </ModalLoading>
         </div>
     );
 };
