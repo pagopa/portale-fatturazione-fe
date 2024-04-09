@@ -556,6 +556,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         }
    
     },[]);
+
+    console.log(mainState);
     return (
         <div className="mx-5">
             {/*title container start */}
@@ -849,6 +851,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 funGetNotifiche={getlistaNotifiche}
                 funGetNotifichePagoPa={getlistaNotifichePagoPa}
                 openModalLoading={setShowLoadingGrid}
+                page={realPageNumber}
+                rows={rowsPerPage}
             ></ModalContestazione>
 
             <ModalRedirect

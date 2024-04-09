@@ -18,7 +18,7 @@ const style = {
 };
 
 const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, getDatiFat, getDatiFatPagoPa, handleGetDettaglioModuloCommessa, handleGetDettaglioModuloCommessaPagoPa, mainState}) => {
-    console.log(mainState);
+    
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
     const navigate = useNavigate();
@@ -30,16 +30,22 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
             value:valueObj
         });
     };
-    console.log(location);
+    console.log(mainState, 'ciao');
     const handleClose = () => setOpen(false);
 
     const handleEsci = () =>{
-        if(location.pathname === '/'){
-            if(profilo.auth === 'PAGOPA'){
+        if(location.pathname === '/' ){
+            if(profilo.auth === 'PAGOPA'&& mainState.statusPageDatiFatturazione === 'mutable' && mainState.datiFatturazione === false){
+                setOpen(false);
+                navigate('/pagopalistadatifatturazione');
+            }else if(profilo.auth === 'PAGOPA'&& mainState.statusPageDatiFatturazione === 'immutable'){
+                setOpen(false);
+                navigate('/pagopalistadatifatturazione');
+            }else if(profilo.auth === 'PAGOPA' && mainState.statusPageDatiFatturazione === 'mutable'){
                 getDatiFatPagoPa();
                 setOpen(false);
                 handleModifyMainState({statusPageDatiFatturazione:'immutable'});
-            }else{
+            }else if(profilo.auth === 'PA'){
                 getDatiFat();
                 handleModifyMainState({statusPageDatiFatturazione:'immutable'});
                 setOpen(false);

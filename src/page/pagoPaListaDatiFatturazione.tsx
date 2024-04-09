@@ -11,6 +11,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import { downloadDocumentoListaDatiFatturazionePagoPa, listaDatiFatturazionePagopa } from "../api/apiPagoPa/datiDiFatturazionePA/api";
 import useIsTabActive from "../reusableFunctin/tabIsActiv";
+import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 
 const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainState, dispatchMainState}) =>{
     const getToken = localStorage.getItem('token') || '{}';
@@ -114,6 +115,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
     }, [mainState.nonce]);
 
     const onDownloadButton = async() =>{
+        setShowLoading(true);
         await downloadDocumentoListaDatiFatturazionePagoPa(token,mainState.nonce, bodyGetLista).then((res:ResponseDownloadListaFatturazione) => {
           
             //const url = window.URL.createObjectURL(res.data.documento);
@@ -125,7 +127,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
           
             link.click();
             document.body.removeChild(link);
-           
+            setShowLoading(false);
         }).catch(err => {
           
             manageError(err,navigate);
@@ -189,6 +191,8 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
         }
 
     ];
+
+    const [showLoading,setShowLoading] = useState(false);
 
     return(
         <div className="mx-5">
@@ -334,6 +338,11 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
             <div>
 
             </div>
+            <ModalLoading 
+                open={showLoading} 
+                setOpen={setShowLoading}
+                sentence={'Downloading...'} >
+            </ModalLoading>
         </div>
     );
 }; 
