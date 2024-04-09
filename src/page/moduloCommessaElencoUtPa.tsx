@@ -11,8 +11,8 @@ import ModalRedirect from '../components/commessaInserimento/madalRedirect';
 import { getDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
 import useIsTabActive from '../reusableFunctin/tabIsActiv';
 
-const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatchMainState,mainState}) => {
-   
+const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatchMainState,mainState, valueSelect, setValueSelect}) => {
+
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
   
@@ -51,7 +51,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
     },[]);
 
     const [anni, setAnni] = useState<string[]>([]);
-    const [valueSelect, setValueSelect] = useState<string>('');
+   
 
     const [gridData, setGridData] = useState<DataGridCommessa[]>([]);
     

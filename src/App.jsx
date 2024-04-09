@@ -91,6 +91,7 @@ const App = ({ instance }) => {
         relSelected: null // rel selezionata nella grid in page rel
     });
 
+    //_______________rel __________________
     const currentYear = (new Date()).getFullYear();
     const currentMonth = (new Date()).getMonth() + 1;
     const month = Number(currentMonth);
@@ -105,7 +106,15 @@ const App = ({ instance }) => {
     });
     const [pageGridRel, setPageGridRel] = useState(0);
     const [rowsPerPageGridRel, setRowsPerPageGridRel] = useState(10);
-    console.log({bodyRel});
+    //_____________________________
+
+    //___________elenco commessa anno selfcare
+    const [valueAnnoElencoCom, setValueAnnoElencoCom] = useState('');
+    //_____________________________________________________________
+
+    //________ lista dati fatturazione pagopa
+    const [filterListaFatturazione, setFilterListaFatturazione] = useState({descrizione:'',prodotto:'',profilo:''});
+    //______________________________________________
 
     const recOrConsIsLogged = profilo.profilo === 'REC' || profilo.profilo ==='CON';
 
@@ -146,13 +155,13 @@ const App = ({ instance }) => {
                                             dispatchMainState={ dispatchMainState} />} />
                                         }
                                    
-                                        <Route path="/4" element={<ModuloCommessaElencoUtPa mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
+                                        <Route path="/4" element={<ModuloCommessaElencoUtPa mainState={mainState}  dispatchMainState={ dispatchMainState} valueSelect={valueAnnoElencoCom}  setValueSelect={setValueAnnoElencoCom}  />} />
                                   
                                         <Route path="/8" element={<ModuloCommessaInserimentoUtEn30 mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
                                   
                                         <Route path="/pdf" element={<ModuloCommessaPdf mainState={mainState} />} />
                                   
-                                        <Route path="/pagopalistadatifatturazione" element={<PagoPaListaDatiFatturazione mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
+                                        <Route path="/pagopalistadatifatturazione" element={<PagoPaListaDatiFatturazione mainState={mainState}  dispatchMainState={ dispatchMainState} setBodyGetLista={setFilterListaFatturazione} bodyGetLista={filterListaFatturazione} />} />
                                     
                                         <Route path="/pagopalistamodulicommessa" element={<PagoPaListaModuliCommessa mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
                                    
