@@ -5,6 +5,8 @@ export interface ResponseGetAnni {
 export interface VisualModuliCommessaProps{
     dispatchMainState:any,
     mainState:any,
+    valueSelect:string,
+    setValueSelect:any
 }
 
 export interface DataGridCommessa{
