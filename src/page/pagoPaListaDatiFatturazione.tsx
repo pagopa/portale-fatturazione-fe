@@ -13,7 +13,7 @@ import { downloadDocumentoListaDatiFatturazionePagoPa, listaDatiFatturazionePago
 import useIsTabActive from "../reusableFunctin/tabIsActiv";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 
-const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainState, dispatchMainState, setBodyGetLista, bodyGetLista}) =>{
+const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainState, dispatchMainState, setBodyGetLista, bodyGetLista,infoPageListaDatiFat, setInfoPageListaDatiFat}) =>{
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
 
@@ -92,6 +92,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
     };
 
     const getListaDatifatturazione = async(body:BodyListaDatiFatturazione) =>{
+       
         await listaDatiFatturazionePagopa(body ,token,mainState.nonce)
             .then((res)=>{
               
@@ -287,13 +288,16 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                         label="Rag Soc. Ente"
                         placeholder="Rag Soc. Ente"
                         value={bodyGetLista.descrizione}
-                        onChange={(e)=>setBodyGetLista((prev)=> ({...prev, ...{descrizione:e.target.value}}))}
+                        onChange={(e)=> setBodyGetLista((prev)=> ({...prev, ...{descrizione:e.target.value}}))}
                     />
                 </div>
                 <div className=" d-flex justify-content-center align-items-center">
                     <div>
                         <Button 
-                            onClick={()=> getListaDatifatturazione(bodyGetLista)} 
+                            onClick={()=>{
+                                getListaDatifatturazione(bodyGetLista);
+                                setInfoPageListaDatiFat({ page: 0, pageSize: 100 });
+                            } } 
                             sx={{ marginTop: 'auto', marginBottom: 'auto'}}
                             variant="contained"> Filtra
                         </Button>
@@ -301,6 +305,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                             <Button
                                 onClick={()=>{
                                     setBodyGetLista(({descrizione:'',prodotto:'',profilo:''}));
+                                    setInfoPageListaDatiFat({ page: 0, pageSize: 100 });
                                     getListaDatifatturazione({descrizione:'',prodotto:'',profilo:''});
                                 } }
                                 sx={{marginLeft:'24px'}} >
@@ -327,6 +332,9 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                     }
                    
                 }}
+                onPaginationModelChange={(e)=>setInfoPageListaDatiFat(e)}
+
+                paginationModel={infoPageListaDatiFat}
                 rows={gridData} 
                 columns={columns}
                 getRowId={(row) => row.key}

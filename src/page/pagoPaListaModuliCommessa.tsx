@@ -13,7 +13,7 @@ import { downloadDocumentoListaModuloCommessaPagoPa, listaModuloCommessaPagopa }
 import useIsTabActive from "../reusableFunctin/tabIsActiv";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 
-const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchMainState, mainState}) =>{
+const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchMainState, mainState, setInfoPageListaCom, infoPageListaCom, bodyGetLista, setBodyGetLista}) =>{
 
     const navigate = useNavigate();
 
@@ -44,7 +44,8 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
         const yearArray = [0, 1].map((count) => `${thisYear - count}`);
         return yearArray;
     };
-    let currString: string;
+
+    let currString;
     //creo un array di oggetti con tutti i mesi 
 
     if((new Date()).getMonth() === 11){
@@ -53,6 +54,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
         const currentMonth = (new Date()).getMonth() + 2;
         currString = currentMonth.toString();
     }
+    
  
     const mesi = [
         {1:'Gennaio'},{2:'Febbraio'},{3:'Marzo'},{4:'Aprile'},{5:'Maggio'},{6:'Giugno'},
@@ -60,7 +62,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
 
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [gridData, setGridData] = useState([]);
-    const [bodyGetLista, setBodyGetLista] = useState({descrizione:'',prodotto:'', anno:currentYear, mese:currString});
+    
 
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
 
@@ -370,7 +372,10 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
                 <div className=" d-flex justify-content-center align-items-center">
                     <div>
                         <Button 
-                            onClick={()=> getListaCommesse()} 
+                            onClick={()=>{
+                                setInfoPageListaCom({ page: 0, pageSize: 100 });
+                                getListaCommesse();
+                            } } 
                             sx={{ marginTop: 'auto', marginBottom: 'auto'}}
                             variant="contained"> Filtra
                         </Button>
@@ -379,6 +384,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
                         
                             <Button
                                 onClick={()=>{
+                                    setInfoPageListaCom({ page: 0, pageSize: 100 });
                                     getListaCommesseOnAnnulla();
                                 } }
                                 sx={{marginLeft:'24px'}} >
@@ -408,9 +414,11 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
                 }}
                 rows={gridData} 
                 columns={columns}
-                getRowId={(row) => row.key}
+                getRowId={(row) => row?.key}
                 onRowClick={handleEvent}
                 onCellClick={handleOnCellClick}
+                onPaginationModelChange={(e)=>setInfoPageListaCom(e)}
+                paginationModel={infoPageListaCom}
                 
                 />
                 

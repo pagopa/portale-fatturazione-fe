@@ -28,7 +28,11 @@ export interface LoginProps {
 
 export interface SideNavProps{
     dispatchMainState:any,
-    mainState:any
+    mainState:any,
+    setFilterListaFatturazione:any,
+    setFilterListaCommesse:any,
+    setInfoPageListaDatiFat:any,
+    setInfoPageListaCom:any
 }
 
 export interface StepperProps {
