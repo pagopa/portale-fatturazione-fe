@@ -443,7 +443,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
     
     const hiddenRispondiChiudiSend_Ente = (stato !== 4 && stato !== 7) || profilo.auth === 'PAGOPA' || profilo.profilo === 'REC' || profilo.profilo === 'CON';
 
-    const hiddenChiudi_send = profilo.auth === 'PAGOPA';
+    const hiddenChiudi_send = profilo.auth === 'PAGOPA' && noChiusura;
 
     let disableCreaContestazioneButton = false;
     if(stato === 1 && (contestazioneSelected.contestazione.tipoContestazione < 1  || contestazioneSelected.contestazione.noteEnte === null || contestazioneSelected.contestazione.noteEnte === '')){

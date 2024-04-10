@@ -19,7 +19,7 @@ import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/
 import { getDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
 
 
-const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}) => {
+const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState, setFilterListaFatturazione, setFilterListaCommesse,setInfoPageListaDatiFat, setInfoPageListaCom}) => {
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -74,6 +74,8 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
     const handleListItemClick = async() => {
 
         if(profilo.auth === 'PAGOPA'){
+            setFilterListaFatturazione({descrizione:'',prodotto:'',profilo:''});
+            setInfoPageListaDatiFat({ page: 0, pageSize: 100 });
            
             navigate('/pagopalistadatifatturazione');
         }else{
@@ -118,10 +120,24 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
         });
 
     };
+    
+    const currentYear = (new Date()).getFullYear();
+
+    let currString;
+    //creo un array di oggetti con tutti i mesi 
+
+    if((new Date()).getMonth() === 11){
+        currString = '1';
+    }else{
+        const currentMonth = (new Date()).getMonth() + 2;
+        currString = currentMonth.toString();
+    }
 
     const handleListItemClickModuloCommessa = async () => {
        
         if(profilo.auth === 'PAGOPA'){
+            setFilterListaCommesse({descrizione:'',prodotto:'', anno:currentYear, mese:currString});
+            setInfoPageListaCom({ page: 0, pageSize: 100 });
             //cliccando sulla side nav Modulo commessa e sono l'ente PAGOPA
             navigate('/pagopalistamodulicommessa');
 
