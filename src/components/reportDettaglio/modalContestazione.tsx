@@ -390,7 +390,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
     profilo.profilo === 'REC' ||
     profilo.profilo === 'CON'; 
 
-    const showButtonAccettaRecapitista_Send = (profilo.auth === 'PAGOPA' || profilo.profilo === 'PA') && noteRecapitista && noChiusura;
+    const showButtonAccettaRecapitista_Send = profilo.auth === 'PAGOPA' && noteRecapitista && noChiusura;
     let labelButtonAccettaRecapitista_Send = 'Accetta risposta Recapitista';
   
     // (stato === 4 && profilo.auth === 'PAGOPA')? 'Modifica e accetta risposta RECAPITISTA' : 'Accetta risposta RECAPITISTA'
@@ -409,7 +409,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
 
     
     // logica button accetta risposa consolidatore_SEND_ENTE
-    const showButtonAccettaConsolidatore_Send = (profilo.auth === 'PAGOPA' || profilo.profilo === 'PA') && noteConsolidatore && noChiusura;
+    const showButtonAccettaConsolidatore_Send = profilo.auth === 'PAGOPA'  && noteConsolidatore && noChiusura;
     let labelButtonAccettaConsolidatore_Send = 'Accetta risposta Consolidatore';
   
     
@@ -505,8 +505,8 @@ CON => consolidatore (selfcare -> tutti gli enti)
         labelRispondiAccetta_Ente = 'Accetta risposta SEND';
     }
 
-    const showTextBox_Recapitista = profilo.profilo === 'REC' || noteRecapitista;
-    const showTextBox_Consolidatore = profilo.profilo === 'CON' || noteConsolidatore;
+    const showTextBox_Recapitista = (profilo.profilo === 'REC' && (stato !== 2 && stato !== 8 && stato !== 9)) || noteRecapitista ;
+    const showTextBox_Consolidatore = (profilo.profilo === 'CON' && (stato !== 2 && stato !== 8 && stato !== 9)) || noteConsolidatore;
     /*stato === 1 ||
      (stato === 2 && noteRecapitista === null) || 
      stato === 3 ||
