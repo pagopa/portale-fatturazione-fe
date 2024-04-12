@@ -149,7 +149,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                 idNotifica:contestazioneSelected.contestazione.idNotifica,
                 statoContestazione:2
             };
-        }else if(action === 'Modifica/Rispondi' && stato === 4){
+        }else if(action === 'Modifica/Rispondi' && (stato === 4 || stato === 5 || stato === 6 || stato === 7)){
             body = {
                 idNotifica:contestazioneSelected.contestazione.idNotifica,
                 noteEnte:contestazioneSelected.contestazione.noteEnte,
@@ -441,7 +441,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
     (noRisposta === false && noModifica === false);
 
     
-    const hiddenRispondiChiudiSend_Ente = (stato !== 4 && stato !== 7) || profilo.auth === 'PAGOPA' || profilo.profilo === 'REC' || profilo.profilo === 'CON';
+    const hiddenRispondiChiudiSend_Ente =  profilo.profilo === 'PA' && rispostaSend && stato !== 2 && stato !== 8 && stato !== 9; // (stato !== 4 && stato !== 7) || profilo.auth === 'PAGOPA' || profilo.profilo === 'REC' || profilo.profilo === 'CON';
 
     const hiddenChiudi_send = profilo.auth === 'PAGOPA' && noChiusura;
 
@@ -804,7 +804,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                 </div>
                             }
                             {/* butto ENTE  */}
-                            { hiddenRispondiChiudiSend_Ente ? null :
+                            { hiddenRispondiChiudiSend_Ente &&
                                 <div className='col-2 me-2'>
                                     <Button
                                        
