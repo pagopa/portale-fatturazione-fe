@@ -393,10 +393,14 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 manageError(err,navigate);
             }));
     };
+
+    const [valueRispostaEnte, setValueRispostaEnte] = useState('');
+    const [constestazioneStatic, setContestazioneStatic] = useState();
+    
                 
     const getContestazioneModal = async(idNotifica:string) =>{
         setShowLoadingGrid(true);
-
+        console.log('io');
         if( profilo.profilo === 'PA'){
             await getContestazione(token, mainState.nonce , idNotifica )
                 .then((res)=>{
@@ -409,6 +413,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                         setShowLoadingGrid(false);
                         setOpen(true); 
                         setContestazioneSelected(res.data);
+                        setValueRispostaEnte(res.data.contestazione.rispostaEnte);
+                     
                     }           
                 })
                 .catch(((err)=>{
@@ -426,6 +432,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                         // atrimenti show pop up creazione contestazione
                         setOpen(true); 
                         setContestazioneSelected(res.data);
+                        setContestazioneStatic(res.data);
                     }           
                 })
                 .catch(((err)=>{
@@ -443,6 +450,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                         // atrimenti show pop up creazione contestazione
                         setOpen(true); 
                         setContestazioneSelected(res.data);
+                        setContestazioneStatic(res.data);
                     }           
                 })
                 .catch(((err)=>{
@@ -459,6 +467,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     // atrimenti show pop up creazione contestazione
                     setOpen(true); 
                     setContestazioneSelected(res.data);
+                    setContestazioneStatic(res.data);
                 }                 
             }).catch(((err)=>{
                 setShowLoadingGrid(false);
@@ -853,6 +862,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 openModalLoading={setShowLoadingGrid}
                 page={realPageNumber}
                 rows={rowsPerPage}
+                valueRispostaEnte={valueRispostaEnte}
+                constestazioneStatic={constestazioneStatic}
             ></ModalContestazione>
 
             <ModalRedirect
