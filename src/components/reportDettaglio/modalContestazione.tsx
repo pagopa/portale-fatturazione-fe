@@ -333,7 +333,8 @@ CON => consolidatore (selfcare -> tutti gli enti)
      (stato === 8 && rispostaEnte === null ) || 
      (stato === 9 && rispostaEnte === null ); 
 
-    const readOnlyRispostaEnte = profilo.profilo !== 'PA' || (profilo.profilo === 'PA' && valueRispostaEnte !== null);
+    const readOnlyRispostaEnte = profilo.profilo !== 'PA' || (profilo.profilo === 'PA' && valueRispostaEnte !== null && stato !== 7);
+  
     console.log({valueRispostaEnte});
     /*(stato === 2 && rispostaEnte !== null) ||
        stato === 8 ||
@@ -434,13 +435,15 @@ CON => consolidatore (selfcare -> tutti gli enti)
      stato !== 3 ||
     contestazioneSelected.modifica === false; 
 
-    let hiddenModificaRispondiEnte;  
+    let hiddenModificaRispondiEnte = false;  
     //profilo.profilo === 'PA' && (noRisposta || noModifica) && !rispostaEnte;
     if( stato === 1 || stato === 2 || stato === 8 || stato === 9){
         hiddenModificaRispondiEnte = false;
     }else if(profilo.profilo === 'PA' && noModifica){
         hiddenModificaRispondiEnte = true;
     }else if(profilo.profilo === 'PA' && noRisposta && valueRispostaEnte === null){
+        hiddenModificaRispondiEnte = true;
+    }else if(profilo.profilo === 'PA' && noRisposta && valueRispostaEnte !== null && stato === 7){
         hiddenModificaRispondiEnte = true;
     }
     
