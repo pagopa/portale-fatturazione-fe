@@ -40,6 +40,8 @@ export interface ModalContestazioneProps{
     openModalLoading:any,
     page:number,
     rows:number,
+    valueRispostaEnte:string,
+    constestazioneStatic:any
 }
 
 export interface FlagContestazione{
