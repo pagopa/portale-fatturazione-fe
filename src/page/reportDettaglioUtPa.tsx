@@ -400,7 +400,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 
     const getContestazioneModal = async(idNotifica:string) =>{
         setShowLoadingGrid(true);
-        console.log('io');
+    
         if( profilo.profilo === 'PA'){
             await getContestazione(token, mainState.nonce , idNotifica )
                 .then((res)=>{
@@ -566,7 +566,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
    
     },[]);
 
-    console.log(mainState);
+
     return (
         <div className="mx-5">
             {/*title container start */}

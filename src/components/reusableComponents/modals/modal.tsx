@@ -30,11 +30,11 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
             value:valueObj
         });
     };
-    console.log(mainState, 'ciao');
+  
     const handleClose = () => setOpen(false);
 
     const handleEsci = () =>{
-        console.log('ciao' , profilo.auth);
+     
         if(location.pathname === '/' ){
             if(profilo.auth === 'PAGOPA'&& mainState.statusPageDatiFatturazione === 'mutable' && mainState.datiFatturazione === false){
                 setOpen(false);
@@ -47,7 +47,7 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
                 setOpen(false);
                 handleModifyMainState({statusPageDatiFatturazione:'immutable'});
             }else if(profilo.auth === 'SELFCARE'){
-                console.log('ciao');
+            
                 getDatiFat();
                 handleModifyMainState({statusPageDatiFatturazione:'immutable'});
                 setOpen(false);

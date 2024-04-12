@@ -91,7 +91,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         'ID Documento':false,
         "Codice. Commessa/Convenzione":false,
     });
-    console.log(statusBottonConferma);
+   
     // check su ogni elemento dello state statusBottonConferma
     const enableDisableConferma = Object.values(statusBottonConferma).every(element => element === false);
    
