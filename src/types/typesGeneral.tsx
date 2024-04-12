@@ -140,6 +140,13 @@ export interface SelectMeseProps{
     setValue: (value:any) => void
 }
 
+export enum Profilo {
+    AZURE = 'PAGOPA',
+    SELFCARE = 'PA',
+    RECAPITISTA = 'REC',
+    CONSOLIDATORE = 'CON'
+}
+
 
 
 
