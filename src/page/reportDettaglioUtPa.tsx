@@ -566,6 +566,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
    
     },[]);
 
+    const backgroundColorButtonScadenzario = (profilo.auth === 'PAGOPA' || profilo.profilo === 'PA') ? "#0062C3" : 'red';
 
     return (
         <div className="mx-5">
@@ -576,7 +577,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 </div>
                 <div className="col-3 ">
                     <Box sx={{width:'80%', marginLeft:'20px', display:'flex', justifyContent:'end'}}  >
-                        <Button onClick={()=> setShowModalScadenziario(true)} variant="contained">
+                        <Button  style={{
+                            backgroundColor:backgroundColorButtonScadenzario
+                        }} variant="contained"  onClick={()=> setShowModalScadenziario(true)} >
                             <VisibilityIcon sx={{marginRight:'10px'}}></VisibilityIcon>
                     Scadenzario
                         </Button>
@@ -894,7 +897,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             <ModalScadenziario
                 open={showModalScadenziario} 
                 setOpen={setShowModalScadenziario}
-                nonce={mainState.nonce}></ModalScadenziario>                                    
+                nonce={mainState.nonce}
+                profilo={profilo}></ModalScadenziario>                                    
         </div>
     );
 };

@@ -15,7 +15,7 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: '60%',
+    width: '80%',
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
@@ -24,7 +24,8 @@ const style = {
 interface ModalScadenziario {
     setOpen:any,
     open:boolean,
-    nonce:string
+    nonce:string,
+    profilo:any
 }
 
 interface Scadenziario {
@@ -34,7 +35,7 @@ interface Scadenziario {
     meseContestazione: string
 }
 
-const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce}) => {
+const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce, profilo}) => {
 
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
@@ -96,6 +97,12 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce})
                                         <TableCell align="left">Anno </TableCell>
                                         <TableCell align="left">Data inizio inserimento contestazione</TableCell>
                                         <TableCell align="left">Data fine inserimento contestazione</TableCell>
+                                        {(profilo.profilo === 'CON' || profilo.profilo === 'REC') &&
+                                        <>
+                                            <TableCell align="left">Data inizio contestazione Recapitista</TableCell>
+                                            <TableCell align="left">Data fine contestazione Recapitista</TableCell>
+                                        </>
+                                        }
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -110,6 +117,11 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce})
                                             <TableCell align="left">{row.annoContestazione}</TableCell>
                                             <TableCell align="left">{row.dataInizio}</TableCell>
                                             <TableCell align="left">{row.dataFine}</TableCell>
+                                            {(profilo.profilo === 'CON' || profilo.profilo === 'REC') &&
+                                            <>
+                                                <TableCell align="left">{row.dataRecapitistaInizio}</TableCell>
+                                                <TableCell align="left">{row.dataRecapitistaFine}</TableCell>
+                                            </>}
                                         </TableRow>
                                     ))}
                                 </TableBody>
