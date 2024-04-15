@@ -20,6 +20,7 @@ import { getModuloCommessaPagoPa, modifyDatiModuloCommessaPagoPa } from '../api/
 import { getDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
 import { getDatiFatturazionePagoPa } from '../api/apiPagoPa/datiDiFatturazionePA/api';
 import useIsTabActive from '../reusableFunctin/tabIsActiv';
+import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 
 export const InserimentoModuloCommessaContext = createContext<InsModuloCommessaContext>({
     datiCommessa: {
@@ -320,11 +321,13 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
         await insertDatiModuloCommessa(datiCommessa, token, mainState.nonce)
             .then(res =>{
+                setOpenModalLoading(false);
                 setButtonMofica(true);
                 toDoOnPostModifyCommessa(res);
                  
             } )
             .catch(err => {
+                setOpenModalLoading(false);
                 manageError(err, navigate); 
             });
     };
@@ -341,14 +344,17 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
         await modifyDatiModuloCommessaPagoPa(datiCommessaPlusIdTpcProIdE, token, mainState.nonce)
             .then((res)=>{
+                setOpenModalLoading(false);
                 setButtonMofica(true);
                 toDoOnPostModifyCommessa(res);
             }).catch(err => {
+                setOpenModalLoading(false);
                 manageError(err, navigate); 
             });
     };
 
     const OnButtonSalva = () =>{
+        setOpenModalLoading(true);
         if(profilo.auth === 'PAGOPA'){
             hendleModifyDatiModuloCommessaPagoPa();
         }else{
@@ -387,7 +393,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
         actionTitle = <Typography variant="h4">Modulo commessa</Typography>;
     }
    
-  
+    const [openModalLoading, setOpenModalLoading] = useState(false);
 
     return (
         <InserimentoModuloCommessaContext.Provider
@@ -508,6 +514,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 setOpen={setOpenModalRedirect}
                 open={openModalRedirect}
                 sentence={`Per poter inserire il modulo commessa è obbligatorio fornire  i seguenti dati di fatturazione:`}></ModalRedirect>
+
+            <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}></ModalLoading>
             
         </InserimentoModuloCommessaContext.Provider>
     );
