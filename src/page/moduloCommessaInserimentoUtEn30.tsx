@@ -21,6 +21,7 @@ import { getDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api
 import { getDatiFatturazionePagoPa } from '../api/apiPagoPa/datiDiFatturazionePA/api';
 import useIsTabActive from '../reusableFunctin/tabIsActiv';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
+import { PathPf } from '../types/enum';
 
 export const InserimentoModuloCommessaContext = createContext<InsModuloCommessaContext>({
     datiCommessa: {
@@ -247,11 +248,11 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
         /* se l'utente PagoPA modifa l'url e cerca di accedere al path '/8' senza aver prima selezionato
          una row della grid lista MODULI COMMESSA viene fatto il redirect automatico a  '/pagopalistamodulocommessa'*/
         if(profilo.auth === 'PAGOPA' && !profilo.idEnte){
-            window.location.href = '/pagopalistamodulicommessa';
+            window.location.href = PathPf.LISTA_MODULICOMMESSA;
         }
         /* se l'utente selcare  modifica l'url andando ad inserire '/8' viene eseguito il redirect a datifatturazione*/
         if(profilo.auth === 'SELFCARE' && !statusApp.mese && !statusApp.anno){
-            window.location.href = '/';
+            window.location.href = PathPf.DATI_FATTURAZIONE;
         }
 
         if(statusApp.datiFatturazione === false){
@@ -313,7 +314,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 }}));
 
             // redirect dati di fatturazione per il primo inserimento modulo commessa mese corrente
-            navigate('/');
+            navigate(PathPf.DATI_FATTURAZIONE);
         }  
     };
 
@@ -420,9 +421,9 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                         startIcon={<ArrowBackIcon />}
                         onClick={() =>{
                             if(mainState.statusPageInserimentoCommessa === 'immutable' && profilo.auth !== 'PAGOPA'){
-                                navigate('/4');
+                                navigate(PathPf.LISTA_COMMESSE);
                             }else if(mainState.statusPageInserimentoCommessa === 'immutable' && profilo.auth === 'PAGOPA'){
-                                navigate('/pagopalistamodulicommessa');
+                                navigate(PathPf.LISTA_MODULICOMMESSA);
                             }else if(mainState.inserisciModificaCommessa === 'INSERT' && profilo.auth === 'SELFCARE'){
                                 setOpen(true);
                             }else{
@@ -431,11 +432,11 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                             /*
                             setButtonMofica(true);
                             if(mainState.statusPageInserimentoCommessa === 'immutable' && profilo.auth !== 'PAGOPA'){
-                                navigate('/4');
+                                navigate(PathPf.LISTA_COMMESSE);
                             }else if(mainState.statusPageInserimentoCommessa === 'immutable' && profilo.auth === 'PAGOPA'){
                                 navigate('/pagopalistamodulicommessa');
                             }else if(mainState.inserisciModificaCommessa === 'INSERT' && profilo.auth === 'SELFCARE'){
-                                navigate('/4');
+                                navigate(PathPf.LISTA_COMMESSE);
                             }else{
                                 handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
                             } 
@@ -506,7 +507,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
             </div> 
             {mainState.statusPageInserimentoCommessa === 'immutable' &&
                 <div className="d-flex justify-content-center marginTop24 mb-5">
-                    <Button onClick={()=>navigate('/pdf')} variant="contained">Vedi anteprima</Button>
+                    <Button onClick={()=>navigate(PathPf.PDF_COMMESSA)} variant="contained">Vedi anteprima</Button>
                 </div> 
             }
            

@@ -8,8 +8,8 @@ export interface ListaModuliCommessaProps{
     bodyGetLista:{
         descrizione:string,
         prodotto:string,
-        anno:string,
-        mese:string
+        anno:number,
+        mese:number
     },
     setBodyGetLista:any
 }

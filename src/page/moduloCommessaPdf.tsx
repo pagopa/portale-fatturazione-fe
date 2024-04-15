@@ -12,6 +12,7 @@ import { DatiModuloCommessaPdf,ModComPdfProps, ResponseDownloadPdf } from "../ty
 import { downloadModuloCommessaPdf, getModuloCommessaPdf } from "../api/apiSelfcare/moduloCommessaSE/api";
 import { downloadModuloCommessaPagoPaPdf, getModuloCommessaPagoPaPdf } from "../api/apiPagoPa/moduloComessaPA/api";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
+import { PathPf } from "../types/enum";
 
 const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
 
@@ -220,7 +221,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
         const newStatusApp = {...statusApp, ...{userClickOn:'GRID'}};
       
         localStorage.setItem('statusApplication', JSON.stringify(newStatusApp));
-        navigate('/8'); 
+        navigate(PathPf.MODULOCOMMESSA); 
     };
 
 

@@ -4,6 +4,7 @@ import { loginRequest } from '../authConfig';
 import {InteractionStatus,
 } from "@azure/msal-browser";
 import { useNavigate } from "react-router";
+import { PathPf } from "../types/enum";
 
 //Pagina di accesso con l'autenticazione AZURE
 
@@ -16,7 +17,7 @@ const Azure : React.FC = () =>{
     const checkIfUserIsAutenticated = JSON.parse(getProfiloFromLocalStorage).auth;
 
     if(checkIfUserIsAutenticated === 'PAGOPA'){
-        navigate('/pagopalistadatifatturazione');
+        navigate(PathPf.LISTA_DATI_FATTURAZIONE);
     }
 
     const { instance, inProgress, accounts } = useMsal();
