@@ -4,7 +4,7 @@ import Stack from '@mui/material/Stack';
 import { useState } from 'react';
 
 type AlertProps = {
-    typeAlert : string,
+    typeAlert : any,
     setVisible:any,
     visible:boolean
 }
@@ -17,6 +17,7 @@ const BasicAlerts:React.FC <AlertProps> =  ({typeAlert, setVisible , visible}) =
     const [css, setCss] = useState('main_container_alert_component');
 
     React.useEffect(()=>{
+        console.log('miao');
         if(visible === true){
 
             setCss('main_container_alert_component_show');
@@ -25,7 +26,7 @@ const BasicAlerts:React.FC <AlertProps> =  ({typeAlert, setVisible , visible}) =
            
                 setCss('main_container_alert_component_hidden');
                 setVisible(false);
-            }, 3000);
+            }, 8000);
             return () =>{
                 clearTimeout(timer);
             }; 
@@ -38,7 +39,7 @@ const BasicAlerts:React.FC <AlertProps> =  ({typeAlert, setVisible , visible}) =
     return (
         <div className={css}>
             <Stack sx={{ width: '100%' }} spacing={2}>
-                <Alert severity="error">This is an error Alert.</Alert>
+                <Alert severity={typeAlert}  variant="standard">INTERNAL SERVER ERROR: L'operazione non è andata a buon fine</Alert>
             </Stack>
         </div>
     );
