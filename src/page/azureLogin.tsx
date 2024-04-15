@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
+import { PathPf } from "../types/enum";
 
 // pagina visulizzata nel caso in cui l'utenete PagoPa procede con il logOut
 // l'utente PagoPa potrà riaccedere tramite questa pagina
@@ -11,10 +12,10 @@ const AzureLogin : React.FC = () =>{
     const getProfiloFromLocalStorage = localStorage.getItem('profilo') || '{}';
 
     const checkIfUserIsAutenticated = JSON.parse(getProfiloFromLocalStorage).auth;
-
+    console.log(checkIfUserIsAutenticated);
     useEffect(()=>{
         if(checkIfUserIsAutenticated === 'PAGOPA'){
-            navigate('/pagopalistadatifatturazione');
+            navigate(PathPf.LISTA_DATI_FATTURAZIONE);
         }
         if(checkIfUserIsAutenticated === 'SELFCARE'){
             localStorage.removeItem('profilo');

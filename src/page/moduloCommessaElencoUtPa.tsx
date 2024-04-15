@@ -10,6 +10,7 @@ import { getAnni, getDatiModuloCommessa, getListaCommessaFiltered } from '../api
 import ModalRedirect from '../components/commessaInserimento/madalRedirect';
 import { getDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
 import useIsTabActive from '../reusableFunctin/tabIsActiv';
+import { PathPf } from '../types/enum';
 
 const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatchMainState,mainState, valueSelect, setValueSelect}) => {
 
@@ -129,7 +130,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
        
         if(profilo.auth === 'PAGOPA'){
             //cliccando sulla side nav Modulo commessa e sono l'ente PAGOPA
-            navigate('/pagopalistamodulicommessa');
+            navigate(PathPf.LISTA_MODULICOMMESSA);
 
         }else{
             //cliccando sulla side nav Modulo commessa e sono un ente qualsiasi
@@ -159,7 +160,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
                     localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
                         ...newState}));
                  
-                    navigate('/8');
+                    navigate(PathPf.MODULOCOMMESSA);
                 }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0 ){
     
                     handleModifyMainState({
@@ -178,7 +179,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
                     localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
                         ...newState}));
                    
-                    navigate('/4');
+                    navigate(PathPf.LISTA_COMMESSE);
                 }else if(res.data.modifica === false && res.data.moduliCommessa.length === 0){
 
                     handleModifyMainState({
@@ -197,7 +198,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
                     localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
                         ...newState}));
                    
-                    navigate('/4');
+                    navigate(PathPf.LISTA_COMMESSE);
                 }else if(res.data.modifica === false && res.data.moduliCommessa.length > 0){
                     handleModifyMainState({
                         inserisciModificaCommessa:'NO_ACTION',
@@ -215,7 +216,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
                     localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
                         ...newState}));
                    
-                    navigate('/4');
+                    navigate(PathPf.LISTA_COMMESSE);
                 }
     
             }).catch((err) =>{

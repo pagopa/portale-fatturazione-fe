@@ -17,6 +17,7 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { SideNavProps } from '../../types/typesGeneral';
 import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
 import { getDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
+import { PathPf } from '../../types/enum';
 
 
 const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState, setFilterListaFatturazione, setFilterListaCommesse,setInfoPageListaDatiFat, setInfoPageListaCom}) => {
@@ -77,9 +78,9 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
             setFilterListaFatturazione({descrizione:'',prodotto:'',profilo:''});
             setInfoPageListaDatiFat({ page: 0, pageSize: 100 });
            
-            navigate('/pagopalistadatifatturazione');
+            navigate(PathPf.LISTA_DATI_FATTURAZIONE);
         }else{
-            navigate('/');
+            navigate(PathPf.DATI_FATTURAZIONE);
             /*
             if(mainState.datiFatturazione === true){
                 handleModifyMainState({
@@ -139,7 +140,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
             setFilterListaCommesse({descrizione:'',prodotto:'', anno:currentYear, mese:currString});
             setInfoPageListaCom({ page: 0, pageSize: 100 });
             //cliccando sulla side nav Modulo commessa e sono l'ente PAGOPA
-            navigate('/pagopalistamodulicommessa');
+            navigate(PathPf.LISTA_MODULICOMMESSA);
 
         }else{
             //cliccando sulla side nav Modulo commessa e sono un ente qualsiasi
@@ -169,7 +170,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
                     localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
                         ...newState}));
                  
-                    navigate('/8');
+                    navigate(PathPf.MODULOCOMMESSA);
                 }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0 ){
     
                     handleModifyMainState({
@@ -188,7 +189,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
                     localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
                         ...newState}));
                    
-                    navigate('/4');
+                    navigate(PathPf.LISTA_COMMESSE);
                 }else if(res.data.modifica === false && res.data.moduliCommessa.length === 0){
 
                     handleModifyMainState({
@@ -207,7 +208,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
                     localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
                         ...newState}));
                    
-                    navigate('/4');
+                    navigate(PathPf.LISTA_COMMESSE);
                 }else if(res.data.modifica === false && res.data.moduliCommessa.length > 0){
                     handleModifyMainState({
                         inserisciModificaCommessa:'NO_ACTION',
@@ -225,7 +226,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
                     localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
                         ...newState}));
                    
-                    navigate('/4');
+                    navigate(PathPf.LISTA_COMMESSE);
                 }
     
             }).catch((err) =>{
@@ -237,34 +238,34 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
 
     const handleListItemClickNotifiche = () => {
 
-        navigate('/notifiche');
+        navigate(PathPf.LISTA_NOTIFICHE);
     };
 
     const handleListItemClickRel = async () => {
-        navigate('/rel');
+        navigate(PathPf.LISTA_REL);
      
     };
     
     const currentLocation = location.pathname;
 
     useEffect(()=>{
-        if(currentLocation === '/'){
+        if(currentLocation === PathPf.DATI_FATTURAZIONE){
             setSelectedIndex(0);
-        }else if(currentLocation === '/4'){
+        }else if(currentLocation === PathPf.LISTA_COMMESSE){
             setSelectedIndex(1);
-        }else if(currentLocation === '/8'){
+        }else if(currentLocation === PathPf.MODULOCOMMESSA){
             setSelectedIndex(1);
-        }else if(currentLocation === '/pagopalistadatifatturazione'){
+        }else if(currentLocation === PathPf.LISTA_DATI_FATTURAZIONE){
             setSelectedIndex(0);
-        }else if(currentLocation === '/pagopalistamodulicommessa'){
+        }else if(currentLocation === PathPf.LISTA_MODULICOMMESSA){
             setSelectedIndex(1);
-        }else if(currentLocation === '/pdf'){
+        }else if(currentLocation === PathPf.PDF_COMMESSA){
             setSelectedIndex(1);
-        }else if(currentLocation === '/notifiche'){
+        }else if(currentLocation === PathPf.LISTA_NOTIFICHE){
             setSelectedIndex(2);
-        }else if(currentLocation === '/rel'){
+        }else if(currentLocation === PathPf.LISTA_REL){
             setSelectedIndex(3);
-        }else if(currentLocation === '/relpdf'){
+        }else if(currentLocation === PathPf.PDF_REL){
             setSelectedIndex(3);
         }
         
