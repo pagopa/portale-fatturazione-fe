@@ -14,12 +14,13 @@ import {
 } from '../types/typesAreaPersonaleUtenteEnte';
 import {  getDatiFatturazione,
     modifyDatiFatturazione,
-    insertDatiFatturazione,} from '../api/apiSelfcare/datiDiFatturazioneSE/api';
+    insertDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
 import {  getDatiFatturazionePagoPa,
     modifyDatiFatturazionePagoPa,
     insertDatiFatturazionePagoPa, } from '../api/apiPagoPa/datiDiFatturazionePA/api';
 import useIsTabActive from '../reusableFunctin/tabIsActiv';
 import BasicModal from '../components/reusableComponents/modals/modal';
+import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 
 export const DatiFatturazioneContext = createContext<AreaPersonaleContext>({
     datiFatturazione:{
@@ -226,6 +227,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
    
     const hendleSubmitDatiFatturazione = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) =>{
         e.preventDefault();
+        setOpenModalLoading(true);
         const statusApp = localStorage.getItem('statusApplication')||'{}';
         const parseStatusApp = JSON.parse(statusApp);
         //  1 - se l'user ha già dati fatturazione
@@ -236,12 +238,13 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 const newDatiFatturazione = {...datiFatturazione, ...{idEnte:profilo.idEnte,prodotto:profilo.prodotto}};
 
                 modifyDatiFatturazionePagoPa(token,mainState.nonce, newDatiFatturazione ).then(() =>{
-
+                    setOpenModalLoading(false);
                     handleModifyMainState({
                         statusPageDatiFatturazione:'immutable',
                     });
                 
                 }).catch(err => {
+                    setOpenModalLoading(false);
                     manageError(err, navigate);
                 });
 
@@ -249,7 +252,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 // 1 - ed è un utente SELFCARE
                 modifyDatiFatturazione(datiFatturazione, token,mainState.nonce)
                     .then(() =>{
-                       
+                        setOpenModalLoading(false);
                         handleModifyMainState({
                             statusPageDatiFatturazione:'immutable',
                         });
@@ -260,6 +263,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                         }
                     })
                     .catch(err => {
+                        setOpenModalLoading(false);
                         manageError(err, navigate);
                     });
             }
@@ -293,13 +297,14 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
             // 2 - ed è un utente PAGOPA
             if(profilo.auth === 'PAGOPA'){
                 insertDatiFatturazionePagoPa( token,mainState.nonce, bodyPagoPa).then(()  =>{
-                    
+                    setOpenModalLoading(false);
                     handleModifyMainState({
                         statusPageDatiFatturazione:'immutable',
                         datiFatturazione:true
                     });
                  
                 }).catch(err =>{
+                    setOpenModalLoading(false);
                     if(err?.response?.status === 401){
                         navigate('/error');
                     }else if(err?.response?.status === 419){
@@ -310,7 +315,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
             }else{
                 // 2 - ED è UN UTENTE SELFCARE
                 insertDatiFatturazione(body, token,mainState.nonce).then(() =>{
-                  
+                    setOpenModalLoading(false);
                     if(parseStatusApp.inserisciModificaCommessa === 'INSERT'){
                         handleModifyMainState({
                             statusPageDatiFatturazione:'immutable',
@@ -340,6 +345,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                         navigate('/4');
                     }  
                 }).catch(err =>{
+                    setOpenModalLoading(false);
                     if(err.response.status === 401){
                         navigate('/error');
                     }else if(err.response.status === 419){
@@ -354,7 +360,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
          
     };
 
-  
+    const [openModalLoading, setOpenModalLoading] = useState(false);
 
     return (
         <DatiFatturazioneContext.Provider
@@ -400,7 +406,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 </div>
 
                 <BasicModal setOpen={setOpen} open={open} dispatchMainState={dispatchMainState} getDatiFat={getDatiFat} getDatiFatPagoPa={getDatiFatPagoPa} mainState={mainState}></BasicModal>
-
+                <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}></ModalLoading>
             </div>
         </DatiFatturazioneContext.Provider>
     );
