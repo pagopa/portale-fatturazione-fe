@@ -1,9 +1,9 @@
 import { Typography, Box } from "@mui/material";
 import { IllusError } from "@pagopa/mui-italia";
-
 import { redirect } from "../api/api";
+import { ErrorPageProps } from "../types/typesGeneral";
 
-const ErrorPage : React.FC = () =>{
+const ErrorPage : React.FC<ErrorPageProps> = ({dispatchMainState, mainState}) =>{
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token || {};
 

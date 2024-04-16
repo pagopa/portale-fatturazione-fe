@@ -88,7 +88,8 @@ const App = ({ instance }) => {
         statusPageInserimentoCommessa:'immutable',
         // idEnte:'',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
         // prodotto: '',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione,
-        relSelected: null // rel selezionata nella grid in page rel
+        relSelected: null,
+        apiError:'' // rel selezionata nella grid in page rel
     });
 
     //_______________rel __________________
@@ -194,7 +195,8 @@ const App = ({ instance }) => {
                                         <Route path="*" element={<Navigate to="/error" replace />} />
 
                                         <Route path="/azureLogin" element={<AzureLogin />} />
-                                        <Route path="/error" element={<ErrorPage />} />
+
+                                        <Route path="/error" dispatchMainState={ dispatchMainState}  mainState={mainState} element={<ErrorPage />} />
                                     </Routes>
 
 
