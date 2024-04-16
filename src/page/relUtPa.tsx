@@ -192,6 +192,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel
                 navigate('/relpdf');
               
             }).catch((err)=>{
+             
                 manageError(err, navigate);
             }
               

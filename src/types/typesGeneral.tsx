@@ -73,7 +73,8 @@ export interface MainState{
     // idEnte:string,// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
     //prodotto: string,// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
     datiFatturazione:boolean, // parametro utilizato in modulo commessa per capire se accettare l'inserimento commessa o fare il redirect t dati fatturazione se non sono stati inseriti
-    relSelected:Rel|null // rel selezionata nella grid in page rel
+    relSelected:Rel|null,
+    apiError:string // rel selezionata nella grid in page rel
 }
 
 export interface BodyDownloadDatiFatturazione{
@@ -138,6 +139,11 @@ export interface SelectUltimiDueAnniProps{
 export interface SelectMeseProps{
     values:BodyRel,
     setValue: (value:any) => void
+}
+
+export interface ErrorPageProps{
+    dispatchMainState:any,
+    mainState:MainState
 }
 
 export enum Profilo {
