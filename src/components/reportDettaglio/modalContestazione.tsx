@@ -335,7 +335,6 @@ CON => consolidatore (selfcare -> tutti gli enti)
 
     const readOnlyRispostaEnte = profilo.profilo !== 'PA' || (profilo.profilo === 'PA' && valueRispostaEnte !== null && stato !== 7);
   
-    console.log({valueRispostaEnte});
     /*(stato === 2 && rispostaEnte !== null) ||
        stato === 8 ||
        stato === 9 || 
@@ -465,7 +464,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
     if(stato === 1 && (contestazioneSelected.contestazione.tipoContestazione < 1  || contestazioneSelected.contestazione.noteEnte === null || contestazioneSelected.contestazione.noteEnte === '')){
         disableCreaContestazioneButton = true;
     }
-    console.log(profilo.auth === 'PAGOAPA' , stato !== 4 , constestazioneStatic?.contestazione.noteSend !== null, 'ciao mondo');
+   
     let stringButtonAccettaEnte_send = 'Rispondi e accetta Ente';
     if(profilo.profilo === 'REC' && stato === 5 ){
         stringButtonAccettaEnte_send = 'Modifica e accetta Ente';

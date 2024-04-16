@@ -44,7 +44,7 @@ export const DatiFatturazioneContext = createContext<AreaPersonaleContext>({
 
 const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, dispatchMainState}) => {
 
-    console.log(PathPf.DATI_FATTURAZIONE);
+    
    
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;

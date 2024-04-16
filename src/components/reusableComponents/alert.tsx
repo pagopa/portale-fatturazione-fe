@@ -17,7 +17,7 @@ const BasicAlerts:React.FC <AlertProps> =  ({typeAlert, setVisible , visible}) =
     const [css, setCss] = useState('main_container_alert_component');
 
     React.useEffect(()=>{
-        console.log('miao');
+  
         if(visible === true){
 
             setCss('main_container_alert_component_show');
