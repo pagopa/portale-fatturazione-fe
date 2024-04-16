@@ -12,7 +12,7 @@ const AzureLogin : React.FC = () =>{
     const getProfiloFromLocalStorage = localStorage.getItem('profilo') || '{}';
 
     const checkIfUserIsAutenticated = JSON.parse(getProfiloFromLocalStorage).auth;
-    console.log(checkIfUserIsAutenticated);
+   
     useEffect(()=>{
         if(checkIfUserIsAutenticated === 'PAGOPA'){
             navigate(PathPf.LISTA_DATI_FATTURAZIONE);

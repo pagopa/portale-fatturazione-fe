@@ -80,7 +80,7 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
                 setBodyGetLista((prev:BodyListaNotifiche) => ({...prev,...{idEnti:arrayIdEnte}}));
                 setValueAutocomplete(value);
             }}
-            onInputChange={(event, newInputValue, reason)=>console.log({event, newInputValue, reason}, '??')}
+            onInputChange={(event, newInputValue, reason)=>console.log('')}
             id="checkboxes-tags-demo"
           
             options={dataSelect}

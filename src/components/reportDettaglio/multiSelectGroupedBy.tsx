@@ -64,7 +64,7 @@ const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({m
             groupBy={(option:FlagContestazione) => option.descrizione}
             disableCloseOnSelect
             getOptionLabel={(option) => option.flag}
-            onInputChange={(event, newInputValue, reason)=>console.log({event, newInputValue, reason}, '??')}
+            onInputChange={(event, newInputValue, reason)=>console.log('')}
             renderInput={(params) =>{
                
                 return <TextField 
