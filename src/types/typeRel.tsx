@@ -10,6 +10,10 @@ export interface RelPageProps{
     rowsPerPage:number,
     setRowsPerPage:any
 }
+export interface RelPagePdfProps{
+    mainState:MainState,
+    dispatchMainState:any
+}
 export interface TextRegioneSocialeRelProps{
     values:any,
     setValue: (value:any) => void

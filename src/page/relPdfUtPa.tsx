@@ -1,7 +1,7 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked, SingleFileInput} from '@pagopa/mui-italia';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import { RelPageProps } from "../types/typeRel";
+import { RelPagePdfProps, RelPageProps } from "../types/typeRel";
 import { Button, Typography } from "@mui/material";
 import { useNavigate } from 'react-router';
 import {manageError } from '../api/api';
@@ -15,12 +15,11 @@ import ModalUploadPdf from '../components/rel/modalUploadPdf';
 import { saveAs } from "file-saver";
 import generatePDF from 'react-to-pdf';
 import { redirect } from '../api/api';
-import BasicAlerts from '../components/reusableComponents/alert';
-import { display } from '@mui/system';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
+import { PathPf } from '../types/enum';
 
 
-const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
+const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) =>{
 
     const targetRef  = useRef<HTMLInputElement>(null);
 
@@ -40,7 +39,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
     useEffect(()=>{
         if(rel === null){
-            navigate('/rel');
+            navigate(PathPf.LISTA_REL);
         }
 
         if(!token){
@@ -264,7 +263,7 @@ const RelPdfPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                         onFocusVisible={() => { console.log('onFocus'); }}
                         size="small"
                         startIcon={<ArrowBackIcon />}
-                        onClick={() => navigate('/rel')}
+                        onClick={() => navigate(PathPf.LISTA_REL)}
                    
                     >
                     Indietro

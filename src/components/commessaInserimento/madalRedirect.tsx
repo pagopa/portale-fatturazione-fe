@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { ModalProps } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
+import { PathPf } from '../../types/enum';
 
 const style = {
     position: 'absolute' as const,
@@ -29,7 +30,7 @@ const ModalRedirect : React.FC<ModalProps> =({setOpen, open, sentence}) => {
     };
 
     const handleGoToDatiFatturazione = () =>{
-        navigate('/');
+        navigate(PathPf.DATI_FATTURAZIONE);
         
     };
 

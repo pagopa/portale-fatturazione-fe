@@ -3,6 +3,7 @@ import { selfcareLogin, getAuthProfilo, manageError, redirect } from '../api/api
 import {useEffect} from 'react';
 import { LoginProps, ManageErrorResponse } from '../types/typesGeneral';
 import { getDatiModuloCommessa } from '../api/apiSelfcare/moduloCommessaSE/api';
+import { PathPf } from '../types/enum';
 
 
 // Blank page utilizzata per l'accesso degli utenti tramite  Selfcare
@@ -104,13 +105,13 @@ const getProfilo = async (res:ParameterGetProfilo)=>{
            
             if(resp.data.profilo === "REC" || resp.data.profilo === "CON"){
                 handleModifyMainState({ruolo:resp.data.ruolo,nonce:storeProfilo.nonce});
-                navigate('/notifiche');
+                navigate(PathPf.LISTA_NOTIFICHE);
             }else{
                 getCommessa(res.data[0].jwt, storeProfilo.nonce);
                 setCheckProfilo(true);
                 // setto il ruolo nello state di riferimento globale
                 handleModifyMainState({ruolo:resp.data.ruolo,nonce:storeProfilo.nonce});
-                navigate("/");
+                navigate(PathPf.DATI_FATTURAZIONE);
             }
         } )
         .catch(() => {

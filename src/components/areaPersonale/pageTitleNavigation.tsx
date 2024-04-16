@@ -6,6 +6,7 @@ import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
 import DnsIcon from '@mui/icons-material/Dns';
 import { useLocation, useNavigate } from 'react-router';
 import BasicModal from '../reusableComponents/modals/modal';
+import { PathPf } from '../../types/enum';
 
 interface PageTitleProps {
     dispatchMainState:any,
@@ -47,7 +48,7 @@ const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState, se
 
     const onIndietroButtonPagoPa = () =>{
         if(mainState.statusPageDatiFatturazione === 'immutable' &&  profilo.auth === 'PAGOPA'){
-            navigate('/pagopalistadatifatturazione');
+            navigate(PathPf.LISTA_DATI_FATTURAZIONE);
         }else{
             setOpen(true);
         }

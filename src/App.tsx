@@ -29,6 +29,21 @@ import RelPage from './page/relUtPa';
 import { reducerMainState } from './reducer/reducerMainState';
 
 
+
+enum PathPf {
+    DATI_FATTURAZIONE = '/datidifatturazione', //
+    LISTA_DATI_FATTURAZIONE = '/listadatifatturazione',//listadatidifatturazione
+    MODULOCOMMESSA = '/modulocommessa', //8
+    LISTA_MODULICOMMESSA = '/listamodulicommessa',
+    LISTA_COMMESSE = '/modulicommessa',  //4
+    PDF_COMMESSA = '/pdfmodulocommessa',//pdf
+    LISTA_NOTIFICHE = '/listanotifiche',
+    LISTA_REL = '/listarel',
+    PDF_REL = '/relpdf'
+}
+
+
+
 const MainContent = () => {
     /**
      * useMsal is hook that returns the PublicClientApplication instance,
@@ -171,26 +186,26 @@ const App = ({ instance }) => {
                                         
                                         <Route path="azure" element={<Azure />} />
                                         
-                                        {!recOrConsIsLogged && <Route path="/" element={<AreaPersonaleUtenteEnte
+                                        {!recOrConsIsLogged && <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte
                                             mainState={mainState}
                                             dispatchMainState={ dispatchMainState} />} />
                                         }
                                    
-                                        <Route path="/4" element={<ModuloCommessaElencoUtPa mainState={mainState}  dispatchMainState={ dispatchMainState} valueSelect={valueAnnoElencoCom}  setValueSelect={setValueAnnoElencoCom}  />} />
+                                        <Route path={PathPf.LISTA_COMMESSE} element={<ModuloCommessaElencoUtPa mainState={mainState}  dispatchMainState={ dispatchMainState} valueSelect={valueAnnoElencoCom}  setValueSelect={setValueAnnoElencoCom}  />} />
                                   
-                                        <Route path="/8" element={<ModuloCommessaInserimentoUtEn30 mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
+                                        <Route path={PathPf.MODULOCOMMESSA} element={<ModuloCommessaInserimentoUtEn30 mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
                                   
-                                        <Route path="/pdf" element={<ModuloCommessaPdf mainState={mainState} />} />
+                                        <Route path={PathPf.PDF_COMMESSA} element={<ModuloCommessaPdf mainState={mainState} />} />
                                   
-                                        <Route path="/pagopalistadatifatturazione" element={<PagoPaListaDatiFatturazione mainState={mainState}  dispatchMainState={ dispatchMainState} setBodyGetLista={setFilterListaFatturazione} bodyGetLista={filterListaFatturazione} infoPageListaDatiFat={infoPageListaDatiFat}  setInfoPageListaDatiFat={setInfoPageListaDatiFat}/>} />
+                                        <Route path={PathPf.LISTA_DATI_FATTURAZIONE} element={<PagoPaListaDatiFatturazione mainState={mainState}  dispatchMainState={ dispatchMainState} setBodyGetLista={setFilterListaFatturazione} bodyGetLista={filterListaFatturazione} infoPageListaDatiFat={infoPageListaDatiFat}  setInfoPageListaDatiFat={setInfoPageListaDatiFat}/>} />
                                     
-                                        <Route path="/pagopalistamodulicommessa" element={<PagoPaListaModuliCommessa mainState={mainState}  dispatchMainState={ dispatchMainState} setBodyGetLista={setFilterListaCommesse} bodyGetLista={filterListaCommesse} infoPageListaCom={infoPageListaCom}  setInfoPageListaCom={setInfoPageListaCom}/>} />
+                                        <Route path={PathPf.LISTA_MODULICOMMESSA} element={<PagoPaListaModuliCommessa mainState={mainState}  dispatchMainState={ dispatchMainState} setBodyGetLista={setFilterListaCommesse} bodyGetLista={filterListaCommesse} infoPageListaCom={infoPageListaCom}  setInfoPageListaCom={setInfoPageListaCom}/>} />
                                    
-                                        <Route path="/notifiche" element={<ReportDettaglio mainState={mainState} />} />
+                                        <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio mainState={mainState} />} />
 
-                                        <Route path="/rel" element={<RelPage  mainState={mainState}  dispatchMainState={dispatchMainState}  bodyRel={bodyRel} setBodyRel={setBodyRel} page={pageGridRel} setPage={setPageGridRel} rowsPerPage={rowsPerPageGridRel} setRowsPerPage={setRowsPerPageGridRel} />} />
+                                        <Route path={PathPf.LISTA_REL} element={<RelPage  mainState={mainState}  dispatchMainState={dispatchMainState}  bodyRel={bodyRel} setBodyRel={setBodyRel} page={pageGridRel} setPage={setPageGridRel} rowsPerPage={rowsPerPageGridRel} setRowsPerPage={setRowsPerPageGridRel} />} />
 
-                                        <Route path="/relpdf" element={<RelPdfPage  mainState={mainState}  dispatchMainState={dispatchMainState}/>} />
+                                        <Route path={PathPf.PDF_REL} element={<RelPdfPage  mainState={mainState}  dispatchMainState={dispatchMainState}/>} />
 
                                         <Route path="*" element={<Navigate to="/error" replace />} />
 

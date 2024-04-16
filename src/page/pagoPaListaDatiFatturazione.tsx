@@ -12,6 +12,7 @@ import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import { downloadDocumentoListaDatiFatturazionePagoPa, listaDatiFatturazionePagopa } from "../api/apiPagoPa/datiDiFatturazionePA/api";
 import useIsTabActive from "../reusableFunctin/tabIsActiv";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
+import { PathPf } from "../types/enum";
 
 const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainState, dispatchMainState, setBodyGetLista, bodyGetLista,infoPageListaDatiFat, setInfoPageListaDatiFat}) =>{
     const getToken = localStorage.getItem('token') || '{}';
@@ -56,7 +57,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
             const newProfilo = profilo; 
             localStorage.setItem('profilo', JSON.stringify(newProfilo));
         }else if(profilo.auth === 'SELFCARE'){
-            navigate('/');
+            navigate(PathPf.DATI_FATTURAZIONE);
         }
 
     },[]);
@@ -162,7 +163,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
             const string = JSON.stringify({nomeEnteClickOn:params.row.ragioneSociale});
             localStorage.setItem('statusApplication', string);
 
-            navigate('/');
+            navigate(PathPf.DATI_FATTURAZIONE);
         }
        
     };
