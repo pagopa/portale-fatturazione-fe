@@ -6,6 +6,7 @@ import Modal from '@mui/material/Modal';
 import { ModalProps } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
 import { useLocation } from 'react-router-dom';
+import { PathPf } from '../../../types/enum';
 const style = {
     position: 'absolute' as const,
     top: '50%',
@@ -35,13 +36,13 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
 
     const handleEsci = () =>{
      
-        if(location.pathname === '/' ){
+        if(location.pathname === PathPf.DATI_FATTURAZIONE ){
             if(profilo.auth === 'PAGOPA'&& mainState.statusPageDatiFatturazione === 'mutable' && mainState.datiFatturazione === false){
                 setOpen(false);
-                navigate('/pagopalistadatifatturazione');
+                navigate(PathPf.LISTA_DATI_FATTURAZIONE);
             }else if(profilo.auth === 'PAGOPA'&& mainState.statusPageDatiFatturazione === 'immutable'){
                 setOpen(false);
-                navigate('/pagopalistadatifatturazione');
+                navigate(PathPf.LISTA_DATI_FATTURAZIONE);
             }else if(profilo.auth === 'PAGOPA' && mainState.statusPageDatiFatturazione === 'mutable'){
                 getDatiFatPagoPa();
                 setOpen(false);
@@ -53,14 +54,14 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
                 setOpen(false);
             }
         }
-        if(location.pathname === '/8'){
+        if(location.pathname === PathPf.MODULOCOMMESSA){
             if(profilo.auth === 'PAGOPA'){
                 handleGetDettaglioModuloCommessaPagoPa();
                 setOpen(false);
                 handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
             }else if(mainState.inserisciModificaCommessa === 'INSERT' && profilo.auth === 'SELFCARE'){
                 setOpen(false);
-                navigate('/4');
+                navigate(PathPf.LISTA_COMMESSE);
 
             }else if(profilo.auth === 'SELFCARE'){
                 handleGetDettaglioModuloCommessa();

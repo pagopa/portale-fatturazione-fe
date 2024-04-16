@@ -5,6 +5,7 @@ import { useMsal } from "@azure/msal-react";
 import {useState, useEffect} from 'react';
 import { useNavigate } from "react-router";
 import { AuthAzureProps, MainState } from "../types/typesGeneral";
+import { PathPf } from "../types/enum";
 
 // Blank Page utilizzata per l'autenticazione Azure e le conseguenti chiamate di accesso pagoPA
 // e salvataggio del profilo nlla local storage
@@ -103,7 +104,7 @@ const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
                     action:'LISTA_DATI_FATTURAZIONE',
                     nonce:storeProfilo.nonce});
 
-                navigate('/pagopalistadatifatturazione');
+                navigate(PathPf.LISTA_DATI_FATTURAZIONE);
               
             } )
             .catch(()=> {

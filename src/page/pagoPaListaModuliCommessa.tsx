@@ -12,6 +12,7 @@ import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import { downloadDocumentoListaModuloCommessaPagoPa, listaModuloCommessaPagopa } from "../api/apiPagoPa/moduloComessaPA/api";
 import useIsTabActive from "../reusableFunctin/tabIsActiv";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
+import { PathPf } from "../types/enum";
 
 const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchMainState, mainState, setInfoPageListaCom, infoPageListaCom, bodyGetLista, setBodyGetLista}) =>{
 
@@ -77,7 +78,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
             const newProfilo = profilo; 
             localStorage.setItem('profilo', JSON.stringify(newProfilo));
         }else if(profilo.auth === 'SELFCARE'){
-            navigate('/');
+            navigate(PathPf.DATI_FATTURAZIONE);
         }
 
     },[]);
@@ -188,7 +189,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
             localStorage.setItem('profilo', stringProfilo);
 
            
-            navigate('/8');
+            navigate(PathPf.MODULOCOMMESSA);
            
         }
        

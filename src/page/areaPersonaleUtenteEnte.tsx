@@ -22,6 +22,7 @@ import useIsTabActive from '../reusableFunctin/tabIsActiv';
 import BasicModal from '../components/reusableComponents/modals/modal';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import BasicAlerts from '../components/reusableComponents/alert';
+import {PathPf} from '../types/enum';
 
 export const DatiFatturazioneContext = createContext<AreaPersonaleContext>({
     datiFatturazione:{
@@ -43,7 +44,7 @@ export const DatiFatturazioneContext = createContext<AreaPersonaleContext>({
 
 const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, dispatchMainState}) => {
 
-    
+    console.log(PathPf.DATI_FATTURAZIONE);
    
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
@@ -219,9 +220,9 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         }
 
         /* se l'utente PagoPA modifa l'url e cerca di accedere al path '/' 
-        senza aver prima selezionato una row della grid lista dati fatturazione viene fatto il redirect automatico a  '/pagopalistadatifatturazione'*/
+        senza aver prima selezionato una row della grid lista dati fatturazione viene fatto il redirect automatico a  PathPf.LISTA_DATI_FATTURAZIONE*/
         if(profilo.auth === 'PAGOPA' && !profilo.idEnte){
-            window.location.href = '/pagopalistadatifatturazione';
+            window.location.href = PathPf.LISTA_DATI_FATTURAZIONE;
         }
     },[]);
 
@@ -245,7 +246,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                     });
                 
                 }).catch(err => {
-                    console.log(err,'error');
                     setOpenModalLoading(false);
                     if(err?.response?.status  === 500){
                         setAlertVisible(true);
@@ -264,9 +264,9 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                             statusPageDatiFatturazione:'immutable',
                         });
                         if(mainState.inserisciModificaCommessa === 'INSERT'){
-                            navigate('/8');
+                            navigate(PathPf.MODULOCOMMESSA);
                         }else{
-                            navigate('/4');
+                            navigate(PathPf.LISTA_COMMESSE);
                         }
                     })
                     .catch(err => {
@@ -341,7 +341,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                                 datiFatturazione:true,
                                 statusPageInserimentoCommessa:'mutable'
                             }}));
-                        navigate('/8');
+                        navigate(PathPf.MODULOCOMMESSA);
                     }else{
                         handleModifyMainState({
                             statusPageDatiFatturazione:'immutable',
@@ -353,7 +353,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                                 statusPageDatiFatturazione:'immutable',
                                 datiFatturazione:true,
                             }}));
-                        navigate('/4');
+                        navigate(PathPf.LISTA_COMMESSE);
                     }  
                 }).catch(err =>{
                     setOpenModalLoading(false);

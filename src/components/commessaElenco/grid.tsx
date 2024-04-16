@@ -5,6 +5,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useNavigate } from 'react-router';
 import { DataGridCommessa } from '../../types/typeModuloCommessaElenco';
 import { MainState, Params } from '../../types/typesGeneral';
+import { PathPf } from '../../types/enum';
 
 interface GridComponentProps {
     data: DataGridCommessa[],
@@ -70,7 +71,7 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
             localStorage.setItem('statusApplication', string);
 
            
-            navigate('/8');
+            navigate(PathPf.MODULOCOMMESSA);
         }
        
     };

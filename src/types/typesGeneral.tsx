@@ -92,8 +92,8 @@ export  type Params = {
 export interface BodyDownloadListaCommesse{
     descrizione: string,
     prodotto: string,
-    anno:string,
-    mese:string 
+    anno:string|number,
+    mese:string| number
 }
 
 export interface BodyListaNotifiche{

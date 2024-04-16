@@ -16,6 +16,7 @@ import SelectStatoPdf from "../components/rel/selectStatoPdf";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { saveAs } from "file-saver";
 import useIsTabActive from "../reusableFunctin/tabIsActiv";
+import { PathPf } from "../types/enum";
 
 const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel, setBodyRel, page, setPage, rowsPerPage, setRowsPerPage}) =>{
 
@@ -175,7 +176,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel
                 handleModifyMainState({relSelected:res.data});
                
                 if(res.data.datiFatturazione === true){
-                    navigate('/relpdf');
+                    navigate(PathPf.PDF_REL);
                 }else{
                     setOpenModalRedirect(true);
                 }
@@ -189,7 +190,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel
     
                 handleModifyMainState({relSelected:res.data});
             
-                navigate('/relpdf');
+                navigate(PathPf.PDF_REL);
               
             }).catch((err)=>{
              
