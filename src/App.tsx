@@ -211,7 +211,7 @@ const App = ({ instance }) => {
 
                                         <Route path="/azureLogin" element={<AzureLogin />} />
 
-                                        <Route path="/error" dispatchMainState={ dispatchMainState}  mainState={mainState} element={<ErrorPage />} />
+                                        <Route path="/error"  element={<ErrorPage dispatchMainState={ dispatchMainState}  mainState={mainState}/>} />
                                     </Routes>
 
 
