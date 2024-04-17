@@ -17,12 +17,14 @@ import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { saveAs } from "file-saver";
 import useIsTabActive from "../reusableFunctin/tabIsActiv";
 import { PathPf } from "../types/enum";
+import { profiliEnti } from "../reusableFunctin/profilo";
 
 const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel, setBodyRel, page, setPage, rowsPerPage, setRowsPerPage}) =>{
 
     const mesiGrid = ["Dicembre", "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
 
     const navigate = useNavigate();
+    const enti = profiliEnti();
 
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
@@ -63,7 +65,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel
 
     const getlistaRel = async (nPage,nRows) => {
         setGetListaRelRunning(true);
-        if(profilo.auth === 'SELFCARE'){
+        if(enti){
             const {idEnti, ...newBody} = bodyRel;
             await  getListaRel(token,mainState.nonce,nPage, nRows, newBody)
                 .then((res)=>{
@@ -171,7 +173,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel
    
     const getRel = async(idRel) => {
 
-        if(profilo.auth === 'SELFCARE'){
+        if(enti){
             getSingleRel(token,mainState.nonce,idRel).then((res) =>{
                 handleModifyMainState({relSelected:res.data});
                
@@ -206,7 +208,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel
 
     const downloadListaRelExel = async() =>{
         setShowLoading(true);
-        if(profilo.auth === 'SELFCARE'){
+        if(enti){
 
             const {idEnti, ...newBody} = bodyRel;
             await downloadListaRel(token,mainState.nonce,newBody).then((res)=>{

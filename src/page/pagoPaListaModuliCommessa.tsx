@@ -13,6 +13,7 @@ import { downloadDocumentoListaModuloCommessaPagoPa, listaModuloCommessaPagopa }
 import useIsTabActive from "../reusableFunctin/tabIsActiv";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../types/enum";
+import { profiliEnti } from "../reusableFunctin/profilo";
 
 const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchMainState, mainState, setInfoPageListaCom, infoPageListaCom, bodyGetLista, setBodyGetLista}) =>{
 
@@ -23,6 +24,8 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
 
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
+
+    const enti = profiliEnti();
     
     const tabActive = useIsTabActive();
     useEffect(()=>{
@@ -77,7 +80,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
             delete profilo.idEnte;
             const newProfilo = profilo; 
             localStorage.setItem('profilo', JSON.stringify(newProfilo));
-        }else if(profilo.auth === 'SELFCARE'){
+        }else if(enti){
             navigate(PathPf.DATI_FATTURAZIONE);
         }
 

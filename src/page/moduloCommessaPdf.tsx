@@ -13,6 +13,7 @@ import { downloadModuloCommessaPdf, getModuloCommessaPdf } from "../api/apiSelfc
 import { downloadModuloCommessaPagoPaPdf, getModuloCommessaPagoPaPdf } from "../api/apiPagoPa/moduloComessaPA/api";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../types/enum";
+import { profiliEnti } from "../reusableFunctin/profilo";
 
 const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
 
@@ -42,6 +43,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
     
 
     const navigate = useNavigate();
+    const enti = profiliEnti();
 
     const [dataPdf, setDataPdf] = useState<DataPdf>({
         cup: "",
@@ -186,7 +188,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
         
         if(profilo.auth === 'PAGOPA'){
             downlodPagoPaPdf();
-        }else if(profilo.auth === 'SELFCARE'){
+        }else if(enti){
             downloadPdf();
         }
     };

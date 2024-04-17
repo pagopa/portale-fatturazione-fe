@@ -12,6 +12,7 @@ import {useState, useEffect} from 'react';
 import YupString from '../../validations/string/index';
 import { createContestazione, modifyContestazioneConsolidatore, modifyContestazioneEnte,modifyContestazioneRecapitista, tipologiaTipoContestazione } from '../../api/apiSelfcare/notificheSE/api';
 import { modifyContestazioneEntePagoPa } from '../../api/apiPagoPa/notificheSE/api';
+import { profiliEnti } from '../../reusableFunctin/profilo';
 
 const style = {
     position: 'absolute' as const,
@@ -42,6 +43,8 @@ CON => consolidatore (selfcare -> tutti gli enti)
    */
 
     const navigate = useNavigate();
+
+    const enti = profiliEnti();
     
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
@@ -215,7 +218,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
 
         }
         
-        if(profilo.profilo === 'PA'){
+        if(enti){
             await modifyContestazioneEnte(token, profilo.nonce, body).then(()=>{
                
                 funGetNotifiche(page,rows);
@@ -333,7 +336,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
      (stato === 8 && rispostaEnte === null ) || 
      (stato === 9 && rispostaEnte === null ); 
 
-    const readOnlyRispostaEnte = profilo.profilo !== 'PA' || (profilo.profilo === 'PA' && valueRispostaEnte !== null && stato !== 7);
+    const readOnlyRispostaEnte = !enti || (enti && valueRispostaEnte !== null && stato !== 7);
   
     /*(stato === 2 && rispostaEnte !== null) ||
        stato === 8 ||
@@ -345,7 +348,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
 
     const supportoSentHidden =  stato === 1 ||
     stato === 2 ||
-    (stato === 3 && profilo.profilo === 'PA') ||
+    (stato === 3 && enti) ||
     (stato === 8 && rispostaSend === null) ||
     (stato === 9  && rispostaSend === null) ||
     (rispostaSend === null && noRisposta === false) ||
@@ -382,7 +385,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
     profilo.auth !== 'PAGOPA';
     */
 
-    const hiddenRispondiAccettaEnte_SEND_REC_CON = profilo.profilo === 'PA' || stato === 2 || stato === 8 || stato === 9 ;
+    const hiddenRispondiAccettaEnte_SEND_REC_CON = enti || stato === 2 || stato === 8 || stato === 9 ;
    
     const hiddenConsRec =   stato === 1 ||
     stato === 2 ||
@@ -397,7 +400,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
     let labelButtonAccettaRecapitista_Send = 'Accetta risposta Recapitista';
   
     // (stato === 4 && profilo.auth === 'PAGOPA')? 'Modifica e accetta risposta RECAPITISTA' : 'Accetta risposta RECAPITISTA'
-    if((stato === 4 && profilo.auth === 'PAGOPA') || (stato === 3  && profilo.profilo === 'PA')){
+    if((stato === 4 && profilo.auth === 'PAGOPA') || (stato === 3  && enti)){
         labelButtonAccettaRecapitista_Send = 'Modifica e accetta risposta Recapitista';
     } 
 
@@ -406,7 +409,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
     if(profilo.auth === 'PAGOPA' && (rispostaSend === null || rispostaSend === '')){
         disableButtonAccettaRecapitista_Send_Ente = true;
     }
-    if(profilo.profilo === 'PA' && (rispostaEnte === null || rispostaEnte === '')){
+    if(enti && (rispostaEnte === null || rispostaEnte === '')){
         disableButtonAccettaRecapitista_Send_Ente = true;
     }
 
@@ -416,7 +419,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
     let labelButtonAccettaConsolidatore_Send = 'Accetta risposta Consolidatore';
   
     
-    if((stato === 4 && profilo.auth === 'PAGOPA') || (stato === 3  && profilo.profilo === 'PA')){
+    if((stato === 4 && profilo.auth === 'PAGOPA') || (stato === 3  && enti)){
         labelButtonAccettaConsolidatore_Send = 'Modifica e accetta risposta Consolidatore';
     } 
 
@@ -425,12 +428,12 @@ CON => consolidatore (selfcare -> tutti gli enti)
     if(profilo.auth === 'PAGOPA' && (rispostaSend === null || rispostaSend === '')){
         disableButtonAccettaConsolidatore_Send_Ente = true;
     }
-    if(profilo.profilo === 'PA' && (rispostaEnte === null || rispostaEnte === '')){
+    if(enti && (rispostaEnte === null || rispostaEnte === '')){
         disableButtonAccettaConsolidatore_Send_Ente = true;
     }
 
 
-    const hiddenButtonAnnullaContestazione = profilo.profilo !== 'PA' ||
+    const hiddenButtonAnnullaContestazione = !enti ||
      stato !== 3 ||
     contestazioneSelected.modifica === false; 
 
@@ -438,11 +441,11 @@ CON => consolidatore (selfcare -> tutti gli enti)
     //profilo.profilo === 'PA' && (noRisposta || noModifica) && !rispostaEnte;
     if( stato === 1 || stato === 2 || stato === 8 || stato === 9){
         hiddenModificaRispondiEnte = false;
-    }else if(profilo.profilo === 'PA' && noModifica){
+    }else if(enti && noModifica){
         hiddenModificaRispondiEnte = true;
-    }else if(profilo.profilo === 'PA' && noRisposta && valueRispostaEnte === null){
+    }else if(enti && noRisposta && valueRispostaEnte === null){
         hiddenModificaRispondiEnte = true;
-    }else if(profilo.profilo === 'PA' && noRisposta && valueRispostaEnte !== null && stato === 7){
+    }else if(enti && noRisposta && valueRispostaEnte !== null && stato === 7){
         hiddenModificaRispondiEnte = true;
     }
     
@@ -456,7 +459,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
     (noRisposta === false && noModifica === false);*/
 
     
-    const hiddenRispondiChiudiSend_Ente =  profilo.profilo === 'PA' && rispostaSend && stato !== 2 && stato !== 8 && stato !== 9; // (stato !== 4 && stato !== 7) || profilo.auth === 'PAGOPA' || profilo.profilo === 'REC' || profilo.profilo === 'CON';
+    const hiddenRispondiChiudiSend_Ente =  enti && rispostaSend && stato !== 2 && stato !== 8 && stato !== 9; // (stato !== 4 && stato !== 7) || profilo.auth === 'PAGOPA' || profilo.profilo === 'REC' || profilo.profilo === 'CON';
 
     const hiddenChiudi_send = profilo.auth === 'PAGOPA' && noChiusura;
 
@@ -499,16 +502,16 @@ CON => consolidatore (selfcare -> tutti gli enti)
     }
 
     let labelModificaRispondiEnte = 'Rispondi';
-    if(stato === 3 && profilo.profilo === 'PA' ){
+    if(stato === 3 && enti ){
         labelModificaRispondiEnte = 'Modifica Nota';
-    }else if(stato === 7 && profilo.profilo === 'PA'){
+    }else if(stato === 7 && enti){
         labelModificaRispondiEnte = 'Modifica Risposta';
     }
 
     let disableRispondiAccettaSend_rispondi = false;
-    if(profilo.profilo === 'PA' && stato === 4 && (rispostaEnte === '' || rispostaEnte === null)){
+    if(enti && stato === 4 && (rispostaEnte === '' || rispostaEnte === null)){
         disableRispondiAccettaSend_rispondi = true;
-    }else if(profilo.profilo === 'PA' && stato === 3 && (contestazioneSelected.contestazione.noteEnte === '' || contestazioneSelected.contestazione.noteEnte === null)){
+    }else if(enti && stato === 3 && (contestazioneSelected.contestazione.noteEnte === '' || contestazioneSelected.contestazione.noteEnte === null)){
         disableRispondiAccettaSend_rispondi = true;
     }
     

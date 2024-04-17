@@ -17,6 +17,7 @@ import generatePDF from 'react-to-pdf';
 import { redirect } from '../api/api';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import { PathPf } from '../types/enum';
+import { profiliEnti } from '../reusableFunctin/profilo';
 
 
 const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) =>{
@@ -31,6 +32,8 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
 
     const state = localStorage.getItem('statusApplication') || '{}';
     const statusApp =  JSON.parse(state);
+
+    const enti = profiliEnti();
 
     const mesiWithZero = ['01','02','03','04','05','06','07','08','09','10','11','12'];
     const rel = mainState.relSelected;
@@ -62,7 +65,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
 
         if( mainState.relSelected !== null){
             setShowDownloading(true);
-            if(profilo.auth === 'SELFCARE'){
+            if(enti){
                 await getRelExel(token, mainState.nonce, mainState.relSelected.idTestata).then((res)=>{
                
                     saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio/ ${ mainState.relSelected?.ragioneSociale} /${mainState.relSelected?.mese}/${mainState.relSelected?.anno}.xlsx` );
@@ -89,7 +92,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
     const downloadPdfRel = async() =>{
         setShowDownloading(true);
         if( mainState.relSelected !== null){
-            if(profilo.auth === 'SELFCARE'){
+            if(enti){
                 await getRelPdf(token, mainState.nonce, mainState.relSelected.idTestata).then((res: ResponseDownloadPdf)=>{
                     toDoOnDownloadPdf(res);
                 }).catch((err)=>{
@@ -104,7 +107,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
 
         if( mainState.relSelected !== null){
             setShowDownloading(true);
-            if(profilo.auth === 'SELFCARE'){
+            if(enti){
                 await getRelPdfFirmato(token, mainState.nonce, mainState.relSelected.idTestata).then((res)=>{
                     saveAs("data:text/plain;base64," + res.data.documento,`REL firmata / ${ mainState.relSelected?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${mainState.relSelected?.anno}.pdf` );
                     setShowDownloading(false);
@@ -143,7 +146,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
 
             const {idEnte, ...bodySelf} = bodyPagopa;
 
-            if(profilo.auth === 'SELFCARE'){
+            if(enti){
                 await getLogRelDocumentoFirmato(token, mainState.nonce,bodySelf).then((res) =>{
                     setLastUpdateDocFirmato(res.data[0].dataEvento);
                
@@ -245,7 +248,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
     }
 
 
-    const classContainerButtons = profilo.auth === 'SELFCARE' ? 'd-flex justify-content-between m-5': 'd-flex justify-content-end m-5';
+    const classContainerButtons = enti ? 'd-flex justify-content-between m-5': 'd-flex justify-content-end m-5';
 
     
 
@@ -316,7 +319,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
            
            
             <div className={classContainerButtons}>
-                {profilo.auth === 'SELFCARE' &&
+                {enti &&
                  <>
                      <div className="">
                          <Button sx={{width:'274px'}} onClick={() => downloadPdfRel()}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>

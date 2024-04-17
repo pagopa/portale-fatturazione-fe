@@ -22,6 +22,7 @@ import { getDatiFatturazionePagoPa } from '../api/apiPagoPa/datiDiFatturazionePA
 import useIsTabActive from '../reusableFunctin/tabIsActiv';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import { PathPf } from '../types/enum';
+import { profiliEnti } from '../reusableFunctin/profilo';
 
 export const InserimentoModuloCommessaContext = createContext<InsModuloCommessaContext>({
     datiCommessa: {
@@ -70,6 +71,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     },[tabActive, mainState.nonce]);
 
     const navigate = useNavigate();
+    const enti = profiliEnti();
 
     useEffect(()=>{
         handleModifyMainState(statusApp);
@@ -226,7 +228,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
         if(statusApp.userClickOn === 'GRID' && mainState.nonce !== ''){
 
             // SELFCARE
-            if(profilo.auth === 'SELFCARE'){
+            if(enti){
                 
                 handleGetDettaglioModuloCommessa();
                 getDatiFat();
@@ -251,7 +253,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
             window.location.href = PathPf.LISTA_MODULICOMMESSA;
         }
         /* se l'utente selcare  modifica l'url andando ad inserire '/8' viene eseguito il redirect a datifatturazione*/
-        if(profilo.auth === 'SELFCARE' && !statusApp.mese && !statusApp.anno){
+        if(enti && !statusApp.mese && !statusApp.anno){
             window.location.href = PathPf.DATI_FATTURAZIONE;
         }
 
@@ -424,7 +426,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                                 navigate(PathPf.LISTA_COMMESSE);
                             }else if(mainState.statusPageInserimentoCommessa === 'immutable' && profilo.auth === 'PAGOPA'){
                                 navigate(PathPf.LISTA_MODULICOMMESSA);
-                            }else if(mainState.inserisciModificaCommessa === 'INSERT' && profilo.auth === 'SELFCARE'){
+                            }else if(mainState.inserisciModificaCommessa === 'INSERT' && enti){
                                 setOpen(true);
                             }else{
                                 setOpen(true);

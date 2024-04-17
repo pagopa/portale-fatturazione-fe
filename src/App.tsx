@@ -82,8 +82,12 @@ const MainContent = () => {
 
 const App = ({ instance }) => {
     // eslint-disable-next-line no-undef
+
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
+
+    const profiloValue = profilo.profilo;
+    
 
     const [checkProfilo,setCheckProfilo] = useState(false);
     // set status page abilita e disabilita le modifiche al componente dati fatturazione
