@@ -893,7 +893,7 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                                         onClick={()=>{
                                             if(profilo.auth === 'PAGOPA'){
                                                 modifyContestazioneFunPagoPa('accettaConsolidatore_SEND');
-                                            }if(profilo.profilo === 'CON'){
+                                            }if(enti){
                                                 modifyContestazioneFun('accettaConsolidatore_ENTE');
                                             }
                                         }}
