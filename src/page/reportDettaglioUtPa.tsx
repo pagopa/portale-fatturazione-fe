@@ -401,13 +401,13 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     };
 
     const [valueRispostaEnte, setValueRispostaEnte] = useState('');
-    const [constestazioneStatic, setContestazioneStatic] = useState();
+    const [contestazioneStatic, setContestazioneStatic] = useState();
     
-                
+    console.log(contestazioneStatic);    
     const getContestazioneModal = async(idNotifica:string) =>{
         setShowLoadingGrid(true);
     
-        if( enti){
+        if(enti){
             await getContestazione(token, mainState.nonce , idNotifica )
                 .then((res)=>{
                     //se i tempi di creazione di una contestazione sono scaduti show pop up info
@@ -416,9 +416,11 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                         setOpenModalInfo(true);
                     }else{
                     // atrimenti show pop up creazione contestazione
+                        console.log(res.data);
                         setShowLoadingGrid(false);
                         setOpen(true); 
                         setContestazioneSelected(res.data);
+                        setContestazioneStatic(res.data);
                         setValueRispostaEnte(res.data.contestazione.rispostaEnte);
                      
                     }           
@@ -573,7 +575,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     },[]);
 
     const backgroundColorButtonScadenzario = (profilo.auth === 'PAGOPA' || enti) ? "#0062C3" : 'red';
-    console.log(backgroundColorButtonScadenzario, enti);
+
     return (
         <div className="mx-5">
             {/*title container start */}
@@ -872,7 +874,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 page={realPageNumber}
                 rows={rowsPerPage}
                 valueRispostaEnte={valueRispostaEnte}
-                constestazioneStatic={constestazioneStatic}
+                contestazioneStatic={contestazioneStatic}
             ></ModalContestazione>
 
             <ModalRedirect

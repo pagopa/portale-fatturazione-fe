@@ -41,7 +41,7 @@ export interface ModalContestazioneProps{
     page:number,
     rows:number,
     valueRispostaEnte:string,
-    constestazioneStatic:any
+    contestazioneStatic:any
 }
 
 export interface FlagContestazione{
