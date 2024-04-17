@@ -11,6 +11,7 @@ import ModalRedirect from '../components/commessaInserimento/madalRedirect';
 import { getDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
 import useIsTabActive from '../reusableFunctin/tabIsActiv';
 import { PathPf } from '../types/enum';
+import { profiliEnti } from '../reusableFunctin/profilo';
 
 const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatchMainState,mainState, valueSelect, setValueSelect}) => {
 
@@ -39,6 +40,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
     },[tabActive, mainState.nonce]);
    
     const navigate = useNavigate();
+    const enti = profiliEnti();
 
     const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre",'Gennaio'];
 
@@ -305,7 +307,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
                     </Box>
                 </div>
 
-                {(mainState.primoInserimetoCommessa && profilo.auth === 'SELFCARE') &&
+                {(mainState.primoInserimetoCommessa && enti) &&
                 <Button variant="contained" onClick={()=>{
                     handleListItemClickModuloCommessa();
                 }}>Inserisci modulo commessa</Button>

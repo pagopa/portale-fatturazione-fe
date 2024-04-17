@@ -7,6 +7,7 @@ import { ModalProps } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
 import { useLocation } from 'react-router-dom';
 import { PathPf } from '../../../types/enum';
+import { profiliEnti } from '../../../reusableFunctin/profilo';
 const style = {
     position: 'absolute' as const,
     top: '50%',
@@ -24,6 +25,7 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
     const profilo =  JSON.parse(getProfilo);
     const navigate = useNavigate();
     const location = useLocation();
+    const enti = profiliEnti();
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -47,7 +49,7 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
                 getDatiFatPagoPa();
                 setOpen(false);
                 handleModifyMainState({statusPageDatiFatturazione:'immutable'});
-            }else if(profilo.auth === 'SELFCARE'){
+            }else if(enti){
             
                 getDatiFat();
                 handleModifyMainState({statusPageDatiFatturazione:'immutable'});
@@ -59,11 +61,11 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
                 handleGetDettaglioModuloCommessaPagoPa();
                 setOpen(false);
                 handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
-            }else if(mainState.inserisciModificaCommessa === 'INSERT' && profilo.auth === 'SELFCARE'){
+            }else if(mainState.inserisciModificaCommessa === 'INSERT' && enti){
                 setOpen(false);
                 navigate(PathPf.LISTA_COMMESSE);
 
-            }else if(profilo.auth === 'SELFCARE'){
+            }else if(enti){
                 handleGetDettaglioModuloCommessa();
                 handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
                 setOpen(false);

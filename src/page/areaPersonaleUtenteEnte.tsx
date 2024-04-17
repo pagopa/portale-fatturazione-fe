@@ -23,6 +23,7 @@ import BasicModal from '../components/reusableComponents/modals/modal';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import BasicAlerts from '../components/reusableComponents/alert';
 import {PathPf} from '../types/enum';
+import { profiliEnti } from '../reusableFunctin/profilo';
 
 export const DatiFatturazioneContext = createContext<AreaPersonaleContext>({
     datiFatturazione:{
@@ -60,6 +61,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
     },[tabActive, mainState.nonce]);
 
     const navigate = useNavigate();
+    const enti = profiliEnti();
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -203,7 +205,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
     // se il nonce è presente viene chiamata la get dati fatturazione
     useEffect(()=>{
         if(mainState.nonce !== ''){
-            if(profilo.auth === 'SELFCARE'){
+            if(enti){
                 // se l'utente NON è pagopa
                 getDatiFat();
             }else if(profilo.auth === 'PAGOPA'){

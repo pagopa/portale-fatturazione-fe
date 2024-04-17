@@ -13,6 +13,7 @@ import { downloadDocumentoListaDatiFatturazionePagoPa, listaDatiFatturazionePago
 import useIsTabActive from "../reusableFunctin/tabIsActiv";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../types/enum";
+import { profiliEnti } from "../reusableFunctin/profilo";
 
 const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainState, dispatchMainState, setBodyGetLista, bodyGetLista,infoPageListaDatiFat, setInfoPageListaDatiFat}) =>{
     const getToken = localStorage.getItem('token') || '{}';
@@ -37,6 +38,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
     };
 
     const navigate = useNavigate();
+    const enti = profiliEnti();
 
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [profili, setProfili] = useState(['']);
@@ -56,7 +58,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
             delete profilo.idEnte;
             const newProfilo = profilo; 
             localStorage.setItem('profilo', JSON.stringify(newProfilo));
-        }else if(profilo.auth === 'SELFCARE'){
+        }else if(enti){
             navigate(PathPf.DATI_FATTURAZIONE);
         }
 

@@ -21,10 +21,12 @@ import GridCustom from "../components/reusableComponents/gridCustom";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 import useIsTabActive from "../reusableFunctin/tabIsActiv";
 import { saveAs } from "file-saver";
+import { profiliEnti } from "../reusableFunctin/profilo";
 
 const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
     const navigate = useNavigate();
+    const enti = profiliEnti();
     
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
@@ -195,7 +197,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
         const {idEnti, ...body} = newBody;
 
-        if(profilo.profilo === 'PA'){
+        if(enti){
            
             await listaNotifiche(token,mainState.nonce,1,10, body)
                 .then((res)=>{
@@ -257,7 +259,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         const {idEnti, ...newBody} = bodyGetLista;
         // disable button filtra e annulla filtri nell'attesa dei dati
         setGetNotificheWorking(true);
-        if(profilo.profilo === 'PA'){
+        if(enti){
             await listaNotifiche(token,mainState.nonce,nPage, nRow, newBody)
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
@@ -405,7 +407,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const getContestazioneModal = async(idNotifica:string) =>{
         setShowLoadingGrid(true);
     
-        if( profilo.profilo === 'PA'){
+        if( enti){
             await getContestazione(token, mainState.nonce , idNotifica )
                 .then((res)=>{
                     //se i tempi di creazione di una contestazione sono scaduti show pop up info
@@ -482,7 +484,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
     const downloadNotificheOnDownloadButton = async () =>{
         setShowLoading(true);
-        if(profilo.profilo === 'PA'){
+        if(enti){
             await downloadNotifche(token, mainState.nonce,bodyGetLista )
                 .then((res)=>{
                     saveAs("data:text/plain;base64," + res.data.documento,`Notifiche /${notificheListWithOnere[0].ragioneSociale}/${mesiWithZero[bodyGetLista.mese-1]} /${bodyGetLista.anno}.xlsx` );
@@ -570,8 +572,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
    
     },[]);
 
-    const backgroundColorButtonScadenzario = (profilo.auth === 'PAGOPA' || profilo.profilo === 'PA') ? "#0062C3" : 'red';
-
+    const backgroundColorButtonScadenzario = (profilo.auth === 'PAGOPA' || enti) ? "#0062C3" : 'red';
+    console.log(backgroundColorButtonScadenzario, enti);
     return (
         <div className="mx-5">
             {/*title container start */}
