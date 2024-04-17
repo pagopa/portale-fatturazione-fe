@@ -25,22 +25,7 @@ const style = {
     p: 4,
 };
 
-const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open, mainState, contestazioneSelected, setContestazioneSelected, funGetNotifiche, funGetNotifichePagoPa, openModalLoading, page, rows, valueRispostaEnte, constestazioneStatic}) => {
-/*
-    PA => ente (selfcare)
- SUP=> supporto (ad)
- FIN=> finance (ad)
- RCP => recapitista (selfcare -> per cap)
-CON => consolidatore (selfcare -> tutti gli enti)
-
-    const [entita, setEnt] = useState('');
-   
-    useEffect(()=>{
-
-        setEntita('PA');
-    },[]);
- 
-   */
+const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open, mainState, contestazioneSelected, setContestazioneSelected, funGetNotifiche, funGetNotifichePagoPa, openModalLoading, page, rows, valueRispostaEnte, contestazioneStatic}) => {
 
     const navigate = useNavigate();
 
@@ -314,6 +299,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
     const rispostaSend = contestazioneSelected?.contestazione?.noteSend;
     const noteRecapitista = contestazioneSelected.contestazione.noteRecapitista;
     const noteConsolidatore = contestazioneSelected.contestazione.noteConsolidatore;
+    const noteEnte = contestazioneSelected.contestazione.noteEnte;
 
     const noActionEnte = !contestazioneSelected.modifica && !contestazioneSelected.chiusura && !contestazioneSelected.risposta;
 
@@ -353,7 +339,9 @@ CON => consolidatore (selfcare -> tutti gli enti)
     (stato === 9  && rispostaSend === null) ||
     (rispostaSend === null && noRisposta === false) ||
     (profilo.profilo === 'REC' && (rispostaSend === null || rispostaSend === '')) || // add 04/04
-    (profilo.profilo === 'CON' && (rispostaSend === null || rispostaSend === '')) ;  // add 05/04
+    (profilo.profilo === 'CON' && (rispostaSend === null || rispostaSend === '')) ;  // add 05/
+
+    const showSupportoSend = profilo.auth === 'PAGOPA' || (rispostaSend !== null && rispostaSend !== '');
     // stato === 3 ||
     //(stato === 5 && rispostaSend === null)||
     //(stato === 6 && rispostaSend === null)||
@@ -364,7 +352,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
      stato === 9||
      stato === 8  ||
       stato === 2 ||
-      (stato !== 4 && constestazioneStatic?.contestazione.noteSend !== null) ||
+      (stato !== 4 && contestazioneStatic?.contestazione.noteSend !== null) ||
       noRisposta === false;
 
     const hiddenRispondi_send =  stato === 1 ||
@@ -374,7 +362,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
     profilo.auth !== 'PAGOPA'||
     noRisposta === false ||
     noChiusura === false ||
-    (stato !== 4 && constestazioneStatic?.contestazione.noteSend !== null);    //////
+    (stato !== 4 && contestazioneStatic?.contestazione.noteSend !== null);    //////
     // profilo.auth === 'PAGOPA' && noRisposta &&
     /*
     const hiddenRispondiAccettaEnte_SEND_REC_CON = stato === 1 ||
@@ -396,7 +384,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
     profilo.profilo === 'REC' ||
     profilo.profilo === 'CON'; 
 
-    const showButtonAccettaRecapitista_Send = profilo.auth === 'PAGOPA' && noteRecapitista && noChiusura;
+    const showButtonAccettaRecapitista_Send = (profilo.auth === 'PAGOPA' || enti) && noteRecapitista && noChiusura;
     let labelButtonAccettaRecapitista_Send = 'Accetta risposta Recapitista';
   
     // (stato === 4 && profilo.auth === 'PAGOPA')? 'Modifica e accetta risposta RECAPITISTA' : 'Accetta risposta RECAPITISTA'
@@ -409,13 +397,16 @@ CON => consolidatore (selfcare -> tutti gli enti)
     if(profilo.auth === 'PAGOPA' && (rispostaSend === null || rispostaSend === '')){
         disableButtonAccettaRecapitista_Send_Ente = true;
     }
-    if(enti && (rispostaEnte === null || rispostaEnte === '')){
+    if(enti  && (rispostaEnte === null || rispostaEnte === '')){
         disableButtonAccettaRecapitista_Send_Ente = true;
     }
+    /* if(enti && (rispostaEnte === null || rispostaEnte === '')){
+        disableButtonAccettaRecapitista_Send_Ente = true;
+    }*/
 
     
     // logica button accetta risposa consolidatore_SEND_ENTE
-    const showButtonAccettaConsolidatore_Send = profilo.auth === 'PAGOPA'  && noteConsolidatore && noChiusura;
+    const showButtonAccettaConsolidatore_Send = (profilo.auth === 'PAGOPA' || enti)  && noteConsolidatore && noChiusura;
     let labelButtonAccettaConsolidatore_Send = 'Accetta risposta Consolidatore';
   
     
@@ -471,21 +462,21 @@ CON => consolidatore (selfcare -> tutti gli enti)
     let stringButtonAccettaEnte_send = 'Rispondi e accetta Ente';
     if(profilo.profilo === 'REC' && stato === 5 ){
         stringButtonAccettaEnte_send = 'Modifica e accetta Ente';
-    }else if(profilo.profilo === 'REC' && stato !== 5  && constestazioneStatic?.contestazione.noteRecapitista === null ){
+    }else if(profilo.profilo === 'REC' && stato !== 5  && contestazioneStatic?.contestazione.noteRecapitista === null ){
         stringButtonAccettaEnte_send = 'Rispondi e accetta Ente';
-    }else if(profilo.profilo === 'REC' && stato !== 5  && constestazioneStatic?.contestazione.noteRecapitista !== null ){
+    }else if(profilo.profilo === 'REC' && stato !== 5  && contestazioneStatic?.contestazione.noteRecapitista !== null ){
         stringButtonAccettaEnte_send = 'Accetta Ente';
     }else if(profilo.profilo === 'CON' && stato === 6 ){
         stringButtonAccettaEnte_send = 'Modifica e accetta Ente';
-    }else if(profilo.profilo === 'CON' && stato !== 6 && constestazioneStatic?.contestazione.noteConsolidatore === null){
+    }else if(profilo.profilo === 'CON' && stato !== 6 && contestazioneStatic?.contestazione.noteConsolidatore === null){
         stringButtonAccettaEnte_send = 'Rispondi e accetta Ente';
-    }else if(profilo.profilo === 'CON' && stato !== 6  && constestazioneStatic?.contestazione.noteConsolidatore !== null ){
+    }else if(profilo.profilo === 'CON' && stato !== 6  && contestazioneStatic?.contestazione.noteConsolidatore !== null ){
         stringButtonAccettaEnte_send = 'Accetta Ente';
     }else if(stato === 4  && profilo.auth === 'PAGOPA'){
         stringButtonAccettaEnte_send = 'Modifica e accetta Ente';
-    }else if (profilo.auth === 'PAGOPA' && stato !== 4 && constestazioneStatic?.contestazione.noteSend === null){
+    }else if (profilo.auth === 'PAGOPA' && stato !== 4 && contestazioneStatic?.contestazione.noteSend === null){
         stringButtonAccettaEnte_send = 'Rispondi e accetta Ente';
-    }else if (profilo.auth === 'PAGOPA' && stato !== 4 && constestazioneStatic?.contestazione.noteSend !== null){
+    }else if (profilo.auth === 'PAGOPA' && stato !== 4 && contestazioneStatic?.contestazione.noteSend !== null){
         stringButtonAccettaEnte_send = 'Accetta contestazione Ente';
     }
     /*else if(noRisposta === false){     // secondo me questo if va tolto
@@ -507,13 +498,18 @@ CON => consolidatore (selfcare -> tutti gli enti)
     }else if(stato === 7 && enti){
         labelModificaRispondiEnte = 'Modifica Risposta';
     }
-
+    console.log({contestazioneStatic});
     let disableRispondiAccettaSend_rispondi = false;
     if(enti && stato === 4 && (rispostaEnte === '' || rispostaEnte === null)){
         disableRispondiAccettaSend_rispondi = true;
-    }else if(enti && stato === 3 && (contestazioneSelected.contestazione.noteEnte === '' || contestazioneSelected.contestazione.noteEnte === null)){
+    }else if(enti && stato === 3 && (noteEnte === '' || noteEnte === null)){
+        disableRispondiAccettaSend_rispondi = true;
+    }else if((noteRecapitista !== null || noteConsolidatore !== null || rispostaSend !== null) && (rispostaEnte === null || rispostaEnte === '') ){
         disableRispondiAccettaSend_rispondi = true;
     }
+    //else if(contestazioneStatic){
+    //  disableRispondiAccettaSend_rispondi = true;
+    // }
     
     let labelChiusdi_send = 'Rifiuta Contestazione';
     if(stato === 3 && noRisposta === true){
@@ -541,7 +537,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
     (stato === 9 && noteRecapitista === null); */
     // RECAPITISTA
     let showButton_Recapitista = false;
-    if(profilo.profilo === 'REC' && stato !== 5  && constestazioneStatic?.contestazione.noteRecapitista !== null){
+    if(profilo.profilo === 'REC' && stato !== 5  && contestazioneStatic?.contestazione.noteRecapitista !== null){
         showButton_Recapitista = false;
     }else if(profilo.profilo === 'REC' && noRisposta){
         showButton_Recapitista = true;
@@ -558,7 +554,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
    
     // CONSOLIDATORE
     let showButton_Consolidatore = false;
-    if(profilo.profilo === 'CON' && stato !== 6  && constestazioneStatic?.contestazione.noteConsolidatore !== null){
+    if(profilo.profilo === 'CON' && stato !== 6  && contestazioneStatic?.contestazione.noteConsolidatore !== null){
         showButton_Recapitista = false;
     }else if(profilo.profilo === 'CON' && noRisposta){
         showButton_Consolidatore = true;
@@ -697,7 +693,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                 </div>
                             }
                         </div>
-                        {supportoSentHidden ? null :
+                        {showSupportoSend &&
                             <div className='row mt-5'>
                             
                                 <Typography id="modal-modal-title" variant="overline">
@@ -737,7 +733,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         id="outlined-basic"
                                         label='Risposta'
                                         placeholder='Risposta'
-                                        InputProps={{ readOnly: profilo.profilo !== 'REC' || !noRisposta || (stato !== 5 && constestazioneStatic?.contestazione.noteRecapitista !== null) }}
+                                        InputProps={{ readOnly: profilo.profilo !== 'REC' || !noRisposta || (stato !== 5 && contestazioneStatic?.contestazione.noteRecapitista !== null) }}
                                         value={noteRecapitista}
                                         fullWidth
                                         multiline
@@ -766,7 +762,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         id="outlined-basic"
                                         label='Risposta'
                                         placeholder='Risposta'
-                                        InputProps={{ readOnly: profilo.profilo !== 'CON' || !noRisposta || (stato !== 6 && constestazioneStatic?.contestazione.noteConsolidatore !== null)}}
+                                        InputProps={{ readOnly: profilo.profilo !== 'CON' || !noRisposta || (stato !== 6 && contestazioneStatic?.contestazione.noteConsolidatore !== null)}}
                                         value={noteConsolidatore || ''}
                                         fullWidth
                                         multiline
@@ -914,7 +910,7 @@ CON => consolidatore (selfcare -> tutti gli enti)
                                         onClick={()=>{
                                             if(profilo.auth === 'PAGOPA'){
                                                 modifyContestazioneFunPagoPa('accettaRecapitista_SEND');
-                                            }if(profilo.profilo === 'REC'){
+                                            }if(enti){
                                                 modifyContestazioneFun('accettaRecapitista_ENTE');
                                             }
                                         }}
