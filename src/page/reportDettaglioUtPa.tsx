@@ -123,10 +123,54 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const notificheListWithOnere = notificheList.map((notifica) =>{
         
         let newOnere = '';
-        if(notifica.onere === 'SEND_PA'){
-            newOnere = 'ENTE';
-        }else if( notifica.onere === 'PA_SEND' ){
+        if( notifica.onere === 'PA_SEND' ){
             newOnere = 'SEND';
+        }else if( notifica.onere === 'PA_REC' ){
+            newOnere = 'RECAPITISTA';
+        }else if( notifica.onere === 'PA_CON' ){
+            newOnere = 'CONSOLIDATORE';
+        }else if( notifica.onere === 'GSP_SEND' ){
+            newOnere = 'SEND';
+        }else if( notifica.onere === 'GSP_REC' ){
+            newOnere = 'RECAPITISTA';
+        }else if( notifica.onere === 'GSP_CON' ){
+            newOnere = 'CONSOLIDATORE';
+        }else if( notifica.onere === 'SCP_SEND' ){
+            newOnere = 'SEND';
+        }else if( notifica.onere === 'SCP_REC' ){
+            newOnere = 'RECAPITISTA';
+        }else if( notifica.onere === 'SCP_CON' ){
+            newOnere = 'CONSOLIDATORE';
+        }else if( notifica.onere === 'PSP_SEND' ){
+            newOnere = 'SEND';
+        }else if( notifica.onere === 'PSP_REC' ){
+            newOnere = 'RECAPITISTA';
+        }else if( notifica.onere === 'PSP_CON' ){
+            newOnere = 'CONSOLIDATORE';
+        }else if( notifica.onere === 'AS_SEND' ){
+            newOnere = 'SEND';
+        }else if( notifica.onere === 'AS_REC' ){
+            newOnere = 'RECAPITISTA';
+        }else if( notifica.onere === 'AS_CON' ){
+            newOnere = 'CONSOLIDATORE';
+        }else if( notifica.onere === 'SA_SEND' ){
+            newOnere = 'SEND';
+        }else if( notifica.onere === 'SA_REC' ){
+            newOnere = 'RECAPITISTA';
+        }else if( notifica.onere === 'SA_CON' ){
+            newOnere = 'CONSOLIDATORE';
+        }else if(notifica.onere === 'SEND_PA'){
+            newOnere = 'ENTE';
+        }else if(notifica.onere === 'SEND_GSP'){
+            newOnere = 'ENTE';
+        }else if(notifica.onere === 'SEND_SCP'){
+            newOnere = 'ENTE';
+        }else if(notifica.onere === 'SEND_PSP'){
+            newOnere = 'ENTE';
+        }else if(notifica.onere === 'SEND_AS'){
+            newOnere = 'ENTE';
+        }else if(notifica.onere === 'SEND_SA'){
+            newOnere = 'ENTE';
         }else if(notifica.onere === 'SEND_SEND'){
             newOnere = 'SEND';
         }else if(notifica.onere === 'SEND_REC'){
