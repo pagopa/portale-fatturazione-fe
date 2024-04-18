@@ -1,10 +1,10 @@
-import { pagopaLogin, getAuthProfilo, manageError, redirect } from "../api/api";
+import { pagopaLogin, getAuthProfilo, redirect } from "../api/api";
 import {InteractionRequiredAuthError,InteractionStatus,
 } from "@azure/msal-browser";
 import { useMsal } from "@azure/msal-react";
 import {useState, useEffect} from 'react';
 import { useNavigate } from "react-router";
-import { AuthAzureProps, MainState } from "../types/typesGeneral";
+import { AuthAzureProps} from "../types/typesGeneral";
 import { PathPf } from "../types/enum";
 
 // Blank Page utilizzata per l'autenticazione Azure e le conseguenti chiamate di accesso pagoPA
@@ -60,6 +60,7 @@ const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
     const postPagoPa = () =>{
         pagopaLogin(tokens).then((res)=>{
             if(res.status === 200){
+                localStorage.removeItem("statusApplication");
                 // store del token nella local storage per tutte le successive chiamate START
                 const storeJwt = {token:res.data.jwt};
                 localStorage.setItem('token', JSON.stringify(storeJwt));
