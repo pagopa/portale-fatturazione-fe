@@ -1,7 +1,7 @@
 import { Typography } from "@mui/material";
 import { Box, FormControl, InputLabel,Select, MenuItem, TextField, Button} from '@mui/material';
 import { getTipologiaProfilo, manageError, redirect} from '../api/api';
-import { ListaDatiFatturazioneProps, ResponseDownloadListaFatturazione } from "../types/typeListaDatiFatturazione";
+import { BodyGetListaDatiFatturazione, GridElementListaFatturazione, ListaDatiFatturazioneProps, ResponseDownloadListaFatturazione } from "../types/typeListaDatiFatturazione";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -44,9 +44,18 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
     const [profili, setProfili] = useState(['']);
     
 
-    const [gridData, setGridData] = useState([]);
+    const [gridData, setGridData] = useState<GridElementListaFatturazione[]>([]);
 
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
+
+    const [filtersDownload, setFiltersDownload] = useState<BodyGetListaDatiFatturazione>({descrizione:'',prodotto:'',profilo:''});
+
+    const [getListaLoading, setGetListaLoading] = useState(false);
+
+    // al primo reload se torno inditro da dettaglio dati tturazione ho gli stessi filtri per il download
+    useEffect(()=>{
+        setFiltersDownload(bodyGetLista);
+    },[]);
 
     useEffect(()=>{
 
@@ -95,14 +104,16 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
     };
 
     const getListaDatifatturazione = async(body:BodyListaDatiFatturazione) =>{
-       
+        setGetListaLoading(true);
         await listaDatiFatturazionePagopa(body ,token,mainState.nonce)
             .then((res)=>{
               
                 setGridData(res.data);
+                setGetListaLoading(false);
             })
             .catch(((err)=>{
                 setGridData([]);
+                setGetListaLoading(false);
                 manageError(err,navigate);
             })); 
     };
@@ -117,16 +128,21 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
        
         }
     }, [mainState.nonce]);
+    
 
     const onDownloadButton = async() =>{
         setShowLoading(true);
-        await downloadDocumentoListaDatiFatturazionePagoPa(token,mainState.nonce, bodyGetLista).then((res:ResponseDownloadListaFatturazione) => {
+        await downloadDocumentoListaDatiFatturazionePagoPa(token,mainState.nonce, filtersDownload).then((res:ResponseDownloadListaFatturazione) => {
           
+            let fileName = `Lista dati di fatturazione.xlsx`;
+            if(gridData.length === 1){
+                fileName = `Lista dati di fatturazione / ${gridData[0]?.ragioneSociale}.xlsx`;
+            }
             //const url = window.URL.createObjectURL(res.data.documento);
             const link = document.createElement('a');
             link.href = "data:text/plain;base64," + res.data.documento;
          
-            link.setAttribute('download', 'Dati di fatturazione.xlsx'); //or any other extension
+            link.setAttribute('download', fileName); //or any other extension
             document.body.appendChild(link);
           
             link.click();
@@ -300,6 +316,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                             onClick={()=>{
                                 getListaDatifatturazione(bodyGetLista);
                                 setInfoPageListaDatiFat({ page: 0, pageSize: 100 });
+                                setFiltersDownload(bodyGetLista);
                             } } 
                             sx={{ marginTop: 'auto', marginBottom: 'auto'}}
                             variant="contained"> Filtra
@@ -307,9 +324,10 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                         {statusAnnulla === 'hidden'? null :
                             <Button
                                 onClick={()=>{
-                                    setBodyGetLista(({descrizione:'',prodotto:'',profilo:''}));
+                                    setBodyGetLista({descrizione:'',prodotto:'',profilo:''});
                                     setInfoPageListaDatiFat({ page: 0, pageSize: 100 });
                                     getListaDatifatturazione({descrizione:'',prodotto:'',profilo:''});
+                                    setFiltersDownload({descrizione:'',prodotto:'',profilo:''});
                                 } }
                                 sx={{marginLeft:'24px'}} >
                         Annulla filtri
@@ -321,12 +339,17 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
             </div>
             {/* grid */}
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
-               
-                <Button onClick={() =>onDownloadButton()}>
+                {
+                    gridData.length > 0 &&
+                <Button onClick={() =>onDownloadButton()}
+                    disabled={getListaLoading}
+                >
                 Download Risultati
                     <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
                 </Button>
+                }
             </div>
+           
             <div className="mt-1 mb-5" style={{ width: '100%'}}>
                 <DataGrid sx={{
                     height:'400px',

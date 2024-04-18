@@ -1,4 +1,4 @@
-import { ListaModuliCommessaProps } from "../types/typeListaModuliCommessa";
+import { BodyDownloadModuliCommessa, GridElementListaCommesse, ListaModuliCommessaProps } from "../types/typeListaModuliCommessa";
 import { Params } from "../types/typesGeneral";
 import { Typography } from "@mui/material";
 import { Box, FormControl, InputLabel,Select, MenuItem, TextField, Button} from '@mui/material';
@@ -65,10 +65,17 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
         {7:'Luglio'},{8:'Agosto'},{9:'Settembre'},{10:'Ottobre'},{11:'Novembre'},{12:'Dicembre'}];
 
     const [prodotti, setProdotti] = useState([{nome:''}]);
-    const [gridData, setGridData] = useState([]);
+    const [gridData, setGridData] = useState<GridElementListaCommesse[]>([]);
+    console.log(gridData);
     
 
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
+
+    const [bodyDownload, setBodyDownload] = useState<BodyDownloadModuliCommessa>({descrizione:'',prodotto:'', anno:currentYear, mese:currString});
+
+    useEffect(()=>{
+        setBodyDownload(bodyGetLista);
+    },[]);
 
     useEffect(()=>{
 
@@ -139,13 +146,17 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
 
     const downloadExelListaCommessa = async () =>{
         setShowLoading(true);
-        await downloadDocumentoListaModuloCommessaPagoPa(token, mainState.nonce,bodyGetLista)
+        await downloadDocumentoListaModuloCommessaPagoPa(token, mainState.nonce,bodyDownload)
             .then((res)=>{
-               
+                let fileName = `Moduli Commessa/${mesiWithZero[Number(bodyDownload.mese) -1]}/${bodyDownload.anno}.xlsx`;
+
+                if(gridData.length === 1){
+                    fileName = `Moduli Commessa/${gridData[0]?.ragioneSociale} /${mesiWithZero[Number(bodyDownload.mese) -1]}/${bodyDownload.anno}.xlsx`;
+                }
                 //const url = window.URL.createObjectURL(res.data.documento);
                 const link = document.createElement('a');
                 link.href = "data:text/plain;base64," + res.data.documento;
-                link.setAttribute('download', `Moduli Commessa/${mesiWithZero[Number(bodyGetLista.mese) -1]}/${bodyGetLista.anno}.xlsx`); //or any other extension
+                link.setAttribute('download', fileName); //or any other extension
                 document.body.appendChild(link);
               
                 link.click();
@@ -379,6 +390,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
                             onClick={()=>{
                                 setInfoPageListaCom({ page: 0, pageSize: 100 });
                                 getListaCommesse();
+                                setBodyDownload(bodyGetLista);
                             } } 
                             sx={{ marginTop: 'auto', marginBottom: 'auto'}}
                             variant="contained"> Filtra
@@ -390,6 +402,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
                                 onClick={()=>{
                                     setInfoPageListaCom({ page: 0, pageSize: 100 });
                                     getListaCommesseOnAnnulla();
+                                    setBodyDownload({descrizione:'',prodotto:'', anno:currentYear, mese:currString});
                                 } }
                                 sx={{marginLeft:'24px'}} >
                     Annulla filtri
