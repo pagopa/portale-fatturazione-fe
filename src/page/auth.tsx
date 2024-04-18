@@ -104,6 +104,7 @@ const getProfilo = async (res:ParameterGetProfilo)=>{
             }));
            
             if(resp.data.profilo === "REC" || resp.data.profilo === "CON"){
+                localStorage.removeItem("statusApplication");
                 handleModifyMainState({ruolo:resp.data.ruolo,nonce:storeProfilo.nonce});
                 navigate(PathPf.LISTA_NOTIFICHE);
             }else{
