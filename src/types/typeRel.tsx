@@ -23,11 +23,18 @@ export interface BodyRel{
     anno:number,
     mese:number,
     tipologiaFattura:string|null,
-    idEnti?:string[] | [],
+    idEnti:string[] | [],
     idContratto: string | null,
     caricata: number|null
 } 
 
+export interface BodyRelSelfcare{
+    anno:number,
+    mese:number,
+    tipologiaFattura:string|null,
+    idContratto: string | null,
+    caricata: number|null
+}
 export interface Rel {
     idTestata: string,
     idEnte: string,
@@ -58,4 +65,5 @@ export interface BodyRelLog {
     idContratto: string,
     idEnte?:string
 }
+
 

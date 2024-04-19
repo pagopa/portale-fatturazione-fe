@@ -27,6 +27,7 @@ import { loginRequest } from './authConfig';
 import './App.css';
 import RelPage from './page/relUtPa';
 import { reducerMainState } from './reducer/reducerMainState';
+import { BodyRel } from './types/typeRel';
 
 
 
@@ -116,7 +117,7 @@ const App = ({ instance }) => {
     const currentMonth = (new Date()).getMonth() + 1;
     const month = Number(currentMonth);
 
-    const [bodyRel, setBodyRel] = useState({
+    const [bodyRel, setBodyRel] = useState<BodyRel>({
         anno:currentYear,
         mese:month,
         tipologiaFattura:null,

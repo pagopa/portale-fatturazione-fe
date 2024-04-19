@@ -1,8 +1,8 @@
 import axios from "axios";
-import { BodyRel, BodyRelLog } from "../../../types/typeRel";
+import { BodyRel, BodyRelLog, BodyRelSelfcare } from "../../../types/typeRel";
 import { url } from "../../api";
 
-export const getListaRel = async (token:string, nonce:string , page:number, pageSize:number, body: BodyRel) => {
+export const getListaRel = async (token:string, nonce:string , page:number, pageSize:number, body: BodyRelSelfcare) => {
     const response =  await axios.post(`${url}/api/rel/ente?page=${page}&pageSize=${pageSize}&nonce=${nonce}`,
         body,
         { headers: {
@@ -43,7 +43,7 @@ export const getRelExel = async ( token:string ,nonce:string , id:string) => {
     return response;
 };
 
-export const downloadListaRel = async (token:string, nonce:string , body: BodyRel) => {
+export const downloadListaRel = async (token:string, nonce:string , body: BodyRelSelfcare) => {
     const response =  await axios.post(`${url}/api/rel/ente/documento/ricerca?nonce=${nonce}`,
         body,
         { headers: {
