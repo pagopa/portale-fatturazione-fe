@@ -143,6 +143,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     });
     
     // Modifico l'oggetto notifica per fare il binding dei dati nel componente GRIDCUSTOM
+    let headerNames: string[] = [];
     const notificheListWithOnere = notificheList.map((notifica) =>{
         
         let newOnere = '';
@@ -205,8 +206,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         }else if(notifica.onere === 'CON'){
             newOnere = 'CONSOLIDATORE';
         }
-     
-        return {idNotifica:notifica.idNotifica,
+
+        const element = {
+            idNotifica:notifica.idNotifica,
             contestazione:notifica.contestazione,
             onere:newOnere,
             recipientId:notifica.recipientId,
@@ -220,6 +222,16 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             cap:notifica.cap,
             costEuroInCentesimi:(Number(notifica.costEuroInCentesimi) / 100).toLocaleString("de-DE", { style: "currency", currency: "EUR" })
         };
+        
+        if(profilo.profilo === 'REC'){
+            headerNames = ['Contestazione', 'Onere', 'Recipient ID','Anno', 'Mese','Tipo Notifica','IUN', 'Data invio','Stato estero', 'CAP', 'Costo', ''];
+            const {ragioneSociale, ...result} = element;
+            return result;
+        }else{
+            headerNames = ['Contestazione', 'Onere', 'Recipient ID','Anno', 'Mese','Ragione Sociale', 'Tipo Notifica','IUN', 'Data invio','Stato estero', 'CAP', 'Costo', ''];
+            return element;
+        }
+
     });
   
     // visualizzare il tasto annulla filtri      
@@ -596,7 +608,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             const {idEnti, recapitisti, consolidatori, ...bodyEnti} = bodyDownload;
             await downloadNotifche(token, mainState.nonce,bodyEnti )
                 .then((res)=>{
-                    saveAs("data:text/plain;base64," + res.data.documento,`Notifiche /${notificheListWithOnere[0].ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.xlsx` );
+                    saveAs("data:text/plain;base64," + res.data.documento,`Notifiche /${notificheList[0].ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.xlsx` );
                     setShowLoading(false);         
                 })
                 .catch(((err)=>{
@@ -1050,7 +1062,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     total={totalNotifiche}
                     page={page}
                     rows={rowsPerPage}
-                    headerNames={['Contestazione', 'Onere', 'Recipient ID','Anno', 'Mese','Ragione Sociale', 'Tipo Notifica','IUN', 'Data invio','Stato estero', 'CAP', 'Costo', '']}
+                    headerNames={headerNames}
                     apiGet={getContestazioneModal}
                     disabled={getNotificheWorking}></GridCustom>
             </div>             
