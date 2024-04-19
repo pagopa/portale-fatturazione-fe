@@ -105,9 +105,36 @@ export interface BodyListaNotifiche{
     tipoNotifica: number | null,
     statoContestazione: number[] | [],
     iun:string | null,
-    idEnti?: string[],
+    idEnti: string[],  // solo lato PAGOPA
+    recipientId:string|null,
+    recapitisti:string[],  // solo lato PAGOPA
+    consolidatori:string[] // solo lato PAGOPA
+}
+
+export interface BodyListaNotificheSelfcare{
+    anno: number,
+    mese: number,
+    prodotto: string,
+    cap: string|null ,
+    profilo: string,
+    tipoNotifica: number | null,
+    statoContestazione: number[] | [],
+    iun:string | null,
     recipientId:string|null
 }
+export interface BodyListaNotificheConsolidatore{
+    anno: number,
+    mese: number,
+    prodotto: string,
+    cap: string|null ,
+    profilo: string,
+    tipoNotifica: number | null,
+    statoContestazione: number[] | [],
+    iun:string | null,
+    recipientId:string|null,
+    idEnti: string[],
+}
+
 type RequestError = {
     status:number,
     statusText: string

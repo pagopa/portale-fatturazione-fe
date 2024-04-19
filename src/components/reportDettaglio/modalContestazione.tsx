@@ -498,7 +498,7 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
     }else if(stato === 7 && enti){
         labelModificaRispondiEnte = 'Modifica Risposta';
     }
-    console.log({contestazioneStatic});
+
     let disableRispondiAccettaSend_rispondi = false;
     if(enti && stato === 4 && (rispostaEnte === '' || rispostaEnte === null)){
         disableRispondiAccettaSend_rispondi = true;

@@ -56,3 +56,15 @@ export const getTipologieScadenziario = async (token:string, nonce:string) => {
 
     return response;
 };
+
+
+export const getTipologiaEntiCompletiPagoPa = async (token:string, nonce:string , tipo:string) => {
+    const response =  await axios.post(`${url}/api/tipologia/enti/fornitori?nonce=${nonce}`,
+        {tipo},
+        { headers: {
+            Authorization: 'Bearer ' + token,
+        },
+        }
+    );
+    return response;
+};

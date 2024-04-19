@@ -4,7 +4,7 @@ import React , { useState, useEffect} from 'react';
 import { TextField,Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { getTipologiaProfilo, manageError, redirect } from "../api/api";
-import { ReportDettaglioProps, NotificheList, FlagContestazione, Contestazione, ElementMultiSelect  } from "../types/typeReportDettaglio";
+import { ReportDettaglioProps, NotificheList, FlagContestazione, Contestazione, ElementMultiSelect, ListaRecCon  } from "../types/typeReportDettaglio";
 import { useNavigate } from "react-router";
 import { BodyListaNotifiche } from "../types/typesGeneral";
 import ModalContestazione from '../components/reportDettaglio/modalContestazione';
@@ -15,7 +15,7 @@ import MultiSelectStatoContestazione from "../components/reportDettaglio/multiSe
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import ModalScadenziario from "../components/reportDettaglio/modalScadenziario";
 import { downloadNotifche, downloadNotifcheConsolidatore, downloadNotifcheRecapitista, getContestazione, getContestazioneCosolidatore, getContestazioneRecapitista, listaNotifiche, listaNotificheConsolidatore, listaNotificheRecapitista } from "../api/apiSelfcare/notificheSE/api";
-import { downloadNotifchePagoPa, getContestazionePagoPa, listaNotifichePagoPa } from "../api/apiPagoPa/notificheSE/api";
+import { downloadNotifchePagoPa, getContestazionePagoPa, getTipologiaEntiCompletiPagoPa, listaNotifichePagoPa } from "../api/apiPagoPa/notificheSE/api";
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import GridCustom from "../components/reusableComponents/gridCustom";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
@@ -76,6 +76,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const [profili, setProfili] = useState([]);
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
     const [notificheList, setNotificheList] = useState<NotificheList[]>([]);
+
+    const [listaRecapitista, setListaRecapitisti] = useState<ListaRecCon[]>([]);
+    const [listaConsolidatori, setListaConsolidatori] = useState<ListaRecCon[]>([]);
             
     const [bodyGetLista, setBodyGetLista] = useState<BodyListaNotifiche>({
         profilo:'',
@@ -87,8 +90,12 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         cap:null,
         iun:null,
         idEnti:[],
-        recipientId:null
+        recipientId:null,
+        recapitisti:[],
+        consolidatori:[]
     });
+
+    console.log({bodyGetLista});
             
     const [contestazioneSelected, setContestazioneSelected] = useState<Contestazione>({ 
         risposta:true,
@@ -210,7 +217,10 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     bodyGetLista.idEnti?.length !== 0 ||
                     bodyGetLista.mese !== currString ||
                     bodyGetLista.anno !== currentYear||
-                    bodyGetLista.recipientId !== null){
+                    bodyGetLista.recipientId !== null ||
+                    bodyGetLista.consolidatori?.length !== 0 ||
+                    bodyGetLista.recapitisti?.length !== 0  
+        ){
             setStatusAnnulla('show');
         }else{           
             setStatusAnnulla('hidden');
@@ -230,7 +240,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             cap:null,
             iun:null,
             idEnti:[],
-            recipientId:null
+            recipientId:null,
+            recapitisti:[],
+            consolidatori:[]
 
         };
 
@@ -239,7 +251,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         setDataSelect([]);
         setBodyGetLista(newBody);
 
-        const {idEnti, ...body} = newBody;
+        const {idEnti, recapitisti, consolidatori, ...body} = newBody;
+       
 
         if(enti){
            
@@ -264,7 +277,19 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     manageError(error, navigate);
                 });
         }else if(profilo.profilo === 'CON'){
-            await listaNotificheConsolidatore(token,mainState.nonce,1, 10, newBody)
+            const bodyConsolidatore = {
+                profilo:'',
+                prodotto:'',
+                anno:currentYear,
+                mese:currString, 
+                tipoNotifica:null,
+                statoContestazione:[],
+                cap:null,
+                iun:null,
+                idEnti:[],
+                recipientId:null,
+            };
+            await listaNotificheConsolidatore(token,mainState.nonce,1, 10, bodyConsolidatore)
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
                     setTotalNotifiche(res.data.count);
@@ -300,7 +325,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const getlistaNotifiche = async (nPage:number, nRow:number) => {
         setShowLoadingGrid(true);
         // elimino idEnti dal paylod della get notifiche lato selfcare
-        const {idEnti, ...newBody} = bodyGetLista;
+        const {idEnti, recapitisti, consolidatori, ...newBody} = bodyGetLista;
         // disable button filtra e annulla filtri nell'attesa dei dati
         setGetNotificheWorking(true);
         if(enti){
@@ -333,7 +358,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     manageError(error, navigate);
                 });
         }else if(profilo.profilo === 'CON'){
-            await listaNotificheConsolidatore(token,mainState.nonce,nPage, nRow, bodyGetLista)
+
+            const {recapitisti, consolidatori, ...bodyConsolidatore} = bodyGetLista;
+            await listaNotificheConsolidatore(token,mainState.nonce,nPage, nRow, bodyConsolidatore)
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
                     setTotalNotifiche(res.data.count);
@@ -376,10 +403,12 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         if(mainState.nonce !== ''){
             getProdotti();
             getProfili();
+            
 
             if(profilo.profilo === 'SELFCARE'){
                 getlistaNotifiche( realPageNumber, rowsPerPage); 
             }else if(profilo.auth === 'PAGOPA'){
+                getRecapitistConsolidatori();
                 getlistaNotifichePagoPa( realPageNumber, rowsPerPage);
             }
         } 
@@ -423,6 +452,20 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             getlistaNotifichePagoPa(realPage,parseInt(event.target.value, 10));
         }                    
     };
+
+    const getRecapitistConsolidatori = async() =>{
+        await getTipologiaEntiCompletiPagoPa(token, mainState.nonce, 'REC').then((res)=>{          
+            setListaRecapitisti(res.data);
+        }).catch(((err)=>{
+            manageError(err,navigate);
+        }));
+
+        await getTipologiaEntiCompletiPagoPa(token, mainState.nonce, 'CON').then((res)=>{          
+            setListaConsolidatori(res.data);
+        }).catch(((err)=>{
+            manageError(err,navigate);
+        }));
+    };
                         
     const getProdotti = async() => {
         await getTipologiaProdotto(token, mainState.nonce )
@@ -447,11 +490,12 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const [valueRispostaEnte, setValueRispostaEnte] = useState('');
     const [contestazioneStatic, setContestazioneStatic] = useState();
     
-    console.log(contestazioneStatic);    
+     
     const getContestazioneModal = async(idNotifica:string) =>{
         setShowLoadingGrid(true);
     
         if(enti){
+           
             await getContestazione(token, mainState.nonce , idNotifica )
                 .then((res)=>{
                     //se i tempi di creazione di una contestazione sono scaduti show pop up info
@@ -531,7 +575,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const downloadNotificheOnDownloadButton = async () =>{
         setShowLoading(true);
         if(enti){
-            await downloadNotifche(token, mainState.nonce,bodyGetLista )
+            const {idEnti, recapitisti, consolidatori, ...bodyEnti} = bodyGetLista;
+            await downloadNotifche(token, mainState.nonce,bodyEnti )
                 .then((res)=>{
                     saveAs("data:text/plain;base64," + res.data.documento,`Notifiche /${notificheListWithOnere[0].ragioneSociale}/${mesiWithZero[bodyGetLista.mese-1]} /${bodyGetLista.anno}.xlsx` );
                     setShowLoading(false);         
@@ -540,7 +585,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     manageError(err,navigate);
                 }));
         }else if(profilo.profilo === 'REC'){
-            await downloadNotifcheRecapitista(token, mainState.nonce,bodyGetLista )
+            const {idEnti, recapitisti, consolidatori, ...bodyRecapitista} = bodyGetLista;
+            await downloadNotifcheRecapitista(token, mainState.nonce,bodyRecapitista )
                 .then((res)=>{
                     const blob = new Blob([res.data], { type: 'text/csv' });
                     const url = window.URL.createObjectURL(blob);
@@ -558,7 +604,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     setShowLoading(false);
                 }));
         }else if(profilo.profilo === 'CON'){
-            await downloadNotifcheConsolidatore(token, mainState.nonce,bodyGetLista )
+            const { recapitisti, consolidatori, ...bodyConsolidatore} = bodyGetLista;
+            await downloadNotifcheConsolidatore(token, mainState.nonce,bodyConsolidatore )
                 .then((res)=>{
 
                     const blob = new Blob([res.data], { type: 'text/csv' });
@@ -840,8 +887,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     </div>                         
                 </div>
                 <div className="row mt-5" >
+                   
                     {(profilo.auth === 'PAGOPA' || profilo.profilo === 'CON') &&
-                    <div className="col-3">
+                    <div  className="col-3">
                         <MultiselectCheckbox 
                             mainState={mainState} 
                             setBodyGetLista={setBodyGetLista}
@@ -849,6 +897,76 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                             dataSelect={dataSelect}
                         ></MultiselectCheckbox>
                     </div>
+                    }
+                    {profilo.auth === 'PAGOPA' && 
+                    <>
+                        <div className="col-3">
+                            <Box sx={{width:'80%', marginLeft:'20px'}} >
+                                <FormControl
+                                    fullWidth
+                                    size="medium"
+                                >
+                                    <InputLabel
+                                        id="selectCons"
+                                    >
+                                            Consolidatore     
+                                    </InputLabel>
+                                    <Select
+                                        id="sea"
+                                        label='Consolidatore'
+                                        labelId="search-by-label"
+                                        onChange={(e) =>{
+                                            const value = e.target.value;
+                                            setBodyGetLista((prev)=> ({...prev, ...{consolidatori:[value]}}));
+                                        }}
+                                        value={bodyGetLista.consolidatori[0] || ''}        
+                                    >
+                                        {listaConsolidatori.map((el) => (     
+                                            <MenuItem
+                                                key={el.idEnte}
+                                                value={el.idEnte}
+                                            >
+                                                {el.descrizione}
+                                            </MenuItem>      
+                                        ))}       
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                        </div>
+                        <div className="col-3">
+                            <Box sx={{width:'80%', marginLeft:'20px'}} >
+                                <FormControl
+                                    fullWidth
+                                    size="medium"
+                                >
+                                    <InputLabel
+                                        id="selectRecapitista"
+                                    >
+                                            Recapitista     
+                                    </InputLabel>
+                                    <Select
+                                        id="sea"
+                                        label='Recapitista'
+                                        labelId="search-by-label"
+                                        onChange={(e) =>{
+                                            const value = e.target.value;
+                                            setBodyGetLista((prev)=> ({...prev, ...{recapitisti:[value]}}));
+                                        }}
+                                        value={bodyGetLista.recapitisti[0] || ''}        
+                                    >
+                                        {listaRecapitista.map((el) => (     
+                                            <MenuItem
+                                                key={el.idEnte}
+                                                value={el.idEnte}
+                                            >
+                                                {el.descrizione}
+                                            </MenuItem>      
+                                        ))}       
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                        </div>
+                    </>
                     }
                 </div>
                 <div className="">

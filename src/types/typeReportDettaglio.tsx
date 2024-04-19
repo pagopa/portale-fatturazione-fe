@@ -127,12 +127,15 @@ export interface OptionMultiselectChackbox {
 }
 
 export interface ModalBodyContestazioneModifyPagoPa{
-    
     idNotifica?: string,
     onere?: string,
     noteSend?: string | null,
-    statoContestazione?: number
-      
+    statoContestazione?: number 
+}
+
+export interface ListaRecCon {
+    idEnte: string,
+    descrizione: string
 }
 
 
