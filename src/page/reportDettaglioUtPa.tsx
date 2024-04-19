@@ -95,7 +95,23 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         consolidatori:[]
     });
 
-    console.log({bodyGetLista});
+   
+    const [bodyDownload, setBodyDownload] = useState<BodyListaNotifiche>({
+        profilo:'',
+        prodotto:'',
+        anno:currentYear,
+        mese:currString, 
+        tipoNotifica:null,
+        statoContestazione:[],
+        cap:null,
+        iun:null,
+        idEnti:[],
+        recipientId:null,
+        recapitisti:[],
+        consolidatori:[]
+    });
+
+    console.log(bodyDownload,'ooo');
             
     const [contestazioneSelected, setContestazioneSelected] = useState<Contestazione>({ 
         risposta:true,
@@ -250,6 +266,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         setValueFgContestazione([]);
         setDataSelect([]);
         setBodyGetLista(newBody);
+        setBodyDownload(newBody);
 
         const {idEnti, recapitisti, consolidatori, ...body} = newBody;
        
@@ -418,6 +435,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const onButtonFiltra = () =>{
         setPage(0);
         setRowsPerPage(10);
+        setBodyDownload(bodyGetLista);
         if(profilo.auth === 'SELFCARE'){
             getlistaNotifiche(1, 10);
         }else{
@@ -575,17 +593,18 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const downloadNotificheOnDownloadButton = async () =>{
         setShowLoading(true);
         if(enti){
-            const {idEnti, recapitisti, consolidatori, ...bodyEnti} = bodyGetLista;
+            const {idEnti, recapitisti, consolidatori, ...bodyEnti} = bodyDownload;
             await downloadNotifche(token, mainState.nonce,bodyEnti )
                 .then((res)=>{
-                    saveAs("data:text/plain;base64," + res.data.documento,`Notifiche /${notificheListWithOnere[0].ragioneSociale}/${mesiWithZero[bodyGetLista.mese-1]} /${bodyGetLista.anno}.xlsx` );
+                    saveAs("data:text/plain;base64," + res.data.documento,`Notifiche /${notificheListWithOnere[0].ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.xlsx` );
                     setShowLoading(false);         
                 })
                 .catch(((err)=>{
+                    setShowLoading(false);
                     manageError(err,navigate);
                 }));
         }else if(profilo.profilo === 'REC'){
-            const {idEnti, recapitisti, consolidatori, ...bodyRecapitista} = bodyGetLista;
+            const {idEnti, recapitisti, consolidatori, ...bodyRecapitista} = bodyDownload;
             await downloadNotifcheRecapitista(token, mainState.nonce,bodyRecapitista )
                 .then((res)=>{
                     const blob = new Blob([res.data], { type: 'text/csv' });
@@ -593,7 +612,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     const a = document.createElement('a');
                     a.setAttribute('hidden', '');
                     a.setAttribute('href', url);
-                    a.setAttribute('download',`Notifiche /${mesiWithZero[bodyGetLista.mese-1]} /${bodyGetLista.anno}.csv`);
+                    a.setAttribute('download',`Notifiche /${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`);
                     document.body.appendChild(a);
                     a.click();
                     setShowLoading(false);
@@ -604,16 +623,21 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     setShowLoading(false);
                 }));
         }else if(profilo.profilo === 'CON'){
-            const { recapitisti, consolidatori, ...bodyConsolidatore} = bodyGetLista;
+            const { recapitisti, consolidatori, ...bodyConsolidatore} = bodyDownload;
             await downloadNotifcheConsolidatore(token, mainState.nonce,bodyConsolidatore )
                 .then((res)=>{
+                    let fileName = `Notifiche /${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`;
+
+                    if(bodyConsolidatore.idEnti.length === 1){
+                        fileName = `Notifiche /${notificheList[0].ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`;
+                    }
 
                     const blob = new Blob([res.data], { type: 'text/csv' });
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.setAttribute('hidden', '');
                     a.setAttribute('href', url);
-                    a.setAttribute('download',`Notifiche /${mesiWithZero[bodyGetLista.mese-1]} /${bodyGetLista.anno}.csv`);
+                    a.setAttribute('download',fileName);
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
@@ -624,14 +648,20 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     setShowLoading(false);
                 }));
         }else if(profilo.auth === 'PAGOPA'){
-            await downloadNotifchePagoPa(token, mainState.nonce,bodyGetLista )
+            await downloadNotifchePagoPa(token, mainState.nonce,bodyDownload)
                 .then((res)=>{
+
+                    let fileName = `Notifiche /${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`;
+
+                    if(bodyDownload.idEnti.length === 1){
+                        fileName = `Notifiche /${notificheList[0].ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`;
+                    }
                     const blob = new Blob([res.data], { type: 'text/csv' });
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.setAttribute('hidden', '');
                     a.setAttribute('href', url);
-                    a.setAttribute('download',`Notifiche /${mesiWithZero[bodyGetLista.mese-1]} /${bodyGetLista.anno}.csv`);
+                    a.setAttribute('download',fileName);
                     document.body.appendChild(a);
                     a.click();
                     setShowLoading(false);

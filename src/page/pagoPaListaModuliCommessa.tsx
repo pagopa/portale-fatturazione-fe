@@ -66,7 +66,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
 
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [gridData, setGridData] = useState<GridElementListaCommesse[]>([]);
-    console.log(gridData);
+  
     
 
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');

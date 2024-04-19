@@ -63,6 +63,19 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel
     const [getListaRelRunning, setGetListaRelRunning] = useState(false);
     const [disableDownloadListaPdf, setDisableListaPdf] = useState(true);
 
+    const [bodyDownload, setBodyDownload] = useState<BodyRel>({
+        anno:currentYear,
+        mese:month,
+        tipologiaFattura:null,
+        idEnti:[],
+        idContratto:null,
+        caricata:null
+    });
+
+    useEffect(()=>{
+        setBodyDownload(bodyRel);
+    },[]);
+
     const getlistaRel = async (nPage,nRows) => {
         setGetListaRelRunning(true);
         if(enti){
@@ -144,6 +157,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel
     const onButtonFiltra = () =>{
         setPage(0);
         setRowsPerPage(10);
+        setBodyDownload(bodyRel);
         getlistaRel(1,10); 
     };
 
@@ -210,16 +224,20 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel
         setShowLoading(true);
         if(enti){
 
-            const {idEnti, ...newBody} = bodyRel;
+            const {idEnti, ...newBody} = bodyDownload;
             await downloadListaRel(token,mainState.nonce,newBody).then((res)=>{
-                saveAs("data:text/plain;base64," + res.data.documento,`Regolari esecuzioni /${data[0]?.ragioneSociale}/ ${mesiWithZero[bodyRel.mese-1]}/ ${bodyRel.anno}.xlsx` );
+                saveAs("data:text/plain;base64," + res.data.documento,`Regolari esecuzioni /${data[0]?.ragioneSociale}/ ${mesiWithZero[bodyDownload.mese-1]}/ ${bodyDownload.anno}.xlsx` );
                 setShowLoading(false);
             }).catch((err)=>{
                 manageError(err,navigate);
             }); 
         }else{
-            await downloadListaRelPagopa(token,mainState.nonce,bodyRel).then((res)=>{
-                saveAs("data:text/plain;base64," + res.data.documento,`Regolari esecuzioni /${mesiWithZero[bodyRel.mese-1]}/ ${bodyRel.anno}.xlsx` );
+            await downloadListaRelPagopa(token,mainState.nonce,bodyDownload).then((res)=>{
+                let fileName = `Regolari esecuzioni /${mesiWithZero[bodyDownload.mese-1]}/ ${bodyDownload.anno}.xlsx`;
+                if(bodyDownload.idEnti.length === 1){
+                    fileName = `Regolari esecuzioni /${data[0]?.ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]}/ ${bodyDownload.anno}.xlsx`;
+                }
+                saveAs("data:text/plain;base64," + res.data.documento,fileName );
                 setShowLoading(false);
             }).catch((err)=>{
                 manageError(err,navigate);
@@ -236,7 +254,11 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel
         await downloadListaRelPdfZipPagopa(token,mainState.nonce,bodyRel)
             .then(response => response.blob())
             .then(blob => {
-                saveAs(blob,`REL /Frimate / ${mesiWithZero[bodyRel.mese -1]} / ${bodyRel.anno}.zip` );
+                let fileName = `REL /Frimate / ${mesiWithZero[bodyRel.mese -1]} / ${bodyRel.anno}.zip`;
+                if(bodyDownload.idEnti.length === 1){
+                    fileName = `REL /Frimate /${data[0]?.ragioneSociale}/${mesiWithZero[bodyRel.mese -1]} / ${bodyRel.anno}.zip`;
+                }
+                saveAs(blob,fileName );
                 setShowLoading(false);
             })
             .catch(err => {
@@ -304,6 +326,14 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel
                     <div className="col-2">
                         <Button onClick={()=>{
                             setBodyRel({
+                                anno:currentYear,
+                                mese:month,
+                                tipologiaFattura:null,
+                                idEnti:[],
+                                idContratto:null,
+                                caricata:null
+                            });
+                            setBodyDownload({
                                 anno:currentYear,
                                 mese:month,
                                 tipologiaFattura:null,
