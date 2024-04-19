@@ -1,9 +1,9 @@
 import axios from "axios";
 import { url } from "../../api";
-import { BodyListaNotifiche } from "../../../types/typesGeneral";
+import { BodyListaNotifiche, BodyListaNotificheConsolidatore, BodyListaNotificheSelfcare } from "../../../types/typesGeneral";
 import { BodyListaEnti, ModalBodyContestazione, ModalBodyContestazioneModify } from "../../../types/typeReportDettaglio";
 
-export const listaNotifiche = async (token:string, nonce:string , page:number, pageSize:number, body: BodyListaNotifiche) => {
+export const listaNotifiche = async (token:string, nonce:string , page:number, pageSize:number, body: BodyListaNotificheSelfcare) => {
     const response =  await axios.post(`${url}/api/notifiche/ente?page=${page}&pageSize=${pageSize}&nonce=${nonce}`,
         body,
         { headers: {
@@ -14,7 +14,7 @@ export const listaNotifiche = async (token:string, nonce:string , page:number, p
     return response;
 };
 
-export const listaNotificheRecapitista = async (token:string, nonce:string , page:number, pageSize:number, body: BodyListaNotifiche) => {
+export const listaNotificheRecapitista = async (token:string, nonce:string , page:number, pageSize:number, body: BodyListaNotificheSelfcare) => {
     const response =  await axios.post(`${url}/api/notifiche/recapitista?page=${page}&pageSize=${pageSize}&nonce=${nonce}`,
         body,
         { headers: {
@@ -25,7 +25,7 @@ export const listaNotificheRecapitista = async (token:string, nonce:string , pag
     return response;
 };
 
-export const listaNotificheConsolidatore = async (token:string, nonce:string , page:number, pageSize:number, body: BodyListaNotifiche) => {
+export const listaNotificheConsolidatore = async (token:string, nonce:string , page:number, pageSize:number, body: BodyListaNotificheConsolidatore) => {
     const response =  await axios.post(`${url}/api/notifiche/consolidatore?page=${page}&pageSize=${pageSize}&nonce=${nonce}`,
         body,
         { headers: {
@@ -132,7 +132,7 @@ export const modifyContestazioneConsolidatore = async (token:string, nonce:strin
 
 
 
-export const downloadNotifche = async (token:string, nonce:string , body: BodyListaNotifiche) => {
+export const downloadNotifche = async (token:string, nonce:string , body: BodyListaNotificheSelfcare) => {
     const response =  await axios.post(`${url}/api/notifiche/ente/documento/ricerca?nonce=${nonce}`,
         body,
         { headers: {
@@ -143,7 +143,7 @@ export const downloadNotifche = async (token:string, nonce:string , body: BodyLi
     return response;
 };
 
-export const downloadNotifcheRecapitista = async (token:string, nonce:string , body: BodyListaNotifiche) => {
+export const downloadNotifcheRecapitista = async (token:string, nonce:string , body: BodyListaNotificheSelfcare) => {
     const response =  await axios.post(`${url}/api/notifiche/recapitista/documento/ricerca?binary=false&nonce=${nonce}`,
         body,
         { headers: {
@@ -154,7 +154,7 @@ export const downloadNotifcheRecapitista = async (token:string, nonce:string , b
     return response;
 };
 
-export const downloadNotifcheConsolidatore = async (token:string, nonce:string , body: BodyListaNotifiche) => {
+export const downloadNotifcheConsolidatore = async (token:string, nonce:string , body: BodyListaNotificheConsolidatore) => {
     const response =  await axios.post(`${url}/api/notifiche/consolidatore/documento/ricerca?binary=false&nonce=${nonce}`,
         body,
         { headers: {

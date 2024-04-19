@@ -8,7 +8,7 @@ import { manageError } from '../../api/api';
 import { useNavigate } from 'react-router';
 import { FlagContestazione, MultiSelectGroupedByProps } from '../../types/typeReportDettaglio';
 import { useEffect , useState} from 'react';
-import { BodyListaNotifiche } from '../../types/typesGeneral';
+import { BodyListaNotifiche} from '../../types/typesGeneral';
 import { flagContestazione } from '../../api/apiSelfcare/notificheSE/api';
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;

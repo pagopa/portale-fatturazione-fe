@@ -7,7 +7,7 @@ import { manageError } from '../../api/api';
 import { useNavigate } from 'react-router';
 import { MultiselectNotificheProps, OptionMultiselectChackbox } from '../../types/typeReportDettaglio';
 import {useState, useEffect} from 'react';
-import { BodyListaNotifiche } from '../../types/typesGeneral';
+import { BodyListaNotifiche} from '../../types/typesGeneral';
 import { listaEntiNotifichePage, listaEntiNotifichePageConsolidatore } from '../../api/apiSelfcare/notificheSE/api';
 
 const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetLista, dataSelect, setDataSelect,mainState}) => {

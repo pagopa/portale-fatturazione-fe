@@ -136,7 +136,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
           
             let fileName = `Lista dati di fatturazione.xlsx`;
             if(gridData.length === 1){
-                fileName = `Lista dati di fatturazione / ${gridData[0]?.ragioneSociale}.xlsx`;
+                fileName = `Dati di fatturazione / ${gridData[0]?.ragioneSociale}.xlsx`;
             }
             //const url = window.URL.createObjectURL(res.data.documento);
             const link = document.createElement('a');
