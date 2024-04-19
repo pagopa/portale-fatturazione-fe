@@ -99,8 +99,8 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce, 
                                         <TableCell align="left">Data fine inserimento contestazione</TableCell>
                                         {(profilo.profilo === 'CON' || profilo.profilo === 'REC') &&
                                         <>
-                                            <TableCell align="left">Data inizio contestazione Recapitista</TableCell>
-                                            <TableCell align="left">Data fine contestazione Recapitista</TableCell>
+                                            <TableCell align="left">Data inizio contestazione {profilo.profilo === 'REC'?"Recapitista":"Consolidatore"}</TableCell>
+                                            <TableCell align="left">Data fine contestazione {profilo.profilo === 'REC'?"Recapitista":"Consolidatore"}</TableCell>
                                         </>
                                         }
                                     </TableRow>
