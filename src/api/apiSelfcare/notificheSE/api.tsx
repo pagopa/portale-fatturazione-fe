@@ -25,7 +25,7 @@ export const listaNotificheRecapitista = async (token:string, nonce:string , pag
     return response;
 };
 
-export const listaNotificheConsolidatore = async (token:string, nonce:string , page:number, pageSize:number, body: BodyListaNotificheConsolidatore) => {
+export const listaNotificheConsolidatore = async (token:string, nonce:string , page:number, pageSize:number, body: BodyListaNotificheSelfcare) => {
     const response =  await axios.post(`${url}/api/notifiche/consolidatore?page=${page}&pageSize=${pageSize}&nonce=${nonce}`,
         body,
         { headers: {
@@ -154,7 +154,7 @@ export const downloadNotifcheRecapitista = async (token:string, nonce:string , b
     return response;
 };
 
-export const downloadNotifcheConsolidatore = async (token:string, nonce:string , body: BodyListaNotificheConsolidatore) => {
+export const downloadNotifcheConsolidatore = async (token:string, nonce:string , body: BodyListaNotificheSelfcare) => {
     const response =  await axios.post(`${url}/api/notifiche/consolidatore/documento/ricerca?binary=false&nonce=${nonce}`,
         body,
         { headers: {

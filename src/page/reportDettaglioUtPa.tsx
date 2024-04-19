@@ -223,7 +223,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             costEuroInCentesimi:(Number(notifica.costEuroInCentesimi) / 100).toLocaleString("de-DE", { style: "currency", currency: "EUR" })
         };
         
-        if(profilo.profilo === 'REC'){
+        if(profilo.profilo === 'REC' || profilo.profilo === 'CON'){
             headerNames = ['Contestazione', 'Onere', 'Recipient ID','Anno', 'Mese','Tipo Notifica','IUN', 'Data invio','Stato estero', 'CAP', 'Costo', ''];
             const {ragioneSociale, ...result} = element;
             return result;
@@ -306,19 +306,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     manageError(error, navigate);
                 });
         }else if(profilo.profilo === 'CON'){
-            const bodyConsolidatore = {
-                profilo:'',
-                prodotto:'',
-                anno:currentYear,
-                mese:currString, 
-                tipoNotifica:null,
-                statoContestazione:[],
-                cap:null,
-                iun:null,
-                idEnti:[],
-                recipientId:null,
-            };
-            await listaNotificheConsolidatore(token,mainState.nonce,1, 10, bodyConsolidatore)
+           
+            await listaNotificheConsolidatore(token,mainState.nonce,1, 10, body)
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
                     setTotalNotifiche(res.data.count);
@@ -388,8 +377,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 });
         }else if(profilo.profilo === 'CON'){
 
-            const {recapitisti, consolidatori, ...bodyConsolidatore} = bodyGetLista;
-            await listaNotificheConsolidatore(token,mainState.nonce,nPage, nRow, bodyConsolidatore)
+            await listaNotificheConsolidatore(token,mainState.nonce,nPage, nRow,newBody)
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
                     setTotalNotifiche(res.data.count);
@@ -635,21 +623,16 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     setShowLoading(false);
                 }));
         }else if(profilo.profilo === 'CON'){
-            const { recapitisti, consolidatori, ...bodyConsolidatore} = bodyDownload;
+            const { idEnti, recapitisti, consolidatori, ...bodyConsolidatore} = bodyDownload;
             await downloadNotifcheConsolidatore(token, mainState.nonce,bodyConsolidatore )
                 .then((res)=>{
-                    let fileName = `Notifiche /${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`;
-
-                    if(bodyConsolidatore.idEnti.length === 1){
-                        fileName = `Notifiche /${notificheList[0].ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`;
-                    }
-
+                
                     const blob = new Blob([res.data], { type: 'text/csv' });
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.setAttribute('hidden', '');
                     a.setAttribute('href', url);
-                    a.setAttribute('download',fileName);
+                    a.setAttribute('download', `Notifiche /${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`);
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
@@ -930,7 +913,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 </div>
                 <div className="row mt-5" >
                    
-                    {(profilo.auth === 'PAGOPA' || profilo.profilo === 'CON') &&
+                    {profilo.auth === 'PAGOPA' &&
                     <div  className="col-3">
                         <MultiselectCheckbox 
                             mainState={mainState} 
