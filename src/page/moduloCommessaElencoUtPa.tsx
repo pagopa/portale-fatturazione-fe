@@ -50,8 +50,10 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
         if(statusApp.datiFatturazione === false){
             setOpenModalRedirect(true);
         }
-  
     },[]);
+
+  
+
 
     const [anni, setAnni] = useState<string[]>([]);
    
@@ -307,7 +309,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
                     </Box>
                 </div>
 
-                {(mainState.primoInserimetoCommessa && enti) &&
+                {(statusApp.primoInserimetoCommessa && enti) &&
                 <Button variant="contained" onClick={()=>{
                     handleListItemClickModuloCommessa();
                 }}>Inserisci modulo commessa</Button>
