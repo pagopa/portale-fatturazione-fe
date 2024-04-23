@@ -36,6 +36,45 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
     const state = localStorage.getItem('statusApplication') || '{}';
     const statusApp =  JSON.parse(state);
+    /*
+    const setFilterToLocalStorage = () => {
+        localStorage.setItem("filtersNotifiche", JSON.stringify({bodyGetLista,textValue,valueAutocomplete}));
+    }; 
+
+    const setInfoPageToLocalStorage = (info) => {
+        localStorage.setItem("pageRowNotifiche", JSON.stringify(info));
+    };
+
+    const getFiltersFromLocalStorage = () => {
+        const filtri = localStorage.getItem('filtersNotifiche') || '{}';
+        const result =  JSON.parse(filtri);
+        return result;
+    };
+    const getInfoPageFromLocalStorage = () => {
+        const infoPage = localStorage.getItem('pageRowListaNotifiche') || '{}';
+        const result =  JSON.parse(infoPage);
+        return result;
+    };
+
+*/
+                
+    useEffect(() => {
+      
+        if(mainState.nonce !== ''){
+            getProdotti();
+            getProfili();
+            
+
+            if(profilo.profilo === 'SELFCARE'){
+                getlistaNotifiche( realPageNumber, rowsPerPage); 
+            }else if(profilo.auth === 'PAGOPA'){
+                getRecapitistConsolidatori();
+                getlistaNotifichePagoPa( realPageNumber, rowsPerPage);
+            }
+        } 
+    }, [mainState.nonce]);
+
+   
 
     const tabActive = useIsTabActive();
     useEffect(()=>{
@@ -417,22 +456,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             });
                     
     };
-            
-    useEffect(() => {
-      
-        if(mainState.nonce !== ''){
-            getProdotti();
-            getProfili();
-            
 
-            if(profilo.profilo === 'SELFCARE'){
-                getlistaNotifiche( realPageNumber, rowsPerPage); 
-            }else if(profilo.auth === 'PAGOPA'){
-                getRecapitistConsolidatori();
-                getlistaNotifichePagoPa( realPageNumber, rowsPerPage);
-            }
-        } 
-    }, [mainState.nonce]);
+
 
     // logica sul button filtra
     const onButtonFiltra = () =>{

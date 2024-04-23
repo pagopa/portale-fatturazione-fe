@@ -2,13 +2,7 @@ import { MainState } from "./typesGeneral";
 
 export interface RelPageProps{
     mainState:MainState,
-    dispatchMainState:any,
-    bodyRel:BodyRel,
-    setBodyRel:any,
-    page:number,
-    setPage:any,
-    rowsPerPage:number,
-    setRowsPerPage:any
+    dispatchMainState:any
 }
 export interface RelPagePdfProps{
     mainState:MainState,
