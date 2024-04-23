@@ -18,8 +18,9 @@ import { saveAs } from "file-saver";
 import useIsTabActive from "../reusableFunctin/tabIsActiv";
 import { PathPf } from "../types/enum";
 import { profiliEnti } from "../reusableFunctin/profilo";
+import { OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 
-const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel, setBodyRel, page, setPage, rowsPerPage, setRowsPerPage}) =>{
+const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
     const mesiGrid = ["Dicembre", "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
 
@@ -31,6 +32,69 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel
 
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
+
+    const setFilterToLocalStorage = (bodyRel,textValue,valueAutocomplete, page, rowsPerPage) => {
+        localStorage.setItem("filtersRel", JSON.stringify({bodyRel,textValue,valueAutocomplete, page, rowsPerPage}));
+    }; 
+
+    
+
+    const deleteFilterToLocalStorage = () => {
+        localStorage.removeItem("filtersRel");
+    }; 
+
+    const getFiltersFromLocalStorage = () => {
+        const filtri = localStorage.getItem('filtersRel') || '{}';
+        const result =  JSON.parse(filtri);
+        return result;
+    };
+
+    const currentYear = (new Date()).getFullYear();
+    const currentMonth = (new Date()).getMonth() + 1;
+    const month = Number(currentMonth);
+  
+    const [bodyRel, setBodyRel] = useState<BodyRel>({
+        anno:currentYear,
+        mese:month,
+        tipologiaFattura:null,
+        idEnti:[],
+        idContratto:null,
+        caricata:null
+    });
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+
+
+  
+
+
+    useEffect(()=>{
+        const result = getFiltersFromLocalStorage();
+        console.log(1);
+        if(mainState.nonce !== ''){
+            
+            if(Object.keys(result).length > 0){
+                console.log(2);
+                console.log(result,'000');
+                setBodyRel(result.bodyRel);
+                setTextValue(result.textValue);
+                setValueAutocomplete(result.valueAutocomplete);
+                getlistaRel(result.bodyRel,result.page + 1, result.rowsPerPage);
+                setPage(result.page);
+                setRowsPerPage(result.rowsPerPage);
+                setBodyDownload(result.bodyRel);
+            }else{
+                console.log(3);
+                const realPage = page + 1;
+                getlistaRel(bodyRel,realPage, rowsPerPage);
+            }
+
+           
+        }
+        
+    },[mainState.nonce]);
+    
+    
 
     const tabActive = useIsTabActive();
     useEffect(()=>{
@@ -46,9 +110,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel
         });
     };
 
-    const currentYear = (new Date()).getFullYear();
-    const currentMonth = (new Date()).getMonth() + 1;
-    const month = Number(currentMonth);
+
 
   
     const  hiddenAnnullaFiltri = bodyRel.tipologiaFattura === null && bodyRel.idEnti?.length === 0 && bodyRel.caricata === null; 
@@ -63,6 +125,10 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel
     const [getListaRelRunning, setGetListaRelRunning] = useState(false);
     const [disableDownloadListaPdf, setDisableListaPdf] = useState(true);
 
+    const [textValue, setTextValue] = useState('');
+
+    const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
+
     const [bodyDownload, setBodyDownload] = useState<BodyRel>({
         anno:currentYear,
         mese:month,
@@ -71,12 +137,11 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel
         idContratto:null,
         caricata:null
     });
+   
+   
 
-    useEffect(()=>{
-        setBodyDownload(bodyRel);
-    },[]);
-
-    const getlistaRel = async (nPage,nRows) => {
+    const getlistaRel = async (bodyRel,nPage,nRows) => {
+       
         setGetListaRelRunning(true);
         if(enti){
             const {idEnti, ...newBody} = bodyRel;
@@ -146,19 +211,16 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel
         }            
     };
    
-    useEffect(()=>{
-        if(mainState.nonce !== ''){
-            const realPage = page + 1;
-            getlistaRel(realPage, rowsPerPage);
-        }
-        
-    },[mainState.nonce]);
+   
 
     const onButtonFiltra = () =>{
         setPage(0);
         setRowsPerPage(10);
         setBodyDownload(bodyRel);
-        getlistaRel(1,10); 
+        getlistaRel(bodyRel,1,10); 
+        setFilterToLocalStorage(bodyRel,textValue,valueAutocomplete, 0, 10);
+       
+        
     };
 
     const handleChangePage = (
@@ -168,8 +230,11 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel
      
         const realPage = newPage + 1;
        
-        getlistaRel(realPage, rowsPerPage);
+        getlistaRel(bodyRel,realPage, rowsPerPage);
         setPage(newPage);
+        const result = getFiltersFromLocalStorage();
+        setFilterToLocalStorage(result.bodyRel,result.textValue,result.valueAutocomplete, newPage, rowsPerPage);
+        
     };
                     
     const handleChangeRowsPerPage = (
@@ -180,8 +245,10 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel
         setPage(0);
         const realPage = page + 1;
 
-        getlistaRel(realPage,parseInt(event.target.value, 10));
-                          
+        getlistaRel(bodyRel,realPage,parseInt(event.target.value, 10));
+        const result = getFiltersFromLocalStorage();
+        setFilterToLocalStorage(result.bodyRel,result.textValue,result.valueAutocomplete, page, parseInt(event.target.value, 10));
+      
     };
 
    
@@ -189,6 +256,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel
 
         if(enti){
             getSingleRel(token,mainState.nonce,idRel).then((res) =>{
+                
                 handleModifyMainState({relSelected:res.data});
                
                 if(res.data.datiFatturazione === true){
@@ -203,7 +271,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel
             );
         }else{
             getSingleRelPagopa(token,mainState.nonce,idRel).then((res) =>{
-    
+               
                 handleModifyMainState({relSelected:res.data});
             
                 navigate(PathPf.PDF_REL);
@@ -301,16 +369,20 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel
                     </div>
                 </div>
                 <div className="row mt-5">
-                    { /*profilo.auth === 'PAGOPA' &&
+                    { profilo.auth === 'PAGOPA' &&
                         <div  className="col-3">
                             <MultiselectCheckbox 
                                 mainState={mainState} 
                                 setBodyGetLista={setBodyRel}
                                 setDataSelect={setDataSelect}
                                 dataSelect={dataSelect}
+                                setTextValue={setTextValue}
+                                textValue={textValue}
+                                valueAutocomplete={valueAutocomplete}
+                                setValueAutocomplete={setValueAutocomplete}
                             ></MultiselectCheckbox>
                         </div>
-    */ }
+                    }
                 </div>
                 
                 <div className="row mt-5">
@@ -344,6 +416,8 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel
                             setData([]);
                             setPage(0);
                             setRowsPerPage(10);
+                            deleteFilterToLocalStorage();
+                            
                         }} 
                         disabled={getListaRelRunning}
                         >Annulla Filtri</Button>

@@ -112,24 +112,7 @@ const App = ({ instance }) => {
         apiError:'' // rel selezionata nella grid in page rel
     });
 
-    //_______________rel __________________
-    const currentYear = (new Date()).getFullYear();
-    const currentMonth = (new Date()).getMonth() + 1;
-    const month = Number(currentMonth);
-    console.log('app');
-    const [bodyRel, setBodyRel] = useState<BodyRel>({
-        anno:currentYear,
-        mese:month,
-        tipologiaFattura:null,
-        idEnti:[],
-        idContratto:null,
-        caricata:null
-    });
-    const [pageGridRel, setPageGridRel] = useState(0);
-    const [rowsPerPageGridRel, setRowsPerPageGridRel] = useState(10);
-    //_____________________________
-
-    //___________elenco commessa anno selfcare
+   
     const [valueAnnoElencoCom, setValueAnnoElencoCom] = useState('');
     //_____________________________________________________________
 
@@ -191,7 +174,7 @@ const App = ({ instance }) => {
                                    
                                         <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio mainState={mainState} />} />
 
-                                        <Route path={PathPf.LISTA_REL} element={<RelPage  mainState={mainState}  dispatchMainState={dispatchMainState}  bodyRel={bodyRel} setBodyRel={setBodyRel} page={pageGridRel} setPage={setPageGridRel} rowsPerPage={rowsPerPageGridRel} setRowsPerPage={setRowsPerPageGridRel} />} />
+                                        <Route path={PathPf.LISTA_REL} element={<RelPage  mainState={mainState}  dispatchMainState={dispatchMainState}/>} />
 
                                         <Route path={PathPf.PDF_REL} element={<RelPdfPage  mainState={mainState}  dispatchMainState={dispatchMainState}/>} />
 
