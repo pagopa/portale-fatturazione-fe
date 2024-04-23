@@ -123,7 +123,8 @@ const getProfilo = async (res:ParameterGetProfilo)=>{
 // prima chiamata 
 const getSelfcare = async() =>{
     await selfcareLogin(token).then(res =>{
-          
+        localStorage.clear();
+
         if(res.status === 200){
             // store del token nella local storage per tutte le successive chiamate START
             const storeJwt = {token:res.data[0].jwt};

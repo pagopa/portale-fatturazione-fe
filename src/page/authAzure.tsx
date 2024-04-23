@@ -59,8 +59,9 @@ const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
   
     const postPagoPa = () =>{
         pagopaLogin(tokens).then((res)=>{
+            localStorage.clear();
             if(res.status === 200){
-                localStorage.removeItem("statusApplication");
+                //localStorage.removeItem("statusApplication");
                 // store del token nella local storage per tutte le successive chiamate START
                 const storeJwt = {token:res.data.jwt};
                 localStorage.setItem('token', JSON.stringify(storeJwt));

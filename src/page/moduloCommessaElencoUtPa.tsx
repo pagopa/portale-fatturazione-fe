@@ -23,7 +23,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
 
     const state = localStorage.getItem('statusApplication') || '{}';
     const statusApp =  JSON.parse(state);
-
+    console.log({statusApp, mainState});
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
             type:'MODIFY_MAIN_STATE',
