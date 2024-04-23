@@ -743,8 +743,6 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                                             return {...prev, contestazione:newContestazione};
                                          
                                         })}
-                                        onBlur={()=> console.log('miao')}
-            
                                     />
                                 </div>
 
@@ -770,7 +768,6 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                                             const newContestazione = {...prev.contestazione, noteConsolidatore:e.target.value};
                                             return {...prev, contestazione:newContestazione};
                                         })}
-                                        onBlur={()=> console.log('miao')}
                                     />
                                 </div>
                             </div>
