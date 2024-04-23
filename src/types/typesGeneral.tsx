@@ -28,11 +28,7 @@ export interface LoginProps {
 
 export interface SideNavProps{
     dispatchMainState:any,
-    mainState:any,
-    setFilterListaFatturazione:any,
-    setFilterListaCommesse:any,
-    setInfoPageListaDatiFat:any,
-    setInfoPageListaCom:any
+    mainState:any
 }
 
 export interface StepperProps {
@@ -49,7 +45,7 @@ export type AuthAzureProps = {
 }
 
 export type BodyListaDatiFatturazione = {
-    descrizione: string,
+    idEnti:string[],
     prodotto: string,
     profilo: string
 }
@@ -78,7 +74,7 @@ export interface MainState{
 }
 
 export interface BodyDownloadDatiFatturazione{
-    descrizione: string,
+    idEnti:string[],
     prodotto: string,
     profilo: string  
 }
@@ -90,7 +86,7 @@ export  type Params = {
 
 
 export interface BodyDownloadListaCommesse{
-    descrizione: string,
+    idEnti: string[],
     prodotto: string,
     anno:string|number,
     mese:string| number

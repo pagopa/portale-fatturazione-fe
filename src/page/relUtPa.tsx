@@ -301,7 +301,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel
                     </div>
                 </div>
                 <div className="row mt-5">
-                    { profilo.auth === 'PAGOPA' &&
+                    { /*profilo.auth === 'PAGOPA' &&
                         <div  className="col-3">
                             <MultiselectCheckbox 
                                 mainState={mainState} 
@@ -310,7 +310,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState, bodyRel
                                 dataSelect={dataSelect}
                             ></MultiselectCheckbox>
                         </div>
-                    }
+    */ }
                 </div>
                 
                 <div className="row mt-5">

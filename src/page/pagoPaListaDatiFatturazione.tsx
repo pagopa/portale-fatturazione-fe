@@ -14,13 +14,42 @@ import useIsTabActive from "../reusableFunctin/tabIsActiv";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../types/enum";
 import { profiliEnti } from "../reusableFunctin/profilo";
+import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
+import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 
-const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainState, dispatchMainState, setBodyGetLista, bodyGetLista,infoPageListaDatiFat, setInfoPageListaDatiFat}) =>{
+const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainState}) =>{
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
 
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
+
+
+    const setFilterToLocalStorage = () => {
+        localStorage.setItem("filtersListaDatiFatturazione", JSON.stringify({bodyGetLista,textValue,valueAutocomplete}));
+    }; 
+
+    const setInfoPageToLocalStorage = (info) => {
+        localStorage.setItem("pageRowListaDatiFatturazione", JSON.stringify(info));
+    };
+
+    const deleteFilterToLocalStorage = () => {
+        localStorage.removeItem("filtersListaDatiFatturazione");
+    }; 
+
+    const getFiltersFromLocalStorage = () => {
+        const filtri = localStorage.getItem('filtersListaDatiFatturazione') || '{}';
+        const result =  JSON.parse(filtri);
+        return result;
+    };
+
+    const getInfoPageFromLocalStorage = () => {
+        const infoPage = localStorage.getItem('pageRowListaDatiFatturazione') || '{}';
+        const result =  JSON.parse(infoPage);
+        return result;
+    };
+
+   
     
     const tabActive = useIsTabActive();
     useEffect(()=>{
@@ -29,13 +58,6 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
         }
     },[tabActive, mainState.nonce]);
    
-
-    const handleModifyMainState = (valueObj) => {
-        dispatchMainState({
-            type:'MODIFY_MAIN_STATE',
-            value:valueObj
-        });
-    };
 
     const navigate = useNavigate();
     const enti = profiliEnti();
@@ -48,14 +70,44 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
 
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
 
-    const [filtersDownload, setFiltersDownload] = useState<BodyGetListaDatiFatturazione>({descrizione:'',prodotto:'',profilo:''});
+    const [filtersDownload, setFiltersDownload] = useState<BodyGetListaDatiFatturazione>({idEnti:[],prodotto:'',profilo:''});
 
     const [getListaLoading, setGetListaLoading] = useState(false);
 
+    const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
+
+    const [bodyGetLista, setBodyGetLista] = useState({idEnti:[],prodotto:'',profilo:''});
+    const [infoPageListaDatiFat , setInfoPageListaDatiFat] = useState({ page: 0, pageSize: 100 });
+
+    const [textValue, setTextValue] = useState('');
+
+    const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
+
     // al primo reload se torno inditro da dettaglio dati tturazione ho gli stessi filtri per il download
+
     useEffect(()=>{
-        setFiltersDownload(bodyGetLista);
-    },[]);
+
+        const result = getFiltersFromLocalStorage();
+        const infoPageResult = getInfoPageFromLocalStorage();
+        if(mainState.nonce !== ''){
+            getProdotti();
+            getProfili();
+            if(Object.keys(result).length > 0){
+                setBodyGetLista(result.bodyGetLista);
+                setTextValue(result.textValue);
+                setValueAutocomplete(result.valueAutocomplete);
+                getListaDatifatturazione(result.bodyGetLista);
+                setFiltersDownload(result.bodyGetLista);
+            }else{
+                getListaDatifatturazione(bodyGetLista);
+            }
+
+            if(infoPageResult.page > 0){
+                setInfoPageListaDatiFat(infoPageResult);
+            }
+        }
+    }, [mainState.nonce]);
+
 
     useEffect(()=>{
 
@@ -72,9 +124,9 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
         }
 
     },[]);
-
+    console.log(bodyGetLista);
     useEffect(()=>{
-        if(bodyGetLista.descrizione !== '' || bodyGetLista.prodotto !== '' || bodyGetLista.profilo !== ''){
+        if(bodyGetLista.idEnti?.length  !== 0 || bodyGetLista.prodotto !== '' || bodyGetLista.profilo !== ''){
             setStatusAnnulla('show');
         }else{
             setStatusAnnulla('hidden');
@@ -118,16 +170,6 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
             })); 
     };
 
-    useEffect(()=>{
-       
-        if(mainState.nonce !== ''){
-
-            getProdotti();
-            getProfili();
-            getListaDatifatturazione(bodyGetLista);
-       
-        }
-    }, [mainState.nonce]);
     
 
     const onDownloadButton = async() =>{
@@ -222,9 +264,9 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
             </div>
             {/*title container end */}
         
-            <div className="d-flex  me-5 mb-5   marginTop24" >
-                <div className="me-5">
-                    <Box sx={{ width: 200 }}>
+            <div className="d-flex mb-5 marginTop24" >
+                <div className="col-3">
+                    <Box  style={{ width: '80%' }}>
                         <FormControl
                             fullWidth
                             size="medium"
@@ -240,7 +282,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                                 label='Seleziona Prodotto'
                                 labelId="search-by-label"
                                 onChange={(e) => setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}))}
-                                value={bodyGetLista.prodotto}
+                                value={bodyGetLista.prodotto || ''}
                                 //IconComponent={SearchIcon}
                     
                                 disabled={status=== 'immutable' ? true : false}
@@ -261,8 +303,8 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                         </FormControl>
                     </Box>
                 </div>
-                <div>
-                    <Box sx={{ width: 200 }}>
+                <div className="col-3 me-3">
+                    <Box style={{ width: '80%' }}>
                         <FormControl
                             fullWidth
                             size="medium"
@@ -301,14 +343,17 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                 </div>
             </div>
             <div className="d-flex" >
-                <div className="me-5">
-                    <TextField
-                        sx={{ width: 200 }}
-                        label="Rag Soc. Ente"
-                        placeholder="Rag Soc. Ente"
-                        value={bodyGetLista.descrizione}
-                        onChange={(e)=> setBodyGetLista((prev)=> ({...prev, ...{descrizione:e.target.value}}))}
-                    />
+                <div  className="col-3">
+                    <MultiselectCheckbox 
+                        mainState={mainState} 
+                        setBodyGetLista={setBodyGetLista}
+                        setDataSelect={setDataSelect}
+                        dataSelect={dataSelect}
+                        setTextValue={setTextValue}
+                        textValue={textValue}
+                        valueAutocomplete={valueAutocomplete}
+                        setValueAutocomplete={setValueAutocomplete}
+                    ></MultiselectCheckbox>
                 </div>
                 <div className=" d-flex justify-content-center align-items-center">
                     <div>
@@ -317,6 +362,8 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                                 getListaDatifatturazione(bodyGetLista);
                                 setInfoPageListaDatiFat({ page: 0, pageSize: 100 });
                                 setFiltersDownload(bodyGetLista);
+                                setFilterToLocalStorage();
+                                setInfoPageToLocalStorage({ page: 0, pageSize: 100 }); 
                             } } 
                             sx={{ marginTop: 'auto', marginBottom: 'auto'}}
                             variant="contained"> Filtra
@@ -324,10 +371,13 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                         {statusAnnulla === 'hidden'? null :
                             <Button
                                 onClick={()=>{
-                                    setBodyGetLista({descrizione:'',prodotto:'',profilo:''});
+                                    setBodyGetLista({idEnti:[],prodotto:'',profilo:''});
                                     setInfoPageListaDatiFat({ page: 0, pageSize: 100 });
-                                    getListaDatifatturazione({descrizione:'',prodotto:'',profilo:''});
-                                    setFiltersDownload({descrizione:'',prodotto:'',profilo:''});
+                                    setInfoPageToLocalStorage({ page: 0, pageSize: 100 });
+                                    getListaDatifatturazione({idEnti:[],prodotto:'',profilo:''});
+                                    setFiltersDownload({idEnti:[],prodotto:'',profilo:''});
+                                    setDataSelect([]);
+                                    deleteFilterToLocalStorage();
                                 } }
                                 sx={{marginLeft:'24px'}} >
                         Annulla filtri
@@ -358,7 +408,8 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                     }
                    
                 }}
-                onPaginationModelChange={(e)=>setInfoPageListaDatiFat(e)}
+                onPaginationModelChange={(e)=>{
+                    setInfoPageListaDatiFat(e); setInfoPageToLocalStorage(e);}}
 
                 paginationModel={infoPageListaDatiFat}
                 rows={gridData} 

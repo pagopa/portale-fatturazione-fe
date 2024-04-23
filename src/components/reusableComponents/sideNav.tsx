@@ -20,7 +20,7 @@ import { getDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/ap
 import { PathPf } from '../../types/enum';
 
 
-const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState, setFilterListaFatturazione, setFilterListaCommesse,setInfoPageListaDatiFat, setInfoPageListaCom}) => {
+const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}) => {
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -75,8 +75,8 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
     const handleListItemClick = async() => {
 
         if(profilo.auth === 'PAGOPA'){
-            setFilterListaFatturazione({descrizione:'',prodotto:'',profilo:''});
-            setInfoPageListaDatiFat({ page: 0, pageSize: 100 });
+            // setFilterListaFatturazione({descrizione:'',prodotto:'',profilo:''});
+            //setInfoPageListaDatiFat({ page: 0, pageSize: 100 });
            
             navigate(PathPf.LISTA_DATI_FATTURAZIONE);
         }else{
@@ -137,8 +137,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
     const handleListItemClickModuloCommessa = async () => {
        
         if(profilo.auth === 'PAGOPA'){
-            setFilterListaCommesse({descrizione:'',prodotto:'', anno:currentYear, mese:currString});
-            setInfoPageListaCom({ page: 0, pageSize: 100 });
+        
             //cliccando sulla side nav Modulo commessa e sono l'ente PAGOPA
             navigate(PathPf.LISTA_MODULICOMMESSA);
 

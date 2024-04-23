@@ -14,8 +14,10 @@ import useIsTabActive from "../reusableFunctin/tabIsActiv";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../types/enum";
 import { profiliEnti } from "../reusableFunctin/profilo";
+import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
+import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 
-const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchMainState, mainState, setInfoPageListaCom, infoPageListaCom, bodyGetLista, setBodyGetLista}) =>{
+const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchMainState, mainState}) =>{
 
     const navigate = useNavigate();
 
@@ -26,6 +28,51 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
     const profilo =  JSON.parse(getProfilo);
 
     const enti = profiliEnti();
+
+
+    const setFilterToLocalStorage = () => {
+        localStorage.setItem("filtersModuliCommessa", JSON.stringify({bodyGetLista,textValue,valueAutocomplete}));
+    }; 
+    const setInfoPageToLocalStorage = (info) => {
+        localStorage.setItem("pageRowListaModuliCommessa", JSON.stringify(info));
+    };
+
+    const deleteFilterToLocalStorage = () => {
+        localStorage.removeItem("filtersModuliCommessa");
+    }; 
+
+    const getFiltersFromLocalStorage = () => {
+        const filtri = localStorage.getItem('filtersModuliCommessa') || '{}';
+        const result =  JSON.parse(filtri);
+        return result;
+    };
+    const getInfoPageFromLocalStorage = () => {
+        const infoPage = localStorage.getItem('pageRowListaModuliCommessa') || '{}';
+        const result =  JSON.parse(infoPage);
+        return result;
+    };
+
+    useEffect(()=>{
+
+        const result = getFiltersFromLocalStorage();
+        const infoPageResult = getInfoPageFromLocalStorage();
+        if(mainState.nonce !== ''){
+            getProdotti();
+            if(Object.keys(result).length > 0){
+                setBodyGetLista(result.bodyGetLista);
+                setTextValue(result.textValue);
+                setValueAutocomplete(result.valueAutocomplete);
+                getListaCommesse(result.bodyGetLista);
+                setBodyDownload(result.bodyGetLista);
+            }else{
+                getListaCommesse(bodyGetLista);
+            }
+
+            if(infoPageResult.page > 0){
+                setInfoPageListaCom(infoPageResult);
+            }
+        }
+    }, [mainState.nonce]);
     
     const tabActive = useIsTabActive();
     useEffect(()=>{
@@ -64,14 +111,21 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
         {1:'Gennaio'},{2:'Febbraio'},{3:'Marzo'},{4:'Aprile'},{5:'Maggio'},{6:'Giugno'},
         {7:'Luglio'},{8:'Agosto'},{9:'Settembre'},{10:'Ottobre'},{11:'Novembre'},{12:'Dicembre'}];
 
+   
+
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [gridData, setGridData] = useState<GridElementListaCommesse[]>([]);
   
-    
+    const [bodyGetLista, setBodyGetLista] = useState({idEnti:[],prodotto:'', anno:currentYear, mese:currString});
+    const [infoPageListaCom , setInfoPageListaCom] = useState({ page: 0, pageSize: 100 });
+    const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
+    const [textValue, setTextValue] = useState('');
+
+    const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
 
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
 
-    const [bodyDownload, setBodyDownload] = useState<BodyDownloadModuliCommessa>({descrizione:'',prodotto:'', anno:currentYear, mese:currString});
+    const [bodyDownload, setBodyDownload] = useState<BodyDownloadModuliCommessa>({idEnti:[],prodotto:'', anno:currentYear, mese:currString});
 
     useEffect(()=>{
         setBodyDownload(bodyGetLista);
@@ -94,7 +148,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
     },[]);
 
     useEffect(()=>{
-        if(bodyGetLista.descrizione !== '' || bodyGetLista.prodotto !== '' ){
+        if( bodyGetLista.prodotto !== '' || bodyGetLista?.idEnti.length !== 0 ){
             setStatusAnnulla('show');
         }else{
             setStatusAnnulla('hidden');
@@ -112,15 +166,10 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
             }));
     };
 
-    useEffect(()=>{
-        if(mainState.nonce !== ''){
-            getProdotti();
-            getListaCommesse();
-        }
-    }, [mainState.nonce]);
+ 
 
-    const getListaCommesse = async() =>{
-        await listaModuloCommessaPagopa(bodyGetLista ,token, mainState.nonce)
+    const getListaCommesse = async(body) =>{
+        await listaModuloCommessaPagopa(body ,token, mainState.nonce)
             .then((res)=>{
                
                 setGridData(res.data);
@@ -134,7 +183,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
         await listaModuloCommessaPagopa({descrizione:'',prodotto:'', anno:currentYear, mese:currString} ,token, mainState.nonce)
             .then((res)=>{
              
-                setBodyGetLista({descrizione:'',prodotto:'', anno:currentYear, mese:currString});
+                setBodyGetLista({idEnti:[],prodotto:'', anno:currentYear, mese:currString});
                 setGridData(res.data);
             })
             .catch((err)=>{
@@ -254,10 +303,10 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
             </div>
             {/*title container end */}
     
-            <div className="d-flex  me-5 mb-5   marginTop24" >
+            <div className="d-flex mb-5 marginTop24" >
                
-                <div>
-                    <Box sx={{ width: 200 }}>
+                <div className="col-3">
+                    <Box sx={{ width: '80%' }}>
                         <FormControl
                             fullWidth
                             size="medium"
@@ -294,8 +343,8 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
                         </FormControl>
                     </Box>
                 </div>
-                <div className="ms-5">
-                    <Box sx={{ width: 200 }}>
+                <div className="col-3">
+                    <Box sx={{ width: '80%' }}>
                         <FormControl
                             fullWidth
                             size="medium"
@@ -337,8 +386,8 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
                 </div>
             </div>
             <div className="d-flex" >
-                <div className="me-5">
-                    <Box sx={{ width: 200 }}>
+                <div className="col-3 ">
+                    <Box sx={{ width: '80%' }}>
                         <FormControl
                             fullWidth
                             size="medium"
@@ -375,22 +424,29 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
                         </FormControl>
                     </Box>
                 </div>
-                <div className="me-5">
-                    <TextField
-                        sx={{ width: 200 }}
-                        label="Rag Soc. Ente"
-                        placeholder="Rag Soc. Ente"
-                        value={bodyGetLista.descrizione}
-                        onChange={(e) => setBodyGetLista((prev)=> ({...prev, ...{descrizione:e.target.value}}))}
-                    />
+                
+                <div  className="col-3">
+                    <MultiselectCheckbox 
+                        mainState={mainState} 
+                        setBodyGetLista={setBodyGetLista}
+                        setDataSelect={setDataSelect}
+                        dataSelect={dataSelect}
+                        setTextValue={setTextValue}
+                        textValue={textValue}
+                        valueAutocomplete={valueAutocomplete}
+                        setValueAutocomplete={setValueAutocomplete}
+                    ></MultiselectCheckbox>
                 </div>
+             
                 <div className=" d-flex justify-content-center align-items-center">
                     <div>
                         <Button 
                             onClick={()=>{
                                 setInfoPageListaCom({ page: 0, pageSize: 100 });
-                                getListaCommesse();
+                                setInfoPageToLocalStorage({ page: 0, pageSize: 100 });
+                                getListaCommesse(bodyGetLista);
                                 setBodyDownload(bodyGetLista);
+                                setFilterToLocalStorage();
                             } } 
                             sx={{ marginTop: 'auto', marginBottom: 'auto'}}
                             variant="contained"> Filtra
@@ -401,8 +457,11 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
                             <Button
                                 onClick={()=>{
                                     setInfoPageListaCom({ page: 0, pageSize: 100 });
+                                    setInfoPageToLocalStorage({ page: 0, pageSize: 100 });
                                     getListaCommesseOnAnnulla();
-                                    setBodyDownload({descrizione:'',prodotto:'', anno:currentYear, mese:currString});
+                                    setBodyDownload({idEnti:[],prodotto:'', anno:currentYear, mese:currString});
+                                    setDataSelect([]);
+                                    deleteFilterToLocalStorage();
                                 } }
                                 sx={{marginLeft:'24px'}} >
                     Annulla filtri
@@ -434,7 +493,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
                 getRowId={(row) => row?.key}
                 onRowClick={handleEvent}
                 onCellClick={handleOnCellClick}
-                onPaginationModelChange={(e)=>setInfoPageListaCom(e)}
+                onPaginationModelChange={(e)=>{setInfoPageListaCom(e);setInfoPageToLocalStorage(e);}}
                 paginationModel={infoPageListaCom}
                 
                 />
