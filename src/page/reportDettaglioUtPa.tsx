@@ -111,7 +111,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         consolidatori:[]
     });
 
-    console.log(bodyDownload,'ooo');
             
     const [contestazioneSelected, setContestazioneSelected] = useState<Contestazione>({ 
         risposta:true,
@@ -522,7 +521,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                         setOpenModalInfo(true);
                     }else{
                     // atrimenti show pop up creazione contestazione
-                        console.log(res.data);
                         setShowLoadingGrid(false);
                         setOpen(true); 
                         setContestazioneSelected(res.data);
