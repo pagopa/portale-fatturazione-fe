@@ -1,17 +1,11 @@
 export interface ListaModuliCommessaProps{
     mainState:any,
-    dispatchMainState:any,
-    setInfoPageListaCom:any,
-    infoPageListaCom:{
-        page: number,
-        pageSize: number },
-    bodyGetLista:BodyDownloadModuliCommessa,
-    setBodyGetLista:any
+    dispatchMainState:any
 }
 
 
 export interface BodyDownloadModuliCommessa{
-    descrizione:string,
+    idEnti:string[],
     prodotto:string,
     anno:number|string,
     mese:number

@@ -116,7 +116,11 @@ export interface MultiselectNotificheProps{
     mainState : MainState,
     setBodyGetLista:any,
     setDataSelect:any,
-    dataSelect:ElementMultiSelect[] 
+    dataSelect:ElementMultiSelect[] ,
+    setTextValue:any,
+    textValue:string,
+    valueAutocomplete:any,
+    setValueAutocomplete:any
 }
 
 

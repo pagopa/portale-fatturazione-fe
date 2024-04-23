@@ -116,7 +116,7 @@ const App = ({ instance }) => {
     const currentYear = (new Date()).getFullYear();
     const currentMonth = (new Date()).getMonth() + 1;
     const month = Number(currentMonth);
-
+    console.log('app');
     const [bodyRel, setBodyRel] = useState<BodyRel>({
         anno:currentYear,
         mese:month,
@@ -133,24 +133,7 @@ const App = ({ instance }) => {
     const [valueAnnoElencoCom, setValueAnnoElencoCom] = useState('');
     //_____________________________________________________________
 
-    //________ lista dati fatturazione pagopa
-    const [filterListaFatturazione, setFilterListaFatturazione] = useState({descrizione:'',prodotto:'',profilo:''});
-    const [infoPageListaDatiFat , setInfoPageListaDatiFat] = useState({ page: 0, pageSize: 100 });
-    //______________________________________________
-    //________ lista dati commessa
-
-    let currString;
-    //creo un array di oggetti con tutti i mesi 
-
-    if((new Date()).getMonth() === 11){
-        currString = '1';
-    }else{
-        const currentMonth = (new Date()).getMonth() + 2;
-        currString = currentMonth.toString();
-    }
-    const [filterListaCommesse, setFilterListaCommesse] = useState({descrizione:'',prodotto:'', anno:currentYear, mese:currString});
-    const [infoPageListaCom , setInfoPageListaCom] = useState({ page: 0, pageSize: 100 });
-    //__________________
+  
 
     const recOrConsIsLogged = profilo.profilo === 'REC' || profilo.profilo ==='CON';
 
@@ -173,10 +156,10 @@ const App = ({ instance }) => {
                                 <Grid item xs={2}>
                                     <SideNavComponent  dispatchMainState={ dispatchMainState}
                                         mainState={mainState}
-                                        setFilterListaFatturazione={setFilterListaFatturazione}
-                                        setFilterListaCommesse={setFilterListaCommesse}
-                                        setInfoPageListaDatiFat={setInfoPageListaDatiFat}
-                                        setInfoPageListaCom={setInfoPageListaCom}
+                                        //setFilterListaFatturazione={setFilterListaFatturazione}
+                                        //setFilterListaCommesse={setFilterListaCommesse}
+                                        //setInfoPageListaDatiFat={setInfoPageListaDatiFat}
+                                        //setInfoPageListaCom={setInfoPageListaCom}
                                     />
                                 </Grid> 
                                
@@ -202,9 +185,9 @@ const App = ({ instance }) => {
                                   
                                         <Route path={PathPf.PDF_COMMESSA} element={<ModuloCommessaPdf mainState={mainState} />} />
                                   
-                                        <Route path={PathPf.LISTA_DATI_FATTURAZIONE} element={<PagoPaListaDatiFatturazione mainState={mainState}  dispatchMainState={ dispatchMainState} setBodyGetLista={setFilterListaFatturazione} bodyGetLista={filterListaFatturazione} infoPageListaDatiFat={infoPageListaDatiFat}  setInfoPageListaDatiFat={setInfoPageListaDatiFat}/>} />
+                                        <Route path={PathPf.LISTA_DATI_FATTURAZIONE} element={<PagoPaListaDatiFatturazione mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
                                     
-                                        <Route path={PathPf.LISTA_MODULICOMMESSA} element={<PagoPaListaModuliCommessa mainState={mainState}  dispatchMainState={ dispatchMainState} setBodyGetLista={setFilterListaCommesse} bodyGetLista={filterListaCommesse} infoPageListaCom={infoPageListaCom}  setInfoPageListaCom={setInfoPageListaCom}/>} />
+                                        <Route path={PathPf.LISTA_MODULICOMMESSA} element={<PagoPaListaModuliCommessa mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
                                    
                                         <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio mainState={mainState} />} />
 

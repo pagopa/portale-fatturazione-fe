@@ -1,13 +1,6 @@
 export interface ListaDatiFatturazioneProps{
     mainState:any,
     dispatchMainState:any,
-    setBodyGetLista:any,
-    bodyGetLista:BodyGetListaDatiFatturazione,
-    infoPageListaDatiFat:{
-        page: number, 
-        pageSize: number
-    },
-    setInfoPageListaDatiFat:any
 }
 export interface ResponseDownloadListaFatturazione {
     data:{
@@ -16,7 +9,7 @@ export interface ResponseDownloadListaFatturazione {
 }
 
 export interface BodyGetListaDatiFatturazione {
-    descrizione:string,
+    idEnti:string[],
     prodotto:string,
     profilo:string
 }

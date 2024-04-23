@@ -4,7 +4,7 @@ import React , { useState, useEffect} from 'react';
 import { TextField,Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { getTipologiaProfilo, manageError, redirect } from "../api/api";
-import { ReportDettaglioProps, NotificheList, FlagContestazione, Contestazione, ElementMultiSelect, ListaRecCon  } from "../types/typeReportDettaglio";
+import { ReportDettaglioProps, NotificheList, FlagContestazione, Contestazione, ElementMultiSelect, ListaRecCon, OptionMultiselectChackbox  } from "../types/typeReportDettaglio";
 import { useNavigate } from "react-router";
 import { BodyListaNotifiche } from "../types/typesGeneral";
 import ModalContestazione from '../components/reportDettaglio/modalContestazione';
@@ -76,6 +76,10 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const [profili, setProfili] = useState([]);
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
     const [notificheList, setNotificheList] = useState<NotificheList[]>([]);
+
+    const [textValue, setTextValue] = useState('');
+
+    const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
 
     const [listaRecapitista, setListaRecapitisti] = useState<ListaRecCon[]>([]);
     const [listaConsolidatori, setListaConsolidatori] = useState<ListaRecCon[]>([]);
@@ -918,6 +922,10 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                             setBodyGetLista={setBodyGetLista}
                             setDataSelect={setDataSelect}
                             dataSelect={dataSelect}
+                            setTextValue={setTextValue}
+                            textValue={textValue}
+                            valueAutocomplete={valueAutocomplete}
+                            setValueAutocomplete={setValueAutocomplete}
                         ></MultiselectCheckbox>
                     </div>
                     }
