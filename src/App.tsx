@@ -139,10 +139,6 @@ const App = ({ instance }) => {
                                 <Grid item xs={2}>
                                     <SideNavComponent  dispatchMainState={ dispatchMainState}
                                         mainState={mainState}
-                                        //setFilterListaFatturazione={setFilterListaFatturazione}
-                                        //setFilterListaCommesse={setFilterListaCommesse}
-                                        //setInfoPageListaDatiFat={setInfoPageListaDatiFat}
-                                        //setInfoPageListaCom={setInfoPageListaCom}
                                     />
                                 </Grid> 
                                
