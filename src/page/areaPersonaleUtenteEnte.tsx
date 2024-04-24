@@ -23,7 +23,7 @@ import BasicModal from '../components/reusableComponents/modals/modal';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import BasicAlerts from '../components/reusableComponents/alert';
 import {PathPf} from '../types/enum';
-import { profiliEnti } from '../reusableFunctin/profilo';
+import { getProfilo, getStatusApp, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from '../reusableFunctin/actionLocalStorage';
 
 export const DatiFatturazioneContext = createContext<AreaPersonaleContext>({
     datiFatturazione:{
@@ -44,22 +44,11 @@ export const DatiFatturazioneContext = createContext<AreaPersonaleContext>({
 });
 
 const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, dispatchMainState}) => {
-
-    
    
-    const getToken = localStorage.getItem('token') || '{}';
-    const token =  JSON.parse(getToken).token;
-
-    const getProfilo = localStorage.getItem('profilo') || '{}';
-    const profilo =  JSON.parse(getProfilo);
-
+    const token =  getToken();
+    const profilo =  getProfilo();
+    const statusApp = getStatusApp();
     const tabActive = useIsTabActive();
-    useEffect(()=>{
-        if(tabActive === true && (mainState.nonce !== profilo.nonce)){
-            window.location.href = redirect;
-        }
-    },[tabActive, mainState.nonce]);
-
     const navigate = useNavigate();
     const enti = profiliEnti();
 
@@ -69,8 +58,10 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
             value:valueObj
         });
     };
-  
+
     const [open, setOpen] = useState(false);
+    const [openModalLoading, setOpenModalLoading] = useState(false);
+    const [alertVisible, setAlertVisible] = useState(false);
     const [datiFatturazione, setDatiFatturazione] = useState<DatiFatturazione>({
         tipoCommessa:'',
         idEnte:'',
@@ -86,7 +77,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         notaLegale:false
 
     });
-   
   
     // state creato per il tasto conferma , abilitato nel caso in cui tutti values sono true
     const [statusBottonConferma, setStatusButtonConferma] = useState<StateEnableConferma>({
@@ -96,111 +86,12 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         'ID Documento':false,
         "Codice. Commessa/Convenzione":false,
     });
-   
-    // check su ogni elemento dello state statusBottonConferma
-    const enableDisableConferma = Object.values(statusBottonConferma).every(element => element === false);
-   
-    const ifAnyTextAreaIsEmpty = (
-        datiFatturazione.notaLegale === false 
-     || datiFatturazione.pec === ''
-     || datiFatturazione.contatti.length === 0
-    );
-   
-    // get dati fatturazione SELFCARE
-    const getDatiFat = async () =>{
-      
-        await getDatiFatturazione(token,mainState.nonce).then((res:SuccesResponseGetDatiFatturazione ) =>{   
-           
-            setDatiFatturazione(res.data); 
 
-            const statusApp = localStorage.getItem('statusApplication')||'{}';
-            const parseStatusApp = JSON.parse(statusApp);
-        
-            localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
-                ...{ datiFatturazione:true}}));
-
-            handleModifyMainState({...parseStatusApp, ...{
-                datiFatturazione:true,
-                statusPageDatiFatturazione:'immutable'
-            }});
-           
-        }).catch(err =>{
-           
-            if(err?.response?.status === 401){
-                localStorage.removeItem("token");
-                localStorage.removeItem("profilo");
-                navigate('/error');
-            }else if(err?.response?.status === 404){
-                const statusApp = localStorage.getItem('statusApplication')||'{}';
-                const parseStatusApp = JSON.parse(statusApp);
-            
-                localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
-                    ...{ datiFatturazione:false}}));
-
-                handleModifyMainState({...parseStatusApp, ...{
-                    datiFatturazione:false,
-                    statusPageDatiFatturazione:'mutable'
-                }});
-            }else if(err?.response?.status === 419){
-
-                navigate('/error');
-            }
-        
-            setDatiFatturazione({
-                tipoCommessa:'',
-                idEnte:'',
-                splitPayment:true,
-                cup: '',
-                idDocumento:'',
-                codCommessa:'',
-                contatti:[],
-                dataCreazione:'',
-                dataModifica:'',
-                dataDocumento:null,
-                pec:'',
-                notaLegale:false
-        
-            });
-
-            manageError(err, navigate);
-        });
-
-    };
-   
-    // get dati fatturazione PAGOPA
-    const getDatiFatPagoPa = async () =>{
-        await getDatiFatturazionePagoPa(token,mainState.nonce, profilo.idEnte, profilo.prodotto ).then((res:SuccesResponseGetDatiFatturazione) =>{   
-            handleModifyMainState({
-                datiFatturazione:true,
-                statusPageDatiFatturazione:'immutable'
-            });
-        
-            setDatiFatturazione(res.data); 
-           
-        }).catch(err =>{
-            handleModifyMainState({
-                datiFatturazione:false,
-                statusPageDatiFatturazione:'mutable'
-            });
-            
-            setDatiFatturazione({
-                tipoCommessa:'',
-                idEnte:'',
-                splitPayment:true,
-                cup: '',
-                idDocumento:'',
-                codCommessa:'',
-                contatti:[],
-                dataCreazione:'',
-                dataModifica:'',
-                dataDocumento:null,
-                pec:'',
-                notaLegale:false
-        
-            });
-            manageError(err, navigate);
-        });
-    };
+    useEffect(()=>{
+        if(tabActive === true && (mainState.nonce !== profilo.nonce)){
+            window.location.href = redirect;
+        }
+    },[tabActive, mainState.nonce]);
 
     // se il nonce è presente viene chiamata la get dati fatturazione
     useEffect(()=>{
@@ -220,25 +111,100 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         if(token === undefined){
             window.location.href = redirect;
         }
-
         /* se l'utente PagoPA modifa l'url e cerca di accedere al path '/' 
         senza aver prima selezionato una row della grid lista dati fatturazione viene fatto il redirect automatico a  PathPf.LISTA_DATI_FATTURAZIONE*/
         if(profilo.auth === 'PAGOPA' && !profilo.idEnte){
             window.location.href = PathPf.LISTA_DATI_FATTURAZIONE;
         }
     },[]);
+   
+    // get dati fatturazione SELFCARE
+    const getDatiFat = async () =>{
+        await getDatiFatturazione(token,mainState.nonce).then((res:SuccesResponseGetDatiFatturazione ) =>{   
+            setDatiFatturazione(res.data); 
+        
+            localStorage.setItem('statusApplication',JSON.stringify({...statusApp,
+                ...{ datiFatturazione:true}}));
 
+            handleModifyMainState({...statusApp, ...{
+                datiFatturazione:true,
+                statusPageDatiFatturazione:'immutable'
+            }});
+        }).catch(err =>{
+            if(err?.response?.status === 401){
+                localStorage.removeItem("token");
+                localStorage.removeItem("profilo");
+                navigate('/error');
+            }else if(err?.response?.status === 404){
+                localStorage.setItem('statusApplication',JSON.stringify({...statusApp,
+                    ...{ datiFatturazione:false}}));
+
+                handleModifyMainState({...statusApp, ...{
+                    datiFatturazione:false,
+                    statusPageDatiFatturazione:'mutable'
+                }});
+            }else if(err?.response?.status === 419){
+                navigate('/error');
+            }
+            setDatiFatturazione({
+                tipoCommessa:'',
+                idEnte:'',
+                splitPayment:true,
+                cup: '',
+                idDocumento:'',
+                codCommessa:'',
+                contatti:[],
+                dataCreazione:'',
+                dataModifica:'',
+                dataDocumento:null,
+                pec:'',
+                notaLegale:false
+        
+            });
+            manageError(err, navigate);
+        });
+
+    };
+   
+    // get dati fatturazione PAGOPA
+    const getDatiFatPagoPa = async () =>{
+        await getDatiFatturazionePagoPa(token,mainState.nonce, profilo.idEnte, profilo.prodotto ).then((res:SuccesResponseGetDatiFatturazione) =>{   
+            handleModifyMainState({
+                datiFatturazione:true,
+                statusPageDatiFatturazione:'immutable'
+            });
+            setDatiFatturazione(res.data); 
+        }).catch(err =>{
+            handleModifyMainState({
+                datiFatturazione:false,
+                statusPageDatiFatturazione:'mutable'
+            });
+            setDatiFatturazione({
+                tipoCommessa:'',
+                idEnte:'',
+                splitPayment:true,
+                cup: '',
+                idDocumento:'',
+                codCommessa:'',
+                contatti:[],
+                dataCreazione:'',
+                dataModifica:'',
+                dataDocumento:null,
+                pec:'',
+                notaLegale:false
+        
+            });
+            manageError(err, navigate);
+        });
+    };
    
     const hendleSubmitDatiFatturazione = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) =>{
         e.preventDefault();
         setOpenModalLoading(true);
-        const statusApp = localStorage.getItem('statusApplication')||'{}';
-        const parseStatusApp = JSON.parse(statusApp);
         //  1 - se l'user ha già dati fatturazione
         if(mainState.datiFatturazione === true){
             // 1 - ed è un utente PAGOPA
             if(profilo.auth === 'PAGOPA'){
-
                 const newDatiFatturazione = {...datiFatturazione, ...{idEnte:profilo.idEnte,prodotto:profilo.prodotto}};
 
                 modifyDatiFatturazionePagoPa(token,mainState.nonce, newDatiFatturazione ).then(() =>{
@@ -246,7 +212,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                     handleModifyMainState({
                         statusPageDatiFatturazione:'immutable',
                     });
-                
                 }).catch(err => {
                     setOpenModalLoading(false);
                     if(err?.response?.status  === 500){
@@ -254,9 +219,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                     }else{
                         manageError(err, navigate);
                     }
-                    
                 });
-
             }else{
                 // 1 - ed è un utente SELFCARE
                 modifyDatiFatturazione(datiFatturazione, token,mainState.nonce)
@@ -282,17 +245,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
             }
         }else{
             // 2 - se l'user NON ha I dati fatturazione
-            const body = {
-                tipoCommessa:datiFatturazione.tipoCommessa,
-                splitPayment:datiFatturazione.splitPayment,
-                cup: datiFatturazione.cup,
-                notaLegale:datiFatturazione.notaLegale,
-                idDocumento:datiFatturazione.idDocumento,
-                codCommessa:datiFatturazione.codCommessa,
-                contatti:datiFatturazione.contatti,
-                dataDocumento:new Date().toISOString(),
-                pec:datiFatturazione.pec};
-
             const bodyPagoPa = {
                 tipoCommessa:datiFatturazione.tipoCommessa,
                 splitPayment:datiFatturazione.splitPayment,
@@ -306,7 +258,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 idEnte:profilo.idEnte,
                 prodotto:profilo.prodotto
             };
-              
+            const {idEnte,prodotto,...body} = bodyPagoPa;
             // 2 - ed è un utente PAGOPA
             if(profilo.auth === 'PAGOPA'){
                 insertDatiFatturazionePagoPa( token,mainState.nonce, bodyPagoPa).then(()  =>{
@@ -315,7 +267,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                         statusPageDatiFatturazione:'immutable',
                         datiFatturazione:true
                     });
-                 
                 }).catch(err =>{
                     setOpenModalLoading(false);
                     if(err?.response?.status === 401){
@@ -329,32 +280,27 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 // 2 - ED è UN UTENTE SELFCARE
                 insertDatiFatturazione(body, token,mainState.nonce).then(() =>{
                     setOpenModalLoading(false);
-                    if(parseStatusApp.inserisciModificaCommessa === 'INSERT'){
+                    if(statusApp.inserisciModificaCommessa === 'INSERT'){
                         handleModifyMainState({
                             statusPageDatiFatturazione:'immutable',
                             datiFatturazione:true,
                             statusPageInserimentoCommessa:'mutable'
                         });
-                       
-                    
-                        localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
-                            ...{
-                                statusPageDatiFatturazione:'immutable',
-                                datiFatturazione:true,
-                                statusPageInserimentoCommessa:'mutable'
-                            }}));
+                        setInfoToStatusApplicationLoacalStorage(statusApp,{
+                            statusPageDatiFatturazione:'immutable',
+                            datiFatturazione:true,
+                            statusPageInserimentoCommessa:'mutable'
+                        });
                         navigate(PathPf.MODULOCOMMESSA);
                     }else{
                         handleModifyMainState({
                             statusPageDatiFatturazione:'immutable',
                             datiFatturazione:true,
                         });
-
-                        localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
-                            ...{
-                                statusPageDatiFatturazione:'immutable',
-                                datiFatturazione:true,
-                            }}));
+                        setInfoToStatusApplicationLoacalStorage(statusApp,{
+                            statusPageDatiFatturazione:'immutable',
+                            datiFatturazione:true,
+                        });
                         navigate(PathPf.LISTA_COMMESSE);
                     }  
                 }).catch(err =>{
@@ -362,22 +308,23 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                     if(err?.response?.status === 401){
                         navigate('/error');
                     }else if(err?.response?.status === 419){
-        
                         navigate('/error');
                     }else if(err?.response?.status  === 500){
                         setAlertVisible(true);
                     }
-                    
-                });
-                    
-            }
-            
-        }
-         
+                });     
+            } 
+        }   
     };
 
-    const [openModalLoading, setOpenModalLoading] = useState(false);
-    const [alertVisible, setAlertVisible] = useState(false);
+    // check su ogni elemento dello state statusBottonConferma
+    const enableDisableConferma = Object.values(statusBottonConferma).every(element => element === false);
+   
+    const ifAnyTextAreaIsEmpty = (
+        datiFatturazione.notaLegale === false 
+       || datiFatturazione.pec === ''
+       || datiFatturazione.contatti.length === 0
+    );
 
     return (
         <DatiFatturazioneContext.Provider
@@ -386,19 +333,15 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 setDatiFatturazione,
                 setStatusButtonConferma,
                 mainState}}>
-
             <div >
-                
                 <PageTitleNavigation dispatchMainState={dispatchMainState} setOpen={setOpen} /> 
                 {/* tab 1 e 2 start */}
                 <div className='mt-5'>
                     <TabAreaPersonaleUtente />
                 </div>
                 <div>
-
                     {mainState.statusPageDatiFatturazione === 'immutable' ? null : (
                         <div className="d-flex justify-content-between m-5 ">
-
                             <Button
                                 onClick={() => setOpen(true)}
                                 disabled={mainState.datiFatturazione === false || mainState.statusPageDatiFatturazione === 'immutable' }
@@ -416,12 +359,9 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                             >
               Salva
                             </Button>
-
                         </div>
                     )}
-
                 </div>
-
                 <BasicModal setOpen={setOpen} open={open} dispatchMainState={dispatchMainState} getDatiFat={getDatiFat} getDatiFatPagoPa={getDatiFatPagoPa} mainState={mainState}></BasicModal>
                 <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}></ModalLoading>
                 <BasicAlerts typeAlert={'error'} setVisible={setAlertVisible}  visible={alertVisible}></BasicAlerts>

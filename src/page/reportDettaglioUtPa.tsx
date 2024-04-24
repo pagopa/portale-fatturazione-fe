@@ -21,7 +21,7 @@ import GridCustom from "../components/reusableComponents/gridCustom";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 import useIsTabActive from "../reusableFunctin/tabIsActiv";
 import { saveAs } from "file-saver";
-import { profiliEnti } from "../reusableFunctin/profilo";
+import { profiliEnti } from "../reusableFunctin/actionLocalStorage";
 
 const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 

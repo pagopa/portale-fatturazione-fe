@@ -1,3 +1,5 @@
+import { DataPdf } from "./typeModuloCommessaInserimento"
+
 export interface ListaModuliCommessaProps{
     mainState:any,
     dispatchMainState:any
@@ -35,4 +37,16 @@ export interface GridElementListaCommesse {
     totaleLordo: number,
     idTipoContratto:number,
     stato: string
+}
+
+export interface DatiCommessaPdf {
+    totaleNotifiche?: number,
+    numeroNotificheNazionali?: number,
+    numeroNotificheInternazionali?: number,
+    tipo?: string,
+    idTipoSpedizione?: number
+}
+
+export interface ResponseGetPdfPagoPa {
+    data:DataPdf
 }

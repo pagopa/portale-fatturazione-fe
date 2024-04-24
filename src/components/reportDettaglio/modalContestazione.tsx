@@ -12,7 +12,7 @@ import {useState, useEffect} from 'react';
 import YupString from '../../validations/string/index';
 import { createContestazione, modifyContestazioneConsolidatore, modifyContestazioneEnte,modifyContestazioneRecapitista, tipologiaTipoContestazione } from '../../api/apiSelfcare/notificheSE/api';
 import { modifyContestazioneEntePagoPa } from '../../api/apiPagoPa/notificheSE/api';
-import { profiliEnti } from '../../reusableFunctin/profilo';
+import { profiliEnti } from '../../reusableFunctin/actionLocalStorage';
 
 const style = {
     position: 'absolute' as const,

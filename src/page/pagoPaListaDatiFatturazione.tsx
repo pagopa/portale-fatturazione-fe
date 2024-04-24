@@ -13,7 +13,7 @@ import { downloadDocumentoListaDatiFatturazionePagoPa, listaDatiFatturazionePago
 import useIsTabActive from "../reusableFunctin/tabIsActiv";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../types/enum";
-import { profiliEnti } from "../reusableFunctin/profilo";
+import { profiliEnti } from "../reusableFunctin/actionLocalStorage";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 

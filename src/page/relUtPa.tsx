@@ -17,7 +17,7 @@ import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { saveAs } from "file-saver";
 import useIsTabActive from "../reusableFunctin/tabIsActiv";
 import { PathPf } from "../types/enum";
-import { profiliEnti } from "../reusableFunctin/profilo";
+import { profiliEnti } from "../reusableFunctin/actionLocalStorage";
 import { OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 
 const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{

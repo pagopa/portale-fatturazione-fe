@@ -13,7 +13,7 @@ import { downloadDocumentoListaModuloCommessaPagoPa, listaModuloCommessaPagopa }
 import useIsTabActive from "../reusableFunctin/tabIsActiv";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../types/enum";
-import { profiliEnti } from "../reusableFunctin/profilo";
+import { profiliEnti } from "../reusableFunctin/actionLocalStorage";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 
@@ -474,11 +474,12 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
             </div>
             {/* grid */}
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
-           
+                {gridData.length > 0 &&
                 <Button onClick={()=>downloadExelListaCommessa() } >
             Download Risultati
                     <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
                 </Button>
+                }
             </div>
             <div className="mt-1 mb-5" style={{ width: '100%'}}>
                 <DataGrid sx={{
