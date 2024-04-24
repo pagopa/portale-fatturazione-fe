@@ -124,7 +124,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
         }
 
     },[]);
-    console.log(bodyGetLista);
+
     useEffect(()=>{
         if(bodyGetLista.idEnti?.length  !== 0 || bodyGetLista.prodotto !== '' || bodyGetLista.profilo !== ''){
             setStatusAnnulla('show');
