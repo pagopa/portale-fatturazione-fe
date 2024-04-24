@@ -70,12 +70,12 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
     useEffect(()=>{
         const result = getFiltersFromLocalStorage();
-        console.log(1);
+      
         if(mainState.nonce !== ''){
             
             if(Object.keys(result).length > 0){
-                console.log(2);
-                console.log(result,'000');
+             
+             
                 setBodyRel(result.bodyRel);
                 setTextValue(result.textValue);
                 setValueAutocomplete(result.valueAutocomplete);
@@ -84,7 +84,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 setRowsPerPage(result.rowsPerPage);
                 setBodyDownload(result.bodyRel);
             }else{
-                console.log(3);
+           
                 const realPage = page + 1;
                 getlistaRel(bodyRel,realPage, rowsPerPage);
             }
