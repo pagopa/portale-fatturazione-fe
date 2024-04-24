@@ -69,22 +69,9 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
         localStorage.removeItem("pageRowListaModuliCommessa");
         localStorage.removeItem("filtersRel");
         if(profilo.auth === 'PAGOPA'){
-           
-            // setFilterListaFatturazione({descrizione:'',prodotto:'',profilo:''});
-            //setInfoPageListaDatiFat({ page: 0, pageSize: 100 });
-           
             navigate(PathPf.LISTA_DATI_FATTURAZIONE);
         }else{
             navigate(PathPf.DATI_FATTURAZIONE);
-            /*
-            if(mainState.datiFatturazione === true){
-                handleModifyMainState({
-                    action:'DATI_FATTURAZIONE',
-                    statusPageDatiFatturazione:'immutable'
-                });
-                localStorage.setItem('statusApplication', JSON.stringify(mainState));
-            }
-           */
         }
         
     };
@@ -108,30 +95,16 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
             
             localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
                 ...{datiFatturazione:true}}));
-
         }).catch(err =>{
-          
             if(err?.response?.status === 404){
                 handleModifyMainState({datiFatturazione:false});
                 localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
                     ...{datiFatturazione:false}}));
             }
-           
         });
 
     };
     
-    const currentYear = (new Date()).getFullYear();
-
-    let currString;
-    //creo un array di oggetti con tutti i mesi 
-
-    if((new Date()).getMonth() === 11){
-        currString = '1';
-    }else{
-        const currentMonth = (new Date()).getMonth() + 2;
-        currString = currentMonth.toString();
-    }
 
     const handleListItemClickModuloCommessa = async () => {
       
@@ -139,24 +112,19 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
         localStorage.removeItem("filtersListaDatiFatturazione");
         localStorage.removeItem("pageRowListaDatiFatturazione");
         if(profilo.auth === 'PAGOPA'){
-        
             //cliccando sulla side nav Modulo commessa e sono l'ente PAGOPA
             navigate(PathPf.LISTA_MODULICOMMESSA);
-
         }else{
             //cliccando sulla side nav Modulo commessa e sono un ente qualsiasi
             await getDatiFat();
             await getDatiModuloCommessa(token, mainState.nonce).then((res)=>{
-               
                 if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
-                  
                     handleModifyMainState({
                         inserisciModificaCommessa:'INSERT',
                         statusPageInserimentoCommessa:'mutable',
                         userClickOn:undefined,
                         primoInserimetoCommessa:true
                     });
-                 
                     const newState = {
                         mese:res.data.mese,
                         anno:res.data.anno,
@@ -182,7 +150,6 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
     
                     const newState = {
                         inserisciModificaCommessa:'MODIFY',
-                        // datiFatturazione:mainState.datiFatturazione,
                         primoInserimetoCommessa:false
                     };
                     const statusApp = localStorage.getItem('statusApplication')||'{}';
@@ -201,7 +168,6 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
                 
                     const newState = {
                         inserisciModificaCommessa:'NO_ACTION',
-                        //datiFatturazione:mainState.datiFatturazione,
                         primoInserimetoCommessa:false
                     };
                     const statusApp = localStorage.getItem('statusApplication')||'{}';
@@ -219,7 +185,6 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
 
                     const newState = {
                         inserisciModificaCommessa:'NO_ACTION',
-                        // datiFatturazione:mainState.datiFatturazione,
                         primoInserimetoCommessa:false
                     };
                     const statusApp = localStorage.getItem('statusApplication')||'{}';
@@ -227,14 +192,11 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
             
                     localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
                         ...newState}));
-                   
                     navigate(PathPf.LISTA_COMMESSE);
                 }
-    
             }).catch((err) =>{
                 manageError(err, navigate);
             });
-            
         }
     };
 
@@ -253,7 +215,6 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
         localStorage.removeItem("filtersListaDatiFatturazione");
         localStorage.removeItem("pageRowListaDatiFatturazione");
         navigate(PathPf.LISTA_REL);
-     
     };
     
     const currentLocation = location.pathname;
@@ -278,7 +239,6 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
         }else if(currentLocation === PathPf.PDF_REL){
             setSelectedIndex(3);
         }
-        
     },[currentLocation]);
    
     const hideShowSidenav = location.pathname === '/auth' ||

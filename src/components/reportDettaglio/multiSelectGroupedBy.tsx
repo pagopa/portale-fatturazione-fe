@@ -10,45 +10,39 @@ import { FlagContestazione, MultiSelectGroupedByProps } from '../../types/typeRe
 import { useEffect , useState} from 'react';
 import { BodyListaNotifiche} from '../../types/typesGeneral';
 import { flagContestazione } from '../../api/apiSelfcare/notificheSE/api';
+import { getProfilo, getToken } from '../../reusableFunctin/actionLocalStorage';
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({mainState,  setBodyGetLista, setValueFgContestazione, valueFgContestazione}) => {
 
-    const getToken = localStorage.getItem('token') || '{}';
-    const token =  JSON.parse(getToken).token;
-
-    const getProfilo = localStorage.getItem('profilo') || '{}';
-    const profilo =  JSON.parse(getProfilo);
- 
+    const token =  getToken();
+    const profilo =  getProfilo();
     const navigate = useNavigate();
 
     const [fgContestazione, setFgContestazione] = useState<FlagContestazione[]>([]);
 
+    useEffect(()=>{
+        if(mainState.nonce !== ''){
+            getFlagContestazione();
+        }
+    },[mainState.nonce]);
+
     const getFlagContestazione =  async() => {
         await flagContestazione(token, mainState.nonce )
             .then((res)=>{
-                setFgContestazione(res.data);
-                                
+                setFgContestazione(res.data);                
             })
             .catch(((err)=>{
                 manageError(err,navigate);
             }));
     };
 
-    useEffect(()=>{
-        if(mainState.nonce !== ''){
-            getFlagContestazione();
-            
-        }
-    },[mainState.nonce]);
-
     return (
         <Autocomplete
             sx={{ '.MuiAutocomplete-groupLabel': {
-                backgroundColor:'#FF0000',
-                       
+                backgroundColor:'#FF0000',          
             },
             height:'60px'}}
             multiple
@@ -68,8 +62,6 @@ const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({m
             renderInput={(params) =>{
                
                 return <TextField 
-                    //onChange={(e)=> setTextValue(e.target.value)} 
-                  
                     {...params}
                     label="Contestazione" 
                     placeholder="Contestazione" />;
@@ -77,25 +69,19 @@ const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({m
                 
             }
             renderOption={(props, option, { selected }) =>{
-                //settato come key l'id ente 
-              
                 const newProps = {...props,...{key:option.id}};
                 return (
                     <div>
-                        <li    {...newProps}   >
-                        
+                        <li {...newProps}>
                             <Checkbox
-                            
                                 icon={icon}
                                 checkedIcon={checkedIcon}
                                 style={{ marginRight: 8 }}
                                 checked={selected}
                             />
-                        
                             {option.flag}
                         </li>
                     </div>
-                  
                 );
             } }
         />

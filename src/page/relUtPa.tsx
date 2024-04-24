@@ -17,91 +17,16 @@ import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { saveAs } from "file-saver";
 import useIsTabActive from "../reusableFunctin/tabIsActiv";
 import { PathPf } from "../types/enum";
-import { profiliEnti } from "../reusableFunctin/actionLocalStorage";
+import { deleteFilterToLocalStorageRel, getFiltersFromLocalStorageRel, getProfilo, getStatusApp, getToken, profiliEnti, setFilterToLocalStorageRel } from "../reusableFunctin/actionLocalStorage";
 import { OptionMultiselectChackbox } from "../types/typeReportDettaglio";
+import { mesiGrid, mesiWithZero } from "../reusableFunctin/reusableArrayObj";
 
 const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
-    const mesiGrid = ["Dicembre", "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
-
+    const token =  getToken();
+    const profilo =  getProfilo();
     const navigate = useNavigate();
     const enti = profiliEnti();
-
-    const getToken = localStorage.getItem('token') || '{}';
-    const token =  JSON.parse(getToken).token;
-
-    const getProfilo = localStorage.getItem('profilo') || '{}';
-    const profilo =  JSON.parse(getProfilo);
-
-    const setFilterToLocalStorage = (bodyRel,textValue,valueAutocomplete, page, rowsPerPage) => {
-        localStorage.setItem("filtersRel", JSON.stringify({bodyRel,textValue,valueAutocomplete, page, rowsPerPage}));
-    }; 
-
-    
-
-    const deleteFilterToLocalStorage = () => {
-        localStorage.removeItem("filtersRel");
-    }; 
-
-    const getFiltersFromLocalStorage = () => {
-        const filtri = localStorage.getItem('filtersRel') || '{}';
-        const result =  JSON.parse(filtri);
-        return result;
-    };
-
-    const currentYear = (new Date()).getFullYear();
-    const currentMonth = (new Date()).getMonth() + 1;
-    const month = Number(currentMonth);
-  
-    const [bodyRel, setBodyRel] = useState<BodyRel>({
-        anno:currentYear,
-        mese:month,
-        tipologiaFattura:null,
-        idEnti:[],
-        idContratto:null,
-        caricata:null
-    });
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
-
-
-  
-
-
-    useEffect(()=>{
-        const result = getFiltersFromLocalStorage();
-      
-        if(mainState.nonce !== ''){
-            
-            if(Object.keys(result).length > 0){
-             
-             
-                setBodyRel(result.bodyRel);
-                setTextValue(result.textValue);
-                setValueAutocomplete(result.valueAutocomplete);
-                getlistaRel(result.bodyRel,result.page + 1, result.rowsPerPage);
-                setPage(result.page);
-                setRowsPerPage(result.rowsPerPage);
-                setBodyDownload(result.bodyRel);
-            }else{
-           
-                const realPage = page + 1;
-                getlistaRel(bodyRel,realPage, rowsPerPage);
-            }
-
-           
-        }
-        
-    },[mainState.nonce]);
-    
-    
-
-    const tabActive = useIsTabActive();
-    useEffect(()=>{
-        if(tabActive === true && (mainState.nonce !== profilo.nonce)){
-            window.location.href = redirect;
-        }
-    },[tabActive, mainState.nonce]);
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -110,25 +35,21 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         });
     };
 
-
-
+    const currentYear = (new Date()).getFullYear();
+    const currentMonth = (new Date()).getMonth() + 1;
+    const month = Number(currentMonth);
   
-    const  hiddenAnnullaFiltri = bodyRel.tipologiaFattura === null && bodyRel.idEnti?.length === 0 && bodyRel.caricata === null; 
-
-    // data ragione sociale
-
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [openModalRedirect, setOpenModalRedirect] = useState(false);
+    const [showLoading, setShowLoading] = useState(false);
     const [totalNotifiche, setTotalNotifiche]  = useState(0);
-       
     const [dataSelect, setDataSelect] = useState([]);
     const [data, setData] = useState<any>([]);
-
     const [getListaRelRunning, setGetListaRelRunning] = useState(false);
     const [disableDownloadListaPdf, setDisableListaPdf] = useState(true);
-
     const [textValue, setTextValue] = useState('');
-
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
-
     const [bodyDownload, setBodyDownload] = useState<BodyRel>({
         anno:currentYear,
         mese:month,
@@ -137,11 +58,34 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         idContratto:null,
         caricata:null
     });
-   
-   
+    const [bodyRel, setBodyRel] = useState<BodyRel>({
+        anno:currentYear,
+        mese:month,
+        tipologiaFattura:null,
+        idEnti:[],
+        idContratto:null,
+        caricata:null
+    });
+
+    useEffect(()=>{
+        const result = getFiltersFromLocalStorageRel();
+        if(mainState.nonce !== ''){
+            if(Object.keys(result).length > 0){
+                setBodyRel(result.bodyRel);
+                setTextValue(result.textValue);
+                setValueAutocomplete(result.valueAutocomplete);
+                getlistaRel(result.bodyRel,result.page + 1, result.rowsPerPage);
+                setPage(result.page);
+                setRowsPerPage(result.rowsPerPage);
+                setBodyDownload(result.bodyRel);
+            }else{
+                const realPage = page + 1;
+                getlistaRel(bodyRel,realPage, rowsPerPage);
+            }
+        }
+    },[mainState.nonce]);
 
     const getlistaRel = async (bodyRel,nPage,nRows) => {
-       
         setGetListaRelRunning(true);
         if(enti){
             const {idEnti, ...newBody} = bodyRel;
@@ -166,12 +110,10 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                             totale:obj.totale.toLocaleString("de-DE", { style: "currency", currency: "EUR" })
                         };
                     });
-                    
                     setData(orderDataCustom);
                     setTotalNotifiche(res.data.count);
                     setGetListaRelRunning(false);
                 }).catch((error)=>{
-                    
                     manageError(error, navigate);
                 });
         }else{
@@ -182,7 +124,6 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                     setDisableListaPdf(checkIfAllCaricata);
                     // ordino i dati in base all'header della grid
                     const orderDataCustom = res.data.relTestate.map((obj)=>{
-
                         // inserire come prima chiave l'id se non si vuol renderlo visibile nella grid
                         // 'id serve per la chiamata get dettaglio dell'elemento selezionato nella grid
                         return {
@@ -200,65 +141,49 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                             totale:obj.totale.toLocaleString("de-DE", { style: "currency", currency: "EUR" })
                         };
                     });
-                
                     setData(orderDataCustom);
                     setTotalNotifiche(res.data.count);
                     setGetListaRelRunning(false);
                 }).catch((error)=>{
-                
                     manageError(error, navigate);
                 });
         }            
     };
-   
-   
 
     const onButtonFiltra = () =>{
         setPage(0);
         setRowsPerPage(10);
         setBodyDownload(bodyRel);
         getlistaRel(bodyRel,1,10); 
-        setFilterToLocalStorage(bodyRel,textValue,valueAutocomplete, 0, 10);
-       
-        
+        setFilterToLocalStorageRel(bodyRel,textValue,valueAutocomplete, 0, 10);
     };
 
     const handleChangePage = (
         event: React.MouseEvent<HTMLButtonElement> | null,
         newPage: number,
     ) => {
-     
         const realPage = newPage + 1;
-       
         getlistaRel(bodyRel,realPage, rowsPerPage);
         setPage(newPage);
-        const result = getFiltersFromLocalStorage();
-        setFilterToLocalStorage(result.bodyRel,result.textValue,result.valueAutocomplete, newPage, rowsPerPage);
-        
+        const result = getFiltersFromLocalStorageRel();
+        setFilterToLocalStorageRel(result.bodyRel,result.textValue,result.valueAutocomplete, newPage, rowsPerPage);
     };
                     
     const handleChangeRowsPerPage = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
-    
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
         const realPage = page + 1;
-
         getlistaRel(bodyRel,realPage,parseInt(event.target.value, 10));
-        const result = getFiltersFromLocalStorage();
-        setFilterToLocalStorage(result.bodyRel,result.textValue,result.valueAutocomplete, page, parseInt(event.target.value, 10));
-      
+        const result = getFiltersFromLocalStorageRel();
+        setFilterToLocalStorageRel(result.bodyRel,result.textValue,result.valueAutocomplete, page, parseInt(event.target.value, 10));
     };
-
    
     const getRel = async(idRel) => {
-
         if(enti){
             getSingleRel(token,mainState.nonce,idRel).then((res) =>{
-                
                 handleModifyMainState({relSelected:res.data});
-               
                 if(res.data.datiFatturazione === true){
                     navigate(PathPf.PDF_REL);
                 }else{
@@ -266,32 +191,20 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 }
             }).catch((err)=>{
                 manageError(err, navigate);
-            }
-              
-            );
+            });
         }else{
             getSingleRelPagopa(token,mainState.nonce,idRel).then((res) =>{
-               
                 handleModifyMainState({relSelected:res.data});
-            
                 navigate(PathPf.PDF_REL);
-              
             }).catch((err)=>{
-             
                 manageError(err, navigate);
-            }
-              
-            );
+            });
         }
-        
     };  
-
-    const mesiWithZero = ['01','02','03','04','05','06','07','08','09','10','11','12'];
 
     const downloadListaRelExel = async() =>{
         setShowLoading(true);
         if(enti){
-
             const {idEnti, ...newBody} = bodyDownload;
             await downloadListaRel(token,mainState.nonce,newBody).then((res)=>{
                 saveAs("data:text/plain;base64," + res.data.documento,`Regolari esecuzioni /${data[0]?.ragioneSociale}/ ${mesiWithZero[bodyDownload.mese-1]}/ ${bodyDownload.anno}.xlsx` );
@@ -310,12 +223,8 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             }).catch((err)=>{
                 manageError(err,navigate);
             }); 
-            
         }
-        
     };
-
-
   
     const downloadListaPdfPagopa = async() =>{
         setShowLoading(true);
@@ -333,19 +242,8 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 manageError(err,navigate);
             });
     };
-
-  
     
-    
-    // visulizzazione del pop up redirect dati di fatturazione
-    const [openModalRedirect, setOpenModalRedirect] = useState(false);
-    const [showLoading, setShowLoading] = useState(false);
-    /*
-    <Button onClick={() => setVisible(true)}>SHOW ALERT</Button>
-    <BasicAlerts setVisible={setVisible} visible={visible} typeAlert={''}></BasicAlerts>
-    const [visible, setVisible] = useState(false);
-*/
- 
+    const  hiddenAnnullaFiltri = bodyRel.tipologiaFattura === null && bodyRel.idEnti?.length === 0 && bodyRel.caricata === null; 
     return (
        
         <div className="mx-5">
@@ -353,7 +251,6 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 <Typography variant="h4">Regolare Esecuzione</Typography>
             </div>
             <div className="mt-5">
-               
                 <div className="row">
                     <div className="col-3">
                         <SelectUltimiDueAnni values ={bodyRel} setValue={setBodyRel}></SelectUltimiDueAnni>
@@ -384,7 +281,6 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                         </div>
                     }
                 </div>
-                
                 <div className="row mt-5">
                     <div className="col-1">
                         <Button
@@ -416,7 +312,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                             setData([]);
                             setPage(0);
                             setRowsPerPage(10);
-                            deleteFilterToLocalStorage();
+                            deleteFilterToLocalStorageRel();
                             
                         }} 
                         disabled={getListaRelRunning}
@@ -466,26 +362,19 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 setOpen={setOpenModalRedirect} 
                 open={openModalRedirect}
                 sentence={`Per poter visualizzare il dettaglio REL  è obbligatorio fornire i seguenti dati di fatturazione:`}>
-                    
             </ModalRedirect>
-
             <ModalLoading 
                 open={showLoading} 
                 setOpen={setShowLoading} 
                 sentence={'Downloading...'}>
             </ModalLoading>
-
             <ModalLoading 
                 open={getListaRelRunning} 
                 setOpen={setGetListaRelRunning} 
                 sentence={'Loading...'}>
             </ModalLoading>
         </div>
-
     );
 };
 
 export default RelPage;
-
-
-

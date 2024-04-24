@@ -22,7 +22,6 @@ const ModalRedirect : React.FC<ModalProps> =({setOpen, open, sentence}) => {
 
     const navigate = useNavigate();
 
-
     const handleClose = (event:object, reason: string) =>{
         if(reason !== 'backdropClick'){
             setOpen(false);
@@ -30,13 +29,11 @@ const ModalRedirect : React.FC<ModalProps> =({setOpen, open, sentence}) => {
     };
 
     const handleGoToDatiFatturazione = () =>{
-        navigate(PathPf.DATI_FATTURAZIONE);
-        
+        navigate(PathPf.DATI_FATTURAZIONE);  
     };
 
     return (
         <div>
-        
             <Modal
                 open={open}
                 onClose={handleClose}
@@ -59,17 +56,14 @@ const ModalRedirect : React.FC<ModalProps> =({setOpen, open, sentence}) => {
                                     <li><Typography id="modal-modal-title" variant="subtitle2" >Indirizzo mail di riferimento</Typography></li>
                                 </ul>
                             </div>
-                            
                         </Typography>
                     </div>
-                   
                     <div className='container_buttons_modal d-flex justify-content-center mt-5'>
                         <Button
                             variant='contained'
                             onClick={()=>handleGoToDatiFatturazione()}
                         >Vai ai dati di fatturazione</Button>
                     </div>
-                    
                 </Box>
                 
             </Modal>

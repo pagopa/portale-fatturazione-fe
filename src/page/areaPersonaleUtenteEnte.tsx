@@ -48,7 +48,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
     const token =  getToken();
     const profilo =  getProfilo();
     const statusApp = getStatusApp();
-    const tabActive = useIsTabActive();
     const navigate = useNavigate();
     const enti = profiliEnti();
 
@@ -86,12 +85,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         'ID Documento':false,
         "Codice. Commessa/Convenzione":false,
     });
-
-    useEffect(()=>{
-        if(tabActive === true && (mainState.nonce !== profilo.nonce)){
-            window.location.href = redirect;
-        }
-    },[tabActive, mainState.nonce]);
 
     // se il nonce è presente viene chiamata la get dati fatturazione
     useEffect(()=>{

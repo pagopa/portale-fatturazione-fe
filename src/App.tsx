@@ -1,6 +1,6 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import {useState, useReducer} from 'react';
+import {useState, useReducer, useEffect} from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { ThemeProvider, Grid } from '@mui/material';
 import {theme} from '@pagopa/mui-italia';
@@ -28,8 +28,9 @@ import './App.css';
 import RelPage from './page/relUtPa';
 import { reducerMainState } from './reducer/reducerMainState';
 import { BodyRel } from './types/typeRel';
-
-
+import { redirect } from './api/api';
+import { getProfilo } from './reusableFunctin/actionLocalStorage';
+import useIsTabActive from './reusableFunctin/tabIsActiv';
 
 enum PathPf {
     DATI_FATTURAZIONE = '/datidifatturazione', //
@@ -42,8 +43,6 @@ enum PathPf {
     LISTA_REL = '/listarel',
     PDF_REL = '/relpdf'
 }
-
-
 
 const MainContent = () => {
     /**
@@ -80,16 +79,11 @@ const MainContent = () => {
     );
 };
 
-
 const App = ({ instance }) => {
     // eslint-disable-next-line no-undef
-
-    const getProfilo = localStorage.getItem('profilo') || '{}';
-    const profilo =  JSON.parse(getProfilo);
-
-    const profiloValue = profilo.profilo;
-    
-
+    const profilo =  getProfilo();
+    const tabActive = useIsTabActive();
+ 
     const [checkProfilo,setCheckProfilo] = useState(false);
     // set status page abilita e disabilita le modifiche al componente dati fatturazione
     
@@ -112,17 +106,18 @@ const App = ({ instance }) => {
         apiError:'' // rel selezionata nella grid in page rel
     });
 
+    useEffect(()=>{
+        if(tabActive === true && (mainState.nonce !== profilo.nonce)){
+            window.location.href = redirect;
+        }
+    },[tabActive, mainState.nonce]);
    
     const [valueAnnoElencoCom, setValueAnnoElencoCom] = useState('');
     //_____________________________________________________________
 
-  
-
     const recOrConsIsLogged = profilo.profilo === 'REC' || profilo.profilo ==='CON';
-
   
     return (
-
       
         <MsalProvider instance={instance}>
             <Router>
@@ -141,8 +136,6 @@ const App = ({ instance }) => {
                                         mainState={mainState}
                                     />
                                 </Grid> 
-                               
-
 
                                 <Grid item xs={10}>
                                     <Routes>
@@ -180,10 +173,6 @@ const App = ({ instance }) => {
 
                                         <Route path="/error"  element={<ErrorPage dispatchMainState={ dispatchMainState}  mainState={mainState}/>} />
                                     </Routes>
-
-
-
-
 
                                 </Grid>
 

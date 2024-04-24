@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router';
 import { DataGridCommessa } from '../../types/typeModuloCommessaElenco';
 import { MainState, Params } from '../../types/typesGeneral';
 import { PathPf } from '../../types/enum';
+import { month } from '../../reusableFunctin/reusableArrayObj';
 
 interface GridComponentProps {
     data: DataGridCommessa[],
@@ -25,7 +26,6 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
             value:valueObj
         });
     };
-    const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre",'Gennaio'];
   
     const dataWithLabelFixed = data.map((singleObj)=>{
         const mese = month[singleObj.meseValidita -1 ];
@@ -37,9 +37,7 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
 
     let columsSelectedGrid = '';
     const handleOnCellClick = (params:Params) =>{
-       
         columsSelectedGrid  = params.field;
-        
     };
 
     const handleEvent: GridEventListener<'rowClick'> = (
@@ -49,10 +47,7 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
         event.preventDefault();
         // l'evento verrà eseguito solo se l'utente farà il clik sul mese o l'action(freccia)
         if(columsSelectedGrid  === 'meseValidita' ||columsSelectedGrid  === 'action' ){
-
             const getMeseIndex :number = month.findIndex(x => x == params.row.meseValidita); 
-          
-
             handleModifyMainState({
                 mese:getMeseIndex+1,
                 anno:params.row.annoValidita,
@@ -60,7 +55,6 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
                 userClickOn:'GRID',
                 inserisciModificaCommessa:"MODIFY"
             });
-
             const newState = {
                 mese:getMeseIndex+1,
                 anno:params.row.annoValidita,
@@ -69,11 +63,8 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
             };
             const string = JSON.stringify(newState);
             localStorage.setItem('statusApplication', string);
-
-           
             navigate(PathPf.MODULOCOMMESSA);
         }
-       
     };
     
     const columns: GridColDef[] = [
@@ -85,7 +76,6 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
             headerName:'Mese',
             width: 120,
             renderCell: (param:Params) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.meseValidita}</a>
-
         },
         {
             field: 'stato',
@@ -93,7 +83,6 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
             headerAlign: 'left',
             headerName:'Stato',
             width: 160,
-
         },
         {
             field: 'dataModifica',
@@ -101,7 +90,6 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
             headerAlign: 'left',
             headerName:'Data Inserimento',
             width: 190,
-
         },
         {
             field: 'totale',
@@ -109,7 +97,6 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
             headerAlign: 'left',
             headerName:'Totale',
             width: 160,
-
         },
         {
             field: 'totaleDigitale',
@@ -117,7 +104,6 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
             headerAlign: 'left',
             headerName:'Tot. Digitale',
             width: 160,
-
         },
         {
             field:'totaleAnalogico',
@@ -125,19 +111,13 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
             headerAlign: 'left',
             headerName:'Tot. Analogiche',
             width: 160,
-
         },
         {
             field: 'action',
             headerName: '',
             sortable: false,
             headerAlign: 'left',
-            renderCell: (() => (
-    
-                <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} />
-    
-            )
-            ),
+            renderCell: (() => (<ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} />)),
         }
     ];
 

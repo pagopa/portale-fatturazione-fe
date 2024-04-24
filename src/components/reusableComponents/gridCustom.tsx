@@ -27,7 +27,6 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
         apiGet(element[nameParameterApi]);
     };
    
-
     return (
         <div>
             <div style={{overflowX:'auto'}}>

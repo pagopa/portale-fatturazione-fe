@@ -30,20 +30,16 @@ const SelectTipologiaFattura : React.FC<SelecTipologiaProps> = ({setValue, value
                     labelId="search-by-label"
                     onChange={(e) =>{
                         setValue((prev)=> ({...prev, ...{tipologiaFattura:e.target.value}}));
-                    }}
-                               
-                    value={values.tipologiaFattura || ''}
-                             
+                    }}     
+                    value={values.tipologiaFattura || ''}       
                 >
-                    {tipologie.map((el) => (
-                                    
+                    {tipologie.map((el) => (            
                         <MenuItem
                             key={Math.random()}
                             value={el}
                         >
                             {el}
-                        </MenuItem>
-                                    
+                        </MenuItem>              
                     ))}
                                     
                 </Select>

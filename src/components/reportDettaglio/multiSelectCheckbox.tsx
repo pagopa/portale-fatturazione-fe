@@ -9,6 +9,7 @@ import { MultiselectNotificheProps, OptionMultiselectChackbox } from '../../type
 import {useState, useEffect } from 'react';
 import { BodyListaNotifiche} from '../../types/typesGeneral';
 import { listaEntiNotifichePage, listaEntiNotifichePageConsolidatore } from '../../api/apiSelfcare/notificheSE/api';
+import { getProfilo, getToken } from '../../reusableFunctin/actionLocalStorage';
 
 const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetLista, dataSelect, setDataSelect,mainState,setTextValue, textValue ,valueAutocomplete, setValueAutocomplete}) => {
 
@@ -16,74 +17,44 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
     const navigate = useNavigate();
-    
-    const getToken = localStorage.getItem('token') || '{}';
-    const token =  JSON.parse(getToken).token;
-
-    const getProfilo = localStorage.getItem('profilo') || '{}';
-    const profilo =  JSON.parse(getProfilo);
-
-   
+    const token =  getToken();
+    const profilo =  getProfilo();
 
     useEffect(()=>{
-
         if(dataSelect.length === 0){
             setValueAutocomplete([]);
         }
     }, [dataSelect]);
-    /*
-
-    useEffect(()=>{
-        if(textValue.length >= 3){
-            const filterRagSociale = {textValue, valueAutocomplete};
-            localStorage.setItem("filtroRagioneSociale", JSON.stringify(filterRagSociale));
-        }   },[valueAutocomplete]);
-
-    useEffect(()=>{
-        if(ragSoc && mainState.nonce !== ''){
-            setTextValue(ragSoc.textValue);
-            setValueAutocomplete(ragSoc.valueAutocomplete);
-        } 
-    },[]);
-
-*/
+   
     useEffect(()=>{
         const timer = setTimeout(() => {
-         
             if(textValue.length >= 3){
                 listaEntiNotifichePageOnSelect();
             }
         }, 800);
         return () => clearTimeout(timer);
-        
     },[textValue]);
 
     // servizio che popola la select con la checkbox
     const listaEntiNotifichePageOnSelect = async () =>{
-
         if(profilo.profilo === 'CON'){
             await listaEntiNotifichePageConsolidatore(token, mainState.nonce, {descrizione:textValue} )
                 .then((res)=>{
                     setDataSelect(res.data);
-            
                 })
                 .catch(((err)=>{
                     manageError(err,navigate);
                 }));
-
         }else if(profilo.auth === 'PAGOPA'){
             await listaEntiNotifichePage(token, mainState.nonce, {descrizione:textValue} )
                 .then((res)=>{
                     setDataSelect(res.data);
-                
                 })
                 .catch(((err)=>{
                     manageError(err,navigate);
                 }));
         }
-      
     };
-
     return (
         <Autocomplete
             multiple
@@ -100,12 +71,9 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
             isOptionEqualToValue={(option, value) => option.idEnte === value.idEnte}
             renderOption={(props, option, { selected }) =>{
                 const newProps = {...props,...{key:option.idEnte}};
-               
                 return (
                     <li {...newProps}   >
-                        
                         <Checkbox
-                            
                             icon={icon}
                             checkedIcon={checkedIcon}
                             style={{ marginRight: 8 }}
@@ -122,11 +90,8 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
                     {...params}
                     label="Rag Soc. Ente" 
                     placeholder="Min 3 caratteri" />;
-            } 
-                
-            }
+            }}
         />
     );
 };
-
 export default MultiselectCheckbox;

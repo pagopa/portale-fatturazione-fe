@@ -8,18 +8,12 @@ import DynamicInsert from './dynamicInsert';
 import TextFieldComponent from './textField';
 import {AreaPersonaleContext} from '../../types/typesAreaPersonaleUtenteEnte';
 import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
+import { getProfilo } from '../../reusableFunctin/actionLocalStorage';
+import { createDateFromString } from '../../reusableFunctin/function';
 
 const TabAreaPersonaleUtente = () => {
     const {mainState,datiFatturazione,setDatiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
-   
-    function createDateFromString(string:string){
-        const getGiorno = new Date(string).getDate();
-      
-        const getMese = new Date(string).getMonth() + 1;
-        const getAnno = new Date(string).getFullYear();
-
-        return getGiorno+'/'+getMese+'/'+getAnno;
-    }
+    const parseProfilo  =  getProfilo();
 
     const valueOptionRadioTipoOrdine = [
         {descrizione:'Dati ordine d\'acquisto', id:"1"},
@@ -30,9 +24,6 @@ const TabAreaPersonaleUtente = () => {
         {descrizione:'Si', id: true},
         {descrizione:'No', id: false},
     ];
-
-    const getProfilo =  localStorage.getItem('profilo') || '{}';
-    const parseProfilo = JSON.parse(getProfilo);
 
     const colorAsterisco = mainState.statusPageDatiFatturazione === 'immutable' ? '#C3CAD1': 'black'; 
 

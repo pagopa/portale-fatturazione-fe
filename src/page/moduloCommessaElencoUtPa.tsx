@@ -9,7 +9,6 @@ import { ManageErrorResponse } from '../types/typesGeneral';
 import { getAnni, getDatiModuloCommessa, getListaCommessaFiltered } from '../api/apiSelfcare/moduloCommessaSE/api';
 import ModalRedirect from '../components/commessaInserimento/madalRedirect';
 import { getDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
-import useIsTabActive from '../reusableFunctin/tabIsActiv';
 import { PathPf } from '../types/enum';
 import { getProfilo, getStatusApp, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from '../reusableFunctin/actionLocalStorage';
 import { fixResponseForDataGrid } from '../reusableFunctin/function';
@@ -19,7 +18,6 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
     const token =  getToken();
     const profilo =  getProfilo();
     const statusApp = getStatusApp();
-    const tabActive = useIsTabActive();
     const navigate = useNavigate();
     const enti = profiliEnti();
     
@@ -33,12 +31,6 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
     const [anni, setAnni] = useState<string[]>([]);
     const [gridData, setGridData] = useState<DataGridCommessa[]>([]);
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
-
-    useEffect(()=>{
-        if(tabActive === true && (mainState.nonce !== profilo.nonce)){
-            window.location.href = redirect;
-        }
-    },[tabActive, mainState.nonce]);
   
     useEffect(()=>{
         handleModifyMainState(statusApp);

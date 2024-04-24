@@ -1,7 +1,7 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked, SingleFileInput} from '@pagopa/mui-italia';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import { RelPagePdfProps, RelPageProps } from "../types/typeRel";
+import { RelPagePdfProps} from "../types/typeRel";
 import { Button, Typography } from "@mui/material";
 import { useNavigate } from 'react-router';
 import {manageError } from '../api/api';
@@ -17,38 +17,20 @@ import generatePDF from 'react-to-pdf';
 import { redirect } from '../api/api';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import { PathPf } from '../types/enum';
-import { profiliEnti } from '../reusableFunctin/actionLocalStorage';
-
+import { getProfilo, getStatusApp, getToken, profiliEnti } from '../reusableFunctin/actionLocalStorage';
+import { mesi, mesiWithZero } from '../reusableFunctin/reusableArrayObj';
+import { createDateFromString } from '../reusableFunctin/function';
 
 const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) =>{
 
     const targetRef  = useRef<HTMLInputElement>(null);
-
-    const getToken = localStorage.getItem('token') || '{}';
-    const token =  JSON.parse(getToken).token;
-
-    const getProfilo = localStorage.getItem('profilo') || '{}';
-    const profilo =  JSON.parse(getProfilo);
-
-    const state = localStorage.getItem('statusApplication') || '{}';
-    const statusApp =  JSON.parse(state);
-
-    const enti = profiliEnti();
-
-    const mesiWithZero = ['01','02','03','04','05','06','07','08','09','10','11','12'];
-    const rel = mainState.relSelected;
-
+    const token =  getToken();
+    const profilo =  getProfilo();
     const navigate = useNavigate();
-
-    useEffect(()=>{
-        if(rel === null){
-            navigate(PathPf.LISTA_REL);
-        }
-
-        if(!token){
-            window.location.href = redirect;
-        }
-    },[]);
+    const enti = profiliEnti();
+    const statusApp = getStatusApp();
+    const rel = mainState.relSelected;
+    const meseOnDoc = mainState.relSelected?.mese || 0;
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -57,17 +39,34 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
         });
     };
 
-    const mesi = ["Dicembre", "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
-    
     const [showDownloading, setShowDownloading] = useState(false);
+    const [lastUpdateDocFirmato, setLastUpdateDocFirmato] = useState('');
+    const [file, setFile] = useState<File | null>(null);
+    const [loadingUpload, setLoadingUpload] = useState<boolean>(false);
+    const [errorUpload, setErrorUpload] = useState<boolean>(false);
+    const [openModalConfirmUploadPdf, setOpenModalConfirmUploadPdf] = useState<boolean>(false);
+
+    useEffect(()=>{
+        if(rel === null){
+            navigate(PathPf.LISTA_REL);
+        }
+        if(!token){
+            window.location.href = redirect;
+        }
+        getDateLastDownloadPdfFirmato(); 
+    },[]);
+
+    useEffect(()=>{
+        if(file !== null){
+            uploadPdf();
+        }
+    },[file]);
 
     const downloadRelExel = async() =>{
-
         if( mainState.relSelected !== null){
             setShowDownloading(true);
             if(enti){
                 await getRelExel(token, mainState.nonce, mainState.relSelected.idTestata).then((res)=>{
-               
                     saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio/ ${ mainState.relSelected?.ragioneSociale} /${mainState.relSelected?.mese}/${mainState.relSelected?.anno}.xlsx` );
                     setShowDownloading(false);
                 }).catch((err)=>{
@@ -82,11 +81,8 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                     manageError(err,navigate);
                     setShowDownloading(false);
                 });
-                
             }
-             
         }
-        
     };
 
     const downloadPdfRel = async() =>{
@@ -102,9 +98,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
         }  
     };
 
-    const meseOnDoc = mainState.relSelected?.mese || 0;
     const downloadPdfRelFirmato = async() =>{
-
         if( mainState.relSelected !== null){
             setShowDownloading(true);
             if(enti){
@@ -112,7 +106,6 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                     saveAs("data:text/plain;base64," + res.data.documento,`REL firmata / ${ mainState.relSelected?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${mainState.relSelected?.anno}.pdf` );
                     setShowDownloading(false);
                 }).catch((err)=>{
-
                     manageError(err,navigate);
                     setShowDownloading(false);
                 });
@@ -124,16 +117,10 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                     manageError(err,navigate);
                     setShowDownloading(false);
                 });
-                
             } 
         }
-        
     };
 
-
-    const [lastUpdateDocFirmato, setLastUpdateDocFirmato] = useState('');
-
-    
     const getDateLastDownloadPdfFirmato = async() =>{
         if(rel){
             const bodyPagopa = {
@@ -143,72 +130,37 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                 idContratto: rel.idContratto,
                 idEnte:rel.idEnte
             };
-
             const {idEnte, ...bodySelf} = bodyPagopa;
-
             if(enti){
                 await getLogRelDocumentoFirmato(token, mainState.nonce,bodySelf).then((res) =>{
                     setLastUpdateDocFirmato(res.data[0].dataEvento);
-               
-                }).catch((err)=>{
-                   
+                }).catch((err)=>{ 
                     manageError(err, navigate);
                 });
             }else if(profilo.auth === 'PAGOPA'){
                 await getLogPagoPaRelDocumentoFirmato(token, mainState.nonce,bodyPagopa).then((res) =>{
                     setLastUpdateDocFirmato(res.data[0].dataEvento);
-                   
                 }).catch((err)=>{
-                   
                     manageError(err, navigate);
                 });
             }
-           
         }
     };
     
     const toDoOnDownloadPdf = (res:ResponseDownloadPdf) =>{
-     
         const wrapper = document.getElementById('file_download_rel');
         if(wrapper){
             wrapper.innerHTML = res.data;
             generatePDF(targetRef, {filename: `Regolare Esecuzione / ${ mainState.relSelected?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${statusApp.anno} .pdf`});
             setShowDownloading(false);
         }
-    
     };
 
-
-    useEffect(()=>{
-        //downloadPdfRel(); 
-        getDateLastDownloadPdfFirmato();  
-    },[]);
-
-    const [file, setFile] = useState<File | null>(null);
-    const [loadingUpload, setLoadingUpload] = useState<boolean>(false);
-    const [errorUpload, setErrorUpload] = useState<boolean>(false);
-    const [openModalConfirmUploadPdf, setOpenModalConfirmUploadPdf] = useState<boolean>(false);
-    
-
-    const handleSelect = (e) => {
-        setFile(e);
-    };
-    const handleRemove = () => {
-        setFile(null);
-    };
-   
-    useEffect(()=>{
-        if(file !== null){
-            uploadPdf();
-        }
-    },[file]);
-  
     const uploadPdf = async () =>{
         setLoadingUpload(true);
         setErrorUpload(false);
         if(rel){
             await uploadPdfRel(token, mainState.nonce, rel.idTestata, {file:file} ).then((res)=>{
-              
                 getRel(rel.idTestata);
                 setFile(null);
                 setLoadingUpload(false);
@@ -219,81 +171,50 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
             }).catch(()=>{
                 setLoadingUpload(false);
                 setErrorUpload(true);
-               
             });
         }
-      
     };
 
     const getRel = async(idRel) => {
-     
         getSingleRel(token,mainState.nonce,idRel).then((res) =>{
             handleModifyMainState({relSelected:res.data});
-           
         }).catch((err)=>{
             manageError(err, navigate);
-        }
-              
-        );
+        });
     };
 
-
-    function createDateFromString(string:string){
-        const getGiorno = new Date(string).getDate();
-  
-        const getMese = new Date(string).getMonth() + 1;
-        const getAnno = new Date(string).getFullYear();
-
-        return getGiorno+'/'+getMese+'/'+getAnno;
-    }
-
-
     const classContainerButtons = enti ? 'd-flex justify-content-between m-5': 'd-flex justify-content-end m-5';
-
-    
 
     return (
         <div>
             <div style={{ position:'absolute',zIndex:-1, top:'-1000px'}}  id='file_download_rel' ref={targetRef}>
-
             </div>
             <div className=' marginTop24  '>
-                
                 <div className='ms-5'>
-             
                     <ButtonNaked
                         color="primary"
                         onFocusVisible={() => { console.log('onFocus'); }}
                         size="small"
                         startIcon={<ArrowBackIcon />}
                         onClick={() => navigate(PathPf.LISTA_REL)}
-                   
                     >
                     Indietro
- 
                     </ButtonNaked>
-              
                     <Typography sx={{marginLeft:'20px'}} variant="caption">
                         <ManageAccountsIcon sx={{paddingBottom:'3px'}}  fontSize='small'></ManageAccountsIcon>
                       Regolare Esecuzione /
-                    
                     </Typography>
                     <Typography sx={{fontWeight:'bold', marginLeft:'5px'}} variant="caption">
-                   
                       Dettaglio
-                    
                     </Typography>
                 </div>
-               
             </div>
             <div className='d-flex justify-content-end mt-4 me-5'>
                 <Button  onClick={()=> downloadRelExel()} >Scarica report di dettaglio notifiche Reg. Es. <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
             </div>
             <div className="bg-white mb-5 me-5 ms-5">
-              
                 <div className="pt-5 pb-5 ">
                     {rel !== null &&
-
                     <div className="container text-center">
                         <TextDettaglioPdf description={'Soggetto aderente'} value={rel.ragioneSociale}></TextDettaglioPdf>
                         <TextDettaglioPdf description={'Tipologia Fattura'} value={rel.tipologiaFattura}></TextDettaglioPdf>
@@ -311,23 +232,18 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                         <TextDettaglioPdf description={'Totale Ivato Analogico '} value={Number(rel.totaleAnalogicoIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                         <TextDettaglioPdf description={'Totale Ivato Digitale'} value={Number(rel.totaleDigitaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                         <TextDettaglioPdf description={'Totale Ivato'} value={Number(rel.totaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                        
                     </div>
                     }
                 </div>
             </div>
-           
-           
             <div className={classContainerButtons}>
                 {enti &&
                  <>
                      <div className="">
                          <Button sx={{width:'274px'}} onClick={() => downloadPdfRel()}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
                      </div>
-               
-                     
                      <div id='singleInputRel' style={{minWidth: '300px', height:'40px'}}>
-                         <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".pdf"]} onFileSelected={(e)=>handleSelect(e)} onFileRemoved={handleRemove} dropzoneLabel={(rel?.caricata === 1 ||rel?.caricata === 2) ? 'Reinserisci nuovo PDF Reg. Es. firmato':"Inserisci PDF Reg. Es.  firmato"} rejectedLabel="Tipo file non supportato" ></SingleFileInput>
+                         <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".pdf"]} onFileSelected={(e)=> setFile(e)} onFileRemoved={() => setFile(null)} dropzoneLabel={(rel?.caricata === 1 ||rel?.caricata === 2) ? 'Reinserisci nuovo PDF Reg. Es. firmato':"Inserisci PDF Reg. Es.  firmato"} rejectedLabel="Tipo file non supportato" ></SingleFileInput>
                      </div> 
                  </>
                 }
@@ -339,28 +255,18 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                     <div className='text-center mt-2'>
                         <Typography variant="overline" >{createDateFromString(lastUpdateDocFirmato)}</Typography>
                     </div>
-                    
-                  
-                
-                   
                 </div>
                 }
             </div>
-           
-            
             {openModalConfirmUploadPdf &&
             <ModalUploadPdf setOpen={setOpenModalConfirmUploadPdf} open={openModalConfirmUploadPdf}></ModalUploadPdf>
             }
-
             <ModalLoading 
                 open={showDownloading} 
                 setOpen={setShowDownloading}
                 sentence={'Downloading...'} >
             </ModalLoading>
-            
-
         </div>
-       
     );
 };
 

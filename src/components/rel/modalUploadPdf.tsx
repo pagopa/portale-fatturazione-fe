@@ -19,13 +19,11 @@ const style = {
 const ModalUploadPdf : React.FC<ModalProps> =({setOpen, open}) => {
 
     const handleClose = () =>{
-       
         setOpen(false);
     };
 
     return (
         <div>
-        
             <Modal
                 open={open}
                 onClose={handleClose}
@@ -43,16 +41,13 @@ const ModalUploadPdf : React.FC<ModalProps> =({setOpen, open}) => {
                         L'inserimento del documento è stato completato
                         </Typography>
                     </div>
-                  
                     <div className='container_buttons_modal d-flex justify-content-center'>
                         <Button
                             variant='contained'
                             onClick={()=>handleClose()}
                         >Ok</Button>
                     </div>
-                    
                 </Box>
-                
             </Modal>
         </div>
     );

@@ -13,17 +13,14 @@ const  RadioComponent: React.FC<RadioComponentProps> = (props) => {
     } = props;
 
     const {mainState ,setDatiFatturazione, datiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
-
     let makeSplitRadioDisable = true;
     if(label ==='Split Paymet'){
-
         if(mainState.statusPageDatiFatturazione === 'immutable'){
             makeSplitRadioDisable = true;
         }else if(mainState.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa === ''){
             makeSplitRadioDisable = true;
         }else if(mainState.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa !== ''){
             makeSplitRadioDisable = false;
-    
         }
 
     }else{
@@ -44,30 +41,20 @@ const  RadioComponent: React.FC<RadioComponentProps> = (props) => {
                 onChange={(e)=>{setDatiFatturazione((prevState: DatiFatturazione) =>{
                     let newState;
                     if(e.target.value.toLowerCase() === 'true'){
-                       
                         const newValue = {[keyObject]:true};
                         newState = {...prevState, ...newValue};
                     }else if(e.target.value.toLowerCase() === 'false'){
-                     
                         const newValue = {[keyObject]:false};
                         newState = {...prevState, ...newValue};
                     }else{
-                 
                         const newValue = {[keyObject]:e.target.value};
                         newState = {...prevState, ...newValue};
-                        //setstatusPagePage('mutable');
                     }
-                   
                     return newState;
-                   
                 } );}}>
                 {options.map((el:OptinsRadio) => (
-
                     <FormControlLabel  key={Math.random()} value={el.id} control={<Radio checked={el.id === valueRadio} disabled={makeSplitRadioDisable} />} label={el.descrizione} />
-                )
-          
-                )}
-
+                ))}
             </RadioGroup>
         </FormControl>
     );
