@@ -38,3 +38,68 @@ export const setInfoToStatusApplicationLoacalStorage = (oldObj, newObj) => {
 
     localStorage.setItem('statusApplication',JSON.stringify({...oldObj,...newObj}));
 };
+
+export const setInfoToProfiloLoacalStorage = (oldObj, newObj) => {
+
+    localStorage.setItem('profilo',JSON.stringify({...oldObj,...newObj}));
+};
+
+export const setFilterToLocalStorage = (bodyGetLista,textValue,valueAutocomplete) => {
+    localStorage.setItem("filtersListaDatiFatturazione", JSON.stringify({bodyGetLista,textValue,valueAutocomplete}));
+}; 
+
+export const setInfoPageToLocalStorage = (info) => {
+    localStorage.setItem("pageRowListaDatiFatturazione", JSON.stringify(info));
+};
+
+export const deleteFilterToLocalStorage = () => {
+    localStorage.removeItem("filtersListaDatiFatturazione");
+}; 
+
+export const getFiltersFromLocalStorage = () => {
+    const filtri = localStorage.getItem('filtersListaDatiFatturazione') || '{}';
+    const result =  JSON.parse(filtri);
+    return result;
+};
+
+export const getInfoPageFromLocalStorage = () => {
+    const infoPage = localStorage.getItem('pageRowListaDatiFatturazione') || '{}';
+    const result =  JSON.parse(infoPage);
+    return result;
+};
+
+export const setFilterToLocalStorageCommessa = (bodyGetLista,textValue,valueAutocomplete) => {
+    localStorage.setItem("filtersModuliCommessa", JSON.stringify({bodyGetLista,textValue,valueAutocomplete}));
+}; 
+export const setInfoPageToLocalStorageCommessa = (info) => {
+    localStorage.setItem("pageRowListaModuliCommessa", JSON.stringify(info));
+};
+
+export const deleteFilterToLocalStorageCommessa = () => {
+    localStorage.removeItem("filtersModuliCommessa");
+}; 
+
+export const getFiltersFromLocalStorageCommessa = () => {
+    const filtri = localStorage.getItem('filtersModuliCommessa') || '{}';
+    const result =  JSON.parse(filtri);
+    return result;
+};
+export const getInfoPageFromLocalStorageCommessa = () => {
+    const infoPage = localStorage.getItem('pageRowListaModuliCommessa') || '{}';
+    const result =  JSON.parse(infoPage);
+    return result;
+};
+
+export const setFilterToLocalStorageRel = (bodyRel,textValue,valueAutocomplete, page, rowsPerPage) => {
+    localStorage.setItem("filtersRel", JSON.stringify({bodyRel,textValue,valueAutocomplete, page, rowsPerPage}));
+}; 
+
+export const deleteFilterToLocalStorageRel = () => {
+    localStorage.removeItem("filtersRel");
+}; 
+
+export const getFiltersFromLocalStorageRel = () => {
+    const filtri = localStorage.getItem('filtersRel') || '{}';
+    const result =  JSON.parse(filtri);
+    return result;
+};

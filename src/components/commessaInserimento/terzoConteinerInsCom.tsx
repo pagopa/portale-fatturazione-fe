@@ -3,21 +3,16 @@ import { Grid, Typography, InputLabel } from '@mui/material';
 import { TerzoContainerModCommessa, CategorieTotali} from '../../types/typeModuloCommessaInserimento';
 import { useNavigate } from 'react-router';
 import { getDatiConfigurazioneCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
+import { getProfilo, getStatusApp, getToken } from '../../reusableFunctin/actionLocalStorage';
+import { month } from '../../reusableFunctin/reusableArrayObj';
+import { createDateFromString } from '../../reusableFunctin/function';
 
 const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali, dataModifica, mainState}) => {
-
-    const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre","Gennaio"];
     
     const navigate = useNavigate();
-    
-    const getToken = localStorage.getItem('token') || '{}';
-    const token =  JSON.parse(getToken).token;
-
-    const getProfilo = localStorage.getItem('profilo') || '{}';
-    const profilo =  JSON.parse(getProfilo);
-
-    const getStatusApplication = localStorage.getItem('statusApplication') || '{}';
-    const statusApplication =  JSON.parse(getStatusApplication);
+    const token =  getToken();
+    const profilo =  getProfilo();
+    const statusApplication = getStatusApp();
 
     let mese = '';
     let anno = 2000;
@@ -27,16 +22,12 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
     }else{
         const mon = new Date().getMonth();
         const date = new Date();
-      
         if(mon === 11){
-           
             anno = date.getFullYear()+1;
-           
         }else{
             anno = date.getFullYear();
         }
         mese = month[mon + 1 ];
-
     }
   
     const [labelCategorie, setLabelCategorie] = useState<CategorieTotali[]>([
@@ -50,10 +41,14 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
             percentuale: 0,
             descrizione: ''
         }]);
-    const dataToInsert = <span className="fw-semibold"> {mese}/{anno}</span>;
+
+    useEffect(()=>{
+        if(mainState.nonce !== ''){
+            getConfigurazione();
+        }
+    },[]);
 
     const replaceDate = (arr:[], stringToRepace:string, stringToInsert:string) =>{
-  
         return arr.map((singleObj:CategorieTotali) =>{
             singleObj.descrizione = singleObj.descrizione.replace(stringToRepace,stringToInsert);
             return singleObj;
@@ -73,14 +68,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                 }
             });
     };
-
-    useEffect(()=>{
-        if(mainState.nonce !== ''){
-            getConfigurazione();
-        }
-        
-    },[]);
-
+ 
     const labelDigitale = labelCategorie.filter((obj) => obj.idCategoriaSpedizione === 2);
     const labelAnalogica = labelCategorie.filter((obj) => obj.idCategoriaSpedizione === 1);
 
@@ -90,23 +78,14 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
     const sum = (valueTotali[0]?.totaleValoreCategoriaSpedizione || 0) + (valueTotali[1]?.totaleValoreCategoriaSpedizione || 0);
     const sumFixed2Decimal = sum.toLocaleString("de-DE", { style: "currency", currency: "EUR" });
 
-    function createDateFromString(string:string){
-        const getGiorno = new Date(string).getDate();
-      
-        const getMese = new Date(string).getMonth() + 1;
-        const getAnno = new Date(string).getFullYear();
-
-        return getGiorno+'/'+getMese+'/'+getAnno;
-    }
+    const dataToInsert = <span className="fw-semibold"> {mese}/{anno}</span>;
     return (
         <div className=" m-3 pl-5 pt-3">
             {/* prima row start */}
-
             <Grid
                 container
                 columns={12}
             >
-
                 <Grid
                     sx={{
                         textAlign: 'left',
@@ -117,9 +96,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                     <Typography>
                         {labelDigitale[0].descrizione} {dataToInsert}
                     </Typography>
-         
                 </Grid>
-
                 <Grid
                     sx={{ display:'flex', alignItems:'center', justifyContent:'center' }}
                     item
@@ -132,18 +109,12 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                         {valueDigitale[0]?.totaleValoreCategoriaSpedizione.toLocaleString("de-DE", { style: "currency", currency: "EUR" })|| '0 €'} 
                     </Typography>
                 </Grid>
-  
             </Grid>
-
-            {/* prima row end */}
-
-            {/* seconda row start */}
             <hr></hr>
             <Grid
                 container
                 columns={12}
             >
-
                 <Grid
                     sx={{
                         textAlign: 'left',
@@ -154,9 +125,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                     <Typography>
                         {labelAnalogica[0].descrizione} {dataToInsert}
                     </Typography>
-         
                 </Grid>
-
                 <Grid
                     sx={{ display:'flex', alignItems:'center', justifyContent:'center' }}
                     item
@@ -169,7 +138,6 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                         {valueAnalogico[0]?.totaleValoreCategoriaSpedizione.toLocaleString("de-DE", { style: "currency", currency: "EUR" })|| '0 €'}
                     </Typography>
                 </Grid>
-
             </Grid>
             {/* seconda row end */}
             <hr></hr>
@@ -178,16 +146,10 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                 container
                 columns={12}
             >
-
-                <Grid
-                    item
-                    xs={6}
-                   
-                >
+                <Grid item xs={6}>
                     <div className='d-flex justify-content-end'>
                         <Typography sx={{fontWeight:'bold'}} >TOTALE MODULO COMMESSA NETTO IVA</Typography>
-                    </div>
-                    
+                    </div> 
                 </Grid>
                 <Grid
                     sx={{ textAlign: 'center' }}
@@ -201,11 +163,8 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                         {sumFixed2Decimal}
                     </Typography>
                 </Grid>
-
             </Grid>
-
             <hr className="mx-3 mt-5" />
-
             {
                 statusApplication.inserisciModificaCommessa === 'INSERT' ? null :
                     <div className="d-flex justify-content-around marginTopBottom24">
@@ -215,10 +174,8 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                         </div>
                     </div>
             }
-
         </div>
     );
 };
 
 export default TerzoContainerInsCom;
-//{createDateFromString(parseProfilo.dataPrimo)}

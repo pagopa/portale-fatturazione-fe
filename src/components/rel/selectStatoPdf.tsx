@@ -43,8 +43,7 @@ const SelectStatoPdf : React.FC<SelecTipologiaPdf> = ({setValue, values}) =>{
                             {el}
                         </MenuItem>
                                     
-                    ))}
-                                    
+                    ))}                 
                 </Select>
             </FormControl>
         </Box>

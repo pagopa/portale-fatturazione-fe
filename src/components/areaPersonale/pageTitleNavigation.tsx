@@ -4,10 +4,9 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
 import DnsIcon from '@mui/icons-material/Dns';
-import { useLocation, useNavigate } from 'react-router';
-import BasicModal from '../reusableComponents/modals/modal';
+import {  useNavigate } from 'react-router';
 import { PathPf } from '../../types/enum';
-
+import { getProfilo, getStatusApp } from '../../reusableFunctin/actionLocalStorage';
 interface PageTitleProps {
     dispatchMainState:any,
     setOpen:any
@@ -16,16 +15,9 @@ interface PageTitleProps {
 const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState, setOpen}) => {
 
     const {mainState} = useContext(DatiFatturazioneContext);
-
-    const getProfilo = localStorage.getItem('profilo') || '{}';
-    const profilo =  JSON.parse(getProfilo);
-
-    const getStatusApplication = localStorage.getItem('statusApplication') || '{}';
-    const statusApp =  JSON.parse(getStatusApplication);
-
+    const profilo =  getProfilo();
+    const statusApp = getStatusApp();
     const navigate = useNavigate();
-
-    
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -34,7 +26,6 @@ const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState, se
         });
     };
   
- 
     let titleNavigation;
     if (!mainState.datiFatturazione) {
         titleNavigation = 'Inserisci i dati di fatturazione ';
@@ -44,16 +35,12 @@ const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState, se
         titleNavigation = 'Modifica dati di fatturazione ';
     }
 
-  
-
     const onIndietroButtonPagoPa = () =>{
         if(mainState.statusPageDatiFatturazione === 'immutable' &&  profilo.auth === 'PAGOPA'){
             navigate(PathPf.LISTA_DATI_FATTURAZIONE);
         }else{
             setOpen(true);
         }
-          
-        
     };
 
     const cssPath1 = mainState.statusPageDatiFatturazione === 'immutable'?'bold':'normal';
@@ -61,7 +48,6 @@ const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState, se
 
     return (
         <div className="mx-5 marginTop24">
-           
             {((mainState.statusPageDatiFatturazione === 'mutable' && mainState.datiFatturazione) || profilo.auth === 'PAGOPA')
                 &&
                     <div>
@@ -86,18 +72,13 @@ const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState, se
             <div className="marginTop24">
                 <Typography variant="h4">{titleNavigation} {profilo.auth === 'PAGOPA' && `/ ${statusApp.nomeEnteClickOn}`} </Typography>
             </div>
-            
             {mainState.statusPageDatiFatturazione === 'immutable' && profilo.ruolo === 'R/W' ? (
                 <div className="text-end">
                     <Button onClick={() => handleModifyMainState({statusPageDatiFatturazione:'mutable'})}
                         variant="contained" size="small">Modifica</Button>
                 </div>
             ) : null}
-
-            
-
         </div>
-
     );
 };
 export default  PageTitleNavigation;

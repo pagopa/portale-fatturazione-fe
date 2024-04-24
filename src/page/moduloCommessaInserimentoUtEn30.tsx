@@ -59,7 +59,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     const token =  getToken();
     const profilo =  getProfilo();
     const statusApp = getStatusApp();
-    const tabActive = useIsTabActive();
     const navigate = useNavigate();
     const enti = profiliEnti();
     
@@ -110,12 +109,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
             totaleValoreCategoriaSpedizione: 0
         }
     ]);
-
-    useEffect(()=>{
-        if(tabActive === true && (mainState.nonce !== profilo.nonce)){
-            window.location.href = redirect;
-        }
-    },[tabActive, mainState.nonce]);
 
     useEffect(()=>{
         if(statusApp.userClickOn === 'GRID' && mainState.nonce !== ''){

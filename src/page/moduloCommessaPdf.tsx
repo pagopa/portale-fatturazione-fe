@@ -17,7 +17,7 @@ import { getProfilo, getStatusApp, getTipoCommessa, getToken, profiliEnti, setIn
 import useIsTabActive from "../reusableFunctin/tabIsActiv";
 import { mesiWithZero, month } from "../reusableFunctin/reusableArrayObj";
 import { DatiCommessaPdf, ResponseGetPdfPagoPa } from "../types/typeListaModuliCommessa";
-import { replaceDate } from "../reusableFunctin/function";
+import { createDateFromString, replaceDate } from "../reusableFunctin/function";
 
 const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
 
@@ -169,9 +169,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
     const { toPDF, targetRef } = usePDF({filename: `Modulo Commessa /${dataPdf.descrizione} /${mesiWithZero[statusApp.mese -1]}/ ${statusApp.anno}.pdf`});
     return (
         <>
-        
             <div className="">
-                
                 <div className='d-flex marginTop24 ms-5 '>
                     <ButtonNaked
                         color="primary"
@@ -179,29 +177,20 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
                         size="small"
                         startIcon={<ArrowBackIcon />}
                         onClick={() => onIndietroButton() }
-                   
                     >
                     Indietro
- 
                     </ButtonNaked>
-              
                     <Typography sx={{ fontWeight:'bold', marginLeft:'20px'}} variant="caption">
-
                         <ViewModuleIcon sx={{paddingBottom:'3px'}}  fontSize='small'></ViewModuleIcon>
                       Modulo commessa 
-                    
                     </Typography>
                     <Typography  variant="caption">/ {mese}</Typography>
-                
                 </div>
                 <div className="bg-white m-5 p-5">
-
                     <div className=" ">
                         {/* nascondo il pdf */}
                         <div style={{ position:'absolute',zIndex:-1}}  id='file_download' ref={targetRef}>
-
                         </div>
-
                         <div className="container text-center">
                             <TextDettaglioPdf description={'Soggetto aderente'} value={dataPdf.descrizione}></TextDettaglioPdf>
                             <TextDettaglioPdf description={'Sede Legale completa'} value={dataPdf.indirizzoCompleto}></TextDettaglioPdf>
@@ -214,12 +203,10 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
                             <TextDettaglioPdf description={'Data di compilazione'} value={createDateFromString(dataPdf.dataModifica)|| ''}></TextDettaglioPdf>
                         </div>
                     </div>
-
                     <div className="mt-5">
                         <div className="container text-center">
                             <div className="row">
                                 <div className="col-7">
-                        
                                 </div>
                                 <div className="col-5">
                                     <div className="row">
@@ -233,18 +220,13 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
                                             <Typography  variant="overline">Totale notifiche da processare</Typography>
                                         </div>
                                     </div>
-    
                                 </div>
-                       
                             </div>
-                    
                             {arrWithlabelDateMonth.map((singleObj:DatiModuloCommessaPdf)=>{
                                 return (
                                     <div key={Math.random()} className="row mt-3">
                                         <div className="col-7">
-                                      
                                             <Typography sx={{display:'flex',textAlign:'left'}} variant="caption">{singleObj.tipo}</Typography>
-                                        
                                         </div>
                                         <div className="col-5">
                                             <div className="row">
@@ -263,30 +245,23 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
                                 );
                             })}
                             <hr></hr>
-
                             {dataPdf.datiModuloCommessaCosti.map((singleObj)=>{
                                 return (
                                     <div key={Math.random()} className="row mt-3">
                                         <div className="col-7">
-      
                                             <Typography sx={{display:'flex',textAlign:'left'}} variant="caption">{singleObj.descrizione}</Typography>
-        
                                         </div>
                                         <div className="col-5">
-                                           
                                             <div className="row">
                                                 <div className="col">
-                                                  
                                                 </div>
                                                 <div className="col">
-                                                    
                                                 </div>
                                                 <div className="row">
                                                     <div className="d-flex flex-row-reverse">
                                                         <Typography  variant="caption">{singleObj.Totale}</Typography>
                                                     </div>
                                                 </div>
-                                              
                                             </div>
                                         </div>
                                     </div>
@@ -295,20 +270,16 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
                     
                         </div>
                     </div>
-
                 </div>
                 <div className="d-flex justify-content-center mb-5">
                     <Button onClick={()=> onButtonScarica()}  variant="contained">Scarica</Button>
                 </div>
-
                 <ModalLoading 
                     open={showLoading} 
                     setOpen={setShowLoading}
                     sentence={'Downloading...'} >
                 </ModalLoading>
-
             </div>
-           
         </>
     );
 };

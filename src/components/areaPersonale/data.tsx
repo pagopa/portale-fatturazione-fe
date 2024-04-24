@@ -21,11 +21,9 @@ export interface DatePickerProps {
 }
 
 const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate}) => {
-
     const {mainState,setDatiFatturazione, datiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
 
     const onChangeHandler = (e:any) => {
-
         try {
             const data = new Date(e).toISOString();
             setDatiFatturazione({...datiFatturazione,...{dataDocumento:data}});

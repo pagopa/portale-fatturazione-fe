@@ -20,7 +20,6 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
     } = props;
 
     const validationTextArea = (max: number, validation:string, input:string|number)=>{
-        
         YupString.max(max, validation)
             .validate(input)
             .then(()=>{
@@ -46,7 +45,6 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
     }; 
 
     const validationTextAreaEmail = (element:string)=>{
-        
         _YupPec.validate(element)
             .then(()=>{
                 setErrorValidation(false);
@@ -62,12 +60,9 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
         e.persist();
         if(label === 'Mail Pec'){
             validationTextAreaEmail(value);
-           
         }else{
             validationTextArea(dataValidation.max,dataValidation.validation ,value);
-           
         }
-
     };
 
     let makeTextInputDisable = true;
@@ -77,11 +72,9 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
         makeTextInputDisable = true;
     }else if(mainState.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa !== ''){
         makeTextInputDisable = false;
-
     }
   
     return (
-
         <TextField
             required={required}
             helperText={helperText}
@@ -92,15 +85,12 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
             value={value}
             error={errorValidation}
             onChange={(e)=>{setDatiFatturazione((prevState: DatiFatturazione) =>{
-                
                 const newValue = {[keyObject]:e.target.value};
                 const newState = {...prevState, ...newValue};
-              
                 return newState;
             } );}}
             onBlur={(e)=> hendleOnMouseOut(e)}
         />
-
     );
 };
 

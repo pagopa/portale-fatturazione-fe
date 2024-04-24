@@ -19,110 +19,46 @@ import { downloadNotifchePagoPa, getContestazionePagoPa, getTipologiaEntiComplet
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import GridCustom from "../components/reusableComponents/gridCustom";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
-import useIsTabActive from "../reusableFunctin/tabIsActiv";
 import { saveAs } from "file-saver";
-import { profiliEnti } from "../reusableFunctin/actionLocalStorage";
+import { getProfilo, getStatusApp, getToken, profiliEnti } from "../reusableFunctin/actionLocalStorage";
+import {mesi, mesiGrid, mesiWithZero, tipoNotifica } from "../reusableFunctin/reusableArrayObj";
+import { getCurrentFinancialYear } from "../reusableFunctin/function";
 
 const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
 
+    const token =  getToken();
+    const profilo =  getProfilo();
     const navigate = useNavigate();
+    const statusApp = getStatusApp();
     const enti = profiliEnti();
-    
-    const getToken = localStorage.getItem('token') || '{}';
-    const token =  JSON.parse(getToken).token;
 
-    const getProfilo = localStorage.getItem('profilo') || '{}';
-    const profilo =  JSON.parse(getProfilo);
-
-    const state = localStorage.getItem('statusApplication') || '{}';
-    const statusApp =  JSON.parse(state);
-    /*
-    const setFilterToLocalStorage = () => {
-        localStorage.setItem("filtersNotifiche", JSON.stringify({bodyGetLista,textValue,valueAutocomplete}));
-    }; 
-
-    const setInfoPageToLocalStorage = (info) => {
-        localStorage.setItem("pageRowNotifiche", JSON.stringify(info));
-    };
-
-    const getFiltersFromLocalStorage = () => {
-        const filtri = localStorage.getItem('filtersNotifiche') || '{}';
-        const result =  JSON.parse(filtri);
-        return result;
-    };
-    const getInfoPageFromLocalStorage = () => {
-        const infoPage = localStorage.getItem('pageRowListaNotifiche') || '{}';
-        const result =  JSON.parse(infoPage);
-        return result;
-    };
-
-*/
-                
-    useEffect(() => {
-      
-        if(mainState.nonce !== ''){
-            getProdotti();
-            getProfili();
-            
-
-            if(profilo.profilo === 'SELFCARE'){
-                getlistaNotifiche( realPageNumber, rowsPerPage); 
-            }else if(profilo.auth === 'PAGOPA'){
-                getRecapitistConsolidatori();
-                getlistaNotifichePagoPa( realPageNumber, rowsPerPage);
-            }
-        } 
-    }, [mainState.nonce]);
-
-   
-
-    const tabActive = useIsTabActive();
-    useEffect(()=>{
-        if(tabActive === true && (mainState.nonce !== profilo.nonce)){
-            window.location.href = redirect;
-        }
-    },[tabActive, mainState.nonce]);
-    
-    // prendo gli ultimi 2 anni dinamicamente
-    const currentYear = (new Date()).getFullYear();
-    const getCurrentFinancialYear = () => {
-        const thisYear = (new Date()).getFullYear();
-        const yearArray = [0, 1].map((count) => `${thisYear - count}`);
-        return yearArray;
-    };
-    
-    //creo un array di oggetti con tutti i mesi 
     const currentMonth = (new Date()).getMonth() + 1;
     const currString = currentMonth;
-    const mesi = [
-        {1:'Gennaio'},{2:'Febbraio'},{3:'Marzo'},{4:'Aprile'},{5:'Maggio'},{6:'Giugno'},
-        {7:'Luglio'},{8:'Agosto'},{9:'Settembre'},{10:'Ottobre'},{11:'Novembre'},{12:'Dicembre'}];
+    const currentYear = (new Date()).getFullYear();
 
-    const mesiWithZero = ['01','02','03','04','05','06','07','08','09','10','11','12'];
-        
-
-    const mesiGrid = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
-        
-    const tipoNotifica = [
-        {"Digitali": 1},
-        {"Analogico AR Nazionali": 2}, 
-        {"Analogico AR Internazionali": 3},
-        {"Analogico RS Nazionali": 4}, 
-        {"Analogico RS Internazionali": 5}, 
-        {"Analogico 890":6}];
-            
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [profili, setProfili] = useState([]);
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
     const [notificheList, setNotificheList] = useState<NotificheList[]>([]);
-
     const [textValue, setTextValue] = useState('');
-
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
-
     const [listaRecapitista, setListaRecapitisti] = useState<ListaRecCon[]>([]);
     const [listaConsolidatori, setListaConsolidatori] = useState<ListaRecCon[]>([]);
-            
+    const [getNotificheWorking, setGetNotificheWorking] = useState(false);
+    const [page, setPage] = React.useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [totalNotifiche, setTotalNotifiche]  = useState(0);
+    const realPageNumber = page + 1;
+    const [valueRispostaEnte, setValueRispostaEnte] = useState('');
+    const [contestazioneStatic, setContestazioneStatic] = useState();
+    const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
+    const [valueFgContestazione, setValueFgContestazione] = useState<FlagContestazione[]>([]);        
+    const [open, setOpen] = useState(false);
+    const [openModalInfo, setOpenModalInfo] = useState(false);
+    const [showLoading, setShowLoading] = useState(false);
+    const [showLoadingGrid, setShowLoadingGrid] = useState(false);
+    const [showModalScadenziario, setShowModalScadenziario ] = useState(false);   
+    const [openModalRedirect, setOpenModalRedirect] = useState(false);
     const [bodyGetLista, setBodyGetLista] = useState<BodyListaNotifiche>({
         profilo:'',
         prodotto:'',
@@ -137,8 +73,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         recapitisti:[],
         consolidatori:[]
     });
-
-   
     const [bodyDownload, setBodyDownload] = useState<BodyListaNotifiche>({
         profilo:'',
         prodotto:'',
@@ -153,8 +87,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         recapitisti:[],
         consolidatori:[]
     });
-
-            
     const [contestazioneSelected, setContestazioneSelected] = useState<Contestazione>({ 
         risposta:true,
         modifica: true,
@@ -183,11 +115,49 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             mese: 0
         }
     });
+
+    useEffect(() => {
+        if(mainState.nonce !== ''){
+            getProdotti();
+            getProfili();
+            if(profilo.profilo === 'SELFCARE'){
+                getlistaNotifiche( realPageNumber, rowsPerPage); 
+            }else if(profilo.auth === 'PAGOPA'){
+                getRecapitistConsolidatori();
+                getlistaNotifichePagoPa( realPageNumber, rowsPerPage);
+            }
+        } 
+    }, [mainState.nonce]);
+
+    useEffect(()=>{
+        if( 
+            bodyGetLista.profilo !== '' ||
+                    bodyGetLista.prodotto !== '' ||
+                    bodyGetLista.tipoNotifica !== null ||
+                    bodyGetLista.statoContestazione.length !== 0 ||
+                    bodyGetLista.cap !== null ||
+                    bodyGetLista.idEnti?.length !== 0 ||
+                    bodyGetLista.mese !== currString ||
+                    bodyGetLista.anno !== currentYear||
+                    bodyGetLista.recipientId !== null ||
+                    bodyGetLista.consolidatori?.length !== 0 ||
+                    bodyGetLista.recapitisti?.length !== 0  
+        ){
+            setStatusAnnulla('show');
+        }else{           
+            setStatusAnnulla('hidden');
+        }
+    },[bodyGetLista]);
+
+    useEffect(()=>{
+        if(statusApp.datiFatturazione === false){
+            setOpenModalRedirect(true);
+        }
+    },[]);
     
     // Modifico l'oggetto notifica per fare il binding dei dati nel componente GRIDCUSTOM
     let headerNames: string[] = [];
     const notificheListWithOnere = notificheList.map((notifica) =>{
-        
         let newOnere = '';
         if( notifica.onere === 'PA_SEND' ){
             newOnere = 'SEND';
@@ -264,7 +234,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             cap:notifica.cap,
             costEuroInCentesimi:(Number(notifica.costEuroInCentesimi) / 100).toLocaleString("de-DE", { style: "currency", currency: "EUR" })
         };
-        
         if(profilo.profilo === 'REC' || profilo.profilo === 'CON'){
             headerNames = ['Contestazione', 'Onere', 'Recipient ID','Anno', 'Mese','Tipo Notifica','IUN', 'Data invio','Stato estero', 'CAP', 'Costo', ''];
             const {ragioneSociale, ...result} = element;
@@ -273,33 +242,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             headerNames = ['Contestazione', 'Onere', 'Recipient ID','Anno', 'Mese','Ragione Sociale', 'Tipo Notifica','IUN', 'Data invio','Stato estero', 'CAP', 'Costo', ''];
             return element;
         }
-
     });
   
-    // visualizzare il tasto annulla filtri      
-    useEffect(()=>{
-        if( 
-            bodyGetLista.profilo !== '' ||
-                    bodyGetLista.prodotto !== '' ||
-                    bodyGetLista.tipoNotifica !== null ||
-                    bodyGetLista.statoContestazione.length !== 0 ||
-                    bodyGetLista.cap !== null ||
-                    bodyGetLista.idEnti?.length !== 0 ||
-                    bodyGetLista.mese !== currString ||
-                    bodyGetLista.anno !== currentYear||
-                    bodyGetLista.recipientId !== null ||
-                    bodyGetLista.consolidatori?.length !== 0 ||
-                    bodyGetLista.recapitisti?.length !== 0  
-        ){
-            setStatusAnnulla('show');
-        }else{           
-            setStatusAnnulla('hidden');
-        }
-    },[bodyGetLista]);
-
-    // action sul tasto annulla filtri
     const onAnnullaFiltri = async () =>{
-
         const newBody = {
             profilo:'',
             prodotto:'',
@@ -315,23 +260,17 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             consolidatori:[]
 
         };
-
         setStatusAnnulla('hidden');
         setValueFgContestazione([]);
         setDataSelect([]);
         setBodyGetLista(newBody);
         setBodyDownload(newBody);
-
         const {idEnti, recapitisti, consolidatori, ...body} = newBody;
-       
-
         if(enti){
-           
             await listaNotifiche(token,mainState.nonce,1,10, body)
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
-                    setTotalNotifiche(res.data.count);
-                        
+                    setTotalNotifiche(res.data.count);    
                 }).catch((error)=>{
                     manageError(error, navigate);
                 });
@@ -348,7 +287,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     manageError(error, navigate);
                 });
         }else if(profilo.profilo === 'CON'){
-           
             await listaNotificheConsolidatore(token,mainState.nonce,1, 10, body)
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
@@ -361,26 +299,15 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     manageError(error, navigate);
                 });
         }else if(profilo.auth === 'PAGOPA'){
-        
             await listaNotifichePagoPa(token,mainState.nonce,1,10, newBody)
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
                     setTotalNotifiche(res.data.count);
-                        
                 }).catch((error)=>{
                     manageError(error, navigate);
                 });
         }
-      
     };     
-        // disable tutti i button fino a che il servizio lista notifiche non mi dia un 200K , questo perchè c'è un numero di notifiche elevato
-        // con delle tempistiche lunghissime        
-    const [getNotificheWorking, setGetNotificheWorking] = useState(false);
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [totalNotifiche, setTotalNotifiche]  = useState(0);
-    const realPageNumber = page + 1;
- 
 
     const getlistaNotifiche = async (nPage:number, nRow:number) => {
         setShowLoadingGrid(true);
@@ -401,7 +328,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     setGetNotificheWorking(false);
                     setShowLoadingGrid(false);
                     manageError(error, navigate);
-                   
                 });
         }else if(profilo.profilo === 'REC'){
             await listaNotificheRecapitista(token,mainState.nonce,nPage, nRow, newBody)
@@ -418,7 +344,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     manageError(error, navigate);
                 });
         }else if(profilo.profilo === 'CON'){
-
             await listaNotificheConsolidatore(token,mainState.nonce,nPage, nRow,newBody)
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
@@ -432,9 +357,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     setShowLoadingGrid(false);
                     manageError(error, navigate);
                 });
-        }
-       
-                    
+        }           
     };
 
     const getlistaNotifichePagoPa = async (nPage:number, nRow:number) => {
@@ -453,13 +376,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 setGetNotificheWorking(false);
                 setShowLoadingGrid(false);
                 manageError(error, navigate);
-            });
-                    
+            });       
     };
 
-
-
-    // logica sul button filtra
     const onButtonFiltra = () =>{
         setPage(0);
         setRowsPerPage(10);
@@ -487,11 +406,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     const handleChangeRowsPerPage = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
-    
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
         const realPage = page + 1;
-
         if(profilo.auth === 'SELFCARE'){
             getlistaNotifiche(realPage,parseInt(event.target.value, 10));
         }else if(profilo.auth === 'PAGOPA'){
@@ -505,7 +422,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         }).catch(((err)=>{
             manageError(err,navigate);
         }));
-
         await getTipologiaEntiCompletiPagoPa(token, mainState.nonce, 'CON').then((res)=>{          
             setListaConsolidatori(res.data);
         }).catch(((err)=>{
@@ -533,15 +449,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             }));
     };
 
-    const [valueRispostaEnte, setValueRispostaEnte] = useState('');
-    const [contestazioneStatic, setContestazioneStatic] = useState();
-    
-     
     const getContestazioneModal = async(idNotifica:string) =>{
         setShowLoadingGrid(true);
-    
         if(enti){
-           
             await getContestazione(token, mainState.nonce , idNotifica )
                 .then((res)=>{
                     //se i tempi di creazione di una contestazione sono scaduti show pop up info
@@ -555,7 +465,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                         setContestazioneSelected(res.data);
                         setContestazioneStatic(res.data);
                         setValueRispostaEnte(res.data.contestazione.rispostaEnte);
-                     
                     }           
                 })
                 .catch(((err)=>{
@@ -653,7 +562,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
             const { idEnti, recapitisti, consolidatori, ...bodyConsolidatore} = bodyDownload;
             await downloadNotifcheConsolidatore(token, mainState.nonce,bodyConsolidatore )
                 .then((res)=>{
-                
                     const blob = new Blob([res.data], { type: 'text/csv' });
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
@@ -672,9 +580,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         }else if(profilo.auth === 'PAGOPA'){
             await downloadNotifchePagoPa(token, mainState.nonce,bodyDownload)
                 .then((res)=>{
-
                     let fileName = `Notifiche /${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`;
-
                     if(bodyDownload.idEnti.length === 1){
                         fileName = `Notifiche /${notificheList[0].ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`;
                     }
@@ -694,29 +600,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     setShowLoading(false);
                 }));
         }
-    };
-
-    // stato multiselect ragione sociale 
-    const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
-    const [valueFgContestazione, setValueFgContestazione] = useState<FlagContestazione[]>([]);
-
-    // modal             
-    const [open, setOpen] = useState(false);
-    const [openModalInfo, setOpenModalInfo] = useState(false);
-    const [showLoading, setShowLoading] = useState(false);
-    const [showLoadingGrid, setShowLoadingGrid] = useState(false);
-    
-    const [showModalScadenziario, setShowModalScadenziario ] = useState(false);   
-    // visulizzazione del pop up redirect dati di fatturazione
-    const [openModalRedirect, setOpenModalRedirect] = useState(false);
-
-    useEffect(()=>{
-        if(statusApp.datiFatturazione === false){
-            setOpenModalRedirect(true);
-        }
-   
-    },[]);
-
+    }; 
+  
     const backgroundColorButtonScadenzario = (profilo.auth === 'PAGOPA' || enti) ? "#0062C3" : 'red';
 
     return (
@@ -784,7 +669,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                     id="sea"
                                 >
                                 Mese
-                                
                                 </InputLabel>
                                 <Select
                                     id="sea"
@@ -835,7 +719,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                                         >
                                             {el.nome}
                                         </MenuItem>
-                                        
                                     ))}
                                 </Select>
                             </FormControl>
@@ -939,7 +822,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     </div>                         
                 </div>
                 <div className="row mt-5" >
-                   
                     {profilo.auth === 'PAGOPA' &&
                     <div  className="col-3">
                         <MultiselectCheckbox 
@@ -1055,11 +937,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     <Button
                         disabled={getNotificheWorking}
                         onClick={()=> {
-                
-                            
                             downloadNotificheOnDownloadButton(); 
-                           
-                           
                         }}  >
                                   Download Risultati 
                         <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
@@ -1094,32 +972,26 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 valueRispostaEnte={valueRispostaEnte}
                 contestazioneStatic={contestazioneStatic}
             ></ModalContestazione>
-
             <ModalRedirect
                 setOpen={setOpenModalRedirect} 
                 open={openModalRedirect}
                 sentence={`Per poter visualizzare la lista delle Notifiche è obbligatorio fornire i seguenti dati di fatturazione:`}>
-                    
             </ModalRedirect>
-
             <ModalInfo
                 open={openModalInfo} 
                 setOpen={setOpenModalInfo}
                 sentence={'Non è possibile creare una contestazione.'} >
             </ModalInfo>
-
             <ModalLoading 
                 open={showLoading} 
                 setOpen={setShowLoading}
                 sentence={'Downloading...'} >
             </ModalLoading>
-
             <ModalLoading 
                 open={showLoadingGrid} 
                 setOpen={setShowLoadingGrid}
                 sentence={'Loading...'} >
             </ModalLoading>
-         
             <ModalScadenziario
                 open={showModalScadenziario} 
                 setOpen={setShowModalScadenziario}
@@ -1127,6 +999,5 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 profilo={profilo}></ModalScadenziario>                                    
         </div>
     );
-};
-                                                
+};                                        
 export default ReportDettaglio;

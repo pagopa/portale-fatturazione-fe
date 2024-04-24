@@ -10,52 +10,37 @@ import { DataGrid, GridRowParams,GridEventListener,MuiEvent, GridColDef} from '@
 import DownloadIcon from '@mui/icons-material/Download';
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import { downloadDocumentoListaModuloCommessaPagoPa, listaModuloCommessaPagopa } from "../api/apiPagoPa/moduloComessaPA/api";
-import useIsTabActive from "../reusableFunctin/tabIsActiv";
+import { saveAs } from "file-saver";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../types/enum";
-import { profiliEnti } from "../reusableFunctin/actionLocalStorage";
+import { deleteFilterToLocalStorageCommessa, getFiltersFromLocalStorageCommessa, getInfoPageFromLocalStorageCommessa, getProfilo, getToken, profiliEnti, setFilterToLocalStorageCommessa, setInfoPageToLocalStorageCommessa } from "../reusableFunctin/actionLocalStorage";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
+import { currentMonth, getCurrentFinancialYear } from "../reusableFunctin/function";
+import { currentYear, mesi, mesiGrid, mesiWithZero } from "../reusableFunctin/reusableArrayObj";
 
-const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchMainState, mainState}) =>{
+const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState}) =>{
 
+    const token =  getToken();
+    const profilo =  getProfilo();
     const navigate = useNavigate();
-
-    const getToken = localStorage.getItem('token') || '{}';
-    const token =  JSON.parse(getToken).token;
-
-    const getProfilo = localStorage.getItem('profilo') || '{}';
-    const profilo =  JSON.parse(getProfilo);
-
     const enti = profiliEnti();
+    const currString = currentMonth();
 
-
-    const setFilterToLocalStorage = () => {
-        localStorage.setItem("filtersModuliCommessa", JSON.stringify({bodyGetLista,textValue,valueAutocomplete}));
-    }; 
-    const setInfoPageToLocalStorage = (info) => {
-        localStorage.setItem("pageRowListaModuliCommessa", JSON.stringify(info));
-    };
-
-    const deleteFilterToLocalStorage = () => {
-        localStorage.removeItem("filtersModuliCommessa");
-    }; 
-
-    const getFiltersFromLocalStorage = () => {
-        const filtri = localStorage.getItem('filtersModuliCommessa') || '{}';
-        const result =  JSON.parse(filtri);
-        return result;
-    };
-    const getInfoPageFromLocalStorage = () => {
-        const infoPage = localStorage.getItem('pageRowListaModuliCommessa') || '{}';
-        const result =  JSON.parse(infoPage);
-        return result;
-    };
+    const [prodotti, setProdotti] = useState([{nome:''}]);
+    const [gridData, setGridData] = useState<GridElementListaCommesse[]>([]);
+    const [bodyGetLista, setBodyGetLista] = useState({idEnti:[],prodotto:'', anno:currentYear, mese:currString});
+    const [infoPageListaCom , setInfoPageListaCom] = useState({ page: 0, pageSize: 100 });
+    const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
+    const [textValue, setTextValue] = useState('');
+    const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
+    const [statusAnnulla, setStatusAnnulla] = useState('hidden');
+    const [bodyDownload, setBodyDownload] = useState<BodyDownloadModuliCommessa>({idEnti:[],prodotto:'', anno:currentYear, mese:currString});
+    const [showLoading,setShowLoading] = useState(false);
 
     useEffect(()=>{
-
-        const result = getFiltersFromLocalStorage();
-        const infoPageResult = getInfoPageFromLocalStorage();
+        const result = getFiltersFromLocalStorageCommessa();
+        const infoPageResult = getInfoPageFromLocalStorageCommessa();
         if(mainState.nonce !== ''){
             getProdotti();
             if(Object.keys(result).length > 0){
@@ -67,72 +52,17 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
             }else{
                 getListaCommesse(bodyGetLista);
             }
-
             if(infoPageResult.page > 0){
                 setInfoPageListaCom(infoPageResult);
             }
         }
     }, [mainState.nonce]);
-    
-    const tabActive = useIsTabActive();
-    useEffect(()=>{
-        if(tabActive === true && (mainState.nonce !== profilo.nonce)){
-            window.location.href = redirect;
-        }
-    },[tabActive, mainState.nonce]);
-
-    const handleModifyMainState = (valueObj) => {
-        dispatchMainState({
-            type:'MODIFY_MAIN_STATE',
-            value:valueObj
-        });
-    };
-
-    // prendo gli ultimi 2 anni dinamicamente
-    const currentYear = (new Date()).getFullYear().toString();
-    const getCurrentFinancialYear = () => {
-        const thisYear = (new Date()).getFullYear();
-        const yearArray = [0, 1].map((count) => `${thisYear - count}`);
-        return yearArray;
-    };
-
-    let currString;
-    //creo un array di oggetti con tutti i mesi 
-
-    if((new Date()).getMonth() === 11){
-        currString = '1';
-    }else{
-        const currentMonth = (new Date()).getMonth() + 2;
-        currString = currentMonth.toString();
-    }
-    
- 
-    const mesi = [
-        {1:'Gennaio'},{2:'Febbraio'},{3:'Marzo'},{4:'Aprile'},{5:'Maggio'},{6:'Giugno'},
-        {7:'Luglio'},{8:'Agosto'},{9:'Settembre'},{10:'Ottobre'},{11:'Novembre'},{12:'Dicembre'}];
-
-   
-
-    const [prodotti, setProdotti] = useState([{nome:''}]);
-    const [gridData, setGridData] = useState<GridElementListaCommesse[]>([]);
-  
-    const [bodyGetLista, setBodyGetLista] = useState({idEnti:[],prodotto:'', anno:currentYear, mese:currString});
-    const [infoPageListaCom , setInfoPageListaCom] = useState({ page: 0, pageSize: 100 });
-    const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
-    const [textValue, setTextValue] = useState('');
-
-    const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
-
-    const [statusAnnulla, setStatusAnnulla] = useState('hidden');
-
-    const [bodyDownload, setBodyDownload] = useState<BodyDownloadModuliCommessa>({idEnti:[],prodotto:'', anno:currentYear, mese:currString});
 
     useEffect(()=>{
         setBodyDownload(bodyGetLista);
     },[]);
 
     useEffect(()=>{
-
         if(token === undefined){
             window.location.href = '/azureLogin';
         }else if(profilo.auth === 'PAGOPA'){
@@ -144,7 +74,6 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
         }else if(enti){
             navigate(PathPf.DATI_FATTURAZIONE);
         }
-
     },[]);
 
     useEffect(()=>{
@@ -158,7 +87,6 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
     const getProdotti = async() => {
         await getTipologiaProdotto(token, mainState.nonce )
             .then((res)=>{
-               
                 setProdotti(res.data);
             })
             .catch(((err)=>{
@@ -166,12 +94,9 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
             }));
     };
 
- 
-
     const getListaCommesse = async(body) =>{
         await listaModuloCommessaPagopa(body ,token, mainState.nonce)
             .then((res)=>{
-               
                 setGridData(res.data);
             })
             .catch((err)=>{
@@ -182,7 +107,6 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
     const getListaCommesseOnAnnulla = async() =>{
         await listaModuloCommessaPagopa({descrizione:'',prodotto:'', anno:currentYear, mese:currString} ,token, mainState.nonce)
             .then((res)=>{
-             
                 setBodyGetLista({idEnti:[],prodotto:'', anno:currentYear, mese:currString});
                 setGridData(res.data);
             })
@@ -191,25 +115,15 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
             }); 
     };
 
-    const mesiWithZero = ['01','02','03','04','05','06','07','08','09','10','11','12'];
-
     const downloadExelListaCommessa = async () =>{
         setShowLoading(true);
         await downloadDocumentoListaModuloCommessaPagoPa(token, mainState.nonce,bodyDownload)
             .then((res)=>{
                 let fileName = `Moduli Commessa/${mesiWithZero[Number(bodyDownload.mese) -1]}/${bodyDownload.anno}.xlsx`;
-
                 if(gridData.length === 1){
                     fileName = `Modulo Commessa/${gridData[0]?.ragioneSociale} /${mesiWithZero[Number(bodyDownload.mese) -1]}/${bodyDownload.anno}.xlsx`;
                 }
-                //const url = window.URL.createObjectURL(res.data.documento);
-                const link = document.createElement('a');
-                link.href = "data:text/plain;base64," + res.data.documento;
-                link.setAttribute('download', fileName); //or any other extension
-                document.body.appendChild(link);
-              
-                link.click();
-                document.body.removeChild(link);
+                saveAs("data:text/plain;base64," + res.data.documento,fileName);
                 setShowLoading(false);
             })
             .catch((err)=>{
@@ -220,19 +134,15 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
     let columsSelectedGrid = '';
     const handleOnCellClick = (params:Params) =>{
         columsSelectedGrid  = params.field;
-        
     };
 
     const handleEvent: GridEventListener<'rowClick'> = (
         params:GridRowParams,
         event: MuiEvent<React.MouseEvent<HTMLElement>>,
-      
     ) => {
         event.preventDefault();
-       
         // l'evento verrà eseguito solo se l'utente farà il clik sul  mese e action
         if(columsSelectedGrid  === 'regioneSociale' ||columsSelectedGrid  === 'action' ){
-          
             const newState = {
                 mese:params.row.mese,
                 anno:params.row.anno,
@@ -250,51 +160,26 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
             }};
             const stringProfilo = JSON.stringify(newProfilo);
             localStorage.setItem('profilo', stringProfilo);
-
-           
             navigate(PathPf.MODULOCOMMESSA);
-           
         }
-       
     };
-
-    const mesiGrid = ["Dicembre", "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
 
     const columns: GridColDef[] = [
         { field: 'regioneSociale', headerName: 'Ragione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/8">{param.row.ragioneSociale}</a>},
         { field: 'mese', headerName: 'Mese', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <div className="MuiDataGrid-cellContent" title={mesiGrid[param.row.mese]} role="presentation">{mesiGrid[param.row.mese]}</div>},
         { field: 'prodotto', headerName: 'Prodotto', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        
         { field: 'numeroNotificheNazionaliDigitale', headerName: 'Num. Not. Naz.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'tipoSpedizioneAnalogicoAR', headerName: 'Tipo spediz. Analog.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'numeroNotificheInternazionaliDigitale', headerName: 'Num. Not. Int.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'numeroNotificheNazionaliAnalogicoAR', headerName: 'Num. Not. Naz. AR', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'numeroNotificheInternazionaliAnalogicoAR', headerName: 'Num. Not. Int. AR', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        // { field: 'tipoSpedizioneAnalogicoAR', headerName: 'Tipo spediz Anal', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'numeroNotificheNazionaliAnalogico890', headerName: 'Num. Not. Naz. 890', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'numeroNotificheInternazionaliAnalogico890', headerName: 'Num. Not. Naz. AR 890', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'totaleAnalogicoLordo', headerName: 'Tot. Spedizioni A.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',  valueFormatter: ({ value }) => value.toLocaleString("de-DE", { style: "currency", currency: "EUR" })},
         { field: 'totaleDigitaleLordo', headerName: 'Tot. Spedizioni D', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left', valueFormatter: ({ value }) => value.toLocaleString("de-DE", { style: "currency", currency: "EUR" }) },
-    
-        {
-            field: 'action',
-            headerName: '',
-            sortable: false,
-            width:70,
-            headerAlign: 'left',
-            disableColumnMenu :true,
-            renderCell: (() => (
-    
-                <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} onClick={() => console.log('Show page details')} />
-    
-            )
-            ),
-        }
-
+        {field: 'action', headerName: '',sortable: false, width:70,headerAlign: 'left',disableColumnMenu :true, renderCell: (() => (<ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} onClick={() => console.log('Show page details')} /> ) ),}
     ];
 
-    const [showLoading,setShowLoading] = useState(false);
-    
     return (
         <div className="mx-5">
             {/*title container start */}
@@ -302,9 +187,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
                 <Typography variant="h4">Lista Modulo Commessa</Typography>
             </div>
             {/*title container end */}
-    
             <div className="d-flex mb-5 marginTop24" >
-               
                 <div className="col-3">
                     <Box sx={{ width: '80%' }}>
                         <FormControl
@@ -315,7 +198,6 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
                                 id="sea"
                             >
                                 Anno
-
                             </InputLabel>
                             <Select
                                 id="sea"
@@ -323,22 +205,16 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
                                 labelId="search-by-label"
                                 onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{anno:e.target.value}}))}
                                 value={bodyGetLista.anno}
-                                //IconComponent={SearchIcon}
-                    
                                 disabled={status=== 'immutable' ? true : false}
-
                             >
                                 {getCurrentFinancialYear().map((el) => (
-
                                     <MenuItem
                                         key={Math.random()}
                                         value={el}
                                     >
                                         {el}
                                     </MenuItem>
-
                                 ))}
-
                             </Select>
                         </FormControl>
                     </Box>
@@ -353,7 +229,6 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
                                 id="sea"
                             >
                                 Mese
-
                             </InputLabel>
                             <Select
                                 id="sea"
@@ -362,24 +237,17 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
                                 onChange={(e) =>{
                                     setBodyGetLista((prev)=> ({...prev, ...{mese:e.target.value}}));
                                 }}
-                               
                                 value={bodyGetLista.mese}
-                                //IconComponent={SearchIcon}
-                    
                                 disabled={status=== 'immutable' ? true : false}
-
                             >
                                 {mesi.map((el) => (
-
                                     <MenuItem
                                         key={Math.random()}
                                         value={Object.keys(el)[0].toString()}
                                     >
                                         {Object.values(el)[0]}
                                     </MenuItem>
-
                                 ))}
-
                             </Select>
                         </FormControl>
                     </Box>
@@ -396,7 +264,6 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
                                 id="sea"
                             >
                                 Seleziona Prodotto
-
                             </InputLabel>
                             <Select
                                 id="sea"
@@ -404,27 +271,20 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
                                 labelId="search-by-label"
                                 onChange={(e) => setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}))}
                                 value={bodyGetLista.prodotto}
-                                //IconComponent={SearchIcon}
-                    
                                 disabled={status=== 'immutable' ? true : false}
-
                             >
                                 {prodotti.map((el) => (
-
                                     <MenuItem
                                         key={Math.random()}
                                         value={el.nome}
                                     >
                                         {el.nome}
                                     </MenuItem>
-
                                 ))}
-
                             </Select>
                         </FormControl>
                     </Box>
                 </div>
-                
                 <div  className="col-3">
                     <MultiselectCheckbox 
                         mainState={mainState} 
@@ -437,40 +297,35 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
                         setValueAutocomplete={setValueAutocomplete}
                     ></MultiselectCheckbox>
                 </div>
-             
                 <div className=" d-flex justify-content-center align-items-center">
                     <div>
                         <Button 
                             onClick={()=>{
                                 setInfoPageListaCom({ page: 0, pageSize: 100 });
-                                setInfoPageToLocalStorage({ page: 0, pageSize: 100 });
+                                setInfoPageToLocalStorageCommessa({ page: 0, pageSize: 100 });
                                 getListaCommesse(bodyGetLista);
                                 setBodyDownload(bodyGetLista);
-                                setFilterToLocalStorage();
+                                setFilterToLocalStorageCommessa(bodyGetLista,textValue,valueAutocomplete);
                             } } 
                             sx={{ marginTop: 'auto', marginBottom: 'auto'}}
                             variant="contained"> Filtra
                         </Button>
-
                         {statusAnnulla === 'hidden' ? null :
-                        
                             <Button
                                 onClick={()=>{
                                     setInfoPageListaCom({ page: 0, pageSize: 100 });
-                                    setInfoPageToLocalStorage({ page: 0, pageSize: 100 });
+                                    setInfoPageToLocalStorageCommessa({ page: 0, pageSize: 100 });
                                     getListaCommesseOnAnnulla();
                                     setBodyDownload({idEnti:[],prodotto:'', anno:currentYear, mese:currString});
                                     setDataSelect([]);
-                                    deleteFilterToLocalStorage();
+                                    deleteFilterToLocalStorageCommessa();
                                 } }
                                 sx={{marginLeft:'24px'}} >
                     Annulla filtri
                             </Button>
                         }
                     </div>
-                
                 </div>
-           
             </div>
             {/* grid */}
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
@@ -487,23 +342,16 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
                     '& .MuiDataGrid-virtualScroller': {
                         backgroundColor: 'white',
                     }
-                   
                 }}
                 rows={gridData} 
                 columns={columns}
                 getRowId={(row) => row?.key}
                 onRowClick={handleEvent}
                 onCellClick={handleOnCellClick}
-                onPaginationModelChange={(e)=>{setInfoPageListaCom(e);setInfoPageToLocalStorage(e);}}
+                onPaginationModelChange={(e)=>{setInfoPageListaCom(e); setInfoPageToLocalStorageCommessa(e);}}
                 paginationModel={infoPageListaCom}
-                
                 />
-                
             </div>
-            <div>
-
-            </div>
-
             <ModalLoading 
                 open={showLoading} 
                 setOpen={setShowLoading}

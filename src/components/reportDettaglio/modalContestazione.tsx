@@ -12,7 +12,7 @@ import {useState, useEffect} from 'react';
 import YupString from '../../validations/string/index';
 import { createContestazione, modifyContestazioneConsolidatore, modifyContestazioneEnte,modifyContestazioneRecapitista, tipologiaTipoContestazione } from '../../api/apiSelfcare/notificheSE/api';
 import { modifyContestazioneEntePagoPa } from '../../api/apiPagoPa/notificheSE/api';
-import { profiliEnti } from '../../reusableFunctin/actionLocalStorage';
+import { getProfilo, getToken, profiliEnti } from '../../reusableFunctin/actionLocalStorage';
 
 const style = {
     position: 'absolute' as const,
@@ -28,30 +28,14 @@ const style = {
 const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open, mainState, contestazioneSelected, setContestazioneSelected, funGetNotifiche, funGetNotifichePagoPa, openModalLoading, page, rows, valueRispostaEnte, contestazioneStatic}) => {
 
     const navigate = useNavigate();
-
     const enti = profiliEnti();
-    
-    const getToken = localStorage.getItem('token') || '{}';
-    const token =  JSON.parse(getToken).token;
-
-    const getProfilo = localStorage.getItem('profilo') || '{}';
-    const profilo =  JSON.parse(getProfilo);
+    const token =  getToken();
+    const profilo =  getProfilo();
 
     const [enableCreaContestazione, setEnableCreaContestazione] = useState(true);
-
-    const requiredString = (string:string , nomeTextBox:string) =>{
-        
-        YupString.required().validate(string).then(()=>{
-               
-            setEnableCreaContestazione(false);
-      
-        }).catch(()=>{
-             
-            setEnableCreaContestazione(true);
-         
-        });
-    };
-
+    const [tipoContestazioni, setTipoContestazioni] = useState<TipoContestazione[]>([]);
+    const [errNoteEnte, setErrNoteEnte] = useState(false);
+   
     // reset dei dati del modal ogni qual volta viene chiuso 
     useEffect(()=>{
         if(open === false){
@@ -83,32 +67,27 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                 }
                 
             });
-            
             setEnableCreaContestazione(true);
         }
         setErrNoteEnte(false);
     },[open]);
 
-    const [tipoContestazioni, setTipoContestazioni] = useState<TipoContestazione[]>([]);
+    useEffect(()=>{
+        if(mainState.nonce !== ''){
+            getTipoConestazioni();
+        }
+    },[mainState.nonce]);
 
     // get delle tipologie delle contestazioni che popolano la select 
     const getTipoConestazioni = async() => {
         await tipologiaTipoContestazione(token, mainState.nonce)
             .then((res)=>{
                 setTipoContestazioni(res.data);
-          
             })
             .catch(((err)=>{
                 manageError(err,navigate);
             }));
     };
-
-    useEffect(()=>{
-        if(mainState.nonce !== ''){
-            getTipoConestazioni();
-          
-        }
-    },[mainState.nonce]);
 
     const creaContestazione = async () => {
         setOpen(false);
@@ -118,7 +97,6 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
             tipoContestazione:contestazioneSelected.contestazione.tipoContestazione,
             noteEnte:contestazioneSelected.contestazione.noteEnte
         };
-        
         await createContestazione(token, mainState.nonce,body)
             .then(()=>{
                 funGetNotifiche(page,rows);
@@ -200,12 +178,10 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                 rispostaEnte: rispostaEnte,
                 statoContestazione:contestazioneSelected.contestazione.statoContestazione
             };
-
         }
-        
+
         if(enti){
             await modifyContestazioneEnte(token, profilo.nonce, body).then(()=>{
-               
                 funGetNotifiche(page,rows);
             }).catch(((err)=>{
                 manageError(err,navigate);
@@ -213,19 +189,16 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
         }else if(profilo.profilo === 'REC'){
             await modifyContestazioneRecapitista(token, profilo.nonce, body).then(()=>{
                 funGetNotifiche(page,rows);
-                
             }).catch(((err)=>{
                 manageError(err,navigate);
             }));
         }else if(profilo.profilo === 'CON'){
             await modifyContestazioneConsolidatore(token, profilo.nonce, body).then(()=>{
                 funGetNotifiche(page,rows);
-                
             }).catch(((err)=>{
                 manageError(err,navigate);
             }));
         }
-  
     };
 
     const modifyContestazioneFunPagoPa = async(action:string) => {
@@ -233,7 +206,6 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
         openModalLoading(true);
         let body = {};
         if(action === 'rispondi'){
-
             body = {
                 idNotifica:contestazioneSelected.contestazione.idNotifica,
                 onere:'PA',
@@ -275,21 +247,21 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
         }
         
         await modifyContestazioneEntePagoPa(token, mainState.nonce, body).then((res)=>{
-            
             funGetNotifichePagoPa(page,rows);
-            
         }).catch(((err)=>{
             manageError(err,navigate);
         }));
     };
 
-    const [errNoteEnte, setErrNoteEnte] = useState(false);
-
-    const handleOpen = () => {
-        setOpen(true);
+    const requiredString = (string:string , nomeTextBox:string) =>{
+        YupString.required().validate(string).then(()=>{
+            setEnableCreaContestazione(false);
+        }).catch(()=>{
+            setEnableCreaContestazione(true);
+        });
     };
+
     const handleClose = () => {
-        
         setOpen(false);
     };
 
@@ -300,8 +272,6 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
     const noteRecapitista = contestazioneSelected.contestazione.noteRecapitista;
     const noteConsolidatore = contestazioneSelected.contestazione.noteConsolidatore;
     const noteEnte = contestazioneSelected.contestazione.noteEnte;
-
-    const noActionEnte = !contestazioneSelected.modifica && !contestazioneSelected.chiusura && !contestazioneSelected.risposta;
 
     // ente/selfacre puo rispondere?
     const noRisposta = contestazioneSelected.risposta;
@@ -323,30 +293,8 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
      (stato === 9 && rispostaEnte === null ); 
 
     const readOnlyRispostaEnte = !enti || (enti && valueRispostaEnte !== null && stato !== 7);
-  
-    /*(stato === 2 && rispostaEnte !== null) ||
-       stato === 8 ||
-       stato === 9 || 
-       stato === 7 ||
-       noRisposta === false ||
-       profilo.profilo !== 'PA';*/
-    // stato === 7 && (rispostaSend !== '' || rispostaSend !== null || noteRecapitista !== null || noteRecapitista !== '' || notaCosolidatore !== null ||notaCosolidatore !== '' ) ||
-
-    const supportoSentHidden =  stato === 1 ||
-    stato === 2 ||
-    (stato === 3 && enti) ||
-    (stato === 8 && rispostaSend === null) ||
-    (stato === 9  && rispostaSend === null) ||
-    (rispostaSend === null && noRisposta === false) ||
-    (profilo.profilo === 'REC' && (rispostaSend === null || rispostaSend === '')) || // add 04/04
-    (profilo.profilo === 'CON' && (rispostaSend === null || rispostaSend === '')) ;  // add 05/
 
     const showSupportoSend = profilo.auth === 'PAGOPA' || (rispostaSend !== null && rispostaSend !== '');
-    // stato === 3 ||
-    //(stato === 5 && rispostaSend === null)||
-    //(stato === 6 && rispostaSend === null)||
-
-   
 
     const supportSendReadOnly = profilo.auth !== 'PAGOPA' ||
      stato === 9||
@@ -362,32 +310,13 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
     profilo.auth !== 'PAGOPA'||
     noRisposta === false ||
     noChiusura === false ||
-    (stato !== 4 && contestazioneStatic?.contestazione.noteSend !== null);    //////
-    // profilo.auth === 'PAGOPA' && noRisposta &&
-    /*
-    const hiddenRispondiAccettaEnte_SEND_REC_CON = stato === 1 ||
-    stato === 2 ||
-    stato === 6 ||
-    stato === 8 ||
-    stato === 9 ||
-    profilo.auth !== 'PAGOPA';
-    */
-
+    (stato !== 4 && contestazioneStatic?.contestazione.noteSend !== null);  
+ 
     const hiddenRispondiAccettaEnte_SEND_REC_CON = enti || stato === 2 || stato === 8 || stato === 9 ;
    
-    const hiddenConsRec =   stato === 1 ||
-    stato === 2 ||
-    stato === 3 ||
-    // stato === 6 ||
-    stato === 8 ||
-    stato === 9 ||
-    profilo.profilo === 'REC' ||
-    profilo.profilo === 'CON'; 
-
     const showButtonAccettaRecapitista_Send = (profilo.auth === 'PAGOPA' || enti) && noteRecapitista && noChiusura;
     let labelButtonAccettaRecapitista_Send = 'Accetta risposta Recapitista';
   
-    // (stato === 4 && profilo.auth === 'PAGOPA')? 'Modifica e accetta risposta RECAPITISTA' : 'Accetta risposta RECAPITISTA'
     if((stato === 4 && profilo.auth === 'PAGOPA') || (stato === 3  && enti)){
         labelButtonAccettaRecapitista_Send = 'Modifica e accetta risposta Recapitista';
     } 
@@ -400,22 +329,15 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
     if(enti  && (rispostaEnte === null || rispostaEnte === '')){
         disableButtonAccettaRecapitista_Send_Ente = true;
     }
-    /* if(enti && (rispostaEnte === null || rispostaEnte === '')){
-        disableButtonAccettaRecapitista_Send_Ente = true;
-    }*/
-
-    
-    // logica button accetta risposa consolidatore_SEND_ENTE
+   
     const showButtonAccettaConsolidatore_Send = (profilo.auth === 'PAGOPA' || enti)  && noteConsolidatore && noChiusura;
+
     let labelButtonAccettaConsolidatore_Send = 'Accetta risposta Consolidatore';
-  
-    
     if((stato === 4 && profilo.auth === 'PAGOPA') || (stato === 3  && enti)){
         labelButtonAccettaConsolidatore_Send = 'Modifica e accetta risposta Consolidatore';
     } 
 
     let disableButtonAccettaConsolidatore_Send_Ente = false;
-    
     if(profilo.auth === 'PAGOPA' && (rispostaSend === null || rispostaSend === '')){
         disableButtonAccettaConsolidatore_Send_Ente = true;
     }
@@ -423,13 +345,12 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
         disableButtonAccettaConsolidatore_Send_Ente = true;
     }
 
-
     const hiddenButtonAnnullaContestazione = !enti ||
      stato !== 3 ||
     contestazioneSelected.modifica === false; 
 
     let hiddenModificaRispondiEnte = false;  
-    //profilo.profilo === 'PA' && (noRisposta || noModifica) && !rispostaEnte;
+
     if( stato === 1 || stato === 2 || stato === 8 || stato === 9){
         hiddenModificaRispondiEnte = false;
     }else if(enti && noModifica){
@@ -439,19 +360,8 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
     }else if(enti && noRisposta && valueRispostaEnte !== null && stato === 7){
         hiddenModificaRispondiEnte = true;
     }
-    
-    /* stato === 1  ||
-       stato === 2  ||
-        stato === 8  || 
-        stato === 9 ||
-    //  stato === 7 ||
-    profilo.profilo !== 'PA' ||
-    // aggiunta 22/02
-    (noRisposta === false && noModifica === false);*/
-
-    
-    const hiddenRispondiChiudiSend_Ente =  enti && rispostaSend && stato !== 2 && stato !== 8 && stato !== 9; // (stato !== 4 && stato !== 7) || profilo.auth === 'PAGOPA' || profilo.profilo === 'REC' || profilo.profilo === 'CON';
-
+     
+    const hiddenRispondiChiudiSend_Ente =  enti && rispostaSend && stato !== 2 && stato !== 8 && stato !== 9;
     const hiddenChiudi_send = profilo.auth === 'PAGOPA' && noChiusura;
 
     let disableCreaContestazioneButton = false;
@@ -479,9 +389,6 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
     }else if (profilo.auth === 'PAGOPA' && stato !== 4 && contestazioneStatic?.contestazione.noteSend !== null){
         stringButtonAccettaEnte_send = 'Accetta contestazione Ente';
     }
-    /*else if(noRisposta === false){     // secondo me questo if va tolto
-        stringButtonAccettaEnte_send = 'Accetta Contestazione ENTE';
-    }*/
 
     let disableRispondiAccettaEnte_SEND_REC_CON = false;
     if(profilo.auth === 'PAGOPA' && (rispostaSend === '' || rispostaSend === null)){
@@ -507,9 +414,6 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
     }else if((noteRecapitista !== null || noteConsolidatore !== null || rispostaSend !== null) && (rispostaEnte === null || rispostaEnte === '') ){
         disableRispondiAccettaSend_rispondi = true;
     }
-    //else if(contestazioneStatic){
-    //  disableRispondiAccettaSend_rispondi = true;
-    // }
     
     let labelChiusdi_send = 'Rifiuta Contestazione';
     if(stato === 3 && noRisposta === true){
@@ -527,14 +431,7 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
 
     const showTextBox_Recapitista = (profilo.profilo === 'REC' && (stato !== 2 && stato !== 8 && stato !== 9)) || noteRecapitista ;
     const showTextBox_Consolidatore = (profilo.profilo === 'CON' && (stato !== 2 && stato !== 8 && stato !== 9)) || noteConsolidatore;
-    /*stato === 1 ||
-     (stato === 2 && noteRecapitista === null) || 
-     stato === 3 ||
-    (stato === 4 && noteRecapitista === null) ||
-    (stato === 6 && noteRecapitista === null) ||
-    (stato === 7 && noteRecapitista === null) ||
-    (stato === 8 && noteRecapitista === null) ||
-    (stato === 9 && noteRecapitista === null); */
+   
     // RECAPITISTA
     let showButton_Recapitista = false;
     if(profilo.profilo === 'REC' && stato !== 5  && contestazioneStatic?.contestazione.noteRecapitista !== null){
@@ -569,7 +466,6 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
     }
     return (
         <div>
-        
             <Modal
                 open={open}
                 onClose={handleClose}
@@ -588,7 +484,6 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                             <Button variant="contained"  onClick={()=> handleClose() }> X </Button>
                         </div>
                     </div>
-                   
                     {/*BODY */}
                     <div className='pt-3'>
                         <div className='row mt-3'>
@@ -601,17 +496,13 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                                         id="tipoCon"
                                     >
                                 Tipo Contestazione
-
                                     </InputLabel>
                                     <Select
                                         id="tipoCon"
-                                        
                                         label='Tipo Contestazione'
                                         labelId="search-by-label"
                                         onChange={(e) =>{
-                                           
                                             if(e.target.value === ''){
-                                                 
                                                 setContestazioneSelected((prev:Contestazione)=>{
                                                     const newContestazione = {...prev.contestazione, tipoContestazione:null};
                                                     return {...prev, contestazione:newContestazione};
@@ -622,80 +513,60 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                                                     return {...prev, contestazione:newContestazione};
                                                 } );
                                             }
-                                            
                                         } }
                                         value={contestazioneSelected.contestazione.tipoContestazione|| ''}
-                                        // disabled= {profilo.profilo !== 'PA' || contestazioneSelected?.contestazione?.statoContestazione !== 1}
                                         inputProps={{ readOnly: contestazioneSelected?.contestazione?.statoContestazione !== 1 }}
-
                                     >
                                         {tipoContestazioni.map((el) => (
-
                                             <MenuItem
                                                 key={el.id}
                                                 value={el.id}
                                             >
                                                 {el.tipo}
                                             </MenuItem>
-
                                         ))}
-
                                     </Select>
                                 </FormControl>
                             </div>
-                        
                             <div className='col-4'>
                                 <TextField
                                     required
-                                  
                                     id="outlined-basic"
                                     label='Note Contestazione'
                                     placeholder='Note Contestazione'
-                                    //  disabled={makeTextInputDisable}
                                     value={contestazioneSelected.contestazione.noteEnte}
                                     fullWidth
                                     multiline
-                                    
-                                    //disabled= {profilo.profilo !== 'PA' || (contestazioneSelected?.contestazione?.statoContestazione !== 1 && contestazioneSelected?.contestazione?.statoContestazione !== 3) ||  contestazioneSelected.modifica === false}
                                     InputProps={{ readOnly: readOnlyNotaContestazione}}
                                     error={errNoteEnte}
                                     onChange={(e) =>  setContestazioneSelected((prev:Contestazione)=> {
-                                    
                                         const newContestazione = {...prev.contestazione, noteEnte:e.target.value};
                                         return {...prev, contestazione:newContestazione};
-                                     
                                     })}
                                     onBlur={(e)=> requiredString(e.target.value, 'nota_ente')}
-            
                                 />
                             </div>
-                            
                             {rispostaEnteIsHidden ? null : 
                                 <div className='col-4'>
                                     <TextField
                                         id="x"
                                         label='Risposta'
                                         placeholder='Risposta'
-                                        //disabled={profilo.profilo !== 'PA' || (contestazioneSelected.contestazione.statoContestazione !== 3 && contestazioneSelected.contestazione.statoContestazione !== 4 && contestazioneSelected.contestazione.statoContestazione !== 5 && contestazioneSelected.contestazione.statoContestazione !== 6 )}
                                         InputProps={{ readOnly:readOnlyRispostaEnte}}
                                         value={rispostaEnte || ''}
                                         fullWidth
                                         multiline
                                         onChange={(e) =>  setContestazioneSelected((prev:Contestazione)=> {
-                                    
                                             const newContestazione = {...prev.contestazione, rispostaEnte:e.target.value};
                                             return {...prev, contestazione:newContestazione};
-                                         
                                         })}
                                         onBlur={(e)=> requiredString(e.target.value, 'risposta_ente')}
-            
                                     />
                                 </div>
                             }
                         </div>
                         {showSupportoSend &&
                             <div className='row mt-5'>
-                            
                                 <Typography id="modal-modal-title" variant="overline">
                                 Supporto Send
                                 </Typography>
@@ -704,27 +575,21 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                                         id="supporto"
                                         label='Risposta'
                                         placeholder='Risposta'
-                                        //disabled={profilo.profilo !== 'SUP' || (contestazioneSelected.contestazione.statoContestazione !== 1 && contestazioneSelected.contestazione.statoContestazione !== 2 && contestazioneSelected.contestazione.statoContestazione !== 7 && contestazioneSelected.contestazione.statoContestazione !== 8 && contestazioneSelected.contestazione.statoContestazione !== 9 )}
                                         value={rispostaSend || ''}
                                         fullWidth
                                         multiline
                                         InputProps={{ readOnly: supportSendReadOnly }}
                                         onChange={(e) =>  setContestazioneSelected((prev:Contestazione)=> {
-                                    
                                             const newContestazione = {...prev.contestazione, noteSend:e.target.value};
                                             return {...prev, contestazione:newContestazione};
-                                         
                                         })}
-            
                                     />
                                 </div>
-
                             </div>
                         }
                         { /*  recapitista textfield */}
                         {showTextBox_Recapitista &&
                             <div className='row mt-5'>
-                            
                                 <Typography id="modal-modal-title" variant="overline">
                                 Recapitista
                                 </Typography>
@@ -738,20 +603,16 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                                         fullWidth
                                         multiline
                                         onChange={(e) =>  setContestazioneSelected((prev:Contestazione)=> {
-                                    
                                             const newContestazione = {...prev.contestazione, noteRecapitista:e.target.value};
                                             return {...prev, contestazione:newContestazione};
-                                         
                                         })}
                                     />
                                 </div>
-
                             </div>
                         }
                         {/*consolidatore text field */}
                         {showTextBox_Consolidatore &&
                             <div className='row mt-5'>
-                            
                                 <Typography id="modal-modal-title" variant="overline">
                                 Consolidatore
                                 </Typography>
@@ -772,36 +633,27 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                                 </div>
                             </div>
                         }
-                      
-
                     </div>
-
                     {/*BODY */}
                     <div className='mt-5'>
                         <div className='row'>
                             {/* butto ENTE */}
-                            {
-                                contestazioneSelected.contestazione.statoContestazione !== 1   ? null :
-                          
-                                    <div className='col-2 me-2'>
-                                        <Button 
-                                            disabled={disableCreaContestazioneButton}
-                                            variant='outlined'
-                                            onClick={()=>{
-                                                creaContestazione();
-                                            }
-                                            }
-                                            
-                                        >Crea Contestazione</Button>
-                                    </div>
+                            {contestazioneSelected.contestazione.statoContestazione !== 1   ? null :
+                                <div className='col-2 me-2'>
+                                    <Button 
+                                        disabled={disableCreaContestazioneButton}
+                                        variant='outlined'
+                                        onClick={()=>{
+                                            creaContestazione();
+                                        }}  
+                                    >Crea Contestazione</Button>
+                                </div>
                             }
                             {/* butto ENTE */}
                             {
                                 hiddenButtonAnnullaContestazione ? null :
-                          
                                     <div className='col-2 me-2'>
                                         <Button 
-                                   
                                             variant='outlined'
                                             onClick={()=>{
                                                 modifyContestazioneFun('Annulla');
@@ -818,9 +670,7 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                                         variant='contained'
                                         onClick={()=>{
                                             modifyContestazioneFun('Modifica/Rispondi');
-                                            
                                         }}
-                                       
                                     >{labelModificaRispondiEnte}</Button>
                                 </div>
                             }
@@ -828,14 +678,11 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                             { hiddenRispondiChiudiSend_Ente &&
                                 <div className='col-2 me-2'>
                                     <Button
-                                       
                                         disabled={disableRispondiAccettaSend_rispondi}
                                         variant='contained'
                                         onClick={()=>{
                                             modifyContestazioneFun('RispondiAccettaSend');
-                                            
                                         }}
-                                       
                                     >{labelRispondiAccetta_Ente}</Button>
                                 </div>
                             }
@@ -847,8 +694,7 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                                         disabled={rispostaSend === null  || rispostaSend === ''}
                                         variant='contained'
                                         onClick={()=>{
-                                            modifyContestazioneFunPagoPa('rispondi');
-                                            
+                                            modifyContestazioneFunPagoPa('rispondi');  
                                         }}
                                     >{(stato === 4) ? 'Modifica Risposta' : 'Rispondi'}</Button>
                                 </div>
@@ -873,7 +719,6 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                             {hiddenChiudi_send &&
                                 <div className='col-2 me-2 '>
                                     <Button
-                                       
                                         disabled={rispostaSend === null || rispostaSend === ''}
                                         variant='contained'
                                         onClick={()=>modifyContestazioneFunPagoPa('chiudi')}
@@ -937,11 +782,8 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                                 </div>
                             }
                         </div>
-                     
                     </div>
-                    
                 </Box>
-                
             </Modal>
         </div>
     );

@@ -4,37 +4,14 @@ import { RowInsComProps, ModuliCommessa, DatiCommessa} from '../../types/typeMod
 import YupString from '../../validations/string/index';
 import { InsModuloCommessaContext } from '../../types/typeModuloCommessaInserimento';
 import { InserimentoModuloCommessaContext } from '../../page/moduloCommessaInserimentoUtEn30';
+import { getStatusApp } from '../../reusableFunctin/actionLocalStorage';
+import { month } from '../../reusableFunctin/reusableArrayObj';
 
 const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHidden, idTipoSpedizione, rowNumber}) => {
     const { setDatiCommessa,setDisableContinua, datiCommessa, mainState} = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
 
-    const getStatusApplication = localStorage.getItem('statusApplication') || '{}';
-    const statusApplication =  JSON.parse(getStatusApplication);
+    const statusApplication = getStatusApp();
    
-    const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre",'Gennaio'];
-    
-    let mese = '';
-    let anno = 2000;
-    if(statusApplication.inserisciModificaCommessa === 'MODIFY' ){
-        mese = month[statusApplication.mese -1 ];
-        anno = statusApplication.anno;
-    }else{
-        const mon = new Date().getMonth();
-        const date = new Date();
-      
-        if(mon === 11){
-           
-            anno = date.getFullYear()+1;
-           
-        }else{
-            anno = date.getFullYear();
-        }
-        mese = month[mon + 1 ];
-
-    }
-
-    const meseAnno = <span className="fw-semibold"> {mese}/{anno}</span>;
-
     const [errorNazionale, setErrorNazionale] = useState(false);
     const [errorInternazionale, setErrorInternazionale] = useState(false);
     const [input, setInput] = useState({nazionale:0, internazionale:0});
@@ -43,7 +20,23 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
     useEffect(()=>{
         setTotaleNotifiche(input.nazionale + input.internazionale);
     },[input]);
-   
+
+    let mese = '';
+    let anno = 2000;
+    if(statusApplication.inserisciModificaCommessa === 'MODIFY' ){
+        mese = month[statusApplication.mese -1 ];
+        anno = statusApplication.anno;
+    }else{
+        const mon = new Date().getMonth();
+        const date = new Date();
+        if(mon === 11){
+            anno = date.getFullYear()+1;
+        }else{
+            anno = date.getFullYear();
+        }
+        mese = month[mon + 1 ];
+    }
+
     const validationAllowNumberColumNazionale = (input:number, set:any) =>{
         YupString.matches(/^[0-9]*$/,  {
             message: "Non è possibile inserire numeri negatii",
@@ -51,11 +44,9 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
         }).validate(input)
             .then(()=>{
                 set(false);
-        
             }).catch(() =>{
                 setDisableContinua(true);
                 set(true);
-          
             } );
     };
 
@@ -66,11 +57,9 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
         }).validate(input)
             .then(()=>{
                 set(false);
-        
             }).catch(() =>{
                 setDisableContinua(true);
                 set(true);
-      
             } );
     };
 
@@ -79,7 +68,6 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
         const num = Number(e.target.value);
         validationAllowNumberColumNazionale(num, setErrorNazionale);
         validationAllowNumberColumnInternazionale(num, setErrorNazionale);
-    
     };
     const hendleOnBlur2 = (e:React.FocusEvent<HTMLTextAreaElement | HTMLInputElement, Element>) =>{
         e.persist();
@@ -89,7 +77,6 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
     };
 
     const findValueNazione = (rowNumber : number) =>{
-        
         return datiCommessa.moduliCommessa.filter(obj => obj.idTipoSpedizione === rowNumber)[0]?.numeroNotificheNazionali;
     };
     const findValueInternazionale = (rowNumber : number) =>{
@@ -97,10 +84,10 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
     };
     const findValueTotaleNazInte = (rowNumber : number) =>{
         const x = datiCommessa.moduliCommessa.filter(obj => obj.idTipoSpedizione === rowNumber)[0]?.totaleNotifiche;
-    
         return x; 
-
     };
+
+    const meseAnno = <span className="fw-semibold"> {mese}/{anno}</span>;
   
     return (
         <Grid
@@ -108,7 +95,6 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
             container
             columns={12}
         >
-
             <Grid
                 sx={{
                     textAlign: 'left',
@@ -118,10 +104,8 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
                 item
                 xs={6}
             >
-
                 <Typography>{sentence}{meseAnno}</Typography>
             </Grid>
-
             <Grid
                 sx={{ textAlign: 'center' }}
                 item
@@ -137,23 +121,18 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
                     error={errorNazionale}
                     onBlur={(e)=>hendleOnBlur(e)}
                     onChange={(e)=>{
-                        
                         let value = parseInt(e.target.value);
-                
                         if(!value){
                             value = 0;
                         }
                         setInput({...input, ...{nazionale: value}});
-                      
                         setDatiCommessa((prevState:DatiCommessa)=>{
-
                             const arrayFiltered = prevState.moduliCommessa.filter((singleObj: ModuliCommessa)=>{
                                 return singleObj.idTipoSpedizione !== idTipoSpedizione;
                             });
                             const getsingleIdTipoSpedizione = prevState.moduliCommessa.filter((singleObj: ModuliCommessa)=>{
                                 return singleObj.idTipoSpedizione === idTipoSpedizione; 
                             });
-                        
                             const setNotificheNazionali = {
                                 numeroNotificheNazionali: value,
                                 numeroNotificheInternazionali: getsingleIdTipoSpedizione[0]?.numeroNotificheInternazionali,
@@ -163,9 +142,7 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
                             const newModuliCommessa = [...arrayFiltered, setNotificheNazionali];
                             const newState = {moduliCommessa:newModuliCommessa };
                             return newState;
-
                         });
-                        
                     }}
                 />
             </Grid>
@@ -185,22 +162,18 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
                             error={errorInternazionale}
                             onBlur={(e)=>hendleOnBlur2(e)}
                             onChange={(e)=>{
-
                                 let value = parseInt(e.target.value);
                                 if(!value){
                                     value = 0;
                                 }
                                 setInput({...input, ...{internazionale: value}});
-                               
                                 setDatiCommessa((prevState:DatiCommessa)=>{
-
                                     const arrayFiltered = prevState.moduliCommessa.filter((singleObj: ModuliCommessa)=>{
                                         return singleObj.idTipoSpedizione !== idTipoSpedizione;
                                     });
                                     const getsingleIdTipoSpedizione = prevState.moduliCommessa.filter((singleObj: ModuliCommessa)=>{
                                         return singleObj.idTipoSpedizione === idTipoSpedizione; 
                                     });
-                                
                                     const setNotificheInternazionali = {
                                         numeroNotificheNazionali: getsingleIdTipoSpedizione[0].numeroNotificheNazionali,
                                         numeroNotificheInternazionali: value,
@@ -210,13 +183,10 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
                                     const newModuliCommessa = [...arrayFiltered, setNotificheInternazionali];
                                     const newState = {moduliCommessa:newModuliCommessa };
                                     return newState;
-        
                                 });
-                                
                             }}
                         />
                     )}
-
             </Grid>
             <Grid
                 sx={{ textAlign: 'center', marginTop:'8.5px' }}
@@ -230,7 +200,6 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
                     {findValueTotaleNazInte(rowNumber) }
                 </Typography>
             </Grid>
-
         </Grid>
     );
 };

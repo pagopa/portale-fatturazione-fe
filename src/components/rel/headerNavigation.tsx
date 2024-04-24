@@ -18,18 +18,13 @@ const HeaderNavigationRel : React.FC = () =>{
                 size="small"
                 startIcon={<ArrowBackIcon />}
                 onClick={() => navigate(PathPf.LISTA_REL)}
-           
             >
             Indietro
-
             </ButtonNaked>
-      
             <Typography sx={{ fontWeight:'bold', marginLeft:'20px'}} variant="caption">
                 <ManageAccountsIcon sx={{paddingBottom:'3px'}}  fontSize='small'></ManageAccountsIcon>
               Rel 
-            
             </Typography>
-        
         </div>
     );
 };
