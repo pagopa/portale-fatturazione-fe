@@ -19,7 +19,6 @@ import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/
 import { getDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
 import { PathPf } from '../../types/enum';
 
-
 const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}) => {
 
     const navigate = useNavigate();
@@ -31,17 +30,12 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
     const getProfilo = localStorage.getItem('profilo') || '{}';
     const profilo =  JSON.parse(getProfilo);
 
-
-    
-
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
             type:'MODIFY_MAIN_STATE',
             value:valueObj
         });
     };
-
-
 
     // questa chiamata viene eseguita esclusivamente se l'utenete fa un reload page cosi da inserire nuovamente il NONCE nel DOM
     const getProfiloToGetNonce = async () =>{
@@ -50,9 +44,9 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
             .then((res) =>{
                 handleModifyMainState({nonce:res?.data.nonce});
             
-            }).catch(()=>{
-
-                navigate('/error');
+            }).catch((err)=>{
+                manageError(err, navigate);
+                //navigate('/error');
             });
     };
     // eseguiamo la get a riga 21 solo se il value dell'input(nonce) nel Dom è non c'è e controlliamo che nella local storage sia settatto il profilo
@@ -67,10 +61,8 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
         }
          
     },[mainState.nonce]);
-  
 
     const [selectedIndex, setSelectedIndex] = useState(0);
-
     
     const handleListItemClick = async() => {
         localStorage.removeItem("filtersModuliCommessa");
@@ -114,7 +106,6 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
             handleModifyMainState({datiFatturazione:true});
             //localStorage.setItem('statusApplication', JSON.stringify(mainState));
             
-            
             localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
                 ...{datiFatturazione:true}}));
 
@@ -125,7 +116,6 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
                 localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
                     ...{datiFatturazione:false}}));
             }
-           
            
         });
 
@@ -298,7 +288,6 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
                             !profilo.auth;
 
     const recOrConsIsLogged = profilo.profilo === 'REC' || profilo.profilo ==='CON';
-   
 
     return (
         <>
@@ -344,7 +333,6 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
                 </Box>
             }
         </>
-       
 
     );
 };

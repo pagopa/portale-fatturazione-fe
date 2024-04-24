@@ -13,38 +13,22 @@ import { downloadModuloCommessaPdf, getModuloCommessaPdf } from "../api/apiSelfc
 import { downloadModuloCommessaPagoPaPdf, getModuloCommessaPagoPaPdf } from "../api/apiPagoPa/moduloComessaPA/api";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../types/enum";
-import { profiliEnti } from "../reusableFunctin/profilo";
+import { getProfilo, getStatusApp, getTipoCommessa, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from "../reusableFunctin/actionLocalStorage";
+import useIsTabActive from "../reusableFunctin/tabIsActiv";
+import { mesiWithZero, month } from "../reusableFunctin/reusableArrayObj";
+import { DatiCommessaPdf, ResponseGetPdfPagoPa } from "../types/typeListaModuliCommessa";
+import { replaceDate } from "../reusableFunctin/function";
 
 const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
 
-    const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre","Gennaio"];
-    const mesiWithZero = ['01','02','03','04','05','06','07','08','09','10','11','12'];
-
-    const getToken = localStorage.getItem('token') || '{}';
-    const token =  JSON.parse(getToken).token;
-
-    const getProfilo = localStorage.getItem('profilo') || '{}';
-    const profilo =  JSON.parse(getProfilo);
-
-    const state = localStorage.getItem('statusApplication') || '{}';
-    const statusApp =  JSON.parse(state);
-
-    const tipoCommessa =  localStorage.getItem('tipo') || '';
-
-   
-    function createDateFromString(string:string){
-        const getGiorno = new Date(string).getDate();
-      
-        const getMese = new Date(string).getMonth() + 1;
-        const getAnno = new Date(string).getFullYear();
-
-        return getGiorno+'/'+getMese+'/'+getAnno;
-    }
-    
-
+    const token =  getToken();
+    const profilo =  getProfilo();
+    const statusApp = getStatusApp();
+    const tipoCommessa =  getTipoCommessa();
     const navigate = useNavigate();
     const enti = profiliEnti();
 
+    const [showLoading, setShowLoading] = useState(false);
     const [dataPdf, setDataPdf] = useState<DataPdf>({
         cup: "",
         cig: "",
@@ -79,23 +63,19 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
                 descrizione:''}
         ]
     });
-   
-    const { toPDF, targetRef } = usePDF({filename: `Modulo Commessa /${dataPdf.descrizione} /${mesiWithZero[statusApp.mese -1]}/ ${statusApp.anno}.pdf`});
-    interface DatiCommessaPdf {
-        totaleNotifiche?: number,
-        numeroNotificheNazionali?: number,
-        numeroNotificheInternazionali?: number,
-        tipo?: string,
-        idTipoSpedizione?: number
-    }
 
-    interface ResponseGetPdfPagoPa {
-        data:DataPdf
-    }
-    
+    useEffect(()=>{
+        if(mainState.nonce !== ''){
+            if(profilo.auth === 'PAGOPA'){
+                getPagoPdf();
+            }else{
+                getPdf();
+            }
+        }
+    },[mainState.nonce]);
+   
     // richiamo questa funzione in entrambe le getPdf     selfcare     pagopa
     const toDoOnGetPdfSelfcarePagopa = (res:ResponseGetPdfPagoPa) =>{
-
         let final = [{
             totaleNotifiche: 0,
             numeroNotificheNazionali: 0,
@@ -103,7 +83,6 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
             tipo:"",
             idTipoSpedizione: 0
         }];
-       
         const primo = res.data.datiModuloCommessa.find((obj:DatiCommessaPdf)=>obj.idTipoSpedizione === 3);
         const secondo = res.data.datiModuloCommessa.find((obj:DatiCommessaPdf)=>obj.idTipoSpedizione === 1);
         const terzo = res.data.datiModuloCommessa.find((obj:DatiCommessaPdf)=>obj.idTipoSpedizione === 2);
@@ -112,16 +91,13 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
         if(primo !== undefined && secondo !== undefined && terzo !== undefined && quarto !== undefined){
             final = [primo, secondo, terzo, quarto];
         }
-         
         setDataPdf({...res.data,...{datiModuloCommessa:final}});
         localStorage.setItem("tipo", res.data.tipoCommessa);
     };
 
     const getPdf = async() =>{
         getModuloCommessaPdf(token, statusApp.anno,statusApp.mese, mainState.nonce).then((res:ResponseGetPdfPagoPa)=>{
-
             toDoOnGetPdfSelfcarePagopa(res);
-         
         }).catch((err)=>{
             manageError(err, navigate);
         });  
@@ -130,16 +106,13 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
     const getPagoPdf = async() =>{
         getModuloCommessaPagoPaPdf(token, mainState.nonce,statusApp.mese,statusApp.anno,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto)
             .then((res)=>{
-
                 toDoOnGetPdfSelfcarePagopa(res);
-         
             }).catch((err)=>{
                 manageError(err, navigate);
             });  
     };
 
     const toDoOnDownloadPdf = (res:ResponseDownloadPdf) =>{
-
         const wrapper = document.getElementById('file_download');
         if(wrapper){
             wrapper.innerHTML = res.data;
@@ -152,7 +125,6 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
         setShowLoading(true);
         downloadModuloCommessaPdf(token, statusApp.anno,statusApp.mese, tipoCommessa, mainState.nonce).then((res: ResponseDownloadPdf)=>{
             toDoOnDownloadPdf(res);
-           
         }).catch((err)=>{
             manageError(err, navigate);
         });   
@@ -161,31 +133,13 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
     const downlodPagoPaPdf = async()=>{
         setShowLoading(true);
         downloadModuloCommessaPagoPaPdf(token,  mainState.nonce,statusApp.mese,statusApp.anno,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto,tipoCommessa).then((res:ResponseDownloadPdf)=>{
-         
             toDoOnDownloadPdf(res);
         }).catch((err)=>{
             manageError(err, navigate);
         }); 
     };
-    //_______________________________________________
-    useEffect(()=>{
-
-        if(mainState.nonce !== ''){
-
-            if(profilo.auth === 'PAGOPA'){
-                getPagoPdf();
-                // downlodPagoPaPdf();
-            }else{
-                getPdf();
-                //downloadPdf();
-            }
-          
-        }
-      
-    },[mainState.nonce]);
 
     const onButtonScarica  = ( ) =>{
-        
         if(profilo.auth === 'PAGOPA'){
             downlodPagoPaPdf();
         }else if(enti){
@@ -195,40 +149,24 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
 
     let mese = '';
     let anno = 2000;
-
     const mon = new Date().getMonth();
     const date = new Date();
     mese = month[mon + 1 ];
     if(mon === 11){
-       
         anno = date.getFullYear()+1;
-       
     }else{
         anno = date.getFullYear();
     }
 
-    const replaceDate = (arr:DatiModuloCommessaPdf[], stringToRepace:string, stringToInsert:string) =>{
-  
-        return arr.map((singleObj :DatiModuloCommessaPdf ) =>{
-            singleObj.tipo = singleObj.tipo.replace(stringToRepace,stringToInsert);
-            return singleObj;
-        });
-    };
     const string = `${mese}/${anno}`;
-   
     const arrWithlabelDateMonth = replaceDate(dataPdf.datiModuloCommessa,'[data]',string );
 
     const onIndietroButton = () =>{
-
-        const newStatusApp = {...statusApp, ...{userClickOn:'GRID'}};
-      
-        localStorage.setItem('statusApplication', JSON.stringify(newStatusApp));
+        setInfoToStatusApplicationLoacalStorage(statusApp,{userClickOn:'GRID'});
         navigate(PathPf.MODULOCOMMESSA); 
     };
 
-
-    const [showLoading, setShowLoading] = useState(false);
-
+    const { toPDF, targetRef } = usePDF({filename: `Modulo Commessa /${dataPdf.descrizione} /${mesiWithZero[statusApp.mese -1]}/ ${statusApp.anno}.pdf`});
     return (
         <>
         

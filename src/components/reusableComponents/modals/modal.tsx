@@ -7,7 +7,7 @@ import { ModalProps } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
 import { useLocation } from 'react-router-dom';
 import { PathPf } from '../../../types/enum';
-import { profiliEnti } from '../../../reusableFunctin/profilo';
+import { profiliEnti } from '../../../reusableFunctin/actionLocalStorage';
 const style = {
     position: 'absolute' as const,
     top: '50%',

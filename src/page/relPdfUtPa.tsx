@@ -17,7 +17,7 @@ import generatePDF from 'react-to-pdf';
 import { redirect } from '../api/api';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import { PathPf } from '../types/enum';
-import { profiliEnti } from '../reusableFunctin/profilo';
+import { profiliEnti } from '../reusableFunctin/actionLocalStorage';
 
 
 const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) =>{
