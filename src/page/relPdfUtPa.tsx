@@ -88,7 +88,6 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
     useEffect(()=>{
         if(mainState.nonce !== ''){
             getRel(statusApp.idElement);
-            getDateLastDownloadPdfFirmato(); 
         }
     },[mainState.nonce]);
 
@@ -148,30 +147,23 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
         
     };
 
-    const getDateLastDownloadPdfFirmato = async() =>{
-        if(rel){
-            const bodyPagopa = {
-                anno: Number(rel.anno),
-                mese: Number(rel.mese),
-                tipologiaFattura: rel.tipologiaFattura,
-                idContratto: rel.idContratto,
-                idEnte:rel.idEnte
-            };
-            const {idEnte, ...bodySelf} = bodyPagopa;
-            if(enti){
-                await getLogRelDocumentoFirmato(token, mainState.nonce,bodySelf).then((res) =>{
-                    setLastUpdateDocFirmato(res.data[0].dataEvento);
-                }).catch((err)=>{ 
-                    manageError(err, navigate);
-                });
-            }else if(profilo.auth === 'PAGOPA'){
-                await getLogPagoPaRelDocumentoFirmato(token, mainState.nonce,bodyPagopa).then((res) =>{
-                    setLastUpdateDocFirmato(res.data[0].dataEvento);
-                }).catch((err)=>{
-                    manageError(err, navigate);
-                });
-            }
+    const getDateLastDownloadPdfFirmato = async(body) =>{
+     
+        const {idEnte, ...bodySelf} = body;
+        if(enti){
+            await getLogRelDocumentoFirmato(token, mainState.nonce,bodySelf).then((res) =>{
+                setLastUpdateDocFirmato(res.data[0].dataEvento);
+            }).catch((err)=>{ 
+                manageError(err, navigate);
+            });
+        }else if(profilo.auth === 'PAGOPA'){
+            await getLogPagoPaRelDocumentoFirmato(token, mainState.nonce,body).then((res) =>{
+                setLastUpdateDocFirmato(res.data[0].dataEvento);
+            }).catch((err)=>{
+                manageError(err, navigate);
+            });
         }
+        
     };
     
     const toDoOnDownloadPdf = (res:ResponseDownloadPdf) =>{
@@ -186,20 +178,26 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
     const uploadPdf = async () =>{
         setLoadingUpload(true);
         setErrorUpload(false);
-        if(rel){
-            await uploadPdfRel(token, mainState.nonce, rel.idTestata, {file:file} ).then((res)=>{
-                getRel(rel.idTestata);
-                setFile(null);
-                setLoadingUpload(false);
-                if(res.status === 200){
-                    setOpenModalConfirmUploadPdf(true);
-                    getDateLastDownloadPdfFirmato();
-                }
-            }).catch(()=>{
-                setLoadingUpload(false);
-                setErrorUpload(true);
-            });
-        }
+       
+        await uploadPdfRel(token, mainState.nonce, rel.idTestata, {file:file} ).then((res)=>{
+            getRel(rel.idTestata);
+            setFile(null);
+            setLoadingUpload(false);
+            if(res.status === 200){
+                setOpenModalConfirmUploadPdf(true);
+                getDateLastDownloadPdfFirmato({
+                    anno: Number(rel.anno),
+                    mese: Number(rel.mese),
+                    tipologiaFattura: rel.tipologiaFattura,
+                    idContratto: rel.idContratto,
+                    idEnte:rel.idEnte
+                });
+            }
+        }).catch(()=>{
+            setLoadingUpload(false);
+            setErrorUpload(true);
+        });
+        
     };
 
     const getRel = async(idRel) => {
@@ -209,6 +207,13 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                 if(res.data.datiFatturazione === true){
                     setLoadingDettaglio(false);
                     setRel(res.data);
+                    getDateLastDownloadPdfFirmato({
+                        anno: Number(res.data.anno),
+                        mese: Number(res.data.mese),
+                        tipologiaFattura: res.data.tipologiaFattura,
+                        idContratto: res.data.idContratto,
+                        idEnte:res.data.idEnte
+                    });
                 }else{
                     setLoadingDettaglio(false);
                     setOpenModalRedirect(true);
@@ -221,6 +226,13 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
             getSingleRelPagopa(token,mainState.nonce,idRel).then((res) =>{
                 setLoadingDettaglio(false);
                 setRel(res.data);
+                getDateLastDownloadPdfFirmato({
+                    anno: Number(res.data.anno),
+                    mese: Number(res.data.mese),
+                    tipologiaFattura: res.data.tipologiaFattura,
+                    idContratto: res.data.idContratto,
+                    idEnte:res.data.idEnte
+                });
             }).catch((err)=>{
                 setLoadingDettaglio(false);
                 manageError(err, navigate);
@@ -264,7 +276,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                         <TextDettaglioPdf description='Tipologia Fattura' value={rel.tipologiaFattura}></TextDettaglioPdf>
                         <TextDettaglioPdf description='ID Documento' value={rel.idDocumento}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Anno' value={rel.anno}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Mese' value={month[rel.mese]}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Mese' value={month[Number(rel.mese) - 1]}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Cup' value={rel.cup}></TextDettaglioPdf>
                         <TextDettaglioPdf description='N. Notifiche Analogiche' value={rel.totaleNotificheAnalogiche}></TextDettaglioPdf>
                         <TextDettaglioPdf description='N. Notifiche Digitali' value={rel.totaleNotificheDigitali}></TextDettaglioPdf>

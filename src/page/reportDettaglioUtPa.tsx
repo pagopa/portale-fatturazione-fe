@@ -3,7 +3,7 @@ import { } from '@mui/material';
 import React , { useState, useEffect} from 'react';
 import { TextField,Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { getTipologiaProfilo, manageError, redirect } from "../api/api";
+import { getTipologiaProfilo, manageError} from "../api/api";
 import { ReportDettaglioProps, NotificheList, FlagContestazione, Contestazione, ElementMultiSelect, ListaRecCon, OptionMultiselectChackbox  } from "../types/typeReportDettaglio";
 import { useNavigate } from "react-router";
 import { BodyListaNotifiche } from "../types/typesGeneral";
@@ -20,7 +20,7 @@ import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import GridCustom from "../components/reusableComponents/gridCustom";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 import { saveAs } from "file-saver";
-import { getProfilo, getStatusApp, getToken, profiliEnti } from "../reusableFunctin/actionLocalStorage";
+import { deleteFilterToLocalStorageNotifiche, getFiltersFromLocalStorageNotifiche, getProfilo, getStatusApp, getToken, profiliEnti, setFilterToLocalStorageNotifiche } from "../reusableFunctin/actionLocalStorage";
 import {mesi, mesiGrid, mesiWithZero, tipoNotifica } from "../reusableFunctin/reusableArrayObj";
 import { getCurrentFinancialYear } from "../reusableFunctin/function";
 
@@ -117,14 +117,24 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     });
 
     useEffect(() => {
+        const result = getFiltersFromLocalStorageNotifiche();
         if(mainState.nonce !== ''){
-            getProdotti();
-            getProfili();
-            if(profilo.profilo === 'SELFCARE'){
-                getlistaNotifiche( realPageNumber, rowsPerPage); 
-            }else if(profilo.auth === 'PAGOPA'){
-                getRecapitistConsolidatori();
-                getlistaNotifichePagoPa( realPageNumber, rowsPerPage);
+            if(Object.keys(result).length > 0){
+                getProdotti();
+                getProfili();
+                setBodyGetLista(result.bodyGetLista);
+                setTextValue(result.textValue);
+                setValueAutocomplete(result.valueAutocomplete);
+                setPage(result.page);
+                setRowsPerPage(result.rowsPerPage);
+                setBodyDownload(result.bodyGetLista);
+
+                if(profilo.profilo === 'SELFCARE'){
+                    getlistaNotifiche( result.page + 1, result.rowsPerPage,result.bodyGetLista); 
+                }else if(profilo.auth === 'PAGOPA'){
+                    getRecapitistConsolidatori();
+                    getlistaNotifichePagoPa( result.page + 1, result.rowsPerPage,result.bodyGetLista);
+                }
             }
         } 
     }, [mainState.nonce]);
@@ -265,6 +275,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         setDataSelect([]);
         setBodyGetLista(newBody);
         setBodyDownload(newBody);
+        deleteFilterToLocalStorageNotifiche();
         const {idEnti, recapitisti, consolidatori, ...body} = newBody;
         if(enti){
             await listaNotifiche(token,mainState.nonce,1,10, body)
@@ -309,10 +320,10 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         }
     };     
 
-    const getlistaNotifiche = async (nPage:number, nRow:number) => {
+    const getlistaNotifiche = async (nPage:number, nRow:number, bodyParameter) => {
         setShowLoadingGrid(true);
         // elimino idEnti dal paylod della get notifiche lato selfcare
-        const {idEnti, recapitisti, consolidatori, ...newBody} = bodyGetLista;
+        const {idEnti, recapitisti, consolidatori, ...newBody} = bodyParameter;
         // disable button filtra e annulla filtri nell'attesa dei dati
         setGetNotificheWorking(true);
         if(enti){
@@ -360,11 +371,11 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         }           
     };
 
-    const getlistaNotifichePagoPa = async (nPage:number, nRow:number) => {
+    const getlistaNotifichePagoPa = async (nPage:number, nRow:number, bodyParameter) => {
         // disable button filtra e annulla filtri nell'attesa dei dati
         setGetNotificheWorking(true);
         setShowLoadingGrid(true);
-        await listaNotifichePagoPa(token,mainState.nonce,nPage, nRow, bodyGetLista)
+        await listaNotifichePagoPa(token,mainState.nonce,nPage, nRow, bodyParameter)
             .then((res)=>{
                 // abilita button filtra e annulla filtri all'arrivo dei dati
                 setGetNotificheWorking(false);
@@ -383,10 +394,11 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         setPage(0);
         setRowsPerPage(10);
         setBodyDownload(bodyGetLista);
+        setFilterToLocalStorageNotifiche(bodyGetLista,textValue,valueAutocomplete, 0, 10);
         if(profilo.auth === 'SELFCARE'){
-            getlistaNotifiche(1, 10);
+            getlistaNotifiche(1, 10,bodyGetLista);
         }else{
-            getlistaNotifichePagoPa(1, 10);
+            getlistaNotifichePagoPa(1, 10,bodyGetLista);
         }  
     };
                 
@@ -396,11 +408,14 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     ) => {
         const realPage = newPage + 1;
         if(profilo.auth === 'SELFCARE'){
-            getlistaNotifiche(realPage,rowsPerPage);
+            getlistaNotifiche(realPage,rowsPerPage, bodyGetLista);
         }else if(profilo.auth === 'PAGOPA'){
-            getlistaNotifichePagoPa(realPage,rowsPerPage);
+            getlistaNotifichePagoPa(realPage,rowsPerPage, bodyGetLista);
         }
         setPage(newPage);
+        const result = getFiltersFromLocalStorageNotifiche();
+        setFilterToLocalStorageNotifiche(result.bodyGetLista,result.textValue,result.valueAutocomplete, newPage, rowsPerPage);
+       
     };
                     
     const handleChangeRowsPerPage = (
@@ -408,12 +423,15 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
     ) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
+        const result = getFiltersFromLocalStorageNotifiche();
+        setFilterToLocalStorageNotifiche(result.bodyGetLista,result.textValue,result.valueAutocomplete, page, parseInt(event.target.value, 10));
         const realPage = page + 1;
         if(profilo.auth === 'SELFCARE'){
-            getlistaNotifiche(realPage,parseInt(event.target.value, 10));
+            getlistaNotifiche(realPage,parseInt(event.target.value, 10),bodyGetLista);
         }else if(profilo.auth === 'PAGOPA'){
-            getlistaNotifichePagoPa(realPage,parseInt(event.target.value, 10));
-        }                    
+            getlistaNotifichePagoPa(realPage,parseInt(event.target.value, 10),bodyGetLista);
+        }  
+                          
     };
 
     const getRecapitistConsolidatori = async() =>{

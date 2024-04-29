@@ -68,6 +68,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
         localStorage.removeItem("filtersModuliCommessa");
         localStorage.removeItem("pageRowListaModuliCommessa");
         localStorage.removeItem("filtersRel");
+        localStorage.removeItem("filtersNotifiche");
         if(profilo.auth === 'PAGOPA'){
             navigate(PathPf.LISTA_DATI_FATTURAZIONE);
         }else{
@@ -104,13 +105,13 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
         });
 
     };
-    
 
     const handleListItemClickModuloCommessa = async () => {
       
         localStorage.removeItem("filtersRel");
         localStorage.removeItem("filtersListaDatiFatturazione");
         localStorage.removeItem("pageRowListaDatiFatturazione");
+        localStorage.removeItem("filtersNotifiche");
         if(profilo.auth === 'PAGOPA'){
             //cliccando sulla side nav Modulo commessa e sono l'ente PAGOPA
             navigate(PathPf.LISTA_MODULICOMMESSA);
@@ -214,6 +215,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
         localStorage.removeItem("pageRowListaModuliCommessa");
         localStorage.removeItem("filtersListaDatiFatturazione");
         localStorage.removeItem("pageRowListaDatiFatturazione");
+        localStorage.removeItem("filtersNotifiche");
         navigate(PathPf.LISTA_REL);
     };
     

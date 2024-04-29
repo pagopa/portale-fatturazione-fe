@@ -103,3 +103,16 @@ export const getFiltersFromLocalStorageRel = () => {
     const result =  JSON.parse(filtri);
     return result;
 };
+
+export const setFilterToLocalStorageNotifiche = (bodyGetLista,textValue,valueAutocomplete, page, rowsPerPage) => {
+    localStorage.setItem("filtersNotifiche", JSON.stringify({bodyGetLista,textValue,valueAutocomplete, page, rowsPerPage}));
+}; 
+export const deleteFilterToLocalStorageNotifiche = () => {
+    localStorage.removeItem("filtersNotifiche");
+}; 
+
+export const getFiltersFromLocalStorageNotifiche = () => {
+    const filtri = localStorage.getItem('filtersNotifiche') || '{}';
+    const result =  JSON.parse(filtri);
+    return result;
+};
