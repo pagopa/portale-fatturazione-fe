@@ -1,7 +1,7 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked, SingleFileInput} from '@pagopa/mui-italia';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import { RelPagePdfProps} from "../types/typeRel";
+import { Rel, RelPagePdfProps} from "../types/typeRel";
 import { Button, Typography } from "@mui/material";
 import { useNavigate } from 'react-router';
 import {manageError } from '../api/api';
@@ -9,7 +9,7 @@ import { useEffect, useRef, useState} from 'react';
 import TextDettaglioPdf from '../components/commessaPdf/textDettaglioPdf';
 import { ResponseDownloadPdf } from '../types/typeModuloCommessaInserimento';
 import { getRelExel, getRelPdf, uploadPdfRel ,getRelPdfFirmato, getSingleRel, getLogRelDocumentoFirmato } from '../api/apiSelfcare/relSE/api';
-import { getLogPagoPaRelDocumentoFirmato, getRelExelPagoPa, getRelPdfFirmatoPagoPa } from '../api/apiPagoPa/relPA/api';
+import { getLogPagoPaRelDocumentoFirmato, getRelExelPagoPa, getRelPdfFirmatoPagoPa, getSingleRelPagopa } from '../api/apiPagoPa/relPA/api';
 import DownloadIcon from '@mui/icons-material/Download';
 import ModalUploadPdf from '../components/rel/modalUploadPdf';
 import { saveAs } from "file-saver";
@@ -18,8 +18,9 @@ import { redirect } from '../api/api';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import { PathPf } from '../types/enum';
 import { getProfilo, getStatusApp, getToken, profiliEnti } from '../reusableFunctin/actionLocalStorage';
-import { mesi, mesiWithZero } from '../reusableFunctin/reusableArrayObj';
+import { mesi, mesiWithZero, month } from '../reusableFunctin/reusableArrayObj';
 import { createDateFromString } from '../reusableFunctin/function';
+import ModalRedirect from '../components/commessaInserimento/madalRedirect';
 
 const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) =>{
 
@@ -29,8 +30,6 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
     const navigate = useNavigate();
     const enti = profiliEnti();
     const statusApp = getStatusApp();
-    const rel = mainState.relSelected;
-    const meseOnDoc = mainState.relSelected?.mese || 0;
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -38,22 +37,46 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
             value:valueObj
         });
     };
-
+    console.log(mainState,'tt');
     const [showDownloading, setShowDownloading] = useState(false);
     const [lastUpdateDocFirmato, setLastUpdateDocFirmato] = useState('');
     const [file, setFile] = useState<File | null>(null);
     const [loadingUpload, setLoadingUpload] = useState<boolean>(false);
     const [errorUpload, setErrorUpload] = useState<boolean>(false);
     const [openModalConfirmUploadPdf, setOpenModalConfirmUploadPdf] = useState<boolean>(false);
+    const [openModalRedirect, setOpenModalRedirect] = useState(false);
+    const [loadingDettaglio , setLoadingDettaglio] = useState(false);
+    const [rel, setRel]  = useState<Rel>({
+        idTestata: "",
+        idEnte: "",
+        ragioneSociale: "",
+        dataDocumento: null,
+        idDocumento: "",
+        cup:"",
+        idContratto: "",
+        tipologiaFattura: "",
+        anno: "",
+        mese: "",
+        totaleAnalogico: 0,
+        totaleDigitale: 0,
+        totaleNotificheAnalogiche: 0,
+        totaleNotificheDigitali: 0,
+        totale: 0,
+        datiFatturazione: false,
+        iva: 0,
+        totaleAnalogicoIva: 0,
+        totaleDigitaleIva: 0,
+        totaleIva: 0,
+        firmata: "",
+        caricata: 0
+    });
+
+    const meseOnDoc = rel?.mese || 0;
 
     useEffect(()=>{
-        if(rel === null){
-            navigate(PathPf.LISTA_REL);
-        }
         if(!token){
             window.location.href = redirect;
         }
-        getDateLastDownloadPdfFirmato(); 
     },[]);
 
     useEffect(()=>{
@@ -62,63 +85,67 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
         }
     },[file]);
 
-    const downloadRelExel = async() =>{
-        if( mainState.relSelected !== null){
-            setShowDownloading(true);
-            if(enti){
-                await getRelExel(token, mainState.nonce, mainState.relSelected.idTestata).then((res)=>{
-                    saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio/ ${ mainState.relSelected?.ragioneSociale} /${mainState.relSelected?.mese}/${mainState.relSelected?.anno}.xlsx` );
-                    setShowDownloading(false);
-                }).catch((err)=>{
-                    manageError(err,navigate);
-                    setShowDownloading(false);
-                });
-            }else{
-                await getRelExelPagoPa(token, mainState.nonce, mainState.relSelected.idTestata).then((res)=>{
-                    saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio / ${ mainState.relSelected?.ragioneSociale} / ${mainState.relSelected?.mese} / ${mainState.relSelected?.anno}.xlsx` );
-                    setShowDownloading(false);
-                }).catch((err)=>{
-                    manageError(err,navigate);
-                    setShowDownloading(false);
-                });
-            }
+    useEffect(()=>{
+        if(mainState.nonce !== ''){
+            getRel(statusApp.idElement);
+            getDateLastDownloadPdfFirmato(); 
         }
+    },[mainState.nonce]);
+
+    const downloadRelExel = async() =>{
+        setShowDownloading(true);
+        if(enti){
+            await getRelExel(token, mainState.nonce, statusApp.idElement).then((res)=>{
+                saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio/ ${ rel?.ragioneSociale} /${rel?.mese}/${rel?.anno}.xlsx` );
+                setShowDownloading(false);
+            }).catch((err)=>{
+                manageError(err,navigate);
+                setShowDownloading(false);
+            });
+        }else{
+            await getRelExelPagoPa(token, mainState.nonce, statusApp.idElement).then((res)=>{
+                saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio / ${ rel?.ragioneSociale} / ${rel?.mese} / ${rel?.anno}.xlsx` );
+                setShowDownloading(false);
+            }).catch((err)=>{
+                manageError(err,navigate);
+                setShowDownloading(false);
+            });
+        }
+        
     };
 
     const downloadPdfRel = async() =>{
         setShowDownloading(true);
-        if( mainState.relSelected !== null){
-            if(enti){
-                await getRelPdf(token, mainState.nonce, mainState.relSelected.idTestata).then((res: ResponseDownloadPdf)=>{
-                    toDoOnDownloadPdf(res);
-                }).catch((err)=>{
-                    manageError(err,navigate);
-                });
-            }  
+        if(enti){
+            await getRelPdf(token, mainState.nonce, statusApp.idElement).then((res: ResponseDownloadPdf)=>{
+                toDoOnDownloadPdf(res);
+            }).catch((err)=>{
+                manageError(err,navigate);
+            });
         }  
+       
     };
 
     const downloadPdfRelFirmato = async() =>{
-        if( mainState.relSelected !== null){
-            setShowDownloading(true);
-            if(enti){
-                await getRelPdfFirmato(token, mainState.nonce, mainState.relSelected.idTestata).then((res)=>{
-                    saveAs("data:text/plain;base64," + res.data.documento,`REL firmata / ${ mainState.relSelected?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${mainState.relSelected?.anno}.pdf` );
-                    setShowDownloading(false);
-                }).catch((err)=>{
-                    manageError(err,navigate);
-                    setShowDownloading(false);
-                });
-            }else{
-                await getRelPdfFirmatoPagoPa(token, mainState.nonce, mainState.relSelected.idTestata).then((res)=>{
-                    saveAs("data:text/plain;base64," + res.data.documento,`REL firmata / ${ mainState.relSelected?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${mainState.relSelected?.anno}.pdf` );
-                    setShowDownloading(false);
-                }).catch((err)=>{
-                    manageError(err,navigate);
-                    setShowDownloading(false);
-                });
-            } 
-        }
+        setShowDownloading(true);
+        if(enti){
+            await getRelPdfFirmato(token, mainState.nonce, statusApp.idElement).then((res)=>{
+                saveAs("data:text/plain;base64," + res.data.documento,`REL firmata / ${ rel?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${rel?.anno}.pdf` );
+                setShowDownloading(false);
+            }).catch((err)=>{
+                manageError(err,navigate);
+                setShowDownloading(false);
+            });
+        }else{
+            await getRelPdfFirmatoPagoPa(token, mainState.nonce, statusApp.idElement).then((res)=>{
+                saveAs("data:text/plain;base64," + res.data.documento,`REL firmata / ${ rel?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${rel?.anno}.pdf` );
+                setShowDownloading(false);
+            }).catch((err)=>{
+                manageError(err,navigate);
+                setShowDownloading(false);
+            });
+        } 
+        
     };
 
     const getDateLastDownloadPdfFirmato = async() =>{
@@ -151,7 +178,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
         const wrapper = document.getElementById('file_download_rel');
         if(wrapper){
             wrapper.innerHTML = res.data;
-            generatePDF(targetRef, {filename: `Regolare Esecuzione / ${ mainState.relSelected?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${statusApp.anno} .pdf`});
+            generatePDF(targetRef, {filename: `Regolare Esecuzione / ${ rel?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${statusApp.anno} .pdf`});
             setShowDownloading(false);
         }
     };
@@ -176,12 +203,30 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
     };
 
     const getRel = async(idRel) => {
-        getSingleRel(token,mainState.nonce,idRel).then((res) =>{
-            handleModifyMainState({relSelected:res.data});
-        }).catch((err)=>{
-            manageError(err, navigate);
-        });
-    };
+        setLoadingDettaglio(true);
+        if(enti){
+            getSingleRel(token,mainState.nonce,idRel).then((res) =>{
+                if(res.data.datiFatturazione === true){
+                    setLoadingDettaglio(false);
+                    setRel(res.data);
+                }else{
+                    setLoadingDettaglio(false);
+                    setOpenModalRedirect(true);
+                }
+            }).catch((err)=>{
+                setLoadingDettaglio(false);
+                manageError(err, navigate);
+            });
+        }else{
+            getSingleRelPagopa(token,mainState.nonce,idRel).then((res) =>{
+                setLoadingDettaglio(false);
+                setRel(res.data);
+            }).catch((err)=>{
+                setLoadingDettaglio(false);
+                manageError(err, navigate);
+            });
+        }
+    };  
 
     const classContainerButtons = enti ? 'd-flex justify-content-between m-5': 'd-flex justify-content-end m-5';
 
@@ -214,26 +259,24 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
             </div>
             <div className="bg-white mb-5 me-5 ms-5">
                 <div className="pt-5 pb-5 ">
-                    {rel !== null &&
                     <div className="container text-center">
-                        <TextDettaglioPdf description={'Soggetto aderente'} value={rel.ragioneSociale}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Tipologia Fattura'} value={rel.tipologiaFattura}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'ID Documento'} value={rel.idDocumento}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Anno'} value={rel.anno}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Mese'} value={mesi[rel.mese]}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Cup'} value={rel.cup}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'N. Notifiche Analogiche'} value={rel.totaleNotificheAnalogiche}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'N. Notifiche Digitali'} value={rel.totaleNotificheDigitali}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'N. Totale Notifiche'} value={rel.totaleNotificheDigitali + rel.totaleNotificheAnalogiche }></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Totale Imponibile Analogico'} value={Number(rel.totaleAnalogico).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Totale Imponibile Digitale'} value={Number(rel.totaleDigitale).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Totale Imponibile'} value={Number(rel.totale).toLocaleString()+' €'}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Iva'} value={rel.iva +' %'}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Totale Ivato Analogico '} value={Number(rel.totaleAnalogicoIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Totale Ivato Digitale'} value={Number(rel.totaleDigitaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                        <TextDettaglioPdf description={'Totale Ivato'} value={Number(rel.totaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Soggetto aderente' value={rel.ragioneSociale}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Tipologia Fattura' value={rel.tipologiaFattura}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='ID Documento' value={rel.idDocumento}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Anno' value={rel.anno}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Mese' value={month[rel.mese]}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Cup' value={rel.cup}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='N. Notifiche Analogiche' value={rel.totaleNotificheAnalogiche}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='N. Notifiche Digitali' value={rel.totaleNotificheDigitali}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='N. Totale Notifiche' value={rel.totaleNotificheDigitali + rel.totaleNotificheAnalogiche }></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Totale Imponibile Analogico' value={Number(rel.totaleAnalogico).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Totale Imponibile Digitale' value={Number(rel.totaleDigitale).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Totale Imponibile' value={Number(rel.totale).toLocaleString()+' €'}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Iva' value={rel.iva +' %'}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Totale Ivato Analogico ' value={Number(rel.totaleAnalogicoIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Totale Ivato Digitale' value={Number(rel.totaleDigitaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Totale Ivato' value={Number(rel.totaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                     </div>
-                    }
                 </div>
             </div>
             <div className={classContainerButtons}>
@@ -261,10 +304,20 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
             {openModalConfirmUploadPdf &&
             <ModalUploadPdf setOpen={setOpenModalConfirmUploadPdf} open={openModalConfirmUploadPdf}></ModalUploadPdf>
             }
+            <ModalRedirect
+                setOpen={setOpenModalRedirect} 
+                open={openModalRedirect}
+                sentence={`Per poter visualizzare il dettaglio REL  è obbligatorio fornire i seguenti dati di fatturazione:`}>
+            </ModalRedirect>
             <ModalLoading 
                 open={showDownloading} 
                 setOpen={setShowDownloading}
                 sentence={'Downloading...'} >
+            </ModalLoading>
+            <ModalLoading 
+                open={loadingDettaglio} 
+                setOpen={setLoadingDettaglio}
+                sentence={'Loading...'} >
             </ModalLoading>
         </div>
     );

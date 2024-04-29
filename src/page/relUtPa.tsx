@@ -6,7 +6,7 @@ import SelectTipologiaFattura from "../components/rel/selectTipologiaFattura";
 import GridCustom from "../components/reusableComponents/gridCustom";
 import { BodyRel, RelPageProps } from "../types/typeRel";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
-import { manageError, redirect} from "../api/api";
+import { manageError} from "../api/api";
 import { useNavigate } from "react-router";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 import DownloadIcon from '@mui/icons-material/Download';
@@ -15,9 +15,8 @@ import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, getListaRelPagoPa
 import SelectStatoPdf from "../components/rel/selectStatoPdf";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { saveAs } from "file-saver";
-import useIsTabActive from "../reusableFunctin/tabIsActiv";
 import { PathPf } from "../types/enum";
-import { deleteFilterToLocalStorageRel, getFiltersFromLocalStorageRel, getProfilo, getStatusApp, getToken, profiliEnti, setFilterToLocalStorageRel } from "../reusableFunctin/actionLocalStorage";
+import { deleteFilterToLocalStorageRel, getFiltersFromLocalStorageRel, getProfilo, getToken, profiliEnti, setFilterToLocalStorageRel } from "../reusableFunctin/actionLocalStorage";
 import { OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { mesiGrid, mesiWithZero } from "../reusableFunctin/reusableArrayObj";
 
@@ -41,7 +40,6 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
   
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [openModalRedirect, setOpenModalRedirect] = useState(false);
     const [showLoading, setShowLoading] = useState(false);
     const [totalNotifiche, setTotalNotifiche]  = useState(0);
     const [dataSelect, setDataSelect] = useState([]);
@@ -180,26 +178,10 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         setFilterToLocalStorageRel(result.bodyRel,result.textValue,result.valueAutocomplete, page, parseInt(event.target.value, 10));
     };
    
-    const getRel = async(idRel) => {
-        if(enti){
-            getSingleRel(token,mainState.nonce,idRel).then((res) =>{
-                handleModifyMainState({relSelected:res.data});
-                if(res.data.datiFatturazione === true){
-                    navigate(PathPf.PDF_REL);
-                }else{
-                    setOpenModalRedirect(true);
-                }
-            }).catch((err)=>{
-                manageError(err, navigate);
-            });
-        }else{
-            getSingleRelPagopa(token,mainState.nonce,idRel).then((res) =>{
-                handleModifyMainState({relSelected:res.data});
-                navigate(PathPf.PDF_REL);
-            }).catch((err)=>{
-                manageError(err, navigate);
-            });
-        }
+    const setIdRel = async(idRel) => {
+        handleModifyMainState({relSelected:idRel});
+        navigate(PathPf.PDF_REL);
+    
     };  
 
     const downloadListaRelExel = async() =>{
@@ -354,15 +336,10 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                         page={page}
                         rows={rowsPerPage}
                         headerNames={['Ragione Sociale','Tipologia Fattura', 'Reg. Es. PDF','ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale','']}
-                        apiGet={getRel}
+                        apiGet={setIdRel}
                         disabled={getListaRelRunning}></GridCustom>
                 </div>
             </div>
-            <ModalRedirect
-                setOpen={setOpenModalRedirect} 
-                open={openModalRedirect}
-                sentence={`Per poter visualizzare il dettaglio REL  è obbligatorio fornire i seguenti dati di fatturazione:`}>
-            </ModalRedirect>
             <ModalLoading 
                 open={showLoading} 
                 setOpen={setShowLoading} 
