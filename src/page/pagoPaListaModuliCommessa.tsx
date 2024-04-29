@@ -57,11 +57,11 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
             }
         }
     }, [mainState.nonce]);
-
+    /*
     useEffect(()=>{
         setBodyDownload(bodyGetLista);
     },[]);
-
+*/
     useEffect(()=>{
         if(token === undefined){
             window.location.href = '/azureLogin';
