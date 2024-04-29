@@ -12,7 +12,7 @@ import {useState, useEffect} from 'react';
 import YupString from '../../validations/string/index';
 import { createContestazione, modifyContestazioneConsolidatore, modifyContestazioneEnte,modifyContestazioneRecapitista, tipologiaTipoContestazione } from '../../api/apiSelfcare/notificheSE/api';
 import { modifyContestazioneEntePagoPa } from '../../api/apiPagoPa/notificheSE/api';
-import { getProfilo, getToken, profiliEnti } from '../../reusableFunctin/actionLocalStorage';
+import { getFiltersFromLocalStorageNotifiche, getProfilo, getToken, profiliEnti } from '../../reusableFunctin/actionLocalStorage';
 
 const style = {
     position: 'absolute' as const,
@@ -99,7 +99,8 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
         };
         await createContestazione(token, mainState.nonce,body)
             .then(()=>{
-                funGetNotifiche(page,rows);
+                const result = getFiltersFromLocalStorageNotifiche();
+                funGetNotifiche(page,rows, result.bodyGetLista);
             })
             .catch(((err)=>{
                 manageError(err,navigate);
@@ -180,21 +181,22 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
             };
         }
 
+        const result = getFiltersFromLocalStorageNotifiche();
         if(enti){
             await modifyContestazioneEnte(token, profilo.nonce, body).then(()=>{
-                funGetNotifiche(page,rows);
+                funGetNotifiche(page,rows,result.bodyGetLista);
             }).catch(((err)=>{
                 manageError(err,navigate);
             }));
         }else if(profilo.profilo === 'REC'){
             await modifyContestazioneRecapitista(token, profilo.nonce, body).then(()=>{
-                funGetNotifiche(page,rows);
+                funGetNotifiche(page,rows,result.bodyGetLista);
             }).catch(((err)=>{
                 manageError(err,navigate);
             }));
         }else if(profilo.profilo === 'CON'){
             await modifyContestazioneConsolidatore(token, profilo.nonce, body).then(()=>{
-                funGetNotifiche(page,rows);
+                funGetNotifiche(page,rows,result.bodyGetLista);
             }).catch(((err)=>{
                 manageError(err,navigate);
             }));
@@ -247,7 +249,8 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
         }
         
         await modifyContestazioneEntePagoPa(token, mainState.nonce, body).then((res)=>{
-            funGetNotifichePagoPa(page,rows);
+            const result = getFiltersFromLocalStorageNotifiche();
+            funGetNotifichePagoPa(page,rows, result.bodyGetLista);
         }).catch(((err)=>{
             manageError(err,navigate);
         }));
