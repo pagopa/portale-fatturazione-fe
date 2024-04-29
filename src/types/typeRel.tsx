@@ -34,9 +34,10 @@ export interface Rel {
     idEnte: string,
     caricata:number,
     ragioneSociale: string,
-    dataDocumento: string,
+    dataDocumento: string |null,
     idDocumento: string,
     cup: string,
+    datiFatturazione:boolean
     idContratto: string,
     tipologiaFattura: string,
     anno: string,
@@ -49,7 +50,8 @@ export interface Rel {
     iva:number,
     totaleAnalogicoIva:number,
     totaleDigitaleIva:number,
-    totaleIva:number
+    totaleIva:number,
+    firmata:string|null
 }
 
 export interface BodyRelLog {
