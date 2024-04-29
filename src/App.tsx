@@ -91,19 +91,14 @@ const App = ({ instance }) => {
         mese:'',
         anno:'',
         nonce:'',
-        //nomeEnteClickOn:'',  // lato pagopa sul click della grid lista ModuloCommessa/dati fatturazione vado a soricizzare il nome da mostrare nel dettaglio
-        //modifica:undefined, // se la commessa selezionata è modificabile
         datiFatturazione:false,// l'ente ha i dati di fatturazione?
         userClickOn:undefined, // se l'utente clicca su un elemento di lista commesse setto GRID
         inserisciModificaCommessa:undefined, // INSERT MODIFY  se il sevizio get commessa mi restituisce true []
         primoInserimetoCommessa:true,// la commessa mese corrente è stata inserita?
-        // action:'DATI_FATTURAZIONE', // le action possono essere HIDE_MODULO_COMMESSA / SHOW_MODULO_COMMESSA / DATI_FATTURAZIOne
         statusPageDatiFatturazione:'immutable',
         statusPageInserimentoCommessa:'immutable',
-        // idEnte:'',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
-        // prodotto: '',// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione,
         relSelected: null,
-        apiError:'' // rel selezionata nella grid in page rel
+        apiError:'' 
     });
 
     useEffect(()=>{
