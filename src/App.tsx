@@ -1,7 +1,7 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import {useState, useReducer, useEffect} from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate} from 'react-router-dom';
 import { ThemeProvider, Grid } from '@mui/material';
 import {theme} from '@pagopa/mui-italia';
 import AreaPersonaleUtenteEnte from './page/areaPersonaleUtenteEnte';
@@ -27,8 +27,7 @@ import { loginRequest } from './authConfig';
 import './App.css';
 import RelPage from './page/relUtPa';
 import { reducerMainState } from './reducer/reducerMainState';
-import { BodyRel } from './types/typeRel';
-import { redirect } from './api/api';
+import { getAuthProfilo, redirect } from './api/api';
 import { getProfilo } from './reusableFunctin/actionLocalStorage';
 import useIsTabActive from './reusableFunctin/tabIsActiv';
 
@@ -83,6 +82,13 @@ const App = ({ instance }) => {
     // eslint-disable-next-line no-undef
     const profilo =  getProfilo();
     const tabActive = useIsTabActive();
+
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
  
     const [checkProfilo,setCheckProfilo] = useState(false);
     // set status page abilita e disabilita le modifiche al componente dati fatturazione
@@ -98,11 +104,35 @@ const App = ({ instance }) => {
         statusPageDatiFatturazione:'immutable',
         statusPageInserimentoCommessa:'immutable',
         relSelected: null,
-        apiError:'' 
+        apiError:'',
+        authenticated:false 
     });
-
+    console.log(mainState);
+    // questa chiamata viene eseguita esclusivamente se l'utenete fa un reload page cosi da inserire nuovamente il NONCE nel DOM
+    const getProfiloToGetNonce = async () =>{
+    
+        await getAuthProfilo(profilo.jwt)
+            .then((res) =>{
+                handleModifyMainState({nonce:res?.data.nonce,authenticated:true});
+            }).catch((err)=>{
+                window.location.href = redirect;
+                //navigate('/error');
+            });
+    };
+    // eseguiamo la get a riga 21 solo se il value dell'input(nonce) nel Dom è non c'è e controlliamo che nella local storage sia settatto il profilo
+    // Object.values(profilo).length !== 0 viene fatto solo per far si che la chiamanta non venga fatta al primo rendering
+    // in quel caso il get profilo viene chiamato nella page auth
+  
     useEffect(()=>{
-        if(tabActive === true && (mainState.nonce !== profilo.nonce)){
+        // if(mainState.nonce === '' && Object.values(profilo).length !== 0 && location.pathname !== '/auth' ){
+        if(mainState.nonce === '' && Object.values(profilo).length !== 0){
+            getProfiloToGetNonce();
+        }
+         
+    },[mainState.nonce]);
+    console.log(window.location.href);
+    useEffect(()=>{
+        if(mainState.authenticated === true && tabActive === true && (mainState.nonce !== profilo.nonce && window.location.href !== '/azureLogin' )){
             window.location.href = redirect;
         }
     },[tabActive, mainState.nonce]);
@@ -119,7 +149,7 @@ const App = ({ instance }) => {
                 <ThemeProvider theme={theme}>
                     <div className="App">
 
-                        <HeaderPostLogin />
+                        <HeaderPostLogin mainState={mainState}/>
 
                         <div>
                             <HeaderNavComponent />
@@ -139,7 +169,7 @@ const App = ({ instance }) => {
                                         
                                         <Route path="/auth/azure" element={<AuthAzure  dispatchMainState={ dispatchMainState}/>} />
                                         
-                                        <Route path="azure" element={<Azure />} />
+                                        <Route path="azure" element={<Azure dispatchMainState={ dispatchMainState}/>} />
                                         
                                         {!recOrConsIsLogged && <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte
                                             mainState={mainState}
@@ -164,7 +194,7 @@ const App = ({ instance }) => {
 
                                         <Route path="*" element={<Navigate to="/error" replace />} />
 
-                                        <Route path="/azureLogin" element={<AzureLogin />} />
+                                        <Route path="/azureLogin" element={<AzureLogin dispatchMainState={dispatchMainState}/>} />
 
                                         <Route path="/error"  element={<ErrorPage dispatchMainState={ dispatchMainState}  mainState={mainState}/>} />
                                     </Routes>

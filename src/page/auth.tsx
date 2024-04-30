@@ -5,7 +5,6 @@ import { LoginProps, ManageErrorResponse } from '../types/typesGeneral';
 import { getDatiModuloCommessa } from '../api/apiSelfcare/moduloCommessaSE/api';
 import { PathPf } from '../types/enum';
 
-
 // Blank page utilizzata per l'accesso degli utenti tramite  Selfcare
 
 /*quando l'utente SELFCARE va al link https://uat.selfcare.pagopa.it/auth/login , procede con login es. (comune di Erba ) , viene fatto un redirect
@@ -40,9 +39,6 @@ interface ParameterGetProfilo {
 const getCommessa = async (tokenC, nonceC) =>{
       
     await getDatiModuloCommessa(tokenC, nonceC).then((res)=>{
-       
-    
-        
 
         if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
           
@@ -79,10 +75,8 @@ const getCommessa = async (tokenC, nonceC) =>{
     }).catch((err)=>{
         manageError(err, navigate);
         
-        
     });
 };
-
 
 //  seconda chiamata
 const getProfilo = async (res:ParameterGetProfilo)=>{
@@ -105,13 +99,13 @@ const getProfilo = async (res:ParameterGetProfilo)=>{
            
             if(resp.data.profilo === "REC" || resp.data.profilo === "CON"){
                 localStorage.removeItem("statusApplication");
-                handleModifyMainState({ruolo:resp.data.ruolo,nonce:storeProfilo.nonce});
+                handleModifyMainState({ruolo:resp.data.ruolo,nonce:storeProfilo.nonce,authenticated:true});
                 navigate(PathPf.LISTA_NOTIFICHE);
             }else{
                 getCommessa(res.data[0].jwt, storeProfilo.nonce);
                 setCheckProfilo(true);
                 // setto il ruolo nello state di riferimento globale
-                handleModifyMainState({ruolo:resp.data.ruolo,nonce:storeProfilo.nonce});
+                handleModifyMainState({ruolo:resp.data.ruolo,nonce:storeProfilo.nonce,authenticated:true});
                 navigate(PathPf.DATI_FATTURAZIONE);
             }
         } )

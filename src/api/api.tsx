@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { TokenObject,ManageErrorResponse} from '../types/typesGeneral';
 
-
 export const url = process.env.REACT_APP_URL;
 export const redirect = process.env.REACT_APP_REDIRECT || '';
 
@@ -31,14 +30,10 @@ export const manageError = (res:ManageErrorResponse,navigate:any) =>{
     
 };
 
-
-
 export const pagopaLogin = async (tokenObject:TokenObject) => {
     const result = await axios.post(`${url}/api/auth/pagopa/login`, tokenObject);
     return result;
 };
-
-
 
 export const selfcareLogin = async (selfcareToken:string|null) =>{
     const result = await axios.get(`${url}/api/auth/selfcare/login?selfcareToken=${selfcareToken}`,
@@ -58,10 +53,6 @@ export const getAuthProfilo = async (tokenFromSelfcarePagoPa:string) => {
     return result;
 };
 
-
-
-
-
 export const getTipologiaProfilo = async (token:string, nonce:string) => {
     const response =  await axios.get(`${url}/api/tipologia/tipoprofilo?nonce=${nonce}`,
         { headers: {
@@ -70,26 +61,3 @@ export const getTipologiaProfilo = async (token:string, nonce:string) => {
     );
     return response;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
