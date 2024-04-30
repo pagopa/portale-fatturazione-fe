@@ -111,6 +111,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                     setTotalNotifiche(res.data.count);
                     setGetListaRelRunning(false);
                 }).catch((error)=>{
+                    setGetListaRelRunning(false);
                     manageError(error, navigate);
                 });
         }else{
@@ -142,6 +143,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                     setTotalNotifiche(res.data.count);
                     setGetListaRelRunning(false);
                 }).catch((error)=>{
+                    setGetListaRelRunning(false);
                     manageError(error, navigate);
                 });
         }            
