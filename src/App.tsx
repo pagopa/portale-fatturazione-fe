@@ -125,14 +125,14 @@ const App = ({ instance }) => {
   
     useEffect(()=>{
         // if(mainState.nonce === '' && Object.values(profilo).length !== 0 && location.pathname !== '/auth' ){
-        if(mainState.nonce === '' && Object.values(profilo).length !== 0){
+        if(mainState.nonce === '' && Object.values(profilo).length !== 0 && window.location.pathname  !== '/azureLogin'){
             getProfiloToGetNonce();
         }
          
     },[mainState.nonce]);
-    console.log(window.location.href);
+ 
     useEffect(()=>{
-        if(mainState.authenticated === true && tabActive === true && (mainState.nonce !== profilo.nonce && window.location.href !== '/azureLogin' )){
+        if(mainState.authenticated === true && tabActive === true && (mainState.nonce !== profilo.nonce)){
             window.location.href = redirect;
         }
     },[tabActive, mainState.nonce]);
@@ -141,74 +141,114 @@ const App = ({ instance }) => {
     //_____________________________________________________________
 
     const recOrConsIsLogged = profilo.profilo === 'REC' || profilo.profilo ==='CON';
+
+    let route;
+
+    if(profilo.jwt){
+
+        route = <Router>
+            <ThemeProvider theme={theme}>
+                <div className="App">
+
+                    <HeaderPostLogin mainState={mainState}/>
+
+                    <div>
+                        <HeaderNavComponent />
+
+                        <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
+                     
+                            <Grid item xs={2}>
+                                <SideNavComponent  dispatchMainState={ dispatchMainState}
+                                    mainState={mainState}
+                                />
+                            </Grid> 
+
+                            <Grid item xs={10}>
+                                <Routes>
+                                
+                                    <Route path="/auth" element={<Auth setCheckProfilo={setCheckProfilo}  dispatchMainState={ dispatchMainState} />} />
+                                
+                                    <Route path="/auth/azure" element={<AuthAzure  dispatchMainState={ dispatchMainState}/>} />
+                                
+                                    <Route path="azure" element={<Azure dispatchMainState={ dispatchMainState}/>} />
+                                
+                                    {!recOrConsIsLogged && <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte
+                                        mainState={mainState}
+                                        dispatchMainState={ dispatchMainState} />} />
+                                    }
+                           
+                                    <Route path={PathPf.LISTA_COMMESSE} element={<ModuloCommessaElencoUtPa mainState={mainState}  dispatchMainState={ dispatchMainState} valueSelect={valueAnnoElencoCom}  setValueSelect={setValueAnnoElencoCom}  />} />
+                          
+                                    <Route path={PathPf.MODULOCOMMESSA} element={<ModuloCommessaInserimentoUtEn30 mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
+                          
+                                    <Route path={PathPf.PDF_COMMESSA} element={<ModuloCommessaPdf mainState={mainState} />} />
+                          
+                                    <Route path={PathPf.LISTA_DATI_FATTURAZIONE} element={<PagoPaListaDatiFatturazione mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
+                            
+                                    <Route path={PathPf.LISTA_MODULICOMMESSA} element={<PagoPaListaModuliCommessa mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
+                           
+                                    <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio mainState={mainState} />} />
+
+                                    <Route path={PathPf.LISTA_REL} element={<RelPage  mainState={mainState}  dispatchMainState={dispatchMainState}/>} />
+
+                                    <Route path={PathPf.PDF_REL} element={<RelPdfPage  mainState={mainState}  dispatchMainState={dispatchMainState}/>} />
+
+                                    <Route path="*" element={<Navigate to="/error" replace />} />
+
+                                    <Route path="/azureLogin" element={<AzureLogin dispatchMainState={dispatchMainState}/>} />
+
+                                    <Route path="/error"  element={<ErrorPage dispatchMainState={ dispatchMainState}  mainState={mainState}/>} />
+                                </Routes>
+
+                            </Grid>
+
+                        </Grid>
+                    </div>
+
+                    <FooterPostLogin />
+                </div>
+            </ThemeProvider>
+
+        </Router>;
+
+    }else if(!profilo.jwt){
+        route = <Router>
+            <ThemeProvider theme={theme}>
+                <div className="App">
+
+                    <HeaderPostLogin mainState={mainState}/>
+
+                    <div>
+                        <HeaderNavComponent />
+
+                        <Routes>
+                            
+                            <Route path="/auth" element={<Auth setCheckProfilo={setCheckProfilo}  dispatchMainState={ dispatchMainState} />} />
+                            
+                            <Route path="/auth/azure" element={<AuthAzure  dispatchMainState={ dispatchMainState}/>} />
+                            
+                            <Route path="azure" element={<Azure dispatchMainState={ dispatchMainState}/>} />
+                            
+                            <Route path="*" element={<Navigate to={"/error"} replace />} />
+
+                            <Route path="/azureLogin" element={<AzureLogin dispatchMainState={dispatchMainState}/>} />
+
+                            <Route path="/error"  element={<ErrorPage dispatchMainState={ dispatchMainState}  mainState={mainState}/>} />
+                        </Routes>
+
+                    </div>
+
+                    <FooterPostLogin />
+                </div>
+            </ThemeProvider>
+
+        </Router>;
+    }
   
     return (
       
         <MsalProvider instance={instance}>
-            <Router>
-                <ThemeProvider theme={theme}>
-                    <div className="App">
-
-                        <HeaderPostLogin mainState={mainState}/>
-
-                        <div>
-                            <HeaderNavComponent />
-
-                            <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
-                             
-                                <Grid item xs={2}>
-                                    <SideNavComponent  dispatchMainState={ dispatchMainState}
-                                        mainState={mainState}
-                                    />
-                                </Grid> 
-
-                                <Grid item xs={10}>
-                                    <Routes>
-                                        
-                                        <Route path="/auth" element={<Auth setCheckProfilo={setCheckProfilo}  dispatchMainState={ dispatchMainState} />} />
-                                        
-                                        <Route path="/auth/azure" element={<AuthAzure  dispatchMainState={ dispatchMainState}/>} />
-                                        
-                                        <Route path="azure" element={<Azure dispatchMainState={ dispatchMainState}/>} />
-                                        
-                                        {!recOrConsIsLogged && <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte
-                                            mainState={mainState}
-                                            dispatchMainState={ dispatchMainState} />} />
-                                        }
-                                   
-                                        <Route path={PathPf.LISTA_COMMESSE} element={<ModuloCommessaElencoUtPa mainState={mainState}  dispatchMainState={ dispatchMainState} valueSelect={valueAnnoElencoCom}  setValueSelect={setValueAnnoElencoCom}  />} />
-                                  
-                                        <Route path={PathPf.MODULOCOMMESSA} element={<ModuloCommessaInserimentoUtEn30 mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
-                                  
-                                        <Route path={PathPf.PDF_COMMESSA} element={<ModuloCommessaPdf mainState={mainState} />} />
-                                  
-                                        <Route path={PathPf.LISTA_DATI_FATTURAZIONE} element={<PagoPaListaDatiFatturazione mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
-                                    
-                                        <Route path={PathPf.LISTA_MODULICOMMESSA} element={<PagoPaListaModuliCommessa mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
-                                   
-                                        <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio mainState={mainState} />} />
-
-                                        <Route path={PathPf.LISTA_REL} element={<RelPage  mainState={mainState}  dispatchMainState={dispatchMainState}/>} />
-
-                                        <Route path={PathPf.PDF_REL} element={<RelPdfPage  mainState={mainState}  dispatchMainState={dispatchMainState}/>} />
-
-                                        <Route path="*" element={<Navigate to="/error" replace />} />
-
-                                        <Route path="/azureLogin" element={<AzureLogin dispatchMainState={dispatchMainState}/>} />
-
-                                        <Route path="/error"  element={<ErrorPage dispatchMainState={ dispatchMainState}  mainState={mainState}/>} />
-                                    </Routes>
-
-                                </Grid>
-
-                            </Grid>
-                        </div>
-
-                        <FooterPostLogin />
-                    </div>
-                </ThemeProvider>
-
-            </Router>
+            {route}
         </MsalProvider>
 
     );
