@@ -4,20 +4,26 @@ import { TokenObject,ManageErrorResponse} from '../types/typesGeneral';
 export const url = process.env.REACT_APP_URL;
 export const redirect = process.env.REACT_APP_REDIRECT || '';
 
-export const manageError = (res:ManageErrorResponse,navigate:any) =>{
+export const manageError = (res:ManageErrorResponse,navigate:any,dispatchMainState:any) =>{
+
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
     
     if(res?.response?.request?.status === 401){
-      
-        localStorage.removeItem("token");
-        localStorage.removeItem("profilo");
-        window.location.href = redirect;
-      
+        // localStorage.clear();
+        // window.location.href = redirect;
+        handleModifyMainState({apiError:res.response.request.status});
+        console.log(res);
     }else if(res?.response?.request?.status   === 404){
         //navigate('/error');
         // alert('Qualcosa è andato storto');
     }else if(res?.response?.request?.status   === 419){
         window.location.href = redirect;
-        // alert('Qualcosa è andato storto');else if(res?.response?.request?.status   === 500){
+       
     }else if(res?.response?.request?.status  === 400){
         console.log('400 da gestire');
     }else if(res?.response?.request?.status  === 403){

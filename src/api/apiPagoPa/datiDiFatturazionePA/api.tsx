@@ -7,7 +7,7 @@ export const listaDatiFatturazionePagopa = async (body : BodyListaDatiFatturazio
     const response =  await axios.post(`${url}/api/datifatturazione/pagopa/ricerca?nonce=${nonce}`,
         body,
         { headers: {
-            Authorization: 'Bearer ' + token
+            Authorization: 'Bearer ' + 'aa'
         },}
     );
 

@@ -20,7 +20,6 @@ import {  getDatiFatturazionePagoPa,
     insertDatiFatturazionePagoPa, } from '../api/apiPagoPa/datiDiFatturazionePA/api';
 import BasicModal from '../components/reusableComponents/modals/modal';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
-import BasicAlerts from '../components/reusableComponents/alert';
 import {PathPf} from '../types/enum';
 import { getProfilo, getStatusApp, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from '../reusableFunctin/actionLocalStorage';
 
@@ -153,7 +152,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 notaLegale:false
         
             });
-            manageError(err, navigate);
+            manageError(err, navigate,dispatchMainState);
         });
 
     };
@@ -186,7 +185,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 notaLegale:false
         
             });
-            manageError(err, navigate);
+            manageError(err, navigate,dispatchMainState);
         });
     };
    
@@ -206,7 +205,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                     });
                 }).catch(err => {
                     setOpenModalLoading(false);
-                    manageError(err, navigate);
+                    manageError(err, navigate,dispatchMainState);
                     /*if(err?.response?.status  === 500){
                         setAlertVisible(true);
                     }else{
@@ -229,7 +228,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                     })
                     .catch(err => {
                         setOpenModalLoading(false);
-                        manageError(err, navigate);
+                        manageError(err, navigate,dispatchMainState);
                         /* if(err?.response?.status  === 500){
                             setAlertVisible(true);
                         }else{

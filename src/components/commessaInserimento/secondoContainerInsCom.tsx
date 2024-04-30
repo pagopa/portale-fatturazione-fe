@@ -11,7 +11,7 @@ import { getProfilo, getToken } from '../../reusableFunctin/actionLocalStorage';
 import { getIdByTipo } from '../../reusableFunctin/function';
 
 const SecondoContainerInsCom : React.FC = () => {
-    const { totale, mainState } = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
+    const { totale, mainState,dispatchMainState } = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
     
     const navigate = useNavigate();
     const token =  getToken();
@@ -30,7 +30,7 @@ const SecondoContainerInsCom : React.FC = () => {
                 idSpedizioneAnalogAR : getIdByTipo('Analog. A/R',res.data),
             });
         }).catch((err:ManageErrorResponse) =>{
-            manageError(err, navigate);
+            manageError(err, navigate,dispatchMainState);
         });
     };
    

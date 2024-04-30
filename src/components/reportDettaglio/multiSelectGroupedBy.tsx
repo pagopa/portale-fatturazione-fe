@@ -15,7 +15,7 @@ import { getProfilo, getToken } from '../../reusableFunctin/actionLocalStorage';
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
-const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({mainState,  setBodyGetLista, setValueFgContestazione, valueFgContestazione}) => {
+const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({mainState,  setBodyGetLista, setValueFgContestazione, valueFgContestazione, dispatchMainState}) => {
 
     const token =  getToken();
     const profilo =  getProfilo();
@@ -35,7 +35,7 @@ const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({m
                 setFgContestazione(res.data);                
             })
             .catch(((err)=>{
-                manageError(err,navigate);
+                manageError(err,navigate,dispatchMainState);
             }));
     };
 

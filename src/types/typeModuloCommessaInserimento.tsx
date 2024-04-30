@@ -117,7 +117,8 @@ export interface DatiCommessaCosti{
 }
 
 export interface ModComPdfProps{
-    mainState: any
+    mainState: any,
+    dispatchMainState:any
 }
 
 export interface PrimoContainerInsComProps{

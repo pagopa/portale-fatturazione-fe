@@ -25,7 +25,8 @@ interface ModalScadenziario {
     setOpen:any,
     open:boolean,
     nonce:string,
-    profilo:any
+    profilo:any,
+    dispatchMainState:any
 }
 
 interface Scadenziario {
@@ -35,7 +36,7 @@ interface Scadenziario {
     meseContestazione: string
 }
 
-const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce, profilo}) => {
+const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce, profilo,dispatchMainState}) => {
 
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
@@ -54,7 +55,7 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce, 
               
             })
             .catch(((err)=>{
-                manageError(err,navigate);
+                manageError(err,navigate,dispatchMainState);
             }));
     };
 

@@ -167,7 +167,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
                 setButtonMofica(res.modifica);
             }).catch((err:ManageErrorResponse)=>{
-                manageError(err,navigate);
+                manageError(err,navigate,dispatchMainState);
             });
     };
 
@@ -184,7 +184,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 setDataModifica(res.dataModifica);
                 setButtonMofica(res.modifica);
             }).catch((err:ManageErrorResponse)=>{
-                manageError(err,navigate);
+                manageError(err,navigate,dispatchMainState);
             });
     };
     // Lato self care
@@ -204,7 +204,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                     datiFatturazione:false,
                     statusPageInserimentoCommessa:'immutable'});
             }else{
-                manageError(err, navigate);
+                manageError(err, navigate,dispatchMainState);
             }
         });
     };
@@ -274,7 +274,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
             } )
             .catch(err => {
                 setOpenModalLoading(false);
-                manageError(err, navigate); 
+                manageError(err, navigate,dispatchMainState); 
             });
     };
 
@@ -294,7 +294,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 toDoOnPostModifyCommessa(res);
             }).catch(err => {
                 setOpenModalLoading(false);
-                manageError(err, navigate); 
+                manageError(err, navigate,dispatchMainState); 
             });
     };
 
