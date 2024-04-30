@@ -25,7 +25,7 @@ const style = {
     p: 4,
 };
 
-const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open, mainState, contestazioneSelected, setContestazioneSelected, funGetNotifiche, funGetNotifichePagoPa, openModalLoading, page, rows, valueRispostaEnte, contestazioneStatic}) => {
+const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open, mainState, contestazioneSelected, setContestazioneSelected, funGetNotifiche, funGetNotifichePagoPa, openModalLoading, page, rows, valueRispostaEnte, contestazioneStatic,dispatchMainState}) => {
 
     const navigate = useNavigate();
     const enti = profiliEnti();
@@ -85,7 +85,7 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                 setTipoContestazioni(res.data);
             })
             .catch(((err)=>{
-                manageError(err,navigate);
+                manageError(err,navigate,dispatchMainState);
             }));
     };
 
@@ -103,7 +103,7 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                 funGetNotifiche(page,rows, result.bodyGetLista);
             })
             .catch(((err)=>{
-                manageError(err,navigate);
+                manageError(err,navigate,dispatchMainState);
             }));
     };
 
@@ -186,19 +186,19 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
             await modifyContestazioneEnte(token, profilo.nonce, body).then(()=>{
                 funGetNotifiche(page,rows,result.bodyGetLista);
             }).catch(((err)=>{
-                manageError(err,navigate);
+                manageError(err,navigate,dispatchMainState);
             }));
         }else if(profilo.profilo === 'REC'){
             await modifyContestazioneRecapitista(token, profilo.nonce, body).then(()=>{
                 funGetNotifiche(page,rows,result.bodyGetLista);
             }).catch(((err)=>{
-                manageError(err,navigate);
+                manageError(err,navigate,dispatchMainState);
             }));
         }else if(profilo.profilo === 'CON'){
             await modifyContestazioneConsolidatore(token, profilo.nonce, body).then(()=>{
                 funGetNotifiche(page,rows,result.bodyGetLista);
             }).catch(((err)=>{
-                manageError(err,navigate);
+                manageError(err,navigate,dispatchMainState);
             }));
         }
     };
@@ -252,7 +252,7 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
             const result = getFiltersFromLocalStorageNotifiche();
             funGetNotifichePagoPa(page,rows, result.bodyGetLista);
         }).catch(((err)=>{
-            manageError(err,navigate);
+            manageError(err,navigate,dispatchMainState);
         }));
     };
 

@@ -19,7 +19,7 @@ import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeRepo
 import { currentMonth, getCurrentFinancialYear } from "../reusableFunctin/function";
 import { currentYear, mesi, mesiGrid, mesiWithZero } from "../reusableFunctin/reusableArrayObj";
 
-const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState}) =>{
+const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState, dispatchMainState}) =>{
 
     const token =  getToken();
     const profilo =  getProfilo();
@@ -90,7 +90,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
                 setProdotti(res.data);
             })
             .catch(((err)=>{
-                manageError(err,navigate);
+                manageError(err,navigate,dispatchMainState);
             }));
     };
 
@@ -100,7 +100,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
                 setGridData(res.data);
             })
             .catch((err)=>{
-                manageError(err,navigate);
+                manageError(err,navigate,dispatchMainState);
             }); 
     };
 
@@ -111,7 +111,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
                 setGridData(res.data);
             })
             .catch((err)=>{
-                manageError(err,navigate);
+                manageError(err,navigate,dispatchMainState);
             }); 
     };
 
@@ -127,7 +127,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
                 setShowLoading(false);
             })
             .catch((err)=>{
-                manageError(err,navigate);
+                manageError(err,navigate,dispatchMainState);
             });
     };
 
@@ -288,6 +288,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
                 <div  className="col-3">
                     <MultiselectCheckbox 
                         mainState={mainState} 
+                        dispatchMainState={dispatchMainState}
                         setBodyGetLista={setBodyGetLista}
                         setDataSelect={setDataSelect}
                         dataSelect={dataSelect}

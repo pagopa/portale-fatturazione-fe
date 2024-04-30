@@ -1,7 +1,8 @@
 import { MainState } from "./typesGeneral";
 
 export interface ReportDettaglioProps {
-    mainState:any,
+    mainState:MainState,
+    dispatchMainState:any
 }
 
 export interface NotificheList{
@@ -26,7 +27,8 @@ export interface MultiSelectGroupedByProps{
     mainState:MainState,
     setBodyGetLista:any,
     setValueFgContestazione:any,
-    valueFgContestazione: FlagContestazione[]
+    valueFgContestazione: FlagContestazione[],
+    dispatchMainState:any
 }
 
 export interface ModalContestazioneProps{
@@ -41,7 +43,8 @@ export interface ModalContestazioneProps{
     page:number,
     rows:number,
     valueRispostaEnte:string,
-    contestazioneStatic:any
+    contestazioneStatic:any,
+    dispatchMainState:any
 }
 
 export interface FlagContestazione{
@@ -120,7 +123,8 @@ export interface MultiselectNotificheProps{
     setTextValue:any,
     textValue:string,
     valueAutocomplete:any,
-    setValueAutocomplete:any
+    setValueAutocomplete:any,
+    dispatchMainState:any
 }
 
 

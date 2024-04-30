@@ -24,7 +24,7 @@ import { deleteFilterToLocalStorageNotifiche, getFiltersFromLocalStorageNotifich
 import {mesi, mesiGrid, mesiWithZero, tipoNotifica } from "../reusableFunctin/reusableArrayObj";
 import { getCurrentFinancialYear } from "../reusableFunctin/function";
 
-const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
+const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMainState}) => {
 
     const token =  getToken();
     const profilo =  getProfilo();
@@ -283,7 +283,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     setNotificheList(res.data.notifiche);
                     setTotalNotifiche(res.data.count);    
                 }).catch((error)=>{
-                    manageError(error, navigate);
+                    manageError(error, navigate,dispatchMainState);
                 });
         }else if(profilo.profilo === 'REC'){
             await listaNotificheRecapitista(token,mainState.nonce,1, 10, body)
@@ -295,7 +295,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 }).catch((error)=>{
                 // abilita button filtra e annulla filtri all'arrivo dei dati
                     setGetNotificheWorking(false);
-                    manageError(error, navigate);
+                    manageError(error, navigate,dispatchMainState);
                 });
         }else if(profilo.profilo === 'CON'){
             await listaNotificheConsolidatore(token,mainState.nonce,1, 10, body)
@@ -307,7 +307,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 }).catch((error)=>{
                 // abilita button filtra e annulla filtri all'arrivo dei dati
                     setGetNotificheWorking(false);
-                    manageError(error, navigate);
+                    manageError(error, navigate,dispatchMainState);
                 });
         }else if(profilo.auth === 'PAGOPA'){
             await listaNotifichePagoPa(token,mainState.nonce,1,10, newBody)
@@ -315,7 +315,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     setNotificheList(res.data.notifiche);
                     setTotalNotifiche(res.data.count);
                 }).catch((error)=>{
-                    manageError(error, navigate);
+                    manageError(error, navigate,dispatchMainState);
                 });
         }
     };     
@@ -338,7 +338,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 // abilita button filtra e annulla filtri all'arrivo dei dati
                     setGetNotificheWorking(false);
                     setShowLoadingGrid(false);
-                    manageError(error, navigate);
+                    manageError(error, navigate,dispatchMainState);
                 });
         }else if(profilo.profilo === 'REC'){
             await listaNotificheRecapitista(token,mainState.nonce,nPage, nRow, newBody)
@@ -352,7 +352,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     // abilita button filtra e annulla filtri all'arrivo dei dati
                     setGetNotificheWorking(false);
                     setShowLoadingGrid(false);
-                    manageError(error, navigate);
+                    manageError(error, navigate,dispatchMainState);
                 });
         }else if(profilo.profilo === 'CON'){
             await listaNotificheConsolidatore(token,mainState.nonce,nPage, nRow,newBody)
@@ -366,7 +366,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     // abilita button filtra e annulla filtri all'arrivo dei dati
                     setGetNotificheWorking(false);
                     setShowLoadingGrid(false);
-                    manageError(error, navigate);
+                    manageError(error, navigate,dispatchMainState);
                 });
         }           
     };
@@ -386,7 +386,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 // abilita button filtra e annulla filtri all'arrivo dei dati
                 setGetNotificheWorking(false);
                 setShowLoadingGrid(false);
-                manageError(error, navigate);
+                manageError(error, navigate,dispatchMainState);
             });       
     };
 
@@ -438,12 +438,12 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
         await getTipologiaEntiCompletiPagoPa(token, mainState.nonce, 'REC').then((res)=>{          
             setListaRecapitisti(res.data);
         }).catch(((err)=>{
-            manageError(err,navigate);
+            manageError(err,navigate,dispatchMainState);
         }));
         await getTipologiaEntiCompletiPagoPa(token, mainState.nonce, 'CON').then((res)=>{          
             setListaConsolidatori(res.data);
         }).catch(((err)=>{
-            manageError(err,navigate);
+            manageError(err,navigate,dispatchMainState);
         }));
     };
                         
@@ -453,7 +453,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 setProdotti(res.data);
             })
             .catch(((err)=>{
-                manageError(err,navigate);
+                manageError(err,navigate,dispatchMainState);
             }));
     };
                                             
@@ -463,7 +463,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 setProfili(res.data);
             })
             .catch(((err)=>{
-                manageError(err,navigate);
+                manageError(err,navigate,dispatchMainState);
             }));
     };
 
@@ -487,7 +487,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 })
                 .catch(((err)=>{
                     setShowLoadingGrid(false);
-                    manageError(err,navigate);
+                    manageError(err,navigate,dispatchMainState);
                 }));
         }else if( profilo.profilo === 'REC'){
             await getContestazioneRecapitista(token, mainState.nonce , idNotifica )
@@ -505,7 +505,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 })
                 .catch(((err)=>{
                     setShowLoadingGrid(false);
-                    manageError(err,navigate);
+                    manageError(err,navigate,dispatchMainState);
                 }));
         }else if( profilo.profilo === 'CON'){
             await getContestazioneCosolidatore(token, mainState.nonce , idNotifica )
@@ -523,7 +523,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 })
                 .catch(((err)=>{
                     setShowLoadingGrid(false);
-                    manageError(err,navigate);
+                    manageError(err,navigate,dispatchMainState);
                 }));
         }else if(profilo.auth === 'PAGOPA'){
             await getContestazionePagoPa(token, mainState.nonce , idNotifica ).then((res)=>{
@@ -539,7 +539,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 }                 
             }).catch(((err)=>{
                 setShowLoadingGrid(false);
-                manageError(err,navigate);
+                manageError(err,navigate,dispatchMainState);
             }));
         }
     };
@@ -555,7 +555,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 })
                 .catch(((err)=>{
                     setShowLoading(false);
-                    manageError(err,navigate);
+                    manageError(err,navigate,dispatchMainState);
                 }));
         }else if(profilo.profilo === 'REC'){
             const {idEnti, recapitisti, consolidatori, ...bodyRecapitista} = bodyDownload;
@@ -573,7 +573,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     document.body.removeChild(a); 
                 })
                 .catch(((err)=>{
-                    manageError(err,navigate);
+                    manageError(err,navigate,dispatchMainState);
                     setShowLoading(false);
                 }));
         }else if(profilo.profilo === 'CON'){
@@ -592,7 +592,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     setShowLoading(false);
                 })
                 .catch(((err)=>{
-                    manageError(err,navigate);
+                    manageError(err,navigate,dispatchMainState);
                     setShowLoading(false);
                 }));
         }else if(profilo.auth === 'PAGOPA'){
@@ -614,7 +614,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     document.body.removeChild(a); 
                 })
                 .catch(((err)=>{
-                    manageError(err,navigate);
+                    manageError(err,navigate,dispatchMainState);
                     setShowLoading(false);
                 }));
         }
@@ -799,6 +799,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                         <Box sx={{width:'80%', marginLeft:'20px'}} >
                             <MultiSelectStatoContestazione 
                                 mainState={mainState}
+                                dispatchMainState={dispatchMainState}
                                 setBodyGetLista={setBodyGetLista}
                                 valueFgContestazione={valueFgContestazione}
                                 setValueFgContestazione={setValueFgContestazione}></MultiSelectStatoContestazione>
@@ -843,6 +844,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                     {profilo.auth === 'PAGOPA' &&
                     <div  className="col-3">
                         <MultiselectCheckbox 
+                            dispatchMainState={dispatchMainState}
                             mainState={mainState} 
                             setBodyGetLista={setBodyGetLista}
                             setDataSelect={setDataSelect}
@@ -989,6 +991,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 rows={rowsPerPage}
                 valueRispostaEnte={valueRispostaEnte}
                 contestazioneStatic={contestazioneStatic}
+                dispatchMainState={dispatchMainState}
             ></ModalContestazione>
             <ModalRedirect
                 setOpen={setOpenModalRedirect} 
@@ -1014,7 +1017,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState}) => {
                 open={showModalScadenziario} 
                 setOpen={setShowModalScadenziario}
                 nonce={mainState.nonce}
-                profilo={profilo}></ModalScadenziario>                                    
+                profilo={profilo}
+                dispatchMainState={dispatchMainState}></ModalScadenziario>                                    
         </div>
     );
 };                                        

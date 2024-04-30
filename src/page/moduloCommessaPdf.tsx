@@ -19,7 +19,7 @@ import { mesiWithZero, month } from "../reusableFunctin/reusableArrayObj";
 import { DatiCommessaPdf, ResponseGetPdfPagoPa } from "../types/typeListaModuliCommessa";
 import { createDateFromString, replaceDate } from "../reusableFunctin/function";
 
-const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
+const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState, dispatchMainState}) =>{
 
     const token =  getToken();
     const profilo =  getProfilo();
@@ -99,7 +99,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
         getModuloCommessaPdf(token, statusApp.anno,statusApp.mese, mainState.nonce).then((res:ResponseGetPdfPagoPa)=>{
             toDoOnGetPdfSelfcarePagopa(res);
         }).catch((err)=>{
-            manageError(err, navigate);
+            manageError(err, navigate,dispatchMainState);
         });  
     };
 
@@ -108,7 +108,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
             .then((res)=>{
                 toDoOnGetPdfSelfcarePagopa(res);
             }).catch((err)=>{
-                manageError(err, navigate);
+                manageError(err, navigate,dispatchMainState);
             });  
     };
 
@@ -126,7 +126,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
         downloadModuloCommessaPdf(token, statusApp.anno,statusApp.mese, tipoCommessa, mainState.nonce).then((res: ResponseDownloadPdf)=>{
             toDoOnDownloadPdf(res);
         }).catch((err)=>{
-            manageError(err, navigate);
+            manageError(err, navigate,dispatchMainState);
         });   
     };
 
@@ -135,7 +135,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState}) =>{
         downloadModuloCommessaPagoPaPdf(token,  mainState.nonce,statusApp.mese,statusApp.anno,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto,tipoCommessa).then((res:ResponseDownloadPdf)=>{
             toDoOnDownloadPdf(res);
         }).catch((err)=>{
-            manageError(err, navigate);
+            manageError(err, navigate,dispatchMainState);
         }); 
     };
 

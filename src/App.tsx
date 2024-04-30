@@ -30,6 +30,7 @@ import { reducerMainState } from './reducer/reducerMainState';
 import { getAuthProfilo, redirect } from './api/api';
 import { getProfilo } from './reusableFunctin/actionLocalStorage';
 import useIsTabActive from './reusableFunctin/tabIsActiv';
+import BasicAlerts from './components/reusableComponents/alert';
 
 enum PathPf {
     DATI_FATTURAZIONE = '/datidifatturazione', //
@@ -91,6 +92,7 @@ const App = ({ instance }) => {
     };
  
     const [checkProfilo,setCheckProfilo] = useState(false);
+    const [showAlert, setShowAlert] = useState(false);
     // set status page abilita e disabilita le modifiche al componente dati fatturazione
     
     const [mainState, dispatchMainState] = useReducer(reducerMainState, {
@@ -104,10 +106,16 @@ const App = ({ instance }) => {
         statusPageDatiFatturazione:'immutable',
         statusPageInserimentoCommessa:'immutable',
         relSelected: null,
-        apiError:'',
+        apiError:null,
         authenticated:false 
     });
     console.log(mainState);
+    useEffect(()=>{
+        if(mainState.apiError !== null){
+            setShowAlert(true);
+        }
+        
+    }, [mainState.apiError]);
     // questa chiamata viene eseguita esclusivamente se l'utenete fa un reload page cosi da inserire nuovamente il NONCE nel DOM
     const getProfiloToGetNonce = async () =>{
     
@@ -146,10 +154,18 @@ const App = ({ instance }) => {
 
     if(profilo.jwt){
 
+        let wrongPath = PathPf.DATI_FATTURAZIONE;
+
+        if(profilo.auth === 'PAGOPA'){
+            wrongPath = PathPf.LISTA_DATI_FATTURAZIONE;
+        }else if(recOrConsIsLogged){
+            wrongPath = PathPf.LISTA_NOTIFICHE;
+        }
+
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App">
-
+                    <BasicAlerts setVisible={setShowAlert} visible={showAlert} mainState={mainState} dispatchMainState={ dispatchMainState}></BasicAlerts>
                     <HeaderPostLogin mainState={mainState}/>
 
                     <div>
@@ -172,28 +188,29 @@ const App = ({ instance }) => {
                                 
                                     <Route path="azure" element={<Azure dispatchMainState={ dispatchMainState}/>} />
                                 
-                                    {!recOrConsIsLogged && <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte
-                                        mainState={mainState}
-                                        dispatchMainState={ dispatchMainState} />} />
+                                    {!recOrConsIsLogged &&
+                                    <>
+                                        <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte mainState={mainState} dispatchMainState={ dispatchMainState} />} />
+                           
+                                        <Route path={PathPf.LISTA_COMMESSE} element={<ModuloCommessaElencoUtPa mainState={mainState}  dispatchMainState={ dispatchMainState} valueSelect={valueAnnoElencoCom}  setValueSelect={setValueAnnoElencoCom}  />} />
+                          
+                                        <Route path={PathPf.MODULOCOMMESSA} element={<ModuloCommessaInserimentoUtEn30 mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
+                          
+                                        <Route path={PathPf.PDF_COMMESSA} element={<ModuloCommessaPdf mainState={mainState} dispatchMainState={ dispatchMainState}/>} />
+                          
+                                        <Route path={PathPf.LISTA_DATI_FATTURAZIONE} element={<PagoPaListaDatiFatturazione mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
+                            
+                                        <Route path={PathPf.LISTA_MODULICOMMESSA} element={<PagoPaListaModuliCommessa mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
+
+                                        <Route path={PathPf.LISTA_REL} element={<RelPage  mainState={mainState}  dispatchMainState={dispatchMainState}/>} />
+
+                                        <Route path={PathPf.PDF_REL} element={<RelPdfPage  mainState={mainState}  dispatchMainState={dispatchMainState}/>} />
+                                    </>
                                     }
                            
-                                    <Route path={PathPf.LISTA_COMMESSE} element={<ModuloCommessaElencoUtPa mainState={mainState}  dispatchMainState={ dispatchMainState} valueSelect={valueAnnoElencoCom}  setValueSelect={setValueAnnoElencoCom}  />} />
-                          
-                                    <Route path={PathPf.MODULOCOMMESSA} element={<ModuloCommessaInserimentoUtEn30 mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
-                          
-                                    <Route path={PathPf.PDF_COMMESSA} element={<ModuloCommessaPdf mainState={mainState} />} />
-                          
-                                    <Route path={PathPf.LISTA_DATI_FATTURAZIONE} element={<PagoPaListaDatiFatturazione mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
-                            
-                                    <Route path={PathPf.LISTA_MODULICOMMESSA} element={<PagoPaListaModuliCommessa mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
-                           
-                                    <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio mainState={mainState} />} />
+                                    <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio mainState={mainState} dispatchMainState={dispatchMainState}/>} />
 
-                                    <Route path={PathPf.LISTA_REL} element={<RelPage  mainState={mainState}  dispatchMainState={dispatchMainState}/>} />
-
-                                    <Route path={PathPf.PDF_REL} element={<RelPdfPage  mainState={mainState}  dispatchMainState={dispatchMainState}/>} />
-
-                                    <Route path="*" element={<Navigate to="/error" replace />} />
+                                    <Route path="*" element={<Navigate to={wrongPath} replace />} />
 
                                     <Route path="/azureLogin" element={<AzureLogin dispatchMainState={dispatchMainState}/>} />
 

@@ -11,7 +11,7 @@ import { BodyListaNotifiche} from '../../types/typesGeneral';
 import { listaEntiNotifichePage, listaEntiNotifichePageConsolidatore } from '../../api/apiSelfcare/notificheSE/api';
 import { getProfilo, getToken } from '../../reusableFunctin/actionLocalStorage';
 
-const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetLista, dataSelect, setDataSelect,mainState,setTextValue, textValue ,valueAutocomplete, setValueAutocomplete}) => {
+const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetLista, dataSelect, setDataSelect,mainState,setTextValue, textValue ,valueAutocomplete, setValueAutocomplete,dispatchMainState}) => {
 
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -43,7 +43,7 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
                     setDataSelect(res.data);
                 })
                 .catch(((err)=>{
-                    manageError(err,navigate);
+                    manageError(err,navigate,dispatchMainState);
                 }));
         }else if(profilo.auth === 'PAGOPA'){
             await listaEntiNotifichePage(token, mainState.nonce, {descrizione:textValue} )
@@ -51,7 +51,7 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
                     setDataSelect(res.data);
                 })
                 .catch(((err)=>{
-                    manageError(err,navigate);
+                    manageError(err,navigate,dispatchMainState);
                 }));
         }
     };

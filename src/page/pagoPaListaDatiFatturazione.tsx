@@ -17,7 +17,7 @@ import { deleteFilterToLocalStorage, getFiltersFromLocalStorage, getInfoPageFrom
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 
-const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainState}) =>{
+const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainState, dispatchMainState}) =>{
     const token =  getToken();
     const profilo =  getProfilo();
     const navigate = useNavigate();
@@ -87,7 +87,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                 setProdotti(res.data);
             })
             .catch(((err)=>{
-                manageError(err,navigate);
+                manageError(err,navigate,dispatchMainState);
             }));
     };
 
@@ -97,7 +97,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                 setProfili(res.data);
             })
             .catch(((err)=>{
-                manageError(err,navigate);
+                manageError(err,navigate,dispatchMainState);
             }));
     };
 
@@ -111,7 +111,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
             .catch(((err)=>{
                 setGridData([]);
                 setGetListaLoading(false);
-                manageError(err,navigate);
+                manageError(err,navigate,dispatchMainState);
             })); 
     };
 
@@ -125,7 +125,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
             saveAs("data:text/plain;base64," + res.data.documento,fileName);
             setShowLoading(false);
         }).catch(err => {
-            manageError(err,navigate);
+            manageError(err,navigate,dispatchMainState);
         });
     };
 
@@ -249,6 +249,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                 <div  className="col-3">
                     <MultiselectCheckbox 
                         mainState={mainState} 
+                        dispatchMainState={dispatchMainState}
                         setBodyGetLista={setBodyGetLista}
                         setDataSelect={setDataSelect}
                         dataSelect={dataSelect}

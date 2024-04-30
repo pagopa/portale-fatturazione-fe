@@ -1,15 +1,40 @@
 import * as React from 'react';
-import Alert from '@mui/material/Alert';
+import Alert, { AlertColor } from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
+import { MainState } from '../../types/typesGeneral';
+import { redirect } from '../../api/api';
+import { getProfilo } from '../../reusableFunctin/actionLocalStorage';
+import { useNavigate } from 'react-router';
 
 type AlertProps = {
-    typeAlert : any,
     setVisible:any,
-    visible:boolean
+    visible:boolean,
+    mainState:MainState,
+    dispatchMainState:any
 }
 
-const BasicAlerts:React.FC <AlertProps> =  ({typeAlert, setVisible , visible}) => {
+const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, dispatchMainState}) => {
+    const profilo =  getProfilo();
+    const navigate = useNavigate();
+
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
+
+    let sentenceAlert = '';
+    let colorAlert:AlertColor = 'success';
+    if(mainState.apiError === 401){
+        sentenceAlert =  "Gentile utente non è autenticato.";
+        colorAlert = 'error';
+    }else if(mainState.apiError === 419){
+        sentenceAlert =  "Gentile utente la sesione è scaduta.";
+        colorAlert = 'warning';
+    }
 
     const [css, setCss] = useState('main_container_alert_component');
 
@@ -20,19 +45,41 @@ const BasicAlerts:React.FC <AlertProps> =  ({typeAlert, setVisible , visible}) =
     
                 setCss('main_container_alert_component_hidden');
                 setVisible(false);
-            }, 8000);
+
+                if(profilo.auth === 'PAGOPA' || profilo.profilo === 'REC' ||profilo.profilo === 'CON'){
+                    //navigate('/azureLogin');
+                }else{
+                    window.location.href = redirect;
+                }
+                
+            }, 6000);
+
+            return () =>{
+                clearTimeout(timer);
+                
+            }; 
+        }
+    },[visible]);
+
+    React.useEffect(()=>{
+        if(visible === false){
+           
+            const timer = setTimeout(() => {
+                handleModifyMainState({apiError:null});
+            }, 2000);
             return () =>{
                 clearTimeout(timer);
             }; 
         }
     },[visible]);
 
-    return (
+    return createPortal(
         <div className={css}>
             <Stack sx={{ width: '100%' }} spacing={2}>
-                <Alert severity={typeAlert}  variant="standard">INTERNAL SERVER ERROR: L'operazione non è andata a buon fine</Alert>
+                <Alert severity={colorAlert}  variant="standard">{sentenceAlert}</Alert>
             </Stack>
-        </div>
+        </div>,
+        document.getElementById("modal-alert")|| document.body
     );
 };
 
