@@ -18,7 +18,6 @@ import {  getDatiFatturazione,
 import {  getDatiFatturazionePagoPa,
     modifyDatiFatturazionePagoPa,
     insertDatiFatturazionePagoPa, } from '../api/apiPagoPa/datiDiFatturazionePA/api';
-import useIsTabActive from '../reusableFunctin/tabIsActiv';
 import BasicModal from '../components/reusableComponents/modals/modal';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import BasicAlerts from '../components/reusableComponents/alert';
@@ -60,7 +59,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
 
     const [open, setOpen] = useState(false);
     const [openModalLoading, setOpenModalLoading] = useState(false);
-    const [alertVisible, setAlertVisible] = useState(false);
+    // const [alertVisible, setAlertVisible] = useState(false);
     const [datiFatturazione, setDatiFatturazione] = useState<DatiFatturazione>({
         tipoCommessa:'',
         idEnte:'',
@@ -207,11 +206,12 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                     });
                 }).catch(err => {
                     setOpenModalLoading(false);
-                    if(err?.response?.status  === 500){
+                    manageError(err, navigate);
+                    /*if(err?.response?.status  === 500){
                         setAlertVisible(true);
                     }else{
-                        manageError(err, navigate);
-                    }
+                       
+                    }*/
                 });
             }else{
                 // 1 - ed è un utente SELFCARE
@@ -229,11 +229,12 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                     })
                     .catch(err => {
                         setOpenModalLoading(false);
-                        if(err?.response?.status  === 500){
+                        manageError(err, navigate);
+                        /* if(err?.response?.status  === 500){
                             setAlertVisible(true);
                         }else{
                             manageError(err, navigate);
-                        }
+                        }*/
                     });
             }
         }else{
@@ -302,9 +303,9 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                         navigate('/error');
                     }else if(err?.response?.status === 419){
                         navigate('/error');
-                    }else if(err?.response?.status  === 500){
+                    }/*else if(err?.response?.status  === 500){
                         setAlertVisible(true);
-                    }
+                    }*/
                 });     
             } 
         }   
@@ -357,7 +358,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 </div>
                 <BasicModal setOpen={setOpen} open={open} dispatchMainState={dispatchMainState} getDatiFat={getDatiFat} getDatiFatPagoPa={getDatiFatPagoPa} mainState={mainState}></BasicModal>
                 <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}></ModalLoading>
-                <BasicAlerts typeAlert={'error'} setVisible={setAlertVisible}  visible={alertVisible}></BasicAlerts>
+                {/*  <BasicAlerts typeAlert={'error'} setVisible={setAlertVisible}  visible={alertVisible}></BasicAlerts>*/}
             </div>
         </DatiFatturazioneContext.Provider>
     );

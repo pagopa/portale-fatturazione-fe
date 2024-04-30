@@ -13,7 +13,6 @@ export interface ModalProps {
     mainState?:MainState
 }
 
-
 export interface LocationState {
     pathname?: string;
    
@@ -22,7 +21,6 @@ export interface LocationState {
 export interface LoginProps {
     setCheckProfilo:any,
     dispatchMainState:any,
-
 
 }
 
@@ -60,17 +58,15 @@ export type BodyListaModuloCommessa = {
 export interface MainState{
     mese:string,
     anno:string,
-    // nomeEnteClickOn:string, // lato pagopa sul click della grid lista ModuloCommessa/dati fatturazione vado a soricizzare il nome da mostrare nel dettaglio 
     userClickOn:undefined, // se l'utente clicca su un elemento di lista commesse setto GRID
     inserisciModificaCommessa:string |undefined, // INSERT MODIFY  se il sevizio get commessa mi restituisce true []
     statusPageDatiFatturazione:string,
     statusPageInserimentoCommessa:string,
     nonce:string,
-    // idEnte:string,// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
-    //prodotto: string,// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
     datiFatturazione:boolean, // parametro utilizato in modulo commessa per capire se accettare l'inserimento commessa o fare il redirect t dati fatturazione se non sono stati inseriti
     relSelected:Rel|null,
-    apiError:string // rel selezionata nella grid in page rel
+    apiError:string,
+    authenticated:boolean
 }
 
 export interface BodyDownloadDatiFatturazione{
@@ -83,7 +79,6 @@ export  type Params = {
     field:string,
     row:DataGridCommessa
 }
-
 
 export interface BodyDownloadListaCommesse{
     idEnti: string[],
@@ -144,7 +139,6 @@ export interface ManageErrorResponse{
     message:string,
     response: ResponseError
 
-
 }
 
 export interface BodyCreateContestazione{
@@ -176,8 +170,6 @@ export enum Profilo {
     CONSOLIDATORE = 'CON'
 }
 
-
-
-
-
-
+export interface AzureLoginProps{
+    dispatchMainState:any
+}
