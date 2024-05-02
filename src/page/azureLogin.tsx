@@ -41,7 +41,7 @@ const AzureLogin : React.FC<AzureLoginProps> = ({ dispatchMainState}) =>{
     return (
       
         <div className='container d-flex align-items-center justify-content-center ' style={{height: '400px'}}>
-            <Typography variant="h1">Accedi al Portale Fatturazione <ArrowCircleUpIcon fontSize="large"></ArrowCircleUpIcon></Typography>
+            <Typography variant="h1">Accedi all'Area Riservata di PagoPA <ArrowCircleUpIcon fontSize="large"></ArrowCircleUpIcon></Typography>
         
         </div>
      

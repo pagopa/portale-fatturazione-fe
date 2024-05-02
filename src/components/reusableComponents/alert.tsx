@@ -29,22 +29,22 @@ const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, di
     let sentenceAlert = '';
     let colorAlert:AlertColor = 'success';
     if(mainState.apiError === 401 || mainState.apiError === 403 ){
-        sentenceAlert =  "Gentile utente non è autenticato.";
+        sentenceAlert =  "Utente non autenticato. Effettuare nuovamente l'accesso";
         colorAlert = 'error';
     }else if(mainState.apiError === 419){
-        sentenceAlert =  "Gentile utente la sesione è scaduta. ";
-        colorAlert = 'warning';
+        sentenceAlert =  "Sessione scaduta. Effettuare nuovamente l'accesso";
+        colorAlert = 'error';
     }else if(mainState.apiError === 500){
-        sentenceAlert =  "Gentile utente l'operazione non è stata eseguita. Contatti l'amministratore";
+        sentenceAlert =  "L'operazione non è andata a buon fine. Si prega di riprovare";
         colorAlert = 'error';
     }else if(mainState.apiError === 400){
-        sentenceAlert =  "Richiesta non eseguita. Contatti l'amministratore";
+        sentenceAlert =  "L'operazione non è andata a buon fine. Contattare l'assistenza";
         colorAlert = 'error';
     }else if(mainState.apiError === 404){
-        sentenceAlert =  "Non ci sono risultati per la ricerca eseguita";
+        sentenceAlert =  "La ricerca non ha prodotto risultati";
         colorAlert = "info";
     }else if(mainState.apiError === "Network Error"){
-        sentenceAlert =  "La connessione Internet risulta offline";
+        sentenceAlert =  "La connessione Internet risulta non attiva";
         colorAlert = 'warning';
     }
     
@@ -64,7 +64,7 @@ const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, di
                     window.location.href = redirect;
                 }
                 
-            }, 6000);
+            }, 4000);
 
             return () =>{
                 clearTimeout(timer);
