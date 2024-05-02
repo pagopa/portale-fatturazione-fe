@@ -130,8 +130,6 @@ export const modifyContestazioneConsolidatore = async (token:string, nonce:strin
     return response;
 };
 
-
-
 export const downloadNotifche = async (token:string, nonce:string , body: BodyListaNotificheSelfcare) => {
     const response =  await axios.post(`${url}/api/notifiche/ente/documento/ricerca?nonce=${nonce}`,
         body,
