@@ -31,12 +31,12 @@ const ModalLoading : React.FC<ModalProps> = ({setOpen, open, sentence}) => {
                 <Box sx={style}>
                     <div className='d-flex justify-content-center'>
                         <Typography id="modal-modal-title" variant="h6" component="h2">
-             Gentile utente  
+             Operazione in corso  
                         </Typography>
                     </div>
                     <div className='d-flex justify-content-center mt-3'>
                         <Typography id="modal-modal-title" variant="body1" gutterBottom>
-            Attenda la fine del processo  
+            Attendere la fine del processo  
                         </Typography>
                     </div>
                     <div className='d-flex justify-content-center mt-3'>

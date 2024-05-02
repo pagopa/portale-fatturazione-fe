@@ -298,7 +298,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                          <Button sx={{width:'274px'}} onClick={() => downloadPdfRel()}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
                      </div>
                      <div id='singleInputRel' style={{minWidth: '300px', height:'40px'}}>
-                         <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".pdf"]} onFileSelected={(e)=> setFile(e)} onFileRemoved={() => setFile(null)} dropzoneLabel={(rel?.caricata === 1 ||rel?.caricata === 2) ? 'Reinserisci nuovo PDF Reg. Es. firmato':"Inserisci PDF Reg. Es.  firmato"} rejectedLabel="Tipo file non supportato" ></SingleFileInput>
+                         <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".pdf"]} onFileSelected={(e)=> setFile(e)} onFileRemoved={() => setFile(null)} dropzoneLabel={(rel?.caricata === 1 ||rel?.caricata === 2) ? 'Reinserisci nuovo PDF Reg. Es. firmato':"Inserisci PDF Reg. Es. firmato"} rejectedLabel="Tipo file non supportato" ></SingleFileInput>
                      </div> 
                  </>
                 }
@@ -319,7 +319,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
             <ModalRedirect
                 setOpen={setOpenModalRedirect} 
                 open={openModalRedirect}
-                sentence={`Per poter visualizzare il dettaglio REL  è obbligatorio fornire i seguenti dati di fatturazione:`}>
+                sentence={`Per poter visualizzare il dettaglio REL è obbligatorio fornire i seguenti dati di fatturazione:`}>
             </ModalRedirect>
             <ModalLoading 
                 open={showDownloading} 

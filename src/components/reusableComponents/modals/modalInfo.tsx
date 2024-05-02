@@ -32,7 +32,7 @@ const ModalInfo : React.FC<ModalProps> = ({setOpen, open, sentence}) => {
                 <Box sx={style}>
                     <div className='d-flex justify-content-center'>
                         <Typography id="modal-modal-title" variant="h6" component="h2">
-        Gentile utente 
+        Operazione in corso
                         </Typography>
                         
                     </div>
