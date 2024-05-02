@@ -30,7 +30,7 @@ const SecondoContainerInsCom : React.FC = () => {
                 idSpedizioneAnalogAR : getIdByTipo('Analog. A/R',res.data),
             });
         }).catch((err:ManageErrorResponse) =>{
-            manageError(err, navigate,dispatchMainState);
+            manageError(err,dispatchMainState);
         });
     };
    

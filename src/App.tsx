@@ -1,7 +1,7 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import {useState, useReducer, useEffect} from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate} from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate} from 'react-router-dom';
 import { ThemeProvider, Grid } from '@mui/material';
 import {theme} from '@pagopa/mui-italia';
 import AreaPersonaleUtenteEnte from './page/areaPersonaleUtenteEnte';
@@ -27,7 +27,7 @@ import { loginRequest } from './authConfig';
 import './App.css';
 import RelPage from './page/relUtPa';
 import { reducerMainState } from './reducer/reducerMainState';
-import { getAuthProfilo, redirect } from './api/api';
+import { getAuthProfilo, manageError, redirect } from './api/api';
 import { getProfilo } from './reusableFunctin/actionLocalStorage';
 import useIsTabActive from './reusableFunctin/tabIsActiv';
 import BasicAlerts from './components/reusableComponents/alert';
@@ -109,7 +109,7 @@ const App = ({ instance }) => {
         apiError:null,
         authenticated:false 
     });
-    console.log(mainState);
+    console.log({mainState});
     useEffect(()=>{
         if(mainState.apiError !== null){
             setShowAlert(true);
@@ -123,8 +123,8 @@ const App = ({ instance }) => {
             .then((res) =>{
                 handleModifyMainState({nonce:res?.data.nonce,authenticated:true});
             }).catch((err)=>{
-                window.location.href = redirect;
-                //navigate('/error');
+                //window.location.href = redirect;
+                manageError(err,dispatchMainState);
             });
     };
     // eseguiamo la get a riga 21 solo se il value dell'input(nonce) nel Dom è non c'è e controlliamo che nella local storage sia settatto il profilo

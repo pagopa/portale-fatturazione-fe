@@ -55,7 +55,7 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce, 
               
             })
             .catch(((err)=>{
-                manageError(err,navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             }));
     };
 

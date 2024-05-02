@@ -87,7 +87,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                 setProdotti(res.data);
             })
             .catch(((err)=>{
-                manageError(err,navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             }));
     };
 
@@ -97,7 +97,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                 setProfili(res.data);
             })
             .catch(((err)=>{
-                manageError(err,navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             }));
     };
 
@@ -111,7 +111,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
             .catch(((err)=>{
                 setGridData([]);
                 setGetListaLoading(false);
-                manageError(err,navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             })); 
     };
 
@@ -125,7 +125,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
             saveAs("data:text/plain;base64," + res.data.documento,fileName);
             setShowLoading(false);
         }).catch(err => {
-            manageError(err,navigate,dispatchMainState);
+            manageError(err,dispatchMainState);
         });
     };
 

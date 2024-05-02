@@ -73,7 +73,7 @@ const getCommessa = async (tokenC, nonceC) =>{
         localStorage.setItem('profilo', string);
 
     }).catch((err)=>{
-        manageError(err, navigate,dispatchMainState);
+        manageError(err,dispatchMainState);
         
     });
 };

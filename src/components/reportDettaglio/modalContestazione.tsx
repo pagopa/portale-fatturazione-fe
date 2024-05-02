@@ -85,7 +85,7 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                 setTipoContestazioni(res.data);
             })
             .catch(((err)=>{
-                manageError(err,navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             }));
     };
 
@@ -103,7 +103,7 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                 funGetNotifiche(page,rows, result.bodyGetLista);
             })
             .catch(((err)=>{
-                manageError(err,navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             }));
     };
 
@@ -186,19 +186,19 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
             await modifyContestazioneEnte(token, profilo.nonce, body).then(()=>{
                 funGetNotifiche(page,rows,result.bodyGetLista);
             }).catch(((err)=>{
-                manageError(err,navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             }));
         }else if(profilo.profilo === 'REC'){
             await modifyContestazioneRecapitista(token, profilo.nonce, body).then(()=>{
                 funGetNotifiche(page,rows,result.bodyGetLista);
             }).catch(((err)=>{
-                manageError(err,navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             }));
         }else if(profilo.profilo === 'CON'){
             await modifyContestazioneConsolidatore(token, profilo.nonce, body).then(()=>{
                 funGetNotifiche(page,rows,result.bodyGetLista);
             }).catch(((err)=>{
-                manageError(err,navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             }));
         }
     };
@@ -252,7 +252,7 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
             const result = getFiltersFromLocalStorageNotifiche();
             funGetNotifichePagoPa(page,rows, result.bodyGetLista);
         }).catch(((err)=>{
-            manageError(err,navigate,dispatchMainState);
+            manageError(err,dispatchMainState);
         }));
     };
 

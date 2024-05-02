@@ -43,7 +43,7 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
                     setDataSelect(res.data);
                 })
                 .catch(((err)=>{
-                    manageError(err,navigate,dispatchMainState);
+                    manageError(err,dispatchMainState);
                 }));
         }else if(profilo.auth === 'PAGOPA'){
             await listaEntiNotifichePage(token, mainState.nonce, {descrizione:textValue} )
@@ -51,7 +51,7 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
                     setDataSelect(res.data);
                 })
                 .catch(((err)=>{
-                    manageError(err,navigate,dispatchMainState);
+                    manageError(err,dispatchMainState);
                 }));
         }
     };

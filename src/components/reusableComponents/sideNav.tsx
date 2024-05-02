@@ -171,7 +171,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState}
                     navigate(PathPf.LISTA_COMMESSE);
                 }
             }).catch((err) =>{
-                manageError(err, navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             });
         }
     };

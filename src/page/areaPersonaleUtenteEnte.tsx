@@ -122,11 +122,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 statusPageDatiFatturazione:'immutable'
             }});
         }).catch(err =>{
-            if(err?.response?.status === 401){
-                localStorage.removeItem("token");
-                localStorage.removeItem("profilo");
-                navigate('/error');
-            }else if(err?.response?.status === 404){
+            if(err?.response?.status === 404){
                 localStorage.setItem('statusApplication',JSON.stringify({...statusApp,
                     ...{ datiFatturazione:false}}));
 
@@ -134,8 +130,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                     datiFatturazione:false,
                     statusPageDatiFatturazione:'mutable'
                 }});
-            }else if(err?.response?.status === 419){
-                navigate('/error');
             }
             setDatiFatturazione({
                 tipoCommessa:'',
@@ -152,7 +146,8 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 notaLegale:false
         
             });
-            manageError(err, navigate,dispatchMainState);
+            if(err?.response?.status !== 404)
+                manageError(err,dispatchMainState);
         });
 
     };
@@ -185,7 +180,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 notaLegale:false
         
             });
-            manageError(err, navigate,dispatchMainState);
+            manageError(err,dispatchMainState);
         });
     };
    
@@ -205,7 +200,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                     });
                 }).catch(err => {
                     setOpenModalLoading(false);
-                    manageError(err, navigate,dispatchMainState);
+                    manageError(err,dispatchMainState);
                     /*if(err?.response?.status  === 500){
                         setAlertVisible(true);
                     }else{
@@ -228,7 +223,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                     })
                     .catch(err => {
                         setOpenModalLoading(false);
-                        manageError(err, navigate,dispatchMainState);
+                        manageError(err,dispatchMainState);
                         /* if(err?.response?.status  === 500){
                             setAlertVisible(true);
                         }else{
@@ -262,11 +257,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                     });
                 }).catch(err =>{
                     setOpenModalLoading(false);
-                    if(err?.response?.status === 401){
-                        navigate('/error');
-                    }else if(err?.response?.status === 419){
-                        navigate('/error');
-                    }
+                    manageError(err,dispatchMainState);
                 });
 
             }else{
@@ -298,11 +289,12 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                     }  
                 }).catch(err =>{
                     setOpenModalLoading(false);
-                    if(err?.response?.status === 401){
+                    manageError(err,dispatchMainState);
+                    /*if(err?.response?.status === 401){
                         navigate('/error');
                     }else if(err?.response?.status === 419){
                         navigate('/error');
-                    }/*else if(err?.response?.status  === 500){
+                    }else if(err?.response?.status  === 500){
                         setAlertVisible(true);
                     }*/
                 });     

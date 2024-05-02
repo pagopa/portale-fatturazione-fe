@@ -283,7 +283,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                     setNotificheList(res.data.notifiche);
                     setTotalNotifiche(res.data.count);    
                 }).catch((error)=>{
-                    manageError(error, navigate,dispatchMainState);
+                    manageError(error, dispatchMainState);
                 });
         }else if(profilo.profilo === 'REC'){
             await listaNotificheRecapitista(token,mainState.nonce,1, 10, body)
@@ -295,7 +295,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                 }).catch((error)=>{
                 // abilita button filtra e annulla filtri all'arrivo dei dati
                     setGetNotificheWorking(false);
-                    manageError(error, navigate,dispatchMainState);
+                    manageError(error, dispatchMainState);
                 });
         }else if(profilo.profilo === 'CON'){
             await listaNotificheConsolidatore(token,mainState.nonce,1, 10, body)
@@ -307,7 +307,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                 }).catch((error)=>{
                 // abilita button filtra e annulla filtri all'arrivo dei dati
                     setGetNotificheWorking(false);
-                    manageError(error, navigate,dispatchMainState);
+                    manageError(error, dispatchMainState);
                 });
         }else if(profilo.auth === 'PAGOPA'){
             await listaNotifichePagoPa(token,mainState.nonce,1,10, newBody)
@@ -315,7 +315,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                     setNotificheList(res.data.notifiche);
                     setTotalNotifiche(res.data.count);
                 }).catch((error)=>{
-                    manageError(error, navigate,dispatchMainState);
+                    manageError(error, dispatchMainState);
                 });
         }
     };     
@@ -338,7 +338,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                 // abilita button filtra e annulla filtri all'arrivo dei dati
                     setGetNotificheWorking(false);
                     setShowLoadingGrid(false);
-                    manageError(error, navigate,dispatchMainState);
+                    manageError(error, dispatchMainState);
                 });
         }else if(profilo.profilo === 'REC'){
             await listaNotificheRecapitista(token,mainState.nonce,nPage, nRow, newBody)
@@ -352,7 +352,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                     // abilita button filtra e annulla filtri all'arrivo dei dati
                     setGetNotificheWorking(false);
                     setShowLoadingGrid(false);
-                    manageError(error, navigate,dispatchMainState);
+                    manageError(error, dispatchMainState);
                 });
         }else if(profilo.profilo === 'CON'){
             await listaNotificheConsolidatore(token,mainState.nonce,nPage, nRow,newBody)
@@ -366,7 +366,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                     // abilita button filtra e annulla filtri all'arrivo dei dati
                     setGetNotificheWorking(false);
                     setShowLoadingGrid(false);
-                    manageError(error, navigate,dispatchMainState);
+                    manageError(error, dispatchMainState);
                 });
         }           
     };
@@ -386,7 +386,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                 // abilita button filtra e annulla filtri all'arrivo dei dati
                 setGetNotificheWorking(false);
                 setShowLoadingGrid(false);
-                manageError(error, navigate,dispatchMainState);
+                manageError(error, dispatchMainState);
             });       
     };
 
@@ -438,12 +438,12 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
         await getTipologiaEntiCompletiPagoPa(token, mainState.nonce, 'REC').then((res)=>{          
             setListaRecapitisti(res.data);
         }).catch(((err)=>{
-            manageError(err,navigate,dispatchMainState);
+            manageError(err,dispatchMainState);
         }));
         await getTipologiaEntiCompletiPagoPa(token, mainState.nonce, 'CON').then((res)=>{          
             setListaConsolidatori(res.data);
         }).catch(((err)=>{
-            manageError(err,navigate,dispatchMainState);
+            manageError(err,dispatchMainState);
         }));
     };
                         
@@ -453,7 +453,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                 setProdotti(res.data);
             })
             .catch(((err)=>{
-                manageError(err,navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             }));
     };
                                             
@@ -463,7 +463,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                 setProfili(res.data);
             })
             .catch(((err)=>{
-                manageError(err,navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             }));
     };
 
@@ -487,7 +487,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                 })
                 .catch(((err)=>{
                     setShowLoadingGrid(false);
-                    manageError(err,navigate,dispatchMainState);
+                    manageError(err,dispatchMainState);
                 }));
         }else if( profilo.profilo === 'REC'){
             await getContestazioneRecapitista(token, mainState.nonce , idNotifica )
@@ -505,7 +505,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                 })
                 .catch(((err)=>{
                     setShowLoadingGrid(false);
-                    manageError(err,navigate,dispatchMainState);
+                    manageError(err,dispatchMainState);
                 }));
         }else if( profilo.profilo === 'CON'){
             await getContestazioneCosolidatore(token, mainState.nonce , idNotifica )
@@ -523,7 +523,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                 })
                 .catch(((err)=>{
                     setShowLoadingGrid(false);
-                    manageError(err,navigate,dispatchMainState);
+                    manageError(err,dispatchMainState);
                 }));
         }else if(profilo.auth === 'PAGOPA'){
             await getContestazionePagoPa(token, mainState.nonce , idNotifica ).then((res)=>{
@@ -539,7 +539,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                 }                 
             }).catch(((err)=>{
                 setShowLoadingGrid(false);
-                manageError(err,navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             }));
         }
     };
@@ -555,7 +555,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                 })
                 .catch(((err)=>{
                     setShowLoading(false);
-                    manageError(err,navigate,dispatchMainState);
+                    manageError(err,dispatchMainState);
                 }));
         }else if(profilo.profilo === 'REC'){
             const {idEnti, recapitisti, consolidatori, ...bodyRecapitista} = bodyDownload;
@@ -573,7 +573,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                     document.body.removeChild(a); 
                 })
                 .catch(((err)=>{
-                    manageError(err,navigate,dispatchMainState);
+                    manageError(err,dispatchMainState);
                     setShowLoading(false);
                 }));
         }else if(profilo.profilo === 'CON'){
@@ -592,7 +592,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                     setShowLoading(false);
                 })
                 .catch(((err)=>{
-                    manageError(err,navigate,dispatchMainState);
+                    manageError(err,dispatchMainState);
                     setShowLoading(false);
                 }));
         }else if(profilo.auth === 'PAGOPA'){
@@ -614,7 +614,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                     document.body.removeChild(a); 
                 })
                 .catch(((err)=>{
-                    manageError(err,navigate,dispatchMainState);
+                    manageError(err,dispatchMainState);
                     setShowLoading(false);
                 }));
         }
