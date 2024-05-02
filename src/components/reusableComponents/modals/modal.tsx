@@ -84,7 +84,7 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
                 <Box sx={style}>
                     <div className='text-center'>
                         <Typography id="modal-modal-title" variant="h6" component="h2">
-        Gentile utente
+        Attenzione!
                         </Typography>
                         <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             Le modifiche andranno perse

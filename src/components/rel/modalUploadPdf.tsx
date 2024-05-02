@@ -33,7 +33,7 @@ const ModalUploadPdf : React.FC<ModalProps> =({setOpen, open}) => {
                 <Box sx={style}>
                     <div className='text-center'>
                         <Typography id="modal-modal-title" variant="h6" component="h2">
-                 Gentile utente
+                 Operazione andata a buon fine
                         </Typography>
                     </div>
                     <div className='text-center'>
