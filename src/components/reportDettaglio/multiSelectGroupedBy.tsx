@@ -35,7 +35,7 @@ const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({m
                 setFgContestazione(res.data);                
             })
             .catch(((err)=>{
-                manageError(err,navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             }));
     };
 

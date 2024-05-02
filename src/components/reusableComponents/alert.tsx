@@ -28,27 +28,39 @@ const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, di
 
     let sentenceAlert = '';
     let colorAlert:AlertColor = 'success';
-    if(mainState.apiError === 401){
+    if(mainState.apiError === 401 || mainState.apiError === 403 ){
         sentenceAlert =  "Gentile utente non è autenticato.";
         colorAlert = 'error';
     }else if(mainState.apiError === 419){
-        sentenceAlert =  "Gentile utente la sesione è scaduta.";
+        sentenceAlert =  "Gentile utente la sesione è scaduta. ";
+        colorAlert = 'warning';
+    }else if(mainState.apiError === 500){
+        sentenceAlert =  "Gentile utente l'operazione non è stata eseguita. Contatti l'amministratore";
+        colorAlert = 'error';
+    }else if(mainState.apiError === 400){
+        sentenceAlert =  "Richiesta non eseguita. Contatti l'amministratore";
+        colorAlert = 'error';
+    }else if(mainState.apiError === 404){
+        sentenceAlert =  "Non ci sono risultati per la ricerca eseguita";
+        colorAlert = "info";
+    }else if(mainState.apiError === "Network Error"){
+        sentenceAlert =  "La connessione Internet risulta offline";
         colorAlert = 'warning';
     }
-
+    
     const [css, setCss] = useState('main_container_alert_component');
 
     React.useEffect(()=>{
-        if(visible === true){
+        if(visible === true && mainState.apiError !== null){
+
+            const logout = mainState.apiError === 401 || mainState.apiError === 403 || mainState.apiError === 419;
             setCss('main_container_alert_component_show');
             const timer = setTimeout(() => {
     
                 setCss('main_container_alert_component_hidden');
                 setVisible(false);
 
-                if(profilo.auth === 'PAGOPA' || profilo.profilo === 'REC' ||profilo.profilo === 'CON'){
-                    //navigate('/azureLogin');
-                }else{
+                if(logout){
                     window.location.href = redirect;
                 }
                 
@@ -62,11 +74,11 @@ const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, di
     },[visible]);
 
     React.useEffect(()=>{
-        if(visible === false){
+        if(visible === false  && mainState.apiError !== null){
            
             const timer = setTimeout(() => {
                 handleModifyMainState({apiError:null});
-            }, 2000);
+            }, 500);
             return () =>{
                 clearTimeout(timer);
             }; 

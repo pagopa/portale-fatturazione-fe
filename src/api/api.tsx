@@ -4,7 +4,7 @@ import { TokenObject,ManageErrorResponse} from '../types/typesGeneral';
 export const url = process.env.REACT_APP_URL;
 export const redirect = process.env.REACT_APP_REDIRECT || '';
 
-export const manageError = (res:ManageErrorResponse,navigate:any,dispatchMainState:any) =>{
+export const manageError = (res:ManageErrorResponse,dispatchMainState:any) =>{
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -12,26 +12,34 @@ export const manageError = (res:ManageErrorResponse,navigate:any,dispatchMainSta
             value:valueObj
         });
     };
-    
+    console.log(res);
     if(res?.response?.request?.status === 401){
         // localStorage.clear();
         // window.location.href = redirect;
         handleModifyMainState({apiError:res.response.request.status});
-        console.log(res);
+        
     }else if(res?.response?.request?.status   === 404){
         //navigate('/error');
         // alert('Qualcosa è andato storto');
+        handleModifyMainState({apiError:res.response.request.status});
     }else if(res?.response?.request?.status   === 419){
-        window.location.href = redirect;
+        handleModifyMainState({apiError:res.response.request.status});
+        //window.location.href = redirect;
        
     }else if(res?.response?.request?.status  === 400){
-        console.log('400 da gestire');
+        handleModifyMainState({apiError:res.response.request.status});
+        // console.log('400 da gestire');
     }else if(res?.response?.request?.status  === 403){
-        window.location.href = redirect;
+        handleModifyMainState({apiError:res.response.request.status});
+        //window.location.href = redirect;
         //navigate('/error');
     }else if(res?.response?.request?.status  === 500){
-        alert('Operazione non eseguita: Internal Server Error');
-        navigate('/error');
+        handleModifyMainState({apiError:res.response.request.status});
+        // alert('Operazione non eseguita: Internal Server Error');
+        // navigate('/error');
+    }else if(res?.message === "Network Error"){
+        handleModifyMainState({apiError:"Network Error"});
+        //window.location.href = '/error';
     }
     
 };

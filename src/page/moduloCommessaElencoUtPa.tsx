@@ -60,7 +60,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
         await getAnni(token, mainState.nonce).then((res:GetAnniResponse)=>{
             setAnni(res.data);
         }).catch((err:ManageErrorResponse)=>{
-            manageError(err, navigate,dispatchMainState);
+            manageError(err,dispatchMainState);
         });
     };
 
@@ -70,7 +70,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
             const finalData = fixResponseForDataGrid(res.data);
             setGridData(finalData);
         }).catch((err:ManageErrorResponse)=>{
-            manageError(err, navigate,dispatchMainState);
+            manageError(err,dispatchMainState);
         });
     };
 
@@ -154,7 +154,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
                     navigate(PathPf.LISTA_COMMESSE);
                 }
             }).catch((err) =>{
-                manageError(err, navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             });
         }
     };

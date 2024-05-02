@@ -98,7 +98,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                 saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio/ ${ rel?.ragioneSociale} /${rel?.mese}/${rel?.anno}.xlsx` );
                 setShowDownloading(false);
             }).catch((err)=>{
-                manageError(err,navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
                 setShowDownloading(false);
             });
         }else{
@@ -106,7 +106,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                 saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio / ${ rel?.ragioneSociale} / ${rel?.mese} / ${rel?.anno}.xlsx` );
                 setShowDownloading(false);
             }).catch((err)=>{
-                manageError(err,navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
                 setShowDownloading(false);
             });
         }
@@ -119,7 +119,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
             await getRelPdf(token, mainState.nonce, statusApp.idElement).then((res: ResponseDownloadPdf)=>{
                 toDoOnDownloadPdf(res);
             }).catch((err)=>{
-                manageError(err,navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             });
         }  
        
@@ -132,7 +132,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                 saveAs("data:text/plain;base64," + res.data.documento,`REL firmata / ${ rel?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${rel?.anno}.pdf` );
                 setShowDownloading(false);
             }).catch((err)=>{
-                manageError(err,navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
                 setShowDownloading(false);
             });
         }else{
@@ -140,7 +140,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                 saveAs("data:text/plain;base64," + res.data.documento,`REL firmata / ${ rel?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${rel?.anno}.pdf` );
                 setShowDownloading(false);
             }).catch((err)=>{
-                manageError(err,navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
                 setShowDownloading(false);
             });
         } 
@@ -154,13 +154,13 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
             await getLogRelDocumentoFirmato(token, mainState.nonce,bodySelf).then((res) =>{
                 setLastUpdateDocFirmato(res.data[0].dataEvento);
             }).catch((err)=>{ 
-                manageError(err, navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             });
         }else if(profilo.auth === 'PAGOPA'){
             await getLogPagoPaRelDocumentoFirmato(token, mainState.nonce,body).then((res) =>{
                 setLastUpdateDocFirmato(res.data[0].dataEvento);
             }).catch((err)=>{
-                manageError(err, navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             });
         }
         
@@ -220,7 +220,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                 }
             }).catch((err)=>{
                 setLoadingDettaglio(false);
-                manageError(err, navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             });
         }else{
             getSingleRelPagopa(token,mainState.nonce,idRel).then((res) =>{
@@ -235,7 +235,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                 });
             }).catch((err)=>{
                 setLoadingDettaglio(false);
-                manageError(err, navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             });
         }
     };  

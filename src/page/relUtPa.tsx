@@ -112,7 +112,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                     setGetListaRelRunning(false);
                 }).catch((error)=>{
                     setGetListaRelRunning(false);
-                    manageError(error, navigate,dispatchMainState);
+                    manageError(error, dispatchMainState);
                 });
         }else{
             await  getListaRelPagoPa(token,mainState.nonce,nPage, nRows, bodyRel)
@@ -144,7 +144,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                     setGetListaRelRunning(false);
                 }).catch((error)=>{
                     setGetListaRelRunning(false);
-                    manageError(error, navigate,dispatchMainState);
+                    manageError(error, dispatchMainState);
                 });
         }            
     };
@@ -193,7 +193,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 saveAs("data:text/plain;base64," + res.data.documento,`Regolari esecuzioni /${data[0]?.ragioneSociale}/ ${mesiWithZero[bodyDownload.mese-1]}/ ${bodyDownload.anno}.xlsx` );
                 setShowLoading(false);
             }).catch((err)=>{
-                manageError(err,navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             }); 
         }else{
             await downloadListaRelPagopa(token,mainState.nonce,bodyDownload).then((res)=>{
@@ -204,7 +204,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 saveAs("data:text/plain;base64," + res.data.documento,fileName );
                 setShowLoading(false);
             }).catch((err)=>{
-                manageError(err,navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             }); 
         }
     };
@@ -222,7 +222,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 setShowLoading(false);
             })
             .catch(err => {
-                manageError(err,navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             });
     };
     

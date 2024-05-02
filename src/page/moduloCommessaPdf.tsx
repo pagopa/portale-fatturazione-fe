@@ -99,7 +99,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState, dispatchMainSt
         getModuloCommessaPdf(token, statusApp.anno,statusApp.mese, mainState.nonce).then((res:ResponseGetPdfPagoPa)=>{
             toDoOnGetPdfSelfcarePagopa(res);
         }).catch((err)=>{
-            manageError(err, navigate,dispatchMainState);
+            manageError(err,dispatchMainState);
         });  
     };
 
@@ -108,7 +108,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState, dispatchMainSt
             .then((res)=>{
                 toDoOnGetPdfSelfcarePagopa(res);
             }).catch((err)=>{
-                manageError(err, navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             });  
     };
 
@@ -126,7 +126,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState, dispatchMainSt
         downloadModuloCommessaPdf(token, statusApp.anno,statusApp.mese, tipoCommessa, mainState.nonce).then((res: ResponseDownloadPdf)=>{
             toDoOnDownloadPdf(res);
         }).catch((err)=>{
-            manageError(err, navigate,dispatchMainState);
+            manageError(err,dispatchMainState);
         });   
     };
 
@@ -135,7 +135,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState, dispatchMainSt
         downloadModuloCommessaPagoPaPdf(token,  mainState.nonce,statusApp.mese,statusApp.anno,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto,tipoCommessa).then((res:ResponseDownloadPdf)=>{
             toDoOnDownloadPdf(res);
         }).catch((err)=>{
-            manageError(err, navigate,dispatchMainState);
+            manageError(err,dispatchMainState);
         }); 
     };
 

@@ -90,7 +90,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
                 setProdotti(res.data);
             })
             .catch(((err)=>{
-                manageError(err,navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             }));
     };
 
@@ -100,7 +100,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
                 setGridData(res.data);
             })
             .catch((err)=>{
-                manageError(err,navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             }); 
     };
 
@@ -111,7 +111,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
                 setGridData(res.data);
             })
             .catch((err)=>{
-                manageError(err,navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             }); 
     };
 
@@ -127,7 +127,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
                 setShowLoading(false);
             })
             .catch((err)=>{
-                manageError(err,navigate,dispatchMainState);
+                manageError(err,dispatchMainState);
             });
     };
 
