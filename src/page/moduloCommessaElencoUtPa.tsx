@@ -204,7 +204,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
                         >
             Filtra 
                         </Button>
-                        {valueSelect === '' &&
+                        {valueSelect !== '' &&
                             <Typography
                                 variant="caption-semibold"
                                 onClick={()=>{setValueSelect(''); getListaCommessaGrid('');}}
