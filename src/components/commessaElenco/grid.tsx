@@ -6,8 +6,8 @@ import { useNavigate } from 'react-router';
 import { DataGridCommessa } from '../../types/typeModuloCommessaElenco';
 import { MainState, Params } from '../../types/typesGeneral';
 import { PathPf } from '../../types/enum';
-import { month } from '../../reusableFunctin/reusableArrayObj';
-import { getStatusApp } from '../../reusableFunctin/actionLocalStorage';
+import { month } from '../../reusableFunction/reusableArrayObj';
+import { getStatusApp } from '../../reusableFunction/actionLocalStorage';
 
 interface GridComponentProps {
     data: DataGridCommessa[],

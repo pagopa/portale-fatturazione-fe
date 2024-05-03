@@ -26,7 +26,8 @@ export interface LoginProps {
 
 export interface SideNavProps{
     dispatchMainState:any,
-    mainState:any
+    mainState:MainState,
+    setOpenBasicModal_DatFat_ModCom:any
 }
 
 export interface StepperProps {

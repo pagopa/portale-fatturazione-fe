@@ -8,8 +8,8 @@ import DynamicInsert from './dynamicInsert';
 import TextFieldComponent from './textField';
 import {AreaPersonaleContext} from '../../types/typesAreaPersonaleUtenteEnte';
 import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
-import { getProfilo } from '../../reusableFunctin/actionLocalStorage';
-import { createDateFromString } from '../../reusableFunctin/function';
+import { getProfilo } from '../../reusableFunction/actionLocalStorage';
+import { createDateFromString } from '../../reusableFunction/function';
 
 const TabAreaPersonaleUtente = () => {
     const {mainState,datiFatturazione,setDatiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);

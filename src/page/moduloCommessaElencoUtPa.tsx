@@ -10,8 +10,8 @@ import { getAnni, getDatiModuloCommessa, getListaCommessaFiltered } from '../api
 import ModalRedirect from '../components/commessaInserimento/madalRedirect';
 import { getDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
 import { PathPf } from '../types/enum';
-import { getProfilo, getStatusApp, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from '../reusableFunctin/actionLocalStorage';
-import { fixResponseForDataGrid } from '../reusableFunctin/function';
+import { getProfilo, getStatusApp, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from '../reusableFunction/actionLocalStorage';
+import { fixResponseForDataGrid } from '../reusableFunction/function';
 
 const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatchMainState,mainState, valueSelect, setValueSelect}) => {
 

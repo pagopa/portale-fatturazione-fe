@@ -2,8 +2,8 @@ import React from 'react';
 import { Grid , Typography} from '@mui/material';
 import LabelComponent from './label';
 import { PrimoContainerInsComProps } from '../../types/typeModuloCommessaInserimento';
-import { getProfilo, getStatusApp } from '../../reusableFunctin/actionLocalStorage';
-import { month } from '../../reusableFunctin/reusableArrayObj';
+import { getProfilo, getStatusApp } from '../../reusableFunction/actionLocalStorage';
+import { month } from '../../reusableFunction/reusableArrayObj';
 
 const PrimoContainerInsCom : React.FC<PrimoContainerInsComProps> = () => {
     const statusApplication = getStatusApp();

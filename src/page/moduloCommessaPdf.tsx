@@ -13,11 +13,11 @@ import { downloadModuloCommessaPdf, getModuloCommessaPdf } from "../api/apiSelfc
 import { downloadModuloCommessaPagoPaPdf, getModuloCommessaPagoPaPdf } from "../api/apiPagoPa/moduloComessaPA/api";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../types/enum";
-import { getProfilo, getStatusApp, getTipoCommessa, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from "../reusableFunctin/actionLocalStorage";
-import useIsTabActive from "../reusableFunctin/tabIsActiv";
-import { mesiWithZero, month } from "../reusableFunctin/reusableArrayObj";
+import { getProfilo, getStatusApp, getTipoCommessa, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from "../reusableFunction/actionLocalStorage";
+import useIsTabActive from "../reusableFunction/tabIsActiv";
+import { mesiWithZero, month } from "../reusableFunction/reusableArrayObj";
 import { DatiCommessaPdf, ResponseGetPdfPagoPa } from "../types/typeListaModuliCommessa";
-import { createDateFromString, replaceDate } from "../reusableFunctin/function";
+import { createDateFromString, replaceDate } from "../reusableFunction/function";
 
 const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState, dispatchMainState}) =>{
 

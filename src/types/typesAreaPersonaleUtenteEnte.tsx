@@ -1,3 +1,5 @@
+import { MainState } from "./typesGeneral";
+
 export interface SuccesResponseGetDatiFatturazione {
     data:DatiFatturazione
 }
@@ -8,8 +10,10 @@ export type Contatti = {
 }
 
 export interface AreaPersonaleProps{ 
-    mainState?:any,
-    dispatchMainState:any
+    mainState:MainState,
+    dispatchMainState:any,
+    open:boolean,
+    setOpen:any
 }
 export interface DatiFatturazione{
     id?:string,

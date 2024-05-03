@@ -19,12 +19,11 @@ import { getDettaglioModuloCommessa, insertDatiModuloCommessa } from '../api/api
 import { getModuloCommessaPagoPa, modifyDatiModuloCommessaPagoPa } from '../api/apiPagoPa/moduloComessaPA/api';
 import { getDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
 import { getDatiFatturazionePagoPa } from '../api/apiPagoPa/datiDiFatturazionePA/api';
-import useIsTabActive from '../reusableFunctin/tabIsActiv';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import { PathPf } from '../types/enum';
-import { getProfilo, getStatusApp, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from '../reusableFunctin/actionLocalStorage';
-import { calculateTot } from '../reusableFunctin/function';
-import { month } from '../reusableFunctin/reusableArrayObj';
+import { getProfilo, getStatusApp, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from '../reusableFunction/actionLocalStorage';
+import { calculateTot } from '../reusableFunction/function';
+import { month } from '../reusableFunction/reusableArrayObj';
 
 export const InserimentoModuloCommessaContext = createContext<InsModuloCommessaContext>({
     datiCommessa: {
@@ -54,7 +53,7 @@ export const InserimentoModuloCommessaContext = createContext<InsModuloCommessaC
    
 });
 
-const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps> = ({mainState, dispatchMainState}) => {
+const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps> = ({mainState, dispatchMainState, open, setOpen}) => {
 
     const token =  getToken();
     const profilo =  getProfilo();
@@ -69,7 +68,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
         });
     };
 
-    const [open, setOpen] = useState(false);
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
     const [totale, setTotale] = useState<TotaleNazionaleInternazionale>({totaleNazionale:0, totaleInternazionale:0, totaleNotifiche:0});
     const [dataMod, setDataModifica] = useState('');

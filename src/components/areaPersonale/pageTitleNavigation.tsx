@@ -6,7 +6,7 @@ import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
 import DnsIcon from '@mui/icons-material/Dns';
 import {  useNavigate } from 'react-router';
 import { PathPf } from '../../types/enum';
-import { getProfilo, getStatusApp } from '../../reusableFunctin/actionLocalStorage';
+import { getProfilo, getStatusApp } from '../../reusableFunction/actionLocalStorage';
 interface PageTitleProps {
     dispatchMainState:any,
     setOpen:any

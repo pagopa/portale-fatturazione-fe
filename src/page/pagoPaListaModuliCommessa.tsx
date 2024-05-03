@@ -13,11 +13,11 @@ import { downloadDocumentoListaModuloCommessaPagoPa, listaModuloCommessaPagopa }
 import { saveAs } from "file-saver";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../types/enum";
-import { deleteFilterToLocalStorageCommessa, getFiltersFromLocalStorageCommessa, getInfoPageFromLocalStorageCommessa, getProfilo, getToken, profiliEnti, setFilterToLocalStorageCommessa, setInfoPageToLocalStorageCommessa } from "../reusableFunctin/actionLocalStorage";
+import { deleteFilterToLocalStorageCommessa, getFiltersFromLocalStorageCommessa, getInfoPageFromLocalStorageCommessa, getProfilo, getToken, profiliEnti, setFilterToLocalStorageCommessa, setInfoPageToLocalStorageCommessa } from "../reusableFunction/actionLocalStorage";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
-import { currentMonth, getCurrentFinancialYear } from "../reusableFunctin/function";
-import { currentYear, mesi, mesiGrid, mesiWithZero } from "../reusableFunctin/reusableArrayObj";
+import { currentMonth, getCurrentFinancialYear } from "../reusableFunction/function";
+import { currentYear, mesi, mesiGrid, mesiWithZero } from "../reusableFunction/reusableArrayObj";
 
 const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState, dispatchMainState}) =>{
 
