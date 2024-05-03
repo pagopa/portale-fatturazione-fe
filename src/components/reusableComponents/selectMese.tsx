@@ -1,7 +1,7 @@
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { Box } from "@mui/system";
 import { SelectMeseProps } from "../../types/typesGeneral";
-import { mesi } from "../../reusableFunctin/reusableArrayObj";
+import { mesi } from "../../reusableFunction/reusableArrayObj";
 
 const SelectMese : React.FC<SelectMeseProps> = ({setValue, values}) =>{
 

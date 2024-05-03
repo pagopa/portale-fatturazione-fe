@@ -15,9 +15,9 @@ import SelectStatoPdf from "../components/rel/selectStatoPdf";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { saveAs } from "file-saver";
 import { PathPf } from "../types/enum";
-import { deleteFilterToLocalStorageRel, getFiltersFromLocalStorageRel, getProfilo, getToken, profiliEnti, setFilterToLocalStorageRel } from "../reusableFunctin/actionLocalStorage";
+import { deleteFilterToLocalStorageRel, getFiltersFromLocalStorageRel, getProfilo, getToken, profiliEnti, setFilterToLocalStorageRel } from "../reusableFunction/actionLocalStorage";
 import { OptionMultiselectChackbox } from "../types/typeReportDettaglio";
-import { mesiGrid, mesiWithZero } from "../reusableFunctin/reusableArrayObj";
+import { mesiGrid, mesiWithZero } from "../reusableFunction/reusableArrayObj";
 
 const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
@@ -63,6 +63,8 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         idContratto:null,
         caricata:null
     });
+
+ 
 
     useEffect(()=>{
         const result = getFiltersFromLocalStorageRel();

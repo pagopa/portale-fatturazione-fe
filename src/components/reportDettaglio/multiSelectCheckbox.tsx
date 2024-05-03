@@ -9,7 +9,7 @@ import { MultiselectNotificheProps, OptionMultiselectChackbox } from '../../type
 import {useState, useEffect } from 'react';
 import { BodyListaNotifiche} from '../../types/typesGeneral';
 import { listaEntiNotifichePage, listaEntiNotifichePageConsolidatore } from '../../api/apiSelfcare/notificheSE/api';
-import { getProfilo, getToken } from '../../reusableFunctin/actionLocalStorage';
+import { getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
 
 const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetLista, dataSelect, setDataSelect,mainState,setTextValue, textValue ,valueAutocomplete, setValueAutocomplete,dispatchMainState}) => {
 

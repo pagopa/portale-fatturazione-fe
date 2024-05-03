@@ -20,9 +20,9 @@ import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import GridCustom from "../components/reusableComponents/gridCustom";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 import { saveAs } from "file-saver";
-import { deleteFilterToLocalStorageNotifiche, getFiltersFromLocalStorageNotifiche, getProfilo, getStatusApp, getToken, profiliEnti, setFilterToLocalStorageNotifiche } from "../reusableFunctin/actionLocalStorage";
-import {mesi, mesiGrid, mesiWithZero, tipoNotifica } from "../reusableFunctin/reusableArrayObj";
-import { getCurrentFinancialYear } from "../reusableFunctin/function";
+import { deleteFilterToLocalStorageNotifiche, getFiltersFromLocalStorageNotifiche, getProfilo, getStatusApp, getToken, profiliEnti, setFilterToLocalStorageNotifiche } from "../reusableFunction/actionLocalStorage";
+import {mesi, mesiGrid, mesiWithZero, tipoNotifica } from "../reusableFunction/reusableArrayObj";
+import { getCurrentFinancialYear } from "../reusableFunction/function";
 
 const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMainState}) => {
 

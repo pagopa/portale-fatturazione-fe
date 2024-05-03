@@ -1,3 +1,4 @@
+import { MainState } from "./typesGeneral";
 
 export type ModuliCommessa = {
     numeroNotificheNazionali: number,
@@ -11,8 +12,10 @@ export interface DatiCommessa  {
     moduliCommessa : ModuliCommessa[]
 }
 export  interface ModuloCommessaInserimentoProps{
-    mainState:any,
-    dispatchMainState:any
+    mainState:MainState,
+    dispatchMainState:any,
+    open:boolean,
+    setOpen:any
 }
 export interface TotaleNazionaleInternazionale{
     totaleNazionale:number,

@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { MainState } from '../../types/typesGeneral';
 import { redirect } from '../../api/api';
-import { getProfilo } from '../../reusableFunctin/actionLocalStorage';
+import { getProfilo } from '../../reusableFunction/actionLocalStorage';
 import { useNavigate } from 'react-router';
 
 type AlertProps = {
@@ -16,8 +16,7 @@ type AlertProps = {
 }
 
 const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, dispatchMainState}) => {
-    const profilo =  getProfilo();
-    const navigate = useNavigate();
+
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({

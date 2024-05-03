@@ -21,7 +21,7 @@ import {  getDatiFatturazionePagoPa,
 import BasicModal from '../components/reusableComponents/modals/modal';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import {PathPf} from '../types/enum';
-import { getProfilo, getStatusApp, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from '../reusableFunctin/actionLocalStorage';
+import { getProfilo, getStatusApp, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from '../reusableFunction/actionLocalStorage';
 
 export const DatiFatturazioneContext = createContext<AreaPersonaleContext>({
     datiFatturazione:{
@@ -41,7 +41,7 @@ export const DatiFatturazioneContext = createContext<AreaPersonaleContext>({
     }
 });
 
-const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, dispatchMainState}) => {
+const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, dispatchMainState, open, setOpen}) => {
    
     const token =  getToken();
     const profilo =  getProfilo();
@@ -56,7 +56,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         });
     };
 
-    const [open, setOpen] = useState(false);
     const [openModalLoading, setOpenModalLoading] = useState(false);
     // const [alertVisible, setAlertVisible] = useState(false);
     const [datiFatturazione, setDatiFatturazione] = useState<DatiFatturazione>({

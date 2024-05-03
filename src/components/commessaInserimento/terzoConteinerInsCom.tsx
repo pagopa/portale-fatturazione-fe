@@ -3,9 +3,9 @@ import { Grid, Typography, InputLabel } from '@mui/material';
 import { TerzoContainerModCommessa, CategorieTotali} from '../../types/typeModuloCommessaInserimento';
 import { useNavigate } from 'react-router';
 import { getDatiConfigurazioneCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
-import { getProfilo, getStatusApp, getToken } from '../../reusableFunctin/actionLocalStorage';
-import { month } from '../../reusableFunctin/reusableArrayObj';
-import { createDateFromString } from '../../reusableFunctin/function';
+import { getProfilo, getStatusApp, getToken } from '../../reusableFunction/actionLocalStorage';
+import { month } from '../../reusableFunction/reusableArrayObj';
+import { createDateFromString } from '../../reusableFunction/function';
 
 const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali, dataModifica, mainState}) => {
     

@@ -4,8 +4,8 @@ import { RowInsComProps, ModuliCommessa, DatiCommessa} from '../../types/typeMod
 import YupString from '../../validations/string/index';
 import { InsModuloCommessaContext } from '../../types/typeModuloCommessaInserimento';
 import { InserimentoModuloCommessaContext } from '../../page/moduloCommessaInserimentoUtEn30';
-import { getStatusApp } from '../../reusableFunctin/actionLocalStorage';
-import { month } from '../../reusableFunctin/reusableArrayObj';
+import { getStatusApp } from '../../reusableFunction/actionLocalStorage';
+import { month } from '../../reusableFunction/reusableArrayObj';
 
 const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHidden, idTipoSpedizione, rowNumber}) => {
     const { setDatiCommessa,setDisableContinua, datiCommessa, mainState} = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);

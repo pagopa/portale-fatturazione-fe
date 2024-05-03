@@ -28,8 +28,8 @@ import './App.css';
 import RelPage from './page/relUtPa';
 import { reducerMainState } from './reducer/reducerMainState';
 import { getAuthProfilo, manageError, redirect } from './api/api';
-import { getProfilo } from './reusableFunctin/actionLocalStorage';
-import useIsTabActive from './reusableFunctin/tabIsActiv';
+import { getProfilo } from './reusableFunction/actionLocalStorage';
+import useIsTabActive from './reusableFunction/tabIsActiv';
 import BasicAlerts from './components/reusableComponents/alert';
 
 enum PathPf {
@@ -93,6 +93,7 @@ const App = ({ instance }) => {
  
     const [checkProfilo,setCheckProfilo] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
+    const [openBasicModal_DatFat_ModCom, setOpenBasicModal_DatFat_ModCom] = useState(false);
     // set status page abilita e disabilita le modifiche al componente dati fatturazione
     
     const [mainState, dispatchMainState] = useReducer(reducerMainState, {
@@ -176,6 +177,7 @@ const App = ({ instance }) => {
                             <Grid item xs={2}>
                                 <SideNavComponent  dispatchMainState={ dispatchMainState}
                                     mainState={mainState}
+                                    setOpenBasicModal_DatFat_ModCom={setOpenBasicModal_DatFat_ModCom}
                                 />
                             </Grid> 
 
@@ -190,11 +192,11 @@ const App = ({ instance }) => {
                                 
                                     {!recOrConsIsLogged &&
                                     <>
-                                        <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte mainState={mainState} dispatchMainState={ dispatchMainState} />} />
+                                        <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte mainState={mainState} dispatchMainState={ dispatchMainState} setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} />} />
                            
                                         <Route path={PathPf.LISTA_COMMESSE} element={<ModuloCommessaElencoUtPa mainState={mainState}  dispatchMainState={ dispatchMainState} valueSelect={valueAnnoElencoCom}  setValueSelect={setValueAnnoElencoCom}  />} />
                           
-                                        <Route path={PathPf.MODULOCOMMESSA} element={<ModuloCommessaInserimentoUtEn30 mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
+                                        <Route path={PathPf.MODULOCOMMESSA} element={<ModuloCommessaInserimentoUtEn30 mainState={mainState}  dispatchMainState={ dispatchMainState} setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom}/>} />
                           
                                         <Route path={PathPf.PDF_COMMESSA} element={<ModuloCommessaPdf mainState={mainState} dispatchMainState={ dispatchMainState}/>} />
                           
@@ -228,7 +230,7 @@ const App = ({ instance }) => {
 
         </Router>;
 
-    }else if(!profilo.jwt){
+    }else if(!profilo.jwt && mainState.apiError === null){
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App">
@@ -246,7 +248,7 @@ const App = ({ instance }) => {
                             
                             <Route path="azure" element={<Azure dispatchMainState={ dispatchMainState}/>} />
                             
-                            <Route path="*" element={<Navigate to={"/error"} replace />} />
+                           // <Route path="*" element={<Navigate to={"/error"} replace />} />
 
                             <Route path="/azureLogin" element={<AzureLogin dispatchMainState={dispatchMainState}/>} />
 
@@ -256,6 +258,14 @@ const App = ({ instance }) => {
                     </div>
 
                     <FooterPostLogin />
+                </div>
+            </ThemeProvider>
+
+        </Router>;
+    }else if(!profilo.jwt){
+        route = <Router>
+            <ThemeProvider theme={theme}>
+                <div className="App">
                 </div>
             </ThemeProvider>
 

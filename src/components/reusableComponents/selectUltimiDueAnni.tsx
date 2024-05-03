@@ -2,7 +2,7 @@ import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { Box } from "@mui/system";
 import React from "react";
 import { SelectUltimiDueAnniProps } from "../../types/typesGeneral";
-import { getCurrentFinancialYear } from "../../reusableFunctin/function";
+import { getCurrentFinancialYear } from "../../reusableFunction/function";
 
 const SelectUltimiDueAnni : React.FC<SelectUltimiDueAnniProps> = ({setValue, values}) =>{
 

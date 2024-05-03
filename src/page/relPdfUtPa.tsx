@@ -17,9 +17,9 @@ import generatePDF from 'react-to-pdf';
 import { redirect } from '../api/api';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import { PathPf } from '../types/enum';
-import { getProfilo, getStatusApp, getToken, profiliEnti } from '../reusableFunctin/actionLocalStorage';
-import { mesi, mesiWithZero, month } from '../reusableFunctin/reusableArrayObj';
-import { createDateFromString } from '../reusableFunctin/function';
+import { getProfilo, getStatusApp, getToken, profiliEnti } from '../reusableFunction/actionLocalStorage';
+import { mesi, mesiWithZero, month } from '../reusableFunction/reusableArrayObj';
+import { createDateFromString } from '../reusableFunction/function';
 import ModalRedirect from '../components/commessaInserimento/madalRedirect';
 
 const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) =>{
@@ -31,13 +31,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
     const enti = profiliEnti();
     const statusApp = getStatusApp();
 
-    const handleModifyMainState = (valueObj) => {
-        dispatchMainState({
-            type:'MODIFY_MAIN_STATE',
-            value:valueObj
-        });
-    };
-    console.log(mainState,'tt');
+   
     const [showDownloading, setShowDownloading] = useState(false);
     const [lastUpdateDocFirmato, setLastUpdateDocFirmato] = useState('');
     const [file, setFile] = useState<File | null>(null);
@@ -76,6 +70,9 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
     useEffect(()=>{
         if(!token){
             window.location.href = redirect;
+        }
+        if(mainState.relSelected === null){
+            navigate(PathPf.LISTA_REL);
         }
     },[]);
 

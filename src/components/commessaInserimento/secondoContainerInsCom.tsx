@@ -7,8 +7,8 @@ import { manageError } from '../../api/api';
 import { useNavigate } from 'react-router';
 import { ManageErrorResponse } from '../../types/typesGeneral';
 import { getCategoriaSpedizione } from '../../api/apiSelfcare/moduloCommessaSE/api';
-import { getProfilo, getToken } from '../../reusableFunctin/actionLocalStorage';
-import { getIdByTipo } from '../../reusableFunctin/function';
+import { getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
+import { getIdByTipo } from '../../reusableFunction/function';
 
 const SecondoContainerInsCom : React.FC = () => {
     const { totale, mainState,dispatchMainState } = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
