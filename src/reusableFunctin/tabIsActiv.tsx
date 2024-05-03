@@ -6,7 +6,7 @@ export default function useIsTabActive (){
         // eslint-disable-next-line no-undef
         setIsTabVisible(document.visibilityState === 'visible');
     }, []);
-    console.log(isTabVisible);
+
     useEffect(() => {
         if(window.location.pathname  !== '/azureLogin'){
             document.addEventListener('visibilitychange', handleVisibilityChange);
