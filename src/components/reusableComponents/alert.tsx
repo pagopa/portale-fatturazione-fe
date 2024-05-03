@@ -61,6 +61,7 @@ const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, di
                 setVisible(false);
 
                 if(logout){
+                    localStorage.clear();
                     window.location.href = redirect;
                 }
                 
