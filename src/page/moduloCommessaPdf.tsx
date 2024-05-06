@@ -14,7 +14,6 @@ import { downloadModuloCommessaPagoPaPdf, getModuloCommessaPagoPaPdf } from "../
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../types/enum";
 import { getProfilo, getStatusApp, getTipoCommessa, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from "../reusableFunction/actionLocalStorage";
-import useIsTabActive from "../reusableFunction/tabIsActiv";
 import { mesiWithZero, month } from "../reusableFunction/reusableArrayObj";
 import { DatiCommessaPdf, ResponseGetPdfPagoPa } from "../types/typeListaModuliCommessa";
 import { createDateFromString, replaceDate } from "../reusableFunction/function";
@@ -29,6 +28,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState, dispatchMainSt
     const enti = profiliEnti();
 
     const [showLoading, setShowLoading] = useState(false);
+    const [showLoadingDettaglio, setShowLoadingDettaglio] = useState(false);
     const [dataPdf, setDataPdf] = useState<DataPdf>({
         cup: "",
         cig: "",
@@ -96,18 +96,24 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState, dispatchMainSt
     };
 
     const getPdf = async() =>{
+        setShowLoadingDettaglio(true);
         getModuloCommessaPdf(token, statusApp.anno,statusApp.mese, mainState.nonce).then((res:ResponseGetPdfPagoPa)=>{
             toDoOnGetPdfSelfcarePagopa(res);
+            setShowLoadingDettaglio(false);
         }).catch((err)=>{
+            setShowLoadingDettaglio(false);
             manageError(err,dispatchMainState);
         });  
     };
 
     const getPagoPdf = async() =>{
+        setShowLoadingDettaglio(true);
         getModuloCommessaPagoPaPdf(token, mainState.nonce,statusApp.mese,statusApp.anno,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto)
             .then((res)=>{
                 toDoOnGetPdfSelfcarePagopa(res);
+                setShowLoadingDettaglio(false);
             }).catch((err)=>{
+                setShowLoadingDettaglio(false);
                 manageError(err,dispatchMainState);
             });  
     };
@@ -278,6 +284,11 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState, dispatchMainSt
                     open={showLoading} 
                     setOpen={setShowLoading}
                     sentence={'Downloading...'} >
+                </ModalLoading>
+                <ModalLoading 
+                    open={showLoadingDettaglio} 
+                    setOpen={setShowLoadingDettaglio}
+                    sentence={'Loading...'} >
                 </ModalLoading>
             </div>
         </>

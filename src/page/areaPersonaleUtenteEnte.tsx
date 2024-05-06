@@ -57,7 +57,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
     };
 
     const [openModalLoading, setOpenModalLoading] = useState(false);
-    // const [alertVisible, setAlertVisible] = useState(false);
     const [datiFatturazione, setDatiFatturazione] = useState<DatiFatturazione>({
         tipoCommessa:'',
         idEnte:'',
@@ -200,11 +199,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 }).catch(err => {
                     setOpenModalLoading(false);
                     manageError(err,dispatchMainState);
-                    /*if(err?.response?.status  === 500){
-                        setAlertVisible(true);
-                    }else{
-                       
-                    }*/
                 });
             }else{
                 // 1 - ed è un utente SELFCARE
@@ -223,11 +217,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                     .catch(err => {
                         setOpenModalLoading(false);
                         manageError(err,dispatchMainState);
-                        /* if(err?.response?.status  === 500){
-                            setAlertVisible(true);
-                        }else{
-                            manageError(err, navigate);
-                        }*/
                     });
             }
         }else{
@@ -289,13 +278,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 }).catch(err =>{
                     setOpenModalLoading(false);
                     manageError(err,dispatchMainState);
-                    /*if(err?.response?.status === 401){
-                        navigate('/error');
-                    }else if(err?.response?.status === 419){
-                        navigate('/error');
-                    }else if(err?.response?.status  === 500){
-                        setAlertVisible(true);
-                    }*/
                 });     
             } 
         }   
