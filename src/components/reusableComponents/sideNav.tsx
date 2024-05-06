@@ -118,8 +118,8 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
                             primoInserimetoCommessa:true
                         };
 
-                        const statusApp = localStorage.getItem('statusApplication')||'{}';
-                        const parseStatusApp = JSON.parse(statusApp);
+                        // const statusApp = localStorage.getItem('statusApplication')||'{}';
+                        // const parseStatusApp = JSON.parse(statusApp);
             
                         localStorage.setItem('statusApplication',JSON.stringify(newState));
                  
