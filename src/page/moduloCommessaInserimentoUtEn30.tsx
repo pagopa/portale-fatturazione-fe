@@ -24,6 +24,7 @@ import { PathPf } from '../types/enum';
 import { getProfilo, getStatusApp, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from '../reusableFunction/actionLocalStorage';
 import { calculateTot } from '../reusableFunction/function';
 import { month } from '../reusableFunction/reusableArrayObj';
+import ModalConfermaInserimento from '../components/commessaInserimento/modalConfermaInserimento';
 
 export const InserimentoModuloCommessaContext = createContext<InsModuloCommessaContext>({
     datiCommessa: {
@@ -73,6 +74,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     const [dataMod, setDataModifica] = useState('');
     const [buttonModifica, setButtonMofica] = useState(false);
     const [openModalLoading, setOpenModalLoading] = useState(false);
+    const [openModalConfermaIns, setOpenModalConfermaIns] = useState(false);
     const [datiCommessa, setDatiCommessa] = useState<DatiCommessa>( {
         moduliCommessa: [
             {
@@ -93,7 +95,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 totaleNotifiche:0,
                 idTipoSpedizione: 3
             }
-          
         ]
     });
     
@@ -162,7 +163,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 setTotale({totaleNazionale:objAboutTotale.totaleNumeroNotificheNazionali
                     , totaleInternazionale:objAboutTotale.totaleNumeroNotificheInternazionali
                     , totaleNotifiche:objAboutTotale.totaleNumeroNotificheDaProcessare});
-
                 setButtonMofica(res.modifica);
             }).catch((err:ManageErrorResponse)=>{
                 manageError(err,dispatchMainState);
@@ -296,13 +296,17 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
             });
     };
 
-    const OnButtonSalva = () =>{
+    const onButtonComfermaPopUp = () =>{
         setOpenModalLoading(true);
         if(profilo.auth === 'PAGOPA'){
             hendleModifyDatiModuloCommessaPagoPa();
         }else{
             hendlePostModuloCommessa();
         }
+    };
+
+    const OnButtonSalva = () =>{
+        setOpenModalConfermaIns(true);
     };
 
     const hendleOnButtonModificaModuloCommessa = () => {
@@ -424,6 +428,11 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 setOpen={setOpenModalRedirect}
                 open={openModalRedirect}
                 sentence={`Per poter inserire il modulo commessa è obbligatorio fornire  i seguenti dati di fatturazione:`}></ModalRedirect>
+            <ModalConfermaInserimento
+                setOpen={setOpenModalConfermaIns}
+                open={openModalConfermaIns}
+                onButtonComfermaPopUp={onButtonComfermaPopUp}
+            ></ModalConfermaInserimento>
             <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}></ModalLoading>
         </InserimentoModuloCommessaContext.Provider>
     );
