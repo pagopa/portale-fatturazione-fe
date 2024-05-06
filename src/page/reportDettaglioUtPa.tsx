@@ -117,8 +117,10 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
     });
 
     useEffect(() => {
+        console.log('ff');
         const result = getFiltersFromLocalStorageNotifiche();
         if(mainState.nonce !== ''){
+            
             if(Object.keys(result).length > 0){
                 getProdotti();
                 getProfili();
@@ -134,6 +136,13 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                 }else if(profilo.auth === 'PAGOPA'){
                     getRecapitistConsolidatori();
                     getlistaNotifichePagoPa( result.page + 1, result.rowsPerPage,result.bodyGetLista);
+                }
+            }else{
+                if(profilo.profilo === 'SELFCARE'){
+                    getlistaNotifiche( page + 1, rowsPerPage,bodyGetLista); 
+                }else if(profilo.auth === 'PAGOPA'){
+                    getRecapitistConsolidatori();
+                    getlistaNotifichePagoPa( page + 1, rowsPerPage,bodyGetLista);
                 }
             }
         } 
@@ -435,7 +444,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
     };
 
     const getRecapitistConsolidatori = async() =>{
-        await getTipologiaEntiCompletiPagoPa(token, mainState.nonce, 'REC').then((res)=>{          
+        console.log(1);
+        await getTipologiaEntiCompletiPagoPa(token, mainState.nonce, 'REC').then((res)=>{     
+            console.log(2);     
             setListaRecapitisti(res.data);
         }).catch(((err)=>{
             manageError(err,dispatchMainState);
