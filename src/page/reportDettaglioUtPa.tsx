@@ -42,6 +42,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
     const [notificheList, setNotificheList] = useState<NotificheList[]>([]);
     const [textValue, setTextValue] = useState('');
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
+    
     const [listaRecapitista, setListaRecapitisti] = useState<ListaRecCon[]>([]);
     const [listaConsolidatori, setListaConsolidatori] = useState<ListaRecCon[]>([]);
     const [getNotificheWorking, setGetNotificheWorking] = useState(false);
@@ -52,7 +53,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
     const [valueRispostaEnte, setValueRispostaEnte] = useState('');
     const [contestazioneStatic, setContestazioneStatic] = useState();
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
-    const [valueFgContestazione, setValueFgContestazione] = useState<FlagContestazione[]>([]);        
+    const [valueFgContestazione, setValueFgContestazione] = useState<FlagContestazione[]>([]);
+    console.log(valueAutocomplete,valueFgContestazione);        
     const [open, setOpen] = useState(false);
     const [openModalInfo, setOpenModalInfo] = useState(false);
     const [showLoading, setShowLoading] = useState(false);
@@ -127,6 +129,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                 setBodyGetLista(result.bodyGetLista);
                 setTextValue(result.textValue);
                 setValueAutocomplete(result.valueAutocomplete);
+                setValueFgContestazione(result.valueFgContestazione);
                 setPage(result.page);
                 setRowsPerPage(result.rowsPerPage);
                 setBodyDownload(result.bodyGetLista);
@@ -403,7 +406,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
         setPage(0);
         setRowsPerPage(10);
         setBodyDownload(bodyGetLista);
-        setFilterToLocalStorageNotifiche(bodyGetLista,textValue,valueAutocomplete, 0, 10);
+        setFilterToLocalStorageNotifiche(bodyGetLista,textValue,valueAutocomplete, 0, 10,valueFgContestazione);
         if(profilo.auth === 'SELFCARE'){
             getlistaNotifiche(1, 10,bodyGetLista);
         }else{
@@ -423,7 +426,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
         }
         setPage(newPage);
         const result = getFiltersFromLocalStorageNotifiche();
-        setFilterToLocalStorageNotifiche(result.bodyGetLista,result.textValue,result.valueAutocomplete, newPage, rowsPerPage);
+        setFilterToLocalStorageNotifiche(result.bodyGetLista,result.textValue,result.valueAutocomplete, newPage, rowsPerPage, result.valueFgContestazione);
        
     };
                     
@@ -433,7 +436,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
         const result = getFiltersFromLocalStorageNotifiche();
-        setFilterToLocalStorageNotifiche(result.bodyGetLista,result.textValue,result.valueAutocomplete, page, parseInt(event.target.value, 10));
+        setFilterToLocalStorageNotifiche(result.bodyGetLista,result.textValue,result.valueAutocomplete, page, parseInt(event.target.value, 10),result.valueFgContestazione);
         const realPage = page + 1;
         if(profilo.auth === 'SELFCARE'){
             getlistaNotifiche(realPage,parseInt(event.target.value, 10),bodyGetLista);

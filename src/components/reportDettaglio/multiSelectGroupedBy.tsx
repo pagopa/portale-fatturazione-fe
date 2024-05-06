@@ -18,8 +18,6 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({mainState,  setBodyGetLista, setValueFgContestazione, valueFgContestazione, dispatchMainState}) => {
 
     const token =  getToken();
-    const profilo =  getProfilo();
-    const navigate = useNavigate();
 
     const [fgContestazione, setFgContestazione] = useState<FlagContestazione[]>([]);
 
@@ -58,7 +56,7 @@ const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({m
             groupBy={(option:FlagContestazione) => option.descrizione}
             disableCloseOnSelect
             getOptionLabel={(option) => option.flag}
-            onInputChange={(event, newInputValue, reason)=>console.log('')}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
             renderInput={(params) =>{
                
                 return <TextField 
