@@ -104,8 +104,8 @@ export const getFiltersFromLocalStorageRel = () => {
     return result;
 };
 
-export const setFilterToLocalStorageNotifiche = (bodyGetLista,textValue,valueAutocomplete, page, rowsPerPage) => {
-    localStorage.setItem("filtersNotifiche", JSON.stringify({bodyGetLista,textValue,valueAutocomplete, page, rowsPerPage}));
+export const setFilterToLocalStorageNotifiche = (bodyGetLista,textValue,valueAutocomplete, page, rowsPerPage,valueFgContestazione) => {
+    localStorage.setItem("filtersNotifiche", JSON.stringify({bodyGetLista,textValue,valueAutocomplete, page, rowsPerPage,valueFgContestazione}));
 }; 
 export const deleteFilterToLocalStorageNotifiche = () => {
     localStorage.removeItem("filtersNotifiche");
