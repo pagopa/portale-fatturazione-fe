@@ -61,9 +61,9 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
                 const newCategorie = replaceDate(res.data.categorie,'[data]', '');
                 setLabelCategorie(newCategorie);
             }).catch((err)=>{
-                if(err.response.status === 401){
+                if(err?.response?.status === 401){
                     navigate('/error');
-                }else if(err.response.status === 419){
+                }else if(err?.response?.status === 419){
                     navigate('/error');
                 }
             });

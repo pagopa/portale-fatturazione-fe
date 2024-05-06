@@ -190,7 +190,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState, dispatchMainSt
                         <ViewModuleIcon sx={{paddingBottom:'3px'}}  fontSize='small'></ViewModuleIcon>
                       Modulo commessa 
                     </Typography>
-                    <Typography  variant="caption">/ {mese}</Typography>
+                    <Typography  variant="caption">/ {month[statusApp.mese - 1]}</Typography>
                 </div>
                 <div className="bg-white m-5 p-5">
                     <div className=" ">

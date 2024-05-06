@@ -109,7 +109,8 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
                         userClickOn:undefined,
                         primoInserimetoCommessa:true
                     };
-                    setInfoToStatusApplicationLoacalStorage(statusApp,newState);
+                    // setInfoToStatusApplicationLoacalStorage(statusApp,newState);
+                    localStorage.setItem('statusApplication',JSON.stringify(newState));
                     navigate(PathPf.MODULOCOMMESSA);
                 }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0 ){
     

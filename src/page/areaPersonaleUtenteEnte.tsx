@@ -144,8 +144,10 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 notaLegale:false
         
             });
-            if(err?.response?.status !== 404)
+            if(err?.response?.status !== 404){
                 manageError(err,dispatchMainState);
+            }
+                
         });
 
     };
@@ -178,7 +180,10 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 notaLegale:false
         
             });
-            manageError(err,dispatchMainState);
+            
+            if(err?.response?.status !== 404){
+                manageError(err,dispatchMainState);
+            }
         });
     };
    

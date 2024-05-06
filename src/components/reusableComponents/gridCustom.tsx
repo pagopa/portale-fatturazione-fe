@@ -1,5 +1,6 @@
 import { Card, Table, TableBody, TableCell, TableHead, TablePagination, TableRow } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { name } from "@azure/msal-browser/dist/packageMetadata";
 
 interface GridCustomProps {
     elements:object[],
@@ -59,7 +60,7 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                   
                                     return (
                 
-                                        <TableRow key={element.idEnte}>
+                                        <TableRow key={element[nameParameterApi]}>
                                             {
                                                 Object.values(sliced).map((value:any, i:number)=>{
                                                     const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;

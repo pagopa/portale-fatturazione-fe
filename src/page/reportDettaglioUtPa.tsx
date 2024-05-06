@@ -348,6 +348,10 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                     setShowLoadingGrid(false);
                 }).catch((error)=>{
                 // abilita button filtra e annulla filtri all'arrivo dei dati
+                    if(error?.response?.status === 404){
+                        setNotificheList([]);
+                        setTotalNotifiche(0);
+                    }
                     setGetNotificheWorking(false);
                     setShowLoadingGrid(false);
                     manageError(error, dispatchMainState);
@@ -362,6 +366,10 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                     setShowLoadingGrid(false);
                 }).catch((error)=>{
                     // abilita button filtra e annulla filtri all'arrivo dei dati
+                    if(error?.response?.status === 404){
+                        setNotificheList([]);
+                        setTotalNotifiche(0);
+                    }
                     setGetNotificheWorking(false);
                     setShowLoadingGrid(false);
                     manageError(error, dispatchMainState);
@@ -376,6 +384,10 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                     setShowLoadingGrid(false);
                 }).catch((error)=>{
                     // abilita button filtra e annulla filtri all'arrivo dei dati
+                    if(error?.response?.status === 404){
+                        setNotificheList([]);
+                        setTotalNotifiche(0);
+                    }
                     setGetNotificheWorking(false);
                     setShowLoadingGrid(false);
                     manageError(error, dispatchMainState);
@@ -396,6 +408,10 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                 setShowLoadingGrid(false);
             }).catch((error)=>{
                 // abilita button filtra e annulla filtri all'arrivo dei dati
+                if(error?.response?.status === 404){
+                    setNotificheList([]);
+                    setTotalNotifiche(0);
+                }
                 setGetNotificheWorking(false);
                 setShowLoadingGrid(false);
                 manageError(error, dispatchMainState);

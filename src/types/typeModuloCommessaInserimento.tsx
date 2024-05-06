@@ -180,5 +180,6 @@ export    interface ResponseDettaglioModuloCommessa {
 export interface ModalConfermaInsProps{
     setOpen:any,
     open:boolean,
-    onButtonComfermaPopUp:any
+    onButtonComfermaPopUp:any,
+    mainState:MainState
 }
