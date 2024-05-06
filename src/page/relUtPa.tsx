@@ -113,6 +113,10 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                     setTotalNotifiche(res.data.count);
                     setGetListaRelRunning(false);
                 }).catch((error)=>{
+                    if(error?.response?.status === 404){
+                        setData([]);
+                        setTotalNotifiche(0);
+                    }
                     setGetListaRelRunning(false);
                     manageError(error, dispatchMainState);
                 });
@@ -145,6 +149,10 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                     setTotalNotifiche(res.data.count);
                     setGetListaRelRunning(false);
                 }).catch((error)=>{
+                    if(error?.response?.status === 404){
+                        setData([]);
+                        setTotalNotifiche(0);
+                    }
                     setGetListaRelRunning(false);
                     manageError(error, dispatchMainState);
                 });
@@ -299,6 +307,14 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                             setPage(0);
                             setRowsPerPage(10);
                             deleteFilterToLocalStorageRel();
+                            getlistaRel({
+                                anno:currentYear,
+                                mese:month,
+                                tipologiaFattura:null,
+                                idEnti:[],
+                                idContratto:null,
+                                caricata:null
+                            },1,10);
                             
                         }} 
                         disabled={getListaRelRunning}

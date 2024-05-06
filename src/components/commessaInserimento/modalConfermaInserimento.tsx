@@ -17,7 +17,7 @@ const style = {
     p: 4,
 };
 
-const ModalConfermaInserimento : React.FC<ModalConfermaInsProps> =({setOpen, open, onButtonComfermaPopUp}) => {
+const ModalConfermaInserimento : React.FC<ModalConfermaInsProps> =({setOpen, open, onButtonComfermaPopUp, mainState}) => {
     
     const statusApp = getStatusApp();
    
@@ -45,7 +45,7 @@ const ModalConfermaInserimento : React.FC<ModalConfermaInsProps> =({setOpen, ope
         Attenzione!
                         </Typography>
                         <Typography id="modal-modal-description" variant="body1" sx={{ mt: 2 }}>
-                            {`Stai registrando il Modulo Commessa di ${month[statusApp.mese - 1]} ${statusApp.anno}: confermi l'operazione?`}
+                            {`Stai ${mainState.inserisciModificaCommessa === 'MODIFY' ? 'modificando': 'registrando'} il Modulo Commessa di ${month[statusApp.mese - 1]} ${statusApp.anno}: confermi l'operazione?`}
                         </Typography>
                     </div>
                    

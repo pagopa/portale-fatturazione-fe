@@ -110,6 +110,44 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     ]);
 
     useEffect(()=>{
+        console.log('mimmo');
+        if(mainState.inserisciModificaCommessa === 'INSERT'){
+            setTotaliModuloCommessa([
+                {
+                    idCategoriaSpedizione: 1,
+                    totaleValoreCategoriaSpedizione: 0
+                },
+                {
+                    idCategoriaSpedizione: 2,
+                    totaleValoreCategoriaSpedizione: 0
+                }
+            ]);
+            setDatiCommessa({
+                moduliCommessa: [
+                    {
+                        numeroNotificheNazionali: 0,
+                        numeroNotificheInternazionali: 0,
+                        totaleNotifiche:0,
+                        idTipoSpedizione: 1
+                    },
+                    {
+                        numeroNotificheNazionali: 0,
+                        numeroNotificheInternazionali: 0,
+                        totaleNotifiche:0,
+                        idTipoSpedizione: 2
+                    },
+                    {
+                        numeroNotificheNazionali: 0,
+                        numeroNotificheInternazionali: 0,
+                        totaleNotifiche:0,
+                        idTipoSpedizione: 3
+                    }
+                ]
+            });
+        }
+    },[mainState.inserisciModificaCommessa]);
+
+    useEffect(()=>{
         if(statusApp.userClickOn === 'GRID' && mainState.nonce !== ''){
             // SELFCARE
             if(enti){
@@ -139,6 +177,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
         if(statusApp.datiFatturazione === false){
             setOpenModalRedirect(true);
         }
+        handleModifyMainState(statusApp);
     },[]);
 
     useEffect(()=>{
@@ -148,9 +187,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
             totaleNotifiche:calculateTot(datiCommessa.moduliCommessa,'totaleNotifiche')});
     },[datiCommessa]);
 
-    useEffect(()=>{
-        handleModifyMainState(statusApp);
-    },[]);
+
 
     const handleGetDettaglioModuloCommessa = async () =>{
         await getDettaglioModuloCommessa(token,statusApp.anno,statusApp.mese, mainState.nonce)
@@ -218,7 +255,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 datiFatturazione:true,
                 statusPageInserimentoCommessa:'immutable'});
         }).catch(err =>{
-            if(err.response.status === 404){
+            if(err?.response?.status === 404){
                 handleModifyMainState({
                     datiFatturazione:false,
                     statusPageInserimentoCommessa:'immutable'
@@ -432,6 +469,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 setOpen={setOpenModalConfermaIns}
                 open={openModalConfermaIns}
                 onButtonComfermaPopUp={onButtonComfermaPopUp}
+                mainState={mainState}
             ></ModalConfermaInserimento>
             <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}></ModalLoading>
         </InserimentoModuloCommessaContext.Provider>

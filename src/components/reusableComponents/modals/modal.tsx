@@ -41,6 +41,7 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
         if(location.pathname === PathPf.DATI_FATTURAZIONE ){
             if(profilo.auth === 'PAGOPA'&& mainState.statusPageDatiFatturazione === 'mutable' && mainState.datiFatturazione === false){
                 setOpen(false);
+                handleModifyMainState({statusPageDatiFatturazione:'immutable'});
                 navigate(PathPf.LISTA_DATI_FATTURAZIONE);
             }else if(profilo.auth === 'PAGOPA'&& mainState.statusPageDatiFatturazione === 'immutable'){
                 setOpen(false);
@@ -63,6 +64,7 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
                 handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
             }else if(mainState.inserisciModificaCommessa === 'INSERT' && enti){
                 setOpen(false);
+                handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
                 navigate(PathPf.LISTA_COMMESSE);
 
             }else if(enti){

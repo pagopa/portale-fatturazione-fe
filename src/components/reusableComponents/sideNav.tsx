@@ -101,7 +101,9 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
             //cliccando sulla side nav Modulo commessa e sono un ente qualsiasi
                 await getDatiFat();
                 await getDatiModuloCommessa(token, mainState.nonce).then((res)=>{
+                    console.log({res});
                     if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
+                        
                         handleModifyMainState({
                             inserisciModificaCommessa:'INSERT',
                             statusPageInserimentoCommessa:'mutable',
@@ -112,7 +114,6 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
                             mese:res.data.mese,
                             anno:res.data.anno,
                             inserisciModificaCommessa:'INSERT',
-                            //datiFatturazione:mainState.datiFatturazione,
                             userClickOn:undefined,
                             primoInserimetoCommessa:true
                         };
@@ -120,8 +121,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
                         const statusApp = localStorage.getItem('statusApplication')||'{}';
                         const parseStatusApp = JSON.parse(statusApp);
             
-                        localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
-                            ...newState}));
+                        localStorage.setItem('statusApplication',JSON.stringify(newState));
                  
                         navigate(PathPf.MODULOCOMMESSA);
                     }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0 ){
