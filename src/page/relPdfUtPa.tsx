@@ -217,6 +217,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                 }
             }).catch((err)=>{
                 setLoadingDettaglio(false);
+                navigate(PathPf.LISTA_REL);
                 manageError(err,dispatchMainState);
             });
         }else{
@@ -232,7 +233,9 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                 });
             }).catch((err)=>{
                 setLoadingDettaglio(false);
+                navigate(PathPf.LISTA_REL);
                 manageError(err,dispatchMainState);
+
             });
         }
     };  

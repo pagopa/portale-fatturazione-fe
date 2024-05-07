@@ -60,7 +60,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
         await getAnni(token, mainState.nonce).then((res:GetAnniResponse)=>{
             setAnni(res.data);
         }).catch((err:ManageErrorResponse)=>{
-            manageError(err,dispatchMainState);
+            // manageError(err,dispatchMainState);
         });
     };
 

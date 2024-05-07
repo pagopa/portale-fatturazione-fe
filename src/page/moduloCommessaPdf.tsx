@@ -103,6 +103,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState, dispatchMainSt
         }).catch((err)=>{
             setShowLoadingDettaglio(false);
             manageError(err,dispatchMainState);
+            navigate(PathPf.MODULOCOMMESSA);
         });  
     };
 
@@ -115,6 +116,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState, dispatchMainSt
             }).catch((err)=>{
                 setShowLoadingDettaglio(false);
                 manageError(err,dispatchMainState);
+                navigate(PathPf.MODULOCOMMESSA);
             });  
     };
 

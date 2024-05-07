@@ -100,6 +100,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
                 setGridData(res.data);
             })
             .catch((err)=>{
+                setGridData([]);
                 manageError(err,dispatchMainState);
             }); 
     };

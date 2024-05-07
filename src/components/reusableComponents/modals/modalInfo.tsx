@@ -32,12 +32,12 @@ const ModalInfo : React.FC<ModalProps> = ({setOpen, open, sentence}) => {
                 <Box sx={style}>
                     <div className='d-flex justify-content-center'>
                         <Typography id="modal-modal-title" variant="h6" component="h2">
-        Operazione in corso
+        Attenzione!
                         </Typography>
                         
                     </div>
                     <div className='d-flex justify-content-center text-center'>
-                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                        <Typography id="modal-modal-description" variant="body1" sx={{ mt: 2 }}>
                             {sentence}
                         </Typography>
                     </div>
