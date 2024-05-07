@@ -53,8 +53,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
     const [valueRispostaEnte, setValueRispostaEnte] = useState('');
     const [contestazioneStatic, setContestazioneStatic] = useState();
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
-    const [valueFgContestazione, setValueFgContestazione] = useState<FlagContestazione[]>([]);
-    console.log(valueAutocomplete,valueFgContestazione);        
+    const [valueFgContestazione, setValueFgContestazione] = useState<FlagContestazione[]>([]);       
     const [open, setOpen] = useState(false);
     const [openModalInfo, setOpenModalInfo] = useState(false);
     const [showLoading, setShowLoading] = useState(false);
@@ -119,7 +118,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
     });
 
     useEffect(() => {
-        console.log('ff');
+        console.log('ff', profilo.profilo);
         const result = getFiltersFromLocalStorageNotifiche();
         if(mainState.nonce !== ''){
             
@@ -134,14 +133,14 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                 setRowsPerPage(result.rowsPerPage);
                 setBodyDownload(result.bodyGetLista);
 
-                if(profilo.profilo === 'SELFCARE'){
+                if(profilo.auth === 'SELFCARE'){
                     getlistaNotifiche( result.page + 1, result.rowsPerPage,result.bodyGetLista); 
                 }else if(profilo.auth === 'PAGOPA'){
                     getRecapitistConsolidatori();
                     getlistaNotifichePagoPa( result.page + 1, result.rowsPerPage,result.bodyGetLista);
                 }
             }else{
-                if(profilo.profilo === 'SELFCARE'){
+                if(profilo.auth === 'SELFCARE'){
                     getlistaNotifiche( page + 1, rowsPerPage,bodyGetLista); 
                 }else if(profilo.auth === 'PAGOPA'){
                     getRecapitistConsolidatori();
@@ -288,13 +287,18 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
         setBodyGetLista(newBody);
         setBodyDownload(newBody);
         deleteFilterToLocalStorageNotifiche();
+        setGetNotificheWorking(true);
         const {idEnti, recapitisti, consolidatori, ...body} = newBody;
         if(enti){
             await listaNotifiche(token,mainState.nonce,1,10, body)
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
-                    setTotalNotifiche(res.data.count);    
+                    setTotalNotifiche(res.data.count); 
+                    setGetNotificheWorking(false);   
                 }).catch((error)=>{
+                    setNotificheList([]);
+                    setTotalNotifiche(0);
+                    setGetNotificheWorking(false);
                     manageError(error, dispatchMainState);
                 });
         }else if(profilo.profilo === 'REC'){
@@ -307,6 +311,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                 }).catch((error)=>{
                 // abilita button filtra e annulla filtri all'arrivo dei dati
                     setGetNotificheWorking(false);
+                    setNotificheList([]);
+                    setTotalNotifiche(0);
                     manageError(error, dispatchMainState);
                 });
         }else if(profilo.profilo === 'CON'){
@@ -319,6 +325,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                 }).catch((error)=>{
                 // abilita button filtra e annulla filtri all'arrivo dei dati
                     setGetNotificheWorking(false);
+                    setNotificheList([]);
+                    setTotalNotifiche(0);
                     manageError(error, dispatchMainState);
                 });
         }else if(profilo.auth === 'PAGOPA'){
@@ -326,7 +334,11 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
                     setTotalNotifiche(res.data.count);
+                    setGetNotificheWorking(false);
                 }).catch((error)=>{
+                    setNotificheList([]);
+                    setTotalNotifiche(0);
+                    setGetNotificheWorking(false);
                     manageError(error, dispatchMainState);
                 });
         }
