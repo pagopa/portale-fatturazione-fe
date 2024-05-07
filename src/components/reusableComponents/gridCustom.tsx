@@ -18,7 +18,7 @@ interface GridCustomProps {
 const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, nameParameterApi, apiGet, disabled}) =>{
 
     const handleClickOnGrid = (element) =>{
-        console.log(element);
+     
         const string = JSON.stringify({
             nomeEnteClickOn:element.ragioneSociale,
             mese:element.mese,

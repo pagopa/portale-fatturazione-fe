@@ -12,15 +12,12 @@ export const manageError = (res:ManageErrorResponse,dispatchMainState:any) =>{
             value:valueObj
         });
     };
-    console.log(res);
+  
     if(res?.response?.request?.status === 401){
-        // localStorage.clear();
-        // window.location.href = redirect;
         handleModifyMainState({apiError:res.response.request.status});
         
     }else if(res?.response?.request?.status   === 404){
-        //navigate('/error');
-        // alert('Qualcosa è andato storto');
+     
         handleModifyMainState({apiError:res.response.request.status});
     }else if(res?.response?.request?.status   === 419){
         handleModifyMainState({apiError:res.response.request.status});

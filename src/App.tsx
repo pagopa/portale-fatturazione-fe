@@ -110,7 +110,7 @@ const App = ({ instance }) => {
         apiError:null,
         authenticated:false 
     });
-    console.log({mainState});
+    
     useEffect(()=>{
         if(mainState.apiError !== null){
             setShowAlert(true);

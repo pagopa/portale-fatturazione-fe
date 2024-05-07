@@ -101,7 +101,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
             //cliccando sulla side nav Modulo commessa e sono un ente qualsiasi
                 await getDatiFat();
                 await getDatiModuloCommessa(token, mainState.nonce).then((res)=>{
-                    console.log({res});
+                 
                     if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
                         
                         handleModifyMainState({
