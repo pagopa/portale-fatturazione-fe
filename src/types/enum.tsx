@@ -14,5 +14,6 @@ export enum PathPf {
     PDF_COMMESSA = '/pdfmodulocommessa',//pdf
     LISTA_NOTIFICHE = '/listanotifiche',
     LISTA_REL = '/listarel',
-    PDF_REL = '/relpdf'
+    PDF_REL = '/relpdf',
+    ADESIONE_BANDO = '/adesionealbando'
 }
