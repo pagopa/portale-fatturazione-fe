@@ -18,6 +18,7 @@ import { SideNavProps } from '../../types/typesGeneral';
 import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
 import { getDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
 import { PathPf } from '../../types/enum';
+import AnnouncementIcon from '@mui/icons-material/Announcement';
 
 const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState, setOpenBasicModal_DatFat_ModCom}) => {
 
@@ -209,6 +210,14 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
             navigate(PathPf.LISTA_REL);
         }
     };
+
+    const handleListItemClickBando = async () => {
+        if(mainState.statusPageDatiFatturazione === 'mutable' || mainState.statusPageInserimentoCommessa === 'mutable'){
+            setOpenBasicModal_DatFat_ModCom(true);
+        }else{
+            navigate(PathPf.ADESIONE_BANDO);
+        }
+    }; 
     
     const currentLocation = location.pathname;
 
@@ -231,6 +240,8 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
             setSelectedIndex(3);
         }else if(currentLocation === PathPf.PDF_REL){
             setSelectedIndex(3);
+        }else if(currentLocation === PathPf.ADESIONE_BANDO){
+            setSelectedIndex(4);
         }
     },[currentLocation]);
    
@@ -274,12 +285,20 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
                             <ListItemText primary="Notifiche" />
                         </ListItemButton>
                         {!recOrConsIsLogged &&
-                        <ListItemButton selected={selectedIndex === 3} onClick={() => handleListItemClickRel()}>
-                            <ListItemIcon>
-                                <ManageAccountsIcon fontSize="inherit" />
-                            </ListItemIcon>
-                            <ListItemText primary="Regolare Esecuzione" />
-                        </ListItemButton>
+                        <>
+                            <ListItemButton selected={selectedIndex === 3} onClick={() => handleListItemClickRel()}>
+                                <ListItemIcon>
+                                    <ManageAccountsIcon fontSize="inherit" />
+                                </ListItemIcon>
+                                <ListItemText primary="Regolare esecuzione" />
+                            </ListItemButton>
+                            <ListItemButton selected={selectedIndex === 4} onClick={() => handleListItemClickBando()}>
+                                <ListItemIcon>
+                                    <AnnouncementIcon fontSize="inherit" />
+                                </ListItemIcon>
+                                <ListItemText primary="Adesione al bando" />
+                            </ListItemButton>
+                        </>
                         }
                     </List>
                     <Divider />

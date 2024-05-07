@@ -1,6 +1,6 @@
 import { Typography } from "@mui/material";
-import { Box, FormControl, InputLabel,Select, MenuItem, TextField, Button} from '@mui/material';
-import { getTipologiaProfilo, manageError, redirect} from '../api/api';
+import { Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
+import { getTipologiaProfilo, manageError} from '../api/api';
 import { BodyGetListaDatiFatturazione, GridElementListaFatturazione, ListaDatiFatturazioneProps, ResponseDownloadListaFatturazione } from "../types/typeListaDatiFatturazione";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
@@ -160,18 +160,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
         { field: 'codCommessa', headerName: 'Cod. Commessa', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'dataCreazione', headerName: 'Data Primo Acc.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'dataModifica', headerName: 'Data Ultimo Acc.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        {
-            field: 'action',
-            headerName: '',
-            sortable: false,
-            width:70,
-            headerAlign: 'left',
-            disableColumnMenu :true,
-            renderCell: (() => (
-                <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} onClick={() => console.log('Show page details')} />
-            )
-            ),
-        }
+        {field: 'action', headerName: '',sortable: false,width:70,headerAlign: 'left',disableColumnMenu :true,renderCell: (() => ( <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} onClick={() => console.log('Show page details')} />)),}
     ];
 
     return(

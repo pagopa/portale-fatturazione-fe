@@ -1,7 +1,7 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import {useState, useReducer, useEffect} from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate} from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate} from 'react-router-dom';
 import { ThemeProvider, Grid } from '@mui/material';
 import {theme} from '@pagopa/mui-italia';
 import AreaPersonaleUtenteEnte from './page/areaPersonaleUtenteEnte';
@@ -19,7 +19,6 @@ import PagoPaListaDatiFatturazione from './page/pagoPaListaDatiFatturazione';
 import PagoPaListaModuliCommessa from './page/pagoPaListaModuliCommessa';
 import ReportDettaglio from './page/reportDettaglioUtPa';
 import AuthAzure from './page/authAzure';
-import RelPdfPage from './page/relPdfUtPa';
 import { MsalProvider, AuthenticatedTemplate, useMsal, UnauthenticatedTemplate } from '@azure/msal-react';
 import Azure from './page/azure';
 import { Container, Button } from 'react-bootstrap';
@@ -31,18 +30,9 @@ import { getAuthProfilo, manageError, redirect } from './api/api';
 import { getProfilo } from './reusableFunction/actionLocalStorage';
 import useIsTabActive from './reusableFunction/tabIsActiv';
 import BasicAlerts from './components/reusableComponents/alert';
+import AdesioneBando from './page/adesioneBando';
+import { PathPf } from './types/enum';
 
-enum PathPf {
-    DATI_FATTURAZIONE = '/datidifatturazione', //
-    LISTA_DATI_FATTURAZIONE = '/listadatifatturazione',//listadatidifatturazione
-    MODULOCOMMESSA = '/modulocommessa', //8
-    LISTA_MODULICOMMESSA = '/listamodulicommessa',
-    LISTA_COMMESSE = '/modulicommessa',  //4
-    PDF_COMMESSA = '/pdfmodulocommessa',//pdf
-    LISTA_NOTIFICHE = '/listanotifiche',
-    LISTA_REL = '/listarel',
-    PDF_REL = '/relpdf'
-}
 
 const MainContent = () => {
     /**
@@ -206,7 +196,8 @@ const App = ({ instance }) => {
 
                                         <Route path={PathPf.LISTA_REL} element={<RelPage  mainState={mainState}  dispatchMainState={dispatchMainState}/>} />
 
-                                        <Route path={PathPf.PDF_REL} element={<RelPdfPage  mainState={mainState}  dispatchMainState={dispatchMainState}/>} />
+                                        <Route path={PathPf.ADESIONE_BANDO} element={<AdesioneBando/>} />
+                                       
                                     </>
                                     }
                            
