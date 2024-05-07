@@ -20,6 +20,12 @@ const style = {
 const ModalConfermaInserimento : React.FC<ModalConfermaInsProps> =({setOpen, open, onButtonComfermaPopUp, mainState}) => {
     
     const statusApp = getStatusApp();
+
+    const handleClose = (event:object, reason: string) =>{
+        if(reason !== 'backdropClick'){
+            setOpen(false);
+        }
+    };
    
     const handleConferma = () => {
         setOpen(false);
@@ -28,14 +34,17 @@ const ModalConfermaInserimento : React.FC<ModalConfermaInsProps> =({setOpen, ope
 
     const handleAnnulla = () =>{
         setOpen(false);
+             
     };
+
+   
        
     
     return (
         <div>
             <Modal
                 open={open}
-                onClose={handleConferma}
+                onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
