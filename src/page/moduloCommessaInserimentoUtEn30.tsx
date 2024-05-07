@@ -110,7 +110,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     ]);
 
     useEffect(()=>{
-        console.log('mimmo');
+      
         if(mainState.inserisciModificaCommessa === 'INSERT'){
             setTotaliModuloCommessa([
                 {

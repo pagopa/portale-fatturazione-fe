@@ -118,7 +118,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
     });
 
     useEffect(() => {
-        console.log('ff', profilo.profilo);
+       
         const result = getFiltersFromLocalStorageNotifiche();
         if(mainState.nonce !== ''){
             
@@ -475,9 +475,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
     };
 
     const getRecapitistConsolidatori = async() =>{
-        console.log(1);
+     
         await getTipologiaEntiCompletiPagoPa(token, mainState.nonce, 'REC').then((res)=>{     
-            console.log(2);     
+            
             setListaRecapitisti(res.data);
         }).catch(((err)=>{
             manageError(err,dispatchMainState);
