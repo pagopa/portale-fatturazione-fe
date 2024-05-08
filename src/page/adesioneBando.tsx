@@ -2,13 +2,36 @@ import { Button, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import { DataGrid, GridColDef, GridEventListener, GridRowParams, MuiEvent } from "@mui/x-data-grid";
 import { Params } from "../types/typesGeneral";
-import { GridElementListaFatturazione } from "../types/typeListaDatiFatturazione";
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { listaAsseverazionePagopa } from "../api/apiPagoPa/adesioneBandoPA/api";
+import { getToken } from "../reusableFunction/actionLocalStorage";
+import { AdesioneBandoProps, Asseverazione } from "../types/typeAdesioneBando";
+import { manageError } from "../api/api";
 
-const AdesioneBando : React.FC = () => {
+const AdesioneBando : React.FC<AdesioneBandoProps> = ({mainState, dispatchMainState}) => {
 
-    const [gridData, setGridData] = useState<GridElementListaFatturazione[]>([]);
+    const token =  getToken();
+
+    const [gridData, setGridData] = useState<Asseverazione[]>([]);
+    const [infoPageBando , setInfoPageBando] = useState({ page: 0, pageSize: 100 });
+
+    useEffect(()=>{
+        if(mainState.nonce !== ''){
+            getListaAsseverazione();
+        }
+    },[mainState.nonce]);
+
+    const getListaAsseverazione = async ( ) =>{
+        await listaAsseverazionePagopa(token,mainState.nonce)
+            .then((res)=>{
+                setGridData(res.data);
+            })
+            .catch((err)=>{
+                manageError(err,dispatchMainState);
+            });
+    };
 
     let columsSelectedGrid = '';
     const handleOnCellClick = (params:Params) =>{
@@ -24,15 +47,17 @@ const AdesioneBando : React.FC = () => {
         console.log('elle');
     };
 
+    
+
     const columns: GridColDef[] = [
         { field: 'ragioneSociale', headerName: 'Ragione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.ragioneSociale}</a>},
-        { field: 'cup', headerName: 'Cup', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'splitPayment', headerName: 'Split payment', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'idDocumento', headerName: 'ID. Documento', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'dataDocumento', headerName: 'Data Documento', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'codCommessa', headerName: 'Cod. Commessa', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'dataCreazione', headerName: 'Data Primo Acc.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'dataModifica', headerName: 'Data Ultimo Acc.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        { field: 'prodotto', headerName: 'Prodotto', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        { field: 'tipoContratto', headerName: 'Tipo Contratto', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        { field: 'asseverazione', headerName: 'Asseverazione', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        { field: 'calcoloAsseverazione', headerName: 'Calcolo Asseverazione', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        { field: 'dataAnagrafica', headerName: 'Data Anagrafica', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        { field: 'tipoCalcoloAsseverazione', headerName: 'Tipo Calcolo Asseverazione', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        { field: 'idUtente', headerName: 'Id Utente', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         {field: 'action', headerName: '',sortable: false,width:70,headerAlign: 'left',disableColumnMenu :true,renderCell: (() => ( <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} onClick={() => console.log('Show page details')} />)),}
     ];
 
@@ -60,12 +85,11 @@ const AdesioneBando : React.FC = () => {
                     }
                 }}
                 onPaginationModelChange={(e)=>{
-                    // setInfoPageListaDatiFat(e); setInfoPageToLocalStorage(e);
-                    console.log('ciao');}}
-                paginationModel={{ page: 0, pageSize: 100 }}
+                    setInfoPageBando(e);}}
+                paginationModel={infoPageBando}
                 rows={gridData} 
                 columns={columns}
-                getRowId={(row) => row.key}
+                getRowId={(row) => row.idEnte}
                 onRowClick={handleEvent}
                 onCellClick={handleOnCellClick}
                 />
