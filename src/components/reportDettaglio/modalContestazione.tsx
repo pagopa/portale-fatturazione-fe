@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router';
 import {useState, useEffect} from 'react';
 import YupString from '../../validations/string/index';
 import { createContestazione, modifyContestazioneConsolidatore, modifyContestazioneEnte,modifyContestazioneRecapitista, tipologiaTipoContestazione } from '../../api/apiSelfcare/notificheSE/api';
-import { modifyContestazioneEntePagoPa } from '../../api/apiPagoPa/notificheSE/api';
+import { modifyContestazioneEntePagoPa } from '../../api/apiPagoPa/notifichePA/api';
 import { getFiltersFromLocalStorageNotifiche, getProfilo, getToken, profiliEnti } from '../../reusableFunction/actionLocalStorage';
 
 const style = {

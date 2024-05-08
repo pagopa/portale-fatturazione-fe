@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router';
 import { useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import Paper from '@mui/material/Paper';
-import { getTipologieScadenziario } from '../../api/apiPagoPa/notificheSE/api';
+import { getTipologieScadenziario } from '../../api/apiPagoPa/notifichePA/api';
 
 const style = {
     position: 'absolute' as const,

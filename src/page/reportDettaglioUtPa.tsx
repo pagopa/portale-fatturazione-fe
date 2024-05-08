@@ -15,7 +15,7 @@ import MultiSelectStatoContestazione from "../components/reportDettaglio/multiSe
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import ModalScadenziario from "../components/reportDettaglio/modalScadenziario";
 import { downloadNotifche, downloadNotifcheConsolidatore, downloadNotifcheRecapitista, getContestazione, getContestazioneCosolidatore, getContestazioneRecapitista, listaNotifiche, listaNotificheConsolidatore, listaNotificheRecapitista } from "../api/apiSelfcare/notificheSE/api";
-import { downloadNotifchePagoPa, getContestazionePagoPa, getTipologiaEntiCompletiPagoPa, listaNotifichePagoPa } from "../api/apiPagoPa/notificheSE/api";
+import { downloadNotifchePagoPa, getContestazionePagoPa, getTipologiaEntiCompletiPagoPa, listaNotifichePagoPa } from "../api/apiPagoPa/notifichePA/api";
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import GridCustom from "../components/reusableComponents/gridCustom";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";

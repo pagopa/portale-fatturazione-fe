@@ -292,12 +292,14 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
                                 </ListItemIcon>
                                 <ListItemText primary="Regolare esecuzione" />
                             </ListItemButton>
+                            {profilo.auth === 'PAGOPA' && 
                             <ListItemButton selected={selectedIndex === 4} onClick={() => handleListItemClickBando()}>
                                 <ListItemIcon>
                                     <AnnouncementIcon fontSize="inherit" />
                                 </ListItemIcon>
                                 <ListItemText primary="Adesione al bando" />
-                            </ListItemButton>
+                            </ListItemButton>}
+                            
                         </>
                         }
                     </List>

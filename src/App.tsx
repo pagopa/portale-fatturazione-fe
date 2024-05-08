@@ -27,7 +27,7 @@ import './App.css';
 import RelPage from './page/relUtPa';
 import { reducerMainState } from './reducer/reducerMainState';
 import { getAuthProfilo, manageError, redirect } from './api/api';
-import { getProfilo } from './reusableFunction/actionLocalStorage';
+import { getProfilo, profiliEnti } from './reusableFunction/actionLocalStorage';
 import useIsTabActive from './reusableFunction/tabIsActiv';
 import BasicAlerts from './components/reusableComponents/alert';
 import AdesioneBando from './page/adesioneBando';
@@ -137,13 +137,14 @@ const App = ({ instance }) => {
     },[tabActive, mainState.nonce]);
    
     const [valueAnnoElencoCom, setValueAnnoElencoCom] = useState('');
-    //_____________________________________________________________
+   
 
     const recOrConsIsLogged = profilo.profilo === 'REC' || profilo.profilo ==='CON';
+    const enti = profiliEnti();
 
     let route;
 
-    if(profilo.jwt){
+    if(profilo.jwt && profilo.auth === 'PAGOPA'){
 
         let wrongPath = PathPf.DATI_FATTURAZIONE;
 
@@ -180,30 +181,127 @@ const App = ({ instance }) => {
                                 
                                     <Route path="azure" element={<Azure dispatchMainState={ dispatchMainState}/>} />
                                 
-                                    {!recOrConsIsLogged &&
-                                    <>
-                                        <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte mainState={mainState} dispatchMainState={ dispatchMainState} setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} />} />
-                           
-                                        <Route path={PathPf.LISTA_COMMESSE} element={<ModuloCommessaElencoUtPa mainState={mainState}  dispatchMainState={ dispatchMainState} valueSelect={valueAnnoElencoCom}  setValueSelect={setValueAnnoElencoCom}  />} />
+                                    <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte mainState={mainState} dispatchMainState={ dispatchMainState} setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} />} />
                           
-                                        <Route path={PathPf.MODULOCOMMESSA} element={<ModuloCommessaInserimentoUtEn30 mainState={mainState}  dispatchMainState={ dispatchMainState} setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom}/>} />
+                                    <Route path={PathPf.MODULOCOMMESSA} element={<ModuloCommessaInserimentoUtEn30 mainState={mainState}  dispatchMainState={ dispatchMainState} setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom}/>} />
                           
-                                        <Route path={PathPf.PDF_COMMESSA} element={<ModuloCommessaPdf mainState={mainState} dispatchMainState={ dispatchMainState}/>} />
+                                    <Route path={PathPf.PDF_COMMESSA} element={<ModuloCommessaPdf mainState={mainState} dispatchMainState={ dispatchMainState}/>} />
                           
-                                        <Route path={PathPf.LISTA_DATI_FATTURAZIONE} element={<PagoPaListaDatiFatturazione mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
+                                    <Route path={PathPf.LISTA_DATI_FATTURAZIONE} element={<PagoPaListaDatiFatturazione mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
                             
-                                        <Route path={PathPf.LISTA_MODULICOMMESSA} element={<PagoPaListaModuliCommessa mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
+                                    <Route path={PathPf.LISTA_MODULICOMMESSA} element={<PagoPaListaModuliCommessa mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
 
-                                        <Route path={PathPf.LISTA_REL} element={<RelPage  mainState={mainState}  dispatchMainState={dispatchMainState}/>} />
+                                    <Route path={PathPf.LISTA_REL} element={<RelPage  mainState={mainState}  dispatchMainState={dispatchMainState}/>} />
 
-                                        <Route path={PathPf.ADESIONE_BANDO} element={<AdesioneBando/>} />
-                                       
-                                    </>
-                                    }
+                                    <Route path={PathPf.ADESIONE_BANDO} element={<AdesioneBando mainState={mainState} dispatchMainState={dispatchMainState}/>} />
                            
                                     <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio mainState={mainState} dispatchMainState={dispatchMainState}/>} />
 
-                                    <Route path="*" element={<Navigate to={wrongPath} replace />} />
+                                    <Route path="*" element={<Navigate to={PathPf.LISTA_DATI_FATTURAZIONE} replace />} />
+
+                                    <Route path="/azureLogin" element={<AzureLogin dispatchMainState={dispatchMainState}/>} />
+
+                                    <Route path="/error"  element={<ErrorPage dispatchMainState={ dispatchMainState}  mainState={mainState}/>} />
+                                </Routes>
+                            </Grid>
+                        </Grid>
+                    </div>
+                    <FooterPostLogin />
+                </div>
+            </ThemeProvider>
+
+        </Router>;
+
+    }else if(profilo.jwt && enti){
+
+        route = <Router>
+            <ThemeProvider theme={theme}>
+                <div className="App">
+                    <BasicAlerts setVisible={setShowAlert} visible={showAlert} mainState={mainState} dispatchMainState={ dispatchMainState}></BasicAlerts>
+                    <HeaderPostLogin mainState={mainState}/>
+
+                    <div>
+                        <HeaderNavComponent />
+
+                        <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
+                     
+                            <Grid item xs={2}>
+                                <SideNavComponent  dispatchMainState={ dispatchMainState}
+                                    mainState={mainState}
+                                    setOpenBasicModal_DatFat_ModCom={setOpenBasicModal_DatFat_ModCom}
+                                />
+                            </Grid> 
+
+                            <Grid item xs={10}>
+                                <Routes>
+                                
+                                    <Route path="/auth" element={<Auth setCheckProfilo={setCheckProfilo}  dispatchMainState={ dispatchMainState} />} />
+                                
+                                    <Route path="/auth/azure" element={<AuthAzure  dispatchMainState={ dispatchMainState}/>} />
+                                
+                                    <Route path="azure" element={<Azure dispatchMainState={ dispatchMainState}/>} />
+                                
+                                    <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte mainState={mainState} dispatchMainState={ dispatchMainState} setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} />} />
+                           
+                                    <Route path={PathPf.LISTA_COMMESSE} element={<ModuloCommessaElencoUtPa mainState={mainState}  dispatchMainState={ dispatchMainState} valueSelect={valueAnnoElencoCom}  setValueSelect={setValueAnnoElencoCom}  />} />
+                          
+                                    <Route path={PathPf.MODULOCOMMESSA} element={<ModuloCommessaInserimentoUtEn30 mainState={mainState}  dispatchMainState={ dispatchMainState} setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom}/>} />
+                          
+                                    <Route path={PathPf.PDF_COMMESSA} element={<ModuloCommessaPdf mainState={mainState} dispatchMainState={ dispatchMainState}/>} />
+
+                                    <Route path={PathPf.LISTA_REL} element={<RelPage  mainState={mainState}  dispatchMainState={dispatchMainState}/>} />
+                                   
+                                    <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio mainState={mainState} dispatchMainState={dispatchMainState}/>} />
+
+                                    <Route path="*" element={<Navigate to={PathPf.DATI_FATTURAZIONE} replace />} />
+
+                                    <Route path="/azureLogin" element={<AzureLogin dispatchMainState={dispatchMainState}/>} />
+
+                                    <Route path="/error"  element={<ErrorPage dispatchMainState={ dispatchMainState}  mainState={mainState}/>} />
+                                </Routes>
+
+                            </Grid>
+
+                        </Grid>
+                    </div>
+
+                    <FooterPostLogin />
+                </div>
+            </ThemeProvider>
+
+        </Router>;
+
+    }else if(profilo.jwt && recOrConsIsLogged){
+        route = <Router>
+            <ThemeProvider theme={theme}>
+                <div className="App">
+                    <BasicAlerts setVisible={setShowAlert} visible={showAlert} mainState={mainState} dispatchMainState={ dispatchMainState}></BasicAlerts>
+                    <HeaderPostLogin mainState={mainState}/>
+
+                    <div>
+                        <HeaderNavComponent />
+
+                        <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
+                 
+                            <Grid item xs={2}>
+                                <SideNavComponent  dispatchMainState={ dispatchMainState}
+                                    mainState={mainState}
+                                    setOpenBasicModal_DatFat_ModCom={setOpenBasicModal_DatFat_ModCom}
+                                />
+                            </Grid> 
+
+                            <Grid item xs={10}>
+                                <Routes>
+                            
+                                    <Route path="/auth" element={<Auth setCheckProfilo={setCheckProfilo}  dispatchMainState={ dispatchMainState} />} />
+                            
+                                    <Route path="/auth/azure" element={<AuthAzure  dispatchMainState={ dispatchMainState}/>} />
+                            
+                                    <Route path="azure" element={<Azure dispatchMainState={ dispatchMainState}/>} />
+                               
+                                    <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio mainState={mainState} dispatchMainState={dispatchMainState}/>} />
+
+                                    <Route path="*" element={<Navigate to={PathPf.LISTA_NOTIFICHE} replace />} />
 
                                     <Route path="/azureLogin" element={<AzureLogin dispatchMainState={dispatchMainState}/>} />
 
@@ -239,7 +337,7 @@ const App = ({ instance }) => {
                             
                             <Route path="azure" element={<Azure dispatchMainState={ dispatchMainState}/>} />
                             
-                           // <Route path="*" element={<Navigate to={"/error"} replace />} />
+                            <Route path="*" element={<Navigate to={"/error"} replace />} />
 
                             <Route path="/azureLogin" element={<AzureLogin dispatchMainState={dispatchMainState}/>} />
 
