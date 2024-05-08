@@ -146,14 +146,6 @@ const App = ({ instance }) => {
 
     if(profilo.jwt && profilo.auth === 'PAGOPA'){
 
-        let wrongPath = PathPf.DATI_FATTURAZIONE;
-
-        if(profilo.auth === 'PAGOPA'){
-            wrongPath = PathPf.LISTA_DATI_FATTURAZIONE;
-        }else if(recOrConsIsLogged){
-            wrongPath = PathPf.LISTA_NOTIFICHE;
-        }
-
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App">

@@ -35,7 +35,7 @@ export const modifyContestazioneEntePagoPa = async (token:string, nonce:string ,
     return response;
 };
 
-export const downloadNotifchePagoPa = async (token:string, nonce:string , body: BodyListaNotifiche) => {
+export const downloadNotifchePagoPa  = async (token:string, nonce:string , body: BodyListaNotifiche) => {
     const response =  await axios.post(`${url}/api/notifiche/pagopa/documento/ricerca?binary=false&nonce=${nonce}`,
         body,
         { headers: {
