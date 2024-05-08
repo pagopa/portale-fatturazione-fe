@@ -2,13 +2,14 @@ import { Button, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import { DataGrid, GridColDef, GridEventListener, GridRowParams, MuiEvent } from "@mui/x-data-grid";
 import { Params } from "../types/typesGeneral";
-
+import { saveAs } from "file-saver";
 import { useEffect, useState } from "react";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { listaAsseverazionePagopa } from "../api/apiPagoPa/adesioneBandoPA/api";
+import { downloadDocumentoAsseverazionePagoPa, listaAsseverazionePagopa } from "../api/apiPagoPa/adesioneBandoPA/api";
 import { getToken } from "../reusableFunction/actionLocalStorage";
 import { AdesioneBandoProps, Asseverazione } from "../types/typeAdesioneBando";
 import { manageError } from "../api/api";
+import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 
 const AdesioneBando : React.FC<AdesioneBandoProps> = ({mainState, dispatchMainState}) => {
 
@@ -16,6 +17,7 @@ const AdesioneBando : React.FC<AdesioneBandoProps> = ({mainState, dispatchMainSt
 
     const [gridData, setGridData] = useState<Asseverazione[]>([]);
     const [infoPageBando , setInfoPageBando] = useState({ page: 0, pageSize: 100 });
+    const [showLoadingGrid,setShowLoadingGrid] = useState(false);
 
     useEffect(()=>{
         if(mainState.nonce !== ''){
@@ -24,9 +26,24 @@ const AdesioneBando : React.FC<AdesioneBandoProps> = ({mainState, dispatchMainSt
     },[mainState.nonce]);
 
     const getListaAsseverazione = async ( ) =>{
+        setShowLoadingGrid(true);
         await listaAsseverazionePagopa(token,mainState.nonce)
             .then((res)=>{
                 setGridData(res.data);
+                setShowLoadingGrid(false);
+            })
+            .catch((err)=>{
+                setShowLoadingGrid(false);
+                setGridData([]);
+                manageError(err,dispatchMainState);
+            });
+    };
+
+    const downloadListaAdesione = async () => {
+        await downloadDocumentoAsseverazionePagoPa(token,mainState.nonce)
+            .then((res)=>{
+                console.log(res);
+                saveAs("data:text/plain;base64," + res.data.documento,`Lista adesione al bando.xlsx` );
             })
             .catch((err)=>{
                 manageError(err,dispatchMainState);
@@ -66,10 +83,11 @@ const AdesioneBando : React.FC<AdesioneBandoProps> = ({mainState, dispatchMainSt
             <div className="marginTop24 ">
                 <Typography variant="h4">Adesione al bando</Typography>
             </div>
-            <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
+            <div className="marginTop24" style={{display:'flex', justifyContent:'end', height:"48px"}}>
+                
                 {
-                    [1].length > 0 &&
-                <Button onClick={() =>console.log('download')}
+                    gridData.length > 0 &&
+                <Button onClick={() => downloadListaAdesione()}
                     disabled={false}
                 >
                 Download Risultati
@@ -94,6 +112,14 @@ const AdesioneBando : React.FC<AdesioneBandoProps> = ({mainState, dispatchMainSt
                 onCellClick={handleOnCellClick}
                 />
             </div>
+            <div>
+                <ModalLoading 
+                    open={showLoadingGrid} 
+                    setOpen={setShowLoadingGrid}
+                    sentence={'Loading...'} >
+                </ModalLoading>
+            </div>
+            
         </div>
     );
 

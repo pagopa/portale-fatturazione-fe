@@ -1,6 +1,6 @@
 import axios from "axios";
 import { url } from "../../api";
-import { BodyListaNotifiche, BodyListaNotificheConsolidatore, BodyListaNotificheSelfcare } from "../../../types/typesGeneral";
+import { BodyListaNotificheSelfcare } from "../../../types/typesGeneral";
 import { BodyListaEnti, ModalBodyContestazione, ModalBodyContestazioneModify } from "../../../types/typeReportDettaglio";
 
 export const listaNotifiche = async (token:string, nonce:string , page:number, pageSize:number, body: BodyListaNotificheSelfcare) => {

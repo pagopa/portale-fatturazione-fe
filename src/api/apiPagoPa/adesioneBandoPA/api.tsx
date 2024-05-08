@@ -10,3 +10,14 @@ export const listaAsseverazionePagopa = async (token:string, nonce:string) => {
     );
     return response;
 };
+
+export const downloadDocumentoAsseverazionePagoPa = async (token:string, nonce:string) => {
+    const response =  await axios.post(`${url}/api/asseverazione/documento?nonce=${nonce}`,
+        {},
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },
+        }
+    );
+    return response;
+};
