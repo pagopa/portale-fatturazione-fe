@@ -71,7 +71,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
         if(!token){
             window.location.href = redirect;
         }
-        if(mainState.relSelected === null){
+        if(!statusApp.idElement){
             navigate(PathPf.LISTA_REL);
         }
     },[]);
