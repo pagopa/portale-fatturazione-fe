@@ -57,40 +57,56 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                     const sliced = Object.fromEntries(
                                         Object.entries(element).slice(1)
                                     );
-                                  
-                                    return (
+                                    if(sliced?.tipologiaFattura === 'ASSEVERAZIONE'){
+                                        return (
                 
-                                        <TableRow key={element[nameParameterApi]}>
-                                            {
-                                                Object.values(sliced).map((value:any, i:number)=>{
-                                                    const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
-                                                  
-                                                    return (
-                                                        
-                                                        <TableCell
-                                                            sx={cssFirstColum} 
-                                                            onClick={()=>{
-                                                                if(i === 0){
-                                                                    handleClickOnGrid(element);
-                                                                }            
-                                                            } }
-                                                        >
-                                                            {value}
-                                                        </TableCell>
-                                                    );
-                                                   
-                                                })
-                                            }
-                            
-                                            <TableCell  onClick={()=>{
-                                                apiGet(element[nameParameterApi]);            
-                                            } }>
-                                                <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
-                                            </TableCell>
-                   
-                                        </TableRow>
-                
-                                    );
+                                            <TableRow key={element[nameParameterApi]}>
+                                                {
+                                                    Object.values(sliced).map((value:any, i:number)=>{
+                                                        const cssFirstColum = i === 0 ? {color:'#606060', fontWeight: 'bold', cursor: 'pointer'} : null;
+                                                        return (
+                                                            <TableCell
+                                                                sx={cssFirstColum} 
+                                                            >
+                                                                {value}
+                                                            </TableCell>
+                                                        );
+                                                    })
+                                                }
+                                            </TableRow>
+                                        );
+                                    }else{
+                                        return (
+                                            <TableRow key={element[nameParameterApi]}>
+                                                {
+                                                    Object.values(sliced).map((value:any, i:number)=>{
+                                                        const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
+                                                        return (
+                                                            <TableCell
+                                                                sx={cssFirstColum} 
+                                                                onClick={()=>{
+                                                                    if(i === 0){
+                                                                        handleClickOnGrid(element);
+                                                                    }            
+                                                                } }
+                                                            >
+                                                                {value}
+                                                            </TableCell>
+                                                        );
+                                                    })
+                                                }
+                                
+                                                <TableCell  onClick={()=>{
+                                                    handleClickOnGrid(element);            
+                                                } }>
+                                                    <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
+                                                </TableCell>
+                       
+                                            </TableRow>
+                    
+                                        );
+                                    }
+                                    
                                 } )}
                             </TableBody>
                         }

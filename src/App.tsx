@@ -32,6 +32,7 @@ import useIsTabActive from './reusableFunction/tabIsActiv';
 import BasicAlerts from './components/reusableComponents/alert';
 import AdesioneBando from './page/adesioneBando';
 import { PathPf } from './types/enum';
+import RelPdfPage from './page/relPdfUtPa';
 
 
 const MainContent = () => {
@@ -184,6 +185,8 @@ const App = ({ instance }) => {
                                     <Route path={PathPf.LISTA_MODULICOMMESSA} element={<PagoPaListaModuliCommessa mainState={mainState}  dispatchMainState={ dispatchMainState} />} />
 
                                     <Route path={PathPf.LISTA_REL} element={<RelPage  mainState={mainState}  dispatchMainState={dispatchMainState}/>} />
+                                    
+                                    <Route path={PathPf.PDF_REL} element={<RelPdfPage  mainState={mainState}  dispatchMainState={dispatchMainState}/>} />
 
                                     <Route path={PathPf.ADESIONE_BANDO} element={<AdesioneBando mainState={mainState} dispatchMainState={dispatchMainState}/>} />
                            
@@ -242,7 +245,9 @@ const App = ({ instance }) => {
                                     <Route path={PathPf.PDF_COMMESSA} element={<ModuloCommessaPdf mainState={mainState} dispatchMainState={ dispatchMainState}/>} />
 
                                     <Route path={PathPf.LISTA_REL} element={<RelPage  mainState={mainState}  dispatchMainState={dispatchMainState}/>} />
-                                   
+
+                                    <Route path={PathPf.PDF_REL} element={<RelPdfPage  mainState={mainState}  dispatchMainState={dispatchMainState}/>} />
+                                    
                                     <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio mainState={mainState} dispatchMainState={dispatchMainState}/>} />
 
                                     <Route path="*" element={<Navigate to={PathPf.DATI_FATTURAZIONE} replace />} />
