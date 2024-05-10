@@ -61,7 +61,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
             localStorage.removeItem("filtersNotifiche");
             navigate(PathPf.LISTA_DATI_FATTURAZIONE);
             
-        }else if(profilo.auth === enti){
+        }else if(enti){
             navigate(PathPf.DATI_FATTURAZIONE);
         } 
       
