@@ -288,6 +288,14 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         }   
     };
 
+    const onIndietroButtonPagoPa = () =>{
+        if(mainState.statusPageDatiFatturazione === 'immutable' &&  profilo.auth === 'PAGOPA'){
+            navigate(PathPf.LISTA_DATI_FATTURAZIONE);
+        }else{
+            setOpen(prev => ({...prev, ...{visible:true,clickOn:'INDIETRO_BUTTON'}}));
+        }
+    };
+
     // check su ogni elemento dello state statusBottonConferma
     const enableDisableConferma = Object.values(statusBottonConferma).every(element => element === false);
    
@@ -314,7 +322,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                     {mainState.statusPageDatiFatturazione === 'immutable' ? null : (
                         <div className="d-flex justify-content-between m-5 ">
                             <Button
-                                onClick={() => setOpen(true)}
+                                onClick={() => onIndietroButtonPagoPa()}
                                 disabled={mainState.datiFatturazione === false || mainState.statusPageDatiFatturazione === 'immutable' }
                                 variant="outlined"
                                 size="medium"

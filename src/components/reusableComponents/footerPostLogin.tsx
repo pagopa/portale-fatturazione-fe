@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Footer } from '@pagopa/mui-italia';
+import { CompanyLinkType, Footer } from '@pagopa/mui-italia';
 import { useState } from 'react';
 import { useLocation } from 'react-router';
 import '../../style/areaPersonaleUtenteEnte.css';
@@ -64,10 +64,6 @@ export default function FooterPostLogin() {
         },
     };
 
-    const pagoPALink = {
-        href: 'https://www.pagopa.it/',
-        ariaLabel: 'Link: vai al sito di PagoPA S.p.A.',
-    };
 
     const companyLegalInfo = (
         <>
@@ -82,6 +78,11 @@ export default function FooterPostLogin() {
         </>
     );
 
+    const pagoPALink: CompanyLinkType = {
+        href: "https://www.pagopa.it/",
+        ariaLabel: "Link: vai al sito di PagoPA S.p.A.",
+    };
+      
     const postLoginLinks: Array<FooterLinksType> = [
         {
             label: "Informativa Privacy",
@@ -109,8 +110,9 @@ export default function FooterPostLogin() {
         },
     ];
 
+
     const preLoginLinks: PreLoginFooterLinksType = {
-    // First column
+        // First column
         aboutUs: {
             title: undefined,
             links: [
@@ -244,6 +246,7 @@ export default function FooterPostLogin() {
             ],
         },
     };
+      
 
     const getDataUser = localStorage.getItem('dati')|| '{}';
     

@@ -39,7 +39,7 @@ const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState, se
         if(mainState.statusPageDatiFatturazione === 'immutable' &&  profilo.auth === 'PAGOPA'){
             navigate(PathPf.LISTA_DATI_FATTURAZIONE);
         }else{
-            setOpen(true);
+            setOpen(prev => ({...prev, ...{visible:true,clickOn:'INDIETRO_BUTTON'}}));
         }
     };
 

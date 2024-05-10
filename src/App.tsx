@@ -33,6 +33,7 @@ import BasicAlerts from './components/reusableComponents/alert';
 import AdesioneBando from './page/adesioneBando';
 import { PathPf } from './types/enum';
 import RelPdfPage from './page/relPdfUtPa';
+import { InfoOpen } from './types/typesGeneral';
 
 
 const MainContent = () => {
@@ -84,8 +85,9 @@ const App = ({ instance }) => {
  
     const [checkProfilo,setCheckProfilo] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
-    const [openBasicModal_DatFat_ModCom, setOpenBasicModal_DatFat_ModCom] = useState(false);
+    const [openBasicModal_DatFat_ModCom, setOpenBasicModal_DatFat_ModCom] = useState<InfoOpen>({visible:false,clickOn:''});
     // set status page abilita e disabilita le modifiche al componente dati fatturazione
+    console.log(openBasicModal_DatFat_ModCom);
     
     const [mainState, dispatchMainState] = useReducer(reducerMainState, {
         mese:'',
@@ -101,7 +103,7 @@ const App = ({ instance }) => {
         apiError:null,
         authenticated:false 
     });
-    
+    console.log(mainState);
     useEffect(()=>{
         if(mainState.apiError !== null){
             setShowAlert(true);

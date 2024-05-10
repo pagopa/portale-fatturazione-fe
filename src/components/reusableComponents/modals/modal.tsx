@@ -7,7 +7,7 @@ import { ModalProps } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
 import { useLocation } from 'react-router-dom';
 import { PathPf } from '../../../types/enum';
-import { profiliEnti } from '../../../reusableFunction/actionLocalStorage';
+import { getChosenPath, profiliEnti } from '../../../reusableFunction/actionLocalStorage';
 const style = {
     position: 'absolute' as const,
     top: '50%',
@@ -25,8 +25,9 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
     const profilo =  JSON.parse(getProfilo);
     const navigate = useNavigate();
     const location = useLocation();
+    const chosenPath = getChosenPath();
     const enti = profiliEnti();
-
+    console.log(open, 'ooo');
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
             type:'MODIFY_MAIN_STATE',
@@ -34,43 +35,92 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
         });
     };
   
-    const handleClose = () => setOpen(false);
+    const handleClose = () =>{
+        setOpen(prev => ({...prev,...{visible:false}}));
+    };
 
     const handleEsci = () =>{
      
         if(location.pathname === PathPf.DATI_FATTURAZIONE ){
             if(profilo.auth === 'PAGOPA'&& mainState.statusPageDatiFatturazione === 'mutable' && mainState.datiFatturazione === false){
-                setOpen(false);
+                navigate(open.clickOn);
+                setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
                 handleModifyMainState({statusPageDatiFatturazione:'immutable'});
-                navigate(PathPf.LISTA_DATI_FATTURAZIONE);
+                
+                localStorage.removeItem("filtersModuliCommessa");
+                localStorage.removeItem("pageRowListaModuliCommessa");
+                localStorage.removeItem("filtersRel");
+                localStorage.removeItem("filtersNotifiche");
+                localStorage.removeItem("filtersListaDatiFatturazione");
+                localStorage.removeItem("pageRowListaDatiFatturazione");
+               
+               
             }else if(profilo.auth === 'PAGOPA'&& mainState.statusPageDatiFatturazione === 'immutable'){
-                setOpen(false);
+                setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
                 navigate(PathPf.LISTA_DATI_FATTURAZIONE);
-            }else if(profilo.auth === 'PAGOPA' && mainState.statusPageDatiFatturazione === 'mutable'){
+            }else if(profilo.auth === 'PAGOPA' && mainState.statusPageDatiFatturazione === 'mutable' && open.clickOn === 'INDIETRO_BUTTON'){
                 getDatiFatPagoPa();
-                setOpen(false);
+                setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
                 handleModifyMainState({statusPageDatiFatturazione:'immutable'});
-            }else if(enti){
-            
+            }else if(profilo.auth === 'PAGOPA' && mainState.statusPageDatiFatturazione === 'mutable' && open.clickOn !== 'INDIETRO_BUTTON'){
+                getDatiFatPagoPa();
+                setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
+                handleModifyMainState({statusPageDatiFatturazione:'immutable'});
+                navigate(open.clickOn);
+                localStorage.removeItem("filtersModuliCommessa");
+                localStorage.removeItem("pageRowListaModuliCommessa");
+                localStorage.removeItem("filtersRel");
+                localStorage.removeItem("filtersNotifiche");
+                localStorage.removeItem("filtersListaDatiFatturazione");
+                localStorage.removeItem("pageRowListaDatiFatturazione");
+            }else if(enti && mainState.statusPageDatiFatturazione === 'mutable'){
                 getDatiFat();
                 handleModifyMainState({statusPageDatiFatturazione:'immutable'});
-                setOpen(false);
+                navigate(open.clickOn);
+                setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
+                localStorage.removeItem("filtersModuliCommessa");
+                localStorage.removeItem("pageRowListaModuliCommessa");
+                localStorage.removeItem("filtersRel");
+                localStorage.removeItem("filtersNotifiche");
+                localStorage.removeItem("filtersListaDatiFatturazione");
+                localStorage.removeItem("pageRowListaDatiFatturazione");
             }
         }
         if(location.pathname === PathPf.MODULOCOMMESSA){
-            if(profilo.auth === 'PAGOPA'){
+            if(profilo.auth === 'PAGOPA' && open.clickOn === 'INDIETRO_BUTTON'){
                 handleGetDettaglioModuloCommessaPagoPa();
-                setOpen(false);
+                setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
                 handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
-            }else if(mainState.inserisciModificaCommessa === 'INSERT' && enti){
-                setOpen(false);
+
+            }else if(profilo.auth === 'PAGOPA' && open.clickOn !== 'INDIETRO_BUTTON'){
+                handleGetDettaglioModuloCommessaPagoPa();
+                navigate(open.clickOn);
+                setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
+                handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
+                localStorage.removeItem("filtersModuliCommessa");
+                localStorage.removeItem("pageRowListaModuliCommessa");
+                localStorage.removeItem("filtersRel");
+                localStorage.removeItem("filtersNotifiche");
+                localStorage.removeItem("filtersListaDatiFatturazione");
+                localStorage.removeItem("pageRowListaDatiFatturazione");
+
+            }else if(mainState.statusPageInserimentoCommessa === 'mutable' && enti && open.clickOn === 'INDIETRO_BUTTON' && mainState.inserisciModificaCommessa === 'MODIFY'){
+                setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
+                handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
+                handleGetDettaglioModuloCommessa();
+
+            }else if(mainState.statusPageInserimentoCommessa === 'mutable' && enti && open.clickOn === 'INDIETRO_BUTTON' && mainState.inserisciModificaCommessa === 'INSERT'){
+                setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
                 handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
                 navigate(PathPf.LISTA_COMMESSE);
-
-            }else if(enti){
                 handleGetDettaglioModuloCommessa();
+
+            }else if(mainState.statusPageInserimentoCommessa === 'mutable' && enti && open.clickOn !== 'INDIETRO_BUTTON'){
+                navigate(open.clickOn);
+                setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
                 handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
-                setOpen(false);
+                
+
             }
         }
        
@@ -78,7 +128,7 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
     return (
         <div>
             <Modal
-                open={open}
+                open={open.visible}
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
