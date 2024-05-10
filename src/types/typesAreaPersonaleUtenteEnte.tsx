@@ -1,4 +1,4 @@
-import { MainState } from "./typesGeneral";
+import { InfoOpen, MainState } from "./typesGeneral";
 
 export interface SuccesResponseGetDatiFatturazione {
     data:DatiFatturazione
@@ -12,9 +12,10 @@ export type Contatti = {
 export interface AreaPersonaleProps{ 
     mainState:MainState,
     dispatchMainState:any,
-    open:boolean,
+    open:InfoOpen,
     setOpen:any
 }
+
 export interface DatiFatturazione{
     id?:string,
     idEnte:string,

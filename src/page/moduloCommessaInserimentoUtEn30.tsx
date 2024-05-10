@@ -360,6 +360,20 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
             }
         ]);
     };
+
+    const onIndietroButton = () =>{
+        if(mainState.statusPageInserimentoCommessa === 'immutable' && profilo.auth !== 'PAGOPA'){
+            navigate(PathPf.LISTA_COMMESSE);
+        }else if(mainState.statusPageInserimentoCommessa === 'immutable' && profilo.auth === 'PAGOPA'){
+            navigate(PathPf.LISTA_MODULICOMMESSA);
+        }else if(mainState.statusPageInserimentoCommessa === 'mutable' && profilo.auth === 'PAGOPA'){
+            setOpen(prev => ({...prev, ...{visible:true,clickOn:'INDIETRO_BUTTON'}}));
+        }else if(mainState.inserisciModificaCommessa === 'INSERT'&& enti){
+            setOpen(prev => ({...prev, ...{visible:true,clickOn:'INDIETRO_BUTTON'}}));
+        }else if(mainState.inserisciModificaCommessa === 'MODIFY' && mainState.statusPageInserimentoCommessa === 'mutable'&& enti ){
+            setOpen(prev => ({...prev, ...{visible:true,clickOn:'INDIETRO_BUTTON'}}));
+        } 
+    };
     const cssPathModuloComm = mainState.statusPageInserimentoCommessa === 'immutable' ? 'bold' : 'normal';
     const cssPathAggModComm = mainState.statusPageInserimentoCommessa === 'mutable' ? 'bold' : 'normal';
 
@@ -399,15 +413,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                         size="small"
                         startIcon={<ArrowBackIcon />}
                         onClick={() =>{
-                            if(mainState.statusPageInserimentoCommessa === 'immutable' && profilo.auth !== 'PAGOPA'){
-                                navigate(PathPf.LISTA_COMMESSE);
-                            }else if(mainState.statusPageInserimentoCommessa === 'immutable' && profilo.auth === 'PAGOPA'){
-                                navigate(PathPf.LISTA_MODULICOMMESSA);
-                            }else if(mainState.inserisciModificaCommessa === 'INSERT' && enti){
-                                setOpen(true);
-                            }else{
-                                setOpen(true);
-                            } 
+                            onIndietroButton();
                         }}
                     >
                         Indietro
@@ -444,7 +450,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                                 <Button
                                     variant="outlined"
                                     type="button"
-                                    onClick={()=>setOpen(true)}
+                                    onClick={()=>onIndietroButton()}
                                 >Indietro
                                 </Button>
                                 <Button variant="contained" 

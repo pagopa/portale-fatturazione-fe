@@ -174,3 +174,8 @@ export enum Profilo {
 export interface AzureLoginProps{
     dispatchMainState:any
 }
+
+export interface InfoOpen{
+    visible:boolean,
+    clickOn:string
+}

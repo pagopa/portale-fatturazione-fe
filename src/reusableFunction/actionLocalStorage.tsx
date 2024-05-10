@@ -34,6 +34,11 @@ export const getTipoCommessa = () => {
     return result;
 };
 
+export const getChosenPath = () => {
+    const result =  localStorage.getItem('chosenPath') || '';
+    return result;
+};
+
 export const setInfoToStatusApplicationLoacalStorage = (oldObj, newObj) => {
 
     localStorage.setItem('statusApplication',JSON.stringify({...oldObj,...newObj}));
