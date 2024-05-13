@@ -292,7 +292,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                 </div>
             </div>
             <div className={classContainerButtons}>
-                {enti &&
+                {(enti && rel.totale > 0) &&
                  <>
                      <div className="">
                          <Button sx={{width:'274px'}} onClick={() => downloadPdfRel()}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
@@ -302,7 +302,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                      </div> 
                  </>
                 }
-                {rel?.caricata === 1 &&
+                {rel?.caricata >= 1 &&
                 <div>
                     <div>
                         <Button sx={{width:'300px'}} onClick={() => downloadPdfRelFirmato()}   variant="contained">Scarica PDF Firmato <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
