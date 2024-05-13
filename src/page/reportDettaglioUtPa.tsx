@@ -246,7 +246,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
             onere:newOnere,
             recipientId:notifica.recipientId,
             anno:notifica.anno,
-            mese:mesiGrid[Number(notifica.mese) - 1 ],
+            mese:mesiGrid[Number(notifica.mese)],
             ragioneSociale:notifica.ragioneSociale,
             tipoNotifica:notifica.tipoNotifica,
             iun:notifica.iun,
