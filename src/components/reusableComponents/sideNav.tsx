@@ -45,10 +45,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
             setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.LISTA_DATI_FATTURAZIONE}}));
    
         }else if(((mainState.statusPageDatiFatturazione === 'immutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)|| (mainState.statusPageInserimentoCommessa === 'immutable' && location.pathname === PathPf.MODULOCOMMESSA)) && profilo.auth === 'PAGOPA'){
-            localStorage.removeItem("filtersModuliCommessa");
-            localStorage.removeItem("pageRowListaModuliCommessa");
-            localStorage.removeItem("filtersRel");
-            localStorage.removeItem("filtersNotifiche");
+           
             navigate(PathPf.LISTA_DATI_FATTURAZIONE);
             
         }else if(((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)|| (mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)) && enti){
@@ -62,6 +59,10 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
             navigate(PathPf.LISTA_DATI_FATTURAZIONE);
             
         }else if(enti){
+            localStorage.removeItem("filtersModuliCommessa");
+            localStorage.removeItem("pageRowListaModuliCommessa");
+            localStorage.removeItem("filtersRel");
+            localStorage.removeItem("filtersNotifiche");
             navigate(PathPf.DATI_FATTURAZIONE);
         } 
       
@@ -229,6 +230,12 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
         if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
             setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.ADESIONE_BANDO}}));
         }else{
+            localStorage.removeItem("filtersRel");
+            localStorage.removeItem("filtersListaDatiFatturazione");
+            localStorage.removeItem("pageRowListaDatiFatturazione");
+            localStorage.removeItem("filtersNotifiche");
+            localStorage.removeItem("filtersModuliCommessa");
+            localStorage.removeItem("pageRowListaModuliCommessa");
             navigate(PathPf.ADESIONE_BANDO);
         }
     }; 
