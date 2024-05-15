@@ -9,7 +9,7 @@ import { useEffect, useRef, useState} from 'react';
 import TextDettaglioPdf from '../components/commessaPdf/textDettaglioPdf';
 import { ResponseDownloadPdf } from '../types/typeModuloCommessaInserimento';
 import { getRelExel, getRelPdf, uploadPdfRel ,getRelPdfFirmato, getSingleRel, getLogRelDocumentoFirmato } from '../api/apiSelfcare/relSE/api';
-import { getLogPagoPaRelDocumentoFirmato, getRelExelPagoPa, getRelPdfFirmatoPagoPa, getSingleRelPagopa } from '../api/apiPagoPa/relPA/api';
+import { getLogPagoPaRelDocumentoFirmato, getRelExelPagoPa, getRelPdfFirmatoPagoPa, getRelPdfPagoPa, getSingleRelPagopa } from '../api/apiPagoPa/relPA/api';
 import DownloadIcon from '@mui/icons-material/Download';
 import ModalUploadPdf from '../components/rel/modalUploadPdf';
 import { saveAs } from "file-saver";
@@ -111,14 +111,23 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
     };
 
     const downloadPdfRel = async() =>{
-        setShowDownloading(true);
         if(enti){
+            setShowDownloading(true);
             await getRelPdf(token, mainState.nonce, statusApp.idElement).then((res: ResponseDownloadPdf)=>{
                 toDoOnDownloadPdf(res);
             }).catch((err)=>{
+                setShowDownloading(false);
                 manageError(err,dispatchMainState);
             });
-        }  
+        }else if(profilo.auth === 'PAGOPA'){
+            setShowDownloading(true);
+            await getRelPdfPagoPa(token, mainState.nonce, statusApp.idElement).then((res: ResponseDownloadPdf)=>{
+                toDoOnDownloadPdf(res);
+            }).catch((err)=>{
+                setShowDownloading(false);
+                manageError(err,dispatchMainState);
+            });
+        }
        
     };
 
@@ -292,15 +301,17 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                 </div>
             </div>
             <div className={classContainerButtons}>
-                {(enti && rel.totale > 0) &&
-                 <>
+              
+                {((enti && rel.totale > 0) || profilo.auth === 'PAGOPA') &&
                      <div className="">
                          <Button sx={{width:'274px'}} onClick={() => downloadPdfRel()}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
                      </div>
+                }
+                {(enti && rel.totale > 0) &&
                      <div id='singleInputRel' style={{minWidth: '300px', height:'40px'}}>
                          <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".pdf"]} onFileSelected={(e)=> setFile(e)} onFileRemoved={() => setFile(null)} dropzoneLabel={(rel?.caricata === 1 ||rel?.caricata === 2) ? 'Reinserisci nuovo PDF Reg. Es. firmato':"Inserisci PDF Reg. Es. firmato"} rejectedLabel="Tipo file non supportato" ></SingleFileInput>
                      </div> 
-                 </>
+                
                 }
                 {rel?.caricata >= 1 &&
                 <div>
