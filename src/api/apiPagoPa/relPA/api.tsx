@@ -90,3 +90,14 @@ export const getRelPdfPagoPa = async ( token:string ,nonce:string , id:string) =
     return response;
 };
 
+export const downloadQuadraturaRelPagopa = async (token:string, nonce:string , body: BodyRel) => {
+    const response =  await axios.post(`${url}/api/rel/pagopa/quadratura/ricerca?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },
+        }
+    );
+    return response;
+};
+

@@ -11,7 +11,7 @@ import ModuloCommessaPdf from './page/moduloCommessaPdf';
 import Auth from './page/auth';
 import HeaderPostLogin from './components/reusableComponents/headerPostLogin';
 import SideNavComponent from './components/reusableComponents/sideNav';
-import FooterPostLogin from './components/reusableComponents/footerPostLogin';
+import FooterComponent from './components/reusableComponents/footer';
 import ErrorPage from './page/error';
 import HeaderNavComponent from './components/reusableComponents/headerNav';
 import AzureLogin from './page/azureLogin';
@@ -87,7 +87,7 @@ const App = ({ instance }) => {
     const [showAlert, setShowAlert] = useState(false);
     const [openBasicModal_DatFat_ModCom, setOpenBasicModal_DatFat_ModCom] = useState<InfoOpen>({visible:false,clickOn:''});
     // set status page abilita e disabilita le modifiche al componente dati fatturazione
-    console.log(openBasicModal_DatFat_ModCom);
+   
     
     const [mainState, dispatchMainState] = useReducer(reducerMainState, {
         mese:'',
@@ -103,7 +103,7 @@ const App = ({ instance }) => {
         apiError:null,
         authenticated:false 
     });
-    console.log(mainState);
+   
     useEffect(()=>{
         if(mainState.apiError !== null){
             setShowAlert(true);
@@ -203,7 +203,7 @@ const App = ({ instance }) => {
                             </Grid>
                         </Grid>
                     </div>
-                    <FooterPostLogin />
+                    <FooterComponent mainState={mainState} />
                 </div>
             </ThemeProvider>
 
@@ -264,7 +264,7 @@ const App = ({ instance }) => {
                         </Grid>
                     </div>
 
-                    <FooterPostLogin />
+                    <FooterComponent mainState={mainState} />
                 </div>
             </ThemeProvider>
 
@@ -312,7 +312,7 @@ const App = ({ instance }) => {
                         </Grid>
                     </div>
 
-                    <FooterPostLogin />
+                    <FooterComponent mainState={mainState} />
                 </div>
             </ThemeProvider>
 
@@ -345,7 +345,7 @@ const App = ({ instance }) => {
 
                     </div>
 
-                    <FooterPostLogin />
+                    <FooterComponent mainState={mainState} />
                 </div>
             </ThemeProvider>
 

@@ -27,7 +27,7 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
     const location = useLocation();
     const chosenPath = getChosenPath();
     const enti = profiliEnti();
-    console.log(open, 'ooo');
+   
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
             type:'MODIFY_MAIN_STATE',
