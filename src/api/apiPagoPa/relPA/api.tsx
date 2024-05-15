@@ -80,3 +80,13 @@ export const getLogPagoPaRelDocumentoFirmato = async (token:string, nonce:string
     return response;
 };
 
+export const getRelPdfPagoPa = async ( token:string ,nonce:string , id:string) => {
+    const response =  await axios.get(`${url}/api/rel/pagopa/documento/download/${id}?nonce=${nonce}`,  
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
