@@ -41,7 +41,7 @@ type PreLoginFooterLinksType = {
     };
 };
 
-export default function FooterPostLogin() {
+const FooterComponent = ({mainState}) => {
     
     const [ lang, setLang ] = useState<LangCode>("it"); 
     const location = useLocation();
@@ -86,25 +86,25 @@ export default function FooterPostLogin() {
     const postLoginLinks: Array<FooterLinksType> = [
         {
             label: "Informativa Privacy",
-            href: "#informativa-privacy",
+            href: "https://www.pagopa.it/it/informativa-privacy-area-riservata/",
             ariaLabel: "Vai al link: Informativa Privacy",
             linkType: "internal",
         },
         {
             label: "Diritto alla protezione dei dati personali",
-            href: "#diritto-allaprotezionedipersonalidati",
+            href: "https://privacyportal-de.onetrust.com/webform/77f17844-04c3-4969-a11d-462ee77acbe1/9ab6533d-be4a-482e-929a-0d8d2ab29df8",
             ariaLabel: "Vai al link: Diritto alla protezione dei dati personali",
             linkType: "internal",
         },
         {
             label: "Termini e condizioni",
-            href: "#terms-conditions",
+            href: "https://www.pagopa.it/it/termini-condizioni-area-riservata/",
             ariaLabel: "Vai al link: Termini e condizioni",
             linkType: "internal",
         },
         {
             label: "Accessibilità",
-            href: "#accessibility",
+            href: "https://form.agid.gov.it/view/7aa810f2-bc15-40d1-b996-6eaa658439c3",
             ariaLabel: "Vai al link: Accessibilità",
             linkType: "internal",
         },
@@ -240,41 +240,40 @@ export default function FooterPostLogin() {
     };
       
 
-    const getDataUser = localStorage.getItem('dati')|| '{}';
-    
-    const dataUser = JSON.parse(getDataUser);
-
-    const [statusLog, setStatusLog] = useState(false);
-
-    useEffect(()=>{
-        const bool = getDataUser === '{}' ? false : true;
-        setStatusLog(bool);
-    },[dataUser]);
+  
 
     const hideFooter = location.pathname === '/auth' ||
     location.pathname === '/azure' ||
     location.pathname === '/auth/azure';
 
+
+
+      
+
+
+
     return (
         <div>
-            {hideFooter ? null : 
-                <Footer
-                    loggedUser={statusLog}
-                    companyLink={pagoPALink}
-                    legalInfo={companyLegalInfo}
-                    postLoginLinks={postLoginLinks}
-                    languages={LANGUAGES}
-                    currentLangCode={lang}
-                    preLoginLinks={preLoginLinks}
-                    onLanguageChanged={
-                        () => {
-                            console.log("Changed Language");
-                        }
+            {!hideFooter && 
+            <Footer
+                loggedUser={mainState.authenticated}
+                companyLink={pagoPALink}
+                legalInfo={companyLegalInfo}
+                postLoginLinks={postLoginLinks}
+                languages={LANGUAGES}
+                currentLangCode={lang}
+                preLoginLinks={preLoginLinks}
+                onLanguageChanged={
+                    () => {
+                        console.log("Changed Language");
                     }
-                    productsJsonUrl="https://dev.selfcare.pagopa.it/assets/products.json"
-                    hideProductsColumn={false}
-                />}
+                }
+                productsJsonUrl="https://dev.selfcare.pagopa.it/assets/products.json"
+                hideProductsColumn={false}
+            /> }
         </div>
 
     );
-}
+};
+
+export default FooterComponent;

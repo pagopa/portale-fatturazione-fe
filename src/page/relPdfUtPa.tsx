@@ -300,20 +300,26 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                     </div>
                 </div>
             </div>
+            <div className='d-flex justify-content-start m-5'>
+                {profilo.auth === 'PAGOPA' &&
+                    <Button sx={{width:'274px'}} onClick={() => downloadPdfRel()}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+                }
+            </div>
             <div className={classContainerButtons}>
-              
-                {((enti && rel.totale > 0) || profilo.auth === 'PAGOPA') &&
-                     <div className="">
-                         <Button sx={{width:'274px'}} onClick={() => downloadPdfRel()}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
-                     </div>
-                }
-                {(enti && rel.totale > 0) &&
-                     <div id='singleInputRel' style={{minWidth: '300px', height:'40px'}}>
-                         <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".pdf"]} onFileSelected={(e)=> setFile(e)} onFileRemoved={() => setFile(null)} dropzoneLabel={(rel?.caricata === 1 ||rel?.caricata === 2) ? 'Reinserisci nuovo PDF Reg. Es. firmato':"Inserisci PDF Reg. Es. firmato"} rejectedLabel="Tipo file non supportato" ></SingleFileInput>
-                     </div> 
-                
-                }
-                {rel?.caricata >= 1 &&
+                <div>
+                    {(enti && rel.totale > 0) &&
+                    <>
+                        <div className="">
+                            <Button sx={{width:'274px'}} onClick={() => downloadPdfRel()}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+                        </div>
+                        <div id='singleInputRel' style={{minWidth: '300px', height:'40px'}}>
+                            <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".pdf"]} onFileSelected={(e)=> setFile(e)} onFileRemoved={() => setFile(null)} dropzoneLabel={(rel?.caricata === 1 ||rel?.caricata === 2) ? 'Reinserisci nuovo PDF Reg. Es. firmato':"Inserisci PDF Reg. Es. firmato"} rejectedLabel="Tipo file non supportato" ></SingleFileInput>
+                        </div> 
+                    </>
+                    }
+                </div>
+               
+                {(enti && rel?.caricata >= 1) &&
                 <div>
                     <div>
                         <Button sx={{width:'300px'}} onClick={() => downloadPdfRelFirmato()}   variant="contained">Scarica PDF Firmato <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>

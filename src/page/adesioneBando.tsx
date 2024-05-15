@@ -26,7 +26,7 @@ const AdesioneBando : React.FC<AdesioneBandoProps> = ({mainState, dispatchMainSt
     const [errorUpload, setErrorUpload] = useState<boolean>(false);
     const [openModalConfirmUploadDoc, setOpenModalConfirmUploadDoc] = useState<boolean>(false);
 
-    console.log(file);
+    
     useEffect(()=>{
         if(mainState.nonce !== ''){
             getListaAsseverazione();
@@ -107,7 +107,7 @@ const AdesioneBando : React.FC<AdesioneBandoProps> = ({mainState, dispatchMainSt
     ) => {
         event.preventDefault();
         // l'evento verrà eseguito solo se l'utente farà il clik sul 
-        console.log('elle');
+      
     };
 
     

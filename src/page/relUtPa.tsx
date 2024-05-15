@@ -10,7 +10,7 @@ import { manageError} from "../api/api";
 import { useNavigate } from "react-router";
 import DownloadIcon from '@mui/icons-material/Download';
 import { downloadListaRel, getListaRel} from "../api/apiSelfcare/relSE/api";
-import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, getListaRelPagoPa } from "../api/apiPagoPa/relPA/api";
+import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, downloadQuadraturaRelPagopa, getListaRelPagoPa } from "../api/apiPagoPa/relPA/api";
 import SelectStatoPdf from "../components/rel/selectStatoPdf";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { saveAs } from "file-saver";
@@ -218,6 +218,19 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             }); 
         }
     };
+
+    const downloadQuadratura = async() => {
+        downloadQuadraturaRelPagopa(token,mainState.nonce,bodyDownload).then((res)=>{
+            let fileName = `Quadratura regolari esecuzioni /${mesiWithZero[bodyDownload.mese-1]}/ ${bodyDownload.anno}.xlsx`;
+            if(bodyDownload.idEnti.length === 1){
+                fileName = `Quadratura regolare esecuzione /${data[0]?.ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]}/ ${bodyDownload.anno}.xlsx`;
+            }
+            saveAs("data:text/plain;base64," + res.data.documento,fileName );
+            setShowLoading(false);
+        }).catch((err)=>{
+            manageError(err,dispatchMainState);
+        });  
+    };
   
     const downloadListaPdfPagopa = async() =>{
         setShowLoading(true);
@@ -324,17 +337,29 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 </div>
                 <div className="mt-5 mb-5">
                     { data.length > 0  &&
-            <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
-                <div>
-                    {profilo.auth === 'PAGOPA'&&  
-                    <Button
-                        disabled={getListaRelRunning  || !disableDownloadListaPdf}
-                        onClick={()=> {
-                            downloadListaPdfPagopa();
-                        }}  >
+            <div className="marginTop24 d-flex d-flex justify-content-between">
+                <div className="d-flex justify-content-start">
+                    {profilo.auth === 'PAGOPA'&&
+                   
+                   <Button onClick={()=> {
+                       downloadQuadratura();
+                   }} >
+                     Quadratura notifiche Rel 
+                       <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
+                   </Button>  }
+                </div>
+                <div className="d-flex justify-content-end">
+                    {profilo.auth === 'PAGOPA'&&
+                   
+                        <Button
+                            disabled={getListaRelRunning  || !disableDownloadListaPdf}
+                            onClick={()=> {
+                                downloadListaPdfPagopa();
+                            }}  >
                                   Download documenti firmati 
-                        <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
-                    </Button>
+                            <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
+                        </Button>
+                   
                     }
                     <Button
                         disabled={getListaRelRunning}

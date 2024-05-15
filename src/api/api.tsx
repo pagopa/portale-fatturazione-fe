@@ -21,19 +21,17 @@ export const manageError = (res:ManageErrorResponse,dispatchMainState:any) =>{
         handleModifyMainState({apiError:res.response.request.status});
     }else if(res?.response?.request?.status   === 419){
         handleModifyMainState({apiError:res.response.request.status});
-        //window.location.href = redirect;
+       
        
     }else if(res?.response?.request?.status  === 400){
         handleModifyMainState({apiError:res.response.request.status});
-        // console.log('400 da gestire');
+    
     }else if(res?.response?.request?.status  === 403){
         handleModifyMainState({apiError:res.response.request.status});
-        //window.location.href = redirect;
-        //navigate('/error');
+      
     }else if(res?.response?.request?.status  === 500){
         handleModifyMainState({apiError:res.response.request.status});
-        // alert('Operazione non eseguita: Internal Server Error');
-        // navigate('/error');
+    
     }else if(res?.message === "Network Error"){
         handleModifyMainState({apiError:"Network Error"});
         //window.location.href = '/error';
