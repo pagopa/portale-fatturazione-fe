@@ -220,6 +220,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     };
 
     const downloadQuadratura = async() => {
+        setShowLoading(true);
         downloadQuadraturaRelPagopa(token,mainState.nonce,bodyDownload).then((res)=>{
             let fileName = `Quadratura regolari esecuzioni /${mesiWithZero[bodyDownload.mese-1]}/ ${bodyDownload.anno}.xlsx`;
             if(bodyDownload.idEnti.length === 1){
@@ -228,6 +229,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             saveAs("data:text/plain;base64," + res.data.documento,fileName );
             setShowLoading(false);
         }).catch((err)=>{
+            setShowLoading(false);
             manageError(err,dispatchMainState);
         });  
     };
