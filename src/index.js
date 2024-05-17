@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { PublicClientApplication, EventType } from '@azure/msal-browser';
 import { msalConfig } from './authConfig';
+import './i18n';
 
 /**
  * MSAL should be instantiated outside of the component tree to prevent it from being re-instantiated on re-renders.
