@@ -4,7 +4,6 @@ import { DataGrid, GridColDef, GridEventListener, GridRowParams, MuiEvent } from
 import { Params } from "../types/typesGeneral";
 import { saveAs } from "file-saver";
 import { useEffect, useState } from "react";
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { downloadDocumentoAsseverazionePagoPa, exportDocumentoAsseverazionePagoPa, listaAsseverazionePagopa, uploadExelAsseverazionePagopa } from "../api/apiPagoPa/adesioneBandoPA/api";
 import { getToken } from "../reusableFunction/actionLocalStorage";
 import { AdesioneBandoProps, Asseverazione } from "../types/typeAdesioneBando";
@@ -12,6 +11,7 @@ import { manageError } from "../api/api";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { SingleFileInput } from "@pagopa/mui-italia";
 import ModalUploadPdf from "../components/rel/modalUploadPdf";
+
 
 const AdesioneBando : React.FC<AdesioneBandoProps> = ({mainState, dispatchMainState}) => {
 
