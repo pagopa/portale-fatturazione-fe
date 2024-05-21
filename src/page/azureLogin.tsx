@@ -1,6 +1,4 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router";
-import { PathPf } from "../types/enum";
 import { Typography } from "@mui/material";
 import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
 import { AzureLoginProps } from "../types/typesGeneral";
