@@ -65,7 +65,7 @@ export interface MainState{
     statusPageInserimentoCommessa:string,
     nonce:string,
     datiFatturazione:boolean, // parametro utilizato in modulo commessa per capire se accettare l'inserimento commessa o fare il redirect t dati fatturazione se non sono stati inseriti
-    relSelected:Rel|null,
+    relSelected:string|null,
     apiError:number|string|null,
     authenticated:boolean
 }

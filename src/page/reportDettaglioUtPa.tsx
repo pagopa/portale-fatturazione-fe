@@ -28,7 +28,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
 
     const token =  getToken();
     const profilo =  getProfilo();
-    const navigate = useNavigate();
     const statusApp = getStatusApp();
     const enti = profiliEnti();
 
