@@ -5,8 +5,8 @@ import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { MainState } from '../../types/typesGeneral';
 import { redirect } from '../../api/api';
-import { getProfilo } from '../../reusableFunction/actionLocalStorage';
-import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
+
 
 type AlertProps = {
     setVisible:any,
@@ -16,7 +16,7 @@ type AlertProps = {
 }
 
 const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, dispatchMainState}) => {
-
+    const { t, i18n } = useTranslation();
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -25,25 +25,19 @@ const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, di
         });
     };
 
-    let sentenceAlert = '';
+  
     let colorAlert:AlertColor = 'success';
     if(mainState.apiError === 401 || mainState.apiError === 403 ){
-        sentenceAlert =  "Utente non autenticato. Effettuare nuovamente l'accesso";
         colorAlert = 'error';
     }else if(mainState.apiError === 419){
-        sentenceAlert =  "Sessione scaduta. Effettuare nuovamente l'accesso";
         colorAlert = 'error';
     }else if(mainState.apiError === 500){
-        sentenceAlert =  "L'operazione non è andata a buon fine. Si prega di riprovare";
         colorAlert = 'error';
     }else if(mainState.apiError === 400){
-        sentenceAlert =  "L'operazione non è andata a buon fine. Contattare l'assistenza";
         colorAlert = 'error';
     }else if(mainState.apiError === 404){
-        sentenceAlert =  "La ricerca non ha prodotto risultati";
         colorAlert = "info";
     }else if(mainState.apiError === "Network Error"){
-        sentenceAlert =  "La connessione Internet risulta non attiva";
         colorAlert = 'warning';
     }
     
@@ -88,7 +82,7 @@ const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, di
     return createPortal(
         <div className={css}>
             <Stack sx={{ width: '100%' }} spacing={2}>
-                <Alert severity={colorAlert}  variant="standard">{sentenceAlert}</Alert>
+                <Alert severity={colorAlert}  variant="standard">{t(`errori.${mainState.apiError}`)}</Alert>
             </Stack>
         </div>,
         document.getElementById("modal-alert")|| document.body
