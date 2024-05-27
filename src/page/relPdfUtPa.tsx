@@ -18,7 +18,7 @@ import { redirect } from '../api/api';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import { PathPf } from '../types/enum';
 import { getProfilo, getStatusApp, getToken, profiliEnti } from '../reusableFunction/actionLocalStorage';
-import { mesi, mesiWithZero, month } from '../reusableFunction/reusableArrayObj';
+import {mesiWithZero, month } from '../reusableFunction/reusableArrayObj';
 import { createDateFromString } from '../reusableFunction/function';
 import ModalRedirect from '../components/commessaInserimento/madalRedirect';
 
@@ -160,13 +160,13 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
             await getLogRelDocumentoFirmato(token, mainState.nonce,bodySelf).then((res) =>{
                 setLastUpdateDocFirmato(res.data[0].dataEvento);
             }).catch((err)=>{ 
-                manageError(err,dispatchMainState);
+                //manageError(err,dispatchMainState);
             });
         }else if(profilo.auth === 'PAGOPA'){
             await getLogPagoPaRelDocumentoFirmato(token, mainState.nonce,body).then((res) =>{
                 setLastUpdateDocFirmato(res.data[0].dataEvento);
             }).catch((err)=>{
-                manageError(err,dispatchMainState);
+                //manageError(err,dispatchMainState);
             });
         }
         
@@ -305,9 +305,9 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                     <Button sx={{width:'274px'}} onClick={() => downloadPdfRel()}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
                 }
             </div>
-            <div className={classContainerButtons}>
-                <div>
-                    {(enti && rel.totale > 0) &&
+            <div className="d-flex justify-content-between m-5">
+               
+                {(enti && rel.totale > 0) &&
                     <>
                         <div className="">
                             <Button sx={{width:'274px'}} onClick={() => downloadPdfRel()}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
@@ -316,8 +316,8 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                             <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".pdf"]} onFileSelected={(e)=> setFile(e)} onFileRemoved={() => setFile(null)} dropzoneLabel={(rel?.caricata === 1 ||rel?.caricata === 2) ? 'Reinserisci nuovo PDF Reg. Es. firmato':"Inserisci PDF Reg. Es. firmato"} rejectedLabel="Tipo file non supportato" ></SingleFileInput>
                         </div> 
                     </>
-                    }
-                </div>
+                }
+              
                
                 {(enti && rel?.caricata >= 1) &&
                 <div>

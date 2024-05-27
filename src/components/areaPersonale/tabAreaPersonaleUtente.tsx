@@ -92,7 +92,7 @@ const TabAreaPersonaleUtente = () => {
                             <div>
                                 <TextFieldComponent
                                     required={false}
-                                    helperText="max 20 caratteri alfanumerici"
+                                    helperText="max 20 caratteri"
                                     label="ID Documento"
                                     placeholder="Inserisci ID"
                                     fullWidth={false}

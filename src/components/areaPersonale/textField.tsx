@@ -56,10 +56,26 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
             } );
     }; 
 
+    const validationIdDocumento = (max: number, validation:string, input:string|number) => {
+      
+        YupString.max(max, validation)
+            .validate(input)
+            .then(()=>{
+                setErrorValidation(false);
+                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+            })
+            .catch(() =>{
+                setErrorValidation(true);
+                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
+            } );
+    };
+
     const hendleOnMouseOut = (e: React.SyntheticEvent<EventTarget>) =>{
         e.persist();
         if(label === 'Mail Pec'){
             validationTextAreaEmail(value);
+        }else if(label === "ID Documento" ){
+            validationIdDocumento(dataValidation.max,dataValidation.validation ,value);
         }else{
             validationTextArea(dataValidation.max,dataValidation.validation ,value);
         }
