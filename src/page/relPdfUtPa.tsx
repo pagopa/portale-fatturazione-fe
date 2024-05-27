@@ -249,7 +249,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
         }
     };  
 
-    const classContainerButtons = enti ? 'd-flex justify-content-between m-5': 'd-flex justify-content-end m-5';
+    // const classContainerButtons = enti ? 'd-flex justify-content-between m-5': 'd-flex justify-content-end m-5';
 
     return (
         <div>
