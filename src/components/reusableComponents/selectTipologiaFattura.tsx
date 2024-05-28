@@ -1,9 +1,15 @@
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { Box } from "@mui/system";
-import { BodyRel } from "../../types/typeRel";
 interface SelecTipologiaProps{
     setValue: any,
-    values:BodyRel
+    values:{
+        anno:number,
+        mese:number|null,
+        tipologiaFattura:null| string,
+        idEnti?:string[],
+        idContratto?:null|string,
+        caricata?:null|number
+    }
 }
 
 const SelectTipologiaFattura : React.FC<SelecTipologiaProps> = ({setValue, values}) =>{

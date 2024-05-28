@@ -82,7 +82,8 @@ const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, di
     return createPortal(
         <div className={css}>
             <Stack sx={{ width: '100%' }} spacing={2}>
-                <Alert severity={colorAlert}  variant="standard">{t(`errori.${mainState.apiError}`)}</Alert>
+                <Alert severity={colorAlert}  variant="standard">{mainState.apiError && t(`errori.${mainState.apiError}`)}</Alert>
+                
             </Stack>
         </div>,
         document.getElementById("modal-alert")|| document.body

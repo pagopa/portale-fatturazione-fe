@@ -27,7 +27,7 @@ i18n
             escapeValue: false, // not needed for react as it escapes by default
         },
         resources:{
-            ita:{
+            it:{
                 translation:{
                     errori:{
                         401:"Utente non autenticato. Effettuare nuovamente l'accesso",
@@ -36,7 +36,8 @@ i18n
                         500:"L'operazione non è andata a buon fine. Si prega di riprovare",
                         400:"L'operazione non è andata a buon fine. Contattare l'assistenza",
                         404:"La ricerca non ha prodotto risultati",
-                        "Network Error":"La connessione Internet risulta non attiva"
+                        "Network Error":"La connessione Internet risulta non attiva",
+                       
                     }
                 }
             }

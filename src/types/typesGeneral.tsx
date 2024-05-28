@@ -155,7 +155,14 @@ export interface SelectUltimiDueAnniProps{
 }
 
 export interface SelectMeseProps{
-    values:BodyRel,
+    values:{
+        anno:number,
+        mese:number|null,
+        tipologiaFattura:null| string,
+        idEnti?:string[],
+        idContratto?:null|string,
+        caricata?:null|number
+    },
     setValue: (value:any) => void
 }
 
