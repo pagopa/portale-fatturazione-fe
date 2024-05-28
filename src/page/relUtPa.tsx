@@ -267,7 +267,11 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                         <SelectMese values={bodyRel} setValue={setBodyRel}></SelectMese>
                     </div>
                     <div  className="col-3">
-                        <SelectTipologiaFattura values={bodyRel} setValue={setBodyRel}></SelectTipologiaFattura>
+                        <SelectTipologiaFattura values={bodyRel} setValue={setBodyRel} types={[
+                            'PRIMO SALDO',
+                            'SECONDO SALDO',
+                            'PRIMO CONGUAGLIO',
+                            'SECONDO CONGUAGLIO']}></SelectTipologiaFattura>
                     </div>
                     <div className="col-3">
                         <SelectStatoPdf values={bodyRel} setValue={setBodyRel}></SelectStatoPdf>

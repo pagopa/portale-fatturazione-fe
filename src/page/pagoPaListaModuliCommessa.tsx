@@ -183,122 +183,126 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
 
     return (
         <div className="mx-5">
-            {/*title container start */}
             <div className="marginTop24 ">
                 <Typography variant="h4">Lista Modulo Commessa</Typography>
             </div>
-            {/*title container end */}
-            <div className="d-flex mb-5 marginTop24" >
-                <div className="col-3">
-                    <Box sx={{ width: '80%' }}>
-                        <FormControl
-                            fullWidth
-                            size="medium"
-                        >
-                            <InputLabel
-                                id="sea"
+            <div className="mb-5 mt-5 marginTop24" >
+                <div className="row">
+
+                
+                    <div className="col-3">
+                        <Box sx={{ width: '80%' }}>
+                            <FormControl
+                                fullWidth
+                                size="medium"
                             >
+                                <InputLabel
+                                    id="sea"
+                                >
                                 Anno
-                            </InputLabel>
-                            <Select
-                                id="sea"
-                                label='Seleziona Prodotto'
-                                labelId="search-by-label"
-                                onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{anno:e.target.value}}))}
-                                value={bodyGetLista.anno}
-                                disabled={status=== 'immutable' ? true : false}
+                                </InputLabel>
+                                <Select
+                                    id="sea"
+                                    label='Seleziona Prodotto'
+                                    labelId="search-by-label"
+                                    onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{anno:e.target.value}}))}
+                                    value={bodyGetLista.anno}
+                                    disabled={status=== 'immutable' ? true : false}
+                                >
+                                    {getCurrentFinancialYear().map((el) => (
+                                        <MenuItem
+                                            key={Math.random()}
+                                            value={el}
+                                        >
+                                            {el}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Box>
+                    </div>
+                
+                    <div className="col-3">
+                        <Box sx={{ width: '80%' }}>
+                            <FormControl
+                                fullWidth
+                                size="medium"
                             >
-                                {getCurrentFinancialYear().map((el) => (
-                                    <MenuItem
-                                        key={Math.random()}
-                                        value={el}
-                                    >
-                                        {el}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Box>
-                </div>
-                <div className="col-3">
-                    <Box sx={{ width: '80%' }}>
-                        <FormControl
-                            fullWidth
-                            size="medium"
-                        >
-                            <InputLabel
-                                id="sea"
-                            >
+                                <InputLabel
+                                    id="sea"
+                                >
                                 Mese
-                            </InputLabel>
-                            <Select
-                                id="sea"
-                                label='Seleziona Prodotto'
-                                labelId="search-by-label"
-                                onChange={(e) =>{
-                                    setBodyGetLista((prev)=> ({...prev, ...{mese:e.target.value}}));
-                                }}
-                                value={bodyGetLista.mese}
-                                disabled={status=== 'immutable' ? true : false}
+                                </InputLabel>
+                                <Select
+                                    id="sea"
+                                    label='Seleziona Prodotto'
+                                    labelId="search-by-label"
+                                    onChange={(e) =>{
+                                        setBodyGetLista((prev)=> ({...prev, ...{mese:e.target.value}}));
+                                    }}
+                                    value={bodyGetLista.mese}
+                                    disabled={status=== 'immutable' ? true : false}
+                                >
+                                    {mesi.map((el) => (
+                                        <MenuItem
+                                            key={Math.random()}
+                                            value={Object.keys(el)[0].toString()}
+                                        >
+                                            {Object.values(el)[0]}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Box>
+                    </div>
+                    <div className="col-3 ">
+                        <Box sx={{ width: '80%' }}>
+                            <FormControl
+                                fullWidth
+                                size="medium"
                             >
-                                {mesi.map((el) => (
-                                    <MenuItem
-                                        key={Math.random()}
-                                        value={Object.keys(el)[0].toString()}
-                                    >
-                                        {Object.values(el)[0]}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Box>
+                                <InputLabel
+                                    id="sea"
+                                >
+                                Seleziona Prodotto
+                                </InputLabel>
+                                <Select
+                                    id="sea"
+                                    label='Seleziona Prodotto'
+                                    labelId="search-by-label"
+                                    onChange={(e) => setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}))}
+                                    value={bodyGetLista.prodotto}
+                                    disabled={status=== 'immutable' ? true : false}
+                                >
+                                    {prodotti.map((el) => (
+                                        <MenuItem
+                                            key={Math.random()}
+                                            value={el.nome}
+                                        >
+                                            {el.nome}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Box>
+                    </div>
+                    <div  className="col-3">
+                        <MultiselectCheckbox 
+                            mainState={mainState} 
+                            dispatchMainState={dispatchMainState}
+                            setBodyGetLista={setBodyGetLista}
+                            setDataSelect={setDataSelect}
+                            dataSelect={dataSelect}
+                            setTextValue={setTextValue}
+                            textValue={textValue}
+                            valueAutocomplete={valueAutocomplete}
+                            setValueAutocomplete={setValueAutocomplete}
+                        ></MultiselectCheckbox>
+                    </div>
                 </div>
             </div>
             <div className="d-flex" >
-                <div className="col-3 ">
-                    <Box sx={{ width: '80%' }}>
-                        <FormControl
-                            fullWidth
-                            size="medium"
-                        >
-                            <InputLabel
-                                id="sea"
-                            >
-                                Seleziona Prodotto
-                            </InputLabel>
-                            <Select
-                                id="sea"
-                                label='Seleziona Prodotto'
-                                labelId="search-by-label"
-                                onChange={(e) => setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}))}
-                                value={bodyGetLista.prodotto}
-                                disabled={status=== 'immutable' ? true : false}
-                            >
-                                {prodotti.map((el) => (
-                                    <MenuItem
-                                        key={Math.random()}
-                                        value={el.nome}
-                                    >
-                                        {el.nome}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Box>
-                </div>
-                <div  className="col-3">
-                    <MultiselectCheckbox 
-                        mainState={mainState} 
-                        dispatchMainState={dispatchMainState}
-                        setBodyGetLista={setBodyGetLista}
-                        setDataSelect={setDataSelect}
-                        dataSelect={dataSelect}
-                        setTextValue={setTextValue}
-                        textValue={textValue}
-                        valueAutocomplete={valueAutocomplete}
-                        setValueAutocomplete={setValueAutocomplete}
-                    ></MultiselectCheckbox>
-                </div>
+                
                 <div className=" d-flex justify-content-center align-items-center">
                     <div>
                         <Button 
