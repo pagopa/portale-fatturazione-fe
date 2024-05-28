@@ -660,11 +660,11 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
     }; 
   
     const backgroundColorButtonScadenzario = (profilo.auth === 'PAGOPA' || enti) ? "#0062C3" : 'red';
-
+  
     return (
         <div className="mx-5">
             {/*title container start */}
-            <div className="d-flex   marginTop24 ">
+            <div className="d-flex marginTop24 ">
                 <div className="col-9">
                     <Typography variant="h4">Report Dettaglio</Typography>
                 </div>

@@ -170,7 +170,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                 <Typography variant="h4">Lista Dati Fatturazione</Typography>
             </div>
             {/*title container end */}
-            <div className="d-flex mb-5 marginTop24" >
+            <div className="row mb-5 mt-5" >
                 <div className="col-3">
                     <Box  style={{ width: '80%' }}>
                         <FormControl
@@ -202,7 +202,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                         </FormControl>
                     </Box>
                 </div>
-                <div className="col-3 me-3">
+                <div className="col-3">
                     <Box style={{ width: '80%' }}>
                         <FormControl
                             fullWidth
@@ -233,8 +233,6 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                         </FormControl>
                     </Box>
                 </div>
-            </div>
-            <div className="d-flex" >
                 <div  className="col-3">
                     <MultiselectCheckbox 
                         mainState={mainState} 
@@ -248,6 +246,9 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                         setValueAutocomplete={setValueAutocomplete}
                     ></MultiselectCheckbox>
                 </div>
+            </div>
+            <div className="d-flex" >
+              
                 <div className=" d-flex justify-content-center align-items-center">
                     <div>
                         <Button 

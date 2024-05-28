@@ -9,16 +9,13 @@ interface SelecTipologiaProps{
         idEnti?:string[],
         idContratto?:null|string,
         caricata?:null|number
-    }
+    },
+    types:string[]
 }
 
-const SelectTipologiaFattura : React.FC<SelecTipologiaProps> = ({setValue, values}) =>{
+const SelectTipologiaFattura : React.FC<SelecTipologiaProps> = ({setValue, values, types}) =>{
 
-    const tipologie = [
-        'PRIMO SALDO',
-        'SECONDO SALDO',
-        'PRIMO CONGUAGLIO',
-        'SECONDO CONGUAGLIO'];
+    
     return (
         <Box sx={{width:'80%', marginLeft:'20px'}}  >
             <FormControl
@@ -39,7 +36,7 @@ const SelectTipologiaFattura : React.FC<SelecTipologiaProps> = ({setValue, value
                     }}     
                     value={values.tipologiaFattura || ''}       
                 >
-                    {tipologie.map((el) => (            
+                    {types.map((el) => (            
                         <MenuItem
                             key={Math.random()}
                             value={el}

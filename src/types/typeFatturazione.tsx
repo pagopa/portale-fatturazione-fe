@@ -3,7 +3,8 @@ import { MainState } from "./typesGeneral";
 export interface BodyFatturazione{
     anno:number,
     mese:number,
-    tipologiaFattura:string
+    tipologiaFattura:string,
+    idEnti:string[]
 }
 
 export interface FatturazioneProps{
