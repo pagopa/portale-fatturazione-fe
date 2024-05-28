@@ -15,5 +15,6 @@ export enum PathPf {
     LISTA_NOTIFICHE = '/listanotifiche',
     LISTA_REL = '/listarel',
     PDF_REL = '/relpdf',
-    ADESIONE_BANDO = '/adesionealbando'
+    ADESIONE_BANDO = '/adesionealbando',
+    FATTURAZIONE = '/fatturazione'
 }

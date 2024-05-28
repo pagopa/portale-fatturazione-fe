@@ -19,6 +19,7 @@ import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/
 import { getDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
 import { PathPf } from '../../types/enum';
 import AnnouncementIcon from '@mui/icons-material/Announcement';
+import ReceiptIcon from '@mui/icons-material/Receipt';
 import { getProfilo, getToken, profiliEnti } from '../../reusableFunction/actionLocalStorage';
 
 const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState, setOpenBasicModal_DatFat_ModCom}) => {
@@ -239,6 +240,10 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
             navigate(PathPf.ADESIONE_BANDO);
         }
     }; 
+
+    const handleListItemClickFatturazione = () =>{
+        navigate(PathPf.FATTURAZIONE);
+    };
     
     const currentLocation = location.pathname;
 
@@ -263,6 +268,8 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
             setSelectedIndex(3);
         }else if(currentLocation === PathPf.ADESIONE_BANDO){
             setSelectedIndex(4);
+        }else if(currentLocation === PathPf.FATTURAZIONE){
+            setSelectedIndex(5);
         }
     },[currentLocation]);
    
@@ -314,12 +321,20 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
                                 <ListItemText primary="Regolare esecuzione" />
                             </ListItemButton>
                             {profilo.auth === 'PAGOPA' && 
-                            <ListItemButton selected={selectedIndex === 4} onClick={() => handleListItemClickBando()}>
-                                <ListItemIcon>
-                                    <AnnouncementIcon fontSize="inherit" />
-                                </ListItemIcon>
-                                <ListItemText primary="Adesione al bando" />
-                            </ListItemButton>}
+                            <>
+                                <ListItemButton selected={selectedIndex === 4} onClick={() => handleListItemClickBando()}>
+                                    <ListItemIcon>
+                                        <AnnouncementIcon fontSize="inherit" />
+                                    </ListItemIcon>
+                                    <ListItemText primary="Adesione al bando" />
+                                </ListItemButton>
+                                <ListItemButton selected={selectedIndex === 5} onClick={() => handleListItemClickFatturazione()}>
+                                    <ListItemIcon>
+                                        <ReceiptIcon fontSize="inherit" />
+                                    </ListItemIcon>
+                                    <ListItemText primary="Fatturazione" />
+                                </ListItemButton>
+                            </>}
                             
                         </>
                         }

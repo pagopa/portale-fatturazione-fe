@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import SelectUltimiDueAnni from "../components/reusableComponents/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/selectMese";
 import { Button, Typography } from "@mui/material";
-import SelectTipologiaFattura from "../components/rel/selectTipologiaFattura";
+import SelectTipologiaFattura from "../components/reusableComponents/selectTipologiaFattura";
 import GridCustom from "../components/reusableComponents/gridCustom";
 import { BodyRel, RelPageProps } from "../types/typeRel";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
