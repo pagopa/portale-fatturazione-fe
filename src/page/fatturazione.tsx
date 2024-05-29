@@ -2,34 +2,27 @@ import { Button, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import { DataGrid, GridColDef, GridEventListener, GridRowParams, MuiEvent } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
-import { getToken } from "../reusableFunction/actionLocalStorage";
+import { getProfilo, getToken } from "../reusableFunction/actionLocalStorage";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { Params } from "../types/typesGeneral";
 import SelectUltimiDueAnni from "../components/reusableComponents/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/selectMese";
-import SelectTipologiaFattura from "../components/reusableComponents/selectTipologiaFattura";
 import { BodyFatturazione, FatturazioneProps } from "../types/typeFatturazione";
-import { getFatturazionePagoPa } from "../api/apiPagoPa/fatturazionePA/api";
+import { getFatturazionePagoPa, getTipologieFaPagoPa } from "../api/apiPagoPa/fatturazionePA/api";
 import { manageError } from "../api/api";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
+import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
+import MultiSelectFatturazione from "../components/fatturazione/multiSelect";
 
 const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainState}) =>{
 
     const token =  getToken();
+    const profilo =  getProfilo();
 
     const currentYear = (new Date()).getFullYear();
     const currentMonth = (new Date()).getMonth() + 1;
     const month = Number(currentMonth);
-
-    const tipologie = [
-        'ACCONTO',
-        'ANTICIPO',
-        'PRIMO CONGUA',
-        'PRIMO SALDO',
-        'SECONDO CONGUA',
-        'SECONDO SALDO'];
-
 
     const [gridData, setGridData] = useState([]);
     const [infoPageFatturazione , setInfoPageFatturazione] = useState({ page: 0, pageSize: 100 });
@@ -39,13 +32,16 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
     const [textValue, setTextValue] = useState('');
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
+    const [tipologie, setTipologie] = useState<string[]>([]);
+    const [valueMulitselectTipologie, setValueMultiselectTipologie] = useState<string[]>([]);
+  
     const [bodyFatturazione, setBodyFatturazione] = useState<BodyFatturazione>({
         anno:currentYear,
         mese:month,
-        tipologiaFattura:tipologie[0],
+        tipologiaFattura:[],
         idEnti:[]
     });
-
+    
     useEffect(()=>{
         if(mainState.nonce !== ''){
             getlistaFatturazione(bodyFatturazione);
@@ -53,18 +49,52 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
     },[mainState.nonce]);
 
     useEffect(()=>{
-        if(bodyFatturazione?.idEnti.length !== 0 ){
+        if(bodyFatturazione.idEnti.length !== 0 || bodyFatturazione.tipologiaFattura.length !== 0 ){
             setStatusAnnulla('show');
         }else{
             setStatusAnnulla('hidden');
         }
     },[bodyFatturazione]);
 
+    useEffect(()=>{
+        if(dataSelect.length === 0){
+            setValueAutocomplete([]);
+        }
+    }, [dataSelect]);
+   
+    useEffect(()=>{
+        const timer = setTimeout(() => {
+            if(textValue.length >= 3){
+                listaEntiNotifichePageOnSelect();
+            }
+        }, 800);
+        return () => clearTimeout(timer);
+    },[textValue]);
+
+   
+    useEffect(()=>{
+        if(mainState.nonce !== ''){
+            getTipologieFatturazione();
+            setValueMultiselectTipologie([]);
+        }
+    },[mainState.nonce, bodyFatturazione.mese,bodyFatturazione.anno]);
+
+    const getTipologieFatturazione =  async() => {
+        await getTipologieFaPagoPa(token, mainState.nonce, {anno:bodyFatturazione.anno,mese:bodyFatturazione.mese}  )
+            .then((res)=>{
+                setTipologie(res.data);                
+            })
+            .catch(((err)=>{
+                manageError(err,dispatchMainState);
+            }));
+    };
+    
 
   
 
     const getlistaFatturazione = async (body) => {
         setShowLoadingGrid(true);
+
         await  getFatturazionePagoPa(token,mainState.nonce,body)
             .then((res)=>{
                 const orderDataCustom = res.data.map(el => el.fattura).map(obj=> ({...{id:Math.random()},...obj}));
@@ -79,10 +109,26 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
             });        
     };
 
+    // servizio che popola la select con la checkbox
+    const listaEntiNotifichePageOnSelect = async () =>{
+        if(profilo.auth === 'PAGOPA'){
+            await listaEntiNotifichePage(token, mainState.nonce, {descrizione:textValue} )
+                .then((res)=>{
+                    setDataSelect(res.data);
+                })
+                .catch(((err)=>{
+                    manageError(err,dispatchMainState);
+                }));
+        }
+    };
+
+  
+
 
     const columns: GridColDef[] = [
         { field: 'ragionesociale', headerName: 'Ragione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" >{param.row.ragionesociale}</a>},
         { field: 'tipocontratto', headerName: 'Tipo Contratto', width: 140 , headerClassName: 'super-app-theme--header', headerAlign: 'left'},
+        { field: 'totale', headerName: 'Tot.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',  valueFormatter: ({ value }) => value.toLocaleString("de-DE", { style: "currency", currency: "EUR" })},
         { field: 'numero', headerName: 'N. Fattura', width: 120 , headerClassName: 'super-app-theme--header', headerAlign: 'left'},
         { field: 'tipoDocumento', headerName: 'Tipo Documento', width: 140, headerClassName: 'super-app-theme--header', headerAlign: 'left'},
         { field: 'divisa', headerName: 'Divisa', width: 120, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
@@ -120,18 +166,23 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                     <div  className="col-3">
                         <SelectMese values={bodyFatturazione} setValue={setBodyFatturazione}></SelectMese>
                     </div>
+                    {/* 
                     <div  className="col-3">
                         <SelectTipologiaFattura values={bodyFatturazione} setValue={setBodyFatturazione}  types={tipologie}></SelectTipologiaFattura>
+                    </div>*/}
+                    <div  className="col-3">
+                        <MultiSelectFatturazione
+                            setBody={setBodyFatturazione}
+                            list={tipologie}
+                            value={valueMulitselectTipologie}
+                            setValue={setValueMultiselectTipologie}
+                        ></MultiSelectFatturazione>
                     </div>
                     <div  className="col-3">
                         <MultiselectCheckbox 
-                            mainState={mainState} 
-                            dispatchMainState={dispatchMainState}
                             setBodyGetLista={setBodyFatturazione}
-                            setDataSelect={setDataSelect}
                             dataSelect={dataSelect}
                             setTextValue={setTextValue}
-                            textValue={textValue}
                             valueAutocomplete={valueAutocomplete}
                             setValueAutocomplete={setValueAutocomplete}
                         ></MultiselectCheckbox>
@@ -155,16 +206,17 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                                 getlistaFatturazione({
                                     anno:currentYear,
                                     mese:month,
-                                    tipologiaFattura:tipologie[0],
+                                    tipologiaFattura:[],
                                     idEnti:[]
                                 });
                                 setBodyFatturazione({
                                     anno:currentYear,
                                     mese:month,
-                                    tipologiaFattura:tipologie[0],
+                                    tipologiaFattura:[],
                                     idEnti:[]
                                 });
                                 setDataSelect([]);
+                                setValueMultiselectTipologie([]);
                              
                             } }
                             sx={{marginLeft:'24px'}} >

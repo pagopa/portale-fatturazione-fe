@@ -5,7 +5,6 @@ import { TextField,Box, FormControl, InputLabel,Select, MenuItem, Button} from '
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { getTipologiaProfilo, manageError} from "../api/api";
 import { ReportDettaglioProps, NotificheList, FlagContestazione, Contestazione, ElementMultiSelect, ListaRecCon, OptionMultiselectChackbox  } from "../types/typeReportDettaglio";
-import { useNavigate } from "react-router";
 import { BodyListaNotifiche } from "../types/typesGeneral";
 import ModalContestazione from '../components/reportDettaglio/modalContestazione';
 import ModalInfo from "../components/reusableComponents/modals/modalInfo";
@@ -14,7 +13,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import MultiSelectStatoContestazione from "../components/reportDettaglio/multiSelectGroupedBy";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import ModalScadenziario from "../components/reportDettaglio/modalScadenziario";
-import { downloadNotifche, downloadNotifcheConsolidatore, downloadNotifcheRecapitista, getContestazione, getContestazioneCosolidatore, getContestazioneRecapitista, listaNotifiche, listaNotificheConsolidatore, listaNotificheRecapitista } from "../api/apiSelfcare/notificheSE/api";
+import { downloadNotifche, downloadNotifcheConsolidatore, downloadNotifcheRecapitista, getContestazione, getContestazioneCosolidatore, getContestazioneRecapitista, listaEntiNotifichePage, listaEntiNotifichePageConsolidatore, listaNotifiche, listaNotificheConsolidatore, listaNotificheRecapitista } from "../api/apiSelfcare/notificheSE/api";
 import { downloadNotifchePagoPa, getContestazionePagoPa, getTipologiaEntiCompletiPagoPa, listaNotifichePagoPa } from "../api/apiPagoPa/notifichePA/api";
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import GridCustom from "../components/reusableComponents/gridCustom";
@@ -174,7 +173,43 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
             setOpenModalRedirect(true);
         }
     },[]);
-    
+
+    useEffect(()=>{
+        if(dataSelect.length === 0){
+            setValueAutocomplete([]);
+        }
+    }, [dataSelect]);
+   
+    useEffect(()=>{
+        const timer = setTimeout(() => {
+            if(textValue.length >= 3){
+                listaEntiNotifichePageOnSelect();
+            }
+        }, 800);
+        return () => clearTimeout(timer);
+    },[textValue]);
+
+    // servizio che popola la select con la checkbox
+    const listaEntiNotifichePageOnSelect = async () =>{
+        if(profilo.profilo === 'CON'){
+            await listaEntiNotifichePageConsolidatore(token, mainState.nonce, {descrizione:textValue} )
+                .then((res)=>{
+                    setDataSelect(res.data);
+                })
+                .catch(((err)=>{
+                    manageError(err,dispatchMainState);
+                }));
+        }else if(profilo.auth === 'PAGOPA'){
+            await listaEntiNotifichePage(token, mainState.nonce, {descrizione:textValue} )
+                .then((res)=>{
+                    setDataSelect(res.data);
+                })
+                .catch(((err)=>{
+                    manageError(err,dispatchMainState);
+                }));
+        }
+    };
+
     // Modifico l'oggetto notifica per fare il binding dei dati nel componente GRIDCUSTOM
     let headerNames: string[] = [];
     const notificheListWithOnere = notificheList.map((notifica) =>{
@@ -883,13 +918,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                     {profilo.auth === 'PAGOPA' &&
                     <div  className="col-3">
                         <MultiselectCheckbox 
-                            dispatchMainState={dispatchMainState}
-                            mainState={mainState} 
                             setBodyGetLista={setBodyGetLista}
-                            setDataSelect={setDataSelect}
                             dataSelect={dataSelect}
                             setTextValue={setTextValue}
-                            textValue={textValue}
                             valueAutocomplete={valueAutocomplete}
                             setValueAutocomplete={setValueAutocomplete}
                         ></MultiselectCheckbox>

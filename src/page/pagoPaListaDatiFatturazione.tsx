@@ -16,6 +16,7 @@ import { PathPf } from "../types/enum";
 import { deleteFilterToLocalStorage, getFiltersFromLocalStorage, getInfoPageFromLocalStorage, getProfilo, getToken, profiliEnti, setFilterToLocalStorage, setInfoPageToLocalStorage, setInfoToProfiloLoacalStorage } from "../reusableFunction/actionLocalStorage";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
+import { listaEntiNotifichePage, listaEntiNotifichePageConsolidatore } from "../api/apiSelfcare/notificheSE/api";
 
 const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainState, dispatchMainState}) =>{
     const token =  getToken();
@@ -81,6 +82,21 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
         }
     },[bodyGetLista]);
 
+    useEffect(()=>{
+        if(dataSelect.length === 0){
+            setValueAutocomplete([]);
+        }
+    }, [dataSelect]);
+   
+    useEffect(()=>{
+        const timer = setTimeout(() => {
+            if(textValue.length >= 3){
+                listaEntiNotifichePageOnSelect();
+            }
+        }, 800);
+        return () => clearTimeout(timer);
+    },[textValue]);
+
     const getProdotti = async() => {
         await getTipologiaProdotto(token,mainState.nonce )
             .then((res)=>{
@@ -113,6 +129,20 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                 setGetListaLoading(false);
                 manageError(err,dispatchMainState);
             })); 
+    };
+
+
+    // servizio che popola la select con la checkbox
+    const listaEntiNotifichePageOnSelect = async () =>{
+        if(profilo.auth === 'PAGOPA'){
+            await listaEntiNotifichePage(token, mainState.nonce, {descrizione:textValue} )
+                .then((res)=>{
+                    setDataSelect(res.data);
+                })
+                .catch(((err)=>{
+                    manageError(err,dispatchMainState);
+                }));
+        }
     };
 
     const onDownloadButton = async() =>{
@@ -235,13 +265,9 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                 </div>
                 <div  className="col-3">
                     <MultiselectCheckbox 
-                        mainState={mainState} 
-                        dispatchMainState={dispatchMainState}
                         setBodyGetLista={setBodyGetLista}
-                        setDataSelect={setDataSelect}
                         dataSelect={dataSelect}
                         setTextValue={setTextValue}
-                        textValue={textValue}
                         valueAutocomplete={valueAutocomplete}
                         setValueAutocomplete={setValueAutocomplete}
                     ></MultiselectCheckbox>

@@ -158,7 +158,7 @@ export interface SelectMeseProps{
     values:{
         anno:number,
         mese:number|null,
-        tipologiaFattura:null| string,
+        tipologiaFattura:null| string|string[],
         idEnti?:string[],
         idContratto?:null|string,
         caricata?:null|number

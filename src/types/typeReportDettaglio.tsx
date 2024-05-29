@@ -116,17 +116,12 @@ export interface ElementMultiSelect {
 }
 
 export interface MultiselectNotificheProps{
-    mainState : MainState,
     setBodyGetLista:any,
-    setDataSelect:any,
     dataSelect:ElementMultiSelect[] ,
     setTextValue:any,
-    textValue:string,
     valueAutocomplete:any,
     setValueAutocomplete:any,
-    dispatchMainState:any
 }
-
 
 export interface OptionMultiselectChackbox {
     
