@@ -18,6 +18,7 @@ import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckb
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { currentMonth, getCurrentFinancialYear } from "../reusableFunction/function";
 import { currentYear, mesi, mesiGrid, mesiWithZero } from "../reusableFunction/reusableArrayObj";
+import { listaEntiNotifichePage, listaEntiNotifichePageConsolidatore } from "../api/apiSelfcare/notificheSE/api";
 
 const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState, dispatchMainState}) =>{
 
@@ -84,6 +85,21 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
         }
     },[bodyGetLista]);
 
+    useEffect(()=>{
+        if(dataSelect.length === 0){
+            setValueAutocomplete([]);
+        }
+    }, [dataSelect]);
+   
+    useEffect(()=>{
+        const timer = setTimeout(() => {
+            if(textValue.length >= 3){
+                listaEntiNotifichePageOnSelect();
+            }
+        }, 800);
+        return () => clearTimeout(timer);
+    },[textValue]);
+
     const getProdotti = async() => {
         await getTipologiaProdotto(token, mainState.nonce )
             .then((res)=>{
@@ -114,6 +130,18 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
             .catch((err)=>{
                 manageError(err,dispatchMainState);
             }); 
+    };
+
+    const listaEntiNotifichePageOnSelect = async () =>{
+        if(profilo.auth === 'PAGOPA'){
+            await listaEntiNotifichePage(token, mainState.nonce, {descrizione:textValue} )
+                .then((res)=>{
+                    setDataSelect(res.data);
+                })
+                .catch(((err)=>{
+                    manageError(err,dispatchMainState);
+                }));
+        }
     };
 
     const downloadExelListaCommessa = async () =>{
@@ -288,13 +316,9 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
                     </div>
                     <div  className="col-3">
                         <MultiselectCheckbox 
-                            mainState={mainState} 
-                            dispatchMainState={dispatchMainState}
                             setBodyGetLista={setBodyGetLista}
-                            setDataSelect={setDataSelect}
                             dataSelect={dataSelect}
                             setTextValue={setTextValue}
-                            textValue={textValue}
                             valueAutocomplete={valueAutocomplete}
                             setValueAutocomplete={setValueAutocomplete}
                         ></MultiselectCheckbox>

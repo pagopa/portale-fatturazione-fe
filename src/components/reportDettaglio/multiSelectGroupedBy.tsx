@@ -5,12 +5,11 @@ import { Checkbox } from '@mui/material';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { manageError } from '../../api/api';
-import { useNavigate } from 'react-router';
 import { FlagContestazione, MultiSelectGroupedByProps } from '../../types/typeReportDettaglio';
 import { useEffect , useState} from 'react';
 import { BodyListaNotifiche} from '../../types/typesGeneral';
 import { flagContestazione } from '../../api/apiSelfcare/notificheSE/api';
-import { getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
+import { getToken } from '../../reusableFunction/actionLocalStorage';
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -39,10 +38,6 @@ const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({m
 
     return (
         <Autocomplete
-            sx={{ '.MuiAutocomplete-groupLabel': {
-                backgroundColor:'#FF0000',          
-            },
-            height:'60px'}}
             multiple
             onChange={(event, value) => {
                 const arrayIdContestazioni = value.map(obj=> obj.id);

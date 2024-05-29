@@ -18,6 +18,7 @@ import { PathPf } from "../types/enum";
 import { deleteFilterToLocalStorageRel, getFiltersFromLocalStorageRel, getProfilo, getToken, profiliEnti, setFilterToLocalStorageRel } from "../reusableFunction/actionLocalStorage";
 import { OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { mesiGrid, mesiWithZero } from "../reusableFunction/reusableArrayObj";
+import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
 
 const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
@@ -83,6 +84,21 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             }
         }
     },[mainState.nonce]);
+
+    useEffect(()=>{
+        if(dataSelect.length === 0){
+            setValueAutocomplete([]);
+        }
+    }, [dataSelect]);
+   
+    useEffect(()=>{
+        const timer = setTimeout(() => {
+            if(textValue.length >= 3){
+                listaEntiNotifichePageOnSelect();
+            }
+        }, 800);
+        return () => clearTimeout(timer);
+    },[textValue]);
 
     const getlistaRel = async (bodyRel,nPage,nRows) => {
         setGetListaRelRunning(true);
@@ -157,6 +173,19 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                     manageError(error, dispatchMainState);
                 });
         }            
+    };
+
+    // servizio che popola la select con la checkbox
+    const listaEntiNotifichePageOnSelect = async () =>{
+        if(profilo.auth === 'PAGOPA'){
+            await listaEntiNotifichePage(token, mainState.nonce, {descrizione:textValue} )
+                .then((res)=>{
+                    setDataSelect(res.data);
+                })
+                .catch(((err)=>{
+                    manageError(err,dispatchMainState);
+                }));
+        }
     };
 
     const onButtonFiltra = () =>{
@@ -281,13 +310,9 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                     { profilo.auth === 'PAGOPA' &&
                         <div  className="col-3">
                             <MultiselectCheckbox 
-                                dispatchMainState={dispatchMainState}
-                                mainState={mainState} 
                                 setBodyGetLista={setBodyRel}
-                                setDataSelect={setDataSelect}
                                 dataSelect={dataSelect}
                                 setTextValue={setTextValue}
-                                textValue={textValue}
                                 valueAutocomplete={valueAutocomplete}
                                 setValueAutocomplete={setValueAutocomplete}
                             ></MultiselectCheckbox>
