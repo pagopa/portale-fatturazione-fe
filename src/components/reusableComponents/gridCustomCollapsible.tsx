@@ -12,46 +12,51 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { useState } from 'react';
+import { Card, TablePagination } from '@mui/material';
 
-function createData(
-    name: string,
-    calories: number,
-    fat: number,
-    carbs: number,
-    protein: number,
-    price: number,
-) {
-    return {
-        name,
-        calories,
-        fat,
-        carbs,
-        protein,
-        price,
-        history: [
-            {
-                date: '2020-01-05',
-                customerId: '11091700',
-                amount: 3,
-            },
-            {
-                date: '2020-01-02',
-                customerId: 'Anonymous',
-                amount: 1,
-            },
-        ],
-    };
+
+interface Posizioni {
+    numerolinea: number,
+    testo: string,
+    codiceMateriale: string,
+    quantita: number,
+    prezzoUnitario: number,
+    imponibile: number
 }
 
-function Row(props: { row: ReturnType<typeof createData> }) {
+interface RowObj {
+    id: number,
+    totale: number,
+    numero: number,
+    dataFattura: string,
+    prodotto: string,
+    identificativo: string,
+    tipologiaFattura: string,
+    istitutioID: string,
+    onboardingTokenID: string,
+    ragionesociale: string,
+    tipocontratto: string,
+    idcontratto: string,
+    tipoDocumento: string,
+    divisa: string,
+    metodoPagamento: string,
+    causale: string,
+    split: false,
+    sollecito: string,
+    posizioni:Posizioni[]
+}
+
+const Row =(props: { row:RowObj}) => {
     const { row } = props;
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
 
     return (
         <React.Fragment>
             <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
                 <TableCell>
                     <IconButton
+                        sx={{color:'#227AFC'}}
                         aria-label="expand row"
                         size="small"
                         onClick={() => setOpen(!open)}
@@ -59,41 +64,43 @@ function Row(props: { row: ReturnType<typeof createData> }) {
                         {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
                 </TableCell>
-                <TableCell component="th" scope="row">
-                    {row.name}
-                </TableCell>
-                <TableCell align="right">{row.calories}</TableCell>
-                <TableCell align="right">{row.fat}</TableCell>
-                <TableCell align="right">{row.carbs}</TableCell>
-                <TableCell align="right">{row.protein}</TableCell>
+                <TableCell >{row.ragionesociale}</TableCell>
+                <TableCell >{row.tipocontratto}</TableCell>
+                <TableCell>{row.totale}</TableCell>
+                <TableCell >{row.numero}</TableCell>
+                <TableCell >{row.tipoDocumento}</TableCell>
+                <TableCell>{row.divisa}</TableCell>
+                <TableCell >{row.metodoPagamento}</TableCell>
+                <TableCell >{row.identificativo}</TableCell>
+                <TableCell>{row.tipologiaFattura}</TableCell>
+                <TableCell >{row.split}</TableCell>
+                <TableCell>{row.dataFattura}</TableCell>
             </TableRow>
             <TableRow>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box sx={{ margin: 1 }}>
                             <Typography variant="h6" gutterBottom component="div">
-                History
+                Posizioni
                             </Typography>
                             <Table size="small" aria-label="purchases">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell>Date</TableCell>
-                                        <TableCell>Customer</TableCell>
-                                        <TableCell align="right">Amount</TableCell>
-                                        <TableCell align="right">Total price ($)</TableCell>
+                                        <TableCell>Numero Linea</TableCell>
+                                        <TableCell>Testo</TableCell>
+                                        <TableCell >Codice Materiale</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {row.history.map((historyRow) => (
-                                        <TableRow key={historyRow.date}>
+                                    {row.posizioni.map((obj) => (
+                                        <TableRow key={Math.random()}>
                                             <TableCell component="th" scope="row">
-                                                {historyRow.date}
+                                                {obj.numerolinea}
                                             </TableCell>
-                                            <TableCell>{historyRow.customerId}</TableCell>
-                                            <TableCell align="right">{historyRow.amount}</TableCell>
-                                            <TableCell align="right">
-                                                {Math.round(historyRow.amount * row.price * 100) / 100}
+                                            <TableCell component="th" scope="row">
+                                                {obj.testo}
                                             </TableCell>
+                                            <TableCell>{obj.codiceMateriale}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
@@ -101,39 +108,87 @@ function Row(props: { row: ReturnType<typeof createData> }) {
                         </Box>
                     </Collapse>
                 </TableCell>
-            </TableRow>
+            </TableRow>  
         </React.Fragment>
     );
-}
+};
 
-const rows = [
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0, 3.99),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3, 4.99),
-    createData('Eclair', 262, 16.0, 24, 6.0, 3.79),
-    createData('Cupcake', 305, 3.7, 67, 4.3, 2.5),
-    createData('Gingerbread', 356, 16.0, 49, 3.9, 1.5),
-];
 
-export default function CollapsibleTable() {
+const CollapsibleTable = ({data}) => {
+
+    console.log(data);
     return (
-        <TableContainer component={Paper}>
-            <Table aria-label="collapsible table">
-                <TableHead>
-                    <TableRow>
-                        <TableCell />
-                        <TableCell>Dessert (100g serving)</TableCell>
-                        <TableCell align="right">Calories</TableCell>
-                        <TableCell align="right">Fat&nbsp;(g)</TableCell>
-                        <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-                        <TableCell align="right">Protein&nbsp;(g)</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {rows.map((row) => (
-                        <Row key={row.name} row={row} />
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
+        <>
+            <div style={{overflowX:'auto'}}>
+                <Card sx={{width: '2000px'}}  >
+                    <Table >
+                        <TableContainer component={Paper}>
+                            <Table aria-label="collapsible table">
+                                <TableHead sx={{backgroundColor:'#f2f2f2'}}>
+                                    <TableRow>
+                                        <TableCell />
+                                        <TableCell>Ragione Sociale</TableCell>
+                                        <TableCell >Tipo Contratto</TableCell>
+                                        <TableCell >Tot.</TableCell>
+                                        <TableCell >N. Fattura</TableCell>
+                                        <TableCell >Tipo Documento</TableCell>
+                                        <TableCell >Divisa</TableCell>
+                                        <TableCell >M. Pagamento</TableCell>
+                                        <TableCell >Ident.</TableCell>
+                                        <TableCell >T. Fattura</TableCell>
+                                        <TableCell >Split</TableCell>
+                                        <TableCell >Data Fattura</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {data.map((row) => (
+                                        <Row key={row.name} row={row} />
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Table>
+                </Card>
+            </div>
+            <div className="pt-3"> 
+                <TablePaginationDemo></TablePaginationDemo>
+            </div>  
+        </>
     );
-}
+};
+
+export default CollapsibleTable;
+
+
+
+
+
+const TablePaginationDemo = () => {
+    const [page, setPage] = React.useState(2);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+    const handleChangePage = (
+        event: React.MouseEvent<HTMLButtonElement> | null,
+        newPage: number,
+    ) => {
+        setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    ) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
+
+    return (
+        <TablePagination
+            component="div"
+            count={100}
+            page={page}
+            onPageChange={handleChangePage}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+    );
+};

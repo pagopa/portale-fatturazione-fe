@@ -14,6 +14,7 @@ import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckb
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
 import MultiSelectFatturazione from "../components/fatturazione/multiSelect";
+import CollapsibleTable from "../components/reusableComponents/gridCustomCollapsible";
 
 const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainState}) =>{
 
@@ -237,22 +238,28 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                 </Button>
                 }
             </div>
-            <div className="mt-1 mb-5" style={{ width: '100%'}}>
-                <DataGrid sx={{
-                    height:'500px',
-                    '& .MuiDataGrid-virtualScroller': {
-                        backgroundColor: 'white',
-                    }
-                }}
-                onPaginationModelChange={(e)=>{
-                    setInfoPageFatturazione(e);}}
-                paginationModel={infoPageFatturazione}
-                rows={gridData} 
-                columns={columns}
-                getRowId={(row) => row.id}
-                onRowClick={handleEvent}
-                onCellClick={handleOnCellClick}
-                />
+            {/*
+                <div className="mt-1 mb-5" style={{ width: '100%'}}>
+                    <DataGrid sx={{
+                        height:'500px',
+                        '& .MuiDataGrid-virtualScroller': {
+                            backgroundColor: 'white',
+                        }
+                    }}
+                    onPaginationModelChange={(e)=>{
+                        setInfoPageFatturazione(e);}}
+                    paginationModel={infoPageFatturazione}
+                    rows={gridData} 
+                    columns={columns}
+                    getRowId={(row) => row.id}
+                    onRowClick={handleEvent}
+                    onCellClick={handleOnCellClick}
+                    />
+                </div>
+                    */ }
+            
+            <div className="">
+                <CollapsibleTable data={gridData}></CollapsibleTable>
             </div>
             <div>
                 <ModalLoading 
