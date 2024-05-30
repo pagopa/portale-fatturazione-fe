@@ -238,26 +238,6 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                 </Button>
                 }
             </div>
-            {/*
-                <div className="mt-1 mb-5" style={{ width: '100%'}}>
-                    <DataGrid sx={{
-                        height:'500px',
-                        '& .MuiDataGrid-virtualScroller': {
-                            backgroundColor: 'white',
-                        }
-                    }}
-                    onPaginationModelChange={(e)=>{
-                        setInfoPageFatturazione(e);}}
-                    paginationModel={infoPageFatturazione}
-                    rows={gridData} 
-                    columns={columns}
-                    getRowId={(row) => row.id}
-                    onRowClick={handleEvent}
-                    onCellClick={handleOnCellClick}
-                    />
-                </div>
-                    */ }
-            
             <div className="">
                 <CollapsibleTable data={gridData}></CollapsibleTable>
             </div>

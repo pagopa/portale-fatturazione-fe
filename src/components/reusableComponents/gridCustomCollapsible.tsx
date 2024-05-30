@@ -12,7 +12,7 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, TablePagination } from '@mui/material';
 
 
@@ -64,9 +64,9 @@ const Row =(props: { row:RowObj}) => {
                         {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
                 </TableCell>
-                <TableCell >{row.ragionesociale}</TableCell>
+                <TableCell sx={{color:'#0D6EFD',fontWeight: 'bold'}} >{row.ragionesociale}</TableCell>
                 <TableCell >{row.tipocontratto}</TableCell>
-                <TableCell>{row.totale}</TableCell>
+                <TableCell>{row.totale.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</TableCell>
                 <TableCell >{row.numero}</TableCell>
                 <TableCell >{row.tipoDocumento}</TableCell>
                 <TableCell>{row.divisa}</TableCell>
@@ -74,33 +74,35 @@ const Row =(props: { row:RowObj}) => {
                 <TableCell >{row.identificativo}</TableCell>
                 <TableCell>{row.tipologiaFattura}</TableCell>
                 <TableCell >{row.split}</TableCell>
-                <TableCell>{row.dataFattura}</TableCell>
+                <TableCell>{row.dataFattura !== null ? new Date(row.dataFattura).toLocaleString().split(',')[0] : ''}</TableCell>
             </TableRow>
             <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={4}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Box sx={{ margin: 1 }}>
-                            <Typography variant="h6" gutterBottom component="div">
+                        <Box sx={{ margin: 2 , backgroundColor:'#F8F8F8', padding:'10px'}}>
+                            <Typography sx={{marginLeft:"6px"}} variant="h6" gutterBottom component="div">
                 Posizioni
                             </Typography>
                             <Table size="small" aria-label="purchases">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Numero Linea</TableCell>
-                                        <TableCell>Testo</TableCell>
-                                        <TableCell >Codice Materiale</TableCell>
+                                <TableHead sx={{ marginLeft:"16px"}}>
+                                    <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
+                                        <TableCell sx={{ marginLeft:"16px"}} >Numero Linea</TableCell>
+                                        <TableCell sx={{ marginLeft:"16px"}}>Codice Materiale</TableCell>
+                                        <TableCell sx={{ marginLeft:"16px"}}>Imponibile</TableCell>
+                                        <TableCell sx={{ marginLeft:"16px"}}>Totale</TableCell>
                                     </TableRow>
                                 </TableHead>
-                                <TableBody>
+                                <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
                                     {row.posizioni.map((obj) => (
                                         <TableRow key={Math.random()}>
-                                            <TableCell component="th" scope="row">
+                                            <TableCell>
                                                 {obj.numerolinea}
                                             </TableCell>
-                                            <TableCell component="th" scope="row">
-                                                {obj.testo}
-                                            </TableCell>
                                             <TableCell>{obj.codiceMateriale}</TableCell>
+                                            <TableCell align="right" component="th" scope="row">
+                                                {obj.imponibile.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
+                                            </TableCell>
+                                            <TableCell align="right">1$</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
@@ -115,8 +117,31 @@ const Row =(props: { row:RowObj}) => {
 
 
 const CollapsibleTable = ({data}) => {
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [count, setCount] = useState(0);
+  
 
-    console.log(data);
+    const [showedData, setShowedData] = useState<RowObj[]>([]);
+    console.log({data, showedData});
+
+    useEffect(()=>{
+        setCount(data.length);
+        setPage(0);
+        setRowsPerPage(10);
+        setShowedData(data.slice(0, 10));
+    },[data]);
+
+    useEffect(()=>{
+        let from = 0;
+        if(page === 0){
+            from = 0;
+        }else{
+            from = page * rowsPerPage;
+        }
+        setShowedData(data.slice(from, rowsPerPage + from));
+    },[page,rowsPerPage]);
+
     return (
         <>
             <div style={{overflowX:'auto'}}>
@@ -140,9 +165,9 @@ const CollapsibleTable = ({data}) => {
                                         <TableCell >Data Fattura</TableCell>
                                     </TableRow>
                                 </TableHead>
-                                <TableBody>
-                                    {data.map((row) => (
-                                        <Row key={row.name} row={row} />
+                                <TableBody style={{height: '50px'}}>
+                                    {showedData.map((row) => (
+                                        <Row key={row.onboardingTokenID} row={row} />
                                     ))}
                                 </TableBody>
                             </Table>
@@ -151,7 +176,13 @@ const CollapsibleTable = ({data}) => {
                 </Card>
             </div>
             <div className="pt-3"> 
-                <TablePaginationDemo></TablePaginationDemo>
+                <TablePaginationDemo 
+                    setRowsPerPage={setRowsPerPage}
+                    setPage={setPage}
+                    page={page}
+                    rowsPerPage={rowsPerPage}
+                    count={count}
+                ></TablePaginationDemo>
             </div>  
         </>
     );
@@ -163,9 +194,8 @@ export default CollapsibleTable;
 
 
 
-const TablePaginationDemo = () => {
-    const [page, setPage] = React.useState(2);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+const TablePaginationDemo = ({setPage, page, rowsPerPage, setRowsPerPage, count}) => {
+    
 
     const handleChangePage = (
         event: React.MouseEvent<HTMLButtonElement> | null,
@@ -184,7 +214,7 @@ const TablePaginationDemo = () => {
     return (
         <TablePagination
             component="div"
-            count={100}
+            count={count}
             page={page}
             onPageChange={handleChangePage}
             rowsPerPage={rowsPerPage}
