@@ -1,6 +1,6 @@
 import { Card, Table, TableBody, TableCell, TableHead, TablePagination, TableRow } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { name } from "@azure/msal-browser/dist/packageMetadata";
+
 
 interface GridCustomProps {
     elements:object[],
