@@ -16,7 +16,7 @@ import ModalScadenziario from "../components/reportDettaglio/modalScadenziario";
 import { downloadNotifche, downloadNotifcheConsolidatore, downloadNotifcheRecapitista, getContestazione, getContestazioneCosolidatore, getContestazioneRecapitista, listaEntiNotifichePage, listaEntiNotifichePageConsolidatore, listaNotifiche, listaNotificheConsolidatore, listaNotificheRecapitista } from "../api/apiSelfcare/notificheSE/api";
 import { downloadNotifchePagoPa, getContestazionePagoPa, getTipologiaEntiCompletiPagoPa, listaNotifichePagoPa } from "../api/apiPagoPa/notifichePA/api";
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
-import GridCustom from "../components/reusableComponents/gridCustom";
+import GridCustom from "../components/reusableComponents/grid/gridCustom";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 import { saveAs } from "file-saver";
 import { deleteFilterToLocalStorageNotifiche, getFiltersFromLocalStorageNotifiche, getProfilo, getStatusApp, getToken, profiliEnti, setFilterToLocalStorageNotifiche } from "../reusableFunction/actionLocalStorage";
