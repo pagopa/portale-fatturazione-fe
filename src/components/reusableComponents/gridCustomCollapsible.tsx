@@ -89,7 +89,6 @@ const Row =(props: { row:RowObj}) => {
                                         <TableCell sx={{ marginLeft:"16px"}} >Numero Linea</TableCell>
                                         <TableCell sx={{ marginLeft:"16px"}}>Codice Materiale</TableCell>
                                         <TableCell sx={{ marginLeft:"16px"}}>Imponibile</TableCell>
-                                        <TableCell sx={{ marginLeft:"16px"}}>Totale</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
@@ -102,7 +101,6 @@ const Row =(props: { row:RowObj}) => {
                                             <TableCell align="right" component="th" scope="row">
                                                 {obj.imponibile.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
                                             </TableCell>
-                                            <TableCell align="right">1$</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
