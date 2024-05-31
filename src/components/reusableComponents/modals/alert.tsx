@@ -3,8 +3,8 @@ import Alert, { AlertColor } from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { MainState } from '../../types/typesGeneral';
-import { redirect } from '../../api/api';
+import { MainState } from '../../../types/typesGeneral';
+import { redirect } from '../../../api/api';
 import { useTranslation } from 'react-i18next';
 
 

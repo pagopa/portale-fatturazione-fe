@@ -29,7 +29,7 @@ import { reducerMainState } from './reducer/reducerMainState';
 import { getAuthProfilo, manageError, redirect } from './api/api';
 import { getProfilo, profiliEnti } from './reusableFunction/actionLocalStorage';
 import useIsTabActive from './reusableFunction/tabIsActiv';
-import BasicAlerts from './components/reusableComponents/alert';
+import BasicAlerts from './components/reusableComponents/modals/alert';
 import AdesioneBando from './page/adesioneBando';
 import { PathPf } from './types/enum';
 import RelPdfPage from './page/relPdfUtPa';
@@ -76,6 +76,7 @@ const App = ({ instance }) => {
     // eslint-disable-next-line no-undef
     const profilo =  getProfilo();
     const tabActive = useIsTabActive();
+    const enti = profiliEnti();
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -86,6 +87,7 @@ const App = ({ instance }) => {
  
     const [checkProfilo,setCheckProfilo] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
+    const [valueAnnoElencoCom, setValueAnnoElencoCom] = useState('');
     const [openBasicModal_DatFat_ModCom, setOpenBasicModal_DatFat_ModCom] = useState<InfoOpen>({visible:false,clickOn:''});
     // set status page abilita e disabilita le modifiche al componente dati fatturazione
    
@@ -113,7 +115,6 @@ const App = ({ instance }) => {
     }, [mainState.apiError]);
     // questa chiamata viene eseguita esclusivamente se l'utenete fa un reload page cosi da inserire nuovamente il NONCE nel DOM
     const getProfiloToGetNonce = async () =>{
-    
         await getAuthProfilo(profilo.jwt)
             .then((res) =>{
                 handleModifyMainState({nonce:res?.data.nonce,authenticated:true});
@@ -127,11 +128,9 @@ const App = ({ instance }) => {
     // in quel caso il get profilo viene chiamato nella page auth
   
     useEffect(()=>{
-        // if(mainState.nonce === '' && Object.values(profilo).length !== 0 && location.pathname !== '/auth' ){
         if(mainState.nonce === '' && Object.values(profilo).length !== 0 && window.location.pathname  !== '/azureLogin'){
             getProfiloToGetNonce();
-        }
-         
+        }  
     },[mainState.nonce]);
  
     useEffect(()=>{
@@ -140,12 +139,8 @@ const App = ({ instance }) => {
         }
     },[tabActive, mainState.nonce]);
    
-    const [valueAnnoElencoCom, setValueAnnoElencoCom] = useState('');
-   
-
     const recOrConsIsLogged = profilo.profilo === 'REC' || profilo.profilo ==='CON';
-    const enti = profiliEnti();
-
+   
     let route;
 
     if(profilo.jwt && profilo.auth === 'PAGOPA'){

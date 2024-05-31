@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import SelectUltimiDueAnni from "../components/reusableComponents/selectUltimiDueAnni";
-import SelectMese from "../components/reusableComponents/selectMese";
+import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
+import SelectMese from "../components/reusableComponents/select/selectMese";
 import { Button, Typography } from "@mui/material";
-import SelectTipologiaFattura from "../components/reusableComponents/selectTipologiaFattura";
-import GridCustom from "../components/reusableComponents/gridCustom";
+import SelectTipologiaFattura from "../components/reusableComponents/select/selectTipologiaFattura";
+import GridCustom from "../components/reusableComponents/grid/gridCustom";
 import { BodyRel, RelPageProps } from "../types/typeRel";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { manageError} from "../api/api";

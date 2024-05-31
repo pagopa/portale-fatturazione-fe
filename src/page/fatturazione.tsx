@@ -1,40 +1,37 @@
 import { Button, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
-import { DataGrid, GridColDef, GridEventListener, GridRowParams, MuiEvent } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import { getProfilo, getToken } from "../reusableFunction/actionLocalStorage";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
-import { Params } from "../types/typesGeneral";
-import SelectUltimiDueAnni from "../components/reusableComponents/selectUltimiDueAnni";
-import SelectMese from "../components/reusableComponents/selectMese";
-import { BodyFatturazione, FatturazioneProps } from "../types/typeFatturazione";
+import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
+import SelectMese from "../components/reusableComponents/select/selectMese";
+import { BodyFatturazione, FatturazioneProps, FattureObj} from "../types/typeFatturazione";
 import { getFatturazionePagoPa, getTipologieFaPagoPa } from "../api/apiPagoPa/fatturazionePA/api";
 import { manageError } from "../api/api";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
 import MultiSelectFatturazione from "../components/fatturazione/multiSelect";
-import CollapsibleTable from "../components/reusableComponents/gridCustomCollapsible";
+import CollapsibleTable from "../components/reusableComponents/grid/gridCustomCollapsible";
 
 const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainState}) =>{
 
     const token =  getToken();
     const profilo =  getProfilo();
-
     const currentYear = (new Date()).getFullYear();
     const currentMonth = (new Date()).getMonth() + 1;
     const month = Number(currentMonth);
 
     const [gridData, setGridData] = useState([]);
-    const [infoPageFatturazione , setInfoPageFatturazione] = useState({ page: 0, pageSize: 100 });
     const [showLoadingGrid,setShowLoadingGrid] = useState(false);
     const [showDownloading,setShowDownloading] = useState(false);
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
     const [textValue, setTextValue] = useState('');
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
-    const [statusAnnulla, setStatusAnnulla] = useState('hidden');
+    const [statusAnnulla, setStatusAnnulla] = useState<string>('hidden');
     const [tipologie, setTipologie] = useState<string[]>([]);
     const [valueMulitselectTipologie, setValueMultiselectTipologie] = useState<string[]>([]);
+    const [showedData, setShowedData] = useState<FattureObj[]>([]);
   
     const [bodyFatturazione, setBodyFatturazione] = useState<BodyFatturazione>({
         anno:currentYear,
@@ -91,8 +88,6 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
     };
     
 
-  
-
     const getlistaFatturazione = async (body) => {
         setShowLoadingGrid(true);
 
@@ -123,36 +118,6 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
         }
     };
 
-  
-
-
-    const columns: GridColDef[] = [
-        { field: 'ragionesociale', headerName: 'Ragione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" >{param.row.ragionesociale}</a>},
-        { field: 'tipocontratto', headerName: 'Tipo Contratto', width: 140 , headerClassName: 'super-app-theme--header', headerAlign: 'left'},
-        { field: 'totale', headerName: 'Tot.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',  valueFormatter: ({ value }) => value.toLocaleString("de-DE", { style: "currency", currency: "EUR" })},
-        { field: 'numero', headerName: 'N. Fattura', width: 120 , headerClassName: 'super-app-theme--header', headerAlign: 'left'},
-        { field: 'tipoDocumento', headerName: 'Tipo Documento', width: 140, headerClassName: 'super-app-theme--header', headerAlign: 'left'},
-        { field: 'divisa', headerName: 'Divisa', width: 120, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'metodoPagamento', headerName: 'M. Pagamento', width: 140 , headerClassName: 'super-app-theme--header', headerAlign: 'left'},
-        { field: 'identificativo', headerName: 'Ident.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'tipologiaFattura', headerName: 'T. Fattura', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'split', headerName: 'Split', width: 140, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'dataFattura', headerName: 'Data Fattura', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',valueFormatter: (value:any) =>  value.value !== null ? new Date(value.value).toLocaleString().split(',')[0] : '' },
-    ];
-
-    let columsSelectedGrid = '';
-    const handleOnCellClick = (params:Params) =>{
-        columsSelectedGrid  = params.field;
-    };
-
-    const handleEvent: GridEventListener<'rowClick'> = (
-        params:GridRowParams,
-        event: MuiEvent<React.MouseEvent<HTMLElement>>,
-    ) => {
-        event.preventDefault();
-        // l'evento verrà eseguito solo se l'utente farà il clik sul 
-      
-    };
 
     return (
         <div className="mx-5">
@@ -193,9 +158,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                    
                     <Button 
                         onClick={()=>{
-                            setInfoPageFatturazione({ page: 0, pageSize: 100 });
                             getlistaFatturazione(bodyFatturazione);
-                            //setBodyDownload(bodyGetLista);
                         } } 
                         sx={{ marginTop: 'auto', marginBottom: 'auto'}}
                         variant="contained"> Filtra
@@ -203,7 +166,6 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                     {statusAnnulla === 'hidden' ? null :
                         <Button
                             onClick={()=>{
-                                setInfoPageFatturazione({ page: 0, pageSize: 100 });
                                 getlistaFatturazione({
                                     anno:currentYear,
                                     mese:month,
@@ -218,7 +180,6 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                                 });
                                 setDataSelect([]);
                                 setValueMultiselectTipologie([]);
-                             
                             } }
                             sx={{marginLeft:'24px'}} >
                     Annulla filtri
@@ -238,9 +199,24 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                 </Button>
                 }
             </div>
-            <div className="">
-                <CollapsibleTable data={gridData}></CollapsibleTable>
-            </div>
+            
+            <CollapsibleTable 
+                data={gridData}
+                showedData={showedData}
+                setShowedData={setShowedData}
+                headerNames={[
+                    "",
+                    "Ragione Sociale",
+                    "Tipo Contratto",
+                    "Tot.",
+                    "N. Fattura",
+                    "Tipo Documento",
+                    "Divisa",
+                    "M. Pagamento",
+                    "Ident.",
+                    "T. Fattura",
+                    "Split",
+                    "Data Fattura"]}></CollapsibleTable>
             <div>
                 <ModalLoading 
                     open={showLoadingGrid} 
