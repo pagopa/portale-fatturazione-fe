@@ -84,7 +84,7 @@ const Row =(props: { row:RowObj}) => {
                 Posizioni
                             </Typography>
                             <Table size="small" aria-label="purchases">
-                                <TableHead sx={{ marginLeft:"16px"}}>
+                                <TableHead>
                                     <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
                                         <TableCell sx={{ marginLeft:"16px"}} >Numero Linea</TableCell>
                                         <TableCell sx={{ marginLeft:"16px"}}>Codice Materiale</TableCell>
