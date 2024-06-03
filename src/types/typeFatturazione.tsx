@@ -45,7 +45,7 @@ export interface FattureObj {
     divisa: string,
     metodoPagamento: string,
     causale: string,
-    split: false,
+    split: boolean,
     sollecito: string,
     posizioni:Posizioni[]
 }
