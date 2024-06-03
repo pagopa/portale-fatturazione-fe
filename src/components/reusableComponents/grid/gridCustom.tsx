@@ -1,5 +1,6 @@
 import { Card, Table, TableBody, TableCell, TableHead, TablePagination, TableRow } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { useId } from "react";
 
 
 interface GridCustomProps {
@@ -16,6 +17,7 @@ interface GridCustomProps {
 }
 
 const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, nameParameterApi, apiGet, disabled}) =>{
+
 
     const handleClickOnGrid = (element) =>{
      
@@ -38,7 +40,7 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                             <TableRow>
                                 {headerNames.map((el)=>{
                                     return (
-                                        <TableCell>
+                                        <TableCell key={Math.random()}>
                                             {el}
                                         </TableCell>
                                     );
@@ -47,12 +49,11 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                         </TableHead>
 
                         {elements.length === 0 ?
-                            <div className="" style={{height: '50px'}}>
+                            <TableBody  style={{height: '50px'}}>
 
-                            </div> :
+                            </TableBody> :
                             <TableBody sx={{marginLeft:'20px'}}>
                                 {elements.map((element:any) =>{
-
                                     // tolgo da ogni oggetto la prima chiave valore  perchè il cliente non vuole vedere es. l'id ma serve per la chiamata get di dettaglio 
                                     const sliced = Object.fromEntries(
                                         Object.entries(element).slice(1)
@@ -60,12 +61,13 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                     if(sliced?.tipologiaFattura === 'ASSEVERAZIONE'){
                                         return (
                 
-                                            <TableRow key={element[nameParameterApi]}>
+                                            <TableRow key={Math.random()}>
                                                 {
                                                     Object.values(sliced).map((value:any, i:number)=>{
                                                         const cssFirstColum = i === 0 ? {color:'#606060', fontWeight: 'bold', cursor: 'pointer'} : null;
                                                         return (
                                                             <TableCell
+                                                                key={Math.random()}
                                                                 sx={cssFirstColum} 
                                                             >
                                                                 {value}
@@ -77,13 +79,14 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                         );
                                     }else{
                                         return (
-                                            <TableRow key={element[nameParameterApi]}>
+                                            <TableRow key={Math.random()}>
                                                 {
                                                     Object.values(sliced).map((value:any, i:number)=>{
                                                         const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
                                                         return (
                                                             <TableCell
                                                                 sx={cssFirstColum} 
+                                                                key={Math.random()}
                                                                 onClick={()=>{
                                                                     if(i === 0){
                                                                         handleClickOnGrid(element);
@@ -96,7 +99,7 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                                     })
                                                 }
                                 
-                                                <TableCell  onClick={()=>{
+                                                <TableCell onClick={()=>{
                                                     handleClickOnGrid(element);            
                                                 } }>
                                                     <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
