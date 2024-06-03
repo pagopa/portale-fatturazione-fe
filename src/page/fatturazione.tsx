@@ -6,13 +6,15 @@ import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
 import { BodyFatturazione, FatturazioneProps, FattureObj} from "../types/typeFatturazione";
-import { getFatturazionePagoPa, getTipologieFaPagoPa } from "../api/apiPagoPa/fatturazionePA/api";
+import { downloadFatturePagopa, getFatturazionePagoPa, getTipologieFaPagoPa } from "../api/apiPagoPa/fatturazionePA/api";
 import { manageError } from "../api/api";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
 import MultiSelectFatturazione from "../components/fatturazione/multiSelect";
 import CollapsibleTable from "../components/reusableComponents/grid/gridCustomCollapsible";
+import { saveAs } from "file-saver";
+import { month } from "../reusableFunction/reusableArrayObj";
 
 const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainState}) =>{
 
@@ -20,9 +22,9 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
     const profilo =  getProfilo();
     const currentYear = (new Date()).getFullYear();
     const currentMonth = (new Date()).getMonth() + 1;
-    const month = Number(currentMonth);
+    const monthNumber = Number(currentMonth);
 
-    const [gridData, setGridData] = useState([]);
+    const [gridData, setGridData] = useState<FattureObj[]>([]);
     const [showLoadingGrid,setShowLoadingGrid] = useState(false);
     const [showDownloading,setShowDownloading] = useState(false);
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
@@ -35,7 +37,13 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
   
     const [bodyFatturazione, setBodyFatturazione] = useState<BodyFatturazione>({
         anno:currentYear,
-        mese:month,
+        mese:monthNumber,
+        tipologiaFattura:[],
+        idEnti:[]
+    });
+    const [bodyFatturazioneDownload, setBodyFatturazioneDownload] = useState<BodyFatturazione>({
+        anno:currentYear,
+        mese:monthNumber,
         tipologiaFattura:[],
         idEnti:[]
     });
@@ -118,6 +126,21 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
         }
     };
 
+    const downloadListaFatturazione = async () => {
+        setShowDownloading(true);
+        await downloadFatturePagopa(token,mainState.nonce, bodyFatturazioneDownload).then((res)=>{
+            let title = `Lista fatturazione/${month[bodyFatturazioneDownload.mese - 1]}/${bodyFatturazioneDownload.anno}.xlsx`;
+            if(bodyFatturazioneDownload.idEnti.length === 1 && gridData[0]){
+                title = `Lista fatturazione/ ${gridData[0]?.ragionesociale}/${month[bodyFatturazioneDownload.mese - 1]}/${bodyFatturazioneDownload.anno}.xlsx`;
+            }
+            saveAs("data:text/plain;base64," + res.data.documento, title );
+            setShowDownloading(false);
+        }).catch(((err)=>{
+            setShowDownloading(false);
+            manageError(err,dispatchMainState);
+        }));
+    };
+
 
     return (
         <div className="mx-5">
@@ -168,13 +191,13 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                             onClick={()=>{
                                 getlistaFatturazione({
                                     anno:currentYear,
-                                    mese:month,
+                                    mese:monthNumber,
                                     tipologiaFattura:[],
                                     idEnti:[]
                                 });
                                 setBodyFatturazione({
                                     anno:currentYear,
-                                    mese:month,
+                                    mese:monthNumber,
                                     tipologiaFattura:[],
                                     idEnti:[]
                                 });
@@ -191,8 +214,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                 
                 {
                     gridData.length > 0 &&
-                <Button onClick={() => console.log('download')}
-                    disabled={false}
+                <Button onClick={() => downloadListaFatturazione()}
                 >
                 Download Risultati
                     <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
