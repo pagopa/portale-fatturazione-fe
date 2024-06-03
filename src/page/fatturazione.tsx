@@ -95,7 +95,6 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
             }));
     };
     
-
     const getlistaFatturazione = async (body) => {
         setShowLoadingGrid(true);
 
@@ -104,6 +103,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                 const orderDataCustom = res.data.map(el => el.fattura).map(obj=> ({...{id:Math.random()},...obj}));
                 setGridData(orderDataCustom);
                 setShowLoadingGrid(false);
+                setBodyFatturazioneDownload(bodyFatturazione);
             }).catch((error)=>{
                 if(error?.response?.status === 404){
                     setGridData([]);
@@ -112,6 +112,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                 manageError(error, dispatchMainState);
             });        
     };
+
 
     // servizio che popola la select con la checkbox
     const listaEntiNotifichePageOnSelect = async () =>{
@@ -196,6 +197,12 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                                     idEnti:[]
                                 });
                                 setBodyFatturazione({
+                                    anno:currentYear,
+                                    mese:monthNumber,
+                                    tipologiaFattura:[],
+                                    idEnti:[]
+                                });
+                                setBodyFatturazioneDownload({
                                     anno:currentYear,
                                     mese:monthNumber,
                                     tipologiaFattura:[],
