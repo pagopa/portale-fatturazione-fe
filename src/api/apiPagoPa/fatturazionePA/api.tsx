@@ -25,4 +25,12 @@ export const getTipologieFaPagoPa = async (token:string, nonce:string, body: {an
 };
 
 
-
+export const downloadFatturePagopa = async (token:string, nonce:string,body: BodyFatturazione) => {
+    const response =  await axios.post(`${url}/api/fatture/download?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+};
