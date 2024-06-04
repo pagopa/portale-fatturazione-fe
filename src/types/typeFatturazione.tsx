@@ -1,3 +1,4 @@
+import { TableCellProps } from "@mui/material";
 import { MainState } from "./typesGeneral";
 
 export interface BodyFatturazione{
@@ -54,5 +55,11 @@ export interface GridCollapsible{
     data:FattureObj[],
     showedData:FattureObj[],
     setShowedData:any,
-    headerNames:string[]
+    headerNames:HeaderCollapsible[]
+}
+
+export type HeaderCollapsible = {
+    name:string,
+    align:"center" | "inherit" | "left" | "right" | "justify" | undefined,
+    id:number
 }

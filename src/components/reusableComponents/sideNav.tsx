@@ -242,7 +242,18 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
     }; 
 
     const handleListItemClickFatturazione = () =>{
-        navigate(PathPf.FATTURAZIONE);
+        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.FATTURAZIONE}}));
+        }else{
+            localStorage.removeItem("filtersRel");
+            localStorage.removeItem("filtersListaDatiFatturazione");
+            localStorage.removeItem("pageRowListaDatiFatturazione");
+            localStorage.removeItem("filtersNotifiche");
+            localStorage.removeItem("filtersModuliCommessa");
+            localStorage.removeItem("pageRowListaModuliCommessa");
+            navigate(PathPf.FATTURAZIONE);
+        }
+        
     };
     
     const currentLocation = location.pathname;
