@@ -52,10 +52,7 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, showedData, setShowe
                                 <TableRow>
                                     {headerNames.map((el)=>{
                                         return(
-                
-                                            <TableCell key={Math.random()}>{el}</TableCell>
-                
-                
+                                            <TableCell align={el.align} key={el.id}>{el.name}</TableCell>
                                         );
                                     })}
                                 </TableRow>
@@ -101,16 +98,16 @@ const Row = ({row}) => {
                     </IconButton>
                 </TableCell>
                 <TableCell sx={{color:'#0D6EFD',fontWeight: 'bold'}} >{row.ragionesociale}</TableCell>
-                <TableCell >{row.tipocontratto}</TableCell>
-                <TableCell >{row.totale.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</TableCell>
-                <TableCell >{row.numero}</TableCell>
-                <TableCell >{row.tipoDocumento}</TableCell>
-                <TableCell >{row.divisa}</TableCell>
-                <TableCell >{row.metodoPagamento}</TableCell>
-                <TableCell >{row.identificativo}</TableCell>
-                <TableCell >{row.tipologiaFattura}</TableCell>
-                <TableCell >{row?.split?.toString()|| ''}</TableCell>
-                <TableCell >{row.dataFattura !== null ? new Date(row.dataFattura).toLocaleString().split(',')[0] : ''}</TableCell>
+                <TableCell align='center' >{row.tipocontratto}</TableCell>
+                <TableCell align='right' >{row.totale.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</TableCell>
+                <TableCell align='right' >{row.numero}</TableCell>
+                <TableCell align='center' >{row.tipoDocumento}</TableCell>
+                <TableCell align='center' >{row.divisa}</TableCell>
+                <TableCell align='center' >{row.metodoPagamento}</TableCell>
+                <TableCell align='center'>{row.identificativo}</TableCell>
+                <TableCell align='center'>{row.tipologiaFattura}</TableCell>
+                <TableCell align='center'>{row?.split?.toString()|| ''}</TableCell>
+                <TableCell align='center'>{row.dataFattura !== null ? new Date(row.dataFattura).toLocaleString().split(',')[0] : ''}</TableCell>
             </TableRow>
             <TableRow>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={4}>
