@@ -57,12 +57,14 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, showedData, setShowe
                                     })}
                                 </TableRow>
                             </TableHead>
-        
-                            {showedData.map((row) => {
+                            {showedData.length === 0 ? <TableBody  style={{height: '50px'}}>
+
+                            </TableBody> :
+                                showedData.map((row) => {
             
-                                return(
-                                    <Row key={row.id} row={row}></Row>
-                                ); })}
+                                    return(
+                                        <Row key={row.id} row={row}></Row>
+                                    ); })}
                         </Table>
                     </TableContainer>
                 </Card>
@@ -84,8 +86,10 @@ export default CollapsibleTable;
     
 const Row = ({row}) => {
     const [open, setOpen] = useState(false);
+ 
     return(
-        <TableBody>
+        
+        <TableBody sx={{minHeight:"100px"}}>
             <TableRow  sx={{ '& > *': { borderBottom: 'unset' } }}>
                 <TableCell>
                     <IconButton
@@ -114,7 +118,7 @@ const Row = ({row}) => {
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box sx={{ margin: 2 , backgroundColor:'#F8F8F8', padding:'10px'}}>
                             <Typography sx={{marginLeft:"6px"}} variant="h6" gutterBottom component="div">
-            Posizioni
+                Posizioni
                             </Typography>
                             <Table size="small" aria-label="purchases">
                                 <TableHead>
@@ -142,8 +146,10 @@ const Row = ({row}) => {
                     </Collapse>
                 </TableCell>
             </TableRow> 
-        </TableBody>
-    );
+        </TableBody>);
+   
+   
+   
 };
     
     
