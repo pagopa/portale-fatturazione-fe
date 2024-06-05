@@ -31,7 +31,6 @@ export const getRelExelPagoPa = async ( token:string ,nonce:string , id:string) 
             Authorization: 'Bearer ' + token
         },}
     );
-
     return response;
 };
 

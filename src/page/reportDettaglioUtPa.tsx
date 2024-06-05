@@ -624,8 +624,16 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
             const {idEnti, recapitisti, consolidatori, ...bodyEnti} = bodyDownload;
             await downloadNotifche(token, mainState.nonce,bodyEnti )
                 .then((res)=>{
-                    saveAs("data:text/plain;base64," + res.data.documento,`Notifiche /${notificheList[0].ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.xlsx` );
-                    setShowLoading(false);         
+                    const blob = new Blob([res.data], { type: 'text/csv' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.setAttribute('hidden', '');
+                    a.setAttribute('href', url);
+                    a.setAttribute('download',`Notifiche /${notificheList[0].ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`);
+                    document.body.appendChild(a);
+                    a.click();
+                    setShowLoading(false);
+                    document.body.removeChild(a);        
                 })
                 .catch(((err)=>{
                     setShowLoading(false);

@@ -94,39 +94,38 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
             await getRelExel(token, mainState.nonce, statusApp.idElement).then((res)=>{
                 //saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio/ ${ rel?.ragioneSociale} /${rel?.mese}/${rel?.anno}.xlsx` );
                 //setShowDownloading(false);
-
-                const fileName = `Rel / Report di dettaglio / ${ rel?.ragioneSociale} / ${rel?.mese} / ${rel?.anno}.csv`;
                 
                 const blob = new Blob([res.data], { type: 'text/csv' });
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.setAttribute('hidden', '');
                 a.setAttribute('href', url);
-                a.setAttribute('download',fileName);
+                a.setAttribute('download',`Rel / Report di dettaglio / ${ rel?.ragioneSociale} / ${rel?.mese} / ${rel?.anno}.csv`);
                 document.body.appendChild(a);
                 a.click();
                 setShowDownloading(false);
                 document.body.removeChild(a);
+               
             }).catch((err)=>{
                 manageError(err,dispatchMainState);
                 setShowDownloading(false);
             });
         }else{
             await getRelExelPagoPa(token, mainState.nonce, statusApp.idElement).then((res)=>{
-                //saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio / ${ rel?.ragioneSociale} / ${rel?.mese} / ${rel?.anno}.xlsx` );
-                //setShowDownloading(false);
-                const fileName = `Rel / Report di dettaglio / ${ rel?.ragioneSociale} / ${rel?.mese} / ${rel?.anno}.csv`;
+                // saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio / ${ rel?.ragioneSociale} / ${rel?.mese} / ${rel?.anno}.xlsx` );
+                // setShowDownloading(false);
                 
                 const blob = new Blob([res.data], { type: 'text/csv' });
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.setAttribute('hidden', '');
                 a.setAttribute('href', url);
-                a.setAttribute('download',fileName);
+                a.setAttribute('download',`Rel / Report di dettaglio / ${ rel?.ragioneSociale} / ${rel?.mese} / ${rel?.anno}.csv`);
                 document.body.appendChild(a);
                 a.click();
                 setShowDownloading(false);
                 document.body.removeChild(a);
+                
             }).catch((err)=>{
                 manageError(err,dispatchMainState);
                 setShowDownloading(false);
