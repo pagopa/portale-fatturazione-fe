@@ -115,7 +115,7 @@ const TabAreaPersonaleUtente = () => {
                         <div>
                             <TextFieldComponent
                                 required={false}
-                                helperText="max 100 caratteri alfanumerici"
+                                helperText="max 100 caratteri"
                                 label="Codice. Commessa/Convenzione"
                                 placeholder="Commessa/Convenzione"
                                 fullWidth
