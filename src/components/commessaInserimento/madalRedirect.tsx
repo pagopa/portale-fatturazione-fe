@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { ModalProps } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
+import { PathPf } from '../../types/enum';
 
 const style = {
     position: 'absolute' as const,
@@ -20,18 +21,19 @@ const style = {
 const ModalRedirect : React.FC<ModalProps> =({setOpen, open, sentence}) => {
 
     const navigate = useNavigate();
-   
 
-    const handleClose = () => setOpen(false);
+    const handleClose = (event:object, reason: string) =>{
+        if(reason !== 'backdropClick'){
+            setOpen(false);
+        }
+    };
 
     const handleGoToDatiFatturazione = () =>{
-        navigate('/');
-        
+        navigate(PathPf.DATI_FATTURAZIONE);  
     };
 
     return (
         <div>
-        
             <Modal
                 open={open}
                 onClose={handleClose}
@@ -41,7 +43,7 @@ const ModalRedirect : React.FC<ModalProps> =({setOpen, open, sentence}) => {
                 <Box sx={style}>
                     <div className='d-flex justify-content-center'>
                         <Typography id="modal-modal-title" variant="h6" component="h2">
-                    Gentile utente
+                    Attenzione!
                         </Typography>
                     </div>
                     <div className='mt-2'>
@@ -54,19 +56,14 @@ const ModalRedirect : React.FC<ModalProps> =({setOpen, open, sentence}) => {
                                     <li><Typography id="modal-modal-title" variant="subtitle2" >Indirizzo mail di riferimento</Typography></li>
                                 </ul>
                             </div>
-                            
                         </Typography>
                     </div>
-                    
-                   
-                   
                     <div className='container_buttons_modal d-flex justify-content-center mt-5'>
                         <Button
                             variant='contained'
                             onClick={()=>handleGoToDatiFatturazione()}
-                        >Insrisci i Dati di fatturazione</Button>
+                        >Vai ai dati di fatturazione</Button>
                     </div>
-                    
                 </Box>
                 
             </Modal>

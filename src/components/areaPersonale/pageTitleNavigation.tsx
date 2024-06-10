@@ -1,74 +1,84 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import { Typography, Button } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
-import { MainState } from '../../types/typesGeneral';
+import DnsIcon from '@mui/icons-material/Dns';
+import {  useNavigate } from 'react-router';
+import { PathPf } from '../../types/enum';
+import { getProfilo, getStatusApp } from '../../reusableFunction/actionLocalStorage';
+interface PageTitleProps {
+    dispatchMainState:any,
+    setOpen:any
+}
 
-const PageTitleNavigation = () => {
+const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState, setOpen}) => {
 
+    const {mainState} = useContext(DatiFatturazioneContext);
+    const profilo =  getProfilo();
+    const statusApp = getStatusApp();
+    const navigate = useNavigate();
 
-    const getProfilo = localStorage.getItem('profilo') || '{}';
-    const profilo =  JSON.parse(getProfilo);
-
-    const {mainState, setMainState, user} = useContext(DatiFatturazioneContext);
- 
-    let titleNavigation;
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
   
-    if (mainState.statusPageDatiFatturazione === 'immutable' &&  user !== 'new') {
-       
-        titleNavigation = 'Dati di fatturazione';
-    }else if(mainState.statusPageDatiFatturazione === 'mutable' &&  user === 'old'){
-        titleNavigation = 'Modifica dati di fatturazione';
-       
-    }else {
-        titleNavigation = 'Inserisci dati di fatturazione ';
-      
+    let titleNavigation;
+    if (!mainState.datiFatturazione) {
+        titleNavigation = 'Inserisci i dati di fatturazione ';
+    }else if (mainState.statusPageDatiFatturazione === 'immutable' && mainState.datiFatturazione) {
+        titleNavigation = 'Dati di fatturazione ';
+    }else if(mainState.statusPageDatiFatturazione === 'mutable' &&   mainState.datiFatturazione ){
+        titleNavigation = 'Modifica dati di fatturazione ';
     }
 
+    const onIndietroButtonPagoPa = () =>{
+        if(mainState.statusPageDatiFatturazione === 'immutable' &&  profilo.auth === 'PAGOPA'){
+            navigate(PathPf.LISTA_DATI_FATTURAZIONE);
+        }else{
+            setOpen(prev => ({...prev, ...{visible:true,clickOn:'INDIETRO_BUTTON'}}));
+        }
+    };
 
-
-   
-    // da usare quando si saprà bene la logica
-    // const pathNewUser =  <Typography  variant="caption"> /<strong> Iserisci dati di fatturazione</strong></Typography>;
-    const pathOldUser = <Typography sx={{ marginLeft: '10px' }} variant="caption">Dati di fatturazione <strong>/ Modifica</strong></Typography>;
-  
+    const cssPath1 = mainState.statusPageDatiFatturazione === 'immutable'?'bold':'normal';
+    const cssPath2 = mainState.statusPageDatiFatturazione === 'mutable'?'bold':'normal';
 
     return (
-        <div className="mx-5 mt-2">
-           
-            {(mainState.statusPageDatiFatturazione === 'mutable' && user === 'old')
-                ? (
+        <div className="mx-5 marginTop24">
+            {((mainState.statusPageDatiFatturazione === 'mutable' && mainState.datiFatturazione) || profilo.auth === 'PAGOPA')
+                &&
                     <div>
                         <ButtonNaked
                             color="primary"
-                            onFocusVisible={() => { console.log('onFocus'); }}
                             size="small"
                             startIcon={<ArrowBackIcon />}
-                            onClick={() =>  setMainState((prev:MainState)=>({...prev, ...{statusPageDatiFatturazione:'immutable'}})) }
+                            onClick={() => onIndietroButtonPagoPa()}
                             sx={{marginBottom:'2px'}}
                         >
                           Indietro 
                         </ButtonNaked>
-                        {pathOldUser}
-                        
-
+                        <Typography sx={{ marginLeft: '20px',fontWeight:cssPath1 }} variant="caption">
+                            <DnsIcon fontSize="inherit" sx={{marginRight:'5px'}}></DnsIcon>
+                              Dati di fatturazione /
+                        </Typography>
+                        <Typography sx={{fontWeight:cssPath2 }} variant="caption">
+                            {!mainState.datiFatturazione ? 'Inserisci i dati di fatturazione':'Modifica i dati di fatturazione'}
+                        </Typography>
                     </div>
-                     
-                      
-                ) : null}
+            }
             <div className="marginTop24">
-                <Typography variant="h4">{titleNavigation}</Typography>
+                <Typography variant="h4">{titleNavigation} {profilo.auth === 'PAGOPA' && `/ ${statusApp.nomeEnteClickOn}`} </Typography>
             </div>
-            
             {mainState.statusPageDatiFatturazione === 'immutable' && profilo.ruolo === 'R/W' ? (
-                <div className="text-end marginTop24">
-                    <Button onClick={() => setMainState((prev:MainState)=>({...prev, ...{statusPageDatiFatturazione:'mutable'}}))} variant="contained" size="small">Modifica</Button>
+                <div className="text-end">
+                    <Button onClick={() => handleModifyMainState({statusPageDatiFatturazione:'mutable'})}
+                        variant="contained" size="small">Modifica</Button>
                 </div>
             ) : null}
-
         </div>
-
     );
 };
 export default  PageTitleNavigation;

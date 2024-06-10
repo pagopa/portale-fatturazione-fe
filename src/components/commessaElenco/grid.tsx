@@ -5,46 +5,42 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useNavigate } from 'react-router';
 import { DataGridCommessa } from '../../types/typeModuloCommessaElenco';
 import { MainState, Params } from '../../types/typesGeneral';
-
-
+import { PathPf } from '../../types/enum';
+import { month } from '../../reusableFunction/reusableArrayObj';
+import { getStatusApp } from '../../reusableFunction/actionLocalStorage';
 
 interface GridComponentProps {
     data: DataGridCommessa[],
-    setMainState:any,
+    dispatchMainState:any,
     mainState:MainState
    
 }
 
 const GridComponent : React.FC<GridComponentProps> = (props) => {
-    const {data, setMainState} = props;
-    const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre",'Gennaio'];
+    const {data, dispatchMainState} = props;
 
+    const statusApp = getStatusApp();
+    const navigate = useNavigate();
+
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
   
     const dataWithLabelFixed = data.map((singleObj)=>{
         const mese = month[singleObj.meseValidita -1 ];
         const newObj = {
             meseValidita: mese,
         };
-      
-       
-
         return {...singleObj, ...newObj};
-       
     });
-
-
-    const navigate = useNavigate();
-
-   
 
     let columsSelectedGrid = '';
     const handleOnCellClick = (params:Params) =>{
-       
         columsSelectedGrid  = params.field;
-        
     };
-
-
 
     const handleEvent: GridEventListener<'rowClick'> = (
         params:GridRowParams,
@@ -53,33 +49,25 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
         event.preventDefault();
         // l'evento verrà eseguito solo se l'utente farà il clik sul mese o l'action(freccia)
         if(columsSelectedGrid  === 'meseValidita' ||columsSelectedGrid  === 'action' ){
-
             const getMeseIndex :number = month.findIndex(x => x == params.row.meseValidita); 
-          
+            handleModifyMainState({
+                mese:getMeseIndex+1,
+                anno:params.row.annoValidita,
+                // modifica:params.row.modifica,
+                userClickOn:'GRID',
+                inserisciModificaCommessa:"MODIFY"
+            });
             const newState = {
-                path:'/8',
                 mese:getMeseIndex+1,
                 anno:params.row.annoValidita,
                 userClickOn:'GRID',
                 inserisciModificaCommessa:"MODIFY"
             };
-            const string = JSON.stringify(newState);
+            const string = JSON.stringify({...statusApp,...newState});
             localStorage.setItem('statusApplication', string);
-
-            setMainState((prev:MainState)=>({...prev, ...{
-                mese:getMeseIndex+1,
-                anno:params.row.annoValidita,
-                modifica:params.row.modifica,
-                userClickOn:'GRID',
-                inserisciModificaCommessa:"MODIFY"
-            }}));
-            // localStorage.removeItem('statusApplication');
-           
-            navigate('/8');
+            navigate(PathPf.MODULOCOMMESSA);
         }
-       
     };
-
     
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID', width: 90 },
@@ -90,8 +78,6 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
             headerName:'Mese',
             width: 120,
             renderCell: (param:Params) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.meseValidita}</a>
-            
-
         },
         {
             field: 'stato',
@@ -99,7 +85,6 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
             headerAlign: 'left',
             headerName:'Stato',
             width: 160,
-
         },
         {
             field: 'dataModifica',
@@ -107,7 +92,6 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
             headerAlign: 'left',
             headerName:'Data Inserimento',
             width: 190,
-
         },
         {
             field: 'totale',
@@ -115,7 +99,6 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
             headerAlign: 'left',
             headerName:'Totale',
             width: 160,
-
         },
         {
             field: 'totaleDigitale',
@@ -123,7 +106,6 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
             headerAlign: 'left',
             headerName:'Tot. Digitale',
             width: 160,
-
         },
         {
             field:'totaleAnalogico',
@@ -131,24 +113,15 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
             headerAlign: 'left',
             headerName:'Tot. Analogiche',
             width: 160,
-
         },
         {
             field: 'action',
             headerName: '',
             sortable: false,
             headerAlign: 'left',
-            renderCell: (() => (
-    
-                <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} />
-    
-            )
-            ),
+            renderCell: (() => (<ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} />)),
         }
     ];
-  
-   
-   
 
     return (
 

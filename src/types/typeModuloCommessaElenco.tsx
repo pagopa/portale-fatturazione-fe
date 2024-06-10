@@ -3,8 +3,10 @@ export interface ResponseGetAnni {
 }
 
 export interface VisualModuliCommessaProps{
-    setMainState:any,
+    dispatchMainState:any,
     mainState:any,
+    valueSelect:string,
+    setValueSelect:any
 }
 
 export interface DataGridCommessa{

@@ -1,4 +1,4 @@
-import React, {useContext } from 'react';
+import {useContext } from 'react';
 import '../../style/areaPersonaleUtenteEnte.css';
 import { Box, InputLabel, Typography, Checkbox, FormControlLabel } from '@mui/material';
 import { red } from '@mui/material/colors';
@@ -7,29 +7,13 @@ import DataComponent from './data';
 import DynamicInsert from './dynamicInsert';
 import TextFieldComponent from './textField';
 import {AreaPersonaleContext} from '../../types/typesAreaPersonaleUtenteEnte';
-
 import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
-
-
-
-
+import { getProfilo } from '../../reusableFunction/actionLocalStorage';
+import { createDateFromString } from '../../reusableFunction/function';
 
 const TabAreaPersonaleUtente = () => {
-    const {mainState,datiFatturazione,setDatiFatturazione, user} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
-
-   
-    function createDateFromString(string:string){
-        const getGiorno = new Date(string).getDate();
-      
-        const getMese = new Date(string).getMonth() + 1;
-        const getAnno = new Date(string).getFullYear();
-
-        return getGiorno+'/'+getMese+'/'+getAnno;
-    }
-
-
-    
-   
+    const {mainState,datiFatturazione,setDatiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
+    const parseProfilo  =  getProfilo();
 
     const valueOptionRadioTipoOrdine = [
         {descrizione:'Dati ordine d\'acquisto', id:"1"},
@@ -41,23 +25,17 @@ const TabAreaPersonaleUtente = () => {
         {descrizione:'No', id: false},
     ];
 
-    const getProfilo =  localStorage.getItem('profilo') || '{}';
-    const parseProfilo = JSON.parse(getProfilo);
-  
-  
+    const colorAsterisco = mainState.statusPageDatiFatturazione === 'immutable' ? '#C3CAD1': 'black'; 
 
     return (
 
         <div className="ms-5 me-5 mb-5  bg-white rounded">
-            
             <div className="ms-4  me-4 pt-4 marginTop24">
-
                 <div>
                     <RadioComponent
                         options={valueOptionRadioTipoOrdine}
                         valueRadio={datiFatturazione.tipoCommessa}
                         keyObject='tipoCommessa'
-                      
                     />
                 </div>
 
@@ -76,22 +54,8 @@ const TabAreaPersonaleUtente = () => {
                                 keyObject='cup'
                                 dataValidation={{max:15,validation:'Validazione Mail'}}
                             />
-
                         </div>
                         {/* CUP end */}
-                        {/* CIG start 
-                    <div>
-                        <TextFieldComponent
-                            helperText="max 10 caratteri alfanumerici"
-                            label="CIG"
-                            placeholder="Inserisci il CIG"
-                            fullWidth={false}
-                            value={datiFatturazione.cig}
-                            keyObject='cig'
-                            dataValidation={{max:10,validation:'Max 10 caratteri'}}
-                        />
-                    </div>
-                    CIG end */}
                         {/* radio start  */}
                         <div>
                             <RadioComponent
@@ -102,12 +66,7 @@ const TabAreaPersonaleUtente = () => {
                             />
                         </div>
                     </Box>
-                  
-         
                     {/* radio start */}
-                    {/* Box tipo contratto start    
-          <SelectComponet inputLabel="Tipo Contratto:"  showIcon={false} status={statusPage} />
-           Box tipo contratto end */}
                     <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(1, 2fr)' }}>
                         <div>
                             <TextFieldComponent
@@ -119,13 +78,9 @@ const TabAreaPersonaleUtente = () => {
                                 value={datiFatturazione.pec}
                                 keyObject='pec'
                                 dataValidation={{max:15,validation:'Max 15 caratteri'}}
-                            
                             />
                         </div>
                     </Box>
-                   
-                   
-          
                 </Box>
                 <div />
                 {/* first box cap cig split radio  end */}
@@ -137,7 +92,7 @@ const TabAreaPersonaleUtente = () => {
                             <div>
                                 <TextFieldComponent
                                     required={false}
-                                    helperText="max 20 caratteri alfanumerici"
+                                    helperText="max 20 caratteri"
                                     label="ID Documento"
                                     placeholder="Inserisci ID"
                                     fullWidth={false}
@@ -160,7 +115,7 @@ const TabAreaPersonaleUtente = () => {
                         <div>
                             <TextFieldComponent
                                 required={false}
-                                helperText="max 100 caratteri alfanumerici"
+                                helperText="max 100 caratteri"
                                 label="Codice. Commessa/Convenzione"
                                 placeholder="Commessa/Convenzione"
                                 fullWidth
@@ -178,53 +133,47 @@ const TabAreaPersonaleUtente = () => {
                 <div className="mt-3">
                     <DynamicInsert status={mainState?.statusPageDatiFatturazione} arrElement={datiFatturazione.contatti} setData={setDatiFatturazione} />
                 </div>
-
                 {/* terzo box   end */}
                 {/*checkbox start */}
-                
-                <FormControlLabel  sx={{
-                    marginTop:'24px',
-                    '& .MuiFormControlLabel-label': {
-                        fontSize: '0.8rem',
+                <div className='d-flex marginTop24'>
+                    <Typography sx={{marginRight:'10px', color:colorAsterisco}}  variant="h6">*</Typography>
+               
+                    <FormControlLabel  sx={{
+                        '& .MuiFormControlLabel-label': {
+                            fontSize: '0.8rem',
                        
-                    },
-                    '&.MuiFormControlLabel-root': {
-                        marginLeft:'0',
-                        marginRight:'0'
-                    }
-                }}  
-                required
-                labelPlacement="start"
-                control={<Checkbox 
-                    sx={{color: red[800]}}
-                    checked={datiFatturazione.notaLegale || false}
-                    onChange={()=> setDatiFatturazione((prev:any)=>({...prev,...{notaLegale:!datiFatturazione.notaLegale}}))}/>}
-                disabled={mainState.statusPageDatiFatturazione === 'immutable'}
-                label="Gli accordi di adesione a SEND sono esclusi dall`applicazione del Codice dei Contratti Pubblici ai
-                 sensi dell`art. 56, comma 1, lett a) del D.lgs. 36/2023 pertanto non sono sottoposti alla disciplina della
-                  tracciabilità dei flussi finanziari di cui alla L. 136/2010, come indicato dall`ANAC nelle relative Linee Guida.
-                Conseguentemente, il CIG non deve essere acquisito e riportato nelle fatture "
-                />
-
+                        },
+                        '&.MuiFormControlLabel-root': {
+                            marginLeft:'0',
+                            marginRight:'0'
+                        }
+                    }}  
+                
+                    labelPlacement="start"
+                    control={<Checkbox 
+                        sx={{color: red[800]}}
+                        checked={datiFatturazione.notaLegale || false}
+                        onChange={()=> setDatiFatturazione((prev:any)=>({...prev,...{notaLegale:!datiFatturazione.notaLegale}}))}/>}
+                    disabled={mainState.statusPageDatiFatturazione === 'immutable'}
+                    label="Gli accordi di adesione a SEND sono esclusi dall'applicazione del Codice dei Contratti Pubblici ai
+                 sensi dell'art. 56, comma 1, lett a) del D.lgs. 36/2023 pertanto non sono sottoposti alla disciplina della
+                  tracciabilità dei flussi finanziari di cui alla L. 136/2010, come indicato dall'ANAC nelle relative Linee Guida.
+                Conseguentemente, il CIG non deve essere acquisito e riportato nelle fatture"
+                    />
+                </div>
                 {/*checkbox start */}
                 <hr className="mx-3 mt-5" />
                 <div className="d-flex justify-content-around marginTopBottom24">
                     <div className='d-flex'>
                         <InputLabel  sx={{ marginRight:'20px'}}  size={"normal"}>Data primo accesso</InputLabel>
-                        {user === 'old' ? <Typography >{createDateFromString(parseProfilo.dataPrimo)}</Typography>: null}
+                        {mainState.datiFatturazione && <Typography >{createDateFromString(parseProfilo.dataPrimo)}</Typography>}
                     </div>
-
                     <div className='d-flex'>
                         <InputLabel sx={{ marginRight:'20px'}}  size={"normal"}>Data ultimo accesso</InputLabel>
-                        {user === 'old' ? <Typography >{createDateFromString(parseProfilo.dataUltimo)}</Typography>: null}
-                        
+                        {mainState.datiFatturazione && <Typography >{createDateFromString(parseProfilo.dataUltimo)}</Typography>}
                     </div>
-        
-        
                 </div>
-
             </div>
-
         </div>
     );
 };

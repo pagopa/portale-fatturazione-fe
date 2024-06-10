@@ -1,16 +1,10 @@
-import * as React from 'react';
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef} from '@mui/x-data-grid';
 
 const columns: GridColDef[] = [
     { field: 'contractId', headerName: 'ID', width: 70 },
     { field: 'tipologiaFatture', headerName: 'Tipologia Fattura', width: 160 },
     { field: 'anno', headerName: 'Anno', width: 130 },
-    {
-        field: 'mese',
-        headerName: 'Mese',
-     
-        width: 130,
-    },
+    { field: 'mese',headerName: 'Mese',width: 130},
     { field: 'totaleAnalogico', headerName: 'Tot. Analogico', width: 130 },
     { field: 'totaleDigitale', headerName: 'Tot. Digitale', width: 130 },
     { field: 'totaleNotAnalogiche', headerName: 'Tot. Not. Analogico', width: 130 },
@@ -56,7 +50,6 @@ export default function DataTable() {
                 pageSizeOptions={[5, 10]}
                 autoHeight
                 disableColumnMenu
-
             />
         </div>
     );

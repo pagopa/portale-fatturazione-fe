@@ -2,9 +2,12 @@ import { MainState } from "./typesGeneral";
 
 export interface RelPageProps{
     mainState:MainState,
-    setMainState:any,
+    dispatchMainState:any
 }
-
+export interface RelPagePdfProps{
+    mainState:MainState,
+    dispatchMainState:any
+}
 export interface TextRegioneSocialeRelProps{
     values:any,
     setValue: (value:any) => void
@@ -14,32 +17,49 @@ export interface BodyRel{
     anno:number,
     mese:number,
     tipologiaFattura:string|null,
-    idEnti?:string[] | [],
-    idContratto: string | null
+    idEnti:string[] | [],
+    idContratto: string | null,
+    caricata: number|null
 } 
 
+export interface BodyRelSelfcare{
+    anno:number,
+    mese:number,
+    tipologiaFattura:string|null,
+    idContratto: string | null,
+    caricata: number|null
+}
 export interface Rel {
     idTestata: string,
     idEnte: string,
+    caricata:number,
     ragioneSociale: string,
-    dataDocumento: string,
+    dataDocumento: string |null,
     idDocumento: string,
     cup: string,
+    datiFatturazione:boolean
     idContratto: string,
     tipologiaFattura: string,
     anno: string,
     mese: string,
     totaleAnalogico: number,
-    totaleDigitale: string,
+    totaleDigitale: number,
     totaleNotificheAnalogiche: number,
     totaleNotificheDigitali: number,
     totale: number,
     iva:number,
     totaleAnalogicoIva:number,
     totaleDigitaleIva:number,
-    totaleIva:number
-
-
-
+    totaleIva:number,
+    firmata:string|null
 }
+
+export interface BodyRelLog {
+    anno: number,
+    mese: number,
+    tipologiaFattura: string,
+    idContratto: string,
+    idEnte?:string
+}
+
 

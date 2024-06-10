@@ -11,53 +11,62 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import DnsIcon from '@mui/icons-material/Dns';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
-import { getDatiModuloCommessa, getDatiFatturazione,  manageError} from '../../api/api';
+import {manageError} from '../../api/api';
 import MarkUnreadChatAltIcon from '@mui/icons-material/MarkUnreadChatAlt';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import { MainState, SideNavProps } from '../../types/typesGeneral';
+import { SideNavProps } from '../../types/typesGeneral';
+import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
+import { getDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
+import { PathPf } from '../../types/enum';
+import AnnouncementIcon from '@mui/icons-material/Announcement';
+import ReceiptIcon from '@mui/icons-material/Receipt';
+import { getProfilo, getToken, profiliEnti } from '../../reusableFunction/actionLocalStorage';
 
-
-const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => {
+const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState, setOpenBasicModal_DatFat_ModCom}) => {
 
     const navigate = useNavigate();
     const location = useLocation();
+    const enti = profiliEnti();
+    const token = getToken();
+    const profilo = getProfilo();
 
-    const getToken = localStorage.getItem('token') || '{}';
-    const token =  JSON.parse(getToken).token;
-   
-    const getProfilo = localStorage.getItem('profilo') || '{}';
-    const profilo =  JSON.parse(getProfilo);
 
-    
-  
-    const getProfiloFromLocalStorage = localStorage.getItem('profilo') || '{}';
-
-    const checkIfUserIsAutenticated = JSON.parse(getProfiloFromLocalStorage).auth;
-  
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
 
     const [selectedIndex, setSelectedIndex] = useState(0);
     
     const handleListItemClick = async() => {
-
-        if(checkIfUserIsAutenticated === 'PAGOPA'){
-           
-            navigate('/pagopalistadatifatturazione');
-        }else{
-            navigate('/');
-            if(mainState.datiFatturazione === true){
-                setMainState((prev:any)=>({ 
-                    ...prev,
-                    ...{
-                        action:'DATI_FATTURAZIONE',
-                        statusPageDatiFatturazione:'immutable'
-                    }}));
         
-                localStorage.setItem('statusApplication', JSON.stringify(mainState));
-            }
+        if(((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)|| (mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)) && profilo.auth === 'PAGOPA'){
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.LISTA_DATI_FATTURAZIONE}}));
+   
+        }else if(((mainState.statusPageDatiFatturazione === 'immutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)|| (mainState.statusPageInserimentoCommessa === 'immutable' && location.pathname === PathPf.MODULOCOMMESSA)) && profilo.auth === 'PAGOPA'){
            
-           
-        }
-        
+            navigate(PathPf.LISTA_DATI_FATTURAZIONE);
+            
+        }else if(((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)|| (mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)) && enti){
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.DATI_FATTURAZIONE}}));
+          
+        }else if(profilo.auth === 'PAGOPA'){
+            localStorage.removeItem("filtersModuliCommessa");
+            localStorage.removeItem("pageRowListaModuliCommessa");
+            localStorage.removeItem("filtersRel");
+            localStorage.removeItem("filtersNotifiche");
+            navigate(PathPf.LISTA_DATI_FATTURAZIONE);
+            
+        }else if(enti){
+            localStorage.removeItem("filtersModuliCommessa");
+            localStorage.removeItem("pageRowListaModuliCommessa");
+            localStorage.removeItem("filtersRel");
+            localStorage.removeItem("filtersNotifiche");
+            navigate(PathPf.DATI_FATTURAZIONE);
+        } 
+      
     };
 
     // Lato self care
@@ -70,162 +79,218 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
     // viene mostrata la grid lista commesse , solo nel momento in cui l'utente va a selezionare un comune potrà essere eseguita la
     // chiamata con i parametri necessari (id ente)
     const getDatiFat = async () =>{
-      
-        await getDatiFatturazione(token,profilo.nonce).then(( ) =>{ 
+        const statusApp = localStorage.getItem('statusApplication')||'{}';
+        const parseStatusApp = JSON.parse(statusApp);
+        await getDatiFatturazione(token,mainState.nonce).then(( ) =>{ 
             
-            setMainState((prev:MainState)=>({
-                ...prev, 
+            handleModifyMainState({datiFatturazione:true});
+            //localStorage.setItem('statusApplication', JSON.stringify(mainState));
+            
+            localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
                 ...{datiFatturazione:true}}));
-           
         }).catch(err =>{
-          
-            if(err.response.status === 404){
-                setMainState((prev:MainState)=>({
-                    ...prev,
+            if(err?.response?.status === 404){
+                handleModifyMainState({datiFatturazione:false});
+                localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
                     ...{datiFatturazione:false}}));
             }
         });
 
     };
 
- 
-
-
     const handleListItemClickModuloCommessa = async () => {
-       
-        if(profilo.auth === 'PAGOPA'){
-            //cliccando sulla side nav Modulo commessa e sono l'ente PAGOPA
-            navigate('/pagopalistamodulicommessa');
-
+        if(((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)|| (mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA))&& profilo.auth === 'PAGOPA'){
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.LISTA_MODULICOMMESSA}}));
+        }else if((mainState.statusPageDatiFatturazione === 'immutable'|| (mainState.statusPageInserimentoCommessa === 'immutable' && location.pathname === PathPf.MODULOCOMMESSA)) && profilo.auth === 'PAGOPA'){
+            navigate(PathPf.LISTA_MODULICOMMESSA);
+            localStorage.removeItem("filtersRel");
+            localStorage.removeItem("filtersListaDatiFatturazione");
+            localStorage.removeItem("pageRowListaDatiFatturazione");
+            localStorage.removeItem("filtersNotifiche");
+        }else if((mainState.inserisciModificaCommessa === 'INSERT'&& location.pathname === PathPf.MODULOCOMMESSA) && enti){
+            console.log('il nulla');
+        }else if(((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)|| (mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)) && enti){
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.LISTA_COMMESSE}}));
         }else{
             //cliccando sulla side nav Modulo commessa e sono un ente qualsiasi
+            localStorage.removeItem("filtersRel");
+            localStorage.removeItem("filtersListaDatiFatturazione");
+            localStorage.removeItem("pageRowListaDatiFatturazione");
+            localStorage.removeItem("filtersNotifiche");
+            
             await getDatiFat();
-            await getDatiModuloCommessa(token, profilo.nonce).then((res)=>{
-
+            await getDatiModuloCommessa(token, mainState.nonce).then((res)=>{
+                 
                 if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
-                    setMainState((prev:MainState)=>({
-                        ...prev,
-                        ...{
-                            inserisciModificaCommessa:'INSERT',
-                            statusPageInserimentoCommessa:'mutable',
-                            modifica:true
-                        }}));
-               
+                        
+                    handleModifyMainState({
+                        inserisciModificaCommessa:'INSERT',
+                        statusPageInserimentoCommessa:'mutable',
+                        userClickOn:undefined,
+                        primoInserimetoCommessa:true
+                    });
                     const newState = {
-                        path:'/8',
                         mese:res.data.mese,
                         anno:res.data.anno,
-                        inserisciModificaCommessa:'INSERT'
+                        inserisciModificaCommessa:'INSERT',
+                        userClickOn:undefined,
+                        primoInserimetoCommessa:true
                     };
-                    localStorage.setItem('statusApplication', JSON.stringify(newState));
-                  
-                    navigate('/8');
+
+                    localStorage.setItem('statusApplication',JSON.stringify(newState));
+                 
+                    navigate(PathPf.MODULOCOMMESSA);
                 }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0 ){
     
-                    setMainState((prev:MainState)=>({ 
-                        ...prev,
-                        ...{
-                            inserisciModificaCommessa:'MODIFY',
-                            statusPageInserimentoCommessa:'immutable',
-                            modifica:true}}));
+                    handleModifyMainState({
+                        inserisciModificaCommessa:'MODIFY',
+                        statusPageInserimentoCommessa:'immutable',
+                        primoInserimetoCommessa:false});
     
                     const newState = {
-                        path:'/4',
-                        // mese:res.data.mese,
-                        // anno:res.data.anno,
-                        inserisciModificaCommessa:'MODIFY'
+                        inserisciModificaCommessa:'MODIFY',
+                        primoInserimetoCommessa:false
                     };
-                    localStorage.setItem('statusApplication', JSON.stringify(newState));
-                   
-                    navigate('/4');
-                }else if(res.data.modifica === false && res.data.moduliCommessa.length === 0){
-                    setMainState((prev:MainState)=>({ 
-                        ...prev,
-                        ...{
-                            inserisciModificaCommessa:'NO_ACTION',
-                            statusPageInserimentoCommessa:'immutable',
-                            modifica:false}}));
-    
-                    const newState = {
-                        path:'/4',
-                        // mese:res.data.mese,
-                        // anno:res.data.anno,
-                        inserisciModificaCommessa:'NO_ACTION'
-                    };
-                    localStorage.setItem('statusApplication', JSON.stringify(newState));
-                   
-                    navigate('/4');
-                }else if(res.data.modifica === false && res.data.moduliCommessa.length > 0){
-                    setMainState((prev:MainState)=>({ 
-                        ...prev,
-                        ...{
-                            inserisciModificaCommessa:'NO_ACTION',
-                            statusPageInserimentoCommessa:'immutable',
-                            modifica:false}})); 
-                    const newState = {
-                        path:'/8',
-                        // mese:res.data.mese,
-                        // anno:res.data.anno,
-                        inserisciModificaCommessa:'NO_ACTION'
-                    };
-                    localStorage.setItem('statusApplication', JSON.stringify(newState));
-                   
-                    navigate('/4');
-                }
-    
-            }).catch((err) =>{
-                manageError(err, navigate);
-            });
+                    const statusApp = localStorage.getItem('statusApplication')||'{}';
+                    const parseStatusApp = JSON.parse(statusApp);
             
+                    localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
+                        ...newState}));
+                   
+                    navigate(PathPf.LISTA_COMMESSE);
+                }else if(res.data.modifica === false && res.data.moduliCommessa.length === 0){
+
+                    handleModifyMainState({
+                        inserisciModificaCommessa:'NO_ACTION',
+                        statusPageInserimentoCommessa:'immutable',
+                        primoInserimetoCommessa:false});
+                
+                    const newState = {
+                        inserisciModificaCommessa:'NO_ACTION',
+                        primoInserimetoCommessa:false
+                    };
+                    const statusApp = localStorage.getItem('statusApplication')||'{}';
+                    const parseStatusApp = JSON.parse(statusApp);
+            
+                    localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
+                        ...newState}));
+                   
+                    navigate(PathPf.LISTA_COMMESSE);
+                }else if(res.data.modifica === false && res.data.moduliCommessa.length > 0){
+                    handleModifyMainState({
+                        inserisciModificaCommessa:'NO_ACTION',
+                        statusPageInserimentoCommessa:'immutable',
+                        primoInserimetoCommessa:false}); 
+
+                    const newState = {
+                        inserisciModificaCommessa:'NO_ACTION',
+                        primoInserimetoCommessa:false
+                    };
+                    const statusApp = localStorage.getItem('statusApplication')||'{}';
+                    const parseStatusApp = JSON.parse(statusApp);
+            
+                    localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
+                        ...newState}));
+                    navigate(PathPf.LISTA_COMMESSE);
+                }
+            }).catch((err) =>{
+                manageError(err,dispatchMainState);
+            });
+        }
+
+        
+    };
+
+    const handleListItemClickNotifiche = () => {
+        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.LISTA_NOTIFICHE}}));
+        }else{
+            localStorage.removeItem("filtersModuliCommessa");
+            localStorage.removeItem("pageRowListaModuliCommessa");
+            localStorage.removeItem("filtersRel");
+            localStorage.removeItem("filtersListaDatiFatturazione");
+            localStorage.removeItem("pageRowListaDatiFatturazione");
+            navigate(PathPf.LISTA_NOTIFICHE);
         }
     };
 
-
-    const handleListItemClickNotifiche = () => {
-
-        navigate('/notifiche');
-    };
-
     const handleListItemClickRel = async () => {
-        navigate('/rel');
-     
+        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.LISTA_REL}}));
+        }else{
+            localStorage.removeItem("filtersModuliCommessa");
+            localStorage.removeItem("pageRowListaModuliCommessa");
+            localStorage.removeItem("filtersListaDatiFatturazione");
+            localStorage.removeItem("pageRowListaDatiFatturazione");
+            localStorage.removeItem("filtersNotifiche");
+            navigate(PathPf.LISTA_REL);
+        }
     };
-    
+
+    const handleListItemClickBando = async () => {
+        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.ADESIONE_BANDO}}));
+        }else{
+            localStorage.removeItem("filtersRel");
+            localStorage.removeItem("filtersListaDatiFatturazione");
+            localStorage.removeItem("pageRowListaDatiFatturazione");
+            localStorage.removeItem("filtersNotifiche");
+            localStorage.removeItem("filtersModuliCommessa");
+            localStorage.removeItem("pageRowListaModuliCommessa");
+            navigate(PathPf.ADESIONE_BANDO);
+        }
+    }; 
+
+    const handleListItemClickFatturazione = () =>{
+        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.FATTURAZIONE}}));
+        }else{
+            localStorage.removeItem("filtersRel");
+            localStorage.removeItem("filtersListaDatiFatturazione");
+            localStorage.removeItem("pageRowListaDatiFatturazione");
+            localStorage.removeItem("filtersNotifiche");
+            localStorage.removeItem("filtersModuliCommessa");
+            localStorage.removeItem("pageRowListaModuliCommessa");
+            navigate(PathPf.FATTURAZIONE);
+        }
+        
+    };
     
     const currentLocation = location.pathname;
 
     useEffect(()=>{
-        if(currentLocation === '/'){
+        if(currentLocation === PathPf.DATI_FATTURAZIONE){
             setSelectedIndex(0);
-        }else if(currentLocation === '/4'){
+        }else if(currentLocation === PathPf.LISTA_COMMESSE){
             setSelectedIndex(1);
-        }else if(currentLocation === '/8'){
+        }else if(currentLocation === PathPf.MODULOCOMMESSA){
             setSelectedIndex(1);
-        }else if(currentLocation === '/pagopalistadatifatturazione'){
+        }else if(currentLocation === PathPf.LISTA_DATI_FATTURAZIONE){
             setSelectedIndex(0);
-        }else if(currentLocation === '/pagopalistamodulicommessa'){
+        }else if(currentLocation === PathPf.LISTA_MODULICOMMESSA){
             setSelectedIndex(1);
-        }else if(currentLocation === '/pdf'){
+        }else if(currentLocation === PathPf.PDF_COMMESSA){
             setSelectedIndex(1);
-        }else if(currentLocation === '/notifiche'){
+        }else if(currentLocation === PathPf.LISTA_NOTIFICHE){
             setSelectedIndex(2);
-        }else if(currentLocation === '/rel'){
+        }else if(currentLocation === PathPf.LISTA_REL){
             setSelectedIndex(3);
-        }else if(currentLocation === '/relpdf'){
+        }else if(currentLocation === PathPf.PDF_REL){
             setSelectedIndex(3);
+        }else if(currentLocation === PathPf.ADESIONE_BANDO){
+            setSelectedIndex(4);
+        }else if(currentLocation === PathPf.FATTURAZIONE){
+            setSelectedIndex(5);
         }
-        
     },[currentLocation]);
-
-    
    
     const hideShowSidenav = location.pathname === '/auth' ||
                             location.pathname === '/azure' ||
                             location.pathname === '/auth/azure'||
                             location.pathname === '/azureLogin'||
                             !profilo.auth;
- 
 
+    const recOrConsIsLogged = profilo.profilo === 'REC' || profilo.profilo ==='CON';
 
     return (
         <>
@@ -237,20 +302,20 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
                 }}
                 >
                     <List component="nav" aria-label="main piattaforma-notifiche sender">
-                        <ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick()}>
+                        {!recOrConsIsLogged &&
+                        <><ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick()}>
                             <ListItemIcon>
                                 <DnsIcon fontSize="inherit"></DnsIcon>
-                      
+
                             </ListItemIcon>
                             <ListItemText primary="Dati di fatturazione" />
-                        </ListItemButton>
-                        <ListItemButton selected={selectedIndex === 1} onClick={() => handleListItemClickModuloCommessa()}>
+                        </ListItemButton><ListItemButton selected={selectedIndex === 1} onClick={() => handleListItemClickModuloCommessa()}>
                             <ListItemIcon>
                                 <ViewModuleIcon fontSize="inherit" />
                             </ListItemIcon>
                             <ListItemText primary="Modulo commessa" />
-                        </ListItemButton>
-                       
+                        </ListItemButton></>
+                        }
                         <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClickNotifiche()}>
                             <ListItemIcon>
                            
@@ -258,13 +323,32 @@ const SideNavComponent: React.FC<SideNavProps> = ({setMainState, mainState}) => 
                             </ListItemIcon>
                             <ListItemText primary="Notifiche" />
                         </ListItemButton>
-                        <ListItemButton selected={selectedIndex === 3} onClick={() => handleListItemClickRel()}>
-                            <ListItemIcon>
-                                <ManageAccountsIcon fontSize="inherit" />
-                            </ListItemIcon>
-                            <ListItemText primary="Regolare Esecuzione" />
-                        </ListItemButton>
-                        
+                        {!recOrConsIsLogged &&
+                        <>
+                            <ListItemButton selected={selectedIndex === 3} onClick={() => handleListItemClickRel()}>
+                                <ListItemIcon>
+                                    <ManageAccountsIcon fontSize="inherit" />
+                                </ListItemIcon>
+                                <ListItemText primary="Regolare esecuzione" />
+                            </ListItemButton>
+                            {profilo.auth === 'PAGOPA' && 
+                            <>
+                                <ListItemButton selected={selectedIndex === 4} onClick={() => handleListItemClickBando()}>
+                                    <ListItemIcon>
+                                        <AnnouncementIcon fontSize="inherit" />
+                                    </ListItemIcon>
+                                    <ListItemText primary="Adesione al bando" />
+                                </ListItemButton>
+                                <ListItemButton selected={selectedIndex === 5} onClick={() => handleListItemClickFatturazione()}>
+                                    <ListItemIcon>
+                                        <ReceiptIcon fontSize="inherit" />
+                                    </ListItemIcon>
+                                    <ListItemText primary="Fatturazione" />
+                                </ListItemButton>
+                            </>}
+                            
+                        </>
+                        }
                     </List>
                     <Divider />
                 </Box>

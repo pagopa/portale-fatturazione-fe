@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
-import { Footer } from '@pagopa/mui-italia';
+import { CompanyLinkType, Footer } from '@pagopa/mui-italia';
 import { useState } from 'react';
 import { useLocation } from 'react-router';
 import '../../style/areaPersonaleUtenteEnte.css';
-
 
 type LangCode = "it" | "en";
 type LinkType = "internal" | "external";
@@ -42,11 +41,10 @@ type PreLoginFooterLinksType = {
     };
 };
 
-export default function FooterPostLogin() {
+const FooterComponent = ({mainState}) => {
     
     const [ lang, setLang ] = useState<LangCode>("it"); 
     const location = useLocation();
- 
 
     const LANGUAGES = {
         it: {
@@ -66,10 +64,6 @@ export default function FooterPostLogin() {
         },
     };
 
-    const pagoPALink = {
-        href: 'https://www.pagopa.it/',
-        ariaLabel: 'Link: vai al sito di PagoPA S.p.A.',
-    };
 
     const companyLegalInfo = (
         <>
@@ -84,30 +78,33 @@ export default function FooterPostLogin() {
         </>
     );
 
- 
-
+    const pagoPALink: CompanyLinkType = {
+        href: "https://www.pagopa.it/",
+        ariaLabel: "Link: vai al sito di PagoPA S.p.A.",
+    };
+      
     const postLoginLinks: Array<FooterLinksType> = [
         {
             label: "Informativa Privacy",
-            href: "#informativa-privacy",
+            href: "https://www.pagopa.it/it/informativa-privacy-area-riservata/",
             ariaLabel: "Vai al link: Informativa Privacy",
             linkType: "internal",
         },
         {
             label: "Diritto alla protezione dei dati personali",
-            href: "#diritto-allaprotezionedipersonalidati",
+            href: "https://privacyportal-de.onetrust.com/webform/77f17844-04c3-4969-a11d-462ee77acbe1/9ab6533d-be4a-482e-929a-0d8d2ab29df8",
             ariaLabel: "Vai al link: Diritto alla protezione dei dati personali",
             linkType: "internal",
         },
         {
             label: "Termini e condizioni",
-            href: "#terms-conditions",
+            href: "https://www.pagopa.it/it/termini-condizioni-area-riservata/",
             ariaLabel: "Vai al link: Termini e condizioni",
             linkType: "internal",
         },
         {
             label: "Accessibilità",
-            href: "#accessibility",
+            href: "https://form.agid.gov.it/view/7aa810f2-bc15-40d1-b996-6eaa658439c3",
             ariaLabel: "Vai al link: Accessibilità",
             linkType: "internal",
         },
@@ -115,31 +112,25 @@ export default function FooterPostLogin() {
 
 
     const preLoginLinks: PreLoginFooterLinksType = {
-    // First column
+        // First column
         aboutUs: {
             title: undefined,
             links: [
                 {
-                    label: "Chi siamo",
-                    href: "#chi-siamo",
+                    label: "PagoPA S.p.A.",
+                    href: "https://www.pagopa.it/it/societa/chi-siamo/",
                     ariaLabel: "Vai al link: Chi siamo",
                     linkType: "internal",
                 },
                 {
-                    label: "PNRR",
-                    href: "#pnrr",
-                    ariaLabel: "Vai al link: PNRR",
-                    linkType: "internal",
-                },
-                {
                     label: "Media",
-                    href: "#media",
+                    href: "https://www.pagopa.it/it/",
                     ariaLabel: "Vai al link: Media",
                     linkType: "internal",
                 },
                 {
                     label: "Lavora con noi",
-                    href: "#lavora-con-noi",
+                    href: "https://www.pagopa.it/it/lavora-con-noi/",
                     ariaLabel: "Vai al link: Lavora con noi",
                     linkType: "internal",
                 },
@@ -151,19 +142,19 @@ export default function FooterPostLogin() {
             links: [
                 {
                     label: "Informativa Privacy",
-                    href: "#informativa-privacy",
+                    href: "https://www.pagopa.it/it/informativa-privacy-area-riservata/",
                     ariaLabel: "Vai al link: Informativa Privacy",
                     linkType: "internal",
                 },
                 {
                     label: "Certificazioni",
-                    href: "#certificazioni",
+                    href: "https://www.pagopa.it/it/certificazioni/",
                     ariaLabel: "Vai al link: Certificazioni",
                     linkType: "internal",
                 },
                 {
                     label: "Sicurezza delle informazioni",
-                    href: "#sicurezza-delle-informazioni",
+                    href: "https://www.pagopa.it/it/politiche-per-la-sicurezza-delle-informazioni/",
                     ariaLabel: "Vai al link: Sicurezza delle informazioni",
                     linkType: "internal",
                 },
@@ -171,9 +162,7 @@ export default function FooterPostLogin() {
                     label: "Diritto alla protezione dei dati personali",
                     ariaLabel: "Vai al link: Diritto alla protezione dei dati personali",
                     linkType: "internal",
-                    onClick: () => {
-                        console.log("onClick");
-                    },
+                    href: "https://privacyportal-de.onetrust.com/webform/77f17844-04c3-4969-a11d-462ee77acbe1/9ab6533d-be4a-482e-929a-0d8d2ab29df8"
                 },
                 {
                     label: "Preferenze Cookie",
@@ -186,25 +175,25 @@ export default function FooterPostLogin() {
                 },
                 {
                     label: "Termini e Condizioni",
-                    href: "#terms-conditions",
+                    href: "https://www.pagopa.it/it/termini-condizioni-area-riservata/",
                     ariaLabel: "Vai al link: Termini e Condizioni",
                     linkType: "internal",
                 },
                 {
                     label: "Società trasparente",
-                    href: "#societa-trasparente",
+                    href: "https://pagopa.portaleamministrazionetrasparente.it/",
                     ariaLabel: "Vai al link: Società trasparente",
                     linkType: "internal",
                 },
                 {
                     label: "Responsible Disclosure Policy",
-                    href: "#responsible-disclosure-policy",
+                    href: "https://www.pagopa.it/it/responsible-disclosure-policy/",
                     ariaLabel: "Vai al link: Responsible Disclosure Policy",
                     linkType: "internal",
                 },
                 {
                     label: "Modello 321",
-                    href: "#modello-321",
+                    href: "https://pagopa.portaleamministrazionetrasparente.it/pagina746_altri-contenuti.html",
                     ariaLabel: "Vai al link: Modello 321",
                     linkType: "internal",
                 },
@@ -242,50 +231,49 @@ export default function FooterPostLogin() {
             links: [
                 {
                     label: "Accessibilità",
-                    href: "#accessibilità",
+                    href: "https://form.agid.gov.it/view/7aa810f2-bc15-40d1-b996-6eaa658439c3",
                     ariaLabel: "Vai al link: Accessibilità",
                     linkType: "internal",
                 },
             ],
         },
     };
+      
 
-    const getDataUser = localStorage.getItem('dati')|| '{}';
-    
-    const dataUser = JSON.parse(getDataUser);
-
-    const [statusLog, setStatusLog] = useState(false);
-
-    useEffect(()=>{
-        const bool = getDataUser === '{}' ? false : true;
-        setStatusLog(bool);
-    },[dataUser]);
+  
 
     const hideFooter = location.pathname === '/auth' ||
     location.pathname === '/azure' ||
     location.pathname === '/auth/azure';
 
+
+
+      
+
+
+
     return (
         <div>
-            {hideFooter ? null : 
-                <Footer
-                    loggedUser={statusLog}
-                    companyLink={pagoPALink}
-                    legalInfo={companyLegalInfo}
-                    postLoginLinks={postLoginLinks}
-                    languages={LANGUAGES}
-                    currentLangCode={lang}
-                    preLoginLinks={preLoginLinks}
-                    onLanguageChanged={
-                        () => {
-                            console.log("Changed Language");
-                        }
+            {!hideFooter && 
+            <Footer
+                loggedUser={mainState.authenticated}
+                companyLink={pagoPALink}
+                legalInfo={companyLegalInfo}
+                postLoginLinks={postLoginLinks}
+                languages={LANGUAGES}
+                currentLangCode={lang}
+                preLoginLinks={preLoginLinks}
+                onLanguageChanged={
+                    () => {
+                        console.log("Changed Language");
                     }
-                    productsJsonUrl="https://dev.selfcare.pagopa.it/assets/products.json"
-                    hideProductsColumn={false}
-                />}
+                }
+                productsJsonUrl="https://dev.selfcare.pagopa.it/assets/products.json"
+                hideProductsColumn={false}
+            /> }
         </div>
 
     );
-}
+};
 
+export default FooterComponent;

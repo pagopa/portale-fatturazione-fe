@@ -10,21 +10,20 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: 500,
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
 };
 
-const ModalInfo : React.FC<ModalProps> = ({setOpen, open}) => {
+const ModalUploadPdf : React.FC<ModalProps> =({setOpen, open}) => {
 
-   
-    const handleClose = () => setOpen(false);
-
+    const handleClose = () =>{
+        setOpen(false);
+    };
 
     return (
         <div>
-        
             <Modal
                 open={open}
                 onClose={handleClose}
@@ -32,31 +31,25 @@ const ModalInfo : React.FC<ModalProps> = ({setOpen, open}) => {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    <div className='d-flex justify-content-center'>
+                    <div className='text-center'>
                         <Typography id="modal-modal-title" variant="h6" component="h2">
-        Gentile utente 
-                        </Typography>
-                        
-                    </div>
-                    <div className='d-flex justify-content-center'>
-                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Non è possibile creare una contestazione.
+                 Operazione andata a buon fine
                         </Typography>
                     </div>
-                   
-                   
-                    <div className='container_buttons_modal d-flex justify-content-center mt-3'>
-                        <Button 
-                            sx={{marginRight:'20px'}} 
-                            variant='outlined'
+                    <div className='text-center'>
+                        <Typography id="modal-modal-description" sx={{ mt: 3 }}>
+                        L'inserimento del documento è stato completato
+                        </Typography>
+                    </div>
+                    <div className='container_buttons_modal d-flex justify-content-center'>
+                        <Button
+                            variant='contained'
                             onClick={()=>handleClose()}
-                        >Esci</Button>
+                        >Ok</Button>
                     </div>
-                    
                 </Box>
-                
             </Modal>
         </div>
     );
 };
-export default  ModalInfo;
+export default  ModalUploadPdf ;

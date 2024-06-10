@@ -2,18 +2,12 @@ import React from 'react';
 import { Grid , Typography} from '@mui/material';
 import LabelComponent from './label';
 import { PrimoContainerInsComProps } from '../../types/typeModuloCommessaInserimento';
-
+import { getProfilo, getStatusApp } from '../../reusableFunction/actionLocalStorage';
+import { month } from '../../reusableFunction/reusableArrayObj';
 
 const PrimoContainerInsCom : React.FC<PrimoContainerInsComProps> = () => {
-
-    const getStatusApplication = localStorage.getItem('statusApplication') || '{}';
-    const statusApplication =  JSON.parse(getStatusApplication);
-
-    const getProfilo = localStorage.getItem('profilo') || '{}';
-    const profilo =  JSON.parse(getProfilo);
-   
-    const month = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre", "Gennaio"];
-    
+    const statusApplication = getStatusApp();
+    const profilo =  getProfilo();
 
     let mese = '';
     let anno = 2000;
@@ -23,27 +17,16 @@ const PrimoContainerInsCom : React.FC<PrimoContainerInsComProps> = () => {
     }else if(statusApplication.inserisciModificaCommessa === 'INSERT'){
         const mon = new Date().getMonth();
         const date = new Date();
-      
         if(mon === 11){
-           
             anno = date.getFullYear()+1;
             mese = month[mon + 1 ];
-            //setMainState((prev:any) =>({...prev, ...{mese:mese,anno:anno}}));
-           
         }else{
             anno = date.getFullYear();
             mese = month[mon + 1 ];
-            // setMainState((prev:any) =>({...prev, ...{mese:mese,anno:anno}}));
         }
-     
-
     }
-    
-   
 
     const data = `${mese}/${anno}`;
-
-   
     let exampleTipoContratto = "PAC";
     if(profilo.idTipoContratto === 1){
         exampleTipoContratto = 'PAL';
@@ -56,7 +39,6 @@ const PrimoContainerInsCom : React.FC<PrimoContainerInsComProps> = () => {
                 spacing={2}
                 columns={12}
             >
-
                 <Grid
                     sx={{ textAlign: 'center' }}
                     item
@@ -66,14 +48,12 @@ const PrimoContainerInsCom : React.FC<PrimoContainerInsComProps> = () => {
                         <LabelComponent label="Mese/Anno:" input={data} />
                         <LabelComponent label="Tipo Contratto:" input={exampleTipoContratto} />
                     </div>
-         
                 </Grid>
-
                 <Grid
                     item
                     xs={2}
                 >
-                    <Typography sx={{fontWeight:'bold', textAlign:'center'}}>Territorio Nazionale</Typography>
+                    <Typography sx={{fontWeight:'bold', textAlign:'center'}}>Territorio nazionale</Typography>
                 </Grid>
                 <Grid
                     item
@@ -87,7 +67,6 @@ const PrimoContainerInsCom : React.FC<PrimoContainerInsComProps> = () => {
                 >
                     <Typography sx={{fontWeight:'bold', textAlign:'center'}}>Totale notifiche da processare</Typography>
                 </Grid>
-
             </Grid>
         </div>
     );

@@ -4,20 +4,31 @@ import { loginRequest } from '../authConfig';
 import {InteractionStatus,
 } from "@azure/msal-browser";
 import { useNavigate } from "react-router";
+import { PathPf } from "../types/enum";
+import { AzureLoginProps } from "../types/typesGeneral";
 
 //Pagina di accesso con l'autenticazione AZURE
 
-const Azure : React.FC = () =>{
+const Azure : React.FC<AzureLoginProps> = ({dispatchMainState}) =>{
 
-    const navigate = useNavigate();
+    localStorage.clear();
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
 
+    useEffect(()=>{
+        handleModifyMainState({authenticated:false});
+    },[]);
     const getProfiloFromLocalStorage = localStorage.getItem('profilo') || '{}';
 
     const checkIfUserIsAutenticated = JSON.parse(getProfiloFromLocalStorage).auth;
 
-    if(checkIfUserIsAutenticated === 'PAGOPA'){
-        navigate('/pagopalistadatifatturazione');
-    }
+    /*if(checkIfUserIsAutenticated === 'PAGOPA'){
+        navigate(PathPf.LISTA_DATI_FATTURAZIONE);
+    }*/
 
     const { instance, inProgress, accounts } = useMsal();
 
@@ -26,15 +37,11 @@ const Azure : React.FC = () =>{
         await  instance.loginRedirect(loginRequest).catch((error) => console.log(error));
     };
 
-
- 
-
     useEffect(()=>{
         if ( inProgress === InteractionStatus.None && checkIfUserIsAutenticated !== 'PAGOPA' ) {
 
             handleLoginRedirect();
         }
-       
 
     },[instance, accounts, inProgress]);
 

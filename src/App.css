@@ -85,3 +85,53 @@ background-color:white;
   
 }
 
+#singleInputRel .MuiFormControl-root .MuiFormLabel-root{
+  margin-bottom: 0px;
+
+
+}
+
+#singleInputRel .MuiFormControl-root .MuiBox-root .MuiBox-root, #singleInputRel .MuiFormControl-root .MuiBox-root{
+height: 48px;
+}
+
+ #singleInputRel .MuiFormControl-root .MuiBox-root{
+  min-height: 48px;
+}
+
+/* css Alert component */
+@keyframes smooth-appear {
+  to{
+    top: 10px;
+    opacity:1;
+  }
+}
+.main_container_alert_component_show {
+  position: fixed;
+  top: -100%;
+  opacity:0;
+  z-index: 2;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: smooth-appear 1s ease forwards;
+}
+.main_container_alert_component{
+  display: none;
+}
+
+@keyframes smooth-hidden {
+  to{
+    opacity:0;
+    top: -100%;
+  }
+}
+.main_container_alert_component_hidden{
+  position: fixed;
+  opacity:1;
+  top: 10px;
+  left: 50%;
+  z-index: 2;
+  transform: translateX(-50%);
+  animation: smooth-hidden 3s ease forwards;
+}
+

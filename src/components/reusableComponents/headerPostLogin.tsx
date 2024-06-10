@@ -12,14 +12,11 @@ type JwtUser = {
     email?: string;
 };
 
-export default function HeaderPostLogin() {
-
+const HeaderPostLogin = ({mainState}) => {
 
     const location  = useLocation();
-    
 
     const getDataUser = localStorage.getItem('profilo')|| '{}';
-    
 
     const dataUser = JSON.parse(getDataUser);
     const pagoPALink = {
@@ -60,28 +57,17 @@ export default function HeaderPostLogin() {
         instance.loginRedirect(loginRequest).catch((error) => console.log(error));
     };
 
-
-    const handleLogoutRedirect = () => {
-        
-        instance.logoutRedirect().catch((error) => console.log(error));
-    };
-
-
-
     const navigate = useNavigate();
 
     const getProfiloFromLocalStorage = localStorage.getItem('profilo') || '{}';
 
     const checkIfUserIsAutenticated = JSON.parse(getProfiloFromLocalStorage).auth;
 
-   
-
     const hideShowHeaderLogin =  location.pathname === '/auth' ||
                                  location.pathname === '/azure' ||
                                  location.pathname === '/auth/azure'; 
-  
     
-    const statusUser = getDataUser === '{}' ? false : user;
+    const statusUser = mainState.authenticated && user;
     return (
 
         <div className="div_header">
@@ -96,29 +82,19 @@ export default function HeaderPostLogin() {
                     
                     onLogin={handleLoginRedirect}
                     onLogout={() => {
-
-
-                        
-                        
-
                         if(checkIfUserIsAutenticated === 'PAGOPA'){
-                            // handleLogoutRedirect();
-                            
-                            localStorage.removeItem('profilo');
-                            localStorage.removeItem('token');
-                            localStorage.removeItem('statusApplication');
+                            localStorage.clear();
                             navigate('/azureLogin');
                         }else{
-                            localStorage.removeItem('profilo');
-                            localStorage.removeItem('token');
-                            localStorage.removeItem('statusApplication');
+                            localStorage.clear();
                             window.location.href = redirect;
                         }
-                        
                     }}
                     onDocumentationClick={()=>onButtonClick()}
                 />
             }
         </div>
     );
-}
+};
+
+export default HeaderPostLogin;

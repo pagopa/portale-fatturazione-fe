@@ -18,7 +18,6 @@ const LabelComponent : React.FC<LabelProps> = ({ label, input }) => {
                 <Typography sx={{textAlign:'start'}} >{input}</Typography>
             </div>
       
-      
         </div>
     );
 };

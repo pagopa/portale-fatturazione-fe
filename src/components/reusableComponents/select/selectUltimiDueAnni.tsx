@@ -1,18 +1,11 @@
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { Box } from "@mui/system";
 import React from "react";
-import { SelectUltimiDueAnniProps } from "../../types/typesGeneral";
+import { SelectUltimiDueAnniProps } from "../../../types/typesGeneral";
+import { getCurrentFinancialYear } from "../../../reusableFunction/function";
 
 const SelectUltimiDueAnni : React.FC<SelectUltimiDueAnniProps> = ({setValue, values}) =>{
 
-
-    // prendo gli ultimi 2 anni dinamicamente
-   
-    const getCurrentFinancialYear = () => {
-        const thisYear = (new Date()).getFullYear();
-        const yearArray = [0, 1].map((count) => `${thisYear - count}`);
-        return yearArray;
-    };
     return (
         <Box sx={{width:'80%'}} >
             <FormControl
