@@ -74,7 +74,7 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
         e.persist();
         if(label === 'Mail Pec'){
             validationTextAreaEmail(value);
-        }else if(label === "ID Documento" ){
+        }else if(label === "ID Documento" || label === "Codice. Commessa/Convenzione"){
             validationIdDocumento(dataValidation.max,dataValidation.validation ,value);
         }else{
             validationTextArea(dataValidation.max,dataValidation.validation ,value);

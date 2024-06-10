@@ -1,8 +1,5 @@
 import { Card, Table, TableBody, TableCell, TableHead, TablePagination, TableRow } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { useId } from "react";
-
-
 interface GridCustomProps {
     elements:object[],
     changePage:any,
