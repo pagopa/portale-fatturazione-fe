@@ -315,7 +315,8 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
     noChiusura === false ||
     (stato !== 4 && contestazioneStatic?.contestazione.noteSend !== null);  
  
-    const hiddenRispondiAccettaEnte_SEND_REC_CON = enti || stato === 2 || stato === 8 || stato === 9 ;
+    //aggiunta !noChiusura 10/06
+    const hiddenRispondiAccettaEnte_SEND_REC_CON = enti || stato === 2 || stato === 8 || stato === 9 || !noChiusura;
    
     const showButtonAccettaRecapitista_Send = (profilo.auth === 'PAGOPA' || enti) && noteRecapitista && noChiusura;
     let labelButtonAccettaRecapitista_Send = 'Accetta risposta Recapitista';
