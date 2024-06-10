@@ -1,0 +1,29 @@
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
+import Backend from "i18next-http-backend";
+import LanguageDetector from "i18next-browser-languagedetector";
+
+i18n.use(Backend)    
+    .use(LanguageDetector)
+    .use(initReactI18next).init({
+        fallbackLng: 'ita',
+        resources:{
+            it:{
+                translation:{
+                    errori:{
+                        401:"Utente non autenticato. Effettuare nuovamente l'accesso",
+                        403:"Utente non autenticato. Effettuare nuovamente l'accesso",
+                        419:"Sessione scaduta. Effettuare nuovamente l'accesso",
+                        500:"L'operazione non è andata a buon fine. Si prega di riprovare",
+                        400:"L'operazione non è andata a buon fine. Contattare l'assistenza",
+                        404:"La ricerca non ha prodotto risultati",
+                        "Network Error":"La connessione Internet risulta non attiva",
+                       
+                    }
+                }
+            }
+        }
+    });
+
+
+export default i18n;

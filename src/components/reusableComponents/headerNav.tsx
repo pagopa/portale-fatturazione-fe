@@ -29,7 +29,6 @@ const HeaderNavComponent : React.FC =() => {
     const UserDetailsParsed = JSON.parse(getUserDetails);
     const camelizeDescizioneRuolo = () =>{
        
-       
         const allLower =  UserDetailsParsed.descrizioneRuolo?.toLowerCase();
         const ruolo = allLower?.charAt(0).toUpperCase() + allLower?.slice(1);
         return {name:UserDetailsParsed.nomeEnte, ruolo };
@@ -41,7 +40,6 @@ const HeaderNavComponent : React.FC =() => {
         setuser(camelizeDescizioneRuolo());
     
     },[getUserDetails]);
-    
 
     const productsList : Array<ProductEntity>  = [
         {
@@ -53,7 +51,6 @@ const HeaderNavComponent : React.FC =() => {
 
     const cdnPath = 'https://assets.cdn.io.italia.it/logos/organizations/';
     const name = user.name;
-
 
     const partyList : Array<PartyEntity> = [
         {
@@ -70,7 +67,6 @@ const HeaderNavComponent : React.FC =() => {
                             location.pathname === '/auth/azure'||
                             location.pathname === '/azureLogin'||
                             !UserDetailsParsed.auth;
-
     
     return (
         <>
@@ -83,9 +79,6 @@ const HeaderNavComponent : React.FC =() => {
                     chipSize='small'
                 />}
         </>
-       
-
-
 
     );
 };

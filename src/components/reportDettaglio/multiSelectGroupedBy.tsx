@@ -4,54 +4,40 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { Checkbox } from '@mui/material';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import { flagContestazione, manageError } from '../../api/api';
-import { useNavigate } from 'react-router';
+import { manageError } from '../../api/api';
 import { FlagContestazione, MultiSelectGroupedByProps } from '../../types/typeReportDettaglio';
 import { useEffect , useState} from 'react';
-import { BodyListaNotifiche } from '../../types/typesGeneral';
-
+import { BodyListaNotifiche} from '../../types/typesGeneral';
+import { flagContestazione } from '../../api/apiSelfcare/notificheSE/api';
+import { getToken } from '../../reusableFunction/actionLocalStorage';
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
-const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({mainState,  setBodyGetLista, setValueFgContestazione, valueFgContestazione}) => {
+const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({mainState,  setBodyGetLista, setValueFgContestazione, valueFgContestazione, dispatchMainState}) => {
 
-    const getToken = localStorage.getItem('token') || '{}';
-    const token =  JSON.parse(getToken).token;
-
-    const getProfilo = localStorage.getItem('profilo') || '{}';
-    const profilo =  JSON.parse(getProfilo);
- 
-    const navigate = useNavigate();
+    const token =  getToken();
 
     const [fgContestazione, setFgContestazione] = useState<FlagContestazione[]>([]);
-    
-    
+
+    useEffect(()=>{
+        if(mainState.nonce !== ''){
+            getFlagContestazione();
+        }
+    },[mainState.nonce]);
 
     const getFlagContestazione =  async() => {
-        await flagContestazione(token, profilo.nonce )
+        await flagContestazione(token, mainState.nonce )
             .then((res)=>{
-                setFgContestazione(res.data);
-                                
+                setFgContestazione(res.data);                
             })
             .catch(((err)=>{
-                manageError(err,navigate);
+                manageError(err,dispatchMainState);
             }));
     };
 
-    useEffect(()=>{
-        if(profilo.nonce !== undefined){
-            getFlagContestazione();
-            
-        }
-    },[profilo.nonce]);
-
     return (
         <Autocomplete
-            sx={{ '.MuiAutocomplete-groupLabel': {
-                backgroundColor:'#FF0000',
-                       
-            },}}
             multiple
             onChange={(event, value) => {
                 const arrayIdContestazioni = value.map(obj=> obj.id);
@@ -65,12 +51,10 @@ const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({m
             groupBy={(option:FlagContestazione) => option.descrizione}
             disableCloseOnSelect
             getOptionLabel={(option) => option.flag}
-            onInputChange={(event, newInputValue, reason)=>console.log({event, newInputValue, reason}, '??')}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
             renderInput={(params) =>{
                
                 return <TextField 
-                    //onChange={(e)=> setTextValue(e.target.value)} 
-                  
                     {...params}
                     label="Contestazione" 
                     placeholder="Contestazione" />;
@@ -78,25 +62,19 @@ const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({m
                 
             }
             renderOption={(props, option, { selected }) =>{
-                //settato come key l'id ente 
-              
                 const newProps = {...props,...{key:option.id}};
                 return (
                     <div>
-                        <li    {...newProps}   >
-                        
+                        <li {...newProps}>
                             <Checkbox
-                            
                                 icon={icon}
                                 checkedIcon={checkedIcon}
                                 style={{ marginRight: 8 }}
                                 checked={selected}
                             />
-                        
                             {option.flag}
                         </li>
                     </div>
-                  
                 );
             } }
         />

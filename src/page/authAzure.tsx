@@ -1,23 +1,26 @@
-import { pagopaLogin, getAuthProfilo, manageError, redirect } from "../api/api";
+import { pagopaLogin, getAuthProfilo, redirect } from "../api/api";
 import {InteractionRequiredAuthError,InteractionStatus,
 } from "@azure/msal-browser";
 import { useMsal } from "@azure/msal-react";
 import {useState, useEffect} from 'react';
 import { useNavigate } from "react-router";
-import { AuthAzureProps, MainState } from "../types/typesGeneral";
-
+import { AuthAzureProps} from "../types/typesGeneral";
+import { PathPf } from "../types/enum";
 
 // Blank Page utilizzata per l'autenticazione Azure e le conseguenti chiamate di accesso pagoPA
 // e salvataggio del profilo nlla local storage
-const AuthAzure : React.FC<AuthAzureProps> = ({setMainState}) =>{
+const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
 
-   
- 
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
     
     const navigate = useNavigate();
 
     const { instance, inProgress, accounts } = useMsal();
-   
    
     const [apiData, setApiData] = useState(null);
     const [tokens, setTokens] = useState({});
@@ -34,7 +37,6 @@ const AuthAzure : React.FC<AuthAzureProps> = ({setMainState}) =>{
                     // Acquire token silent success
                     const accessToken = accessTokenResponse.accessToken;
                     const idToken = accessTokenResponse.idToken;
-               
 
                     setTokens({access_token:accessToken, id_token:idToken});
                   
@@ -48,36 +50,31 @@ const AuthAzure : React.FC<AuthAzureProps> = ({setMainState}) =>{
         }
     }, [instance, accounts, inProgress, apiData]);
 
-
     useEffect(()=>{
         if(Object.values(tokens).length > 0){
             postPagoPa();
         }
 
     },[tokens]);
-
-
   
     const postPagoPa = () =>{
         pagopaLogin(tokens).then((res)=>{
+            localStorage.clear();
             if(res.status === 200){
-            
+                //localStorage.removeItem("statusApplication");
                 // store del token nella local storage per tutte le successive chiamate START
                 const storeJwt = {token:res.data.jwt};
                 localStorage.setItem('token', JSON.stringify(storeJwt));
            
                 // store del token nella local storage per tutte le successive chiamate END
                 getProfilo(res);
-               
             }
-
-        }).catch((err) =>{
+        }).catch(() =>{
             window.location.href = redirect;
-            //manageError(err, navigate);
+
         });
 
     };
-
 
     type  Jwt = {
         jwt:string
@@ -86,12 +83,10 @@ const AuthAzure : React.FC<AuthAzureProps> = ({setMainState}) =>{
         data:Jwt
     }
 
-
     const getProfilo = async (res:ParameterGetProfiloAzure)=>{
       
         await getAuthProfilo(res.data.jwt)
             .then(resp =>{
-              
                
                 const storeProfilo = resp.data;
                 localStorage.setItem('profilo', JSON.stringify({
@@ -103,22 +98,22 @@ const AuthAzure : React.FC<AuthAzureProps> = ({setMainState}) =>{
                     dataPrimo:storeProfilo.dataPrimo,
                     prodotto:storeProfilo.prodotto,
                     jwt:res.data.jwt,
-                    nonce: storeProfilo.nonce
+                    nonce:storeProfilo.nonce
                 }));
-                
               
-              
-                setMainState((prev:MainState)=>({...prev, ...{nonce:resp?.data.nonce,ruolo:resp.data.ruolo,action:'LISTA_DATI_FATTURAZIONE'}}));
-                navigate('/pagopalistadatifatturazione');
-                // setto il nonce nello state di riferimento globale
+                handleModifyMainState({
+                    ruolo:resp.data.ruolo,
+                    action:'LISTA_DATI_FATTURAZIONE',
+                    nonce:storeProfilo.nonce,
+                    authenticated:true});
+
+                navigate(PathPf.LISTA_DATI_FATTURAZIONE);
               
             } )
-            .catch(err => {
+            .catch(()=> {
                 window.location.href = redirect;
-                //manageError(err, navigate);
             });
     };
-
   
     return (
         <>

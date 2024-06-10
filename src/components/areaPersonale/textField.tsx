@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {TextField,} from '@mui/material';
 import {DatiFatturazione, TextFieldProps, StateEnableConferma,AreaPersonaleContext}  from '../../types/typesAreaPersonaleUtenteEnte';
 import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
@@ -7,8 +7,14 @@ import YupString from '../../validations/string/index';
 
 const TextFieldComponent : React.FC<TextFieldProps> = props => {
     const {mainState,setDatiFatturazione,setStatusButtonConferma, datiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
-
+  
     const [errorValidation, setErrorValidation] = useState(false);
+
+    // ogni qual volta csul click indietro richaimo i dati di fatturazione e setto tutti gli errori a false
+    useEffect(()=>{
+        setErrorValidation(false);
+    },[mainState]);
+    
     const {
         helperText, label, placeholder, fullWidth,value,keyObject, dataValidation, required
     } = props;
@@ -39,8 +45,6 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
     }; 
 
     const validationTextAreaEmail = (element:string)=>{
-
-        
         _YupPec.validate(element)
             .then(()=>{
                 setErrorValidation(false);
@@ -52,19 +56,30 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
             } );
     }; 
 
+    const validationIdDocumento = (max: number, validation:string, input:string|number) => {
+      
+        YupString.max(max, validation)
+            .validate(input)
+            .then(()=>{
+                setErrorValidation(false);
+                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+            })
+            .catch(() =>{
+                setErrorValidation(true);
+                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
+            } );
+    };
 
     const hendleOnMouseOut = (e: React.SyntheticEvent<EventTarget>) =>{
         e.persist();
         if(label === 'Mail Pec'){
             validationTextAreaEmail(value);
-           
+        }else if(label === "ID Documento" || label === "Codice. Commessa/Convenzione"){
+            validationIdDocumento(dataValidation.max,dataValidation.validation ,value);
         }else{
             validationTextArea(dataValidation.max,dataValidation.validation ,value);
-           
         }
-
     };
-
 
     let makeTextInputDisable = true;
     if(mainState.statusPageDatiFatturazione === 'immutable'){
@@ -73,11 +88,9 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
         makeTextInputDisable = true;
     }else if(mainState.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa !== ''){
         makeTextInputDisable = false;
-
     }
   
     return (
-
         <TextField
             required={required}
             helperText={helperText}
@@ -88,20 +101,12 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
             value={value}
             error={errorValidation}
             onChange={(e)=>{setDatiFatturazione((prevState: DatiFatturazione) =>{
-                
                 const newValue = {[keyObject]:e.target.value};
                 const newState = {...prevState, ...newValue};
-              
                 return newState;
             } );}}
             onBlur={(e)=> hendleOnMouseOut(e)}
-            
-           
-      
-    
-      
         />
-
     );
 };
 

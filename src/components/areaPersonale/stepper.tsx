@@ -6,8 +6,6 @@ import StepLabel from '@mui/material/StepLabel';
 import { StepperProps } from '../../types/typesGeneral';
 const steps = ['Modulo Commessa', 'Conferma dati'];
 
-
-
 const HorizontalLinearStepper: React.FC<StepperProps> = ({indexStepper}) => {
 
     return (

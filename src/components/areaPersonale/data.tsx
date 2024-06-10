@@ -5,7 +5,6 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import {DataProps, AreaPersonaleContext}  from '../../types/typesAreaPersonaleUtenteEnte';
 import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
 
-
 export interface DatePickerProps {
     label: string;
   
@@ -21,16 +20,10 @@ export interface DatePickerProps {
     autocomplete: "birthday";
 }
 
-
-
 const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate}) => {
-
     const {mainState,setDatiFatturazione, datiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
 
-
     const onChangeHandler = (e:any) => {
-      
-
         try {
             const data = new Date(e).toISOString();
             setDatiFatturazione({...datiFatturazione,...{dataDocumento:data}});
@@ -43,11 +36,9 @@ const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate}) => {
     if(datiFatturazione.dataDocumento){
         valueDate = new Date(datiFatturazione.dataDocumento);
     }
-  
 
     let dataInputDisable  = true;
 
-  
     if(mainState.statusPageDatiFatturazione === 'immutable'){
         dataInputDisable = true;
     }else if(mainState.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa === ''){

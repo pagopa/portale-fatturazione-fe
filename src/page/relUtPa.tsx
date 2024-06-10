@@ -1,261 +1,287 @@
 import React, { useEffect, useState } from "react";
-import SelectUltimiDueAnni from "../components/reusableComponents/selectUltimiDueAnni";
-import SelectMese from "../components/reusableComponents/selectMese";
+import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
+import SelectMese from "../components/reusableComponents/select/selectMese";
 import { Button, Typography } from "@mui/material";
-import SelectTipologiaFattura from "../components/rel/selectTipologiaFattura";
-import GridCustom from "../components/reusableComponents/gridCustom";
-import { BodyRel, Rel, RelPageProps } from "../types/typeRel";
+import SelectTipologiaFattura from "../components/reusableComponents/select/selectTipologiaFattura";
+import GridCustom from "../components/reusableComponents/grid/gridCustom";
+import { BodyRel, RelPageProps } from "../types/typeRel";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
-import { getListaRel, getSingleRel, manageError,downloadListaRel, getListaRelPagoPa, getSingleRelPagopa, downloadListaRelPagopa } from "../api/api";
+import { manageError} from "../api/api";
 import { useNavigate } from "react-router";
-import { MainState } from "../types/typesGeneral";
-import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 import DownloadIcon from '@mui/icons-material/Download';
+import { downloadListaRel, getListaRel} from "../api/apiSelfcare/relSE/api";
+import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, downloadQuadraturaRelPagopa, getListaRelPagoPa } from "../api/apiPagoPa/relPA/api";
+import SelectStatoPdf from "../components/rel/selectStatoPdf";
+import ModalLoading from "../components/reusableComponents/modals/modalLoading";
+import { saveAs } from "file-saver";
+import { PathPf } from "../types/enum";
+import { deleteFilterToLocalStorageRel, getFiltersFromLocalStorageRel, getProfilo, getToken, profiliEnti, setFilterToLocalStorageRel } from "../reusableFunction/actionLocalStorage";
+import { OptionMultiselectChackbox } from "../types/typeReportDettaglio";
+import { mesiGrid, mesiWithZero } from "../reusableFunction/reusableArrayObj";
+import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
 
+const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
-const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
-
-    const mesiGrid = ["Dicembre", "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
-
+    const token =  getToken();
+    const profilo =  getProfilo();
     const navigate = useNavigate();
+    const enti = profiliEnti();
 
-    const getToken = localStorage.getItem('token') || '{}';
-    const token =  JSON.parse(getToken).token;
-
-    const getProfilo = localStorage.getItem('profilo') || '{}';
-    const profilo =  JSON.parse(getProfilo);
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
 
     const currentYear = (new Date()).getFullYear();
-
-
     const currentMonth = (new Date()).getMonth() + 1;
     const month = Number(currentMonth);
-
-
-   
-
-
-
-
-    
+  
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [showLoading, setShowLoading] = useState(false);
+    const [totalNotifiche, setTotalNotifiche]  = useState(0);
+    const [dataSelect, setDataSelect] = useState([]);
+    const [data, setData] = useState<any>([]);
+    const [getListaRelRunning, setGetListaRelRunning] = useState(false);
+    const [disableDownloadListaPdf, setDisableListaPdf] = useState(true);
+    const [textValue, setTextValue] = useState('');
+    const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
+    const [bodyDownload, setBodyDownload] = useState<BodyRel>({
+        anno:currentYear,
+        mese:month,
+        tipologiaFattura:null,
+        idEnti:[],
+        idContratto:null,
+        caricata:null
+    });
     const [bodyRel, setBodyRel] = useState<BodyRel>({
         anno:currentYear,
         mese:month,
         tipologiaFattura:null,
         idEnti:[],
-        idContratto:null
+        idContratto:null,
+        caricata:null
     });
 
-    const  hiddenAnnullaFiltri = bodyRel.tipologiaFattura === null ; 
+ 
 
+    useEffect(()=>{
+        const result = getFiltersFromLocalStorageRel();
+        if(mainState.nonce !== ''){
+            if(Object.keys(result).length > 0){
+                setBodyRel(result.bodyRel);
+                setTextValue(result.textValue);
+                setValueAutocomplete(result.valueAutocomplete);
+                getlistaRel(result.bodyRel,result.page + 1, result.rowsPerPage);
+                setPage(result.page);
+                setRowsPerPage(result.rowsPerPage);
+                setBodyDownload(result.bodyRel);
+            }else{
+                const realPage = page + 1;
+                getlistaRel(bodyRel,realPage, rowsPerPage);
+            }
+        }
+    },[mainState.nonce]);
 
-    // data ragione sociale
-
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [totalNotifiche, setTotalNotifiche]  = useState(0);
-       
-    const [dataSelect, setDataSelect] = useState([]);
+    useEffect(()=>{
+        if(dataSelect.length === 0){
+            setValueAutocomplete([]);
+        }
+    }, [dataSelect]);
    
-    const headerNamesGrid = ['Ragione Sociale','Tipologia Fattura', 'ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale',''];    
-   
-    const [data, setData] = useState([]);
+    useEffect(()=>{
+        const timer = setTimeout(() => {
+            if(textValue.length >= 3){
+                listaEntiNotifichePageOnSelect();
+            }
+        }, 800);
+        return () => clearTimeout(timer);
+    },[textValue]);
 
-   
-
-    const getlistaRelEnte = async (nPage,nRows) => {
-
-        if(profilo.auth === 'SELFCARE'){
+    const getlistaRel = async (bodyRel,nPage,nRows) => {
+        setGetListaRelRunning(true);
+        if(enti){
             const {idEnti, ...newBody} = bodyRel;
-     
-      
-            await  getListaRel(token,profilo.nonce,nPage, nRows, newBody)
+            await  getListaRel(token,mainState.nonce,nPage, nRows, newBody)
                 .then((res)=>{
                     // ordino i dati in base all'header della grid
                     const orderDataCustom = res.data.relTestate.map((obj)=>{
-
                         // inserire come prima chiave l'id se non si vuol renderlo visibile nella grid
                         // 'id serve per la chiamata get dettaglio dell'elemento selezionato nella grid
                         return {
                             idTestata:obj.idTestata,
                             ragioneSociale:obj.ragioneSociale,
                             tipologiaFattura:obj.tipologiaFattura,
+                            firmata:obj.firmata,
                             idContratto:obj.idContratto,
                             anno:obj.anno,
                             mese:mesiGrid[obj.mese],
-                            totaleAnalogico:Number(obj.totaleAnalogico).toFixed(2)+' €',
-                            totaleDigitale:Number(obj.totaleDigitale).toFixed(2)+' €',
+                            totaleAnalogico:obj.totaleAnalogico.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
+                            totaleDigitale:obj.totaleDigitale.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
                             totaleNotificheAnalogiche:obj.totaleNotificheAnalogiche,
                             totaleNotificheDigitali:obj.totaleNotificheDigitali,
-                            totale:Number(obj.totale).toFixed(2)+' €'
+                            totale:obj.totale.toLocaleString("de-DE", { style: "currency", currency: "EUR" })
                         };
                     });
-                    
                     setData(orderDataCustom);
                     setTotalNotifiche(res.data.count);
+                    setGetListaRelRunning(false);
                 }).catch((error)=>{
-                    
-                    manageError(error, navigate);
+                    if(error?.response?.status === 404){
+                        setData([]);
+                        setTotalNotifiche(0);
+                    }
+                    setGetListaRelRunning(false);
+                    manageError(error, dispatchMainState);
                 });
         }else{
-            await  getListaRelPagoPa(token,profilo.nonce,nPage, nRows, bodyRel)
+            await  getListaRelPagoPa(token,mainState.nonce,nPage, nRows, bodyRel)
                 .then((res)=>{
-                // ordino i dati in base all'header della grid
+                    // controllo che tutte le rel abbiano il pdf caricato, se TRUE abilito il button download
+                    const checkIfAllCaricata = res.data.relTestate.every(v => v.caricata === 1);
+                    setDisableListaPdf(checkIfAllCaricata);
+                    // ordino i dati in base all'header della grid
                     const orderDataCustom = res.data.relTestate.map((obj)=>{
-
                         // inserire come prima chiave l'id se non si vuol renderlo visibile nella grid
                         // 'id serve per la chiamata get dettaglio dell'elemento selezionato nella grid
                         return {
                             idTestata:obj.idTestata,
                             ragioneSociale:obj.ragioneSociale,
                             tipologiaFattura:obj.tipologiaFattura,
+                            firmata:obj.firmata,
                             idContratto:obj.idContratto,
                             anno:obj.anno,
                             mese:mesiGrid[obj.mese],
-                            totaleAnalogico:Number(obj.totaleAnalogico).toFixed(2)+' €',
-                            totaleDigitale:Number(obj.totaleDigitale).toFixed(2)+' €',
+                            totaleAnalogico:obj.totaleAnalogico.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
+                            totaleDigitale:obj.totaleDigitale.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
                             totaleNotificheAnalogiche:obj.totaleNotificheAnalogiche,
                             totaleNotificheDigitali:obj.totaleNotificheDigitali,
-                            totale:Number(obj.totale).toFixed(2)+' €'
+                            totale:obj.totale.toLocaleString("de-DE", { style: "currency", currency: "EUR" })
                         };
                     });
-                
                     setData(orderDataCustom);
                     setTotalNotifiche(res.data.count);
+                    setGetListaRelRunning(false);
                 }).catch((error)=>{
-                
-                    manageError(error, navigate);
+                    if(error?.response?.status === 404){
+                        setData([]);
+                        setTotalNotifiche(0);
+                    }
+                    setGetListaRelRunning(false);
+                    manageError(error, dispatchMainState);
                 });
         }            
     };
 
-    useEffect(()=>{
-        const realPage = page + 1;
-        getlistaRelEnte(realPage, rowsPerPage);
-    },[page, rowsPerPage]);
+    // servizio che popola la select con la checkbox
+    const listaEntiNotifichePageOnSelect = async () =>{
+        if(profilo.auth === 'PAGOPA'){
+            await listaEntiNotifichePage(token, mainState.nonce, {descrizione:textValue} )
+                .then((res)=>{
+                    setDataSelect(res.data);
+                })
+                .catch(((err)=>{
+                    manageError(err,dispatchMainState);
+                }));
+        }
+    };
 
+    const onButtonFiltra = () =>{
+        setPage(0);
+        setRowsPerPage(10);
+        setBodyDownload(bodyRel);
+        getlistaRel(bodyRel,1,10); 
+        setFilterToLocalStorageRel(bodyRel,textValue,valueAutocomplete, 0, 10);
+    };
 
     const handleChangePage = (
         event: React.MouseEvent<HTMLButtonElement> | null,
         newPage: number,
     ) => {
-     
         const realPage = newPage + 1;
-        if(profilo.auth === 'SELFCARE'){
-            getlistaRelEnte(realPage, rowsPerPage);
-            
-        }
-        if(profilo.auth === 'PAGOPA'){
-            // getlistaNotifichePagoPa(realPage,rowsPerPage);
-            //listaEntiNotifichePageOnSelect();
-        }
+        getlistaRel(bodyRel,realPage, rowsPerPage);
         setPage(newPage);
+        const result = getFiltersFromLocalStorageRel();
+        setFilterToLocalStorageRel(result.bodyRel,result.textValue,result.valueAutocomplete, newPage, rowsPerPage);
     };
                     
     const handleChangeRowsPerPage = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
-    
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
         const realPage = page + 1;
-
-        if(profilo.auth === 'SELFCARE'){
-            getlistaRelEnte(realPage,parseInt(event.target.value, 10));
-        }
-        if(profilo.auth === 'PAGOPA'){
-           
-            // getlistaNotifichePagoPa(realPage,parseInt(event.target.value, 10));
-            //listaEntiNotifichePageOnSelect();
-        }
-                            
+        getlistaRel(bodyRel,realPage,parseInt(event.target.value, 10));
+        const result = getFiltersFromLocalStorageRel();
+        setFilterToLocalStorageRel(result.bodyRel,result.textValue,result.valueAutocomplete, page, parseInt(event.target.value, 10));
     };
-  
-
-
-    // visulizzazione del pop up redirect dati di fatturazione
-    const [openModalRedirect, setOpenModalRedirect] = useState(false);
    
-    const getRel = async(idRel) => {
-
-        if(profilo.auth === 'SELFCARE'){
-            getSingleRel(token,profilo.nonce,idRel).then((res) =>{
-          
-                setMainState((prev:MainState) => ({...prev,...{relSelected:res.data}}));
-                if(res.data.datiFatturazione === true){
-                    navigate('/relpdf');
-                }else{
-                    setOpenModalRedirect(false);
-                }
-            }).catch((err)=>{
-                manageError(err, navigate);
-            }
-              
-            );
-        }else{
-            getSingleRelPagopa(token,profilo.nonce,idRel).then((res) =>{
-          
-                setMainState((prev:MainState) => ({...prev,...{relSelected:res.data}}));
-                if(res.data.datiFatturazione === true){
-                    navigate('/relpdf');
-                }else{
-                    setOpenModalRedirect(false);
-                }
-            }).catch((err)=>{
-                manageError(err, navigate);
-            }
-              
-            );
-        }
-       
-        
+    const setIdRel = async(idRel) => {
+        handleModifyMainState({relSelected:idRel});
+        navigate(PathPf.PDF_REL);
+    
     };  
 
-    
-
-  
-
-
     const downloadListaRelExel = async() =>{
-
-        if(profilo.auth === 'SELFCARE'){
-
-            const {idEnti, ...newBody} = bodyRel;
-            await downloadListaRel(token,profilo.nonce,newBody).then((res)=>{
-                const link = document.createElement('a');
-                link.href = "data:text/plain;base64," + res.data.documento;
-                link.setAttribute('download', `Lista Regolare esecuzione mese di riferimento ${mesiGrid[bodyRel.mese]}.xlsx`); //or any other extension
-                document.body.appendChild(link);
-              
-                link.click();
-                document.body.removeChild(link);
-           
+        setShowLoading(true);
+        if(enti){
+            const {idEnti, ...newBody} = bodyDownload;
+            await downloadListaRel(token,mainState.nonce,newBody).then((res)=>{
+                saveAs("data:text/plain;base64," + res.data.documento,`Regolari esecuzioni /${data[0]?.ragioneSociale}/ ${mesiWithZero[bodyDownload.mese-1]}/ ${bodyDownload.anno}.xlsx` );
+                setShowLoading(false);
             }).catch((err)=>{
-                console.log(err);
+                manageError(err,dispatchMainState);
             }); 
         }else{
-            await downloadListaRelPagopa(token,profilo.nonce,bodyRel).then((res)=>{
-                const link = document.createElement('a');
-                link.href = "data:text/plain;base64," + res.data.documento;
-                link.setAttribute('download', `Lista Regolare esecuzione mese di riferimento ${mesiGrid[bodyRel.mese]}.xlsx`); //or any other extension
-                document.body.appendChild(link);
-              
-                link.click();
-                document.body.removeChild(link);
-           
+            await downloadListaRelPagopa(token,mainState.nonce,bodyDownload).then((res)=>{
+                let fileName = `Regolari esecuzioni /${mesiWithZero[bodyDownload.mese-1]}/ ${bodyDownload.anno}.xlsx`;
+                if(bodyDownload.idEnti.length === 1){
+                    fileName = `Regolari esecuzioni /${data[0]?.ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]}/ ${bodyDownload.anno}.xlsx`;
+                }
+                saveAs("data:text/plain;base64," + res.data.documento,fileName );
+                setShowLoading(false);
             }).catch((err)=>{
-                console.log(err);
+                manageError(err,dispatchMainState);
             }); 
-            
         }
-
-        
     };
- 
 
-
+    const downloadQuadratura = async() => {
+        setShowLoading(true);
+        downloadQuadraturaRelPagopa(token,mainState.nonce,bodyDownload).then((res)=>{
+            let fileName = `Quadratura regolari esecuzioni /${mesiWithZero[bodyDownload.mese-1]}/ ${bodyDownload.anno}.xlsx`;
+            if(bodyDownload.idEnti.length === 1){
+                fileName = `Quadratura regolare esecuzione /${data[0]?.ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]}/ ${bodyDownload.anno}.xlsx`;
+            }
+            saveAs("data:text/plain;base64," + res.data.documento,fileName );
+            setShowLoading(false);
+        }).catch((err)=>{
+            setShowLoading(false);
+            manageError(err,dispatchMainState);
+        });  
+    };
+  
+    const downloadListaPdfPagopa = async() =>{
+        setShowLoading(true);
+        await downloadListaRelPdfZipPagopa(token,mainState.nonce,bodyRel)
+            .then(response => response.blob())
+            .then(blob => {
+                let fileName = `REL /Frimate / ${mesiWithZero[bodyRel.mese -1]} / ${bodyRel.anno}.zip`;
+                if(bodyDownload.idEnti.length === 1){
+                    fileName = `REL /Frimate /${data[0]?.ragioneSociale}/${mesiWithZero[bodyRel.mese -1]} / ${bodyRel.anno}.zip`;
+                }
+                saveAs(blob,fileName );
+                setShowLoading(false);
+            })
+            .catch(err => {
+                manageError(err,dispatchMainState);
+            });
+    };
+    
+    const  hiddenAnnullaFiltri = bodyRel.tipologiaFattura === null && bodyRel.idEnti?.length === 0 && bodyRel.caricata === null; 
     return (
-
        
         <div className="mx-5">
             <div className="marginTop24 ">
@@ -270,30 +296,37 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
                         <SelectMese values={bodyRel} setValue={setBodyRel}></SelectMese>
                     </div>
                     <div  className="col-3">
-                        <SelectTipologiaFattura values={bodyRel} setValue={setBodyRel}></SelectTipologiaFattura>
+                        <SelectTipologiaFattura values={bodyRel} setValue={setBodyRel} types={[
+                            'PRIMO SALDO',
+                            'SECONDO SALDO',
+                            'PRIMO CONGUAGLIO',
+                            'SECONDO CONGUAGLIO']}></SelectTipologiaFattura>
                     </div>
+                    <div className="col-3">
+                        <SelectStatoPdf values={bodyRel} setValue={setBodyRel}></SelectStatoPdf>
+                    </div>
+                </div>
+                <div className="row mt-5">
                     { profilo.auth === 'PAGOPA' &&
                         <div  className="col-3">
                             <MultiselectCheckbox 
-                                mainState={mainState} 
                                 setBodyGetLista={setBodyRel}
-                                setDataSelect={setDataSelect}
                                 dataSelect={dataSelect}
+                                setTextValue={setTextValue}
+                                valueAutocomplete={valueAutocomplete}
+                                setValueAutocomplete={setValueAutocomplete}
                             ></MultiselectCheckbox>
                         </div>
                     }
-                  
-                   
-                    
                 </div>
-                
                 <div className="row mt-5">
-                    
                     <div className="col-1">
-                        <Button onClick={()=>{
-                            const realPage = page + 1;
-                            getlistaRelEnte(realPage, rowsPerPage);
-                        }} variant="contained">Filtra</Button>
+                        <Button
+                            onClick={()=>{
+                                onButtonFiltra();
+                            }}
+                            variant="contained"
+                            disabled={getListaRelRunning}>Filtra</Button>
                     </div>
                     {!hiddenAnnullaFiltri && 
                     <div className="col-2">
@@ -303,35 +336,73 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
                                 mese:month,
                                 tipologiaFattura:null,
                                 idEnti:[],
-                                idContratto:null
+                                idContratto:null,
+                                caricata:null
+                            });
+                            setBodyDownload({
+                                anno:currentYear,
+                                mese:month,
+                                tipologiaFattura:null,
+                                idEnti:[],
+                                idContratto:null,
+                                caricata:null
                             });
                             setData([]);
-                        }} >Annulla Filtri</Button>
+                            setPage(0);
+                            setRowsPerPage(10);
+                            deleteFilterToLocalStorageRel();
+                            getlistaRel({
+                                anno:currentYear,
+                                mese:month,
+                                tipologiaFattura:null,
+                                idEnti:[],
+                                idContratto:null,
+                                caricata:null
+                            },1,10);
+                            
+                        }} 
+                        disabled={getListaRelRunning}
+                        >Annulla Filtri</Button>
                     </div>
                     }
                 </div>
                 <div className="mt-5 mb-5">
                     { data.length > 0  &&
-            <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
-                 
-                <div>
+            <div className="marginTop24 d-flex d-flex justify-content-between">
+                <div className="d-flex justify-content-start">
+                    {profilo.auth === 'PAGOPA'&&
+                   
+                   <Button onClick={()=> {
+                       downloadQuadratura();
+                   }} >
+                     Quadratura notifiche Rel 
+                       <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
+                   </Button>  }
+                </div>
+                <div className="d-flex justify-content-end">
+                    {profilo.auth === 'PAGOPA'&&
+                   
+                        <Button
+                            disabled={getListaRelRunning  || !disableDownloadListaPdf}
+                            onClick={()=> {
+                                downloadListaPdfPagopa();
+                            }}  >
+                                  Download documenti firmati 
+                            <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
+                        </Button>
+                   
+                    }
                     <Button
-                        disabled={false}
+                        disabled={getListaRelRunning}
                         onClick={()=> {
                             downloadListaRelExel();
-                          
                         }}  >
-                                  Download Risultati 
+                                  Download risultati 
                         <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
                     </Button>
-            
-                </div>           
-                   
-               
-               
+                </div>            
             </div>
                     }    
-                    
                     <GridCustom
                         nameParameterApi='idTestata'
                         elements={data}
@@ -340,20 +411,22 @@ const RelPage : React.FC<RelPageProps> = ({mainState, setMainState}) =>{
                         total={totalNotifiche}
                         page={page}
                         rows={rowsPerPage}
-                        headerNames={headerNamesGrid}
-                        apiGet={getRel}></GridCustom>
-                 
+                        headerNames={['Ragione Sociale','Tipologia Fattura', 'Reg. Es. PDF','ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale','']}
+                        apiGet={setIdRel}
+                        disabled={getListaRelRunning}></GridCustom>
                 </div>
-           
             </div>
-            <ModalRedirect
-                setOpen={setOpenModalRedirect} 
-                open={openModalRedirect}
-                sentence={`Per poter visulazzare il dettaglio REL è nesessario l'inserimento dei dati di fatturazione obbligatori:`}></ModalRedirect>
-      
+            <ModalLoading 
+                open={showLoading} 
+                setOpen={setShowLoading} 
+                sentence={'Downloading...'}>
+            </ModalLoading>
+            <ModalLoading 
+                open={getListaRelRunning} 
+                setOpen={setGetListaRelRunning} 
+                sentence={'Loading...'}>
+            </ModalLoading>
         </div>
-
-
     );
 };
 

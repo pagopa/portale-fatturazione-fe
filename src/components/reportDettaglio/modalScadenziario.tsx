@@ -3,31 +3,31 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { ModalProps } from 'react-bootstrap';
-import { getTipologieScadenziario, manageError } from '../../api/api';
+import { manageError } from '../../api/api';
 import { useNavigate } from 'react-router';
 import { useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import Paper from '@mui/material/Paper';
+import { getTipologieScadenziario } from '../../api/apiPagoPa/notifichePA/api';
 
 const style = {
     position: 'absolute' as const,
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: '60%',
+    width: '80%',
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
 };
 
-
 interface ModalScadenziario {
     setOpen:any,
     open:boolean,
-    nonce:string
+    nonce:string,
+    profilo:any,
+    dispatchMainState:any
 }
-
 
 interface Scadenziario {
     annoContestazione: number,
@@ -36,7 +36,7 @@ interface Scadenziario {
     meseContestazione: string
 }
 
-const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce}) => {
+const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce, profilo,dispatchMainState}) => {
 
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
@@ -46,24 +46,25 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce})
     const handleClose = () => setOpen(false);
 
     const [datiScadenziario, setDatiScadenziario] = useState<Scadenziario[] | []>([]);
-
     
     const getScadenziario = async () => {
 
         getTipologieScadenziario(token, nonce )
             .then((res)=>{
                 setDatiScadenziario(res.data);
-                console.log({res},'scadenziario ');
+              
             })
             .catch(((err)=>{
-                manageError(err,navigate);
+                manageError(err,dispatchMainState);
             }));
     };
 
     useEffect(()=>{
-        getScadenziario();
-    },[]);
-
+        if(nonce !== ''){
+            getScadenziario();
+        }
+       
+    },[nonce]);
 
     return (
         <div>
@@ -81,7 +82,6 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce})
                             <Typography  id="modal-modal-title" variant="h6" component="h2">
                                 Scadenzario
                             </Typography>
-                   
                           
                         </div>
                         <div>
@@ -98,6 +98,12 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce})
                                         <TableCell align="left">Anno </TableCell>
                                         <TableCell align="left">Data inizio inserimento contestazione</TableCell>
                                         <TableCell align="left">Data fine inserimento contestazione</TableCell>
+                                        {(profilo.profilo === 'CON' || profilo.profilo === 'REC') &&
+                                        <>
+                                            <TableCell align="left">Data inizio contestazione {profilo.profilo === 'REC'?"Recapitista":"Consolidatore"}</TableCell>
+                                            <TableCell align="left">Data fine contestazione {profilo.profilo === 'REC'?"Recapitista":"Consolidatore"}</TableCell>
+                                        </>
+                                        }
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -112,6 +118,11 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce})
                                             <TableCell align="left">{row.annoContestazione}</TableCell>
                                             <TableCell align="left">{row.dataInizio}</TableCell>
                                             <TableCell align="left">{row.dataFine}</TableCell>
+                                            {(profilo.profilo === 'CON' || profilo.profilo === 'REC') &&
+                                            <>
+                                                <TableCell align="left">{row.dataRecapitistaInizio}</TableCell>
+                                                <TableCell align="left">{row.dataRecapitistaFine}</TableCell>
+                                            </>}
                                         </TableRow>
                                     ))}
                                 </TableBody>
@@ -121,7 +132,6 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce})
                     </div>
                     
                 </Box>
-             
                 
             </Modal>
         </div>

@@ -1,3 +1,5 @@
+import { InfoOpen, MainState } from "./typesGeneral";
+
 export interface SuccesResponseGetDatiFatturazione {
     data:DatiFatturazione
 }
@@ -8,9 +10,12 @@ export type Contatti = {
 }
 
 export interface AreaPersonaleProps{ 
-    mainState?:any,
-    setMainState:any
+    mainState:MainState,
+    dispatchMainState:any,
+    open:InfoOpen,
+    setOpen:any
 }
+
 export interface DatiFatturazione{
     id?:string,
     idEnte:string,
@@ -59,7 +64,7 @@ export interface DatiFatturazionePostPagopa {
 export interface AreaPersonaleContext {
     datiFatturazione:DatiFatturazione, 
     setDatiFatturazione?:any,
-    setMainState?:any,
+    dispatchMainState?:any,
     setStatusButtonConferma?:any,
     user?:string,
     mainState?:any

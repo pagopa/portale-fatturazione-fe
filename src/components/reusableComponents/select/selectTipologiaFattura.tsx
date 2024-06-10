@@ -1,20 +1,21 @@
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { Box } from "@mui/system";
-import { BodyRel } from "../../types/typeRel";
 interface SelecTipologiaProps{
     setValue: any,
-    values:BodyRel
+    values:{
+        anno:number,
+        mese:number|null,
+        tipologiaFattura:null| string,
+        idEnti?:string[],
+        idContratto?:null|string,
+        caricata?:null|number
+    },
+    types:string[]
 }
 
+const SelectTipologiaFattura : React.FC<SelecTipologiaProps> = ({setValue, values, types}) =>{
 
-
-const SelectTipologiaFattura : React.FC<SelecTipologiaProps> = ({setValue, values}) =>{
-
-    const tipologie = [
-        'PRIMO SALDO',
-        'SECONDO SALDO',
-        'PRIMO CONGUAGLIO',
-        'SECONDO CONGUAGLIO'];
+    
     return (
         <Box sx={{width:'80%', marginLeft:'20px'}}  >
             <FormControl
@@ -32,20 +33,16 @@ const SelectTipologiaFattura : React.FC<SelecTipologiaProps> = ({setValue, value
                     labelId="search-by-label"
                     onChange={(e) =>{
                         setValue((prev)=> ({...prev, ...{tipologiaFattura:e.target.value}}));
-                    }}
-                               
-                    value={values.tipologiaFattura || ''}
-                             
+                    }}     
+                    value={values.tipologiaFattura || ''}       
                 >
-                    {tipologie.map((el) => (
-                                    
+                    {types.map((el) => (            
                         <MenuItem
                             key={Math.random()}
                             value={el}
                         >
                             {el}
-                        </MenuItem>
-                                    
+                        </MenuItem>              
                     ))}
                                     
                 </Select>
@@ -55,6 +52,3 @@ const SelectTipologiaFattura : React.FC<SelecTipologiaProps> = ({setValue, value
 };
 
 export default SelectTipologiaFattura;
-
-
-

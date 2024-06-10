@@ -1,17 +1,18 @@
 import { MainState } from "./typesGeneral";
 
 export interface ReportDettaglioProps {
-    mainState:any,
+    mainState:MainState,
+    dispatchMainState:any
 }
 
 export interface NotificheList{
     idNotifica:string
     ragioneSociale:string,
-    codiceFiscale:string,
+    codiceFiscale?:string,
     contestazione:boolean,
     tipoNotifica:string,
-    mese:number,
-    statoContestazione:number,
+    mese:number|string,
+    statoContestazione?:number,
     iun:string,
     costEuroInCentesimi:string,
     dataInvio:string,
@@ -26,7 +27,8 @@ export interface MultiSelectGroupedByProps{
     mainState:MainState,
     setBodyGetLista:any,
     setValueFgContestazione:any,
-    valueFgContestazione: FlagContestazione[]
+    valueFgContestazione: FlagContestazione[],
+    dispatchMainState:any
 }
 
 export interface ModalContestazioneProps{
@@ -36,7 +38,13 @@ export interface ModalContestazioneProps{
     contestazioneSelected:Contestazione,
     setContestazioneSelected:any,
     funGetNotifiche:any,
-    funGetNotifichePagoPa:any
+    funGetNotifichePagoPa:any,
+    openModalLoading:any,
+    page:number,
+    rows:number,
+    valueRispostaEnte:string,
+    contestazioneStatic:any,
+    dispatchMainState:any
 }
 
 export interface FlagContestazione{
@@ -108,12 +116,12 @@ export interface ElementMultiSelect {
 }
 
 export interface MultiselectNotificheProps{
-    mainState : MainState,
     setBodyGetLista:any,
-    setDataSelect:any,
-    dataSelect:ElementMultiSelect[] 
+    dataSelect:ElementMultiSelect[] ,
+    setTextValue:any,
+    valueAutocomplete:any,
+    setValueAutocomplete:any,
 }
-
 
 export interface OptionMultiselectChackbox {
     
@@ -122,12 +130,15 @@ export interface OptionMultiselectChackbox {
 }
 
 export interface ModalBodyContestazioneModifyPagoPa{
-    
     idNotifica?: string,
     onere?: string,
     noteSend?: string | null,
-    statoContestazione?: number
-      
+    statoContestazione?: number 
+}
+
+export interface ListaRecCon {
+    idEnte: string,
+    descrizione: string
 }
 
 

@@ -4,7 +4,6 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { ModalProps } from 'react-bootstrap';
-import { useNavigate } from 'react-router';
 
 const style = {
     position: 'absolute' as const,
@@ -17,24 +16,9 @@ const style = {
     p: 4,
 };
 
-const BasicModal : React.FC<ModalProps> =({setOpen, open}) => {
-
-    const getProfilo = localStorage.getItem('profilo') || '{}';
-    const profilo =  JSON.parse(getProfilo);
-
-    const navigate = useNavigate();
+const ModalInfo : React.FC<ModalProps> = ({setOpen, open, sentence}) => {
    
-
     const handleClose = () => setOpen(false);
-
-    const handleEsci = () =>{
-        if(profilo.auth === 'PAGOPA'){
-            navigate('/pagopalistadatifatturazione');
-        }else{
-            navigate('/');
-        }
-        
-    };
 
     return (
         <div>
@@ -46,21 +30,23 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open}) => {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2">
-        Vuoi davvero uscire ?
-                    </Typography>
-                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Se esci le modifiche andranno perse
-                    </Typography>
-                    <div className='container_buttons_modal d-flex justify-content-end'>
+                    <div className='d-flex justify-content-center'>
+                        <Typography id="modal-modal-title" variant="h6" component="h2">
+        Attenzione!
+                        </Typography>
+                        
+                    </div>
+                    <div className='d-flex justify-content-center text-center'>
+                        <Typography id="modal-modal-description" variant="body1" sx={{ mt: 2 }}>
+                            {sentence}
+                        </Typography>
+                    </div>
+                   
+                    <div className='container_buttons_modal d-flex justify-content-center mt-3'>
                         <Button 
                             sx={{marginRight:'20px'}} 
                             variant='outlined'
                             onClick={()=>handleClose()}
-                        >Annulla</Button>
-                        <Button
-                            variant='contained'
-                            onClick={()=>handleEsci()}
                         >Esci</Button>
                     </div>
                     
@@ -70,4 +56,4 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open}) => {
         </div>
     );
 };
-export default  BasicModal;
+export default  ModalInfo;

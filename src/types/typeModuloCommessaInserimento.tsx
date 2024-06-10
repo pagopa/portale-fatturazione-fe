@@ -1,3 +1,4 @@
+import { InfoOpen, MainState } from "./typesGeneral";
 
 export type ModuliCommessa = {
     numeroNotificheNazionali: number,
@@ -11,8 +12,10 @@ export interface DatiCommessa  {
     moduliCommessa : ModuliCommessa[]
 }
 export  interface ModuloCommessaInserimentoProps{
-    mainState:any,
-    setMainState:any
+    mainState:MainState,
+    dispatchMainState:any,
+    open:InfoOpen,
+    setOpen:any
 }
 export interface TotaleNazionaleInternazionale{
     totaleNazionale:number,
@@ -28,7 +31,7 @@ export interface InsModuloCommessaContext {
     setTotale?:any,
     totale:TotaleNazionaleInternazionale
     mainState?:any,
-    setMainState?:any
+    dispatchMainState?:any
 }
 export interface RowInsComProps {
     sentence : string,
@@ -117,11 +120,12 @@ export interface DatiCommessaCosti{
 }
 
 export interface ModComPdfProps{
-    mainState: any
+    mainState: any,
+    dispatchMainState:any
 }
 
 export interface PrimoContainerInsComProps{
-    setMainState?: any
+    dispatchMainState?: any
 }
 
 export  interface ArrayTipologieCommesse {
@@ -171,4 +175,11 @@ export    interface ResponseDettaglioModuloCommessa {
         totale:ResponsTotaliInsModuloCommessa[]
     }
 
+}
+
+export interface ModalConfermaInsProps{
+    setOpen:any,
+    open:boolean,
+    onButtonComfermaPopUp:any,
+    mainState:MainState
 }

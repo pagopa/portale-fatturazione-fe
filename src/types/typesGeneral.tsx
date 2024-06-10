@@ -1,11 +1,17 @@
 import { DataGridCommessa } from "./typeModuloCommessaElenco";
 import { BodyRel, Rel } from "./typeRel";
+
 export interface ModalProps {
     setOpen : any,
     open: boolean,
-    sentence:string
+    sentence?:string,
+    dispatchMainState:any,
+    getDatiFat?:any,
+    getDatiFatPagoPa?:any,
+    handleGetDettaglioModuloCommessa?:any,
+    handleGetDettaglioModuloCommessaPagoPa?:any,
+    mainState?:MainState
 }
-
 
 export interface LocationState {
     pathname?: string;
@@ -14,14 +20,14 @@ export interface LocationState {
 
 export interface LoginProps {
     setCheckProfilo:any,
-    setMainState:any,
-
+    dispatchMainState:any,
 
 }
 
 export interface SideNavProps{
-    setMainState:any,
-    mainState:any
+    dispatchMainState:any,
+    mainState:MainState,
+    setOpenBasicModal_DatFat_ModCom:any
 }
 
 export interface StepperProps {
@@ -34,11 +40,11 @@ export type TokenObject = {
 }
 
 export type AuthAzureProps = {
-    setMainState:any,
+    dispatchMainState:any,
 }
 
 export type BodyListaDatiFatturazione = {
-    descrizione: string,
+    idEnti:string[],
     prodotto: string,
     profilo: string
 }
@@ -53,22 +59,19 @@ export type BodyListaModuloCommessa = {
 export interface MainState{
     mese:string,
     anno:string,
-    modifica:undefined, // se la commessa selezionata è modificabile
     userClickOn:undefined, // se l'utente clicca su un elemento di lista commesse setto GRID
     inserisciModificaCommessa:string |undefined, // INSERT MODIFY  se il sevizio get commessa mi restituisce true []
-    action:string, // le action possono essere HIDE_MODULO_COMMESSA / SHOW_MODULO_COMMESSA / DATI_FATTURAZIOne
     statusPageDatiFatturazione:string,
     statusPageInserimentoCommessa:string,
-    path:string,
-    indexStepper:0, // in che pat sono al momento del reload?
-    idEnte:string,// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
-    prodotto: string,// parametro valorizzato nel caso in cui AUTH sia PAGOPA e venga selezionata una row della lista dati fatturazione
+    nonce:string,
     datiFatturazione:boolean, // parametro utilizato in modulo commessa per capire se accettare l'inserimento commessa o fare il redirect t dati fatturazione se non sono stati inseriti
-    relSelected:Rel|null // rel selezionata nella grid in page rel
+    relSelected:string|null,
+    apiError:number|string|null,
+    authenticated:boolean
 }
 
 export interface BodyDownloadDatiFatturazione{
-    descrizione: string,
+    idEnti:string[],
     prodotto: string,
     profilo: string  
 }
@@ -78,12 +81,11 @@ export  type Params = {
     row:DataGridCommessa
 }
 
-
 export interface BodyDownloadListaCommesse{
-    descrizione: string,
+    idEnti: string[],
     prodotto: string,
-    anno:string,
-    mese:string 
+    anno:string|number,
+    mese:string| number
 }
 
 export interface BodyListaNotifiche{
@@ -95,9 +97,36 @@ export interface BodyListaNotifiche{
     tipoNotifica: number | null,
     statoContestazione: number[] | [],
     iun:string | null,
-    idEnti?: string[],
+    idEnti: string[],  // solo lato PAGOPA
+    recipientId:string|null,
+    recapitisti:string[],  // solo lato PAGOPA
+    consolidatori:string[] // solo lato PAGOPA
+}
+
+export interface BodyListaNotificheSelfcare{
+    anno: number,
+    mese: number,
+    prodotto: string,
+    cap: string|null ,
+    profilo: string,
+    tipoNotifica: number | null,
+    statoContestazione: number[] | [],
+    iun:string | null,
     recipientId:string|null
 }
+export interface BodyListaNotificheConsolidatore{
+    anno: number,
+    mese: number,
+    prodotto: string,
+    cap: string|null ,
+    profilo: string,
+    tipoNotifica: number | null,
+    statoContestazione: number[] | [],
+    iun:string | null,
+    recipientId:string|null,
+    idEnti: string[],
+}
+
 type RequestError = {
     status:number,
     statusText: string
@@ -110,7 +139,6 @@ interface ResponseError {
 export interface ManageErrorResponse{
     message:string,
     response: ResponseError
-
 
 }
 
@@ -127,12 +155,34 @@ export interface SelectUltimiDueAnniProps{
 }
 
 export interface SelectMeseProps{
-    values:BodyRel,
+    values:{
+        anno:number,
+        mese:number|null,
+        tipologiaFattura:null| string|string[],
+        idEnti?:string[],
+        idContratto?:null|string,
+        caricata?:null|number
+    },
     setValue: (value:any) => void
 }
 
+export interface ErrorPageProps{
+    dispatchMainState:any,
+    mainState:MainState
+}
 
+export enum Profilo {
+    AZURE = 'PAGOPA',
+    SELFCARE = 'PA',
+    RECAPITISTA = 'REC',
+    CONSOLIDATORE = 'CON'
+}
 
+export interface AzureLoginProps{
+    dispatchMainState:any
+}
 
-
-
+export interface InfoOpen{
+    visible:boolean,
+    clickOn:string
+}

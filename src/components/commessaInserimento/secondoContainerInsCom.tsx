@@ -1,34 +1,21 @@
 import React, { useEffect, useState, useContext} from 'react';
 import { Grid, Typography } from '@mui/material';
 import RowInserimentoCommessa from './rowInserimentoCommessa';
-import { InsModuloCommessaContext, ArrayTipologieCommesse,ResponseCategorieSpedizione   } from '../../types/typeModuloCommessaInserimento';
+import { InsModuloCommessaContext,ResponseCategorieSpedizione   } from '../../types/typeModuloCommessaInserimento';
 import { InserimentoModuloCommessaContext } from '../../page/moduloCommessaInserimentoUtEn30';
-import { getCategoriaSpedizione, manageError} from '../../api/api';
+import { manageError } from '../../api/api';
 import { useNavigate } from 'react-router';
 import { ManageErrorResponse } from '../../types/typesGeneral';
+import { getCategoriaSpedizione } from '../../api/apiSelfcare/moduloCommessaSE/api';
+import { getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
+import { getIdByTipo } from '../../reusableFunction/function';
 
 const SecondoContainerInsCom : React.FC = () => {
+    const { totale, mainState,dispatchMainState } = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
+    
     const navigate = useNavigate();
-    const getToken = localStorage.getItem('token') || '{}';
-    const token =  JSON.parse(getToken).token;
+    const token =  getToken();
 
-    const getProfilo = localStorage.getItem('profilo') || '{}';
-    const profilo =  JSON.parse(getProfilo);
-
-    const { totale, mainState} = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
-
-   
-
-    const getIdByTipo = (string:string, array:ArrayTipologieCommesse[]) =>{
-      
-        const getAllObjs = array.map((singleObj)=>{
-            return singleObj.tipoSpedizione;
-        }).flat().filter((obj)=>{
-            return obj.tipo === string;
-        });
-        return getAllObjs[0].id;
-     
-    };
     const [arrTipoSpedizione , setArrTipoSpedizione] = useState({
         idSpedizioneDigitale : 0,
         idSpedizioneAnalog890 : 0,
@@ -36,31 +23,22 @@ const SecondoContainerInsCom : React.FC = () => {
     });
  
     const getCategoria = async () =>{
-        await getCategoriaSpedizione(token , profilo.nonce).then((res:ResponseCategorieSpedizione ) => {
-         
-         
+        await getCategoriaSpedizione(token , mainState.nonce).then((res:ResponseCategorieSpedizione ) => {
             setArrTipoSpedizione({
                 idSpedizioneDigitale :getIdByTipo('Digitale',res.data),
                 idSpedizioneAnalog890 :  getIdByTipo('Analog. L. 890/82',res.data),
                 idSpedizioneAnalogAR : getIdByTipo('Analog. A/R',res.data),
             });
-          
-            
         }).catch((err:ManageErrorResponse) =>{
-            manageError(err, navigate);
+            manageError(err,dispatchMainState);
         });
     };
    
     useEffect(()=>{
-        if(profilo.nonce !== undefined){
+        if(mainState.nonce !== ''){
             getCategoria();
         }
-        
-    },[profilo.nonce]);
-
-  
-
-
+    },[mainState.nonce]);
   
     return (
         <div className="m-3 pl-5 ">
@@ -70,7 +48,6 @@ const SecondoContainerInsCom : React.FC = () => {
                 sentence="Numero complessivo delle notifiche da processare in via digitale nel mese di"
                 textBoxHidden={false}
                 idTipoSpedizione={arrTipoSpedizione.idSpedizioneDigitale}
-                // setInputTotale={setInputTotale}
                 rowNumber={3}
             />
             {/* prima row end */}
@@ -79,9 +56,7 @@ const SecondoContainerInsCom : React.FC = () => {
             <RowInserimentoCommessa
                 sentence="Numero complessivo delle notifiche da processare in via analogica tramite Raccomandata A/R nel mese di"
                 textBoxHidden={false}
-               
                 idTipoSpedizione={arrTipoSpedizione.idSpedizioneAnalogAR}
-                // setInputTotale={setInputTotale}
                 rowNumber={1}
             />
             {/* seconda row end */}
@@ -90,9 +65,7 @@ const SecondoContainerInsCom : React.FC = () => {
             <RowInserimentoCommessa
                 sentence="Numero complessivo delle notifiche da processare in via analogica del tipo notifica ex L. 890/1982 nel mese di"
                 textBoxHidden
-              
                 idTipoSpedizione={arrTipoSpedizione.idSpedizioneAnalog890}
-                // setInputTotale={setInputTotale}
                 rowNumber={2}
             />
             <hr></hr>
@@ -106,7 +79,6 @@ const SecondoContainerInsCom : React.FC = () => {
                 container
                 columns={12}
             >
-
                 <Grid
                     item
                     xs={6}
@@ -114,10 +86,7 @@ const SecondoContainerInsCom : React.FC = () => {
                     <div className='d-flex justify-content-end'>
                         <Typography sx={{fontWeight:'bold'}}> TOTALE</Typography >
                     </div>
-
-                    
                 </Grid>
-
                 <Grid
                     sx={{ textAlign: 'center' }}
                     item
