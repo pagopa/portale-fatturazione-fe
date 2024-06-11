@@ -39,6 +39,23 @@ export const manageError = (res:ManageErrorResponse,dispatchMainState:any) =>{
     
 };
 
+export const manageErrorDownload = (res:string,dispatchMainState:any) =>{
+
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
+  
+    if(res === '404'){
+        const value = res+"_DOWNLOAD";
+        handleModifyMainState({apiError:value});
+    }
+   
+    
+};
+
 export const pagopaLogin = async (tokenObject:TokenObject) => {
     const result = await axios.post(`${url}/api/auth/pagopa/login`, tokenObject);
     return result;

@@ -106,6 +106,8 @@ const App = ({ instance }) => {
         apiError:null,
         authenticated:false 
     });
+
+  
   
     useEffect(()=>{
         if(mainState.apiError !== null){

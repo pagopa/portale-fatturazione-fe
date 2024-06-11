@@ -35,7 +35,7 @@ const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, di
         colorAlert = 'error';
     }else if(mainState.apiError === 400){
         colorAlert = 'error';
-    }else if(mainState.apiError === 404){
+    }else if(mainState.apiError === 404 || mainState.apiError === '404_DOWNLOAD'){
         colorAlert = "info";
     }else if(mainState.apiError === "Network Error"){
         colorAlert = 'warning';

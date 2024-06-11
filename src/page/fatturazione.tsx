@@ -6,8 +6,8 @@ import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
 import { BodyFatturazione, FatturazioneProps, FattureObj, HeaderCollapsible} from "../types/typeFatturazione";
-import { downloadFatturePagopa, getFatturazionePagoPa, getTipologieFaPagoPa } from "../api/apiPagoPa/fatturazionePA/api";
-import { manageError } from "../api/api";
+import { downloadFatturePagopa, downloadFattureReportPagopa, getFatturazionePagoPa, getTipologieFaPagoPa } from "../api/apiPagoPa/fatturazionePA/api";
+import { manageError, manageErrorDownload } from "../api/api";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
@@ -129,18 +129,40 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
 
     const downloadListaFatturazione = async () => {
         setShowDownloading(true);
-        await downloadFatturePagopa(token,mainState.nonce, bodyFatturazioneDownload).then((res)=>{
+        await downloadFatturePagopa(token,mainState.nonce, bodyFatturazioneDownload).then(response => response.blob()).then((response)=>{
             let title = `Lista fatturazione/${month[bodyFatturazioneDownload.mese - 1]}/${bodyFatturazioneDownload.anno}.xlsx`;
             if(bodyFatturazioneDownload.idEnti.length === 1 && gridData[0]){
                 title = `Lista fatturazione/ ${gridData[0]?.ragionesociale}/${month[bodyFatturazioneDownload.mese - 1]}/${bodyFatturazioneDownload.anno}.xlsx`;
             }
-            saveAs("data:text/plain;base64," + res.data.documento, title );
+            saveAs(response,title);
             setShowDownloading(false);
         }).catch(((err)=>{
             setShowDownloading(false);
             manageError(err,dispatchMainState);
         }));
     };
+
+    const downloadListaReportFatturazione = async () => {
+        setShowDownloading(true);
+        await downloadFattureReportPagopa(token,mainState.nonce, bodyFatturazioneDownload).then((response)=>{
+            if (response.ok) {
+                return response.blob();
+            }
+            throw '404';
+        }).then((response)=>{
+            let title = `Lista report/${month[bodyFatturazioneDownload.mese - 1]}/${bodyFatturazioneDownload.anno}.xlsx`;
+            if(bodyFatturazioneDownload.idEnti.length === 1 && gridData[0]){
+                title = `Lista report/ ${gridData[0]?.ragionesociale}/${month[bodyFatturazioneDownload.mese - 1]}/${bodyFatturazioneDownload.anno}.xlsx`;
+            }
+            saveAs(response,title);
+            setShowDownloading(false);
+        }).catch(((err)=>{
+            setShowDownloading(false);
+            manageErrorDownload(err,dispatchMainState);
+        }));
+    };
+
+    
 
 
     const headersObjGrid : HeaderCollapsible[] = [
@@ -232,16 +254,26 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                     }
                 </div>
             </div>
-            <div className="marginTop24" style={{display:'flex', justifyContent:'end', height:"48px"}}>
-                
+            <div className="marginTop24" style={{display:'flex', justifyContent:'space-between', height:"48px"}}>
+                <Button  onClick={() => downloadListaReportFatturazione()}
+                >
+                Download Report
+                    <DownloadIcon sx={{marginLeft:'10px'}}></DownloadIcon>
+                </Button>
+               
                 {
                     gridData.length > 0 &&
-                <Button onClick={() => downloadListaFatturazione()}
-                >
+                   
+                        
+                        <Button onClick={() => downloadListaFatturazione()}
+                        >
                 Download Risultati
-                    <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
-                </Button>
+                            <DownloadIcon sx={{marginLeft:'10px'}}></DownloadIcon>
+                        </Button>
                 }
+               
+                
+                
             </div>
             
             <CollapsibleTable 

@@ -116,7 +116,7 @@ const TabAreaPersonaleUtente = () => {
                             <TextFieldComponent
                                 required={false}
                                 helperText="max 100 caratteri"
-                                label="Codice. Commessa/Convenzione"
+                                label="Codice Commessa/Convenzione"
                                 placeholder="Commessa/Convenzione"
                                 fullWidth
                                 value={datiFatturazione.codCommessa}

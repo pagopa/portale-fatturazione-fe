@@ -26,11 +26,29 @@ export const getTipologieFaPagoPa = async (token:string, nonce:string, body: {an
 
 
 export const downloadFatturePagopa = async (token:string, nonce:string,body: BodyFatturazione) => {
-    const response =  await axios.post(`${url}/api/fatture/download?nonce=${nonce}`,
-        body,
-        { headers: {
-            Authorization: 'Bearer ' + token
-        },}
-    );
+    const response = await fetch(`${url}/api/fatture/download?nonce=${nonce}`, 
+        {
+            headers: {
+                Authorization: 'Bearer '+token,
+                'Content-type':'application/json'
+            },
+            method: 'POST',
+            body:JSON.stringify(body),
+        });
+   
+    return response;
+};
+
+export const downloadFattureReportPagopa = async (token:string, nonce:string,body: BodyFatturazione) => {
+    const response = await fetch(`${url}/api/fatture/report?nonce=${nonce}`, 
+        {
+            headers: {
+                Authorization: 'Bearer '+token,
+                'Content-type':'application/json'
+            },
+            method: 'POST',
+            body:JSON.stringify(body),
+        });
+    
     return response;
 };
