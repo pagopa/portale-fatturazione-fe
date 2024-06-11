@@ -17,6 +17,7 @@ i18n.use(Backend)
                         500:"L'operazione non è andata a buon fine. Si prega di riprovare",
                         400:"L'operazione non è andata a buon fine. Contattare l'assistenza",
                         404:"La ricerca non ha prodotto risultati",
+                        '404_DOWNLOAD':"L'azione di download non ha prodotto risultati",
                         "Network Error":"La connessione Internet risulta non attiva",
                        
                     }

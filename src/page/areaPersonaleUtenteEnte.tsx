@@ -79,7 +79,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         'CIG':false,
         'Mail Pec':false,
         'ID Documento':false,
-        "Codice. Commessa/Convenzione":false,
+        "Codice Commessa/Convenzione":false,
     });
 
     // se il nonce è presente viene chiamata la get dati fatturazione

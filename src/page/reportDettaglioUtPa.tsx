@@ -119,9 +119,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
        
         const result = getFiltersFromLocalStorageNotifiche();
         if(mainState.nonce !== ''){
-            
+            getProdotti();
             if(Object.keys(result).length > 0){
-                getProdotti();
+               
                 getProfili();
                 setBodyGetLista(result.bodyGetLista);
                 setTextValue(result.textValue);
@@ -624,6 +624,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
             const {idEnti, recapitisti, consolidatori, ...bodyEnti} = bodyDownload;
             await downloadNotifche(token, mainState.nonce,bodyEnti )
                 .then((res)=>{
+                  
                     const blob = new Blob([res.data], { type: 'text/csv' });
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
@@ -680,6 +681,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
         }else if(profilo.auth === 'PAGOPA'){
             await downloadNotifchePagoPa(token, mainState.nonce,bodyDownload)
                 .then((res)=>{
+                  
                     let fileName = `Notifiche /${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`;
                     if(bodyDownload.idEnti.length === 1){
                         fileName = `Notifiche /${notificheList[0].ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`;
@@ -701,7 +703,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                 }));
         }
     }; 
-  
+ 
     const backgroundColorButtonScadenzario = (profilo.auth === 'PAGOPA' || enti) ? "#0062C3" : 'red';
   
     return (
@@ -805,9 +807,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                                     Seleziona Prodotto
                                 </InputLabel>
                                 <Select
-                                    id="prodotto"
+                                    id="prodotto_notifiche"
                                     label='Seleziona Prodotto'
-                                    labelId="search-by-label"
+                                    labelId="search-by-label_notifiche"
                                     onChange={(e) => setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}))}
                                     value={bodyGetLista.prodotto}
                                     disabled={status=== 'immutable' ? true : false}

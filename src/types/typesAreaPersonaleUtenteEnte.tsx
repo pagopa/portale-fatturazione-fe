@@ -126,7 +126,7 @@ export interface StateEnableConferma {
     CIG:boolean,
     'Mail Pec':boolean,
     'ID Documento':boolean,
-    "Codice. Commessa/Convenzione":boolean,
+    "Codice Commessa/Convenzione":boolean,
 }
 
 
