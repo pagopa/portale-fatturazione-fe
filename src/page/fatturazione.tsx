@@ -254,22 +254,25 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                     }
                 </div>
             </div>
-            <div className="marginTop24" style={{display:'flex', justifyContent:'space-between', height:"48px"}}>
-                <Button  onClick={() => downloadListaReportFatturazione()}
-                >
-                Download Report
-                    <DownloadIcon sx={{marginLeft:'10px'}}></DownloadIcon>
-                </Button>
+            <div className="marginTop24" style={{display:'flex', justifyContent:'end', height:"48px"}}>
+               
                
                 {
                     gridData.length > 0 &&
                    
-                        
-                        <Button onClick={() => downloadListaFatturazione()}
-                        >
+                        <>
+                            <Button  onClick={() => downloadListaReportFatturazione()}
+                            >
+                Download Report
+                                <DownloadIcon sx={{marginLeft:'10px'}}></DownloadIcon>
+                            </Button>
+                            <Button onClick={() => downloadListaFatturazione()}
+                            >
                 Download Risultati
-                            <DownloadIcon sx={{marginLeft:'10px'}}></DownloadIcon>
-                        </Button>
+                                <DownloadIcon sx={{marginLeft:'10px'}}></DownloadIcon>
+                            </Button>
+                        </>
+                        
                 }
                
                 
