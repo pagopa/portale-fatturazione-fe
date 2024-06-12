@@ -1,7 +1,7 @@
 import { Button, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import { useEffect, useState } from "react";
-import { getProfilo, getToken } from "../reusableFunction/actionLocalStorage";
+import { getFiltersFromLocalStorageFatture, getInfoPageFromLocalStorageFatture, getProfilo, getToken } from "../reusableFunction/actionLocalStorage";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
@@ -47,6 +47,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
         tipologiaFattura:[],
         idEnti:[]
     });
+
     
     useEffect(()=>{
         if(mainState.nonce !== ''){
@@ -62,11 +63,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
         }
     },[bodyFatturazione]);
 
-    useEffect(()=>{
-        if(dataSelect.length === 0){
-            setValueAutocomplete([]);
-        }
-    }, [dataSelect]);
+  
    
     useEffect(()=>{
         const timer = setTimeout(() => {
@@ -193,10 +190,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                     <div  className="col-3">
                         <SelectMese values={bodyFatturazione} setValue={setBodyFatturazione}></SelectMese>
                     </div>
-                    {/* 
-                    <div  className="col-3">
-                        <SelectTipologiaFattura values={bodyFatturazione} setValue={setBodyFatturazione}  types={tipologie}></SelectTipologiaFattura>
-                    </div>*/}
+                   
                     <div  className="col-3">
                         <MultiSelectFatturazione
                             setBody={setBodyFatturazione}

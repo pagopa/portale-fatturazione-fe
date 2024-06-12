@@ -121,3 +121,28 @@ export const getFiltersFromLocalStorageNotifiche = () => {
     const result =  JSON.parse(filtri);
     return result;
 };
+
+
+export const setFilterToLocalStorageFatture = (bodyGetLista,textValue,valueAutocomplete) => {
+    localStorage.setItem("filtersFatture", JSON.stringify({bodyGetLista,textValue,valueAutocomplete}));
+}; 
+
+export const setInfoPageToLocalStorageFatture = (info) => {
+    localStorage.setItem("pageRowFatture", JSON.stringify(info));
+};
+
+export const deleteFilterToLocalStorageFatture = () => {
+    localStorage.removeItem("filtersFatture");
+}; 
+
+export const getFiltersFromLocalStorageFatture = () => {
+    const filtri = localStorage.getItem('filtersFatture') || '{}';
+    const result =  JSON.parse(filtri);
+    return result;
+};
+
+export const getInfoPageFromLocalStorageFatture = () => {
+    const infoPage = localStorage.getItem('pageRowFatture') || '{}';
+    const result =  JSON.parse(infoPage);
+    return result;
+};

@@ -58,11 +58,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
             }
         }
     }, [mainState.nonce]);
-    /*
-    useEffect(()=>{
-        setBodyDownload(bodyGetLista);
-    },[]);
-*/
+ 
     useEffect(()=>{
         if(token === undefined){
             window.location.href = '/azureLogin';
@@ -93,6 +89,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
    
     useEffect(()=>{
         const timer = setTimeout(() => {
+         
             if(textValue.length >= 3){
                 listaEntiNotifichePageOnSelect();
             }
