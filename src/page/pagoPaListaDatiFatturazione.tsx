@@ -74,6 +74,8 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
         }
     },[]);
 
+
+
     useEffect(()=>{
         if(bodyGetLista.idEnti?.length  !== 0 || bodyGetLista.prodotto !== '' || bodyGetLista.profilo !== ''){
             setStatusAnnulla('show');
@@ -295,6 +297,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                                     getListaDatifatturazione({idEnti:[],prodotto:'',profilo:''});
                                     setFiltersDownload({idEnti:[],prodotto:'',profilo:''});
                                     setDataSelect([]);
+                                    setValueAutocomplete([]);
                                     deleteFilterToLocalStorage();
                                 } }
                                 sx={{marginLeft:'24px'}} >

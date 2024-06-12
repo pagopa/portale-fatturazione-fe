@@ -81,11 +81,6 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
         }
     },[bodyGetLista]);
 
-    useEffect(()=>{
-        if(dataSelect.length === 0){
-            setValueAutocomplete([]);
-        }
-    }, [dataSelect]);
    
     useEffect(()=>{
         const timer = setTimeout(() => {
@@ -346,6 +341,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
                                     setBodyDownload({idEnti:[],prodotto:'', anno:currentYear, mese:currString});
                                     setDataSelect([]);
                                     deleteFilterToLocalStorageCommessa();
+                                    setValueAutocomplete([]);
                                 } }
                                 sx={{marginLeft:'24px'}} >
                     Annulla filtri
