@@ -347,6 +347,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                             setPage(0);
                             setRowsPerPage(10);
                             deleteFilterToLocalStorageRel();
+                            setValueAutocomplete([]);
                             getlistaRel({
                                 anno:currentYear,
                                 mese:month,
