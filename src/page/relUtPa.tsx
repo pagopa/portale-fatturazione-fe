@@ -85,11 +85,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         }
     },[mainState.nonce]);
 
-    useEffect(()=>{
-        if(dataSelect.length === 0){
-            setValueAutocomplete([]);
-        }
-    }, [dataSelect]);
+   
    
     useEffect(()=>{
         const timer = setTimeout(() => {

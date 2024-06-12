@@ -51,8 +51,8 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
                 localStorage.removeItem("pageRowListaModuliCommessa");
                 localStorage.removeItem("filtersRel");
                 localStorage.removeItem("filtersNotifiche");
-                localStorage.removeItem("filtersListaDatiFatturazione");
-                localStorage.removeItem("pageRowListaDatiFatturazione");
+                //localStorage.removeItem("filtersListaDatiFatturazione");
+                //localStorage.removeItem("pageRowListaDatiFatturazione");
                
                
             }else if(profilo.auth === 'PAGOPA'&& mainState.statusPageDatiFatturazione === 'immutable'){
@@ -71,19 +71,19 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
                 localStorage.removeItem("pageRowListaModuliCommessa");
                 localStorage.removeItem("filtersRel");
                 localStorage.removeItem("filtersNotifiche");
-                localStorage.removeItem("filtersListaDatiFatturazione");
-                localStorage.removeItem("pageRowListaDatiFatturazione");
+                // localStorage.removeItem("filtersListaDatiFatturazione");
+                // localStorage.removeItem("pageRowListaDatiFatturazione");
             }else if(enti && mainState.statusPageDatiFatturazione === 'mutable'){
                 getDatiFat();
                 handleModifyMainState({statusPageDatiFatturazione:'immutable'});
                 navigate(open.clickOn);
                 setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
-                localStorage.removeItem("filtersModuliCommessa");
+                /* localStorage.removeItem("filtersModuliCommessa");
                 localStorage.removeItem("pageRowListaModuliCommessa");
                 localStorage.removeItem("filtersRel");
                 localStorage.removeItem("filtersNotifiche");
                 localStorage.removeItem("filtersListaDatiFatturazione");
-                localStorage.removeItem("pageRowListaDatiFatturazione");
+                localStorage.removeItem("pageRowListaDatiFatturazione");*/
             }
         }
         if(location.pathname === PathPf.MODULOCOMMESSA){
@@ -97,8 +97,8 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
                 navigate(open.clickOn);
                 setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
                 handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
-                localStorage.removeItem("filtersModuliCommessa");
-                localStorage.removeItem("pageRowListaModuliCommessa");
+                // localStorage.removeItem("filtersModuliCommessa");
+                // localStorage.removeItem("pageRowListaModuliCommessa");
                 localStorage.removeItem("filtersRel");
                 localStorage.removeItem("filtersNotifiche");
                 localStorage.removeItem("filtersListaDatiFatturazione");
