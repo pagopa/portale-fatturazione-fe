@@ -130,7 +130,7 @@ const App = ({ instance }) => {
     // in quel caso il get profilo viene chiamato nella page auth
   
     useEffect(()=>{
-        if(mainState.nonce === '' && Object.values(profilo).length !== 0 && window.location.pathname  !== '/azureLogin'){
+        if(mainState.nonce === '' && Object.values(profilo).length !== 0 && window.location.pathname  !== '/azureLogin' && window.location.pathname  !== '/auth' && window.location.pathname  !== '/azure'){
             getProfiloToGetNonce();
         }  
     },[mainState.nonce]);
