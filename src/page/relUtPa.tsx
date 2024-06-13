@@ -264,9 +264,9 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         await downloadListaRelPdfZipPagopa(token,mainState.nonce,bodyRel)
             .then(response => response.blob())
             .then(blob => {
-                let fileName = `REL /Frimate / ${mesiWithZero[bodyRel.mese -1]} / ${bodyRel.anno}.zip`;
+                let fileName = `REL /Firmate / ${mesiWithZero[bodyRel.mese -1]} / ${bodyRel.anno}.zip`;
                 if(bodyDownload.idEnti.length === 1){
-                    fileName = `REL /Frimate /${data[0]?.ragioneSociale}/${mesiWithZero[bodyRel.mese -1]} / ${bodyRel.anno}.zip`;
+                    fileName = `REL /Firmate /${data[0]?.ragioneSociale}/${mesiWithZero[bodyRel.mese -1]} / ${bodyRel.anno}.zip`;
                 }
                 saveAs(blob,fileName );
                 setShowLoading(false);
