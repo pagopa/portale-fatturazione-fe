@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, Suspense} from 'react';
 import { manageError, redirect } from '../api/api';
 import { useNavigate} from 'react-router';
 import '../style/areaPersonaleUtenteEnte.css';
@@ -21,6 +21,7 @@ import BasicModal from '../components/reusableComponents/modals/modal';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import {PathPf} from '../types/enum';
 import { getProfilo, getStatusApp, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from '../reusableFunction/actionLocalStorage';
+import SuspenseDatiFatturazione from '../components/areaPersonale/suspense';
 
 
 const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, dispatchMainState, open, setOpen}) => {
@@ -286,14 +287,10 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
        || datiFatturazione.pec === ''
        || datiFatturazione.contatti.length === 0
     );
-    /*
-    datiFatturazione,
-                setDatiFatturazione,
-                setStatusButtonConferma,
-                mainState */
+  
 
     return (
-       
+      
         <div >
             <PageTitleNavigation dispatchMainState={dispatchMainState} setOpen={setOpen} mainState={mainState} /> 
             {/* tab 1 e 2 start */}
@@ -327,8 +324,9 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
             <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}></ModalLoading>
             {/*  <BasicAlerts typeAlert={'error'} setVisible={setAlertVisible}  visible={alertVisible}></BasicAlerts>*/}
         </div>
-     
     );
 };
 
 export default  AreaPersonaleUtenteEnte;
+
+

@@ -1,6 +1,6 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import {useState, useReducer, useEffect} from 'react';
+import {useState, useReducer, useEffect, Suspense} from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate} from 'react-router-dom';
 import { ThemeProvider, Grid } from '@mui/material';
 import {theme} from '@pagopa/mui-italia';
@@ -77,7 +77,7 @@ const App = ({ instance }) => {
     const profilo =  getProfilo();
     const tabActive = useIsTabActive();
     const enti = profiliEnti();
-
+    console.log({tabActive});
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
             type:'MODIFY_MAIN_STATE',
@@ -113,8 +113,8 @@ const App = ({ instance }) => {
         if(mainState.apiError !== null){
             setShowAlert(true);
         }
-        
     }, [mainState.apiError]);
+    
     // questa chiamata viene eseguita esclusivamente se l'utenete fa un reload page cosi da inserire nuovamente il NONCE nel DOM
     const getProfiloToGetNonce = async () =>{
         await getAuthProfilo(profilo.jwt)
@@ -142,6 +142,7 @@ const App = ({ instance }) => {
     },[tabActive, mainState.nonce]);
    
     const recOrConsIsLogged = profilo.profilo === 'REC' || profilo.profilo ==='CON';
+
    
     let route;
 
@@ -238,7 +239,7 @@ const App = ({ instance }) => {
                                 
                                     <Route path="azure" element={<Azure dispatchMainState={ dispatchMainState}/>} />
                                 
-                                    <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte mainState={mainState} dispatchMainState={ dispatchMainState} setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} />} />
+                                    <Route path={PathPf.DATI_FATTURAZIONE} element={ <AreaPersonaleUtenteEnte mainState={mainState} dispatchMainState={ dispatchMainState} setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom}></AreaPersonaleUtenteEnte>} />
                            
                                     <Route path={PathPf.LISTA_COMMESSE} element={<ModuloCommessaElencoUtPa mainState={mainState}  dispatchMainState={ dispatchMainState} valueSelect={valueAnnoElencoCom}  setValueSelect={setValueAnnoElencoCom}  />} />
                           
