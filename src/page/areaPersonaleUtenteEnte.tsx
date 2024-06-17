@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext  } from 'react';
+import React, { useState, useEffect} from 'react';
 import { manageError, redirect } from '../api/api';
 import { useNavigate} from 'react-router';
 import '../style/areaPersonaleUtenteEnte.css';
@@ -6,7 +6,6 @@ import { Button } from '@mui/material';
 import TabAreaPersonaleUtente from '../components/areaPersonale/tabAreaPersonaleUtente';
 import PageTitleNavigation from '../components/areaPersonale/pageTitleNavigation';
 import {
-    AreaPersonaleContext,
     DatiFatturazione,
     StateEnableConferma,
     AreaPersonaleProps,
@@ -23,23 +22,6 @@ import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import {PathPf} from '../types/enum';
 import { getProfilo, getStatusApp, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from '../reusableFunction/actionLocalStorage';
 
-export const DatiFatturazioneContext = createContext<AreaPersonaleContext>({
-    datiFatturazione:{
-        idEnte:'',
-        tipoCommessa:'',
-        splitPayment:true,
-        cup: '',
-        idDocumento:'',
-        codCommessa:'',
-        contatti:[],
-        dataCreazione:'',
-        dataModifica:'',
-        dataDocumento:'',
-        pec:'',
-        notaLegale:false
-
-    }
-});
 
 const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, dispatchMainState, open, setOpen}) => {
    
@@ -304,48 +286,48 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
        || datiFatturazione.pec === ''
        || datiFatturazione.contatti.length === 0
     );
-
-    return (
-        <DatiFatturazioneContext.Provider
-            value={{
-                datiFatturazione,
+    /*
+    datiFatturazione,
                 setDatiFatturazione,
                 setStatusButtonConferma,
-                mainState}}>
-            <div >
-                <PageTitleNavigation dispatchMainState={dispatchMainState} setOpen={setOpen} /> 
-                {/* tab 1 e 2 start */}
-                <div className='mt-5'>
-                    <TabAreaPersonaleUtente />
-                </div>
-                <div>
-                    {mainState.statusPageDatiFatturazione === 'immutable' ? null : (
-                        <div className="d-flex justify-content-between m-5 ">
-                            <Button
-                                onClick={() => onIndietroButtonPagoPa()}
-                                disabled={mainState.datiFatturazione === false || mainState.statusPageDatiFatturazione === 'immutable' }
-                                variant="outlined"
-                                size="medium"
-                            >
-              Indietro
-                            </Button>
-                            <Button
-                                variant="contained"
-                                size="medium"
-                                type='submit'
-                                onClick={(e) => hendleSubmitDatiFatturazione(e)}
-                                disabled={!enableDisableConferma || ifAnyTextAreaIsEmpty}
-                            >
-              Salva
-                            </Button>
-                        </div>
-                    )}
-                </div>
-                <BasicModal setOpen={setOpen} open={open} dispatchMainState={dispatchMainState} getDatiFat={getDatiFat} getDatiFatPagoPa={getDatiFatPagoPa} mainState={mainState}></BasicModal>
-                <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}></ModalLoading>
-                {/*  <BasicAlerts typeAlert={'error'} setVisible={setAlertVisible}  visible={alertVisible}></BasicAlerts>*/}
+                mainState */
+
+    return (
+       
+        <div >
+            <PageTitleNavigation dispatchMainState={dispatchMainState} setOpen={setOpen} mainState={mainState} /> 
+            {/* tab 1 e 2 start */}
+            <div className='mt-5'>
+                <TabAreaPersonaleUtente mainState={mainState} datiFatturazione={datiFatturazione} setDatiFatturazione={setDatiFatturazione} setStatusButtonConferma={setStatusButtonConferma} />
             </div>
-        </DatiFatturazioneContext.Provider>
+            <div>
+                {mainState.statusPageDatiFatturazione === 'immutable' ? null : (
+                    <div className="d-flex justify-content-between m-5 ">
+                        <Button
+                            onClick={() => onIndietroButtonPagoPa()}
+                            disabled={mainState.datiFatturazione === false || mainState.statusPageDatiFatturazione === 'immutable' }
+                            variant="outlined"
+                            size="medium"
+                        >
+              Indietro
+                        </Button>
+                        <Button
+                            variant="contained"
+                            size="medium"
+                            type='submit'
+                            onClick={(e) => hendleSubmitDatiFatturazione(e)}
+                            disabled={!enableDisableConferma || ifAnyTextAreaIsEmpty}
+                        >
+              Salva
+                        </Button>
+                    </div>
+                )}
+            </div>
+            <BasicModal setOpen={setOpen} open={open} dispatchMainState={dispatchMainState} getDatiFat={getDatiFat} getDatiFatPagoPa={getDatiFatPagoPa} mainState={mainState}></BasicModal>
+            <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}></ModalLoading>
+            {/*  <BasicAlerts typeAlert={'error'} setVisible={setAlertVisible}  visible={alertVisible}></BasicAlerts>*/}
+        </div>
+     
     );
 };
 

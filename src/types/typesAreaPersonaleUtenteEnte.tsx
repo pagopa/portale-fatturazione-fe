@@ -92,7 +92,11 @@ export interface TextFieldProps {
     value : string,
     keyObject:string,
     dataValidation:ObjectValidationTextArea 
-    required:boolean
+    required:boolean,
+    mainState:MainState,
+    setDatiFatturazione:any,
+    setStatusButtonConferma:any,
+    datiFatturazione:DatiFatturazione
 
 }
 
@@ -101,12 +105,18 @@ export interface RadioComponentProps {
     label?: string,
     options:OptinsRadio[],
     keyObject:string,
+    mainState:MainState,
+    datiFatturazione:DatiFatturazione, 
+    setDatiFatturazione?:any,
 
 }
 
 export interface DataProps {
     dataLabel: string,
     formatDate: string,
+    mainState:MainState,
+    setDatiFatturazione:any,
+    datiFatturazione:DatiFatturazione
 }
 
 export interface Email {
@@ -117,7 +127,9 @@ export interface Email {
 export interface DynamicInsertProps {
     status: string,
     arrElement: Email[],
-    setData: any
+    setData: any,
+    datiFatturazione:DatiFatturazione,
+    mainState:MainState
 }
 
 

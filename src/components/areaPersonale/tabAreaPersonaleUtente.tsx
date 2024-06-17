@@ -1,4 +1,3 @@
-import {useContext } from 'react';
 import '../../style/areaPersonaleUtenteEnte.css';
 import { Box, InputLabel, Typography, Checkbox, FormControlLabel } from '@mui/material';
 import { red } from '@mui/material/colors';
@@ -6,13 +5,19 @@ import RadioComponent from './radio';
 import DataComponent from './data';
 import DynamicInsert from './dynamicInsert';
 import TextFieldComponent from './textField';
-import {AreaPersonaleContext} from '../../types/typesAreaPersonaleUtenteEnte';
-import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
 import { getProfilo } from '../../reusableFunction/actionLocalStorage';
 import { createDateFromString } from '../../reusableFunction/function';
+import { MainState } from '../../types/typesGeneral';
+import { DatiFatturazione } from '../../types/typesAreaPersonaleUtenteEnte';
+interface TabAreaProps{
+    mainState:MainState,
+    datiFatturazione:DatiFatturazione,
+    setDatiFatturazione:any,
+    setStatusButtonConferma:any
+}
 
-const TabAreaPersonaleUtente = () => {
-    const {mainState,datiFatturazione,setDatiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
+const TabAreaPersonaleUtente: React.FC<TabAreaProps>  = ({mainState,datiFatturazione,setDatiFatturazione,setStatusButtonConferma}) => {
+  
     const parseProfilo  =  getProfilo();
 
     const valueOptionRadioTipoOrdine = [
@@ -36,6 +41,10 @@ const TabAreaPersonaleUtente = () => {
                         options={valueOptionRadioTipoOrdine}
                         valueRadio={datiFatturazione.tipoCommessa}
                         keyObject='tipoCommessa'
+                        mainState={mainState} 
+                        setDatiFatturazione={setDatiFatturazione}
+                        datiFatturazione={datiFatturazione}
+                        
                     />
                 </div>
 
@@ -53,6 +62,10 @@ const TabAreaPersonaleUtente = () => {
                                 value={datiFatturazione.cup}
                                 keyObject='cup'
                                 dataValidation={{max:15,validation:'Validazione Mail'}}
+                                mainState={mainState}
+                                setDatiFatturazione={setDatiFatturazione}
+                                setStatusButtonConferma={setStatusButtonConferma}
+                                datiFatturazione={datiFatturazione}
                             />
                         </div>
                         {/* CUP end */}
@@ -63,6 +76,9 @@ const TabAreaPersonaleUtente = () => {
                                 label="Split Payment"
                                 options={valueOptionRadioSplitPayment}
                                 keyObject='splitPayment'
+                                mainState={mainState} 
+                                setDatiFatturazione={setDatiFatturazione}
+                                datiFatturazione={datiFatturazione}
                             />
                         </div>
                     </Box>
@@ -78,6 +94,11 @@ const TabAreaPersonaleUtente = () => {
                                 value={datiFatturazione.pec}
                                 keyObject='pec'
                                 dataValidation={{max:15,validation:'Max 15 caratteri'}}
+                                mainState={mainState}
+                                setDatiFatturazione={setDatiFatturazione}
+                                setStatusButtonConferma={setStatusButtonConferma}
+                                datiFatturazione={datiFatturazione}
+                                
                             />
                         </div>
                     </Box>
@@ -99,6 +120,10 @@ const TabAreaPersonaleUtente = () => {
                                     value={datiFatturazione.idDocumento}
                                     keyObject='idDocumento'
                                     dataValidation={{max:20,validation:'Max 20 caratteri'}}
+                                    mainState={mainState}
+                                    setDatiFatturazione={setDatiFatturazione}
+                                    setStatusButtonConferma={setStatusButtonConferma}
+                                    datiFatturazione={datiFatturazione}
                                 />
                             </div>
                             {/* id documento end */}
@@ -107,6 +132,9 @@ const TabAreaPersonaleUtente = () => {
                                 <DataComponent 
                                     dataLabel="Data documento"
                                     formatDate="dd/MM/yyyy"
+                                    mainState={mainState}
+                                    datiFatturazione={datiFatturazione}
+                                    setDatiFatturazione={setDatiFatturazione}
                                 />
                             </div>
                             {/* data notifica end */}
@@ -122,6 +150,10 @@ const TabAreaPersonaleUtente = () => {
                                 value={datiFatturazione.codCommessa}
                                 keyObject='codCommessa'
                                 dataValidation={{max:100,validation:'Max 100 caratteri'}}
+                                mainState={mainState}
+                                setDatiFatturazione={setDatiFatturazione}
+                                setStatusButtonConferma={setStatusButtonConferma}
+                                datiFatturazione={datiFatturazione}
                             />
                         </div>
                         {/* commessa end */}
@@ -131,7 +163,7 @@ const TabAreaPersonaleUtente = () => {
                 {/* secondo box   end */}
                 {/* terzo box   start */}
                 <div className="mt-3">
-                    <DynamicInsert status={mainState?.statusPageDatiFatturazione} arrElement={datiFatturazione.contatti} setData={setDatiFatturazione} />
+                    <DynamicInsert status={mainState?.statusPageDatiFatturazione} arrElement={datiFatturazione.contatti} setData={setDatiFatturazione} mainState={mainState} datiFatturazione={datiFatturazione}/>
                 </div>
                 {/* terzo box   end */}
                 {/*checkbox start */}
