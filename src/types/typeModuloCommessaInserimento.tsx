@@ -33,11 +33,23 @@ export interface InsModuloCommessaContext {
     mainState?:any,
     dispatchMainState?:any
 }
+
+
+export interface SecondoContainerProps{
+    totale:TotaleNazionaleInternazionale,
+    mainState:MainState,
+    dispatchMainState:any,
+    setDatiCommessa:any,
+    datiCommessa:DatiCommessa
+}
 export interface RowInsComProps {
     sentence : string,
     textBoxHidden : boolean
     idTipoSpedizione:number,
-    rowNumber : number
+    rowNumber : number,
+    setDatiCommessa:any,
+    datiCommessa:DatiCommessa,
+    mainState:MainState
 }
 
 export interface DataTotaleObj {

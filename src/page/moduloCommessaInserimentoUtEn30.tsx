@@ -26,33 +26,6 @@ import { calculateTot } from '../reusableFunction/function';
 import { month } from '../reusableFunction/reusableArrayObj';
 import ModalConfermaInserimento from '../components/commessaInserimento/modalConfermaInserimento';
 
-export const InserimentoModuloCommessaContext = createContext<InsModuloCommessaContext>({
-    datiCommessa: {
-        moduliCommessa: [
-            {
-                numeroNotificheNazionali: 0,
-                numeroNotificheInternazionali: 0,
-                totaleNotifiche:0,
-                idTipoSpedizione: 1
-            },
-            {
-                numeroNotificheNazionali: 0,
-                numeroNotificheInternazionali: 0,
-                totaleNotifiche:0,
-                idTipoSpedizione: 2
-            },
-            {
-                numeroNotificheNazionali: 0,
-                numeroNotificheInternazionali: 0,
-                totaleNotifiche:0,
-                idTipoSpedizione: 3
-            }
-          
-        ]
-    },
-    totale:{totaleNazionale:0, totaleInternazionale:0, totaleNotifiche:0}
-   
-});
 
 const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps> = ({mainState, dispatchMainState, open, setOpen}) => {
 
@@ -390,17 +363,18 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
         actionTitle = <Typography variant="h4">Modulo commessa</Typography>;
     }
 
-    return (
-        <InserimentoModuloCommessaContext.Provider
-            value={{
-                setDatiCommessa,
+    /*
+    setDatiCommessa,
                 datiCommessa,
                 totaliModuloCommessa,
                 setTotale,
                 totale,
                 mainState,
                 dispatchMainState
-            }}>
+     */
+
+    return (
+        <>
             <BasicModal setOpen={setOpen} open={open} dispatchMainState={dispatchMainState} handleGetDettaglioModuloCommessa={handleGetDettaglioModuloCommessa} handleGetDettaglioModuloCommessaPagoPa={handleGetDettaglioModuloCommessaPagoPa} mainState={mainState}></BasicModal>
             {/*Hide   modulo commessa sul click contina , save del modulo commessa cosi da mostrare dati fatturazione,
             il componente visualizzato è AreaPersonaleUtenteEnte  */}
@@ -439,7 +413,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 <div>
                     <div className="bg-white mt-3 pt-3">
                         <PrimoContainerInsCom />
-                        <SecondoContainerInsCom  />
+                        <SecondoContainerInsCom totale={totale} mainState={mainState} dispatchMainState={dispatchMainState} setDatiCommessa={setDatiCommessa} datiCommessa={datiCommessa} />
                     </div>
                     <div className='bg-white'>
                         <TerzoContainerInsCom valueTotali={totaliModuloCommessa} dataModifica={dataMod} mainState={mainState}/>
@@ -453,7 +427,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                                     onClick={()=>onIndietroButton()}
                                 >Indietro
                                 </Button>
-                                <Button variant="contained" 
+                                <Button 
+                                    variant="contained" 
                                     onClick={()=>{ 
                                         OnButtonSalva();      
                                     }}              
@@ -478,7 +453,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 mainState={mainState}
             ></ModalConfermaInserimento>
             <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}></ModalLoading>
-        </InserimentoModuloCommessaContext.Provider>
+        </>
     );
 };
 
