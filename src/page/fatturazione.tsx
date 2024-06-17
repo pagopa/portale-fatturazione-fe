@@ -147,9 +147,9 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
             }
             throw '404';
         }).then((response)=>{
-            let title = `Lista report/${month[bodyFatturazioneDownload.mese - 1]}/${bodyFatturazioneDownload.anno}.xlsx`;
+            let title = `Lista report/${month[bodyFatturazioneDownload.mese - 1]}/${bodyFatturazioneDownload.anno}.zip`;
             if(bodyFatturazioneDownload.idEnti.length === 1 && gridData[0]){
-                title = `Lista report/ ${gridData[0]?.ragionesociale}/${month[bodyFatturazioneDownload.mese - 1]}/${bodyFatturazioneDownload.anno}.xlsx`;
+                title = `Lista report/ ${gridData[0]?.ragionesociale}/${month[bodyFatturazioneDownload.mese - 1]}/${bodyFatturazioneDownload.anno}.zip`;
             }
             saveAs(response,title);
             setShowDownloading(false);
