@@ -1,12 +1,14 @@
-import React, {useState, useContext, useEffect} from 'react';
+import React, {useState,useEffect} from 'react';
 import {TextField,} from '@mui/material';
-import {DatiFatturazione, TextFieldProps, StateEnableConferma,AreaPersonaleContext}  from '../../types/typesAreaPersonaleUtenteEnte';
-import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
+import {DatiFatturazione, TextFieldProps, StateEnableConferma}  from '../../types/typesAreaPersonaleUtenteEnte';
 import { _YupPec} from '../../validations/email/index';
 import YupString from '../../validations/string/index';
 
 const TextFieldComponent : React.FC<TextFieldProps> = props => {
-    const {mainState,setDatiFatturazione,setStatusButtonConferma, datiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
+
+    const {
+        helperText, label, placeholder, fullWidth,value,keyObject, dataValidation, required,mainState,setDatiFatturazione,setStatusButtonConferma, datiFatturazione
+    } = props;
   
     const [errorValidation, setErrorValidation] = useState(false);
 
@@ -15,9 +17,7 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
         setErrorValidation(false);
     },[mainState]);
     
-    const {
-        helperText, label, placeholder, fullWidth,value,keyObject, dataValidation, required
-    } = props;
+   
 
     const validationTextArea = (max: number, validation:string, input:string|number)=>{
         YupString.max(max, validation)

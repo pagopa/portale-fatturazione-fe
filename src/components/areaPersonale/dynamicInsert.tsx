@@ -3,18 +3,15 @@ import {
     TextField, Button, Typography, IconButton,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { useState, useContext } from 'react';
+import { useState} from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import {DynamicInsertProps,DatiFatturazione,Email,AreaPersonaleContext}  from '../../types/typesAreaPersonaleUtenteEnte';
-import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
+import {DynamicInsertProps,DatiFatturazione,Email}  from '../../types/typesAreaPersonaleUtenteEnte';
 import { _YupEmail} from '../../validations/email/index';
 
 const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
 
-    const {datiFatturazione, mainState} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
-
-    const {status, arrElement, setData} = props;
+    const {status, arrElement, setData,datiFatturazione, mainState} = props;
     const [element, setElement] = useState('');
     const [validation, setValidation] = useState(false);
 
