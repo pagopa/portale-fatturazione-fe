@@ -1,19 +1,15 @@
-import React, { useEffect, useState, useContext} from 'react';
+import React, { useEffect, useState} from 'react';
 import { Grid, Typography } from '@mui/material';
 import RowInserimentoCommessa from './rowInserimentoCommessa';
-import { InsModuloCommessaContext,ResponseCategorieSpedizione   } from '../../types/typeModuloCommessaInserimento';
-import { InserimentoModuloCommessaContext } from '../../page/moduloCommessaInserimentoUtEn30';
+import { ResponseCategorieSpedizione, SecondoContainerProps   } from '../../types/typeModuloCommessaInserimento';
 import { manageError } from '../../api/api';
-import { useNavigate } from 'react-router';
 import { ManageErrorResponse } from '../../types/typesGeneral';
 import { getCategoriaSpedizione } from '../../api/apiSelfcare/moduloCommessaSE/api';
-import { getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
+import {  getToken } from '../../reusableFunction/actionLocalStorage';
 import { getIdByTipo } from '../../reusableFunction/function';
 
-const SecondoContainerInsCom : React.FC = () => {
-    const { totale, mainState,dispatchMainState } = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
-    
-    const navigate = useNavigate();
+const SecondoContainerInsCom : React.FC<SecondoContainerProps> = ({totale, mainState,dispatchMainState, setDatiCommessa,datiCommessa}) => {
+
     const token =  getToken();
 
     const [arrTipoSpedizione , setArrTipoSpedizione] = useState({
@@ -49,6 +45,9 @@ const SecondoContainerInsCom : React.FC = () => {
                 textBoxHidden={false}
                 idTipoSpedizione={arrTipoSpedizione.idSpedizioneDigitale}
                 rowNumber={3}
+                mainState={mainState}
+                setDatiCommessa={setDatiCommessa}
+                datiCommessa={datiCommessa}
             />
             {/* prima row end */}
             <hr></hr>
@@ -58,6 +57,9 @@ const SecondoContainerInsCom : React.FC = () => {
                 textBoxHidden={false}
                 idTipoSpedizione={arrTipoSpedizione.idSpedizioneAnalogAR}
                 rowNumber={1}
+                mainState={mainState}
+                setDatiCommessa={setDatiCommessa}
+                datiCommessa={datiCommessa}
             />
             {/* seconda row end */}
             {/* terza row start */}
@@ -67,6 +69,9 @@ const SecondoContainerInsCom : React.FC = () => {
                 textBoxHidden
                 idTipoSpedizione={arrTipoSpedizione.idSpedizioneAnalog890}
                 rowNumber={2}
+                mainState={mainState}
+                setDatiCommessa={setDatiCommessa}
+                datiCommessa={datiCommessa}
             />
             <hr></hr>
             {/* terza row end */}

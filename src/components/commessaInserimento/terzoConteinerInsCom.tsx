@@ -42,11 +42,13 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
             descrizione: ''
         }]);
 
+ 
+
     useEffect(()=>{
         if(mainState.nonce !== ''){
             getConfigurazione();
         }
-    },[]);
+    },[mainState.nonce]);
 
     const replaceDate = (arr:[], stringToRepace:string, stringToInsert:string) =>{
         return arr.map((singleObj:CategorieTotali) =>{
