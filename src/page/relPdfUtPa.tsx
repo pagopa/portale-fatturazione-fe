@@ -21,6 +21,7 @@ import { getProfilo, getStatusApp, getToken, profiliEnti } from '../reusableFunc
 import {mesiWithZero, month } from '../reusableFunction/reusableArrayObj';
 import { createDateFromString } from '../reusableFunction/function';
 import ModalRedirect from '../components/commessaInserimento/madalRedirect';
+import SkeletonRelPdf from '../components/rel/skeletonRelPdf';
 
 const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) =>{
 
@@ -273,7 +274,11 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
         }
     };  
 
-    // const classContainerButtons = enti ? 'd-flex justify-content-between m-5': 'd-flex justify-content-end m-5';
+    if(loadingDettaglio){
+        return(
+            <SkeletonRelPdf></SkeletonRelPdf>
+        );
+    }
 
     return (
         <div>
@@ -366,11 +371,6 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                 open={showDownloading} 
                 setOpen={setShowDownloading}
                 sentence={'Downloading...'} >
-            </ModalLoading>
-            <ModalLoading 
-                open={loadingDettaglio} 
-                setOpen={setLoadingDettaglio}
-                sentence={'Loading...'} >
             </ModalLoading>
         </div>
     );
