@@ -42,23 +42,23 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
     useEffect(()=>{
         const result = getFiltersFromLocalStorage();
         const infoPageResult = getInfoPageFromLocalStorage();
-        if(mainState.nonce !== ''){
-            getProdotti();
-            getProfili();
-            if(Object.keys(result).length > 0){
-                setBodyGetLista(result.bodyGetLista);
-                setTextValue(result.textValue);
-                setValueAutocomplete(result.valueAutocomplete);
-                getListaDatifatturazione(result.bodyGetLista);
-                setFiltersDownload(result.bodyGetLista);
-            }else{
-                getListaDatifatturazione(bodyGetLista);
-            }
-            if(infoPageResult.page > 0){
-                setInfoPageListaDatiFat(infoPageResult);
-            }
+       
+        getProdotti();
+        getProfili();
+        if(Object.keys(result).length > 0){
+            setBodyGetLista(result.bodyGetLista);
+            setTextValue(result.textValue);
+            setValueAutocomplete(result.valueAutocomplete);
+            getListaDatifatturazione(result.bodyGetLista);
+            setFiltersDownload(result.bodyGetLista);
+        }else{
+            getListaDatifatturazione(bodyGetLista);
         }
-    }, [mainState.nonce]);
+        if(infoPageResult.page > 0){
+            setInfoPageListaDatiFat(infoPageResult);
+        }
+        
+    }, []);
 
     useEffect(()=>{
         if(token === undefined){
@@ -98,7 +98,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
   
 
     const getProdotti = async() => {
-        await getTipologiaProdotto(token,mainState.nonce )
+        await getTipologiaProdotto(token,profilo.nonce )
             .then((res)=>{
                 setProdotti(res.data);
             })
@@ -108,7 +108,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
     };
 
     const getProfili = async() => {
-        await getTipologiaProfilo(token,mainState.nonce)
+        await getTipologiaProfilo(token,profilo.nonce)
             .then((res)=>{
                 setProfili(res.data);
             })
@@ -119,7 +119,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
 
     const getListaDatifatturazione = async(body:BodyListaDatiFatturazione) =>{
         setGetListaLoading(true);
-        await listaDatiFatturazionePagopa(body ,token,mainState.nonce)
+        await listaDatiFatturazionePagopa(body ,token,profilo.nonce)
             .then((res)=>{
                 setGridData(res.data);
                 setGetListaLoading(false);
@@ -135,7 +135,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
     // servizio che popola la select con la checkbox
     const listaEntiNotifichePageOnSelect = async () =>{
         if(profilo.auth === 'PAGOPA'){
-            await listaEntiNotifichePage(token, mainState.nonce, {descrizione:textValue} )
+            await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} )
                 .then((res)=>{
                     setDataSelect(res.data);
                 })
@@ -147,7 +147,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
 
     const onDownloadButton = async() =>{
         setShowLoading(true);
-        await downloadDocumentoListaDatiFatturazionePagoPa(token,mainState.nonce, filtersDownload).then((res:ResponseDownloadListaFatturazione) => {
+        await downloadDocumentoListaDatiFatturazionePagoPa(token,profilo.nonce, filtersDownload).then((res:ResponseDownloadListaFatturazione) => {
             let fileName = `Lista dati di fatturazione.xlsx`;
             if(gridData.length === 1){
                 fileName = `Dati di fatturazione / ${gridData[0]?.ragioneSociale}.xlsx`;

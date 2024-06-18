@@ -118,35 +118,35 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
     useEffect(() => {
        
         const result = getFiltersFromLocalStorageNotifiche();
-        if(mainState.nonce !== ''){
-            getProdotti();
-            if(Object.keys(result).length > 0){
+        
+        getProdotti();
+        if(Object.keys(result).length > 0){
                
-                getProfili();
-                setBodyGetLista(result.bodyGetLista);
-                setTextValue(result.textValue);
-                setValueAutocomplete(result.valueAutocomplete);
-                setValueFgContestazione(result.valueFgContestazione);
-                setPage(result.page);
-                setRowsPerPage(result.rowsPerPage);
-                setBodyDownload(result.bodyGetLista);
+            getProfili();
+            setBodyGetLista(result.bodyGetLista);
+            setTextValue(result.textValue);
+            setValueAutocomplete(result.valueAutocomplete);
+            setValueFgContestazione(result.valueFgContestazione);
+            setPage(result.page);
+            setRowsPerPage(result.rowsPerPage);
+            setBodyDownload(result.bodyGetLista);
 
-                if(profilo.auth === 'SELFCARE'){
-                    getlistaNotifiche( result.page + 1, result.rowsPerPage,result.bodyGetLista); 
-                }else if(profilo.auth === 'PAGOPA'){
-                    getRecapitistConsolidatori();
-                    getlistaNotifichePagoPa( result.page + 1, result.rowsPerPage,result.bodyGetLista);
-                }
-            }else{
-                if(profilo.auth === 'SELFCARE'){
-                    getlistaNotifiche( page + 1, rowsPerPage,bodyGetLista); 
-                }else if(profilo.auth === 'PAGOPA'){
-                    getRecapitistConsolidatori();
-                    getlistaNotifichePagoPa( page + 1, rowsPerPage,bodyGetLista);
-                }
+            if(profilo.auth === 'SELFCARE'){
+                getlistaNotifiche( result.page + 1, result.rowsPerPage,result.bodyGetLista); 
+            }else if(profilo.auth === 'PAGOPA'){
+                getRecapitistConsolidatori();
+                getlistaNotifichePagoPa( result.page + 1, result.rowsPerPage,result.bodyGetLista);
             }
-        } 
-    }, [mainState.nonce]);
+        }else{
+            if(profilo.auth === 'SELFCARE'){
+                getlistaNotifiche( page + 1, rowsPerPage,bodyGetLista); 
+            }else if(profilo.auth === 'PAGOPA'){
+                getRecapitistConsolidatori();
+                getlistaNotifichePagoPa( page + 1, rowsPerPage,bodyGetLista);
+            }
+        }
+        
+    }, []);
 
     useEffect(()=>{
         if( 
@@ -192,7 +192,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
     // servizio che popola la select con la checkbox
     const listaEntiNotifichePageOnSelect = async () =>{
         if(profilo.profilo === 'CON'){
-            await listaEntiNotifichePageConsolidatore(token, mainState.nonce, {descrizione:textValue} )
+            await listaEntiNotifichePageConsolidatore(token, profilo.nonce, {descrizione:textValue} )
                 .then((res)=>{
                     setDataSelect(res.data);
                 })
@@ -200,7 +200,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                     manageError(err,dispatchMainState);
                 }));
         }else if(profilo.auth === 'PAGOPA'){
-            await listaEntiNotifichePage(token, mainState.nonce, {descrizione:textValue} )
+            await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} )
                 .then((res)=>{
                     setDataSelect(res.data);
                 })
@@ -324,7 +324,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
         setGetNotificheWorking(true);
         const {idEnti, recapitisti, consolidatori, ...body} = newBody;
         if(enti){
-            await listaNotifiche(token,mainState.nonce,1,10, body)
+            await listaNotifiche(token,profilo.nonce,1,10, body)
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
                     setTotalNotifiche(res.data.count); 
@@ -336,7 +336,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                     manageError(error, dispatchMainState);
                 });
         }else if(profilo.profilo === 'REC'){
-            await listaNotificheRecapitista(token,mainState.nonce,1, 10, body)
+            await listaNotificheRecapitista(token,profilo.nonce,1, 10, body)
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
                     setTotalNotifiche(res.data.count);
@@ -350,7 +350,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                     manageError(error, dispatchMainState);
                 });
         }else if(profilo.profilo === 'CON'){
-            await listaNotificheConsolidatore(token,mainState.nonce,1, 10, body)
+            await listaNotificheConsolidatore(token,profilo.nonce,1, 10, body)
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
                     setTotalNotifiche(res.data.count);
@@ -364,7 +364,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                     manageError(error, dispatchMainState);
                 });
         }else if(profilo.auth === 'PAGOPA'){
-            await listaNotifichePagoPa(token,mainState.nonce,1,10, newBody)
+            await listaNotifichePagoPa(token,profilo.nonce,1,10, newBody)
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
                     setTotalNotifiche(res.data.count);
@@ -385,7 +385,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
         // disable button filtra e annulla filtri nell'attesa dei dati
         setGetNotificheWorking(true);
         if(enti){
-            await listaNotifiche(token,mainState.nonce,nPage, nRow, newBody)
+            await listaNotifiche(token,profilo.nonce,nPage, nRow, newBody)
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
                     setTotalNotifiche(res.data.count);
@@ -403,7 +403,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                     manageError(error, dispatchMainState);
                 });
         }else if(profilo.profilo === 'REC'){
-            await listaNotificheRecapitista(token,mainState.nonce,nPage, nRow, newBody)
+            await listaNotificheRecapitista(token,profilo.nonce,nPage, nRow, newBody)
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
                     setTotalNotifiche(res.data.count);
@@ -421,7 +421,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                     manageError(error, dispatchMainState);
                 });
         }else if(profilo.profilo === 'CON'){
-            await listaNotificheConsolidatore(token,mainState.nonce,nPage, nRow,newBody)
+            await listaNotificheConsolidatore(token,profilo.nonce,nPage, nRow,newBody)
                 .then((res)=>{
                     setNotificheList(res.data.notifiche);
                     setTotalNotifiche(res.data.count);
@@ -445,7 +445,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
         // disable button filtra e annulla filtri nell'attesa dei dati
         setGetNotificheWorking(true);
         setShowLoadingGrid(true);
-        await listaNotifichePagoPa(token,mainState.nonce,nPage, nRow, bodyParameter)
+        await listaNotifichePagoPa(token,profilo.nonce,nPage, nRow, bodyParameter)
             .then((res)=>{
                 // abilita button filtra e annulla filtri all'arrivo dei dati
                 setGetNotificheWorking(false);
@@ -485,8 +485,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
             getlistaNotifichePagoPa(realPage,rowsPerPage, bodyGetLista);
         }
         setPage(newPage);
-        const result = getFiltersFromLocalStorageNotifiche();
-        setFilterToLocalStorageNotifiche(result.bodyGetLista,result.textValue,result.valueAutocomplete, newPage, rowsPerPage, result.valueFgContestazione);
+       
+        setFilterToLocalStorageNotifiche(bodyDownload,textValue,valueAutocomplete, newPage, rowsPerPage, valueFgContestazione);
        
     };
                     
@@ -495,8 +495,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
     ) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
-        const result = getFiltersFromLocalStorageNotifiche();
-        setFilterToLocalStorageNotifiche(result.bodyGetLista,result.textValue,result.valueAutocomplete, page, parseInt(event.target.value, 10),result.valueFgContestazione);
+      
+        setFilterToLocalStorageNotifiche(bodyDownload,textValue,valueAutocomplete, page, parseInt(event.target.value, 10),valueFgContestazione);
         const realPage = page + 1;
         if(profilo.auth === 'SELFCARE'){
             getlistaNotifiche(realPage,parseInt(event.target.value, 10),bodyGetLista);
@@ -508,13 +508,13 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
 
     const getRecapitistConsolidatori = async() =>{
      
-        await getTipologiaEntiCompletiPagoPa(token, mainState.nonce, 'REC').then((res)=>{     
+        await getTipologiaEntiCompletiPagoPa(token, profilo.nonce, 'REC').then((res)=>{     
             
             setListaRecapitisti(res.data);
         }).catch(((err)=>{
             manageError(err,dispatchMainState);
         }));
-        await getTipologiaEntiCompletiPagoPa(token, mainState.nonce, 'CON').then((res)=>{          
+        await getTipologiaEntiCompletiPagoPa(token, profilo.nonce, 'CON').then((res)=>{          
             setListaConsolidatori(res.data);
         }).catch(((err)=>{
             manageError(err,dispatchMainState);
@@ -522,7 +522,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
     };
                         
     const getProdotti = async() => {
-        await getTipologiaProdotto(token, mainState.nonce )
+        await getTipologiaProdotto(token, profilo.nonce )
             .then((res)=>{          
                 setProdotti(res.data);
             })
@@ -532,7 +532,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
     };
                                             
     const getProfili = async() => {
-        await getTipologiaProfilo(token, mainState.nonce )
+        await getTipologiaProfilo(token, profilo.nonce )
             .then((res)=>{              
                 setProfili(res.data);
             })
@@ -544,7 +544,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
     const getContestazioneModal = async(idNotifica:string) =>{
         setShowLoadingGrid(true);
         if(enti){
-            await getContestazione(token, mainState.nonce , idNotifica )
+            await getContestazione(token, profilo.nonce , idNotifica )
                 .then((res)=>{
                     //se i tempi di creazione di una contestazione sono scaduti show pop up info
                     if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
@@ -564,7 +564,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                     manageError(err,dispatchMainState);
                 }));
         }else if( profilo.profilo === 'REC'){
-            await getContestazioneRecapitista(token, mainState.nonce , idNotifica )
+            await getContestazioneRecapitista(token, profilo.nonce , idNotifica )
                 .then((res)=>{
                     setShowLoadingGrid(false);
                     //se i tempi di creazione di una contestazione sono scaduti show pop up info
@@ -582,7 +582,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                     manageError(err,dispatchMainState);
                 }));
         }else if( profilo.profilo === 'CON'){
-            await getContestazioneCosolidatore(token, mainState.nonce , idNotifica )
+            await getContestazioneCosolidatore(token, profilo.nonce , idNotifica )
                 .then((res)=>{
                     setShowLoadingGrid(false);
                     //se i tempi di creazione di una contestazione sono scaduti show pop up info
@@ -600,7 +600,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                     manageError(err,dispatchMainState);
                 }));
         }else if(profilo.auth === 'PAGOPA'){
-            await getContestazionePagoPa(token, mainState.nonce , idNotifica ).then((res)=>{
+            await getContestazionePagoPa(token, profilo.nonce , idNotifica ).then((res)=>{
                 setShowLoadingGrid(false);
                 //se i tempi di creazione di una contestazione sono scaduti show pop up info
                 if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
@@ -622,7 +622,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
         setShowLoading(true);
         if(enti){
             const {idEnti, recapitisti, consolidatori, ...bodyEnti} = bodyDownload;
-            await downloadNotifche(token, mainState.nonce,bodyEnti )
+            await downloadNotifche(token, profilo.nonce,bodyEnti )
                 .then((res)=>{
                   
                     const blob = new Blob([res.data], { type: 'text/csv' });
@@ -642,7 +642,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                 }));
         }else if(profilo.profilo === 'REC'){
             const {idEnti, recapitisti, consolidatori, ...bodyRecapitista} = bodyDownload;
-            await downloadNotifcheRecapitista(token, mainState.nonce,bodyRecapitista )
+            await downloadNotifcheRecapitista(token, profilo.nonce,bodyRecapitista )
                 .then((res)=>{
                     const blob = new Blob([res.data], { type: 'text/csv' });
                     const url = window.URL.createObjectURL(blob);
@@ -661,7 +661,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                 }));
         }else if(profilo.profilo === 'CON'){
             const { idEnti, recapitisti, consolidatori, ...bodyConsolidatore} = bodyDownload;
-            await downloadNotifcheConsolidatore(token, mainState.nonce,bodyConsolidatore )
+            await downloadNotifcheConsolidatore(token, profilo.nonce,bodyConsolidatore )
                 .then((res)=>{
                     const blob = new Blob([res.data], { type: 'text/csv' });
                     const url = window.URL.createObjectURL(blob);
@@ -679,7 +679,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                     setShowLoading(false);
                 }));
         }else if(profilo.auth === 'PAGOPA'){
-            await downloadNotifchePagoPa(token, mainState.nonce,bodyDownload)
+            await downloadNotifchePagoPa(token, profilo.nonce,bodyDownload)
                 .then((res)=>{
                   
                     let fileName = `Notifiche /${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`;
@@ -1096,7 +1096,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
             <ModalScadenziario
                 open={showModalScadenziario} 
                 setOpen={setShowModalScadenziario}
-                nonce={mainState.nonce}
+                nonce={profilo.nonce}
                 profilo={profilo}
                 dispatchMainState={dispatchMainState}></ModalScadenziario>                                    
         </div>

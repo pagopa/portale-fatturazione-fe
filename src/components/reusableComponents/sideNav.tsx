@@ -79,9 +79,10 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
     // viene mostrata la grid lista commesse , solo nel momento in cui l'utente va a selezionare un comune potrà essere eseguita la
     // chiamata con i parametri necessari (id ente)
     const getDatiFat = async () =>{
+    
         const statusApp = localStorage.getItem('statusApplication')||'{}';
         const parseStatusApp = JSON.parse(statusApp);
-        await getDatiFatturazione(token,mainState.nonce).then(( ) =>{ 
+        await getDatiFatturazione(token,profilo.nonce).then(( ) =>{ 
             
             handleModifyMainState({datiFatturazione:true});
             //localStorage.setItem('statusApplication', JSON.stringify(mainState));
@@ -119,7 +120,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
             localStorage.removeItem("filtersNotifiche");
             
             await getDatiFat();
-            await getDatiModuloCommessa(token, mainState.nonce).then((res)=>{
+            await getDatiModuloCommessa(token, profilo.nonce).then((res)=>{
                  
                 if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
                         

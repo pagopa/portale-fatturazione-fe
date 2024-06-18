@@ -121,7 +121,7 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
                     //onBlur={(e)=>hendleOnBlur(e)}
                     onChange={(e)=>{
                         let value = parseInt(e.target.value);
-                        console.log(value);
+                      
                         if(!value || value < 0){
                             value = 0;
                         }

@@ -5,7 +5,7 @@ import { Params } from "../types/typesGeneral";
 import { saveAs } from "file-saver";
 import { useEffect, useState } from "react";
 import { downloadDocumentoAsseverazionePagoPa, exportDocumentoAsseverazionePagoPa, listaAsseverazionePagopa, uploadExelAsseverazionePagopa } from "../api/apiPagoPa/adesioneBandoPA/api";
-import { getToken } from "../reusableFunction/actionLocalStorage";
+import { getProfilo, getToken } from "../reusableFunction/actionLocalStorage";
 import { AdesioneBandoProps, Asseverazione } from "../types/typeAdesioneBando";
 import { manageError } from "../api/api";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
@@ -16,6 +16,7 @@ import ModalUploadPdf from "../components/rel/modalUploadPdf";
 const AdesioneBando : React.FC<AdesioneBandoProps> = ({mainState, dispatchMainState}) => {
 
     const token =  getToken();
+    const profilo = getProfilo();
 
     const [gridData, setGridData] = useState<Asseverazione[]>([]);
     const [infoPageBando , setInfoPageBando] = useState({ page: 0, pageSize: 100 });
@@ -28,10 +29,10 @@ const AdesioneBando : React.FC<AdesioneBandoProps> = ({mainState, dispatchMainSt
 
     
     useEffect(()=>{
-        if(mainState.nonce !== ''){
-            getListaAsseverazione();
-        }
-    },[mainState.nonce]);
+     
+        getListaAsseverazione();
+        
+    },[]);
 
     useEffect(()=>{
         if(file !== null){
@@ -41,7 +42,7 @@ const AdesioneBando : React.FC<AdesioneBandoProps> = ({mainState, dispatchMainSt
 
     const getListaAsseverazione = async ( ) =>{
         setShowLoadingGrid(true);
-        await listaAsseverazionePagopa(token,mainState.nonce)
+        await listaAsseverazionePagopa(token, profilo.nonce)
             .then((res)=>{
                 setGridData(res.data);
                 setShowLoadingGrid(false);
@@ -55,7 +56,7 @@ const AdesioneBando : React.FC<AdesioneBandoProps> = ({mainState, dispatchMainSt
 
     const downloadListaAdesione = async () => {
         setShowDownloading(true);
-        await downloadDocumentoAsseverazionePagoPa(token,mainState.nonce)
+        await downloadDocumentoAsseverazionePagoPa(token,profilo.nonce)
             .then((res)=>{
                 
                 saveAs("data:text/plain;base64," + res.data.documento,`Lista adesione al bando.xlsx` );
@@ -69,7 +70,7 @@ const AdesioneBando : React.FC<AdesioneBandoProps> = ({mainState, dispatchMainSt
 
     const exportAdesioneDoc = async () => {
         setShowDownloading(true);
-        await exportDocumentoAsseverazionePagoPa(token,mainState.nonce)
+        await exportDocumentoAsseverazionePagoPa(token,profilo.nonce)
             .then((res)=>{
                
                 saveAs("data:text/plain;base64," + res.data.documento,`Documento asseverazione.xlsx` );
@@ -83,7 +84,7 @@ const AdesioneBando : React.FC<AdesioneBandoProps> = ({mainState, dispatchMainSt
 
     const uploadAdesioneDoc = async () => {
         setShowLoadingGrid(true);
-        await uploadExelAsseverazionePagopa(token, mainState.nonce,{file:file}).then((res)=>{
+        await uploadExelAsseverazionePagopa(token, profilo.nonce,{file:file}).then((res)=>{
             setShowLoadingGrid(false);
             setOpenModalConfirmUploadDoc(true);
             getListaAsseverazione();
