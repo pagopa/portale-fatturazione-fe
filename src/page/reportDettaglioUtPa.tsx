@@ -485,8 +485,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
             getlistaNotifichePagoPa(realPage,rowsPerPage, bodyGetLista);
         }
         setPage(newPage);
-        const result = getFiltersFromLocalStorageNotifiche();
-        setFilterToLocalStorageNotifiche(result.bodyGetLista,result.textValue,result.valueAutocomplete, newPage, rowsPerPage, result.valueFgContestazione);
+       
+        setFilterToLocalStorageNotifiche(bodyDownload,textValue,valueAutocomplete, newPage, rowsPerPage,valueFgContestazione);
        
     };
                     
@@ -495,8 +495,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
     ) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
-        const result = getFiltersFromLocalStorageNotifiche();
-        setFilterToLocalStorageNotifiche(result.bodyGetLista,result.textValue,result.valueAutocomplete, page, parseInt(event.target.value, 10),result.valueFgContestazione);
+        
+        setFilterToLocalStorageNotifiche(bodyDownload,textValue,valueAutocomplete, page, parseInt(event.target.value, 10),valueFgContestazione);
         const realPage = page + 1;
         if(profilo.auth === 'SELFCARE'){
             getlistaNotifiche(realPage,parseInt(event.target.value, 10),bodyGetLista);

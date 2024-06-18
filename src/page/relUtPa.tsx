@@ -199,8 +199,8 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         const realPage = newPage + 1;
         getlistaRel(bodyRel,realPage, rowsPerPage);
         setPage(newPage);
-        const result = getFiltersFromLocalStorageRel();
-        setFilterToLocalStorageRel(result.bodyRel,result.textValue,result.valueAutocomplete, newPage, rowsPerPage);
+      
+        setFilterToLocalStorageRel(bodyDownload,textValue,valueAutocomplete, newPage, rowsPerPage);
     };
                     
     const handleChangeRowsPerPage = (
@@ -210,8 +210,8 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         setPage(0);
         const realPage = page + 1;
         getlistaRel(bodyRel,realPage,parseInt(event.target.value, 10));
-        const result = getFiltersFromLocalStorageRel();
-        setFilterToLocalStorageRel(result.bodyRel,result.textValue,result.valueAutocomplete, page, parseInt(event.target.value, 10));
+   
+        setFilterToLocalStorageRel(bodyDownload,textValue,valueAutocomplete, page, parseInt(event.target.value, 10));
     };
    
     const setIdRel = async(idRel) => {
