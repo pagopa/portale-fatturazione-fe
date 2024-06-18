@@ -5,12 +5,13 @@ import { ResponseCategorieSpedizione, SecondoContainerProps   } from '../../type
 import { manageError } from '../../api/api';
 import { ManageErrorResponse } from '../../types/typesGeneral';
 import { getCategoriaSpedizione } from '../../api/apiSelfcare/moduloCommessaSE/api';
-import {  getToken } from '../../reusableFunction/actionLocalStorage';
+import {  getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
 import { getIdByTipo } from '../../reusableFunction/function';
 
 const SecondoContainerInsCom : React.FC<SecondoContainerProps> = ({totale, mainState,dispatchMainState, setDatiCommessa,datiCommessa}) => {
 
     const token =  getToken();
+    const profilo = getProfilo();
 
     const [arrTipoSpedizione , setArrTipoSpedizione] = useState({
         idSpedizioneDigitale : 0,
@@ -19,7 +20,7 @@ const SecondoContainerInsCom : React.FC<SecondoContainerProps> = ({totale, mainS
     });
  
     const getCategoria = async () =>{
-        await getCategoriaSpedizione(token , mainState.nonce).then((res:ResponseCategorieSpedizione ) => {
+        await getCategoriaSpedizione(token , profilo.nonce).then((res:ResponseCategorieSpedizione ) => {
             setArrTipoSpedizione({
                 idSpedizioneDigitale :getIdByTipo('Digitale',res.data),
                 idSpedizioneAnalog890 :  getIdByTipo('Analog. L. 890/82',res.data),
@@ -31,10 +32,10 @@ const SecondoContainerInsCom : React.FC<SecondoContainerProps> = ({totale, mainS
     };
    
     useEffect(()=>{
-        if(mainState.nonce !== ''){
-            getCategoria();
-        }
-    },[mainState.nonce]);
+       
+        getCategoria();
+       
+    },[]);
   
     return (
         <div className="m-3 pl-5 ">

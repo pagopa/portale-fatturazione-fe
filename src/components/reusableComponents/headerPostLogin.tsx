@@ -66,6 +66,7 @@ const HeaderPostLogin = ({mainState}) => {
     const hideShowHeaderLogin =  location.pathname === '/auth' ||
                                  location.pathname === '/azure' ||
                                  location.pathname === '/auth/azure'; 
+                                 
     
     const statusUser = mainState.authenticated && user;
     return (

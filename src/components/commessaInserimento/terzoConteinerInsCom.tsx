@@ -45,10 +45,8 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
  
 
     useEffect(()=>{
-        if(mainState.nonce !== ''){
-            getConfigurazione();
-        }
-    },[mainState.nonce]);
+        getConfigurazione();
+    },[]);
 
     const replaceDate = (arr:[], stringToRepace:string, stringToInsert:string) =>{
         return arr.map((singleObj:CategorieTotali) =>{
@@ -58,7 +56,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
     };
 
     const getConfigurazione = async() =>{
-        getDatiConfigurazioneCommessa(token, profilo.idTipoContratto, profilo.prodotto, mainState.nonce)
+        getDatiConfigurazioneCommessa(token, profilo.idTipoContratto, profilo.prodotto, profilo.nonce)
             .then((res)=>{
                 const newCategorie = replaceDate(res.data.categorie,'[data]', '');
                 setLabelCategorie(newCategorie);

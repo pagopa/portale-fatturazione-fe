@@ -17,6 +17,7 @@ import { getProfilo, getStatusApp, getTipoCommessa, getToken, profiliEnti, setIn
 import { mesiWithZero, month } from "../reusableFunction/reusableArrayObj";
 import { DatiCommessaPdf, ResponseGetPdfPagoPa } from "../types/typeListaModuliCommessa";
 import { createDateFromString, replaceDate } from "../reusableFunction/function";
+import SkeletonComPdf from "../components/commessaPdf/skeletonComPdf";
 
 const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState, dispatchMainState}) =>{
 
@@ -65,14 +66,14 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState, dispatchMainSt
     });
 
     useEffect(()=>{
-        if(mainState.nonce !== ''){
-            if(profilo.auth === 'PAGOPA'){
-                getPagoPdf();
-            }else{
-                getPdf();
-            }
+    
+        if(profilo.auth === 'PAGOPA'){
+            getPagoPdf();
+        }else{
+            getPdf();
         }
-    },[mainState.nonce]);
+        
+    },[]);
    
     // richiamo questa funzione in entrambe le getPdf     selfcare     pagopa
     const toDoOnGetPdfSelfcarePagopa = (res:ResponseGetPdfPagoPa) =>{
@@ -97,7 +98,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState, dispatchMainSt
 
     const getPdf = async() =>{
         setShowLoadingDettaglio(true);
-        getModuloCommessaPdf(token, statusApp.anno,statusApp.mese, mainState.nonce).then((res:ResponseGetPdfPagoPa)=>{
+        getModuloCommessaPdf(token, statusApp.anno,statusApp.mese, profilo.nonce).then((res:ResponseGetPdfPagoPa)=>{
             toDoOnGetPdfSelfcarePagopa(res);
             setShowLoadingDettaglio(false);
         }).catch((err)=>{
@@ -109,7 +110,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState, dispatchMainSt
 
     const getPagoPdf = async() =>{
         setShowLoadingDettaglio(true);
-        getModuloCommessaPagoPaPdf(token, mainState.nonce,statusApp.mese,statusApp.anno,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto)
+        getModuloCommessaPagoPaPdf(token, profilo.nonce,statusApp.mese,statusApp.anno,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto)
             .then((res)=>{
                 toDoOnGetPdfSelfcarePagopa(res);
                 setShowLoadingDettaglio(false);
@@ -131,7 +132,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState, dispatchMainSt
  
     const downloadPdf = async()=>{
         setShowLoading(true);
-        downloadModuloCommessaPdf(token, statusApp.anno,statusApp.mese, tipoCommessa, mainState.nonce).then((res: ResponseDownloadPdf)=>{
+        downloadModuloCommessaPdf(token, statusApp.anno,statusApp.mese, tipoCommessa, profilo.nonce).then((res: ResponseDownloadPdf)=>{
             toDoOnDownloadPdf(res);
         }).catch((err)=>{
             manageError(err,dispatchMainState);
@@ -140,7 +141,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState, dispatchMainSt
 
     const downlodPagoPaPdf = async()=>{
         setShowLoading(true);
-        downloadModuloCommessaPagoPaPdf(token,  mainState.nonce,statusApp.mese,statusApp.anno,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto,tipoCommessa).then((res:ResponseDownloadPdf)=>{
+        downloadModuloCommessaPagoPaPdf(token,  profilo.nonce,statusApp.mese,statusApp.anno,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto,tipoCommessa).then((res:ResponseDownloadPdf)=>{
             toDoOnDownloadPdf(res);
         }).catch((err)=>{
             manageError(err,dispatchMainState);
@@ -175,6 +176,12 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState, dispatchMainSt
     };
 
     const { toPDF, targetRef } = usePDF({filename: `Modulo Commessa /${dataPdf.descrizione} /${mesiWithZero[statusApp.mese -1]}/ ${statusApp.anno}.pdf`});
+
+    if(showLoadingDettaglio){
+        return(
+            <SkeletonComPdf></SkeletonComPdf>
+        );
+    }
     return (
         <>
             <div className="">
@@ -286,11 +293,6 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState, dispatchMainSt
                     open={showLoading} 
                     setOpen={setShowLoading}
                     sentence={'Downloading...'} >
-                </ModalLoading>
-                <ModalLoading 
-                    open={showLoadingDettaglio} 
-                    setOpen={setShowLoadingDettaglio}
-                    sentence={'Loading...'} >
                 </ModalLoading>
             </div>
         </>

@@ -1,6 +1,6 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import {useState, useReducer, useEffect, Suspense} from 'react';
+import {useState, useReducer, useEffect} from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate} from 'react-router-dom';
 import { ThemeProvider, Grid } from '@mui/material';
 import {theme} from '@pagopa/mui-italia';
@@ -77,7 +77,7 @@ const App = ({ instance }) => {
     const profilo =  getProfilo();
     const tabActive = useIsTabActive();
     const enti = profiliEnti();
-    console.log({tabActive});
+
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
             type:'MODIFY_MAIN_STATE',
@@ -114,12 +114,15 @@ const App = ({ instance }) => {
             setShowAlert(true);
         }
     }, [mainState.apiError]);
-    
+
     // questa chiamata viene eseguita esclusivamente se l'utenete fa un reload page cosi da inserire nuovamente il NONCE nel DOM
     const getProfiloToGetNonce = async () =>{
         await getAuthProfilo(profilo.jwt)
             .then((res) =>{
-                handleModifyMainState({nonce:res?.data.nonce,authenticated:true});
+                handleModifyMainState({ nonce:res.data.nonce,authenticated:true});
+                if(res?.data.nonce !== profilo.nonce || !profilo){
+                    window.location.href = redirect;
+                }
             }).catch((err)=>{
                 //window.location.href = redirect;
                 manageError(err,dispatchMainState);
@@ -129,20 +132,30 @@ const App = ({ instance }) => {
     // Object.values(profilo).length !== 0 viene fatto solo per far si che la chiamanta non venga fatta al primo rendering
     // in quel caso il get profilo viene chiamato nella page auth
   
-    useEffect(()=>{
+    /* useEffect(()=>{
         if(mainState.nonce === '' && Object.values(profilo).length !== 0 && window.location.pathname  !== '/azureLogin' && window.location.pathname  !== '/auth' && window.location.pathname  !== '/azure'){
             getProfiloToGetNonce();
         }  
-    },[mainState.nonce]);
+    },[mainState.nonce]);*/
  
     useEffect(()=>{
         if(mainState.authenticated === true && tabActive === true && (mainState.nonce !== profilo.nonce)){
             window.location.href = redirect;
         }
-    },[tabActive, mainState.nonce]);
+    },[tabActive]);
+
+    useEffect(()=>{
+        /*if(mainState.authenticated === true && tabActive === true && (mainState.nonce !== profilo.nonce)){
+            window.location.href = redirect;
+        }*/
+    
+        if(Object.values(profilo).length !== 0 && window.location.pathname  !== '/azureLogin' && window.location.pathname  !== '/auth' && window.location.pathname  !== '/azure'){
+            getProfiloToGetNonce();
+        }  
+    },[]);
    
     const recOrConsIsLogged = profilo.profilo === 'REC' || profilo.profilo ==='CON';
-
+    
    
     let route;
 
@@ -239,8 +252,8 @@ const App = ({ instance }) => {
                                 
                                     <Route path="azure" element={<Azure dispatchMainState={ dispatchMainState}/>} />
                                 
-                                    <Route path={PathPf.DATI_FATTURAZIONE} element={ <AreaPersonaleUtenteEnte mainState={mainState} dispatchMainState={ dispatchMainState} setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom}></AreaPersonaleUtenteEnte>} />
-                           
+                                    <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte mainState={mainState} dispatchMainState={ dispatchMainState} setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom}></AreaPersonaleUtenteEnte>}/>
+                                       
                                     <Route path={PathPf.LISTA_COMMESSE} element={<ModuloCommessaElencoUtPa mainState={mainState}  dispatchMainState={ dispatchMainState} valueSelect={valueAnnoElencoCom}  setValueSelect={setValueAnnoElencoCom}  />} />
                           
                                     <Route path={PathPf.MODULOCOMMESSA} element={<ModuloCommessaInserimentoUtEn30 mainState={mainState}  dispatchMainState={ dispatchMainState} setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom}/>} />

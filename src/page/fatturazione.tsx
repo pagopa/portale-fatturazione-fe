@@ -1,7 +1,7 @@
 import { Button, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import { useEffect, useState } from "react";
-import { getFiltersFromLocalStorageFatture, getInfoPageFromLocalStorageFatture, getProfilo, getToken } from "../reusableFunction/actionLocalStorage";
+import {getProfilo, getToken } from "../reusableFunction/actionLocalStorage";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
@@ -50,10 +50,10 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
 
     
     useEffect(()=>{
-        if(mainState.nonce !== ''){
-            getlistaFatturazione(bodyFatturazione);
-        }
-    },[mainState.nonce]);
+       
+        getlistaFatturazione(bodyFatturazione);
+       
+    },[]);
 
     useEffect(()=>{
         if(bodyFatturazione.idEnti.length !== 0 || bodyFatturazione.tipologiaFattura.length !== 0 ){
@@ -76,14 +76,14 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
 
    
     useEffect(()=>{
-        if(mainState.nonce !== ''){
-            getTipologieFatturazione();
-            setValueMultiselectTipologie([]);
-        }
-    },[mainState.nonce, bodyFatturazione.mese,bodyFatturazione.anno]);
+       
+        getTipologieFatturazione();
+        setValueMultiselectTipologie([]);
+        
+    },[ bodyFatturazione.mese,bodyFatturazione.anno]);
 
     const getTipologieFatturazione =  async() => {
-        await getTipologieFaPagoPa(token, mainState.nonce, {anno:bodyFatturazione.anno,mese:bodyFatturazione.mese}  )
+        await getTipologieFaPagoPa(token, profilo.nonce, {anno:bodyFatturazione.anno,mese:bodyFatturazione.mese}  )
             .then((res)=>{
                 setTipologie(res.data);                
             })
@@ -95,7 +95,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
     const getlistaFatturazione = async (body) => {
         setShowLoadingGrid(true);
 
-        await  getFatturazionePagoPa(token,mainState.nonce,body)
+        await  getFatturazionePagoPa(token,profilo.nonce,body)
             .then((res)=>{
                 const orderDataCustom = res.data.map(el => el.fattura).map(obj=> ({...{id:Math.random()},...obj}));
                 setGridData(orderDataCustom);
@@ -114,7 +114,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
     // servizio che popola la select con la checkbox
     const listaEntiNotifichePageOnSelect = async () =>{
         if(profilo.auth === 'PAGOPA'){
-            await listaEntiNotifichePage(token, mainState.nonce, {descrizione:textValue} )
+            await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} )
                 .then((res)=>{
                     setDataSelect(res.data);
                 })
@@ -126,7 +126,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
 
     const downloadListaFatturazione = async () => {
         setShowDownloading(true);
-        await downloadFatturePagopa(token,mainState.nonce, bodyFatturazioneDownload).then(response => response.blob()).then((response)=>{
+        await downloadFatturePagopa(token,profilo.nonce, bodyFatturazioneDownload).then(response => response.blob()).then((response)=>{
             let title = `Lista fatturazione/${month[bodyFatturazioneDownload.mese - 1]}/${bodyFatturazioneDownload.anno}.xlsx`;
             if(bodyFatturazioneDownload.idEnti.length === 1 && gridData[0]){
                 title = `Lista fatturazione/ ${gridData[0]?.ragionesociale}/${month[bodyFatturazioneDownload.mese - 1]}/${bodyFatturazioneDownload.anno}.xlsx`;
@@ -141,7 +141,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
 
     const downloadListaReportFatturazione = async () => {
         setShowDownloading(true);
-        await downloadFattureReportPagopa(token,mainState.nonce, bodyFatturazioneDownload).then((response)=>{
+        await downloadFattureReportPagopa(token,profilo.nonce, bodyFatturazioneDownload).then((response)=>{
             if (response.ok) {
                 return response.blob();
             }

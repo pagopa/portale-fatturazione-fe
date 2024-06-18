@@ -42,12 +42,12 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
     // nel caso in cui un utente apre un altra tab e accede come un utente diverso le chiamate andranno in errore
     // nel beck è stato implementato un controllo basato sul nonce
     useEffect(()=>{
-        if(mainState.nonce !== ''){
-            getAnniSelect();
-            getListaCommessaGrid('');
-        }
         
-    },[mainState.nonce]);
+        getAnniSelect();
+        getListaCommessaGrid('');
+        
+        
+    },[]);
     
     // se il token non c'è viene fatto il redirect al portale di accesso
     useEffect(()=>{
@@ -57,7 +57,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
     },[]);
 
     const getAnniSelect = async () =>{
-        await getAnni(token, mainState.nonce).then((res:GetAnniResponse)=>{
+        await getAnni(token, profilo.nonce).then((res:GetAnniResponse)=>{
             setAnni(res.data);
         }).catch((err:ManageErrorResponse)=>{
             // manageError(err,dispatchMainState);
@@ -66,7 +66,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
 
     // servizio che popola la grid con la lista commesse
     const getListaCommessaGrid = async (valueAnno) =>{
-        await getListaCommessaFiltered(token , mainState.nonce,valueAnno).then((res:ResponseGetListaCommesse)=>{
+        await getListaCommessaFiltered(token , profilo.nonce,valueAnno).then((res:ResponseGetListaCommesse)=>{
             const finalData = fixResponseForDataGrid(res.data);
             setGridData(finalData);
         }).catch((err:ManageErrorResponse)=>{
@@ -75,7 +75,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
     };
 
     const getDatiFat = async () =>{
-        await getDatiFatturazione(token,mainState.nonce).then(( ) =>{      
+        await getDatiFatturazione(token,profilo.nonce).then(( ) =>{      
             handleModifyMainState({datiFatturazione:true});
             setInfoToStatusApplicationLoacalStorage(statusApp,{datiFatturazione:true});
         }).catch(err =>{
@@ -93,7 +93,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
         }else{
             //cliccando sulla side nav Modulo commessa e sono un ente qualsiasi
             await getDatiFat();
-            await getDatiModuloCommessa(token, mainState.nonce).then((res)=>{
+            await getDatiModuloCommessa(token, profilo.nonce).then((res)=>{
                 if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
                     handleModifyMainState({
                         inserisciModificaCommessa:'INSERT',
