@@ -7,7 +7,7 @@ import SelectUltimiDueAnni from "../components/reusableComponents/select/selectU
 import SelectMese from "../components/reusableComponents/select/selectMese";
 import { BodyFatturazione, FatturazioneProps, FattureObj, HeaderCollapsible} from "../types/typeFatturazione";
 import { downloadFatturePagopa, downloadFattureReportPagopa, getFatturazionePagoPa, getTipologieFaPagoPa } from "../api/apiPagoPa/fatturazionePA/api";
-import { manageError, manageErrorDownload } from "../api/api";
+import { manageError, manageErrorDownload, manageErrorRagioneSociale } from "../api/api";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
@@ -119,7 +119,11 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                     setDataSelect(res.data);
                 })
                 .catch(((err)=>{
-                    manageError(err,dispatchMainState);
+                    if(err.response.status === 404){
+                        manageErrorRagioneSociale(err.response.status,dispatchMainState) ;
+                    }else{
+                        manageError(err,dispatchMainState);
+                    }
                 }));
         }
     };

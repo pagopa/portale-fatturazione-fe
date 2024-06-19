@@ -1,4 +1,4 @@
-import {useState, createContext, useEffect} from 'react';
+import {useState,useEffect} from 'react';
 import {Typography, Button} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked } from '@pagopa/mui-italia';
@@ -10,10 +10,8 @@ import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { useNavigate } from 'react-router';
 import {manageError} from '../api/api';
 import { redirect } from '../api/api';
-//import AreaPersonaleUtenteEnte from '../page/areaPersonaleUtenteEnte';
-//import HorizontalLinearStepper from '../components/areaPersonale/stepper';
 import ModalRedirect from '../components/commessaInserimento/madalRedirect';
-import { DatiCommessa, ResponseDettaglioModuloCommessa, InsModuloCommessaContext ,ModuloCommessaInserimentoProps, TotaleNazionaleInternazionale, ResponsTotaliInsModuloCommessa, ModuliCommessa} from '../types/typeModuloCommessaInserimento';
+import { DatiCommessa, ResponseDettaglioModuloCommessa,ModuloCommessaInserimentoProps, TotaleNazionaleInternazionale, ResponsTotaliInsModuloCommessa, ModuliCommessa} from '../types/typeModuloCommessaInserimento';
 import { ManageErrorResponse } from '../types/typesGeneral';
 import { getDettaglioModuloCommessa, insertDatiModuloCommessa } from '../api/apiSelfcare/moduloCommessaSE/api';
 import { getModuloCommessaPagoPa, modifyDatiModuloCommessaPagoPa } from '../api/apiPagoPa/moduloComessaPA/api';

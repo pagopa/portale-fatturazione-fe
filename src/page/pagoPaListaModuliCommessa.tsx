@@ -1,8 +1,8 @@
 import { BodyDownloadModuliCommessa, GridElementListaCommesse, ListaModuliCommessaProps } from "../types/typeListaModuliCommessa";
 import { Params } from "../types/typesGeneral";
 import { Typography } from "@mui/material";
-import { Box, FormControl, InputLabel,Select, MenuItem, TextField, Button} from '@mui/material';
-import { manageError, redirect } from '../api/api';
+import { Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
+import { manageError, manageErrorRagioneSociale } from '../api/api';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -18,7 +18,7 @@ import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckb
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { currentMonth, getCurrentFinancialYear } from "../reusableFunction/function";
 import { currentYear, mesi, mesiGrid, mesiWithZero } from "../reusableFunction/reusableArrayObj";
-import { listaEntiNotifichePage, listaEntiNotifichePageConsolidatore } from "../api/apiSelfcare/notificheSE/api";
+import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
 
 const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState, dispatchMainState}) =>{
 
@@ -128,10 +128,16 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
         if(profilo.auth === 'PAGOPA'){
             await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} )
                 .then((res)=>{
-                    setDataSelect(res.data);
+                    setDataSelect(res.data) ;
                 })
                 .catch(((err)=>{
-                    manageError(err,dispatchMainState);
+                    if(err.response.status === 404){
+                        manageErrorRagioneSociale(err.response.status,dispatchMainState) ;
+                    }else{
+                        manageError(err,dispatchMainState);
+                    }
+                   
+                    
                 }));
         }
     };

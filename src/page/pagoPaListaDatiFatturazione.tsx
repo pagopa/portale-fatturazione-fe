@@ -1,6 +1,6 @@
 import { Skeleton, Typography } from "@mui/material";
 import { Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
-import { getTipologiaProfilo, manageError} from '../api/api';
+import { getTipologiaProfilo, manageError, manageErrorRagioneSociale} from '../api/api';
 import { BodyGetListaDatiFatturazione, GridElementListaFatturazione, ListaDatiFatturazioneProps, ResponseDownloadListaFatturazione } from "../types/typeListaDatiFatturazione";
 import { Suspense, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
@@ -140,7 +140,11 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                     setDataSelect(res.data);
                 })
                 .catch(((err)=>{
-                    manageError(err,dispatchMainState);
+                    if(err.response.status === 404){
+                        manageErrorRagioneSociale(err.response.status,dispatchMainState) ;
+                    }else{
+                        manageError(err,dispatchMainState);
+                    }
                 }));
         }
     };

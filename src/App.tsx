@@ -107,7 +107,7 @@ const App = ({ instance }) => {
         authenticated:false 
     });
 
-  
+    console.log(mainState);
   
     useEffect(()=>{
         if(mainState.apiError !== null){

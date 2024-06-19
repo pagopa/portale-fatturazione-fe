@@ -52,8 +52,22 @@ export const manageErrorDownload = (res:string,dispatchMainState:any) =>{
         const value = res+"_DOWNLOAD";
         handleModifyMainState({apiError:value});
     }
-   
-    
+};
+
+export const manageErrorRagioneSociale = (res:number,dispatchMainState:any) =>{
+
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
+    console.log(res);
+    if(res === 404){
+        const value = res+"_RAGIONE_SOCIALE";
+        
+        handleModifyMainState({apiError:value});
+    }
 };
 
 export const pagopaLogin = async (tokenObject:TokenObject) => {
