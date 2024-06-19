@@ -3,7 +3,7 @@ import { } from '@mui/material';
 import React , { useState, useEffect} from 'react';
 import { TextField,Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { getTipologiaProfilo, manageError} from "../api/api";
+import { getTipologiaProfilo, manageError, manageErrorRagioneSociale} from "../api/api";
 import { ReportDettaglioProps, NotificheList, FlagContestazione, Contestazione, ElementMultiSelect, ListaRecCon, OptionMultiselectChackbox  } from "../types/typeReportDettaglio";
 import { BodyListaNotifiche } from "../types/typesGeneral";
 import ModalContestazione from '../components/reportDettaglio/modalContestazione';
@@ -18,7 +18,6 @@ import { downloadNotifchePagoPa, getContestazionePagoPa, getTipologiaEntiComplet
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import GridCustom from "../components/reusableComponents/grid/gridCustom";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
-import { saveAs } from "file-saver";
 import { deleteFilterToLocalStorageNotifiche, getFiltersFromLocalStorageNotifiche, getProfilo, getStatusApp, getToken, profiliEnti, setFilterToLocalStorageNotifiche } from "../reusableFunction/actionLocalStorage";
 import {mesi, mesiGrid, mesiWithZero, tipoNotifica } from "../reusableFunction/reusableArrayObj";
 import { getCurrentFinancialYear } from "../reusableFunction/function";
@@ -121,7 +120,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
         
         getProdotti();
         if(Object.keys(result).length > 0){
-               
+            console.log(result.valueAutocomplete);
             getProfili();
             setBodyGetLista(result.bodyGetLista);
             setTextValue(result.textValue);
@@ -174,11 +173,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
         }
     },[]);
 
-    useEffect(()=>{
-        if(dataSelect.length === 0){
-            setValueAutocomplete([]);
-        }
-    }, [dataSelect]);
+    
    
     useEffect(()=>{
         const timer = setTimeout(() => {
@@ -197,7 +192,11 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                     setDataSelect(res.data);
                 })
                 .catch(((err)=>{
-                    manageError(err,dispatchMainState);
+                    if(err.response.status === 404){
+                        manageErrorRagioneSociale(err.response.status,dispatchMainState) ;
+                    }else{
+                        manageError(err,dispatchMainState);
+                    }
                 }));
         }else if(profilo.auth === 'PAGOPA'){
             await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} )
@@ -205,7 +204,11 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                     setDataSelect(res.data);
                 })
                 .catch(((err)=>{
-                    manageError(err,dispatchMainState);
+                    if(err.response.status === 404){
+                        manageErrorRagioneSociale(err.response.status,dispatchMainState) ;
+                    }else{
+                        manageError(err,dispatchMainState);
+                    }
                 }));
         }
     };
@@ -320,6 +323,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
         setDataSelect([]);
         setBodyGetLista(newBody);
         setBodyDownload(newBody);
+        setValueAutocomplete([]);
         deleteFilterToLocalStorageNotifiche();
         setGetNotificheWorking(true);
         const {idEnti, recapitisti, consolidatori, ...body} = newBody;

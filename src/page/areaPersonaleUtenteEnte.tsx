@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense} from 'react';
+import React, { useState, useEffect} from 'react';
 import { manageError, redirect } from '../api/api';
 import { useNavigate} from 'react-router';
 import '../style/areaPersonaleUtenteEnte.css';

@@ -6,7 +6,7 @@ import SelectTipologiaFattura from "../components/reusableComponents/select/sele
 import GridCustom from "../components/reusableComponents/grid/gridCustom";
 import { BodyRel, RelPageProps } from "../types/typeRel";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
-import { manageError} from "../api/api";
+import { manageError, manageErrorRagioneSociale} from "../api/api";
 import { useNavigate } from "react-router";
 import DownloadIcon from '@mui/icons-material/Download';
 import { downloadListaRel, getListaRel} from "../api/apiSelfcare/relSE/api";
@@ -69,7 +69,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
     useEffect(()=>{
         const result = getFiltersFromLocalStorageRel();
-       
+     
         if(Object.keys(result).length > 0){
             setBodyRel(result.bodyRel);
             setTextValue(result.textValue);
@@ -179,7 +179,11 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                     setDataSelect(res.data);
                 })
                 .catch(((err)=>{
-                    manageError(err,dispatchMainState);
+                    if(err.response.status === 404){
+                        manageErrorRagioneSociale(err.response.status,dispatchMainState) ;
+                    }else{
+                        manageError(err,dispatchMainState);
+                    }
                 }));
         }
     };
