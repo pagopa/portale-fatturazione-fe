@@ -62,7 +62,7 @@ export const manageErrorRagioneSociale = (res:number,dispatchMainState:any) =>{
             value:valueObj
         });
     };
-    console.log(res);
+  
     if(res === 404){
         const value = res+"_RAGIONE_SOCIALE";
         

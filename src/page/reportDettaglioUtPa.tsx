@@ -120,7 +120,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
         
         getProdotti();
         if(Object.keys(result).length > 0){
-            console.log(result.valueAutocomplete);
+       
             getProfili();
             setBodyGetLista(result.bodyGetLista);
             setTextValue(result.textValue);
