@@ -35,6 +35,7 @@ import { PathPf } from './types/enum';
 import RelPdfPage from './page/relPdfUtPa';
 import { InfoOpen } from './types/typesGeneral';
 import Fatturazione from './page/fatturazione';
+import CentroMessaggi from './page/centroMessaggi';
 
 
 const MainContent = () => {
@@ -207,6 +208,8 @@ const App = ({ instance }) => {
                                     <Route path={PathPf.FATTURAZIONE} element={<Fatturazione mainState={mainState} dispatchMainState={dispatchMainState}/>} />
                            
                                     <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio mainState={mainState} dispatchMainState={dispatchMainState}/>} />
+
+                                    <Route path={'/centromessaggi'} element={<CentroMessaggi />} />
 
                                     <Route path="*" element={<Navigate to={PathPf.LISTA_DATI_FATTURAZIONE} replace />} />
 
