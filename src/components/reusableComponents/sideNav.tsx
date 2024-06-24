@@ -21,6 +21,7 @@ import { PathPf } from '../../types/enum';
 import AnnouncementIcon from '@mui/icons-material/Announcement';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import { getProfilo, getToken, profiliEnti } from '../../reusableFunction/actionLocalStorage';
+import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
 
 const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState, setOpenBasicModal_DatFat_ModCom}) => {
 
@@ -256,6 +257,10 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
         }
         
     };
+
+    const handleListItemClickCentroMessaggi = () =>{
+        navigate("/centromessaggi");
+    };
     
     const currentLocation = location.pathname;
 
@@ -282,6 +287,8 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
             setSelectedIndex(4);
         }else if(currentLocation === PathPf.FATTURAZIONE){
             setSelectedIndex(5);
+        }else if(currentLocation === "/centromessaggi"){
+            setSelectedIndex(6);
         }
     },[currentLocation]);
    
@@ -345,6 +352,12 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
                                         <ReceiptIcon fontSize="inherit" />
                                     </ListItemIcon>
                                     <ListItemText primary="Fatturazione" />
+                                </ListItemButton>
+                                <ListItemButton selected={selectedIndex === 6} onClick={() => handleListItemClickCentroMessaggi()}>
+                                    <ListItemIcon>
+                                        <MarkEmailUnreadIcon fontSize="inherit" />
+                                    </ListItemIcon>
+                                    <ListItemText primary="Centro Messaggi" />
                                 </ListItemButton>
                             </>}
                             
