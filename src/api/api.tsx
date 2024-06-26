@@ -4,7 +4,7 @@ import { TokenObject,ManageErrorResponse} from '../types/typesGeneral';
 export const url = process.env.REACT_APP_URL;
 export const redirect = process.env.REACT_APP_REDIRECT || '';
 
-export const manageError = (res:ManageErrorResponse,dispatchMainState:any) =>{
+export const manageError = (res:ManageErrorResponse,dispatchMainState) =>{
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -39,7 +39,7 @@ export const manageError = (res:ManageErrorResponse,dispatchMainState:any) =>{
     
 };
 
-export const manageErrorDownload = (res:string,dispatchMainState:any) =>{
+export const manageErrorDownload = (res:string,dispatchMainState) =>{
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -54,7 +54,7 @@ export const manageErrorDownload = (res:string,dispatchMainState:any) =>{
     }
 };
 
-export const managePresaInCarico = (res:string,dispatchMainState:any) =>{
+export const managePresaInCarico = (res:string,dispatchMainState) =>{
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({

@@ -11,10 +11,10 @@ import { manageError, manageErrorDownload, managePresaInCarico } from "../api/ap
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
-import MultiSelectFatturazione from "../components/fatturazione/multiSelect";
 import CollapsibleTable from "../components/reusableComponents/grid/gridCustomCollapsible";
 import { saveAs } from "file-saver";
 import { month } from "../reusableFunction/reusableArrayObj";
+import MultiSelectBase from "../components/reusableComponents/select/multiSelectBase";
 
 const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainState}) =>{
 
@@ -221,12 +221,14 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                     </div>
                    
                     <div  className="col-3">
-                        <MultiSelectFatturazione
+                        <MultiSelectBase
                             setBody={setBodyFatturazione}
                             list={tipologie}
                             value={valueMulitselectTipologie}
                             setValue={setValueMultiselectTipologie}
-                        ></MultiSelectFatturazione>
+                            label={'Tipologia Fattura'}
+                            placeholder={"Tipologia Fattura"}
+                        ></MultiSelectBase>
                     </div>
                     <div  className="col-3">
                         <MultiselectCheckbox 

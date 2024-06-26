@@ -4,14 +4,15 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { Checkbox } from '@mui/material';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import { MultiSelectFatturazioneProps } from '../../types/typeFatturazione';
+import { MultiSelectBaseProps } from '../../../types/typesGeneral';
+
 
 
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
-const MultiSelectFatturazione : React.FC<MultiSelectFatturazioneProps> =  ({setBody,list,value,setValue}) => {
+const MultiSelectBase : React.FC<MultiSelectBaseProps> =  ({setBody,list,value,setValue,label,placeholder}) => {
 
 
     return (
@@ -49,4 +50,4 @@ const MultiSelectFatturazione : React.FC<MultiSelectFatturazioneProps> =  ({setB
         />
     );
 };
-export default MultiSelectFatturazione;
+export default MultiSelectBase;

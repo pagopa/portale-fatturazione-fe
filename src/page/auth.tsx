@@ -14,7 +14,7 @@ Nella risposta della chiamata getProfilo noi andiamo ad estrapolare il jwt, salv
 da parte dell'utente SELFCARE
 
 */
-const Auth : React.FC<LoginProps> = ({setCheckProfilo, dispatchMainState}) =>{
+const Auth : React.FC<LoginProps> = ({dispatchMainState}) =>{
     
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -103,7 +103,7 @@ const getProfilo = async (res:ParameterGetProfilo)=>{
                 navigate(PathPf.LISTA_NOTIFICHE);
             }else{
                 getCommessa(res.data[0].jwt, storeProfilo.nonce);
-                setCheckProfilo(true);
+                //setCheckProfilo(true);
                 // setto il ruolo nello state di riferimento globale
                 handleModifyMainState({ruolo:resp.data.ruolo,nonce:storeProfilo.nonce,authenticated:true});
                 navigate(PathPf.DATI_FATTURAZIONE);

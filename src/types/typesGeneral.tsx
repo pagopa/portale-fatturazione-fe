@@ -19,7 +19,6 @@ export interface LocationState {
 }
 
 export interface LoginProps {
-    setCheckProfilo:any,
     dispatchMainState:any,
 
 }
@@ -167,6 +166,14 @@ export interface SelectMeseProps{
     setValue: (value:any) => void
 }
 
+export interface MultiSelectBaseProps{
+    setBody:any,
+    list:any,
+    value:string[],
+    setValue:any,
+    label:string,
+    placeholder:string
+}
 export interface ErrorPageProps{
     dispatchMainState:any,
     mainState:MainState

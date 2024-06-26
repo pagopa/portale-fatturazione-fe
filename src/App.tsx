@@ -19,11 +19,8 @@ import PagoPaListaDatiFatturazione from './page/pagoPaListaDatiFatturazione';
 import PagoPaListaModuliCommessa from './page/pagoPaListaModuliCommessa';
 import ReportDettaglio from './page/reportDettaglioUtPa';
 import AuthAzure from './page/authAzure';
-import { MsalProvider, AuthenticatedTemplate, useMsal, UnauthenticatedTemplate } from '@azure/msal-react';
+import { MsalProvider} from '@azure/msal-react';
 import Azure from './page/azure';
-import { Container, Button } from 'react-bootstrap';
-import { loginRequest } from './authConfig';
-import './App.css';
 import RelPage from './page/relUtPa';
 import { reducerMainState } from './reducer/reducerMainState';
 import { getAuthProfilo, manageError, redirect } from './api/api';
@@ -33,45 +30,10 @@ import BasicAlerts from './components/reusableComponents/modals/alert';
 import AdesioneBando from './page/adesioneBando';
 import { PathPf } from './types/enum';
 import RelPdfPage from './page/relPdfUtPa';
-import { InfoOpen } from './types/typesGeneral';
+import { InfoOpen} from './types/typesGeneral';
 import Fatturazione from './page/fatturazione';
 import CentroMessaggi from './page/centroMessaggi';
 
-
-const MainContent = () => {
-    /**
-     * useMsal is hook that returns the PublicClientApplication instance,
-     * that tells you what msal is currently doing. For more, visit:
-     * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-react/docs/hooks.md
-     */
-    const { instance } = useMsal();
-    const activeAccount = instance.getActiveAccount();
-
-    const handleRedirect = () => {
-        instance
-            .loginRedirect({
-                ...loginRequest,
-                prompt: 'create',
-            })
-            .catch((error) => console.log(error));
-    };
-    return (
-        <div className="App">
-            <AuthenticatedTemplate>
-                {activeAccount ? (
-                    <Container>
-                        {/*<IdTokenData idTokenClaims={activeAccount.idTokenClaims} /> */} 
-                    </Container>
-                ) : null}
-            </AuthenticatedTemplate>
-            <UnauthenticatedTemplate>
-                <Button className="signInButton" onClick={handleRedirect} variant="primary">
-                    Sign up
-                </Button>
-            </UnauthenticatedTemplate>
-        </div>
-    );
-};
 
 const App = ({ instance }) => {
     // eslint-disable-next-line no-undef
@@ -86,12 +48,12 @@ const App = ({ instance }) => {
         });
     };
  
-    const [checkProfilo,setCheckProfilo] = useState(false);
+   
     const [showAlert, setShowAlert] = useState(false);
     const [valueAnnoElencoCom, setValueAnnoElencoCom] = useState('');
     const [openBasicModal_DatFat_ModCom, setOpenBasicModal_DatFat_ModCom] = useState<InfoOpen>({visible:false,clickOn:''});
     // set status page abilita e disabilita le modifiche al componente dati fatturazione
-   
+ 
     
     const [mainState, dispatchMainState] = useReducer(reducerMainState, {
         mese:'',
@@ -186,7 +148,7 @@ const App = ({ instance }) => {
                             <Grid item xs={10}>
                                 <Routes>
                                 
-                                    <Route path="/auth" element={<Auth setCheckProfilo={setCheckProfilo}  dispatchMainState={ dispatchMainState} />} />
+                                    <Route path="/auth" element={<Auth dispatchMainState={ dispatchMainState} />} />
                                 
                                     <Route path="/auth/azure" element={<AuthAzure  dispatchMainState={ dispatchMainState}/>} />
                                 
@@ -252,7 +214,7 @@ const App = ({ instance }) => {
                             <Grid item xs={10}>
                                 <Routes>
                                 
-                                    <Route path="/auth" element={<Auth setCheckProfilo={setCheckProfilo}  dispatchMainState={ dispatchMainState} />} />
+                                    <Route path="/auth" element={<Auth dispatchMainState={ dispatchMainState} />} />
                                 
                                     <Route path="/auth/azure" element={<AuthAzure  dispatchMainState={ dispatchMainState}/>} />
                                 
@@ -312,7 +274,7 @@ const App = ({ instance }) => {
                             <Grid item xs={10}>
                                 <Routes>
                             
-                                    <Route path="/auth" element={<Auth setCheckProfilo={setCheckProfilo}  dispatchMainState={ dispatchMainState} />} />
+                                    <Route path="/auth" element={<Auth dispatchMainState={ dispatchMainState} />} />
                             
                                     <Route path="/auth/azure" element={<AuthAzure  dispatchMainState={ dispatchMainState}/>} />
                             
@@ -350,7 +312,7 @@ const App = ({ instance }) => {
 
                         <Routes>
                             
-                            <Route path="/auth" element={<Auth setCheckProfilo={setCheckProfilo}  dispatchMainState={ dispatchMainState} />} />
+                            <Route path="/auth" element={<Auth dispatchMainState={ dispatchMainState} />} />
                             
                             <Route path="/auth/azure" element={<AuthAzure  dispatchMainState={ dispatchMainState}/>} />
                             

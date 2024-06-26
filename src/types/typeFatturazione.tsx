@@ -13,12 +13,7 @@ export interface FatturazioneProps{
     dispatchMainState:any
 }
 
-export interface MultiSelectFatturazioneProps{
-    setBody:any,
-    list:any,
-    value:string[],
-    setValue:any
-}
+
 
 type Posizioni = {
     numerolinea: number,

@@ -1,22 +1,29 @@
 import { Button, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import { DataGrid, GridRowParams,GridEventListener,MuiEvent, GridColDef } from '@mui/x-data-grid';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
+import { getListaMessaggi, getMessaggiCount } from "../api/apiPagoPa/centroMessaggi/api";
+import { getProfilo, getToken } from "../reusableFunction/actionLocalStorage";
+import MultiSelectBase from "../components/reusableComponents/select/multiSelectBase";
 
 
 
 const CentroMessaggi : React.FC = () => {
 
+    const token = getToken();
+    const profilo = getProfilo();
     const currentYear = (new Date()).getFullYear();
     const currentMonth = (new Date()).getMonth() + 1;
     const monthNumber = Number(currentMonth);
-
+    console.log(currentYear);
     const [bodyCentroMessaggi, setBodyCentroMessaggi] = useState({
         anno:currentYear,
-        mese:null
+        mese:null,
+        tipologiaDocumento:['fatturazione'],
+        letto: false
     });
 
     const [gridData, setGridData] = useState([{
@@ -28,7 +35,30 @@ const CentroMessaggi : React.FC = () => {
         id:1,
     }]);
 
-    const [infoPageListaDatiFat , setInfoPageListaDatiFat] = useState({ page: 0, pageSize: 100 });
+    const [infoPageListaMes , setInfoPageListaMes] = useState({ page: 1, pageSize: 100 });
+
+
+    const getCount = async () =>{
+        await getMessaggiCount(token,profilo.nonce).then((res)=>{
+            console.log(res);
+        }).catch((err)=>{
+            console.log(err);
+        });
+    };
+
+    const getMessaggi = async () =>{
+        await getListaMessaggi(token,profilo.nonce,bodyCentroMessaggi,infoPageListaMes.page,infoPageListaMes.pageSize).then((res)=>{
+            console.log(res);
+        }).catch((err)=>{
+            console.log(err);
+        });
+    };
+
+    useEffect(()=>{
+
+        getCount();
+        getMessaggi();
+    },[]);
 
     let columsSelectedGrid = '';
     const handleOnCellClick = (params) =>{
@@ -67,12 +97,22 @@ const CentroMessaggi : React.FC = () => {
                     <div  className="col-3">
                         <SelectMese values={bodyCentroMessaggi} setValue={setBodyCentroMessaggi}></SelectMese>
                     </div>
+                    <div  className="col-3">
+                        <MultiSelectBase
+                            setBody={setBodyCentroMessaggi}
+                            list={['fatturazione']}
+                            value={['fatturazione']}
+                            setValue={setBodyCentroMessaggi}
+                            label={'Tipologia Documento'}
+                            placeholder={"Tipologia Documento"}
+                        ></MultiSelectBase>
+                    </div>
                 </div>
                 <div className="d-flex mt-5">
                    
                     <Button 
                         onClick={()=>{
-                            console.log('filtra');
+                            getMessaggi();
                         } } 
                         sx={{ marginTop: 'auto', marginBottom: 'auto'}}
                         variant="contained"> Filtra
@@ -106,7 +146,7 @@ const CentroMessaggi : React.FC = () => {
                     }
                 }}
                 onPaginationModelChange={(e)=>{console.log(e);}}
-                paginationModel={infoPageListaDatiFat}
+                paginationModel={infoPageListaMes}
                 rows={gridData} 
                 columns={columns}
                 getRowId={(row) => row.id}

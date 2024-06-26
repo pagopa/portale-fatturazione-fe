@@ -9,11 +9,12 @@ import { getProfilo } from '../../reusableFunction/actionLocalStorage';
 import { createDateFromString } from '../../reusableFunction/function';
 import { MainState } from '../../types/typesGeneral';
 import { DatiFatturazione } from '../../types/typesAreaPersonaleUtenteEnte';
+import { Dispatch, SetStateAction } from 'react';
 interface TabAreaProps{
     mainState:MainState,
     datiFatturazione:DatiFatturazione,
-    setDatiFatturazione:any,
-    setStatusButtonConferma:any
+    setDatiFatturazione:Dispatch<SetStateAction<DatiFatturazione>>,
+    setStatusButtonConferma:(value:string) => void
 }
 
 const TabAreaPersonaleUtente: React.FC<TabAreaProps>  = ({mainState,datiFatturazione,setDatiFatturazione,setStatusButtonConferma}) => {
@@ -185,7 +186,7 @@ const TabAreaPersonaleUtente: React.FC<TabAreaProps>  = ({mainState,datiFatturaz
                     control={<Checkbox 
                         sx={{color: red[800]}}
                         checked={datiFatturazione.notaLegale || false}
-                        onChange={()=> setDatiFatturazione((prev:any)=>({...prev,...{notaLegale:!datiFatturazione.notaLegale}}))}/>}
+                        onChange={()=> setDatiFatturazione((prev:DatiFatturazione)=>({...prev,...{notaLegale:!datiFatturazione.notaLegale}}))}/>}
                     disabled={mainState.statusPageDatiFatturazione === 'immutable'}
                     label="Gli accordi di adesione a SEND sono esclusi dall'applicazione del Codice dei Contratti Pubblici ai
                  sensi dell'art. 56, comma 1, lett a) del D.lgs. 36/2023 pertanto non sono sottoposti alla disciplina della
