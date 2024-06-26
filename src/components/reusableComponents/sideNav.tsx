@@ -7,6 +7,7 @@ import {
     ListItemIcon,
     Box,
     Divider,
+    Badge,
 } from '@mui/material';
 import { useNavigate, useLocation } from "react-router-dom";
 import DnsIcon from '@mui/icons-material/Dns';
@@ -260,6 +261,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
 
     const handleListItemClickCentroMessaggi = () =>{
         navigate("/centromessaggi");
+        handleModifyMainState({badgeContent:0});
     };
     
     const currentLocation = location.pathname;
@@ -355,8 +357,33 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
                                 </ListItemButton>
                                 <ListItemButton selected={selectedIndex === 6} onClick={() => handleListItemClickCentroMessaggi()}>
                                     <ListItemIcon>
-                                        <MarkEmailUnreadIcon fontSize="inherit" />
+                                        <Badge
+                                            badgeContent={mainState.badgeContent}
+                                            color="error"
+                                            variant="standard"
+                                        >
+                                            <MarkEmailUnreadIcon fontSize="inherit" 
+                                                sx={{
+                                                    color: '#17324D'
+                                                }}
+                                            />
+                                        </Badge>
+                                        
                                     </ListItemIcon>
+                                    {/* <ListItemIcon>
+                                        <Badge
+                                            badgeContent={10}
+                                            color="primary"
+                                            variant="standard"
+                                        >
+                                            <MarkEmailUnreadIcon fontSize="inherit" 
+                                                sx={{
+                                                    color: '#17324D'
+                                                }}
+                                            />
+                                        </Badge>
+                                        
+                                    </ListItemIcon>*/}
                                     <ListItemText primary="Centro Messaggi" />
                                 </ListItemButton>
                             </>}

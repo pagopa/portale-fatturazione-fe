@@ -105,9 +105,12 @@ const App = ({ instance }) => {
         statusPageInserimentoCommessa:'immutable',
         relSelected: null,
         apiError:null,
-        authenticated:false 
+        authenticated:false ,
+        badgeContent:0
     });
 
+   
+ 
 
   
     useEffect(()=>{

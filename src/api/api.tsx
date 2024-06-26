@@ -54,7 +54,7 @@ export const manageErrorDownload = (res:string,dispatchMainState:any) =>{
     }
 };
 
-export const manageErrorRagioneSociale = (res:number,dispatchMainState:any) =>{
+export const managePresaInCarico = (res:string,dispatchMainState:any) =>{
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -63,12 +63,12 @@ export const manageErrorRagioneSociale = (res:number,dispatchMainState:any) =>{
         });
     };
   
-    if(res === 404){
-        const value = res+"_RAGIONE_SOCIALE";
-        
-        handleModifyMainState({apiError:value});
-    }
+   
+    handleModifyMainState({apiError:res});
+    
 };
+
+
 
 export const pagopaLogin = async (tokenObject:TokenObject) => {
     const result = await axios.post(`${url}/api/auth/pagopa/login`, tokenObject);

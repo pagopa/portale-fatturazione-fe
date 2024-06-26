@@ -25,7 +25,7 @@ const SelectMese : React.FC<SelectMeseProps> = ({setValue, values}) =>{
                         const value = Number(e.target.value);
                         setValue((prev)=> ({...prev, ...{mese:value}}));
                     }}         
-                    value={values.mese}  
+                    value={values.mese||''}  
                     disabled={status=== 'immutable' ? true : false}            
                 >
                     {mesi.map((el) => (

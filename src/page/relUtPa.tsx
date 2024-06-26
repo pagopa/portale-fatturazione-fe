@@ -6,7 +6,7 @@ import SelectTipologiaFattura from "../components/reusableComponents/select/sele
 import GridCustom from "../components/reusableComponents/grid/gridCustom";
 import { BodyRel, RelPageProps } from "../types/typeRel";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
-import { manageError, manageErrorRagioneSociale} from "../api/api";
+import { manageError} from "../api/api";
 import { useNavigate } from "react-router";
 import DownloadIcon from '@mui/icons-material/Download';
 import { downloadListaRel, getListaRel} from "../api/apiSelfcare/relSE/api";
@@ -179,11 +179,9 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                     setDataSelect(res.data);
                 })
                 .catch(((err)=>{
-                    if(err.response.status === 404){
-                        manageErrorRagioneSociale(err.response.status,dispatchMainState) ;
-                    }else{
-                        manageError(err,dispatchMainState);
-                    }
+                   
+                    manageError(err,dispatchMainState);
+                   
                 }));
         }
     };

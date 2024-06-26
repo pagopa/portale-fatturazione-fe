@@ -7,7 +7,7 @@ import SelectUltimiDueAnni from "../components/reusableComponents/select/selectU
 import SelectMese from "../components/reusableComponents/select/selectMese";
 import { BodyFatturazione, FatturazioneProps, FattureObj, HeaderCollapsible} from "../types/typeFatturazione";
 import { downloadFatturePagopa, downloadFattureReportPagopa, getFatturazionePagoPa, getTipologieFaPagoPa } from "../api/apiPagoPa/fatturazionePA/api";
-import { manageError, manageErrorDownload, manageErrorRagioneSociale } from "../api/api";
+import { manageError, manageErrorDownload, managePresaInCarico } from "../api/api";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
@@ -105,6 +105,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                 if(error?.response?.status === 404){
                     setGridData([]);
                 }
+               
                 setShowLoadingGrid(false);
                 manageError(error, dispatchMainState);
             });        
@@ -119,11 +120,8 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                     setDataSelect(res.data);
                 })
                 .catch(((err)=>{
-                    if(err.response.status === 404){
-                        manageErrorRagioneSociale(err.response.status,dispatchMainState) ;
-                    }else{
-                        manageError(err,dispatchMainState);
-                    }
+                    manageError(err,dispatchMainState);
+                 
                 }));
         }
     };
@@ -162,6 +160,33 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
             manageErrorDownload(err,dispatchMainState);
         }));
     };
+
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
+
+    const provaPresaInCarico = () => {
+        
+        managePresaInCarico('PRESA',dispatchMainState);
+        
+    
+      
+        const timer = setTimeout(() => {
+           
+            handleModifyMainState({badgeContent:mainState.badgeContent+1});
+        }, 10000);
+        
+        return () =>{
+            clearTimeout(timer);
+                
+        }; 
+        
+      
+    };
+
 
     
 
@@ -259,6 +284,11 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                     gridData.length > 0 &&
                    
                         <>
+                            <Button  onClick={() => provaPresaInCarico()}
+                            >
+                NEW ACTION
+                                <DownloadIcon sx={{marginLeft:'10px'}}></DownloadIcon>
+                            </Button>
                             <Button  onClick={() => downloadListaReportFatturazione()}
                             >
                 Download Report

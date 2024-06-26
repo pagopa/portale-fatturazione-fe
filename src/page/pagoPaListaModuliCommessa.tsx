@@ -2,7 +2,7 @@ import { BodyDownloadModuliCommessa, GridElementListaCommesse, ListaModuliCommes
 import { Params } from "../types/typesGeneral";
 import { Typography } from "@mui/material";
 import { Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
-import { manageError, manageErrorRagioneSociale } from '../api/api';
+import { manageError } from '../api/api';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -131,13 +131,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
                     setDataSelect(res.data) ;
                 })
                 .catch(((err)=>{
-                    if(err.response.status === 404){
-                        manageErrorRagioneSociale(err.response.status,dispatchMainState) ;
-                    }else{
-                        manageError(err,dispatchMainState);
-                    }
-                   
-                    
+                    manageError(err,dispatchMainState);
                 }));
         }
     };
