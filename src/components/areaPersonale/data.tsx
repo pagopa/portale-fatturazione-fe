@@ -20,10 +20,11 @@ export interface DatePickerProps {
 
 const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate,mainState,setDatiFatturazione, datiFatturazione}) => {
 
-
-    const onChangeHandler = (e:any) => {
+ 
+    const onChangeHandler = (e) => {
+        
         try {
-            const data = new Date(e).toISOString();
+            const data: string = new Date(e).toISOString();
             setDatiFatturazione({...datiFatturazione,...{dataDocumento:data}});
         } catch (error) {
             setDatiFatturazione({...datiFatturazione,...{dataDocumento:''}});
@@ -53,7 +54,7 @@ const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate,mainState
                     label={dataLabel}
                     format={formatDate}
                     value={valueDate}
-                    onChange={(e) => onChangeHandler(e)}
+                    onChange={(e:Date | null)  => onChangeHandler(e)}
                     disabled={dataInputDisable}
                     slotProps={{
                         textField: {

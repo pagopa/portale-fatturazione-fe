@@ -5,10 +5,12 @@ import DnsIcon from '@mui/icons-material/Dns';
 import {  useNavigate } from 'react-router';
 import { PathPf } from '../../types/enum';
 import { getProfilo, getStatusApp } from '../../reusableFunction/actionLocalStorage';
-import { MainState } from '../../types/typesGeneral';
+import { InfoOpen, MainState } from '../../types/typesGeneral';
+import { Dispatch, SetStateAction } from 'react';
+
 interface PageTitleProps {
     dispatchMainState:any,
-    setOpen:any,
+    setOpen:Dispatch<SetStateAction<InfoOpen>>,
     mainState:MainState
 }
 
@@ -38,7 +40,7 @@ const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState, se
         if(mainState.statusPageDatiFatturazione === 'immutable' &&  profilo.auth === 'PAGOPA'){
             navigate(PathPf.LISTA_DATI_FATTURAZIONE);
         }else{
-            setOpen(prev => ({...prev, ...{visible:true,clickOn:'INDIETRO_BUTTON'}}));
+            setOpen((prev:InfoOpen) => ({...prev, ...{visible:true,clickOn:'INDIETRO_BUTTON'}}));
         }
     };
 

@@ -28,7 +28,7 @@ export interface DatiFatturazione{
     contatti: Contatti[],
     dataCreazione:string,
     dataModifica:string,
-    dataDocumento:string | null,
+    dataDocumento: null | string,
     pec:string,
     notaLegale:boolean,
     prodotto?:string,
