@@ -67,7 +67,8 @@ export interface MainState{
     datiFatturazione:boolean, // parametro utilizato in modulo commessa per capire se accettare l'inserimento commessa o fare il redirect t dati fatturazione se non sono stati inseriti
     relSelected:string|null,
     apiError:number|string|null,
-    authenticated:boolean
+    authenticated:boolean,
+    badgeContent:number
 }
 
 export interface BodyDownloadDatiFatturazione{
@@ -158,7 +159,7 @@ export interface SelectMeseProps{
     values:{
         anno:number,
         mese:number|null,
-        tipologiaFattura:null| string|string[],
+        tipologiaFattura?:null| string|string[],
         idEnti?:string[],
         idContratto?:null|string,
         caricata?:null|number

@@ -1,8 +1,8 @@
-import { Skeleton, Typography } from "@mui/material";
+import {  Typography } from "@mui/material";
 import { Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
-import { getTipologiaProfilo, manageError, manageErrorRagioneSociale} from '../api/api';
+import { getTipologiaProfilo, manageError, } from '../api/api';
 import { BodyGetListaDatiFatturazione, GridElementListaFatturazione, ListaDatiFatturazioneProps, ResponseDownloadListaFatturazione } from "../types/typeListaDatiFatturazione";
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import {BodyListaDatiFatturazione, Params} from '../types/typesGeneral';
@@ -140,11 +140,9 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                     setDataSelect(res.data);
                 })
                 .catch(((err)=>{
-                    if(err.response.status === 404){
-                        manageErrorRagioneSociale(err.response.status,dispatchMainState) ;
-                    }else{
-                        manageError(err,dispatchMainState);
-                    }
+                 
+                    manageError(err,dispatchMainState);
+                   
                 }));
         }
     };
@@ -323,26 +321,21 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainS
                 }
             </div>
             <div className="mt-1 mb-5" style={{ width: '100%'}}>
-                <Suspense fallback={
-                    <Skeleton variant="rectangular" width={1000} height={1000} />
-                }>
-                    <DataGrid sx={{
-                        height:'400px',
-                        '& .MuiDataGrid-virtualScroller': {
-                            backgroundColor: 'white',
-                        }
-                    }}
-                    onPaginationModelChange={(e)=>{
-                        setInfoPageListaDatiFat(e); setInfoPageToLocalStorage(e);}}
-                    paginationModel={infoPageListaDatiFat}
-                    rows={gridData} 
-                    columns={columns}
-                    getRowId={(row) => row.key}
-                    onRowClick={handleEvent}
-                    onCellClick={handleOnCellClick}
-                    />
-                </Suspense>
-               
+                <DataGrid sx={{
+                    height:'400px',
+                    '& .MuiDataGrid-virtualScroller': {
+                        backgroundColor: 'white',
+                    }
+                }}
+                onPaginationModelChange={(e)=>{
+                    setInfoPageListaDatiFat(e); setInfoPageToLocalStorage(e);}}
+                paginationModel={infoPageListaDatiFat}
+                rows={gridData} 
+                columns={columns}
+                getRowId={(row) => row.key}
+                onRowClick={handleEvent}
+                onCellClick={handleOnCellClick}
+                />
             </div>
             <div>
             </div>

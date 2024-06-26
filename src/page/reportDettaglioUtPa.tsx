@@ -3,7 +3,7 @@ import { } from '@mui/material';
 import React , { useState, useEffect} from 'react';
 import { TextField,Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { getTipologiaProfilo, manageError, manageErrorRagioneSociale} from "../api/api";
+import { getTipologiaProfilo, manageError} from "../api/api";
 import { ReportDettaglioProps, NotificheList, FlagContestazione, Contestazione, ElementMultiSelect, ListaRecCon, OptionMultiselectChackbox  } from "../types/typeReportDettaglio";
 import { BodyListaNotifiche } from "../types/typesGeneral";
 import ModalContestazione from '../components/reportDettaglio/modalContestazione';
@@ -192,11 +192,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                     setDataSelect(res.data);
                 })
                 .catch(((err)=>{
-                    if(err.response.status === 404){
-                        manageErrorRagioneSociale(err.response.status,dispatchMainState) ;
-                    }else{
-                        manageError(err,dispatchMainState);
-                    }
+                    manageError(err,dispatchMainState);
                 }));
         }else if(profilo.auth === 'PAGOPA'){
             await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} )
@@ -204,11 +200,9 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                     setDataSelect(res.data);
                 })
                 .catch(((err)=>{
-                    if(err.response.status === 404){
-                        manageErrorRagioneSociale(err.response.status,dispatchMainState) ;
-                    }else{
-                        manageError(err,dispatchMainState);
-                    }
+                   
+                    manageError(err,dispatchMainState);
+                    
                 }));
         }
     };
