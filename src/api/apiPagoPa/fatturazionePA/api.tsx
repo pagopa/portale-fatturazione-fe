@@ -52,3 +52,14 @@ export const downloadFattureReportPagopa = async (token:string, nonce:string,bod
     
     return response;
 };
+
+
+export const fatturePrenotazioneReportPagoPa = async (token:string, nonce:string, body:BodyFatturazione) => {
+    const response =  await axios.post(`${url}/api/fatture/report/prenotazione?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }}
+    );
+    return response;
+};

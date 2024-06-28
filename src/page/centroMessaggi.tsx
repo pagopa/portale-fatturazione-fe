@@ -1,4 +1,4 @@
-import { Button, Typography } from "@mui/material";
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import { DataGrid, GridRowParams,GridEventListener,MuiEvent, GridColDef } from '@mui/x-data-grid';
 import { useEffect, useState } from "react";
@@ -8,55 +8,72 @@ import SelectMese from "../components/reusableComponents/select/selectMese";
 import { getListaMessaggi, getMessaggiCount } from "../api/apiPagoPa/centroMessaggi/api";
 import { getProfilo, getToken } from "../reusableFunction/actionLocalStorage";
 import MultiSelectBase from "../components/reusableComponents/select/multiSelectBase";
+import { MainState } from "../types/typesGeneral";
 
 
+interface Messaggi {
+    idEnte: null|string,
+    idUtente: string,
+    json: string,
+    anno: number,
+    mese: number,
+    prodotto: string,
+    gruppoRuolo: string,
+    auth: string,
+    stato: string,
+    dataInserimento: string,
+    dataStepCorrente: string,
+    linkDocumento: string,
+    tipologiaDocumento: string,
+    lettura: boolean,
+    hash: string
+}
 
-const CentroMessaggi : React.FC = () => {
+interface CentroMessaggiProps {
+    mainState:MainState,
+    dispatchMainState:any
+}
+
+
+const CentroMessaggi : React.FC<CentroMessaggiProps> = ({mainState,dispatchMainState}) => {
+
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
 
     const token = getToken();
     const profilo = getProfilo();
     const currentYear = (new Date()).getFullYear();
     const currentMonth = (new Date()).getMonth() + 1;
     const monthNumber = Number(currentMonth);
-    console.log(currentYear);
+    
     const [bodyCentroMessaggi, setBodyCentroMessaggi] = useState({
         anno:currentYear,
         mese:null,
-        tipologiaDocumento:['fatturazione'],
+        tipologiaDocumento:[],
         letto: false
     });
 
-    const [gridData, setGridData] = useState([{
-        anno:2023,
-        mese:'Gennaio',
-        stato:'presa in carico',
-        dataI:'23/06/2024',
-        dataF:'24/06/2024',
-        id:1,
-    }]);
+    const [gridData, setGridData] = useState<Messaggi[]>([]);
 
     const [infoPageListaMes , setInfoPageListaMes] = useState({ page: 1, pageSize: 100 });
 
 
-    const getCount = async () =>{
-        await getMessaggiCount(token,profilo.nonce).then((res)=>{
-            console.log(res);
-        }).catch((err)=>{
-            console.log(err);
-        });
-    };
+    console.log(gridData);
 
     const getMessaggi = async () =>{
         await getListaMessaggi(token,profilo.nonce,bodyCentroMessaggi,infoPageListaMes.page,infoPageListaMes.pageSize).then((res)=>{
-            console.log(res);
+           
+            setGridData(res.data.messaggi);
         }).catch((err)=>{
             console.log(err);
         });
     };
 
     useEffect(()=>{
-
-        getCount();
         getMessaggi();
     },[]);
 
@@ -77,12 +94,12 @@ const CentroMessaggi : React.FC = () => {
         { field: 'anno', headerName: 'Anno Riferimento', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left'},
         { field: 'mese', headerName: 'Mese Riferimento', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'stato', headerName: 'Stato', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'dataI', headerName: 'Data di riferimento', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'dataF', headerName: 'Data Step corrente', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left'},
+        { field: 'dataInserimento', headerName: 'Data Inserimento', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',valueFormatter: (value:any) =>  value.value !== null ? new Date(value.value).toLocaleString().split(',')[0] : '' },
+        { field: 'lettura', headerName: 'Letto', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left'},
         {field: 'action', headerName: '',sortable: false,width:70,headerAlign: 'left',disableColumnMenu :true,renderCell: (() => ( <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} onClick={() => console.log('Show page details')} />)),}
     ];
 
-  
+    console.log(bodyCentroMessaggi);
 
     return (
         <div className="mx-5">
@@ -100,12 +117,37 @@ const CentroMessaggi : React.FC = () => {
                     <div  className="col-3">
                         <MultiSelectBase
                             setBody={setBodyCentroMessaggi}
-                            list={['fatturazione']}
-                            value={['fatturazione']}
+                            list={[]}
+                            value={[]}
                             setValue={setBodyCentroMessaggi}
                             label={'Tipologia Documento'}
                             placeholder={"Tipologia Documento"}
                         ></MultiSelectBase>
+                    </div>
+                    <div  className="col-3">
+                        <Box sx={{width:'80%', marginLeft:'20px'}}>
+                            <FormControl fullWidth>
+                                <InputLabel id="select lettura">Lettura</InputLabel>
+                                <Select
+                                    labelId="select-lettura"
+                                    id="select-lettura"
+                                    value={bodyCentroMessaggi.letto.toString()}
+                                    label="Lettura"
+                                    onChange={(e:SelectChangeEvent)=> {
+                                        let val;
+                                        if(e.target.value === 'true'){
+                                            val = true;
+                                        }else{
+                                            val = false;
+                                        }
+                                        setBodyCentroMessaggi((prev)=>({...prev,...{letto:val}}));
+                                    }}
+                                >
+                                    <MenuItem value={'true'}>Si</MenuItem>
+                                    <MenuItem value={'false'}>No</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Box>
                     </div>
                 </div>
                 <div className="d-flex mt-5">
@@ -119,7 +161,12 @@ const CentroMessaggi : React.FC = () => {
                     </Button>
                    
                     <Button
-                        onClick={()=> console.log('ANNULLA')}
+                        onClick={()=> setBodyCentroMessaggi({
+                            anno:currentYear,
+                            mese:null,
+                            tipologiaDocumento:[],
+                            letto: false
+                        })}
                         sx={{marginLeft:'24px'}} >
                    Annulla filtri
                     </Button>
@@ -149,7 +196,7 @@ const CentroMessaggi : React.FC = () => {
                 paginationModel={infoPageListaMes}
                 rows={gridData} 
                 columns={columns}
-                getRowId={(row) => row.id}
+                getRowId={(row) => row.idMessaggio}
                 onRowClick={handleEvent}
                 onCellClick={handleOnCellClick}
                 />

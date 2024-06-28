@@ -17,24 +17,22 @@ export interface AreaPersonaleProps{
 }
 
 export interface DatiFatturazione{
-    id?:string,
+    id:number,
+    map:null|string,
     idEnte:string,
-    map?:string
     tipoCommessa:string,
     splitPayment:boolean,
-    cup: string,
+    cup:string,
     idDocumento:string,
     codCommessa:string,
-    contatti: Contatti[],
+    contatti: Contatti[]|[],
     dataCreazione:string,
     dataModifica:string,
     dataDocumento: null | string,
     pec:string,
     notaLegale:boolean,
-    prodotto?:string,
+    prodotto:string
 }
-
-    
 
 export interface DatiFatturazionePost{
     tipoCommessa:string,

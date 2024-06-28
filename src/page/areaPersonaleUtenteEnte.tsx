@@ -54,8 +54,10 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         dataModifica:'',
         dataDocumento:new Date().toISOString(),
         pec:'',
-        notaLegale:false
-
+        notaLegale:false,
+        prodotto:'',
+        map:'',
+        id:0
     });
   
     // state creato per il tasto conferma , abilitato nel caso in cui tutti values sono true
@@ -137,7 +139,10 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 dataModifica:'',
                 dataDocumento:null,
                 pec:'',
-                notaLegale:false
+                notaLegale:false,
+                prodotto:'',
+                map:'',
+                id:0
         
             });
             if(err?.response?.status !== 404){
@@ -174,7 +179,10 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 dataModifica:'',
                 dataDocumento:null,
                 pec:'',
-                notaLegale:false
+                notaLegale:false,
+                prodotto:'',
+                map:'',
+                id:0
         
             });
             

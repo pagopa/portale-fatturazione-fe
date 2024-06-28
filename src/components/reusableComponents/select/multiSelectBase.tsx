@@ -20,10 +20,10 @@ const MultiSelectBase : React.FC<MultiSelectBaseProps> =  ({setBody,list,value,s
             multiple
             onChange={(event, value,reason) => {
                 setValue(value);
-                setBody((prev) => ({...prev,...{tipologiaFattura:value}}));
+                setBody((prev) => ({...prev,...{tipologiaDocumento:value}}));
 
             }}
-            id="checkboxes-tipologie"
+            id="checkboxes-tipologie-documento"
             options={list}
             value={value}
             disableCloseOnSelect
@@ -43,8 +43,8 @@ const MultiSelectBase : React.FC<MultiSelectBaseProps> =  ({setBody,list,value,s
             renderInput={(params) => {
                 
                 return <TextField {...params}
-                    label="Tipologia Fattura" 
-                    placeholder="Tipologia Fattura" />;
+                    label={label} 
+                    placeholder={placeholder} />;
             }}
            
         />
