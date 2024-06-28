@@ -23,6 +23,7 @@ import AnnouncementIcon from '@mui/icons-material/Announcement';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import { getProfilo, getToken, profiliEnti } from '../../reusableFunction/actionLocalStorage';
 import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
+import { getMessaggiCount } from '../../api/apiPagoPa/centroMessaggi/api';
 
 const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState, setOpenBasicModal_DatFat_ModCom}) => {
 
@@ -39,6 +40,26 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
             value:valueObj
         });
     };
+
+    const getCount = async () =>{
+        await getMessaggiCount(token,profilo.nonce).then((res)=>{
+            console.log(res);
+            const numMessaggi = res.data;
+            handleModifyMainState({badgeContent:numMessaggi});
+        }).catch((err)=>{
+            console.log(err);
+        });
+    };
+    useEffect(()=>{
+
+        getCount();
+        const interval = setInterval(() => {
+            getCount();
+        }, 8000);
+      
+        return () => clearInterval(interval); 
+    },[]);
+
 
     const [selectedIndex, setSelectedIndex] = useState(0);
     

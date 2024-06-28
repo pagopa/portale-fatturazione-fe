@@ -6,7 +6,7 @@ import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
 import { BodyFatturazione, FatturazioneProps, FattureObj, HeaderCollapsible} from "../types/typeFatturazione";
-import { downloadFatturePagopa, downloadFattureReportPagopa, getFatturazionePagoPa, getTipologieFaPagoPa } from "../api/apiPagoPa/fatturazionePA/api";
+import { downloadFatturePagopa, downloadFattureReportPagopa, fatturePrenotazioneReportPagoPa, getFatturazionePagoPa, getTipologieFaPagoPa } from "../api/apiPagoPa/fatturazionePA/api";
 import { manageError, manageErrorDownload, managePresaInCarico } from "../api/api";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
@@ -161,34 +161,17 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
         }));
     };
 
-    const handleModifyMainState = (valueObj) => {
-        dispatchMainState({
-            type:'MODIFY_MAIN_STATE',
-            value:valueObj
-        });
+    const getPrenotazioneReport = async () => {
+        await fatturePrenotazioneReportPagoPa(token,profilo.nonce, bodyFatturazioneDownload)
+            .then((res)=>{
+                console.log(res);
+                managePresaInCarico('PRESA',dispatchMainState);
+            })
+            .catch(((err)=>{
+                manageError(err,dispatchMainState);
+         
+            }));
     };
-
-    const provaPresaInCarico = () => {
-        
-        managePresaInCarico('PRESA',dispatchMainState);
-        
-    
-      
-        const timer = setTimeout(() => {
-           
-            handleModifyMainState({badgeContent:mainState.badgeContent+1});
-        }, 10000);
-        
-        return () =>{
-            clearTimeout(timer);
-                
-        }; 
-        
-      
-    };
-
-
-    
 
 
     const headersObjGrid : HeaderCollapsible[] = [
@@ -284,14 +267,8 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                
                 {
                     gridData.length > 0 &&
-                   
                         <>
-                            <Button  onClick={() => provaPresaInCarico()}
-                            >
-                NEW ACTION
-                                <DownloadIcon sx={{marginLeft:'10px'}}></DownloadIcon>
-                            </Button>
-                            <Button  onClick={() => downloadListaReportFatturazione()}
+                            <Button  onClick={() => getPrenotazioneReport()}
                             >
                 Download Report
                                 <DownloadIcon sx={{marginLeft:'10px'}}></DownloadIcon>
@@ -302,11 +279,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                                 <DownloadIcon sx={{marginLeft:'10px'}}></DownloadIcon>
                             </Button>
                         </>
-                        
-                }
-               
-                
-                
+                }  
             </div>
             
             <CollapsibleTable 

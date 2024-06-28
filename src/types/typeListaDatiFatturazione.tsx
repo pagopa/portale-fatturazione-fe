@@ -1,5 +1,7 @@
+import { MainState } from "./typesGeneral";
+
 export interface ListaDatiFatturazioneProps{
-    mainState:any,
+    mainState:MainState,
     dispatchMainState:any,
 }
 export interface ResponseDownloadListaFatturazione {
