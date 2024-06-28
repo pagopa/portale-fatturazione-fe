@@ -9,7 +9,7 @@ import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import SkeletonRelPdf from '../components/rel/skeletonRelPdf';
 import { MainState } from '../types/typesGeneral';
 import { useNavigate, useParams } from 'react-router';
-import { downloadMessaggioPagoPa } from '../api/apiPagoPa/centroMessaggi/api';
+import { downloadMessaggioPagoPa, readMessaggioPagoPa } from '../api/apiPagoPa/centroMessaggi/api';
 import { saveAs } from "file-saver";
 import { manageErrorDownload } from "../api/api";
 import { getProfilo, getToken } from '../reusableFunction/actionLocalStorage';
@@ -25,7 +25,7 @@ const DettaglioMessaggio : React.FC<DettaglioMessaggioProps> = ({mainState,dispa
 
     const { id } = useParams();
     const navigate = useNavigate();
-    console.log(id, mainState);
+    console.log(typeof(id), mainState);
 
     const [details, setDetails] = useState<Messaggi>( {
         idEnte: '',
@@ -49,6 +49,10 @@ const DettaglioMessaggio : React.FC<DettaglioMessaggioProps> = ({mainState,dispa
         if(mainState.messaggioSelected !== null){
             setDetails(mainState.messaggioSelected);
         }
+    },[mainState.messaggioSelected]);
+
+    useEffect(()=>{
+        readMessage();
     },[mainState.messaggioSelected]);
 
    
@@ -75,7 +79,19 @@ const DettaglioMessaggio : React.FC<DettaglioMessaggioProps> = ({mainState,dispa
             manageErrorDownload(err,dispatchMainState);
         }));
     };
-  
+
+
+    const readMessage = async() => {
+        await readMessaggioPagoPa(token,profilo.nonce,{idMessaggio:Number(id)}).then((res)=>{
+
+            console.log(res);
+    
+        }).catch((err)=>{
+           
+            console.log(err);
+        });
+    };
+   
     if(showDownloading){
         return(
             <SkeletonRelPdf></SkeletonRelPdf>

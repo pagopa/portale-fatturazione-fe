@@ -36,3 +36,15 @@ export const downloadMessaggioPagoPa = async (token:string, nonce:string , body:
     return response;
 };
 
+
+export const readMessaggioPagoPa = async (token:string, nonce:string ,body:{idMessaggio:number}) => {
+    const response =  await axios.post(`${url}/api/messaggi/read?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },
+        }
+    );
+    return response;
+};
+
