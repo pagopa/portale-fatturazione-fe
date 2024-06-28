@@ -33,6 +33,7 @@ import RelPdfPage from './page/relPdfUtPa';
 import { InfoOpen} from './types/typesGeneral';
 import Fatturazione from './page/fatturazione';
 import CentroMessaggi from './page/centroMessaggi';
+import DettaglioMessaggio from './page/centroMessaggiDettaglio';
 
 
 const App = ({ instance }) => {
@@ -68,7 +69,8 @@ const App = ({ instance }) => {
         relSelected: null,
         apiError:null,
         authenticated:false ,
-        badgeContent:0
+        badgeContent:0,
+        messaggioSelected:null
     });
 
    
@@ -175,6 +177,8 @@ const App = ({ instance }) => {
                                     <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio mainState={mainState} dispatchMainState={dispatchMainState}/>} />
 
                                     <Route path={'/centromessaggi'} element={<CentroMessaggi mainState={mainState} dispatchMainState={dispatchMainState}/>} />
+
+                                    <Route path={'/dettagliomessaggio/:id'} element={<DettaglioMessaggio mainState={mainState} dispatchMainState={dispatchMainState}/>} />
 
                                     <Route path="*" element={<Navigate to={PathPf.LISTA_DATI_FATTURAZIONE} replace />} />
 

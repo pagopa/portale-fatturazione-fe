@@ -5,12 +5,17 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { MultiselectNotificheProps, OptionMultiselectChackbox } from '../../types/typeReportDettaglio';
 import { BodyListaNotifiche} from '../../types/typesGeneral';
+import { useLocation } from 'react-router';
+import { PathPf } from '../../types/enum';
 
 
 const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetLista, dataSelect,setTextValue,valueAutocomplete, setValueAutocomplete}) => {
 
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
+    const location = useLocation();
+
+    const customMargin = location.pathname === PathPf.FATTURAZIONE ? { width: '80%' ,marginLeft:'12px'} : { width: '80%'};
 
     return (
         <Autocomplete
@@ -40,7 +45,7 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
                     </li>
                 );
             } }
-            style={{ width: '80%' }}
+            style={customMargin}
             renderInput={(params) =>{
                 return <TextField 
                     onChange={(e)=> setTextValue(e.target.value)} 

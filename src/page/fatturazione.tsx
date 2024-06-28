@@ -164,7 +164,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
     const getPrenotazioneReport = async () => {
         await fatturePrenotazioneReportPagoPa(token,profilo.nonce, bodyFatturazioneDownload)
             .then((res)=>{
-                console.log(res);
+             
                 managePresaInCarico('PRESA',dispatchMainState);
             })
             .catch(((err)=>{
@@ -202,7 +202,6 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                     <div  className="col-3">
                         <SelectMese values={bodyFatturazione} setValue={setBodyFatturazione}></SelectMese>
                     </div>
-                   
                     <div  className="col-3">
                         <MultiSelectBase
                             setBody={setBodyFatturazione}
@@ -224,43 +223,45 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                     </div>
                 </div>
                 <div className="d-flex mt-5">
-                   
-                    <Button 
-                        onClick={()=>{
-                            getlistaFatturazione(bodyFatturazione);
-                        } } 
-                        sx={{ marginTop: 'auto', marginBottom: 'auto'}}
-                        variant="contained"> Filtra
-                    </Button>
-                    {statusAnnulla === 'hidden' ? null :
-                        <Button
+                    <div className="row">
+                        <Button 
                             onClick={()=>{
-                                getlistaFatturazione({
-                                    anno:currentYear,
-                                    mese:monthNumber,
-                                    tipologiaFattura:[],
-                                    idEnti:[]
-                                });
-                                setBodyFatturazione({
-                                    anno:currentYear,
-                                    mese:monthNumber,
-                                    tipologiaFattura:[],
-                                    idEnti:[]
-                                });
-                                setBodyFatturazioneDownload({
-                                    anno:currentYear,
-                                    mese:monthNumber,
-                                    tipologiaFattura:[],
-                                    idEnti:[]
-                                });
-                                setDataSelect([]);
-                                setValueMultiselectTipologie([]);
-                            } }
-                            sx={{marginLeft:'24px'}} >
-                    Annulla filtri
+                                getlistaFatturazione(bodyFatturazione);
+                            } } 
+                            sx={{ marginTop: 'auto', marginBottom: 'auto'}}
+                            variant="contained"> Filtra
                         </Button>
-                    }
+                        {statusAnnulla === 'hidden' ? null :
+                            <Button
+                                onClick={()=>{
+                                    getlistaFatturazione({
+                                        anno:currentYear,
+                                        mese:monthNumber,
+                                        tipologiaFattura:[],
+                                        idEnti:[]
+                                    });
+                                    setBodyFatturazione({
+                                        anno:currentYear,
+                                        mese:monthNumber,
+                                        tipologiaFattura:[],
+                                        idEnti:[]
+                                    });
+                                    setBodyFatturazioneDownload({
+                                        anno:currentYear,
+                                        mese:monthNumber,
+                                        tipologiaFattura:[],
+                                        idEnti:[]
+                                    });
+                                    setDataSelect([]);
+                                    setValueMultiselectTipologie([]);
+                                } }
+                                sx={{marginLeft:'24px'}} >
+                    Annulla filtri
+                            </Button>
+                        }
+                    </div>
                 </div>
+                   
             </div>
             <div className="marginTop24" style={{display:'flex', justifyContent:'end', height:"48px"}}>
                

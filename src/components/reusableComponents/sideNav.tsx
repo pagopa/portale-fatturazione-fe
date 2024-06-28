@@ -43,7 +43,6 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
 
     const getCount = async () =>{
         await getMessaggiCount(token,profilo.nonce).then((res)=>{
-            console.log(res);
             const numMessaggi = res.data;
             handleModifyMainState({badgeContent:numMessaggi});
         }).catch((err)=>{
@@ -282,7 +281,6 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
 
     const handleListItemClickCentroMessaggi = () =>{
         navigate("/centromessaggi");
-        handleModifyMainState({badgeContent:0});
     };
     
     const currentLocation = location.pathname;
