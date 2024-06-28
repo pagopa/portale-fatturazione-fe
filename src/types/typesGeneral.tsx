@@ -1,3 +1,4 @@
+import { Messaggi } from "../page/centroMessaggi";
 import { DataGridCommessa } from "./typeModuloCommessaElenco";
 import { BodyRel, Rel } from "./typeRel";
 
@@ -67,7 +68,8 @@ export interface MainState{
     relSelected:string|null,
     apiError:number|string|null,
     authenticated:boolean,
-    badgeContent:number
+    badgeContent:number,
+    messaggioSelected:null|Messaggi
 }
 
 export interface BodyDownloadDatiFatturazione{
@@ -172,7 +174,7 @@ export interface MultiSelectBaseProps{
     value:string[],
     setValue:any,
     label:string,
-    placeholder:string
+    placeholder:string,
 }
 export interface ErrorPageProps{
     dispatchMainState:any,

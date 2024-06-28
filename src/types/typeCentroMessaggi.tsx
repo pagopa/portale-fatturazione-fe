@@ -2,5 +2,5 @@ export interface BodyCentromessaggi {
     anno: number,
     mese: number|null,
     tipologiaDocumento: string[]|[],
-    letto: boolean
+    letto: boolean|null
 }
