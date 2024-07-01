@@ -76,7 +76,7 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
             }else if(enti && mainState.statusPageDatiFatturazione === 'mutable'){
                 getDatiFat();
                 handleModifyMainState({statusPageDatiFatturazione:'immutable'});
-                //navigate(open.clickOn);
+                navigate(open.clickOn);
                 setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
                 /* localStorage.removeItem("filtersModuliCommessa");
                 localStorage.removeItem("pageRowListaModuliCommessa");
