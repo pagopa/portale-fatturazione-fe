@@ -104,7 +104,7 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
         { field: 'tipologiaAccertamento', headerName: 'Tipologia Accertamento', width: 400 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.tipologiaAccertamento}</a>},
         { field: 'anno', headerName: 'Anno', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'mese', headerName: 'Mese', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        {field: 'action', headerName: '',sortable: false,width:70,headerAlign: 'left',disableColumnMenu :true,renderCell: (() => ( <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }}/>)),}
+        {field: 'action', headerName: '',sortable: false,width:70,headerAlign: 'left',disableColumnMenu :true,renderCell: (() => ( <DownloadIcon sx={{marginLeft:'10px',color: '#1976D2', cursor: 'pointer'}}></DownloadIcon>)),}
     ];
 
 
@@ -173,22 +173,9 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
                 </div>
                    
             </div>
-            <div className="marginTop24" style={{display:'flex', justifyContent:'end', height:"48px"}}>
-               
-               
-                {
-                    gridData.length > 0 &&
-                        <>
-                            <Button  onClick={() => console.log('download')}
-                            >
-                Download Report
-                                <DownloadIcon sx={{marginLeft:'10px'}}></DownloadIcon>
-                            </Button>
-                        </>
-                }  
-            </div>
             
-            <div className="mt-1 mb-5" style={{ width: '100%'}}>
+            
+            <div className="mt-5 mb-5" style={{ width: '100%'}}>
                 <DataGrid sx={{
                     height:'400px',
                     '& .MuiDataGrid-virtualScroller': {
