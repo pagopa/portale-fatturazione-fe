@@ -34,6 +34,7 @@ import { InfoOpen} from './types/typesGeneral';
 import Fatturazione from './page/fatturazione';
 import CentroMessaggi from './page/centroMessaggi';
 import DettaglioMessaggio from './page/centroMessaggiDettaglio';
+import Accertamenti from './page/accertamenti';
 
 
 const App = ({ instance }) => {
@@ -177,6 +178,8 @@ const App = ({ instance }) => {
                                     <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio mainState={mainState} dispatchMainState={dispatchMainState}/>} />
 
                                     <Route path={'/centromessaggi'} element={<CentroMessaggi mainState={mainState} dispatchMainState={dispatchMainState}/>} />
+
+                                    <Route path={'/accertamenti'} element={<Accertamenti  dispatchMainState={dispatchMainState}/>} />
 
                                     <Route path={'/dettagliomessaggio/:id'} element={<DettaglioMessaggio mainState={mainState} dispatchMainState={dispatchMainState}/>} />
 
