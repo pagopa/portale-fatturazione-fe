@@ -222,43 +222,49 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                         ></MultiselectCheckbox>
                     </div>
                 </div>
-                <div className="d-flex mt-5">
+                <div className=" mt-5">
                     <div className="row">
-                        <Button 
-                            onClick={()=>{
-                                getlistaFatturazione(bodyFatturazione);
-                            } } 
-                            sx={{ marginTop: 'auto', marginBottom: 'auto'}}
-                            variant="contained"> Filtra
-                        </Button>
-                        {statusAnnulla === 'hidden' ? null :
-                            <Button
+                        <div className="col-1">
+                            <Button 
                                 onClick={()=>{
-                                    getlistaFatturazione({
-                                        anno:currentYear,
-                                        mese:monthNumber,
-                                        tipologiaFattura:[],
-                                        idEnti:[]
-                                    });
-                                    setBodyFatturazione({
-                                        anno:currentYear,
-                                        mese:monthNumber,
-                                        tipologiaFattura:[],
-                                        idEnti:[]
-                                    });
-                                    setBodyFatturazioneDownload({
-                                        anno:currentYear,
-                                        mese:monthNumber,
-                                        tipologiaFattura:[],
-                                        idEnti:[]
-                                    });
-                                    setDataSelect([]);
-                                    setValueMultiselectTipologie([]);
-                                } }
-                                sx={{marginLeft:'24px'}} >
-                    Annulla filtri
+                                    getlistaFatturazione(bodyFatturazione);
+                                } } 
+                                sx={{ marginTop: 'auto', marginBottom: 'auto'}}
+                                variant="contained"> Filtra
                             </Button>
-                        }
+                        </div>
+                        <div className="col-2">
+                            {statusAnnulla === 'hidden' ? null :
+                                <Button
+                                    onClick={()=>{
+                                        getlistaFatturazione({
+                                            anno:currentYear,
+                                            mese:monthNumber,
+                                            tipologiaFattura:[],
+                                            idEnti:[]
+                                        });
+                                        setBodyFatturazione({
+                                            anno:currentYear,
+                                            mese:monthNumber,
+                                            tipologiaFattura:[],
+                                            idEnti:[]
+                                        });
+                                        setBodyFatturazioneDownload({
+                                            anno:currentYear,
+                                            mese:monthNumber,
+                                            tipologiaFattura:[],
+                                            idEnti:[]
+                                        });
+                                        setDataSelect([]);
+                                        setValueMultiselectTipologie([]);
+                                    } }
+                                    sx={{marginLeft:'24px'}} >
+                              Annulla filtri
+                                </Button>
+                            }
+                        </div>
+                       
+                        
                     </div>
                 </div>
                    

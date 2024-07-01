@@ -24,6 +24,7 @@ import ReceiptIcon from '@mui/icons-material/Receipt';
 import { getProfilo, getToken, profiliEnti } from '../../reusableFunction/actionLocalStorage';
 import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
 import { getMessaggiCount } from '../../api/apiPagoPa/centroMessaggi/api';
+import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 
 const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState, setOpenBasicModal_DatFat_ModCom}) => {
 
@@ -282,6 +283,10 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
     const handleListItemClickCentroMessaggi = () =>{
         navigate("/centromessaggi");
     };
+
+    const handleListItemClickAccertamenti = () =>{
+        navigate("/accertamenti");
+    };
     
     const currentLocation = location.pathname;
 
@@ -310,6 +315,8 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
             setSelectedIndex(5);
         }else if(currentLocation === "/centromessaggi"){
             setSelectedIndex(6);
+        }else if(currentLocation === "/accertamenti"){
+            setSelectedIndex(7);
         }
     },[currentLocation]);
    
@@ -373,6 +380,12 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
                                         <ReceiptIcon fontSize="inherit" />
                                     </ListItemIcon>
                                     <ListItemText primary="Fatturazione" />
+                                </ListItemButton>
+                                <ListItemButton selected={selectedIndex === 7} onClick={() => handleListItemClickAccertamenti()}>
+                                    <ListItemIcon>
+                                        <ManageSearchIcon fontSize="inherit"></ManageSearchIcon>
+                                    </ListItemIcon>
+                                    <ListItemText primary="Accertamenti" />
                                 </ListItemButton>
                                 <ListItemButton selected={selectedIndex === 6} onClick={() => handleListItemClickCentroMessaggi()}>
                                     <ListItemIcon>
