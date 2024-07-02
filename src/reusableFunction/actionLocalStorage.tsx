@@ -95,8 +95,8 @@ export const getInfoPageFromLocalStorageCommessa = () => {
     return result;
 };
 
-export const setFilterToLocalStorageRel = (bodyRel,textValue,valueAutocomplete, page, rowsPerPage) => {
-    localStorage.setItem("filtersRel", JSON.stringify({bodyRel,textValue,valueAutocomplete, page, rowsPerPage}));
+export const setFilterToLocalStorageRel = (bodyRel,textValue,valueAutocomplete, page, rowsPerPage,valuetipologiaFattura) => {
+    localStorage.setItem("filtersRel", JSON.stringify({bodyRel,textValue,valueAutocomplete, page, rowsPerPage,valuetipologiaFattura}));
 }; 
 
 export const deleteFilterToLocalStorageRel = () => {
