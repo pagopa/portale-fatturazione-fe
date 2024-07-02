@@ -161,9 +161,10 @@ export interface SelectMeseProps{
         tipologiaFattura:null| string|string[],
         idEnti?:string[],
         idContratto?:null|string,
-        caricata?:null|number
+        caricata?:null|number,
     },
     setValue: (value:any) => void
+    getTipologia?:any
 }
 
 export interface ErrorPageProps{

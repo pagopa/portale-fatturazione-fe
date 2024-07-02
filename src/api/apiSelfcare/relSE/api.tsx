@@ -85,3 +85,14 @@ export const getLogRelDocumentoFirmato = async (token:string, nonce:string , bod
     );
     return response;
 };
+
+export const getTipologieFatture = async (token:string, nonce:string , body: {mese:number,anno:number}) => {
+    const response =  await axios.post(`${url}/api/rel/tipologiafattura?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },
+        }
+    );
+    return response;
+};

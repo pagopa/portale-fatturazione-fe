@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
 import { Button, Typography } from "@mui/material";
@@ -9,7 +9,7 @@ import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckb
 import { manageError} from "../api/api";
 import { useNavigate } from "react-router";
 import DownloadIcon from '@mui/icons-material/Download';
-import { downloadListaRel, getListaRel} from "../api/apiSelfcare/relSE/api";
+import { downloadListaRel, getListaRel, getTipologieFatture} from "../api/apiSelfcare/relSE/api";
 import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, downloadQuadraturaRelPagopa, getListaRelPagoPa } from "../api/apiPagoPa/relPA/api";
 import SelectStatoPdf from "../components/rel/selectStatoPdf";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
@@ -48,6 +48,9 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     const [disableDownloadListaPdf, setDisableListaPdf] = useState(true);
     const [textValue, setTextValue] = useState('');
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
+    const [tipologiaFatture, setTipologiaFatture] = useState<string[]>([]);
+    const [valuetipologiaFattura, setValueTipologiaFattura] = useState<string>('');
+
     const [bodyDownload, setBodyDownload] = useState<BodyRel>({
         anno:currentYear,
         mese:month,
@@ -68,6 +71,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
  
 
     useEffect(()=>{
+        
         const result = getFiltersFromLocalStorageRel();
         if(mainState.nonce !== ''){
             if(Object.keys(result).length > 0){
@@ -78,12 +82,23 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 setPage(result.page);
                 setRowsPerPage(result.rowsPerPage);
                 setBodyDownload(result.bodyRel);
+                getListTipologiaFattura(result.bodyRel.anno,result.bodyRel.mese);
+                
+               
+                console.log(1);
             }else{
                 const realPage = page + 1;
                 getlistaRel(bodyRel,realPage, rowsPerPage);
+                getListTipologiaFattura(bodyRel.anno,bodyRel.mese);
+                
+                console.log(2);
             }
         }
+       
     },[mainState.nonce]);
+
+ 
+
 
    
    
@@ -177,8 +192,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             await listaEntiNotifichePage(token, mainState.nonce, {descrizione:textValue} )
                 .then((res)=>{
                     setDataSelect(res.data);
-                })
-                .catch(((err)=>{
+                }).catch(((err)=>{
                     manageError(err,dispatchMainState);
                 }));
         }
@@ -189,7 +203,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         setRowsPerPage(10);
         setBodyDownload(bodyRel);
         getlistaRel(bodyRel,1,10); 
-        setFilterToLocalStorageRel(bodyRel,textValue,valueAutocomplete, 0, 10);
+        setFilterToLocalStorageRel(bodyRel,textValue,valueAutocomplete, 0, 10,valuetipologiaFattura);
     };
 
     const handleChangePage = (
@@ -200,7 +214,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         getlistaRel(bodyRel,realPage, rowsPerPage);
         setPage(newPage);
       
-        setFilterToLocalStorageRel(bodyDownload,textValue,valueAutocomplete, newPage, rowsPerPage);
+        setFilterToLocalStorageRel(bodyDownload,textValue,valueAutocomplete, newPage, rowsPerPage,valuetipologiaFattura);
     };
                     
     const handleChangeRowsPerPage = (
@@ -211,7 +225,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         const realPage = page + 1;
         getlistaRel(bodyRel,realPage,parseInt(event.target.value, 10));
    
-        setFilterToLocalStorageRel(bodyDownload,textValue,valueAutocomplete, page, parseInt(event.target.value, 10));
+        setFilterToLocalStorageRel(bodyDownload,textValue,valueAutocomplete, page, parseInt(event.target.value, 10),valuetipologiaFattura);
     };
    
     const setIdRel = async(idRel) => {
@@ -219,6 +233,43 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         navigate(PathPf.PDF_REL);
     
     };  
+
+    const getListTipologiaFattura = async(anno,mese) => {
+     
+        const result = getFiltersFromLocalStorageRel();
+        if(enti){
+            await getTipologieFatture(token, mainState.nonce, {mese,anno}).then((res)=>{
+                setTipologiaFatture(res.data);
+                if(result.valuetipologiaFattura){
+                    setValueTipologiaFattura(result.valuetipologiaFattura);
+                }else{
+                    setValueTipologiaFattura('');
+                }
+                
+                
+            }).catch(((err)=>{
+                setTipologiaFatture([]);
+                setValueTipologiaFattura("");
+                // manageError(err,dispatchMainState);
+            }));
+        }
+       
+    };
+
+    const getListTipologiaFatturaXXXXX = async(mese) => {
+  
+        if(enti){
+            await getTipologieFatture(token, mainState.nonce, {mese,anno:2024}).then((res)=>{
+                setTipologiaFatture(res.data);
+                setValueTipologiaFattura('');
+            }).catch(((err)=>{
+                setTipologiaFatture([]);
+                setValueTipologiaFattura('');
+                // manageError(err,dispatchMainState);
+            }));
+        }
+       
+    };
 
     const downloadListaRelExel = async() =>{
         setShowLoading(true);
@@ -275,7 +326,6 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 manageError(err,dispatchMainState);
             });
     };
-    
     const  hiddenAnnullaFiltri = bodyRel.tipologiaFattura === null && bodyRel.idEnti?.length === 0 && bodyRel.caricata === null; 
     return (
        
@@ -289,14 +339,10 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                         <SelectUltimiDueAnni values ={bodyRel} setValue={setBodyRel}></SelectUltimiDueAnni>
                     </div>
                     <div  className="col-3">
-                        <SelectMese values={bodyRel} setValue={setBodyRel}></SelectMese>
+                        <SelectMese values={bodyRel} setValue={setBodyRel} getTipologia={getListTipologiaFatturaXXXXX}></SelectMese>
                     </div>
                     <div  className="col-3">
-                        <SelectTipologiaFattura values={bodyRel} setValue={setBodyRel} types={[
-                            'PRIMO SALDO',
-                            'SECONDO SALDO',
-                            'PRIMO CONGUAGLIO',
-                            'SECONDO CONGUAGLIO']}></SelectTipologiaFattura>
+                        <SelectTipologiaFattura value={valuetipologiaFattura} setBody={setBodyRel} setValue={setValueTipologiaFattura} types={tipologiaFatture}></SelectTipologiaFattura>
                     </div>
                     <div className="col-3">
                         <SelectStatoPdf values={bodyRel} setValue={setBodyRel}></SelectStatoPdf>

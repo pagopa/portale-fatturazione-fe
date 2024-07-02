@@ -3,7 +3,7 @@ import { Box } from "@mui/system";
 import { SelectMeseProps } from "../../../types/typesGeneral";
 import { mesi } from "../../../reusableFunction/reusableArrayObj";
 
-const SelectMese : React.FC<SelectMeseProps> = ({setValue, values}) =>{
+const SelectMese : React.FC<SelectMeseProps> = ({setValue, values, getTipologia}) =>{
 
     return (
         <Box sx={{width:'80%', marginLeft:'20px'}}  >
@@ -24,6 +24,7 @@ const SelectMese : React.FC<SelectMeseProps> = ({setValue, values}) =>{
                                     
                         const value = Number(e.target.value);
                         setValue((prev)=> ({...prev, ...{mese:value}}));
+                        getTipologia(e.target.value);
                     }}         
                     value={values.mese}  
                     disabled={status=== 'immutable' ? true : false}            
