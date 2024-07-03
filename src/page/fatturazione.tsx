@@ -88,6 +88,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                 setTipologie(res.data);                
             })
             .catch(((err)=>{
+                setTipologie([]);
                 manageError(err,dispatchMainState);
             }));
     };
