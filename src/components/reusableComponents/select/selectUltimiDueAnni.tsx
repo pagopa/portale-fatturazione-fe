@@ -4,8 +4,8 @@ import React from "react";
 import { SelectUltimiDueAnniProps } from "../../../types/typesGeneral";
 import { getCurrentFinancialYear } from "../../../reusableFunction/function";
 
-const SelectUltimiDueAnni : React.FC<SelectUltimiDueAnniProps> = ({setValue, values}) =>{
-
+const SelectUltimiDueAnni : React.FC<SelectUltimiDueAnniProps> = ({setValue, values, getTipologia}) =>{
+    console.log(values);
     return (
         <Box sx={{width:'80%'}} >
             <FormControl
@@ -26,6 +26,9 @@ const SelectUltimiDueAnni : React.FC<SelectUltimiDueAnniProps> = ({setValue, val
                                 
                         const value = Number(e.target.value);
                         setValue((prev)=> ({...prev, ...{anno:value}}));
+                        if(getTipologia){
+                            getTipologia(values.mese,e.target.value);
+                        }
                     }}
                     value={values.anno}
                     //IconComponent={SearchIcon}

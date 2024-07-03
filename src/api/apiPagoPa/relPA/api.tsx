@@ -100,3 +100,17 @@ export const downloadQuadraturaRelPagopa = async (token:string, nonce:string , b
     return response;
 };
 
+
+export const getTipologieFatturePagoPa = async (token:string, nonce:string , body: {mese:number,anno:number}) => {
+    const response =  await axios.post(`${url}/api/rel/pagopa/tipologiafattura?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },
+        }
+    );
+    return response;
+};
+
+
+

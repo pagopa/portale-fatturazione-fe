@@ -10,7 +10,7 @@ import { manageError} from "../api/api";
 import { useNavigate } from "react-router";
 import DownloadIcon from '@mui/icons-material/Download';
 import { downloadListaRel, getListaRel, getTipologieFatture} from "../api/apiSelfcare/relSE/api";
-import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, downloadQuadraturaRelPagopa, getListaRelPagoPa } from "../api/apiPagoPa/relPA/api";
+import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, downloadQuadraturaRelPagopa, getListaRelPagoPa, getTipologieFatturePagoPa } from "../api/apiPagoPa/relPA/api";
 import SelectStatoPdf from "../components/rel/selectStatoPdf";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { saveAs } from "file-saver";
@@ -252,14 +252,29 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 setValueTipologiaFattura("");
                 // manageError(err,dispatchMainState);
             }));
+        }else if(profilo.auth === 'PAGOPA'){
+            await getTipologieFatturePagoPa(token, mainState.nonce, {mese,anno}).then((res)=>{
+                setTipologiaFatture(res.data);
+                if(result.valuetipologiaFattura){
+                    setValueTipologiaFattura(result.valuetipologiaFattura);
+                }else{
+                    setValueTipologiaFattura('');
+                }
+                
+                
+            }).catch(((err)=>{
+                setTipologiaFatture([]);
+                setValueTipologiaFattura("");
+                // manageError(err,dispatchMainState);
+            }));
         }
        
     };
 
-    const getListTipologiaFatturaXXXXX = async(mese) => {
+    const getListTipologiaFatturaOnChangeMonthYear = async(mese,anno) => {
   
         if(enti){
-            await getTipologieFatture(token, mainState.nonce, {mese,anno:2024}).then((res)=>{
+            await getTipologieFatture(token, mainState.nonce, {mese,anno}).then((res)=>{
                 setTipologiaFatture(res.data);
                 setValueTipologiaFattura('');
             }).catch(((err)=>{
@@ -267,6 +282,16 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 setValueTipologiaFattura('');
                 // manageError(err,dispatchMainState);
             }));
+        }else if(profilo.auth === 'PAGOPA'){
+            await getTipologieFatturePagoPa(token, mainState.nonce, {mese,anno}).then((res)=>{
+                setTipologiaFatture(res.data);
+                setValueTipologiaFattura('');
+            }).catch(((err)=>{
+                setTipologiaFatture([]);
+                setValueTipologiaFattura('');
+                // manageError(err,dispatchMainState);
+            }));
+
         }
        
     };
@@ -336,10 +361,10 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             <div className="mt-5">
                 <div className="row">
                     <div className="col-3">
-                        <SelectUltimiDueAnni values ={bodyRel} setValue={setBodyRel}></SelectUltimiDueAnni>
+                        <SelectUltimiDueAnni values ={bodyRel} setValue={setBodyRel} getTipologia={getListTipologiaFatturaOnChangeMonthYear}></SelectUltimiDueAnni>
                     </div>
                     <div  className="col-3">
-                        <SelectMese values={bodyRel} setValue={setBodyRel} getTipologia={getListTipologiaFatturaXXXXX}></SelectMese>
+                        <SelectMese values={bodyRel} setValue={setBodyRel} getTipologia={getListTipologiaFatturaOnChangeMonthYear}></SelectMese>
                     </div>
                     <div  className="col-3">
                         <SelectTipologiaFattura value={valuetipologiaFattura} setBody={setBodyRel} setValue={setValueTipologiaFattura} types={tipologiaFatture}></SelectTipologiaFattura>
