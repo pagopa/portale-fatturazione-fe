@@ -64,7 +64,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
         firmata: "",
         caricata: 0
     });
-
+    console.log(rel);
     const meseOnDoc = rel?.mese || 0;
 
     useEffect(()=>{
@@ -331,7 +331,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
             </div>
             <div className="d-flex justify-content-between m-5">
                
-                {(enti && rel.totale > 0) &&
+                {(enti && rel.totale > 0 && rel.tipologiaFattura !== 'VAR. SEMESTRALE' && rel.tipologiaFattura !== 'VAR. ANNUALE') &&
                     <>
                         <div className="">
                             <Button sx={{width:'274px'}} onClick={() => downloadPdfRel()}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
@@ -343,7 +343,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                 }
               
                
-                {(enti && rel?.caricata >= 1) &&
+                {(enti && rel?.caricata >= 1 && rel.tipologiaFattura !== 'VAR. SEMESTRALE' && rel.tipologiaFattura !== 'VAR. ANNUALE') &&
                 <div>
                     <div>
                         <Button sx={{width:'300px'}} onClick={() => downloadPdfRelFirmato()}   variant="contained">Scarica PDF Firmato <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
