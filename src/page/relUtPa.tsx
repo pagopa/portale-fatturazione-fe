@@ -389,6 +389,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                                 idContratto:null,
                                 caricata:null
                             });
+                            setValueTipologiaFattura('');
                             setData([]);
                             setPage(0);
                             setRowsPerPage(10);
