@@ -185,7 +185,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
             <div className="mt-5">
                 <div className="row">
                     <div className="col-3">
-                        <SelectUltimiDueAnni values ={bodyFatturazione} setValue={setBodyFatturazione}></SelectUltimiDueAnni>
+                        <SelectUltimiDueAnni values={bodyFatturazione} setValue={setBodyFatturazione}></SelectUltimiDueAnni>
                     </div>
                     <div  className="col-3">
                         <SelectMese values={bodyFatturazione} setValue={setBodyFatturazione}></SelectMese>

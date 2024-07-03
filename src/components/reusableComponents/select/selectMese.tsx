@@ -24,7 +24,10 @@ const SelectMese : React.FC<SelectMeseProps> = ({setValue, values, getTipologia}
                                     
                         const value = Number(e.target.value);
                         setValue((prev)=> ({...prev, ...{mese:value}}));
-                        getTipologia(e.target.value);
+                        if(getTipologia){
+                            getTipologia(e.target.value, values.anno);
+                        }
+                        
                     }}         
                     value={values.mese}  
                     disabled={status=== 'immutable' ? true : false}            
