@@ -235,7 +235,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
      
         const result = getFiltersFromLocalStorageRel();
         if(enti){
-            await getTipologieFatture(token, mainState.nonce, {mese,anno}).then((res)=>{
+            await getTipologieFatture(token, profilo.nonce, {mese,anno}).then((res)=>{
                 setTipologiaFatture(res.data);
                 if(result.valuetipologiaFattura){
                     setValueTipologiaFattura(result.valuetipologiaFattura);
@@ -250,7 +250,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 // manageError(err,dispatchMainState);
             }));
         }else if(profilo.auth === 'PAGOPA'){
-            await getTipologieFatturePagoPa(token, mainState.nonce, {mese,anno}).then((res)=>{
+            await getTipologieFatturePagoPa(token, profilo.nonce, {mese,anno}).then((res)=>{
                 setTipologiaFatture(res.data);
                 if(result.valuetipologiaFattura){
                     setValueTipologiaFattura(result.valuetipologiaFattura);
@@ -271,7 +271,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     const getListTipologiaFatturaOnChangeMonthYear = async(mese,anno) => {
   
         if(enti){
-            await getTipologieFatture(token, mainState.nonce, {mese,anno}).then((res)=>{
+            await getTipologieFatture(token, profilo.nonce, {mese,anno}).then((res)=>{
                 setTipologiaFatture(res.data);
                 setValueTipologiaFattura('');
             }).catch(((err)=>{
@@ -280,7 +280,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 // manageError(err,dispatchMainState);
             }));
         }else if(profilo.auth === 'PAGOPA'){
-            await getTipologieFatturePagoPa(token, mainState.nonce, {mese,anno}).then((res)=>{
+            await getTipologieFatturePagoPa(token, profilo.nonce, {mese,anno}).then((res)=>{
                 setTipologiaFatture(res.data);
                 setValueTipologiaFattura('');
             }).catch(((err)=>{

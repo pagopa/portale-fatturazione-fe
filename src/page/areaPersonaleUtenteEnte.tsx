@@ -298,7 +298,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 });  
                 // viene fatta questa chiamata solo al primo inserimento dei dati di fatturazione
                 // aggiunto 01/07 start
-                await getDatiModuloCommessa(token, mainState.nonce).then((res)=>{
+                await getDatiModuloCommessa(token, profilo.nonce).then((res)=>{
                  
                     if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
                             
