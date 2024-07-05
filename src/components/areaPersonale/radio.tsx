@@ -1,18 +1,15 @@
-import React,{useContext} from 'react';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import { RadioComponentProps,DatiFatturazione,OptinsRadio,AreaPersonaleContext }  from '../../types/typesAreaPersonaleUtenteEnte';
-import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
+import { RadioComponentProps,DatiFatturazione,OptinsRadio }  from '../../types/typesAreaPersonaleUtenteEnte';
 
 const  RadioComponent: React.FC<RadioComponentProps> = (props) => {
     const {
-        label, options, valueRadio,keyObject,
+        label, options, valueRadio,keyObject,mainState ,setDatiFatturazione, datiFatturazione
     } = props;
 
-    const {mainState ,setDatiFatturazione, datiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
     let makeSplitRadioDisable = true;
     if(label ==='Split Paymet'){
         if(mainState.statusPageDatiFatturazione === 'immutable'){

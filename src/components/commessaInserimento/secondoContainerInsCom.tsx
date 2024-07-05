@@ -1,20 +1,17 @@
-import React, { useEffect, useState, useContext} from 'react';
+import React, { useEffect, useState} from 'react';
 import { Grid, Typography } from '@mui/material';
 import RowInserimentoCommessa from './rowInserimentoCommessa';
-import { InsModuloCommessaContext,ResponseCategorieSpedizione   } from '../../types/typeModuloCommessaInserimento';
-import { InserimentoModuloCommessaContext } from '../../page/moduloCommessaInserimentoUtEn30';
+import { ResponseCategorieSpedizione, SecondoContainerProps   } from '../../types/typeModuloCommessaInserimento';
 import { manageError } from '../../api/api';
-import { useNavigate } from 'react-router';
 import { ManageErrorResponse } from '../../types/typesGeneral';
 import { getCategoriaSpedizione } from '../../api/apiSelfcare/moduloCommessaSE/api';
-import { getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
+import {  getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
 import { getIdByTipo } from '../../reusableFunction/function';
 
-const SecondoContainerInsCom : React.FC = () => {
-    const { totale, mainState,dispatchMainState } = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
-    
-    const navigate = useNavigate();
+const SecondoContainerInsCom : React.FC<SecondoContainerProps> = ({totale, mainState,dispatchMainState, setDatiCommessa,datiCommessa}) => {
+
     const token =  getToken();
+    const profilo = getProfilo();
 
     const [arrTipoSpedizione , setArrTipoSpedizione] = useState({
         idSpedizioneDigitale : 0,
@@ -23,7 +20,7 @@ const SecondoContainerInsCom : React.FC = () => {
     });
  
     const getCategoria = async () =>{
-        await getCategoriaSpedizione(token , mainState.nonce).then((res:ResponseCategorieSpedizione ) => {
+        await getCategoriaSpedizione(token , profilo.nonce).then((res:ResponseCategorieSpedizione ) => {
             setArrTipoSpedizione({
                 idSpedizioneDigitale :getIdByTipo('Digitale',res.data),
                 idSpedizioneAnalog890 :  getIdByTipo('Analog. L. 890/82',res.data),
@@ -35,10 +32,10 @@ const SecondoContainerInsCom : React.FC = () => {
     };
    
     useEffect(()=>{
-        if(mainState.nonce !== ''){
-            getCategoria();
-        }
-    },[mainState.nonce]);
+       
+        getCategoria();
+       
+    },[]);
   
     return (
         <div className="m-3 pl-5 ">
@@ -49,6 +46,9 @@ const SecondoContainerInsCom : React.FC = () => {
                 textBoxHidden={false}
                 idTipoSpedizione={arrTipoSpedizione.idSpedizioneDigitale}
                 rowNumber={3}
+                mainState={mainState}
+                setDatiCommessa={setDatiCommessa}
+                datiCommessa={datiCommessa}
             />
             {/* prima row end */}
             <hr></hr>
@@ -58,6 +58,9 @@ const SecondoContainerInsCom : React.FC = () => {
                 textBoxHidden={false}
                 idTipoSpedizione={arrTipoSpedizione.idSpedizioneAnalogAR}
                 rowNumber={1}
+                mainState={mainState}
+                setDatiCommessa={setDatiCommessa}
+                datiCommessa={datiCommessa}
             />
             {/* seconda row end */}
             {/* terza row start */}
@@ -67,6 +70,9 @@ const SecondoContainerInsCom : React.FC = () => {
                 textBoxHidden
                 idTipoSpedizione={arrTipoSpedizione.idSpedizioneAnalog890}
                 rowNumber={2}
+                mainState={mainState}
+                setDatiCommessa={setDatiCommessa}
+                datiCommessa={datiCommessa}
             />
             <hr></hr>
             {/* terza row end */}

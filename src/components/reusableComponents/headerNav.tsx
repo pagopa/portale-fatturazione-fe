@@ -1,8 +1,8 @@
 import React, { ReactNode, useState, useEffect } from 'react';
 import { useLocation } from 'react-router';
-import {
-    HeaderProduct,
-} from '@pagopa/mui-italia';
+import {HeaderProduct} from '@pagopa/mui-italia';
+import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
+import Badge from '@mui/material/Badge';
 
 type PartySwitchItem = {
     id: string;
@@ -10,6 +10,7 @@ type PartySwitchItem = {
     productRole?: string;
     logoUrl?: string;
     parentName?: string;
+    icon?:any
 };
 type LinkType = "internal" | "external";
 type ProductSwitchItem = {
@@ -17,7 +18,6 @@ type ProductSwitchItem = {
     title: string;
     productUrl: string;
     linkType: LinkType;
-    icon?: ReactNode;
 };
 type PartyEntity = PartySwitchItem;
 type ProductEntity = ProductSwitchItem;
@@ -58,7 +58,6 @@ const HeaderNavComponent : React.FC =() => {
             logoUrl: ``,
             name: name,
             productRole: user.ruolo,
-            
         },
     ];
 
@@ -76,8 +75,7 @@ const HeaderNavComponent : React.FC =() => {
                     productsList={productsList}
                     onSelectedProduct={(p) => console.log('Selected Item:', p.title)}
                     partyList={partyList}
-                    chipSize='small'
-                />}
+                ></HeaderProduct>}
         </>
 
     );

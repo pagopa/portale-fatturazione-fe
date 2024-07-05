@@ -1,4 +1,4 @@
-import {useState, createContext, useEffect} from 'react';
+import {useState,useEffect} from 'react';
 import {Typography, Button} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked } from '@pagopa/mui-italia';
@@ -10,10 +10,8 @@ import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { useNavigate } from 'react-router';
 import {manageError} from '../api/api';
 import { redirect } from '../api/api';
-//import AreaPersonaleUtenteEnte from '../page/areaPersonaleUtenteEnte';
-//import HorizontalLinearStepper from '../components/areaPersonale/stepper';
 import ModalRedirect from '../components/commessaInserimento/madalRedirect';
-import { DatiCommessa, ResponseDettaglioModuloCommessa, InsModuloCommessaContext ,ModuloCommessaInserimentoProps, TotaleNazionaleInternazionale, ResponsTotaliInsModuloCommessa, ModuliCommessa} from '../types/typeModuloCommessaInserimento';
+import { DatiCommessa, ResponseDettaglioModuloCommessa,ModuloCommessaInserimentoProps, TotaleNazionaleInternazionale, ResponsTotaliInsModuloCommessa, ModuliCommessa} from '../types/typeModuloCommessaInserimento';
 import { ManageErrorResponse } from '../types/typesGeneral';
 import { getDettaglioModuloCommessa, insertDatiModuloCommessa } from '../api/apiSelfcare/moduloCommessaSE/api';
 import { getModuloCommessaPagoPa, modifyDatiModuloCommessaPagoPa } from '../api/apiPagoPa/moduloComessaPA/api';
@@ -25,34 +23,8 @@ import { getProfilo, getStatusApp, getToken, profiliEnti, setInfoToStatusApplica
 import { calculateTot } from '../reusableFunction/function';
 import { month } from '../reusableFunction/reusableArrayObj';
 import ModalConfermaInserimento from '../components/commessaInserimento/modalConfermaInserimento';
+import SkeletonComIns from '../components/commessaInserimento/skeletonComIns';
 
-export const InserimentoModuloCommessaContext = createContext<InsModuloCommessaContext>({
-    datiCommessa: {
-        moduliCommessa: [
-            {
-                numeroNotificheNazionali: 0,
-                numeroNotificheInternazionali: 0,
-                totaleNotifiche:0,
-                idTipoSpedizione: 1
-            },
-            {
-                numeroNotificheNazionali: 0,
-                numeroNotificheInternazionali: 0,
-                totaleNotifiche:0,
-                idTipoSpedizione: 2
-            },
-            {
-                numeroNotificheNazionali: 0,
-                numeroNotificheInternazionali: 0,
-                totaleNotifiche:0,
-                idTipoSpedizione: 3
-            }
-          
-        ]
-    },
-    totale:{totaleNazionale:0, totaleInternazionale:0, totaleNotifiche:0}
-   
-});
 
 const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps> = ({mainState, dispatchMainState, open, setOpen}) => {
 
@@ -70,6 +42,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     };
 
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
+    const [loadingData, setLoadingData] = useState(false);
     const [totale, setTotale] = useState<TotaleNazionaleInternazionale>({totaleNazionale:0, totaleInternazionale:0, totaleNotifiche:0});
     const [dataMod, setDataModifica] = useState('');
     const [buttonModifica, setButtonMofica] = useState(false);
@@ -148,7 +121,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     },[mainState.inserisciModificaCommessa]);
 
     useEffect(()=>{
-        if(statusApp.userClickOn === 'GRID' && mainState.nonce !== ''){
+        if(statusApp.userClickOn === 'GRID'){
             // SELFCARE
             if(enti){
                 handleGetDettaglioModuloCommessa();
@@ -159,7 +132,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 getDatiFatPagoPa();
             }
         }
-    },[mainState.nonce]);
+    },[]);
 
     useEffect(()=>{
         if(token === undefined){
@@ -190,7 +163,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
 
     const handleGetDettaglioModuloCommessa = async () =>{
-        await getDettaglioModuloCommessa(token,statusApp.anno,statusApp.mese, mainState.nonce)
+        setLoadingData(true);
+        await getDettaglioModuloCommessa(token,statusApp.anno,statusApp.mese, profilo.nonce)
             .then((response:ResponseDettaglioModuloCommessa)=>{
                 const res = response.data;
                 setDataModifica(res.dataModifica);
@@ -201,13 +175,16 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                     , totaleInternazionale:objAboutTotale.totaleNumeroNotificheInternazionali
                     , totaleNotifiche:objAboutTotale.totaleNumeroNotificheDaProcessare});
                 setButtonMofica(res.modifica);
+                setLoadingData(false);
             }).catch((err:ManageErrorResponse)=>{
                 manageError(err,dispatchMainState);
+                setLoadingData(false);
             });
     };
 
     const handleGetDettaglioModuloCommessaPagoPa = async () => {
-        await getModuloCommessaPagoPa(token, mainState.nonce,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto, statusApp.mese, statusApp.anno )
+        setLoadingData(true);
+        await getModuloCommessaPagoPa(token, profilo.nonce,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto, statusApp.mese, statusApp.anno )
             .then((response:ResponseDettaglioModuloCommessa)=>{
                 const res = response.data;
                 setDatiCommessa({moduliCommessa:res.moduliCommessa});
@@ -218,8 +195,10 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                     , totaleNotifiche:objAboutTotale.totaleNumeroNotificheDaProcessare});
                 setDataModifica(res.dataModifica);
                 setButtonMofica(res.modifica);
+                setLoadingData(false);
             }).catch((err:ManageErrorResponse)=>{
                 manageError(err,dispatchMainState);
+                setLoadingData(false);
             });
     };
     // Lato self care
@@ -228,7 +207,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     //No.... redirect dati fatturazione
     // tutto gestito sul button 'continua' in base al parametro datiFatturazione del main state
     const getDatiFat = async () =>{
-        await getDatiFatturazione(token,mainState.nonce).then(( ) =>{ 
+        await getDatiFatturazione(token,profilo.nonce).then(( ) =>{ 
             handleModifyMainState({
                 datiFatturazione:true,
                 statusPageInserimentoCommessa:'immutable'
@@ -250,7 +229,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     //No.... redirect dati fatturazione
     // tutto gestito sul button 'continua' in base al parametro datiFatturazione del main state
     const getDatiFatPagoPa = async () =>{
-        await getDatiFatturazionePagoPa(token,mainState.nonce, profilo.idEnte, profilo.prodotto ).then(() =>{   
+        await getDatiFatturazionePagoPa(token,profilo.nonce, profilo.idEnte, profilo.prodotto ).then(() =>{   
             handleModifyMainState({
                 datiFatturazione:true,
                 statusPageInserimentoCommessa:'immutable'});
@@ -301,7 +280,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     };
 
     const hendlePostModuloCommessa = async () =>{
-        await insertDatiModuloCommessa(datiCommessa, token, mainState.nonce)
+        await insertDatiModuloCommessa(datiCommessa, token, profilo.nonce)
             .then(res =>{
                 setOpenModalLoading(false);
                 setButtonMofica(true);
@@ -322,7 +301,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 idTipoContratto:profilo.idTipoContratto,
                 idEnte:profilo.idEnte,
                 fatturabile:true }};
-        await modifyDatiModuloCommessaPagoPa(datiCommessaPlusIdTpcProIdE, token, mainState.nonce)
+        await modifyDatiModuloCommessaPagoPa(datiCommessaPlusIdTpcProIdE, token, profilo.nonce)
             .then((res)=>{
                 setOpenModalLoading(false);
                 setButtonMofica(true);
@@ -390,17 +369,16 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
         actionTitle = <Typography variant="h4">Modulo commessa</Typography>;
     }
 
+ 
+    if(loadingData){
+        return(
+            <SkeletonComIns></SkeletonComIns>
+        );
+
+    }
+
     return (
-        <InserimentoModuloCommessaContext.Provider
-            value={{
-                setDatiCommessa,
-                datiCommessa,
-                totaliModuloCommessa,
-                setTotale,
-                totale,
-                mainState,
-                dispatchMainState
-            }}>
+        <>
             <BasicModal setOpen={setOpen} open={open} dispatchMainState={dispatchMainState} handleGetDettaglioModuloCommessa={handleGetDettaglioModuloCommessa} handleGetDettaglioModuloCommessaPagoPa={handleGetDettaglioModuloCommessaPagoPa} mainState={mainState}></BasicModal>
             {/*Hide   modulo commessa sul click contina , save del modulo commessa cosi da mostrare dati fatturazione,
             il componente visualizzato è AreaPersonaleUtenteEnte  */}
@@ -439,7 +417,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 <div>
                     <div className="bg-white mt-3 pt-3">
                         <PrimoContainerInsCom />
-                        <SecondoContainerInsCom  />
+                        <SecondoContainerInsCom totale={totale} mainState={mainState} dispatchMainState={dispatchMainState} setDatiCommessa={setDatiCommessa} datiCommessa={datiCommessa} />
                     </div>
                     <div className='bg-white'>
                         <TerzoContainerInsCom valueTotali={totaliModuloCommessa} dataModifica={dataMod} mainState={mainState}/>
@@ -453,7 +431,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                                     onClick={()=>onIndietroButton()}
                                 >Indietro
                                 </Button>
-                                <Button variant="contained" 
+                                <Button 
+                                    variant="contained" 
                                     onClick={()=>{ 
                                         OnButtonSalva();      
                                     }}              
@@ -478,7 +457,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 mainState={mainState}
             ></ModalConfermaInserimento>
             <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}></ModalLoading>
-        </InserimentoModuloCommessaContext.Provider>
+        </>
     );
 };
 

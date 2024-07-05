@@ -1,25 +1,16 @@
-import React, {useEffect, useState,useContext} from 'react';
+import React, {useEffect, useState} from 'react';
 import { Grid, TextField, Typography } from '@mui/material';
 import { RowInsComProps, ModuliCommessa, DatiCommessa} from '../../types/typeModuloCommessaInserimento';
-import YupString from '../../validations/string/index';
-import { InsModuloCommessaContext } from '../../types/typeModuloCommessaInserimento';
-import { InserimentoModuloCommessaContext } from '../../page/moduloCommessaInserimentoUtEn30';
+
 import { getStatusApp } from '../../reusableFunction/actionLocalStorage';
 import { month } from '../../reusableFunction/reusableArrayObj';
 
-const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHidden, idTipoSpedizione, rowNumber}) => {
-    const { setDatiCommessa,setDisableContinua, datiCommessa, mainState} = useContext<InsModuloCommessaContext>(InserimentoModuloCommessaContext);
+const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHidden, idTipoSpedizione, rowNumber,setDatiCommessa,datiCommessa, mainState}) => {
+
 
     const statusApplication = getStatusApp();
-   
-    const [errorNazionale, setErrorNazionale] = useState(false);
-    const [errorInternazionale, setErrorInternazionale] = useState(false);
     const [input, setInput] = useState({nazionale:0, internazionale:0});
-    const [totaleNotifiche, setTotaleNotifiche] = useState(0);
-
-    useEffect(()=>{
-        setTotaleNotifiche(input.nazionale + input.internazionale);
-    },[input]);
+   
 
     let mese = '';
     let anno = 2000;
@@ -36,30 +27,38 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
         }
         mese = month[mon + 1 ];
     }
+    /*
+ const [totaleNotifiche, setTotaleNotifiche] = useState(0);
 
+    useEffect(()=>{
+        setTotaleNotifiche(input.nazionale + input.internazionale);
+    },[input]);
+ const [errorNazionale, setErrorNazionale] = useState(false);
+    const [errorInternazionale, setErrorInternazionale] = useState(false);
     const validationAllowNumberColumNazionale = (input:number, set:any) =>{
         YupString.matches(/^[0-9]*$/,  {
-            message: "Non è possibile inserire numeri negatii",
+            message: "Non è possibile inserire numeri negativi",
             excludeEmptyString: true
         }).validate(input)
             .then(()=>{
                 set(false);
             }).catch(() =>{
-                setDisableContinua(true);
+                //setDisableContinua(true);
                 set(true);
             } );
     };
 
     const validationAllowNumberColumnInternazionale = (input:number, set:any) =>{
         YupString.matches(/^[0-9]*$/,  {
-            message: "Non è possibile inserire numeri negatii",
+            message: "Non è possibile inserire numeri negativi",
             excludeEmptyString: true
         }).validate(input)
             .then(()=>{
                 set(false);
             }).catch(() =>{
-                setDisableContinua(true);
+                //setDisableContinua(true);
                 set(true);
+               
             } );
     };
 
@@ -75,7 +74,7 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
         validationAllowNumberColumNazionale(num, setErrorInternazionale);
         validationAllowNumberColumnInternazionale(num, setErrorInternazionale);
     };
-
+*/
     const findValueNazione = (rowNumber : number) =>{
         return datiCommessa.moduliCommessa.filter(obj => obj.idTipoSpedizione === rowNumber)[0]?.numeroNotificheNazionali;
     };
@@ -118,11 +117,12 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
                     size="small"
                     value={findValueNazione(rowNumber)}
                     InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
-                    error={errorNazionale}
-                    onBlur={(e)=>hendleOnBlur(e)}
+                    //error={errorNazionale}
+                    //onBlur={(e)=>hendleOnBlur(e)}
                     onChange={(e)=>{
                         let value = parseInt(e.target.value);
-                        if(!value){
+                      
+                        if(!value || value < 0){
                             value = 0;
                         }
                         setInput({...input, ...{nazionale: value}});
@@ -159,11 +159,11 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
                             size="small"
                             value={findValueInternazionale(rowNumber)}
                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
-                            error={errorInternazionale}
-                            onBlur={(e)=>hendleOnBlur2(e)}
+                            //error={errorInternazionale}
+                            //onBlur={(e)=>hendleOnBlur2(e)}
                             onChange={(e)=>{
                                 let value = parseInt(e.target.value);
-                                if(!value){
+                                if(!value || value < 0){
                                     value = 0;
                                 }
                                 setInput({...input, ...{internazionale: value}});

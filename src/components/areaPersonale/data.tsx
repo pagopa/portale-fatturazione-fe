@@ -1,9 +1,7 @@
-import React, {useContext} from "react";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import {DataProps, AreaPersonaleContext}  from '../../types/typesAreaPersonaleUtenteEnte';
-import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
+import {DataProps}  from '../../types/typesAreaPersonaleUtenteEnte';
 
 export interface DatePickerProps {
     label: string;
@@ -20,12 +18,13 @@ export interface DatePickerProps {
     autocomplete: "birthday";
 }
 
-const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate}) => {
-    const {mainState,setDatiFatturazione, datiFatturazione} = useContext<AreaPersonaleContext>(DatiFatturazioneContext);
+const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate,mainState,setDatiFatturazione, datiFatturazione}) => {
 
-    const onChangeHandler = (e:any) => {
+ 
+    const onChangeHandler = (e) => {
+        
         try {
-            const data = new Date(e).toISOString();
+            const data: string = new Date(e).toISOString();
             setDatiFatturazione({...datiFatturazione,...{dataDocumento:data}});
         } catch (error) {
             setDatiFatturazione({...datiFatturazione,...{dataDocumento:''}});
@@ -55,7 +54,7 @@ const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate}) => {
                     label={dataLabel}
                     format={formatDate}
                     value={valueDate}
-                    onChange={(e) => onChangeHandler(e)}
+                    onChange={(e:Date | null)  => onChangeHandler(e)}
                     disabled={dataInputDisable}
                     slotProps={{
                         textField: {

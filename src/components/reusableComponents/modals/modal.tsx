@@ -43,6 +43,7 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
      
         if(location.pathname === PathPf.DATI_FATTURAZIONE ){
             if(profilo.auth === 'PAGOPA'&& mainState.statusPageDatiFatturazione === 'mutable' && mainState.datiFatturazione === false){
+              
                 navigate(open.clickOn);
                 setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
                 handleModifyMainState({statusPageDatiFatturazione:'immutable'});
@@ -56,13 +57,16 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
                
                
             }else if(profilo.auth === 'PAGOPA'&& mainState.statusPageDatiFatturazione === 'immutable'){
+              
                 setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
                 navigate(PathPf.LISTA_DATI_FATTURAZIONE);
             }else if(profilo.auth === 'PAGOPA' && mainState.statusPageDatiFatturazione === 'mutable' && open.clickOn === 'INDIETRO_BUTTON'){
+             
                 getDatiFatPagoPa();
                 setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
                 handleModifyMainState({statusPageDatiFatturazione:'immutable'});
             }else if(profilo.auth === 'PAGOPA' && mainState.statusPageDatiFatturazione === 'mutable' && open.clickOn !== 'INDIETRO_BUTTON'){
+            
                 getDatiFatPagoPa();
                 setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
                 handleModifyMainState({statusPageDatiFatturazione:'immutable'});
@@ -74,10 +78,12 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
                 // localStorage.removeItem("filtersListaDatiFatturazione");
                 // localStorage.removeItem("pageRowListaDatiFatturazione");
             }else if(enti && mainState.statusPageDatiFatturazione === 'mutable'){
+           
                 getDatiFat();
-                handleModifyMainState({statusPageDatiFatturazione:'immutable'});
-                navigate(open.clickOn);
                 setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
+                handleModifyMainState({statusPageDatiFatturazione:'immutable'});
+                //navigate(open.clickOn);
+                
                 /* localStorage.removeItem("filtersModuliCommessa");
                 localStorage.removeItem("pageRowListaModuliCommessa");
                 localStorage.removeItem("filtersRel");

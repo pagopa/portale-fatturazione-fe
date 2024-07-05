@@ -4,6 +4,8 @@ import { redirect } from '../../api/api';
 import { useNavigate } from 'react-router';
 import {useMsal } from '@azure/msal-react';
 import { loginRequest } from '../../authConfig';
+import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
+import Badge from '@mui/material/Badge';
 
 type JwtUser = {
     id: string;
@@ -66,6 +68,7 @@ const HeaderPostLogin = ({mainState}) => {
     const hideShowHeaderLogin =  location.pathname === '/auth' ||
                                  location.pathname === '/azure' ||
                                  location.pathname === '/auth/azure'; 
+                                 
     
     const statusUser = mainState.authenticated && user;
     return (
@@ -75,11 +78,7 @@ const HeaderPostLogin = ({mainState}) => {
                 <HeaderAccount
                     rootLink={pagoPALink}
                     loggedUser={statusUser}
-                   
-                    onAssistanceClick={() => onEmailClick()
-                       
-                    }
-                    
+                    onAssistanceClick={() => onEmailClick()}
                     onLogin={handleLoginRedirect}
                     onLogout={() => {
                         if(checkIfUserIsAutenticated === 'PAGOPA'){
@@ -91,6 +90,7 @@ const HeaderPostLogin = ({mainState}) => {
                         }
                     }}
                     onDocumentationClick={()=>onButtonClick()}
+                   
                 />
             }
         </div>

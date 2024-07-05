@@ -73,14 +73,14 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
     },[open]);
 
     useEffect(()=>{
-        if(mainState.nonce !== ''){
-            getTipoConestazioni();
-        }
-    },[mainState.nonce]);
+       
+        getTipoConestazioni();
+        
+    },[]);
 
     // get delle tipologie delle contestazioni che popolano la select 
     const getTipoConestazioni = async() => {
-        await tipologiaTipoContestazione(token, mainState.nonce)
+        await tipologiaTipoContestazione(token, profilo.nonce)
             .then((res)=>{
                 setTipoContestazioni(res.data);
             })
@@ -97,7 +97,7 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
             tipoContestazione:contestazioneSelected.contestazione.tipoContestazione,
             noteEnte:contestazioneSelected.contestazione.noteEnte
         };
-        await createContestazione(token, mainState.nonce,body)
+        await createContestazione(token, profilo.nonce,body)
             .then(()=>{
                 const result = getFiltersFromLocalStorageNotifiche();
                 funGetNotifiche(page,rows, result.bodyGetLista);
@@ -248,7 +248,7 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
             };
         }
         
-        await modifyContestazioneEntePagoPa(token, mainState.nonce, body).then((res)=>{
+        await modifyContestazioneEntePagoPa(token, profilo.nonce, body).then((res)=>{
             const result = getFiltersFromLocalStorageNotifiche();
             funGetNotifichePagoPa(page,rows, result.bodyGetLista);
         }).catch(((err)=>{

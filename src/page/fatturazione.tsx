@@ -1,20 +1,20 @@
 import { Button, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import { useEffect, useState } from "react";
-import { getFiltersFromLocalStorageFatture, getInfoPageFromLocalStorageFatture, getProfilo, getToken } from "../reusableFunction/actionLocalStorage";
+import {getProfilo, getToken } from "../reusableFunction/actionLocalStorage";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
 import { BodyFatturazione, FatturazioneProps, FattureObj, HeaderCollapsible} from "../types/typeFatturazione";
-import { downloadFatturePagopa, downloadFattureReportPagopa, getFatturazionePagoPa, getTipologieFaPagoPa } from "../api/apiPagoPa/fatturazionePA/api";
-import { manageError, manageErrorDownload } from "../api/api";
+import { downloadFatturePagopa, downloadFattureReportPagopa, fatturePrenotazioneReportPagoPa, getFatturazionePagoPa, getTipologieFaPagoPa } from "../api/apiPagoPa/fatturazionePA/api";
+import { manageError, manageErrorDownload, managePresaInCarico } from "../api/api";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
-import MultiSelectFatturazione from "../components/fatturazione/multiSelect";
 import CollapsibleTable from "../components/reusableComponents/grid/gridCustomCollapsible";
 import { saveAs } from "file-saver";
 import { month } from "../reusableFunction/reusableArrayObj";
+import MultiSelectBase from "../components/reusableComponents/select/multiSelectBase";
 
 const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainState}) =>{
 
@@ -50,10 +50,10 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
 
     
     useEffect(()=>{
-        if(mainState.nonce !== ''){
-            getlistaFatturazione(bodyFatturazione);
-        }
-    },[mainState.nonce]);
+       
+        getlistaFatturazione(bodyFatturazione);
+       
+    },[]);
 
     useEffect(()=>{
         if(bodyFatturazione.idEnti.length !== 0 || bodyFatturazione.tipologiaFattura.length !== 0 ){
@@ -76,14 +76,14 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
 
    
     useEffect(()=>{
-        if(mainState.nonce !== ''){
-            getTipologieFatturazione();
-            setValueMultiselectTipologie([]);
-        }
-    },[mainState.nonce, bodyFatturazione.mese,bodyFatturazione.anno]);
+       
+        getTipologieFatturazione();
+        setValueMultiselectTipologie([]);
+        
+    },[ bodyFatturazione.mese,bodyFatturazione.anno]);
 
     const getTipologieFatturazione =  async() => {
-        await getTipologieFaPagoPa(token, mainState.nonce, {anno:bodyFatturazione.anno,mese:bodyFatturazione.mese}  )
+        await getTipologieFaPagoPa(token, profilo.nonce, {anno:bodyFatturazione.anno,mese:bodyFatturazione.mese}  )
             .then((res)=>{
                 setTipologie(res.data);                
             })
@@ -96,7 +96,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
     const getlistaFatturazione = async (body) => {
         setShowLoadingGrid(true);
 
-        await  getFatturazionePagoPa(token,mainState.nonce,body)
+        await  getFatturazionePagoPa(token,profilo.nonce,body)
             .then((res)=>{
                 const orderDataCustom = res.data.map(el => el.fattura).map(obj=> ({...{id:Math.random()},...obj}));
                 setGridData(orderDataCustom);
@@ -106,6 +106,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                 if(error?.response?.status === 404){
                     setGridData([]);
                 }
+               
                 setShowLoadingGrid(false);
                 manageError(error, dispatchMainState);
             });        
@@ -115,19 +116,20 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
     // servizio che popola la select con la checkbox
     const listaEntiNotifichePageOnSelect = async () =>{
         if(profilo.auth === 'PAGOPA'){
-            await listaEntiNotifichePage(token, mainState.nonce, {descrizione:textValue} )
+            await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} )
                 .then((res)=>{
                     setDataSelect(res.data);
                 })
                 .catch(((err)=>{
                     manageError(err,dispatchMainState);
+                 
                 }));
         }
     };
 
     const downloadListaFatturazione = async () => {
         setShowDownloading(true);
-        await downloadFatturePagopa(token,mainState.nonce, bodyFatturazioneDownload).then(response => response.blob()).then((response)=>{
+        await downloadFatturePagopa(token,profilo.nonce, bodyFatturazioneDownload).then(response => response.blob()).then((response)=>{
             let title = `Lista fatturazione/${month[bodyFatturazioneDownload.mese - 1]}/${bodyFatturazioneDownload.anno}.xlsx`;
             if(bodyFatturazioneDownload.idEnti.length === 1 && gridData[0]){
                 title = `Lista fatturazione/ ${gridData[0]?.ragionesociale}/${month[bodyFatturazioneDownload.mese - 1]}/${bodyFatturazioneDownload.anno}.xlsx`;
@@ -142,7 +144,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
 
     const downloadListaReportFatturazione = async () => {
         setShowDownloading(true);
-        await downloadFattureReportPagopa(token,mainState.nonce, bodyFatturazioneDownload).then((response)=>{
+        await downloadFattureReportPagopa(token,profilo.nonce, bodyFatturazioneDownload).then((response)=>{
             if (response.ok) {
                 return response.blob();
             }
@@ -160,7 +162,17 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
         }));
     };
 
-    
+    const getPrenotazioneReport = async () => {
+        await fatturePrenotazioneReportPagoPa(token,profilo.nonce, bodyFatturazioneDownload)
+            .then((res)=>{
+             
+                managePresaInCarico('PRESA',dispatchMainState);
+            })
+            .catch(((err)=>{
+                manageError(err,dispatchMainState);
+         
+            }));
+    };
 
 
     const headersObjGrid : HeaderCollapsible[] = [
@@ -191,14 +203,15 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                     <div  className="col-3">
                         <SelectMese values={bodyFatturazione} setValue={setBodyFatturazione}></SelectMese>
                     </div>
-                   
                     <div  className="col-3">
-                        <MultiSelectFatturazione
+                        <MultiSelectBase
                             setBody={setBodyFatturazione}
                             list={tipologie}
                             value={valueMulitselectTipologie}
                             setValue={setValueMultiselectTipologie}
-                        ></MultiSelectFatturazione>
+                            label={'Tipologia Fattura'}
+                            placeholder={"Tipologia Fattura"}
+                        ></MultiSelectBase>
                     </div>
                     <div  className="col-3">
                         <MultiselectCheckbox 
@@ -210,53 +223,60 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                         ></MultiselectCheckbox>
                     </div>
                 </div>
-                <div className="d-flex mt-5">
-                   
-                    <Button 
-                        onClick={()=>{
-                            getlistaFatturazione(bodyFatturazione);
-                        } } 
-                        sx={{ marginTop: 'auto', marginBottom: 'auto'}}
-                        variant="contained"> Filtra
-                    </Button>
-                    {statusAnnulla === 'hidden' ? null :
-                        <Button
-                            onClick={()=>{
-                                getlistaFatturazione({
-                                    anno:currentYear,
-                                    mese:monthNumber,
-                                    tipologiaFattura:[],
-                                    idEnti:[]
-                                });
-                                setBodyFatturazione({
-                                    anno:currentYear,
-                                    mese:monthNumber,
-                                    tipologiaFattura:[],
-                                    idEnti:[]
-                                });
-                                setBodyFatturazioneDownload({
-                                    anno:currentYear,
-                                    mese:monthNumber,
-                                    tipologiaFattura:[],
-                                    idEnti:[]
-                                });
-                                setDataSelect([]);
-                                setValueMultiselectTipologie([]);
-                            } }
-                            sx={{marginLeft:'24px'}} >
-                    Annulla filtri
-                        </Button>
-                    }
+                <div className=" mt-5">
+                    <div className="row">
+                        <div className="col-1">
+                            <Button 
+                                onClick={()=>{
+                                    getlistaFatturazione(bodyFatturazione);
+                                } } 
+                                sx={{ marginTop: 'auto', marginBottom: 'auto'}}
+                                variant="contained"> Filtra
+                            </Button>
+                        </div>
+                        <div className="col-2">
+                            {statusAnnulla === 'hidden' ? null :
+                                <Button
+                                    onClick={()=>{
+                                        getlistaFatturazione({
+                                            anno:currentYear,
+                                            mese:monthNumber,
+                                            tipologiaFattura:[],
+                                            idEnti:[]
+                                        });
+                                        setBodyFatturazione({
+                                            anno:currentYear,
+                                            mese:monthNumber,
+                                            tipologiaFattura:[],
+                                            idEnti:[]
+                                        });
+                                        setBodyFatturazioneDownload({
+                                            anno:currentYear,
+                                            mese:monthNumber,
+                                            tipologiaFattura:[],
+                                            idEnti:[]
+                                        });
+                                        setDataSelect([]);
+                                        setValueMultiselectTipologie([]);
+                                    } }
+                                    sx={{marginLeft:'24px'}} >
+                              Annulla filtri
+                                </Button>
+                            }
+                        </div>
+                       
+                        
+                    </div>
                 </div>
+                   
             </div>
             <div className="marginTop24" style={{display:'flex', justifyContent:'end', height:"48px"}}>
                
                
                 {
                     gridData.length > 0 &&
-                   
                         <>
-                            <Button  onClick={() => downloadListaReportFatturazione()}
+                            <Button  onClick={() => getPrenotazioneReport()}
                             >
                 Download Report
                                 <DownloadIcon sx={{marginLeft:'10px'}}></DownloadIcon>
@@ -267,11 +287,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                                 <DownloadIcon sx={{marginLeft:'10px'}}></DownloadIcon>
                             </Button>
                         </>
-                        
-                }
-               
-                
-                
+                }  
             </div>
             
             <CollapsibleTable 

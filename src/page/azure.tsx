@@ -3,8 +3,6 @@ import { useEffect} from 'react';
 import { loginRequest } from '../authConfig';
 import {InteractionStatus,
 } from "@azure/msal-browser";
-import { useNavigate } from "react-router";
-import { PathPf } from "../types/enum";
 import { AzureLoginProps } from "../types/typesGeneral";
 
 //Pagina di accesso con l'autenticazione AZURE
