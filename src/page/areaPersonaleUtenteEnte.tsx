@@ -301,6 +301,88 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                     manageError(err,dispatchMainState);
                 }); 
 
+
+                // viene fatta questa chiamata solo al primo inserimento dei dati di fatturazione
+                // aggiunto 01/07 start
+                await getDatiModuloCommessa(token, mainState.nonce).then((res)=>{
+                 
+                    if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
+                            
+                        handleModifyMainState({
+                            inserisciModificaCommessa:'INSERT',
+                            statusPageInserimentoCommessa:'mutable',
+                            userClickOn:undefined,
+                            primoInserimetoCommessa:true
+                        });
+                        const newState = {
+                            mese:res.data.mese,
+                            anno:res.data.anno,
+                            inserisciModificaCommessa:'INSERT',
+                            userClickOn:undefined,
+                            primoInserimetoCommessa:true
+                        };
+    
+                        localStorage.setItem('statusApplication',JSON.stringify(newState));
+                     
+                        navigate(PathPf.MODULOCOMMESSA);
+                    }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0 ){
+        
+                        handleModifyMainState({
+                            inserisciModificaCommessa:'MODIFY',
+                            statusPageInserimentoCommessa:'immutable',
+                            primoInserimetoCommessa:false});
+        
+                        const newState = {
+                            inserisciModificaCommessa:'MODIFY',
+                            primoInserimetoCommessa:false
+                        };
+                        const statusApp = localStorage.getItem('statusApplication')||'{}';
+                        const parseStatusApp = JSON.parse(statusApp);
+                
+                        localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
+                            ...newState}));
+                       
+                        navigate(PathPf.LISTA_COMMESSE);
+                    }else if(res.data.modifica === false && res.data.moduliCommessa.length === 0){
+    
+                        handleModifyMainState({
+                            inserisciModificaCommessa:'NO_ACTION',
+                            statusPageInserimentoCommessa:'immutable',
+                            primoInserimetoCommessa:false});
+                    
+                        const newState = {
+                            inserisciModificaCommessa:'NO_ACTION',
+                            primoInserimetoCommessa:false
+                        };
+                        const statusApp = localStorage.getItem('statusApplication')||'{}';
+                        const parseStatusApp = JSON.parse(statusApp);
+                
+                        localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
+                            ...newState}));
+                       
+                        navigate(PathPf.LISTA_COMMESSE);
+                    }else if(res.data.modifica === false && res.data.moduliCommessa.length > 0){
+                        handleModifyMainState({
+                            inserisciModificaCommessa:'NO_ACTION',
+                            statusPageInserimentoCommessa:'immutable',
+                            primoInserimetoCommessa:false}); 
+    
+                        const newState = {
+                            inserisciModificaCommessa:'NO_ACTION',
+                            primoInserimetoCommessa:false
+                        };
+                        const statusApp = localStorage.getItem('statusApplication')||'{}';
+                        const parseStatusApp = JSON.parse(statusApp);
+                
+                        localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
+                            ...newState}));
+                        navigate(PathPf.LISTA_COMMESSE);
+                    }
+                }).catch((err) =>{
+                    manageError(err,dispatchMainState);
+                });
+                // aggiunto 01/07
+
                 
                 
             } 
