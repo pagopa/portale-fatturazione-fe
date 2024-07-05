@@ -17,24 +17,22 @@ export interface AreaPersonaleProps{
 }
 
 export interface DatiFatturazione{
-    id?:string,
+    id:number,
+    map:null|string,
     idEnte:string,
-    map?:string
     tipoCommessa:string,
     splitPayment:boolean,
-    cup: string,
+    cup:string,
     idDocumento:string,
     codCommessa:string,
-    contatti: Contatti[],
+    contatti: Contatti[]|[],
     dataCreazione:string,
     dataModifica:string,
-    dataDocumento:string | null,
+    dataDocumento: null | string,
     pec:string,
     notaLegale:boolean,
-    prodotto?:string,
+    prodotto:string
 }
-
-    
 
 export interface DatiFatturazionePost{
     tipoCommessa:string,
@@ -92,7 +90,11 @@ export interface TextFieldProps {
     value : string,
     keyObject:string,
     dataValidation:ObjectValidationTextArea 
-    required:boolean
+    required:boolean,
+    mainState:MainState,
+    setDatiFatturazione:any,
+    setStatusButtonConferma:any,
+    datiFatturazione:DatiFatturazione
 
 }
 
@@ -101,12 +103,18 @@ export interface RadioComponentProps {
     label?: string,
     options:OptinsRadio[],
     keyObject:string,
+    mainState:MainState,
+    datiFatturazione:DatiFatturazione, 
+    setDatiFatturazione?:any,
 
 }
 
 export interface DataProps {
     dataLabel: string,
     formatDate: string,
+    mainState:MainState,
+    setDatiFatturazione:any,
+    datiFatturazione:DatiFatturazione
 }
 
 export interface Email {
@@ -117,7 +125,9 @@ export interface Email {
 export interface DynamicInsertProps {
     status: string,
     arrElement: Email[],
-    setData: any
+    setData: any,
+    datiFatturazione:DatiFatturazione,
+    mainState:MainState
 }
 
 

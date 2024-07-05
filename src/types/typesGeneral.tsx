@@ -1,3 +1,4 @@
+import { Messaggi } from "../page/centroMessaggi";
 import { DataGridCommessa } from "./typeModuloCommessaElenco";
 import { BodyRel, Rel } from "./typeRel";
 
@@ -19,7 +20,6 @@ export interface LocationState {
 }
 
 export interface LoginProps {
-    setCheckProfilo:any,
     dispatchMainState:any,
 
 }
@@ -67,7 +67,9 @@ export interface MainState{
     datiFatturazione:boolean, // parametro utilizato in modulo commessa per capire se accettare l'inserimento commessa o fare il redirect t dati fatturazione se non sono stati inseriti
     relSelected:string|null,
     apiError:number|string|null,
-    authenticated:boolean
+    authenticated:boolean,
+    badgeContent:number,
+    messaggioSelected:null|Messaggi
 }
 
 export interface BodyDownloadDatiFatturazione{
@@ -159,7 +161,7 @@ export interface SelectMeseProps{
     values:{
         anno:number,
         mese:number|null,
-        tipologiaFattura:null| string|string[],
+        tipologiaFattura?:null| string|string[],
         idEnti?:string[],
         idContratto?:null|string,
         caricata?:null|number,
@@ -168,6 +170,14 @@ export interface SelectMeseProps{
     getTipologia?:any
 }
 
+export interface MultiSelectBaseProps{
+    setBody:any,
+    list:any,
+    value:string[],
+    setValue:any,
+    label:string,
+    placeholder:string,
+}
 export interface ErrorPageProps{
     dispatchMainState:any,
     mainState:MainState

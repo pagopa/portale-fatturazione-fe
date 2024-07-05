@@ -42,11 +42,18 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
             descrizione: ''
         }]);
 
+ 
+
     useEffect(()=>{
+<<<<<<< HEAD
         if(mainState.nonce !== ''){
             getConfigurazione();
         }
     },[mainState.nonce]);
+=======
+        getConfigurazione();
+    },[]);
+>>>>>>> front_improvements_06
 
     const replaceDate = (arr:[], stringToRepace:string, stringToInsert:string) =>{
         return arr.map((singleObj:CategorieTotali) =>{
@@ -56,7 +63,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
     };
 
     const getConfigurazione = async() =>{
-        getDatiConfigurazioneCommessa(token, profilo.idTipoContratto, profilo.prodotto, mainState.nonce)
+        getDatiConfigurazioneCommessa(token, profilo.idTipoContratto, profilo.prodotto, profilo.nonce)
             .then((res)=>{
                 const newCategorie = replaceDate(res.data.categorie,'[data]', '');
                 setLabelCategorie(newCategorie);

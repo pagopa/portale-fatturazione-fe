@@ -29,7 +29,7 @@ const SelectMese : React.FC<SelectMeseProps> = ({setValue, values, getTipologia}
                         }
                         
                     }}         
-                    value={values.mese}  
+                    value={values.mese||''}  
                     disabled={status=== 'immutable' ? true : false}            
                 >
                     {mesi.map((el) => (

@@ -1,20 +1,21 @@
-import React, {useContext, useState} from 'react';
 import { Typography, Button } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked } from '@pagopa/mui-italia';
-import { DatiFatturazioneContext } from '../../page/areaPersonaleUtenteEnte';
 import DnsIcon from '@mui/icons-material/Dns';
 import {  useNavigate } from 'react-router';
 import { PathPf } from '../../types/enum';
 import { getProfilo, getStatusApp } from '../../reusableFunction/actionLocalStorage';
+import { InfoOpen, MainState } from '../../types/typesGeneral';
+import { Dispatch, SetStateAction } from 'react';
+
 interface PageTitleProps {
     dispatchMainState:any,
-    setOpen:any
+    setOpen:Dispatch<SetStateAction<InfoOpen>>,
+    mainState:MainState
 }
 
-const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState, setOpen}) => {
+const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState, setOpen,mainState}) => {
 
-    const {mainState} = useContext(DatiFatturazioneContext);
     const profilo =  getProfilo();
     const statusApp = getStatusApp();
     const navigate = useNavigate();
@@ -39,7 +40,7 @@ const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState, se
         if(mainState.statusPageDatiFatturazione === 'immutable' &&  profilo.auth === 'PAGOPA'){
             navigate(PathPf.LISTA_DATI_FATTURAZIONE);
         }else{
-            setOpen(prev => ({...prev, ...{visible:true,clickOn:'INDIETRO_BUTTON'}}));
+            setOpen((prev:InfoOpen) => ({...prev, ...{visible:true,clickOn:'INDIETRO_BUTTON'}}));
         }
     };
 

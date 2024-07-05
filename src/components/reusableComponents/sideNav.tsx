@@ -7,6 +7,7 @@ import {
     ListItemIcon,
     Box,
     Divider,
+    Badge,
 } from '@mui/material';
 import { useNavigate, useLocation } from "react-router-dom";
 import DnsIcon from '@mui/icons-material/Dns';
@@ -21,6 +22,9 @@ import { PathPf } from '../../types/enum';
 import AnnouncementIcon from '@mui/icons-material/Announcement';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import { getProfilo, getToken, profiliEnti } from '../../reusableFunction/actionLocalStorage';
+import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
+import { getMessaggiCount } from '../../api/apiPagoPa/centroMessaggi/api';
+import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 
 const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState, setOpenBasicModal_DatFat_ModCom}) => {
 
@@ -37,7 +41,28 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
             value:valueObj
         });
     };
+    /*
+logica per il centro messaggi sospesa
+    const getCount = async () =>{
+        await getMessaggiCount(token,profilo.nonce).then((res)=>{
+            const numMessaggi = res.data;
+            handleModifyMainState({badgeContent:numMessaggi});
+        }).catch((err)=>{
+            console.log(err);
+        });
+    };
+    
+    useEffect(()=>{
 
+        getCount();
+        const interval = setInterval(() => {
+            getCount();
+        }, 8000);
+      
+        return () => clearInterval(interval); 
+    },[]);
+
+*/
     const [selectedIndex, setSelectedIndex] = useState(0);
     
     const handleListItemClick = async() => {
@@ -79,9 +104,10 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
     // viene mostrata la grid lista commesse , solo nel momento in cui l'utente va a selezionare un comune potrà essere eseguita la
     // chiamata con i parametri necessari (id ente)
     const getDatiFat = async () =>{
+    
         const statusApp = localStorage.getItem('statusApplication')||'{}';
         const parseStatusApp = JSON.parse(statusApp);
-        await getDatiFatturazione(token,mainState.nonce).then(( ) =>{ 
+        await getDatiFatturazione(token,profilo.nonce).then(( ) =>{ 
             
             handleModifyMainState({datiFatturazione:true});
             //localStorage.setItem('statusApplication', JSON.stringify(mainState));
@@ -119,7 +145,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
             localStorage.removeItem("filtersNotifiche");
             
             await getDatiFat();
-            await getDatiModuloCommessa(token, mainState.nonce).then((res)=>{
+            await getDatiModuloCommessa(token, profilo.nonce).then((res)=>{
                  
                 if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
                         
@@ -255,6 +281,16 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
         }
         
     };
+
+    /*
+    const handleListItemClickCentroMessaggi = () =>{
+        navigate("/centromessaggi");
+    };
+    */
+
+    const handleListItemClickAccertamenti = () =>{
+        navigate("/accertamenti");
+    };
     
     const currentLocation = location.pathname;
 
@@ -281,6 +317,10 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
             setSelectedIndex(4);
         }else if(currentLocation === PathPf.FATTURAZIONE){
             setSelectedIndex(5);
+        }else if(currentLocation === "/centromessaggi"){
+            setSelectedIndex(6);
+        }else if(currentLocation === "/accertamenti"){
+            setSelectedIndex(7);
         }
     },[currentLocation]);
    
@@ -345,6 +385,32 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
                                     </ListItemIcon>
                                     <ListItemText primary="Fatturazione" />
                                 </ListItemButton>
+                                <ListItemButton selected={selectedIndex === 7} onClick={() => handleListItemClickAccertamenti()}>
+                                    <ListItemIcon>
+                                        <ManageSearchIcon fontSize="inherit"></ManageSearchIcon>
+                                    </ListItemIcon>
+                                    <ListItemText primary="Accertamenti" />
+                                </ListItemButton>
+                                {/*
+                                <ListItemButton selected={selectedIndex === 6} onClick={() => handleListItemClickCentroMessaggi()}>
+                                    <ListItemIcon>
+                                        <Badge
+                                            badgeContent={mainState.badgeContent}
+                                            color="error"
+                                            variant="standard"
+                                        >
+                                            <MarkEmailUnreadIcon fontSize="inherit" 
+                                                sx={{
+                                                    color: '#17324D'
+                                                }}
+                                            />
+                                        </Badge>
+                                        
+                                    </ListItemIcon>
+                                 
+                                    <ListItemText primary="Centro Messaggi" />
+                                </ListItemButton>
+                                  */}
                             </>}
                             
                         </>

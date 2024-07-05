@@ -9,7 +9,7 @@ import { FlagContestazione, MultiSelectGroupedByProps } from '../../types/typeRe
 import { useEffect , useState} from 'react';
 import { BodyListaNotifiche} from '../../types/typesGeneral';
 import { flagContestazione } from '../../api/apiSelfcare/notificheSE/api';
-import { getToken } from '../../reusableFunction/actionLocalStorage';
+import { getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -17,17 +17,18 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({mainState,  setBodyGetLista, setValueFgContestazione, valueFgContestazione, dispatchMainState}) => {
 
     const token =  getToken();
+    const profilo = getProfilo();
 
     const [fgContestazione, setFgContestazione] = useState<FlagContestazione[]>([]);
 
     useEffect(()=>{
-        if(mainState.nonce !== ''){
-            getFlagContestazione();
-        }
-    },[mainState.nonce]);
+       
+        getFlagContestazione();
+        
+    },[]);
 
     const getFlagContestazione =  async() => {
-        await flagContestazione(token, mainState.nonce )
+        await flagContestazione(token, profilo.nonce )
             .then((res)=>{
                 setFgContestazione(res.data);                
             })

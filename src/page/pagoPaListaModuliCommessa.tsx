@@ -1,8 +1,8 @@
 import { BodyDownloadModuliCommessa, GridElementListaCommesse, ListaModuliCommessaProps } from "../types/typeListaModuliCommessa";
 import { Params } from "../types/typesGeneral";
 import { Typography } from "@mui/material";
-import { Box, FormControl, InputLabel,Select, MenuItem, TextField, Button} from '@mui/material';
-import { manageError, redirect } from '../api/api';
+import { Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
+import { manageError } from '../api/api';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -18,7 +18,7 @@ import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckb
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { currentMonth, getCurrentFinancialYear } from "../reusableFunction/function";
 import { currentYear, mesi, mesiGrid, mesiWithZero } from "../reusableFunction/reusableArrayObj";
-import { listaEntiNotifichePage, listaEntiNotifichePageConsolidatore } from "../api/apiSelfcare/notificheSE/api";
+import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
 
 const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState, dispatchMainState}) =>{
 
@@ -42,22 +42,22 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
     useEffect(()=>{
         const result = getFiltersFromLocalStorageCommessa();
         const infoPageResult = getInfoPageFromLocalStorageCommessa();
-        if(mainState.nonce !== ''){
-            getProdotti();
-            if(Object.keys(result).length > 0){
-                setBodyGetLista(result.bodyGetLista);
-                setTextValue(result.textValue);
-                setValueAutocomplete(result.valueAutocomplete);
-                getListaCommesse(result.bodyGetLista);
-                setBodyDownload(result.bodyGetLista);
-            }else{
-                getListaCommesse(bodyGetLista);
-            }
-            if(infoPageResult.page > 0){
-                setInfoPageListaCom(infoPageResult);
-            }
+       
+        getProdotti();
+        if(Object.keys(result).length > 0){
+            setBodyGetLista(result.bodyGetLista);
+            setTextValue(result.textValue);
+            setValueAutocomplete(result.valueAutocomplete);
+            getListaCommesse(result.bodyGetLista);
+            setBodyDownload(result.bodyGetLista);
+        }else{
+            getListaCommesse(bodyGetLista);
         }
-    }, [mainState.nonce]);
+        if(infoPageResult.page > 0){
+            setInfoPageListaCom(infoPageResult);
+        }
+        
+    }, []);
  
     useEffect(()=>{
         if(token === undefined){
@@ -93,7 +93,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
     },[textValue]);
 
     const getProdotti = async() => {
-        await getTipologiaProdotto(token, mainState.nonce )
+        await getTipologiaProdotto(token, profilo.nonce )
             .then((res)=>{
                 setProdotti(res.data);
             })
@@ -103,7 +103,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
     };
 
     const getListaCommesse = async(body) =>{
-        await listaModuloCommessaPagopa(body ,token, mainState.nonce)
+        await listaModuloCommessaPagopa(body ,token, profilo.nonce)
             .then((res)=>{
                 setGridData(res.data);
             })
@@ -114,7 +114,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
     };
 
     const getListaCommesseOnAnnulla = async() =>{
-        await listaModuloCommessaPagopa({descrizione:'',prodotto:'', anno:currentYear, mese:currString} ,token, mainState.nonce)
+        await listaModuloCommessaPagopa({descrizione:'',prodotto:'', anno:currentYear, mese:currString} ,token, profilo.nonce)
             .then((res)=>{
                 setBodyGetLista({idEnti:[],prodotto:'', anno:currentYear, mese:currString});
                 setGridData(res.data);
@@ -126,9 +126,9 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
 
     const listaEntiNotifichePageOnSelect = async () =>{
         if(profilo.auth === 'PAGOPA'){
-            await listaEntiNotifichePage(token, mainState.nonce, {descrizione:textValue} )
+            await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} )
                 .then((res)=>{
-                    setDataSelect(res.data);
+                    setDataSelect(res.data) ;
                 })
                 .catch(((err)=>{
                     manageError(err,dispatchMainState);
@@ -138,7 +138,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
 
     const downloadExelListaCommessa = async () =>{
         setShowLoading(true);
-        await downloadDocumentoListaModuloCommessaPagoPa(token, mainState.nonce,bodyDownload)
+        await downloadDocumentoListaModuloCommessaPagoPa(token, profilo.nonce,bodyDownload)
             .then((res)=>{
                 let fileName = `Moduli Commessa/${mesiWithZero[Number(bodyDownload.mese) -1]}/${bodyDownload.anno}.xlsx`;
                 if(gridData.length === 1){
