@@ -45,15 +45,8 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
  
 
     useEffect(()=>{
-<<<<<<< HEAD
-        if(mainState.nonce !== ''){
-            getConfigurazione();
-        }
-    },[mainState.nonce]);
-=======
         getConfigurazione();
     },[]);
->>>>>>> front_improvements_06
 
     const replaceDate = (arr:[], stringToRepace:string, stringToInsert:string) =>{
         return arr.map((singleObj:CategorieTotali) =>{

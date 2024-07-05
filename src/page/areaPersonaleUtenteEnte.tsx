@@ -21,11 +21,8 @@ import BasicModal from '../components/reusableComponents/modals/modal';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import {PathPf} from '../types/enum';
 import { getProfilo, getStatusApp, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from '../reusableFunction/actionLocalStorage';
-<<<<<<< HEAD
 import { getDatiModuloCommessa } from '../api/apiSelfcare/moduloCommessaSE/api';
-=======
 import SuspenseDatiFatturazione from '../components/areaPersonale/skeletonDatiFatturazione';
->>>>>>> front_improvements_06
 
 
 
@@ -209,11 +206,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
             if(profilo.auth === 'PAGOPA'){
                 const newDatiFatturazione = {...datiFatturazione, ...{idEnte:profilo.idEnte,prodotto:profilo.prodotto}};
 
-<<<<<<< HEAD
-                await modifyDatiFatturazionePagoPa(token,mainState.nonce, newDatiFatturazione ).then(() =>{
-=======
                 modifyDatiFatturazionePagoPa(token,profilo.nonce, newDatiFatturazione ).then(() =>{
->>>>>>> front_improvements_06
                     setOpenModalLoading(false);
                     handleModifyMainState({
                         statusPageDatiFatturazione:'immutable',
@@ -224,11 +217,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 });
             }else{
                 // 1 - ed è un utente SELFCARE
-<<<<<<< HEAD
-                await modifyDatiFatturazione(datiFatturazione, token,mainState.nonce)
-=======
                 modifyDatiFatturazione(datiFatturazione, token,profilo.nonce)
->>>>>>> front_improvements_06
                     .then(() =>{
                         setOpenModalLoading(false);
                         handleModifyMainState({
@@ -263,11 +252,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
             const {idEnte,prodotto,...body} = bodyPagoPa;
             // 2 - ed è un utente PAGOPA
             if(profilo.auth === 'PAGOPA'){
-<<<<<<< HEAD
-                await insertDatiFatturazionePagoPa( token,mainState.nonce, bodyPagoPa).then(()  =>{
-=======
                 insertDatiFatturazionePagoPa( token,profilo.nonce, bodyPagoPa).then(()  =>{
->>>>>>> front_improvements_06
                     setOpenModalLoading(false);
                     handleModifyMainState({
                         statusPageDatiFatturazione:'immutable',
@@ -282,11 +267,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
 
             }else{
                 // 2 - ED è UN UTENTE SELFCARE
-<<<<<<< HEAD
-                await insertDatiFatturazione(body, token,mainState.nonce).then(() =>{
-=======
                 insertDatiFatturazione(body, token,profilo.nonce).then(() =>{
->>>>>>> front_improvements_06
                     setOpenModalLoading(false);
                     if(statusApp.inserisciModificaCommessa === 'INSERT'){
                         handleModifyMainState({
