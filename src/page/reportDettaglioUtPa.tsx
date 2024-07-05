@@ -484,11 +484,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
         }
         setPage(newPage);
        
-<<<<<<< HEAD
         setFilterToLocalStorageNotifiche(bodyDownload,textValue,valueAutocomplete, newPage, rowsPerPage,valueFgContestazione);
-=======
-        setFilterToLocalStorageNotifiche(bodyDownload,textValue,valueAutocomplete, newPage, rowsPerPage, valueFgContestazione);
->>>>>>> front_improvements_06
        
     };
                     
@@ -497,11 +493,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
     ) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
-<<<<<<< HEAD
-        
-=======
       
->>>>>>> front_improvements_06
         setFilterToLocalStorageNotifiche(bodyDownload,textValue,valueAutocomplete, page, parseInt(event.target.value, 10),valueFgContestazione);
         const realPage = page + 1;
         if(profilo.auth === 'SELFCARE'){

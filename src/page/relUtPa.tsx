@@ -73,32 +73,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     useEffect(()=>{
         
         const result = getFiltersFromLocalStorageRel();
-<<<<<<< HEAD
-        if(mainState.nonce !== ''){
-            if(Object.keys(result).length > 0){
-                setBodyRel(result.bodyRel);
-                setTextValue(result.textValue);
-                setValueAutocomplete(result.valueAutocomplete);
-                getlistaRel(result.bodyRel,result.page + 1, result.rowsPerPage);
-                setPage(result.page);
-                setRowsPerPage(result.rowsPerPage);
-                setBodyDownload(result.bodyRel);
-                getListTipologiaFattura(result.bodyRel.anno,result.bodyRel.mese);
-                
-               
-                console.log(1);
-            }else{
-                const realPage = page + 1;
-                getlistaRel(bodyRel,realPage, rowsPerPage);
-                getListTipologiaFattura(bodyRel.anno,bodyRel.mese);
-                
-                console.log(2);
-            }
-        }
-       
-    },[mainState.nonce]);
-=======
-     
+    
         if(Object.keys(result).length > 0){
             setBodyRel(result.bodyRel);
             setTextValue(result.textValue);
@@ -107,13 +82,14 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             setPage(result.page);
             setRowsPerPage(result.rowsPerPage);
             setBodyDownload(result.bodyRel);
+            getListTipologiaFattura(result.bodyRel.anno,result.bodyRel.mese);
         }else{
             const realPage = page + 1;
             getlistaRel(bodyRel,realPage, rowsPerPage);
+            getListTipologiaFattura(bodyRel.anno,bodyRel.mese);
         }
         
     },[]);
->>>>>>> front_improvements_06
 
  
 
@@ -210,13 +186,9 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} )
                 .then((res)=>{
                     setDataSelect(res.data);
-<<<<<<< HEAD
-                }).catch(((err)=>{
-=======
                 })
                 .catch(((err)=>{
                    
->>>>>>> front_improvements_06
                     manageError(err,dispatchMainState);
                    
                 }));
@@ -238,13 +210,8 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         const realPage = newPage + 1;
         getlistaRel(bodyRel,realPage, rowsPerPage);
         setPage(newPage);
-<<<<<<< HEAD
       
         setFilterToLocalStorageRel(bodyDownload,textValue,valueAutocomplete, newPage, rowsPerPage,valuetipologiaFattura);
-=======
-     
-        setFilterToLocalStorageRel(bodyDownload,textValue,valueAutocomplete, newPage, rowsPerPage);
->>>>>>> front_improvements_06
     };
                     
     const handleChangeRowsPerPage = (
@@ -254,13 +221,8 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         setPage(0);
         const realPage = page + 1;
         getlistaRel(bodyRel,realPage,parseInt(event.target.value, 10));
-<<<<<<< HEAD
    
         setFilterToLocalStorageRel(bodyDownload,textValue,valueAutocomplete, page, parseInt(event.target.value, 10),valuetipologiaFattura);
-=======
-     
-        setFilterToLocalStorageRel(bodyDownload,textValue,valueAutocomplete, page, parseInt(event.target.value, 10));
->>>>>>> front_improvements_06
     };
    
     const setIdRel = async(idRel) => {
@@ -386,12 +348,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 manageError(err,dispatchMainState);
             });
     };
-<<<<<<< HEAD
     const  hiddenAnnullaFiltri = bodyRel.tipologiaFattura === null && bodyRel.idEnti?.length === 0 && bodyRel.caricata === null; 
-=======
-    
-    const  hiddenAnnullaFiltri = bodyRel?.tipologiaFattura === null && bodyRel?.idEnti?.length === 0 && bodyRel?.caricata === null; 
->>>>>>> front_improvements_06
     return (
        
         <div className="mx-5">
