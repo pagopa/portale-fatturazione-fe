@@ -15,15 +15,17 @@ import SelectStatoPdf from "../components/rel/selectStatoPdf";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { saveAs } from "file-saver";
 import { PathPf } from "../types/enum";
-import { deleteFilterToLocalStorageRel, getFiltersFromLocalStorageRel, getProfilo, getToken, profiliEnti, setFilterToLocalStorageRel } from "../reusableFunction/actionLocalStorage";
+import { deleteFilterToLocalStorageRel, getFiltersFromLocalStorageRel, getProfilo, getStatusApp, getToken, profiliEnti, setFilterToLocalStorageRel } from "../reusableFunction/actionLocalStorage";
 import { OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { mesiGrid, mesiWithZero } from "../reusableFunction/reusableArrayObj";
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
+import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 
 const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
     const token =  getToken();
     const profilo =  getProfilo();
+    const statusApp = getStatusApp();
     const navigate = useNavigate();
     const enti = profiliEnti();
 
@@ -50,6 +52,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
     const [tipologiaFatture, setTipologiaFatture] = useState<string[]>([]);
     const [valuetipologiaFattura, setValueTipologiaFattura] = useState<string>('');
+    const [openModalRedirect, setOpenModalRedirect] = useState(false);
 
     const [bodyDownload, setBodyDownload] = useState<BodyRel>({
         anno:currentYear,
@@ -74,7 +77,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         
         const result = getFiltersFromLocalStorageRel();
     
-        if(Object.keys(result).length > 0){
+        if(Object.keys(result).length > 0 && statusApp.datiFatturazione === true){
             setBodyRel(result.bodyRel);
             setTextValue(result.textValue);
             setValueAutocomplete(result.valueAutocomplete);
@@ -83,7 +86,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             setRowsPerPage(result.rowsPerPage);
             setBodyDownload(result.bodyRel);
             getListTipologiaFattura(result.bodyRel.anno,result.bodyRel.mese);
-        }else{
+        }else if(statusApp.datiFatturazione === true){
             const realPage = page + 1;
             getlistaRel(bodyRel,realPage, rowsPerPage);
             getListTipologiaFattura(bodyRel.anno,bodyRel.mese);
@@ -104,6 +107,12 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         }, 800);
         return () => clearTimeout(timer);
     },[textValue]);
+
+    useEffect(()=>{
+        if(statusApp.datiFatturazione === false){
+            setOpenModalRedirect(true);
+        }
+    },[]);
 
     const getlistaRel = async (bodyRel,nPage,nRows) => {
         setGetListaRelRunning(true);
@@ -487,6 +496,11 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 setOpen={setShowLoading} 
                 sentence={'Downloading...'}>
             </ModalLoading>
+            <ModalRedirect
+                setOpen={setOpenModalRedirect} 
+                open={openModalRedirect}
+                sentence={`Per poter visualizzare il dettaglio REL è obbligatorio fornire i seguenti dati di fatturazione:`}>
+            </ModalRedirect>
             <ModalLoading 
                 open={getListaRelRunning} 
                 setOpen={setGetListaRelRunning} 

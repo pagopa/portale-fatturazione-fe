@@ -82,7 +82,7 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
                 getDatiFat();
                 setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
                 handleModifyMainState({statusPageDatiFatturazione:'immutable'});
-                //navigate(open.clickOn);
+                navigate(open.clickOn);
                 
                 /* localStorage.removeItem("filtersModuliCommessa");
                 localStorage.removeItem("pageRowListaModuliCommessa");

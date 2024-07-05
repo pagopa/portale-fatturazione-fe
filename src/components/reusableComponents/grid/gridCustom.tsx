@@ -1,5 +1,6 @@
 import { Card, Table, TableBody, TableCell, TableHead, TablePagination, TableRow } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { getStatusApp, setInfoToStatusApplicationLoacalStorage } from "../../../reusableFunction/actionLocalStorage";
 interface GridCustomProps {
     elements:object[],
     changePage:any,
@@ -15,16 +16,18 @@ interface GridCustomProps {
 
 const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, nameParameterApi, apiGet, disabled}) =>{
 
+    const statusApp = getStatusApp();
 
     const handleClickOnGrid = (element) =>{
      
-        const string = JSON.stringify({
+        const newState= {
             nomeEnteClickOn:element.ragioneSociale,
             mese:element.mese,
             anno:element.anno,
             idElement:element[nameParameterApi]
-        });
-        localStorage.setItem('statusApplication', string);
+        };
+        setInfoToStatusApplicationLoacalStorage(statusApp,newState);
+       
         apiGet(element[nameParameterApi]);
     };
    

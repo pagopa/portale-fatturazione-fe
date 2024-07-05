@@ -113,13 +113,13 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
             mese: 0
         }
     });
-
+    console.log(mainState);
     useEffect(() => {
        
         const result = getFiltersFromLocalStorageNotifiche();
         
         getProdotti();
-        if(Object.keys(result).length > 0){
+        if(Object.keys(result).length > 0 && statusApp.datiFatturazione === true){
        
             getProfili();
             setBodyGetLista(result.bodyGetLista);
@@ -136,7 +136,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                 getRecapitistConsolidatori();
                 getlistaNotifichePagoPa( result.page + 1, result.rowsPerPage,result.bodyGetLista);
             }
-        }else{
+        }else if(statusApp.datiFatturazione === true){
             if(profilo.auth === 'SELFCARE'){
                 getlistaNotifiche( page + 1, rowsPerPage,bodyGetLista); 
             }else if(profilo.auth === 'PAGOPA'){

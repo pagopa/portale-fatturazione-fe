@@ -39,7 +39,6 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
     const [loadingUpload, setLoadingUpload] = useState<boolean>(false);
     const [errorUpload, setErrorUpload] = useState<boolean>(false);
     const [openModalConfirmUploadPdf, setOpenModalConfirmUploadPdf] = useState<boolean>(false);
-    const [openModalRedirect, setOpenModalRedirect] = useState(false);
     const [loadingDettaglio , setLoadingDettaglio] = useState(false);
     const [rel, setRel]  = useState<Rel>({
         idTestata: "",
@@ -65,7 +64,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
         firmata: "",
         caricata: 0
     });
-    console.log(rel);
+    
     const meseOnDoc = rel?.mese || 0;
 
     useEffect(()=>{
@@ -247,7 +246,6 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                     });
                 }else{
                     setLoadingDettaglio(false);
-                    setOpenModalRedirect(true);
                 }
             }).catch((err)=>{
                 setLoadingDettaglio(false);
@@ -362,11 +360,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
             {openModalConfirmUploadPdf &&
             <ModalUploadPdf setOpen={setOpenModalConfirmUploadPdf} open={openModalConfirmUploadPdf}></ModalUploadPdf>
             }
-            <ModalRedirect
-                setOpen={setOpenModalRedirect} 
-                open={openModalRedirect}
-                sentence={`Per poter visualizzare il dettaglio REL è obbligatorio fornire i seguenti dati di fatturazione:`}>
-            </ModalRedirect>
+           
             <ModalLoading 
                 open={showDownloading} 
                 setOpen={setShowDownloading}

@@ -41,6 +41,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         });
     };
 
+    console.log(statusApp, 'DATIFATTURAZIONE');
     const [openModalLoading, setOpenModalLoading] = useState(false);
     const [loadingData, setLoadingData] = useState(false);
     const [datiFatturazione, setDatiFatturazione] = useState<DatiFatturazione>({
@@ -206,7 +207,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
             if(profilo.auth === 'PAGOPA'){
                 const newDatiFatturazione = {...datiFatturazione, ...{idEnte:profilo.idEnte,prodotto:profilo.prodotto}};
 
-                modifyDatiFatturazionePagoPa(token,profilo.nonce, newDatiFatturazione ).then(() =>{
+                await modifyDatiFatturazionePagoPa(token,profilo.nonce, newDatiFatturazione ).then(() =>{
                     setOpenModalLoading(false);
                     handleModifyMainState({
                         statusPageDatiFatturazione:'immutable',
@@ -217,7 +218,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 });
             }else{
                 // 1 - ed è un utente SELFCARE
-                modifyDatiFatturazione(datiFatturazione, token,profilo.nonce)
+                await modifyDatiFatturazione(datiFatturazione, token,profilo.nonce)
                     .then(() =>{
                         setOpenModalLoading(false);
                         handleModifyMainState({
@@ -252,7 +253,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
             const {idEnte,prodotto,...body} = bodyPagoPa;
             // 2 - ed è un utente PAGOPA
             if(profilo.auth === 'PAGOPA'){
-                insertDatiFatturazionePagoPa( token,profilo.nonce, bodyPagoPa).then(()  =>{
+                await insertDatiFatturazionePagoPa( token,profilo.nonce, bodyPagoPa).then(()  =>{
                     setOpenModalLoading(false);
                     handleModifyMainState({
                         statusPageDatiFatturazione:'immutable',
@@ -267,7 +268,8 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
 
             }else{
                 // 2 - ED è UN UTENTE SELFCARE
-                insertDatiFatturazione(body, token,profilo.nonce).then(() =>{
+
+                await insertDatiFatturazione(body, token,profilo.nonce).then(() =>{
                     setOpenModalLoading(false);
                     if(statusApp.inserisciModificaCommessa === 'INSERT'){
                         handleModifyMainState({
@@ -275,6 +277,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                             datiFatturazione:true,
                             statusPageInserimentoCommessa:'mutable'
                         });
+                        console.log(1);
                         setInfoToStatusApplicationLoacalStorage(statusApp,{
                             statusPageDatiFatturazione:'immutable',
                             datiFatturazione:true,
@@ -286,6 +289,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                             statusPageDatiFatturazione:'immutable',
                             datiFatturazione:true,
                         });
+                        console.log(2);
                         setInfoToStatusApplicationLoacalStorage(statusApp,{
                             statusPageDatiFatturazione:'immutable',
                             datiFatturazione:true,
@@ -295,87 +299,10 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 }).catch(err =>{
                     setOpenModalLoading(false);
                     manageError(err,dispatchMainState);
-                });  
-                // viene fatta questa chiamata solo al primo inserimento dei dati di fatturazione
-                // aggiunto 01/07 start
-                await getDatiModuloCommessa(token, profilo.nonce).then((res)=>{
-                 
-                    if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
-                            
-                        handleModifyMainState({
-                            inserisciModificaCommessa:'INSERT',
-                            statusPageInserimentoCommessa:'mutable',
-                            userClickOn:undefined,
-                            primoInserimetoCommessa:true
-                        });
-                        const newState = {
-                            mese:res.data.mese,
-                            anno:res.data.anno,
-                            inserisciModificaCommessa:'INSERT',
-                            userClickOn:undefined,
-                            primoInserimetoCommessa:true
-                        };
-    
-                        localStorage.setItem('statusApplication',JSON.stringify(newState));
-                     
-                        navigate(PathPf.MODULOCOMMESSA);
-                    }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0 ){
-        
-                        handleModifyMainState({
-                            inserisciModificaCommessa:'MODIFY',
-                            statusPageInserimentoCommessa:'immutable',
-                            primoInserimetoCommessa:false});
-        
-                        const newState = {
-                            inserisciModificaCommessa:'MODIFY',
-                            primoInserimetoCommessa:false
-                        };
-                        const statusApp = localStorage.getItem('statusApplication')||'{}';
-                        const parseStatusApp = JSON.parse(statusApp);
+                }); 
+
                 
-                        localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
-                            ...newState}));
-                       
-                        navigate(PathPf.LISTA_COMMESSE);
-                    }else if(res.data.modifica === false && res.data.moduliCommessa.length === 0){
-    
-                        handleModifyMainState({
-                            inserisciModificaCommessa:'NO_ACTION',
-                            statusPageInserimentoCommessa:'immutable',
-                            primoInserimetoCommessa:false});
-                    
-                        const newState = {
-                            inserisciModificaCommessa:'NO_ACTION',
-                            primoInserimetoCommessa:false
-                        };
-                        const statusApp = localStorage.getItem('statusApplication')||'{}';
-                        const parseStatusApp = JSON.parse(statusApp);
                 
-                        localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
-                            ...newState}));
-                       
-                        navigate(PathPf.LISTA_COMMESSE);
-                    }else if(res.data.modifica === false && res.data.moduliCommessa.length > 0){
-                        handleModifyMainState({
-                            inserisciModificaCommessa:'NO_ACTION',
-                            statusPageInserimentoCommessa:'immutable',
-                            primoInserimetoCommessa:false}); 
-    
-                        const newState = {
-                            inserisciModificaCommessa:'NO_ACTION',
-                            primoInserimetoCommessa:false
-                        };
-                        const statusApp = localStorage.getItem('statusApplication')||'{}';
-                        const parseStatusApp = JSON.parse(statusApp);
-                
-                        localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
-                            ...newState}));
-                        navigate(PathPf.LISTA_COMMESSE);
-                    }
-                }).catch((err) =>{
-                    manageError(err,dispatchMainState);
-                });
-                // aggiunto 01/07
             } 
         }   
     };

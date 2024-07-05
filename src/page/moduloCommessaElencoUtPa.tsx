@@ -77,9 +77,13 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
     const getDatiFat = async () =>{
         await getDatiFatturazione(token,profilo.nonce).then(( ) =>{      
             handleModifyMainState({datiFatturazione:true});
+            console.log(3);
             setInfoToStatusApplicationLoacalStorage(statusApp,{datiFatturazione:true});
+            
+
         }).catch(err =>{
             if(err?.response?.status === 404){
+                console.log(4);
                 handleModifyMainState({datiFatturazione:false});
                 setInfoToStatusApplicationLoacalStorage(statusApp,{datiFatturazione:false});
             }
@@ -94,14 +98,15 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
             //cliccando sulla side nav Modulo commessa e sono un ente qualsiasi
             await getDatiFat();
             await getDatiModuloCommessa(token, profilo.nonce).then((res)=>{
+                 
                 if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
+                        
                     handleModifyMainState({
                         inserisciModificaCommessa:'INSERT',
                         statusPageInserimentoCommessa:'mutable',
                         userClickOn:undefined,
                         primoInserimetoCommessa:true
                     });
-                 
                     const newState = {
                         mese:res.data.mese,
                         anno:res.data.anno,
@@ -109,8 +114,10 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
                         userClickOn:undefined,
                         primoInserimetoCommessa:true
                     };
-                    // setInfoToStatusApplicationLoacalStorage(statusApp,newState);
-                    localStorage.setItem('statusApplication',JSON.stringify(newState));
+
+                  
+                    setInfoToStatusApplicationLoacalStorage(statusApp,newState);
+                 
                     navigate(PathPf.MODULOCOMMESSA);
                 }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0 ){
     
@@ -121,10 +128,11 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
     
                     const newState = {
                         inserisciModificaCommessa:'MODIFY',
-                        datiFatturazione:mainState.datiFatturazione,
                         primoInserimetoCommessa:false
                     };
+                    
                     setInfoToStatusApplicationLoacalStorage(statusApp,newState);
+                   
                     navigate(PathPf.LISTA_COMMESSE);
                 }else if(res.data.modifica === false && res.data.moduliCommessa.length === 0){
 
@@ -135,9 +143,9 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
                 
                     const newState = {
                         inserisciModificaCommessa:'NO_ACTION',
-                        datiFatturazione:mainState.datiFatturazione,
                         primoInserimetoCommessa:false
                     };
+            
                     setInfoToStatusApplicationLoacalStorage(statusApp,newState);
                     navigate(PathPf.LISTA_COMMESSE);
                 }else if(res.data.modifica === false && res.data.moduliCommessa.length > 0){
@@ -148,9 +156,10 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
 
                     const newState = {
                         inserisciModificaCommessa:'NO_ACTION',
-                        datiFatturazione:mainState.datiFatturazione,
                         primoInserimetoCommessa:false
                     };
+                   
+
                     setInfoToStatusApplicationLoacalStorage(statusApp,newState);
                     navigate(PathPf.LISTA_COMMESSE);
                 }
