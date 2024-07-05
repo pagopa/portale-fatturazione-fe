@@ -171,7 +171,7 @@ const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState, dispatchMainSt
     const arrWithlabelDateMonth = replaceDate(dataPdf.datiModuloCommessa,'[data]',string );
 
     const onIndietroButton = () =>{
-        console.log(9);
+     
         setInfoToStatusApplicationLoacalStorage(statusApp,{userClickOn:'GRID'});
         navigate(PathPf.MODULOCOMMESSA); 
     };

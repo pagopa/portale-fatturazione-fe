@@ -77,7 +77,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         
         const result = getFiltersFromLocalStorageRel();
     
-        if(Object.keys(result).length > 0 && statusApp.datiFatturazione === true){
+        if(Object.keys(result).length > 0){
             setBodyRel(result.bodyRel);
             setTextValue(result.textValue);
             setValueAutocomplete(result.valueAutocomplete);
@@ -86,7 +86,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             setRowsPerPage(result.rowsPerPage);
             setBodyDownload(result.bodyRel);
             getListTipologiaFattura(result.bodyRel.anno,result.bodyRel.mese);
-        }else if(statusApp.datiFatturazione === true){
+        }{
             const realPage = page + 1;
             getlistaRel(bodyRel,realPage, rowsPerPage);
             getListTipologiaFattura(bodyRel.anno,bodyRel.mese);
@@ -115,8 +115,9 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     },[]);
 
     const getlistaRel = async (bodyRel,nPage,nRows) => {
-        setGetListaRelRunning(true);
-        if(enti){
+        
+        if(enti && statusApp.datiFatturazione === true){
+            setGetListaRelRunning(true);
             const {idEnti, ...newBody} = bodyRel;
             await  getListaRel(token,profilo.nonce,nPage, nRows, newBody)
                 .then((res)=>{
@@ -150,7 +151,8 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                     setGetListaRelRunning(false);
                     manageError(error, dispatchMainState);
                 });
-        }else{
+        }else if(profilo.auth === 'PAGOPA'){
+            setGetListaRelRunning(true);
             await  getListaRelPagoPa(token,profilo.nonce,nPage, nRows, bodyRel)
                 .then((res)=>{
                     // controllo che tutte le rel abbiano il pdf caricato, se TRUE abilito il button download

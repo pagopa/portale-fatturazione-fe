@@ -25,7 +25,7 @@ const DettaglioMessaggio : React.FC<DettaglioMessaggioProps> = ({mainState,dispa
 
     const { id } = useParams();
     const navigate = useNavigate();
-    console.log(typeof(id), mainState);
+  
 
     const [details, setDetails] = useState<Messaggi>( {
         idEnte: '',

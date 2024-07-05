@@ -28,7 +28,7 @@ const GridMessaggi : React.FC<GridCustomProps> = ({elements, changePage, changeR
 
     const handleClickOnGrid = (element) =>{
         navigate(`/dettagliomessaggio/${element.id}`);
-        console.log(element);
+
         handleModifyMainState({messaggioSelected:element});
     };
    
