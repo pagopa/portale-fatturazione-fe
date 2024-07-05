@@ -41,7 +41,8 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         });
     };
 
-    console.log(statusApp, 'DATIFATTURAZIONE');
+    console.log(statusApp);
+  
     const [openModalLoading, setOpenModalLoading] = useState(false);
     const [loadingData, setLoadingData] = useState(false);
     const [datiFatturazione, setDatiFatturazione] = useState<DatiFatturazione>({
@@ -104,7 +105,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
    
     // get dati fatturazione SELFCARE
     const getDatiFat = async () =>{
-    
+        console.log('Dentro dati fatturazione');
         setLoadingData(true);
         await getDatiFatturazione(token,profilo.nonce).then((res:SuccesResponseGetDatiFatturazione ) =>{   
             handleModifyMainState({...statusApp, ...{
@@ -112,22 +113,20 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 statusPageDatiFatturazione:'immutable'
             }});
             setDatiFatturazione(res.data);
-              
-            localStorage.setItem('statusApplication',JSON.stringify({...statusApp,
-                ...{ datiFatturazione:true}}));
-
-           
+            setInfoToStatusApplicationLoacalStorage(statusApp,{ datiFatturazione:true});
             setLoadingData(false);
+            //checkCommessa();
+
         }).catch(err =>{
 
             if(err?.response?.status === 404){
-                localStorage.setItem('statusApplication',JSON.stringify({...statusApp,
-                    ...{ datiFatturazione:false}}));
-
+                console.log('status incriminato',statusApp);
+                setInfoToStatusApplicationLoacalStorage(statusApp,{datiFatturazione:false});
                 handleModifyMainState({...statusApp, ...{
                     datiFatturazione:false,
                     statusPageDatiFatturazione:'mutable'
                 }});
+                //checkCommessa();
             }
             setDatiFatturazione({
                 tipoCommessa:'',
@@ -153,6 +152,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
             setLoadingData(false);     
         });
     };
+
    
     // get dati fatturazione PAGOPA
     const getDatiFatPagoPa = async () =>{
@@ -194,6 +194,9 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
             setLoadingData(false);
         });
     };
+
+
+    
 
 
    
@@ -277,7 +280,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                             datiFatturazione:true,
                             statusPageInserimentoCommessa:'mutable'
                         });
-                        console.log(1);
+                    
                         setInfoToStatusApplicationLoacalStorage(statusApp,{
                             statusPageDatiFatturazione:'immutable',
                             datiFatturazione:true,
@@ -289,7 +292,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                             statusPageDatiFatturazione:'immutable',
                             datiFatturazione:true,
                         });
-                        console.log(2);
+                      
                         setInfoToStatusApplicationLoacalStorage(statusApp,{
                             statusPageDatiFatturazione:'immutable',
                             datiFatturazione:true,
@@ -300,90 +303,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                     setOpenModalLoading(false);
                     manageError(err,dispatchMainState);
                 }); 
-
-
-                // viene fatta questa chiamata solo al primo inserimento dei dati di fatturazione
-                // aggiunto 01/07 start
-                await getDatiModuloCommessa(token, mainState.nonce).then((res)=>{
-                 
-                    if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
-                            
-                        handleModifyMainState({
-                            inserisciModificaCommessa:'INSERT',
-                            statusPageInserimentoCommessa:'mutable',
-                            userClickOn:undefined,
-                            primoInserimetoCommessa:true
-                        });
-                        const newState = {
-                            mese:res.data.mese,
-                            anno:res.data.anno,
-                            inserisciModificaCommessa:'INSERT',
-                            userClickOn:undefined,
-                            primoInserimetoCommessa:true
-                        };
-    
-                        localStorage.setItem('statusApplication',JSON.stringify(newState));
-                     
-                        navigate(PathPf.MODULOCOMMESSA);
-                    }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0 ){
-        
-                        handleModifyMainState({
-                            inserisciModificaCommessa:'MODIFY',
-                            statusPageInserimentoCommessa:'immutable',
-                            primoInserimetoCommessa:false});
-        
-                        const newState = {
-                            inserisciModificaCommessa:'MODIFY',
-                            primoInserimetoCommessa:false
-                        };
-                        const statusApp = localStorage.getItem('statusApplication')||'{}';
-                        const parseStatusApp = JSON.parse(statusApp);
-                
-                        localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
-                            ...newState}));
-                       
-                        navigate(PathPf.LISTA_COMMESSE);
-                    }else if(res.data.modifica === false && res.data.moduliCommessa.length === 0){
-    
-                        handleModifyMainState({
-                            inserisciModificaCommessa:'NO_ACTION',
-                            statusPageInserimentoCommessa:'immutable',
-                            primoInserimetoCommessa:false});
-                    
-                        const newState = {
-                            inserisciModificaCommessa:'NO_ACTION',
-                            primoInserimetoCommessa:false
-                        };
-                        const statusApp = localStorage.getItem('statusApplication')||'{}';
-                        const parseStatusApp = JSON.parse(statusApp);
-                
-                        localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
-                            ...newState}));
-                       
-                        navigate(PathPf.LISTA_COMMESSE);
-                    }else if(res.data.modifica === false && res.data.moduliCommessa.length > 0){
-                        handleModifyMainState({
-                            inserisciModificaCommessa:'NO_ACTION',
-                            statusPageInserimentoCommessa:'immutable',
-                            primoInserimetoCommessa:false}); 
-    
-                        const newState = {
-                            inserisciModificaCommessa:'NO_ACTION',
-                            primoInserimetoCommessa:false
-                        };
-                        const statusApp = localStorage.getItem('statusApplication')||'{}';
-                        const parseStatusApp = JSON.parse(statusApp);
-                
-                        localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
-                            ...newState}));
-                        navigate(PathPf.LISTA_COMMESSE);
-                    }
-                }).catch((err) =>{
-                    manageError(err,dispatchMainState);
-                });
-                // aggiunto 01/07
-
-                
                 
             } 
         }   

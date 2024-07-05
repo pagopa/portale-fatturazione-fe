@@ -77,13 +77,13 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
     const getDatiFat = async () =>{
         await getDatiFatturazione(token,profilo.nonce).then(( ) =>{      
             handleModifyMainState({datiFatturazione:true});
-            console.log(3);
+            
             setInfoToStatusApplicationLoacalStorage(statusApp,{datiFatturazione:true});
             
 
         }).catch(err =>{
             if(err?.response?.status === 404){
-                console.log(4);
+              
                 handleModifyMainState({datiFatturazione:false});
                 setInfoToStatusApplicationLoacalStorage(statusApp,{datiFatturazione:false});
             }

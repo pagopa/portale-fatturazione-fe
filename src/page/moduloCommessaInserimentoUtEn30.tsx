@@ -13,7 +13,7 @@ import { redirect } from '../api/api';
 import ModalRedirect from '../components/commessaInserimento/madalRedirect';
 import { DatiCommessa, ResponseDettaglioModuloCommessa,ModuloCommessaInserimentoProps, TotaleNazionaleInternazionale, ResponsTotaliInsModuloCommessa, ModuliCommessa} from '../types/typeModuloCommessaInserimento';
 import { ManageErrorResponse } from '../types/typesGeneral';
-import { getDettaglioModuloCommessa, insertDatiModuloCommessa } from '../api/apiSelfcare/moduloCommessaSE/api';
+import { getDatiModuloCommessa, getDettaglioModuloCommessa, insertDatiModuloCommessa } from '../api/apiSelfcare/moduloCommessaSE/api';
 import { getModuloCommessaPagoPa, modifyDatiModuloCommessaPagoPa } from '../api/apiPagoPa/moduloComessaPA/api';
 import { getDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
 import { getDatiFatturazionePagoPa } from '../api/apiPagoPa/datiDiFatturazionePA/api';
@@ -24,6 +24,7 @@ import { calculateTot } from '../reusableFunction/function';
 import { month } from '../reusableFunction/reusableArrayObj';
 import ModalConfermaInserimento from '../components/commessaInserimento/modalConfermaInserimento';
 import SkeletonComIns from '../components/commessaInserimento/skeletonComIns';
+import { stat } from 'fs/promises';
 
 
 const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps> = ({mainState, dispatchMainState, open, setOpen}) => {
@@ -121,6 +122,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     },[mainState.inserisciModificaCommessa]);
 
     useEffect(()=>{
+        
         if(statusApp.userClickOn === 'GRID'){
             // SELFCARE
             if(enti){
@@ -135,7 +137,9 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     },[]);
 
     useEffect(()=>{
+        console.log('ffffffff>');
         if(token === undefined){
+            
             window.location.href = redirect;
         }
         /* se l'utente PagoPA modifa l'url e cerca di accedere al path '/8' senza aver prima selezionato
@@ -144,7 +148,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
             window.location.href = PathPf.LISTA_MODULICOMMESSA;
         }
         /* se l'utente selcare  modifica l'url andando ad inserire '/8' viene eseguito il redirect a datifatturazione*/
-        if(enti && !statusApp.mese && !statusApp.anno){
+        if(enti && !statusApp.mese && !statusApp.anno && statusApp.inserisciModificaCommessa !== 'INSERT'){
             window.location.href = PathPf.DATI_FATTURAZIONE;
         }
         if(statusApp.datiFatturazione === false){
@@ -159,6 +163,10 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
             totaleInternazionale:calculateTot(datiCommessa.moduliCommessa,'numeroNotificheInternazionali'),
             totaleNotifiche:calculateTot(datiCommessa.moduliCommessa,'totaleNotifiche')});
     },[datiCommessa]);
+
+
+
+    
 
 
 
@@ -251,7 +259,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 statusPageDatiFatturazione:'immutable',
             });
             setDataModifica(res.data.dataModifica);
-            console.log(11);
+      
             setInfoToStatusApplicationLoacalStorage(statusApp,{
                 statusPageInserimentoCommessa:'immutable',
                 statusPageDatiFatturazione:'immutable',
@@ -273,7 +281,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 anno:res.data.anno,
                 primoInserimetoCommessa: false
             });
-            console.log(8);
+           
             setInfoToStatusApplicationLoacalStorage(statusApp,{
                 statusPageInserimentoCommessa:'immutable',
                 inserisciModificaCommessa:'MODIFY',

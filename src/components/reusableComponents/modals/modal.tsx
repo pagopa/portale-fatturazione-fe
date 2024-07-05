@@ -119,7 +119,7 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
                 setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
                 handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
                 navigate(PathPf.LISTA_COMMESSE);
-                handleGetDettaglioModuloCommessa();
+                //handleGetDettaglioModuloCommessa();
 
             }else if(mainState.statusPageInserimentoCommessa === 'mutable' && enti && open.clickOn !== 'INDIETRO_BUTTON'){
                 navigate(open.clickOn);

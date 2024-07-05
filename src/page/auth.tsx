@@ -36,8 +36,8 @@ interface ParameterGetProfilo {
 }
 
 // terza chiamata fatta per verificare lo stato della commessa e eseguire azioni diverse a seconda del risultato 
-const getCommessa = async (tokenC, nonceC) =>{
-      
+const getCommessa = async (tokenC, nonceC,infoProfilo) =>{
+    console.log('AUTH');
     await getDatiModuloCommessa(tokenC, nonceC).then((res)=>{
 
         if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
@@ -71,7 +71,8 @@ const getCommessa = async (tokenC, nonceC) =>{
 
         const string = JSON.stringify(newProfilo);
         localStorage.setItem('profilo', string);
-
+        handleModifyMainState(infoProfilo);
+        navigate(PathPf.DATI_FATTURAZIONE);
     }).catch((err)=>{
         manageError(err,dispatchMainState);
         
@@ -102,11 +103,12 @@ const getProfilo = async (res:ParameterGetProfilo)=>{
                 handleModifyMainState({ruolo:resp.data.ruolo,nonce:storeProfilo.nonce,authenticated:true});
                 navigate(PathPf.LISTA_NOTIFICHE);
             }else{
-                getCommessa(res.data[0].jwt, storeProfilo.nonce);
+                const infoProfilo = {ruolo:resp.data.ruolo,nonce:storeProfilo.nonce,authenticated:true};
+                getCommessa(res.data[0].jwt, storeProfilo.nonce,infoProfilo);
                 //setCheckProfilo(true);
                 // setto il ruolo nello state di riferimento globale
-                handleModifyMainState({ruolo:resp.data.ruolo,nonce:storeProfilo.nonce,authenticated:true});
-                navigate(PathPf.DATI_FATTURAZIONE);
+               
+                
             }
         } )
         .catch(() => {
@@ -135,6 +137,7 @@ const getSelfcare = async() =>{
 };
 
 useEffect(()=>{
+    console.log('SELFCARE');
     getSelfcare();
 },[]);
    
