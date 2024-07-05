@@ -40,7 +40,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
             value:valueObj
         });
     };
-
+   
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
     const [loadingData, setLoadingData] = useState(false);
     const [totale, setTotale] = useState<TotaleNazionaleInternazionale>({totaleNazionale:0, totaleInternazionale:0, totaleNotifiche:0});
@@ -251,11 +251,16 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 statusPageDatiFatturazione:'immutable',
             });
             setDataModifica(res.data.dataModifica);
-           
+            console.log(11);
+            setInfoToStatusApplicationLoacalStorage(statusApp,{
+                statusPageInserimentoCommessa:'immutable',
+                statusPageDatiFatturazione:'immutable',
+            });
+            /*
             localStorage.setItem('statusApplication',JSON.stringify({...statusApp, ...{
                 statusPageInserimentoCommessa:'immutable',
                 statusPageDatiFatturazione:'immutable',
-            }}));
+            }}));*/
             // aggiunta in seguito
             setTotaliModuloCommessa(res.data.totale);
         }else{
@@ -268,6 +273,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
                 anno:res.data.anno,
                 primoInserimetoCommessa: false
             });
+            console.log(8);
             setInfoToStatusApplicationLoacalStorage(statusApp,{
                 statusPageInserimentoCommessa:'immutable',
                 inserisciModificaCommessa:'MODIFY',

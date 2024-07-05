@@ -21,7 +21,7 @@ import { getDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/ap
 import { PathPf } from '../../types/enum';
 import AnnouncementIcon from '@mui/icons-material/Announcement';
 import ReceiptIcon from '@mui/icons-material/Receipt';
-import { getProfilo, getToken, profiliEnti } from '../../reusableFunction/actionLocalStorage';
+import { getProfilo, getStatusApp, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from '../../reusableFunction/actionLocalStorage';
 import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
 import { getMessaggiCount } from '../../api/apiPagoPa/centroMessaggi/api';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
@@ -33,6 +33,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
     const enti = profiliEnti();
     const token = getToken();
     const profilo = getProfilo();
+    const statusApp = getStatusApp();
 
 
     const handleModifyMainState = (valueObj) => {
@@ -105,20 +106,17 @@ logica per il centro messaggi sospesa
     // chiamata con i parametri necessari (id ente)
     const getDatiFat = async () =>{
     
-        const statusApp = localStorage.getItem('statusApplication')||'{}';
-        const parseStatusApp = JSON.parse(statusApp);
+       
         await getDatiFatturazione(token,profilo.nonce).then(( ) =>{ 
             
             handleModifyMainState({datiFatturazione:true});
-            //localStorage.setItem('statusApplication', JSON.stringify(mainState));
-            
-            localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
-                ...{datiFatturazione:true}}));
+          
+            setInfoToStatusApplicationLoacalStorage(statusApp,{datiFatturazione:true});
+          
         }).catch(err =>{
             if(err?.response?.status === 404){
                 handleModifyMainState({datiFatturazione:false});
-                localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
-                    ...{datiFatturazione:false}}));
+                setInfoToStatusApplicationLoacalStorage(statusApp,{datiFatturazione:false});
             }
         });
 
@@ -163,7 +161,8 @@ logica per il centro messaggi sospesa
                         primoInserimetoCommessa:true
                     };
 
-                    localStorage.setItem('statusApplication',JSON.stringify(newState));
+                  
+                    setInfoToStatusApplicationLoacalStorage(statusApp,newState);
                  
                     navigate(PathPf.MODULOCOMMESSA);
                 }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0 ){
@@ -177,11 +176,8 @@ logica per il centro messaggi sospesa
                         inserisciModificaCommessa:'MODIFY',
                         primoInserimetoCommessa:false
                     };
-                    const statusApp = localStorage.getItem('statusApplication')||'{}';
-                    const parseStatusApp = JSON.parse(statusApp);
-            
-                    localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
-                        ...newState}));
+                    
+                    setInfoToStatusApplicationLoacalStorage(statusApp,newState);
                    
                     navigate(PathPf.LISTA_COMMESSE);
                 }else if(res.data.modifica === false && res.data.moduliCommessa.length === 0){
@@ -195,12 +191,8 @@ logica per il centro messaggi sospesa
                         inserisciModificaCommessa:'NO_ACTION',
                         primoInserimetoCommessa:false
                     };
-                    const statusApp = localStorage.getItem('statusApplication')||'{}';
-                    const parseStatusApp = JSON.parse(statusApp);
             
-                    localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
-                        ...newState}));
-                   
+                    setInfoToStatusApplicationLoacalStorage(statusApp,newState);
                     navigate(PathPf.LISTA_COMMESSE);
                 }else if(res.data.modifica === false && res.data.moduliCommessa.length > 0){
                     handleModifyMainState({
@@ -212,11 +204,9 @@ logica per il centro messaggi sospesa
                         inserisciModificaCommessa:'NO_ACTION',
                         primoInserimetoCommessa:false
                     };
-                    const statusApp = localStorage.getItem('statusApplication')||'{}';
-                    const parseStatusApp = JSON.parse(statusApp);
-            
-                    localStorage.setItem('statusApplication',JSON.stringify({...parseStatusApp,
-                        ...newState}));
+                   
+
+                    setInfoToStatusApplicationLoacalStorage(statusApp,newState);
                     navigate(PathPf.LISTA_COMMESSE);
                 }
             }).catch((err) =>{

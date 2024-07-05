@@ -40,7 +40,7 @@ export const getChosenPath = () => {
 };
 
 export const setInfoToStatusApplicationLoacalStorage = (oldObj, newObj) => {
-
+    console.log(oldObj, newObj, 10);
     localStorage.setItem('statusApplication',JSON.stringify({...oldObj,...newObj}));
 };
 
