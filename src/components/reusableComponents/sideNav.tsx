@@ -41,7 +41,8 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
             value:valueObj
         });
     };
-
+    /*
+logica per il centro messaggi sospesa
     const getCount = async () =>{
         await getMessaggiCount(token,profilo.nonce).then((res)=>{
             const numMessaggi = res.data;
@@ -50,6 +51,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
             console.log(err);
         });
     };
+    
     useEffect(()=>{
 
         getCount();
@@ -60,7 +62,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
         return () => clearInterval(interval); 
     },[]);
 
-
+*/
     const [selectedIndex, setSelectedIndex] = useState(0);
     
     const handleListItemClick = async() => {
@@ -280,9 +282,11 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
         
     };
 
+    /*
     const handleListItemClickCentroMessaggi = () =>{
         navigate("/centromessaggi");
     };
+    */
 
     const handleListItemClickAccertamenti = () =>{
         navigate("/accertamenti");
@@ -387,6 +391,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
                                     </ListItemIcon>
                                     <ListItemText primary="Accertamenti" />
                                 </ListItemButton>
+                                {/*
                                 <ListItemButton selected={selectedIndex === 6} onClick={() => handleListItemClickCentroMessaggi()}>
                                     <ListItemIcon>
                                         <Badge
@@ -402,22 +407,10 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
                                         </Badge>
                                         
                                     </ListItemIcon>
-                                    {/* <ListItemIcon>
-                                        <Badge
-                                            badgeContent={10}
-                                            color="primary"
-                                            variant="standard"
-                                        >
-                                            <MarkEmailUnreadIcon fontSize="inherit" 
-                                                sx={{
-                                                    color: '#17324D'
-                                                }}
-                                            />
-                                        </Badge>
-                                        
-                                    </ListItemIcon>*/}
+                                 
                                     <ListItemText primary="Centro Messaggi" />
                                 </ListItemButton>
+                                  */}
                             </>}
                             
                         </>
