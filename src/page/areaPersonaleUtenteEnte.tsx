@@ -224,12 +224,24 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 await modifyDatiFatturazione(datiFatturazione, token,profilo.nonce)
                     .then(() =>{
                         setOpenModalLoading(false);
-                        handleModifyMainState({
-                            statusPageDatiFatturazione:'immutable' ,
-                        });
                         if(mainState.inserisciModificaCommessa === 'INSERT'){
+                            handleModifyMainState({
+                                statusPageDatiFatturazione:'immutable',
+                                statusPageInserimentoCommessa:'mutable',
+                                mese:new Date().getMonth()+2,
+                                anno:new Date().getFullYear()
+                            });
+                            setInfoToStatusApplicationLoacalStorage(statusApp,{
+                                statusPageDatiFatturazione:'immutable',
+                                statusPageInserimentoCommessa:'mutable',
+                                mese:new Date().getMonth()+2,
+                                anno:new Date().getFullYear()
+                            });
                             navigate(PathPf.MODULOCOMMESSA);
                         }else{
+                            handleModifyMainState({
+                                statusPageDatiFatturazione:'immutable',
+                            });
                             navigate(PathPf.LISTA_COMMESSE);
                         }
                     })
@@ -278,13 +290,17 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                         handleModifyMainState({
                             statusPageDatiFatturazione:'immutable',
                             datiFatturazione:true,
-                            statusPageInserimentoCommessa:'mutable'
+                            statusPageInserimentoCommessa:'mutable',
+                            mese:new Date().getMonth()+2,
+                            anno:new Date().getFullYear()
                         });
                     
                         setInfoToStatusApplicationLoacalStorage(statusApp,{
                             statusPageDatiFatturazione:'immutable',
                             datiFatturazione:true,
-                            statusPageInserimentoCommessa:'mutable'
+                            statusPageInserimentoCommessa:'mutable',
+                            mese:new Date().getMonth()+2,
+                            anno:new Date().getFullYear()
                         });
                         navigate(PathPf.MODULOCOMMESSA);
                     }else{
