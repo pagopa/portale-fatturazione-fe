@@ -5,15 +5,15 @@ import {getProfilo, getToken } from "../reusableFunction/actionLocalStorage";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
-import { BodyFatturazione,FattureObj} from "../types/typeFatturazione";
+import {FattureObj} from "../types/typeFatturazione";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { DataGrid, GridColDef, GridEventListener, GridRowParams, MuiEvent } from "@mui/x-data-grid";
 import { Params } from "../types/typesGeneral";
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { getDownloadSingleAccertamentoPagoPa, getListaAccertamentiPagoPa } from "../api/apiPagoPa/accertamentiPA/api";
+import { getDownloadSingleAccertamentoPagoPaCsv, getDownloadSingleAccertamentoPagoPaZipExel, getListaAccertamentiPagoPa } from "../api/apiPagoPa/accertamentiPA/api";
 import { manageError } from "../api/api";
 import { Accertamento, BodyAccertamenti } from "../types/typeAccertamenti";
 import { mesiGrid } from "../reusableFunction/reusableArrayObj";
+import { saveAs } from "file-saver";
 
 
 interface AccertamentiProps {
@@ -47,12 +47,7 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
         tipologiaFattura:[],
         idEnti:[]
     });
-    const [bodyAccertamentiDownload, setBodyAccertamentiDownload] = useState<BodyAccertamenti>({
-        anno:currentYear,
-        mese:null,
-        tipologiaFattura:[],
-        idEnti:[]
-    });
+
 
     useEffect(()=>{
 
@@ -73,23 +68,50 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
 
     };
 
-    const downloadAccertamento = async (id,mese,anno) => {
-        setShowDownloading(true);
-        await getDownloadSingleAccertamentoPagoPa(token,profilo.nonce, {idReport:id}).then((res)=>{
-            const blob = new Blob([res.data], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.setAttribute('hidden', '');
-            a.setAttribute('href', url);
-            a.setAttribute('download',`Accertamento/${mese}/${anno}.csv`);
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);   
-            setShowDownloading(false);
-        }).catch(((err)=>{
-            setShowDownloading(false);
-            manageError(err,dispatchMainState);
-        }));
+    const downloadAccertamento = async (id,mese,anno,descrizione, contentType) => {
+        console.log(contentType,id);
+        if(contentType === "text/csv"){
+            setShowDownloading(true);
+            await getDownloadSingleAccertamentoPagoPaCsv(token,profilo.nonce, {idReport:id}).then((res)=>{
+                const blob = new Blob([res.data], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.setAttribute('hidden', '');
+                a.setAttribute('href', url);
+                a.setAttribute('download',`Accertamento/${descrizione}/${mese}/${anno}.csv`);
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);   
+                setShowDownloading(false);
+            }).catch(((err)=>{
+                setShowDownloading(false);
+                manageError(err,dispatchMainState);
+            }));
+        }else if(contentType === "application/zip"){
+
+            await getDownloadSingleAccertamentoPagoPaZipExel(token,profilo.nonce, {idReport:id}).then(response => response.blob())
+                .then((res)=>{
+                    console.log(res);
+                    saveAs(res,`Accertamento/${descrizione}/${mese}/${anno}.zip`);
+                    setShowDownloading(false);
+                }).catch(((err)=>{
+                    setShowDownloading(false);
+                    manageError(err,dispatchMainState);
+                }));
+        }else if(contentType ==="application/vnd.ms-excel"){
+            await getDownloadSingleAccertamentoPagoPaZipExel(token,profilo.nonce, {idReport:id}).then(response => response.blob()).then((res)=>{
+                saveAs( res,`Accertamento/${descrizione}/${mese}/${anno}.xlsx` );
+                setShowDownloading(false);
+            }).catch((err)=>{
+                manageError(err,dispatchMainState);
+            }); 
+        }
+     
+
+
+
+
+       
     };
 
     let columsSelectedGrid = '';
@@ -111,7 +133,7 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
         { field: 'prodotto', headerName: 'Prodotto', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'anno', headerName: 'Anno', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'mese', headerName: 'Mese', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' ,renderCell: (param:any) => <div className="MuiDataGrid-cellContent" title={mesiGrid[param.row.mese]} role="presentation">{mesiGrid[param.row.mese]}</div> },
-        {field: 'action', headerName: '',sortable: false,width:70,headerAlign: 'left',disableColumnMenu :true,renderCell: ((param:any) => ( <DownloadIcon sx={{marginLeft:'10px',color: '#1976D2', cursor: 'pointer'}} onClick={()=> downloadAccertamento(param.id,param.row.mese,param.row.anno)}></DownloadIcon>)),}
+        {field: 'action', headerName: '',sortable: false,width:70,headerAlign: 'left',disableColumnMenu :true,renderCell: ((param:any) => ( <DownloadIcon sx={{marginLeft:'10px',color: '#1976D2', cursor: 'pointer'}} onClick={()=> downloadAccertamento(param.id,param.row.mese,param.row.anno,param.row.descrizione,param.row.contentType)}></DownloadIcon>)),}
     ];
 
 

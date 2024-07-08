@@ -11,7 +11,8 @@ export const getListaAccertamentiPagoPa = async (token:string, nonce:string , bo
     return response;
 };
 
-export const getDownloadSingleAccertamentoPagoPa = async (token:string, nonce:string , body: {idReport:number}) => {
+export const getDownloadSingleAccertamentoPagoPaCsv = async (token:string, nonce:string , body: {idReport:number}) => {
+
     const response =  await axios.post(`${url}/api/accertamenti/report/download?nonce=${nonce}`,
         body,
         { headers: {
@@ -19,4 +20,21 @@ export const getDownloadSingleAccertamentoPagoPa = async (token:string, nonce:st
         }}
     );
     return response;
+    
 };
+
+export const getDownloadSingleAccertamentoPagoPaZipExel = async (token:string, nonce:string , body: {idReport:number}) => {
+    const response = await fetch(`${url}/api/accertamenti/report/download?nonce=${nonce}`, 
+        {
+            headers: {
+                Authorization: 'Bearer '+token,
+                'Content-type':'application/json'
+            },
+            method: 'POST',
+            body:JSON.stringify(body),
+        });
+    
+    return response;
+};
+
+
