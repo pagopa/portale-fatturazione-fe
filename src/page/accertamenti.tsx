@@ -56,12 +56,15 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
 
 
     const getListaAccertamenti = async(anno,mese) => {
-
+        setShowLoadingGrid(true);
         await getListaAccertamentiPagoPa(token, profilo.nonce, {anno,mese} )
             .then((res)=>{
                 setGridData(res.data);
+                setShowLoadingGrid(false);
             })
             .catch(((err)=>{
+                setGridData([]);
+                setShowLoadingGrid(false);
                 manageError(err,dispatchMainState);
          
             }));
@@ -69,9 +72,9 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
     };
 
     const downloadAccertamento = async (id,mese,anno,descrizione, contentType) => {
-        console.log(contentType,id);
+        setShowDownloading(true);
         if(contentType === "text/csv"){
-            setShowDownloading(true);
+          
             await getDownloadSingleAccertamentoPagoPaCsv(token,profilo.nonce, {idReport:id}).then((res)=>{
                 const blob = new Blob([res.data], { type: 'text/csv' });
                 const url = window.URL.createObjectURL(blob);
@@ -104,6 +107,7 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
                 setShowDownloading(false);
             }).catch((err)=>{
                 manageError(err,dispatchMainState);
+                setShowDownloading(false);
             }); 
         }
      
