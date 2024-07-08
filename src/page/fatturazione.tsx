@@ -161,8 +161,8 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
             manageErrorDownload(err,dispatchMainState);
         }));
     };
-
-    const getPrenotazioneReport = async () => {
+    /*
+    const downloadListaReportFatturazione = async () => {
         await fatturePrenotazioneReportPagoPa(token,profilo.nonce, bodyFatturazioneDownload)
             .then((res)=>{
              
@@ -174,7 +174,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
             }));
     };
 
-
+*/
     const headersObjGrid : HeaderCollapsible[] = [
         {name:"",align:"left",id:1},
         {name:"Ragione Sociale",align:"left",id:2},
@@ -276,7 +276,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                 {
                     gridData.length > 0 &&
                         <>
-                            <Button  onClick={() => getPrenotazioneReport()}
+                            <Button  onClick={() => downloadListaReportFatturazione()}
                             >
                 Download Report
                                 <DownloadIcon sx={{marginLeft:'10px'}}></DownloadIcon>

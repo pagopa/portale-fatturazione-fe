@@ -375,6 +375,7 @@ logica per il centro messaggi sospesa
                                     </ListItemIcon>
                                     <ListItemText primary="Fatturazione" />
                                 </ListItemButton>
+                                
                                 <ListItemButton selected={selectedIndex === 7} onClick={() => handleListItemClickAccertamenti()}>
                                     <ListItemIcon>
                                         <ManageSearchIcon fontSize="inherit"></ManageSearchIcon>
