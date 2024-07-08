@@ -133,6 +133,15 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
         { field: 'prodotto', headerName: 'Prodotto', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'anno', headerName: 'Anno', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'mese', headerName: 'Mese', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' ,renderCell: (param:any) => <div className="MuiDataGrid-cellContent" title={mesiGrid[param.row.mese]} role="presentation">{mesiGrid[param.row.mese]}</div> },
+        { field: 'contentType', headerName: 'Tipo File', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',renderCell: (param:any) => {
+            if(param.row.contentType === "text/csv"){
+                return <div className="MuiDataGrid-cellContent" title="CSV" role="presentation">CSV</div>;
+            }else if(param.row.contentType === "application/zip"){
+                return <div className="MuiDataGrid-cellContent" title="Zip" role="presentation">ZIP</div>;
+            }else if(param.row.contentType === "application/vnd.ms-excel"){
+                return  <div className="MuiDataGrid-cellContent" title="Excel" role="presentation">EXCEL</div>;
+            }
+        } },
         {field: 'action', headerName: '',sortable: false,width:70,headerAlign: 'left',disableColumnMenu :true,renderCell: ((param:any) => ( <DownloadIcon sx={{marginLeft:'10px',color: '#1976D2', cursor: 'pointer'}} onClick={()=> downloadAccertamento(param.id,param.row.mese,param.row.anno,param.row.descrizione,param.row.contentType)}></DownloadIcon>)),}
     ];
 
