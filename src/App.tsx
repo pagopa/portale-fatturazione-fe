@@ -1,9 +1,9 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import {useState, useReducer, useEffect} from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate} from 'react-router-dom';
-import { ThemeProvider, Grid } from '@mui/material';
-import {theme} from '@pagopa/mui-italia';
+import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate} from 'react-router-dom';
+import { ThemeProvider, Grid, Fab, Badge, IconButton } from '@mui/material';
+import {ButtonNaked, theme} from '@pagopa/mui-italia';
 import AreaPersonaleUtenteEnte from './page/areaPersonaleUtenteEnte';
 import ModuloCommessaElencoUtPa from './page/moduloCommessaElencoUtPa';
 import ModuloCommessaInserimentoUtEn30 from './page/moduloCommessaInserimentoUtEn30';
@@ -24,7 +24,7 @@ import Azure from './page/azure';
 import RelPage from './page/relUtPa';
 import { reducerMainState } from './reducer/reducerMainState';
 import { getAuthProfilo, manageError, redirect } from './api/api';
-import { getProfilo, profiliEnti } from './reusableFunction/actionLocalStorage';
+import { getProfilo, getToken, profiliEnti } from './reusableFunction/actionLocalStorage';
 import useIsTabActive from './reusableFunction/tabIsActiv';
 import BasicAlerts from './components/reusableComponents/modals/alert';
 import AdesioneBando from './page/adesioneBando';
@@ -35,6 +35,9 @@ import Fatturazione from './page/fatturazione';
 import CentroMessaggi from './page/centroMessaggi';
 import DettaglioMessaggio from './page/centroMessaggiDettaglio';
 import Accertamenti from './page/accertamenti';
+import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
+import { HeaderProduct } from './components/headerProva/HeaderProduct.tsx';
+import { getMessaggiCount } from './api/apiPagoPa/centroMessaggi/api';
 
 
 const App = ({ instance }) => {
@@ -42,6 +45,8 @@ const App = ({ instance }) => {
     const profilo =  getProfilo();
     const tabActive = useIsTabActive();
     const enti = profiliEnti();
+    const token = getToken();
+  
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -122,6 +127,11 @@ const App = ({ instance }) => {
             getProfiloToGetNonce();
         }  
     },[]);
+
+
+   
+
+
    
     const recOrConsIsLogged = profilo.profilo === 'REC' || profilo.profilo ==='CON';
     
@@ -132,13 +142,24 @@ const App = ({ instance }) => {
 
         route = <Router>
             <ThemeProvider theme={theme}>
-                <div className="App">
+                <div className="App" >
                     <BasicAlerts setVisible={setShowAlert} visible={showAlert} mainState={mainState} dispatchMainState={ dispatchMainState}></BasicAlerts>
-                    <HeaderPostLogin mainState={mainState}/>
+                   
+                    <HeaderPostLogin mainState={mainState} dispatchMainState={ dispatchMainState}/>
 
-                    <div>
+                    <div >
                         <HeaderNavComponent />
-
+                        {/* 
+                        <HeaderProduct 
+                            productsList={[{
+                                id: "0",
+                                title: `Area Riservata`,
+                                productUrl: "#area-riservata",
+                                linkType: "external",
+                            }]}
+                            muiElements={[1]} />
+                       */}
+                        
                         <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
                      
                             <Grid item xs={2}>
@@ -177,7 +198,7 @@ const App = ({ instance }) => {
                            
                                     <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio mainState={mainState} dispatchMainState={dispatchMainState}/>} />
 
-                                    {/*<Route path={'/centromessaggi'} element={<CentroMessaggi mainState={mainState} dispatchMainState={dispatchMainState}/>} /> */}
+                                    <Route path={'/centrorichieste'} element={<CentroMessaggi mainState={mainState} dispatchMainState={dispatchMainState}/>} />
 
                                     <Route path={'/accertamenti'} element={<Accertamenti  dispatchMainState={dispatchMainState}/>} />
 
@@ -204,7 +225,7 @@ const App = ({ instance }) => {
             <ThemeProvider theme={theme}>
                 <div className="App">
                     <BasicAlerts setVisible={setShowAlert} visible={showAlert} mainState={mainState} dispatchMainState={ dispatchMainState}></BasicAlerts>
-                    <HeaderPostLogin mainState={mainState}/>
+                    <HeaderPostLogin mainState={mainState} dispatchMainState={ dispatchMainState}/>
 
                     <div>
                         <HeaderNavComponent />
@@ -264,7 +285,7 @@ const App = ({ instance }) => {
             <ThemeProvider theme={theme}>
                 <div className="App">
                     <BasicAlerts setVisible={setShowAlert} visible={showAlert} mainState={mainState} dispatchMainState={ dispatchMainState}></BasicAlerts>
-                    <HeaderPostLogin mainState={mainState}/>
+                    <HeaderPostLogin mainState={mainState} dispatchMainState={ dispatchMainState}/>
 
                     <div>
                         <HeaderNavComponent />
@@ -312,7 +333,7 @@ const App = ({ instance }) => {
             <ThemeProvider theme={theme}>
                 <div className="App">
 
-                    <HeaderPostLogin mainState={mainState}/>
+                    <HeaderPostLogin mainState={mainState} dispatchMainState={ dispatchMainState}/>
 
                     <div>
                         <HeaderNavComponent />

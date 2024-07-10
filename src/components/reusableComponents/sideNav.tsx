@@ -42,28 +42,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
             value:valueObj
         });
     };
-    /*
-logica per il centro messaggi sospesa
-    const getCount = async () =>{
-        await getMessaggiCount(token,profilo.nonce).then((res)=>{
-            const numMessaggi = res.data;
-            handleModifyMainState({badgeContent:numMessaggi});
-        }).catch((err)=>{
-            console.log(err);
-        });
-    };
-    
-    useEffect(()=>{
 
-        getCount();
-        const interval = setInterval(() => {
-            getCount();
-        }, 8000);
-      
-        return () => clearInterval(interval); 
-    },[]);
-
-*/
     const [selectedIndex, setSelectedIndex] = useState(0);
     
     const handleListItemClick = async() => {
@@ -313,6 +292,7 @@ logica per il centro messaggi sospesa
             setSelectedIndex(7);
         }
     },[currentLocation]);
+
    
     const hideShowSidenav = location.pathname === '/auth' ||
                             location.pathname === '/azure' ||
