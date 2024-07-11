@@ -4,11 +4,6 @@ import { redirect } from '../../api/api';
 import { useNavigate } from 'react-router';
 import {useMsal } from '@azure/msal-react';
 import { loginRequest } from '../../authConfig';
-import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
-import Badge from '@mui/material/Badge';
-import { IconButton } from '@mui/material';
-import { getMessaggiCount } from '../../api/apiPagoPa/centroMessaggi/api';
-import { useEffect } from 'react';
 import { getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
 
 type JwtUser = {
@@ -18,18 +13,9 @@ type JwtUser = {
     email?: string;
 };
 
-const HeaderPostLogin = ({mainState,dispatchMainState}) => {
+const HeaderPostLogin = ({mainState}) => {
 
     const location  = useLocation();
-    const profilo =  getProfilo();
-    const token = getToken();
-
-    const handleModifyMainState = (valueObj) => {
-        dispatchMainState({
-            type:'MODIFY_MAIN_STATE',
-            value:valueObj
-        });
-    };
 
     const getDataUser = localStorage.getItem('profilo')|| '{}';
 
@@ -86,33 +72,11 @@ const HeaderPostLogin = ({mainState,dispatchMainState}) => {
     const statusUser = mainState.authenticated && user;
 
 
-    //logica per il centro messaggi sospesa
-    const getCount = async () =>{
-        await getMessaggiCount(token,profilo.nonce).then((res)=>{
-            const numMessaggi = res.data;
-            handleModifyMainState({badgeContent:numMessaggi});
-        }).catch((err)=>{
-            console.log(err);
-        });
-    };
-    
-    useEffect(()=>{
-        console.log(mainState);
-        if(mainState.authenticated === true){
-            getCount();
-            const interval = setInterval(() => {
-                getCount();
-            }, 3000);
-      
-            return () => clearInterval(interval); 
-         
-        }
-    },[]);
+ 
     return (
 
         <div className="div_header" style={{position:'relative'}}>
             {hideShowHeaderLogin ? null : 
-               
                 <HeaderAccount
                     rootLink={pagoPALink}
                     loggedUser={statusUser}
@@ -131,29 +95,7 @@ const HeaderPostLogin = ({mainState,dispatchMainState}) => {
                    
                 />
             }
-            <Badge
-                badgeContent={mainState.badgeContent}
-                color="primary"
-                variant="standard"
-                sx={{  
-                    position: 'absolute',
-                    top: 70,
-                    right: 220,
-                }}
-            >
-                <IconButton onClick={()=> {
-                            
-                    navigate('/centrorichieste');
-                } }  color="default">
-                    <MarkEmailUnreadIcon fontSize="medium" 
-                        sx={{
-                            color: '#17324D',
-                        }}
-                                
-                    />
-                </IconButton>
-  
-            </Badge>
+           
                
             
         </div>

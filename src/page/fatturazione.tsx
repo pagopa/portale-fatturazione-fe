@@ -142,7 +142,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
         }));
     };
 
-    const downloadListaReportFatturazione = async () => {
+    /*  const downloadListaReportFatturazione = async () => {
         setShowDownloading(true);
         await downloadFattureReportPagopa(token,profilo.nonce, bodyFatturazioneDownload).then((response)=>{
             if (response.ok) {
@@ -160,8 +160,8 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
             setShowDownloading(false);
             manageErrorDownload(err,dispatchMainState);
         }));
-    };
-    /*
+    };*/
+   
     const downloadListaReportFatturazione = async () => {
         await fatturePrenotazioneReportPagoPa(token,profilo.nonce, bodyFatturazioneDownload)
             .then((res)=>{
@@ -174,7 +174,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
             }));
     };
 
-*/
+
     const headersObjGrid : HeaderCollapsible[] = [
         {name:"",align:"left",id:1},
         {name:"Ragione Sociale",align:"left",id:2},

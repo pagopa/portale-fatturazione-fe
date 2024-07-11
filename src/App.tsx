@@ -145,10 +145,10 @@ const App = ({ instance }) => {
                 <div className="App" >
                     <BasicAlerts setVisible={setShowAlert} visible={showAlert} mainState={mainState} dispatchMainState={ dispatchMainState}></BasicAlerts>
                    
-                    <HeaderPostLogin mainState={mainState} dispatchMainState={ dispatchMainState}/>
+                    <HeaderPostLogin mainState={mainState} />
 
                     <div >
-                        <HeaderNavComponent />
+                        <HeaderNavComponent  mainState={mainState} dispatchMainState={dispatchMainState}/>
                         {/* 
                         <HeaderProduct 
                             productsList={[{
@@ -225,10 +225,10 @@ const App = ({ instance }) => {
             <ThemeProvider theme={theme}>
                 <div className="App">
                     <BasicAlerts setVisible={setShowAlert} visible={showAlert} mainState={mainState} dispatchMainState={ dispatchMainState}></BasicAlerts>
-                    <HeaderPostLogin mainState={mainState} dispatchMainState={ dispatchMainState}/>
+                    <HeaderPostLogin mainState={mainState} />
 
                     <div>
-                        <HeaderNavComponent />
+                        <HeaderNavComponent mainState={mainState} dispatchMainState={dispatchMainState}/>
 
                         <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
                      
@@ -285,10 +285,10 @@ const App = ({ instance }) => {
             <ThemeProvider theme={theme}>
                 <div className="App">
                     <BasicAlerts setVisible={setShowAlert} visible={showAlert} mainState={mainState} dispatchMainState={ dispatchMainState}></BasicAlerts>
-                    <HeaderPostLogin mainState={mainState} dispatchMainState={ dispatchMainState}/>
+                    <HeaderPostLogin mainState={mainState} />
 
                     <div>
-                        <HeaderNavComponent />
+                        <HeaderNavComponent mainState={mainState} dispatchMainState={dispatchMainState}/>
 
                         <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
                  
@@ -333,10 +333,10 @@ const App = ({ instance }) => {
             <ThemeProvider theme={theme}>
                 <div className="App">
 
-                    <HeaderPostLogin mainState={mainState} dispatchMainState={ dispatchMainState}/>
+                    <HeaderPostLogin mainState={mainState}/>
 
                     <div>
-                        <HeaderNavComponent />
+                        <HeaderNavComponent mainState={mainState} dispatchMainState={dispatchMainState}/>
 
                         <Routes>
                             

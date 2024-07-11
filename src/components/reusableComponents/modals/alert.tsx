@@ -6,6 +6,10 @@ import { createPortal } from 'react-dom';
 import { MainState } from '../../../types/typesGeneral';
 import { redirect } from '../../../api/api';
 import { useTranslation } from 'react-i18next';
+import { IconButton } from '@mui/material';
+import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
+import { useNavigate } from 'react-router';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 
 type AlertProps = {
@@ -17,6 +21,7 @@ type AlertProps = {
 
 const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, dispatchMainState}) => {
     const { t, i18n } = useTranslation();
+    const navigate = useNavigate();
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -58,7 +63,7 @@ const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, di
                     window.location.href = redirect;
                 }
                 
-            }, 4000);
+            }, 8000);
 
             return () =>{
                 clearTimeout(timer);
@@ -81,10 +86,24 @@ const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, di
 
     return createPortal(
         <div className={css}>
-            <Stack sx={{ width: '100%' }} spacing={2}>
-                <Alert severity={colorAlert}  variant="standard">{mainState.apiError && t(`errori.${mainState.apiError}`)}</Alert>
+            
+            <Alert sx={{display:'flex', justifyContent:'center'}} severity={colorAlert}  variant="standard">{mainState.apiError && t(`errori.${mainState.apiError}`)} 
+                {mainState.apiError === 'PRESA' &&
+                <IconButton onClick={()=> {
+                            
+                    navigate('/centrorichieste');
+                } }  color="default">
+                    <ArrowForwardIcon fontSize="medium" 
+                        sx={{
+                            color: '#17324D',
+                        }}
+                            
+                    />
+                </IconButton>
+                }
+            </Alert>
                 
-            </Stack>
+          
         </div>,
         document.getElementById("modal-alert")|| document.body
     );

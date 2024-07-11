@@ -3,7 +3,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { useEffect, useState } from "react";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
-import { downloadMessaggioPagoPa, getListaMessaggi} from "../api/apiPagoPa/centroMessaggi/api";
+import { downloadMessaggioPagoPa, getListaMessaggi, readMessaggioPagoPa} from "../api/apiPagoPa/centroMessaggi/api";
 import { getProfilo, getToken } from "../reusableFunction/actionLocalStorage";
 import { MainState } from "../types/typesGeneral";
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
@@ -100,10 +100,24 @@ const CentroMessaggi : React.FC<CentroMessaggiProps> = ({mainState,dispatchMainS
                 console.log(res);
                 saveAs(res,`File.zip`);
                 setShowDownloading(false);
+                readMessage(id);
             }).catch(((err)=>{
                 setShowDownloading(false);
                 manageError(err,dispatchMainState);
             }));
+    };
+
+
+    
+    const readMessage = async(id) => {
+        await readMessaggioPagoPa(token,profilo.nonce,{idMessaggio:Number(id)}).then((res)=>{
+
+            console.log(res);
+    
+        }).catch((err)=>{
+           
+            console.log(err);
+        });
     };
 
 
@@ -149,6 +163,8 @@ const CentroMessaggi : React.FC<CentroMessaggiProps> = ({mainState,dispatchMainS
             .toUpperCase()
             .substring(0, 3);
     }
+
+  
     
     
 
@@ -293,39 +309,43 @@ const CentroMessaggi : React.FC<CentroMessaggiProps> = ({mainState,dispatchMainS
                     borderRadius: 2
                 }}>
                     <TimelineNotification >
-                        {gridData.map((item: any, i: number) => <TimelineNotificationItem key={item.id}>
-                            <TimelineNotificationOppositeContent >
-                                <Typography>
-                                    {getDay(item.dataInserimento)}
-                                </Typography>
-                                <Typography color="text.secondary" variant="caption" component="div">
-                                    {getMonthString(item.dataInserimento)}
-                                </Typography>
-                            </TimelineNotificationOppositeContent>
-                            <TimelineNotificationSeparator>
-                                <TimelineConnector />
-                                <TimelineNotificationDot  variant={item.stato === '1' ? "outlined" : undefined} size={item.stato === '1' ? "small" : "default"} />
-                                <TimelineConnector />
-                            </TimelineNotificationSeparator>
-                            <TimelineNotificationContent>
-                                <Typography variant="caption" color="text.secondary" component="div">
-                                    {getTime(item.dataInserimento)}
-                                </Typography>
-                                {item.stato && <Chip size="small" label={item.stato === '1' ? 'In elaborazione' : 'Elaborato' } color={item.stato === '1' ? 'warning':'success'} />}
-                                {item.tipologiaDocumento && <Typography color="text.primary" variant="caption-semibold" component="div">
-                                    {`Tipologia documento: ${item.tipologiaDocumento}`}
-                                </Typography>}
-                                {item.contentType && <Typography color="text.primary" variant="caption" component="div">
-                                    {`Content type: ${item.contentType}`}
-                                </Typography>}
-                                {item.minor && item.fiscalCode && <Typography color="text.secondary" variant="caption" component="div">
-                                    {item.fiscalCode}
-                                </Typography>}
-                                {!item.minor && <ButtonNaked  onClick={()=> downloadMessaggio(item.idMessaggio)} disabled={item.stato !== '2'} target="_blank" variant="naked" color="primary" weight="light" startIcon={<AttachFileIcon />}>
+                        {gridData.map((item: any, i: number) => {
+                            return (
+                                <TimelineNotificationItem sx={{color:'red'}} key={item.id}>
+                                    <TimelineNotificationOppositeContent >
+                                        <Typography>
+                                            {getDay(item.dataInserimento)}
+                                        </Typography>
+                                        <Typography color="text.secondary" variant="caption" component="div">
+                                            {getMonthString(item.dataInserimento)}
+                                        </Typography>
+                                    </TimelineNotificationOppositeContent>
+                                    <TimelineNotificationSeparator>
+                                        <TimelineConnector />
+                                        <TimelineNotificationDot  variant={item.stato === '1' ? "outlined" : undefined} size={item.stato === '1' ? "small" : "default"} />
+                                        <TimelineConnector />
+                                    </TimelineNotificationSeparator>
+                                    <TimelineNotificationContent>
+                                        <Typography variant="caption" color="text.secondary" component="div">
+                                            {getTime(item.dataInserimento)}
+                                        </Typography>
+                                        {item.stato && <Chip size="small" label={item.stato === '1' ? 'In elaborazione' : 'Elaborato' } color={item.stato === '1' ? 'warning':'success'} />}
+                                        {item.tipologiaDocumento && <Typography color="text.primary" variant="caption-semibold" component="div">
+                                            {`Tipologia documento: ${item.tipologiaDocumento}`}
+                                        </Typography>}
+                                        {item.contentType && <Typography color="text.primary" variant="caption" component="div">
+                                            {`Content type: ${item.contentType}`}
+                                        </Typography>}
+                                        {item.minor && item.fiscalCode && <Typography color="text.secondary" variant="caption" component="div">
+                                            {item.fiscalCode}
+                                        </Typography>}
+                                        {!item.minor && <ButtonNaked  onClick={()=> downloadMessaggio(item.idMessaggio)} disabled={item.stato !== '2'} target="_blank" variant="naked" color="primary" weight="light" startIcon={<AttachFileIcon />}>
                 Download documento
-                                </ButtonNaked>}
-                            </TimelineNotificationContent>
-                        </TimelineNotificationItem>)}
+                                        </ButtonNaked>}
+                                    </TimelineNotificationContent>
+                                </TimelineNotificationItem>
+                            );
+                        })}
                     </TimelineNotification>
                 </Box>
 
