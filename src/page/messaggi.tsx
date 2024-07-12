@@ -1,21 +1,18 @@
-import { Autocomplete, Box, Button, Checkbox, Chip, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TablePagination, TextField, Typography } from "@mui/material";
-import DownloadIcon from '@mui/icons-material/Download';
+import {Box, Button, Chip, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TablePagination, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
-import { downloadMessaggioPagoPa, getListaMessaggi, readMessaggioPagoPa} from "../api/apiPagoPa/centroMessaggi/api";
+import { downloadMessaggioPagoPaCsv, downloadMessaggioPagoPaZipExel, getListaMessaggi, readMessaggioPagoPa} from "../api/apiPagoPa/centroMessaggi/api";
 import { getProfilo, getToken } from "../reusableFunction/actionLocalStorage";
 import { MainState } from "../types/typesGeneral";
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
-
-import { mesiGrid, month } from "../reusableFunction/reusableArrayObj";
-import GridMessaggi from "../components/centroMessaggi/gridMessaggi";
 import { ButtonNaked, TimelineNotification, TimelineNotificationContent, TimelineNotificationDot, TimelineNotificationItem, TimelineNotificationOppositeContent, TimelineNotificationSeparator } from "@pagopa/mui-italia";
 import { TimelineConnector } from "@mui/lab";
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import { manageError } from "../api/api";
 import { saveAs } from "file-saver";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 
 
 export interface Messaggi {
@@ -37,35 +34,37 @@ export interface Messaggi {
     data?:string
 }
 
-interface CentroMessaggiProps {
+interface MessaggiProps {
     mainState:MainState,
     dispatchMainState:any
 }
 
-interface FilterCentroMessaggi{
+interface FilterMessaggi{
     anno:number,
     mese:null|number,
     tipologiaDocumento:string[]|[],
+    letto:null|boolean
 }
 
 
-const CentroMessaggi : React.FC<CentroMessaggiProps> = ({mainState,dispatchMainState}) => {
-
-    const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-    const checkedIcon = <CheckBoxIcon fontSize="small" />;
-
-
+const Messaggi : React.FC<MessaggiProps> = ({mainState,dispatchMainState}) => {
 
     const token = getToken();
     const profilo = getProfilo();
     const currentYear = (new Date()).getFullYear();
   
-   
-    
-    const [bodyCentroMessaggi, setBodyCentroMessaggi] = useState<FilterCentroMessaggi>({
+    const [bodyCentroMessaggi, setBodyCentroMessaggi] = useState<FilterMessaggi>({
         anno:currentYear,
         mese:null,
         tipologiaDocumento:[],
+        letto:null
+    });
+
+    const [bodyCentroMessaggiOnFiltra, setBodyCentroMessaggiOnFiltra] = useState<FilterMessaggi>({
+        anno:currentYear,
+        mese:null,
+        tipologiaDocumento:[],
+        letto:null
     });
 
     const [gridData, setGridData] = useState<Messaggi[]>([]);
@@ -74,54 +73,80 @@ const CentroMessaggi : React.FC<CentroMessaggiProps> = ({mainState,dispatchMainS
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [countMessaggi, setCountMessaggi] = useState(0);
     const [valueAutocomplete, setValueAutocomplete] = useState<string[]>([]);
-
     const [showDownloading, setShowDownloading] = useState(false);
-
-
-    console.log(gridData);
    
 
     const getMessaggi = async (pa,ro,body) =>{
-       
         await getListaMessaggi(token,profilo.nonce,body,pa,ro).then((res)=>{
-            
             setGridData(res.data.messaggi);
             setCountMessaggi(res.data.count);
         }).catch((err)=>{
             setGridData([]);
             setCountMessaggi(0);
-            console.log(err);
+            manageError(err,dispatchMainState);
         });
     };
 
-    const downloadMessaggio = async (id) => {
-        await downloadMessaggioPagoPa (token,profilo.nonce, {idMessaggio:id}).then(response => response.blob())
-            .then((res)=>{
+    const downloadMessaggio = async (id, contentType) => {
+        setShowDownloading(true);
+        if(contentType === "text/csv"){
+            console.log('dentro',contentType);
+            await downloadMessaggioPagoPaCsv(token,profilo.nonce, {idMessaggio:id}).then((res)=>{
                 console.log(res);
-                saveAs(res,`File.zip`);
+                const blob = new Blob([res.data], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.setAttribute('hidden', '');
+                a.setAttribute('href', url);
+                a.setAttribute('download',`File.csv`);
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);   
                 setShowDownloading(false);
                 readMessage(id);
             }).catch(((err)=>{
                 setShowDownloading(false);
                 manageError(err,dispatchMainState);
             }));
-    };
-
-
-    
-    const readMessage = async(id) => {
-        await readMessaggioPagoPa(token,profilo.nonce,{idMessaggio:Number(id)}).then((res)=>{
-
-            console.log(res);
-    
-        }).catch((err)=>{
-           
-            console.log(err);
-        });
+        }else if(contentType === "application/zip"){
+        
+            await downloadMessaggioPagoPaZipExel(token,profilo.nonce, {idMessaggio:id}).then(response => response.blob())
+                .then((res)=>{
+                    saveAs(res,`File.zip`);
+                    setShowDownloading(false);
+                    readMessage(id);
+                
+                }).catch(((err)=>{
+                    setShowDownloading(false);
+                    manageError(err,dispatchMainState);
+                }));
+        }else if(contentType ==="application/vnd.ms-excel"){
+            await downloadMessaggioPagoPaZipExel(token,profilo.nonce, {idMessaggio:id}).then(response => response.blob()).then((res)=>{
+                console.log(res);
+                saveAs( res,`File.xlsx` );
+                setShowDownloading(false);
+                readMessage(id);
+            }).catch((err)=>{
+                manageError(err,dispatchMainState);
+                setShowDownloading(false);
+            }); 
+        }
     };
 
 
   
+        
+    
+   
+
+    const readMessage = async(id) => {
+        await readMessaggioPagoPa(token,profilo.nonce,{idMessaggio:Number(id)}).then((res)=>{
+            getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra);
+        }).catch((err)=>{
+            console.log(err);
+            // da aggiungere un messaggio apposito
+        });
+    };
 
     useEffect(()=>{
         getMessaggi(page+1, rowsPerPage, bodyCentroMessaggi);
@@ -133,7 +158,7 @@ const CentroMessaggi : React.FC<CentroMessaggiProps> = ({mainState,dispatchMainS
         newPage: number,
     ) => {
         const realPage = newPage + 1;
-        getMessaggi(realPage, rowsPerPage,bodyCentroMessaggi);
+        getMessaggi(realPage, rowsPerPage,bodyCentroMessaggiOnFiltra);
         setPage(newPage);   
     };
                     
@@ -141,10 +166,11 @@ const CentroMessaggi : React.FC<CentroMessaggiProps> = ({mainState,dispatchMainS
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
         setRowsPerPage(parseInt(event.target.value, 10));
-        
+        setPage(0);
         const realPage = page + 1;
-        getMessaggi(realPage, parseInt(event.target.value, 10),bodyCentroMessaggi);             
+        getMessaggi(realPage, parseInt(event.target.value, 10),bodyCentroMessaggiOnFiltra);             
     };
+
    
     function getDay(dateString: string): string {
         const date = new Date(dateString);
@@ -153,6 +179,9 @@ const CentroMessaggi : React.FC<CentroMessaggiProps> = ({mainState,dispatchMainS
       
     function getTime(dateString: string): string {
         const date = new Date(dateString);
+        if(date.getMinutes() < 9){
+            return `${date.getHours()}:0${date.getMinutes()}`;
+        }
         return `${date.getHours()}:${date.getMinutes()}`;
     }
 
@@ -165,9 +194,6 @@ const CentroMessaggi : React.FC<CentroMessaggiProps> = ({mainState,dispatchMainS
     }
 
   
-    
-    
-
     return (
         <div className="mx-5">
             <div className="marginTop24 ">
@@ -217,6 +243,7 @@ const CentroMessaggi : React.FC<CentroMessaggiProps> = ({mainState,dispatchMainS
                             />
                         </Box>
                     </div>
+                    */}
                     <div  className="col-3">
                         <Box sx={{width:'80%', marginLeft:'20px'}}>
                             <FormControl fullWidth>
@@ -242,13 +269,17 @@ const CentroMessaggi : React.FC<CentroMessaggiProps> = ({mainState,dispatchMainS
                             </FormControl>
                         </Box>
                     </div>
-                    */}
+                    
                 </div>
                 <div className="d-flex mt-5">
                    
                     <Button 
                         onClick={()=>{
-                            getMessaggi(page+1,rowsPerPage,bodyCentroMessaggi);
+                            getMessaggi(1,10,bodyCentroMessaggi);
+                            setBodyCentroMessaggiOnFiltra(bodyCentroMessaggi);
+                            setPage(0);
+                            setRowsPerPage(10);
+
                         } } 
                         sx={{ marginTop: 'auto', marginBottom: 'auto'}}
                         variant="contained"> Filtra
@@ -256,7 +287,7 @@ const CentroMessaggi : React.FC<CentroMessaggiProps> = ({mainState,dispatchMainS
                    
                     <Button
                         onClick={()=>{
-                            getMessaggi(1,rowsPerPage,{
+                            getMessaggi(1,10,{
                                 anno:currentYear,
                                 mese:null,
                                 tipologiaDocumento:[],
@@ -265,8 +296,17 @@ const CentroMessaggi : React.FC<CentroMessaggiProps> = ({mainState,dispatchMainS
                             setBodyCentroMessaggi({
                                 anno:currentYear,
                                 mese:null,
-                                tipologiaDocumento:[]
+                                tipologiaDocumento:[],
+                                letto:null
                             });
+                            setBodyCentroMessaggiOnFiltra({
+                                anno:currentYear,
+                                mese:null,
+                                tipologiaDocumento:[],
+                                letto:null
+                            });
+                            setPage(0);
+                            setRowsPerPage(10);
                         } }
                         sx={{marginLeft:'24px'}} >
                    Annulla filtri
@@ -289,61 +329,60 @@ const CentroMessaggi : React.FC<CentroMessaggiProps> = ({mainState,dispatchMainS
             </div>
             */}
             <div className="mb-5 mt-5">
-                {/*  <GridMessaggi
-                    dispatchMainState={dispatchMainState}
-                    nameParameterApi='idMessaggio'
-                    elements={gridData}
-                    changePage={handleChangePage}
-                    changeRow={handleChangeRowsPerPage} 
-                    total={countMessaggi}
-                    page={page}
-                    rows={rowsPerPage}
-                    headerNames={headersName}
-                    apiGet={getMessaggi}
-                    disabled={false}></GridMessaggi>
-                    */}
-
                 <Box sx={{
-                    
                     backgroundColor: "background.paper",
-                    borderRadius: 2
+                    borderRadius: 2,
+                    overflowY: "auto",
+                    maxHeight: "400px",
+                    minHeight: "400px",
+                    display: "flex",
+                    flexGrow: 1,
+                    flexDirection: "column"
                 }}>
                     <TimelineNotification >
                         {gridData.map((item: any, i: number) => {
                             return (
-                                <TimelineNotificationItem sx={{color:'red'}} key={item.id}>
-                                    <TimelineNotificationOppositeContent >
-                                        <Typography>
-                                            {getDay(item.dataInserimento)}
-                                        </Typography>
-                                        <Typography color="text.secondary" variant="caption" component="div">
-                                            {getMonthString(item.dataInserimento)}
-                                        </Typography>
-                                    </TimelineNotificationOppositeContent>
-                                    <TimelineNotificationSeparator>
-                                        <TimelineConnector />
-                                        <TimelineNotificationDot  variant={item.stato === '1' ? "outlined" : undefined} size={item.stato === '1' ? "small" : "default"} />
-                                        <TimelineConnector />
-                                    </TimelineNotificationSeparator>
-                                    <TimelineNotificationContent>
-                                        <Typography variant="caption" color="text.secondary" component="div">
-                                            {getTime(item.dataInserimento)}
-                                        </Typography>
-                                        {item.stato && <Chip size="small" label={item.stato === '1' ? 'In elaborazione' : 'Elaborato' } color={item.stato === '1' ? 'warning':'success'} />}
-                                        {item.tipologiaDocumento && <Typography color="text.primary" variant="caption-semibold" component="div">
-                                            {`Tipologia documento: ${item.tipologiaDocumento}`}
-                                        </Typography>}
-                                        {item.contentType && <Typography color="text.primary" variant="caption" component="div">
-                                            {`Content type: ${item.contentType}`}
-                                        </Typography>}
-                                        {item.minor && item.fiscalCode && <Typography color="text.secondary" variant="caption" component="div">
-                                            {item.fiscalCode}
-                                        </Typography>}
-                                        {!item.minor && <ButtonNaked  onClick={()=> downloadMessaggio(item.idMessaggio)} disabled={item.stato !== '2'} target="_blank" variant="naked" color="primary" weight="light" startIcon={<AttachFileIcon />}>
+                                <div id={item.lettura ? 'div_timeline_single_messagge_non_lette' :'div_timeline_single_messagge_lette'}>
+                                    <TimelineNotificationItem 
+                                        key={item.id}>
+                                        <TimelineNotificationOppositeContent >
+                                            <Typography>
+                                                {getDay(item.dataInserimento)}
+                                            </Typography>
+                                            <Typography color="text.secondary" variant="caption" component="div">
+                                                {getMonthString(item.dataInserimento)}
+                                            </Typography>
+                                        </TimelineNotificationOppositeContent>
+                                        <TimelineNotificationSeparator>
+                                            <TimelineConnector />
+                                            <TimelineNotificationDot  variant={item.stato === '1' ? "outlined" : undefined} size={item.stato === '1' ? "small" : "default"} />
+                                            <TimelineConnector />
+                                        </TimelineNotificationSeparator>
+                                        <TimelineNotificationContent>
+                                            <Typography variant="caption" color="text.secondary" component="div">
+                                                {getTime(item.dataInserimento)}
+                                            </Typography>
+                                            {item.stato && <Chip size="small" label={item.stato === '1' ? 'In elaborazione' : 'Elaborato' } color={item.stato === '1' ? 'warning':'success'} />}
+                                            {item.tipologiaDocumento && <Typography color="text.primary" variant="caption-semibold" component="div">
+                                                {`Tipologia documento: ${item.tipologiaDocumento}`}
+                                            </Typography>}
+                                            <Typography color="text.primary" variant="overline" component="div">
+                                                {`Letto  `}
+                                                {item.lettura ? <CheckCircleIcon color="success" ></CheckCircleIcon>: <CheckCircleOutlineIcon color="disabled"></CheckCircleOutlineIcon>
+                                                    
+                                                }
+                                          
+                                            </Typography>
+                                            {item.minor && item.fiscalCode && <Typography color="text.secondary" variant="caption" component="div">
+                                                {item.fiscalCode}
+                                            </Typography>}
+                                            {!item.minor && <ButtonNaked  onClick={()=> downloadMessaggio(item.idMessaggio,item.contentType)} disabled={item.stato !== '2'} target="_blank" variant="naked" color="primary" weight="light" startIcon={<AttachFileIcon />}>
                 Download documento
-                                        </ButtonNaked>}
-                                    </TimelineNotificationContent>
-                                </TimelineNotificationItem>
+                                            </ButtonNaked>}
+                                        </TimelineNotificationContent>
+                                    </TimelineNotificationItem>
+                                </div>
+                                
                             );
                         })}
                     </TimelineNotification>
@@ -368,15 +407,16 @@ const CentroMessaggi : React.FC<CentroMessaggiProps> = ({mainState,dispatchMainS
                        
                     ></TablePagination>
                 </div>
-
             </div>         
             <div>
-             
             </div>
-            
+            <ModalLoading 
+                open={showDownloading} 
+                setOpen={setShowDownloading}
+                sentence={'Downloading...'} >
+            </ModalLoading>
         </div>
     );
-
 };
 
-export default CentroMessaggi;
+export default Messaggi;

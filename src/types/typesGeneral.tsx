@@ -1,4 +1,4 @@
-import { Messaggi } from "../page/centroMessaggi";
+import { Messaggi } from "../page/messaggi";
 import { DataGridCommessa } from "./typeModuloCommessaElenco";
 import { BodyRel, Rel } from "./typeRel";
 

@@ -85,10 +85,12 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
     const getTipologieFatturazione =  async() => {
         await getTipologieFaPagoPa(token, profilo.nonce, {anno:bodyFatturazione.anno,mese:bodyFatturazione.mese}  )
             .then((res)=>{
-                setTipologie(res.data);                
+                setTipologie(res.data); 
+                setBodyFatturazione((prev)=>({...prev,tipologiaFattura:[]}) );              
             })
             .catch(((err)=>{
                 setTipologie([]);
+                setBodyFatturazione((prev)=>({...prev,tipologiaFattura:[]}) );
                 manageError(err,dispatchMainState);
             }));
     };
@@ -166,7 +168,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
         await fatturePrenotazioneReportPagoPa(token,profilo.nonce, bodyFatturazioneDownload)
             .then((res)=>{
              
-                managePresaInCarico('PRESA',dispatchMainState);
+                managePresaInCarico('PRESA_IN_CARICO_DOCUMENTO',dispatchMainState);
             })
             .catch(((err)=>{
                 manageError(err,dispatchMainState);

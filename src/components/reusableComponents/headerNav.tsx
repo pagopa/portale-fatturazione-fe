@@ -1,4 +1,4 @@
-import React, { ReactNode, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import {HeaderProduct} from '@pagopa/mui-italia';
 import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
@@ -7,6 +7,7 @@ import { MainState } from '../../types/typesGeneral';
 import { IconButton } from '@mui/material';
 import { getMessaggiCount } from '../../api/apiPagoPa/centroMessaggi/api';
 import { getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
+import { PathPf } from '../../types/enum';
 
 type PartySwitchItem = {
     id: string;
@@ -55,6 +56,7 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState, dispatchMainSt
 
     }; 
     const [user, setuser] = useState({name:'', ruolo:'' });
+    const [countMessages, setCountMessages] = useState(0);
 
     useEffect(()=>{
         setuser(camelizeDescizioneRuolo());
@@ -92,24 +94,23 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState, dispatchMainSt
     const getCount = async () =>{
         await getMessaggiCount(token,profilo.nonce).then((res)=>{
             const numMessaggi = res.data;
-            handleModifyMainState({badgeContent:numMessaggi});
+            setCountMessages(numMessaggi);
         }).catch((err)=>{
             console.log(err);
         });
     };
     
     useEffect(()=>{
-        console.log(mainState);
         if(mainState.authenticated === true){
             getCount();
-            const interval = setInterval(() => {
-                getCount();
+            const interval = setInterval(async() => {
+                await getCount();
             }, 3000);
       
             return () => clearInterval(interval); 
          
         }
-    },[]);
+    },[mainState.authenticated]);
     
     return (
         <>
@@ -125,13 +126,13 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState, dispatchMainSt
                     </div>
                     <div className="d-flex justify-content-center m-auto">
                         <Badge
-                            badgeContent={mainState.badgeContent}
+                            badgeContent={countMessages}
                             color="primary"
                             variant="standard"
                         >
                             <IconButton onClick={()=> {
                             
-                                navigate('/centrorichieste');
+                                navigate(PathPf.MESSAGGI);
                             } }  color="default">
                                 <MarkEmailUnreadIcon fontSize="medium" 
                                     sx={{

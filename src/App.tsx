@@ -1,9 +1,9 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import {useState, useReducer, useEffect} from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate} from 'react-router-dom';
-import { ThemeProvider, Grid, Fab, Badge, IconButton } from '@mui/material';
-import {ButtonNaked, theme} from '@pagopa/mui-italia';
+import { BrowserRouter as Router, Route, Routes, Navigate} from 'react-router-dom';
+import { ThemeProvider, Grid} from '@mui/material';
+import {theme} from '@pagopa/mui-italia';
 import AreaPersonaleUtenteEnte from './page/areaPersonaleUtenteEnte';
 import ModuloCommessaElencoUtPa from './page/moduloCommessaElencoUtPa';
 import ModuloCommessaInserimentoUtEn30 from './page/moduloCommessaInserimentoUtEn30';
@@ -32,21 +32,15 @@ import { PathPf } from './types/enum';
 import RelPdfPage from './page/relPdfUtPa';
 import { InfoOpen} from './types/typesGeneral';
 import Fatturazione from './page/fatturazione';
-import CentroMessaggi from './page/centroMessaggi';
-import DettaglioMessaggio from './page/centroMessaggiDettaglio';
 import Accertamenti from './page/accertamenti';
-import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
-import { HeaderProduct } from './components/headerProva/HeaderProduct.tsx';
-import { getMessaggiCount } from './api/apiPagoPa/centroMessaggi/api';
+import Messaggi from './page/messaggi';
 
 
 const App = ({ instance }) => {
     // eslint-disable-next-line no-undef
     const profilo =  getProfilo();
     const tabActive = useIsTabActive();
-    const enti = profiliEnti();
-    const token = getToken();
-  
+    const enti = profiliEnti();  
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -80,14 +74,7 @@ const App = ({ instance }) => {
     });
 
    
- 
-
-  
-    useEffect(()=>{
-        if(mainState.apiError !== null){
-            setShowAlert(true);
-        }
-    }, [mainState.apiError]);
+   
 
     // questa chiamata viene eseguita esclusivamente se l'utenete fa un reload page cosi da inserire nuovamente il NONCE nel DOM
     const getProfiloToGetNonce = async () =>{
@@ -98,7 +85,6 @@ const App = ({ instance }) => {
                     window.location.href = redirect;
                 }
             }).catch((err)=>{
-                //window.location.href = redirect;
                 manageError(err,dispatchMainState);
             });
     };
@@ -106,11 +92,6 @@ const App = ({ instance }) => {
     // Object.values(profilo).length !== 0 viene fatto solo per far si che la chiamanta non venga fatta al primo rendering
     // in quel caso il get profilo viene chiamato nella page auth
   
-    /* useEffect(()=>{
-        if(mainState.nonce === '' && Object.values(profilo).length !== 0 && window.location.pathname  !== '/azureLogin' && window.location.pathname  !== '/auth' && window.location.pathname  !== '/azure'){
-            getProfiloToGetNonce();
-        }  
-    },[mainState.nonce]);*/
  
     useEffect(()=>{
         if(mainState.authenticated === true && tabActive === true && (mainState.nonce !== profilo.nonce)){
@@ -119,9 +100,12 @@ const App = ({ instance }) => {
     },[tabActive]);
 
     useEffect(()=>{
-        /*if(mainState.authenticated === true && tabActive === true && (mainState.nonce !== profilo.nonce)){
-            window.location.href = redirect;
-        }*/
+        if(mainState.apiError !== null){
+            setShowAlert(true);
+        }
+    }, [mainState.apiError]);
+
+    useEffect(()=>{
     
         if(Object.values(profilo).length !== 0 && window.location.pathname  !== '/azureLogin' && window.location.pathname  !== '/auth' && window.location.pathname  !== '/azure'){
             getProfiloToGetNonce();
@@ -129,13 +113,7 @@ const App = ({ instance }) => {
     },[]);
 
 
-   
-
-
-   
     const recOrConsIsLogged = profilo.profilo === 'REC' || profilo.profilo ==='CON';
-    
-   
     let route;
 
     if(profilo.jwt && profilo.auth === 'PAGOPA'){
@@ -149,16 +127,6 @@ const App = ({ instance }) => {
 
                     <div >
                         <HeaderNavComponent  mainState={mainState} dispatchMainState={dispatchMainState}/>
-                        {/* 
-                        <HeaderProduct 
-                            productsList={[{
-                                id: "0",
-                                title: `Area Riservata`,
-                                productUrl: "#area-riservata",
-                                linkType: "external",
-                            }]}
-                            muiElements={[1]} />
-                       */}
                         
                         <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
                      
@@ -198,7 +166,7 @@ const App = ({ instance }) => {
                            
                                     <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio mainState={mainState} dispatchMainState={dispatchMainState}/>} />
 
-                                    <Route path={'/centrorichieste'} element={<CentroMessaggi mainState={mainState} dispatchMainState={dispatchMainState}/>} />
+                                    <Route path={PathPf.MESSAGGI} element={<Messaggi mainState={mainState} dispatchMainState={dispatchMainState}/>} />
 
                                     <Route path={'/accertamenti'} element={<Accertamenti  dispatchMainState={dispatchMainState}/>} />
 

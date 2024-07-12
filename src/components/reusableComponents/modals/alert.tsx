@@ -1,15 +1,14 @@
 import * as React from 'react';
 import Alert, { AlertColor } from '@mui/material/Alert';
-import Stack from '@mui/material/Stack';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { MainState } from '../../../types/typesGeneral';
 import { redirect } from '../../../api/api';
 import { useTranslation } from 'react-i18next';
 import { IconButton } from '@mui/material';
-import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
 import { useNavigate } from 'react-router';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { PathPf } from '../../../types/enum';
 
 
 type AlertProps = {
@@ -29,7 +28,7 @@ const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, di
             value:valueObj
         });
     };
-
+    console.log(mainState);
   
     let colorAlert:AlertColor = 'success';
     if(mainState.apiError === 401 || mainState.apiError === 403 ){
@@ -88,10 +87,10 @@ const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, di
         <div className={css}>
             
             <Alert sx={{display:'flex', justifyContent:'center'}} severity={colorAlert}  variant="standard">{mainState.apiError && t(`errori.${mainState.apiError}`)} 
-                {mainState.apiError === 'PRESA' &&
-                <IconButton onClick={()=> {
-                            
-                    navigate('/centrorichieste');
+                {mainState.apiError === 'PRESA_IN_CARICO_DOCUMENTO' &&
+                <IconButton sx={{marginLeft:'20px'}} onClick={()=> {
+                    setCss('main_container_alert_component_hidden');
+                    navigate(PathPf.MESSAGGI);
                 } }  color="default">
                     <ArrowForwardIcon fontSize="medium" 
                         sx={{
