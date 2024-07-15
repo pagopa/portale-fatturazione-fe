@@ -192,6 +192,8 @@ const Messaggi : React.FC<MessaggiProps> = ({mainState,dispatchMainState}) => {
             .substring(0, 3);
     }
 
+    
+
   
     return (
         <div className="mx-5">
@@ -340,6 +342,28 @@ const Messaggi : React.FC<MessaggiProps> = ({mainState,dispatchMainState}) => {
                 }}>
                     <TimelineNotification >
                         {gridData.map((item: any, i: number) => {
+
+                            let statoMessaggio = '';
+                            let colorMessaggio;
+                            let disableDownload = false;
+                          
+                            if(item.stato === '0'){
+                                statoMessaggio = 'PRESA IN CARICO';
+                                colorMessaggio = "warning";
+                                disableDownload = true;
+                            }else if(item.stato === '1'){
+                                statoMessaggio = 'IN ELABORAZIONE';
+                                colorMessaggio = "info";
+                                disableDownload = true;
+                            }else if(item.stato === '2'){
+                                statoMessaggio = 'ELABORATO';
+                                colorMessaggio = "success";
+                                disableDownload = false;
+                            }else if(item.stato === '3'){
+                                statoMessaggio = 'NON DISPONIBILE';
+                                colorMessaggio = "error";
+                                disableDownload = true;
+                            }
                             return (
                                 <div id={item.lettura ? 'div_timeline_single_messagge_non_lette' :'div_timeline_single_messagge_lette'}>
                                     <TimelineNotificationItem 
@@ -354,16 +378,16 @@ const Messaggi : React.FC<MessaggiProps> = ({mainState,dispatchMainState}) => {
                                         </TimelineNotificationOppositeContent>
                                         <TimelineNotificationSeparator>
                                             <TimelineConnector />
-                                            <TimelineNotificationDot  variant={item.stato === '1' ? "outlined" : undefined} size={item.stato === '1' ? "small" : "default"} />
+                                            <TimelineNotificationDot  variant={item.lettura ? undefined : "outlined"} size="default"/>
                                             <TimelineConnector />
                                         </TimelineNotificationSeparator>
                                         <TimelineNotificationContent>
                                             <Typography variant="caption" color="text.secondary" component="div">
                                                 {getTime(item.dataInserimento)}
                                             </Typography>
-                                            {item.stato && <Chip size="small" label={item.stato === '1' ? 'In elaborazione' : 'Elaborato' } color={item.stato === '1' ? 'warning':'success'} />}
+                                            {item.stato && <Chip size="small" label={statoMessaggio} color={colorMessaggio} />}
                                             {item.tipologiaDocumento && <Typography color="text.primary" variant="caption-semibold" component="div">
-                                                {`Tipologia documento: ${item.tipologiaDocumento}`}
+                                                {`${item.categoriaDocumento} : ${item.tipologiaDocumento}`}
                                             </Typography>}
                                             <Typography color="text.primary" variant="overline" component="div">
                                                 {`Letto  `}
@@ -375,7 +399,7 @@ const Messaggi : React.FC<MessaggiProps> = ({mainState,dispatchMainState}) => {
                                             {item.minor && item.fiscalCode && <Typography color="text.secondary" variant="caption" component="div">
                                                 {item.fiscalCode}
                                             </Typography>}
-                                            {!item.minor && <ButtonNaked  onClick={()=> downloadMessaggio(item.idMessaggio,item.contentType)} disabled={item.stato !== '2'} target="_blank" variant="naked" color="primary" weight="light" startIcon={<AttachFileIcon />}>
+                                            {!item.minor && <ButtonNaked  onClick={()=> downloadMessaggio(item.idMessaggio,item.contentType)} disabled={disableDownload} target="_blank" variant="naked" color="primary" weight="light" startIcon={<AttachFileIcon />}>
                 Download documento
                                             </ButtonNaked>}
                                         </TimelineNotificationContent>
