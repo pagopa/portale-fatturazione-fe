@@ -106,6 +106,7 @@ const Messaggi : React.FC<MessaggiProps> = ({mainState,dispatchMainState}) => {
             }).catch(((err)=>{
                 setShowDownloading(false);
                 manageError(err,dispatchMainState);
+                getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra);
             }));
         }else if(contentType === "application/zip"){
         
@@ -118,6 +119,7 @@ const Messaggi : React.FC<MessaggiProps> = ({mainState,dispatchMainState}) => {
                 }).catch(((err)=>{
                     setShowDownloading(false);
                     manageError(err,dispatchMainState);
+                    getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra);
                 }));
         }else if(contentType ==="application/vnd.ms-excel"){
             await downloadMessaggioPagoPaZipExel(token,profilo.nonce, {idMessaggio:id}).then(response => response.blob()).then((res)=>{
@@ -128,6 +130,7 @@ const Messaggi : React.FC<MessaggiProps> = ({mainState,dispatchMainState}) => {
             }).catch((err)=>{
                 manageError(err,dispatchMainState);
                 setShowDownloading(false);
+                getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra);
             }); 
         }
     };
@@ -334,8 +337,8 @@ const Messaggi : React.FC<MessaggiProps> = ({mainState,dispatchMainState}) => {
                     backgroundColor: "background.paper",
                     borderRadius: 2,
                     overflowY: "auto",
-                    maxHeight: "400px",
-                    minHeight: "400px",
+                    maxHeight: "1000px",
+                    minHeight: "1000px",
                     display: "flex",
                     flexGrow: 1,
                     flexDirection: "column"
