@@ -45,7 +45,6 @@ export const downloadMessaggioPagoPaCsv = async (token:string, nonce:string , bo
             Authorization: 'Bearer ' + token
         }}
     );
-    console.log(response);
     return response;
     
 };

@@ -90,9 +90,8 @@ const Messaggi : React.FC<MessaggiProps> = ({mainState,dispatchMainState}) => {
     const downloadMessaggio = async (id, contentType) => {
         setShowDownloading(true);
         if(contentType === "text/csv"){
-            console.log('dentro',contentType);
+
             await downloadMessaggioPagoPaCsv(token,profilo.nonce, {idMessaggio:id}).then((res)=>{
-                console.log(res);
                 const blob = new Blob([res.data], { type: 'text/csv' });
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -122,7 +121,7 @@ const Messaggi : React.FC<MessaggiProps> = ({mainState,dispatchMainState}) => {
                 }));
         }else if(contentType ==="application/vnd.ms-excel"){
             await downloadMessaggioPagoPaZipExel(token,profilo.nonce, {idMessaggio:id}).then(response => response.blob()).then((res)=>{
-                console.log(res);
+               
                 saveAs( res,`File.xlsx` );
                 setShowDownloading(false);
                 readMessage(id);

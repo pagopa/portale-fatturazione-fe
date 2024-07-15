@@ -28,7 +28,7 @@ const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, di
             value:valueObj
         });
     };
-    console.log(mainState);
+
   
     let colorAlert:AlertColor = 'success';
     if(mainState.apiError === 401 || mainState.apiError === 403 ){
