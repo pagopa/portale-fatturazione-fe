@@ -13,6 +13,7 @@ import { saveAs } from "file-saver";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
+import { month } from "../reusableFunction/reusableArrayObj";
 
 
 export interface Messaggi {
@@ -87,22 +88,22 @@ const Messaggi : React.FC<MessaggiProps> = ({mainState,dispatchMainState}) => {
         });
     };
 
-    const downloadMessaggio = async (id, contentType) => {
+    const downloadMessaggio = async (item, contentType) => {
         setShowDownloading(true);
         if(contentType === "text/csv"){
 
-            await downloadMessaggioPagoPaCsv(token,profilo.nonce, {idMessaggio:id}).then((res)=>{
+            await downloadMessaggioPagoPaCsv(token,profilo.nonce, {idMessaggio:item.idMessaggio}).then((res)=>{
                 const blob = new Blob([res.data], { type: 'text/csv' });
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.setAttribute('hidden', '');
                 a.setAttribute('href', url);
-                a.setAttribute('download',`File.csv`);
+                a.setAttribute('download',`${item.categoriaDocumento}/${item.tipologiaDocumento}/${month[item.mese-1]}/${item.anno}.csv`);
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);   
                 setShowDownloading(false);
-                readMessage(id);
+                readMessage(item.idMessaggio);
             }).catch(((err)=>{
                 setShowDownloading(false);
                 manageError(err,dispatchMainState);
@@ -110,11 +111,11 @@ const Messaggi : React.FC<MessaggiProps> = ({mainState,dispatchMainState}) => {
             }));
         }else if(contentType === "application/zip"){
         
-            await downloadMessaggioPagoPaZipExel(token,profilo.nonce, {idMessaggio:id}).then(response => response.blob())
+            await downloadMessaggioPagoPaZipExel(token,profilo.nonce, {idMessaggio:item.idMessaggio}).then(response => response.blob())
                 .then((res)=>{
-                    saveAs(res,`File.zip`);
+                    saveAs(res,`${item.categoriaDocumento}/${item.tipologiaDocumento}/${month[item.mese-1]}/${item.anno}.zip`);
                     setShowDownloading(false);
-                    readMessage(id);
+                    readMessage(item.idMessaggio);
                 
                 }).catch(((err)=>{
                     setShowDownloading(false);
@@ -122,11 +123,11 @@ const Messaggi : React.FC<MessaggiProps> = ({mainState,dispatchMainState}) => {
                     getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra);
                 }));
         }else if(contentType ==="application/vnd.ms-excel"){
-            await downloadMessaggioPagoPaZipExel(token,profilo.nonce, {idMessaggio:id}).then(response => response.blob()).then((res)=>{
+            await downloadMessaggioPagoPaZipExel(token,profilo.nonce, {idMessaggio:item.idMessaggio}).then(response => response.blob()).then((res)=>{
                
-                saveAs( res,`File.xlsx` );
+                saveAs( res,`${item.categoriaDocumento}/${item.tipologiaDocumento}/${month[item.mese-1]}/${item.anno}.xlsx` );
                 setShowDownloading(false);
-                readMessage(id);
+                readMessage(item.idMessaggio);
             }).catch((err)=>{
                 manageError(err,dispatchMainState);
                 setShowDownloading(false);
@@ -378,6 +379,7 @@ const Messaggi : React.FC<MessaggiProps> = ({mainState,dispatchMainState}) => {
                                             <Typography color="text.secondary" variant="caption" component="div">
                                                 {getMonthString(item.dataInserimento)}
                                             </Typography>
+
                                         </TimelineNotificationOppositeContent>
                                         <TimelineNotificationSeparator>
                                             <TimelineConnector />
@@ -392,6 +394,9 @@ const Messaggi : React.FC<MessaggiProps> = ({mainState,dispatchMainState}) => {
                                             {item.tipologiaDocumento && <Typography color="text.primary" variant="caption-semibold" component="div">
                                                 {`${item.categoriaDocumento} : ${item.tipologiaDocumento}`}
                                             </Typography>}
+                                            {item.anno && <Typography color="text.primary" variant="caption-semibold" component="div">
+                                                {`${month[item.mese-1]}/${item.anno}  `}
+                                            </Typography>}
                                             <Typography color="text.primary" variant="overline" component="div">
                                                 {`Letto  `}
                                                 {item.lettura ? <CheckCircleIcon color="success" ></CheckCircleIcon>: <CheckCircleOutlineIcon color="disabled"></CheckCircleOutlineIcon>
@@ -402,7 +407,7 @@ const Messaggi : React.FC<MessaggiProps> = ({mainState,dispatchMainState}) => {
                                             {item.minor && item.fiscalCode && <Typography color="text.secondary" variant="caption" component="div">
                                                 {item.fiscalCode}
                                             </Typography>}
-                                            {!item.minor && <ButtonNaked  onClick={()=> downloadMessaggio(item.idMessaggio,item.contentType)} disabled={disableDownload} target="_blank" variant="naked" color="primary" weight="light" startIcon={<AttachFileIcon />}>
+                                            {!item.minor && <ButtonNaked  onClick={()=> downloadMessaggio(item,item.contentType)} disabled={disableDownload} target="_blank" variant="naked" color="primary" weight="light" startIcon={<AttachFileIcon />}>
                 Download documento
                                             </ButtonNaked>}
                                         </TimelineNotificationContent>
