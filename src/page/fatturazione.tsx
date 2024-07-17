@@ -11,10 +11,11 @@ import { manageError, manageErrorDownload } from "../api/api";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
-import MultiSelectFatturazione from "../components/fatturazione/multiSelect";
+
 import CollapsibleTable from "../components/reusableComponents/grid/gridCustomCollapsible";
 import { saveAs } from "file-saver";
 import { month } from "../reusableFunction/reusableArrayObj";
+import MultiSelectFatturazione from "../components/fatturazione/multiSelect";
 
 const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainState}) =>{
 
