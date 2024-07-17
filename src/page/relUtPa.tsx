@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
 import { Button, Typography } from "@mui/material";
@@ -28,6 +28,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     const statusApp = getStatusApp();
     const navigate = useNavigate();
     const enti = profiliEnti();
+    const result = getFiltersFromLocalStorageRel();
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -74,10 +75,8 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
  
 
     useEffect(()=>{
-        
-        const result = getFiltersFromLocalStorageRel();
-    
         if(Object.keys(result).length > 0){
+         
             setBodyRel(result.bodyRel);
             setTextValue(result.textValue);
             setValueAutocomplete(result.valueAutocomplete);
@@ -86,10 +85,11 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             setRowsPerPage(result.rowsPerPage);
             setBodyDownload(result.bodyRel);
             getListTipologiaFattura(result.bodyRel.anno,result.bodyRel.mese);
-        }{
+        }else{
             const realPage = page + 1;
             getlistaRel(bodyRel,realPage, rowsPerPage);
-            getListTipologiaFattura(bodyRel.anno,bodyRel.mese);
+            getListTipologiaFattura(bodyRel.anno, bodyRel.mese);
+      
         }
         
     },[]);
@@ -248,6 +248,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
         if(enti){
             await getTipologieFatture(token, profilo.nonce, {mese,anno}).then((res)=>{
                 setTipologiaFatture(res.data);
+               
                 if(result.valuetipologiaFattura){
                     setValueTipologiaFattura(result.valuetipologiaFattura);
                 }else{
@@ -285,18 +286,26 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             await getTipologieFatture(token, profilo.nonce, {mese,anno}).then((res)=>{
                 setTipologiaFatture(res.data);
                 setValueTipologiaFattura('');
+                setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
+                setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
             }).catch(((err)=>{
                 setTipologiaFatture([]);
                 setValueTipologiaFattura('');
+                setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
+                setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
                 // manageError(err,dispatchMainState);
             }));
         }else if(profilo.auth === 'PAGOPA'){
             await getTipologieFatturePagoPa(token, profilo.nonce, {mese,anno}).then((res)=>{
                 setTipologiaFatture(res.data);
                 setValueTipologiaFattura('');
+                setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
+                setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
             }).catch(((err)=>{
                 setTipologiaFatture([]);
                 setValueTipologiaFattura('');
+                setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
+                setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
                 // manageError(err,dispatchMainState);
             }));
 
