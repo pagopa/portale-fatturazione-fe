@@ -13,8 +13,10 @@ import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useEffect, useState } from 'react';
-import { Card, TablePagination } from '@mui/material';
+import { Card, Checkbox, TablePagination, Toolbar, Tooltip } from '@mui/material';
 import { GridCollapsible } from '../../../types/typeFatturazione';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FilterListIcon from '@mui/icons-material/FilterList';
 
 
 const CollapsibleTable: React.FC<GridCollapsible> = ({data, showedData, setShowedData, headerNames}) => {
@@ -45,11 +47,22 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, showedData, setShowe
         <>
             <div style={{overflowX:'auto'}}>
                 <Card sx={{width: '2000px'}}  >
-        
+                    <EnhancedTableToolbar numSelected={10}></EnhancedTableToolbar>
                     <TableContainer component={Paper}>
                         <Table aria-label="collapsible table">
                             <TableHead sx={{backgroundColor:'#f2f2f2'}}>
                                 <TableRow>
+                                    <TableCell padding="checkbox">
+                                        <Checkbox
+                                            color="primary"
+                                            indeterminate={false}
+                                            checked={false}
+                                            onChange={()=> console.log('ciao')}
+                                            inputProps={{
+                                                'aria-label': 'select all desserts',
+                                            }}
+                                        />
+                                    </TableCell>
                                     {headerNames.map((el)=>{
                                         return(
                                             <TableCell align={el.align} key={el.id}>{el.name}</TableCell>
@@ -91,6 +104,17 @@ const Row = ({row}) => {
         
         <TableBody sx={{minHeight:"100px"}}>
             <TableRow  sx={{ '& > *': { borderBottom: 'unset' } }}>
+                <TableCell padding="checkbox">
+                    <Checkbox
+                        color="primary"
+                        indeterminate={false}
+                        checked={false}
+                        onChange={()=>console.log('change')}
+                        inputProps={{
+                            'aria-label': 'select all desserts',
+                        }}
+                    />
+                </TableCell>
                 <TableCell>
                     <IconButton
                         sx={{color:'#227AFC'}}
@@ -182,6 +206,39 @@ const TablePaginationDemo = ({setPage, page, rowsPerPage, setRowsPerPage, count}
             rowsPerPage={rowsPerPage}
             onRowsPerPageChange={handleChangeRowsPerPage}
         />
+    );
+};
+
+interface EnhancedTableToolbarProps {
+    numSelected: number;
+}
+  
+
+const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) =>{
+    const { numSelected } = props;
+  
+    return (
+        <Toolbar
+            sx={{bgcolor: '#D6E8FB'}}
+        >
+            {numSelected > 0 && (
+                <Typography
+                    sx={{ flex: '1 1 100%' }}
+                    color="inherit"
+                    variant="subtitle1"
+                    component="div"
+                >
+                    {numSelected} selected
+                </Typography>
+            )}
+            {numSelected > 0 && (
+                <Tooltip title="Delete">
+                    <IconButton>
+                        <DeleteIcon />
+                    </IconButton>
+                </Tooltip>
+            )}
+        </Toolbar>
     );
 };
     

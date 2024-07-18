@@ -1,4 +1,4 @@
-import { Button, Typography } from "@mui/material";
+import { Button, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import { useEffect, useState } from "react";
 import { getProfilo, getToken } from "../reusableFunction/actionLocalStorage";
@@ -16,6 +16,7 @@ import CollapsibleTable from "../components/reusableComponents/grid/gridCustomCo
 import { saveAs } from "file-saver";
 import { month } from "../reusableFunction/reusableArrayObj";
 import MultiSelectFatturazione from "../components/fatturazione/multiSelect";
+import MultiSelectBase from "../components/reusableComponents/select/multiSelectBase";
 
 const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainState}) =>{
 
@@ -48,6 +49,8 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
         tipologiaFattura:[],
         idEnti:[]
     });
+
+    const [stato,setStato] = useState(0);
 
     
     useEffect(()=>{
@@ -216,6 +219,24 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                         ></MultiselectCheckbox>
                     </div>
                 </div>
+                <div className="row mt-5">
+                    <div  className="col-3">
+                        <FormControl sx={{width:'80%'}}>
+                            <InputLabel id="stato_fatturazione">Stato</InputLabel>
+                            <Select
+                                labelId="stato_fatturazione"
+                                id="stato_fatturazione"
+                                value={stato}
+                                label="Stato"
+                                onChange={(e)=> console.log(e)}
+                            >
+                                <MenuItem value={0}>Fatturate</MenuItem>
+                                <MenuItem value={1}>Non fatturate</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </div>
+                </div>
+
                 <div className="d-flex mt-5">
                    
                     <Button 
