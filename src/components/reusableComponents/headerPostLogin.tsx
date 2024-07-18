@@ -13,7 +13,7 @@ type JwtUser = {
     email?: string;
 };
 
-const HeaderPostLogin = ({mainState,setShowAlert}) => {
+const HeaderPostLogin = ({mainState}) => {
 
     const location  = useLocation();
 
@@ -84,7 +84,6 @@ const HeaderPostLogin = ({mainState,setShowAlert}) => {
                     onLogin={handleLoginRedirect}
                     onLogout={() => {
                         if(checkIfUserIsAutenticated === 'PAGOPA'){
-                            setShowAlert(false);
                             localStorage.clear();
                             navigate('/azureLogin');
                         }else{
