@@ -48,6 +48,9 @@ const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, di
     const [css, setCss] = useState('main_container_alert_component');
 
     React.useEffect(()=>{
+
+
+
         if(visible === true && mainState.apiError !== null){
 
             const logout = mainState.apiError === 401 || mainState.apiError === 403 || mainState.apiError === 419;
@@ -69,6 +72,7 @@ const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, di
                 
             }; 
         }
+        
     },[visible]);
 
     React.useEffect(()=>{

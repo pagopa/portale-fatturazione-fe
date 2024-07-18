@@ -123,7 +123,7 @@ const App = ({ instance }) => {
                 <div className="App" >
                     <BasicAlerts setVisible={setShowAlert} visible={showAlert} mainState={mainState} dispatchMainState={ dispatchMainState}></BasicAlerts>
                    
-                    <HeaderPostLogin mainState={mainState} />
+                    <HeaderPostLogin mainState={mainState} setShowAlert={setShowAlert}/>
 
                     <div >
                         <HeaderNavComponent  mainState={mainState} dispatchMainState={dispatchMainState}/>
@@ -193,7 +193,7 @@ const App = ({ instance }) => {
             <ThemeProvider theme={theme}>
                 <div className="App">
                     <BasicAlerts setVisible={setShowAlert} visible={showAlert} mainState={mainState} dispatchMainState={ dispatchMainState}></BasicAlerts>
-                    <HeaderPostLogin mainState={mainState} />
+                    <HeaderPostLogin mainState={mainState} setShowAlert={setShowAlert}/>
 
                     <div>
                         <HeaderNavComponent mainState={mainState} dispatchMainState={dispatchMainState}/>
@@ -253,7 +253,7 @@ const App = ({ instance }) => {
             <ThemeProvider theme={theme}>
                 <div className="App">
                     <BasicAlerts setVisible={setShowAlert} visible={showAlert} mainState={mainState} dispatchMainState={ dispatchMainState}></BasicAlerts>
-                    <HeaderPostLogin mainState={mainState} />
+                    <HeaderPostLogin mainState={mainState} setShowAlert={setShowAlert}/>
 
                     <div>
                         <HeaderNavComponent mainState={mainState} dispatchMainState={dispatchMainState}/>
@@ -300,8 +300,8 @@ const App = ({ instance }) => {
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App">
-
-                    <HeaderPostLogin mainState={mainState}/>
+                    <BasicAlerts setVisible={setShowAlert} visible={showAlert} mainState={mainState} dispatchMainState={ dispatchMainState}></BasicAlerts>
+                    <HeaderPostLogin mainState={mainState} setShowAlert={setShowAlert}/>
 
                     <div>
                         <HeaderNavComponent mainState={mainState} dispatchMainState={dispatchMainState}/>
@@ -341,6 +341,7 @@ const App = ({ instance }) => {
     return (
       
         <MsalProvider instance={instance}>
+            
             {route}
         </MsalProvider>
 

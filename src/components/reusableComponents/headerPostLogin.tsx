@@ -4,7 +4,7 @@ import { redirect } from '../../api/api';
 import { useNavigate } from 'react-router';
 import {useMsal } from '@azure/msal-react';
 import { loginRequest } from '../../authConfig';
-import { getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
+
 
 type JwtUser = {
     id: string;
@@ -13,7 +13,7 @@ type JwtUser = {
     email?: string;
 };
 
-const HeaderPostLogin = ({mainState}) => {
+const HeaderPostLogin = ({mainState,setShowAlert}) => {
 
     const location  = useLocation();
 
@@ -84,6 +84,7 @@ const HeaderPostLogin = ({mainState}) => {
                     onLogin={handleLoginRedirect}
                     onLogout={() => {
                         if(checkIfUserIsAutenticated === 'PAGOPA'){
+                            setShowAlert(false);
                             localStorage.clear();
                             navigate('/azureLogin');
                         }else{
