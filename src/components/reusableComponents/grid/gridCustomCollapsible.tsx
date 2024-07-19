@@ -45,14 +45,19 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, showedData, setShowe
     },[page,rowsPerPage]);
     return (
         <>
+            {/*<EnhancedTableToolbar numSelected={10}></EnhancedTableToolbar>*/}
             <div style={{overflowX:'auto'}}>
+                
                 <Card sx={{width: '2000px'}}  >
-                    <EnhancedTableToolbar numSelected={10}></EnhancedTableToolbar>
+                    
                     <TableContainer component={Paper}>
+                        
                         <Table aria-label="collapsible table">
+                           
                             <TableHead sx={{backgroundColor:'#f2f2f2'}}>
                                 <TableRow>
-                                    <TableCell padding="checkbox">
+                                    {/*<TableCell padding="checkbox">
+                                        
                                         <Checkbox
                                             color="primary"
                                             indeterminate={false}
@@ -62,7 +67,7 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, showedData, setShowe
                                                 'aria-label': 'select all desserts',
                                             }}
                                         />
-                                    </TableCell>
+                                    </TableCell>*/}
                                     {headerNames.map((el)=>{
                                         return(
                                             <TableCell align={el.align} key={el.id}>{el.name}</TableCell>
@@ -76,7 +81,7 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, showedData, setShowe
                                 showedData.map((row) => {
             
                                     return(
-                                        <Row key={row.id} row={row}></Row>
+                                        <Row key={row.numero} row={row}></Row>
                                     ); })}
                         </Table>
                     </TableContainer>
@@ -99,22 +104,23 @@ export default CollapsibleTable;
     
 const Row = ({row}) => {
     const [open, setOpen] = useState(false);
+    const [checked, setChecked] = useState(false);
  
     return(
         
         <TableBody sx={{minHeight:"100px"}}>
             <TableRow  sx={{ '& > *': { borderBottom: 'unset' } }}>
-                <TableCell padding="checkbox">
+                {/* <TableCell padding="checkbox">
                     <Checkbox
                         color="primary"
                         indeterminate={false}
-                        checked={false}
-                        onChange={()=>console.log('change')}
+                        checked={checked}
+                        onChange={()=>setChecked(true)}
                         inputProps={{
                             'aria-label': 'select all desserts',
                         }}
                     />
-                </TableCell>
+                </TableCell>*/}
                 <TableCell>
                     <IconButton
                         sx={{color:'#227AFC'}}
@@ -126,6 +132,7 @@ const Row = ({row}) => {
                     </IconButton>
                 </TableCell>
                 <TableCell sx={{color:'#0D6EFD',fontWeight: 'bold'}} >{row.ragionesociale}</TableCell>
+                <TableCell align='center'>{row.tipologiaFattura}</TableCell>
                 <TableCell align='center' >{row.tipocontratto}</TableCell>
                 <TableCell align='right' >{row.totale.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</TableCell>
                 <TableCell align='right' >{row.numero}</TableCell>
@@ -133,7 +140,6 @@ const Row = ({row}) => {
                 <TableCell align='center' >{row.divisa}</TableCell>
                 <TableCell align='center' >{row.metodoPagamento}</TableCell>
                 <TableCell align='center'>{row.identificativo}</TableCell>
-                <TableCell align='center'>{row.tipologiaFattura}</TableCell>
                 <TableCell align='center'>{row?.split?.toString()|| ''}</TableCell>
                 <TableCell align='center'>{row.dataFattura !== null ? new Date(row.dataFattura).toLocaleString().split(',')[0] : ''}</TableCell>
             </TableRow>

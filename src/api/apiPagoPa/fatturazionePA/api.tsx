@@ -13,7 +13,7 @@ export const getFatturazionePagoPa = async (token:string, nonce:string, body: Bo
     return response;
 };
 
-export const getTipologieFaPagoPa = async (token:string, nonce:string, body: {anno:number,mese:number}) => {
+export const getTipologieFaPagoPa = async (token:string, nonce:string, body: {anno:number,mese:number,cancellata:boolean}) => {
     const response =  await axios.post(`${url}/api/fatture/tipologia?nonce=${nonce}`,
         body,
         { headers: {

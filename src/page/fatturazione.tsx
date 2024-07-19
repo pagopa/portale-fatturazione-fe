@@ -16,7 +16,6 @@ import CollapsibleTable from "../components/reusableComponents/grid/gridCustomCo
 import { saveAs } from "file-saver";
 import { month } from "../reusableFunction/reusableArrayObj";
 import MultiSelectFatturazione from "../components/fatturazione/multiSelect";
-import MultiSelectBase from "../components/reusableComponents/select/multiSelectBase";
 
 const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainState}) =>{
 
@@ -41,16 +40,18 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
         anno:currentYear,
         mese:monthNumber,
         tipologiaFattura:[],
-        idEnti:[]
+        idEnti:[],
+        cancellata:false
     });
     const [bodyFatturazioneDownload, setBodyFatturazioneDownload] = useState<BodyFatturazione>({
         anno:currentYear,
         mese:monthNumber,
         tipologiaFattura:[],
-        idEnti:[]
+        idEnti:[],
+        cancellata:false
     });
 
-    const [stato,setStato] = useState(0);
+    const [stato,setStato] = useState(false);
 
     
     useEffect(()=>{
@@ -60,7 +61,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
     },[mainState.nonce]);
 
     useEffect(()=>{
-        if(bodyFatturazione.idEnti.length !== 0 || bodyFatturazione.tipologiaFattura.length !== 0 ){
+        if(bodyFatturazione.idEnti.length !== 0 || bodyFatturazione.tipologiaFattura.length !== 0 || bodyFatturazione.cancellata === true ){
             setStatusAnnulla('show');
         }else{
             setStatusAnnulla('hidden');
@@ -80,14 +81,14 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
 
    
     useEffect(()=>{
-        if(mainState.nonce !== ''){
-            getTipologieFatturazione();
-            setValueMultiselectTipologie([]);
-        }
-    },[mainState.nonce, bodyFatturazione.mese,bodyFatturazione.anno]);
+       
+        getTipologieFatturazione();
+        setValueMultiselectTipologie([]);
+      
+    },[ bodyFatturazione.mese,bodyFatturazione.anno,bodyFatturazione.cancellata]);
 
     const getTipologieFatturazione =  async() => {
-        await getTipologieFaPagoPa(token, mainState.nonce, {anno:bodyFatturazione.anno,mese:bodyFatturazione.mese}  )
+        await getTipologieFaPagoPa(token, mainState.nonce, {anno:bodyFatturazione.anno,mese:bodyFatturazione.mese,cancellata:bodyFatturazione.cancellata}  )
             .then((res)=>{
                 setTipologie(res.data);
                 setBodyFatturazione((prev)=>({...prev,...{tipologiaFattura:[]}}));
@@ -107,8 +108,9 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
 
         await  getFatturazionePagoPa(token,mainState.nonce,body)
             .then((res)=>{
-                const orderDataCustom = res.data.map(el => el.fattura).map(obj=> ({...{id:Math.random()},...obj}));
-                setGridData(orderDataCustom);
+                const data = res.data.map(el => el.fattura);
+                console.log(res.data);
+                setGridData(data);
                 setShowLoadingGrid(false);
                 setBodyFatturazioneDownload(bodyFatturazione);
             }).catch((error)=>{
@@ -175,6 +177,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
     const headersObjGrid : HeaderCollapsible[] = [
         {name:"",align:"left",id:1},
         {name:"Ragione Sociale",align:"left",id:2},
+        {name:"T. Fattura",align:"center",id:10},
         {name:"Tipo Contratto",align:"center",id:3},
         {name:"Tot.",align:"center",id:4},
         {name:"N. Fattura",align:"center",id:5},
@@ -182,7 +185,6 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
         {name:"Divisa",align:"center",id:7},
         {name:"M. Pagamento",align:"center",id:8},
         {name:"Ident.",align:"center",id:9},
-        {name:"T. Fattura",align:"center",id:10},
         {name:"Split",align:"center",id:11},
         {name:"Data Fattura",align:"center",id:12}];
 
@@ -226,9 +228,13 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                             <Select
                                 labelId="stato_fatturazione"
                                 id="stato_fatturazione"
-                                value={stato}
+                                value={bodyFatturazione.cancellata ? 1 : 0}
                                 label="Stato"
-                                onChange={(e)=> console.log(e)}
+                                onChange={(e)=>{
+                                    const value = e.target.value === 0 ? false : true;
+                                    console.log(value);
+                                    setBodyFatturazione((prev)=>({...prev,...{cancellata:value}}));}
+                                }
                             >
                                 <MenuItem value={0}>Fatturate</MenuItem>
                                 <MenuItem value={1}>Non fatturate</MenuItem>
@@ -253,19 +259,22 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                                     anno:currentYear,
                                     mese:monthNumber,
                                     tipologiaFattura:[],
-                                    idEnti:[]
+                                    idEnti:[],
+                                    cancellata:false
                                 });
                                 setBodyFatturazione({
                                     anno:currentYear,
                                     mese:monthNumber,
                                     tipologiaFattura:[],
-                                    idEnti:[]
+                                    idEnti:[],
+                                    cancellata:false
                                 });
                                 setBodyFatturazioneDownload({
                                     anno:currentYear,
                                     mese:monthNumber,
                                     tipologiaFattura:[],
-                                    idEnti:[]
+                                    idEnti:[],
+                                    cancellata:false
                                 });
                                 setDataSelect([]);
                                 setValueMultiselectTipologie([]);
@@ -283,11 +292,14 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                     gridData.length > 0 &&
                    
                         <>
-                            <Button  onClick={() => downloadListaReportFatturazione()}
-                            >
+                            { !bodyFatturazioneDownload.cancellata &&
+                                <Button  onClick={() => downloadListaReportFatturazione()}
+                                >
                 Download Report
-                                <DownloadIcon sx={{marginLeft:'10px'}}></DownloadIcon>
-                            </Button>
+                                    <DownloadIcon sx={{marginLeft:'10px'}}></DownloadIcon>
+                                </Button>
+                            }
+                          
                             <Button onClick={() => downloadListaFatturazione()}
                             >
                 Download Risultati

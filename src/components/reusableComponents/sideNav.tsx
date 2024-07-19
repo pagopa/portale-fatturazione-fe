@@ -375,32 +375,14 @@ logica per il centro messaggi sospesa
                                     </ListItemIcon>
                                     <ListItemText primary="Fatturazione" />
                                 </ListItemButton>
-                                
+                                {/*
                                 <ListItemButton selected={selectedIndex === 7} onClick={() => handleListItemClickAccertamenti()}>
                                     <ListItemIcon>
                                         <ManageSearchIcon fontSize="inherit"></ManageSearchIcon>
                                     </ListItemIcon>
                                     <ListItemText primary="Accertamenti" />
                                 </ListItemButton>
-                                {/*
-                                <ListItemButton selected={selectedIndex === 6} onClick={() => handleListItemClickCentroMessaggi()}>
-                                    <ListItemIcon>
-                                        <Badge
-                                            badgeContent={mainState.badgeContent}
-                                            color="error"
-                                            variant="standard"
-                                        >
-                                            <MarkEmailUnreadIcon fontSize="inherit" 
-                                                sx={{
-                                                    color: '#17324D'
-                                                }}
-                                            />
-                                        </Badge>
-                                        
-                                    </ListItemIcon>
-                                 
-                                    <ListItemText primary="Centro Messaggi" />
-                                </ListItemButton>
+                                
                                   */}
                             </>}
                             
