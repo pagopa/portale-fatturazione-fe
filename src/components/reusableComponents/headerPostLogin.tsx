@@ -58,7 +58,6 @@ const HeaderPostLogin = ({mainState}) => {
         instance.loginRedirect(loginRequest).catch((error) => console.log(error));
     };
 
-    const navigate = useNavigate();
 
     const getProfiloFromLocalStorage = localStorage.getItem('profilo') || '{}';
 
@@ -75,7 +74,7 @@ const HeaderPostLogin = ({mainState}) => {
  
     return (
 
-        <div className="div_header" style={{position:'relative'}}>
+        <div className="div_header">
             {hideShowHeaderLogin ? null : 
                 <HeaderAccount
                     rootLink={pagoPALink}
@@ -85,7 +84,7 @@ const HeaderPostLogin = ({mainState}) => {
                     onLogout={() => {
                         if(checkIfUserIsAutenticated === 'PAGOPA'){
                             localStorage.clear();
-                            navigate('/azureLogin');
+                            window.location.href = '/azureLogin';
                         }else{
                             localStorage.clear();
                             window.location.href = redirect;

@@ -300,8 +300,7 @@ const App = ({ instance }) => {
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App">
-                    <BasicAlerts setVisible={setShowAlert} visible={showAlert} mainState={mainState} dispatchMainState={ dispatchMainState}></BasicAlerts>
-                    <HeaderPostLogin mainState={mainState} />
+                    <HeaderPostLogin mainState={mainState}/>
 
                     <div>
                         <HeaderNavComponent mainState={mainState} dispatchMainState={dispatchMainState}/>
