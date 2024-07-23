@@ -34,8 +34,8 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
     const [statusAnnulla, setStatusAnnulla] = useState<string>('hidden');
     const [tipologie, setTipologie] = useState<string[]>([]);
     const [valueMulitselectTipologie, setValueMultiselectTipologie] = useState<string[]>([]);
-    const [showedData, setShowedData] = useState<FattureObj[]>([]);
-  
+   
+ 
     const [bodyFatturazione, setBodyFatturazione] = useState<BodyFatturazione>({
         anno:currentYear,
         mese:monthNumber,
@@ -51,7 +51,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
         cancellata:false
     });
 
-    const [stato,setStato] = useState(false);
+    console.log({bodyFatturazioneDownload});
 
     
     useEffect(()=>{
@@ -108,7 +108,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
 
         await  getFatturazionePagoPa(token,profilo.nonce,body)
             .then((res)=>{
-                const data = res.data.map(el => el.fattura);
+                const data = res.data.map(el => el?.fattura);
                 console.log(res.data);
                 setGridData(data);
                 setShowLoadingGrid(false);
@@ -117,6 +117,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                 if(error?.response?.status === 404){
                     setGridData([]);
                 }
+                setBodyFatturazioneDownload(bodyFatturazione);
                 setShowLoadingGrid(false);
                 manageError(error, dispatchMainState);
             });        
@@ -178,13 +179,13 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
         {name:"",align:"left",id:1},
         {name:"Ragione Sociale",align:"left",id:2},
         {name:"T. Fattura",align:"center",id:10},
+        {name:"Ident.",align:"center",id:9},
         {name:"Tipo Contratto",align:"center",id:3},
         {name:"Tot.",align:"center",id:4},
         {name:"N. Fattura",align:"center",id:5},
         {name:"Tipo Documento",align:"center",id:6},
         {name:"Divisa",align:"center",id:7},
         {name:"M. Pagamento",align:"center",id:8},
-        {name:"Ident.",align:"center",id:9},
         {name:"Split",align:"center",id:11},
         {name:"Data Fattura",align:"center",id:12}];
 
@@ -315,9 +316,8 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
             
             <CollapsibleTable 
                 data={gridData}
-                showedData={showedData}
-                setShowedData={setShowedData}
-                headerNames={headersObjGrid}></CollapsibleTable>
+                headerNames={headersObjGrid}
+                stato={bodyFatturazioneDownload.cancellata}></CollapsibleTable>
             <div>
                 <ModalLoading 
                     open={showLoadingGrid} 

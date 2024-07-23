@@ -49,14 +49,14 @@ export interface FattureObj {
     causale: string,
     split: boolean,
     sollecito: string,
-    posizioni:Posizioni[]
+    posizioni:Posizioni[],
+    inviata:number
 }
 
 export interface GridCollapsible{
     data:FattureObj[],
-    showedData:FattureObj[],
-    setShowedData:any,
-    headerNames:HeaderCollapsible[]
+    headerNames:HeaderCollapsible[],
+    stato:boolean
 }
 
 export type HeaderCollapsible = {

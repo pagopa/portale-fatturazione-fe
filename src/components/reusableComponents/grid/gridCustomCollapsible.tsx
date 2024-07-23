@@ -13,25 +13,30 @@ import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useEffect, useState } from 'react';
-import { Card, Checkbox, TablePagination, Toolbar, Tooltip } from '@mui/material';
-import { GridCollapsible } from '../../../types/typeFatturazione';
+import { Button, Card, Checkbox, Chip, TablePagination, Toolbar, Tooltip } from '@mui/material';
+import { FattureObj, GridCollapsible } from '../../../types/typeFatturazione';
 import DeleteIcon from '@mui/icons-material/Delete';
-import FilterListIcon from '@mui/icons-material/FilterList';
+import RestoreIcon from '@mui/icons-material/Restore';
+import BlockIcon from '@mui/icons-material/Block';
 
 
-const CollapsibleTable: React.FC<GridCollapsible> = ({data, showedData, setShowedData, headerNames}) => {
+
+const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato}) => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [count, setCount] = useState(0);
+    const [showedData, setShowedData] = useState<FattureObj[]>([]);
+    const [selected, setSelected] = React.useState<readonly number[]>([]);
     
-    
+ 
     
     useEffect(()=>{
         setCount(data.length);
         setPage(0);
         setRowsPerPage(10);
         setShowedData(data.slice(0, 10));
-        // setOpen(false);
+        setSelected([]);
+       
     },[data]);
     
     useEffect(()=>{
@@ -43,9 +48,16 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, showedData, setShowe
         }
         setShowedData(data.slice(from, rowsPerPage + from));
     },[page,rowsPerPage]);
+
+
+   
+
+
+
     return (
         <>
-            {/*<EnhancedTableToolbar numSelected={10}></EnhancedTableToolbar>*/}
+            {selected.length > 0 && <EnhancedTableToolbar numSelected={selected.length} stato={stato}></EnhancedTableToolbar>}
+            
             <div style={{overflowX:'auto'}}>
                 
                 <Card sx={{width: '2000px'}}  >
@@ -56,8 +68,8 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, showedData, setShowe
                            
                             <TableHead sx={{backgroundColor:'#f2f2f2'}}>
                                 <TableRow>
-                                    {/*<TableCell padding="checkbox">
-                                        
+                                    <TableCell padding="checkbox">
+                                        {/*
                                         <Checkbox
                                             color="primary"
                                             indeterminate={false}
@@ -66,8 +78,8 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, showedData, setShowe
                                             inputProps={{
                                                 'aria-label': 'select all desserts',
                                             }}
-                                        />
-                                    </TableCell>*/}
+                                        />*/}
+                                    </TableCell>
                                     {headerNames.map((el)=>{
                                         return(
                                             <TableCell align={el.align} key={el.id}>{el.name}</TableCell>
@@ -81,7 +93,7 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, showedData, setShowe
                                 showedData.map((row) => {
             
                                     return(
-                                        <Row key={row.numero} row={row}></Row>
+                                        <Row key={row.numero} row={row} setSelected={setSelected} selected={selected} ></Row>
                                     ); })}
                         </Table>
                     </TableContainer>
@@ -102,25 +114,48 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, showedData, setShowe
 export default CollapsibleTable;
     
     
-const Row = ({row}) => {
+const Row = ({row, setSelected,selected}) => {
     const [open, setOpen] = useState(false);
-    const [checked, setChecked] = useState(false);
+
+    const handleClick = ( id: number) => {
+        const selectedIndex = selected.indexOf(id);
+        let newSelected: readonly number[] = [];
+    
+        if (selectedIndex === -1) {
+            newSelected = newSelected.concat(selected, id);
+        } else if (selectedIndex === 0) {
+            newSelected = newSelected.concat(selected.slice(1));
+        } else if (selectedIndex === selected.length - 1) {
+            newSelected = newSelected.concat(selected.slice(0, -1));
+        } else if (selectedIndex > 0) {
+            newSelected = newSelected.concat(
+                selected.slice(0, selectedIndex),
+                selected.slice(selectedIndex + 1),
+            );
+        }
+        setSelected(newSelected);
+    };
+
+    const isSelected = (id: number) => selected.indexOf(id) !== -1;
  
     return(
         
         <TableBody sx={{minHeight:"100px"}}>
             <TableRow  sx={{ '& > *': { borderBottom: 'unset' } }}>
-                {/* <TableCell padding="checkbox">
+                <TableCell padding="checkbox">
                     <Checkbox
                         color="primary"
                         indeterminate={false}
-                        checked={checked}
-                        onChange={()=>setChecked(true)}
+                        checked={isSelected(row.numero)}
+                        disabled={row.inviata === 1}
+                        onChange={()=>{
+                            handleClick(row.numero);
+                        }}
                         inputProps={{
                             'aria-label': 'select all desserts',
                         }}
                     />
-                </TableCell>*/}
+                </TableCell>
                 <TableCell>
                     <IconButton
                         sx={{color:'#227AFC'}}
@@ -133,13 +168,13 @@ const Row = ({row}) => {
                 </TableCell>
                 <TableCell sx={{color:'#0D6EFD',fontWeight: 'bold'}} >{row.ragionesociale}</TableCell>
                 <TableCell align='center'>{row.tipologiaFattura}</TableCell>
+                <TableCell align='center'>{row.identificativo}</TableCell>
                 <TableCell align='center' >{row.tipocontratto}</TableCell>
                 <TableCell align='right' >{row.totale.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</TableCell>
                 <TableCell align='right' >{row.numero}</TableCell>
                 <TableCell align='center' >{row.tipoDocumento}</TableCell>
                 <TableCell align='center' >{row.divisa}</TableCell>
                 <TableCell align='center' >{row.metodoPagamento}</TableCell>
-                <TableCell align='center'>{row.identificativo}</TableCell>
                 <TableCell align='center'>{row?.split?.toString()|| ''}</TableCell>
                 <TableCell align='center'>{row.dataFattura !== null ? new Date(row.dataFattura).toLocaleString().split(',')[0] : ''}</TableCell>
             </TableRow>
@@ -217,33 +252,39 @@ const TablePaginationDemo = ({setPage, page, rowsPerPage, setRowsPerPage, count}
 
 interface EnhancedTableToolbarProps {
     numSelected: number;
+    stato:boolean
 }
   
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) =>{
-    const { numSelected } = props;
+    const { numSelected, stato } = props;
+    const color = stato ? "#F2FAF2" : "#F2FAFE";
+    const icon = stato ?  <RestoreIcon sx={{marginLeft:'20px'}}></RestoreIcon> : <BlockIcon sx={{marginLeft:'20px'}}></BlockIcon>;
+    const stringIcon = stato ? 'Ripristina' : 'Sospendi';
   
     return (
         <Toolbar
-            sx={{bgcolor: '#D6E8FB'}}
+            sx={{bgcolor:color}}
         >
-            {numSelected > 0 && (
-                <Typography
-                    sx={{ flex: '1 1 100%' }}
-                    color="inherit"
-                    variant="subtitle1"
-                    component="div"
-                >
-                    {numSelected} selected
-                </Typography>
-            )}
-            {numSelected > 0 && (
-                <Tooltip title="Delete">
-                    <IconButton>
-                        <DeleteIcon />
-                    </IconButton>
-                </Tooltip>
-            )}
+            <Typography
+                sx={{ flex: '1 1 100%' }}
+                color="inherit"
+                variant="subtitle1"
+                component="div"
+            >
+                {numSelected} selected
+            </Typography>
+            <Tooltip title={stringIcon}>
+                
+                <Button>
+                    {stringIcon} {icon}
+                </Button>
+               
+               
+            </Tooltip>
+            
+            
+         
         </Toolbar>
     );
 };
