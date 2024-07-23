@@ -17,6 +17,8 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
 
     const customMargin = location.pathname === PathPf.FATTURAZIONE ? { width: '80%' ,marginLeft:'12px'} : { width: '80%'};
 
+   
+
     return (
         <Autocomplete
             multiple

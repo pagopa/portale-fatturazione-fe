@@ -279,6 +279,8 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                                 });
                                 setDataSelect([]);
                                 setValueMultiselectTipologie([]);
+                                setValueAutocomplete([]);
+                           
                             } }
                             sx={{marginLeft:'24px'}} >
                     Annulla filtri
