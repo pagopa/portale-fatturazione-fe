@@ -50,13 +50,15 @@ export interface FattureObj {
     split: boolean,
     sollecito: string,
     posizioni:Posizioni[],
-    inviata:number
+    inviata:number,
+    idfattura:number
 }
 
 export interface GridCollapsible{
     data:FattureObj[],
     headerNames:HeaderCollapsible[],
-    stato:boolean
+    stato:boolean,
+    sendCancellazzioneRispristinoFatture:any
 }
 
 export type HeaderCollapsible = {

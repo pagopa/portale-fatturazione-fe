@@ -63,3 +63,13 @@ export const fatturePrenotazioneReportPagoPa = async (token:string, nonce:string
     );
     return response;
 };
+
+export const fattureCancellazioneRipristinoPagoPa = async (token:string, nonce:string, body:{idFatture:number[],cancellazione:boolean}) => {
+    const response =  await axios.post(`${url}/api/fatture/cancellazione?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }}
+    );
+    return response;
+};

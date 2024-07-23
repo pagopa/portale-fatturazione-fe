@@ -94,7 +94,7 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
 
             await getDownloadSingleAccertamentoPagoPaZipExel(token,profilo.nonce, {idReport:id}).then(response => response.blob())
                 .then((res)=>{
-                    console.log(res);
+                 
                     saveAs(res,`Accertamento/${descrizione}/${mese}/${anno}.zip`);
                     setShowDownloading(false);
                 }).catch(((err)=>{

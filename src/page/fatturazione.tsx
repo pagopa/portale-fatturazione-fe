@@ -6,8 +6,8 @@ import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
 import { BodyFatturazione, FatturazioneProps, FattureObj, HeaderCollapsible} from "../types/typeFatturazione";
-import { downloadFatturePagopa, downloadFattureReportPagopa, getFatturazionePagoPa, getTipologieFaPagoPa } from "../api/apiPagoPa/fatturazionePA/api";
-import { manageError, manageErrorDownload } from "../api/api";
+import { downloadFatturePagopa, downloadFattureReportPagopa, fattureCancellazioneRipristinoPagoPa, getFatturazionePagoPa, getTipologieFaPagoPa } from "../api/apiPagoPa/fatturazionePA/api";
+import { manageError, manageErrorDownload, managePresaInCarico } from "../api/api";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
@@ -51,7 +51,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
         cancellata:false
     });
 
-    console.log({bodyFatturazioneDownload});
+  
 
     
     useEffect(()=>{
@@ -109,7 +109,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
         await  getFatturazionePagoPa(token,profilo.nonce,body)
             .then((res)=>{
                 const data = res.data.map(el => el?.fattura);
-                console.log(res.data);
+              
                 setGridData(data);
                 setShowLoadingGrid(false);
                 setBodyFatturazioneDownload(bodyFatturazione);
@@ -121,6 +121,20 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                 setShowLoadingGrid(false);
                 manageError(error, dispatchMainState);
             });        
+    };
+
+
+    const sendCancellazzioneRispristinoFatture = async (arrayFatture, cancellazioneValue) =>{
+        await fattureCancellazioneRipristinoPagoPa(token,profilo.nonce,{idFatture:arrayFatture,cancellazione:cancellazioneValue})
+            .then((res)=>{
+           
+                console.log(res);
+                getlistaFatturazione(bodyFatturazioneDownload);
+                managePresaInCarico('FATTURA_SOSPESA_RIPRISTINATA',dispatchMainState);
+            }).catch((error)=>{
+                console.log(error);
+                manageError(error, dispatchMainState);
+            });      
     };
 
 
@@ -171,6 +185,8 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
             manageErrorDownload(err,dispatchMainState);
         }));
     };
+
+
 
     
 
@@ -233,7 +249,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                                 label="Stato"
                                 onChange={(e)=>{
                                     const value = e.target.value === 0 ? false : true;
-                                    console.log(value);
+                               
                                     setBodyFatturazione((prev)=>({...prev,...{cancellata:value}}));}
                                 }
                             >
@@ -319,7 +335,8 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
             <CollapsibleTable 
                 data={gridData}
                 headerNames={headersObjGrid}
-                stato={bodyFatturazioneDownload.cancellata}></CollapsibleTable>
+                stato={bodyFatturazioneDownload.cancellata}
+                sendCancellazzioneRispristinoFatture={sendCancellazzioneRispristinoFatture}></CollapsibleTable>
             <div>
                 <ModalLoading 
                     open={showLoadingGrid} 

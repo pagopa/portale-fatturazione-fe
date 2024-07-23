@@ -13,22 +13,20 @@ import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useEffect, useState } from 'react';
-import { Button, Card, Checkbox, Chip, TablePagination, Toolbar, Tooltip } from '@mui/material';
+import { Button, Card, Checkbox, TablePagination, Toolbar, Tooltip } from '@mui/material';
 import { FattureObj, GridCollapsible } from '../../../types/typeFatturazione';
-import DeleteIcon from '@mui/icons-material/Delete';
 import RestoreIcon from '@mui/icons-material/Restore';
 import BlockIcon from '@mui/icons-material/Block';
 
 
 
-const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato}) => {
+const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,sendCancellazzioneRispristinoFatture}) => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [count, setCount] = useState(0);
     const [showedData, setShowedData] = useState<FattureObj[]>([]);
     const [selected, setSelected] = React.useState<readonly number[]>([]);
-    
- 
+  
     
     useEffect(()=>{
         setCount(data.length);
@@ -50,13 +48,13 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato}) 
     },[page,rowsPerPage]);
 
 
-   
+
 
 
 
     return (
         <>
-            {selected.length > 0 && <EnhancedTableToolbar numSelected={selected.length} stato={stato}></EnhancedTableToolbar>}
+            {selected.length > 0 && <EnhancedTableToolbar numSelected={selected.length} stato={stato} selected={selected} sendCancellazzioneRispristinoFatture={sendCancellazzioneRispristinoFatture}></EnhancedTableToolbar>}
             
             <div style={{overflowX:'auto'}}>
                 
@@ -93,7 +91,7 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato}) 
                                 showedData.map((row) => {
             
                                     return(
-                                        <Row key={row.numero} row={row} setSelected={setSelected} selected={selected} ></Row>
+                                        <Row key={row.idfattura} row={row} setSelected={setSelected} selected={selected} ></Row>
                                     ); })}
                         </Table>
                     </TableContainer>
@@ -116,7 +114,7 @@ export default CollapsibleTable;
     
 const Row = ({row, setSelected,selected}) => {
     const [open, setOpen] = useState(false);
-
+  
     const handleClick = ( id: number) => {
         const selectedIndex = selected.indexOf(id);
         let newSelected: readonly number[] = [];
@@ -146,10 +144,10 @@ const Row = ({row, setSelected,selected}) => {
                     <Checkbox
                         color="primary"
                         indeterminate={false}
-                        checked={isSelected(row.numero)}
+                        checked={isSelected(row.idfattura)}
                         disabled={row.inviata === 1}
                         onChange={()=>{
-                            handleClick(row.numero);
+                            handleClick(row.idfattura);
                         }}
                         inputProps={{
                             'aria-label': 'select all desserts',
@@ -251,13 +249,15 @@ const TablePaginationDemo = ({setPage, page, rowsPerPage, setRowsPerPage, count}
 };
 
 interface EnhancedTableToolbarProps {
-    numSelected: number;
-    stato:boolean
+    numSelected: number,
+    stato:boolean,
+    sendCancellazzioneRispristinoFatture:any,
+    selected:any
 }
   
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) =>{
-    const { numSelected, stato } = props;
+    const { numSelected, stato,sendCancellazzioneRispristinoFatture,selected } = props;
     const color = stato ? "#F2FAF2" : "#F2FAFE";
     const icon = stato ?  <RestoreIcon sx={{marginLeft:'20px'}}></RestoreIcon> : <BlockIcon sx={{marginLeft:'20px'}}></BlockIcon>;
     const stringIcon = stato ? 'Ripristina' : 'Sospendi';
@@ -272,11 +272,13 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) =>{
                 variant="subtitle1"
                 component="div"
             >
-                {numSelected} selected
+                {numSelected} Selezionate
             </Typography>
             <Tooltip title={stringIcon}>
                 
-                <Button>
+                <Button variant="outlined" onClick={()=>{
+                    sendCancellazzioneRispristinoFatture(selected,!stato);
+                }}>
                     {stringIcon} {icon}
                 </Button>
                
