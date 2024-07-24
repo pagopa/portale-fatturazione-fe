@@ -186,18 +186,21 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
             await modifyContestazioneEnte(token, profilo.nonce, body).then(()=>{
                 funGetNotifiche(page,rows,result.bodyGetLista);
             }).catch(((err)=>{
+                openModalLoading(false);
                 manageError(err,dispatchMainState);
             }));
         }else if(profilo.profilo === 'REC'){
             await modifyContestazioneRecapitista(token, profilo.nonce, body).then(()=>{
                 funGetNotifiche(page,rows,result.bodyGetLista);
             }).catch(((err)=>{
+                openModalLoading(false);
                 manageError(err,dispatchMainState);
             }));
         }else if(profilo.profilo === 'CON'){
             await modifyContestazioneConsolidatore(token, profilo.nonce, body).then(()=>{
                 funGetNotifiche(page,rows,result.bodyGetLista);
             }).catch(((err)=>{
+                openModalLoading(false);
                 manageError(err,dispatchMainState);
             }));
         }
@@ -252,6 +255,7 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
             const result = getFiltersFromLocalStorageNotifiche();
             funGetNotifichePagoPa(page,rows, result.bodyGetLista);
         }).catch(((err)=>{
+            openModalLoading(false);
             manageError(err,dispatchMainState);
         }));
     };
@@ -364,8 +368,8 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
     }else if(enti && noRisposta && valueRispostaEnte !== null && stato === 7){
         hiddenModificaRispondiEnte = true;
     }
-     
-    const hiddenRispondiChiudiSend_Ente =  enti && rispostaSend && stato !== 2 && stato !== 8 && stato !== 9;
+    //aggiunta noChiusura riga 372 27/07
+    const hiddenRispondiChiudiSend_Ente =  enti && rispostaSend && stato !== 2 && stato !== 8 && stato !== 9 && noChiusura;
     const hiddenChiudi_send = profilo.auth === 'PAGOPA' && noChiusura;
 
     let disableCreaContestazioneButton = false;
