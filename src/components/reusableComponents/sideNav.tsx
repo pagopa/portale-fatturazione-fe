@@ -353,7 +353,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
                                     </ListItemIcon>
                                     <ListItemText primary="Fatturazione" />
                                 </ListItemButton>
-                                {/*
+                              
                                 <ListItemButton selected={selectedIndex === 7} onClick={() => handleListItemClickAccertamenti()}>
                                     <ListItemIcon>
                                         <ManageSearchIcon fontSize="inherit"></ManageSearchIcon>
@@ -361,7 +361,6 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
                                     <ListItemText primary="Accertamenti" />
                                 </ListItemButton>
                                 
-                                  */}
                             </>}
                             
                         </>
