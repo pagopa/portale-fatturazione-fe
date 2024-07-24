@@ -276,11 +276,11 @@ logica per il centro messaggi sospesa
     const handleListItemClickCentroMessaggi = () =>{
         navigate("/centromessaggi");
     };
-    */
+   
 
     const handleListItemClickAccertamenti = () =>{
         navigate("/accertamenti");
-    };
+    }; */
     
     const currentLocation = location.pathname;
 
@@ -307,11 +307,12 @@ logica per il centro messaggi sospesa
             setSelectedIndex(4);
         }else if(currentLocation === PathPf.FATTURAZIONE){
             setSelectedIndex(5);
-        }else if(currentLocation === "/centromessaggi"){
+        }
+        /*else if(currentLocation === "/centromessaggi"){
             setSelectedIndex(6);
         }else if(currentLocation === "/accertamenti"){
             setSelectedIndex(7);
-        }
+        }*/
     },[currentLocation]);
    
     const hideShowSidenav = location.pathname === '/auth' ||
@@ -375,14 +376,14 @@ logica per il centro messaggi sospesa
                                     </ListItemIcon>
                                     <ListItemText primary="Fatturazione" />
                                 </ListItemButton>
-                                
+                                {/*
                                 <ListItemButton selected={selectedIndex === 7} onClick={() => handleListItemClickAccertamenti()}>
                                     <ListItemIcon>
                                         <ManageSearchIcon fontSize="inherit"></ManageSearchIcon>
                                     </ListItemIcon>
                                     <ListItemText primary="Accertamenti" />
                                 </ListItemButton>
-                                {/*
+                                
                                 <ListItemButton selected={selectedIndex === 6} onClick={() => handleListItemClickCentroMessaggi()}>
                                     <ListItemIcon>
                                         <Badge
