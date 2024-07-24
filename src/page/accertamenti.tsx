@@ -9,8 +9,8 @@ import {FattureObj} from "../types/typeFatturazione";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { DataGrid, GridColDef, GridEventListener, GridRowParams, MuiEvent } from "@mui/x-data-grid";
 import { Params } from "../types/typesGeneral";
-import { getDownloadSingleAccertamentoPagoPaCsv, getDownloadSingleAccertamentoPagoPaZipExel, getListaAccertamentiPagoPa } from "../api/apiPagoPa/accertamentiPA/api";
-import { manageError } from "../api/api";
+import { getListaAccertamentiPagoPa, getListaAccertamentiPrenotazionePagoPa } from "../api/apiPagoPa/accertamentiPA/api";
+import { manageError, managePresaInCarico } from "../api/api";
 import { Accertamento, BodyAccertamenti } from "../types/typeAccertamenti";
 import { mesiGrid } from "../reusableFunction/reusableArrayObj";
 import { saveAs } from "file-saver";
@@ -71,6 +71,19 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
 
     };
 
+
+    const downloadAccertamento = async (id) => {
+        await getListaAccertamentiPrenotazionePagoPa(token,profilo.nonce, {idReport:id})
+            .then((res)=>{
+             
+                managePresaInCarico('PRESA_IN_CARICO_DOCUMENTO',dispatchMainState);
+            })
+            .catch(((err)=>{
+                manageError(err,dispatchMainState);
+         
+            }));
+    };
+    /*
     const downloadAccertamento = async (id,mese,anno,descrizione, contentType) => {
         setShowDownloading(true);
         if(contentType === "text/csv"){
@@ -110,13 +123,9 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
                 setShowDownloading(false);
             }); 
         }
-     
-
-
-
-
-       
+    
     };
+    */
 
     let columsSelectedGrid = '';
     const handleOnCellClick = (params:Params) =>{
@@ -146,7 +155,7 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
                 return  <div className="MuiDataGrid-cellContent" title="Excel" role="presentation">EXCEL</div>;
             }
         } },
-        {field: 'action', headerName: '',sortable: false,width:70,headerAlign: 'left',disableColumnMenu :true,renderCell: ((param:any) => ( <DownloadIcon sx={{marginLeft:'10px',color: '#1976D2', cursor: 'pointer'}} onClick={()=> downloadAccertamento(param.id,param.row.mese,param.row.anno,param.row.descrizione,param.row.contentType)}></DownloadIcon>)),}
+        {field: 'action', headerName: '',sortable: false,width:70,headerAlign: 'left',disableColumnMenu :true,renderCell: ((param:any) => ( <DownloadIcon sx={{marginLeft:'10px',color: '#1976D2', cursor: 'pointer'}} onClick={()=> downloadAccertamento(param.row.idReport)}></DownloadIcon>)),}
     ];
 
 

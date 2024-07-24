@@ -192,7 +192,7 @@ const Row = ({row, setSelected,selected}) => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
-                                    {row.posizioni.map((obj) => (
+                                    {row?.posizioni?.map((obj) => (
                                         <TableRow key={Math.random()}>
                                             <TableCell>
                                                 {obj.numerolinea}

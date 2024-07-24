@@ -11,6 +11,16 @@ export const getListaAccertamentiPagoPa = async (token:string, nonce:string , bo
     return response;
 };
 
+export const getListaAccertamentiPrenotazionePagoPa = async (token:string, nonce:string , body: {idReport:number}) => {
+    const response =  await axios.post(`${url}/api/accertamenti/report/prenotazione?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }}
+    );
+    return response;
+};
+/*
 export const getDownloadSingleAccertamentoPagoPaCsv = async (token:string, nonce:string , body: {idReport:number}) => {
 
     const response =  await axios.post(`${url}/api/accertamenti/report/download?nonce=${nonce}`,
@@ -36,5 +46,5 @@ export const getDownloadSingleAccertamentoPagoPaZipExel = async (token:string, n
     
     return response;
 };
-
+*/
 

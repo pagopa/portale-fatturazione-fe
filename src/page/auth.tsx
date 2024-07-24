@@ -37,7 +37,11 @@ interface ParameterGetProfilo {
 
 // terza chiamata fatta per verificare lo stato della commessa e eseguire azioni diverse a seconda del risultato 
 const getCommessa = async (tokenC, nonceC,infoProfilo) =>{
+<<<<<<< HEAD
    
+=======
+
+>>>>>>> prova_widget_notifiche
     await getDatiModuloCommessa(tokenC, nonceC).then((res)=>{
 
         if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
@@ -137,7 +141,10 @@ const getSelfcare = async() =>{
 };
 
 useEffect(()=>{
+<<<<<<< HEAD
    
+=======
+>>>>>>> prova_widget_notifiche
     getSelfcare();
 },[]);
    

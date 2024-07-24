@@ -22,8 +22,6 @@ import { PathPf } from '../../types/enum';
 import AnnouncementIcon from '@mui/icons-material/Announcement';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import { getProfilo, getStatusApp, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from '../../reusableFunction/actionLocalStorage';
-import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
-import { getMessaggiCount } from '../../api/apiPagoPa/centroMessaggi/api';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 
 const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState, setOpenBasicModal_DatFat_ModCom}) => {
@@ -42,29 +40,8 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
             value:valueObj
         });
     };
-    /*
-logica per il centro messaggi sospesa
-    const getCount = async () =>{
-        await getMessaggiCount(token,profilo.nonce).then((res)=>{
-            const numMessaggi = res.data;
-            handleModifyMainState({badgeContent:numMessaggi});
-        }).catch((err)=>{
-            console.log(err);
-        });
-    };
-    
-    useEffect(()=>{
 
-        getCount();
-        const interval = setInterval(() => {
-            getCount();
-        }, 8000);
-      
-        return () => clearInterval(interval); 
-    },[]);
-
-*/
-    const [selectedIndex, setSelectedIndex] = useState(0);
+    const [selectedIndex, setSelectedIndex] = useState<number | null>(0);
     
     const handleListItemClick = async() => {
         
@@ -307,12 +284,13 @@ logica per il centro messaggi sospesa
             setSelectedIndex(4);
         }else if(currentLocation === PathPf.FATTURAZIONE){
             setSelectedIndex(5);
-        }else if(currentLocation === "/centromessaggi"){
-            setSelectedIndex(6);
+        }else if(currentLocation === "/messaggi"){
+            setSelectedIndex(null);
         }else if(currentLocation === "/accertamenti"){
             setSelectedIndex(7);
         }
     },[currentLocation]);
+
    
     const hideShowSidenav = location.pathname === '/auth' ||
                             location.pathname === '/azure' ||

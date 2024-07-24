@@ -2,7 +2,7 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import {useState, useReducer, useEffect} from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate} from 'react-router-dom';
-import { ThemeProvider, Grid } from '@mui/material';
+import { ThemeProvider, Grid} from '@mui/material';
 import {theme} from '@pagopa/mui-italia';
 import AreaPersonaleUtenteEnte from './page/areaPersonaleUtenteEnte';
 import ModuloCommessaElencoUtPa from './page/moduloCommessaElencoUtPa';
@@ -24,7 +24,7 @@ import Azure from './page/azure';
 import RelPage from './page/relUtPa';
 import { reducerMainState } from './reducer/reducerMainState';
 import { getAuthProfilo, manageError, redirect } from './api/api';
-import { getProfilo, profiliEnti } from './reusableFunction/actionLocalStorage';
+import { getProfilo, getToken, profiliEnti } from './reusableFunction/actionLocalStorage';
 import useIsTabActive from './reusableFunction/tabIsActiv';
 import BasicAlerts from './components/reusableComponents/modals/alert';
 import AdesioneBando from './page/adesioneBando';
@@ -32,16 +32,15 @@ import { PathPf } from './types/enum';
 import RelPdfPage from './page/relPdfUtPa';
 import { InfoOpen} from './types/typesGeneral';
 import Fatturazione from './page/fatturazione';
-import CentroMessaggi from './page/centroMessaggi';
-import DettaglioMessaggio from './page/centroMessaggiDettaglio';
 import Accertamenti from './page/accertamenti';
+import Messaggi from './page/messaggi';
 
 
 const App = ({ instance }) => {
     // eslint-disable-next-line no-undef
     const profilo =  getProfilo();
     const tabActive = useIsTabActive();
-    const enti = profiliEnti();
+    const enti = profiliEnti();  
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -75,14 +74,7 @@ const App = ({ instance }) => {
     });
 
    
- 
-
-  
-    useEffect(()=>{
-        if(mainState.apiError !== null){
-            setShowAlert(true);
-        }
-    }, [mainState.apiError]);
+   
 
     // questa chiamata viene eseguita esclusivamente se l'utenete fa un reload page cosi da inserire nuovamente il NONCE nel DOM
     const getProfiloToGetNonce = async () =>{
@@ -93,7 +85,6 @@ const App = ({ instance }) => {
                     window.location.href = redirect;
                 }
             }).catch((err)=>{
-                //window.location.href = redirect;
                 manageError(err,dispatchMainState);
             });
     };
@@ -101,11 +92,6 @@ const App = ({ instance }) => {
     // Object.values(profilo).length !== 0 viene fatto solo per far si che la chiamanta non venga fatta al primo rendering
     // in quel caso il get profilo viene chiamato nella page auth
   
-    /* useEffect(()=>{
-        if(mainState.nonce === '' && Object.values(profilo).length !== 0 && window.location.pathname  !== '/azureLogin' && window.location.pathname  !== '/auth' && window.location.pathname  !== '/azure'){
-            getProfiloToGetNonce();
-        }  
-    },[mainState.nonce]);*/
  
     useEffect(()=>{
         if(mainState.authenticated === true && tabActive === true && (mainState.nonce !== profilo.nonce)){
@@ -114,31 +100,34 @@ const App = ({ instance }) => {
     },[tabActive]);
 
     useEffect(()=>{
-        /*if(mainState.authenticated === true && tabActive === true && (mainState.nonce !== profilo.nonce)){
-            window.location.href = redirect;
-        }*/
+        if(mainState.apiError !== null){
+            setShowAlert(true);
+        }
+    }, [mainState.apiError]);
+
+    useEffect(()=>{
     
         if(Object.values(profilo).length !== 0 && window.location.pathname  !== '/azureLogin' && window.location.pathname  !== '/auth' && window.location.pathname  !== '/azure'){
             getProfiloToGetNonce();
         }  
     },[]);
-   
+
+
     const recOrConsIsLogged = profilo.profilo === 'REC' || profilo.profilo ==='CON';
-    
-   
     let route;
 
     if(profilo.jwt && profilo.auth === 'PAGOPA'){
 
         route = <Router>
             <ThemeProvider theme={theme}>
-                <div className="App">
+                <div className="App" >
                     <BasicAlerts setVisible={setShowAlert} visible={showAlert} mainState={mainState} dispatchMainState={ dispatchMainState}></BasicAlerts>
-                    <HeaderPostLogin mainState={mainState}/>
+                   
+                    <HeaderPostLogin mainState={mainState} />
 
-                    <div>
-                        <HeaderNavComponent />
-
+                    <div >
+                        <HeaderNavComponent  mainState={mainState} dispatchMainState={dispatchMainState}/>
+                        
                         <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
                      
                             <Grid item xs={2}>
@@ -177,7 +166,11 @@ const App = ({ instance }) => {
                            
                                     <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio mainState={mainState} dispatchMainState={dispatchMainState}/>} />
 
+<<<<<<< HEAD
                                     {/*<Route path={'/centromessaggi'} element={<CentroMessaggi mainState={mainState} dispatchMainState={dispatchMainState}/>} /> 
+=======
+                                    <Route path={PathPf.MESSAGGI} element={<Messaggi mainState={mainState} dispatchMainState={dispatchMainState}/>} />
+>>>>>>> prova_widget_notifiche
 
                                     <Route path={'/accertamenti'} element={<Accertamenti  dispatchMainState={dispatchMainState}/>} />*/}
 
@@ -204,10 +197,10 @@ const App = ({ instance }) => {
             <ThemeProvider theme={theme}>
                 <div className="App">
                     <BasicAlerts setVisible={setShowAlert} visible={showAlert} mainState={mainState} dispatchMainState={ dispatchMainState}></BasicAlerts>
-                    <HeaderPostLogin mainState={mainState}/>
+                    <HeaderPostLogin mainState={mainState} />
 
                     <div>
-                        <HeaderNavComponent />
+                        <HeaderNavComponent mainState={mainState} dispatchMainState={dispatchMainState}/>
 
                         <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
                      
@@ -267,7 +260,7 @@ const App = ({ instance }) => {
                     <HeaderPostLogin mainState={mainState}/>
 
                     <div>
-                        <HeaderNavComponent />
+                        <HeaderNavComponent mainState={mainState} dispatchMainState={dispatchMainState}/>
 
                         <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
                  
@@ -311,11 +304,10 @@ const App = ({ instance }) => {
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App">
-
                     <HeaderPostLogin mainState={mainState}/>
 
                     <div>
-                        <HeaderNavComponent />
+                        <HeaderNavComponent mainState={mainState} dispatchMainState={dispatchMainState}/>
 
                         <Routes>
                             
@@ -352,6 +344,7 @@ const App = ({ instance }) => {
     return (
       
         <MsalProvider instance={instance}>
+            
             {route}
         </MsalProvider>
 

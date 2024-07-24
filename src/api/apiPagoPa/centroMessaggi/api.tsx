@@ -23,7 +23,7 @@ export const getListaMessaggi = async (token:string, nonce:string , body:BodyCen
     return response;
 };
 
-export const downloadMessaggioPagoPa = async (token:string, nonce:string , body:{idMessaggio:number}) => {
+export const downloadMessaggioPagoPaZipExel = async (token:string, nonce:string , body:{idMessaggio:number}) => {
     const response =  await fetch(`${url}/api/messaggi/download?nonce=${nonce}`,
         {
             headers: {
@@ -34,6 +34,19 @@ export const downloadMessaggioPagoPa = async (token:string, nonce:string , body:
             body:JSON.stringify(body),
         });
     return response;
+};
+
+
+export const downloadMessaggioPagoPaCsv = async (token:string, nonce:string , body: {idMessaggio:number}) => {
+
+    const response =  await axios.post(`${url}/api/messaggi/download?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }}
+    );
+    return response;
+    
 };
 
 
