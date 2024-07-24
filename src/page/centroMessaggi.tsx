@@ -102,7 +102,7 @@ const CentroMessaggi : React.FC<CentroMessaggiProps> = ({mainState,dispatchMainS
         }).catch((err)=>{
             setGridData([]);
             setCountMessaggi(0);
-            console.log(err);
+      
         });
     };
 
