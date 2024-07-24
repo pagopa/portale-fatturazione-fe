@@ -41,11 +41,8 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         });
     };
 
-<<<<<<< HEAD
   
-=======
 
->>>>>>> prova_widget_notifiche
   
     const [openModalLoading, setOpenModalLoading] = useState(false);
     const [loadingData, setLoadingData] = useState(false);
@@ -109,11 +106,8 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
    
     // get dati fatturazione SELFCARE
     const getDatiFat = async () =>{
-<<<<<<< HEAD
        
-=======
 
->>>>>>> prova_widget_notifiche
         setLoadingData(true);
         await getDatiFatturazione(token,profilo.nonce).then((res:SuccesResponseGetDatiFatturazione ) =>{   
             handleModifyMainState({...statusApp, ...{
@@ -128,10 +122,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         }).catch(err =>{
 
             if(err?.response?.status === 404){
-<<<<<<< HEAD
            
-=======
->>>>>>> prova_widget_notifiche
                 setInfoToStatusApplicationLoacalStorage(statusApp,{datiFatturazione:false});
                 handleModifyMainState({...statusApp, ...{
                     datiFatturazione:false,

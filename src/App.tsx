@@ -166,11 +166,7 @@ const App = ({ instance }) => {
                            
                                     <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio mainState={mainState} dispatchMainState={dispatchMainState}/>} />
 
-<<<<<<< HEAD
                                     {/*<Route path={'/centromessaggi'} element={<CentroMessaggi mainState={mainState} dispatchMainState={dispatchMainState}/>} /> 
-=======
-                                    <Route path={PathPf.MESSAGGI} element={<Messaggi mainState={mainState} dispatchMainState={dispatchMainState}/>} />
->>>>>>> prova_widget_notifiche
 
                                     <Route path={'/accertamenti'} element={<Accertamenti  dispatchMainState={dispatchMainState}/>} />*/}
 

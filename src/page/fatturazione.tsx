@@ -90,7 +90,6 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
     const getTipologieFatturazione =  async() => {
         await getTipologieFaPagoPa(token, profilo.nonce, {anno:bodyFatturazione.anno,mese:bodyFatturazione.mese,cancellata:bodyFatturazione.cancellata}  )
             .then((res)=>{
-<<<<<<< HEAD
                 setTipologie(res.data);
                 setBodyFatturazione((prev)=>({...prev,...{tipologiaFattura:[]}}));
                 setBodyFatturazioneDownload((prev)=>({...prev,...{tipologiaFattura:[]}}));
@@ -100,14 +99,6 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                 setTipologie([]);
                 setBodyFatturazione((prev)=>({...prev,...{tipologiaFattura:[]}}));
                 setBodyFatturazioneDownload((prev)=>({...prev,...{tipologiaFattura:[]}}));
-=======
-                setTipologie(res.data); 
-                setBodyFatturazione((prev)=>({...prev,tipologiaFattura:[]}) );              
-            })
-            .catch(((err)=>{
-                setTipologie([]);
-                setBodyFatturazione((prev)=>({...prev,tipologiaFattura:[]}) );
->>>>>>> prova_widget_notifiche
                 manageError(err,dispatchMainState);
             }));
     };
@@ -194,13 +185,9 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
             manageErrorDownload(err,dispatchMainState);
         }));
     };
-<<<<<<< HEAD
 
 
 
-    
-
-=======
     /*
     const downloadListaReportFatturazione = async () => {
         await fatturePrenotazioneReportPagoPa(token,profilo.nonce, bodyFatturazioneDownload)
@@ -214,7 +201,6 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
             }));
     };
 */
->>>>>>> prova_widget_notifiche
 
     const headersObjGrid : HeaderCollapsible[] = [
         {name:"",align:"left",id:1},
