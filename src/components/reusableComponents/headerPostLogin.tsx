@@ -83,7 +83,7 @@ const HeaderPostLogin = ({mainState}) => {
                     onLogout={() => {
                         if(checkIfUserIsAutenticated === 'PAGOPA'){
                             localStorage.clear();
-                            navigate('/azureLogin');
+                            window.location.href = '/azureLogin';
                         }else{
                             localStorage.clear();
                             window.location.href = redirect;
