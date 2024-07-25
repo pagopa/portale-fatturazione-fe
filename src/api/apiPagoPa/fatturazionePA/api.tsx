@@ -73,3 +73,15 @@ export const fattureCancellazioneRipristinoPagoPa = async (token:string, nonce:s
     );
     return response;
 };
+
+
+export const fattureInviaSapPa = async (token:string, nonce:string, body:{anno:number,mese:number}) => {
+    const response =  await axios.post(`${url}/api/fatture/invio/sap?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }}
+    );
+    return response;
+};
+

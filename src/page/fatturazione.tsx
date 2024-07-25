@@ -5,8 +5,8 @@ import { getProfilo, getToken } from "../reusableFunction/actionLocalStorage";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
-import { BodyFatturazione, FatturazioneProps, FattureObj, HeaderCollapsible} from "../types/typeFatturazione";
-import { downloadFatturePagopa, downloadFattureReportPagopa, fattureCancellazioneRipristinoPagoPa, getFatturazionePagoPa, getTipologieFaPagoPa } from "../api/apiPagoPa/fatturazionePA/api";
+import { BodyFatturazione, FatturazioneProps, FattureObj, HeaderCollapsible, TipologiaSap} from "../types/typeFatturazione";
+import { downloadFatturePagopa, downloadFattureReportPagopa, fattureCancellazioneRipristinoPagoPa, fattureInviaSapPa, getFatturazionePagoPa, getTipologieFaPagoPa } from "../api/apiPagoPa/fatturazionePA/api";
 import { manageError, manageErrorDownload, managePresaInCarico } from "../api/api";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
@@ -16,6 +16,11 @@ import CollapsibleTable from "../components/reusableComponents/grid/gridCustomCo
 import { saveAs } from "file-saver";
 import { month } from "../reusableFunction/reusableArrayObj";
 import MultiSelectFatturazione from "../components/fatturazione/multiSelect";
+import PreviewIcon from '@mui/icons-material/Preview';
+import ModalSap from "../components/fatturazione/modalSap";
+
+
+
 
 const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainState}) =>{
 
@@ -34,6 +39,11 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
     const [statusAnnulla, setStatusAnnulla] = useState<string>('hidden');
     const [tipologie, setTipologie] = useState<string[]>([]);
     const [valueMulitselectTipologie, setValueMultiselectTipologie] = useState<string[]>([]);
+
+    const [disableButtonSap, setDisableButtonSap] = useState<boolean>(true);
+    const [openSapModal, setOpenSapModal] = useState<boolean>(false);
+    const [responseTipologieSap, setResponseTipologieSap] = useState<TipologiaSap[]>([]);
+
    
  
     const [bodyFatturazione, setBodyFatturazione] = useState<BodyFatturazione>({
@@ -105,7 +115,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
     
     const getlistaFatturazione = async (body) => {
         setShowLoadingGrid(true);
-
+        setDisableButtonSap(true);
         await  getFatturazionePagoPa(token,profilo.nonce,body)
             .then((res)=>{
                 const data = res.data.map(el => el?.fattura);
@@ -113,6 +123,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                 setGridData(data);
                 setShowLoadingGrid(false);
                 setBodyFatturazioneDownload(bodyFatturazione);
+                
             }).catch((error)=>{
                 if(error?.response?.status === 404){
                     setGridData([]);
@@ -120,7 +131,9 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                 setBodyFatturazioneDownload(bodyFatturazione);
                 setShowLoadingGrid(false);
                 manageError(error, dispatchMainState);
-            });        
+            });  
+            
+        getTipologieFattureInvioSap(body.anno,body.mese);
     };
 
 
@@ -217,6 +230,28 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
         {name:"Data Fattura",align:"center",id:12}];
 
 
+    // logic modal ON BUTTON SAP
+
+    const getTipologieFattureInvioSap = async(anno,mese) =>{
+
+        await fattureInviaSapPa(token, profilo.nonce, {anno,mese} )
+            .then((res)=>{
+                setDisableButtonSap(false);
+                setResponseTipologieSap(res.data);
+            })
+            .catch((()=>{
+            //manageError(err,dispatchMainState);
+                setDisableButtonSap(true);
+                setResponseTipologieSap([]);
+            }));
+    };
+
+    const onButtonSap = () => {
+        console.log('open modal');
+        setOpenSapModal(true);
+    };
+    console.log(openSapModal);
+
     return (
         <div className="mx-5 mb-5">
             <div className="marginTop24 ">
@@ -270,50 +305,60 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                         </FormControl>
                     </div>
                 </div>
-
-                <div className="d-flex mt-5">
+                <div className="row mt-5">
+                    <div  className="col-6">
+                        <div className="d-flex">
                    
-                    <Button 
-                        onClick={()=>{
-                            getlistaFatturazione(bodyFatturazione);
-                        } } 
-                        sx={{ marginTop: 'auto', marginBottom: 'auto'}}
-                        variant="contained"> Filtra
-                    </Button>
-                    {statusAnnulla === 'hidden' ? null :
-                        <Button
-                            onClick={()=>{
-                                getlistaFatturazione({
-                                    anno:currentYear,
-                                    mese:monthNumber,
-                                    tipologiaFattura:[],
-                                    idEnti:[],
-                                    cancellata:false
-                                });
-                                setBodyFatturazione({
-                                    anno:currentYear,
-                                    mese:monthNumber,
-                                    tipologiaFattura:[],
-                                    idEnti:[],
-                                    cancellata:false
-                                });
-                                setBodyFatturazioneDownload({
-                                    anno:currentYear,
-                                    mese:monthNumber,
-                                    tipologiaFattura:[],
-                                    idEnti:[],
-                                    cancellata:false
-                                });
-                                setDataSelect([]);
-                                setValueMultiselectTipologie([]);
-                                setValueAutocomplete([]);
-                           
-                            } }
-                            sx={{marginLeft:'24px'}} >
-                    Annulla filtri
-                        </Button>
-                    }
+                            <Button 
+                                onClick={()=>{
+                                    getlistaFatturazione(bodyFatturazione);
+                                } } 
+                                sx={{ marginTop: 'auto', marginBottom: 'auto'}}
+                                variant="contained"> Filtra
+                            </Button>
+                            {statusAnnulla === 'hidden' ? null :
+                                <Button
+                                    onClick={()=>{
+                                        getlistaFatturazione({
+                                            anno:currentYear,
+                                            mese:monthNumber,
+                                            tipologiaFattura:[],
+                                            idEnti:[],
+                                            cancellata:false
+                                        });
+                                        setBodyFatturazione({
+                                            anno:currentYear,
+                                            mese:monthNumber,
+                                            tipologiaFattura:[],
+                                            idEnti:[],
+                                            cancellata:false
+                                        });
+                                        setBodyFatturazioneDownload({
+                                            anno:currentYear,
+                                            mese:monthNumber,
+                                            tipologiaFattura:[],
+                                            idEnti:[],
+                                            cancellata:false
+                                        });
+                                        setDataSelect([]);
+                                        setValueMultiselectTipologie([]);
+                                        setValueAutocomplete([]);
+                          
+                                    } }
+                                    sx={{marginLeft:'24px'}} >
+                   Annulla filtri
+                                </Button>
+                            }
+                        </div>
+                       
+                    </div>
+                    <div className="col-6">
+                        <div className="d-flex flex-row-reverse">
+                            <Button onClick={()=> onButtonSap()} disabled={disableButtonSap}  variant="outlined">Invia a SAP <PreviewIcon sx={{marginLeft:'20px'}}></PreviewIcon></Button>
+                        </div>
+                    </div>
                 </div>
+               
             </div>
             <div className="marginTop24" style={{display:'flex', justifyContent:'end', height:"48px"}}>
                
@@ -359,8 +404,12 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                     setOpen={setShowDownloading}
                     sentence={'Downloading...'} >
                 </ModalLoading>
+              
             </div>
-            
+            <ModalSap
+                open={openSapModal} 
+                setOpen={setOpenSapModal}
+                responseTipologiaSap={responseTipologieSap}></ModalSap>
         </div>
     );
 };

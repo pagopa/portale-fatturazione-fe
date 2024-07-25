@@ -66,3 +66,14 @@ export type HeaderCollapsible = {
     align:"center" | "inherit" | "left" | "right" | "justify" | undefined,
     id:number
 }
+
+export interface ModalSapProps {
+    open:boolean,
+    setOpen:any,
+    responseTipologiaSap:TipologiaSap[]
+}
+
+export type TipologiaSap = {
+    tipologiaFattura: string,
+    numeroFatture: number
+}
