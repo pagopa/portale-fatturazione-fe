@@ -101,7 +101,7 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState, dispatchMainSt
     };
     
     useEffect(()=>{
-        if(mainState.authenticated === true){
+        if(mainState.authenticated === true && profilo.auth === 'PAGOPA'){
             getCount();
             const interval = setInterval(async() => {
                 await getCount();
@@ -111,41 +111,51 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState, dispatchMainSt
          
         }
     },[mainState.authenticated]);
+
+    const conditionalHeder = profilo.auth === 'PAGOPA' ?  (<div style={{display:'flex', backgroundColor:'white'}}>
+        <div style={{width:'95%'}}>
+            <HeaderProduct
+                productId="1"
+                productsList={productsList}
+                onSelectedProduct={(p) => console.log('Selected Item:', p.title)}
+                partyList={partyList}
+            ></HeaderProduct>
+        </div>
+        <div className="d-flex justify-content-center m-auto">
+            <Badge
+                badgeContent={countMessages}
+                color="primary"
+                variant="standard"
+            >
+                <IconButton onClick={()=> {
+            
+                    navigate(PathPf.MESSAGGI);
+                } }  color="default">
+                    <MarkEmailUnreadIcon fontSize="medium" 
+                        sx={{
+                            color: '#17324D',
+                        }}
+                
+                    />
+                </IconButton>
+
+            </Badge>
+        </div>
+   
+    </div>) :
+        (<div >
+            <HeaderProduct
+                productId="1"
+                productsList={productsList}
+                onSelectedProduct={(p) => console.log('Selected Item:', p.title)}
+                partyList={partyList}
+            ></HeaderProduct>
+        </div>);
     
     return (
         <>
             {hideHeadernav ? null :
-                <div style={{display:'flex', backgroundColor:'white'}}>
-                    <div style={{width:'95%'}}>
-                        <HeaderProduct
-                            productId="1"
-                            productsList={productsList}
-                            onSelectedProduct={(p) => console.log('Selected Item:', p.title)}
-                            partyList={partyList}
-                        ></HeaderProduct>
-                    </div>
-                    <div className="d-flex justify-content-center m-auto">
-                        <Badge
-                            badgeContent={countMessages}
-                            color="primary"
-                            variant="standard"
-                        >
-                            <IconButton onClick={()=> {
-                            
-                                navigate(PathPf.MESSAGGI);
-                            } }  color="default">
-                                <MarkEmailUnreadIcon fontSize="medium" 
-                                    sx={{
-                                        color: '#17324D',
-                                    }}
-                                
-                                />
-                            </IconButton>
-  
-                        </Badge>
-                    </div>
-                   
-                </div>
+                conditionalHeder
             }
         </>
 
