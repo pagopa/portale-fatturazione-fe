@@ -6,7 +6,7 @@ import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
 import { BodyFatturazione, FatturazioneProps, FattureObj, HeaderCollapsible, TipologiaSap} from "../types/typeFatturazione";
-import { downloadFatturePagopa, downloadFattureReportPagopa, fattureCancellazioneRipristinoPagoPa, fattureInviaSapPa, getFatturazionePagoPa, getTipologieFaPagoPa } from "../api/apiPagoPa/fatturazionePA/api";
+import { downloadFatturePagopa, downloadFattureReportPagopa, fattureCancellazioneRipristinoPagoPa,fattureTipologiaSapPa, getFatturazionePagoPa, getTipologieFaPagoPa } from "../api/apiPagoPa/fatturazionePA/api";
 import { manageError, manageErrorDownload, managePresaInCarico } from "../api/api";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
@@ -234,7 +234,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
 
     const getTipologieFattureInvioSap = async(anno,mese) =>{
 
-        await fattureInviaSapPa(token, profilo.nonce, {anno,mese} )
+        await fattureTipologiaSapPa(token, profilo.nonce, {anno,mese} )
             .then((res)=>{
                 setDisableButtonSap(false);
                 setResponseTipologieSap(res.data);
@@ -409,7 +409,10 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
             <ModalSap
                 open={openSapModal} 
                 setOpen={setOpenSapModal}
-                responseTipologiaSap={responseTipologieSap}></ModalSap>
+                responseTipologiaSap={responseTipologieSap}
+                mese={bodyFatturazioneDownload.mese}
+                anno={bodyFatturazioneDownload.anno}
+                dispatchMainState={dispatchMainState}></ModalSap>
         </div>
     );
 };

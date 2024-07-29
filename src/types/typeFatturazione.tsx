@@ -70,7 +70,10 @@ export type HeaderCollapsible = {
 export interface ModalSapProps {
     open:boolean,
     setOpen:any,
-    responseTipologiaSap:TipologiaSap[]
+    responseTipologiaSap:TipologiaSap[],
+    mese:number,
+    anno:number,
+    dispatchMainState:any
 }
 
 export type TipologiaSap = {

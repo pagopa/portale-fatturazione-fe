@@ -5,6 +5,9 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { ModalSapProps, TipologiaSap } from '../../types/typeFatturazione';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { fattureInvioSapPa } from '../../api/apiPagoPa/fatturazionePA/api';
+import { getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
+import { manageError } from '../../api/api';
 
 const style = {
     position: 'absolute' as const,
@@ -17,11 +20,28 @@ const style = {
     p: 4,
 };
 
-const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap}) => {
+const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,mese,anno,dispatchMainState}) => {
+
+    const token =  getToken();
+    const profilo =  getProfilo();
 
     const [value, setValue] = React.useState('');
     const [numeroFatture,setNumeroFatture] = React.useState(0);
-    console.log(responseTipologiaSap);
+  
+    console.log({mese,anno,value});
+
+    const onButtonInvia = async() =>{
+
+        await fattureInvioSapPa(token, profilo.nonce, {annoRiferimento:anno,meseRiferimento:mese,tipologiaFattura:value} )
+            .then((res)=>{
+                
+                setOpen(false);
+            }).catch(((err)=>{
+                setOpen(false);
+                manageError(err,dispatchMainState);
+              
+            }));
+    };
    
     const handleClose = () => {
         setOpen(false);
@@ -101,8 +121,9 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap})
                    
                     <div className='container_buttons_modal d-flex justify-content-center mt-5'>
                         <Button  
+                            disabled={value === ''}
                             variant='contained'
-                            onClick={()=>console.log('invia')}
+                            onClick={()=> onButtonInvia()}
                         >INVIA</Button>
                     </div>
                     
