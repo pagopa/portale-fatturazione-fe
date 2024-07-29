@@ -78,5 +78,7 @@ export interface ModalSapProps {
 
 export type TipologiaSap = {
     tipologiaFattura: string,
-    numeroFatture: number
+    numeroFatture: number,
+    annoRiferimento:number,
+    meseRiferimento:number
 }

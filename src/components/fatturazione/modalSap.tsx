@@ -3,11 +3,12 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { ModalSapProps, TipologiaSap } from '../../types/typeFatturazione';
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { ModalSapProps} from '../../types/typeFatturazione';
+import { FormControl, InputLabel, MenuItem, Select, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { fattureInvioSapPa } from '../../api/apiPagoPa/fatturazionePA/api';
 import { getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
 import { manageError } from '../../api/api';
+import { month } from '../../reusableFunction/reusableArrayObj';
 
 const style = {
     position: 'absolute' as const,
@@ -28,16 +29,16 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,m
     const [value, setValue] = React.useState('');
     const [numeroFatture,setNumeroFatture] = React.useState(0);
   
-    console.log({mese,anno,value});
+    console.log({mese,anno,value,responseTipologiaSap});
 
     const onButtonInvia = async() =>{
 
         await fattureInvioSapPa(token, profilo.nonce, {annoRiferimento:anno,meseRiferimento:mese,tipologiaFattura:value} )
             .then((res)=>{
                 
-                setOpen(false);
+                handleClose();
             }).catch(((err)=>{
-                setOpen(false);
+                handleClose();
                 manageError(err,dispatchMainState);
               
             }));
@@ -48,6 +49,8 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,m
         setValue('');
         setNumeroFatture(0);
     };
+
+   
 
     return (
         <div>
@@ -91,7 +94,6 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,m
                                     labelId="search-by-label"
                                     onChange={(e) =>{
                                         setValue(e.target.value);
-                                        console.log(e);
                                         const numFat = responseTipologiaSap.filter((el)=> el.tipologiaFattura === e.target.value);
                                         setNumeroFatture(numFat[0].numeroFatture);
                                         // setBody((prev)=>({...prev,...{tipologiaFattura:e.target.value}}));
@@ -109,14 +111,44 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,m
                                     
                                 </Select>
                             </FormControl>
-                        </Box>
-                        <div className='d-flex align-items-center ms-5'>
-                            <Typography variant="overline" >
-                                {`Numero fatture: ${numeroFatture}`}
-    
-                            </Typography>
-                        </div>
+                        </Box>   
+                    </div>
+                    <div>
                        
+                      
+                        <Box sx={{ backgroundColor:'#F8F8F8', padding:'10px',marginTop:'40px',width:'80%'}}>
+                            <Typography sx={{marginLeft:"6px"}} variant="h6" gutterBottom component="div">
+                                    Fatture
+                            </Typography>
+                            <Table size="small" aria-label="purchases">
+                                <TableHead>
+                                    <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
+                                        <TableCell sx={{ marginLeft:"16px"}} >Tipologia Fattura</TableCell>
+                                        <TableCell sx={{ marginLeft:"16px"}}>Numero Fatture</TableCell>
+                                        <TableCell sx={{ marginLeft:"16px"}}>Data</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
+                                    {responseTipologiaSap.map((el) =>{
+                                        const backgroundColorRow = el.tipologiaFattura === value ? "#D6E8FB" : '';
+                                        return(
+                                            <TableRow sx={{backgroundColor:backgroundColorRow}} key={el.tipologiaFattura}>
+                                                <TableCell>
+                                                    {el.tipologiaFattura}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {el.numeroFatture}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {`${month[el.meseRiferimento-1]}/${el.annoRiferimento}`}
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    } )}
+                                </TableBody>
+                            </Table>
+                        </Box>
+                   
                     </div>
                    
                     <div className='container_buttons_modal d-flex justify-content-center mt-5'>
