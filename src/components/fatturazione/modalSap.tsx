@@ -27,27 +27,30 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,m
     const profilo =  getProfilo();
 
     const [value, setValue] = React.useState('');
-    const [numeroFatture,setNumeroFatture] = React.useState(0);
   
-    console.log({mese,anno,value,responseTipologiaSap});
+    console.log({open});
+  
 
     const onButtonInvia = async() =>{
-
-        await fattureInvioSapPa(token, profilo.nonce, {annoRiferimento:anno,meseRiferimento:mese,tipologiaFattura:value} )
-            .then((res)=>{
+        // se l'utente ha selezionato il button invia a sap 
+        if(open.who === 0){
+            await fattureInvioSapPa(token, profilo.nonce, {annoRiferimento:anno,meseRiferimento:mese,tipologiaFattura:value} )
+                .then((res)=>{
                 
-                handleClose();
-            }).catch(((err)=>{
-                handleClose();
-                manageError(err,dispatchMainState);
+                    handleClose();
+                }).catch(((err)=>{
+                    handleClose();
+                    manageError(err,dispatchMainState);
               
-            }));
+                }));
+        }
+      
     };
    
     const handleClose = () => {
-        setOpen(false);
+        setOpen((prev)=>({...prev,...{show:false}}));
         setValue('');
-        setNumeroFatture(0);
+       
     };
 
    
@@ -56,7 +59,7 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,m
         <div>
         
             <Modal
-                open={open}
+                open={open.show}
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
@@ -67,8 +70,7 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,m
                        
                         <div className='d-flex align-items-center'>
                             <Typography id="modal-modal-title" variant="h6" >
-                             Seleziona le fatture da inviare
-    
+                                {open.who === 0 ? "Seleziona le fatture da inviare" : "Seleziona le fatture da rielaborare"}
                             </Typography>
                         </div>
                             
@@ -94,13 +96,13 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,m
                                     labelId="search-by-label"
                                     onChange={(e) =>{
                                         setValue(e.target.value);
-                                        const numFat = responseTipologiaSap.filter((el)=> el.tipologiaFattura === e.target.value);
-                                        setNumeroFatture(numFat[0].numeroFatture);
+                                        // const numFat = responseTipologiaSap.filter((el)=> el.tipologiaFattura === e.target.value);
+                                        // setNumeroFatture(numFat[0].numeroFatture);
                                         // setBody((prev)=>({...prev,...{tipologiaFattura:e.target.value}}));
                                     }}     
                                     value={value}       
                                 >
-                                    {responseTipologiaSap.map((el) => (            
+                                    {responseTipologiaSap.filter(el => el.azione === open.who).map((el) => (            
                                         <MenuItem
                                             key={Math.random()}
                                             value={el.tipologiaFattura}
@@ -156,7 +158,7 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,m
                             disabled={value === ''}
                             variant='contained'
                             onClick={()=> onButtonInvia()}
-                        >INVIA</Button>
+                        >{open.who === 0 ? "INVIA" : "RESET"}</Button>
                     </div>
                     
                 </Box>

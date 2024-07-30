@@ -18,6 +18,7 @@ import { month } from "../reusableFunction/reusableArrayObj";
 import MultiSelectFatturazione from "../components/fatturazione/multiSelect";
 import PreviewIcon from '@mui/icons-material/Preview';
 import ModalSap from "../components/fatturazione/modalSap";
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 
 
 
@@ -41,7 +42,8 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
     const [valueMulitselectTipologie, setValueMultiselectTipologie] = useState<string[]>([]);
 
     const [disableButtonSap, setDisableButtonSap] = useState<boolean>(true);
-    const [openSapModal, setOpenSapModal] = useState<boolean>(false);
+    const [disableButtonReset, setDisableButtonReset] = useState<boolean>(true);
+    const [openSapModal, setOpenSapModal] = useState<{who:number,show:boolean}>({who:0,show:false});
     const [responseTipologieSap, setResponseTipologieSap] = useState<TipologiaSap[]>([]);
 
    
@@ -236,21 +238,35 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
 
         await fattureTipologiaSapPa(token, profilo.nonce, {anno,mese} )
             .then((res)=>{
-                setDisableButtonSap(false);
+                
+                const anableInvioSap = res.data.filter((el)=> el.azione === 0).length;
+                const anableReset = res.data.filter((el)=> el.azione === 1).length;
+                if(anableInvioSap > 0){
+                    setDisableButtonSap(false);
+                }else{
+                    setDisableButtonSap(true);
+                }
+                if(anableReset > 0){
+                    setDisableButtonReset(false);
+                }else{
+                    setDisableButtonReset(true);
+                }
+                
                 setResponseTipologieSap(res.data);
             })
             .catch((()=>{
             //manageError(err,dispatchMainState);
                 setDisableButtonSap(true);
+                setDisableButtonReset(true);
                 setResponseTipologieSap([]);
             }));
     };
 
-    const onButtonSap = () => {
+    const onButtonSap = (who) => {
         console.log('open modal');
-        setOpenSapModal(true);
+        setOpenSapModal((prev)=>({...prev,...{show:true,who}}));
     };
-    console.log(openSapModal);
+  
 
     return (
         <div className="mx-5 mb-5">
@@ -354,7 +370,8 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                     </div>
                     <div className="col-6">
                         <div className="d-flex flex-row-reverse">
-                            <Button sx={{width:'215px'}} onClick={()=> onButtonSap()} disabled={disableButtonSap}  variant="outlined">Invia a SAP <PreviewIcon sx={{marginLeft:'20px'}}></PreviewIcon></Button>
+                            <Button sx={{width:'216px'}} onClick={()=> onButtonSap(0)} disabled={disableButtonSap}  variant="outlined">Invia a SAP <PreviewIcon sx={{marginLeft:'20px'}}></PreviewIcon></Button>
+                            <Button sx={{width:'216px',marginRight:'10px'}} onClick={()=> onButtonSap(1)} disabled={disableButtonReset} color="error"  variant="outlined">Reset <RestartAltIcon sx={{marginLeft:'20px'}}></RestartAltIcon></Button>
                         </div>
                     </div>
                 </div>
@@ -368,14 +385,14 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                    
                         <>
                             { !bodyFatturazioneDownload.cancellata &&
-                                <Button  onClick={() => downloadListaReportFatturazione()}
+                                <Button sx={{marginRight:'10px',width:'216px'}} onClick={() => downloadListaReportFatturazione()}
                                 >
                 Download Report
                                     <DownloadIcon sx={{marginLeft:'10px'}}></DownloadIcon>
                                 </Button>
                             }
                           
-                            <Button onClick={() => downloadListaFatturazione()}
+                            <Button sx={{width:'216px'}} onClick={() => downloadListaFatturazione()}
                             >
                 Download Risultati
                                 <DownloadIcon sx={{marginLeft:'10px'}}></DownloadIcon>

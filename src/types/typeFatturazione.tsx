@@ -68,7 +68,7 @@ export type HeaderCollapsible = {
 }
 
 export interface ModalSapProps {
-    open:boolean,
+    open:{show:boolean,who:number},
     setOpen:any,
     responseTipologiaSap:TipologiaSap[],
     mese:number,
@@ -80,5 +80,6 @@ export type TipologiaSap = {
     tipologiaFattura: string,
     numeroFatture: number,
     annoRiferimento:number,
-    meseRiferimento:number
+    meseRiferimento:number,
+    azione:number
 }
