@@ -354,7 +354,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                     </div>
                     <div className="col-6">
                         <div className="d-flex flex-row-reverse">
-                            <Button onClick={()=> onButtonSap()} disabled={disableButtonSap}  variant="outlined">Invia a SAP <PreviewIcon sx={{marginLeft:'20px'}}></PreviewIcon></Button>
+                            <Button sx={{width:'215px'}} onClick={()=> onButtonSap()} disabled={disableButtonSap}  variant="outlined">Invia a SAP <PreviewIcon sx={{marginLeft:'20px'}}></PreviewIcon></Button>
                         </div>
                     </div>
                 </div>
