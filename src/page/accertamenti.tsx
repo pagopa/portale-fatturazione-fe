@@ -164,7 +164,7 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
     return (
         <div className="mx-5 mb-5">
             <div className="marginTop24 ">
-                <Typography variant="h4">Accertamenti</Typography>
+                <Typography variant="h4">Documenti contabili</Typography>
             </div>
             <div className="mt-5">
                 <div className="row">

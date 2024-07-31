@@ -38,6 +38,7 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,m
                 .then((res)=>{
                 
                     handleClose();
+                    getListaFatture(bodyFatturazioneDownload);
                 }).catch(((err)=>{
                     handleClose();
                     manageError(err,dispatchMainState);
