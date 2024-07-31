@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { ModalSapProps} from '../../types/typeFatturazione';
 import { FormControl, InputLabel, MenuItem, Select, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
-import { fattureInvioSapPa } from '../../api/apiPagoPa/fatturazionePA/api';
+import { fattureInvioSapPa, fattureResetSapPa } from '../../api/apiPagoPa/fatturazionePA/api';
 import { getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
 import { manageError } from '../../api/api';
 import { month } from '../../reusableFunction/reusableArrayObj';
@@ -21,7 +21,7 @@ const style = {
     p: 4,
 };
 
-const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,mese,anno,dispatchMainState}) => {
+const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,mese,anno,dispatchMainState,getListaFatture,bodyFatturazioneDownload}) => {
 
     const token =  getToken();
     const profilo =  getProfilo();
@@ -44,12 +44,25 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,m
               
                 }));
         }
+        if(open.who === 1){
+            
+            await fattureResetSapPa(token, profilo.nonce, {annoRiferimento:anno,meseRiferimento:mese,tipologiaFattura:value} )
+                .then((res)=>{
+                    handleClose();
+                    getListaFatture(bodyFatturazioneDownload);
+                }).catch(((err)=>{
+                    handleClose();
+                    manageError(err,dispatchMainState);
+              
+                }));
+        }
       
     };
    
     const handleClose = () => {
         setOpen((prev)=>({...prev,...{show:false}}));
         setValue('');
+        
        
     };
 
@@ -102,14 +115,17 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,m
                                     }}     
                                     value={value}       
                                 >
-                                    {responseTipologiaSap.filter(el => el.azione === open.who).map((el) => (            
-                                        <MenuItem
-                                            key={Math.random()}
-                                            value={el.tipologiaFattura}
-                                        >
-                                            {el.tipologiaFattura}
-                                        </MenuItem>              
-                                    ))}
+                                    {responseTipologiaSap.filter(el => el.azione === open.who).map((el) =>{ 
+                                        console.log({el});
+                                        return (            
+                                            <MenuItem
+                                                key={Math.random()}
+                                                value={el.tipologiaFattura}
+                                            >
+                                                {el.tipologiaFattura}
+                                            </MenuItem>              
+                                        );
+                                    } )}
                                     
                                 </Select>
                             </FormControl>
@@ -131,7 +147,7 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,m
                                     </TableRow>
                                 </TableHead>
                                 <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
-                                    {responseTipologiaSap.map((el) =>{
+                                    {responseTipologiaSap.filter(el => el.azione === open.who).map((el) =>{
                                         const backgroundColorRow = el.tipologiaFattura === value ? "#D6E8FB" : '';
                                         return(
                                             <TableRow sx={{backgroundColor:backgroundColorRow}} key={el.tipologiaFattura}>

@@ -358,7 +358,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
                                     <ListItemIcon>
                                         <ManageSearchIcon fontSize="inherit"></ManageSearchIcon>
                                     </ListItemIcon>
-                                    <ListItemText primary="Accertamenti" />
+                                    <ListItemText primary="Documenti contabili" />
                                 </ListItemButton>
                                 
                             </>}

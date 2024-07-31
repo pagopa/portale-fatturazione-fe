@@ -95,3 +95,13 @@ export const fattureInvioSapPa = async (token:string, nonce:string, body:{annoRi
     return response;
 };
 
+export const fattureResetSapPa = async (token:string, nonce:string, body:{annoRiferimento: number,meseRiferimento: number,tipologiaFattura: string}) => {
+    const response =  await axios.post(`${url}/api/fatture/resetta/pipeline?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }}
+    );
+    return response;
+};
+

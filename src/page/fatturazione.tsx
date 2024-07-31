@@ -429,7 +429,9 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                 responseTipologiaSap={responseTipologieSap}
                 mese={bodyFatturazioneDownload.mese}
                 anno={bodyFatturazioneDownload.anno}
-                dispatchMainState={dispatchMainState}></ModalSap>
+                dispatchMainState={dispatchMainState}
+                getListaFatture={getlistaFatturazione}
+                bodyFatturazioneDownload={bodyFatturazioneDownload}></ModalSap>
         </div>
     );
 };

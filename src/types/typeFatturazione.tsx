@@ -73,7 +73,9 @@ export interface ModalSapProps {
     responseTipologiaSap:TipologiaSap[],
     mese:number,
     anno:number,
-    dispatchMainState:any
+    dispatchMainState:any,
+    getListaFatture:any,
+    bodyFatturazioneDownload:BodyFatturazione
 }
 
 export type TipologiaSap = {

@@ -145,7 +145,7 @@ const Row = ({row, setSelected,selected}) => {
                         color="primary"
                         indeterminate={false}
                         checked={isSelected(row.idfattura)}
-                        disabled={row.inviata === 1}
+                        disabled={row.inviata === 1 || row.inviata === 2}
                         onChange={()=>{
                             handleClick(row.idfattura);
                         }}
