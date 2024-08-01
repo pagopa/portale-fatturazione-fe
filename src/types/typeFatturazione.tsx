@@ -58,8 +58,9 @@ export interface GridCollapsible{
     data:FattureObj[],
     headerNames:HeaderCollapsible[],
     stato:boolean,
-    sendCancellazzioneRispristinoFatture:any
+    setOpenConfermaModal:any
 }
+
 
 export type HeaderCollapsible = {
     name:string,
@@ -84,4 +85,11 @@ export type TipologiaSap = {
     annoRiferimento:number,
     meseRiferimento:number,
     azione:number
+}
+
+export interface ModalConfermaRipristinaProps{
+    setOpen:any,
+    open:boolean,
+    onButtonComferma:any,
+    filterInfo:BodyFatturazione
 }

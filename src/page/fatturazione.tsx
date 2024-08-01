@@ -19,6 +19,7 @@ import MultiSelectFatturazione from "../components/fatturazione/multiSelect";
 import PreviewIcon from '@mui/icons-material/Preview';
 import ModalSap from "../components/fatturazione/modalSap";
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import ModalConfermaRipristina from "../components/fatturazione/modalConfermaRipristina";
 
 
 
@@ -44,6 +45,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
     const [disableButtonSap, setDisableButtonSap] = useState<boolean>(true);
     const [disableButtonReset, setDisableButtonReset] = useState<boolean>(true);
     const [openSapModal, setOpenSapModal] = useState<{who:number,show:boolean}>({who:0,show:false});
+    const [openConfermaModal,setOpenConfermaModal] = useState(false);
     const [responseTipologieSap, setResponseTipologieSap] = useState<TipologiaSap[]>([]);
 
    
@@ -409,7 +411,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                 data={gridData}
                 headerNames={headersObjGrid}
                 stato={bodyFatturazioneDownload.cancellata}
-                sendCancellazzioneRispristinoFatture={sendCancellazzioneRispristinoFatture}></CollapsibleTable>
+                setOpenConfermaModal={setOpenConfermaModal}></CollapsibleTable>
             <div>
                 <ModalLoading 
                     open={showLoadingGrid} 
@@ -432,7 +434,13 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                 dispatchMainState={dispatchMainState}
                 getListaFatture={getlistaFatturazione}
                 bodyFatturazioneDownload={bodyFatturazioneDownload}></ModalSap>
+            <ModalConfermaRipristina 
+                setOpen={setOpenConfermaModal}
+                open={openConfermaModal}
+                filterInfo={bodyFatturazioneDownload}
+                onButtonComferma={sendCancellazzioneRispristinoFatture}></ModalConfermaRipristina>
         </div>
+
     );
 };
 

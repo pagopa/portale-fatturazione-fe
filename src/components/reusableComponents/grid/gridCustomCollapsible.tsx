@@ -20,7 +20,7 @@ import BlockIcon from '@mui/icons-material/Block';
 
 
 
-const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,sendCancellazzioneRispristinoFatture}) => {
+const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,setOpenConfermaModal}) => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [count, setCount] = useState(0);
@@ -54,7 +54,7 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,se
 
     return (
         <>
-            {selected.length > 0 && <EnhancedTableToolbar numSelected={selected.length} stato={stato} selected={selected} sendCancellazzioneRispristinoFatture={sendCancellazzioneRispristinoFatture}></EnhancedTableToolbar>}
+            {selected.length > 0 && <EnhancedTableToolbar numSelected={selected.length} stato={stato} selected={selected} setOpenConfermaModal={setOpenConfermaModal}></EnhancedTableToolbar>}
             
             <div style={{overflowX:'auto'}}>
                 
@@ -145,7 +145,7 @@ const Row = ({row, setSelected,selected}) => {
                         color="primary"
                         indeterminate={false}
                         checked={isSelected(row.idfattura)}
-                        disabled={row.inviata === 1 || row.inviata === 2}
+                        disabled={row.inviata === 2}
                         onChange={()=>{
                             handleClick(row.idfattura);
                         }}
@@ -251,13 +251,13 @@ const TablePaginationDemo = ({setPage, page, rowsPerPage, setRowsPerPage, count}
 interface EnhancedTableToolbarProps {
     numSelected: number,
     stato:boolean,
-    sendCancellazzioneRispristinoFatture:any,
+    setOpenConfermaModal:any,
     selected:any
 }
   
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) =>{
-    const { numSelected, stato,sendCancellazzioneRispristinoFatture,selected } = props;
+    const { numSelected, stato,setOpenConfermaModal,selected } = props;
     const color = stato ? "#F2FAF2" : "#F2FAFE";
     const icon = stato ?  <RestoreIcon sx={{marginLeft:'20px'}}></RestoreIcon> : <BlockIcon sx={{marginLeft:'20px'}}></BlockIcon>;
     const stringIcon = stato ? 'Ripristina' : 'Sospendi';
@@ -277,7 +277,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) =>{
             <Tooltip title={stringIcon}>
                 
                 <Button variant="outlined" onClick={()=>{
-                    sendCancellazzioneRispristinoFatture(selected,!stato);
+                    setOpenConfermaModal(true);
                 }}>
                     {stringIcon} {icon}
                 </Button>
