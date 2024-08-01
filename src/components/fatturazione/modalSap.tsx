@@ -28,19 +28,17 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,m
 
     const [value, setValue] = React.useState('');
   
-    console.log({open});
+  
   
 
     const onButtonInvia = async() =>{
         // se l'utente ha selezionato il button invia a sap 
+        handleClose();
         if(open.who === 0){
             await fattureInvioSapPa(token, profilo.nonce, {annoRiferimento:anno,meseRiferimento:mese,tipologiaFattura:value} )
                 .then((res)=>{
-                
-                    handleClose();
                     getListaFatture(bodyFatturazioneDownload);
                 }).catch(((err)=>{
-                    handleClose();
                     manageError(err,dispatchMainState);
               
                 }));
@@ -49,22 +47,18 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,m
             
             await fattureResetSapPa(token, profilo.nonce, {annoRiferimento:anno,meseRiferimento:mese,tipologiaFattura:value} )
                 .then((res)=>{
-                    handleClose();
+                   
                     getListaFatture(bodyFatturazioneDownload);
                 }).catch(((err)=>{
-                    handleClose();
                     manageError(err,dispatchMainState);
-              
                 }));
         }
       
     };
    
     const handleClose = () => {
-        setOpen((prev)=>({...prev,...{show:false}}));
         setValue('');
-        
-       
+        setOpen((prev)=>({...prev,...{show:false}}));
     };
 
    
