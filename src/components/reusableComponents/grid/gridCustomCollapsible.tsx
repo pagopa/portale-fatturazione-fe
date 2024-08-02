@@ -20,7 +20,7 @@ import BlockIcon from '@mui/icons-material/Block';
 
 
 
-const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,setOpenConfermaModal}) => {
+const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,setOpenConfermaModal,setOpenResetFilterModal,monthFilterIsEqualMonthDownload}) => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [count, setCount] = useState(0);
@@ -54,7 +54,13 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,se
 
     return (
         <>
-            {selected.length > 0 && <EnhancedTableToolbar numSelected={selected.length} stato={stato} selected={selected} setOpenConfermaModal={setOpenConfermaModal}></EnhancedTableToolbar>}
+            {selected.length > 0 && <EnhancedTableToolbar 
+                numSelected={selected.length} 
+                stato={stato} 
+                selected={selected}
+                setOpenConfermaModal={setOpenConfermaModal}
+                setOpenResetFilterModal={setOpenResetFilterModal}
+                monthFilterIsEqualMonthDownload={monthFilterIsEqualMonthDownload}></EnhancedTableToolbar>}
             
             <div style={{overflowX:'auto'}}>
                 
@@ -91,7 +97,12 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,se
                                 showedData.map((row) => {
             
                                     return(
-                                        <Row key={row.idfattura} row={row} setSelected={setSelected} selected={selected} ></Row>
+                                        <Row key={row.idfattura} 
+                                            row={row}
+                                            setSelected={setSelected}
+                                            selected={selected}
+                                            setOpenResetFilterModal={setOpenResetFilterModal}
+                                            monthFilterIsEqualMonthDownload={monthFilterIsEqualMonthDownload} ></Row>
                                     ); })}
                         </Table>
                     </TableContainer>
@@ -112,26 +123,34 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,se
 export default CollapsibleTable;
     
     
-const Row = ({row, setSelected,selected}) => {
+const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqualMonthDownload}) => {
     const [open, setOpen] = useState(false);
+    console.log({monthFilterIsEqualMonthDownload});
   
     const handleClick = ( id: number) => {
-        const selectedIndex = selected.indexOf(id);
-        let newSelected: readonly number[] = [];
-    
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, id);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(
-                selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1),
-            );
+
+        if(monthFilterIsEqualMonthDownload){
+            
+            const selectedIndex = selected.indexOf(id);
+            let newSelected: readonly number[] = [];
+        
+            if (selectedIndex === -1) {
+                newSelected = newSelected.concat(selected, id);
+            } else if (selectedIndex === 0) {
+                newSelected = newSelected.concat(selected.slice(1));
+            } else if (selectedIndex === selected.length - 1) {
+                newSelected = newSelected.concat(selected.slice(0, -1));
+            } else if (selectedIndex > 0) {
+                newSelected = newSelected.concat(
+                    selected.slice(0, selectedIndex),
+                    selected.slice(selectedIndex + 1),
+                );
+            }
+            setSelected(newSelected);
+        }else{
+            setOpenResetFilterModal(true);
         }
-        setSelected(newSelected);
+        
     };
 
     const isSelected = (id: number) => selected.indexOf(id) !== -1;
@@ -252,12 +271,14 @@ interface EnhancedTableToolbarProps {
     numSelected: number,
     stato:boolean,
     setOpenConfermaModal:any,
-    selected:any
+    selected:any,
+    setOpenResetFilterModal:any,
+    monthFilterIsEqualMonthDownload:boolean
 }
   
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) =>{
-    const { numSelected, stato,setOpenConfermaModal,selected } = props;
+    const { numSelected, stato,setOpenConfermaModal,selected,setOpenResetFilterModal,monthFilterIsEqualMonthDownload } = props;
     const color = stato ? "#F2FAF2" : "#F2FAFE";
     const icon = stato ?  <RestoreIcon sx={{marginLeft:'20px'}}></RestoreIcon> : <BlockIcon sx={{marginLeft:'20px'}}></BlockIcon>;
     const stringIcon = stato ? 'Ripristina' : 'Sospendi';
@@ -277,7 +298,12 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) =>{
             <Tooltip title={stringIcon}>
                 
                 <Button variant="outlined" onClick={()=>{
-                    setOpenConfermaModal(true);
+                    if(monthFilterIsEqualMonthDownload){
+                        setOpenConfermaModal(true);
+                    }else{
+                        setOpenResetFilterModal(true);
+                    }
+                   
                 }}>
                     {stringIcon} {icon}
                 </Button>

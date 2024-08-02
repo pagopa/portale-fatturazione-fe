@@ -20,6 +20,7 @@ import PreviewIcon from '@mui/icons-material/Preview';
 import ModalSap from "../components/fatturazione/modalSap";
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import ModalConfermaRipristina from "../components/fatturazione/modalConfermaRipristina";
+import ModalResetFilter from "../components/fatturazione/modalResetFilter";
 
 
 
@@ -46,6 +47,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
     const [disableButtonReset, setDisableButtonReset] = useState<boolean>(true);
     const [openSapModal, setOpenSapModal] = useState<{who:number,show:boolean}>({who:0,show:false});
     const [openConfermaModal,setOpenConfermaModal] = useState(false);
+    const [openResetFilterModal,setOpenResetFilterModal] = useState(false);
     const [responseTipologieSap, setResponseTipologieSap] = useState<TipologiaSap[]>([]);
 
    
@@ -150,6 +152,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                 managePresaInCarico('FATTURA_SOSPESA_RIPRISTINATA',dispatchMainState);
             }).catch((error)=>{
                 console.log(error);
+                getlistaFatturazione(bodyFatturazioneDownload);
                 manageError(error, dispatchMainState);
             });      
     };
@@ -411,7 +414,9 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                 data={gridData}
                 headerNames={headersObjGrid}
                 stato={bodyFatturazioneDownload.cancellata}
-                setOpenConfermaModal={setOpenConfermaModal}></CollapsibleTable>
+                setOpenConfermaModal={setOpenConfermaModal}
+                setOpenResetFilterModal={setOpenResetFilterModal}
+                monthFilterIsEqualMonthDownload={bodyFatturazione.mese === bodyFatturazioneDownload.mese}></CollapsibleTable>
             <div>
                 <ModalLoading 
                     open={showLoadingGrid} 
@@ -439,6 +444,12 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                 open={openConfermaModal}
                 filterInfo={bodyFatturazioneDownload}
                 onButtonComferma={sendCancellazzioneRispristinoFatture}></ModalConfermaRipristina>
+            <ModalResetFilter
+                setOpen={setOpenResetFilterModal}
+                open={openResetFilterModal}
+                filterInfo={bodyFatturazioneDownload}
+                filterNotExecuted={bodyFatturazione}
+                getListaFatture={getlistaFatturazione}></ModalResetFilter>
         </div>
 
     );

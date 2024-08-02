@@ -3,8 +3,9 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { ModalConfermaRipristinaProps } from '../../types/typeFatturazione';
+import { ModalResetFilterProps } from '../../types/typeFatturazione';
 import { month } from '../../reusableFunction/reusableArrayObj';
+
 const style = {
     position: 'absolute' as const,
     top: '50%',
@@ -16,7 +17,7 @@ const style = {
     p: 4,
 };
 
-const ModalConfermaRipristina : React.FC<ModalConfermaRipristinaProps> =({setOpen, open, onButtonComferma,filterInfo}) => {
+const ModalResetFilter : React.FC<ModalResetFilterProps> =({setOpen, open, filterInfo,getListaFatture,filterNotExecuted}) => {
     
 
     const handleClose = (event:object, reason: string) =>{
@@ -25,15 +26,13 @@ const ModalConfermaRipristina : React.FC<ModalConfermaRipristinaProps> =({setOpe
         }
     };
    
-    const handleConferma = () => {
+    const handleFiltra = () => {
         setOpen(false);
-        onButtonComferma();
+        getListaFatture(filterNotExecuted);
+       
     };
 
-    const handleAnnulla = () =>{
-        setOpen(false);
-             
-    };
+  
 
    
        
@@ -52,8 +51,8 @@ const ModalConfermaRipristina : React.FC<ModalConfermaRipristinaProps> =({setOpe
         Attenzione!
                         </Typography>
                         <div className='mt-3'>
-                            <Typography id="modal-modal-description" variant="body1" sx={{ mt: 2 }}>
-                                {`${filterInfo.cancellata ? 'Ripristino':'Sospensione'} delle fatture di ${month[filterInfo.mese-1].toLocaleUpperCase()}: confermi l'operazione?`}
+                            <Typography id="modal-modal-description" variant="body1">
+                                {`Il mese selezionato nei filtri "${month[filterNotExecuted.mese -1].toLocaleUpperCase()}" non è in linea con il mese "${month[filterInfo.mese -1].toLocaleUpperCase()}" delle fatture visualizzate`}
                             </Typography>
                         </div>
                         
@@ -63,16 +62,12 @@ const ModalConfermaRipristina : React.FC<ModalConfermaRipristinaProps> =({setOpe
                         <Button 
                             sx={{marginRight:'20px'}} 
                             variant='contained'
-                            onClick={()=>handleConferma()}
-                        >Conferma</Button>
-                        <Button
-                            variant='outlined'
-                            onClick={()=>handleAnnulla()}
-                        >Annulla</Button>
+                            onClick={()=>handleFiltra()}
+                        >Filtra</Button>
                     </div>
                 </Box>
             </Modal>
         </div>
     );
 };
-export default  ModalConfermaRipristina;
+export default  ModalResetFilter;

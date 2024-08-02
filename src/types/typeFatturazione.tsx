@@ -58,7 +58,9 @@ export interface GridCollapsible{
     data:FattureObj[],
     headerNames:HeaderCollapsible[],
     stato:boolean,
-    setOpenConfermaModal:any
+    setOpenConfermaModal:any,
+    setOpenResetFilterModal:any,
+    monthFilterIsEqualMonthDownload:boolean
 }
 
 
@@ -76,7 +78,7 @@ export interface ModalSapProps {
     anno:number,
     dispatchMainState:any,
     getListaFatture:any,
-    bodyFatturazioneDownload:BodyFatturazione
+    bodyFatturazioneDownload:BodyFatturazione,
 }
 
 export type TipologiaSap = {
@@ -92,4 +94,12 @@ export interface ModalConfermaRipristinaProps{
     open:boolean,
     onButtonComferma:any,
     filterInfo:BodyFatturazione
+}
+
+export interface ModalResetFilterProps {
+    setOpen:any,
+    open:boolean,
+    filterInfo:BodyFatturazione,
+    getListaFatture:any,
+    filterNotExecuted:BodyFatturazione
 }
