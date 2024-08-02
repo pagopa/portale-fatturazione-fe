@@ -20,13 +20,13 @@ import BlockIcon from '@mui/icons-material/Block';
 
 
 
-const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,setOpenConfermaModal,setOpenResetFilterModal,monthFilterIsEqualMonthDownload}) => {
+const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,setOpenConfermaModal,setOpenResetFilterModal,monthFilterIsEqualMonthDownload,selected, setSelected}) => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [count, setCount] = useState(0);
     const [showedData, setShowedData] = useState<FattureObj[]>([]);
-    const [selected, setSelected] = React.useState<readonly number[]>([]);
-  
+   
+    console.log({selected});
     
     useEffect(()=>{
         setCount(data.length);
@@ -125,12 +125,12 @@ export default CollapsibleTable;
     
 const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqualMonthDownload}) => {
     const [open, setOpen] = useState(false);
-    console.log({monthFilterIsEqualMonthDownload});
+   
   
     const handleClick = ( id: number) => {
 
         if(monthFilterIsEqualMonthDownload){
-            
+            //logica per id
             const selectedIndex = selected.indexOf(id);
             let newSelected: readonly number[] = [];
         

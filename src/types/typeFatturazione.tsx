@@ -60,7 +60,9 @@ export interface GridCollapsible{
     stato:boolean,
     setOpenConfermaModal:any,
     setOpenResetFilterModal:any,
-    monthFilterIsEqualMonthDownload:boolean
+    monthFilterIsEqualMonthDownload:boolean,
+    selected:number[]
+    setSelected:any
 }
 
 
@@ -93,7 +95,8 @@ export interface ModalConfermaRipristinaProps{
     setOpen:any,
     open:boolean,
     onButtonComferma:any,
-    filterInfo:BodyFatturazione
+    filterInfo:BodyFatturazione,
+    fattureSelectedArr:any
 }
 
 export interface ModalResetFilterProps {

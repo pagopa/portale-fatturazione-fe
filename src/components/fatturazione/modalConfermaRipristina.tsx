@@ -5,6 +5,8 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { ModalConfermaRipristinaProps } from '../../types/typeFatturazione';
 import { month } from '../../reusableFunction/reusableArrayObj';
+import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+
 const style = {
     position: 'absolute' as const,
     top: '50%',
@@ -16,7 +18,7 @@ const style = {
     p: 4,
 };
 
-const ModalConfermaRipristina : React.FC<ModalConfermaRipristinaProps> =({setOpen, open, onButtonComferma,filterInfo}) => {
+const ModalConfermaRipristina : React.FC<ModalConfermaRipristinaProps> =({setOpen, open, onButtonComferma,filterInfo,fattureSelectedArr}) => {
     
 
     const handleClose = (event:object, reason: string) =>{
@@ -35,7 +37,7 @@ const ModalConfermaRipristina : React.FC<ModalConfermaRipristinaProps> =({setOpe
              
     };
 
-   
+    const arr = fattureSelectedArr();
        
     
     return (
@@ -57,6 +59,43 @@ const ModalConfermaRipristina : React.FC<ModalConfermaRipristinaProps> =({setOpe
                             </Typography>
                         </div>
                         
+                    </div>
+                    
+                    <div >
+                       
+                      
+                        <Box sx={{ backgroundColor:'#F8F8F8', padding:'10px',marginTop:'40px',overflowY:'auto',height:'200px'}}>
+                           
+                            <Typography sx={{marginLeft:"6px",textAlign:'center'}} variant="h6" gutterBottom>
+                                   Fatture
+                            </Typography>
+                         
+                           
+                            <Table size="small" aria-label="purchases"sx={{}}>
+                                <TableHead >
+                                    <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
+                                        <TableCell sx={{ marginLeft:"16px"}}> Ragione Sociale</TableCell>
+                                        <TableCell sx={{ marginLeft:"16px"}}> Tipologia Fattura</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
+                                    {arr.map((el) =>{
+                                       
+                                        return(
+                                            <TableRow  key={el}>
+                                                <TableCell>
+                                                    {el.ragionesociale}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {el.tipologiaFattura}
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    } )}
+                                </TableBody>
+                            </Table>
+                        </Box>
+                  
                     </div>
                    
                     <div className='container_buttons_modal d-flex justify-content-center'>

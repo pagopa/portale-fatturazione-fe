@@ -49,8 +49,11 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
     const [openConfermaModal,setOpenConfermaModal] = useState(false);
     const [openResetFilterModal,setOpenResetFilterModal] = useState(false);
     const [responseTipologieSap, setResponseTipologieSap] = useState<TipologiaSap[]>([]);
+    const [fattureSelected, setFattureSelected] = useState<number[]>([]);
+    
 
-   
+  
+    
  
     const [bodyFatturazione, setBodyFatturazione] = useState<BodyFatturazione>({
         anno:currentYear,
@@ -143,8 +146,8 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
     };
 
 
-    const sendCancellazzioneRispristinoFatture = async (arrayFatture, cancellazioneValue) =>{
-        await fattureCancellazioneRipristinoPagoPa(token,profilo.nonce,{idFatture:arrayFatture,cancellazione:cancellazioneValue})
+    const sendCancellazzioneRispristinoFatture = async () =>{
+        await fattureCancellazioneRipristinoPagoPa(token,profilo.nonce,{idFatture:fattureSelected,cancellazione:bodyFatturazioneDownload.cancellata})
             .then((res)=>{
            
                 console.log(res);
@@ -205,6 +208,15 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
             manageErrorDownload(err,dispatchMainState);
         }));
     };
+
+    const fattureSelectedArr = () =>{
+        return fattureSelected.map((el)=>{
+  
+            return gridData.filter((obj:FattureObj) => obj.idfattura === el ).pop();
+        });
+    };
+ 
+    console.log(fattureSelectedArr());
 
 
 
@@ -416,7 +428,10 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                 stato={bodyFatturazioneDownload.cancellata}
                 setOpenConfermaModal={setOpenConfermaModal}
                 setOpenResetFilterModal={setOpenResetFilterModal}
-                monthFilterIsEqualMonthDownload={bodyFatturazione.mese === bodyFatturazioneDownload.mese}></CollapsibleTable>
+                monthFilterIsEqualMonthDownload={bodyFatturazione.mese === bodyFatturazioneDownload.mese}
+                selected={fattureSelected}
+                setSelected={setFattureSelected}
+            ></CollapsibleTable>
             <div>
                 <ModalLoading 
                     open={showLoadingGrid} 
@@ -443,7 +458,8 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
                 setOpen={setOpenConfermaModal}
                 open={openConfermaModal}
                 filterInfo={bodyFatturazioneDownload}
-                onButtonComferma={sendCancellazzioneRispristinoFatture}></ModalConfermaRipristina>
+                onButtonComferma={sendCancellazzioneRispristinoFatture}
+                fattureSelectedArr={fattureSelectedArr}></ModalConfermaRipristina>
             <ModalResetFilter
                 setOpen={setOpenResetFilterModal}
                 open={openResetFilterModal}

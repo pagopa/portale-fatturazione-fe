@@ -21,7 +21,7 @@ import { mesiGrid, mesiWithZero } from "../reusableFunction/reusableArrayObj";
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 
-const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
+const RelPage : React.FC<RelPageProps> = ({ dispatchMainState}) =>{
 
     const token =  getToken();
     const profilo =  getProfilo();
@@ -91,14 +91,9 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
             getListTipologiaFattura(bodyRel.anno, bodyRel.mese);
       
         }
-        
     },[]);
 
  
-
-
-   
-   
     useEffect(()=>{
         const timer = setTimeout(() => {
             if(textValue.length >= 3){
