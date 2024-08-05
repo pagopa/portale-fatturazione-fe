@@ -51,7 +51,8 @@ export interface FattureObj {
     sollecito: string,
     posizioni:Posizioni[],
     inviata:number,
-    idfattura:number
+    idfattura:number,
+    elaborazione:number
 }
 
 export interface GridCollapsible{

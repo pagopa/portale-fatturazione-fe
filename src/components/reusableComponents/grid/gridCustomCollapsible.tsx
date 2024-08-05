@@ -154,6 +154,13 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
     };
 
     const isSelected = (id: number) => selected.indexOf(id) !== -1;
+
+    let tooltipObj:any = {label:'Non Inviata',title:'La fattura non è stata inviata'};
+    if(row.inviata === 1){
+        tooltipObj = {label:'Inviata',title:'La fattura è stata inviata',color:'success'};
+    }else if(row.inviata === 2){
+        tooltipObj = {label:'In Elaborazione',title:'La fattura è in elaborazione',color:'warning'};
+    }
  
     return(
         
@@ -164,7 +171,7 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
                         color="primary"
                         indeterminate={false}
                         checked={isSelected(row.idfattura)}
-                        disabled={row.inviata === 2}
+                        disabled={row.elaborazione === 2}
                         onChange={()=>{
                             handleClick(row.idfattura);
                         }}
@@ -187,9 +194,9 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
                 <TableCell align='center'>
                     <Tooltip
                         placement="bottom"
-                        title="L’invio della notifica è in corso"
+                        title={tooltipObj.title}
                     >
-                        <Chip label="In inoltro" />
+                        <Chip label={tooltipObj.label} color={tooltipObj.color} />
                     </Tooltip>
                 </TableCell>
                 <TableCell align='center'>{row.tipologiaFattura}</TableCell>
