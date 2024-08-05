@@ -237,6 +237,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
     const headersObjGrid : HeaderCollapsible[] = [
         {name:"",align:"left",id:1},
         {name:"Ragione Sociale",align:"left",id:2},
+        {name:"Elaborazione",align:"center",id:13},
         {name:"T. Fattura",align:"center",id:10},
         {name:"Ident.",align:"center",id:9},
         {name:"Tipo Contratto",align:"center",id:3},

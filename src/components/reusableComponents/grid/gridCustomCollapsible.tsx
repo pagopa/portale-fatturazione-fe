@@ -13,7 +13,7 @@ import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useEffect, useState } from 'react';
-import { Button, Card, Checkbox, TablePagination, Toolbar, Tooltip } from '@mui/material';
+import { Button, Card, Checkbox, Chip, TablePagination, Toolbar, Tooltip } from '@mui/material';
 import { FattureObj, GridCollapsible } from '../../../types/typeFatturazione';
 import RestoreIcon from '@mui/icons-material/Restore';
 import BlockIcon from '@mui/icons-material/Block';
@@ -184,6 +184,14 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
                     </IconButton>
                 </TableCell>
                 <TableCell sx={{color:'#0D6EFD',fontWeight: 'bold'}} >{row.ragionesociale}</TableCell>
+                <TableCell align='center'>
+                    <Tooltip
+                        placement="bottom"
+                        title="L’invio della notifica è in corso"
+                    >
+                        <Chip label="In inoltro" />
+                    </Tooltip>
+                </TableCell>
                 <TableCell align='center'>{row.tipologiaFattura}</TableCell>
                 <TableCell align='center'>{row.identificativo}</TableCell>
                 <TableCell align='center' >{row.tipocontratto}</TableCell>
