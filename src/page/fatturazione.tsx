@@ -70,7 +70,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
         cancellata:false
     });
 
-  
+    console.log(bodyFatturazioneDownload.cancellata);
 
     
     useEffect(()=>{
@@ -147,7 +147,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
 
 
     const sendCancellazzioneRispristinoFatture = async () =>{
-        await fattureCancellazioneRipristinoPagoPa(token,profilo.nonce,{idFatture:fattureSelected,cancellazione:bodyFatturazioneDownload.cancellata})
+        await fattureCancellazioneRipristinoPagoPa(token,profilo.nonce,{idFatture:fattureSelected,cancellazione:!bodyFatturazioneDownload.cancellata})
             .then((res)=>{
            
        
