@@ -150,11 +150,11 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
         await fattureCancellazioneRipristinoPagoPa(token,profilo.nonce,{idFatture:fattureSelected,cancellazione:bodyFatturazioneDownload.cancellata})
             .then((res)=>{
            
-                console.log(res);
+       
                 getlistaFatturazione(bodyFatturazioneDownload);
                 managePresaInCarico('FATTURA_SOSPESA_RIPRISTINATA',dispatchMainState);
             }).catch((error)=>{
-                console.log(error);
+               
                 getlistaFatturazione(bodyFatturazioneDownload);
                 manageError(error, dispatchMainState);
             });      
@@ -216,8 +216,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
         });
     };
  
-    console.log(fattureSelectedArr());
-
+   
 
 
     /*
@@ -281,7 +280,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
     };
 
     const onButtonSap = (who) => {
-        console.log('open modal');
+
         setOpenSapModal((prev)=>({...prev,...{show:true,who}}));
     };
   

@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { ModalConfermaRipristinaProps } from '../../types/typeFatturazione';
+import { FattureObj, ModalConfermaRipristinaProps } from '../../types/typeFatturazione';
 import { month } from '../../reusableFunction/reusableArrayObj';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 
@@ -36,9 +36,13 @@ const ModalConfermaRipristina : React.FC<ModalConfermaRipristinaProps> =({setOpe
         setOpen(false);
              
     };
+    let arr = [];
 
-    const arr = fattureSelectedArr();
-       
+    if(open === true){
+        arr = fattureSelectedArr();
+    }
+    
+    console.log(arr,'miao');
     
     return (
         <div>
@@ -78,11 +82,12 @@ const ModalConfermaRipristina : React.FC<ModalConfermaRipristinaProps> =({setOpe
                                         <TableCell sx={{ marginLeft:"16px"}}> Tipologia Fattura</TableCell>
                                     </TableRow>
                                 </TableHead>
+                                {arr.length > 0 &&
                                 <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
-                                    {arr.map((el) =>{
+                                    {arr.map((el:FattureObj) =>{
                                        
                                         return(
-                                            <TableRow  key={el}>
+                                            <TableRow  key={el.idfattura}>
                                                 <TableCell>
                                                     {el.ragionesociale}
                                                 </TableCell>
@@ -93,6 +98,7 @@ const ModalConfermaRipristina : React.FC<ModalConfermaRipristinaProps> =({setOpe
                                         );
                                     } )}
                                 </TableBody>
+                                }
                             </Table>
                         </Box>
                   

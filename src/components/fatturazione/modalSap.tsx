@@ -111,7 +111,7 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,m
                                     value={value}       
                                 >
                                     {responseTipologiaSap.filter(el => el.azione === open.who).map((el) =>{ 
-                                        console.log({el});
+                                    
                                         return (            
                                             <MenuItem
                                                 key={Math.random()}

@@ -159,7 +159,7 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
     if(row.inviata === 1){
         tooltipObj = {label:'Inviata',title:'La fattura è stata inviata',color:'success'};
     }else if(row.inviata === 2){
-        tooltipObj = {label:'In Elaborazione',title:'La fattura è in elaborazione',color:'warning'};
+        tooltipObj = {label:'Elaborazione',title:'La fattura è in elaborazione',color:'warning'};
     }
  
     return(
