@@ -2,7 +2,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked} from '@pagopa/mui-italia';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { Button, Typography } from "@mui/material";
-import { useEffect, useState} from 'react';
+import { Dispatch, SetStateAction, useEffect, useState} from 'react';
 import TextDettaglioPdf from '../components/commessaPdf/textDettaglioPdf';
 import DownloadIcon from '@mui/icons-material/Download';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
@@ -14,11 +14,12 @@ import { saveAs } from "file-saver";
 import { manageErrorDownload } from "../api/api";
 import { getProfilo, getToken } from '../reusableFunction/actionLocalStorage';
 import { Messaggi } from './centroMessaggi';
+import { ActionReducerType } from '../reducer/reducerMainState';
 
 
 interface DettaglioMessaggioProps{
     mainState:MainState,
-    dispatchMainState:any
+    dispatchMainState:Dispatch<ActionReducerType>
 }
 
 const DettaglioMessaggio : React.FC<DettaglioMessaggioProps> = ({mainState,dispatchMainState}) =>{

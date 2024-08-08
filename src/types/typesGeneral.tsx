@@ -1,6 +1,5 @@
 import { Messaggi } from "../page/centroMessaggi";
 import { DataGridCommessa } from "./typeModuloCommessaElenco";
-import { BodyRel, Rel } from "./typeRel";
 
 export interface ModalProps {
     setOpen : any,

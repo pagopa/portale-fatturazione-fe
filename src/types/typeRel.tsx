@@ -1,16 +1,18 @@
+import { Dispatch, SetStateAction } from "react";
 import { MainState } from "./typesGeneral";
+import { ActionReducerType } from "../reducer/reducerMainState";
 
 export interface RelPageProps{
     mainState:MainState,
-    dispatchMainState:any
+    dispatchMainState:Dispatch<ActionReducerType>
 }
 export interface RelPagePdfProps{
     mainState:MainState,
-    dispatchMainState:any
+    dispatchMainState:Dispatch<ActionReducerType>
 }
 export interface TextRegioneSocialeRelProps{
-    values:any,
-    setValue: (value:any) => void
+    values:BodyRel,
+    setValue: Dispatch<SetStateAction<BodyRel>>
 }
 
 export interface BodyRel{

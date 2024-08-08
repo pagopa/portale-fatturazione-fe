@@ -31,7 +31,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
 
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [gridData, setGridData] = useState<GridElementListaCommesse[]>([]);
-    const [bodyGetLista, setBodyGetLista] = useState({idEnti:[],prodotto:'', anno:currentYear, mese:currString});
+    const [bodyGetLista, setBodyGetLista] = useState<BodyDownloadModuliCommessa>({idEnti:[],prodotto:'', anno:currentYear, mese:currString});
     const [infoPageListaCom , setInfoPageListaCom] = useState({ page: 0, pageSize: 100 });
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
     const [textValue, setTextValue] = useState('');
@@ -187,8 +187,8 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({mainState
     };
 
     const columns: GridColDef[] = [
-        { field: 'regioneSociale', headerName: 'Ragione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/8">{param.row.ragioneSociale}</a>},
-        { field: 'mese', headerName: 'Mese', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <div className="MuiDataGrid-cellContent" title={mesiGrid[param.row.mese]} role="presentation">{mesiGrid[param.row.mese]}</div>},
+        { field: 'regioneSociale', headerName: 'Ragione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:{row:GridElementListaCommesse}) => <a className="mese_alidita text-primary fw-bolder" href="/8">{param.row.ragioneSociale}</a>},
+        { field: 'mese', headerName: 'Mese', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:{row:GridElementListaCommesse}) => <div className="MuiDataGrid-cellContent" title={mesiGrid[param.row.mese]} role="presentation">{mesiGrid[param.row.mese]}</div>},
         { field: 'prodotto', headerName: 'Prodotto', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'numeroNotificheNazionaliDigitale', headerName: 'Num. Not. Naz.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'tipoSpedizioneAnalogicoAR', headerName: 'Tipo spediz. Analog.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },

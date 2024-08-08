@@ -1,8 +1,7 @@
-import React, { ReactNode, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router';
 import {HeaderProduct} from '@pagopa/mui-italia';
-import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
-import Badge from '@mui/material/Badge';
+
 
 type PartySwitchItem = {
     id: string;
@@ -10,7 +9,6 @@ type PartySwitchItem = {
     productRole?: string;
     logoUrl?: string;
     parentName?: string;
-    icon?:any
 };
 type LinkType = "internal" | "external";
 type ProductSwitchItem = {
@@ -49,7 +47,7 @@ const HeaderNavComponent : React.FC =() => {
             linkType: 'external',
         }];
 
-    const cdnPath = 'https://assets.cdn.io.italia.it/logos/organizations/';
+    //const cdnPath = 'https://assets.cdn.io.italia.it/logos/organizations/';
     const name = user.name;
 
     const partyList : Array<PartyEntity> = [

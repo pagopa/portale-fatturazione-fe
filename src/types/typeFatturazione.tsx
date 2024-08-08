@@ -1,5 +1,7 @@
 
+import { Dispatch, SetStateAction } from "react";
 import { MainState } from "./typesGeneral";
+import { ActionReducerType } from "../reducer/reducerMainState";
 
 export interface BodyFatturazione{
     anno:number,
@@ -10,14 +12,14 @@ export interface BodyFatturazione{
 
 export interface FatturazioneProps{
     mainState:MainState,
-    dispatchMainState:any
+    dispatchMainState:Dispatch<ActionReducerType>
 }
 
 export interface MultiSelectFatturazioneProps{
-    setBody:any,
-    list:any,
+    setBody:Dispatch<SetStateAction<BodyFatturazione>>,
+    list:string[],
     value:string[],
-    setValue:any
+    setValue:Dispatch<SetStateAction<string[]>>
 }
 
 type Posizioni = {
@@ -54,7 +56,7 @@ export interface FattureObj {
 export interface GridCollapsible{
     data:FattureObj[],
     showedData:FattureObj[],
-    setShowedData:any,
+    setShowedData: Dispatch<SetStateAction<FattureObj[]>>,
     headerNames:HeaderCollapsible[]
 }
 

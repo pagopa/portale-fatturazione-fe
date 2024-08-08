@@ -1,8 +1,11 @@
-import { DataPdf } from "./typeModuloCommessaInserimento"
+import { Dispatch } from "react";
+import { DataPdf } from "./typeModuloCommessaInserimento";
+import { MainState } from "./typesGeneral";
+import { ActionReducerType } from "../reducer/reducerMainState";
 
 export interface ListaModuliCommessaProps{
-    mainState:any,
-    dispatchMainState:any
+    mainState:MainState,
+    dispatchMainState:Dispatch<ActionReducerType>
 }
 
 
@@ -10,7 +13,7 @@ export interface BodyDownloadModuliCommessa{
     idEnti:string[],
     prodotto:string,
     anno:number|string,
-    mese:number
+    mese:number|string
 }
 
 export interface GridElementListaCommesse {

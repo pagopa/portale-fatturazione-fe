@@ -7,9 +7,10 @@ import { PathPf } from '../../types/enum';
 import { getProfilo, getStatusApp } from '../../reusableFunction/actionLocalStorage';
 import { InfoOpen, MainState } from '../../types/typesGeneral';
 import { Dispatch, SetStateAction } from 'react';
+import { ActionReducerType } from '../../reducer/reducerMainState';
 
 interface PageTitleProps {
-    dispatchMainState:Dispatch<SetStateAction<{type:string,value:any}>>,
+    dispatchMainState:Dispatch<ActionReducerType>,
     setOpen:Dispatch<SetStateAction<InfoOpen>>,
     mainState:MainState
 }

@@ -48,7 +48,34 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
     const [totalNotifiche, setTotalNotifiche]  = useState(0);
     const realPageNumber = page + 1;
     const [valueRispostaEnte, setValueRispostaEnte] = useState('');
-    const [contestazioneStatic, setContestazioneStatic] = useState();
+    const [contestazioneStatic, setContestazioneStatic] = useState<Contestazione>({ 
+        risposta:true,
+        modifica: true,
+        chiusura: true,
+        contestazione: {
+            id: 0,
+            tipoContestazione: 0,
+            idNotifica: '',
+            noteEnte: '',
+            noteSend: null,
+            noteRecapitista: null,
+            noteConsolidatore: null,
+            rispostaEnte: '',
+            statoContestazione: 0,
+            onere: '',
+            dataInserimentoEnte: '',
+            dataModificaEnte: '',
+            dataInserimentoSend: '',
+            dataModificaSend: '',
+            dataInserimentoRecapitista: '',
+            dataModificaRecapitista: '',
+            dataInserimentoConsolidatore: '',
+            dataModificaConsolidatore: '',
+            dataChiusura: '',
+            anno: 0,
+            mese: 0
+        }
+    });
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
     const [valueFgContestazione, setValueFgContestazione] = useState<FlagContestazione[]>([]);       
     const [open, setOpen] = useState(false);
@@ -209,7 +236,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
 
     // Modifico l'oggetto notifica per fare il binding dei dati nel componente GRIDCUSTOM
     let headerNames: string[] = [];
-    const notificheListWithOnere = notificheList.map((notifica) =>{
+    const notificheListWithOnere = notificheList.map((notifica:NotificheList) =>{
         let newOnere = '';
         if( notifica.onere === 'PA_SEND' ){
             newOnere = 'SEND';
@@ -1095,7 +1122,6 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                 open={showModalScadenziario} 
                 setOpen={setShowModalScadenziario}
                 nonce={profilo.nonce}
-                profilo={profilo}
                 dispatchMainState={dispatchMainState}></ModalScadenziario>                                    
         </div>
     );

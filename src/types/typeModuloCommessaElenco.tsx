@@ -1,12 +1,16 @@
+import { Dispatch, SetStateAction } from "react";
+import { ActionReducerType } from "../reducer/reducerMainState";
+import { MainState } from "./typesGeneral";
+
 export interface ResponseGetAnni {
     response ?: string[]
 }
 
 export interface VisualModuliCommessaProps{
-    dispatchMainState:any,
-    mainState:any,
+    dispatchMainState:Dispatch<ActionReducerType>
+    mainState:MainState,
     valueSelect:string,
-    setValueSelect:any
+    setValueSelect:Dispatch<SetStateAction<string>>
 }
 
 export interface DataGridCommessa{

@@ -1,6 +1,6 @@
 import { Autocomplete, Box, Button, Checkbox, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
 import { downloadMessaggioPagoPa, getListaMessaggi} from "../api/apiPagoPa/centroMessaggi/api";
@@ -11,6 +11,7 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 
 import { mesiGrid } from "../reusableFunction/reusableArrayObj";
 import GridMessaggi from "../components/centroMessaggi/gridMessaggi";
+import { ActionReducerType } from "../reducer/reducerMainState";
 
 
 
@@ -35,7 +36,7 @@ export interface Messaggi {
 
 interface CentroMessaggiProps {
     mainState:MainState,
-    dispatchMainState:any
+    dispatchMainState:Dispatch<ActionReducerType>
 }
 
 interface FilterCentroMessaggi{

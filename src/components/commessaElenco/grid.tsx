@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Dispatch} from 'react';
 import { Box } from '@mui/material';
 import { DataGrid, GridRowParams,GridEventListener,MuiEvent, GridColDef } from '@mui/x-data-grid';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -8,12 +8,12 @@ import { MainState, Params } from '../../types/typesGeneral';
 import { PathPf } from '../../types/enum';
 import { month } from '../../reusableFunction/reusableArrayObj';
 import { getStatusApp, setInfoToStatusApplicationLoacalStorage } from '../../reusableFunction/actionLocalStorage';
+import { ActionReducerType } from '../../reducer/reducerMainState';
 
 interface GridComponentProps {
     data: DataGridCommessa[],
-    dispatchMainState:any,
+    dispatchMainState:Dispatch<ActionReducerType>,
     mainState:MainState
-   
 }
 
 const GridComponent : React.FC<GridComponentProps> = (props) => {

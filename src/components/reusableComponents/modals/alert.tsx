@@ -1,18 +1,19 @@
 import * as React from 'react';
 import Alert, { AlertColor } from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { MainState } from '../../../types/typesGeneral';
 import { redirect } from '../../../api/api';
 import { useTranslation } from 'react-i18next';
+import { ActionReducerType } from '../../../reducer/reducerMainState';
 
 
 type AlertProps = {
-    setVisible:any,
+    setVisible:Dispatch<SetStateAction<boolean>>,
     visible:boolean,
     mainState:MainState,
-    dispatchMainState:any
+    dispatchMainState:Dispatch<ActionReducerType>
 }
 
 const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, dispatchMainState}) => {

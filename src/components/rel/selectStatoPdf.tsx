@@ -1,8 +1,9 @@
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { Box } from "@mui/system";
 import { BodyRel } from "../../types/typeRel";
+import { Dispatch, SetStateAction } from "react";
 interface SelecTipologiaPdf{
-    setValue: any,
+    setValue: Dispatch<SetStateAction<BodyRel>>,
     values:BodyRel
 }
 
@@ -31,7 +32,7 @@ const SelectStatoPdf : React.FC<SelecTipologiaPdf> = ({setValue, values}) =>{
                     label='Seleziona Prodotto'
                     labelId="search-by-label"
                     onChange={(e) =>{
-                        setValue((prev)=> ({...prev, ...{caricata:e.target.value}}));
+                        setValue((prev)=> ({...prev, ...{caricata:Number(e.target.value)}}));
                     }}         
                     value={caricata?.toString() ||  ''}                  
                 >
