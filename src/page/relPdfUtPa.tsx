@@ -20,7 +20,6 @@ import { PathPf } from '../types/enum';
 import { getProfilo, getStatusApp, getToken, profiliEnti } from '../reusableFunction/actionLocalStorage';
 import {mesiWithZero, month } from '../reusableFunction/reusableArrayObj';
 import { createDateFromString } from '../reusableFunction/function';
-import ModalRedirect from '../components/commessaInserimento/madalRedirect';
 import SkeletonRelPdf from '../components/rel/skeletonRelPdf';
 
 const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) =>{

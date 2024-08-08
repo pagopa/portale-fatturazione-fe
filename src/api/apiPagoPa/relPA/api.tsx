@@ -54,7 +54,7 @@ export const getRelPdfFirmatoPagoPa = async ( token:string ,nonce:string , id:st
 };
 
 
-export const downloadListaRelPdfZipPagopa = async (token:string, nonce:string , body: any) => {
+export const downloadListaRelPdfZipPagopa = async (token:string, nonce:string , body: BodyRel) => {
   
     const response = await fetch(`${url}/api/rel/pagopa/firma/download?nonce=${nonce}`, 
         {

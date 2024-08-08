@@ -264,7 +264,6 @@ const CentroMessaggi : React.FC<CentroMessaggiProps> = ({mainState,dispatchMainS
                     page={page}
                     rows={rowsPerPage}
                     headerNames={headersName}
-                    apiGet={getMessaggi}
                     disabled={false}></GridMessaggi>
             </div>         
             <div>

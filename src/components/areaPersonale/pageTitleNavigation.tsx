@@ -9,7 +9,7 @@ import { InfoOpen, MainState } from '../../types/typesGeneral';
 import { Dispatch, SetStateAction } from 'react';
 
 interface PageTitleProps {
-    dispatchMainState:any,
+    dispatchMainState:Dispatch<SetStateAction<{type:string,value:any}>>,
     setOpen:Dispatch<SetStateAction<InfoOpen>>,
     mainState:MainState
 }

@@ -33,7 +33,7 @@ export const exportDocumentoAsseverazionePagoPa = async (token:string, nonce:str
     return response;
 };
 
-export const uploadExelAsseverazionePagopa = async (token:string, nonce:string , body: any) => {
+export const uploadExelAsseverazionePagopa = async (token:string, nonce:string , body:{file:File|null}) => {
     const response =  await axios.post(`${url}/api/asseverazione/upload?nonce=${nonce}`,
         body,
         { headers: {

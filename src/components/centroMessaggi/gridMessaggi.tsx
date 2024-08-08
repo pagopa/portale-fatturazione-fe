@@ -1,21 +1,21 @@
 import { Card, Table, TableBody, TableCell, TableHead, TablePagination, TableRow } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useNavigate } from "react-router";
+import { Dispatch, SetStateAction } from "react";
 interface GridCustomProps {
     elements:object[],
-    changePage:any,
-    changeRow:any,
+    changePage: (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage: number,) => void,
+    changeRow:(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
     page:number,
     total:number,
     rows:number,
     headerNames:string[],
     nameParameterApi:string,  // elemnto/i che servono alla chiamata get di dettaglio , in questo caso bisogna passare questi pametro/o nel MainState ma non posso visulizzarli nella grid
-    apiGet:any,
     disabled:boolean,
-    dispatchMainState:any
+    dispatchMainState:Dispatch<SetStateAction<{type:string,value:any}>>,
 }
 
-const GridMessaggi : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, nameParameterApi, apiGet, disabled,dispatchMainState}) =>{
+const GridMessaggi : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames,disabled,dispatchMainState}) =>{
 
     const navigate = useNavigate();
 
