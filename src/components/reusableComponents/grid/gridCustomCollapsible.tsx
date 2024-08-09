@@ -7,13 +7,15 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
+import Tooltip from '@mui/material/Tooltip';
+import Chip from '@mui/material/Chip';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useEffect, useState } from 'react';
-import { Button, Card, Checkbox, Chip, TablePagination, Toolbar, Tooltip } from '@mui/material';
+import { Button, Card, Checkbox, TablePagination, Toolbar } from '@mui/material';
 import { FattureObj, GridCollapsible } from '../../../types/typeFatturazione';
 import RestoreIcon from '@mui/icons-material/Restore';
 import BlockIcon from '@mui/icons-material/Block';
@@ -160,6 +162,8 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
         tooltipObj = {label:'Inviata',title:'La fattura è stata inviata',color:'success'};
     }else if(row.inviata === 2){
         tooltipObj = {label:'Elaborazione',title:'La fattura è in elaborazione',color:'warning'};
+    }else if(row.inviata === 3){
+        tooltipObj = {label:'Cancellata',title:'La fattura è stata cancellata',color:'info'};
     }
  
     return(

@@ -351,7 +351,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
                                     <ListItemIcon>
                                         <ReceiptIcon fontSize="inherit" />
                                     </ListItemIcon>
-                                    <ListItemText primary="Fatturazione" />
+                                    <ListItemText primary="Documenti emessi" />
                                 </ListItemButton>
                               
                                 <ListItemButton selected={selectedIndex === 7} onClick={() => handleListItemClickAccertamenti()}>
