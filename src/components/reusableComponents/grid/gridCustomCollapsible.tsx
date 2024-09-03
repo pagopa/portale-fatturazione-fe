@@ -7,29 +7,36 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
+import Tooltip from '@mui/material/Tooltip';
+import Chip from '@mui/material/Chip';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useEffect, useState } from 'react';
-import { Card, TablePagination } from '@mui/material';
-import { GridCollapsible } from '../../../types/typeFatturazione';
+import { Button, Card, Checkbox, TablePagination, Toolbar } from '@mui/material';
+import { FattureObj, GridCollapsible } from '../../../types/typeFatturazione';
+import RestoreIcon from '@mui/icons-material/Restore';
+import BlockIcon from '@mui/icons-material/Block';
 
 
-const CollapsibleTable: React.FC<GridCollapsible> = ({data, showedData, setShowedData, headerNames}) => {
+
+const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,setOpenConfermaModal,setOpenResetFilterModal,monthFilterIsEqualMonthDownload,selected, setSelected}) => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [count, setCount] = useState(0);
-    
-    
+    const [showedData, setShowedData] = useState<FattureObj[]>([]);
+   
+    console.log({selected});
     
     useEffect(()=>{
         setCount(data.length);
         setPage(0);
         setRowsPerPage(10);
         setShowedData(data.slice(0, 10));
-        // setOpen(false);
+        setSelected([]);
+       
     },[data]);
     
     useEffect(()=>{
@@ -41,15 +48,44 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, showedData, setShowe
         }
         setShowedData(data.slice(from, rowsPerPage + from));
     },[page,rowsPerPage]);
+
+
+
+
+
+
     return (
         <>
+            {selected.length > 0 && <EnhancedTableToolbar 
+                numSelected={selected.length} 
+                stato={stato} 
+                selected={selected}
+                setOpenConfermaModal={setOpenConfermaModal}
+                setOpenResetFilterModal={setOpenResetFilterModal}
+                monthFilterIsEqualMonthDownload={monthFilterIsEqualMonthDownload}></EnhancedTableToolbar>}
+            
             <div style={{overflowX:'auto'}}>
+                
                 <Card sx={{width: '2000px'}}  >
-        
+                    
                     <TableContainer component={Paper}>
+                        
                         <Table aria-label="collapsible table">
+                           
                             <TableHead sx={{backgroundColor:'#f2f2f2'}}>
                                 <TableRow>
+                                    <TableCell padding="checkbox">
+                                        {/*
+                                        <Checkbox
+                                            color="primary"
+                                            indeterminate={false}
+                                            checked={false}
+                                            onChange={()=> console.log('ciao')}
+                                            inputProps={{
+                                                'aria-label': 'select all desserts',
+                                            }}
+                                        />*/}
+                                    </TableCell>
                                     {headerNames.map((el)=>{
                                         return(
                                             <TableCell align={el.align} key={el.id}>{el.name}</TableCell>
@@ -63,7 +99,12 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, showedData, setShowe
                                 showedData.map((row) => {
             
                                     return(
-                                        <Row key={row.id} row={row}></Row>
+                                        <Row key={row.idfattura} 
+                                            row={row}
+                                            setSelected={setSelected}
+                                            selected={selected}
+                                            setOpenResetFilterModal={setOpenResetFilterModal}
+                                            monthFilterIsEqualMonthDownload={monthFilterIsEqualMonthDownload} ></Row>
                                     ); })}
                         </Table>
                     </TableContainer>
@@ -84,13 +125,65 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, showedData, setShowe
 export default CollapsibleTable;
     
     
-const Row = ({row}) => {
+const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqualMonthDownload}) => {
     const [open, setOpen] = useState(false);
+   
+  
+    const handleClick = ( id: number) => {
+
+        if(monthFilterIsEqualMonthDownload){
+            //logica per id
+            const selectedIndex = selected.indexOf(id);
+            let newSelected: readonly number[] = [];
+        
+            if (selectedIndex === -1) {
+                newSelected = newSelected.concat(selected, id);
+            } else if (selectedIndex === 0) {
+                newSelected = newSelected.concat(selected.slice(1));
+            } else if (selectedIndex === selected.length - 1) {
+                newSelected = newSelected.concat(selected.slice(0, -1));
+            } else if (selectedIndex > 0) {
+                newSelected = newSelected.concat(
+                    selected.slice(0, selectedIndex),
+                    selected.slice(selectedIndex + 1),
+                );
+            }
+            setSelected(newSelected);
+        }else{
+            setOpenResetFilterModal(true);
+        }
+        
+    };
+
+    const isSelected = (id: number) => selected.indexOf(id) !== -1;
+
+    let tooltipObj:any = {label:'Non Inviata',title:'La fattura non è stata inviata'};
+    if(row.inviata === 1){
+        tooltipObj = {label:'Inviata',title:'La fattura è stata inviata',color:'success'};
+    }else if(row.inviata === 2){
+        tooltipObj = {label:'Elaborazione',title:'La fattura è in elaborazione',color:'warning'};
+    }else if(row.inviata === 3){
+        tooltipObj = {label:'Cancellata',title:'La fattura è stata cancellata',color:'info'};
+    }
  
     return(
         
         <TableBody sx={{minHeight:"100px"}}>
             <TableRow  sx={{ '& > *': { borderBottom: 'unset' } }}>
+                <TableCell padding="checkbox">
+                    <Checkbox
+                        color="primary"
+                        indeterminate={false}
+                        checked={isSelected(row.idfattura)}
+                        disabled={row.elaborazione === 2}
+                        onChange={()=>{
+                            handleClick(row.idfattura);
+                        }}
+                        inputProps={{
+                            'aria-label': 'select all desserts',
+                        }}
+                    />
+                </TableCell>
                 <TableCell>
                     <IconButton
                         sx={{color:'#227AFC'}}
@@ -102,14 +195,22 @@ const Row = ({row}) => {
                     </IconButton>
                 </TableCell>
                 <TableCell sx={{color:'#0D6EFD',fontWeight: 'bold'}} >{row.ragionesociale}</TableCell>
+                <TableCell align='center'>
+                    <Tooltip
+                        placement="bottom"
+                        title={tooltipObj.title}
+                    >
+                        <Chip label={tooltipObj.label} color={tooltipObj.color} />
+                    </Tooltip>
+                </TableCell>
+                <TableCell align='center'>{row.tipologiaFattura}</TableCell>
+                <TableCell align='center'>{row.identificativo}</TableCell>
                 <TableCell align='center' >{row.tipocontratto}</TableCell>
                 <TableCell align='right' >{row.totale.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</TableCell>
                 <TableCell align='right' >{row.numero}</TableCell>
                 <TableCell align='center' >{row.tipoDocumento}</TableCell>
                 <TableCell align='center' >{row.divisa}</TableCell>
                 <TableCell align='center' >{row.metodoPagamento}</TableCell>
-                <TableCell align='center'>{row.identificativo}</TableCell>
-                <TableCell align='center'>{row.tipologiaFattura}</TableCell>
                 <TableCell align='center'>{row?.split?.toString()|| ''}</TableCell>
                 <TableCell align='center'>{row.dataFattura !== null ? new Date(row.dataFattura).toLocaleString().split(',')[0] : ''}</TableCell>
             </TableRow>
@@ -129,7 +230,7 @@ const Row = ({row}) => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
-                                    {row.posizioni.map((obj) => (
+                                    {row?.posizioni?.map((obj) => (
                                         <TableRow key={Math.random()}>
                                             <TableCell>
                                                 {obj.numerolinea}
@@ -182,6 +283,56 @@ const TablePaginationDemo = ({setPage, page, rowsPerPage, setRowsPerPage, count}
             rowsPerPage={rowsPerPage}
             onRowsPerPageChange={handleChangeRowsPerPage}
         />
+    );
+};
+
+interface EnhancedTableToolbarProps {
+    numSelected: number,
+    stato:boolean,
+    setOpenConfermaModal:any,
+    selected:any,
+    setOpenResetFilterModal:any,
+    monthFilterIsEqualMonthDownload:boolean
+}
+  
+
+const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) =>{
+    const { numSelected, stato,setOpenConfermaModal,selected,setOpenResetFilterModal,monthFilterIsEqualMonthDownload } = props;
+    const color = stato ? "#F2FAF2" : "#F2FAFE";
+    const icon = stato ?  <RestoreIcon sx={{marginLeft:'20px'}}></RestoreIcon> : <BlockIcon sx={{marginLeft:'20px'}}></BlockIcon>;
+    const stringIcon = stato ? 'Ripristina' : 'Sospendi';
+  
+    return (
+        <Toolbar
+            sx={{bgcolor:color}}
+        >
+            <Typography
+                sx={{ flex: '1 1 100%' }}
+                color="inherit"
+                variant="subtitle1"
+                component="div"
+            >
+                {numSelected} Selezionate
+            </Typography>
+            <Tooltip title={stringIcon}>
+                
+                <Button variant="outlined" onClick={()=>{
+                    if(monthFilterIsEqualMonthDownload){
+                        setOpenConfermaModal(true);
+                    }else{
+                        setOpenResetFilterModal(true);
+                    }
+                   
+                }}>
+                    {stringIcon} {icon}
+                </Button>
+               
+               
+            </Tooltip>
+            
+            
+         
+        </Toolbar>
     );
 };
     

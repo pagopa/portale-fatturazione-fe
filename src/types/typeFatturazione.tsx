@@ -5,7 +5,8 @@ export interface BodyFatturazione{
     anno:number,
     mese:number,
     tipologiaFattura:string[],
-    idEnti:string[]
+    idEnti:string[],
+    cancellata:boolean
 }
 
 export interface FatturazioneProps{
@@ -48,18 +49,61 @@ export interface FattureObj {
     causale: string,
     split: boolean,
     sollecito: string,
-    posizioni:Posizioni[]
+    posizioni:Posizioni[],
+    inviata:number,
+    idfattura:number,
+    elaborazione:number
 }
 
 export interface GridCollapsible{
     data:FattureObj[],
-    showedData:FattureObj[],
-    setShowedData:any,
-    headerNames:HeaderCollapsible[]
+    headerNames:HeaderCollapsible[],
+    stato:boolean,
+    setOpenConfermaModal:any,
+    setOpenResetFilterModal:any,
+    monthFilterIsEqualMonthDownload:boolean,
+    selected:number[]
+    setSelected:any
 }
+
 
 export type HeaderCollapsible = {
     name:string,
     align:"center" | "inherit" | "left" | "right" | "justify" | undefined,
     id:number
+}
+
+export interface ModalSapProps {
+    open:{show:boolean,who:number},
+    setOpen:any,
+    responseTipologiaSap:TipologiaSap[],
+    mese:number,
+    anno:number,
+    dispatchMainState:any,
+    getListaFatture:any,
+    bodyFatturazioneDownload:BodyFatturazione,
+}
+
+export type TipologiaSap = {
+    tipologiaFattura: string,
+    numeroFatture: number,
+    annoRiferimento:number,
+    meseRiferimento:number,
+    azione:number
+}
+
+export interface ModalConfermaRipristinaProps{
+    setOpen:any,
+    open:boolean,
+    onButtonComferma:any,
+    filterInfo:BodyFatturazione,
+    fattureSelectedArr:any
+}
+
+export interface ModalResetFilterProps {
+    setOpen:any,
+    open:boolean,
+    filterInfo:BodyFatturazione,
+    getListaFatture:any,
+    filterNotExecuted:BodyFatturazione
 }

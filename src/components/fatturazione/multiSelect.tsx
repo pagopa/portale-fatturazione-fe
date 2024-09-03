@@ -38,7 +38,7 @@ const MultiSelectFatturazione : React.FC<MultiSelectFatturazioneProps> =  ({setB
                     {option}
                 </li>
             )}
-            style={{ width: '80%' }}
+            style={{ width: '80%',height:'59px' }}
             renderInput={(params) => {
                 
                 return <TextField {...params}

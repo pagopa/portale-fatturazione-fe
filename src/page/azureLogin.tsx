@@ -7,7 +7,7 @@ import { AzureLoginProps } from "../types/typesGeneral";
 // l'utente PagoPa potrà riaccedere tramite questa pagina
 
 const AzureLogin : React.FC<AzureLoginProps> = ({ dispatchMainState}) =>{
-
+    console.log('ciao');
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
             type:'MODIFY_MAIN_STATE',
@@ -21,21 +21,6 @@ const AzureLogin : React.FC<AzureLoginProps> = ({ dispatchMainState}) =>{
 
     localStorage.clear();
 
-    /*
-    const getProfiloFromLocalStorage = localStorage.getItem('profilo') || '{}';
-
-    const checkIfUserIsAutenticated = JSON.parse(getProfiloFromLocalStorage).auth;
-   
-    useEffect(()=>{
-        if(checkIfUserIsAutenticated === 'PAGOPA'){
-            navigate(PathPf.LISTA_DATI_FATTURAZIONE);
-        }
-        if(checkIfUserIsAutenticated === 'SELFCARE'){
-            localStorage.removeItem('profilo');
-            localStorage.removeItem('token');
-        }
-    },[checkIfUserIsAutenticated]);
-  */
     return (
       
         <div className='container d-flex align-items-center justify-content-center ' style={{height: '400px'}}>

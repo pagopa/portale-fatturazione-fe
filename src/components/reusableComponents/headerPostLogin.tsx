@@ -4,8 +4,7 @@ import { redirect } from '../../api/api';
 import { useNavigate } from 'react-router';
 import {useMsal } from '@azure/msal-react';
 import { loginRequest } from '../../authConfig';
-import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
-import Badge from '@mui/material/Badge';
+
 
 type JwtUser = {
     id: string;
@@ -59,7 +58,6 @@ const HeaderPostLogin = ({mainState}) => {
         instance.loginRedirect(loginRequest).catch((error) => console.log(error));
     };
 
-    const navigate = useNavigate();
 
     const getProfiloFromLocalStorage = localStorage.getItem('profilo') || '{}';
 
@@ -71,6 +69,9 @@ const HeaderPostLogin = ({mainState}) => {
                                  
     
     const statusUser = mainState.authenticated && user;
+
+
+ 
     return (
 
         <div className="div_header">
@@ -93,6 +94,9 @@ const HeaderPostLogin = ({mainState}) => {
                    
                 />
             }
+           
+               
+            
         </div>
     );
 };

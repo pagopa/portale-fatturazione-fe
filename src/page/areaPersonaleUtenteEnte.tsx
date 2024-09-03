@@ -40,8 +40,6 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
             value:valueObj
         });
     };
-
-   
   
     const [openModalLoading, setOpenModalLoading] = useState(false);
     const [loadingData, setLoadingData] = useState(false);
@@ -105,7 +103,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
    
     // get dati fatturazione SELFCARE
     const getDatiFat = async () =>{
-    
+       
         setLoadingData(true);
         await getDatiFatturazione(token,profilo.nonce).then((res:SuccesResponseGetDatiFatturazione ) =>{   
             handleModifyMainState({...statusApp, ...{
@@ -120,7 +118,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         }).catch(err =>{
 
             if(err?.response?.status === 404){
-       
+           
                 setInfoToStatusApplicationLoacalStorage(statusApp,{datiFatturazione:false});
                 handleModifyMainState({...statusApp, ...{
                     datiFatturazione:false,

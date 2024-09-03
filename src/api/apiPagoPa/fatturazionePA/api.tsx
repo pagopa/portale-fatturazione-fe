@@ -13,7 +13,7 @@ export const getFatturazionePagoPa = async (token:string, nonce:string, body: Bo
     return response;
 };
 
-export const getTipologieFaPagoPa = async (token:string, nonce:string, body: {anno:number,mese:number}) => {
+export const getTipologieFaPagoPa = async (token:string, nonce:string, body: {anno:number,mese:number,cancellata:boolean}) => {
     const response =  await axios.post(`${url}/api/fatture/tipologia?nonce=${nonce}`,
         body,
         { headers: {
@@ -63,3 +63,45 @@ export const fatturePrenotazioneReportPagoPa = async (token:string, nonce:string
     );
     return response;
 };
+
+export const fattureCancellazioneRipristinoPagoPa = async (token:string, nonce:string, body:{idFatture:number[],cancellazione:boolean}) => {
+    const response =  await axios.post(`${url}/api/fatture/cancellazione?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }}
+    );
+    return response;
+};
+
+
+export const fattureTipologiaSapPa = async (token:string, nonce:string, body:{anno:number,mese:number}) => {
+    const response =  await axios.post(`${url}/api/fatture/invio/sap?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }}
+    );
+    return response;
+};
+
+export const fattureInvioSapPa = async (token:string, nonce:string, body:{annoRiferimento: number,meseRiferimento: number,tipologiaFattura: string}) => {
+    const response =  await axios.post(`${url}/api/fatture/invio/pipeline?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }}
+    );
+    return response;
+};
+
+export const fattureResetSapPa = async (token:string, nonce:string, body:{annoRiferimento: number,meseRiferimento: number,tipologiaFattura: string}) => {
+    const response =  await axios.post(`${url}/api/fatture/resetta/pipeline?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }}
+    );
+    return response;
+};
+

@@ -137,7 +137,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
     },[]);
 
     useEffect(()=>{
-     
+   
+    
         if(token === undefined){
             
             window.location.href = redirect;

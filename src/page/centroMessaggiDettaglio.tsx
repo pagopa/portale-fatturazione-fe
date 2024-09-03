@@ -9,11 +9,11 @@ import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import SkeletonRelPdf from '../components/rel/skeletonRelPdf';
 import { MainState } from '../types/typesGeneral';
 import { useNavigate, useParams } from 'react-router';
-import { downloadMessaggioPagoPa, readMessaggioPagoPa } from '../api/apiPagoPa/centroMessaggi/api';
+import { readMessaggioPagoPa } from '../api/apiPagoPa/centroMessaggi/api';
 import { saveAs } from "file-saver";
 import { manageErrorDownload } from "../api/api";
 import { getProfilo, getToken } from '../reusableFunction/actionLocalStorage';
-import { Messaggi } from './centroMessaggi';
+import { Messaggi } from './messaggi';
 
 
 interface DettaglioMessaggioProps{
@@ -61,7 +61,7 @@ const DettaglioMessaggio : React.FC<DettaglioMessaggioProps> = ({mainState,dispa
 
 
     const [showDownloading,setShowDownloading] = useState(false);
-
+    /*
     const downloadMessaggio = async (idMessaggio) => {
         setShowDownloading(true);
         await downloadMessaggioPagoPa(token,profilo.nonce,{idMessaggio}).then((response)=>{
@@ -80,7 +80,7 @@ const DettaglioMessaggio : React.FC<DettaglioMessaggioProps> = ({mainState,dispa
         }));
     };
 
-
+*/
     const readMessage = async() => {
         await readMessaggioPagoPa(token,profilo.nonce,{idMessaggio:Number(id)}).then((res)=>{
 
@@ -119,7 +119,7 @@ const DettaglioMessaggio : React.FC<DettaglioMessaggioProps> = ({mainState,dispa
                 </div>
             </div>
             <div className='d-flex justify-content-end mt-4 me-5'>
-                <Button  onClick={()=>downloadMessaggio(id)} >Scarica report <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+                <Button  onClick={()=>console.log('ciao')} >Scarica report <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
             </div>
             <div className="bg-white mb-5 me-5 ms-5">
                 <div className="pt-5 pb-5 ">

@@ -62,8 +62,6 @@ export const managePresaInCarico = (res:string,dispatchMainState) =>{
             value:valueObj
         });
     };
-  
-   
     handleModifyMainState({apiError:res});
     
 };
