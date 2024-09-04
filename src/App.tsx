@@ -168,8 +168,8 @@ const App = ({ instance }) => {
 
                                     <Route path={'/messaggi'} element={<Messaggi mainState={mainState} dispatchMainState={dispatchMainState}/>} />
 
-                                    {/*<Route path={'/accertamenti'} element={<Accertamenti  dispatchMainState={dispatchMainState}/>} />
-
+                                    <Route path={'/accertamenti'} element={<Accertamenti  dispatchMainState={dispatchMainState}/>} />
+                                    {/*
                                    <Route path={'/dettagliomessaggio/:id'} element={<DettaglioMessaggio mainState={mainState} dispatchMainState={dispatchMainState}/>} />*/}
 
                                     <Route path="*" element={<Navigate to={PathPf.LISTA_DATI_FATTURAZIONE} replace />} />
