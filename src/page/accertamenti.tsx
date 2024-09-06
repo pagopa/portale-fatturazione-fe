@@ -14,6 +14,7 @@ import { manageError, managePresaInCarico } from "../api/api";
 import { Accertamento, BodyAccertamenti } from "../types/typeAccertamenti";
 import { mesiGrid } from "../reusableFunction/reusableArrayObj";
 import { saveAs } from "file-saver";
+import ModalMatriceAccertamenti from "../components/accertamenti/modalMatrice";
 
 
 interface AccertamentiProps {
@@ -33,6 +34,7 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
     const [infoPageAccertamenti , setInfoPageAccertamenti] = useState({ page: 0, pageSize: 100 });
     const [showLoadingGrid,setShowLoadingGrid] = useState(false);
     const [showDownloading,setShowDownloading] = useState(false);
+    const [showPopUpMatrice,setShowPopUpMatrice] = useState(false);
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
     const [textValue, setTextValue] = useState('');
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
@@ -225,6 +227,7 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
                             }
                         </div>
                        
+                       
                         
                     </div>
                 </div>
@@ -233,6 +236,9 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
             
             
             <div className="mt-5 mb-5" style={{ width: '100%'}}>
+                <div className="d-flex justify-content-end">
+                    <Button onClick={()=> console.log('matrice')} variant="outlined">Matrice fornitori</Button>
+                </div>
                 <DataGrid sx={{
                     height:'400px',
                     '& .MuiDataGrid-virtualScroller': {
@@ -260,6 +266,10 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
                     setOpen={setShowDownloading}
                     sentence={'Downloading...'} >
                 </ModalLoading>
+                <ModalMatriceAccertamenti 
+                    open={showPopUpMatrice} 
+                    setOpen={setShowPopUpMatrice}
+                    sentence={'Downloading...'} ></ModalMatriceAccertamenti>
             </div>
             
         </div>
