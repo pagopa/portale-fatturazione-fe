@@ -76,11 +76,13 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
         }
     },[]);
 
+    /*
     useEffect(()=>{
         if(file !== null){
             uploadPdf();
         }
     },[file]);
+    */
 
     useEffect(()=>{
        
@@ -205,7 +207,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
         }
     };
 
-    const uploadPdf = async () =>{
+    const uploadPdf = async (file) =>{
         setLoadingUpload(true);
         setErrorUpload(false);
        
@@ -215,6 +217,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
             setLoadingUpload(false);
             if(res.status === 200){
                 setOpenModalConfirmUploadPdf(true);
+                
                 getDateLastDownloadPdfFirmato({
                     anno: Number(rel.anno),
                     mese: Number(rel.mese),
@@ -223,9 +226,11 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                     idEnte:rel.idEnte
                 });
             }
-        }).catch(()=>{
+        }).catch((err)=>{
             setLoadingUpload(false);
             setErrorUpload(true);
+            manageError(err,dispatchMainState);
+            setFile(null);
         });
         
     };
@@ -340,7 +345,7 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
                             <Button sx={{width:'274px'}} onClick={() => downloadPdfRel()}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
                         </div>
                         <div id='singleInputRel' style={{minWidth: '300px', height:'40px'}}>
-                            <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".pdf"]} onFileSelected={(e)=> setFile(e)} onFileRemoved={() => setFile(null)} dropzoneLabel={(rel?.caricata === 1 ||rel?.caricata === 2) ? 'Reinserisci nuovo PDF Reg. Es. firmato':"Inserisci PDF Reg. Es. firmato"} rejectedLabel="Tipo file non supportato" ></SingleFileInput>
+                            <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".pdf"]} onFileSelected={(e)=> uploadPdf(e) } onFileRemoved={() => setFile(null)} dropzoneLabel={(rel?.caricata === 1 ||rel?.caricata === 2) ? 'Reinserisci nuovo PDF Reg. Es. firmato':"Inserisci PDF Reg. Es. firmato"} rejectedLabel="Tipo file non supportato" ></SingleFileInput>
                         </div> 
                     </>
                 }

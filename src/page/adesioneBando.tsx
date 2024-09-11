@@ -33,12 +33,13 @@ const AdesioneBando : React.FC<AdesioneBandoProps> = ({mainState, dispatchMainSt
         getListaAsseverazione();
         
     },[]);
-
+    console.log({file});
+    /*
     useEffect(()=>{
         if(file !== null){
             uploadAdesioneDoc();
         }
-    },[file]);
+    },[file]);*/
 
     const getListaAsseverazione = async ( ) =>{
         setShowLoadingGrid(true);
@@ -82,18 +83,27 @@ const AdesioneBando : React.FC<AdesioneBandoProps> = ({mainState, dispatchMainSt
             });
     };
 
-    const uploadAdesioneDoc = async () => {
+    const uploadAdesioneDoc = async (file) => {
+        console.log('ciao');
         setShowLoadingGrid(true);
+        setErrorUpload(false);
+        setLoadingUpload(true);
+        
         await uploadExelAsseverazionePagopa(token, profilo.nonce,{file:file}).then((res)=>{
             setShowLoadingGrid(false);
             setOpenModalConfirmUploadDoc(true);
             getListaAsseverazione();
             setFile(null);
+            setLoadingUpload(false);
+        
         })
             .catch((err)=>{
                 setShowLoadingGrid(false);
-                manageError(err,dispatchMainState);
                 setErrorUpload(true);
+                manageError(err,dispatchMainState);
+                setFile(null);
+                setLoadingUpload(false);
+                
             });
     };
 
@@ -143,7 +153,7 @@ const AdesioneBando : React.FC<AdesioneBandoProps> = ({mainState, dispatchMainSt
                         </Button>
                     </div>
                     <div id='singleInputRel' style={{minWidth: '300px', height:'40px'}}>
-                        <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".xlsx"]} onFileSelected={(e)=> setFile(e)} onFileRemoved={() => setFile(null)} dropzoneLabel={"Inserisci il File di Adesione al bando"} rejectedLabel="Tipo file non supportato" ></SingleFileInput>
+                        <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".xlsx"]} onFileSelected={(e)=> uploadAdesioneDoc(e)} onFileRemoved={() => setFile(null)}  dropzoneLabel={"Inserisci il File di Adesione al bando"} rejectedLabel="Tipo file non supportato" ></SingleFileInput>
                     </div> 
                 </div>
                 
