@@ -3,22 +3,43 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { ModalProps } from 'react-bootstrap';
+import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { useId, useRef } from 'react';
+import { getMatriceAccertamentiPagoPa } from '../../api/apiPagoPa/accertamentiPA/api';
+import { getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
+import { MatriceArray } from '../../page/accertamenti';
 
 const style = {
     position: 'absolute' as const,
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: 600,
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
 };
 
-const ModalMatriceAccertamenti : React.FC<ModalProps> = ({setOpen, open, sentence}) => {
+const ModalMatriceAccertamenti = ({setOpen, open, data, value, setValue,downloadDocMatrice}) => {
+ 
+
+    const dataFine = useRef('');
+
    
-    const handleClose = () => setOpen(false);
+    const handleClose = () =>{
+        setOpen(false);
+        setValue('');
+        dataFine.current = '';
+    }; 
+
+    const onButtonScarica = () => {
+
+        const objSelected : MatriceArray = data.find(el => el.dataInizioValidita === value);
+
+        downloadDocMatrice(objSelected.dataInizioValidita,objSelected.dataFineValidita);
+        handleClose();
+    };
+
 
     return (
         <div>
@@ -30,24 +51,58 @@ const ModalMatriceAccertamenti : React.FC<ModalProps> = ({setOpen, open, sentenc
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    <div className='d-flex'>
-                        <Typography id="modal-modal-title" variant="h6" component="h2">
-        Download matrice documenti contabili
-                        </Typography>
-                        
+                    <div className='d-flex justify-content-between'>
+                        <div className='ms-3 mt-auto mb-auto'>
+                          
+                            <Typography  id="modal-modal-title" variant="h6" component="h2">
+                                Scarica matrice recapitisti 
+                            </Typography>
+                          
+                        </div>
+                        <div>
+                            <Button variant="contained"  onClick={()=> handleClose() }> X </Button>
+                        </div>
                     </div>
-                    <div className='d-flex justify-content-center text-center'>
-                        <Typography id="modal-modal-description" variant="body1" sx={{ mt: 2 }}>
-                            ciao mondo
-                        </Typography>
+                    <div className=''>
+                        <div className='mt-5'>
+                            <div className="d-flex justify-content-center">
+                                <FormControl color="primary" focused  sx={{width:'70%'}}>
+                                    <InputLabel id="demo-simple-select-label">Data inizio</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="select_matrice"
+                                        value={value}
+                                        label="Data inizio"
+                                        onChange={(e)=>{ 
+                                            setValue(e.target.value);
+                                            const objSelected = data.find(el => el.dataInizioValidita === e.target.value);
+                                            dataFine.current = new Date(objSelected.dataFineValidita).toLocaleString().split(",")[0];
+                                        }}
+                                    >
+                                        {data.map((el)=>{
+    
+                                            console.log(dataFine);
+                                            return  <MenuItem key={el.dataInizioValidita} value={el.dataInizioValidita}>{new Date(el.dataInizioValidita).toLocaleString().split(",")[0]}</MenuItem>;
+                                        })}
+                                    </Select>
+                                </FormControl>
+                            </div>
+                            <div className='d-flex justify-content-center mt-5'>
+                                {dataFine.current !== '' && <TextField sx={{width:'70%'}} label="Data fine" color="error" focused value={dataFine.current} />}
+                            </div>
+                        </div>
+                       
                     </div>
                    
-                    <div className='container_buttons_modal d-flex justify-content-center mt-3'>
+                    <div className='container_buttons_modal d-flex justify-content-center mt-5'>
                         <Button 
                             sx={{marginRight:'20px'}} 
-                            variant='outlined'
-                            onClick={()=>handleClose()}
-                        >Esci</Button>
+                            disabled={value === ''}
+                            variant="contained"
+                            onClick={()=>{
+                                onButtonScarica();
+                            }}
+                        >Scarica</Button>
                     </div>
                     
                 </Box>

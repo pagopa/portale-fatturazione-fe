@@ -9,32 +9,40 @@ import {FattureObj} from "../types/typeFatturazione";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { DataGrid, GridColDef, GridEventListener, GridRowParams, MuiEvent } from "@mui/x-data-grid";
 import { Params } from "../types/typesGeneral";
-import { getListaAccertamentiPagoPa, getListaAccertamentiPrenotazionePagoPa } from "../api/apiPagoPa/accertamentiPA/api";
+import { getListaAccertamentiPagoPa, getListaAccertamentiPrenotazionePagoPa, getMatriceAccertamenti, getMatriceAccertamentiPagoPa } from "../api/apiPagoPa/accertamentiPA/api";
 import { manageError, managePresaInCarico } from "../api/api";
 import { Accertamento, BodyAccertamenti } from "../types/typeAccertamenti";
 import { mesiGrid } from "../reusableFunction/reusableArrayObj";
-import { saveAs } from "file-saver";
 import ModalMatriceAccertamenti from "../components/accertamenti/modalMatrice";
+import { useId } from 'react';
+import { saveAs } from "file-saver";
 
 
 interface AccertamentiProps {
     dispatchMainState:any
 }
 
-const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
+export interface MatriceArray {
+    dataInizioValidita: string,
+    dataFineValidita: string
+}
 
+const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
+    
     const token =  getToken();
     const profilo =  getProfilo();
     const currentYear = (new Date()).getFullYear();
     const currentMonth = (new Date()).getMonth() + 1;
     const monthNumber = Number(currentMonth);
-
+    
     const [gridData, setGridData] = useState<Accertamento[]>([]);
-
+    
     const [infoPageAccertamenti , setInfoPageAccertamenti] = useState({ page: 0, pageSize: 100 });
     const [showLoadingGrid,setShowLoadingGrid] = useState(false);
     const [showDownloading,setShowDownloading] = useState(false);
     const [showPopUpMatrice,setShowPopUpMatrice] = useState(false);
+    const [dataMatrice, setDataMatrice] = useState<MatriceArray[]>([]);
+    const [valueSelectMatrice,setValueSelectMatrice ] = useState('');
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
     const [textValue, setTextValue] = useState('');
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
@@ -42,21 +50,22 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
     const [tipologie, setTipologie] = useState<string[]>([]);
     const [valueMulitselectTipologie, setValueMultiselectTipologie] = useState<string[]>([]);
     const [showedData, setShowedData] = useState<FattureObj[]>([]);
-  
+    const idElement = useId();
     const [bodyAccertamenti, setBodyAccertamenti] = useState<BodyAccertamenti>({
         anno:currentYear,
         mese:null,
         tipologiaFattura:[],
         idEnti:[]
     });
-
-
+    
+    
     useEffect(()=>{
-
+        
         getListaAccertamenti(new Date().getFullYear(),null);
+        getListaMatrice();
     },[]);
-
-
+    
+    
     const getListaAccertamenti = async(anno,mese) => {
         setShowLoadingGrid(true);
         await getListaAccertamentiPagoPa(token, profilo.nonce, {anno,mese} )
@@ -68,81 +77,104 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
                 setGridData([]);
                 setShowLoadingGrid(false);
                 manageError(err,dispatchMainState);
-         
+            
             }));
-
+        
+    };
+    
+    const getListaMatrice = async () =>{
+        await getMatriceAccertamenti(token, profilo.nonce) 
+            .then((res)=>{
+                setDataMatrice(res.data);
+            })
+            .catch(((err)=>{
+                manageError(err,dispatchMainState);
+            }));
     };
 
+    
+    const downloadDocMatrice = async (inizio,fine) => {
+        setShowDownloading(true);
+        await getMatriceAccertamentiPagoPa(token, profilo.nonce,{dataInizioValidita: inizio,dataFineValidita: fine}).then(response => response.blob()) 
+            .then((res)=>{
+                saveAs(res,`Matrice recapitisti.xlsx` );
+                setShowDownloading(false);
+            })
+            .catch(((err)=>{
+                setShowDownloading(false);
+                manageError(err,dispatchMainState);
+            }));
+    };
 
     const downloadAccertamento = async (id) => {
         await getListaAccertamentiPrenotazionePagoPa(token,profilo.nonce, {idReport:id})
             .then((res)=>{
-             
+            
                 managePresaInCarico('PRESA_IN_CARICO_DOCUMENTO',dispatchMainState);
             })
             .catch(((err)=>{
                 manageError(err,dispatchMainState);
-         
+            
             }));
     };
     /*
     const downloadAccertamento = async (id,mese,anno,descrizione, contentType) => {
-        setShowDownloading(true);
-        if(contentType === "text/csv"){
-          
-            await getDownloadSingleAccertamentoPagoPaCsv(token,profilo.nonce, {idReport:id}).then((res)=>{
-                const blob = new Blob([res.data], { type: 'text/csv' });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.setAttribute('hidden', '');
-                a.setAttribute('href', url);
-                a.setAttribute('download',`Accertamento/${descrizione}/${mese}/${anno}.csv`);
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);   
-                setShowDownloading(false);
-            }).catch(((err)=>{
-                setShowDownloading(false);
-                manageError(err,dispatchMainState);
-            }));
-        }else if(contentType === "application/zip"){
-
-            await getDownloadSingleAccertamentoPagoPaZipExel(token,profilo.nonce, {idReport:id}).then(response => response.blob())
-                .then((res)=>{
-                 
-                    saveAs(res,`Accertamento/${descrizione}/${mese}/${anno}.zip`);
-                    setShowDownloading(false);
-                }).catch(((err)=>{
-                    setShowDownloading(false);
-                    manageError(err,dispatchMainState);
-                }));
-        }else if(contentType ==="application/vnd.ms-excel"){
-            await getDownloadSingleAccertamentoPagoPaZipExel(token,profilo.nonce, {idReport:id}).then(response => response.blob()).then((res)=>{
-                saveAs( res,`Accertamento/${descrizione}/${mese}/${anno}.xlsx` );
-                setShowDownloading(false);
-            }).catch((err)=>{
-                manageError(err,dispatchMainState);
-                setShowDownloading(false);
-            }); 
-        }
+    setShowDownloading(true);
+    if(contentType === "text/csv"){
+    
+    await getDownloadSingleAccertamentoPagoPaCsv(token,profilo.nonce, {idReport:id}).then((res)=>{
+    const blob = new Blob([res.data], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.setAttribute('hidden', '');
+    a.setAttribute('href', url);
+    a.setAttribute('download',`Accertamento/${descrizione}/${mese}/${anno}.csv`);
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);   
+    setShowDownloading(false);
+    }).catch(((err)=>{
+    setShowDownloading(false);
+    manageError(err,dispatchMainState);
+    }));
+    }else if(contentType === "application/zip"){
+    
+    await getDownloadSingleAccertamentoPagoPaZipExel(token,profilo.nonce, {idReport:id}).then(response => response.blob())
+    .then((res)=>{
+    
+    saveAs(res,`Accertamento/${descrizione}/${mese}/${anno}.zip`);
+    setShowDownloading(false);
+    }).catch(((err)=>{
+    setShowDownloading(false);
+    manageError(err,dispatchMainState);
+    }));
+    }else if(contentType ==="application/vnd.ms-excel"){
+    await getDownloadSingleAccertamentoPagoPaZipExel(token,profilo.nonce, {idReport:id}).then(response => response.blob()).then((res)=>{
+    saveAs( res,`Accertamento/${descrizione}/${mese}/${anno}.xlsx` );
+    setShowDownloading(false);
+    }).catch((err)=>{
+    manageError(err,dispatchMainState);
+    setShowDownloading(false);
+    }); 
+    }
     
     };
     */
-
+    
     let columsSelectedGrid = '';
     const handleOnCellClick = (params:Params) =>{
         columsSelectedGrid  = params.field;
     };
-
+    
     const handleEvent: GridEventListener<'rowClick'> = (
         params:GridRowParams,
         event: MuiEvent<React.MouseEvent<HTMLElement>>,
     ) => {
         event.preventDefault();
         // l'evento verrà eseguito solo se l'utente farà il clik sul 
-     
+        
     };
-
+    
     const columns: GridColDef[] = [
         { field: 'descrizione', headerName: 'Tipologia Accertamento', width: 400 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.descrizione}</a>},
         { field: 'prodotto', headerName: 'Prodotto', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
@@ -159,10 +191,10 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
         } },
         {field: 'action', headerName: '',sortable: false,width:70,headerAlign: 'left',disableColumnMenu :true,renderCell: ((param:any) => ( <DownloadIcon sx={{marginLeft:'10px',color: '#1976D2', cursor: 'pointer'}} onClick={()=> downloadAccertamento(param.row.idReport)}></DownloadIcon>)),}
     ];
-
-
-  
-
+    
+    
+    
+    
     return (
         <div className="mx-5 mb-5">
             <div className="marginTop24 ">
@@ -177,26 +209,26 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
                         <SelectMese values={bodyAccertamenti} setValue={setBodyAccertamenti}></SelectMese>
                     </div>
                     {/* 
-                    <div  className="col-3">
-                        <MultiSelectBase
-                            setBody={setBodyFatturazione}
-                            list={tipologie}
-                            value={valueMulitselectTipologie}
-                            setValue={setValueMultiselectTipologie}
-                            label={'Tipologia Fattura'}
-                            placeholder={"Tipologia Fattura"}
-                        ></MultiSelectBase>
-                    </div>
-                    <div  className="col-3">
-                        <MultiselectCheckbox 
-                            setBodyGetLista={setBodyFatturazione}
-                            dataSelect={dataSelect}
-                            setTextValue={setTextValue}
-                            valueAutocomplete={valueAutocomplete}
-                            setValueAutocomplete={setValueAutocomplete}
-                        ></MultiselectCheckbox>
-                    </div>
-                    */}
+            <div  className="col-3">
+            <MultiSelectBase
+            setBody={setBodyFatturazione}
+            list={tipologie}
+            value={valueMulitselectTipologie}
+            setValue={setValueMultiselectTipologie}
+            label={'Tipologia Fattura'}
+            placeholder={"Tipologia Fattura"}
+            ></MultiSelectBase>
+            </div>
+            <div  className="col-3">
+            <MultiselectCheckbox 
+            setBodyGetLista={setBodyFatturazione}
+            dataSelect={dataSelect}
+            setTextValue={setTextValue}
+            valueAutocomplete={valueAutocomplete}
+            setValueAutocomplete={setValueAutocomplete}
+            ></MultiselectCheckbox>
+            </div>
+            */}
                 </div>
                 <div className=" mt-5">
                     <div className="row">
@@ -222,22 +254,22 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
                                         });
                                     } }
                                     sx={{marginLeft:'24px'}} >
-                              Annulla filtri
+                Annulla filtri
                                 </Button>
                             }
                         </div>
-                       
-                       
-                        
+            
+            
+            
                     </div>
                 </div>
-                   
+            
             </div>
             
             
             <div className="mt-5 mb-5" style={{ width: '100%'}}>
                 <div className="d-flex justify-content-end">
-                    <Button onClick={()=> console.log('matrice')} variant="outlined">Matrice fornitori</Button>
+                    <Button onClick={()=> setShowPopUpMatrice(true)} variant="outlined">Matrice fornitori</Button>
                 </div>
                 <DataGrid sx={{
                     height:'400px',
@@ -269,11 +301,15 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
                 <ModalMatriceAccertamenti 
                     open={showPopUpMatrice} 
                     setOpen={setShowPopUpMatrice}
-                    sentence={'Downloading...'} ></ModalMatriceAccertamenti>
+                    data={dataMatrice}
+                    setValue={setValueSelectMatrice}
+                    value={valueSelectMatrice}
+                    downloadDocMatrice={downloadDocMatrice}
+                ></ModalMatriceAccertamenti>
             </div>
-            
+                
         </div>
     );
 };
-
+        
 export default Accertamenti;

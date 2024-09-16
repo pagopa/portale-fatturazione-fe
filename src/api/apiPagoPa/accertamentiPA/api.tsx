@@ -49,12 +49,18 @@ export const getDownloadSingleAccertamentoPagoPaZipExel = async (token:string, n
 */
 
 export const getMatriceAccertamentiPagoPa = async (token:string, nonce:string , body: {dataInizioValidita: string,dataFineValidita: string}) => {
-    const response =  await axios.post(`${url}/api/accertamenti/matrice?nonce=${nonce}`,
-        body,
-        { headers: {
-            Authorization: 'Bearer ' + token
-        }}
-    );
+  
+
+    const response = await fetch(`${url}/api/accertamenti/matrice?nonce=${nonce}`, 
+        {
+            headers: {
+                Authorization: 'Bearer '+token,
+                'Content-type':'application/json'
+            },
+            method: 'POST',
+            body:JSON.stringify(body),
+        });
+   
     return response;
 };
 
