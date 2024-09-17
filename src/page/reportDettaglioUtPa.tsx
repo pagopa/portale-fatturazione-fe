@@ -168,7 +168,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
     },[bodyGetLista]);
 
     useEffect(()=>{
-        if(statusApp.datiFatturazione === false){
+        if(statusApp.datiFatturazione === false || statusApp.datiFatturazioneNotCompleted){
             setOpenModalRedirect(true);
         }
     },[]);

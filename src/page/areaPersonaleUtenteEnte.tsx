@@ -108,12 +108,27 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
     
         setLoadingData(true);
         await getDatiFatturazione(token,profilo.nonce).then((res:SuccesResponseGetDatiFatturazione ) =>{   
-            handleModifyMainState({...statusApp, ...{
-                datiFatturazione:true,
-                statusPageDatiFatturazione:'immutable'
-            }});
+
+            // 17/09/24 questa costante datiFatturazioneNotCompleted è stata aggiunta nella local strorage perche ci sono dei comuni che hanno inserito 
+            // o id Documento o cup , ora ci han chiesto di rendere obbligatori i due campi se almeno uno dei due è stato inserito 
+            // e mostrare il pop up redirect nel caso questa costante sarà uguale a false
+            // console.log(res.data);
+            const datiFatturazioneNotCompleted = (res.data.idDocumento === '' && res.data.cup !== '') || (res.data.idDocumento !== '' && res.data.cup === '');
+            if(datiFatturazioneNotCompleted){
+                handleModifyMainState({...statusApp, ...{
+                    datiFatturazione:true,
+                    statusPageDatiFatturazione:'mutable'
+                }});
+            }else{
+                handleModifyMainState({...statusApp, ...{
+                    datiFatturazione:true,
+                    statusPageDatiFatturazione:'immutable'
+                }});
+            }
+           
             setDatiFatturazione(res.data);
-            setInfoToStatusApplicationLoacalStorage(statusApp,{ datiFatturazione:true});
+          
+            setInfoToStatusApplicationLoacalStorage(statusApp,{ datiFatturazione:true,datiFatturazioneNotCompleted});
             setLoadingData(false);
             //checkCommessa();
 

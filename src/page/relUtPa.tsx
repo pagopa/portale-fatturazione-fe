@@ -109,7 +109,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
     },[textValue]);
 
     useEffect(()=>{
-        if(statusApp.datiFatturazione === false){
+        if(statusApp.datiFatturazione === false || statusApp.datiFatturazioneNotCompleted){
             setOpenModalRedirect(true);
         }
     },[]);
