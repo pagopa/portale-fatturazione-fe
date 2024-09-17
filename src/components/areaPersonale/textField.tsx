@@ -17,14 +17,35 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
         setErrorValidation(false);
     },[mainState]);
     
+    console.log(datiFatturazione,'DATI');
    
+    useEffect(()=>{
+        console.log('ciao pippo ');
+        if(keyObject === 'cup' && datiFatturazione.idDocumento !== '' && datiFatturazione.cup === ''){
+            console.log('dentro');
+            setErrorValidation(true);
+        }else if(keyObject === 'cup' && datiFatturazione.idDocumento === '' && datiFatturazione.cup === ''){
+            setErrorValidation(false);
+        }else if(keyObject === 'idDocumento' && datiFatturazione.idDocumento === '' && datiFatturazione.cup !== ''){
+            setErrorValidation(true);
+        }else if(keyObject === 'idDocumento' && datiFatturazione.idDocumento === '' && datiFatturazione.cup === ''){
+            setErrorValidation(false);
+        }
+    },[datiFatturazione]);
 
+   
     const validationTextArea = (max: number, validation:string, input:string|number)=>{
+       
         YupString.max(max, validation)
             .validate(input)
             .then(()=>{
-                setErrorValidation(false);
-                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+                if(datiFatturazione.cup === '' && datiFatturazione.idDocumento !== '' && keyObject === 'cup'){
+                    setErrorValidation(true);
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
+                }else{
+                    setErrorValidation(false);
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+                }
             })
             .catch(() =>{
                 setErrorValidation(true);
@@ -36,12 +57,20 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
             excludeEmptyString: true
         }).validate(input)
             .then(()=>{
-                setErrorValidation(false);
-                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+                if(datiFatturazione.cup === '' && datiFatturazione.idDocumento !== '' && keyObject === 'cup'){
+                    setErrorValidation(true);
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
+                }else{
+                    setErrorValidation(false);
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+                }
+               
             }).catch(() =>{
                 setErrorValidation(true);
                 setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
             } );
+        
+        
     }; 
 
     const validationTextAreaEmail = (element:string)=>{
@@ -61,8 +90,13 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
         YupString.max(max, validation)
             .validate(input)
             .then(()=>{
-                setErrorValidation(false);
-                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+                if(datiFatturazione.cup !== '' && datiFatturazione.idDocumento === ''){
+                    setErrorValidation(true);
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
+                }else{
+                    setErrorValidation(false);
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+                }
             })
             .catch(() =>{
                 setErrorValidation(true);
