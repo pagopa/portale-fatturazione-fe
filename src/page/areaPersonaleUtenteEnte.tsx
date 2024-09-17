@@ -21,28 +21,27 @@ import BasicModal from '../components/reusableComponents/modals/modal';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import {PathPf} from '../types/enum';
 import { getProfilo, getStatusApp, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from '../reusableFunction/actionLocalStorage';
-import { getDatiModuloCommessa } from '../api/apiSelfcare/moduloCommessaSE/api';
 import SuspenseDatiFatturazione from '../components/areaPersonale/skeletonDatiFatturazione';
-
-
-
+        
+        
+        
 const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, dispatchMainState, open, setOpen}) => {
-   
+            
     const token =  getToken();
     const profilo =  getProfilo();
     const statusApp = getStatusApp();
     const navigate = useNavigate();
     const enti = profiliEnti();
-
+            
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
             type:'MODIFY_MAIN_STATE',
             value:valueObj
         });
     };
-
-   
-  
+            
+            
+            
     const [openModalLoading, setOpenModalLoading] = useState(false);
     const [loadingData, setLoadingData] = useState(false);
     const [datiFatturazione, setDatiFatturazione] = useState<DatiFatturazione>({
@@ -62,7 +61,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         map:'',
         id:0
     });
-  
+            
     // state creato per il tasto conferma , abilitato nel caso in cui tutti values sono true
     const [statusBottonConferma, setStatusButtonConferma] = useState<StateEnableConferma>({
         'CUP':false,
@@ -71,41 +70,34 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         'ID Documento':false,
         "Codice Commessa/Convenzione":false,
     });
-
-    // se il nonce è presente viene chiamata la get dati fatturazione
-
+    console.log(statusBottonConferma);
+            
     useEffect(()=>{
-      
         if(enti){
             // se l'utente NON è pagopa
-           
             getDatiFat();
         }else if(profilo.auth === 'PAGOPA'){
             //se l'utente è pagoPa
             getDatiFatPagoPa();
         }
-        
-      
     },[]);
-  
-        
- 
-
+            
+            
     // se non c'è il token viene fatto il redirect al portale di accesso 
     useEffect(()=>{
         if(token === undefined){
             window.location.href = redirect;
         }
         /* se l'utente PagoPA modifa l'url e cerca di accedere al path '/' 
-        senza aver prima selezionato una row della grid lista dati fatturazione viene fatto il redirect automatico a  PathPf.LISTA_DATI_FATTURAZIONE*/
+                senza aver prima selezionato una row della grid lista dati fatturazione viene fatto il redirect automatico a  PathPf.LISTA_DATI_FATTURAZIONE*/
         if(profilo.auth === 'PAGOPA' && !profilo.idEnte){
             window.location.href = PathPf.LISTA_DATI_FATTURAZIONE;
         }
     },[]);
-   
+            
     // get dati fatturazione SELFCARE
     const getDatiFat = async () =>{
-    
+                
         setLoadingData(true);
         await getDatiFatturazione(token,profilo.nonce).then((res:SuccesResponseGetDatiFatturazione ) =>{   
 
@@ -131,11 +123,11 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
             setInfoToStatusApplicationLoacalStorage(statusApp,{ datiFatturazione:true,datiFatturazioneNotCompleted});
             setLoadingData(false);
             //checkCommessa();
-
+                    
         }).catch(err =>{
-
+                    
             if(err?.response?.status === 404){
-       
+                        
                 setInfoToStatusApplicationLoacalStorage(statusApp,{datiFatturazione:false});
                 handleModifyMainState({...statusApp, ...{
                     datiFatturazione:false,
@@ -159,7 +151,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 prodotto:'',
                 map:'',
                 id:0
-        
+                        
             });
             if(err?.response?.status !== 404){
                 manageError(err,dispatchMainState);
@@ -167,8 +159,8 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
             setLoadingData(false);     
         });
     };
-
-   
+            
+            
     // get dati fatturazione PAGOPA
     const getDatiFatPagoPa = async () =>{
         setLoadingData(true);
@@ -200,22 +192,17 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                 prodotto:'',
                 map:'',
                 id:0
-        
+                        
             });
-            
+                    
             if(err?.response?.status !== 404){
                 manageError(err,dispatchMainState);
             }
             setLoadingData(false);
         });
     };
-
-
-    
-
-
-   
-   
+            
+            
     const hendleSubmitDatiFatturazione = async (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) =>{
         e.preventDefault();
         setOpenModalLoading(true);
@@ -224,7 +211,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
             // 1 - ed è un utente PAGOPA
             if(profilo.auth === 'PAGOPA'){
                 const newDatiFatturazione = {...datiFatturazione, ...{idEnte:profilo.idEnte,prodotto:profilo.prodotto}};
-
+                        
                 await modifyDatiFatturazionePagoPa(token,profilo.nonce, newDatiFatturazione ).then(() =>{
                     setOpenModalLoading(false);
                     handleModifyMainState({
@@ -293,12 +280,12 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                     setOpenModalLoading(false);
                     manageError(err,dispatchMainState);
                 });
-
-                
-
+                        
+                        
+                        
             }else{
                 // 2 - ED è UN UTENTE SELFCARE
-
+                        
                 await insertDatiFatturazione(body, token,profilo.nonce).then(() =>{
                     setOpenModalLoading(false);
                     if(statusApp.inserisciModificaCommessa === 'INSERT'){
@@ -309,7 +296,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                             mese:new Date().getMonth()+2,
                             anno:new Date().getFullYear()
                         });
-                    
+                                
                         setInfoToStatusApplicationLoacalStorage(statusApp,{
                             statusPageDatiFatturazione:'immutable',
                             datiFatturazione:true,
@@ -323,7 +310,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                             statusPageDatiFatturazione:'immutable',
                             datiFatturazione:true,
                         });
-                      
+                                
                         setInfoToStatusApplicationLoacalStorage(statusApp,{
                             statusPageDatiFatturazione:'immutable',
                             datiFatturazione:true,
@@ -334,11 +321,11 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                     setOpenModalLoading(false);
                     manageError(err,dispatchMainState);
                 }); 
-                
+                        
             } 
         }   
     };
-
+            
     const onIndietroButtonPagoPa = () =>{
         if(mainState.statusPageDatiFatturazione === 'immutable' &&  profilo.auth === 'PAGOPA'){
             navigate(PathPf.LISTA_DATI_FATTURAZIONE);
@@ -346,32 +333,29 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
             setOpen(prev => ({...prev, ...{visible:true,clickOn:'INDIETRO_BUTTON'}}));
         }
     };
-
+            
     // check su ogni elemento dello state statusBottonConferma
     const enableDisableConferma = Object.values(statusBottonConferma).every(element => element === false);
-   
+            
     const ifAnyTextAreaIsEmpty = (
         datiFatturazione.notaLegale === false 
-       || datiFatturazione.pec === ''
-       || datiFatturazione.contatti.length === 0
+                || datiFatturazione.pec === ''
+                || datiFatturazione.contatti.length === 0
     );
-
+            
     if(loadingData){
         return(
             <SuspenseDatiFatturazione></SuspenseDatiFatturazione>
         );
-   
+                
     }
     return (
-      
+                
         <div >
             <PageTitleNavigation dispatchMainState={dispatchMainState} setOpen={setOpen} mainState={mainState} /> 
             {/* tab 1 e 2 start */}
             <div className='mt-5'>
-               
                 <TabAreaPersonaleUtente mainState={mainState} datiFatturazione={datiFatturazione} setDatiFatturazione={setDatiFatturazione} setStatusButtonConferma={setStatusButtonConferma} />
-        
-                
             </div>
             <div>
                 {mainState.statusPageDatiFatturazione === 'immutable' ? null : (
@@ -382,7 +366,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                             variant="outlined"
                             size="medium"
                         >
-              Indietro
+                    Indietro
                         </Button>
                         <Button
                             variant="contained"
@@ -391,7 +375,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                             onClick={(e) => hendleSubmitDatiFatturazione(e)}
                             disabled={!enableDisableConferma || ifAnyTextAreaIsEmpty}
                         >
-              Salva
+                    Salva
                         </Button>
                     </div>
                 )}
@@ -402,7 +386,8 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         </div>
     );
 };
-
+        
 export default  AreaPersonaleUtenteEnte;
-
-
+        
+        
+        
