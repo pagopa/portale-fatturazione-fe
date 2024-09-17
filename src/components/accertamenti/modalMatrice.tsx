@@ -55,7 +55,7 @@ const ModalMatriceAccertamenti = ({setOpen, open, data, value, setValue,download
                         <div className='ms-3 mt-auto mb-auto'>
                           
                             <Typography  id="modal-modal-title" variant="h6" component="h2">
-                                Scarica matrice recapitisti 
+                                Scarica la matrice recapitisti 
                             </Typography>
                           
                         </div>
