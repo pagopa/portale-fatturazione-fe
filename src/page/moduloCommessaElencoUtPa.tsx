@@ -34,7 +34,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
   
     useEffect(()=>{
         handleModifyMainState(statusApp);
-        if(statusApp.datiFatturazione === false){
+        if(statusApp.datiFatturazione === false || statusApp.datiFatturazioneNotCompleted){
             setOpenModalRedirect(true);
         }
     },[]);
@@ -42,11 +42,8 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
     // nel caso in cui un utente apre un altra tab e accede come un utente diverso le chiamate andranno in errore
     // nel beck è stato implementato un controllo basato sul nonce
     useEffect(()=>{
-        
         getAnniSelect();
         getListaCommessaGrid('');
-        
-        
     },[]);
     
     // se il token non c'è viene fatto il redirect al portale di accesso
