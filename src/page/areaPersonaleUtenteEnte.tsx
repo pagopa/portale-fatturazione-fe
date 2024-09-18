@@ -231,18 +231,22 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                                 statusPageDatiFatturazione:'immutable',
                                 statusPageInserimentoCommessa:'mutable',
                                 mese:new Date().getMonth()+2,
-                                anno:new Date().getFullYear()
+                                anno:new Date().getFullYear(),
                             });
                             setInfoToStatusApplicationLoacalStorage(statusApp,{
                                 statusPageDatiFatturazione:'immutable',
                                 statusPageInserimentoCommessa:'mutable',
                                 mese:new Date().getMonth()+2,
-                                anno:new Date().getFullYear()
+                                anno:new Date().getFullYear(),
+                                datiFatturazioneNotCompleted:false
                             });
                             navigate(PathPf.MODULOCOMMESSA);
                         }else{
                             handleModifyMainState({
                                 statusPageDatiFatturazione:'immutable',
+                            });
+                            setInfoToStatusApplicationLoacalStorage(statusApp,{
+                                datiFatturazioneNotCompleted:false
                             });
                             navigate(PathPf.LISTA_COMMESSE);
                         }
@@ -302,7 +306,8 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                             datiFatturazione:true,
                             statusPageInserimentoCommessa:'mutable',
                             mese:new Date().getMonth()+2,
-                            anno:new Date().getFullYear()
+                            anno:new Date().getFullYear(),
+                            datiFatturazioneNotCompleted:false
                         });
                         navigate(PathPf.MODULOCOMMESSA);
                     }else{
@@ -314,6 +319,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                         setInfoToStatusApplicationLoacalStorage(statusApp,{
                             statusPageDatiFatturazione:'immutable',
                             datiFatturazione:true,
+                            datiFatturazioneNotCompleted:false
                         });
                         navigate(PathPf.LISTA_COMMESSE);
                     }  
@@ -382,7 +388,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
             </div>
             <BasicModal setOpen={setOpen} open={open} dispatchMainState={dispatchMainState} getDatiFat={getDatiFat} getDatiFatPagoPa={getDatiFatPagoPa} mainState={mainState}></BasicModal>
             <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}></ModalLoading>
-            {/*  <BasicAlerts typeAlert={'error'} setVisible={setAlertVisible}  visible={alertVisible}></BasicAlerts>*/}
+            {/*   <BasicAlerts typeAlert={'error'} setVisible={setAlertVisible}  visible={alertVisible}></BasicAlerts>*/}
         </div>
     );
 };

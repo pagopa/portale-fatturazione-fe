@@ -13,25 +13,32 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
     const [errorValidation, setErrorValidation] = useState(false);
 
     // ogni qual volta csul click indietro richaimo i dati di fatturazione e setto tutti gli errori a false
-    useEffect(()=>{
-        setErrorValidation(false);
+    /* useEffect(()=>{
+        if((keyObject === 'cup' && datiFatturazione.cup === '' &&  datiFatturazione.idDocumento !== '') || (keyObject === 'idDocumento' && datiFatturazione.idDocumento === '' &&  datiFatturazione.cup !== '')){
+            return; 
+        }else{
+            setErrorValidation(false);
+        }
+       
     },[mainState]);
-    
-    console.log(datiFatturazione,'DATI');
+*/
    
     useEffect(()=>{
-        console.log('ciao pippo ');
         if(keyObject === 'cup' && datiFatturazione.idDocumento !== '' && datiFatturazione.cup === ''){
             console.log('dentro');
             setErrorValidation(true);
+            setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
         }else if(keyObject === 'cup' && datiFatturazione.idDocumento === '' && datiFatturazione.cup === ''){
             setErrorValidation(false);
+            setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
         }else if(keyObject === 'idDocumento' && datiFatturazione.idDocumento === '' && datiFatturazione.cup !== ''){
             setErrorValidation(true);
+            setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
         }else if(keyObject === 'idDocumento' && datiFatturazione.idDocumento === '' && datiFatturazione.cup === ''){
             setErrorValidation(false);
+            setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
         }
-    },[datiFatturazione]);
+    },[datiFatturazione.cup, datiFatturazione.idDocumento]);
 
    
     const validationTextArea = (max: number, validation:string, input:string|number)=>{
@@ -106,9 +113,9 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
 
     const hendleOnMouseOut = (e: React.SyntheticEvent<EventTarget>) =>{
         e.persist();
-        if(label === 'Mail Pec'){
+        if(keyObject === 'pec'){
             validationTextAreaEmail(value);
-        }else if(label === "ID Documento" || label === "Codice Commessa/Convenzione"){
+        }else if(keyObject ==='idDocumento' || keyObject === 'codCommessa'){
             validationIdDocumento(dataValidation.max,dataValidation.validation ,value);
         }else{
             validationTextArea(dataValidation.max,dataValidation.validation ,value);
@@ -133,6 +140,7 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
             fullWidth={fullWidth}
             disabled={makeTextInputDisable}
             value={value}
+            autoComplete='off'
             error={errorValidation}
             onChange={(e)=>{setDatiFatturazione((prevState: DatiFatturazione) =>{
                 const newValue = {[keyObject]:e.target.value};
