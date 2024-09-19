@@ -334,7 +334,15 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
             </div>
             <div className='d-flex justify-content-start m-5'>
                 {(profilo.auth === 'PAGOPA' && rel.tipologiaFattura !== 'VAR. SEMESTRALE' && rel.tipologiaFattura !== 'VAR. ANNUALE') &&
-                    <Button sx={{width:'274px'}} onClick={() => downloadPdfRel()}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+                  <div>
+                      <div>
+                          <Button sx={{width:'300px'}} onClick={() => downloadPdfRelFirmato()}   variant="contained">Scarica PDF Firmato <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+                      </div>
+                      <div className='text-center mt-2'>
+                          <Typography variant="overline" >{createDateFromString(lastUpdateDocFirmato)}</Typography>
+                      </div>
+                  </div>
+                    // <Button sx={{width:'274px'}} onClick={() => downloadPdfRel()}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
                 }
             </div>
             <div className="d-flex justify-content-between m-5">
