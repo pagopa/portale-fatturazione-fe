@@ -88,9 +88,9 @@ const TabAreaPersonaleUtente: React.FC<TabAreaProps> = ({mainState,datiFatturazi
                         <div>
                             <TextFieldComponent
                                 required={true}
-                                helperText="Inserisci Mail PEC"
-                                label="Mail PEC"
-                                placeholder="Inserisci Mail PEC"
+                                helperText="Inserisci la PEC"
+                                label="PEC"
+                                placeholder="PEC"
                                 fullWidth
                                 value={datiFatturazione.pec}
                                 keyObject='pec'
