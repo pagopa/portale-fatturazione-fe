@@ -68,7 +68,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         'ID Documento':false,
         "Codice Commessa/Convenzione":false,
     });
-    console.log(statusBottonConferma);
+
             
     useEffect(()=>{
         if(enti){
@@ -101,7 +101,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
             // 17/09/24 questa costante datiFatturazioneNotCompleted è stata aggiunta nella local strorage perche ci sono dei comuni che hanno inserito 
             // o id Documento o cup , ora ci han chiesto di rendere obbligatori i due campi se almeno uno dei due è stato inserito 
             // e mostrare il pop up redirect nel caso questa costante sarà uguale a false
-            // console.log(res.data);
+      
             const datiFatturazioneNotCompleted = (res.data.idDocumento === '' && res.data.cup !== '') || (res.data.idDocumento !== '' && res.data.cup === '');
             if(datiFatturazioneNotCompleted){
                 handleModifyMainState({...statusApp, ...{

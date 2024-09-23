@@ -33,13 +33,8 @@ const AdesioneBando : React.FC<AdesioneBandoProps> = ({mainState, dispatchMainSt
         getListaAsseverazione();
         
     },[]);
-    console.log({file});
-    /*
-    useEffect(()=>{
-        if(file !== null){
-            uploadAdesioneDoc();
-        }
-    },[file]);*/
+
+  
 
     const getListaAsseverazione = async ( ) =>{
         setShowLoadingGrid(true);
@@ -84,7 +79,6 @@ const AdesioneBando : React.FC<AdesioneBandoProps> = ({mainState, dispatchMainSt
     };
 
     const uploadAdesioneDoc = async (file) => {
-        console.log('ciao');
         setShowLoadingGrid(true);
         setErrorUpload(false);
         setLoadingUpload(true);

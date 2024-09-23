@@ -28,8 +28,6 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,se
     const [count, setCount] = useState(0);
     const [showedData, setShowedData] = useState<FattureObj[]>([]);
    
-    console.log({selected});
-    
     useEffect(()=>{
         setCount(data.length);
         setPage(0);

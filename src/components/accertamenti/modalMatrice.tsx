@@ -80,8 +80,6 @@ const ModalMatriceAccertamenti = ({setOpen, open, data, value, setValue,download
                                         }}
                                     >
                                         {data.map((el)=>{
-    
-                                            console.log(dataFine);
                                             return  <MenuItem key={el.dataInizioValidita} value={el.dataInizioValidita}>{new Date(el.dataInizioValidita).toLocaleString().split(",")[0]}</MenuItem>;
                                         })}
                                     </Select>

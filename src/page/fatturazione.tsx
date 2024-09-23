@@ -70,9 +70,6 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
         cancellata:false
     });
 
-    console.log(bodyFatturazioneDownload.cancellata);
-
-    
     useEffect(()=>{
       
         getlistaFatturazione(bodyFatturazione);

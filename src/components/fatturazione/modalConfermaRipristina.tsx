@@ -42,7 +42,6 @@ const ModalConfermaRipristina : React.FC<ModalConfermaRipristinaProps> =({setOpe
         arr = fattureSelectedArr();
     }
     
-    console.log(arr,'miao');
     
     return (
         <div>

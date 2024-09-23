@@ -25,7 +25,6 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
    
     useEffect(()=>{
         if(keyObject === 'cup' && datiFatturazione.idDocumento !== '' && datiFatturazione.cup === ''){
-            console.log('dentro');
             setErrorValidation(true);
             setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
         }else if(keyObject === 'cup' && datiFatturazione.idDocumento === '' && datiFatturazione.cup === ''){

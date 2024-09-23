@@ -7,7 +7,7 @@ import { AzureLoginProps } from "../types/typesGeneral";
 // l'utente PagoPa potrà riaccedere tramite questa pagina
 
 const AzureLogin : React.FC<AzureLoginProps> = ({ dispatchMainState}) =>{
-    console.log('ciao');
+
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
             type:'MODIFY_MAIN_STATE',
