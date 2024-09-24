@@ -33,8 +33,6 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
     const token =  getToken();
     const profilo =  getProfilo();
     const currentYear = (new Date()).getFullYear();
-    const currentMonth = (new Date()).getMonth() + 1;
-    const monthNumber = Number(currentMonth);
     
     const [gridData, setGridData] = useState<Accertamento[]>([]);
     
@@ -44,6 +42,7 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
     const [showPopUpMatrice,setShowPopUpMatrice] = useState(false);
     const [dataMatrice, setDataMatrice] = useState<MatriceArray[]>([]);
     const [valueSelectMatrice,setValueSelectMatrice ] = useState('');
+    /*
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
     const [textValue, setTextValue] = useState('');
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
@@ -51,7 +50,7 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
     const [tipologie, setTipologie] = useState<string[]>([]);
     const [valueMulitselectTipologie, setValueMultiselectTipologie] = useState<string[]>([]);
     const [showedData, setShowedData] = useState<FattureObj[]>([]);
-    const idElement = useId();
+    const idElement = useId();*/
     const [bodyAccertamenti, setBodyAccertamenti] = useState<BodyAccertamenti>({
         anno:currentYear,
         mese:null,

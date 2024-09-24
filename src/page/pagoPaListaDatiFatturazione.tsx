@@ -19,7 +19,7 @@ import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeRepo
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
 
 
-const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({mainState, dispatchMainState}) =>{
+const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({dispatchMainState}) =>{
     const token =  getToken();
     const profilo =  getProfilo();
     const navigate = useNavigate();

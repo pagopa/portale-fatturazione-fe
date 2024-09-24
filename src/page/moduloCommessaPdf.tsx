@@ -19,7 +19,7 @@ import { DatiCommessaPdf, ResponseGetPdfPagoPa } from "../types/typeListaModuliC
 import { createDateFromString, replaceDate } from "../reusableFunction/function";
 import SkeletonComPdf from "../components/commessaPdf/skeletonComPdf";
 
-const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({mainState, dispatchMainState}) =>{
+const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({dispatchMainState}) =>{
 
     const token =  getToken();
     const profilo =  getProfilo();

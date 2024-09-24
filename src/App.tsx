@@ -126,7 +126,7 @@ const App = ({ instance }) => {
                     <HeaderPostLogin mainState={mainState} />
 
                     <div >
-                        <HeaderNavComponent  mainState={mainState} dispatchMainState={dispatchMainState}/>
+                        <HeaderNavComponent  mainState={mainState} />
                         
                         <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
                      
@@ -176,7 +176,7 @@ const App = ({ instance }) => {
 
                                     <Route path="/azureLogin" element={<AzureLogin dispatchMainState={dispatchMainState}/>} />
 
-                                    <Route path="/error"  element={<ErrorPage dispatchMainState={ dispatchMainState}  mainState={mainState}/>} />
+                                    <Route path="/error"  element={<ErrorPage />} />
                                 </Routes>
                             </Grid>
                         </Grid>
@@ -196,7 +196,7 @@ const App = ({ instance }) => {
                     <HeaderPostLogin mainState={mainState} />
 
                     <div>
-                        <HeaderNavComponent mainState={mainState} dispatchMainState={dispatchMainState}/>
+                        <HeaderNavComponent mainState={mainState} />
 
                         <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
                      
@@ -234,7 +234,7 @@ const App = ({ instance }) => {
 
                                     <Route path="/azureLogin" element={<AzureLogin dispatchMainState={dispatchMainState}/>} />
 
-                                    <Route path="/error"  element={<ErrorPage dispatchMainState={ dispatchMainState}  mainState={mainState}/>} />
+                                    <Route path="/error"  element={<ErrorPage />} />
                                 </Routes>
 
                             </Grid>
@@ -256,7 +256,7 @@ const App = ({ instance }) => {
                     <HeaderPostLogin mainState={mainState}/>
 
                     <div>
-                        <HeaderNavComponent mainState={mainState} dispatchMainState={dispatchMainState}/>
+                        <HeaderNavComponent mainState={mainState} />
 
                         <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
                  
@@ -282,7 +282,7 @@ const App = ({ instance }) => {
 
                                     <Route path="/azureLogin" element={<AzureLogin dispatchMainState={dispatchMainState}/>} />
 
-                                    <Route path="/error"  element={<ErrorPage dispatchMainState={ dispatchMainState}  mainState={mainState}/>} />
+                                    <Route path="/error"  element={<ErrorPage/>} />
                                 </Routes>
 
                             </Grid>
@@ -303,7 +303,7 @@ const App = ({ instance }) => {
                     <HeaderPostLogin mainState={mainState}/>
 
                     <div>
-                        <HeaderNavComponent mainState={mainState} dispatchMainState={dispatchMainState}/>
+                        <HeaderNavComponent mainState={mainState} />
 
                         <Routes>
                             
@@ -317,7 +317,7 @@ const App = ({ instance }) => {
 
                             <Route path="/azureLogin" element={<AzureLogin dispatchMainState={dispatchMainState}/>} />
 
-                            <Route path="/error"  element={<ErrorPage dispatchMainState={ dispatchMainState}  mainState={mainState}/>} />
+                            <Route path="/error"  element={<ErrorPage/>} />
                         </Routes>
 
                     </div>

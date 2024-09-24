@@ -1,5 +1,5 @@
 import {Box, Button, Chip, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TablePagination, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Dispatch, useEffect, useState } from "react";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
 import { downloadMessaggioPagoPaCsv, downloadMessaggioPagoPaZipExel, getListaMessaggi, readMessaggioPagoPa} from "../api/apiPagoPa/centroMessaggi/api";
@@ -14,6 +14,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { month } from "../reusableFunction/reusableArrayObj";
+import { ActionReducerType } from "../reducer/reducerMainState";
 
 
 export interface Messaggi {
@@ -35,9 +36,33 @@ export interface Messaggi {
     data?:string
 }
 
+export interface Messaggio {
+    idMessaggio:number,
+    idEnte: any,
+    idUtente: string,
+    json: string,
+    anno: number,
+    mese: number,
+    prodotto: string,
+    gruppoRuolo: string,
+    auth: string,
+    stato: string,
+    dataInserimento: string,
+    dataStepCorrente: any,
+    linkDocumento: string,
+    tipologiaDocumento: string,
+    categoriaDocumento: string,
+    lettura: true,
+    hash: string,
+    rhash: string,
+    contentType: string,
+    contentLanguage: string,
+    idReport: number
+}
+
 interface MessaggiProps {
     mainState:MainState,
-    dispatchMainState:any
+    dispatchMainState:Dispatch<ActionReducerType>
 }
 
 interface FilterMessaggi{
@@ -48,7 +73,7 @@ interface FilterMessaggi{
 }
 
 
-const Messaggi : React.FC<MessaggiProps> = ({mainState,dispatchMainState}) => {
+const Messaggi : React.FC<MessaggiProps> = ({dispatchMainState}) => {
 
     const token = getToken();
     const profilo = getProfilo();
@@ -73,7 +98,7 @@ const Messaggi : React.FC<MessaggiProps> = ({mainState,dispatchMainState}) => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [countMessaggi, setCountMessaggi] = useState(0);
-    const [valueAutocomplete, setValueAutocomplete] = useState<string[]>([]);
+    //const [valueAutocomplete, setValueAutocomplete] = useState<string[]>([]);
     const [showDownloading, setShowDownloading] = useState(false);
    
 
@@ -143,7 +168,7 @@ const Messaggi : React.FC<MessaggiProps> = ({mainState,dispatchMainState}) => {
    
 
     const readMessage = async(id) => {
-        await readMessaggioPagoPa(token,profilo.nonce,{idMessaggio:Number(id)}).then((res)=>{
+        await readMessaggioPagoPa(token,profilo.nonce,{idMessaggio:Number(id)}).then(()=>{
             getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra);
         }).catch((err)=>{
             console.log(err);
@@ -319,20 +344,7 @@ const Messaggi : React.FC<MessaggiProps> = ({mainState,dispatchMainState}) => {
                     
                 </div>
             </div>
-            {/* 
-            <div className="marginTop24" style={{display:'flex', justifyContent:'space-between', height:"48px"}}>
-                
-                {
-                    [].length > 0 &&
-                <Button onClick={() => console.log('grid')}
-                    disabled={false}
-                >
-                Download Risultati
-                    <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
-                </Button>
-                }
-            </div>
-            */}
+           
             <div className="mb-5 mt-5">
                 <Box sx={{
                     backgroundColor: "background.paper",
@@ -345,8 +357,8 @@ const Messaggi : React.FC<MessaggiProps> = ({mainState,dispatchMainState}) => {
                     flexDirection: "column"
                 }}>
                     <TimelineNotification >
-                        {gridData.map((item: any, i: number) => {
-
+                        {gridData.map((item: any) => {
+                            console.log(item,'item');
                             let statoMessaggio = '';
                             let colorMessaggio;
                             let disableDownload = false;
@@ -371,7 +383,7 @@ const Messaggi : React.FC<MessaggiProps> = ({mainState,dispatchMainState}) => {
                             return (
                                 <div id={item.lettura ? 'div_timeline_single_messagge_non_lette' :'div_timeline_single_messagge_lette'}>
                                     <TimelineNotificationItem 
-                                        key={item.id}>
+                                        key={item.idMessaggio}>
                                         <TimelineNotificationOppositeContent >
                                             <Typography>
                                                 {getDay(item.dataInserimento)}
@@ -404,12 +416,16 @@ const Messaggi : React.FC<MessaggiProps> = ({mainState,dispatchMainState}) => {
                                                 }
                                           
                                             </Typography>
-                                            {item.minor && item.fiscalCode && <Typography color="text.secondary" variant="caption" component="div">
+                                            {/*item.minor && item.fiscalCode && <Typography color="text.secondary" variant="caption" component="div">
                                                 {item.fiscalCode}
-                                            </Typography>}
-                                            {!item.minor && <ButtonNaked  onClick={()=> downloadMessaggio(item,item.contentType)} disabled={disableDownload} target="_blank" variant="naked" color="primary" weight="light" startIcon={<AttachFileIcon />}>
+                                            </Typography>*/}
+                                            {/*!item.minor && <ButtonNaked  onClick={()=> downloadMessaggio(item,item.contentType)} disabled={disableDownload} target="_blank" variant="naked" color="primary" weight="light" startIcon={<AttachFileIcon />}>
                 Download documento
-                                            </ButtonNaked>}
+                                            </ButtonNaked>*/}
+                                            <ButtonNaked  onClick={()=> downloadMessaggio(item,item.contentType)} disabled={disableDownload} target="_blank" variant="naked" color="primary" weight="light" startIcon={<AttachFileIcon />}>
+                Download documento
+                                            </ButtonNaked>
+
                                         </TimelineNotificationContent>
                                     </TimelineNotificationItem>
                                 </div>

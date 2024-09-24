@@ -6,8 +6,7 @@ import {
     ListItemText,
     ListItemIcon,
     Box,
-    Divider,
-    Badge,
+    Divider
 } from '@mui/material';
 import { useNavigate, useLocation } from "react-router-dom";
 import DnsIcon from '@mui/icons-material/Dns';

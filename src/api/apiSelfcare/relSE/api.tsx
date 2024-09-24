@@ -1,5 +1,5 @@
 import axios from "axios";
-import { BodyRel, BodyRelLog, BodyRelSelfcare } from "../../../types/typeRel";
+import { BodyRelLog, BodyRelSelfcare } from "../../../types/typeRel";
 import { url } from "../../api";
 
 export const getListaRel = async (token:string, nonce:string , page:number, pageSize:number, body: BodyRelSelfcare) => {

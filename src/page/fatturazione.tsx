@@ -24,7 +24,7 @@ import CollapsibleTable from "../components/reusableComponents/grid/gridCustomCo
 
 
 
-const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainState}) =>{
+const Fatturazione : React.FC<FatturazioneProps> = ({dispatchMainState}) =>{
 
     const token =  getToken();
     const profilo =  getProfilo();
@@ -144,9 +144,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({mainState, dispatchMainStat
 
     const sendCancellazzioneRispristinoFatture = async () =>{
         await fattureCancellazioneRipristinoPagoPa(token,profilo.nonce,{idFatture:fattureSelected,cancellazione:!bodyFatturazioneDownload.cancellata})
-            .then((res)=>{
-           
-       
+            .then(()=>{
                 getlistaFatturazione(bodyFatturazioneDownload);
                 managePresaInCarico('FATTURA_SOSPESA_RIPRISTINATA',dispatchMainState);
             }).catch((error)=>{

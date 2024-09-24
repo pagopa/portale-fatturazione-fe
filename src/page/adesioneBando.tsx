@@ -13,7 +13,7 @@ import { SingleFileInput } from "@pagopa/mui-italia";
 import ModalUploadPdf from "../components/rel/modalUploadPdf";
 
 
-const AdesioneBando : React.FC<AdesioneBandoProps> = ({mainState, dispatchMainState}) => {
+const AdesioneBando : React.FC<AdesioneBandoProps> = ({dispatchMainState}) => {
 
     const token =  getToken();
     const profilo = getProfilo();
@@ -83,7 +83,7 @@ const AdesioneBando : React.FC<AdesioneBandoProps> = ({mainState, dispatchMainSt
         setErrorUpload(false);
         setLoadingUpload(true);
         
-        await uploadExelAsseverazionePagopa(token, profilo.nonce,{file:file}).then((res)=>{
+        await uploadExelAsseverazionePagopa(token, profilo.nonce,{file:file}).then(()=>{
             setShowLoadingGrid(false);
             setOpenModalConfirmUploadDoc(true);
             getListaAsseverazione();

@@ -24,7 +24,7 @@ const style = {
     p: 4,
 };
 
-const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open, mainState, contestazioneSelected, setContestazioneSelected, funGetNotifiche, funGetNotifichePagoPa, openModalLoading, page, rows, valueRispostaEnte, contestazioneStatic,dispatchMainState}) => {
+const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open, contestazioneSelected, setContestazioneSelected, funGetNotifiche, funGetNotifichePagoPa, openModalLoading, page, rows, valueRispostaEnte, contestazioneStatic,dispatchMainState}) => {
 
     const enti = profiliEnti();
     const token =  getToken();
@@ -249,7 +249,7 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
             };
         }
         
-        await modifyContestazioneEntePagoPa(token, profilo.nonce, body).then((res)=>{
+        await modifyContestazioneEntePagoPa(token, profilo.nonce, body).then(()=>{
             const result = getFiltersFromLocalStorageNotifiche();
             funGetNotifichePagoPa(page,rows, result.bodyGetLista);
         }).catch(((err)=>{

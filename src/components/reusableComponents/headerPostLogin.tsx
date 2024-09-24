@@ -1,7 +1,6 @@
 import { HeaderAccount } from '@pagopa/mui-italia';
 import { useLocation } from 'react-router';
 import { redirect } from '../../api/api';
-import { useNavigate } from 'react-router';
 import {useMsal } from '@azure/msal-react';
 import { loginRequest } from '../../authConfig';
 

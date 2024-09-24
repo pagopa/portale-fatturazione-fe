@@ -18,7 +18,7 @@ const MultiSelectFatturazione : React.FC<MultiSelectFatturazioneProps> =  ({setB
     return (
         <Autocomplete
             multiple
-            onChange={(event, value,reason) => {
+            onChange={(event, value) => {
                 setValue(value);
                 setBody((prev) => ({...prev,...{tipologiaFattura:value}}));
             }}

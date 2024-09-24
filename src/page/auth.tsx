@@ -131,7 +131,7 @@ const getSelfcare = async() =>{
             getProfilo(res);
                
         }
-    }).catch((err:ManageErrorResponse) =>{
+    }).catch(() =>{
         window.location.href = redirect;
         //manageError(err, navigate);
     });

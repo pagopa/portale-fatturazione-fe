@@ -36,7 +36,7 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,m
         handleClose();
         if(open.who === 0){
             await fattureInvioSapPa(token, profilo.nonce, {annoRiferimento:anno,meseRiferimento:mese,tipologiaFattura:value} )
-                .then((res)=>{
+                .then(()=>{
                     getListaFatture(bodyFatturazioneDownload);
                 }).catch(((err)=>{
                     manageError(err,dispatchMainState);
@@ -46,7 +46,7 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,m
         if(open.who === 1){
             
             await fattureResetSapPa(token, profilo.nonce, {annoRiferimento:anno,meseRiferimento:mese,tipologiaFattura:value} )
-                .then((res)=>{
+                .then(()=>{
                    
                     getListaFatture(bodyFatturazioneDownload);
                 }).catch(((err)=>{

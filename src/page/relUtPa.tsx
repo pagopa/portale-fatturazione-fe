@@ -23,7 +23,7 @@ import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 
 
 
-const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
+const RelPage : React.FC<RelPageProps> = ({dispatchMainState}) =>{
 
     const token =  getToken();
     const profilo =  getProfilo();
@@ -253,7 +253,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 }
                 
                 
-            }).catch(((err)=>{
+            }).catch((()=>{
                 setTipologiaFatture([]);
                 setValueTipologiaFattura("");
                 // manageError(err,dispatchMainState);
@@ -268,7 +268,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 }
                 
                 
-            }).catch(((err)=>{
+            }).catch((()=>{
                 setTipologiaFatture([]);
                 setValueTipologiaFattura("");
                 // manageError(err,dispatchMainState);
@@ -285,7 +285,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 setValueTipologiaFattura('');
                 setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
                 setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
-            }).catch(((err)=>{
+            }).catch((()=>{
                 setTipologiaFatture([]);
                 setValueTipologiaFattura('');
                 setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
@@ -298,7 +298,7 @@ const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
                 setValueTipologiaFattura('');
                 setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
                 setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
-            }).catch(((err)=>{
+            }).catch((()=>{
                 setTipologiaFatture([]);
                 setValueTipologiaFattura('');
                 setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));

@@ -22,7 +22,7 @@ import {mesiWithZero, month } from '../reusableFunction/reusableArrayObj';
 import { createDateFromString } from '../reusableFunction/function';
 import SkeletonRelPdf from '../components/rel/skeletonRelPdf';
 
-const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) =>{
+const RelPdfPage : React.FC<RelPagePdfProps> = ({dispatchMainState}) =>{
 
     const targetRef  = useRef<HTMLInputElement>(null);
     const token =  getToken();
@@ -74,14 +74,6 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({mainState, dispatchMainState}) 
             navigate(PathPf.LISTA_REL);
         }
     },[]);
-
-    /*
-    useEffect(()=>{
-        if(file !== null){
-            uploadPdf();
-        }
-    },[file]);
-    */
 
     useEffect(()=>{
        

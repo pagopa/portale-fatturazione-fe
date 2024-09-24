@@ -155,7 +155,7 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
 
     const isSelected = (id: number) => selected.indexOf(id) !== -1;
 
-    let tooltipObj:any = {label:'Non Inviata',title:'La fattura non è stata inviata'};
+    let tooltipObj:any= {label:'Non Inviata',title:'La fattura non è stata inviata'};
     if(row.inviata === 1){
         tooltipObj = {label:'Inviata',title:'La fattura è stata inviata',color:'success'};
     }else if(row.inviata === 2){
@@ -295,7 +295,7 @@ interface EnhancedTableToolbarProps {
   
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) =>{
-    const { numSelected, stato,setOpenConfermaModal,selected,setOpenResetFilterModal,monthFilterIsEqualMonthDownload } = props;
+    const { numSelected, stato,setOpenConfermaModal,setOpenResetFilterModal,monthFilterIsEqualMonthDownload } = props;
     const color = stato ? "#F2FAF2" : "#F2FAFE";
     const icon = stato ?  <RestoreIcon sx={{marginLeft:'20px'}}></RestoreIcon> : <BlockIcon sx={{marginLeft:'20px'}}></BlockIcon>;
     const stringIcon = stato ? 'Ripristina' : 'Sospendi';

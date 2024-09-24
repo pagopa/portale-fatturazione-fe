@@ -7,7 +7,7 @@ import { getProfilo, getStatusApp, getToken } from '../../reusableFunction/actio
 import { month } from '../../reusableFunction/reusableArrayObj';
 import { createDateFromString } from '../../reusableFunction/function';
 
-const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali, dataModifica, mainState}) => {
+const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali, dataModifica}) => {
     
     const navigate = useNavigate();
     const token =  getToken();

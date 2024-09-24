@@ -20,7 +20,7 @@ type AlertProps = {
 }
 
 const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, dispatchMainState}) => {
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
     const navigate = useNavigate();
 
     const handleModifyMainState = (valueObj) => {
