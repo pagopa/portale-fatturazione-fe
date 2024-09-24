@@ -102,7 +102,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
             // o id Documento o cup , ora ci han chiesto di rendere obbligatori i due campi se almeno uno dei due è stato inserito 
             // e mostrare il pop up redirect nel caso questa costante sarà uguale a false
       
-            const datiFatturazioneNotCompleted = (res.data.idDocumento === '' && res.data.cup !== '') || (res.data.idDocumento !== '' && res.data.cup === '');
+            const datiFatturazioneNotCompleted = res.data.idDocumento === '' && res.data.cup !== '';
             if(datiFatturazioneNotCompleted){
                 handleModifyMainState({...statusApp, ...{
                     datiFatturazione:true,

@@ -82,8 +82,6 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
     // viene mostrata la grid lista commesse , solo nel momento in cui l'utente va a selezionare un comune potrà essere eseguita la
     // chiamata con i parametri necessari (id ente)
     const getDatiFat = async () =>{
-    
-       
         await getDatiFatturazione(token,profilo.nonce).then(( ) =>{ 
             
             handleModifyMainState({datiFatturazione:true});

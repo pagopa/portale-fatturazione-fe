@@ -54,7 +54,6 @@ const ModalRedirect : React.FC<ModalProps> =({setOpen, open, sentence}) => {
                                 <ul className="list-group mt-2">
                                     {statusApp.datiFatturazioneNotCompleted ? 
                                         <>
-                                            <li><Typography id="modal-modal-title" variant="subtitle2" >CUP</Typography></li>
                                             <li><Typography id="modal-modal-title" variant="subtitle2" >Id Documento</Typography></li>
                                         </> :
                                         <>

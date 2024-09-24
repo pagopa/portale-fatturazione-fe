@@ -55,7 +55,7 @@ const TabAreaPersonaleUtente: React.FC<TabAreaProps> = ({mainState,datiFatturazi
                     <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 2fr)' }}>
                         <div>
                             <TextFieldComponent
-                                required={datiFatturazione.idDocumento !== '' || datiFatturazione.cup !== ''}
+                                required={false}
                                 helperText="max 15 caratteri alfanumerici"
                                 label="CUP"
                                 placeholder="Inserisci il CUP"
@@ -113,7 +113,7 @@ const TabAreaPersonaleUtente: React.FC<TabAreaProps> = ({mainState,datiFatturazi
                             {/* Id documento start */}
                             <div>
                                 <TextFieldComponent
-                                    required={datiFatturazione.idDocumento !== '' || datiFatturazione.cup !== ''}
+                                    required={datiFatturazione.cup !== ''}
                                     helperText="max 20 caratteri"
                                     label="ID Documento"
                                     placeholder="Inserisci ID"
