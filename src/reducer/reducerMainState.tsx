@@ -1,5 +1,5 @@
 import { MainState } from "../types/typesGeneral";
-interface ActionReducerType{
+export interface ActionReducerType{
     type:string,
     value:any
 }

@@ -118,17 +118,14 @@ const AdesioneBando : React.FC<AdesioneBandoProps> = ({mainState, dispatchMainSt
     
 
     const columns: GridColDef[] = [
-        { field: 'ragioneSociale', headerName: 'Ragione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" >{param.row.ragioneSociale}</a>},
+        { field: 'ragioneSociale', headerName: 'Ragione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:{row:Asseverazione}) => <a className="mese_alidita text-primary fw-bolder" >{param.row.ragioneSociale}</a>},
         { field: 'prodotto', headerName: 'Prodotto', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'tipoContratto', headerName: 'Tipo Contratto', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'dataAnagrafica', headerName: 'Data Ultima Modifica Anagrafica', width: 200, headerClassName: 'super-app-theme--header', headerAlign: 'left',valueFormatter: (value:any) =>  value.value !== null ? new Date(value.value).toLocaleString().split(',')[0] : ''},
+        { field: 'dataAnagrafica', headerName: 'Data Ultima Modifica Anagrafica', width: 200, headerClassName: 'super-app-theme--header', headerAlign: 'left',valueFormatter: (value:{value:string}) =>  value.value !== null ? new Date(value.value).toLocaleString().split(',')[0] : ''},
         { field: 'calcoloAsseverazione', headerName: 'Calcolo Asseverazione', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'dataAsseverazione', headerName: 'Data Adesione al Bando', width: 200, headerClassName: 'super-app-theme--header', headerAlign: 'left', valueFormatter: (value:any) =>  value.value !== null ? new Date(value.value).toLocaleString().split(',')[0] : ''},
+        { field: 'dataAsseverazione', headerName: 'Data Adesione al Bando', width: 200, headerClassName: 'super-app-theme--header', headerAlign: 'left', valueFormatter: (value:{value:string}) =>  value.value !== null ? new Date(value.value).toLocaleString().split(',')[0] : ''},
         { field: 'descrizione', headerName: 'Descrizione Bando', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'asseverazione', headerName: 'Adesione al Bando', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        // { field: 'tipoCalcoloAsseverazione', headerName: 'Tipo Calcolo Asseverazione', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        //{ field: 'idUtente', headerName: 'Id Utente', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        // {field: 'action', headerName: '',sortable: false,width:70,headerAlign: 'left',disableColumnMenu :true,renderCell: (() => ( <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} onClick={() => console.log('Show page details')} />)),}
+        { field: 'asseverazione', headerName: 'Adesione al Bando', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' }
     ];
 
     return (

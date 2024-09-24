@@ -7,6 +7,10 @@ import { MultiselectNotificheProps, OptionMultiselectChackbox } from '../../type
 import { BodyListaNotifiche} from '../../types/typesGeneral';
 import { useLocation } from 'react-router';
 import { PathPf } from '../../types/enum';
+import { BodyFatturazione } from '../../types/typeFatturazione';
+import { BodyDownloadModuliCommessa } from '../../types/typeListaModuliCommessa';
+import { BodyRel } from '../../types/typeRel';
+import { BodyGetListaDatiFatturazione } from '../../types/typeListaDatiFatturazione';
 
 
 const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetLista, dataSelect,setTextValue,valueAutocomplete, setValueAutocomplete}) => {
@@ -24,7 +28,7 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
             multiple
             onChange={(event, value) => {
                 const arrayIdEnte = value.map(obj=> obj.idEnte);
-                setBodyGetLista((prev:BodyListaNotifiche) => ({...prev,...{idEnti:arrayIdEnte}}));
+                setBodyGetLista((prev:any) => ({...prev,...{idEnti:arrayIdEnte}}));
                 setValueAutocomplete(value);
             }}
             id="checkboxes-tags-demo"

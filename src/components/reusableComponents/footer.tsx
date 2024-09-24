@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react';
 import { CompanyLinkType, Footer } from '@pagopa/mui-italia';
 import { useState } from 'react';
 import { useLocation } from 'react-router';

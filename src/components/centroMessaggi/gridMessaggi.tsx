@@ -1,23 +1,25 @@
 import { Card, Table, TableBody, TableCell, TableHead, TablePagination, TableRow } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useNavigate } from "react-router";
+import { Dispatch} from "react";
+import { Messaggi } from "../../page/centroMessaggi";
+import { ActionReducerType } from "../../reducer/reducerMainState";
 interface GridCustomProps {
-    elements:object[],
-    changePage:any,
-    changeRow:any,
+    elements:Messaggi[],
+    changePage: (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage: number,) => void,
+    changeRow:(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
     page:number,
     total:number,
     rows:number,
     headerNames:string[],
     nameParameterApi:string,  // elemnto/i che servono alla chiamata get di dettaglio , in questo caso bisogna passare questi pametro/o nel MainState ma non posso visulizzarli nella grid
-    apiGet:any,
     disabled:boolean,
-    dispatchMainState:any
+    dispatchMainState:Dispatch<ActionReducerType>,
 }
 
-const GridMessaggi : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, nameParameterApi, apiGet, disabled,dispatchMainState}) =>{
+const GridMessaggi : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames,disabled,dispatchMainState}) =>{
 
-    const navigate = useNavigate();
+    const navigate = useNavigate() ;
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -54,7 +56,7 @@ const GridMessaggi : React.FC<GridCustomProps> = ({elements, changePage, changeR
 
                             </TableBody> :
                             <TableBody sx={{marginLeft:'20px'}}>
-                                {elements.map((element:any) =>{
+                                {elements.map((element:Messaggi) =>{
                                     // tolgo da ogni oggetto la prima chiave valore  perchè il cliente non vuole vedere es. l'id ma serve per la chiamata get di dettaglio 
                                     const sliced = Object.fromEntries(
                                         Object.entries(element).slice(1)
@@ -64,7 +66,7 @@ const GridMessaggi : React.FC<GridCustomProps> = ({elements, changePage, changeR
                 
                                             <TableRow key={Math.random()}>
                                                 {
-                                                    Object.values(sliced).map((value:any, i:number)=>{
+                                                    Object.values(sliced).map((value:string, i:number)=>{
                                                         const cssFirstColum = i === 0 ? {color:'#606060', fontWeight: 'bold', cursor: 'pointer'} : null;
                                                         return (
                                                             <TableCell
@@ -82,7 +84,7 @@ const GridMessaggi : React.FC<GridCustomProps> = ({elements, changePage, changeR
                                         return (
                                             <TableRow key={Math.random()}>
                                                 {
-                                                    Object.values(sliced).map((value:any, i:number)=>{
+                                                    Object.values(sliced).map((value:string, i:number)=>{
                                                         const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
                                                         return (
                                                             <TableCell

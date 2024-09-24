@@ -1,13 +1,20 @@
-import { MainState } from "./typesGeneral";
+import { Dispatch, SetStateAction } from "react";
+import { BodyListaNotifiche, MainState } from "./typesGeneral";
+import { ActionReducerType } from "../reducer/reducerMainState";
+import { BodyFatturazione } from "./typeFatturazione";
+import { BodyDownloadModuliCommessa } from "./typeListaModuliCommessa";
+import { BodyRel } from "./typeRel";
+import { BodyGetListaDatiFatturazione } from "./typeListaDatiFatturazione";
+
 
 export interface ReportDettaglioProps {
     mainState:MainState,
-    dispatchMainState:any
+    dispatchMainState:Dispatch<ActionReducerType>,
 }
 
 export interface NotificheList{
     idNotifica:string
-    ragioneSociale:string,
+    ragioneSociale?:string,
     codiceFiscale?:string,
     contestazione:boolean,
     tipoNotifica:string,
@@ -25,26 +32,26 @@ export interface NotificheList{
 
 export interface MultiSelectGroupedByProps{
     mainState:MainState,
-    setBodyGetLista:any,
-    setValueFgContestazione:any,
+    setBodyGetLista:Dispatch<SetStateAction<BodyListaNotifiche>>,
+    setValueFgContestazione:Dispatch<SetStateAction<FlagContestazione[]>>,
     valueFgContestazione: FlagContestazione[],
-    dispatchMainState:any
+    dispatchMainState:Dispatch<ActionReducerType>,
 }
 
 export interface ModalContestazioneProps{
     open:boolean,
-    setOpen:any,
+    setOpen:Dispatch<SetStateAction<boolean>>,
     mainState:MainState,
     contestazioneSelected:Contestazione,
-    setContestazioneSelected:any,
-    funGetNotifiche:any,
-    funGetNotifichePagoPa:any,
-    openModalLoading:any,
+    setContestazioneSelected:Dispatch<SetStateAction<Contestazione>>,
+    funGetNotifiche:(page:number, row:number,body:BodyListaNotifiche)=> void,
+    funGetNotifichePagoPa:(page:number, row:number,body:BodyListaNotifiche)=> void,
+    openModalLoading:Dispatch<SetStateAction<boolean>>,
     page:number,
     rows:number,
     valueRispostaEnte:string,
-    contestazioneStatic:any,
-    dispatchMainState:any
+    contestazioneStatic:Contestazione,
+    dispatchMainState:Dispatch<ActionReducerType>,
 }
 
 export interface FlagContestazione{
@@ -60,15 +67,16 @@ export interface TipoContestazione{
 }
 
 export interface Contestazione {
-    risposta:boolean,
-    modifica: boolean,
-    chiusura: boolean,
+    risposta?:boolean,
+    modifica?: boolean,
+    chiusura?: boolean,
+    accetta?:boolean,
     contestazione: {
         id: number,
-        tipoContestazione: number,
+        tipoContestazione: number|null,
         idNotifica: string,
         noteEnte: string,
-        noteSend: null,
+        noteSend: string|null,
         noteRecapitista: string | null,
         noteConsolidatore: string | null,
         rispostaEnte: string,
@@ -116,11 +124,11 @@ export interface ElementMultiSelect {
 }
 
 export interface MultiselectNotificheProps{
-    setBodyGetLista:any,
+    setBodyGetLista:Dispatch<SetStateAction<BodyListaNotifiche>>|Dispatch<SetStateAction<BodyFatturazione>>|Dispatch<SetStateAction<BodyGetListaDatiFatturazione>>|Dispatch<SetStateAction<BodyDownloadModuliCommessa>>|Dispatch<SetStateAction<BodyRel>>,  //{idEnti:[],prodotto:'',profilo:''}|BodyDownloadModuliCommessa|BodyRel
     dataSelect:ElementMultiSelect[] ,
-    setTextValue:any,
-    valueAutocomplete:any,
-    setValueAutocomplete:any,
+    setTextValue:Dispatch<SetStateAction<string>>,
+    valueAutocomplete:OptionMultiselectChackbox[],
+    setValueAutocomplete:Dispatch<SetStateAction<OptionMultiselectChackbox[]>> ,
 }
 
 export interface OptionMultiselectChackbox {

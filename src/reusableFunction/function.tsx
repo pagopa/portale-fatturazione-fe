@@ -14,7 +14,7 @@ export const fixResponseForDataGrid = (arr:DataGridCommessa[]) =>{
 };
 
 export  const calculateTot = (arr:ModuliCommessa[], string:string) =>{
-    return arr.reduce((a:number,b:any) =>{
+    return arr.reduce((a,b) =>{
         return a + b[string];
     } , 0 );
 };

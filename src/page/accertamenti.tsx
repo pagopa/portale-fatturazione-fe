@@ -1,6 +1,6 @@
 import { Button, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import {getProfilo, getToken } from "../reusableFunction/actionLocalStorage";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
@@ -16,10 +16,11 @@ import { mesiGrid } from "../reusableFunction/reusableArrayObj";
 import ModalMatriceAccertamenti from "../components/accertamenti/modalMatrice";
 import { useId } from 'react';
 import { saveAs } from "file-saver";
+import { ActionReducerType } from "../reducer/reducerMainState";
 
 
 interface AccertamentiProps {
-    dispatchMainState:any
+    dispatchMainState:Dispatch<ActionReducerType>
 }
 
 export interface MatriceArray {
@@ -176,11 +177,11 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
     };
     
     const columns: GridColDef[] = [
-        { field: 'descrizione', headerName: 'Tipologia Accertamento', width: 400 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.descrizione}</a>},
+        { field: 'descrizione', headerName: 'Tipologia Accertamento', width: 400 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:{row:Accertamento}) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.descrizione}</a>},
         { field: 'prodotto', headerName: 'Prodotto', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'anno', headerName: 'Anno', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'mese', headerName: 'Mese', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' ,renderCell: (param:any) => <div className="MuiDataGrid-cellContent" title={mesiGrid[param.row.mese]} role="presentation">{mesiGrid[param.row.mese]}</div> },
-        { field: 'contentType', headerName: 'Tipo File', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',renderCell: (param:any) => {
+        { field: 'mese', headerName: 'Mese', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' ,renderCell: (param:{row:Accertamento}) => <div className="MuiDataGrid-cellContent" title={mesiGrid[param.row.mese]} role="presentation">{mesiGrid[param.row.mese]}</div> },
+        { field: 'contentType', headerName: 'Tipo File', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',renderCell: (param:{row:Accertamento}) => {
             if(param.row.contentType === "text/csv"){
                 return <div className="MuiDataGrid-cellContent" title="CSV" role="presentation">CSV</div>;
             }else if(param.row.contentType === "application/zip"){
@@ -189,7 +190,7 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
                 return  <div className="MuiDataGrid-cellContent" title="Excel" role="presentation">EXCEL</div>;
             }
         } },
-        {field: 'action', headerName: '',sortable: false,width:70,headerAlign: 'left',disableColumnMenu :true,renderCell: ((param:any) => ( <DownloadIcon sx={{marginLeft:'10px',color: '#1976D2', cursor: 'pointer'}} onClick={()=> downloadAccertamento(param.row.idReport)}></DownloadIcon>)),}
+        {field: 'action', headerName: '',sortable: false,width:70,headerAlign: 'left',disableColumnMenu :true,renderCell: ((param:{id:any,row:Accertamento}) => ( <DownloadIcon sx={{marginLeft:'10px',color: '#1976D2', cursor: 'pointer'}} onClick={()=> downloadAccertamento(param.id)}></DownloadIcon>)),}
     ];
     
     

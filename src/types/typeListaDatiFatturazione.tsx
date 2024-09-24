@@ -1,8 +1,10 @@
+import { Dispatch } from "react";
 import { MainState } from "./typesGeneral";
+import { ActionReducerType } from "../reducer/reducerMainState";
 
 export interface ListaDatiFatturazioneProps{
     mainState:MainState,
-    dispatchMainState:any,
+    dispatchMainState:Dispatch<ActionReducerType>,
 }
 export interface ResponseDownloadListaFatturazione {
     data:{

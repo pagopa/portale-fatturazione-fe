@@ -54,7 +54,7 @@ export const downloadListaRel = async (token:string, nonce:string , body: BodyRe
     return response;
 };
 
-export const uploadPdfRel = async (token:string, nonce:string , id:string, body: any) => {
+export const uploadPdfRel = async (token:string, nonce:string , id:string, body: {file:File|null}) => {
     const response =  await axios.post(`${url}/api/rel/firma/upload/${id}?nonce=${nonce}`,
         body,
         { headers: {

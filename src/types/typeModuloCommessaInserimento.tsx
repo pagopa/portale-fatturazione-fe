@@ -1,4 +1,6 @@
+import { Dispatch, SetStateAction } from "react";
 import { InfoOpen, MainState } from "./typesGeneral";
+import { ActionReducerType } from "../reducer/reducerMainState";
 
 export type ModuliCommessa = {
     numeroNotificheNazionali: number,
@@ -13,9 +15,9 @@ export interface DatiCommessa  {
 }
 export  interface ModuloCommessaInserimentoProps{
     mainState:MainState,
-    dispatchMainState:any,
+    dispatchMainState:Dispatch<ActionReducerType>,
     open:InfoOpen,
-    setOpen:any
+    setOpen:Dispatch<SetStateAction<InfoOpen>>
 }
 export interface TotaleNazionaleInternazionale{
     totaleNazionale:number,
@@ -23,23 +25,11 @@ export interface TotaleNazionaleInternazionale{
     totaleNotifiche:number
 }
 
-export interface InsModuloCommessaContext {
-    datiCommessa: DatiCommessa,
-    setDatiCommessa?: any,
-    setDisableContinua?:any,
-    totaliModuloCommessa?: ResponsTotaliInsModuloCommessa[],
-    setTotale?:any,
-    totale:TotaleNazionaleInternazionale
-    mainState?:any,
-    dispatchMainState?:any
-}
-
-
 export interface SecondoContainerProps{
     totale:TotaleNazionaleInternazionale,
     mainState:MainState,
-    dispatchMainState:any,
-    setDatiCommessa:any,
+    dispatchMainState:Dispatch<ActionReducerType>,
+    setDatiCommessa:Dispatch<SetStateAction<DatiCommessa>>,
     datiCommessa:DatiCommessa
 }
 export interface RowInsComProps {
@@ -47,7 +37,7 @@ export interface RowInsComProps {
     textBoxHidden : boolean
     idTipoSpedizione:number,
     rowNumber : number,
-    setDatiCommessa:any,
+    setDatiCommessa:Dispatch<SetStateAction<DatiCommessa>>,
     datiCommessa:DatiCommessa,
     mainState:MainState
 }
@@ -70,11 +60,11 @@ export interface ResponsTotaliInsModuloCommessa {
 export interface TerzoContainerModCommessa{
     valueTotali:ResponsTotaliInsModuloCommessa[],
     dataModifica:string,
-    mainState:any
+    mainState:MainState
 }
 
 export interface ModalDatiFatProps{
-    setOpenModalDatiFatturazione:any,
+    setOpenModalDatiFatturazione:Dispatch<SetStateAction<boolean>>,
     openModalDatiFatturazione:boolean
 }
 
@@ -132,12 +122,12 @@ export interface DatiCommessaCosti{
 }
 
 export interface ModComPdfProps{
-    mainState: any,
-    dispatchMainState:any
+    mainState: MainState,
+    dispatchMainState:Dispatch<ActionReducerType>,
 }
 
 export interface PrimoContainerInsComProps{
-    dispatchMainState?: any
+    dispatchMainState?:Dispatch<ActionReducerType>,
 }
 
 export  interface ArrayTipologieCommesse {
@@ -190,8 +180,8 @@ export    interface ResponseDettaglioModuloCommessa {
 }
 
 export interface ModalConfermaInsProps{
-    setOpen:any,
+    setOpen:Dispatch<SetStateAction<boolean>>,
     open:boolean,
-    onButtonComfermaPopUp:any,
+    onButtonComfermaPopUp:() => void,
     mainState:MainState
 }

@@ -9,12 +9,13 @@ import { getProfilo } from '../../reusableFunction/actionLocalStorage';
 import { createDateFromString } from '../../reusableFunction/function';
 import { MainState } from '../../types/typesGeneral';
 import { DatiFatturazione, StateEnableConferma } from '../../types/typesAreaPersonaleUtenteEnte';
+import { Dispatch, SetStateAction } from 'react';
 
 interface TabAreaProps{
     mainState:MainState,
     datiFatturazione:DatiFatturazione,
-    setDatiFatturazione:any
-    setStatusButtonConferma:(statusBottonConferma:StateEnableConferma) => void
+    setDatiFatturazione:Dispatch<SetStateAction<DatiFatturazione>>
+    setStatusButtonConferma:Dispatch<SetStateAction<StateEnableConferma>>
 }
 
 const TabAreaPersonaleUtente: React.FC<TabAreaProps> = ({mainState,datiFatturazione,setDatiFatturazione,setStatusButtonConferma}) => {

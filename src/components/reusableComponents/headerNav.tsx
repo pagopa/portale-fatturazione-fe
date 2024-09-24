@@ -15,7 +15,6 @@ type PartySwitchItem = {
     productRole?: string;
     logoUrl?: string;
     parentName?: string;
-    icon?:any
 };
 type LinkType = "internal" | "external";
 type ProductSwitchItem = {
@@ -71,7 +70,7 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState, dispatchMainSt
             linkType: 'external',
         }];
 
-    const cdnPath = 'https://assets.cdn.io.italia.it/logos/organizations/';
+    //const cdnPath = 'https://assets.cdn.io.italia.it/logos/organizations/';
     const name = user.name;
 
     const partyList : Array<PartyEntity> = [

@@ -1,13 +1,12 @@
 import * as React from 'react';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { ModalContestazioneProps, TipoContestazione, ModalBodyContestazione, Contestazione } from '../../types/typeReportDettaglio';
+import { ModalContestazioneProps, TipoContestazione, Contestazione } from '../../types/typeReportDettaglio';
 import {
     TextField,
     Box, FormControl, InputLabel,Select, MenuItem, Button
 } from '@mui/material';
 import { manageError } from '../../api/api'; 
-import { useNavigate } from 'react-router';
 import {useState, useEffect} from 'react';
 import YupString from '../../validations/string/index';
 import { createContestazione, modifyContestazioneConsolidatore, modifyContestazioneEnte,modifyContestazioneRecapitista, tipologiaTipoContestazione } from '../../api/apiSelfcare/notificheSE/api';
@@ -27,7 +26,6 @@ const style = {
 
 const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open, mainState, contestazioneSelected, setContestazioneSelected, funGetNotifiche, funGetNotifichePagoPa, openModalLoading, page, rows, valueRispostaEnte, contestazioneStatic,dispatchMainState}) => {
 
-    const navigate = useNavigate();
     const enti = profiliEnti();
     const token =  getToken();
     const profilo =  getProfilo();
@@ -373,7 +371,7 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
     const hiddenChiudi_send = profilo.auth === 'PAGOPA' && noChiusura;
 
     let disableCreaContestazioneButton = false;
-    if(stato === 1 && (contestazioneSelected.contestazione.tipoContestazione < 1  || contestazioneSelected.contestazione.noteEnte === null || contestazioneSelected.contestazione.noteEnte === '')){
+    if(stato === 1 && (contestazioneSelected.contestazione.statoContestazione < 1  || contestazioneSelected.contestazione.noteEnte === null || contestazioneSelected.contestazione.noteEnte === '')){
         disableCreaContestazioneButton = true;
     }
    
@@ -587,10 +585,12 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                                         fullWidth
                                         multiline
                                         InputProps={{ readOnly: supportSendReadOnly }}
-                                        onChange={(e) =>  setContestazioneSelected((prev:Contestazione)=> {
-                                            const newContestazione = {...prev.contestazione, noteSend:e.target.value};
-                                            return {...prev, contestazione:newContestazione};
-                                        })}
+                                        onChange={(e) => {
+                                            setContestazioneSelected((prev:Contestazione)=> {
+                                                const newContestazione = {...prev.contestazione, noteSend:e.target.value};
+                                                return {...prev, contestazione:newContestazione};
+                                            });
+                                        } }
                                     />
                                 </div>
                             </div>

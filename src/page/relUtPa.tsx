@@ -4,7 +4,7 @@ import SelectMese from "../components/reusableComponents/select/selectMese";
 import { Button, Typography } from "@mui/material";
 import SelectTipologiaFattura from "../components/reusableComponents/select/selectTipologiaFattura";
 import GridCustom from "../components/reusableComponents/grid/gridCustom";
-import { BodyRel, RelPageProps } from "../types/typeRel";
+import { BodyRel, Rel, RelPageProps } from "../types/typeRel";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { manageError} from "../api/api";
 import { useNavigate } from "react-router";
@@ -21,7 +21,9 @@ import { mesiGrid, mesiWithZero } from "../reusableFunction/reusableArrayObj";
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 
-const RelPage : React.FC<RelPageProps> = ({ dispatchMainState}) =>{
+
+
+const RelPage : React.FC<RelPageProps> = ({mainState, dispatchMainState}) =>{
 
     const token =  getToken();
     const profilo =  getProfilo();
@@ -46,7 +48,7 @@ const RelPage : React.FC<RelPageProps> = ({ dispatchMainState}) =>{
     const [showLoading, setShowLoading] = useState(false);
     const [totalNotifiche, setTotalNotifiche]  = useState(0);
     const [dataSelect, setDataSelect] = useState([]);
-    const [data, setData] = useState<any>([]);
+    const [data, setData] = useState<Rel[]>([]);
     const [getListaRelRunning, setGetListaRelRunning] = useState(false);
     const [disableDownloadListaPdf, setDisableListaPdf] = useState(true);
     const [textValue, setTextValue] = useState('');

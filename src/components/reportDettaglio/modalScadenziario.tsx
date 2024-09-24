@@ -5,10 +5,12 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { manageError } from '../../api/api';
 import { useNavigate } from 'react-router';
-import { useEffect, useState } from 'react';
+import { Dispatch, useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import { getTipologieScadenziario } from '../../api/apiPagoPa/notifichePA/api';
+import { getProfilo } from '../../reusableFunction/actionLocalStorage';
+import { ActionReducerType } from '../../reducer/reducerMainState';
 
 const style = {
     position: 'absolute' as const,
@@ -22,11 +24,10 @@ const style = {
 };
 
 interface ModalScadenziario {
-    setOpen:any,
+    setOpen:React.Dispatch<React.SetStateAction<boolean>>,
     open:boolean,
     nonce:string,
-    profilo:any,
-    dispatchMainState:any
+    dispatchMainState:Dispatch<ActionReducerType>,
 }
 
 interface Scadenziario {
@@ -36,13 +37,12 @@ interface Scadenziario {
     meseContestazione: string
 }
 
-const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce, profilo,dispatchMainState}) => {
+const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce,dispatchMainState}) => {
 
     const getToken = localStorage.getItem('token') || '{}';
     const token =  JSON.parse(getToken).token;
+    const profilo =  getProfilo();
 
-    const navigate = useNavigate();
-   
     const handleClose = () => setOpen(false);
 
     const [datiScadenziario, setDatiScadenziario] = useState<Scadenziario[] | []>([]);

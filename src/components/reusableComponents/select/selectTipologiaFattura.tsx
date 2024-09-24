@@ -1,10 +1,12 @@
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { Box } from "@mui/system";
+import { Dispatch, SetStateAction } from "react";
+import { BodyRel } from "../../../types/typeRel";
 interface SelecTipologiaProps{
     value:string|null,
     types:string[],
-    setBody:any,
-    setValue:any
+    setBody:Dispatch<SetStateAction<BodyRel>>,
+    setValue:Dispatch<SetStateAction<string>>,
 }
 
 const SelectTipologiaFattura : React.FC<SelecTipologiaProps> = ({setValue,value, types, setBody}) =>{
@@ -26,8 +28,10 @@ const SelectTipologiaFattura : React.FC<SelecTipologiaProps> = ({setValue,value,
                     label='Seleziona Prodotto'
                     labelId="search-by-label"
                     onChange={(e) =>{
-                        setValue(e.target.value);
-                        setBody((prev)=>({...prev,...{tipologiaFattura:e.target.value}}));
+                        if(e.target.value){
+                            setValue(e.target.value);
+                            setBody((prev)=>({...prev,...{tipologiaFattura:e.target.value}}));
+                        }
                     }}     
                     value={value}       
                 >

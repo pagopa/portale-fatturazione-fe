@@ -1,4 +1,6 @@
+import { Dispatch, SetStateAction } from "react";
 import { MainState } from "./typesGeneral";
+import { ActionReducerType } from "../reducer/reducerMainState";
 
 export interface Asseverazione {
     idEnte: string|null,
@@ -17,5 +19,5 @@ export interface Asseverazione {
 }
 export interface AdesioneBandoProps{
     mainState:MainState,
-    dispatchMainState:any
+    dispatchMainState:Dispatch<ActionReducerType>
 }
