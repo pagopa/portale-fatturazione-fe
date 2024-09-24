@@ -18,6 +18,7 @@ interface TabAreaProps{
     setStatusButtonConferma:Dispatch<SetStateAction<StateEnableConferma>>
 }
 
+
 const TabAreaPersonaleUtente: React.FC<TabAreaProps> = ({mainState,datiFatturazione,setDatiFatturazione,setStatusButtonConferma}) => {
   
     const parseProfilo  =  getProfilo();

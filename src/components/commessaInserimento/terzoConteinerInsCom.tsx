@@ -14,6 +14,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
     const profilo =  getProfilo();
     const statusApplication = getStatusApp();
 
+    
     let mese = '';
     let anno = 2000;
     if(statusApplication.inserisciModificaCommessa === 'MODIFY' ){
