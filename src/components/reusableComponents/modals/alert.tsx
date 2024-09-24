@@ -44,8 +44,8 @@ const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, di
         colorAlert = "info";
     }else if(mainState.apiError === "Network Error"){
         colorAlert = 'warning';
-    }else if(mainState.apiError === 'FATTURA_SOSPESA_RIPRISTINATA'){
-        colorAlert = 'success';
+    }else if(mainState.apiError === 410){
+        colorAlert = 'warning';
     }
     
     const [css, setCss] = useState('main_container_alert_component');

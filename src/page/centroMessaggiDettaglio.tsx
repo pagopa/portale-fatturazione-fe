@@ -7,11 +7,11 @@ import TextDettaglioPdf from '../components/commessaPdf/textDettaglioPdf';
 import DownloadIcon from '@mui/icons-material/Download';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import SkeletonRelPdf from '../components/rel/skeletonRelPdf';
-import { MainState } from '../types/typesGeneral';
+import { MainState, Messaggi } from '../types/typesGeneral';
 import { useNavigate, useParams } from 'react-router';
 import { readMessaggioPagoPa } from '../api/apiPagoPa/centroMessaggi/api';
 import { getProfilo, getToken } from '../reusableFunction/actionLocalStorage';
-import { Messaggi } from './messaggi';
+
 import { ActionReducerType } from '../reducer/reducerMainState';
 
 

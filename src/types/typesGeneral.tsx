@@ -1,4 +1,4 @@
-import { Messaggi } from "../page/messaggi";
+
 import { DataGridCommessa } from "./typeModuloCommessaElenco";
 
 export interface ModalProps {
@@ -11,6 +11,25 @@ export interface ModalProps {
     handleGetDettaglioModuloCommessa?:any,
     handleGetDettaglioModuloCommessaPagoPa?:any,
     mainState?:MainState
+}
+
+export interface Messaggi {
+    idEnte: null|string,
+    idUtente: string,
+    json: string,
+    anno: number,
+    mese: number,
+    prodotto: string,
+    gruppoRuolo: string,
+    auth: string,
+    stato: string,
+    dataInserimento: string,
+    dataStepCorrente: string,
+    linkDocumento: string,
+    tipologiaDocumento: string,
+    lettura: boolean,
+    hash: string,
+    data?:string
 }
 
 export interface LocationState {

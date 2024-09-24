@@ -4,7 +4,8 @@ import { useNavigate } from "react-router";
 import { Dispatch} from "react";
 
 import { ActionReducerType } from "../../reducer/reducerMainState";
-import { Messaggi } from "../../page/messaggi";
+import { Messaggi } from "../../types/typesGeneral";
+
 interface GridCustomProps {
     elements:Messaggi[],
     changePage: (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage: number,) => void,

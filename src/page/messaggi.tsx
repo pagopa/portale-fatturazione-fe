@@ -17,24 +17,7 @@ import { month } from "../reusableFunction/reusableArrayObj";
 import { ActionReducerType } from "../reducer/reducerMainState";
 
 
-export interface Messaggi {
-    idEnte: null|string,
-    idUtente: string,
-    json: string,
-    anno: number,
-    mese: number,
-    prodotto: string,
-    gruppoRuolo: string,
-    auth: string,
-    stato: string,
-    dataInserimento: string,
-    dataStepCorrente: string,
-    linkDocumento: string,
-    tipologiaDocumento: string,
-    lettura: boolean,
-    hash: string,
-    data?:string
-}
+
 
 export interface Messaggio {
     idMessaggio:number,
@@ -93,7 +76,7 @@ const Messaggi : React.FC<MessaggiProps> = ({dispatchMainState}) => {
         letto:null
     });
 
-    const [gridData, setGridData] = useState<Messaggi[]>([]);
+    const [gridData, setGridData] = useState<Messaggio[]>([]);
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -130,6 +113,7 @@ const Messaggi : React.FC<MessaggiProps> = ({dispatchMainState}) => {
                 setShowDownloading(false);
                 readMessage(item.idMessaggio);
             }).catch(((err)=>{
+                console.log(err,'err');
                 setShowDownloading(false);
                 manageError(err,dispatchMainState);
                 getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra);
@@ -357,7 +341,7 @@ const Messaggi : React.FC<MessaggiProps> = ({dispatchMainState}) => {
                     flexDirection: "column"
                 }}>
                     <TimelineNotification >
-                        {gridData.map((item: any) => {
+                        {gridData.map((item: Messaggio) => {
                             console.log(item,'item');
                             let statoMessaggio = '';
                             let colorMessaggio;
@@ -411,20 +395,14 @@ const Messaggi : React.FC<MessaggiProps> = ({dispatchMainState}) => {
                                             </Typography>}
                                             <Typography color="text.primary" variant="overline" component="div">
                                                 {`Letto  `}
-                                                {item.lettura ? <CheckCircleIcon color="success" ></CheckCircleIcon>: <CheckCircleOutlineIcon color="disabled"></CheckCircleOutlineIcon>
-                                                    
-                                                }
+                                                {item.lettura ? <CheckCircleIcon color="success" ></CheckCircleIcon>: <CheckCircleOutlineIcon color="disabled"></CheckCircleOutlineIcon> }
                                           
                                             </Typography>
-                                            {/*item.minor && item.fiscalCode && <Typography color="text.secondary" variant="caption" component="div">
-                                                {item.fiscalCode}
-                                            </Typography>*/}
-                                            {/*!item.minor && <ButtonNaked  onClick={()=> downloadMessaggio(item,item.contentType)} disabled={disableDownload} target="_blank" variant="naked" color="primary" weight="light" startIcon={<AttachFileIcon />}>
+                                           
+                                            {item.stato !== '3' && <ButtonNaked  onClick={()=> downloadMessaggio(item,item.contentType)} disabled={disableDownload} target="_blank" variant="naked" color="primary" weight="light" startIcon={<AttachFileIcon />}>
                 Download documento
-                                            </ButtonNaked>*/}
-                                            <ButtonNaked  onClick={()=> downloadMessaggio(item,item.contentType)} disabled={disableDownload} target="_blank" variant="naked" color="primary" weight="light" startIcon={<AttachFileIcon />}>
-                Download documento
-                                            </ButtonNaked>
+                                            </ButtonNaked>}
+                                         
 
                                         </TimelineNotificationContent>
                                     </TimelineNotificationItem>
