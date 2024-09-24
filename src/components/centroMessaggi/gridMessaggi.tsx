@@ -2,8 +2,9 @@ import { Card, Table, TableBody, TableCell, TableHead, TablePagination, TableRow
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useNavigate } from "react-router";
 import { Dispatch} from "react";
-import { Messaggi } from "../../page/centroMessaggi";
+
 import { ActionReducerType } from "../../reducer/reducerMainState";
+import { Messaggi } from "../../page/messaggi";
 interface GridCustomProps {
     elements:Messaggi[],
     changePage: (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage: number,) => void,

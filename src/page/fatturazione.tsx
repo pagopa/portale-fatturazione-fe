@@ -11,8 +11,6 @@ import { manageError, manageErrorDownload, managePresaInCarico } from "../api/ap
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
-
-import CollapsibleTable from "../components/reusableComponents/grid/gridCustomCollapsible";
 import { saveAs } from "file-saver";
 import { month } from "../reusableFunction/reusableArrayObj";
 import MultiSelectFatturazione from "../components/fatturazione/multiSelect";
@@ -21,6 +19,7 @@ import ModalSap from "../components/fatturazione/modalSap";
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import ModalConfermaRipristina from "../components/fatturazione/modalConfermaRipristina";
 import ModalResetFilter from "../components/fatturazione/modalResetFilter";
+import CollapsibleTable from "../components/reusableComponents/grid/gridCustomCollapsible";
 
 
 

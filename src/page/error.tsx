@@ -6,7 +6,7 @@ import { getProfilo, getToken } from "../reusableFunction/actionLocalStorage";
 
 const ErrorPage : React.FC<ErrorPageProps> = ({dispatchMainState, mainState}) =>{
     const token =  getToken();
-    const profilo =  getProfilo();
+   
 
     const message = 'Il path selezionato è errato';
 

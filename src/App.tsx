@@ -24,7 +24,7 @@ import Azure from './page/azure';
 import RelPage from './page/relUtPa';
 import { reducerMainState } from './reducer/reducerMainState';
 import { getAuthProfilo, manageError, redirect } from './api/api';
-import { getProfilo, getToken, profiliEnti } from './reusableFunction/actionLocalStorage';
+import { getProfilo, profiliEnti } from './reusableFunction/actionLocalStorage';
 import useIsTabActive from './reusableFunction/tabIsActiv';
 import BasicAlerts from './components/reusableComponents/modals/alert';
 import AdesioneBando from './page/adesioneBando';
