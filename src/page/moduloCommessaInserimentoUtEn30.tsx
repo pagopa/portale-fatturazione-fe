@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router';
 import {manageError} from '../api/api';
 import { redirect } from '../api/api';
 import ModalRedirect from '../components/commessaInserimento/madalRedirect';
-import { DatiCommessa, ResponseDettaglioModuloCommessa,ModuloCommessaInserimentoProps, TotaleNazionaleInternazionale, ResponsTotaliInsModuloCommessa, ModuliCommessa} from '../types/typeModuloCommessaInserimento';
+import { DatiCommessa, ResponseDettaglioModuloCommessa,ModuloCommessaInserimentoProps, TotaleNazionaleInternazionale, ResponsTotaliInsModuloCommessa} from '../types/typeModuloCommessaInserimento';
 import { ManageErrorResponse } from '../types/typesGeneral';
 import { getDettaglioModuloCommessa, insertDatiModuloCommessa } from '../api/apiSelfcare/moduloCommessaSE/api';
 import { getModuloCommessaPagoPa, modifyDatiModuloCommessaPagoPa } from '../api/apiPagoPa/moduloComessaPA/api';

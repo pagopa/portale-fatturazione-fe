@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Dispatch } from 'react';
+import React, { useState, useEffect} from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import {HeaderProduct} from '@pagopa/mui-italia';
 import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
@@ -8,7 +8,7 @@ import { IconButton } from '@mui/material';
 import { getMessaggiCount } from '../../api/apiPagoPa/centroMessaggi/api';
 import { getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
 import { PathPf } from '../../types/enum';
-import { ActionReducerType } from '../../reducer/reducerMainState';
+
 
 type PartySwitchItem = {
     id: string;

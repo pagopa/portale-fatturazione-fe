@@ -14,7 +14,7 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { useEffect, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import { Button, Card, Checkbox, TablePagination, Toolbar } from '@mui/material';
 import { FattureObj, GridCollapsible } from '../../../types/typeFatturazione';
 import RestoreIcon from '@mui/icons-material/Restore';
@@ -287,9 +287,9 @@ const TablePaginationDemo = ({setPage, page, rowsPerPage, setRowsPerPage, count}
 interface EnhancedTableToolbarProps {
     numSelected: number,
     stato:boolean,
-    setOpenConfermaModal:any,
-    selected:any,
-    setOpenResetFilterModal:any,
+    setOpenConfermaModal:React.Dispatch<SetStateAction<boolean>>,
+    selected:number[],
+    setOpenResetFilterModal:React.Dispatch<SetStateAction<boolean>>,
     monthFilterIsEqualMonthDownload:boolean
 }
   

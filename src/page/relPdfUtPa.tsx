@@ -172,17 +172,18 @@ const RelPdfPage : React.FC<RelPagePdfProps> = ({dispatchMainState}) =>{
 
     const getDateLastDownloadPdfFirmato = async(body) =>{
      
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const {idEnte, ...bodySelf} = body;
         if(enti){
             await getLogRelDocumentoFirmato(token, profilo.nonce,bodySelf).then((res) =>{
                 setLastUpdateDocFirmato(res.data[0].dataEvento);
-            }).catch((err)=>{ 
+            }).catch(()=>{ 
                 //manageError(err,dispatchMainState);
             });
         }else if(profilo.auth === 'PAGOPA'){
             await getLogPagoPaRelDocumentoFirmato(token, profilo.nonce,body).then((res) =>{
                 setLastUpdateDocFirmato(res.data[0].dataEvento);
-            }).catch((err)=>{
+            }).catch(()=>{
                 //manageError(err,dispatchMainState);
             });
         }

@@ -1,12 +1,10 @@
 import { Button, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, useEffect, useState } from "react";
 import {getProfilo, getToken } from "../reusableFunction/actionLocalStorage";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
-import {FattureObj} from "../types/typeFatturazione";
-import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { DataGrid, GridColDef, GridEventListener, GridRowParams, MuiEvent } from "@mui/x-data-grid";
 import { Params } from "../types/typesGeneral";
 import { getListaAccertamentiPagoPa, getListaAccertamentiPrenotazionePagoPa, getMatriceAccertamenti, getMatriceAccertamentiPagoPa } from "../api/apiPagoPa/accertamentiPA/api";
@@ -14,7 +12,6 @@ import { manageError, managePresaInCarico } from "../api/api";
 import { Accertamento, BodyAccertamenti } from "../types/typeAccertamenti";
 import { mesiGrid } from "../reusableFunction/reusableArrayObj";
 import ModalMatriceAccertamenti from "../components/accertamenti/modalMatrice";
-import { useId } from 'react';
 import { saveAs } from "file-saver";
 import { ActionReducerType } from "../reducer/reducerMainState";
 
@@ -108,8 +105,7 @@ const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
 
     const downloadAccertamento = async (id) => {
         await getListaAccertamentiPrenotazionePagoPa(token,profilo.nonce, {idReport:id})
-            .then((res)=>{
-            
+            .then(()=>{
                 managePresaInCarico('PRESA_IN_CARICO_DOCUMENTO',dispatchMainState);
             })
             .catch(((err)=>{

@@ -1,7 +1,7 @@
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { selfcareLogin, getAuthProfilo, manageError, redirect } from '../api/api';
 import {useEffect} from 'react';
-import { LoginProps, ManageErrorResponse } from '../types/typesGeneral';
+import { LoginProps} from '../types/typesGeneral';
 import { getDatiModuloCommessa } from '../api/apiSelfcare/moduloCommessaSE/api';
 import { PathPf } from '../types/enum';
 

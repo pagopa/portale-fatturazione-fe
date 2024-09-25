@@ -315,6 +315,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
         };
         if(profilo.profilo === 'REC' || profilo.profilo === 'CON'){
             headerNames = ['Contestazione', 'Onere', 'Recipient ID','Anno', 'Mese','Tipo Notifica','IUN', 'Data invio','Stato estero', 'CAP', 'Costo', ''];
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const {ragioneSociale, ...result} = element;
             return result;
         }else{
@@ -347,6 +348,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
         setValueAutocomplete([]);
         deleteFilterToLocalStorageNotifiche();
         setGetNotificheWorking(true);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const {idEnti, recapitisti, consolidatori, ...body} = newBody;
         if(enti){
             await listaNotifiche(token,profilo.nonce,1,10, body)
@@ -406,6 +408,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
     const getlistaNotifiche = async (nPage:number, nRow:number, bodyParameter) => {
         setShowLoadingGrid(true);
         // elimino idEnti dal paylod della get notifiche lato selfcare
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const {idEnti, recapitisti, consolidatori, ...newBody} = bodyParameter;
         // disable button filtra e annulla filtri nell'attesa dei dati
         setGetNotificheWorking(true);
@@ -646,6 +649,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
     const downloadNotificheOnDownloadButton = async () =>{
         setShowLoading(true);
         if(enti){
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const {idEnti, recapitisti, consolidatori, ...bodyEnti} = bodyDownload;
             await downloadNotifche(token, profilo.nonce,bodyEnti )
                 .then((res)=>{
@@ -666,6 +670,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                     manageError(err,dispatchMainState);
                 }));
         }else if(profilo.profilo === 'REC'){
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const {idEnti, recapitisti, consolidatori, ...bodyRecapitista} = bodyDownload;
             await downloadNotifcheRecapitista(token, profilo.nonce,bodyRecapitista )
                 .then((res)=>{
@@ -685,6 +690,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
                     setShowLoading(false);
                 }));
         }else if(profilo.profilo === 'CON'){
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { idEnti, recapitisti, consolidatori, ...bodyConsolidatore} = bodyDownload;
             await downloadNotifcheConsolidatore(token, profilo.nonce,bodyConsolidatore )
                 .then((res)=>{

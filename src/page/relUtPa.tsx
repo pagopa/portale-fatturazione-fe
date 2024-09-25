@@ -115,6 +115,7 @@ const RelPage : React.FC<RelPageProps> = ({dispatchMainState}) =>{
         
         if(enti && statusApp.datiFatturazione === true){
             setGetListaRelRunning(true);
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const {idEnti, ...newBody} = bodyRel;
             await  getListaRel(token,profilo.nonce,nPage, nRows, newBody)
                 .then((res)=>{
@@ -313,6 +314,7 @@ const RelPage : React.FC<RelPageProps> = ({dispatchMainState}) =>{
     const downloadListaRelExel = async() =>{
         setShowLoading(true);
         if(enti){
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const {idEnti, ...newBody} = bodyDownload;
             await downloadListaRel(token,profilo.nonce,newBody).then((res)=>{
                 saveAs("data:text/plain;base64," + res.data.documento,`Regolari esecuzioni /${data[0]?.ragioneSociale}/ ${mesiWithZero[bodyDownload.mese-1]}/ ${bodyDownload.anno}.xlsx` );

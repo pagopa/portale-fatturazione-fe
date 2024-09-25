@@ -21,7 +21,7 @@ import { ActionReducerType } from "../reducer/reducerMainState";
 
 export interface Messaggio {
     idMessaggio:number,
-    idEnte: any,
+    idEnte: null|string|number,
     idUtente: string,
     json: string,
     anno: number,
@@ -31,7 +31,7 @@ export interface Messaggio {
     auth: string,
     stato: string,
     dataInserimento: string,
-    dataStepCorrente: any,
+    dataStepCorrente: null|string|number,
     linkDocumento: string,
     tipologiaDocumento: string,
     categoriaDocumento: string,

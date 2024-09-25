@@ -30,7 +30,7 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
     const token =  getToken();
     const profilo =  getProfilo();
 
-    const [enableCreaContestazione, setEnableCreaContestazione] = useState(true);
+  
     const [tipoContestazioni, setTipoContestazioni] = useState<TipoContestazione[]>([]);
     const [errNoteEnte, setErrNoteEnte] = useState(false);
    
@@ -65,7 +65,6 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                 }
                 
             });
-            setEnableCreaContestazione(true);
         }
         setErrNoteEnte(false);
     },[open]);
@@ -260,9 +259,9 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
 
     const requiredString = (string:string , nomeTextBox:string) =>{
         YupString.required().validate(string).then(()=>{
-            setEnableCreaContestazione(false);
+            console.log('prova',nomeTextBox);
         }).catch(()=>{
-            setEnableCreaContestazione(true);
+            console.log('prova errore',nomeTextBox);
         });
     };
 
