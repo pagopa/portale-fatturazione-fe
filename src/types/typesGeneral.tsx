@@ -88,6 +88,24 @@ export interface MainState{
     authenticated:boolean,
     badgeContent:number,
     messaggioSelected:null|Messaggi
+    prodotti:null|ProfiloObject[]
+}
+
+export type ProfiloObject = {
+    idTipoContratto: any,
+    prodotto: string,
+    idEnte: null,
+    profilo: string,
+    email: string,
+    ruolo: string,
+    descrizioneRuolo: string,
+    gruppoRuolo: string,
+    nomeEnte: null|string,
+    id: string,
+    nonce: string,
+    valido: string,
+    jwt: string,
+    auth: string
 }
 
 export interface BodyDownloadDatiFatturazione{

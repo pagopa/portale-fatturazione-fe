@@ -24,7 +24,7 @@ import Azure from './page/azure';
 import RelPage from './page/relUtPa';
 import { reducerMainState } from './reducer/reducerMainState';
 import { getAuthProfilo, manageError, redirect } from './api/api';
-import { getProfilo, profiliEnti } from './reusableFunction/actionLocalStorage';
+import { getProdotti, getProfilo, profiliEnti } from './reusableFunction/actionLocalStorage';
 import useIsTabActive from './reusableFunction/tabIsActiv';
 import BasicAlerts from './components/reusableComponents/modals/alert';
 import AdesioneBando from './page/adesioneBando';
@@ -34,11 +34,14 @@ import { InfoOpen} from './types/typesGeneral';
 import Fatturazione from './page/fatturazione';
 import Accertamenti from './page/accertamenti';
 import Messaggi from './page/messaggi';
+import AuthAzureProdotti from './page/authAzureProdotti';
+
 
 
 const App = ({ instance }) => {
     // eslint-disable-next-line no-undef
     const profilo =  getProfilo();
+    const prodotti = getProdotti().prodotti;
     const tabActive = useIsTabActive();
     const enti = profiliEnti();  
 
@@ -70,7 +73,8 @@ const App = ({ instance }) => {
         apiError:null,
         authenticated:false ,
         badgeContent:0,
-        messaggioSelected:null
+        messaggioSelected:null,
+        prodotti:null
     });
 
    
@@ -94,7 +98,7 @@ const App = ({ instance }) => {
   
  
     useEffect(()=>{
-        if(mainState.authenticated === true && tabActive === true && (mainState.nonce !== profilo.nonce)){
+        if(mainState.authenticated === true && window.location.pathname !== '/selezionaprodotto' && tabActive === true && (mainState.nonce !== profilo.nonce)){
             window.location.href = redirect;
         }
     },[tabActive]);
@@ -116,7 +120,26 @@ const App = ({ instance }) => {
     const recOrConsIsLogged = profilo.profilo === 'REC' || profilo.profilo ==='CON';
     let route;
 
-    if(profilo.jwt && profilo.auth === 'PAGOPA'){
+    if(prodotti?.length > 0){
+        route = <Router>
+            <ThemeProvider theme={theme}>
+                <div className="App" >
+
+                    <HeaderPostLogin mainState={mainState} />
+
+                    <div>
+                        <Routes>
+                         
+                            <Route path="/selezionaprodotto" element={<AuthAzureProdotti dispatchMainState={ dispatchMainState} />} />
+                        </Routes>
+                    </div>
+                    <FooterComponent mainState={mainState} />
+                </div>
+            </ThemeProvider>
+
+        </Router>;
+
+    }else if(profilo.jwt && profilo.auth === 'PAGOPA'){
 
         route = <Router>
             <ThemeProvider theme={theme}>

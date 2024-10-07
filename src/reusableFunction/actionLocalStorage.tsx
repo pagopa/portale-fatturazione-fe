@@ -22,6 +22,13 @@ export const getProfilo = () =>{
     return result;
 };
 
+export const getProdotti = () =>{
+    const prodotti = localStorage.getItem('prodotti') || '{}';
+    const result =  JSON.parse(prodotti);
+
+    return result;
+};
+
 export const getStatusApp = () =>{
     const status = localStorage.getItem('statusApplication') || '{}';
     const result =  JSON.parse(status);

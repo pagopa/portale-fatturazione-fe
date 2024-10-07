@@ -1,14 +1,16 @@
-import { pagopaLogin, getAuthProfilo, redirect } from "../api/api";
+import { pagopaLogin, redirect, pagopaLogin2 } from "../api/api";
 import {InteractionRequiredAuthError,InteractionStatus,
 } from "@azure/msal-browser";
 import { useMsal } from "@azure/msal-react";
 import {useState, useEffect} from 'react';
 import { useNavigate } from "react-router";
 import { AuthAzureProps} from "../types/typesGeneral";
-import { PathPf } from "../types/enum";
+
 
 // Blank Page utilizzata per l'autenticazione Azure e le conseguenti chiamate di accesso pagoPA
 // e salvataggio del profilo nlla local storage
+
+
 const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
 
     const handleModifyMainState = (valueObj) => {
@@ -52,7 +54,8 @@ const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
 
     useEffect(()=>{
         if(Object.values(tokens).length > 0){
-            postPagoPa();
+            //postPagoPa();
+            postPagoPa2();
         }
 
     },[tokens]);
@@ -67,7 +70,7 @@ const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
                 localStorage.setItem('token', JSON.stringify(storeJwt));
            
                 // store del token nella local storage per tutte le successive chiamate END
-                getProfilo(res);
+                // getProfilo(res);
             }
         }).catch(() =>{
             window.location.href = redirect;
@@ -76,45 +79,30 @@ const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
 
     };
 
-    type  Jwt = {
-        jwt:string
-    }
-    interface ParameterGetProfiloAzure {
-        data:Jwt
-    }
-
-    const getProfilo = async (res:ParameterGetProfiloAzure)=>{
-      
-        await getAuthProfilo(res.data.jwt)
-            .then(resp =>{
+    const postPagoPa2 = () =>{
+        pagopaLogin2(tokens).then((res)=>{
+            localStorage.clear();
+            if(res.status === 200){
+                //localStorage.removeItem("statusApplication");
+                // store del token nella local storage per tutte le successive chiamate START
+                console.log('new res', res);
+             
                
-                const storeProfilo = resp.data;
-                localStorage.setItem('profilo', JSON.stringify({
-                    auth:storeProfilo.auth,
-                    nomeEnte:storeProfilo.nomeEnte,
-                    descrizioneRuolo:storeProfilo.descrizioneRuolo,
-                    ruolo:storeProfilo.ruolo,
-                    dataUltimo:storeProfilo.dataUltimo,
-                    dataPrimo:storeProfilo.dataPrimo,
-                    prodotto:storeProfilo.prodotto,
-                    jwt:res.data.jwt,
-                    nonce:storeProfilo.nonce
-                }));
-              
+                localStorage.setItem('prodotti', JSON.stringify({prodotti:res.data}));
                 handleModifyMainState({
-                    ruolo:resp.data.ruolo,
-                    action:'LISTA_DATI_FATTURAZIONE',
-                    nonce:storeProfilo.nonce,
-                    authenticated:true});
+                    authenticated:true,
+                    prodotti:res.data
+                });
+                navigate('/selezionaprodotto');
+            }
+        }).catch(() =>{
+            window.location.href = redirect;
 
-                navigate(PathPf.LISTA_DATI_FATTURAZIONE);
-              
-            } )
-            .catch(()=> {
-                window.location.href = redirect;
-            });
+        });
+
     };
-  
+
+
     return (
         <>
         </>

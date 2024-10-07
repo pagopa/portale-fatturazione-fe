@@ -76,6 +76,11 @@ export const pagopaLogin = async (tokenObject:TokenObject) => {
     return result;
 };
 
+export const pagopaLogin2 = async (tokenObject:TokenObject) => {
+    const result = await axios.post(`${url}/api/v2/auth/pagopa/login`, tokenObject);
+    return result;
+};
+
 export const selfcareLogin = async (selfcareToken:string|null) =>{
     const result = await axios.get(`${url}/api/auth/selfcare/login?selfcareToken=${selfcareToken}`,
   
