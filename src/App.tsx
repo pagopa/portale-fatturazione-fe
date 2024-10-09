@@ -35,6 +35,7 @@ import Fatturazione from './page/fatturazione';
 import Accertamenti from './page/accertamenti';
 import Messaggi from './page/messaggi';
 import AuthAzureProdotti from './page/authAzureProdotti';
+import SideNamvPagopa from './components/sideNavs/sideNavPagoPA';
 
 
 
@@ -144,6 +145,40 @@ const App = ({ instance }) => {
                             <Route path="/selezionaprodotto" element={<AuthAzureProdotti dispatchMainState={ dispatchMainState} />} />
                         </Routes>
                     </div>
+                    <FooterComponent mainState={mainState} />
+                </div>
+            </ThemeProvider>
+
+        </Router>;
+
+    }else if(profilo.jwt && profilo.auth === 'PAGOPA' && profilo.prodotto === 'prod-pagopa'){
+       
+
+        route = <Router>
+            <ThemeProvider theme={theme}>
+                <div className="App">
+                    <BasicAlerts setVisible={setShowAlert} visible={showAlert} mainState={mainState} dispatchMainState={ dispatchMainState}></BasicAlerts>
+                    <HeaderPostLogin mainState={mainState}/>
+
+                    <div>
+                        <HeaderNavComponent mainState={mainState} dispatchMainState={ dispatchMainState} />
+
+                        <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
+     
+                            <Grid item xs={2}>
+                                <SideNamvPagopa/>
+                            </Grid> 
+
+                            <Grid item xs={10} sx={{height:'500px'}}>
+                                <Routes>
+                
+                                </Routes>
+
+                            </Grid>
+
+                        </Grid>
+                    </div>
+
                     <FooterComponent mainState={mainState} />
                 </div>
             </ThemeProvider>

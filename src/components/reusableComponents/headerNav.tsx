@@ -158,6 +158,7 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainS
                 partyList={partyList}
             ></HeaderProduct>
         </div>
+        {profilo.prodotto === 'prod-pn' &&
         <div className="d-flex justify-content-center m-auto">
             <Badge
                 badgeContent={countMessages}
@@ -178,6 +179,7 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainS
 
             </Badge>
         </div>
+        }
    
     </div>) :
         (<div >
