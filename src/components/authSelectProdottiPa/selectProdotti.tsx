@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { Theme, useTheme } from '@mui/material/styles';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Select from '@mui/material/Select';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import { getProdotti } from '../../reusableFunction/actionLocalStorage';
+import { Typography } from '@mui/material';
 
 
 const MenuProps = {
@@ -17,33 +17,27 @@ const MenuProps = {
     },
 };
 
-const names = [
-    'Oliver Hansen',
-    'Van Henry',
-    'April Tucker',
-    'Ralph Hubbard',
-    'Omar Alexander',
-    'Carlos Abbott',
-    'Miriam Wagner',
-    'Bradley Wilkerson',
-    'Virginia Andrews',
-    'Kelly Snyder',
-];
 
 
 
-export default function MultipleSelectProdotti({setProductSelected}) {
+
+export default function MultipleSelectProdotti({setProductSelected, productSelected}) {
 
     const prodotti = getProdotti().prodotti;
-   
+    const [valueSelect, setValueSelect] = React.useState('');
   
-
+    console.log(valueSelect,'ciao',productSelected);
     const handleChange = (event) => {
         const {
             target: { value },
         } = event;
-        setProductSelected(value);
+        setProductSelected(prodotti.find((el) => el.prodotto === value));
+        setValueSelect(value);
     };
+
+    
+
+    
 
     return (
         <div className='container_select_prodotti'>
@@ -53,24 +47,34 @@ export default function MultipleSelectProdotti({setProductSelected}) {
                     labelId="demo-multiple-name-label"
                     id="demo-multiple-name"
                     open={true}
-                    value={''}
-                    onChange={handleChange}
+                    value={valueSelect}
+                    onChange={(e)=> handleChange(e)}
                     input={<OutlinedInput label="Cerca prodotto" />}
                     MenuProps={MenuProps}
                 >
-                    {prodotti.map((el) => (
-                        <MenuItem
-                            key={el.jwt}
-                            value={el}
-                            style={{height:'60px'}}
-                        >
-                            <div className='icon_select_prodotti'> 
-                                <AccountBalanceIcon sx={{color:'#A2ADB8'}} />
-                            </div>
-                            
-                            {el.prodotto}
-                        </MenuItem>
-                    ))}
+                    {prodotti.map((el) => {
+
+                        let name = el?.prodotto;
+                        if(el?.prodotto === 'prod-pagopa'){
+                            name = 'pagoPA';
+                        }else if(el?.prodotto === 'prod-pn'){
+                            name = 'SEND - Servizio Notifiche Digitali';
+                        }
+
+                        return (
+                            <MenuItem
+                                key={el.jwt}
+                                value={el.prodotto}
+                                style={{height:'60px'}}
+                            >
+                                <div className='icon_select_prodotti'> 
+                                    <AccountBalanceIcon sx={{color:'#A2ADB8'}} />
+                                </div>
+        
+                                <Typography variant="h6">{name}</Typography> 
+                            </MenuItem>
+                        );
+                    } )}
                 </Select>
             </FormControl>
         </div>

@@ -1,87 +1,98 @@
 import React, { useState, useEffect} from 'react';
 import { useLocation, useNavigate } from 'react-router';
-import {HeaderProduct} from '@pagopa/mui-italia';
+import {HeaderProduct,PartyEntity, ProductEntity} from '@pagopa/mui-italia';
 import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
 import Badge from '@mui/material/Badge';
 import { MainState } from '../../types/typesGeneral';
 import { IconButton } from '@mui/material';
 import { getMessaggiCount } from '../../api/apiPagoPa/centroMessaggi/api';
-import { getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
+import { getProdotti, getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
 import { PathPf } from '../../types/enum';
-
-
-type PartySwitchItem = {
-    id: string;
-    name: string;
-    productRole?: string;
-    logoUrl?: string;
-    parentName?: string;
-};
-type LinkType = "internal" | "external";
-type ProductSwitchItem = {
-    id: string;
-    title: string;
-    productUrl: string;
-    linkType: LinkType;
-};
-type PartyEntity = PartySwitchItem;
-type ProductEntity = ProductSwitchItem;
+import { main } from '@popperjs/core';
 
 type HeaderNavProps = {
-    mainState:MainState
+    mainState:MainState,
+    dispatchMainState:any
 }
 
-const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState}) => {
+
+const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainState}) => {
+    console.log('reload');
    
     const location = useLocation();
     const navigate = useNavigate();
-    const getUserDetails = localStorage.getItem('profilo') || '{}';
-    const UserDetailsParsed = JSON.parse(getUserDetails);
+    const prodotti = getProdotti().prodotti;
     const profilo =  getProfilo();
     const token = getToken();
-
   
-    
-    const camelizeDescizioneRuolo = () =>{
-       
-        const allLower =  UserDetailsParsed.descrizioneRuolo?.toLowerCase();
-        const ruolo = allLower?.charAt(0).toUpperCase() + allLower?.slice(1);
-        return {name:UserDetailsParsed.nomeEnte, ruolo };
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
 
-    }; 
-    const [user, setuser] = useState({name:'', ruolo:'' });
     const [countMessages, setCountMessages] = useState(0);
-
+    const arrayProducts:ProductEntity[] = [
+        {
+            id: '0',
+            title: mainState.user.id === '0' ? 'pagoPA': 'SEND - Servizio Notifiche Digitali',
+            productUrl:"",
+            linkType:"external"
+        }
+    ];
+    /*
     useEffect(()=>{
-        setuser(camelizeDescizioneRuolo());
-    
-    },[getUserDetails]);
-
-    const productsList : Array<ProductEntity>  = [
+    },
         {
             id: '1',
             title: 'SEND - Servizio Notifiche Digitali',
-            productUrl: '#send',
-            linkType: 'external',
-        }];
+            productUrl:"",
+            linkType:"external"
+        }
+        //let name = '';
+        if(mainState.prodotti.length >0){
+            const result:Array<ProductEntity> =  mainState.prodotti.map((el)=>{
+           
+
+                return ({
+                    id: el.prodotto,
+                    title: el.prodotto,
+                    productUrl:"",
+                    linkType:"external",
+                });
+            });
+ 
+            setArrayProducts(result);
+        }
+        
+
+    },[mainState.prodotti?.length]);
+   */
+ 
+
+ 
+   
+
+    //const productsList : Array<ProductEntity>  = arrProdotti;
 
     //const cdnPath = 'https://assets.cdn.io.italia.it/logos/organizations/';
-    const name = user.name;
+
 
     const partyList : Array<PartyEntity> = [
         {
-            id: '0',
+            id:'0',
             logoUrl: ``,
-            name: name,
-            productRole: user.ruolo,
-        },
+            name: '',
+            productRole: mainState.user.ruolo,
+        }
     ];
 
     const hideHeadernav = location.pathname === '/auth' ||
                             location.pathname === '/azure' ||
                             location.pathname === '/auth/azure'||
                             location.pathname === '/azureLogin'||
-                            !UserDetailsParsed.auth;
+                            !profilo.auth;
 
 
     //logica per il centro messaggi sospesa
@@ -99,19 +110,51 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState}) => {
             getCount();
             const interval = setInterval(async() => {
                 await getCount();
-            }, 3000);
+            }, 4000);
       
             return () => clearInterval(interval); 
          
         }
     },[mainState.authenticated]);
 
+
+    
+
+
+
+   
+   
     const conditionalHeder = profilo.auth === 'PAGOPA' ?  (<div style={{display:'flex', backgroundColor:'white'}}>
         <div style={{width:'95%'}}>
+
             <HeaderProduct
-                productId="1"
-                productsList={productsList}
-                onSelectedProduct={(p) => console.log('Selected Item:', p.title)}
+                productId='0'
+                productsList={arrayProducts}
+                onSelectedProduct={(e) => {
+                  
+                    let result; 
+                    if(e.id === '0'){
+                        result = mainState.prodotti.find(el => el.prodotto === "prod-pagopa");
+                    }else if(e.id === '1'){
+                        result = mainState.prodotti.find(el => el.prodotto === "prod-pn");
+                    }
+                    //console.log(profiloToPush,'ppp',mainState);
+                  
+                    let id = '0';
+                    if(result?.prodotto === 'prod-pagopa'){
+                        id = '0';
+                    }else if(result?.prodotto === 'prod-pn'){
+                        id = '1';
+                    }
+                    localStorage.removeItem("profilo");
+                    localStorage.removeItem("token");
+                    localStorage.setItem('profilo',JSON.stringify(result));
+                    localStorage.setItem('token',JSON.stringify({token:result?.jwt}));
+                    console.log(result,'ooo',e);
+
+                    handleModifyMainState({user:{name:'', ruolo:result?.descrizioneRuolo, id:id }});
+                    
+                }}
                 partyList={partyList}
             ></HeaderProduct>
         </div>
@@ -139,8 +182,8 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState}) => {
     </div>) :
         (<div >
             <HeaderProduct
-                productId="1"
-                productsList={productsList}
+                productId={'1'}
+                productsList={arrayProducts}
                 onSelectedProduct={(p) => console.log('Selected Item:', p.title)}
                 partyList={partyList}
             ></HeaderProduct>

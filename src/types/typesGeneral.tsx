@@ -88,7 +88,10 @@ export interface MainState{
     authenticated:boolean,
     badgeContent:number,
     messaggioSelected:null|Messaggi
-    prodotti:null|ProfiloObject[]
+    prodotti:ProfiloObject[],
+    user:{
+        name:string,id:string,ruolo:string
+    }
 }
 
 export type ProfiloObject = {

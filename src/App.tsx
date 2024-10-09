@@ -41,7 +41,7 @@ import AuthAzureProdotti from './page/authAzureProdotti';
 const App = ({ instance }) => {
     // eslint-disable-next-line no-undef
     const profilo =  getProfilo();
-    const prodotti = getProdotti().prodotti;
+    const prodotti = getProdotti()?.prodotti;
     const tabActive = useIsTabActive();
     const enti = profiliEnti();  
 
@@ -51,6 +51,8 @@ const App = ({ instance }) => {
             value:valueObj
         });
     };
+
+   
  
    
     const [showAlert, setShowAlert] = useState(false);
@@ -71,12 +73,13 @@ const App = ({ instance }) => {
         statusPageInserimentoCommessa:'immutable',
         relSelected: null,
         apiError:null,
-        authenticated:false ,
+        authenticated:false,
+        user:{name:'', ruolo:'', id:''},
         badgeContent:0,
         messaggioSelected:null,
-        prodotti:null
+        prodotti:[]
     });
-
+    console.log(mainState,'main');
    
    
 
@@ -84,7 +87,15 @@ const App = ({ instance }) => {
     const getProfiloToGetNonce = async () =>{
         await getAuthProfilo(profilo.jwt)
             .then((res) =>{
-                handleModifyMainState({ nonce:res.data.nonce,authenticated:true});
+
+                let id; 
+                if(profilo.prodotto === 'prod-pagopa'){
+                    id = '0';
+                }else if(profilo.prodotto === 'prod-pn'){
+                    id ='1';
+                }
+              
+                handleModifyMainState({ nonce:res.data.nonce,authenticated:true, user:{name:res.data.prodotto, ruolo:res.data.descrizioneRuolo, id:id},prodotti:prodotti});
                 if(res?.data.nonce !== profilo.nonce || !profilo){
                     window.location.href = redirect;
                 }
@@ -120,7 +131,7 @@ const App = ({ instance }) => {
     const recOrConsIsLogged = profilo.profilo === 'REC' || profilo.profilo ==='CON';
     let route;
 
-    if(prodotti?.length > 0){
+    if(prodotti?.length > 0 && !profilo.auth){
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App" >
@@ -149,7 +160,7 @@ const App = ({ instance }) => {
                     <HeaderPostLogin mainState={mainState} />
 
                     <div >
-                        <HeaderNavComponent  mainState={mainState} />
+                        <HeaderNavComponent  mainState={mainState} dispatchMainState={ dispatchMainState} />
                         
                         <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
                      
@@ -219,7 +230,7 @@ const App = ({ instance }) => {
                     <HeaderPostLogin mainState={mainState} />
 
                     <div>
-                        <HeaderNavComponent mainState={mainState} />
+                        <HeaderNavComponent mainState={mainState} dispatchMainState={ dispatchMainState} />
 
                         <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
                      
@@ -279,7 +290,7 @@ const App = ({ instance }) => {
                     <HeaderPostLogin mainState={mainState}/>
 
                     <div>
-                        <HeaderNavComponent mainState={mainState} />
+                        <HeaderNavComponent mainState={mainState} dispatchMainState={ dispatchMainState} />
 
                         <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
                  
@@ -326,7 +337,7 @@ const App = ({ instance }) => {
                     <HeaderPostLogin mainState={mainState}/>
 
                     <div>
-                        <HeaderNavComponent mainState={mainState} />
+                        <HeaderNavComponent mainState={mainState} dispatchMainState={ dispatchMainState}/>
 
                         <Routes>
                             

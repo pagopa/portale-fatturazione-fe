@@ -6,22 +6,15 @@ import { AuthAzureProps, ProfiloObject } from "../types/typesGeneral";
 import { useEffect, useState } from "react";
 import { getProdotti } from "../reusableFunction/actionLocalStorage";
 import { Button, Typography } from "@mui/material";
-
-
-type  Jwt = {
-    jwt:string
-}
-interface ParameterGetProfiloAzure {
-    data:Jwt
-}
+import DivProdotto from "../components/authSelectProdottiPa/divProdotto";
 
 const AuthAzureProdotti : React.FC<AuthAzureProps> = ({dispatchMainState}) => {
 
     const navigate = useNavigate();
     const prodotti = getProdotti().prodotti;
 
-    const [productSelected, setProductSelected] = useState<ProfiloObject|object>({});
-    console.log(productSelected);
+    const [productSelected, setProductSelected] = useState<ProfiloObject|null>(null);
+   
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -42,37 +35,52 @@ const AuthAzureProdotti : React.FC<AuthAzureProps> = ({dispatchMainState}) => {
     },[]);
   
 
-    const getProfilo = async (res:ParameterGetProfiloAzure)=>{
-      
-        await getAuthProfilo(res.data.jwt)
-            .then(resp =>{
-               
-                const storeProfilo = resp.data;
-                localStorage.setItem('profilo', JSON.stringify({
-                    auth:storeProfilo.auth,
-                    nomeEnte:storeProfilo.nomeEnte,
-                    descrizioneRuolo:storeProfilo.descrizioneRuolo,
-                    ruolo:storeProfilo.ruolo,
-                    dataUltimo:storeProfilo.dataUltimo,
-                    dataPrimo:storeProfilo.dataPrimo,
-                    prodotto:storeProfilo.prodotto,
-                    jwt:res.data.jwt,
-                    nonce:storeProfilo.nonce
-                }));
-              
-                handleModifyMainState({
-                    ruolo:resp.data.ruolo,
-                    action:'LISTA_DATI_FATTURAZIONE',
-                    nonce:storeProfilo.nonce,
-                    authenticated:true});
+    const getProfilo = async ()=>{
+        if(productSelected?.jwt){
 
-                navigate(PathPf.LISTA_DATI_FATTURAZIONE);
+      
+            await getAuthProfilo(productSelected.jwt)
+                .then(resp =>{
+               
+                    const storeProfilo = resp.data;
+                    localStorage.setItem('profilo', JSON.stringify({
+                        auth:storeProfilo.auth,
+                        nomeEnte:storeProfilo.nomeEnte,
+                        descrizioneRuolo:storeProfilo.descrizioneRuolo,
+                        ruolo:storeProfilo.ruolo,
+                        dataUltimo:storeProfilo.dataUltimo,
+                        dataPrimo:storeProfilo.dataPrimo,
+                        prodotto:storeProfilo.prodotto,
+                        jwt:productSelected.jwt,
+                        nonce:storeProfilo.nonce
+                    }));
+                    const storeJwt = {token:productSelected.jwt};
+                    localStorage.setItem('token', JSON.stringify(storeJwt));
+
+                    let id = '0';
+                    if(productSelected.prodotto === 'prod-pagopa'){
+                        id = '0';
+                    }else if(productSelected.prodotto === 'prod-pn'){
+                        id = '1';
+                    }
               
-            } )
-            .catch(()=> {
-                window.location.href = redirect;
-            });
+                    handleModifyMainState({
+                        ruolo:resp.data.ruolo,
+                        action:'LISTA_DATI_FATTURAZIONE',
+                        nonce:storeProfilo.nonce,
+                        authenticated:true,
+                        user:{name:'', ruolo:'', id:id}});
+
+                    navigate(PathPf.LISTA_DATI_FATTURAZIONE);
+              
+                } )
+                .catch(()=> {
+                    window.location.href = redirect;
+                });
+        }
     };
+
+   
    
 
     return (
@@ -89,27 +97,32 @@ const AuthAzureProdotti : React.FC<AuthAzureProps> = ({dispatchMainState}) => {
                     <div className=" d-flex align-items-center justify-content-center mt-2">
                         <Typography  align="center">{`Se operi per più prodotti, potrai modificare la tua scelta dopo aver effettuato l’accesso.`}</Typography>                                                               
                     </div>
-                    <div className=" d-flex align-items-center justify-content-center mt-5">
-                     
-                        <MultipleSelectProdotti setProductSelected={setProductSelected}></MultipleSelectProdotti>
-                        
-                    </div>
+                    {!productSelected? 
+                        <div className=" d-flex align-items-center justify-content-center mt-5">
+                            <MultipleSelectProdotti productSelected={productSelected} setProductSelected={setProductSelected}></MultipleSelectProdotti>
+                        </div> :
+                        <div className=" d-flex align-items-center justify-content-center mt-5">
+                            <DivProdotto productSelected={productSelected} setProductSelected={setProductSelected}/>
+                        </div>
+                    }
                 </div>
                 <div className="col">
                 </div>
             </div>
+            {productSelected && 
             <div className="row mt-3">
 
                 <div className="col">
                 </div>
                 <div className="col">
-                    <div className=" d-flex align-items-center justify-content-center mt-2">
-                        <Button variant="contained" >Accedi</Button>
+                    <div className=" d-flex align-items-center justify-content-center mt-5">
+                        <Button variant="contained" onClick={()=> getProfilo()}>Accedi</Button>
                     </div>
                 </div>
                 <div className="col">
                 </div>
             </div>
+            }
             
 
       
