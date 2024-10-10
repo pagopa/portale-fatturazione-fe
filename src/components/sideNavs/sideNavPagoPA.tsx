@@ -40,7 +40,7 @@ const SideNamvPagopa = () => {
                             <ListItemIcon>
                                 <ReceiptIcon fontSize="inherit" />
                             </ListItemIcon>
-                            <ListItemText primary="Anagrafica psp" />
+                            <ListItemText primary="Anagrafica PSP" />
                         </ListItemButton>
                           
                         <ListItemButton selected={selectedIndex === 1} onClick={() => console.log(999)}>

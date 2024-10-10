@@ -24,6 +24,7 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainS
     const prodotti = getProdotti().prodotti;
     const profilo =  getProfilo();
     const token = getToken();
+    const url = window.location.href;
   
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -33,59 +34,38 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainS
     };
 
     const [countMessages, setCountMessages] = useState(0);
-    const arrayProducts:ProductEntity[] = [
+  
+
+    const products:ProductEntity[] = [
         {
-            id: '0',
-            title: mainState.user.id === '0' ? 'Piattaforma pagoPA': 'SEND - Servizio Notifiche Digitali',
+            id: 'prod-pn',
+            title:'SEND - Servizio Notifiche Digitali',
+            productUrl:"",
+            linkType:"external"
+        },
+        {
+            id: 'prod-pagopa',
+            title:'Piattaforma pagoPA',
             productUrl:"",
             linkType:"external"
         }
     ];
 
-    const productsList : Array<ProductEntity>  = [
-        {
-            id: '1',
-            title: 'SEND - Servizio Notifiche Digitali',
-            productUrl: '#send',
-            linkType: 'external',
-        }];
+   
 
-    /*
-    useEffect(()=>{
-    },
+    
+    const arrayProducts:ProductEntity[] = [
         {
             id: '1',
-            title: 'SEND - Servizio Notifiche Digitali',
+            title:'SEND - Servizio Notifiche Digitali',
             productUrl:"",
             linkType:"external"
         }
-        //let name = '';
-        if(mainState.prodotti.length >0){
-            const result:Array<ProductEntity> =  mainState.prodotti.map((el)=>{
-           
+    ];
 
-                return ({
-                    id: el.prodotto,
-                    title: el.prodotto,
-                    productUrl:"",
-                    linkType:"external",
-                });
-            });
- 
-            setArrayProducts(result);
-        }
-        
-
-    },[mainState.prodotti?.length]);
-   */
- 
-
- 
    
 
-    //const productsList : Array<ProductEntity>  = arrProdotti;
-
-    //const cdnPath = 'https://assets.cdn.io.italia.it/logos/organizations/';
+ 
 
 
     const partyList : Array<PartyEntity> = [
@@ -127,7 +107,6 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainS
     },[mainState.authenticated]);
 
 
-    
 
 
 
@@ -137,33 +116,19 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainS
         <div style={{width:'95%'}}>
 
             <HeaderProduct
-                productId='0'
-                productsList={arrayProducts}
+                productId={profilo.prodotto||'prod-pn'}
+                productsList={products}
                 onSelectedProduct={(e) => {
-                    console.log(e);
-                    
-                    let result; 
-                    if(e.id === '0'){
-                        result = mainState.prodotti.find(el => el.prodotto === "prod-pagopa");
-                    }else if(e.id === '1'){
-                        result = mainState.prodotti.find(el => el.prodotto === "prod-pn");
-                    }
-                    //console.log(profiloToPush,'ppp',mainState);
                   
-                    let id = '0';
-                    if(result?.prodotto === 'prod-pagopa'){
-                        id = '0';
-                    }else if(result?.prodotto === 'prod-pn'){
-                        id = '1';
-                    }
+                   
+                    const result = mainState.prodotti.find(el => el.prodotto === e.id);
+                   
+                  
                     localStorage.removeItem("profilo");
                     localStorage.removeItem("token");
                     localStorage.setItem('profilo',JSON.stringify(result));
                     localStorage.setItem('token',JSON.stringify({token:result?.jwt}));
-                    console.log(result,'ooo',e);
-
-                    handleModifyMainState({user:{name:'', ruolo:result?.descrizioneRuolo, id:id }});
-                
+                    window.location.assign(url);
                 }}
                 partyList={partyList}
             ></HeaderProduct>
@@ -194,7 +159,7 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainS
     </div>) :
         (<div >
             <HeaderProduct
-                productId='0'
+                productId='1'
                 productsList={arrayProducts}
                 onSelectedProduct={(p) => console.log('Selected Item:', p.title)}
                 partyList={partyList}
