@@ -40,7 +40,11 @@ export const downloadNotifchePagoPa  = async (token:string, nonce:string , body:
         body,
         { headers: {
             Authorization: 'Bearer ' + token,
+            "Accept" : "application/octet-stream, application/json, text/plain, */*"
         },
+        responseType: 'arraybuffer',
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity
         }
     );
     return response;
