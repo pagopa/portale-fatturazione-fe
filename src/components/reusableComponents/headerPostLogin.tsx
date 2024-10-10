@@ -36,7 +36,7 @@ const HeaderPostLogin = ({mainState}) => {
     // start actions sul manuale operativo , download del manuale
 
     const onButtonClick = () => {
-        const pdfUrl = "/ManualeUtentePortaleFatturazione4.pdf";
+        const pdfUrl = "/ManualeUtentePortaleFatturazione5.pdf";
         const link = document.createElement("a");
         link.href = pdfUrl;
         link.download = "ManualeUtentePortaleFatturazione.pdf";
