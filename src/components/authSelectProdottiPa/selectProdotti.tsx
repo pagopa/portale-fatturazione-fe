@@ -25,6 +25,11 @@ export default function MultipleSelectProdotti({setProductSelected, productSelec
 
     const prodotti = getProdotti().prodotti;
     const [valueSelect, setValueSelect] = React.useState('');
+    const [openSelect, setOpenselect] = React.useState(false);
+
+    React.useEffect(()=>{
+        setOpenselect(true);
+    },[]);
   
     console.log(valueSelect,'ciao',productSelected);
     const handleChange = (event) => {
@@ -46,7 +51,7 @@ export default function MultipleSelectProdotti({setProductSelected, productSelec
                 <Select
                     labelId="demo-multiple-name-label"
                     id="demo-multiple-name"
-                    open={true}
+                    open={openSelect}
                     value={valueSelect}
                     onChange={(e)=> handleChange(e)}
                     input={<OutlinedInput label="Cerca prodotto" />}
@@ -65,7 +70,6 @@ export default function MultipleSelectProdotti({setProductSelected, productSelec
                             <MenuItem
                                 key={el.jwt}
                                 value={el.prodotto}
-                                style={{height:'60px'}}
                             >
                                 <div className='icon_select_prodotti'> 
                                     <AccountBalanceIcon sx={{color:'#A2ADB8'}} />

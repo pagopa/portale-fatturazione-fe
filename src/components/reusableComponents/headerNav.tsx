@@ -41,6 +41,15 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainS
             linkType:"external"
         }
     ];
+
+    const productsList : Array<ProductEntity>  = [
+        {
+            id: '1',
+            title: 'SEND - Servizio Notifiche Digitali',
+            productUrl: '#send',
+            linkType: 'external',
+        }];
+
     /*
     useEffect(()=>{
     },
@@ -84,7 +93,7 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainS
             id:'0',
             logoUrl: ``,
             name: '',
-            productRole: mainState.user.ruolo,
+            productRole: "Amministratore",
         }
     ];
 
@@ -184,7 +193,7 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainS
     </div>) :
         (<div >
             <HeaderProduct
-                productId={'1'}
+                productId='0'
                 productsList={arrayProducts}
                 onSelectedProduct={(p) => console.log('Selected Item:', p.title)}
                 partyList={partyList}

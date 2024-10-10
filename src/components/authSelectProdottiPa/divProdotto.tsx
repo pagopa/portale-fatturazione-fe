@@ -26,7 +26,7 @@ export default function DivProdotto({productSelected, setProductSelected}) {
             <div className="d-flex align-items-center justify-content-center">
                 <div>
                     <div>
-                        <Typography variant="caption-semibold">{name}</Typography>
+                        <Typography variant="overline">{name}</Typography>
                     </div>
                     
                     <Typography variant="caption">{productSelected?.descrizioneRuolo}</Typography>

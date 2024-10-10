@@ -101,10 +101,12 @@ const getProfilo = async (res:ParameterGetProfilo)=>{
            
             if(resp.data.profilo === "REC" || resp.data.profilo === "CON"){
                 localStorage.removeItem("statusApplication");
-                handleModifyMainState({ruolo:resp.data.ruolo,nonce:storeProfilo.nonce,authenticated:true});
+                handleModifyMainState({ruolo:resp.data.ruolo,nonce:storeProfilo.nonce,authenticated:true, user:{name:'', ruolo:storeProfilo.descrizioneRuolo
+                    , id:'1'}});
                 navigate(PathPf.LISTA_NOTIFICHE);
             }else{
-                const infoProfilo = {ruolo:resp.data.ruolo,nonce:storeProfilo.nonce,authenticated:true};
+                const infoProfilo = {ruolo:resp.data.ruolo,nonce:storeProfilo.nonce,authenticated:true, user:{name:'', ruolo:storeProfilo.descrizioneRuolo
+                    , id:'1'}};
                 getCommessa(res.data[0].jwt, storeProfilo.nonce,infoProfilo);
                 //setCheckProfilo(true);
                 // setto il ruolo nello state di riferimento globale
