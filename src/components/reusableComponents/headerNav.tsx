@@ -36,7 +36,7 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainS
     const arrayProducts:ProductEntity[] = [
         {
             id: '0',
-            title: mainState.user.id === '0' ? 'pagoPA': 'SEND - Servizio Notifiche Digitali',
+            title: mainState.user.id === '0' ? 'Piattaforma pagoPA': 'SEND - Servizio Notifiche Digitali',
             productUrl:"",
             linkType:"external"
         }
@@ -140,7 +140,8 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainS
                 productId='0'
                 productsList={arrayProducts}
                 onSelectedProduct={(e) => {
-                  
+                    console.log(e);
+                    
                     let result; 
                     if(e.id === '0'){
                         result = mainState.prodotti.find(el => el.prodotto === "prod-pagopa");
@@ -162,12 +163,12 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainS
                     console.log(result,'ooo',e);
 
                     handleModifyMainState({user:{name:'', ruolo:result?.descrizioneRuolo, id:id }});
-                    
+                
                 }}
                 partyList={partyList}
             ></HeaderProduct>
         </div>
-        {profilo.prodotto === 'prod-pn' &&
+        {profilo.auth === 'PAGOPA' &&
         <div className="d-flex justify-content-center m-auto">
             <Badge
                 badgeContent={countMessages}

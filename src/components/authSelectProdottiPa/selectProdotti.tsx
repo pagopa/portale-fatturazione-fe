@@ -61,7 +61,7 @@ export default function MultipleSelectProdotti({setProductSelected, productSelec
 
                         let name = el?.prodotto;
                         if(el?.prodotto === 'prod-pagopa'){
-                            name = 'pagoPA';
+                            name = 'Piattaforma pagoPA';
                         }else if(el?.prodotto === 'prod-pn'){
                             name = 'SEND - Servizio Notifiche Digitali';
                         }

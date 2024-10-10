@@ -169,9 +169,9 @@ const App = ({ instance }) => {
                                 <SideNamvPagopa/>
                             </Grid> 
 
-                            <Grid item xs={10} sx={{height:'500px'}}>
+                            <Grid item xs={10} sx={{minHeight:'600px'}}>
                                 <Routes>
-                
+                                    <Route path={'/messaggi'} element={<Messaggi mainState={mainState} dispatchMainState={dispatchMainState}/>} />
                                 </Routes>
 
                             </Grid>
