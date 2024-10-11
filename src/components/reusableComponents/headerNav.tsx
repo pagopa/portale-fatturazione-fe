@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useReducer} from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import {HeaderProduct,PartyEntity, ProductEntity} from '@pagopa/mui-italia';
 import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
@@ -8,16 +8,17 @@ import { IconButton } from '@mui/material';
 import { getMessaggiCount } from '../../api/apiPagoPa/centroMessaggi/api';
 import { getProdotti, getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
 import { PathPf } from '../../types/enum';
-import { main } from '@popperjs/core';
 
 type HeaderNavProps = {
     mainState:MainState,
-    dispatchMainState:any
+    dispatchMainState:any,
 }
 
 
+
+
 const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainState}) => {
-    console.log('reload');
+   
    
     const location = useLocation();
     const navigate = useNavigate();
@@ -34,6 +35,10 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainS
     };
 
     const [countMessages, setCountMessages] = useState(0);
+  
+ 
+
+   
   
 
     const products:ProductEntity[] = [
@@ -96,9 +101,9 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainS
     
     useEffect(()=>{
         if(mainState.authenticated === true && profilo.auth === 'PAGOPA'){
-            getCount();
-            const interval = setInterval(async() => {
-                await getCount();
+            
+            const interval = setInterval(() => {
+                getCount();
             }, 4000);
       
             return () => clearInterval(interval); 
@@ -116,7 +121,7 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainS
         <div style={{width:'95%'}}>
 
             <HeaderProduct
-                productId={profilo.prodotto||'prod-pn'}
+                productId={profilo.prodotto}
                 productsList={products}
                 onSelectedProduct={(e) => {
                   
@@ -128,6 +133,7 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainS
                     localStorage.removeItem("token");
                     localStorage.setItem('profilo',JSON.stringify(result));
                     localStorage.setItem('token',JSON.stringify({token:result?.jwt}));
+               
                     window.location.assign(url);
                 }}
                 partyList={partyList}

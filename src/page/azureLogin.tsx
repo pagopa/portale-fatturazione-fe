@@ -20,6 +20,7 @@ const AzureLogin : React.FC<AzureLoginProps> = ({ dispatchMainState}) =>{
     },[]);
 
     localStorage.clear();
+  
 
     return (
       

@@ -10,7 +10,7 @@ export default function DivProdotto({productSelected, setProductSelected}) {
 
     let name = productSelected?.prodotto;
     if(productSelected?.prodotto === 'prod-pagopa'){
-        name = 'Piattforma pagoPA';
+        name = 'Piattaforma pagoPA';
     }else if(productSelected?.prodotto === 'prod-pn'){
         name = 'SEND - Servizio Notifiche Digitali';
     }

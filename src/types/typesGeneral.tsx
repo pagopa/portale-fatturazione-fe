@@ -89,9 +89,7 @@ export interface MainState{
     badgeContent:number,
     messaggioSelected:null|Messaggi
     prodotti:ProfiloObject[],
-    user:{
-        name:string,id:string,ruolo:string
-    }
+    profilo:string
 }
 
 export type ProfiloObject = {

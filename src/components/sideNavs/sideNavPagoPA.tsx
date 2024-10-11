@@ -3,10 +3,12 @@ import { getProfilo } from "../../reusableFunction/actionLocalStorage";
 import { useEffect, useState } from "react";
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
+import { useNavigate } from "react-router";
 
-const SideNamvPagopa = () => {
+const SideNavPagopa = () => {
 
     const profilo = getProfilo();
+    const navigate = useNavigate();
 
     const [selectedIndex, setSelectedIndex] = useState<number | null>(0);
 
@@ -16,9 +18,14 @@ const SideNamvPagopa = () => {
     location.pathname === '/azureLogin'||
     !profilo.auth;
 
+
+    const handleListItemClickAnagrafica = () =>{
+        navigate("/anagraficapsp");
+    };
+
     const currentLocation = location.pathname;
     useEffect(()=>{
-        if(currentLocation === 'prova1'){
+        if(currentLocation === 'anagraficapsp'){
             setSelectedIndex(0);
         }else if(currentLocation === 'prova2'){
             setSelectedIndex(1);
@@ -36,7 +43,7 @@ const SideNamvPagopa = () => {
                 }}
                 >
                     <List component="nav" aria-label="main piattaforma-notifiche sender">
-                        <ListItemButton selected={selectedIndex === 0} onClick={() => console.log(999)}>
+                        <ListItemButton selected={selectedIndex === 0} onClick={() => () => handleListItemClickAnagrafica()}>
                             <ListItemIcon>
                                 <ReceiptIcon fontSize="inherit" />
                             </ListItemIcon>
@@ -56,4 +63,4 @@ const SideNamvPagopa = () => {
         </>
     );
 };
-export default SideNamvPagopa;
+export default SideNavPagopa;

@@ -35,7 +35,8 @@ import Fatturazione from './page/fatturazione';
 import Accertamenti from './page/accertamenti';
 import Messaggi from './page/messaggi';
 import AuthAzureProdotti from './page/authAzureProdotti';
-import SideNamvPagopa from './components/sideNavs/sideNavPagoPA';
+import SideNavPagopa from './components/sideNavs/sideNavPagoPA';
+import AnagraficaPsp from './page/prod_pagopa/anagraficaPsp';
 
 
 
@@ -75,12 +76,11 @@ const App = ({ instance }) => {
         relSelected: null,
         apiError:null,
         authenticated:false,
-        user:{name:'', ruolo:'', id:''},
         badgeContent:0,
         messaggioSelected:null,
         prodotti:[]
     });
-    console.log(mainState,'main');
+   
    
    
 
@@ -89,14 +89,9 @@ const App = ({ instance }) => {
         await getAuthProfilo(profilo.jwt)
             .then((res) =>{
 
-                let id; 
-                if(profilo.prodotto === 'prod-pagopa'){
-                    id = '0';
-                }else if(profilo.prodotto === 'prod-pn'){
-                    id ='1';
-                }
               
-                handleModifyMainState({ nonce:res.data.nonce,authenticated:true, user:{name:res.data.prodotto, ruolo:res.data.descrizioneRuolo, id:id},prodotti:prodotti});
+              
+                handleModifyMainState({ nonce:res.data.nonce,authenticated:true,prodotti:prodotti});
                 if(res?.data.nonce !== profilo.nonce || !profilo){
                     window.location.href = redirect;
                 }
@@ -129,6 +124,7 @@ const App = ({ instance }) => {
     },[]);
 
 
+
     const recOrConsIsLogged = profilo.profilo === 'REC' || profilo.profilo ==='CON';
     let route;
 
@@ -137,12 +133,13 @@ const App = ({ instance }) => {
             <ThemeProvider theme={theme}>
                 <div className="App" >
 
-                    <HeaderPostLogin mainState={mainState} />
-
+                    <HeaderPostLogin mainState={mainState}/>
+                    
                     <div>
                         <Routes>
-                         
+                           
                             <Route path="/selezionaprodotto" element={<AuthAzureProdotti dispatchMainState={ dispatchMainState} />} />
+                            <Route path="/azureLogin" element={<AzureLogin dispatchMainState={dispatchMainState}/>} />
                         </Routes>
                     </div>
                     <FooterComponent mainState={mainState} />
@@ -158,7 +155,7 @@ const App = ({ instance }) => {
             <ThemeProvider theme={theme}>
                 <div className="App">
                     <BasicAlerts setVisible={setShowAlert} visible={showAlert} mainState={mainState} dispatchMainState={ dispatchMainState}></BasicAlerts>
-                    <HeaderPostLogin mainState={mainState}/>
+                    <HeaderPostLogin mainState={mainState}  />
 
                     <div>
                         <HeaderNavComponent mainState={mainState} dispatchMainState={ dispatchMainState} />
@@ -166,12 +163,14 @@ const App = ({ instance }) => {
                         <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
      
                             <Grid item xs={2}>
-                                <SideNamvPagopa/>
+                                <SideNavPagopa/>
                             </Grid> 
 
                             <Grid item xs={10} sx={{minHeight:'600px'}}>
                                 <Routes>
                                     <Route path={'/messaggi'} element={<Messaggi mainState={mainState} dispatchMainState={dispatchMainState}/>} />
+                                    <Route path="/anagraficapsp" element={<AnagraficaPsp dispatchMainState={ dispatchMainState}></AnagraficaPsp>}/>
+                                    <Route path="/azureLogin" element={<AzureLogin dispatchMainState={dispatchMainState}/>} />
                                 </Routes>
 
                             </Grid>
