@@ -56,7 +56,7 @@ const SideNavPagopa = () => {
                             <ListItemIcon>
                                 <ManageSearchIcon fontSize="inherit"></ManageSearchIcon>
                             </ListItemIcon>
-                            <ListItemText primary="Fatture trimestrali" />
+                            <ListItemText primary="Documenti contabili" />
                         </ListItemButton>
                     </List>
                     <Divider />
