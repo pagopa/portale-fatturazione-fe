@@ -169,7 +169,7 @@ const App = ({ instance }) => {
                             <Grid item xs={10} sx={{minHeight:'600px'}}>
                                 <Routes>
                                     <Route path={'/messaggi'} element={<Messaggi mainState={mainState} dispatchMainState={dispatchMainState}/>} />
-                                    <Route path="/anagraficapsp" element={<AnagraficaPsp dispatchMainState={ dispatchMainState}></AnagraficaPsp>}/>
+                                    <Route path={PathPf.ANAGRAFICAPSP} element={<AnagraficaPsp dispatchMainState={ dispatchMainState}></AnagraficaPsp>}/>
                                     <Route path="/azureLogin" element={<AzureLogin dispatchMainState={dispatchMainState}/>} />
                                 </Routes>
 

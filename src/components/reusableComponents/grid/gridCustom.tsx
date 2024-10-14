@@ -3,8 +3,9 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { getStatusApp, setInfoToStatusApplicationLoacalStorage } from "../../../reusableFunction/actionLocalStorage";
 import { Rel } from "../../../types/typeRel";
 import { NotificheList } from "../../../types/typeReportDettaglio";
+import { GridElementListaFatturazione } from "../../../types/typeListaDatiFatturazione";
 interface GridCustomProps {
-    elements:NotificheList[]|Rel[],
+    elements:NotificheList[]|Rel[]|GridElementListaFatturazione[],
     changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
     changeRow:( event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
     page:number,
@@ -12,7 +13,7 @@ interface GridCustomProps {
     rows:number,
     headerNames:string[],
     nameParameterApi:string,  // elemnto/i che servono alla chiamata get di dettaglio , in questo caso bisogna passare questi pametro/o nel MainState ma non posso visulizzarli nella grid
-    apiGet:(id:string)=>void, 
+    apiGet?:(id:string)=>void, 
     disabled:boolean
 }
 
@@ -21,16 +22,19 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
     const statusApp = getStatusApp();
 
     const handleClickOnGrid = (element) =>{
-     
-        const newState= {
-            nomeEnteClickOn:element.ragioneSociale,
-            mese:element.mese,
-            anno:element.anno,
-            idElement:element[nameParameterApi]
-        };
-        setInfoToStatusApplicationLoacalStorage(statusApp,newState);
+        if(apiGet){
+            const newState= {
+                nomeEnteClickOn:element.ragioneSociale,
+                mese:element.mese,
+                anno:element.anno,
+                idElement:element[nameParameterApi]
+            };
+            setInfoToStatusApplicationLoacalStorage(statusApp,newState);
+
        
-        apiGet(element[nameParameterApi]);
+            apiGet(element[nameParameterApi]);
+        }
+       
     };
    
     return (
@@ -43,7 +47,7 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                 {headerNames.map((el)=>{
                                     return (
                                         <TableCell key={Math.random()}>
-                                            {el}
+                                            {el} 
                                         </TableCell>
                                     );
                                 })}
@@ -55,7 +59,7 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
 
                             </TableBody> :
                             <TableBody sx={{marginLeft:'20px'}}>
-                                {elements.map((element:Rel|NotificheList) =>{
+                                {elements.map((element:Rel|NotificheList|GridElementListaFatturazione) =>{
                                     // tolgo da ogni oggetto la prima chiave valore  perchè il cliente non vuole vedere es. l'id ma serve per la chiamata get di dettaglio 
                                     const sliced = Object.fromEntries(
                                         Object.entries(element).slice(1)
@@ -85,6 +89,7 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                                 {
                                                     Object.values(sliced).map((value:string|number, i:number)=>{
                                                         const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
+                                                        const valueEl = (i === 0 && value?.toString().length > 50) ? value?.toString().slice(0, 50) + '...' : value;
                                                         return (
                                                             <TableCell
                                                                 sx={cssFirstColum} 
@@ -95,7 +100,7 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                                                     }            
                                                                 } }
                                                             >
-                                                                {value}
+                                                                {valueEl}
                                                             </TableCell>
                                                         );
                                                     })

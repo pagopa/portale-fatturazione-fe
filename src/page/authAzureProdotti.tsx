@@ -57,22 +57,20 @@ const AuthAzureProdotti : React.FC<AuthAzureProps> = ({dispatchMainState}) => {
                     const storeJwt = {token:productSelected.jwt};
                     localStorage.setItem('token', JSON.stringify(storeJwt));
 
-                    let id = '0';
-                    if(productSelected.prodotto === 'prod-pagopa'){
-                        id = '0';
-                    }else if(productSelected.prodotto === 'prod-pn'){
-                        id = '1';
-                    }
-              
                     handleModifyMainState({
                         ruolo:resp.data.ruolo,
                         action:'LISTA_DATI_FATTURAZIONE',
                         nonce:storeProfilo.nonce,
-                        authenticated:true,
-                        user:{name:'', ruolo:'', id:id}});
+                        authenticated:true
+                    });
 
-                    navigate(PathPf.LISTA_DATI_FATTURAZIONE);
-              
+                   
+                    if(productSelected.prodotto === 'prod-pagopa'){
+                        navigate(PathPf.ANAGRAFICAPSP);
+                    }else if(productSelected.prodotto === 'prod-pn'){
+                        navigate(PathPf.LISTA_DATI_FATTURAZIONE);
+                    }
+
                 } )
                 .catch(()=> {
                     window.location.href = redirect;

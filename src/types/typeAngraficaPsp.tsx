@@ -11,7 +11,7 @@ export interface RequestBodyListaAnagraficaPsp{
 export interface MultiSelectPspProps {
     setBodyGetLista:Dispatch<SetStateAction<RequestBodyListaAnagraficaPsp>>,
     dataSelect:OptionMultiselectChackboxPsp[],
-    setTextValue:any,
+    setTextValue:Dispatch<SetStateAction<string>>,
     valueAutocomplete:OptionMultiselectChackboxPsp[],
     setValueAutocomplete:Dispatch<SetStateAction<OptionMultiselectChackboxPsp[]>> 
 }

@@ -3,17 +3,16 @@ import { Box, Button} from '@mui/material';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { DataGrid, GridRowParams,GridEventListener,MuiEvent, GridColDef } from '@mui/x-data-grid';
+import {  GridColDef } from '@mui/x-data-grid';
 import DownloadIcon from '@mui/icons-material/Download';
-import { PathPf } from "../../types/enum";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
-import { Params } from "../../types/typesGeneral";
 import { manageError } from "../../api/api";
 import { OptionMultiselectChackboxPsp, RequestBodyListaAnagraficaPsp } from "../../types/typeAngraficaPsp";
 import { getListaAnagraficaPsp, getListaNamePsp } from "../../api/apiPagoPa/anagraficaPspPA/api";
 import { GridElementListaFatturazione } from "../../types/typeListaDatiFatturazione";
 import { getProfilo, getToken } from "../../reusableFunction/actionLocalStorage";
 import MultiselectPsp from "../../components/anagraficaPsp/multiselectPsp";
+import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 
 
 
@@ -38,12 +37,14 @@ const AnagraficaPsp:React.FC<any> = ({dispatchMainState}) =>{
         abi: ''});
     const [getListaLoading, setGetListaLoading] = useState(false);
     const [dataSelect, setDataSelect] = useState<OptionMultiselectChackboxPsp[]>([]);
-    const [infoPageListaPsp , setInfoPageListaPsp] = useState({ page: 0, pageSize: 100 });
-    const [textValue, setTextValue] = useState('');
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [totalPsp, setTotalPsp]  = useState(0);
+    const [textValue, setTextValue] = useState<string>('');
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackboxPsp[]>([]);
     const [showLoading,setShowLoading] = useState(false);
 
-    
+    console.log(valueAutocomplete,bodyGetLista);
     
     useEffect(()=>{
         /*
@@ -64,7 +65,8 @@ const AnagraficaPsp:React.FC<any> = ({dispatchMainState}) =>{
         if(infoPageResult.page > 0){
             setInfoPageListaDatiFat(infoPageResult);
         }*/
-        getListaAnagraficaPspGrid(bodyGetLista);
+        const realPage = page + 1;
+        getListaAnagraficaPspGrid(bodyGetLista,realPage,rowsPerPage);
     }, []);
 
  
@@ -91,15 +93,36 @@ const AnagraficaPsp:React.FC<any> = ({dispatchMainState}) =>{
 
 
 
-    const getListaAnagraficaPspGrid = async(body:RequestBodyListaAnagraficaPsp) =>{
+    const getListaAnagraficaPspGrid = async(body:RequestBodyListaAnagraficaPsp, page:number,rowsPerPage:number) =>{
         setGetListaLoading(true);
-        await getListaAnagraficaPsp(token, profilo.nonce, body,0,0)
+        await getListaAnagraficaPsp(token, profilo.nonce, body,page,rowsPerPage)
             .then((res)=>{
-                //setGridData(res.data);
+
+             
+                // ordino i dati in base all'header della grid
+                const orderDataCustom = res.data.psPs.map((obj)=>{
+                    // inserire come prima chiave l'id se non si vuol renderlo visibile nella grid
+                    // 'id serve per la chiamata get dettaglio dell'elemento selezionato nella grid
+                    return {
+                        contractId:obj.contractId,
+                        documentName:obj.name,
+                        contractId2:obj.contractId,
+                        providerNames:obj.providerNames,
+                        pecMail:obj.pecMail,
+                        sdiCode:obj.sdiCode,
+                        abi:obj.abi,
+                        referenteFatturaMail:obj.referenteFatturaMail,
+                        signedDate:new Date(obj.signedDate).toISOString().split('T')[0],
+                    };
+                });
+                setGridData(orderDataCustom);
+                setTotalPsp(res.data.count);
+                console.log(res);
                 setGetListaLoading(false);
             })
             .catch(((err)=>{
                 setGridData([]);
+                setTotalPsp(0);
                 setGetListaLoading(false);
                 manageError(err,dispatchMainState);
             })); 
@@ -108,17 +131,14 @@ const AnagraficaPsp:React.FC<any> = ({dispatchMainState}) =>{
 
     // servizio che popola la select con la checkbox
     const listaNamePspOnSelect = async () =>{
-        if(profilo.auth === 'PAGOPA'){
-            await getListaNamePsp(token, profilo.nonce, {name:textValue} )
-                .then((res)=>{
-                    setDataSelect(res.data);
-                })
-                .catch(((err)=>{
-                 
-                    manageError(err,dispatchMainState);
-                   
-                }));
-        }
+       
+        await getListaNamePsp(token, profilo.nonce, {name:textValue} )
+            .then((res)=>{
+                setDataSelect(res.data);
+            })
+            .catch(((err)=>{
+                manageError(err,dispatchMainState); 
+            }));
     };
     /*
     const onDownloadButton = async() =>{
@@ -135,39 +155,37 @@ const AnagraficaPsp:React.FC<any> = ({dispatchMainState}) =>{
         });
     };
 */
-    let columsSelectedGrid = '';
-    const handleOnCellClick = (params:Params) =>{
-        columsSelectedGrid  = params.field;
-    };
 
-    const handleEvent: GridEventListener<'rowClick'> = (
-        params:GridRowParams,
-        event: MuiEvent<React.MouseEvent<HTMLElement>>,
+    const onButtonFiltra = () =>{
+        setPage(0);
+        setRowsPerPage(10);
+        setFiltersDownload(bodyGetLista);
+        getListaAnagraficaPspGrid(bodyGetLista,1,10); 
+        //setFilterToLocalStorageRel(bodyRel,textValue,valueAutocomplete, 0, 10,valuetipologiaFattura);
+    };
+    const handleChangePage = (
+        event: React.MouseEvent<HTMLButtonElement> | null,
+        newPage: number,
     ) => {
-        event.preventDefault();
-        // l'evento verrà eseguito solo se l'utente farà il clik sul 
-        if(columsSelectedGrid  === 'ragioneSociale' || columsSelectedGrid === 'action' ){
-            /*setInfoToProfiloLoacalStorage(profilo,{
-                idEnte:params.row.idEnte,
-                prodotto:params.row.prodotto,
-            });*/
-            const string = JSON.stringify({nomeEnteClickOn:params.row.ragioneSociale});
-            localStorage.setItem('statusApplication', string);
-            navigate(PathPf.DATI_FATTURAZIONE);
-        }
+        const realPage = newPage + 1;
+        getListaAnagraficaPspGrid(bodyGetLista,realPage, rowsPerPage);
+        setPage(newPage);
+  
+        //setFilterToLocalStorageRel(bodyDownload,textValue,valueAutocomplete, newPage, rowsPerPage,valuetipologiaFattura);
+    };
+                
+    const handleChangeRowsPerPage = (
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    ) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+        const realPage = page + 1;
+        getListaAnagraficaPspGrid(bodyGetLista,realPage,parseInt(event.target.value, 10));
+
+        // setFilterToLocalStorageRel(bodyDownload,textValue,valueAutocomplete, page, parseInt(event.target.value, 10),valuetipologiaFattura);
     };
       
-    const columns: GridColDef[] = [
-        { field: 'ragioneSociale', headerName: 'Ragione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.ragioneSociale}</a>},
-        { field: 'cup', headerName: 'CUP', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'splitPayment', headerName: 'Split payment', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'idDocumento', headerName: 'ID Documento', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'dataDocumento', headerName: 'Data Documento', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',valueFormatter: (value:any) =>  value.value !== null ? new Date(value.value).toLocaleString().split(',')[0] : ''},
-        { field: 'codCommessa', headerName: 'Cod. Commessa', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'dataCreazione', headerName: 'Data Primo Acc.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',valueFormatter: (value:{value:string}) =>  value.value !== null ? new Date(value.value).toLocaleString().split(',')[0] : ''},
-        { field: 'dataModifica', headerName: 'Data Ultimo Acc.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',valueFormatter: (value:{value:string}) =>  value.value !== null ? new Date(value.value).toLocaleString().split(',')[0] : '' },
-        {field: 'action', headerName: '',sortable: false,width:70,headerAlign: 'left',disableColumnMenu :true,renderCell: (() => ( <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }}/>)),}
-    ];
+ 
 
     return(
         <div className="mx-5">
@@ -189,10 +207,10 @@ const AnagraficaPsp:React.FC<any> = ({dispatchMainState}) =>{
                     <Box sx={{width:'80%',marginLeft:'20px'}} >
                         <TextField
                             fullWidth
-                            label='Contract ID'
-                            placeholder='Contract ID'
+                            label='Membership ID'
+                            placeholder='Membership ID'
                             value={''}
-                            onChange={(e) => console.log('contract id')}            
+                            onChange={(e) => console.log('member id')}            
                         />
                     </Box>
                 </div>
@@ -201,7 +219,7 @@ const AnagraficaPsp:React.FC<any> = ({dispatchMainState}) =>{
                         <TextField
                             fullWidth
                             label='Recipient ID'
-                            placeholder='Contract ID'
+                            placeholder='Recipient ID'
                             value={''}
                             onChange={(e) => console.log('contract id')}            
                         />
@@ -225,13 +243,14 @@ const AnagraficaPsp:React.FC<any> = ({dispatchMainState}) =>{
                 <div className=" d-flex justify-content-center align-items-center">
                     <div>
                         <Button 
-                            onClick={()=>{
+                            onClick={()=> {
                                 /* getListaDatifatturazione(bodyGetLista);
                                 setInfoPageListaDatiFat({ page: 0, pageSize: 100 });
                                 setFiltersDownload(bodyGetLista);
                                 setFilterToLocalStorage(bodyGetLista,textValue,valueAutocomplete);
                                 setInfoPageToLocalStorage({ page: 0, pageSize: 100 }); */
-                                getListaAnagraficaPspGrid(bodyGetLista);
+                                //getListaAnagraficaPspGrid(bodyGetLista,page,rowsPerPage);
+                                onButtonFiltra();
                             } } 
                             sx={{ marginTop: 'auto', marginBottom: 'auto'}}
                             variant="contained"> Filtra
@@ -244,9 +263,11 @@ const AnagraficaPsp:React.FC<any> = ({dispatchMainState}) =>{
                                         membershipId: '',
                                         recipientId: '',
                                         abi: ''};
-                                    getListaAnagraficaPspGrid(newBody);
+                                    getListaAnagraficaPspGrid(newBody,1,10);
                                     setBodyGetLista(newBody);
                                     setFiltersDownload(newBody);
+                                    setRowsPerPage(10);
+                                    setPage(0);
                                     setDataSelect([]);
                                     setValueAutocomplete([]);
                                     
@@ -279,23 +300,16 @@ const AnagraficaPsp:React.FC<any> = ({dispatchMainState}) =>{
                 }
             </div>
             <div className="mt-1 mb-5" style={{ width: '100%'}}>
-                <DataGrid sx={{
-                    height:'400px',
-                    '& .MuiDataGrid-virtualScroller': {
-                        backgroundColor: 'white',
-                    }
-                }}
-                onPaginationModelChange={(e)=>{
-                    setInfoPageListaPsp(e);
-                    // setInfoPageToLocalStorage(e);
-                }}
-                paginationModel={infoPageListaPsp}
-                rows={gridData} 
-                columns={columns}
-                getRowId={(row) => row.key}
-                onRowClick={handleEvent}
-                onCellClick={handleOnCellClick}
-                />
+                <GridCustom
+                    nameParameterApi='contractId'
+                    elements={gridData}
+                    changePage={handleChangePage}
+                    changeRow={handleChangeRowsPerPage} 
+                    total={totalPsp}
+                    page={page}
+                    rows={rowsPerPage}
+                    headerNames={['Nome PSP','ID Contratto','Nome Fornitore','PEC','SDI','ABI','E-Mail Ref. Fattura','Data','']}
+                    disabled={getListaLoading}></GridCustom>
             </div>
             <div>
             </div>

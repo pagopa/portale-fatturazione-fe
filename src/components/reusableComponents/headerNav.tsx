@@ -25,8 +25,8 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainS
     const prodotti = getProdotti().prodotti;
     const profilo =  getProfilo();
     const token = getToken();
-    const url = window.location.href;
-  
+    const url = window.location.origin;
+   
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
             type:'MODIFY_MAIN_STATE',
@@ -133,8 +133,15 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainS
                     localStorage.removeItem("token");
                     localStorage.setItem('profilo',JSON.stringify(result));
                     localStorage.setItem('token',JSON.stringify({token:result?.jwt}));
-               
-                    window.location.assign(url);
+
+                    if(e.id === 'prod_pd'){
+                       
+                        window.location.assign(url+PathPf.LISTA_DATI_FATTURAZIONE);
+                    }else{
+                        window.location.assign(url+PathPf.ANAGRAFICAPSP);
+                    }
+
+                    console.log(url);
                 }}
                 partyList={partyList}
             ></HeaderProduct>

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import { useNavigate } from "react-router";
+import { PathPf } from "../../types/enum";
 
 const SideNavPagopa = () => {
 
@@ -20,12 +21,13 @@ const SideNavPagopa = () => {
 
 
     const handleListItemClickAnagrafica = () =>{
-        navigate("/anagraficapsp");
+        console.log('ecco');
+        navigate(PathPf.ANAGRAFICAPSP);
     };
 
     const currentLocation = location.pathname;
     useEffect(()=>{
-        if(currentLocation === 'anagraficapsp'){
+        if(currentLocation === PathPf.ANAGRAFICAPSP){
             setSelectedIndex(0);
         }else if(currentLocation === 'prova2'){
             setSelectedIndex(1);
@@ -43,7 +45,7 @@ const SideNavPagopa = () => {
                 }}
                 >
                     <List component="nav" aria-label="main piattaforma-notifiche sender">
-                        <ListItemButton selected={selectedIndex === 0} onClick={() => () => handleListItemClickAnagrafica()}>
+                        <ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClickAnagrafica()}>
                             <ListItemIcon>
                                 <ReceiptIcon fontSize="inherit" />
                             </ListItemIcon>
