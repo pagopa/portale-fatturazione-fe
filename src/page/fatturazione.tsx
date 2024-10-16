@@ -19,7 +19,7 @@ import ModalSap from "../components/fatturazione/modalSap";
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import ModalConfermaRipristina from "../components/fatturazione/modalConfermaRipristina";
 import ModalResetFilter from "../components/fatturazione/modalResetFilter";
-import CollapsibleTable from "../components/reusableComponents/grid/gridCustomCollapsible";
+import CollapsibleTable from "../components/reusableComponents/grid/gridCollapsible/gridCustomCollapsibleWithCheckbox";
 
 
 
@@ -282,7 +282,7 @@ const Fatturazione : React.FC<FatturazioneProps> = ({dispatchMainState}) =>{
     return (
         <div className="mx-5 mb-5">
             <div className="marginTop24 ">
-                <Typography variant="h4">Fatturazione</Typography>
+                <Typography variant="h4">Documenti emessi</Typography>
             </div>
             <div className="mt-5">
                 <div className="row">

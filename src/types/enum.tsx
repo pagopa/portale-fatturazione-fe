@@ -18,5 +18,6 @@ export enum PathPf {
     ADESIONE_BANDO = '/adesionealbando',
     FATTURAZIONE = '/fatturazione',
     MESSAGGI = '/messaggi',
-    ANAGRAFICAPSP = '/anagraficapsp'
+    ANAGRAFICAPSP = '/anagraficapsp',
+    DOCUMENTICONTABILI = '/documenticontabilipagopa'
 }

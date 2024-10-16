@@ -1,15 +1,14 @@
-import Checkbox from '@mui/material/Checkbox';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import { useLocation } from 'react-router';
-import { PathPf } from '../../types/enum';
-import { MultiSelectPspProps, OptionMultiselectChackboxPsp } from '../../types/typeAngraficaPsp';
+import { Autocomplete, Checkbox, TextField } from "@mui/material";
+import { AutocompleteMultiselect, MultiselectWithKeyValueProps,  RequestBodyListaAnagraficaPsp } from "../../types/typeAngraficaPsp";
+import { useLocation } from "react-router";
+import { PathPf } from "../../types/enum";
+import { RequestBodyListaDocContabiliPagopa } from '../../types/typeDocumentiContabili';
 
 
 
-const MultiselectPsp : React.FC <MultiSelectPspProps> = ({setBodyGetLista,setValueAutocomplete,dataSelect,valueAutocomplete,setTextValue}) => {
+const MultiselectWithKeyValue : React.FC <MultiselectWithKeyValueProps> = ({setBodyGetLista,setValueAutocomplete,dataSelect,valueAutocomplete,setTextValue,keyId,label,keyArrayName,valueId}) => {
 
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -22,19 +21,23 @@ const MultiselectPsp : React.FC <MultiSelectPspProps> = ({setBodyGetLista,setVal
     return (
         <Autocomplete
             multiple
-            onChange={(event, value) => {
-                const arrayContractId = value.map(obj=> obj.contractId);
-                setBodyGetLista((prev:any) => ({...prev,...{contractIds:arrayContractId}}));
+            onChange={(event, value:AutocompleteMultiselect[]) => {
+                const arrayIds = value.map((obj:AutocompleteMultiselect) => obj[keyId]);
+                console.log(arrayIds,keyId,value);
+                setBodyGetLista((prev:RequestBodyListaAnagraficaPsp|RequestBodyListaDocContabiliPagopa) => ({...prev,...{[keyArrayName]:arrayIds}}));
                 setValueAutocomplete(value);
             }}
-            id="psp"
+            id={keyId}
             options={dataSelect}
             disableCloseOnSelect
-            getOptionLabel={(option:OptionMultiselectChackboxPsp) => (option.name)}
+            getOptionLabel={(option:AutocompleteMultiselect) =>{
+                console.log('option', option);
+                return option[valueId];
+            } }
             value={valueAutocomplete}
-            isOptionEqualToValue={(option, value) => option.contractId === value.contractId}
+            isOptionEqualToValue={(option, value) => option[keyId] === value[keyId]}
             renderOption={(props, option, { selected }) =>{
-                const newProps = {...props,...{key:option.contractId}};
+                const newProps = {...props,...{key:option[keyId]}};
                 return (
                     <li {...newProps}   >
                         <Checkbox
@@ -43,7 +46,7 @@ const MultiselectPsp : React.FC <MultiSelectPspProps> = ({setBodyGetLista,setVal
                             style={{ marginRight: 8 }}
                             checked={selected}
                         />
-                        {option.name}
+                        {option[valueId]}
                     </li>
                 );
             } }
@@ -52,10 +55,10 @@ const MultiselectPsp : React.FC <MultiSelectPspProps> = ({setBodyGetLista,setVal
                 return <TextField 
                     onChange={(e)=> setTextValue(e.target.value)} 
                     {...params}
-                    label="Nome PSP" 
+                    label={label} 
                     placeholder="Min 3 caratteri" />;
             }}
         />
     );
 };
-export default MultiselectPsp;
+export default MultiselectWithKeyValue;

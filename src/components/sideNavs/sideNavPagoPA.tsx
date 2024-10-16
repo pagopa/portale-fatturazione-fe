@@ -11,7 +11,7 @@ const SideNavPagopa = () => {
     const profilo = getProfilo();
     const navigate = useNavigate();
 
-    const [selectedIndex, setSelectedIndex] = useState<number | null>(0);
+    const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
     const hideShowSidenav = location.pathname === '/auth' ||
     location.pathname === '/azure' ||
@@ -21,15 +21,18 @@ const SideNavPagopa = () => {
 
 
     const handleListItemClickAnagrafica = () =>{
-        console.log('ecco');
         navigate(PathPf.ANAGRAFICAPSP);
+    };
+
+    const handleListItemClickDocContabili = () =>{
+        navigate(PathPf.DOCUMENTICONTABILI);
     };
 
     const currentLocation = location.pathname;
     useEffect(()=>{
         if(currentLocation === PathPf.ANAGRAFICAPSP){
             setSelectedIndex(0);
-        }else if(currentLocation === 'prova2'){
+        }else if(currentLocation === PathPf.DOCUMENTICONTABILI){
             setSelectedIndex(1);
         }
        
@@ -52,7 +55,7 @@ const SideNavPagopa = () => {
                             <ListItemText primary="Anagrafica PSP" />
                         </ListItemButton>
                           
-                        <ListItemButton selected={selectedIndex === 1} onClick={() => console.log(999)}>
+                        <ListItemButton selected={selectedIndex === 1} onClick={() => handleListItemClickDocContabili()}>
                             <ListItemIcon>
                                 <ManageSearchIcon fontSize="inherit"></ManageSearchIcon>
                             </ListItemIcon>

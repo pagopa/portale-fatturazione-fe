@@ -1,29 +1,22 @@
-import {  TextField, Typography } from "@mui/material";
-import { Box, Button} from '@mui/material';
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import {  GridColDef } from '@mui/x-data-grid';
 import DownloadIcon from '@mui/icons-material/Download';
-import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
-import { manageError } from "../../api/api";
-import { OptionMultiselectChackboxPsp, RequestBodyListaAnagraficaPsp } from "../../types/typeAngraficaPsp";
-import { getListaAnagraficaPsp, getListaNamePsp } from "../../api/apiPagoPa/anagraficaPspPA/api";
-import { GridElementListaFatturazione } from "../../types/typeListaDatiFatturazione";
+import { useEffect, useState } from "react";
 import { getProfilo, getToken } from "../../reusableFunction/actionLocalStorage";
-import MultiselectPsp from "../../components/anagraficaPsp/multiselectPsp";
+import { AutocompleteMultiselect, GridElementListaPsp, OptionMultiselectCheckboxPsp, RequestBodyListaAnagraficaPsp } from "../../types/typeAngraficaPsp";
+import { downloadPsp, getListaAnagraficaPsp, getListaNamePsp } from "../../api/apiPagoPa/anagraficaPspPA/api";
+import { manageError } from "../../api/api";
+import MultiselectWithKeyValue from "../../components/anagraficaPsp/multiselectKeyValue";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
+import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
+import { saveAs } from "file-saver";
 
 
 
 const AnagraficaPsp:React.FC<any> = ({dispatchMainState}) =>{
     const token =  getToken();
     const profilo =  getProfilo();
-    const navigate = useNavigate();
- 
 
-    
-    const [gridData, setGridData] = useState<GridElementListaFatturazione[]>([]);
+    const [gridData, setGridData] = useState<GridElementListaPsp[]>([]);
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
     const [filtersDownload, setFiltersDownload] = useState<RequestBodyListaAnagraficaPsp>({
         contractIds:[],
@@ -36,16 +29,16 @@ const AnagraficaPsp:React.FC<any> = ({dispatchMainState}) =>{
         recipientId: '',
         abi: ''});
     const [getListaLoading, setGetListaLoading] = useState(false);
-    const [dataSelect, setDataSelect] = useState<OptionMultiselectChackboxPsp[]>([]);
+    const [dataSelect, setDataSelect] = useState<OptionMultiselectCheckboxPsp[]>([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalPsp, setTotalPsp]  = useState(0);
     const [textValue, setTextValue] = useState<string>('');
-    const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackboxPsp[]>([]);
+    const [valueAutocomplete, setValueAutocomplete] = useState<AutocompleteMultiselect[]>([]);
     const [showLoading,setShowLoading] = useState(false);
 
-    console.log(valueAutocomplete,bodyGetLista);
     
+    console.log(bodyGetLista);
     useEffect(()=>{
         /*
         const result = getFiltersFromLocalStorage();
@@ -73,7 +66,7 @@ const AnagraficaPsp:React.FC<any> = ({dispatchMainState}) =>{
 
 
     useEffect(()=>{
-        if(bodyGetLista.contractIds?.length  !== 0 || bodyGetLista.membershipId !== '' || bodyGetLista.recipientId !== ''|| bodyGetLista.membershipId){
+        if(bodyGetLista.contractIds.length  !== 0 || bodyGetLista.membershipId !== '' || bodyGetLista.recipientId !== ''|| bodyGetLista.abi !== ''){
             setStatusAnnulla('show');
         }else{
             setStatusAnnulla('hidden');
@@ -140,21 +133,27 @@ const AnagraficaPsp:React.FC<any> = ({dispatchMainState}) =>{
                 manageError(err,dispatchMainState); 
             }));
     };
-    /*
+   
     const onDownloadButton = async() =>{
         setShowLoading(true);
-        await downloadDocumentoListaDatiFatturazionePagoPa(token,profilo.nonce, filtersDownload).then((res:ResponseDownloadListaFatturazione) => {
-            let fileName = `Lista dati di fatturazione.xlsx`;
-            if(gridData.length === 1){
-                fileName = `Dati di fatturazione / ${gridData[0]?.ragioneSociale}.xlsx`;
+        
+        await downloadPsp(token,profilo.nonce, filtersDownload).then(response => response.blob()).then((res) => {
+            let fileName = '';
+            if(filtersDownload.contractIds.length === 1 || gridData.length === 1){
+                fileName = `Anagrafica PSP / ${gridData[0].documentName}.xlsx`;
+            }else{
+                fileName = `Anagrafica PSP.xlsx`;
             }
-            saveAs("data:text/plain;base64," + res.data.documento,fileName);
+           
+            saveAs( res,fileName );
+           
             setShowLoading(false);
         }).catch(err => {
+            setShowLoading(false);
             manageError(err,dispatchMainState);
         });
     };
-*/
+
 
     const onButtonFiltra = () =>{
         setPage(0);
@@ -196,12 +195,17 @@ const AnagraficaPsp:React.FC<any> = ({dispatchMainState}) =>{
             {/*title container end */}
             <div className="row mb-5 mt-5" >
                 <div  className="col-3">
-                    <MultiselectPsp 
+                    <MultiselectWithKeyValue 
                         setBodyGetLista={setBodyGetLista}
                         setValueAutocomplete={setValueAutocomplete}
                         dataSelect={dataSelect}
                         valueAutocomplete={valueAutocomplete}
-                        setTextValue={setTextValue}/>
+                        setTextValue={setTextValue}
+                        keyId={"contractId"}
+                        valueId={'name'}
+                        label={"Nome PSP"} 
+                        keyArrayName={"contractIds"}/>
+                        
                 </div>
                 <div className="col-3">
                     <Box sx={{width:'80%',marginLeft:'20px'}} >
@@ -209,8 +213,8 @@ const AnagraficaPsp:React.FC<any> = ({dispatchMainState}) =>{
                             fullWidth
                             label='Membership ID'
                             placeholder='Membership ID'
-                            value={''}
-                            onChange={(e) => console.log('member id')}            
+                            value={bodyGetLista.membershipId}
+                            onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{membershipId:e.target.value}}))}            
                         />
                     </Box>
                 </div>
@@ -220,8 +224,8 @@ const AnagraficaPsp:React.FC<any> = ({dispatchMainState}) =>{
                             fullWidth
                             label='Recipient ID'
                             placeholder='Recipient ID'
-                            value={''}
-                            onChange={(e) => console.log('contract id')}            
+                            value={bodyGetLista.recipientId}
+                            onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{recipientId:e.target.value}}))}            
                         />
                     </Box>
                 </div>
@@ -231,8 +235,8 @@ const AnagraficaPsp:React.FC<any> = ({dispatchMainState}) =>{
                             fullWidth
                             label='ABI'
                             placeholder='ABI'
-                            value={''}
-                            onChange={(e) => console.log('ABI')}            
+                            value={bodyGetLista.abi}
+                            onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{abi:e.target.value}}))}            
                         />
                     </Box>
                 </div>
@@ -290,8 +294,9 @@ const AnagraficaPsp:React.FC<any> = ({dispatchMainState}) =>{
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
                 {
                     gridData.length > 0 &&
-                <Button onClick={() =>//onDownloadButton()
-                    console.log('download')}
+                <Button onClick={() =>
+                    onDownloadButton()
+                }
                 disabled={getListaLoading}
                 >
                 Download Risultati
@@ -322,3 +327,4 @@ const AnagraficaPsp:React.FC<any> = ({dispatchMainState}) =>{
     );
 }; 
 export default AnagraficaPsp;
+

@@ -36,7 +36,8 @@ import Accertamenti from './page/accertamenti';
 import Messaggi from './page/messaggi';
 import AuthAzureProdotti from './page/authAzureProdotti';
 import SideNavPagopa from './components/sideNavs/sideNavPagoPA';
-import AnagraficaPsp from './page/prod_pagopa/anagraficaPsp';
+import AnagraficaPsp from './page/prod_pagopa/anagraficaPspPagopa';
+import DocumentiContabili from './page/prod_pagopa/documentiContabiliPagopa';
 
 
 
@@ -132,12 +133,9 @@ const App = ({ instance }) => {
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App" >
-
                     <HeaderPostLogin mainState={mainState}/>
-                    
                     <div>
                         <Routes>
-                           
                             <Route path="/selezionaprodotto" element={<AuthAzureProdotti dispatchMainState={ dispatchMainState} />} />
                             <Route path="/azureLogin" element={<AzureLogin dispatchMainState={dispatchMainState}/>} />
                         </Routes>
@@ -145,45 +143,34 @@ const App = ({ instance }) => {
                     <FooterComponent mainState={mainState} />
                 </div>
             </ThemeProvider>
-
         </Router>;
 
     }else if(profilo.jwt && profilo.auth === 'PAGOPA' && profilo.prodotto === 'prod-pagopa'){
-       
-
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App">
                     <BasicAlerts setVisible={setShowAlert} visible={showAlert} mainState={mainState} dispatchMainState={ dispatchMainState}></BasicAlerts>
                     <HeaderPostLogin mainState={mainState}  />
-
                     <div>
                         <HeaderNavComponent mainState={mainState} dispatchMainState={ dispatchMainState} />
-
                         <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
-     
                             <Grid item xs={2}>
                                 <SideNavPagopa/>
                             </Grid> 
-
                             <Grid item xs={10} sx={{minHeight:'600px'}}>
                                 <Routes>
                                     <Route path={'/messaggi'} element={<Messaggi mainState={mainState} dispatchMainState={dispatchMainState}/>} />
                                     <Route path={PathPf.ANAGRAFICAPSP} element={<AnagraficaPsp dispatchMainState={ dispatchMainState}></AnagraficaPsp>}/>
+                                    <Route path={PathPf.DOCUMENTICONTABILI} element={<DocumentiContabili dispatchMainState={ dispatchMainState}></DocumentiContabili>}/>
                                     <Route path="/azureLogin" element={<AzureLogin dispatchMainState={dispatchMainState}/>} />
                                 </Routes>
-
                             </Grid>
-
                         </Grid>
                     </div>
-
                     <FooterComponent mainState={mainState} />
                 </div>
             </ThemeProvider>
-
         </Router>;
-
     }else if(profilo.jwt && profilo.auth === 'PAGOPA'){
 
         route = <Router>

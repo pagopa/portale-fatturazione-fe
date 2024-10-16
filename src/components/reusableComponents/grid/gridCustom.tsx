@@ -4,8 +4,9 @@ import { getStatusApp, setInfoToStatusApplicationLoacalStorage } from "../../../
 import { Rel } from "../../../types/typeRel";
 import { NotificheList } from "../../../types/typeReportDettaglio";
 import { GridElementListaFatturazione } from "../../../types/typeListaDatiFatturazione";
+import { GridElementListaPsp } from "../../../types/typeAngraficaPsp";
 interface GridCustomProps {
-    elements:NotificheList[]|Rel[]|GridElementListaFatturazione[],
+    elements:NotificheList[]|Rel[]|GridElementListaPsp[],
     changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
     changeRow:( event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
     page:number,
@@ -59,7 +60,7 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
 
                             </TableBody> :
                             <TableBody sx={{marginLeft:'20px'}}>
-                                {elements.map((element:Rel|NotificheList|GridElementListaFatturazione) =>{
+                                {elements.map((element:Rel|NotificheList|GridElementListaPsp ) =>{
                                     // tolgo da ogni oggetto la prima chiave valore  perchè il cliente non vuole vedere es. l'id ma serve per la chiamata get di dettaglio 
                                     const sliced = Object.fromEntries(
                                         Object.entries(element).slice(1)
