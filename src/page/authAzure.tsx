@@ -54,25 +54,18 @@ const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
         }
     }, [instance, accounts, inProgress, apiData]);
 
-    const handleLoginRedirect = () => {
-        instance.loginRedirect(loginRequest).catch((error) => console.log(error));
-    };
 
     useEffect(()=>{
         if(Object.values(tokens).length > 0){
             //postPagoPa();
             postPagoPa2();
         }
-        // forse da rimuovere
-        if(Object.values(tokens).length === 0){
-            
-            handleLoginRedirect();
-        }
+       
 
     },[tokens]);
     console.log(tokens,'tokens');
   
-    const postPagoPa = () =>{
+    /* const postPagoPa = () =>{
         pagopaLogin(tokens).then((res)=>{
             localStorage.clear();
             if(res.status === 200){
@@ -89,7 +82,7 @@ const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
 
         });
 
-    };
+    };*/
 
     const postPagoPa2 = () =>{
         pagopaLogin2(tokens).then((res)=>{
