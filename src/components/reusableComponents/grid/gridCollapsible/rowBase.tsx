@@ -73,10 +73,11 @@ const RowBase = ({row, setSelected,selected}) => {
                                         <TableCell sx={{ marginLeft:"16px"}} >Codice Articolo</TableCell>
                                         <TableCell sx={{ marginLeft:"16px"}} >Category ID</TableCell>
                                         <TableCell sx={{ marginLeft:"16px"}}>Quantità</TableCell>
+                                        <TableCell align="center" sx={{ marginLeft:"16px"}}>Importo</TableCell>
                                         <TableCell sx={{ marginLeft:"16px"}}>Codice IVA</TableCell>
                                         <TableCell sx={{ marginLeft:"16px"}}>Condizioni</TableCell>
                                         <TableCell sx={{ marginLeft:"16px"}}>Causale</TableCell>
-                                        <TableCell align="center" sx={{ marginLeft:"16px"}}>Importo</TableCell>
+                                        
                                     </TableRow>
                                 </TableHead>
                                 <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
@@ -85,10 +86,11 @@ const RowBase = ({row, setSelected,selected}) => {
                                             <TableCell>{obj.codiceArticolo}</TableCell>
                                             <TableCell>{obj.category}</TableCell>
                                             <TableCell>{obj.quantita}</TableCell>
+                                            <TableCell align="right" component="th" scope="row">{obj.importo.toLocaleString("de-DE", { style: "currency", currency: "EUR",maximumFractionDigits: 14 })}</TableCell>
                                             <TableCell>{obj.codIva}</TableCell>
                                             <TableCell>{obj.condizioni}</TableCell>
                                             <TableCell>{obj.causale}</TableCell>
-                                            <TableCell align="right" component="th" scope="row">{obj.importo.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</TableCell>
+                                            
                                         </TableRow>
                                     ))}
                                 </TableBody>
