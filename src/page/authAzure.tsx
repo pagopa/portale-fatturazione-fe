@@ -5,6 +5,8 @@ import { useMsal } from "@azure/msal-react";
 import {useState, useEffect} from 'react';
 import { useNavigate } from "react-router";
 import { AuthAzureProps} from "../types/typesGeneral";
+import { loginRequest } from "../authConfig";
+
 
 
 // Blank Page utilizzata per l'autenticazione Azure e le conseguenti chiamate di accesso pagoPA
@@ -52,13 +54,23 @@ const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
         }
     }, [instance, accounts, inProgress, apiData]);
 
+    const handleLoginRedirect = () => {
+        instance.loginRedirect(loginRequest).catch((error) => console.log(error));
+    };
+
     useEffect(()=>{
         if(Object.values(tokens).length > 0){
             //postPagoPa();
             postPagoPa2();
         }
+        // forse da rimuovere
+        if(Object.values(tokens).length === 0){
+            
+            handleLoginRedirect();
+        }
 
     },[tokens]);
+    console.log(tokens,'tokens');
   
     const postPagoPa = () =>{
         pagopaLogin(tokens).then((res)=>{
