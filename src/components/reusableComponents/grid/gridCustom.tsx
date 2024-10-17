@@ -105,12 +105,12 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                                         );
                                                     })
                                                 }
-                                
-                                                <TableCell onClick={()=>{
+                                                {apiGet && <TableCell onClick={()=>{
                                                     handleClickOnGrid(element);            
                                                 } }>
                                                     <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
-                                                </TableCell>
+                                                </TableCell> }
+                                                
                        
                                             </TableRow>
                     
