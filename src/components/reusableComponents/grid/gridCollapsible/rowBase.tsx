@@ -1,13 +1,14 @@
-import { Box, Collapse, IconButton, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
+import { Box, Collapse, IconButton, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { useState } from "react";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 const RowBase = ({row, setSelected,selected}) => {
     const [open, setOpen] = useState(false);
    
   
-    const handleClick = ( id: number) => {
+    /*  const handleClick = ( id: number) => {
         //logica per id
         const selectedIndex = selected.indexOf(id);
         let newSelected: readonly number[] = [];
@@ -38,7 +39,7 @@ const RowBase = ({row, setSelected,selected}) => {
         tooltipObj = {label:'Elaborazione',title:'La fattura è in elaborazione',color:'warning'};
     }else if(row.inviata === 3){
         tooltipObj = {label:'Cancellata',title:'La fattura è stata cancellata',color:'info'};
-    }
+    }*/
  
     return(
         
@@ -54,14 +55,19 @@ const RowBase = ({row, setSelected,selected}) => {
                         {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
                 </TableCell>
-                <TableCell sx={{color:'#0D6EFD',fontWeight: 'bold',width:'400px'}} >{ row.name?.length > 50 ? row.name.slice(0, 50) + '...' : row.name}</TableCell>
+                <TableCell sx={{color:'#0D6EFD',fontWeight: 'bold'}} >{ row.name?.length > 50 ? row.name.slice(0, 50) + '...' : row.name}</TableCell>
                 <TableCell align='center'>{row.contractId}</TableCell>
                 <TableCell align='center' >{row.yearQuarter}</TableCell>
                 <TableCell align='center' >{row.bollo}</TableCell>
                 <TableCell align='center'>{row.riferimentoData !== null ? new Date(row.riferimentoData).toLocaleString().split(',')[0] : ''}</TableCell>
+                <TableCell align='center' onClick={()=>{
+                    console.log('click on arrow');           
+                } }>
+                    <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
+                </TableCell>
             </TableRow>
-            <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={4}>
+            <TableRow >
+                <TableCell style={{ paddingBottom: 0, paddingTop: 0}} colSpan={6}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box sx={{ margin: 2 , backgroundColor:'#F8F8F8', padding:'10px'}}>
                             <Typography sx={{marginLeft:"6px"}} variant="h6" gutterBottom component="div">
@@ -71,13 +77,12 @@ const RowBase = ({row, setSelected,selected}) => {
                                 <TableHead>
                                     <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
                                         <TableCell sx={{ marginLeft:"16px"}} >Codice Articolo</TableCell>
-                                        <TableCell sx={{ marginLeft:"16px"}} >Category ID</TableCell>
+                                        <TableCell sx={{ marginLeft:"16px"}} >ID Categoria</TableCell>
                                         <TableCell sx={{ marginLeft:"16px"}}>Quantità</TableCell>
                                         <TableCell align="center" sx={{ marginLeft:"16px"}}>Importo</TableCell>
                                         <TableCell sx={{ marginLeft:"16px"}}>Codice IVA</TableCell>
                                         <TableCell sx={{ marginLeft:"16px"}}>Condizioni</TableCell>
                                         <TableCell sx={{ marginLeft:"16px"}}>Causale</TableCell>
-                                        
                                     </TableRow>
                                 </TableHead>
                                 <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
@@ -89,8 +94,7 @@ const RowBase = ({row, setSelected,selected}) => {
                                             <TableCell align="right" component="th" scope="row">{obj.importo.toLocaleString("de-DE", { style: "currency", currency: "EUR",maximumFractionDigits: 14 })}</TableCell>
                                             <TableCell>{obj.codIva}</TableCell>
                                             <TableCell>{obj.condizioni}</TableCell>
-                                            <TableCell>{obj.causale}</TableCell>
-                                            
+                                            <TableCell>{obj.causale}</TableCell>  
                                         </TableRow>
                                     ))}
                                 </TableBody>

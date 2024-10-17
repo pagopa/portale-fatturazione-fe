@@ -25,7 +25,7 @@ const TablePaginationDemo = ({setPage, page, rowsPerPage, setRowsPerPage, count}
             onPageChange={handleChangePage}
             rowsPerPage={rowsPerPage}
             onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+        />  
     );
 };
 

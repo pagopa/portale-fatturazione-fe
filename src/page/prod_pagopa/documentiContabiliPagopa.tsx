@@ -204,11 +204,12 @@ const DocumentiContabili:React.FC<any> = ({dispatchMainState}) =>{
 
     const headersObjGrid : HeaderCollapsible[] = [
         {name:"",align:"left",id:1},
-        {name:"Nome",align:"left",id:2},
-        {name:"Contract ID",align:"center",id:3},
+        {name:"Nome PSP",align:"left",id:2},
+        {name:"ID Contratto",align:"center",id:3},
         {name:"Trimestre",align:"center",id:4},
         {name:"Bollo",align:"center",id:5},
-        {name:"Data",align:"center",id:6}];
+        {name:"Data",align:"center",id:6},
+        {name:"Arrow",align:"center",id:7}];
       
  
 

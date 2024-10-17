@@ -3,7 +3,6 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { getStatusApp, setInfoToStatusApplicationLoacalStorage } from "../../../reusableFunction/actionLocalStorage";
 import { Rel } from "../../../types/typeRel";
 import { NotificheList } from "../../../types/typeReportDettaglio";
-import { GridElementListaFatturazione } from "../../../types/typeListaDatiFatturazione";
 import { GridElementListaPsp } from "../../../types/typeAngraficaPsp";
 interface GridCustomProps {
     elements:NotificheList[]|Rel[]|GridElementListaPsp[],

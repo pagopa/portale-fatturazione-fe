@@ -46,9 +46,11 @@ const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
                   
                 })
                 .catch((error) => {
+                   
                     if (error instanceof InteractionRequiredAuthError) {
                         instance.acquireTokenRedirect(accessTokenRequest);
                     }
+                    navigate('/azureLogin');
                  
                 });
         }
@@ -60,8 +62,6 @@ const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
             //postPagoPa();
             postPagoPa2();
         }
-       
-
     },[tokens]);
     console.log(tokens,'tokens');
   

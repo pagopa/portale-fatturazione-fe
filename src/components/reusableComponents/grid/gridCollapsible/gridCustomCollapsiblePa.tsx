@@ -92,7 +92,7 @@ const CollapsibleTablePa: React.FC<GridCollapsibleBase> = ({data, headerNames,se
         <>
             <div style={{overflowX:'auto'}}>
                 
-                <Card sx={{width: '2000px'}}  >
+                <Card sx={{width: '1300px'}}  >
                     
                     <TableContainer component={Paper}>
                         
@@ -103,30 +103,35 @@ const CollapsibleTablePa: React.FC<GridCollapsibleBase> = ({data, headerNames,se
                                     <TableCell padding="checkbox">
                                     </TableCell>
                                     {headerNames.map((el)=>{
-                                        if(el.name !== ''){
-                                            return(
-                                                <TableCell align={el.align} key={el.id}>{el.name}</TableCell>
-                                            );}
+                                        if(el.name === ''){
+                                            return;
+                                            
+                                        }else if(el.name === 'Arrow'){
+                                            return(<TableCell sx={{width:'100px'}} align={el.align} key={el.id}></TableCell>);
+                                        }else{
+                                            return(<TableCell align={el.align} key={el.id}>{el.name}</TableCell>);
+                                        }
                                     })}
                                 </TableRow>
                             </TableHead>
                             {showedData.length === 0 ? <TableBody  style={{height: '50px'}}>
 
-                            </TableBody> :
-                                showedData.map((row) => {
+                            </TableBody>: showedData.map((row) => {
             
-                                    return(
-                                        <RowBase key={row.id} 
-                                            row={row}
-                                            setSelected={setSelected}
-                                            selected={selected}
-                                        ></RowBase>
-                                    ); })}
+                                return(
+                                    <RowBase key={row.id} 
+                                        row={row}
+                                        setSelected={setSelected}
+                                        selected={selected}
+                                    ></RowBase>
+                                ); })}
                         </Table>
                     </TableContainer>
+                   
                 </Card>
             </div>
-            <div className="pt-3"> 
+            <div className="mt-3"> 
+             
                 <TablePaginationDemo 
                     setRowsPerPage={setRowsPerPage}
                     setPage={setPage}

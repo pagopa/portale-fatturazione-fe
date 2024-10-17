@@ -233,8 +233,8 @@ const AnagraficaPsp:React.FC<any> = ({dispatchMainState}) =>{
                     <Box sx={{width:'80%',marginLeft:'20px'}} >
                         <TextField
                             fullWidth
-                            label='ABI'
-                            placeholder='ABI'
+                            label='Codice ABI'
+                            placeholder='Codice ABI'
                             value={bodyGetLista.abi}
                             onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{abi:e.target.value}}))}            
                         />
@@ -313,7 +313,7 @@ const AnagraficaPsp:React.FC<any> = ({dispatchMainState}) =>{
                     total={totalPsp}
                     page={page}
                     rows={rowsPerPage}
-                    headerNames={['Nome PSP','ID Contratto','Nome Fornitore','PEC','SDI','ABI','E-Mail Ref. Fattura','Data','']}
+                    headerNames={['Nome PSP','ID Contratto','Nome Fornitore','E-mail PEC','Codice SDI','Codice ABI','E-Mail Ref. Fattura','Data','']}
                     disabled={getListaLoading}></GridCustom>
             </div>
             <div>
