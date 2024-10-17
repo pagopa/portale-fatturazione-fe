@@ -2,10 +2,12 @@ import { pagopaLogin, redirect, pagopaLogin2 } from "../api/api";
 import {InteractionRequiredAuthError,InteractionStatus,
 } from "@azure/msal-browser";
 import { useMsal } from "@azure/msal-react";
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useContext} from 'react';
 import { useNavigate } from "react-router";
 import { AuthAzureProps} from "../types/typesGeneral";
 import { loginRequest } from "../authConfig";
+import { GlobalContext } from "../store/context/globalContext";
+import { getProdotti, getProfilo } from "../reusableFunction/actionLocalStorage";
 
 
 
@@ -13,8 +15,14 @@ import { loginRequest } from "../authConfig";
 // e salvataggio del profilo nlla local storage
 
 
-const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
+const AuthAzure : React.FC<any> = () =>{
 
+    const profilo =  getProfilo();
+    const prodotti = getProdotti()?.prodotti;
+    const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState,mainState} = globalContextObj;
+
+  
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
             type:'MODIFY_MAIN_STATE',
@@ -101,9 +109,12 @@ const AuthAzure : React.FC<AuthAzureProps> = ({dispatchMainState}) =>{
                     authenticated:true,
                     prodotti:res.data
                 });
+                console.log('navigate');
+                console.log(prodotti,profilo);
                 navigate('/selezionaprodotto');
             }
         }).catch(() =>{
+            console.log('errore azure');
             window.location.href = redirect;
 
         });

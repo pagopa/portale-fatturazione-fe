@@ -1,15 +1,17 @@
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { Typography } from "@mui/material";
 import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
 import { AzureLoginProps } from "../types/typesGeneral";
+import { GlobalContext } from "../store/context/globalContext";
 
 // pagina visulizzata nel caso in cui l'utenete PagoPa procede con il logOut
 // l'utente PagoPa potrà riaccedere tramite questa pagina
 
-const AzureLogin : React.FC<AzureLoginProps> = ({ dispatchMainState}) =>{
+const AzureLogin : React.FC<any> = () =>{
+    const globalContextObj = useContext(GlobalContext); 
 
     const handleModifyMainState = (valueObj) => {
-        dispatchMainState({
+        globalContextObj.dispatchMainState({
             type:'MODIFY_MAIN_STATE',
             value:valueObj
         });

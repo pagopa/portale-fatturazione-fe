@@ -58,7 +58,7 @@ export type TokenObject = {
 }
 
 export type AuthAzureProps = {
-    dispatchMainState:any,
+    //dispatchMainState:any,
 }
 
 export type BodyListaDatiFatturazione = {

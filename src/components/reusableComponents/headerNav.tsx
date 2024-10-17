@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer} from 'react';
+import React, { useState, useEffect, useReducer, useContext} from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import {HeaderProduct,PartyEntity, ProductEntity} from '@pagopa/mui-italia';
 import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
@@ -8,6 +8,7 @@ import { IconButton } from '@mui/material';
 import { getMessaggiCount } from '../../api/apiPagoPa/centroMessaggi/api';
 import { getProdotti, getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
 import { PathPf } from '../../types/enum';
+import { GlobalContext } from '../../store/context/globalContext';
 
 type HeaderNavProps = {
     mainState:MainState,
@@ -17,9 +18,9 @@ type HeaderNavProps = {
 
 
 
-const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainState}) => {
+const HeaderNavComponent : React.FC = () => {
    
-   
+    const globalContextObj = useContext(GlobalContext);
     const location = useLocation();
     const navigate = useNavigate();
     const prodotti = getProdotti().prodotti;
@@ -28,7 +29,7 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainS
     const url = window.location.origin;
    
     const handleModifyMainState = (valueObj) => {
-        dispatchMainState({
+        globalContextObj.dispatchMainState({
             type:'MODIFY_MAIN_STATE',
             value:valueObj
         });
@@ -100,7 +101,7 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainS
     };
     
     useEffect(()=>{
-        if(mainState.authenticated === true && profilo.auth === 'PAGOPA'){
+        if(globalContextObj.mainState.authenticated === true && profilo.auth === 'PAGOPA'){
             
             const interval = setInterval(() => {
                 getCount();
@@ -109,7 +110,7 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainS
             return () => clearInterval(interval); 
          
         }
-    },[mainState.authenticated]);
+    },[globalContextObj.mainState.authenticated]);
 
 
 
@@ -125,14 +126,16 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainS
                 productsList={products}
                 onSelectedProduct={(e) => {
                   
-                   
-                    const result = mainState.prodotti.find(el => el.prodotto === e.id);
+                  
+                    const result = globalContextObj.mainState.prodotti.find(el => el.prodotto === e.id);
                    
                   
                     localStorage.removeItem("profilo");
                     localStorage.removeItem("token");
                     localStorage.setItem('profilo',JSON.stringify(result));
                     localStorage.setItem('token',JSON.stringify({token:result?.jwt}));
+                  
+                  
 
                     if(e.id === 'prod_pd'){
                        

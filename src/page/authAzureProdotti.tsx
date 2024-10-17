@@ -3,13 +3,16 @@ import { getAuthProfilo, redirect } from "../api/api";
 import MultipleSelectProdotti from "../components/authSelectProdottiPa/selectProdotti";
 import { PathPf } from "../types/enum";
 import { AuthAzureProps, ProfiloObject } from "../types/typesGeneral";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { getProdotti } from "../reusableFunction/actionLocalStorage";
 import { Button, Typography } from "@mui/material";
 import DivProdotto from "../components/authSelectProdottiPa/divProdotto";
+import { GlobalContext } from "../store/context/globalContext";
 
-const AuthAzureProdotti : React.FC<AuthAzureProps> = ({dispatchMainState}) => {
+const AuthAzureProdotti : React.FC<any> = () => {
 
+    const globalContextObj = useContext(GlobalContext); 
+    console.log('PPRODOTTI');
     const navigate = useNavigate();
     const prodotti = getProdotti().prodotti;
 
@@ -17,7 +20,7 @@ const AuthAzureProdotti : React.FC<AuthAzureProps> = ({dispatchMainState}) => {
    
 
     const handleModifyMainState = (valueObj) => {
-        dispatchMainState({
+        globalContextObj.dispatchMainState({
             type:'MODIFY_MAIN_STATE',
             value:valueObj
         });
@@ -131,3 +134,5 @@ const AuthAzureProdotti : React.FC<AuthAzureProps> = ({dispatchMainState}) => {
 };
 
 export default AuthAzureProdotti;
+
+

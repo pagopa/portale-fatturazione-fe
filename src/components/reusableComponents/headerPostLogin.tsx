@@ -3,6 +3,8 @@ import { useLocation } from 'react-router';
 import { redirect } from '../../api/api';
 import {useMsal } from '@azure/msal-react';
 import { loginRequest } from '../../authConfig';
+import { useContext } from 'react';
+import { GlobalContext } from '../../store/context/globalContext';
 
 
 type JwtUser = {
@@ -12,7 +14,9 @@ type JwtUser = {
     email?: string;
 };
 
-const HeaderPostLogin = ({mainState}) => {
+const HeaderPostLogin = () => {
+    const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState,mainState} = globalContextObj;
 
     const location  = useLocation();
 

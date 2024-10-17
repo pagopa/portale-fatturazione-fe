@@ -1,17 +1,18 @@
 import { useMsal } from "@azure/msal-react";
-import { useEffect} from 'react';
+import { useContext, useEffect} from 'react';
 import { loginRequest } from '../authConfig';
 import {InteractionStatus,
 } from "@azure/msal-browser";
 import { AzureLoginProps } from "../types/typesGeneral";
+import { GlobalContext } from "../store/context/globalContext";
 
 //Pagina di accesso con l'autenticazione AZURE
 
-const Azure : React.FC<AzureLoginProps> = ({dispatchMainState}) =>{
-
+const Azure : React.FC<any> = () =>{
+    const globalContextObj = useContext(GlobalContext);
     localStorage.clear();
     const handleModifyMainState = (valueObj) => {
-        dispatchMainState({
+        globalContextObj.dispatchMainState({
             type:'MODIFY_MAIN_STATE',
             value:valueObj
         });

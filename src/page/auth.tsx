@@ -1,9 +1,10 @@
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { selfcareLogin, getAuthProfilo, manageError, redirect } from '../api/api';
-import {useEffect} from 'react';
+import {useContext, useEffect} from 'react';
 import { LoginProps} from '../types/typesGeneral';
 import { getDatiModuloCommessa } from '../api/apiSelfcare/moduloCommessaSE/api';
 import { PathPf } from '../types/enum';
+import { GlobalContext } from '../store/context/globalContext';
 
 // Blank page utilizzata per l'accesso degli utenti tramite  Selfcare
 
@@ -14,10 +15,10 @@ Nella risposta della chiamata getProfilo noi andiamo ad estrapolare il jwt, salv
 da parte dell'utente SELFCARE
 
 */
-const Auth : React.FC<LoginProps> = ({dispatchMainState}) =>{
-    
+const Auth : React.FC<any> = () =>{
+    const globalContextObj = useContext(GlobalContext);
     const handleModifyMainState = (valueObj) => {
-        dispatchMainState({
+        globalContextObj.dispatchMainState({
             type:'MODIFY_MAIN_STATE',
             value:valueObj
         });
@@ -75,7 +76,7 @@ const getCommessa = async (tokenC, nonceC,infoProfilo) =>{
         handleModifyMainState(infoProfilo);
         navigate(PathPf.DATI_FATTURAZIONE);
     }).catch((err)=>{
-        manageError(err,dispatchMainState);
+        manageError(err,globalContextObj.dispatchMainState);
         
     });
 };
