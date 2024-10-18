@@ -107,7 +107,7 @@ const CollapsibleTablePa: React.FC<GridCollapsibleBase> = ({data, headerNames,se
                                             return;
                                             
                                         }else if(el.name === 'Arrow'){
-                                            return(<TableCell sx={{width:'100px'}} align={el.align} key={el.id}></TableCell>);
+                                            return(<TableCell sx={{width:'70px'}} align={el.align} key={el.id}></TableCell>);
                                         }else{
                                             return(<TableCell align={el.align} key={el.id}>{el.name}</TableCell>);
                                         }

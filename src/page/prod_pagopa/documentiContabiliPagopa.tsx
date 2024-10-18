@@ -209,7 +209,8 @@ const DocumentiContabili:React.FC<any> = ({dispatchMainState}) =>{
         {name:"Trimestre",align:"center",id:4},
         {name:"Bollo",align:"center",id:5},
         {name:"Data",align:"center",id:6},
-        {name:"Arrow",align:"center",id:7}];
+        {name:"Arrow",align:"center",id:7},
+        {name:"Arrow",align:"center",id:8}];
       
  
 

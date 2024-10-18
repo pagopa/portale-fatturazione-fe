@@ -1,8 +1,10 @@
-import { Box, Collapse, IconButton, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { Box, Collapse, IconButton, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
 import { useState } from "react";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import DownloadIcon from '@mui/icons-material/Download';
+
 
 const RowBase = ({row, setSelected,selected}) => {
     const [open, setOpen] = useState(false);
@@ -63,7 +65,21 @@ const RowBase = ({row, setSelected,selected}) => {
                 <TableCell align='center' onClick={()=>{
                     console.log('click on arrow');           
                 } }>
-                    <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
+                    <Tooltip title="Download report">
+                        <IconButton>
+                            <DownloadIcon sx={{ color: '#1976D2'}} /> 
+                        </IconButton>
+                    </Tooltip>
+                    
+                </TableCell>
+                <TableCell align='center' onClick={()=>{
+                    console.log('click on arrow');           
+                } }>
+                    <Tooltip title="Download trimestre">
+                        <IconButton>
+                            <DownloadIcon sx={{ color: '#1976D2'}} /> 
+                        </IconButton>
+                    </Tooltip>
                 </TableCell>
             </TableRow>
             <TableRow >
