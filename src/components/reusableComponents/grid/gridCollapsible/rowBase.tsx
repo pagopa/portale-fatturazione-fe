@@ -65,7 +65,7 @@ const RowBase = ({row, setSelected,selected}) => {
                 <TableCell align='center' onClick={()=>{
                     console.log('click on arrow');           
                 } }>
-                    <Tooltip title="Download report">
+                    <Tooltip title="Download dettaglio">
                         <IconButton>
                             <DownloadIcon sx={{ color: '#1976D2'}} /> 
                         </IconButton>
