@@ -49,3 +49,15 @@ export const downloadDocContabili = async (token:string, nonce:string , body:Req
     return response;
 };
 
+
+export const getDetailsDocContabilePa = async (token:string, nonce:string , body:{contractId:string,quarter:string}) => {
+    const response =  await axios.post(`${url}/api/v2/pagopa/financialreports/dettaglio?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }
+        }
+    );
+    return response;
+};
+

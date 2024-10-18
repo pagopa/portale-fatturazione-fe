@@ -38,6 +38,7 @@ import AuthAzureProdotti from './page/authAzureProdotti';
 import SideNavPagopa from './components/sideNavs/sideNavPagoPA';
 import AnagraficaPsp from './page/prod_pagopa/anagraficaPspPagopa';
 import DocumentiContabili from './page/prod_pagopa/documentiContabiliPagopa';
+import DettaglioDocContabile from './page/prod_pagopa/dettaglioDocumentoContabile';
 
 
 
@@ -79,11 +80,12 @@ const App = ({ instance }) => {
         authenticated:false,
         badgeContent:0,
         messaggioSelected:null,
-        prodotti:[]
+        prodotti:[],
+        docContabileSelected:null
     });
    
    
-   
+    
 
     // questa chiamata viene eseguita esclusivamente se l'utenete fa un reload page cosi da inserire nuovamente il NONCE nel DOM
     const getProfiloToGetNonce = async () =>{
@@ -133,6 +135,7 @@ const App = ({ instance }) => {
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App" >
+                    <BasicAlerts setVisible={setShowAlert} visible={showAlert} mainState={mainState} dispatchMainState={ dispatchMainState}></BasicAlerts>
                     <HeaderPostLogin mainState={mainState}/>
                     <div>
                         <Routes>
@@ -162,6 +165,7 @@ const App = ({ instance }) => {
                                     <Route path={'/messaggi'} element={<Messaggi mainState={mainState} dispatchMainState={dispatchMainState}/>} />
                                     <Route path={PathPf.ANAGRAFICAPSP} element={<AnagraficaPsp dispatchMainState={ dispatchMainState}></AnagraficaPsp>}/>
                                     <Route path={PathPf.DOCUMENTICONTABILI} element={<DocumentiContabili dispatchMainState={ dispatchMainState}></DocumentiContabili>}/>
+                                    <Route path={PathPf.DETTAGLIO_DOC_CONTABILE} element={<DettaglioDocContabile mainState={mainState}  dispatchMainState={dispatchMainState}></DettaglioDocContabile>}/>
                                     <Route path="/azureLogin" element={<AzureLogin dispatchMainState={dispatchMainState}/>} />
                                     <Route path="/auth/azure" element={<AuthAzure  dispatchMainState={ dispatchMainState}/>} />
                                     <Route path="azure" element={<Azure dispatchMainState={ dispatchMainState}/>} />

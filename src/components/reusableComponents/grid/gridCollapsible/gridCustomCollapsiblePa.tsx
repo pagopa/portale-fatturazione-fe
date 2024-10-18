@@ -47,18 +47,17 @@ export interface DocContabili {
 export interface GridCollapsibleBase{
     data:DocContabili[],
     headerNames:HeaderCollapsible[],
+    handleModifyMainState:any,
     //stato:boolean,
     //setOpenConfermaModal:any,
     //setOpenResetFilterModal:any,
     //monthFilterIsEqualMonthDownload:boolean,
-    selected:number[],
-    setSelected:any,
     //showedData:FattureObj[],
     //setShowedData: Dispatch<SetStateAction<FattureObj[]>>,
 }
 
 
-const CollapsibleTablePa: React.FC<GridCollapsibleBase> = ({data, headerNames,selected,setSelected}) => {
+const CollapsibleTablePa: React.FC<GridCollapsibleBase> = ({data, headerNames,handleModifyMainState}) => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [count, setCount] = useState(0);
@@ -121,8 +120,7 @@ const CollapsibleTablePa: React.FC<GridCollapsibleBase> = ({data, headerNames,se
                                 return(
                                     <RowBase key={row.id} 
                                         row={row}
-                                        setSelected={setSelected}
-                                        selected={selected}
+                                        handleModifyMainState={handleModifyMainState}
                                     ></RowBase>
                                 ); })}
                         </Table>

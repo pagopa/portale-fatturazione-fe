@@ -23,6 +23,15 @@ const DocumentiContabili:React.FC<any> = ({dispatchMainState}) =>{
     const token =  getToken();
     const profilo =  getProfilo();
 
+
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
+
+
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
@@ -52,10 +61,9 @@ const DocumentiContabili:React.FC<any> = ({dispatchMainState}) =>{
 
     const [yearOnSelect,setYearOnSelect] = useState<string[]>([]);
     const [valueYear,setValueYear] = useState('');
-    const [docSelected,setDocSelected] = useState([]);
 
     
-    console.log(bodyGetLista);
+  
     useEffect(()=>{
         /*
         const result = getFiltersFromLocalStorage();
@@ -403,8 +411,7 @@ const DocumentiContabili:React.FC<any> = ({dispatchMainState}) =>{
                 <CollapsibleTablePa 
                     data={gridData}
                     headerNames={headersObjGrid}
-                    selected={docSelected}
-                    setSelected={setDocSelected}
+                    handleModifyMainState={handleModifyMainState}
                 ></CollapsibleTablePa>
             </div>
             <div>

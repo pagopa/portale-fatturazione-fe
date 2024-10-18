@@ -3,11 +3,14 @@ import { useState } from "react";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import DownloadIcon from '@mui/icons-material/Download';
+import { useNavigate } from "react-router";
+import { PathPf } from "../../../../types/enum";
 
 
-const RowBase = ({row, setSelected,selected}) => {
+
+const RowBase = ({row,handleModifyMainState}) => {
     const [open, setOpen] = useState(false);
+    const navigate = useNavigate();
    
   
     /*  const handleClick = ( id: number) => {
@@ -63,21 +66,14 @@ const RowBase = ({row, setSelected,selected}) => {
                 <TableCell align='center' >{row.bollo}</TableCell>
                 <TableCell align='center'>{row.riferimentoData !== null ? new Date(row.riferimentoData).toLocaleString().split(',')[0] : ''}</TableCell>
                 <TableCell align='center' onClick={()=>{
-                    console.log('click on arrow');           
+                    console.log('click on arrow', row);   
+                    handleModifyMainState({docContabileSelected:{contractId:row.contractId,quarter:row.yearQuarter}}); 
+                    navigate(PathPf.DETTAGLIO_DOC_CONTABILE);
+                           
                 } }>
-                    <Tooltip title="Download dettaglio">
+                    <Tooltip title="Dettaglio">
                         <IconButton>
-                            <DownloadIcon sx={{ color: '#1976D2'}} /> 
-                        </IconButton>
-                    </Tooltip>
-                    
-                </TableCell>
-                <TableCell align='center' onClick={()=>{
-                    console.log('click on arrow');           
-                } }>
-                    <Tooltip title="Download trimestre">
-                        <IconButton>
-                            <DownloadIcon sx={{ color: '#1976D2'}} /> 
+                            <ArrowForwardIcon sx={{ color: '#1976D2'}} /> 
                         </IconButton>
                     </Tooltip>
                 </TableCell>

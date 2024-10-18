@@ -89,7 +89,8 @@ export interface MainState{
     badgeContent:number,
     messaggioSelected:null|Messaggi
     prodotti:ProfiloObject[],
-    profilo:string
+    profilo:string,
+    docContabileSelected:null|{contractId:string,quarter:string}
 }
 
 export type ProfiloObject = {
