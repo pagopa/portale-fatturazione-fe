@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useContext} from 'react';
 import { manageError, redirect } from '../api/api';
 import { useNavigate} from 'react-router';
 import '../style/areaPersonaleUtenteEnte.css';
@@ -22,13 +22,17 @@ import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import {PathPf} from '../types/enum';
 import { getProfilo, getStatusApp, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from '../reusableFunction/actionLocalStorage';
 import SuspenseDatiFatturazione from '../components/areaPersonale/skeletonDatiFatturazione';
+import { GlobalContext } from '../store/context/globalContext';
         
         
         
-const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, dispatchMainState, open, setOpen}) => {
-            
-    const token =  getToken();
-    const profilo =  getProfilo();
+const AreaPersonaleUtenteEnte : React.FC = () => {
+
+    const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState,mainState,openBasicModal_DatFat_ModCom,setOpenBasicModal_DatFat_ModCom} = globalContextObj;
+   
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
     const statusApp = getStatusApp();
     const navigate = useNavigate();
     const enti = profiliEnti();
@@ -80,19 +84,19 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         }
     },[]);
             
-            
+    /*
     // se non c'è il token viene fatto il redirect al portale di accesso 
     useEffect(()=>{
         if(token === undefined){
             window.location.href = redirect;
         }
         /* se l'utente PagoPA modifa l'url e cerca di accedere al path '/' 
-                senza aver prima selezionato una row della grid lista dati fatturazione viene fatto il redirect automatico a  PathPf.LISTA_DATI_FATTURAZIONE*/
+                senza aver prima selezionato una row della grid lista dati fatturazione viene fatto il redirect automatico a  PathPf.LISTA_DATI_FATTURAZIONE
         if(profilo.auth === 'PAGOPA' && !profilo.idEnte){
             window.location.href = PathPf.LISTA_DATI_FATTURAZIONE;
         }
     },[]);
-            
+            */
     // get dati fatturazione SELFCARE
     const getDatiFat = async () =>{
         setLoadingData(true);
@@ -124,7 +128,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         }).catch(err =>{
                     
             if(err?.response?.status === 404){
-                setInfoToStatusApplicationLoacalStorage(statusApp,{datiFatturazione:false});
+                // setInfoToStatusApplicationLoacalStorage(statusApp,{datiFatturazione:false});
                 handleModifyMainState({...statusApp, ...{
                     datiFatturazione:false,
                     statusPageDatiFatturazione:'mutable'
@@ -228,26 +232,17 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                                 statusPageInserimentoCommessa:'mutable',
                                 mese:new Date().getMonth()+2,
                                 anno:new Date().getFullYear(),
-                            });
-                            setInfoToStatusApplicationLoacalStorage(statusApp,{
-                                statusPageDatiFatturazione:'immutable',
-                                statusPageInserimentoCommessa:'mutable',
-                                mese:new Date().getMonth()+2,
-                                anno:new Date().getFullYear(),
                                 datiFatturazioneNotCompleted:false
                             });
                             navigate(PathPf.MODULOCOMMESSA);
                         }else{
                             handleModifyMainState({
                                 statusPageDatiFatturazione:'immutable',
-                            });
-                            setInfoToStatusApplicationLoacalStorage(statusApp,{
                                 datiFatturazioneNotCompleted:false
                             });
                             navigate(PathPf.LISTA_COMMESSE);
                         }
-                    })
-                    .catch(err => {
+                    }).catch(err => {
                         setOpenModalLoading(false);
                         manageError(err,dispatchMainState);
                     });
@@ -280,9 +275,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                     setOpenModalLoading(false);
                     manageError(err,dispatchMainState);
                 });
-                        
-                        
-                        
+                
             }else{
                 // 2 - ED è UN UTENTE SELFCARE
                         
@@ -294,25 +287,13 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                             datiFatturazione:true,
                             statusPageInserimentoCommessa:'mutable',
                             mese:new Date().getMonth()+2,
-                            anno:new Date().getFullYear()
-                        });
-                                
-                        setInfoToStatusApplicationLoacalStorage(statusApp,{
-                            statusPageDatiFatturazione:'immutable',
-                            datiFatturazione:true,
-                            statusPageInserimentoCommessa:'mutable',
-                            mese:new Date().getMonth()+2,
                             anno:new Date().getFullYear(),
                             datiFatturazioneNotCompleted:false
                         });
+                                
                         navigate(PathPf.MODULOCOMMESSA);
                     }else{
                         handleModifyMainState({
-                            statusPageDatiFatturazione:'immutable',
-                            datiFatturazione:true,
-                        });
-                                
-                        setInfoToStatusApplicationLoacalStorage(statusApp,{
                             statusPageDatiFatturazione:'immutable',
                             datiFatturazione:true,
                             datiFatturazioneNotCompleted:false
@@ -332,7 +313,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
         if(mainState.statusPageDatiFatturazione === 'immutable' &&  profilo.auth === 'PAGOPA'){
             navigate(PathPf.LISTA_DATI_FATTURAZIONE);
         }else{
-            setOpen(prev => ({...prev, ...{visible:true,clickOn:'INDIETRO_BUTTON'}}));
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:'INDIETRO_BUTTON'}}));
         }
     };
             
@@ -354,7 +335,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
     return (
                 
         <div >
-            <PageTitleNavigation dispatchMainState={dispatchMainState} setOpen={setOpen} mainState={mainState} /> 
+            <PageTitleNavigation dispatchMainState={dispatchMainState} setOpen={setOpenBasicModal_DatFat_ModCom} mainState={mainState} /> 
             {/* tab 1 e 2 start */}
             <div className='mt-5'>
                 <TabAreaPersonaleUtente mainState={mainState} datiFatturazione={datiFatturazione} setDatiFatturazione={setDatiFatturazione} setStatusButtonConferma={setStatusButtonConferma} />
@@ -382,7 +363,7 @@ const AreaPersonaleUtenteEnte : React.FC<AreaPersonaleProps> = ({mainState, disp
                     </div>
                 )}
             </div>
-            <BasicModal setOpen={setOpen} open={open} dispatchMainState={dispatchMainState} getDatiFat={getDatiFat} getDatiFatPagoPa={getDatiFatPagoPa} mainState={mainState}></BasicModal>
+            <BasicModal setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} dispatchMainState={dispatchMainState} getDatiFat={getDatiFat} getDatiFatPagoPa={getDatiFatPagoPa} mainState={mainState}></BasicModal>
             <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}></ModalLoading>
             {/*   <BasicAlerts typeAlert={'error'} setVisible={setAlertVisible}  visible={alertVisible}></BasicAlerts>*/}
         </div>

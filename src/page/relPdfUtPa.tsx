@@ -5,7 +5,7 @@ import { Rel, RelPagePdfProps} from "../types/typeRel";
 import { Button, Typography } from "@mui/material";
 import { useNavigate } from 'react-router';
 import {manageError } from '../api/api';
-import { useEffect, useRef, useState} from 'react';
+import { useContext, useEffect, useRef, useState} from 'react';
 import TextDettaglioPdf from '../components/commessaPdf/textDettaglioPdf';
 import { ResponseDownloadPdf } from '../types/typeModuloCommessaInserimento';
 import { getRelExel, getRelPdf, uploadPdfRel ,getRelPdfFirmato, getSingleRel, getLogRelDocumentoFirmato } from '../api/apiSelfcare/relSE/api';
@@ -21,8 +21,12 @@ import { getProfilo, getStatusApp, getToken, profiliEnti } from '../reusableFunc
 import {mesiWithZero, month } from '../reusableFunction/reusableArrayObj';
 import { createDateFromString } from '../reusableFunction/function';
 import SkeletonRelPdf from '../components/rel/skeletonRelPdf';
+import { GlobalContext } from '../store/context/globalContext';
 
-const RelPdfPage : React.FC<RelPagePdfProps> = ({dispatchMainState}) =>{
+const RelPdfPage : React.FC = () =>{
+
+    const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState} = globalContextObj;
 
     const targetRef  = useRef<HTMLInputElement>(null);
     const token =  getToken();

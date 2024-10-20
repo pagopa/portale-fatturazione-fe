@@ -1,14 +1,19 @@
 import { Box, Divider, List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import { getProfilo } from "../../reusableFunction/actionLocalStorage";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import { useNavigate } from "react-router";
 import { PathPf } from "../../types/enum";
+import { GlobalContext } from "../../store/context/globalContext";
 
 const SideNavPagopa = () => {
 
-    const profilo = getProfilo();
+    const globalContextObj = useContext(GlobalContext);
+    const {mainState} = globalContextObj;
+ 
+    
+    const profilo =  mainState.profilo;
     const navigate = useNavigate();
 
     const [selectedIndex, setSelectedIndex] = useState<number>(0);

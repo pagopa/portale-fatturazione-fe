@@ -1,6 +1,6 @@
 import { Button, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
-import { Dispatch, useEffect, useState } from "react";
+import { Dispatch, useContext, useEffect, useState } from "react";
 import {getProfilo, getToken } from "../reusableFunction/actionLocalStorage";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
@@ -14,6 +14,7 @@ import { mesiGrid } from "../reusableFunction/reusableArrayObj";
 import ModalMatriceAccertamenti from "../components/accertamenti/modalMatrice";
 import { saveAs } from "file-saver";
 import { ActionReducerType } from "../reducer/reducerMainState";
+import { GlobalContext } from "../store/context/globalContext";
 
 
 interface AccertamentiProps {
@@ -25,7 +26,10 @@ export interface MatriceArray {
     dataFineValidita: string
 }
 
-const Accertamenti : React.FC<AccertamentiProps> = ({dispatchMainState}) =>{
+const Accertamenti : React.FC = () =>{
+
+    const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState} = globalContextObj;
     
     const token =  getToken();
     const profilo =  getProfilo();

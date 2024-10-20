@@ -3,7 +3,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { DataGrid, GridColDef, GridEventListener, GridRowParams, MuiEvent } from "@mui/x-data-grid";
 import { Params } from "../types/typesGeneral";
 import { saveAs } from "file-saver";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { downloadDocumentoAsseverazionePagoPa, exportDocumentoAsseverazionePagoPa, listaAsseverazionePagopa, uploadExelAsseverazionePagopa } from "../api/apiPagoPa/adesioneBandoPA/api";
 import { getProfilo, getToken } from "../reusableFunction/actionLocalStorage";
 import { AdesioneBandoProps, Asseverazione } from "../types/typeAdesioneBando";
@@ -11,9 +11,13 @@ import { manageError } from "../api/api";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { SingleFileInput } from "@pagopa/mui-italia";
 import ModalUploadPdf from "../components/rel/modalUploadPdf";
+import { GlobalContext } from "../store/context/globalContext";
 
 
-const AdesioneBando : React.FC<AdesioneBandoProps> = ({dispatchMainState}) => {
+const AdesioneBando : React.FC = () => {
+
+    const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState} = globalContextObj;
 
     const token =  getToken();
     const profilo = getProfilo();

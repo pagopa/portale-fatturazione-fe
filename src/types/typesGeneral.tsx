@@ -89,7 +89,7 @@ export interface MainState{
     badgeContent:number,
     messaggioSelected:null|Messaggi
     prodotti:ProfiloObject[],
-    profilo:string
+    profilo:any
 }
 
 export type ProfiloObject = {
@@ -102,7 +102,6 @@ export type ProfiloObject = {
     descrizioneRuolo: string,
     gruppoRuolo: string,
     nomeEnte: null|string,
-    id: string,
     nonce: string,
     valido: string,
     jwt: string,

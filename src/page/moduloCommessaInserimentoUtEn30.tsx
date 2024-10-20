@@ -1,4 +1,4 @@
-import {useState,useEffect} from 'react';
+import {useState,useEffect, useContext} from 'react';
 import {Typography, Button} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked } from '@pagopa/mui-italia';
@@ -24,10 +24,14 @@ import { calculateTot } from '../reusableFunction/function';
 import { month } from '../reusableFunction/reusableArrayObj';
 import ModalConfermaInserimento from '../components/commessaInserimento/modalConfermaInserimento';
 import SkeletonComIns from '../components/commessaInserimento/skeletonComIns';
+import { GlobalContext } from '../store/context/globalContext';
 
 
 
-const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps> = ({mainState, dispatchMainState, open, setOpen}) => {
+const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
+
+    const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState,mainState,openBasicModal_DatFat_ModCom,setOpenBasicModal_DatFat_ModCom} = globalContextObj;
 
     const token =  getToken();
     const profilo =  getProfilo();
@@ -361,11 +365,11 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
         }else if(mainState.statusPageInserimentoCommessa === 'immutable' && profilo.auth === 'PAGOPA'){
             navigate(PathPf.LISTA_MODULICOMMESSA);
         }else if(mainState.statusPageInserimentoCommessa === 'mutable' && profilo.auth === 'PAGOPA'){
-            setOpen(prev => ({...prev, ...{visible:true,clickOn:'INDIETRO_BUTTON'}}));
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:'INDIETRO_BUTTON'}}));
         }else if(mainState.inserisciModificaCommessa === 'INSERT'&& enti){
-            setOpen(prev => ({...prev, ...{visible:true,clickOn:'INDIETRO_BUTTON'}}));
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:'INDIETRO_BUTTON'}}));
         }else if(mainState.inserisciModificaCommessa === 'MODIFY' && mainState.statusPageInserimentoCommessa === 'mutable'&& enti ){
-            setOpen(prev => ({...prev, ...{visible:true,clickOn:'INDIETRO_BUTTON'}}));
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:'INDIETRO_BUTTON'}}));
         } 
     };
     const cssPathModuloComm = mainState.statusPageInserimentoCommessa === 'immutable' ? 'bold' : 'normal';
@@ -394,7 +398,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC<ModuloCommessaInserimentoProps>
 
     return (
         <>
-            <BasicModal setOpen={setOpen} open={open} dispatchMainState={dispatchMainState} handleGetDettaglioModuloCommessa={handleGetDettaglioModuloCommessa} handleGetDettaglioModuloCommessaPagoPa={handleGetDettaglioModuloCommessaPagoPa} mainState={mainState}></BasicModal>
+            <BasicModal setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} dispatchMainState={dispatchMainState} handleGetDettaglioModuloCommessa={handleGetDettaglioModuloCommessa} handleGetDettaglioModuloCommessaPagoPa={handleGetDettaglioModuloCommessaPagoPa} mainState={mainState}></BasicModal>
             {/*Hide   modulo commessa sul click contina , save del modulo commessa cosi da mostrare dati fatturazione,
             il componente visualizzato è AreaPersonaleUtenteEnte  */}
            

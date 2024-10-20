@@ -1,6 +1,5 @@
 import DownloadIcon from '@mui/icons-material/Download';
-import { useEffect, useState } from "react";
-import { getProfilo, getToken } from "../../reusableFunction/actionLocalStorage";
+import { useContext, useEffect, useState } from "react";
 import { AutocompleteMultiselect, GridElementListaPsp, OptionMultiselectCheckboxPsp, RequestBodyListaAnagraficaPsp } from "../../types/typeAngraficaPsp";
 import { downloadPsp, getListaAnagraficaPsp, getListaNamePsp } from "../../api/apiPagoPa/anagraficaPspPA/api";
 import { manageError } from "../../api/api";
@@ -9,12 +8,17 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { saveAs } from "file-saver";
+import { GlobalContext } from '../../store/context/globalContext';
 
 
 
-const AnagraficaPsp:React.FC<any> = ({dispatchMainState}) =>{
-    const token =  getToken();
-    const profilo =  getProfilo();
+const AnagraficaPsp:React.FC = () =>{
+
+    const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState,mainState} = globalContextObj;
+ 
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
 
     const [gridData, setGridData] = useState<GridElementListaPsp[]>([]);
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
@@ -38,7 +42,6 @@ const AnagraficaPsp:React.FC<any> = ({dispatchMainState}) =>{
     const [showLoading,setShowLoading] = useState(false);
 
     
-    console.log(bodyGetLista);
     useEffect(()=>{
         /*
         const result = getFiltersFromLocalStorage();

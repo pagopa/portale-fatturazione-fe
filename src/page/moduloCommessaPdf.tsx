@@ -1,5 +1,5 @@
 import { manageError } from "../api/api";
-import {useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {Typography, Button} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked} from '@pagopa/mui-italia';
@@ -18,8 +18,12 @@ import { mesiWithZero, month } from "../reusableFunction/reusableArrayObj";
 import { DatiCommessaPdf, ResponseGetPdfPagoPa } from "../types/typeListaModuliCommessa";
 import { createDateFromString, replaceDate } from "../reusableFunction/function";
 import SkeletonComPdf from "../components/commessaPdf/skeletonComPdf";
+import { GlobalContext } from "../store/context/globalContext";
 
-const ModuloCommessaPdf : React.FC<ModComPdfProps> = ({dispatchMainState}) =>{
+const ModuloCommessaPdf : React.FC = () =>{
+
+    const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState} = globalContextObj;
 
     const token =  getToken();
     const profilo =  getProfilo();

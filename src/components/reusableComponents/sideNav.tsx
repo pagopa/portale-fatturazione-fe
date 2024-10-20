@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useState, useEffect } from 'react';
 import {
     List,
@@ -22,16 +22,20 @@ import AnnouncementIcon from '@mui/icons-material/Announcement';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import { getProfilo, getStatusApp, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from '../../reusableFunction/actionLocalStorage';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
+import { GlobalContext } from '../../store/context/globalContext';
 
-const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState, setOpenBasicModal_DatFat_ModCom}) => {
+const SideNavComponent: React.FC<any> = ({setOpenBasicModal_DatFat_ModCom}) => {
+
+    const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState,mainState} = globalContextObj;
 
     const navigate = useNavigate();
     const location = useLocation();
     const enti = profiliEnti();
-    const token = getToken();
-    const profilo = getProfilo();
     const statusApp = getStatusApp();
 
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -39,6 +43,9 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
             value:valueObj
         });
     };
+
+
+
 
     const [selectedIndex, setSelectedIndex] = useState<number | null>(0);
     
@@ -357,9 +364,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
                                     </ListItemIcon>
                                     <ListItemText primary="Documenti contabili" />
                                 </ListItemButton>
-                                
                             </>}
-                            
                         </>
                         }
                     </List>

@@ -2,51 +2,49 @@ import { useNavigate } from "react-router";
 import { getAuthProfilo, redirect } from "../api/api";
 import MultipleSelectProdotti from "../components/authSelectProdottiPa/selectProdotti";
 import { PathPf } from "../types/enum";
-import { AuthAzureProps, ProfiloObject } from "../types/typesGeneral";
-import { useContext, useEffect, useState } from "react";
-import { getProdotti } from "../reusableFunction/actionLocalStorage";
+import { ProfiloObject } from "../types/typesGeneral";
+import { useContext, useState } from "react";
 import { Button, Typography } from "@mui/material";
 import DivProdotto from "../components/authSelectProdottiPa/divProdotto";
 import { GlobalContext } from "../store/context/globalContext";
 
-const AuthAzureProdotti : React.FC<any> = () => {
+const AuthAzureProdotti : React.FC = () => {
 
     const globalContextObj = useContext(GlobalContext); 
+    const {dispatchMainState} = globalContextObj;
     console.log('PPRODOTTI');
     const navigate = useNavigate();
-    const prodotti = getProdotti().prodotti;
 
     const [productSelected, setProductSelected] = useState<ProfiloObject|null>(null);
    
 
     const handleModifyMainState = (valueObj) => {
-        globalContextObj.dispatchMainState({
+        dispatchMainState({
             type:'MODIFY_MAIN_STATE',
             value:valueObj
         });
     };
 
    
-
+    /*
     useEffect(()=>{
-        if(prodotti?.length > 0){
+        if(mainState.prodotti.length > 0){
             handleModifyMainState({
                 authenticated:true,
                 prodotti:prodotti
             });
         }
     },[]);
-  
+  */
 
     const getProfilo = async ()=>{
         if(productSelected?.jwt){
-
-      
             await getAuthProfilo(productSelected.jwt)
-                .then(resp =>{
-               
+                .then((resp) => {
+                    console.log(resp,'llll');
                     const storeProfilo = resp.data;
-                    localStorage.setItem('profilo', JSON.stringify({
+                    const id = resp.data.id;
+                    const profiloDetails = {
                         auth:storeProfilo.auth,
                         nomeEnte:storeProfilo.nomeEnte,
                         descrizioneRuolo:storeProfilo.descrizioneRuolo,
@@ -55,16 +53,18 @@ const AuthAzureProdotti : React.FC<any> = () => {
                         dataPrimo:storeProfilo.dataPrimo,
                         prodotto:storeProfilo.prodotto,
                         jwt:productSelected.jwt,
-                        nonce:storeProfilo.nonce
-                    }));
-                    const storeJwt = {token:productSelected.jwt};
-                    localStorage.setItem('token', JSON.stringify(storeJwt));
-
+                        nonce:storeProfilo.nonce,
+                        idEnte:id
+                    };
+                    //const storeJwt = {token:productSelected.jwt};
+                    //localStorage.setItem('token', JSON.stringify(storeJwt));
+                    //eliminare il nonce
                     handleModifyMainState({
                         ruolo:resp.data.ruolo,
                         action:'LISTA_DATI_FATTURAZIONE',
                         nonce:storeProfilo.nonce,
-                        authenticated:true
+                        authenticated:true,
+                        profilo:profiloDetails
                     });
 
                    
@@ -74,8 +74,7 @@ const AuthAzureProdotti : React.FC<any> = () => {
                         navigate(PathPf.LISTA_DATI_FATTURAZIONE);
                     }
 
-                } )
-                .catch(()=> {
+                }).catch(()=> {
                     window.location.href = redirect;
                 });
         }

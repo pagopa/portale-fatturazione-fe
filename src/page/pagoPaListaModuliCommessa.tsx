@@ -3,7 +3,7 @@ import { Params } from "../types/typesGeneral";
 import { Typography } from "@mui/material";
 import { Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
 import { manageError } from '../api/api';
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { DataGrid, GridRowParams,GridEventListener,MuiEvent, GridColDef} from '@mui/x-data-grid';
@@ -19,10 +19,13 @@ import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeRepo
 import { currentMonth, getCurrentFinancialYear } from "../reusableFunction/function";
 import { currentYear, mesi, mesiGrid, mesiWithZero } from "../reusableFunction/reusableArrayObj";
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
+import { GlobalContext } from "../store/context/globalContext";
 
 
-const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchMainState}) =>{
-
+const PagoPaListaModuliCommessa:React.FC = () =>{
+    const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState} = globalContextObj;
+    
     const token =  getToken();
     const profilo =  getProfilo();
     const navigate = useNavigate();

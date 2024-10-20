@@ -1,6 +1,6 @@
 import { Typography } from "@mui/material";
 import { } from '@mui/material';
-import React , { useState, useEffect} from 'react';
+import React , { useState, useEffect, useContext} from 'react';
 import { TextField,Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { getTipologiaProfilo, manageError} from "../api/api";
@@ -21,8 +21,11 @@ import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 import { deleteFilterToLocalStorageNotifiche, getFiltersFromLocalStorageNotifiche, getProfilo, getStatusApp, getToken, profiliEnti, setFilterToLocalStorageNotifiche } from "../reusableFunction/actionLocalStorage";
 import {mesi, mesiGrid, mesiWithZero, tipoNotifica } from "../reusableFunction/reusableArrayObj";
 import { getCurrentFinancialYear } from "../reusableFunction/function";
+import { GlobalContext } from "../store/context/globalContext";
 
-const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMainState}) => {
+const ReportDettaglio : React.FC = () => {
+    const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState, mainState} = globalContextObj;
 
     const token =  getToken();
     const profilo =  getProfilo();

@@ -20,7 +20,7 @@ type AlertProps = {
     dispatchMainState:Dispatch<ActionReducerType>
 }
 
-const BasicAlerts:React.FC <any> =  ({setVisible , visible}) => {
+const BasicAlerts:React.FC <any> =  () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const globalContextObj = useContext(GlobalContext);
@@ -64,14 +64,14 @@ const BasicAlerts:React.FC <any> =  ({setVisible , visible}) => {
 
 
 
-        if(visible === true && globalContextObj.mainState.apiError !== null){
+        if(showAlert === true && globalContextObj.mainState.apiError !== null){
 
             const logout = globalContextObj.mainState.apiError === 401 || globalContextObj.mainState.apiError === 403 || globalContextObj.mainState.apiError === 419;
             setCss('main_container_alert_component_show');
             const timer = setTimeout(() => {
     
                 setCss('main_container_alert_component_hidden');
-                setVisible(false);
+                setShowAlert(false);
 
                 if(logout){
                     localStorage.clear();
@@ -86,10 +86,10 @@ const BasicAlerts:React.FC <any> =  ({setVisible , visible}) => {
             }; 
         }
         
-    },[visible]);
+    },[showAlert]);
 
     React.useEffect(()=>{
-        if(visible === false  && globalContextObj.mainState.apiError !== null){
+        if(showAlert === false  && globalContextObj.mainState.apiError !== null){
            
             const timer = setTimeout(() => {
                 handleModifyMainState({apiError:null});
@@ -98,7 +98,7 @@ const BasicAlerts:React.FC <any> =  ({setVisible , visible}) => {
                 clearTimeout(timer);
             }; 
         }
-    },[visible]);
+    },[showAlert]);
 
     return createPortal(
         <div className={css}>

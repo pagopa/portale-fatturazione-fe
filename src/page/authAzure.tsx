@@ -17,10 +17,8 @@ import { getProdotti, getProfilo } from "../reusableFunction/actionLocalStorage"
 
 const AuthAzure : React.FC<any> = () =>{
 
-    const profilo =  getProfilo();
-    const prodotti = getProdotti()?.prodotti;
     const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState} = globalContextObj;
+    const {dispatchMainState} = globalContextObj;
 
   
     const handleModifyMainState = (valueObj) => {
@@ -110,7 +108,6 @@ const AuthAzure : React.FC<any> = () =>{
                     prodotti:res.data
                 });
                 console.log('navigate');
-                console.log(prodotti,profilo);
                 navigate('/selezionaprodotto');
             }
         }).catch(() =>{

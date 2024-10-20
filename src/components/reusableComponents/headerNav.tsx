@@ -21,19 +21,14 @@ type HeaderNavProps = {
 const HeaderNavComponent : React.FC = () => {
    
     const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState, mainState} = globalContextObj;
     const location = useLocation();
     const navigate = useNavigate();
     const prodotti = getProdotti().prodotti;
     const profilo =  getProfilo();
     const token = getToken();
     const url = window.location.origin;
-   
-    const handleModifyMainState = (valueObj) => {
-        globalContextObj.dispatchMainState({
-            type:'MODIFY_MAIN_STATE',
-            value:valueObj
-        });
-    };
+
 
     const [countMessages, setCountMessages] = useState(0);
   
@@ -127,13 +122,14 @@ const HeaderNavComponent : React.FC = () => {
                 onSelectedProduct={(e) => {
                   
                   
-                    const result = globalContextObj.mainState.prodotti.find(el => el.prodotto === e.id);
+                    const result:any = mainState.prodotti.find((el:any) => el.prodotto === e.id);
                    
                   
                     localStorage.removeItem("profilo");
                     localStorage.removeItem("token");
                     localStorage.setItem('profilo',JSON.stringify(result));
-                    localStorage.setItem('token',JSON.stringify({token:result?.jwt}));
+                    localStorage.setItem('token',JSON.stringify({token:result.jwt}));
+                   
                   
                   
 

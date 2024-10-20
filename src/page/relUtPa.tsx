@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
 import { Button, Typography } from "@mui/material";
@@ -20,10 +20,14 @@ import { OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { mesiGrid, mesiWithZero } from "../reusableFunction/reusableArrayObj";
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
+import { GlobalContext } from "../store/context/globalContext";
 
 
 
-const RelPage : React.FC<RelPageProps> = ({dispatchMainState}) =>{
+const RelPage : React.FC = () =>{
+
+    const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState} = globalContextObj;
 
     const token =  getToken();
     const profilo =  getProfilo();

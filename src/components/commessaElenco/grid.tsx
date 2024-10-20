@@ -17,7 +17,7 @@ interface GridComponentProps {
 }
 
 const GridComponent : React.FC<GridComponentProps> = (props) => {
-    const {data, dispatchMainState} = props;
+    const {mainState,data, dispatchMainState} = props;
 
     const statusApp = getStatusApp();
     const navigate = useNavigate();

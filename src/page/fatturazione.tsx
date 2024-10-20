@@ -1,6 +1,6 @@
 import { Button, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { getProfilo, getToken } from "../reusableFunction/actionLocalStorage";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
@@ -20,11 +20,12 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import ModalConfermaRipristina from "../components/fatturazione/modalConfermaRipristina";
 import ModalResetFilter from "../components/fatturazione/modalResetFilter";
 import CollapsibleTable from "../components/reusableComponents/grid/gridCollapsible/gridCustomCollapsibleWithCheckbox";
+import { GlobalContext } from "../store/context/globalContext";
 
+const Fatturazione : React.FC = () =>{
 
-
-
-const Fatturazione : React.FC<FatturazioneProps> = ({dispatchMainState}) =>{
+    const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState} = globalContextObj;
 
     const token =  getToken();
     const profilo =  getProfilo();

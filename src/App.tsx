@@ -22,15 +22,11 @@ import AuthAzure from './page/authAzure';
 import { MsalProvider} from '@azure/msal-react';
 import Azure from './page/azure';
 import RelPage from './page/relUtPa';
-import { reducerMainState } from './reducer/reducerMainState';
-import { getAuthProfilo, manageError, redirect } from './api/api';
-import { getProdotti, getProfilo, profiliEnti } from './reusableFunction/actionLocalStorage';
-import useIsTabActive from './reusableFunction/tabIsActiv';
+import { profiliEnti } from './reusableFunction/actionLocalStorage';
 import BasicAlerts from './components/reusableComponents/modals/alert';
 import AdesioneBando from './page/adesioneBando';
 import { PathPf } from './types/enum';
 import RelPdfPage from './page/relPdfUtPa';
-import { InfoOpen} from './types/typesGeneral';
 import Fatturazione from './page/fatturazione';
 import Accertamenti from './page/accertamenti';
 import Messaggi from './page/messaggi';
@@ -38,91 +34,58 @@ import AuthAzureProdotti from './page/authAzureProdotti';
 import SideNavPagopa from './components/sideNavs/sideNavPagoPA';
 import AnagraficaPsp from './page/prod_pagopa/anagraficaPspPagopa';
 import DocumentiContabili from './page/prod_pagopa/documentiContabiliPagopa';
-import GlobalContextProvider, { GlobalContext } from './store/context/globalContext';
-
-
-
+import { GlobalContext } from './store/context/globalContext';
 
 const App = ({ instance }) => {
-    // eslint-disable-next-line no-undef
-   
-    
+
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState} = globalContextObj;
 
-
-    const [profilo, setProfilo] = useState<any>({});
-    const [prodotti, setProdotti] = useState<any>({});
-
-    useEffect(()=>{
-        setProfilo(getProfilo());
-        setProdotti(getProdotti()?.prodotti);
-        console.log('dentro effect',mainState);
-    },[mainState]);
-   
- 
-   
-    const [showAlert, setShowAlert] = useState(false);
-    const [valueAnnoElencoCom, setValueAnnoElencoCom] = useState('');
-    const [openBasicModal_DatFat_ModCom, setOpenBasicModal_DatFat_ModCom] = useState<InfoOpen>({visible:false,clickOn:''});
-    // set status page abilita e disabilita le modifiche al componente dati fatturazione
- 
+    const enti = profiliEnti();
+    const prodotti = mainState.prodotti;
+    const profilo = mainState.profilo;
     
-    
-   
-   
-   
-
-    // eseguiamo la get a riga 21 solo se il value dell'input(nonce) nel Dom è non c'è e controlliamo che nella local storage sia settatto il profilo
-    // Object.values(profilo).length !== 0 viene fatto solo per far si che la chiamanta non venga fatta al primo rendering
-    // in quel caso il get profilo viene chiamato nella page auth
-  
- 
-   
-
-   
-
- 
-
-    console.log(prodotti,profilo);
+    console.log(mainState,'main state');
+    console.log(prodotti,profilo,'ARRAY');
 
     const recOrConsIsLogged = profilo?.profilo === 'REC' || profilo.profilo ==='CON';
     let route;
 
-    if(prodotti?.length > 0 && !profilo.auth){
+    if(prodotti.length > 0 && mainState.authenticated === true && !profilo.auth){
+        console.log(1);
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App" >
                     <HeaderPostLogin />
-                    <div>
-                        <Routes>
-                            <Route path="/selezionaprodotto" element={<AuthAzureProdotti  />} />
-                            <Route path="/azureLogin" element={<AzureLogin />} />
-                        </Routes>
-                    </div>
+                    <Routes>
+                        <Route path="/auth" element={<Auth />} />
+                        <Route path="/auth/azure" element={<AuthAzure  />} />
+                        <Route path="/selezionaprodotto" element={<AuthAzureProdotti />} />
+                        <Route path="/azureLogin" element={<AzureLogin />} />
+                    </Routes>
                     <FooterComponent />
                 </div>
             </ThemeProvider>
         </Router>;
-
-    }else if(profilo.jwt && profilo.auth === 'PAGOPA' && profilo.prodotto === 'prod-pagopa'){
+    }else if(profilo.prodotto === 'prod-pagopa'){
+        console.log(2);
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App">
-                    <BasicAlerts setVisible={setShowAlert} visible={showAlert} ></BasicAlerts>
-                    <HeaderPostLogin  />
+                    <BasicAlerts></BasicAlerts>
+                    <HeaderPostLogin   />
                     <div>
-                        <HeaderNavComponent  />
+                        <HeaderNavComponent   />
                         <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
                             <Grid item xs={2}>
                                 <SideNavPagopa/>
                             </Grid> 
                             <Grid item xs={10} sx={{minHeight:'600px'}}>
                                 <Routes>
-                                    <Route path={'/messaggi'} element={<Messaggi />} />
-                                    <Route path={PathPf.ANAGRAFICAPSP} element={<AnagraficaPsp></AnagraficaPsp>}/>
+                                    <Route path={'/messaggi'} element={<Messaggi  dispatchMainState={dispatchMainState}/>} />
+                                    <Route path={PathPf.ANAGRAFICAPSP} element={<AnagraficaPsp ></AnagraficaPsp>}/>
                                     <Route path={PathPf.DOCUMENTICONTABILI} element={<DocumentiContabili ></DocumentiContabili>}/>
-                                    <Route path="/azureLogin" element={<AzureLogin />} />
+                                    <Route path="/azureLogin" element={<AzureLogin dispatchMainState={dispatchMainState}/>} />
                                     <Route path="/auth/azure" element={<AuthAzure  />} />
                                     <Route path="azure" element={<Azure />} />
                                     <Route path="*" element={<Navigate to={PathPf.ANAGRAFICAPSP} replace />} />
@@ -134,47 +97,150 @@ const App = ({ instance }) => {
                 </div>
             </ThemeProvider>
         </Router>;
-    }else if(!profilo.jwt && mainState.authenticated === false){
+    }else if(profilo.prodotto === 'prod-pn'){
+        console.log(3);
+        route = <Router>
+            <ThemeProvider theme={theme}>
+                <div className="App" >
+                    <BasicAlerts  ></BasicAlerts>
+                    <HeaderPostLogin  />
+                    <div >
+                        <HeaderNavComponent    />
+                        <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
+                            <Grid item xs={2}>
+                                <SideNavComponent />
+                            </Grid> 
+                            <Grid item xs={10}>
+                                <Routes>
+                                    <Route path="/auth" element={<Auth  />} />
+                                    <Route path="/auth/azure" element={<AuthAzure  />} />                 
+                                    <Route path="azure" element={<Azure />} />
+                                    <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte />} />
+                                    <Route path={PathPf.LISTA_MODULICOMMESSA} element={<PagoPaListaModuliCommessa/>}/>
+                                    <Route path={PathPf.MODULOCOMMESSA} element={<ModuloCommessaInserimentoUtEn30/>} />
+                                    <Route path={PathPf.PDF_COMMESSA} element={<ModuloCommessaPdf/>} />
+                                    <Route path={PathPf.LISTA_DATI_FATTURAZIONE} element={<PagoPaListaDatiFatturazione/>} />
+                                    <Route path={PathPf.LISTA_REL} element={<RelPage />} />
+                                    <Route path={PathPf.PDF_REL} element={<RelPdfPage/>} />
+                                    <Route path={PathPf.ADESIONE_BANDO} element={<AdesioneBando/>} />
+                                    <Route path={PathPf.FATTURAZIONE} element={<Fatturazione/>} />
+                                    <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio />} />
+                                    <Route path={'/messaggi'} element={<Messaggi />} />
+                                    <Route path={'/accertamenti'} element={<Accertamenti/>} />
+                                    <Route path="*" element={<Navigate to={PathPf.LISTA_DATI_FATTURAZIONE} replace />} />
+                                    <Route path="/azureLogin" element={<AzureLogin />} />
+                                    <Route path="/error"  element={<ErrorPage />} />
+                                </Routes>
+                            </Grid>
+                        </Grid>
+                    </div>
+                    <FooterComponent  />
+                </div>
+            </ThemeProvider>
+        </Router>;
+
+    }else if(profilo.jwt && enti){
+        console.log(4);
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App">
-                    <HeaderPostLogin/>
-
+                    <BasicAlerts></BasicAlerts>
+                    <HeaderPostLogin  />
                     <div>
-                        <HeaderNavComponent />
-
-                        <Routes>
-                            
-                            <Route path="/auth" element={<Auth  />} />
-                            
-                            <Route path="/auth/azure" element={<AuthAzure  />} />
-                            
-                            <Route path="azure" element={<Azure />} />
-                            
-                            <Route path="*" element={<Navigate to={"/error"} replace />} />
-
-                            <Route path="/azureLogin" element={<AzureLogin />} />
-
-                            <Route path="/error"  element={<ErrorPage/>} />
-                        </Routes>
-
+                        <HeaderNavComponent   />
+                        <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
+                            <Grid item xs={2}>
+                                <SideNavComponent/>
+                            </Grid> 
+                            <Grid item xs={10}>
+                                <Routes>
+                                    <Route path="/auth" element={<Auth  />} />
+                                    <Route path="/auth/azure" element={<AuthAzure  />} />
+                                    <Route path="azure" element={<Azure />} />
+                                    <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte ></AreaPersonaleUtenteEnte>}/>                                     
+                                    <Route path={PathPf.LISTA_COMMESSE} element={<ModuloCommessaElencoUtPa  />} />           
+                                    <Route path={PathPf.MODULOCOMMESSA} element={<ModuloCommessaInserimentoUtEn30 />} />                 
+                                    <Route path={PathPf.PDF_COMMESSA} element={<ModuloCommessaPdf  />} />
+                                    <Route path={PathPf.LISTA_REL} element={<RelPage  />} />
+                                    <Route path={PathPf.PDF_REL} element={<RelPdfPage  />} />                           
+                                    <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio/>} />
+                                    <Route path="*" element={<Navigate to={PathPf.DATI_FATTURAZIONE} replace />} />
+                                    <Route path="/azureLogin" element={<AzureLogin />} />
+                                    <Route path="/error"  element={<ErrorPage />} />
+                                </Routes>
+                            </Grid>
+                        </Grid>
                     </div>
-
-                    <FooterComponent />
+                    <FooterComponent  />
                 </div>
             </ThemeProvider>
+        </Router>;
 
+    }else if(profilo.jwt && recOrConsIsLogged){
+        console.log(5);
+        route = <Router>
+            <ThemeProvider theme={theme}>
+                <div className="App">
+                    <BasicAlerts  ></BasicAlerts>
+                    <HeaderPostLogin />
+                    <div>
+                        <HeaderNavComponent />
+                        <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>            
+                            <Grid item xs={2}>
+                                <SideNavComponent/>
+                            </Grid> 
+                            <Grid item xs={10}>
+                                <Routes>                    
+                                    <Route path="/auth" element={<Auth />} />                        
+                                    <Route path="/auth/azure" element={<AuthAzure  />} />
+                                    <Route path="azure" element={<Azure />} />     
+                                    <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio />} />
+                                    <Route path="*" element={<Navigate to={PathPf.LISTA_NOTIFICHE} replace />} />
+                                    <Route path="/azureLogin" element={<AzureLogin />} />
+                                    <Route path="/error"  element={<ErrorPage/>} />
+                                </Routes>
+                            </Grid>
+                        </Grid>
+                    </div>
+                    <FooterComponent  />
+                </div>
+            </ThemeProvider>
+        </Router>;
+    }else if(mainState.authenticated === false){
+        console.log(6);
+        route = <Router>
+            <ThemeProvider theme={theme}>
+                <div className="App">
+                    <HeaderPostLogin />
+                    <div>
+                        <HeaderNavComponent  />
+                        <Routes>
+                            <Route path="/auth" element={<Auth  />} />
+                            <Route path="/auth/azure" element={<AuthAzure  />} />
+                            <Route path="azure" element={<Azure />} />
+                            <Route path="*" element={<Navigate to={"/error"} replace />} />
+                            <Route path="/azureLogin" element={<AzureLogin/>} />
+                            <Route path="/error"  element={<ErrorPage/>} />
+                        </Routes>
+                    </div>
+                    <FooterComponent  />
+                </div>
+            </ThemeProvider>
+        </Router>;
+    }else if(!profilo.jwt){
+        console.log(7);
+        route = <Router>
+            <ThemeProvider theme={theme}>
+                <div className="App">
+                </div>
+            </ThemeProvider>
         </Router>;
     }
   
     return (
-      
         <MsalProvider instance={instance}>
-           
             {route}
-            
         </MsalProvider>
-
     );
 };
 

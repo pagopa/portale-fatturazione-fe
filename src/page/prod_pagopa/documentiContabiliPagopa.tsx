@@ -1,6 +1,6 @@
 import {  Autocomplete, Checkbox, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { Box, Button} from '@mui/material';
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { saveAs } from "file-saver";
 import DownloadIcon from '@mui/icons-material/Download';
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
@@ -15,13 +15,17 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CollapsibleTablePa, { DocContabili } from "../../components/reusableComponents/grid/gridCollapsible/gridCustomCollapsiblePa";
 import { HeaderCollapsible } from "../../types/typeFatturazione";
+import { GlobalContext } from "../../store/context/globalContext";
 
 
 
 
-const DocumentiContabili:React.FC<any> = ({dispatchMainState}) =>{
-    const token =  getToken();
-    const profilo =  getProfilo();
+const DocumentiContabili:React.FC = () =>{
+    const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState,mainState} = globalContextObj;
+ 
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
 
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
