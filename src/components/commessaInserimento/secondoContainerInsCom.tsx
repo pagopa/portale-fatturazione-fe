@@ -5,13 +5,13 @@ import { ResponseCategorieSpedizione, SecondoContainerProps   } from '../../type
 import { manageError } from '../../api/api';
 import { ManageErrorResponse } from '../../types/typesGeneral';
 import { getCategoriaSpedizione } from '../../api/apiSelfcare/moduloCommessaSE/api';
-import {  getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
+
 import { getIdByTipo } from '../../reusableFunction/function';
 
 const SecondoContainerInsCom : React.FC<SecondoContainerProps> = ({totale, mainState,dispatchMainState, setDatiCommessa,datiCommessa}) => {
 
-    const token =  getToken();
-    const profilo = getProfilo();
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
 
     const [arrTipoSpedizione , setArrTipoSpedizione] = useState({
         idSpedizioneDigitale : 0,

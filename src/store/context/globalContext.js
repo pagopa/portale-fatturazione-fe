@@ -8,6 +8,7 @@ export const GlobalContext = createContext({
         mese:'',
         anno:'',
         nonce:'',
+        nomeEnteClickOn:'',
         datiFatturazione:false,// l'ente ha i dati di fatturazione?
         userClickOn:undefined, // se l'utente clicca su un elemento di lista commesse setto GRID
         inserisciModificaCommessa:undefined, // INSERT MODIFY  se il sevizio get commessa mi restituisce true []
@@ -36,6 +37,7 @@ function GlobalContextProvider({children}){
         mese:'',
         anno:'',
         nonce:'',
+        nomeEnteClickOn:'',
         datiFatturazione:false,// l'ente ha i dati di fatturazione?
         userClickOn:undefined, // se l'utente clicca su un elemento di lista commesse setto GRID
         inserisciModificaCommessa:undefined, // INSERT MODIFY  se il sevizio get commessa mi restituisce true []

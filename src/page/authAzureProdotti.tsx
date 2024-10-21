@@ -43,7 +43,6 @@ const AuthAzureProdotti : React.FC = () => {
                 .then((resp) => {
                     console.log(resp,'llll');
                     const storeProfilo = resp.data;
-                    const id = resp.data.id;
                     const profiloDetails = {
                         auth:storeProfilo.auth,
                         nomeEnte:storeProfilo.nomeEnte,
@@ -54,7 +53,7 @@ const AuthAzureProdotti : React.FC = () => {
                         prodotto:storeProfilo.prodotto,
                         jwt:productSelected.jwt,
                         nonce:storeProfilo.nonce,
-                        idEnte:id
+                        profilo:storeProfilo.profilo
                     };
                     //const storeJwt = {token:productSelected.jwt};
                     //localStorage.setItem('token', JSON.stringify(storeJwt));

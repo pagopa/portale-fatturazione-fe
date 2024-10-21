@@ -19,7 +19,7 @@ const style = {
 
 const ModalConfermaInserimento : React.FC<ModalConfermaInsProps> =({setOpen, open, onButtonComfermaPopUp, mainState}) => {
     
-    const statusApp = getStatusApp();
+
 
     const handleClose = (event:object, reason: string) =>{
         if(reason !== 'backdropClick'){
@@ -54,7 +54,7 @@ const ModalConfermaInserimento : React.FC<ModalConfermaInsProps> =({setOpen, ope
         Attenzione!
                         </Typography>
                         <Typography id="modal-modal-description" variant="body1" sx={{ mt: 2 }}>
-                            {`Stai ${mainState.inserisciModificaCommessa === 'MODIFY' ? 'modificando': 'registrando'} il Modulo Commessa di ${month[statusApp.mese - 1]} ${statusApp.anno}: confermi l'operazione?`}
+                            {`Stai ${mainState.inserisciModificaCommessa === 'MODIFY' ? 'modificando': 'registrando'} il Modulo Commessa di ${month[Number(mainState.mese) - 1]} ${mainState.anno}: confermi l'operazione?`}
                         </Typography>
                     </div>
                    

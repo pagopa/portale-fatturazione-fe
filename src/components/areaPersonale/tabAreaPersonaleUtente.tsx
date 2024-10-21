@@ -21,7 +21,8 @@ interface TabAreaProps{
 
 const TabAreaPersonaleUtente: React.FC<TabAreaProps> = ({mainState,datiFatturazione,setDatiFatturazione,setStatusButtonConferma}) => {
   
-    const parseProfilo  =  getProfilo();
+    const parseProfilo  =  mainState.profilo;
+
 
     const valueOptionRadioTipoOrdine = [
         {descrizione:'Dati ordine d\'acquisto', id:"1"},

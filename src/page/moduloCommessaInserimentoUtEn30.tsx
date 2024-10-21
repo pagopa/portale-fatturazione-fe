@@ -19,7 +19,7 @@ import { getDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api
 import { getDatiFatturazionePagoPa } from '../api/apiPagoPa/datiDiFatturazionePA/api';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import { PathPf } from '../types/enum';
-import { getProfilo, getStatusApp, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from '../reusableFunction/actionLocalStorage';
+import { profiliEnti, } from '../reusableFunction/actionLocalStorage';
 import { calculateTot } from '../reusableFunction/function';
 import { month } from '../reusableFunction/reusableArrayObj';
 import ModalConfermaInserimento from '../components/commessaInserimento/modalConfermaInserimento';
@@ -33,9 +33,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState,openBasicModal_DatFat_ModCom,setOpenBasicModal_DatFat_ModCom} = globalContextObj;
 
-    const token =  getToken();
-    const profilo =  getProfilo();
-    const statusApp = getStatusApp();
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
     const navigate = useNavigate();
     const enti = profiliEnti();
     
@@ -126,8 +125,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     },[mainState.inserisciModificaCommessa]);
 
     useEffect(()=>{
-        
-        if(statusApp.userClickOn === 'GRID'){
+        if(mainState.userClickOn === 'GRID'){
             // SELFCARE
             if(enti){
                 handleGetDettaglioModuloCommessa();
@@ -141,25 +139,23 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     },[]);
 
     useEffect(()=>{
-   
-    
-        if(token === undefined){
-            
+        /*
+        if(token === undefined){   
             window.location.href = redirect;
         }
         /* se l'utente PagoPA modifa l'url e cerca di accedere al path '/8' senza aver prima selezionato
-         una row della grid lista MODULI COMMESSA viene fatto il redirect automatico a  '/pagopalistamodulocommessa'*/
+         una row della grid lista MODULI COMMESSA viene fatto il redirect automatico a  '/pagopalistamodulocommessa'
         if(profilo.auth === 'PAGOPA' && !profilo.idEnte){
             window.location.href = PathPf.LISTA_MODULICOMMESSA;
         }
-        /* se l'utente selcare  modifica l'url andando ad inserire '/8' viene eseguito il redirect a datifatturazione*/
-        if(enti && !statusApp.mese && !statusApp.anno && statusApp.inserisciModificaCommessa !== 'INSERT'){
+        /* se l'utente selcare  modifica l'url andando ad inserire '/8' viene eseguito il redirect a datifatturazione
+        if(enti && !mainState.mese && !mainState.anno && mainState.inserisciModificaCommessa !== 'INSERT'){
             window.location.href = PathPf.DATI_FATTURAZIONE;
-        }
-        if(statusApp.datiFatturazione === false){
+        }*/
+        if(mainState.datiFatturazione === false){
             setOpenModalRedirect(true);
         }
-        handleModifyMainState(statusApp);
+       
     },[]);
 
     useEffect(()=>{
@@ -177,7 +173,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
 
     const handleGetDettaglioModuloCommessa = async () =>{
         setLoadingData(true);
-        await getDettaglioModuloCommessa(token,statusApp.anno,statusApp.mese, profilo.nonce)
+        await getDettaglioModuloCommessa(token,mainState.anno,mainState.mese, profilo.nonce)
             .then((response:ResponseDettaglioModuloCommessa)=>{
                 const res = response.data;
                 setDataModifica(res.dataModifica);
@@ -197,7 +193,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
 
     const handleGetDettaglioModuloCommessaPagoPa = async () => {
         setLoadingData(true);
-        await getModuloCommessaPagoPa(token, profilo.nonce,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto, statusApp.mese, statusApp.anno )
+        await getModuloCommessaPagoPa(token, profilo.nonce,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto, Number(mainState.mese), Number(mainState.anno))
             .then((response:ResponseDettaglioModuloCommessa)=>{
                 const res = response.data;
                 setDatiCommessa({moduliCommessa:res.moduliCommessa});
@@ -265,10 +261,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             });
             setDataModifica(res.data.dataModifica);
       
-            setInfoToStatusApplicationLoacalStorage(statusApp,{
-                statusPageInserimentoCommessa:'immutable',
-                statusPageDatiFatturazione:'immutable',
-            });
             /*
             localStorage.setItem('statusApplication',JSON.stringify({...statusApp, ...{
                 statusPageInserimentoCommessa:'immutable',
@@ -286,14 +278,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 anno:res.data.anno,
                 primoInserimetoCommessa: false
             });
-           
-            setInfoToStatusApplicationLoacalStorage(statusApp,{
-                statusPageInserimentoCommessa:'immutable',
-                inserisciModificaCommessa:'MODIFY',
-                mese:res.data.mese,
-                anno:res.data.anno,
-                primoInserimetoCommessa: false
-            });
+        
             navigate(PathPf.DATI_FATTURAZIONE);
         }  
     };
@@ -379,10 +364,10 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     if(mainState.inserisciModificaCommessa === 'INSERT'){
         actionTitle =  <Typography variant="h4"> Aggiungi modulo commessa</Typography>;
     }else if(mainState.inserisciModificaCommessa  === 'MODIFY' && mainState.statusPageInserimentoCommessa === 'immutable' ){
-        actionTitle = <Typography variant="h4">{month[statusApp.mese - 1]} {profilo.auth === 'PAGOPA' && `/ ${statusApp.nomeEnteClickOn}`}</Typography>;
+        actionTitle = <Typography variant="h4">{month[Number(mainState.mese) - 1]} {profilo.auth === 'PAGOPA' && `/ ${mainState.nomeEnteClickOn}`}</Typography>;
     }else if(mainState.inserisciModificaCommessa  === 'MODIFY' && mainState.statusPageInserimentoCommessa === 'mutable'  ){
         actionTitle = <div className='d-flex'>
-            <Typography variant="h4"> Modifica modulo commessa {profilo.auth === 'PAGOPA' && `/ ${statusApp.nomeEnteClickOn}`}</Typography>
+            <Typography variant="h4"> Modifica modulo commessa {profilo.auth === 'PAGOPA' && `/ ${mainState.nomeEnteClickOn}`}</Typography>
         </div>; 
     }else{
         actionTitle = <Typography variant="h4">Modulo commessa</Typography>;
@@ -420,7 +405,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                          Modulo commessa 
                     </Typography>
                     {
-                        statusApp.inserisciModificaCommessa === 'INSERT' ? 
+                        mainState.inserisciModificaCommessa === 'INSERT' ? 
                             <Typography sx={{fontWeight:cssPathAggModComm}} variant="caption">/ Aggiungi modulo commessa</Typography> :
                             <Typography sx={{fontWeight:cssPathAggModComm}} variant="caption">/ Modifica modulo commessa</Typography>
                     }

@@ -8,12 +8,12 @@ import { useNavigate } from "react-router";
 import TextDettaglioPdf from '../components/commessaPdf/textDettaglioPdf';
 import { DataPdf } from "../types/typeModuloCommessaInserimento";
 import { usePDF } from 'react-to-pdf';
-import { DatiModuloCommessaPdf,ModComPdfProps, ResponseDownloadPdf } from "../types/typeModuloCommessaInserimento";
+import { DatiModuloCommessaPdf, ResponseDownloadPdf } from "../types/typeModuloCommessaInserimento";
 import { downloadModuloCommessaPdf, getModuloCommessaPdf } from "../api/apiSelfcare/moduloCommessaSE/api";
 import { downloadModuloCommessaPagoPaPdf, getModuloCommessaPagoPaPdf } from "../api/apiPagoPa/moduloComessaPA/api";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../types/enum";
-import { getProfilo, getStatusApp, getTipoCommessa, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from "../reusableFunction/actionLocalStorage";
+import { getTipoCommessa, profiliEnti} from "../reusableFunction/actionLocalStorage";
 import { mesiWithZero, month } from "../reusableFunction/reusableArrayObj";
 import { DatiCommessaPdf, ResponseGetPdfPagoPa } from "../types/typeListaModuliCommessa";
 import { createDateFromString, replaceDate } from "../reusableFunction/function";
@@ -23,14 +23,21 @@ import { GlobalContext } from "../store/context/globalContext";
 const ModuloCommessaPdf : React.FC = () =>{
 
     const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState} = globalContextObj;
+    const {mainState,dispatchMainState} = globalContextObj;
 
-    const token =  getToken();
-    const profilo =  getProfilo();
-    const statusApp = getStatusApp();
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
+
     const tipoCommessa =  getTipoCommessa();
     const navigate = useNavigate();
     const enti = profiliEnti();
+
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
 
     const [showLoading, setShowLoading] = useState(false);
     const [showLoadingDettaglio, setShowLoadingDettaglio] = useState(false);
@@ -102,7 +109,7 @@ const ModuloCommessaPdf : React.FC = () =>{
 
     const getPdf = async() =>{
         setShowLoadingDettaglio(true);
-        getModuloCommessaPdf(token, statusApp.anno,statusApp.mese, profilo.nonce).then((res:ResponseGetPdfPagoPa)=>{
+        getModuloCommessaPdf(token, mainState.anno,mainState.mese, profilo.nonce).then((res:ResponseGetPdfPagoPa)=>{
             toDoOnGetPdfSelfcarePagopa(res);
             setShowLoadingDettaglio(false);
         }).catch((err)=>{
@@ -114,7 +121,7 @@ const ModuloCommessaPdf : React.FC = () =>{
 
     const getPagoPdf = async() =>{
         setShowLoadingDettaglio(true);
-        getModuloCommessaPagoPaPdf(token, profilo.nonce,statusApp.mese,statusApp.anno,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto)
+        getModuloCommessaPagoPaPdf(token, profilo.nonce,mainState.mese,mainState.anno,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto)
             .then((res)=>{
                 toDoOnGetPdfSelfcarePagopa(res);
                 setShowLoadingDettaglio(false);
@@ -136,7 +143,7 @@ const ModuloCommessaPdf : React.FC = () =>{
  
     const downloadPdf = async()=>{
         setShowLoading(true);
-        downloadModuloCommessaPdf(token, statusApp.anno,statusApp.mese, tipoCommessa, profilo.nonce).then((res: ResponseDownloadPdf)=>{
+        downloadModuloCommessaPdf(token, mainState.anno,mainState.mese, tipoCommessa, profilo.nonce).then((res: ResponseDownloadPdf)=>{
             toDoOnDownloadPdf(res);
         }).catch((err)=>{
             manageError(err,dispatchMainState);
@@ -145,7 +152,7 @@ const ModuloCommessaPdf : React.FC = () =>{
 
     const downlodPagoPaPdf = async()=>{
         setShowLoading(true);
-        downloadModuloCommessaPagoPaPdf(token,  profilo.nonce,statusApp.mese,statusApp.anno,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto,tipoCommessa).then((res:ResponseDownloadPdf)=>{
+        downloadModuloCommessaPagoPaPdf(token,  profilo.nonce,mainState.mese,mainState.anno,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto,tipoCommessa).then((res:ResponseDownloadPdf)=>{
             toDoOnDownloadPdf(res);
         }).catch((err)=>{
             manageError(err,dispatchMainState);
@@ -176,11 +183,12 @@ const ModuloCommessaPdf : React.FC = () =>{
 
     const onIndietroButton = () =>{
      
-        setInfoToStatusApplicationLoacalStorage(statusApp,{userClickOn:'GRID'});
+        //setInfoToStatusApplicationLoacalStorage(statusApp,{userClickOn:'GRID'});
+        handleModifyMainState({userClickOn:'GRID'});
         navigate(PathPf.MODULOCOMMESSA); 
     };
 
-    const { toPDF, targetRef } = usePDF({filename: `Modulo Commessa /${dataPdf.descrizione} /${mesiWithZero[statusApp.mese -1]}/ ${statusApp.anno}.pdf`});
+    const { toPDF, targetRef } = usePDF({filename: `Modulo Commessa /${dataPdf.descrizione} /${mesiWithZero[Number(mainState.mese) -1]}/ ${mainState.anno}.pdf`});
 
     if(showLoadingDettaglio){
         return(
@@ -204,7 +212,7 @@ const ModuloCommessaPdf : React.FC = () =>{
                         <ViewModuleIcon sx={{paddingBottom:'3px'}}  fontSize='small'></ViewModuleIcon>
                       Modulo commessa 
                     </Typography>
-                    <Typography  variant="caption">/ {month[statusApp.mese - 1]}</Typography>
+                    <Typography  variant="caption">/ {month[Number(mainState.mese) - 1]}</Typography>
                 </div>
                 <div className="bg-white m-5 p-5">
                     <div className=" ">

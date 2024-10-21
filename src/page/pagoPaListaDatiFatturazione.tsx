@@ -23,6 +23,13 @@ import { GlobalContext } from "../store/context/globalContext";
 const PagoPaListaDatiFatturazione:React.FC = () =>{
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState} = globalContextObj;
+
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
    
     const navigate = useNavigate();
     const enti = profiliEnti();
@@ -178,12 +185,8 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
         event.preventDefault();
         // l'evento verrà eseguito solo se l'utente farà il clik sul 
         if(columsSelectedGrid  === 'ragioneSociale' || columsSelectedGrid === 'action' ){
-            setInfoToProfiloLoacalStorage(profilo,{
-                idEnte:params.row.idEnte,
-                prodotto:params.row.prodotto,
-            });
-            const string = JSON.stringify({nomeEnteClickOn:params.row.ragioneSociale});
-            localStorage.setItem('statusApplication', string);
+            const oldProfilo = mainState.profilo;
+            handleModifyMainState({profilo:{...oldProfilo,...{idEnte:params.row.idEnte,prodotto:params.row.prodotto}},nomeEnteClickOn:params.row.ragioneSociale});
             navigate(PathPf.DATI_FATTURAZIONE);
         }
     };

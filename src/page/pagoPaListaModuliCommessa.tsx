@@ -24,10 +24,17 @@ import { GlobalContext } from "../store/context/globalContext";
 
 const PagoPaListaModuliCommessa:React.FC = () =>{
     const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState} = globalContextObj;
+    const {dispatchMainState,mainState} = globalContextObj;
+
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
     
-    const token =  getToken();
-    const profilo =  getProfilo();
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
     const navigate = useNavigate();
     const enti = profiliEnti();
     const currString = currentMonth();
@@ -62,7 +69,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
         }
         
     }, []);
- 
+    /*
     useEffect(()=>{
         if(token === undefined){
             window.location.href = '/azureLogin';
@@ -76,7 +83,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
             navigate(PathPf.DATI_FATTURAZIONE);
         }
     },[]);
-
+*/
     useEffect(()=>{
         if( bodyGetLista.prodotto !== '' || bodyGetLista?.idEnti.length !== 0 ){
             setStatusAnnulla('show');
@@ -168,23 +175,17 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
         event.preventDefault();
         // l'evento verrà eseguito solo se l'utente farà il clik sul  mese e action
         if(columsSelectedGrid  === 'regioneSociale' ||columsSelectedGrid  === 'action' ){
-            const newState = {
-                mese:params.row.mese,
-                anno:params.row.anno,
-                userClickOn:'GRID',
-                inserisciModificaCommessa:"MODIFY",
-                nomeEnteClickOn:params.row.ragioneSociale
-            };
-            const string = JSON.stringify(newState);
-            localStorage.setItem('statusApplication', string);
-
-            const newProfilo = {...profilo,...{
+            const oldProfilo = mainState.profilo;
+            handleModifyMainState({profilo:{...oldProfilo,...{
                 idTipoContratto: params.row.idTipoContratto,
                 prodotto:params.row.prodotto,
-                idEnte:params.row.idEnte
-            }};
-            const stringProfilo = JSON.stringify(newProfilo);
-            localStorage.setItem('profilo', stringProfilo);
+                idEnte:params.row.idEnte,
+               
+            }},mese:params.row.mese,
+            anno:params.row.anno,
+            userClickOn:'GRID',
+            inserisciModificaCommessa:"MODIFY",
+            nomeEnteClickOn:params.row.ragioneSociale});
             navigate(PathPf.MODULOCOMMESSA);
         }
     };

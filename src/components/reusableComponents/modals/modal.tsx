@@ -21,11 +21,9 @@ const style = {
 
 const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, getDatiFat, getDatiFatPagoPa, handleGetDettaglioModuloCommessa, handleGetDettaglioModuloCommessaPagoPa, mainState}) => {
     
-    const getProfilo = localStorage.getItem('profilo') || '{}';
-    const profilo =  JSON.parse(getProfilo);
+    const profilo =  mainState.profilo;
     const navigate = useNavigate();
     const location = useLocation();
-    const chosenPath = getChosenPath();
     const enti = profiliEnti();
    
     const handleModifyMainState = (valueObj) => {

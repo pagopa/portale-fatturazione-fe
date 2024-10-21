@@ -27,10 +27,9 @@ const ReportDettaglio : React.FC = () => {
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState, mainState} = globalContextObj;
 
-    const token =  getToken();
-    const profilo =  getProfilo();
-    const statusApp = getStatusApp();
     const enti = profiliEnti();
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
 
     const currentMonth = (new Date()).getMonth() + 1;
     const currString = currentMonth;
@@ -143,6 +142,8 @@ const ReportDettaglio : React.FC = () => {
             mese: 0
         }
     });
+
+   
   
     useEffect(() => {
        
@@ -160,14 +161,14 @@ const ReportDettaglio : React.FC = () => {
             setRowsPerPage(result.rowsPerPage);
             setBodyDownload(result.bodyGetLista);
 
-            if(profilo.auth === 'SELFCARE' && statusApp.datiFatturazione === true){
+            if(profilo.auth === 'SELFCARE' && mainState.datiFatturazione === true){
                 getlistaNotifiche( result.page + 1, result.rowsPerPage,result.bodyGetLista); 
             }else if(profilo.auth === 'PAGOPA'){
                 getRecapitistConsolidatori();
                 getlistaNotifichePagoPa( result.page + 1, result.rowsPerPage,result.bodyGetLista);
             }
         }else{
-            if(profilo.auth === 'SELFCARE' && statusApp.datiFatturazione === true){
+            if(profilo.auth === 'SELFCARE' && mainState.datiFatturazione === true){
                 getlistaNotifiche( page + 1, rowsPerPage,bodyGetLista); 
             }else if(profilo.auth === 'PAGOPA'){
                 getRecapitistConsolidatori();
@@ -198,7 +199,7 @@ const ReportDettaglio : React.FC = () => {
     },[bodyGetLista]);
 
     useEffect(()=>{
-        if(statusApp.datiFatturazione === false || statusApp.datiFatturazioneNotCompleted){
+        if(mainState.datiFatturazione === false || mainState.datiFatturazioneNotCompleted && enti){
             setOpenModalRedirect(true);
         }
     },[]);

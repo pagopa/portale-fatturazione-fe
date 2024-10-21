@@ -8,7 +8,6 @@ import PageTitleNavigation from '../components/areaPersonale/pageTitleNavigation
 import {
     DatiFatturazione,
     StateEnableConferma,
-    AreaPersonaleProps,
     SuccesResponseGetDatiFatturazione
 } from '../types/typesAreaPersonaleUtenteEnte';
 import {  getDatiFatturazione,
@@ -20,7 +19,7 @@ import {  getDatiFatturazionePagoPa,
 import BasicModal from '../components/reusableComponents/modals/modal';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import {PathPf} from '../types/enum';
-import { getProfilo, getStatusApp, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from '../reusableFunction/actionLocalStorage';
+import { profiliEnti, } from '../reusableFunction/actionLocalStorage';
 import SuspenseDatiFatturazione from '../components/areaPersonale/skeletonDatiFatturazione';
 import { GlobalContext } from '../store/context/globalContext';
         
@@ -33,7 +32,6 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
    
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
-    const statusApp = getStatusApp();
     const navigate = useNavigate();
     const enti = profiliEnti();
             
@@ -108,20 +106,20 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
       
             const datiFatturazioneNotCompleted = res.data.idDocumento === '' && res.data.cup !== '';
             if(datiFatturazioneNotCompleted){
-                handleModifyMainState({...statusApp, ...{
+                handleModifyMainState({
                     datiFatturazione:true,
-                    statusPageDatiFatturazione:'mutable'
-                }});
+                    statusPageDatiFatturazione:'mutable',
+                    datiFatturazioneNotCompleted:datiFatturazioneNotCompleted
+                });
             }else{
-                handleModifyMainState({...statusApp, ...{
+                handleModifyMainState({
                     datiFatturazione:true,
-                    statusPageDatiFatturazione:'immutable'
-                }});
+                    statusPageDatiFatturazione:'immutable',
+                    datiFatturazioneNotCompleted:datiFatturazioneNotCompleted
+                });
             }
            
             setDatiFatturazione(res.data);
-          
-            setInfoToStatusApplicationLoacalStorage(statusApp,{ datiFatturazione:true,datiFatturazioneNotCompleted});
             setLoadingData(false);
             //checkCommessa();
                     
@@ -129,10 +127,10 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                     
             if(err?.response?.status === 404){
                 // setInfoToStatusApplicationLoacalStorage(statusApp,{datiFatturazione:false});
-                handleModifyMainState({...statusApp, ...{
+                handleModifyMainState({
                     datiFatturazione:false,
                     statusPageDatiFatturazione:'mutable'
-                }});
+                });
                 //checkCommessa();
             }
             setDatiFatturazione({
@@ -281,7 +279,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                         
                 await insertDatiFatturazione(body, token,profilo.nonce).then(() =>{
                     setOpenModalLoading(false);
-                    if(statusApp.inserisciModificaCommessa === 'INSERT'){
+                    if(mainState.inserisciModificaCommessa === 'INSERT'){
                         handleModifyMainState({
                             statusPageDatiFatturazione:'immutable',
                             datiFatturazione:true,
