@@ -25,9 +25,9 @@ const BasicAlerts:React.FC = () => {
     const navigate = useNavigate();
 
     const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState, openBasicModal_DatFat_ModCom,setOpenBasicModal_DatFat_ModCom} = globalContextObj;
+    const {dispatchMainState,mainState, showAlert, setShowAlert} = globalContextObj;
  
-   
+    console.log(showAlert,'show');
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -60,14 +60,14 @@ const BasicAlerts:React.FC = () => {
 
 
 
-        if( openBasicModal_DatFat_ModCom && mainState.apiError !== null){
+        if( showAlert && mainState.apiError !== null){
 
             const logout = mainState.apiError === 401 || mainState.apiError === 403 || mainState.apiError === 419;
             setCss('main_container_alert_component_show');
             const timer = setTimeout(() => {
     
                 setCss('main_container_alert_component_hidden');
-                setOpenBasicModal_DatFat_ModCom(false);
+                setShowAlert(false);
 
                 if(logout){
                     localStorage.clear();
@@ -82,10 +82,10 @@ const BasicAlerts:React.FC = () => {
             }; 
         }
         
-    },[openBasicModal_DatFat_ModCom]);
+    },[showAlert]);
 
     React.useEffect(()=>{
-        if( !openBasicModal_DatFat_ModCom  && mainState.apiError !== null){
+        if( !showAlert  && mainState.apiError !== null){
            
             const timer = setTimeout(() => {
                 handleModifyMainState({apiError:null});
@@ -94,7 +94,7 @@ const BasicAlerts:React.FC = () => {
                 clearTimeout(timer);
             }; 
         }
-    },[ openBasicModal_DatFat_ModCom]);
+    },[showAlert]);
 
     return createPortal(
         <div className={css}>

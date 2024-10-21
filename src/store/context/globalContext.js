@@ -31,7 +31,9 @@ export const GlobalContext = createContext({
     },
     dispatchMainState:({type,value}) => null,
     openBasicModal_DatFat_ModCom:{visible:false,clickOn:''},
-    setOpenBasicModal_DatFat_ModCom:(prev) => null
+    setOpenBasicModal_DatFat_ModCom:(prev) => null,
+    showAlert:true,
+    setShowAlert:(prev) => null
 
 
 });
@@ -43,6 +45,7 @@ function GlobalContextProvider({children}){
 
     const [openBasicModal_DatFat_ModCom, setOpenBasicModal_DatFat_ModCom] = useState({visible:false,clickOn:''});
   
+    const [showAlert, setShowAlert] = useState(true);
 
     // eslint-disable-next-line no-undef
     
@@ -57,7 +60,9 @@ function GlobalContextProvider({children}){
         mainState,
         dispatchMainState,
         openBasicModal_DatFat_ModCom,
-        setOpenBasicModal_DatFat_ModCom
+        setOpenBasicModal_DatFat_ModCom,
+        showAlert,
+        setShowAlert
     };
 
 

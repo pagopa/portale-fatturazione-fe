@@ -119,11 +119,11 @@ const App = ({ instance }) => {
             </ThemeProvider>
         </Router>;
     }else if(profilo.prodotto === 'prod-pn'){
-        console.log(3,'dentro');
+        console.log(3,'dentro', mainState);
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App" >
-                    <BasicAlerts  ></BasicAlerts>
+                    <BasicAlerts></BasicAlerts>
                     <HeaderPostLogin  />
                     <div >
                         <HeaderNavComponent    />
