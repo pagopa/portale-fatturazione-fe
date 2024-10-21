@@ -20,41 +20,37 @@ type AlertProps = {
     dispatchMainState:Dispatch<ActionReducerType>
 }
 
-const BasicAlerts:React.FC <any> =  () => {
+const BasicAlerts:React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState} = globalContextObj; 
 
-    const [showAlert, setShowAlert] = useState(false);
+    const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState,mainState, openBasicModal_DatFat_ModCom,setOpenBasicModal_DatFat_ModCom} = globalContextObj;
+ 
+   
 
     const handleModifyMainState = (valueObj) => {
-        globalContextObj.dispatchMainState({
+        dispatchMainState({
             type:'MODIFY_MAIN_STATE',
             value:valueObj
         });
     };
 
-    React.useEffect(()=>{
-        if(mainState.apiError !== null){
-            setShowAlert(true);
-        }
-    }, [mainState.apiError]);
   
     let colorAlert:AlertColor = 'success';
-    if(globalContextObj.mainState.apiError === 401 || globalContextObj.mainState.apiError === 403 ){
+    if(mainState.apiError === 401 || mainState.apiError === 403 ){
         colorAlert = 'error';
-    }else if(globalContextObj.mainState.apiError === 419){
+    }else if(mainState.apiError === 419){
         colorAlert = 'error';
-    }else if(globalContextObj.mainState.apiError === 500){
+    }else if(mainState.apiError === 500){
         colorAlert = 'error';
-    }else if(globalContextObj.mainState.apiError === 400){
+    }else if(mainState.apiError === 400){
         colorAlert = 'error';
-    }else if(globalContextObj.mainState.apiError === 404 || globalContextObj.mainState.apiError === '404_DOWNLOAD' || globalContextObj.mainState.apiError === 'PRESA'){
+    }else if(mainState.apiError === 404 || mainState.apiError === '404_DOWNLOAD' || mainState.apiError === 'PRESA'){
         colorAlert = "info";
-    }else if(globalContextObj.mainState.apiError === "Network Error"){
+    }else if(mainState.apiError === "Network Error"){
         colorAlert = 'warning';
-    }else if(globalContextObj.mainState.apiError === 410){
+    }else if(mainState.apiError === 410){
         colorAlert = 'warning';
     }
     
@@ -64,14 +60,14 @@ const BasicAlerts:React.FC <any> =  () => {
 
 
 
-        if(showAlert === true && globalContextObj.mainState.apiError !== null){
+        if( openBasicModal_DatFat_ModCom && mainState.apiError !== null){
 
-            const logout = globalContextObj.mainState.apiError === 401 || globalContextObj.mainState.apiError === 403 || globalContextObj.mainState.apiError === 419;
+            const logout = mainState.apiError === 401 || mainState.apiError === 403 || mainState.apiError === 419;
             setCss('main_container_alert_component_show');
             const timer = setTimeout(() => {
     
                 setCss('main_container_alert_component_hidden');
-                setShowAlert(false);
+                setOpenBasicModal_DatFat_ModCom(false);
 
                 if(logout){
                     localStorage.clear();
@@ -86,10 +82,10 @@ const BasicAlerts:React.FC <any> =  () => {
             }; 
         }
         
-    },[showAlert]);
+    },[openBasicModal_DatFat_ModCom]);
 
     React.useEffect(()=>{
-        if(showAlert === false  && globalContextObj.mainState.apiError !== null){
+        if( !openBasicModal_DatFat_ModCom  && mainState.apiError !== null){
            
             const timer = setTimeout(() => {
                 handleModifyMainState({apiError:null});
@@ -98,13 +94,13 @@ const BasicAlerts:React.FC <any> =  () => {
                 clearTimeout(timer);
             }; 
         }
-    },[showAlert]);
+    },[ openBasicModal_DatFat_ModCom]);
 
     return createPortal(
         <div className={css}>
             
-            <Alert sx={{display:'flex', justifyContent:'center'}} severity={colorAlert}  variant="standard">{globalContextObj.mainState.apiError && '500' }
-                {globalContextObj.mainState.apiError === 'PRESA_IN_CARICO_DOCUMENTO' &&
+            <Alert sx={{display:'flex', justifyContent:'center'}} severity={colorAlert}  variant="standard">{t(`errori.${mainState.apiError}`)} 
+                {mainState.apiError === 'PRESA_IN_CARICO_DOCUMENTO' &&
                 <IconButton sx={{marginLeft:'20px'}} onClick={()=> {
                     setCss('main_container_alert_component_hidden');
                     navigate(PathPf.MESSAGGI);
