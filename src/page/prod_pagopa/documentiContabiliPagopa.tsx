@@ -62,6 +62,9 @@ const DocumentiContabili:React.FC<any> = ({dispatchMainState,mainState}) =>{
     const [yearOnSelect,setYearOnSelect] = useState<string[]>([]);
     const [valueYear,setValueYear] = useState('');
 
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+
     console.log(mainState,'MAIN',valueAutocomplete,dataSelect);
   
     useEffect(()=>{
@@ -207,6 +210,8 @@ const DocumentiContabili:React.FC<any> = ({dispatchMainState,mainState}) =>{
     const onButtonFiltra = () =>{
         setFiltersDownload(bodyGetLista);
         getListaDocGrid(bodyGetLista); 
+        setPage(0);
+        setRowsPerPage(10);
         handleModifyMainState({filterDocContabili:{body:bodyGetLista,valueAutocomplete:valueAutocomplete, valueQuarters:valueQuarters, infoPage:{page:0,row:10}}});
         //setFilterToLocalStorageRel(bodyRel,textValue,valueAutocomplete, 0, 10,valuetipologiaFattura);
     };
@@ -417,6 +422,10 @@ const DocumentiContabili:React.FC<any> = ({dispatchMainState,mainState}) =>{
                     headerNames={headersObjGrid}
                     handleModifyMainState={handleModifyMainState}
                     mainState={mainState}
+                    setPage={setPage}
+                    page={page}
+                    rowsPerPage={rowsPerPage}
+                    setRowsPerPage={setRowsPerPage}
                 ></CollapsibleTablePa>
             </div>
             <div>

@@ -49,7 +49,7 @@ export interface GridCollapsibleBase{
     data:DocContabili[],
     headerNames:HeaderCollapsible[],
     handleModifyMainState:any,
-    mainState:MainState
+    mainState:MainState,
     //stato:boolean,
     //setOpenConfermaModal:any,
     //setOpenResetFilterModal:any,
@@ -59,20 +59,29 @@ export interface GridCollapsibleBase{
 }
 
 
-const CollapsibleTablePa: React.FC<GridCollapsibleBase> = ({data, headerNames,handleModifyMainState,mainState}) => {
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
+const CollapsibleTablePa: React.FC<any> = ({data, headerNames,handleModifyMainState,page,setPage,rowsPerPage,setRowsPerPage,mainState}) => {
     const [count, setCount] = useState(0);
     const [showedData, setShowedData] = useState<DocContabili[]>([]);
 
-   
     useEffect(()=>{
-        setCount(data.length);
-        setPage(0);
-        setRowsPerPage(10);
-        setShowedData(data.slice(0, 10));
-    },[data]);
+        if(mainState.filterDocContabili.infoPage.page !== 0 || mainState.filterDocContabili.infoPage.row !== 0 ){
+
+            let from = 0;
+            if(page === 0){
+                from = 0;
+            }else{
+                from = mainState.filterDocContabili.infoPage.page * mainState.filterDocContabili.infoPage.row;
+            }
     
+            setCount(data.length);
+            setShowedData(data.slice(from, mainState.filterDocContabili.infoPage.row + from));
+            setPage(mainState.filterDocContabili.infoPage.page);
+            setRowsPerPage(mainState.filterDocContabili.infoPage.row);
+        }
+
+    },[]);
+
+
     useEffect(()=>{
         let from = 0;
         if(page === 0){
@@ -80,10 +89,39 @@ const CollapsibleTablePa: React.FC<GridCollapsibleBase> = ({data, headerNames,ha
         }else{
             from = page * rowsPerPage;
         }
+
+        setCount(data.length);
         setShowedData(data.slice(from, rowsPerPage + from));
+
+        const filter = mainState.filterDocContabili;
+        const newInfoPage = {infoPage:{page:page,row:rowsPerPage}};
+        const newFilter = {...filter,...newInfoPage};
+
+        handleModifyMainState({filterDocContabili:newFilter});
+    },[data,page,rowsPerPage]);
+    
+    /*
+    useEffect(()=>{
+        
+        let from = 0;
+        if(page === 0){
+            from = 0;
+        }else{
+            from = page * rowsPerPage;
+        }
+        //i dati che vengono mostrati
+        setShowedData(data.slice(from, rowsPerPage + from));
+
+        //mi aggiorno lo state
+        const filter = mainState.filterDocContabili;
+        const newInfoPage = {infoPage:{page:page,row:rowsPerPage}};
+        const newFilter = {...filter,...newInfoPage};
+
+        handleModifyMainState({filterDocContabili:newFilter});
+        
     },[page,rowsPerPage]);
 
-
+*/
 
 
 
