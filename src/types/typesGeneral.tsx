@@ -96,7 +96,8 @@ export interface MainState{
     filterDocContabili:{
         body:RequestBodyListaDocContabiliPagopa,
         valueAutocomplete:AutocompleteMultiselect[],
-        valueQuarters:OptionMultiselectCheckboxQarter[]
+        valueQuarters:OptionMultiselectCheckboxQarter[],
+        infoPage:{row:number,page:number}
     }
 }
 

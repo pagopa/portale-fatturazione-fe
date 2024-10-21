@@ -91,7 +91,8 @@ const App = ({ instance }) => {
                 quarters:[]
             },
             valueAutocomplete:[],
-            valueQuarters:[]
+            valueQuarters:[],
+            infoPage:{row:10,page:0}
         }
     });
    

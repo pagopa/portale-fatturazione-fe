@@ -228,7 +228,7 @@ const DettaglioDocContabile : React.FC<any> = ({mainState,dispatchMainState}) =>
                     <div className="container text-center">
                         <TextDettaglioPdf description='Trimestre' value={docContabile.report.yearQuarter}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Tipo documento' value={docContabile.report.tipoDoc}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Codice agiuntivo' value={docContabile.report.codiceAggiuntivo}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Codice aggiuntivo' value={docContabile.report.codiceAggiuntivo}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Valuta' value={docContabile.report.valuta}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Numero' value={docContabile.report.numero}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Report data' value={docContabile.report.data !== '' ? new Date(docContabile.report.data).toISOString().split('T')[0]:''}></TextDettaglioPdf>

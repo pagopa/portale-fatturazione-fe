@@ -12,6 +12,7 @@ import { FattureObj, GridCollapsible, HeaderCollapsible } from '../../../../type
 import TablePaginationDemo from './tablePagination';
 import Row from './rowWithCheckbox';
 import RowBase from './rowBase';
+import { MainState } from '../../../../types/typesGeneral';
 
 
 export interface DocContabili {
@@ -48,6 +49,7 @@ export interface GridCollapsibleBase{
     data:DocContabili[],
     headerNames:HeaderCollapsible[],
     handleModifyMainState:any,
+    mainState:MainState
     //stato:boolean,
     //setOpenConfermaModal:any,
     //setOpenResetFilterModal:any,
@@ -57,19 +59,18 @@ export interface GridCollapsibleBase{
 }
 
 
-const CollapsibleTablePa: React.FC<GridCollapsibleBase> = ({data, headerNames,handleModifyMainState}) => {
+const CollapsibleTablePa: React.FC<GridCollapsibleBase> = ({data, headerNames,handleModifyMainState,mainState}) => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [count, setCount] = useState(0);
     const [showedData, setShowedData] = useState<DocContabili[]>([]);
+
    
     useEffect(()=>{
         setCount(data.length);
         setPage(0);
         setRowsPerPage(10);
         setShowedData(data.slice(0, 10));
-        //setSelected([]);
-       
     },[data]);
     
     useEffect(()=>{

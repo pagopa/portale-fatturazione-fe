@@ -87,7 +87,7 @@ const DocumentiContabili:React.FC<any> = ({dispatchMainState,mainState}) =>{
         setFiltersDownload(mainState.filterDocContabili.body);
         setValueAutocomplete(mainState.filterDocContabili.valueAutocomplete);
         setValueQuarters(mainState.filterDocContabili.valueQuarters);
-        getListaDocGrid(mainState.filterDocContabili);
+        getListaDocGrid(mainState.filterDocContabili.body);
         getYears();
     }, []);
 
@@ -207,7 +207,7 @@ const DocumentiContabili:React.FC<any> = ({dispatchMainState,mainState}) =>{
     const onButtonFiltra = () =>{
         setFiltersDownload(bodyGetLista);
         getListaDocGrid(bodyGetLista); 
-        handleModifyMainState({filterDocContabili:{body:bodyGetLista,valueAutocomplete:valueAutocomplete, valueQuarters:valueQuarters}});
+        handleModifyMainState({filterDocContabili:{body:bodyGetLista,valueAutocomplete:valueAutocomplete, valueQuarters:valueQuarters, infoPage:{page:0,row:10}}});
         //setFilterToLocalStorageRel(bodyRel,textValue,valueAutocomplete, 0, 10,valuetipologiaFattura);
     };
    
@@ -416,6 +416,7 @@ const DocumentiContabili:React.FC<any> = ({dispatchMainState,mainState}) =>{
                     data={gridData}
                     headerNames={headersObjGrid}
                     handleModifyMainState={handleModifyMainState}
+                    mainState={mainState}
                 ></CollapsibleTablePa>
             </div>
             <div>
