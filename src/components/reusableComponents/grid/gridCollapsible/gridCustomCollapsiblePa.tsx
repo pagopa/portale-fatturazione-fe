@@ -62,7 +62,7 @@ export interface GridCollapsibleBase{
 const CollapsibleTablePa: React.FC<any> = ({data, headerNames,handleModifyMainState,page,setPage,rowsPerPage,setRowsPerPage,mainState}) => {
     const [count, setCount] = useState(0);
     const [showedData, setShowedData] = useState<DocContabili[]>([]);
-
+  
     useEffect(()=>{
         if(mainState.filterDocContabili.infoPage.page !== 0 || mainState.filterDocContabili.infoPage.row !== 0 ){
 

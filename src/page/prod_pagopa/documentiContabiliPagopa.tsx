@@ -94,6 +94,8 @@ const DocumentiContabili:React.FC<any> = ({dispatchMainState,mainState}) =>{
         getYears();
     }, []);
 
+   
+
  
 
 
@@ -293,8 +295,9 @@ const DocumentiContabili:React.FC<any> = ({dispatchMainState,mainState}) =>{
                         options={dataSelectQuarter}
                         value={valueQuarters}
                         disableCloseOnSelect
+                        isOptionEqualToValue={(option, value) => option.value === value.value}
                         getOptionLabel={(option:OptionMultiselectCheckboxQarter) => {
-                            console.log(option,'option');
+                            console.log({option,dataSelectQuarter,valueQuarters},'option');
                             return option.quarter;}}
                         renderOption={(props, option,{ selected }) =>(
                             <li {...props}>
