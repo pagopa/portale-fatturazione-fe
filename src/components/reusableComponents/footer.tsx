@@ -43,9 +43,12 @@ type PreLoginFooterLinksType = {
 };
 
 const FooterComponent = () => {
-    const profilo =  getProfilo();
+
     const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState} = globalContextObj;
+    const {mainState} = globalContextObj;
+
+
+    const profilo =  mainState.profilo;
     const tabActive = useIsTabActive();
 
 

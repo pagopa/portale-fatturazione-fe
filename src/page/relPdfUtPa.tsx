@@ -81,7 +81,7 @@ const RelPdfPage : React.FC = () =>{
 
     useEffect(()=>{
         
-        if(mainState?.relSelected?.idRel !== null){
+        if(mainState.relSelected !== null){
             getRel(mainState.relSelected.idRel);
         }
         
@@ -91,7 +91,7 @@ const RelPdfPage : React.FC = () =>{
     const downloadRelExel = async() =>{
         setShowDownloading(true);
         if(enti){
-            await getRelExel(token, profilo.nonce, statusApp.idElement).then((res)=>{
+            await getRelExel(token, profilo.nonce, mainState.relSelected.idRel).then((res)=>{
                 //saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio/ ${ rel?.ragioneSociale} /${rel?.mese}/${rel?.anno}.xlsx` );
                 //setShowDownloading(false);
                 
@@ -111,10 +111,9 @@ const RelPdfPage : React.FC = () =>{
                 setShowDownloading(false);
             });
         }else{
-            await getRelExelPagoPa(token, profilo.nonce, statusApp.idElement).then((res)=>{
+            await getRelExelPagoPa(token, profilo.nonce, mainState.relSelected.idRel).then((res)=>{
                 // saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio / ${ rel?.ragioneSociale} / ${rel?.mese} / ${rel?.anno}.xlsx` );
                 // setShowDownloading(false);
-                
                 const blob = new Blob([res.data], { type: 'text/csv' });
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -137,7 +136,7 @@ const RelPdfPage : React.FC = () =>{
     const downloadPdfRel = async() =>{
         if(enti){
             setShowDownloading(true);
-            await getRelPdf(token, profilo.nonce, statusApp.idElement).then((res: ResponseDownloadPdf)=>{
+            await getRelPdf(token, profilo.nonce, mainState.relSelected.idRel).then((res: ResponseDownloadPdf)=>{
                 toDoOnDownloadPdf(res);
             }).catch((err)=>{
                 setShowDownloading(false);
@@ -145,7 +144,7 @@ const RelPdfPage : React.FC = () =>{
             });
         }else if(profilo.auth === 'PAGOPA'){
             setShowDownloading(true);
-            await getRelPdfPagoPa(token, profilo.nonce, statusApp.idElement).then((res: ResponseDownloadPdf)=>{
+            await getRelPdfPagoPa(token, profilo.nonce, mainState.relSelected.idRel).then((res: ResponseDownloadPdf)=>{
                 toDoOnDownloadPdf(res);
             }).catch((err)=>{
                 setShowDownloading(false);
@@ -158,7 +157,7 @@ const RelPdfPage : React.FC = () =>{
     const downloadPdfRelFirmato = async() =>{
         setShowDownloading(true);
         if(enti){
-            await getRelPdfFirmato(token, profilo.nonce, statusApp.idElement).then((res)=>{
+            await getRelPdfFirmato(token, profilo.nonce, mainState.relSelected.idRel).then((res)=>{
                 saveAs("data:text/plain;base64," + res.data.documento,`REL firmata / ${ rel?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${rel?.anno}.pdf` );
                 setShowDownloading(false);
             }).catch((err)=>{
@@ -166,7 +165,7 @@ const RelPdfPage : React.FC = () =>{
                 setShowDownloading(false);
             });
         }else{
-            await getRelPdfFirmatoPagoPa(token, profilo.nonce, statusApp.idElement).then((res)=>{
+            await getRelPdfFirmatoPagoPa(token, profilo.nonce, mainState.relSelected.idRel).then((res)=>{
                 saveAs("data:text/plain;base64," + res.data.documento,`REL firmata / ${ rel?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${rel?.anno}.pdf` );
                 setShowDownloading(false);
             }).catch((err)=>{
@@ -201,7 +200,7 @@ const RelPdfPage : React.FC = () =>{
         const wrapper = document.getElementById('file_download_rel');
         if(wrapper){
             wrapper.innerHTML = res.data;
-            generatePDF(targetRef, {filename: `Regolare Esecuzione / ${ rel?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${statusApp.anno} .pdf`});
+            generatePDF(targetRef, {filename: `Regolare Esecuzione / ${ rel?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${mainState.anno} .pdf`});
             setShowDownloading(false);
         }
     };

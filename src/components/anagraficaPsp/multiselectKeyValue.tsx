@@ -23,7 +23,7 @@ const MultiselectWithKeyValue : React.FC <MultiselectWithKeyValueProps> = ({setB
             multiple
             onChange={(event, value:AutocompleteMultiselect[]) => {
                 const arrayIds = value.map((obj:AutocompleteMultiselect) => obj[keyId]);
-                console.log(arrayIds,keyId,value);
+               
                 setBodyGetLista((prev:RequestBodyListaAnagraficaPsp|RequestBodyListaDocContabiliPagopa) => ({...prev,...{[keyArrayName]:arrayIds}}));
                 setValueAutocomplete(value);
             }}
@@ -31,7 +31,6 @@ const MultiselectWithKeyValue : React.FC <MultiselectWithKeyValueProps> = ({setB
             options={dataSelect}
             disableCloseOnSelect
             getOptionLabel={(option:AutocompleteMultiselect) =>{
-                console.log('option', option);
                 return option[valueId];
             } }
             value={valueAutocomplete}

@@ -1,9 +1,9 @@
 import { Card, Table, TableBody, TableCell, TableHead, TablePagination, TableRow } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { getStatusApp, setInfoToStatusApplicationLoacalStorage } from "../../../reusableFunction/actionLocalStorage";
 import { Rel } from "../../../types/typeRel";
 import { NotificheList } from "../../../types/typeReportDettaglio";
 import { GridElementListaPsp } from "../../../types/typeAngraficaPsp";
+
 interface GridCustomProps {
     elements:NotificheList[]|Rel[]|GridElementListaPsp[],
     changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
@@ -13,26 +13,22 @@ interface GridCustomProps {
     rows:number,
     headerNames:string[],
     nameParameterApi:string,  // elemnto/i che servono alla chiamata get di dettaglio , in questo caso bisogna passare questi pametro/o nel MainState ma non posso visulizzarli nella grid
-    apiGet?:(id:string)=>void, 
+    apiGet?:(el:any)=>void, 
     disabled:boolean
 }
 
 const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, nameParameterApi, apiGet, disabled}) =>{
 
-    const statusApp = getStatusApp();
 
     const handleClickOnGrid = (element) =>{
         if(apiGet){
-            const newState= {
+            const newDetailRel = {
                 nomeEnteClickOn:element.ragioneSociale,
                 mese:element.mese,
                 anno:element.anno,
-                idElement:element[nameParameterApi]
+                idRel:element[nameParameterApi]
             };
-            setInfoToStatusApplicationLoacalStorage(statusApp,newState);
-
-       
-            apiGet(element[nameParameterApi]);
+            apiGet(newDetailRel);
         }
        
     };

@@ -69,7 +69,7 @@ const AuthAzure : React.FC<any> = () =>{
             postPagoPa2();
         }
     },[tokens]);
-    console.log(tokens,'tokens');
+ 
   
     /* const postPagoPa = () =>{
         pagopaLogin(tokens).then((res)=>{
@@ -96,22 +96,14 @@ const AuthAzure : React.FC<any> = () =>{
             if(res.status === 200){
                 //localStorage.removeItem("statusApplication");
                 // store del token nella local storage per tutte le successive chiamate START
-                console.log('new res', res);
-               
-               
                 localStorage.setItem('prodotti', JSON.stringify({prodotti:res.data}));
-               
-                
-                
                 handleModifyMainState({
                     authenticated:true,
                     prodotti:res.data
                 });
-                console.log('navigate');
                 navigate('/selezionaprodotto');
             }
         }).catch(() =>{
-            console.log('errore azure');
             window.location.href = redirect;
 
         });

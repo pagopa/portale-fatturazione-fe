@@ -113,7 +113,6 @@ const AnagraficaPsp:React.FC = () =>{
                 });
                 setGridData(orderDataCustom);
                 setTotalPsp(res.data.count);
-                console.log(res);
                 setGetListaLoading(false);
             })
             .catch(((err)=>{

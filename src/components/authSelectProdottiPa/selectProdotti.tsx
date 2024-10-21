@@ -31,7 +31,7 @@ export default function MultipleSelectProdotti({setProductSelected, productSelec
         setOpenselect(true);
     },[]);
   
-    console.log(valueSelect,'ciao',productSelected);
+  
     const handleChange = (event) => {
         const {
             target: { value },

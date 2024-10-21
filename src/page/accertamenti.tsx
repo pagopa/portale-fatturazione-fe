@@ -29,10 +29,10 @@ export interface MatriceArray {
 const Accertamenti : React.FC = () =>{
 
     const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState} = globalContextObj;
-    
-    const token =  getToken();
-    const profilo =  getProfilo();
+    const {mainState,dispatchMainState} = globalContextObj;
+
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
     const currentYear = (new Date()).getFullYear();
     
     const [gridData, setGridData] = useState<Accertamento[]>([]);

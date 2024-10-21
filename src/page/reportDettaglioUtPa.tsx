@@ -30,7 +30,6 @@ const ReportDettaglio : React.FC = () => {
     const enti = profiliEnti(mainState);
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
-    console.log(enti,'enti');
     const currentMonth = (new Date()).getMonth() + 1;
     const currString = currentMonth;
     const currentYear = (new Date()).getFullYear();

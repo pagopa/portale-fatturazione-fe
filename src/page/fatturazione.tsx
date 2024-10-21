@@ -25,10 +25,11 @@ import { GlobalContext } from "../store/context/globalContext";
 const Fatturazione : React.FC = () =>{
 
     const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState} = globalContextObj;
+    const {dispatchMainState, mainState} = globalContextObj;
 
-    const token =  getToken();
-    const profilo =  getProfilo();
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
+
     const currentYear = (new Date()).getFullYear();
     const currentMonth = (new Date()).getMonth() + 1;
     const monthNumber = Number(currentMonth);

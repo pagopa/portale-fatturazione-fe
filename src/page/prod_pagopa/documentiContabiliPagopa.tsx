@@ -58,8 +58,6 @@ const DocumentiContabili:React.FC = () =>{
     const [valueYear,setValueYear] = useState('');
     const [docSelected,setDocSelected] = useState([]);
 
-    
-    console.log(bodyGetLista);
     useEffect(()=>{
         /*
         const result = getFiltersFromLocalStorage();
@@ -280,7 +278,6 @@ const DocumentiContabili:React.FC = () =>{
                         value={valueQuarters}
                         disableCloseOnSelect
                         getOptionLabel={(option:OptionMultiselectCheckboxQarter) => {
-                            console.log(option,'option');
                             return option.quarter;}}
                         renderOption={(props, option,{ selected }) =>(
                             <li {...props}>

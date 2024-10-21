@@ -44,10 +44,31 @@ const App = ({ instance }) => {
     const enti = profiliEnti(mainState);
     const prodotti = mainState.prodotti;
     const profilo = mainState.profilo;
-    
-    console.log(mainState,'main state');
-    console.log(prodotti,profilo,'ARRAY');
 
+
+   
+    // eslint-disable-next-line no-undef
+    /*
+    console.log(mainState,'pippo');
+    if(!mainState.profilo.jwt && mainState.prodotti.length === 0){
+        // eslint-disable-next-line no-undef
+        const getGlobalFromStorage = localStorage.getItem('globalState')||'{}';
+        const result =  JSON.parse(getGlobalFromStorage);
+        handleModifyMainState(result);
+    }
+
+    
+    useEffect(()=>{
+        if(!mainState.profilo.jwt){
+            console.log('ecco');
+            // eslint-disable-next-line no-undef
+            const getGlobalFromStorage = localStorage.getItem('globalState')||'{}';
+            const result =  JSON.parse(getGlobalFromStorage);
+            handleModifyMainState(result);
+        }
+
+    },[mainState.profilo.jwt]);
+*/
     const recOrConsIsLogged = profilo?.profilo === 'REC' || profilo.profilo ==='CON';
     let route;
 
@@ -98,7 +119,7 @@ const App = ({ instance }) => {
             </ThemeProvider>
         </Router>;
     }else if(profilo.prodotto === 'prod-pn'){
-        console.log(3);
+        console.log(3,'dentro');
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App" >

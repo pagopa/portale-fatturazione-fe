@@ -59,11 +59,12 @@ interface FilterMessaggi{
 
 const Messaggi : React.FC<any> = () => {
 
-    const token = getToken();
-    const profilo = getProfilo();
+    const globalContextObj = useContext(GlobalContext);
+    const {mainState} = globalContextObj;
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
     const currentYear = (new Date()).getFullYear();
 
-    const globalContextObj = useContext(GlobalContext);
   
     const [bodyCentroMessaggi, setBodyCentroMessaggi] = useState<FilterMessaggi>({
         anno:currentYear,
@@ -116,7 +117,6 @@ const Messaggi : React.FC<any> = () => {
                 setShowDownloading(false);
                 readMessage(item.idMessaggio);
             }).catch(((err)=>{
-                console.log(err,'err');
                 setShowDownloading(false);
                 manageError(err,globalContextObj.dispatchMainState);
                 getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra);
@@ -345,7 +345,6 @@ const Messaggi : React.FC<any> = () => {
                 }}>
                     <TimelineNotification >
                         {gridData.map((item: Messaggio) => {
-                            console.log(item,'item');
                             let statoMessaggio = '';
                             let colorMessaggio;
                             let disableDownload = false;

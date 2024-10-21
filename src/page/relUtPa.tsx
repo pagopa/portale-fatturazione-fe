@@ -237,14 +237,12 @@ const RelPage : React.FC = () =>{
         setFilterToLocalStorageRel(bodyDownload,textValue,valueAutocomplete, page, parseInt(event.target.value, 10),valuetipologiaFattura);
     };
    
-    const setIdRel = async(idRel) => {
-        handleModifyMainState({relSelected:idRel});
+    const setIdRel = async(el) => {
+        handleModifyMainState({relSelected:el});
         navigate(PathPf.PDF_REL);
-    
     };  
 
     const getListTipologiaFattura = async(anno,mese) => {
-     
         const result = getFiltersFromLocalStorageRel();
         if(enti){
             await getTipologieFatture(token, profilo.nonce, {mese,anno}).then((res)=>{

@@ -32,10 +32,9 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
     };
    
     const navigate = useNavigate();
-    const enti = profiliEnti(mainState);
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
-    console.log(profilo,'fioer');
+
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [profili, setProfili] = useState(['']);
     const [gridData, setGridData] = useState<GridElementListaFatturazione[]>([]);

@@ -32,7 +32,7 @@ const SideNavComponent: React.FC<any> = ({setOpenBasicModal_DatFat_ModCom}) => {
     const navigate = useNavigate();
     const location = useLocation();
     const enti = profiliEnti(mainState);
-    const statusApp = getStatusApp();
+  
 
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
@@ -92,12 +92,12 @@ const SideNavComponent: React.FC<any> = ({setOpenBasicModal_DatFat_ModCom}) => {
             
             handleModifyMainState({datiFatturazione:true});
           
-            setInfoToStatusApplicationLoacalStorage(statusApp,{datiFatturazione:true});
+            //setInfoToStatusApplicationLoacalStorage(statusApp,{datiFatturazione:true});
           
         }).catch(err =>{
             if(err?.response?.status === 404){
                 handleModifyMainState({datiFatturazione:false});
-                setInfoToStatusApplicationLoacalStorage(statusApp,{datiFatturazione:false});
+                //setInfoToStatusApplicationLoacalStorage(statusApp,{datiFatturazione:false});
             }
         });
 
@@ -132,8 +132,11 @@ const SideNavComponent: React.FC<any> = ({setOpenBasicModal_DatFat_ModCom}) => {
                         inserisciModificaCommessa:'INSERT',
                         statusPageInserimentoCommessa:'mutable',
                         userClickOn:undefined,
-                        primoInserimetoCommessa:true
+                        primoInserimetoCommessa:true,
+                        mese:res.data.mese,
+                        anno:res.data.anno,
                     });
+                    /*
                     const newState = {
                         mese:res.data.mese,
                         anno:res.data.anno,
@@ -141,9 +144,9 @@ const SideNavComponent: React.FC<any> = ({setOpenBasicModal_DatFat_ModCom}) => {
                         userClickOn:undefined,
                         primoInserimetoCommessa:true
                     };
-
+*/
                   
-                    setInfoToStatusApplicationLoacalStorage(statusApp,newState);
+                    //setInfoToStatusApplicationLoacalStorage(statusApp,newState);
                  
                     navigate(PathPf.MODULOCOMMESSA);
                 }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0 ){
@@ -152,14 +155,14 @@ const SideNavComponent: React.FC<any> = ({setOpenBasicModal_DatFat_ModCom}) => {
                         inserisciModificaCommessa:'MODIFY',
                         statusPageInserimentoCommessa:'immutable',
                         primoInserimetoCommessa:false});
-    
+                    /*
                     const newState = {
                         inserisciModificaCommessa:'MODIFY',
                         primoInserimetoCommessa:false
                     };
                     
                     setInfoToStatusApplicationLoacalStorage(statusApp,newState);
-                   
+                   */
                     navigate(PathPf.LISTA_COMMESSE);
                 }else if(res.data.modifica === false && res.data.moduliCommessa.length === 0){
 
@@ -167,20 +170,20 @@ const SideNavComponent: React.FC<any> = ({setOpenBasicModal_DatFat_ModCom}) => {
                         inserisciModificaCommessa:'NO_ACTION',
                         statusPageInserimentoCommessa:'immutable',
                         primoInserimetoCommessa:false});
-                
+                    /*
                     const newState = {
                         inserisciModificaCommessa:'NO_ACTION',
                         primoInserimetoCommessa:false
                     };
             
-                    setInfoToStatusApplicationLoacalStorage(statusApp,newState);
+                    setInfoToStatusApplicationLoacalStorage(statusApp,newState);*/
                     navigate(PathPf.LISTA_COMMESSE);
                 }else if(res.data.modifica === false && res.data.moduliCommessa.length > 0){
                     handleModifyMainState({
                         inserisciModificaCommessa:'NO_ACTION',
                         statusPageInserimentoCommessa:'immutable',
                         primoInserimetoCommessa:false}); 
-
+                    /*
                     const newState = {
                         inserisciModificaCommessa:'NO_ACTION',
                         primoInserimetoCommessa:false
@@ -188,6 +191,7 @@ const SideNavComponent: React.FC<any> = ({setOpenBasicModal_DatFat_ModCom}) => {
                    
 
                     setInfoToStatusApplicationLoacalStorage(statusApp,newState);
+                    */
                     navigate(PathPf.LISTA_COMMESSE);
                 }
             }).catch((err) =>{

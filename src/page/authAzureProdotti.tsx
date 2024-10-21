@@ -12,7 +12,6 @@ const AuthAzureProdotti : React.FC = () => {
 
     const globalContextObj = useContext(GlobalContext); 
     const {dispatchMainState} = globalContextObj;
-    console.log('PPRODOTTI');
     const navigate = useNavigate();
 
     const [productSelected, setProductSelected] = useState<ProfiloObject|null>(null);
@@ -41,7 +40,6 @@ const AuthAzureProdotti : React.FC = () => {
         if(productSelected?.jwt){
             await getAuthProfilo(productSelected.jwt)
                 .then((resp) => {
-                    console.log(resp,'llll');
                     const storeProfilo = resp.data;
                     const profiloDetails = {
                         auth:storeProfilo.auth,
