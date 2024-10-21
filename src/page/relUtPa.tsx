@@ -27,13 +27,12 @@ import { GlobalContext } from "../store/context/globalContext";
 const RelPage : React.FC = () =>{
 
     const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState} = globalContextObj;
+    const {dispatchMainState,mainState} = globalContextObj;
 
-    const token =  getToken();
-    const profilo =  getProfilo();
-    const statusApp = getStatusApp();
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
     const navigate = useNavigate();
-    const enti = profiliEnti();
+    const enti = profiliEnti(mainState);
     const result = getFiltersFromLocalStorageRel();
 
     const handleModifyMainState = (valueObj) => {
@@ -110,14 +109,14 @@ const RelPage : React.FC = () =>{
     },[textValue]);
 
     useEffect(()=>{
-        if(statusApp.datiFatturazione === false || statusApp.datiFatturazioneNotCompleted){
+        if((mainState.datiFatturazione === false || mainState.datiFatturazioneNotCompleted) && enti){
             setOpenModalRedirect(true);
         }
     },[]);
 
     const getlistaRel = async (bodyRel,nPage,nRows) => {
         
-        if(enti && statusApp.datiFatturazione === true){
+        if(enti && mainState.datiFatturazione === true){
             setGetListaRelRunning(true);
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const {idEnti, ...newBody} = bodyRel;

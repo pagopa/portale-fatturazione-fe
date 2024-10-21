@@ -32,7 +32,7 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
 
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
-    const enti = profiliEnti();
+    const enti = profiliEnti(mainState);
    
 
   

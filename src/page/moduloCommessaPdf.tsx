@@ -30,7 +30,7 @@ const ModuloCommessaPdf : React.FC = () =>{
 
     const tipoCommessa =  getTipoCommessa();
     const navigate = useNavigate();
-    const enti = profiliEnti();
+    const enti = profiliEnti(mainState);
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({

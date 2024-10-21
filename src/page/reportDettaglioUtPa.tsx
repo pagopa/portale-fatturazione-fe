@@ -18,7 +18,7 @@ import { downloadNotifchePagoPa, getContestazionePagoPa, getTipologiaEntiComplet
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import GridCustom from "../components/reusableComponents/grid/gridCustom";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
-import { deleteFilterToLocalStorageNotifiche, getFiltersFromLocalStorageNotifiche, getProfilo, getStatusApp, getToken, profiliEnti, setFilterToLocalStorageNotifiche } from "../reusableFunction/actionLocalStorage";
+import { deleteFilterToLocalStorageNotifiche, getFiltersFromLocalStorageNotifiche,  profiliEnti, setFilterToLocalStorageNotifiche } from "../reusableFunction/actionLocalStorage";
 import {mesi, mesiGrid, mesiWithZero, tipoNotifica } from "../reusableFunction/reusableArrayObj";
 import { getCurrentFinancialYear } from "../reusableFunction/function";
 import { GlobalContext } from "../store/context/globalContext";
@@ -27,10 +27,10 @@ const ReportDettaglio : React.FC = () => {
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState, mainState} = globalContextObj;
 
-    const enti = profiliEnti();
+    const enti = profiliEnti(mainState);
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
-
+    console.log(enti,'enti');
     const currentMonth = (new Date()).getMonth() + 1;
     const currString = currentMonth;
     const currentYear = (new Date()).getFullYear();
@@ -199,7 +199,7 @@ const ReportDettaglio : React.FC = () => {
     },[bodyGetLista]);
 
     useEffect(()=>{
-        if(mainState.datiFatturazione === false || mainState.datiFatturazioneNotCompleted && enti){
+        if((mainState.datiFatturazione === false || mainState.datiFatturazioneNotCompleted) && enti){
             setOpenModalRedirect(true);
         }
     },[]);

@@ -17,7 +17,7 @@ import generatePDF from 'react-to-pdf';
 import { redirect } from '../api/api';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import { PathPf } from '../types/enum';
-import { getProfilo, getStatusApp, getToken, profiliEnti } from '../reusableFunction/actionLocalStorage';
+import {profiliEnti } from '../reusableFunction/actionLocalStorage';
 import {mesiWithZero, month } from '../reusableFunction/reusableArrayObj';
 import { createDateFromString } from '../reusableFunction/function';
 import SkeletonRelPdf from '../components/rel/skeletonRelPdf';
@@ -26,14 +26,14 @@ import { GlobalContext } from '../store/context/globalContext';
 const RelPdfPage : React.FC = () =>{
 
     const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState} = globalContextObj;
+    const {dispatchMainState,mainState} = globalContextObj;
 
     const targetRef  = useRef<HTMLInputElement>(null);
-    const token =  getToken();
-    const profilo =  getProfilo();
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
     const navigate = useNavigate();
-    const enti = profiliEnti();
-    const statusApp = getStatusApp();
+    const enti = profiliEnti(mainState);
+
 
    
     const [showDownloading, setShowDownloading] = useState(false);
@@ -74,14 +74,17 @@ const RelPdfPage : React.FC = () =>{
         if(!token){
             window.location.href = redirect;
         }
-        if(!statusApp.idElement){
+        if(mainState.relSelected === null){
             navigate(PathPf.LISTA_REL);
         }
     },[]);
 
     useEffect(()=>{
-       
-        getRel(statusApp.idElement);
+        
+        if(mainState?.relSelected?.idRel !== null){
+            getRel(mainState.relSelected.idRel);
+        }
+        
         
     },[]);
 

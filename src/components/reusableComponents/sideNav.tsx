@@ -31,7 +31,7 @@ const SideNavComponent: React.FC<any> = ({setOpenBasicModal_DatFat_ModCom}) => {
 
     const navigate = useNavigate();
     const location = useLocation();
-    const enti = profiliEnti();
+    const enti = profiliEnti(mainState);
     const statusApp = getStatusApp();
 
     const token =  mainState.profilo.jwt;

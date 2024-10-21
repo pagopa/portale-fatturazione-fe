@@ -23,7 +23,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
     const profilo =  getProfilo();
     const statusApp = getStatusApp();
     const navigate = useNavigate();
-    const enti = profiliEnti();
+    const enti = profiliEnti(mainState);
 
     const [valueSelect, setValueSelect] = useState('');
     

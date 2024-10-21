@@ -41,7 +41,7 @@ const App = ({ instance }) => {
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState} = globalContextObj;
 
-    const enti = profiliEnti();
+    const enti = profiliEnti(mainState);
     const prodotti = mainState.prodotti;
     const profilo = mainState.profilo;
     

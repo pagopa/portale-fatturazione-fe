@@ -32,7 +32,7 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
     };
    
     const navigate = useNavigate();
-    const enti = profiliEnti();
+    const enti = profiliEnti(mainState);
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     console.log(profilo,'fioer');

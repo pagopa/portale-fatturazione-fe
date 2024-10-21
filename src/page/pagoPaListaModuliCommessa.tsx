@@ -36,7 +36,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
-    const enti = profiliEnti();
+    const enti = profiliEnti(mainState);
     const currString = currentMonth();
 
     const [prodotti, setProdotti] = useState([{nome:''}]);

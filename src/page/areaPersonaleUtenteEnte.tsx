@@ -33,7 +33,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
-    const enti = profiliEnti();
+    const enti = profiliEnti(mainState);
             
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({

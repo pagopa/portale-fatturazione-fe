@@ -24,7 +24,7 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
     const location = useLocation();
-    const enti = profiliEnti();
+    const enti = profiliEnti(mainState);
    
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
