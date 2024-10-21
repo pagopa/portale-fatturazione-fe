@@ -92,6 +92,7 @@ const DettaglioDocContabile : React.FC<any> = ({mainState,dispatchMainState}) =>
         
     },[]);
 
+    console.log(docContabile,'pp');
     /*
 
     const downloadRelExel = async() =>{
@@ -154,6 +155,20 @@ const DettaglioDocContabile : React.FC<any> = ({mainState,dispatchMainState}) =>
         
     };  
 
+    const downloadFile = (url,name) => {
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = name;
+        document.body.appendChild(link);
+
+        link.click();
+
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        //saveAs(url,name);     
+    };
+
     if(loadingDettaglio){
         return(
             <SkeletonRelPdf></SkeletonRelPdf>
@@ -183,8 +198,8 @@ const DettaglioDocContabile : React.FC<any> = ({mainState,dispatchMainState}) =>
                 </div>
             </div>
             <div className='d-flex justify-content-between mt-4 me-5 ms-5'>
-                <Button  onClick={()=> console.log('download')} >Download Detailed Report <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
-                <Button  onClick={()=> console.log('download')} >Download Agent Quarter Report <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+                <Button disabled={docContabile.report.reports[0] === ''} onClick={()=> downloadFile(docContabile.report.reports[0],"Detailed Report")} >Download Detailed Report <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+                <Button disabled={docContabile.report.reports[1] === ''} onClick={()=> downloadFile(docContabile.report.reports[1],"Download Agent Quarter Report")} >Download Agent Quarter Report <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
             </div>
             <div className="bg-white mb-5 me-5 ms-5">
                 <div className="d-flex justify-content-center pt-3">
@@ -232,7 +247,7 @@ const DettaglioDocContabile : React.FC<any> = ({mainState,dispatchMainState}) =>
                         <div className="row">
                             {docContabile.report.posizioni.map((singlePosizione)=>{
                                 return (
-                                    <div className="col-12">
+                                    <div key={singlePosizione.progressivoRiga} className="col-12">
                                         <Box sx={{ margin: 2 , backgroundColor:'#F8F8F8', padding:'10px'}}>
                                             <Table size="small" aria-label="purchases">
                                                 <TableHead>

@@ -19,7 +19,7 @@ import { HeaderCollapsible } from "../../types/typeFatturazione";
 
 
 
-const DocumentiContabili:React.FC<any> = ({dispatchMainState}) =>{
+const DocumentiContabili:React.FC<any> = ({dispatchMainState,mainState}) =>{
     const token =  getToken();
     const profilo =  getProfilo();
 
@@ -62,7 +62,7 @@ const DocumentiContabili:React.FC<any> = ({dispatchMainState}) =>{
     const [yearOnSelect,setYearOnSelect] = useState<string[]>([]);
     const [valueYear,setValueYear] = useState('');
 
-    
+    console.log(mainState,'MAIN',valueAutocomplete,dataSelect);
   
     useEffect(()=>{
         /*
@@ -83,8 +83,11 @@ const DocumentiContabili:React.FC<any> = ({dispatchMainState}) =>{
         if(infoPageResult.page > 0){
             setInfoPageListaDatiFat(infoPageResult);
         }*/
-      
-        getListaDocGrid(bodyGetLista);
+        setBodyGetLista(mainState.filterDocContabili.body);
+        setFiltersDownload(mainState.filterDocContabili.body);
+        setValueAutocomplete(mainState.filterDocContabili.valueAutocomplete);
+        setValueQuarters(mainState.filterDocContabili.valueQuarters);
+        getListaDocGrid(mainState.filterDocContabili);
         getYears();
     }, []);
 
@@ -204,6 +207,7 @@ const DocumentiContabili:React.FC<any> = ({dispatchMainState}) =>{
     const onButtonFiltra = () =>{
         setFiltersDownload(bodyGetLista);
         getListaDocGrid(bodyGetLista); 
+        handleModifyMainState({filterDocContabili:{body:bodyGetLista,valueAutocomplete:valueAutocomplete, valueQuarters:valueQuarters}});
         //setFilterToLocalStorageRel(bodyRel,textValue,valueAutocomplete, 0, 10,valuetipologiaFattura);
     };
    

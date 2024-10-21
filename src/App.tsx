@@ -81,7 +81,18 @@ const App = ({ instance }) => {
         badgeContent:0,
         messaggioSelected:null,
         prodotti:[],
-        docContabileSelected:null
+        docContabileSelected:null,
+        filterDocContabili:{
+            body:{
+                contractIds:[],
+                membershipId: '',
+                recipientId: '',
+                abi:'',
+                quarters:[]
+            },
+            valueAutocomplete:[],
+            valueQuarters:[]
+        }
     });
    
    
@@ -164,7 +175,7 @@ const App = ({ instance }) => {
                                 <Routes>
                                     <Route path={'/messaggi'} element={<Messaggi mainState={mainState} dispatchMainState={dispatchMainState}/>} />
                                     <Route path={PathPf.ANAGRAFICAPSP} element={<AnagraficaPsp dispatchMainState={ dispatchMainState}></AnagraficaPsp>}/>
-                                    <Route path={PathPf.DOCUMENTICONTABILI} element={<DocumentiContabili dispatchMainState={ dispatchMainState}></DocumentiContabili>}/>
+                                    <Route path={PathPf.DOCUMENTICONTABILI} element={<DocumentiContabili mainState={mainState} dispatchMainState={ dispatchMainState}></DocumentiContabili>}/>
                                     <Route path={PathPf.DETTAGLIO_DOC_CONTABILE} element={<DettaglioDocContabile mainState={mainState}  dispatchMainState={dispatchMainState}></DettaglioDocContabile>}/>
                                     <Route path="/azureLogin" element={<AzureLogin dispatchMainState={dispatchMainState}/>} />
                                     <Route path="/auth/azure" element={<AuthAzure  dispatchMainState={ dispatchMainState}/>} />
