@@ -82,7 +82,7 @@ const RelPdfPage : React.FC = () =>{
     useEffect(()=>{
         
         if(mainState.relSelected !== null){
-            getRel(mainState.relSelected.idRel);
+            getRel(mainState.relSelected.id);
         }
         
         
@@ -91,7 +91,7 @@ const RelPdfPage : React.FC = () =>{
     const downloadRelExel = async() =>{
         setShowDownloading(true);
         if(enti){
-            await getRelExel(token, profilo.nonce, mainState.relSelected.idRel).then((res)=>{
+            await getRelExel(token, profilo.nonce, mainState.relSelected.id).then((res)=>{
                 //saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio/ ${ rel?.ragioneSociale} /${rel?.mese}/${rel?.anno}.xlsx` );
                 //setShowDownloading(false);
                 
@@ -111,7 +111,7 @@ const RelPdfPage : React.FC = () =>{
                 setShowDownloading(false);
             });
         }else{
-            await getRelExelPagoPa(token, profilo.nonce, mainState.relSelected.idRel).then((res)=>{
+            await getRelExelPagoPa(token, profilo.nonce, mainState.relSelected.id).then((res)=>{
                 // saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio / ${ rel?.ragioneSociale} / ${rel?.mese} / ${rel?.anno}.xlsx` );
                 // setShowDownloading(false);
                 const blob = new Blob([res.data], { type: 'text/csv' });
@@ -136,7 +136,7 @@ const RelPdfPage : React.FC = () =>{
     const downloadPdfRel = async() =>{
         if(enti){
             setShowDownloading(true);
-            await getRelPdf(token, profilo.nonce, mainState.relSelected.idRel).then((res: ResponseDownloadPdf)=>{
+            await getRelPdf(token, profilo.nonce, mainState.relSelected.id).then((res: ResponseDownloadPdf)=>{
                 toDoOnDownloadPdf(res);
             }).catch((err)=>{
                 setShowDownloading(false);
@@ -144,7 +144,7 @@ const RelPdfPage : React.FC = () =>{
             });
         }else if(profilo.auth === 'PAGOPA'){
             setShowDownloading(true);
-            await getRelPdfPagoPa(token, profilo.nonce, mainState.relSelected.idRel).then((res: ResponseDownloadPdf)=>{
+            await getRelPdfPagoPa(token, profilo.nonce, mainState.relSelected.id).then((res: ResponseDownloadPdf)=>{
                 toDoOnDownloadPdf(res);
             }).catch((err)=>{
                 setShowDownloading(false);
@@ -157,7 +157,7 @@ const RelPdfPage : React.FC = () =>{
     const downloadPdfRelFirmato = async() =>{
         setShowDownloading(true);
         if(enti){
-            await getRelPdfFirmato(token, profilo.nonce, mainState.relSelected.idRel).then((res)=>{
+            await getRelPdfFirmato(token, profilo.nonce, mainState.relSelected.id).then((res)=>{
                 saveAs("data:text/plain;base64," + res.data.documento,`REL firmata / ${ rel?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${rel?.anno}.pdf` );
                 setShowDownloading(false);
             }).catch((err)=>{
@@ -165,7 +165,7 @@ const RelPdfPage : React.FC = () =>{
                 setShowDownloading(false);
             });
         }else{
-            await getRelPdfFirmatoPagoPa(token, profilo.nonce, mainState.relSelected.idRel).then((res)=>{
+            await getRelPdfFirmatoPagoPa(token, profilo.nonce, mainState.relSelected.id).then((res)=>{
                 saveAs("data:text/plain;base64," + res.data.documento,`REL firmata / ${ rel?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${rel?.anno}.pdf` );
                 setShowDownloading(false);
             }).catch((err)=>{

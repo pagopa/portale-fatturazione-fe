@@ -110,6 +110,7 @@ const App = ({ instance }) => {
                                     <Route path="/azureLogin" element={<AzureLogin dispatchMainState={dispatchMainState}/>} />
                                     <Route path="/auth/azure" element={<AuthAzure  />} />
                                     <Route path="azure" element={<Azure />} />
+                                    <Route path="/auth" element={<Auth  />} />
                                     <Route path="*" element={<Navigate to={PathPf.ANAGRAFICAPSP} replace />} />
                                 </Routes>
                             </Grid>

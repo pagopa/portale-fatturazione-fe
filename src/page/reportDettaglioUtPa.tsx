@@ -572,10 +572,11 @@ const ReportDettaglio : React.FC = () => {
             }));
     };
 
-    const getContestazioneModal = async(idNotifica:string) =>{
+    const getContestazioneModal = async(el) =>{
+        const idNotifica = el.id;
         setShowLoadingGrid(true);
         if(enti){
-            await getContestazione(token, profilo.nonce , idNotifica )
+            await getContestazione(token, profilo.nonce , idNotifica)
                 .then((res)=>{
                     //se i tempi di creazione di una contestazione sono scaduti show pop up info
                     if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){

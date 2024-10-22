@@ -21,12 +21,19 @@ type HeaderNavProps = {
 const HeaderNavComponent : React.FC = () => {
    
     const globalContextObj = useContext(GlobalContext);
-    const {mainState} = globalContextObj;
+    const {mainState, dispatchMainState } = globalContextObj;
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const location = useLocation();
     const navigate = useNavigate();
 
+
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
     
    
     const url = window.location.origin;
@@ -124,13 +131,10 @@ const HeaderNavComponent : React.FC = () => {
                 onSelectedProduct={(e) => {
             
                     const newProfilo:any = mainState.prodotti.find((el:any) => el.prodotto === e.id);
-                    const newMainState = {...mainState,...{profilo:newProfilo}};
-        
-                    localStorage.removeItem("globalState");
-                    
-                    localStorage.setItem('globalState',JSON.stringify(newMainState));
-                    
-              
+
+                    handleModifyMainState({
+                        profilo:newProfilo
+                    });
                     if(e.id === 'prod_pd'){
                         window.location.assign(url+PathPf.LISTA_DATI_FATTURAZIONE);
                     }else{

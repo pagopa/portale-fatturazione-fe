@@ -3,7 +3,7 @@ import { getAuthProfilo, redirect } from "../api/api";
 import MultipleSelectProdotti from "../components/authSelectProdottiPa/selectProdotti";
 import { PathPf } from "../types/enum";
 import { ProfiloObject } from "../types/typesGeneral";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Button, Typography } from "@mui/material";
 import DivProdotto from "../components/authSelectProdottiPa/divProdotto";
 import { GlobalContext } from "../store/context/globalContext";
@@ -25,16 +25,8 @@ const AuthAzureProdotti : React.FC = () => {
     };
 
    
-    /*
-    useEffect(()=>{
-        if(mainState.prodotti.length > 0){
-            handleModifyMainState({
-                authenticated:true,
-                prodotti:prodotti
-            });
-        }
-    },[]);
-  */
+  
+
 
     const getProfilo = async ()=>{
         if(productSelected?.jwt){

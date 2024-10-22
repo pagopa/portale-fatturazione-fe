@@ -7,6 +7,8 @@ import Select from '@mui/material/Select';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import { getProdotti } from '../../reusableFunction/actionLocalStorage';
 import { Typography } from '@mui/material';
+import { useContext } from 'react';
+import { GlobalContext } from '../../store/context/globalContext';
 
 
 const MenuProps = {
@@ -23,7 +25,9 @@ const MenuProps = {
 
 export default function MultipleSelectProdotti({setProductSelected, productSelected}) {
 
-    const prodotti = getProdotti().prodotti;
+    const globalContextObj = useContext(GlobalContext); 
+    const {mainState} = globalContextObj;
+
     const [valueSelect, setValueSelect] = React.useState('');
     const [openSelect, setOpenselect] = React.useState(false);
 
@@ -36,7 +40,7 @@ export default function MultipleSelectProdotti({setProductSelected, productSelec
         const {
             target: { value },
         } = event;
-        setProductSelected(prodotti.find((el) => el.prodotto === value));
+        setProductSelected(mainState.prodotti.find((el:any) => el.prodotto === value));
         setValueSelect(value);
     };
 
@@ -57,7 +61,7 @@ export default function MultipleSelectProdotti({setProductSelected, productSelec
                     input={<OutlinedInput label="Cerca prodotto" />}
                     MenuProps={MenuProps}
                 >
-                    {prodotti.map((el) => {
+                    {mainState.prodotti.map((el:any) => {
 
                         let name = el?.prodotto;
                         if(el?.prodotto === 'prod-pagopa'){
