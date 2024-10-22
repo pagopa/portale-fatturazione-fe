@@ -144,6 +144,7 @@ const App = ({ instance }) => {
     let route;
 
     if(prodotti?.length > 0 && !profilo.auth){
+        console.log(1);
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App" >
@@ -161,6 +162,7 @@ const App = ({ instance }) => {
         </Router>;
 
     }else if(profilo.jwt && profilo.auth === 'PAGOPA' && profilo.prodotto === 'prod-pagopa'){
+        console.log(2);
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App">
@@ -191,7 +193,7 @@ const App = ({ instance }) => {
             </ThemeProvider>
         </Router>;
     }else if(profilo.jwt && profilo.auth === 'PAGOPA'){
-
+        console.log(3);
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App" >
@@ -213,7 +215,6 @@ const App = ({ instance }) => {
 
                             <Grid item xs={10}>
                                 <Routes>
-                                
                                     <Route path="/auth" element={<Auth dispatchMainState={ dispatchMainState} />} />
                                 
                                     <Route path="/auth/azure" element={<AuthAzure  dispatchMainState={ dispatchMainState}/>} />
@@ -262,7 +263,7 @@ const App = ({ instance }) => {
         </Router>;
 
     }else if(profilo.jwt && enti){
-
+        console.log(4);
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App">
@@ -323,6 +324,7 @@ const App = ({ instance }) => {
         </Router>;
 
     }else if(profilo.jwt && recOrConsIsLogged){
+        console.log(5);
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App">
@@ -371,6 +373,7 @@ const App = ({ instance }) => {
         </Router>;
 
     }else if(!profilo.jwt && mainState.apiError === null){
+        console.log(6);
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App">
@@ -401,7 +404,9 @@ const App = ({ instance }) => {
             </ThemeProvider>
 
         </Router>;
-    }else if(!profilo.jwt){
+    }
+    /*else if(!profilo.jwt){
+        console.log(8);
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App">
@@ -409,12 +414,11 @@ const App = ({ instance }) => {
             </ThemeProvider>
 
         </Router>;
-    }
+    }*/
   
     return (
       
         <MsalProvider instance={instance}>
-            
             {route}
         </MsalProvider>
 

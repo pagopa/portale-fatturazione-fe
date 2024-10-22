@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { PathPf } from '../../../types/enum';
 import { ActionReducerType } from '../../../reducer/reducerMainState';
+import { getProfilo } from '../../../reusableFunction/actionLocalStorage';
 
 
 type AlertProps = {
@@ -22,6 +23,7 @@ type AlertProps = {
 const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, dispatchMainState}) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const profilo =  getProfilo();
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -58,17 +60,21 @@ const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, di
 
             const logout = mainState.apiError === 401 || mainState.apiError === 403 || mainState.apiError === 419;
             setCss('main_container_alert_component_show');
+            
             const timer = setTimeout(() => {
     
                 setCss('main_container_alert_component_hidden');
                 setVisible(false);
 
                 if(logout){
-                    localStorage.clear();
-                    window.location.href = redirect;
+                    if(profilo.auth === 'PAGOPA'){
+                        window.location.href = '/azureLogin';
+                    }else{
+                        localStorage.clear();
+                        window.location.href = redirect;
+                    }
                 }
-                
-            }, 8000);
+            }, 3000);
 
             return () =>{
                 clearTimeout(timer);
