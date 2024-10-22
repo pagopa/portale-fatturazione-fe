@@ -96,10 +96,29 @@ const AuthAzure : React.FC<any> = () =>{
             if(res.status === 200){
                 //localStorage.removeItem("statusApplication");
                 // store del token nella local storage per tutte le successive chiamate START
-                localStorage.setItem('prodotti', JSON.stringify({prodotti:res.data}));
+              
                 handleModifyMainState({
                     authenticated:true,
-                    prodotti:res.data
+                    prodotti:res.data,
+                    profilo:{},
+                    mese:'',
+                    anno:'',
+                    nomeEnteClickOn:'',
+                    datiFatturazione:false,// l'ente ha i dati di fatturazione?
+                    userClickOn:undefined, // se l'utente clicca su un elemento di lista commesse setto GRID
+                    inserisciModificaCommessa:undefined, // INSERT MODIFY  se il sevizio get commessa mi restituisce true []
+                    primoInserimetoCommessa:true,// la commessa mese corrente è stata inserita?
+                    statusPageDatiFatturazione:'immutable',
+                    statusPageInserimentoCommessa:'immutable',
+                    relSelected:{
+                        nomeEnteClickOn:'',
+                        mese:0,
+                        anno:0,
+                        idElement:''
+                    },
+                    apiError:null,
+                    badgeContent:0,
+                    messaggioSelected:null
                 });
                 navigate('/selezionaprodotto');
             }

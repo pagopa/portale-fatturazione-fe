@@ -7,7 +7,6 @@ export interface ActionReducerType{
 const initialState =  {
     mese:'',
     anno:'',
-    nonce:'',
     nomeEnteClickOn:'',
     datiFatturazione:false,// l'ente ha i dati di fatturazione?
     userClickOn:undefined, // se l'utente clicca su un elemento di lista commesse setto GRID

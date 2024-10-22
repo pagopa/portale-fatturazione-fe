@@ -81,7 +81,6 @@ export interface MainState{
     inserisciModificaCommessa:string |undefined, // INSERT MODIFY  se il sevizio get commessa mi restituisce true []
     statusPageDatiFatturazione:string,
     statusPageInserimentoCommessa:string,
-    nonce:string,
     nomeEnteClickOn:string,
     datiFatturazione:boolean, // parametro utilizato in modulo commessa per capire se accettare l'inserimento commessa o fare il redirect t dati fatturazione se non sono stati inseriti
     relSelected:{

@@ -45,6 +45,7 @@ const App = ({ instance }) => {
     const prodotti = mainState.prodotti;
     const profilo = mainState.profilo;
 
+    console.log(profilo.jwt,enti,'zorro');
 
    
     // eslint-disable-next-line no-undef
@@ -88,7 +89,7 @@ const App = ({ instance }) => {
                 </div>
             </ThemeProvider>
         </Router>;
-    }else if(profilo.prodotto === 'prod-pagopa'){
+    }else if(profilo.prodotto === 'prod-pagopa' && prodotti.length > 0){
         console.log(2);
         route = <Router>
             <ThemeProvider theme={theme}>
@@ -118,7 +119,7 @@ const App = ({ instance }) => {
                 </div>
             </ThemeProvider>
         </Router>;
-    }else if(profilo.prodotto === 'prod-pn'){
+    }else if(profilo.prodotto === 'prod-pn' && prodotti.length > 0){
         console.log(3,'dentro', mainState);
         route = <Router>
             <ThemeProvider theme={theme}>

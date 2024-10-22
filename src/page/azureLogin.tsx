@@ -16,12 +16,10 @@ const AzureLogin : React.FC<any> = () =>{
             value:valueObj
         });
     };
-
-    useEffect(()=>{
-        handleModifyMainState({authenticated:false});
-    },[]);
-
     localStorage.clear();
+
+
+   
   
 
     return (

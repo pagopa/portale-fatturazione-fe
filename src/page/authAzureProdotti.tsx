@@ -59,7 +59,6 @@ const AuthAzureProdotti : React.FC = () => {
                     handleModifyMainState({
                         ruolo:resp.data.ruolo,
                         action:'LISTA_DATI_FATTURAZIONE',
-                        nonce:storeProfilo.nonce,
                         authenticated:true,
                         profilo:profiloDetails
                     });

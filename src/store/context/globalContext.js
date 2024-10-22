@@ -1,14 +1,12 @@
-import { createContext, Dispatch, useEffect, useReducer,useState } from "react";
-import { ActionReducerType, loadState, reducerMainState } from "../../reducer/reducerMainState";
-import { Messaggi, ProfiloObject } from "../../types/typesGeneral";
-import { main } from "@popperjs/core";
+import { createContext, useEffect, useReducer,useState } from "react";
+import {  loadState, reducerMainState } from "../../reducer/reducerMainState";
+
 
 
 export const GlobalContext = createContext({
     mainState:{
         mese:'',
         anno:'',
-        nonce:'',
         nomeEnteClickOn:'',
         datiFatturazione:false,// l'ente ha i dati di fatturazione?
         userClickOn:undefined, // se l'utente clicca su un elemento di lista commesse setto GRID

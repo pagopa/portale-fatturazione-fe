@@ -13,7 +13,7 @@ import { downloadDocumentoListaDatiFatturazionePagoPa, listaDatiFatturazionePago
 import { saveAs } from "file-saver";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../types/enum";
-import { deleteFilterToLocalStorage, getFiltersFromLocalStorage, getInfoPageFromLocalStorage, profiliEnti, setFilterToLocalStorage, setInfoPageToLocalStorage, setInfoToProfiloLoacalStorage } from "../reusableFunction/actionLocalStorage";
+import { deleteFilterToLocalStorage, getFiltersFromLocalStorage, getInfoPageFromLocalStorage,setFilterToLocalStorage, setInfoPageToLocalStorage, setInfoToProfiloLoacalStorage } from "../reusableFunction/actionLocalStorage";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";

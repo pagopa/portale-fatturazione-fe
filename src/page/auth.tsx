@@ -17,6 +17,8 @@ da parte dell'utente SELFCARE
 */
 const Auth : React.FC<any> = () =>{
     const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState} = globalContextObj;
+
     const handleModifyMainState = (valueObj) => {
         globalContextObj.dispatchMainState({
             type:'MODIFY_MAIN_STATE',
@@ -37,46 +39,33 @@ interface ParameterGetProfilo {
 }
 
 // terza chiamata fatta per verificare lo stato della commessa e eseguire azioni diverse a seconda del risultato 
-const getCommessa = async (tokenC, nonceC,infoProfilo) =>{
-   
-
-    await getDatiModuloCommessa(tokenC, nonceC).then((res)=>{
+const getCommessa = async (infoProfilo) =>{
+    await getDatiModuloCommessa(infoProfilo.jwt, infoProfilo.nonce).then((res)=>{
 
         if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
-          
-            localStorage.setItem('statusApplication',JSON.stringify({
+            handleModifyMainState({
                 inserisciModificaCommessa:'INSERT',
                 statusPageInserimentoCommessa:'mutable',
                 primoInserimetoCommessa:true
-            
-            }));
+            });
             // ci sono commesse inserite nel mese corrente e posso modificarle
         }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0){
-
-            localStorage.setItem('statusApplication',JSON.stringify({
+            handleModifyMainState({
                 inserisciModificaCommessa:'MODIFY',
                 statusPageInserimentoCommessa:'immutable',
                 primoInserimetoCommessa:false
-            }));
+            });
     
         }else if(res.data.modifica === false ){
-
-            localStorage.setItem('statusApplication',JSON.stringify({
+            handleModifyMainState({
                 inserisciModificaCommessa:'NO_ACTION',
                 statusPageInserimentoCommessa:'immutable',
                 primoInserimetoCommessa:false
-            }));
+            });
         }
-        const getProfilo = localStorage.getItem('profilo') || '{}';
-        const profilo =  JSON.parse(getProfilo);
-        const newProfilo = {...profilo, ...{idTipoContratto:res.data.idTipoContratto}};
-
-        const string = JSON.stringify(newProfilo);
-        localStorage.setItem('profilo', string);
-        handleModifyMainState(infoProfilo);
         navigate(PathPf.DATI_FATTURAZIONE);
     }).catch((err)=>{
-        manageError(err,globalContextObj.dispatchMainState);
+        manageError(err,dispatchMainState);
         
     });
 };
@@ -87,7 +76,7 @@ const getProfilo = async (res:ParameterGetProfilo)=>{
     await getAuthProfilo(res.data[0].jwt)
         .then(resp =>{
             const storeProfilo = resp.data;
-            localStorage.setItem('profilo', JSON.stringify({
+            const newProfilo = {
                 auth:storeProfilo.auth,
                 nomeEnte:storeProfilo.nomeEnte,
                 descrizioneRuolo:storeProfilo.descrizioneRuolo,
@@ -97,18 +86,39 @@ const getProfilo = async (res:ParameterGetProfilo)=>{
                 prodotto:storeProfilo.prodotto,
                 jwt:res.data[0].jwt,
                 profilo:storeProfilo.profilo, // profilo utilizzato per la gestione delle notifiche/contestazioni
-                nonce:storeProfilo.nonce
-            }));
-           
+                nonce:storeProfilo.nonce,
+                user:{name:'', ruolo:storeProfilo.descrizioneRuolo, id:'1'},
+                idTipoContratto: storeProfilo.idTipoContratto
+            };
+
+          
+            handleModifyMainState({
+                authenticated:true,
+                profilo:newProfilo,
+                prodotti:[],
+                mese:'',
+                anno:'',
+                nomeEnteClickOn:'',
+                datiFatturazione:false,// l'ente ha i dati di fatturazione?
+                userClickOn:undefined, // se l'utente clicca su un elemento di lista commesse setto GRID
+                inserisciModificaCommessa:undefined, // INSERT MODIFY  se il sevizio get commessa mi restituisce true []
+                primoInserimetoCommessa:true,// la commessa mese corrente è stata inserita?
+                statusPageDatiFatturazione:'immutable',
+                statusPageInserimentoCommessa:'immutable',
+                relSelected:{
+                    nomeEnteClickOn:'',
+                    mese:0,
+                    anno:0,
+                    idElement:''
+                },
+                apiError:null,
+                badgeContent:0,
+                messaggioSelected:null
+            });
             if(resp.data.profilo === "REC" || resp.data.profilo === "CON"){
-                localStorage.removeItem("statusApplication");
-                handleModifyMainState({ruolo:resp.data.ruolo,nonce:storeProfilo.nonce,authenticated:true, user:{name:'', ruolo:storeProfilo.descrizioneRuolo, id:'1'}});
                 navigate(PathPf.LISTA_NOTIFICHE);
             }else{
-                const infoProfilo = {ruolo:resp.data.ruolo,nonce:storeProfilo.nonce,authenticated:true, user:{name:'', ruolo:storeProfilo.descrizioneRuolo, id:'1'}};
-                getCommessa(res.data[0].jwt, storeProfilo.nonce,infoProfilo);
-                //setCheckProfilo(true);
-                // setto il ruolo nello state di riferimento globale   
+                getCommessa(newProfilo);  
             }
         } )
         .catch(() => {
@@ -120,15 +130,8 @@ const getProfilo = async (res:ParameterGetProfilo)=>{
 const getSelfcare = async() =>{
     await selfcareLogin(token).then(res =>{
         localStorage.clear();
-
         if(res.status === 200){
-            // store del token nella local storage per tutte le successive chiamate START
-            const storeJwt = {token:res.data[0].jwt};
-            localStorage.setItem('token', JSON.stringify(storeJwt));
-           
-            // store del token nella local storage per tutte le successive chiamate END
-            getProfilo(res);
-               
+            getProfilo(res);  
         }
     }).catch(() =>{
         window.location.href = redirect;
