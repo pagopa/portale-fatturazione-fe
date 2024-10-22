@@ -20,19 +20,31 @@ type HeaderNavProps = {
 const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainState}) => {
    
    
-    const location = useLocation();
-    const navigate = useNavigate();
-    const prodotti = getProdotti().prodotti;
-    const profilo =  getProfilo();
-    const token = getToken();
+   
     const url = window.location.origin;
    
-    const handleModifyMainState = (valueObj) => {
-        dispatchMainState({
-            type:'MODIFY_MAIN_STATE',
-            value:valueObj
-        });
-    };
+    const location = useLocation();
+    const navigate = useNavigate();
+    const getUserDetails = localStorage.getItem('profilo') || '{}';
+    const UserDetailsParsed = JSON.parse(getUserDetails);
+    const profilo =  getProfilo();
+    const token = getToken();
+
+  
+    
+    const camelizeDescizioneRuolo = () =>{
+       
+        const allLower =  UserDetailsParsed.descrizioneRuolo?.toLowerCase();
+        const ruolo = allLower?.charAt(0).toUpperCase() + allLower?.slice(1);
+        return {name:UserDetailsParsed.nomeEnte, ruolo };
+
+    }; 
+    const [user, setuser] = useState({name:'', ruolo:'' });
+
+    useEffect(()=>{
+        setuser(camelizeDescizioneRuolo());
+    
+    },[getUserDetails]);
 
     const [countMessages, setCountMessages] = useState(0);
   
@@ -77,7 +89,7 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainS
         {
             id:'0',
             logoUrl: ``,
-            name: '',
+            name: user.name,
             productRole: "Amministratore",
         }
     ];
@@ -114,8 +126,6 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState , dispatchMainS
 
 
 
-
-   
    
     const conditionalHeder = profilo.auth === 'PAGOPA' ?  (<div style={{display:'flex', backgroundColor:'white'}}>
         <div style={{width:'95%'}}>

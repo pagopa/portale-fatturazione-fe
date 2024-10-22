@@ -154,6 +154,7 @@ const App = ({ instance }) => {
                         <Routes>
                             <Route path="/selezionaprodotto" element={<AuthAzureProdotti dispatchMainState={ dispatchMainState} />} />
                             <Route path="/azureLogin" element={<AzureLogin dispatchMainState={dispatchMainState}/>} />
+                            <Route path="/auth" element={<Auth dispatchMainState={ dispatchMainState} />} />
                         </Routes>
                     </div>
                     <FooterComponent mainState={mainState} />
@@ -183,6 +184,7 @@ const App = ({ instance }) => {
                                     <Route path="/azureLogin" element={<AzureLogin dispatchMainState={dispatchMainState}/>} />
                                     <Route path="/auth/azure" element={<AuthAzure  dispatchMainState={ dispatchMainState}/>} />
                                     <Route path="azure" element={<Azure dispatchMainState={ dispatchMainState}/>} />
+                                    <Route path="/auth" element={<Auth dispatchMainState={ dispatchMainState} />} />
                                     <Route path="*" element={<Navigate to={PathPf.ANAGRAFICAPSP} replace />} />
                                 </Routes>
                             </Grid>
