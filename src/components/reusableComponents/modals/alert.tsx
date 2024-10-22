@@ -56,11 +56,16 @@ const BasicAlerts:React.FC = () => {
     
     const [css, setCss] = useState('main_container_alert_component');
 
+
     React.useEffect(()=>{
+        if(mainState.apiError !== null){
+            setShowAlert(true);
+        }
 
+    },[mainState.apiError]);
 
-
-        if( showAlert && mainState.apiError !== null){
+    React.useEffect(()=>{
+        if(showAlert === true && mainState.apiError !== null){
 
             const logout = mainState.apiError === 401 || mainState.apiError === 403 || mainState.apiError === 419;
             setCss('main_container_alert_component_show');
@@ -68,24 +73,24 @@ const BasicAlerts:React.FC = () => {
     
                 setCss('main_container_alert_component_hidden');
                 setShowAlert(false);
-
+                
                 if(logout){
                     localStorage.clear();
                     window.location.href = redirect;
                 }
                 
-            }, 8000);
+                
+            }, 3000);
 
             return () =>{
                 clearTimeout(timer);
                 
             }; 
         }
-        
-    },[showAlert]);
+    },[showAlert,mainState.apiError]);
 
     React.useEffect(()=>{
-        if( !showAlert  && mainState.apiError !== null){
+        if(showAlert === false  && mainState.apiError !== null){
            
             const timer = setTimeout(() => {
                 handleModifyMainState({apiError:null});

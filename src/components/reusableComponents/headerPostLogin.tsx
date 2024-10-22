@@ -16,7 +16,7 @@ type JwtUser = {
 
 const HeaderPostLogin = () => {
     const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState} = globalContextObj;
+    const {mainState} = globalContextObj;
 
     const location  = useLocation();
 
@@ -94,12 +94,8 @@ const HeaderPostLogin = () => {
                         }
                     }}
                     onDocumentationClick={()=>onButtonClick()}
-                   
                 />
             }
-           
-               
-            
         </div>
     );
 };

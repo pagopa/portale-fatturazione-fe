@@ -26,6 +26,8 @@ const HeaderNavComponent : React.FC = () => {
     const profilo =  mainState.profilo;
     const location = useLocation();
     const navigate = useNavigate();
+
+    
    
     const url = window.location.origin;
 
@@ -121,12 +123,13 @@ const HeaderNavComponent : React.FC = () => {
                 productsList={products}
                 onSelectedProduct={(e) => {
             
-                    const result:any = mainState.prodotti.find((el:any) => el.prodotto === e.id);
+                    const newProfilo:any = mainState.prodotti.find((el:any) => el.prodotto === e.id);
+                    const newMainState = {...mainState,...{profilo:newProfilo}};
         
-                    localStorage.removeItem("profilo");
-                    localStorage.removeItem("token");
-                    localStorage.setItem('profilo',JSON.stringify(result));
-                    localStorage.setItem('token',JSON.stringify({token:result.jwt}));
+                    localStorage.removeItem("globalState");
+                    
+                    localStorage.setItem('globalState',JSON.stringify(newMainState));
+                    
               
                     if(e.id === 'prod_pd'){
                         window.location.assign(url+PathPf.LISTA_DATI_FATTURAZIONE);
@@ -145,7 +148,6 @@ const HeaderNavComponent : React.FC = () => {
                 variant="standard"
             >
                 <IconButton onClick={()=> {
-            
                     navigate(PathPf.MESSAGGI);
                 } }  color="default">
                     <MarkEmailUnreadIcon fontSize="medium" 
