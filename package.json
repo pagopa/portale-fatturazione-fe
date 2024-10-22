@@ -56,7 +56,8 @@
     "eject": "react-scripts eject",
     "start": "env-cmd --environments development react-scripts start",
     "build:dev": "env-cmd --environments development react-scripts build",
-    "build:prod": "env-cmd --environments production react-scripts build"
+    "build:prod": "env-cmd --environments production react-scripts build",
+    "build:uat": "env-cmd --environments uat react-scripts build"
   },
   "browserslist": {
     "production": [

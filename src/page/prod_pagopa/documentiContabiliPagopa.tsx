@@ -409,14 +409,21 @@ const DocumentiContabili:React.FC<any> = ({dispatchMainState,mainState}) =>{
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
                 {
                     gridData.length > 0 &&
-                <Button onClick={() =>
-                    onDownloadButton()
-                }
-                disabled={getListaLoading}
-                >
+                    <>
+                        <Button sx={{marginRight:'10px',width:'216px'}} onClick={() => console.log('ciao')}
+                        >
+                Download Report
+                            <DownloadIcon sx={{marginLeft:'10px'}}></DownloadIcon>
+                        </Button>
+                        <Button onClick={() =>
+                            onDownloadButton()
+                        }
+                        disabled={getListaLoading}
+                        >
                 Download Risultati
-                    <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
-                </Button>
+                            <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
+                        </Button>
+                    </>
                 }
             </div>
             <div className="mt-1 mb-5" style={{ width: '100%'}}>
