@@ -404,8 +404,7 @@ const App = ({ instance }) => {
             </ThemeProvider>
 
         </Router>;
-    }
-    /*else if(!profilo.jwt){
+    }else if(!profilo.jwt){
         console.log(8);
         route = <Router>
             <ThemeProvider theme={theme}>
@@ -414,7 +413,7 @@ const App = ({ instance }) => {
             </ThemeProvider>
 
         </Router>;
-    }*/
+    }
   
     return (
       
