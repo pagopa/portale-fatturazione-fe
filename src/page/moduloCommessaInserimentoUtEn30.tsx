@@ -136,6 +136,9 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 getDatiFatPagoPa();
             }
         }
+        if(mainState.mese === '' || mainState.anno === ''){
+            navigate(PathPf.DATI_FATTURAZIONE);
+        }
     },[]);
 
     useEffect(()=>{
