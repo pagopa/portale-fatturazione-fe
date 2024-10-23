@@ -256,9 +256,8 @@ const App = ({ instance }) => {
                             <Route path="/auth" element={<Auth  />} />
                             <Route path="/auth/azure" element={<AuthAzure  />} />
                             <Route path="azure" element={<Azure />} />
-                            <Route path="*" element={<Navigate to={"/error"} replace />} />
+                            <Route path="*" element={<Navigate to={"/azureLogin"} replace />} />
                             <Route path="/azureLogin" element={<AzureLogin/>} />
-                            <Route path="/error"  element={<ErrorPage/>} />
                         </Routes>
                     </div>
                     <FooterComponent  />
