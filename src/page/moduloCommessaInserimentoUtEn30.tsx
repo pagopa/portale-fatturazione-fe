@@ -152,7 +152,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         if(enti && !mainState.mese && !mainState.anno && mainState.inserisciModificaCommessa !== 'INSERT'){
             window.location.href = PathPf.DATI_FATTURAZIONE;
         }*/
-        if(mainState.datiFatturazione === false){
+        if(mainState.datiFatturazione === false && profilo.auth !== 'PAGOPA'){
             setOpenModalRedirect(true);
         }
        

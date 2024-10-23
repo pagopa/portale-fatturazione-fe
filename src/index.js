@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { PublicClientApplication, EventType } from '@azure/msal-browser';
 import { msalConfig } from './authConfig';
 import './i18n';
-import GlobalContextProvider, { GlobalContext } from './store/context/globalContext';
+import GlobalContextProvider from './store/context/globalContext';
 
 /**
  * MSAL should be instantiated outside of the component tree to prevent it from being re-instantiated on re-renders.

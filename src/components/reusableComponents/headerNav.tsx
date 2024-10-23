@@ -82,7 +82,7 @@ const HeaderNavComponent : React.FC = () => {
         {
             id:'0',
             logoUrl: ``,
-            name: '',
+            name:profilo.nomeEnte ,
             productRole: "Amministratore",
         }
     ];

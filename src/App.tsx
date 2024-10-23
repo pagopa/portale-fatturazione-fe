@@ -35,6 +35,8 @@ import SideNavPagopa from './components/sideNavs/sideNavPagoPA';
 import AnagraficaPsp from './page/prod_pagopa/anagraficaPspPagopa';
 import DocumentiContabili from './page/prod_pagopa/documentiContabiliPagopa';
 import { GlobalContext } from './store/context/globalContext';
+import useIsTabActive from './reusableFunction/tabIsActiv';
+import { redirect } from './api/api';
 
 const App = ({ instance }) => {
 
@@ -45,7 +47,20 @@ const App = ({ instance }) => {
     const prodotti = mainState.prodotti;
     const profilo = mainState.profilo;
 
-    console.log(profilo.jwt,enti,'zorro');
+    const globalLocalStorage = localStorage.getItem('globalState') || '{}';
+    const result =  JSON.parse(globalLocalStorage);
+
+
+    const tabActive = useIsTabActive();
+
+
+    useEffect(()=>{
+        console.log('fuori if', tabActive);
+        if(mainState.authenticated === true  && window.location.pathname !== '/azureLogin' && tabActive === true &&(profilo.nonce !== result.profilo.nonce)){
+            console.log('dentro active');
+            window.location.href = redirect;
+        }
+    },[tabActive]);
 
    
     // eslint-disable-next-line no-undef

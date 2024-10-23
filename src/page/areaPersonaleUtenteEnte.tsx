@@ -192,11 +192,12 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                 id:0
                         
             });
-                    
+             
             if(err?.response?.status !== 404){
                 manageError(err,dispatchMainState);
             }
             setLoadingData(false);
+            navigate(PathPf.LISTA_DATI_FATTURAZIONE); 
         });
     };
             
@@ -354,7 +355,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                             size="medium"
                             type='submit'
                             onClick={(e) => hendleSubmitDatiFatturazione(e)}
-                            disabled={!enableDisableConferma || ifAnyTextAreaIsEmpty}
+                            disabled={false}
                         >
                     Salva
                         </Button>

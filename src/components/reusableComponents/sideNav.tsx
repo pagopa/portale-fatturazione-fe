@@ -20,14 +20,14 @@ import { getDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/ap
 import { PathPf } from '../../types/enum';
 import AnnouncementIcon from '@mui/icons-material/Announcement';
 import ReceiptIcon from '@mui/icons-material/Receipt';
-import { getProfilo, getStatusApp, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from '../../reusableFunction/actionLocalStorage';
+import { profiliEnti } from '../../reusableFunction/actionLocalStorage';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import { GlobalContext } from '../../store/context/globalContext';
 
-const SideNavComponent: React.FC<any> = ({setOpenBasicModal_DatFat_ModCom}) => {
+const SideNavComponent: React.FC = () => {
 
     const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState} = globalContextObj;
+    const {dispatchMainState,mainState,setOpenBasicModal_DatFat_ModCom} = globalContextObj;
 
     const navigate = useNavigate();
     const location = useLocation();

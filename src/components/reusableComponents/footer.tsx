@@ -48,15 +48,7 @@ const FooterComponent = () => {
     const {mainState} = globalContextObj;
 
 
-    const profilo =  mainState.profilo;
-    const tabActive = useIsTabActive();
-
-
-    useEffect(()=>{
-        if(mainState.authenticated === true && window.location.pathname !== '/selezionaprodotto' && tabActive === true && (mainState.nonce !== profilo.nonce)){
-            window.location.href = redirect;
-        }
-    },[tabActive]);
+ 
     
     const [ lang, setLang ] = useState<LangCode>("it"); 
     const location = useLocation();

@@ -6,7 +6,8 @@ import Modal from '@mui/material/Modal';
 import { ModalProps } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
 import { PathPf } from '../../types/enum';
-import { getStatusApp } from '../../reusableFunction/actionLocalStorage';
+import { useContext } from 'react';
+import { GlobalContext } from '../../store/context/globalContext';
 
 const style = {
     position: 'absolute' as const,
@@ -20,7 +21,10 @@ const style = {
 };
 
 const ModalRedirect : React.FC<ModalProps> =({setOpen, open, sentence}) => {
-    const statusApp = getStatusApp();
+
+    const globalContextObj = useContext(GlobalContext);
+    const {mainState} = globalContextObj;
+  
     const navigate = useNavigate();
 
     const handleClose = (event:object, reason: string) =>{
@@ -52,7 +56,7 @@ const ModalRedirect : React.FC<ModalProps> =({setOpen, open, sentence}) => {
                             {sentence}
                             <div className='paddingLeft32'>
                                 <ul className="list-group mt-2">
-                                    {statusApp.datiFatturazioneNotCompleted ? 
+                                    {mainState.datiFatturazioneNotCompleted ? 
                                         <>
                                             <li><Typography id="modal-modal-title" variant="subtitle2" >Id Documento</Typography></li>
                                         </> :
