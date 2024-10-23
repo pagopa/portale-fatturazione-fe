@@ -177,7 +177,7 @@ export interface BodyListaNotificheConsolidatore{
 
 type RequestError = {
     status:number,
-    statusText: string
+    statusText?: string
 }
 
 interface ResponseError {

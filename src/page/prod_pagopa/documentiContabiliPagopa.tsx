@@ -10,7 +10,7 @@ import { downloadPsp, getListaNamePsp } from "../../api/apiPagoPa/anagraficaPspP
 import { getProfilo, getToken } from "../../reusableFunction/actionLocalStorage";
 import MultiselectWithKeyValue from "../../components/anagraficaPsp/multiselectKeyValue";
 import { RequestBodyListaDocContabiliPagopa } from "../../types/typeDocumentiContabili";
-import { downloadDocContabili, getListaDocumentiContabiliPa, getQuartersDocContabiliPa, getYearsDocContabiliPa } from "../../api/apiPagoPa/documentiContabiliPA/api";
+import { downloadDocContabili, downloadFinancialReportDocContabili, getListaDocumentiContabiliPa, getQuartersDocContabiliPa, getYearsDocContabiliPa } from "../../api/apiPagoPa/documentiContabiliPA/api";
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CollapsibleTablePa, { DocContabili } from "../../components/reusableComponents/grid/gridCollapsible/gridCustomCollapsiblePa";
@@ -205,6 +205,31 @@ const DocumentiContabili:React.FC<any> = ({dispatchMainState,mainState}) =>{
             setShowLoading(false);
         }).catch(err => {
             setShowLoading(false);
+            manageError(err,dispatchMainState);
+        });
+    };
+
+    const onDownloadReportButton =  async() =>{
+        setShowLoading(true);
+        await downloadFinancialReportDocContabili(token,profilo.nonce, filtersDownload).then((response) =>{
+            console.log(response, 'gigi');
+            if(response.status !== 200){
+                setShowLoading(false);
+                manageError({response:{request:{status:Number(response.status)}},message:''},dispatchMainState);
+            }else{
+                return response.blob();
+            }
+           
+        }).then((res) => {
+            let fileName = '';
+            if(filtersDownload.contractIds.length === 1 || gridData.length === 1){
+                fileName = `Financial report PDND /${gridData[0].name}/${gridData[0].riferimentoData.substring(0, 4)}.xlsx`;
+            }else{
+                fileName = `Financial report PDND /${gridData[0].riferimentoData.substring(0, 4)}.xlsx`;
+            }
+            saveAs( res,fileName );
+            setShowLoading(false);
+        }).catch(err => {
             manageError(err,dispatchMainState);
         });
     };
@@ -410,7 +435,7 @@ const DocumentiContabili:React.FC<any> = ({dispatchMainState,mainState}) =>{
                 {
                     gridData.length > 0 &&
                     <>
-                        <Button sx={{marginRight:'10px',width:'216px'}} onClick={() => console.log('ciao')}
+                        <Button sx={{marginRight:'10px',width:'216px'}} onClick={() => onDownloadReportButton()}
                         >
                 Download Report
                             <DownloadIcon sx={{marginLeft:'10px'}}></DownloadIcon>
