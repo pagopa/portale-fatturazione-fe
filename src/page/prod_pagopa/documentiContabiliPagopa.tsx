@@ -70,7 +70,7 @@ const DocumentiContabili:React.FC = () =>{
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
-    console.log(mainState,'MAIN',valueAutocomplete,dataSelect);
+ 
   
     useEffect(()=>{
         /*
@@ -91,7 +91,6 @@ const DocumentiContabili:React.FC = () =>{
         if(infoPageResult.page > 0){
             setInfoPageListaDatiFat(infoPageResult);
         }*/
-        console.log(mainState.filterDocContabili.body,'AAA');
         setBodyGetLista(mainState.filterDocContabili.body);
         setFiltersDownload(mainState.filterDocContabili.body);
         setValueAutocomplete(mainState.filterDocContabili.valueAutocomplete);
@@ -99,8 +98,11 @@ const DocumentiContabili:React.FC = () =>{
         getListaDocGrid(mainState.filterDocContabili.body);
         setPage(mainState.filterDocContabili.infoPage.page);
         setRowsPerPage(mainState.filterDocContabili.infoPage.row);
+        console.log(mainState.filterDocContabili.infoPage.row,'best');
         getYears();
     }, []);
+
+   
 
    
 

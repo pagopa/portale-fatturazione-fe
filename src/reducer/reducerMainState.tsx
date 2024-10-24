@@ -36,7 +36,7 @@ const initialState =  {
             quarters:[]},
         valueAutocomplete:[],
         valueQuarters:[],
-        infoPage:{row:0,page:10}
+        infoPage:{row:10,page:0}
     }
 };
 

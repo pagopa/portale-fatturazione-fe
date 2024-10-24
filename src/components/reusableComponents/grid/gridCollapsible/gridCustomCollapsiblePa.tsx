@@ -65,7 +65,7 @@ const CollapsibleTablePa = ({data, headerNames,page,setPage,rowsPerPage,setRowsP
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState, mainState} = globalContextObj;
  
-
+    console.log(rowsPerPage,'rows');
 
 
     const handleModifyMainState = (valueObj) => {
@@ -81,26 +81,20 @@ const CollapsibleTablePa = ({data, headerNames,page,setPage,rowsPerPage,setRowsP
     const [count, setCount] = useState(0);
     const [showedData, setShowedData] = useState<DocContabili[]>([]);
   
-
-
-
+    
+    
     useEffect(()=>{
-        let from = 0;
-        if(page === 0){
-            from = 0;
-        }else{
-            from = page * rowsPerPage;
-        }
 
         setCount(data.length);
-        setShowedData(data.slice(from, rowsPerPage + from));
+        setShowedData(data.slice(0, 10));
         /*
         const filter = mainState.filterDocContabili;
         const newInfoPage = {infoPage:{page:page,row:rowsPerPage}};
         const newFilter = {...filter,...newInfoPage};
 
         handleModifyMainState({filterDocContabili:newFilter});*/
-    },[data,page,rowsPerPage]);
+    },[data]);
+    
     
    
 
@@ -108,6 +102,15 @@ const CollapsibleTablePa = ({data, headerNames,page,setPage,rowsPerPage,setRowsP
         event: React.MouseEvent<HTMLButtonElement> | null,
         newPage: number,
     ) => {
+
+        let from = 0;
+        if(newPage === 0){
+            from = 0;
+        }else{
+            from = newPage * rowsPerPage;
+        }
+    
+        setShowedData(data.slice(from, rowsPerPage + from));
         setPage(newPage);
         const filters = mainState.filterDocContabili;
         const newFilters = {...filters,  ...{infoPage:{row:rowsPerPage,page:newPage}}};
@@ -117,13 +120,15 @@ const CollapsibleTablePa = ({data, headerNames,page,setPage,rowsPerPage,setRowsP
     const handleChangeRowsPerPage = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
+       
+    
+        setShowedData(data.slice(0, event.target.value));
+        setRowsPerPage(event.target.value);
         setPage(0);
         const filters = mainState.filterDocContabili;
-        const newFilters = {...filters,  ...{infoPage:{row:parseInt(event.target.value, 10),page:0}}};
+        const newFilters = {...filters,  ...{infoPage:{row:event.target.value,page:0}}};
         handleModifyMainState({filterDocContabili:newFilters});
     };
-
 
 
 
@@ -153,10 +158,9 @@ const CollapsibleTablePa = ({data, headerNames,page,setPage,rowsPerPage,setRowsP
                                     })}
                                 </TableRow>
                             </TableHead>
-                            {showedData.length === 0 ? <TableBody  style={{height: '50px'}}>
+                            {data.length === 0 ? <TableBody  style={{height: '50px'}}>
 
                             </TableBody>: showedData.map((row) => {
-            
                                 return(
                                     <RowBase key={row.id} 
                                         row={row}
@@ -172,7 +176,7 @@ const CollapsibleTablePa = ({data, headerNames,page,setPage,rowsPerPage,setRowsP
                 <TablePagination
                     component="div"
                     count={count}
-                    page={page}
+                    page={!count || count <= 0 ? 0 : page}
                     onPageChange={handleChangePage}
                     rowsPerPage={rowsPerPage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
