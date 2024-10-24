@@ -95,7 +95,6 @@ const DettaglioDocContabile : React.FC = () =>{
         }
     },[]);
 
-    console.log(docContabile,'pp');
     /*
 
     const downloadRelExel = async() =>{

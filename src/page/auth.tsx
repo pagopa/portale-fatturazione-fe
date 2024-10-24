@@ -130,7 +130,6 @@ const Auth : React.FC<any> = () =>{
  
     // prima chiamata 
     const getSelfcare = async() =>{
-        console.log('selfcare');
         await selfcareLogin(token).then(res =>{
             localStorage.clear();
             if(res.status === 200){

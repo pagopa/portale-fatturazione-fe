@@ -20,9 +20,6 @@ interface TabAreaProps{
 
 
 const TabAreaPersonaleUtente = ({mainState,datiFatturazione,setDatiFatturazione,setStatusButtonConferma}) => {
-  
-    console.log(datiFatturazione,'dati');
-
     const valueOptionRadioTipoOrdine = [
         {descrizione:'Dati ordine d\'acquisto', id:"1"},
         {descrizione:'Dati contratto', id:"2"}

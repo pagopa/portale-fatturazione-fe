@@ -98,7 +98,6 @@ const DocumentiContabili:React.FC = () =>{
         getListaDocGrid(mainState.filterDocContabili.body);
         setPage(mainState.filterDocContabili.infoPage.page);
         setRowsPerPage(mainState.filterDocContabili.infoPage.row);
-        console.log(mainState.filterDocContabili.infoPage.row,'best');
         getYears();
     }, []);
 
@@ -222,7 +221,6 @@ const DocumentiContabili:React.FC = () =>{
     const onDownloadReportButton =  async() =>{
         setShowLoading(true);
         await downloadFinancialReportDocContabili(token,profilo.nonce, filtersDownload).then((response) =>{
-            console.log(response, 'gigi');
             if(response.status !== 200){
                 setShowLoading(false);
                 manageError({response:{request:{status:Number(response.status)}},message:''},dispatchMainState);

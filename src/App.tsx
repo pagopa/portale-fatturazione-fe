@@ -58,9 +58,7 @@ const App = ({ instance }) => {
 
 
     useEffect(()=>{
-        console.log('fuori if', tabActive);
         if(mainState.authenticated === true  && window.location.pathname !== '/azureLogin' && tabActive === true &&(profilo.nonce !== result.profilo.nonce)){
-            console.log('dentro active');
             window.location.href = redirect;
         }
     },[tabActive]);
@@ -92,7 +90,6 @@ const App = ({ instance }) => {
     let route;
 
     if(prodotti.length > 0 && mainState.authenticated === true && !profilo.auth){
-        console.log(1);
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App" >
@@ -108,7 +105,6 @@ const App = ({ instance }) => {
             </ThemeProvider>
         </Router>;
     }else if(profilo.prodotto === 'prod-pagopa' && prodotti.length > 0){
-        console.log(2);
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App">
@@ -138,7 +134,6 @@ const App = ({ instance }) => {
             </ThemeProvider>
         </Router>;
     }else if(profilo.prodotto === 'prod-pn' && prodotti.length > 0){
-        console.log(3,'dentro', mainState);
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App" >
@@ -178,7 +173,6 @@ const App = ({ instance }) => {
         </Router>;
 
     }else if(profilo.jwt && enti){
-        console.log(4);
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App">
@@ -213,7 +207,6 @@ const App = ({ instance }) => {
         </Router>;
 
     }else if(profilo.jwt && recOrConsIsLogged){
-        console.log(5);
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App">
@@ -241,7 +234,6 @@ const App = ({ instance }) => {
             </ThemeProvider>
         </Router>;
     }else if(mainState.authenticated === false){
-        console.log(6);
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App">
@@ -259,7 +251,6 @@ const App = ({ instance }) => {
             </ThemeProvider>
         </Router>;
     }else if(!profilo.jwt){
-        console.log(7);
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App">

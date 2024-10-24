@@ -65,9 +65,6 @@ const CollapsibleTablePa = ({data, headerNames,page,setPage,rowsPerPage,setRowsP
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState, mainState} = globalContextObj;
  
-    console.log(rowsPerPage,'rows');
-
-
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
             type:'MODIFY_MAIN_STATE',

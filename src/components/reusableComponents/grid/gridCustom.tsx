@@ -21,7 +21,6 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
 
 
     const handleClickOnGrid = (element) =>{
-        console.log(element,'eleee');
         if(apiGet){
             const newDetailRel = {
                 nomeEnteClickOn:element.ragioneSociale,
