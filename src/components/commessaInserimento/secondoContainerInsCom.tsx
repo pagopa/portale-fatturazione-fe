@@ -8,7 +8,7 @@ import { getCategoriaSpedizione } from '../../api/apiSelfcare/moduloCommessaSE/a
 
 import { getIdByTipo } from '../../reusableFunction/function';
 
-const SecondoContainerInsCom : React.FC<SecondoContainerProps> = ({totale, mainState,dispatchMainState, setDatiCommessa,datiCommessa}) => {
+const SecondoContainerInsCom = ({totale, mainState,dispatchMainState, setDatiCommessa,datiCommessa}) => {
 
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;

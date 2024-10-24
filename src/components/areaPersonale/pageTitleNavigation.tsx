@@ -15,7 +15,7 @@ interface PageTitleProps {
     mainState:MainState
 }
 
-const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState, setOpen, mainState}) => {
+const PageTitleNavigation = ({dispatchMainState, setOpen, mainState}) => {
 
     const profilo =  mainState.profilo;
 

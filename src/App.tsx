@@ -122,14 +122,14 @@ const App = ({ instance }) => {
                             </Grid> 
                             <Grid item xs={10} sx={{minHeight:'600px'}}>
                                 <Routes>
-                                    <Route path={'/messaggi'} element={<Messaggi  dispatchMainState={dispatchMainState}/>} />
+                                    <Route path={'/messaggi'} element={<Messaggi  />} />
                                     <Route path={PathPf.ANAGRAFICAPSP} element={<AnagraficaPsp ></AnagraficaPsp>}/>
                                     <Route path={PathPf.DOCUMENTICONTABILI} element={<DocumentiContabili ></DocumentiContabili>}/>
-                                    <Route path="/azureLogin" element={<AzureLogin dispatchMainState={dispatchMainState}/>} />
+                                    <Route path="/azureLogin" element={<AzureLogin/>} />
                                     <Route path="/auth/azure" element={<AuthAzure  />} />
                                     <Route path="azure" element={<Azure />} />
                                     <Route path="/auth" element={<Auth  />} />
-                                    <Route path={PathPf.DETTAGLIO_DOC_CONTABILE} element={<DettaglioDocContabile mainState={mainState}  dispatchMainState={dispatchMainState}></DettaglioDocContabile>}/>
+                                    <Route path={PathPf.DETTAGLIO_DOC_CONTABILE} element={<DettaglioDocContabile></DettaglioDocContabile>}/>
                                     <Route path="*" element={<Navigate to={PathPf.ANAGRAFICAPSP} replace />} />
                                 </Routes>
                             </Grid>

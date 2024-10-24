@@ -12,39 +12,6 @@ const RowBase = ({row,handleModifyMainState}) => {
     const [open, setOpen] = useState(false);
     const navigate = useNavigate();
    
-  
-    /*  const handleClick = ( id: number) => {
-        //logica per id
-        const selectedIndex = selected.indexOf(id);
-        let newSelected: readonly number[] = [];
-        
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, id);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(
-                selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1),
-            );
-        }
-        setSelected(newSelected);
-       
-        
-    };
-
-    const isSelected = (id: number) => selected.indexOf(id) !== -1;
-
-    let tooltipObj:any= {label:'Non Inviata',title:'La fattura non è stata inviata'};
-    if(row.inviata === 1){
-        tooltipObj = {label:'Inviata',title:'La fattura è stata inviata',color:'success'};
-    }else if(row.inviata === 2){
-        tooltipObj = {label:'Elaborazione',title:'La fattura è in elaborazione',color:'warning'};
-    }else if(row.inviata === 3){
-        tooltipObj = {label:'Cancellata',title:'La fattura è stata cancellata',color:'info'};
-    }*/
 
     const handleOnDetail = (row) => {  
         handleModifyMainState({docContabileSelected:{contractId:row.contractId,quarter:row.yearQuarter}}); 
@@ -56,6 +23,7 @@ const RowBase = ({row,handleModifyMainState}) => {
         <TableBody sx={{minHeight:"100px"}}>
             <TableRow  sx={{ '& > *': { borderBottom: 'unset' } }}>
                 <TableCell>
+                   
                     <IconButton
                         sx={{color:'#227AFC'}}
                         aria-label="expand row"
@@ -64,8 +32,11 @@ const RowBase = ({row,handleModifyMainState}) => {
                     >
                         {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
+                   
                 </TableCell>
-                <TableCell sx={{color:'#0D6EFD',fontWeight: 'bold',cursor:'pointer'}} onClick={()=> handleOnDetail(row)}  >{ row.name?.length > 50 ? row.name.slice(0, 50) + '...' : row.name}</TableCell>
+                <Tooltip title={row.name}>
+                    <TableCell sx={{color:'#0D6EFD',fontWeight: 'bold',cursor:'pointer'}} onClick={()=> handleOnDetail(row)}  >{ row.name?.length > 50 ? row.name.slice(0, 50) + '...' : row.name}</TableCell>
+                </Tooltip>
                 <TableCell align='center'>{row.contractId}</TableCell>
                 <TableCell align='center' >{row.yearQuarter}</TableCell>
                 <TableCell align='center' >{row.bollo}</TableCell>

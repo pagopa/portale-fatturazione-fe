@@ -19,7 +19,7 @@ interface TabAreaProps{
 }
 
 
-const TabAreaPersonaleUtente: React.FC<TabAreaProps> = ({mainState,datiFatturazione,setDatiFatturazione,setStatusButtonConferma}) => {
+const TabAreaPersonaleUtente = ({mainState,datiFatturazione,setDatiFatturazione,setStatusButtonConferma}) => {
   
     console.log(datiFatturazione,'dati');
 

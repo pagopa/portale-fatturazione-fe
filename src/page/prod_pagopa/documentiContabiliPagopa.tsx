@@ -36,6 +36,7 @@ const DocumentiContabili:React.FC = () =>{
     };
 
 
+
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
@@ -90,11 +91,14 @@ const DocumentiContabili:React.FC = () =>{
         if(infoPageResult.page > 0){
             setInfoPageListaDatiFat(infoPageResult);
         }*/
+        console.log(mainState.filterDocContabili.body,'AAA');
         setBodyGetLista(mainState.filterDocContabili.body);
         setFiltersDownload(mainState.filterDocContabili.body);
         setValueAutocomplete(mainState.filterDocContabili.valueAutocomplete);
         setValueQuarters(mainState.filterDocContabili.valueQuarters);
         getListaDocGrid(mainState.filterDocContabili.body);
+        setPage(mainState.filterDocContabili.infoPage.page);
+        setRowsPerPage(mainState.filterDocContabili.infoPage.row);
         getYears();
     }, []);
 
@@ -458,8 +462,6 @@ const DocumentiContabili:React.FC = () =>{
                 <CollapsibleTablePa 
                     data={gridData}
                     headerNames={headersObjGrid}
-                    handleModifyMainState={handleModifyMainState}
-                    mainState={mainState}
                     setPage={setPage}
                     page={page}
                     rowsPerPage={rowsPerPage}

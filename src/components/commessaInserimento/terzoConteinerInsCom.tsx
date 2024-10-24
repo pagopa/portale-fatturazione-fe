@@ -1,14 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Grid, Typography, InputLabel } from '@mui/material';
-import { TerzoContainerModCommessa, CategorieTotali} from '../../types/typeModuloCommessaInserimento';
+import {  CategorieTotali} from '../../types/typeModuloCommessaInserimento';
 import { useNavigate } from 'react-router';
 import { getDatiConfigurazioneCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
-import { getProfilo, getStatusApp, getToken } from '../../reusableFunction/actionLocalStorage';
 import { month } from '../../reusableFunction/reusableArrayObj';
 import { createDateFromString } from '../../reusableFunction/function';
 import { GlobalContext } from '../../store/context/globalContext';
 
-const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali, dataModifica}) => {
+const TerzoContainerInsCom  = ({valueTotali, dataModifica}) => {
 
     const globalContextObj = useContext(GlobalContext);
     const {mainState} = globalContextObj;

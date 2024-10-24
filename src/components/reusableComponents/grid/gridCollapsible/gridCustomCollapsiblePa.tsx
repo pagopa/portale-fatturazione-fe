@@ -6,13 +6,14 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { useEffect, useState } from 'react';
-import { Card} from '@mui/material';
+import { useContext, useEffect, useState } from 'react';
+import { Card, TablePagination} from '@mui/material';
 import { FattureObj, GridCollapsible, HeaderCollapsible } from '../../../../types/typeFatturazione';
 import TablePaginationDemo from './tablePagination';
 import Row from './rowWithCheckbox';
 import RowBase from './rowBase';
 import { MainState } from '../../../../types/typesGeneral';
+import { GlobalContext } from '../../../../store/context/globalContext';
 
 
 export interface DocContabili {
@@ -59,27 +60,28 @@ export interface GridCollapsibleBase{
 }
 
 
-const CollapsibleTablePa: React.FC<any> = ({data, headerNames,handleModifyMainState,page,setPage,rowsPerPage,setRowsPerPage,mainState}) => {
+const CollapsibleTablePa = ({data, headerNames,page,setPage,rowsPerPage,setRowsPerPage}) => {
+   
+    const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState, mainState} = globalContextObj;
+ 
+
+
+
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
+   
+   
+   
+   
     const [count, setCount] = useState(0);
     const [showedData, setShowedData] = useState<DocContabili[]>([]);
   
-    useEffect(()=>{
-        if(mainState.filterDocContabili.infoPage.page !== 0 || mainState.filterDocContabili.infoPage.row !== 0 ){
 
-            let from = 0;
-            if(page === 0){
-                from = 0;
-            }else{
-                from = mainState.filterDocContabili.infoPage.page * mainState.filterDocContabili.infoPage.row;
-            }
-    
-            setCount(data.length);
-            setShowedData(data.slice(from, mainState.filterDocContabili.infoPage.row + from));
-            setPage(mainState.filterDocContabili.infoPage.page);
-            setRowsPerPage(mainState.filterDocContabili.infoPage.row);
-        }
-
-    },[]);
 
 
     useEffect(()=>{
@@ -92,36 +94,35 @@ const CollapsibleTablePa: React.FC<any> = ({data, headerNames,handleModifyMainSt
 
         setCount(data.length);
         setShowedData(data.slice(from, rowsPerPage + from));
-
+        /*
         const filter = mainState.filterDocContabili;
         const newInfoPage = {infoPage:{page:page,row:rowsPerPage}};
         const newFilter = {...filter,...newInfoPage};
 
-        handleModifyMainState({filterDocContabili:newFilter});
+        handleModifyMainState({filterDocContabili:newFilter});*/
     },[data,page,rowsPerPage]);
     
-    /*
-    useEffect(()=>{
-        
-        let from = 0;
-        if(page === 0){
-            from = 0;
-        }else{
-            from = page * rowsPerPage;
-        }
-        //i dati che vengono mostrati
-        setShowedData(data.slice(from, rowsPerPage + from));
+   
 
-        //mi aggiorno lo state
-        const filter = mainState.filterDocContabili;
-        const newInfoPage = {infoPage:{page:page,row:rowsPerPage}};
-        const newFilter = {...filter,...newInfoPage};
-
-        handleModifyMainState({filterDocContabili:newFilter});
-        
-    },[page,rowsPerPage]);
-
-*/
+    const handleChangePage = (
+        event: React.MouseEvent<HTMLButtonElement> | null,
+        newPage: number,
+    ) => {
+        setPage(newPage);
+        const filters = mainState.filterDocContabili;
+        const newFilters = {...filters,  ...{infoPage:{row:rowsPerPage,page:newPage}}};
+        handleModifyMainState({filterDocContabili:newFilters});
+    };
+    
+    const handleChangeRowsPerPage = (
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    ) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+        const filters = mainState.filterDocContabili;
+        const newFilters = {...filters,  ...{infoPage:{row:parseInt(event.target.value, 10),page:0}}};
+        handleModifyMainState({filterDocContabili:newFilters});
+    };
 
 
 
@@ -168,14 +169,14 @@ const CollapsibleTablePa: React.FC<any> = ({data, headerNames,handleModifyMainSt
                 </Card>
             </div>
             <div className="mt-3"> 
-             
-                <TablePaginationDemo 
-                    setRowsPerPage={setRowsPerPage}
-                    setPage={setPage}
-                    page={page}
-                    rowsPerPage={rowsPerPage}
+                <TablePagination
+                    component="div"
                     count={count}
-                ></TablePaginationDemo>
+                    page={page}
+                    onPageChange={handleChangePage}
+                    rowsPerPage={rowsPerPage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />  
             </div>  
         </>
     );

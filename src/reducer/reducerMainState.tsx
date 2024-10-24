@@ -25,7 +25,19 @@ const initialState =  {
     badgeContent:0,
     messaggioSelected:null,
     prodotti:[],
-    profilo:{}
+    profilo:{},
+    docContabileSelected:{contractId:'',quarter:''},
+    filterDocContabili:{
+        body:{
+            contractIds:[],
+            membershipId: '',
+            recipientId: '',
+            abi: '',
+            quarters:[]},
+        valueAutocomplete:[],
+        valueQuarters:[],
+        infoPage:{row:0,page:10}
+    }
 };
 
 

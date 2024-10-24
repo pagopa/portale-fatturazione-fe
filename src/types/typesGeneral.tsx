@@ -97,7 +97,7 @@ export interface MainState{
     messaggioSelected:null|Messaggi
     prodotti:ProfiloObject[],
     profilo:any,
-    docContabileSelected:null|{contractId:string,quarter:string},
+    docContabileSelected:{contractId:string,quarter:string},
     filterDocContabili:{
         body:RequestBodyListaDocContabiliPagopa,
         valueAutocomplete:AutocompleteMultiselect[],

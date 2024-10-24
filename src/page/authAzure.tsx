@@ -118,7 +118,18 @@ const AuthAzure : React.FC<any> = () =>{
                     },
                     apiError:null,
                     badgeContent:0,
-                    messaggioSelected:null
+                    messaggioSelected:null,
+                    filterDocContabili:{
+                        body:{
+                            contractIds:[],
+                            membershipId: '',
+                            recipientId: '',
+                            abi: '',
+                            quarters:[]},
+                        valueAutocomplete:[],
+                        valueQuarters:[],
+                        infoPage:{row:0,page:10}
+                    },
                 });
                 navigate('/selezionaprodotto');
             }

@@ -427,7 +427,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                         <SecondoContainerInsCom totale={totale} mainState={mainState} dispatchMainState={dispatchMainState} setDatiCommessa={setDatiCommessa} datiCommessa={datiCommessa} />
                     </div>
                     <div className='bg-white'>
-                        <TerzoContainerInsCom valueTotali={totaliModuloCommessa} dataModifica={dataMod} mainState={mainState}/>
+                        <TerzoContainerInsCom valueTotali={totaliModuloCommessa} dataModifica={dataMod}/>
                     </div>
                     {
                         mainState.statusPageInserimentoCommessa === 'immutable' ? null :

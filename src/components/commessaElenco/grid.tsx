@@ -7,8 +7,8 @@ import { DataGridCommessa } from '../../types/typeModuloCommessaElenco';
 import { MainState, Params } from '../../types/typesGeneral';
 import { PathPf } from '../../types/enum';
 import { month } from '../../reusableFunction/reusableArrayObj';
-import { getStatusApp, setInfoToStatusApplicationLoacalStorage } from '../../reusableFunction/actionLocalStorage';
 import { ActionReducerType } from '../../reducer/reducerMainState';
+
 
 interface GridComponentProps {
     data: DataGridCommessa[],
@@ -16,10 +16,9 @@ interface GridComponentProps {
     mainState:MainState
 }
 
-const GridComponent : React.FC<GridComponentProps> = (props) => {
-    const {mainState,data, dispatchMainState} = props;
+const GridComponent  = ({data,dispatchMainState,mainState}) => {
 
-    const statusApp = getStatusApp();
+
     const navigate = useNavigate();
 
     const handleModifyMainState = (valueObj) => {
@@ -57,14 +56,6 @@ const GridComponent : React.FC<GridComponentProps> = (props) => {
                 userClickOn:'GRID',
                 inserisciModificaCommessa:"MODIFY"
             });
-            const newState = {
-                mese:getMeseIndex+1,
-                anno:params.row.annoValidita,
-                userClickOn:'GRID',
-                inserisciModificaCommessa:"MODIFY"
-            };
-            
-            setInfoToStatusApplicationLoacalStorage(statusApp,newState);
             navigate(PathPf.MODULOCOMMESSA);
         }
     };

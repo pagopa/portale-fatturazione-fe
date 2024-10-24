@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 import { getProfilo, getToken } from "../../reusableFunction/actionLocalStorage";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { manageError } from "../../api/api";
 import { saveAs } from "file-saver";
 import SkeletonRelPdf from "../../components/rel/skeletonRelPdf";
@@ -14,12 +14,17 @@ import TextDettaglioPdf from "../../components/commessaPdf/textDettaglioPdf";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { DocContabile } from "../../types/typeDocumentiContabili";
 import DownloadIcon from '@mui/icons-material/Download';
+import { GlobalContext } from "../../store/context/globalContext";
 
 
-const DettaglioDocContabile : React.FC<any> = ({mainState,dispatchMainState}) =>{
+const DettaglioDocContabile : React.FC = () =>{
 
-    const token =  getToken();
-    const profilo =  getProfilo();
+    const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState,mainState} = globalContextObj;
+ 
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
+    
     const navigate = useNavigate();
   
 
@@ -83,13 +88,11 @@ const DettaglioDocContabile : React.FC<any> = ({mainState,dispatchMainState}) =>
 
 
     useEffect(()=>{
-        if(mainState.docContabileSelected === null){
+        if(mainState.docContabileSelected.contractId === '' || mainState.docContabileSelected.quarter === ''){
             navigate(PathPf.DOCUMENTICONTABILI);
         }else{
             getDocContabile({contractId:mainState.docContabileSelected.contractId,quarter:mainState.docContabileSelected.quarter});
         }
-       
-        
     },[]);
 
     console.log(docContabile,'pp');

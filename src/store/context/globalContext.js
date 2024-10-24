@@ -26,6 +26,18 @@ export const GlobalContext = createContext({
         messaggioSelected:null,
         prodotti:[],
         profilo:{},
+        filterDocContabili:{
+            body:{
+                contractIds:[],
+                membershipId: '',
+                recipientId: '',
+                abi: '',
+                quarters:[]},
+            valueAutocomplete:[],
+            valueQuarters:[],
+            infoPage:{row:0,page:10}
+        },
+        docContabileSelected:{contractId:'',quarter:''}
     },
     dispatchMainState:({type,value}) => null,
     openBasicModal_DatFat_ModCom:{visible:false,clickOn:''},
