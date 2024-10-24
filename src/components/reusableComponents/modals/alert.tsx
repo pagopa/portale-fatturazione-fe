@@ -28,8 +28,7 @@ const BasicAlerts:React.FC = () => {
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState, showAlert, setShowAlert} = globalContextObj;
  
-    const profilo = mainState.profilo
-    console.log(showAlert,'show');
+    const profilo = mainState.profilo;
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
