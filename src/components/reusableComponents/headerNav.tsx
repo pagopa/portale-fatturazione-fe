@@ -122,25 +122,21 @@ const HeaderNavComponent : React.FC = () => {
    
     const conditionalHeder = profilo.auth === 'PAGOPA' ?  (<div style={{display:'flex', backgroundColor:'white'}}>
         <div style={{width:'95%'}}>
+            <div key={profilo.prodotto}>
+                <HeaderProduct
+                    productId={profilo.prodotto}
+                    productsList={products}
+                    onSelectedProduct={(e) => {
+                        const newProfilo:any = mainState.prodotti.find((el:any) => el.prodotto === e.id);
+                        handleModifyMainState({
+                            profilo:newProfilo
+                        });
+                    }}
+                    partyList={partyList}
+                ></HeaderProduct>
+            </div>
 
-            <HeaderProduct
-                productId={profilo.prodotto}
-                productsList={products}
-                onSelectedProduct={(e) => {
             
-                    const newProfilo:any = mainState.prodotti.find((el:any) => el.prodotto === e.id);
-
-                    handleModifyMainState({
-                        profilo:newProfilo
-                    });
-                    if(e.id === 'prod_pd'){
-                        window.location.assign(url+PathPf.LISTA_DATI_FATTURAZIONE);
-                    }else{
-                        window.location.assign(url+PathPf.ANAGRAFICAPSP);
-                    }
-                }}
-                partyList={partyList}
-            ></HeaderProduct>
         </div>
         {profilo.auth === 'PAGOPA' &&
         <div className="d-flex justify-content-center m-auto">
