@@ -119,8 +119,6 @@ const HeaderNavComponent : React.FC = () => {
 
 
 
-
-   
    
     const conditionalHeder = profilo.auth === 'PAGOPA' ?  (<div style={{display:'flex', backgroundColor:'white'}}>
         <div style={{width:'95%'}}>

@@ -37,7 +37,7 @@ export const getYearsDocContabiliPa = async (token:string,nonce:string) => {
 
 
 export const downloadDocContabili = async (token:string, nonce:string , body:RequestBodyListaDocContabiliPagopa) => {
-    const response =  await fetch(`${url}//api/v2/pagopa/financialreports/document?nonce=${nonce}`,
+    const response =  await fetch(`${url}/api/v2/pagopa/financialreports/document?nonce=${nonce}`,
         {
             headers: {
                 Authorization: 'Bearer '+token,
@@ -46,6 +46,31 @@ export const downloadDocContabili = async (token:string, nonce:string , body:Req
             method: 'POST',
             body:JSON.stringify(body),
         });
+    return response;
+};
+
+export const downloadFinancialReportDocContabili = async (token:string, nonce:string , body:RequestBodyListaDocContabiliPagopa) => {
+    const response =  await fetch(`${url}/api/v2/pagopa/financialreports/documentpdnd?nonce=${nonce}`,
+        {
+            headers: {
+                Authorization: 'Bearer '+token,
+                'Content-type':'application/json'
+            },
+            method: 'POST',
+            body:JSON.stringify(body),
+        });
+    return response;
+};
+
+
+export const getDetailsDocContabilePa = async (token:string, nonce:string , body:{contractId:string,quarter:string}) => {
+    const response =  await axios.post(`${url}/api/v2/pagopa/financialreports/dettaglio?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }
+        }
+    );
     return response;
 };
 

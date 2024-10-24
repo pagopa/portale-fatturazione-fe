@@ -10,7 +10,7 @@ import { downloadPsp, getListaNamePsp } from "../../api/apiPagoPa/anagraficaPspP
 import { getProfilo, getToken } from "../../reusableFunction/actionLocalStorage";
 import MultiselectWithKeyValue from "../../components/anagraficaPsp/multiselectKeyValue";
 import { RequestBodyListaDocContabiliPagopa } from "../../types/typeDocumentiContabili";
-import { downloadDocContabili, getListaDocumentiContabiliPa, getQuartersDocContabiliPa, getYearsDocContabiliPa } from "../../api/apiPagoPa/documentiContabiliPA/api";
+import { downloadDocContabili, downloadFinancialReportDocContabili, getListaDocumentiContabiliPa, getQuartersDocContabiliPa, getYearsDocContabiliPa } from "../../api/apiPagoPa/documentiContabiliPA/api";
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CollapsibleTablePa, { DocContabili } from "../../components/reusableComponents/grid/gridCollapsible/gridCustomCollapsiblePa";
@@ -26,6 +26,15 @@ const DocumentiContabili:React.FC = () =>{
  
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
+
+
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
+
 
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -56,8 +65,12 @@ const DocumentiContabili:React.FC = () =>{
 
     const [yearOnSelect,setYearOnSelect] = useState<string[]>([]);
     const [valueYear,setValueYear] = useState('');
-    const [docSelected,setDocSelected] = useState([]);
 
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+
+    console.log(mainState,'MAIN',valueAutocomplete,dataSelect);
+  
     useEffect(()=>{
         /*
         const result = getFiltersFromLocalStorage();
@@ -77,10 +90,15 @@ const DocumentiContabili:React.FC = () =>{
         if(infoPageResult.page > 0){
             setInfoPageListaDatiFat(infoPageResult);
         }*/
-      
-        getListaDocGrid(bodyGetLista);
+        setBodyGetLista(mainState.filterDocContabili.body);
+        setFiltersDownload(mainState.filterDocContabili.body);
+        setValueAutocomplete(mainState.filterDocContabili.valueAutocomplete);
+        setValueQuarters(mainState.filterDocContabili.valueQuarters);
+        getListaDocGrid(mainState.filterDocContabili.body);
         getYears();
     }, []);
+
+   
 
  
 
@@ -195,9 +213,37 @@ const DocumentiContabili:React.FC = () =>{
         });
     };
 
+    const onDownloadReportButton =  async() =>{
+        setShowLoading(true);
+        await downloadFinancialReportDocContabili(token,profilo.nonce, filtersDownload).then((response) =>{
+            console.log(response, 'gigi');
+            if(response.status !== 200){
+                setShowLoading(false);
+                manageError({response:{request:{status:Number(response.status)}},message:''},dispatchMainState);
+            }else{
+                return response.blob();
+            }
+           
+        }).then((res) => {
+            let fileName = '';
+            if(filtersDownload.contractIds.length === 1 || gridData.length === 1){
+                fileName = `Financial report PDND /${gridData[0].name}/${gridData[0].riferimentoData.substring(0, 4)}.xlsx`;
+            }else{
+                fileName = `Financial report PDND /${gridData[0].riferimentoData.substring(0, 4)}.xlsx`;
+            }
+            saveAs( res,fileName );
+            setShowLoading(false);
+        }).catch(err => {
+            manageError(err,dispatchMainState);
+        });
+    };
+
     const onButtonFiltra = () =>{
         setFiltersDownload(bodyGetLista);
         getListaDocGrid(bodyGetLista); 
+        setPage(0);
+        setRowsPerPage(10);
+        handleModifyMainState({filterDocContabili:{body:bodyGetLista,valueAutocomplete:valueAutocomplete, valueQuarters:valueQuarters, infoPage:{page:0,row:10}}});
         //setFilterToLocalStorageRel(bodyRel,textValue,valueAutocomplete, 0, 10,valuetipologiaFattura);
     };
    
@@ -211,7 +257,8 @@ const DocumentiContabili:React.FC = () =>{
         {name:"Trimestre",align:"center",id:4},
         {name:"Bollo",align:"center",id:5},
         {name:"Data",align:"center",id:6},
-        {name:"Arrow",align:"center",id:7}];
+        {name:"Arrow",align:"center",id:7},
+        {name:"Arrow",align:"center",id:8}];
       
  
 
@@ -277,6 +324,7 @@ const DocumentiContabili:React.FC = () =>{
                         options={dataSelectQuarter}
                         value={valueQuarters}
                         disableCloseOnSelect
+                        isOptionEqualToValue={(option, value) => option.value === value.value}
                         getOptionLabel={(option:OptionMultiselectCheckboxQarter) => {
                             return option.quarter;}}
                         renderOption={(props, option,{ selected }) =>(
@@ -389,22 +437,33 @@ const DocumentiContabili:React.FC = () =>{
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
                 {
                     gridData.length > 0 &&
-                <Button onClick={() =>
-                    onDownloadButton()
-                }
-                disabled={getListaLoading}
-                >
+                    <>
+                        <Button sx={{marginRight:'10px',width:'216px'}} onClick={() => onDownloadReportButton()}
+                        >
+                Download Report
+                            <DownloadIcon sx={{marginLeft:'10px'}}></DownloadIcon>
+                        </Button>
+                        <Button onClick={() =>
+                            onDownloadButton()
+                        }
+                        disabled={getListaLoading}
+                        >
                 Download Risultati
-                    <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
-                </Button>
+                            <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
+                        </Button>
+                    </>
                 }
             </div>
             <div className="mt-1 mb-5" style={{ width: '100%'}}>
                 <CollapsibleTablePa 
                     data={gridData}
                     headerNames={headersObjGrid}
-                    selected={docSelected}
-                    setSelected={setDocSelected}
+                    handleModifyMainState={handleModifyMainState}
+                    mainState={mainState}
+                    setPage={setPage}
+                    page={page}
+                    rowsPerPage={rowsPerPage}
+                    setRowsPerPage={setRowsPerPage}
                 ></CollapsibleTablePa>
             </div>
             <div>

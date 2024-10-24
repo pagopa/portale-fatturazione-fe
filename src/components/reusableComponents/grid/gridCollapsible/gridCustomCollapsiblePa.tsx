@@ -12,6 +12,7 @@ import { FattureObj, GridCollapsible, HeaderCollapsible } from '../../../../type
 import TablePaginationDemo from './tablePagination';
 import Row from './rowWithCheckbox';
 import RowBase from './rowBase';
+import { MainState } from '../../../../types/typesGeneral';
 
 
 export interface DocContabili {
@@ -47,32 +48,40 @@ export interface DocContabili {
 export interface GridCollapsibleBase{
     data:DocContabili[],
     headerNames:HeaderCollapsible[],
+    handleModifyMainState:any,
+    mainState:MainState,
     //stato:boolean,
     //setOpenConfermaModal:any,
     //setOpenResetFilterModal:any,
     //monthFilterIsEqualMonthDownload:boolean,
-    selected:number[],
-    setSelected:any,
     //showedData:FattureObj[],
     //setShowedData: Dispatch<SetStateAction<FattureObj[]>>,
 }
 
 
-const CollapsibleTablePa: React.FC<GridCollapsibleBase> = ({data, headerNames,selected,setSelected}) => {
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
+const CollapsibleTablePa: React.FC<any> = ({data, headerNames,handleModifyMainState,page,setPage,rowsPerPage,setRowsPerPage,mainState}) => {
     const [count, setCount] = useState(0);
     const [showedData, setShowedData] = useState<DocContabili[]>([]);
-   
+  
     useEffect(()=>{
-        setCount(data.length);
-        setPage(0);
-        setRowsPerPage(10);
-        setShowedData(data.slice(0, 10));
-        //setSelected([]);
-       
-    },[data]);
+        if(mainState.filterDocContabili.infoPage.page !== 0 || mainState.filterDocContabili.infoPage.row !== 0 ){
+
+            let from = 0;
+            if(page === 0){
+                from = 0;
+            }else{
+                from = mainState.filterDocContabili.infoPage.page * mainState.filterDocContabili.infoPage.row;
+            }
     
+            setCount(data.length);
+            setShowedData(data.slice(from, mainState.filterDocContabili.infoPage.row + from));
+            setPage(mainState.filterDocContabili.infoPage.page);
+            setRowsPerPage(mainState.filterDocContabili.infoPage.row);
+        }
+
+    },[]);
+
+
     useEffect(()=>{
         let from = 0;
         if(page === 0){
@@ -80,10 +89,39 @@ const CollapsibleTablePa: React.FC<GridCollapsibleBase> = ({data, headerNames,se
         }else{
             from = page * rowsPerPage;
         }
+
+        setCount(data.length);
         setShowedData(data.slice(from, rowsPerPage + from));
+
+        const filter = mainState.filterDocContabili;
+        const newInfoPage = {infoPage:{page:page,row:rowsPerPage}};
+        const newFilter = {...filter,...newInfoPage};
+
+        handleModifyMainState({filterDocContabili:newFilter});
+    },[data,page,rowsPerPage]);
+    
+    /*
+    useEffect(()=>{
+        
+        let from = 0;
+        if(page === 0){
+            from = 0;
+        }else{
+            from = page * rowsPerPage;
+        }
+        //i dati che vengono mostrati
+        setShowedData(data.slice(from, rowsPerPage + from));
+
+        //mi aggiorno lo state
+        const filter = mainState.filterDocContabili;
+        const newInfoPage = {infoPage:{page:page,row:rowsPerPage}};
+        const newFilter = {...filter,...newInfoPage};
+
+        handleModifyMainState({filterDocContabili:newFilter});
+        
     },[page,rowsPerPage]);
 
-
+*/
 
 
 
@@ -107,7 +145,7 @@ const CollapsibleTablePa: React.FC<GridCollapsibleBase> = ({data, headerNames,se
                                             return;
                                             
                                         }else if(el.name === 'Arrow'){
-                                            return(<TableCell sx={{width:'100px'}} align={el.align} key={el.id}></TableCell>);
+                                            return(<TableCell sx={{width:'70px'}} align={el.align} key={el.id}></TableCell>);
                                         }else{
                                             return(<TableCell align={el.align} key={el.id}>{el.name}</TableCell>);
                                         }
@@ -121,8 +159,7 @@ const CollapsibleTablePa: React.FC<GridCollapsibleBase> = ({data, headerNames,se
                                 return(
                                     <RowBase key={row.id} 
                                         row={row}
-                                        setSelected={setSelected}
-                                        selected={selected}
+                                        handleModifyMainState={handleModifyMainState}
                                     ></RowBase>
                                 ); })}
                         </Table>

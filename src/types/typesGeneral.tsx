@@ -1,4 +1,6 @@
 
+import { AutocompleteMultiselect, OptionMultiselectCheckboxPsp, OptionMultiselectCheckboxQarter } from "./typeAngraficaPsp";
+import { RequestBodyListaDocContabiliPagopa } from "./typeDocumentiContabili";
 import { DataGridCommessa } from "./typeModuloCommessaElenco";
 
 export interface ModalProps {
@@ -94,7 +96,14 @@ export interface MainState{
     badgeContent:number,
     messaggioSelected:null|Messaggi
     prodotti:ProfiloObject[],
-    profilo:any
+    profilo:any,
+    docContabileSelected:null|{contractId:string,quarter:string},
+    filterDocContabili:{
+        body:RequestBodyListaDocContabiliPagopa,
+        valueAutocomplete:AutocompleteMultiselect[],
+        valueQuarters:OptionMultiselectCheckboxQarter[],
+        infoPage:{row:number,page:number}
+    }
 }
 
 export type ProfiloObject = {
@@ -172,7 +181,7 @@ export interface BodyListaNotificheConsolidatore{
 
 type RequestError = {
     status:number,
-    statusText: string
+    statusText?: string
 }
 
 interface ResponseError {

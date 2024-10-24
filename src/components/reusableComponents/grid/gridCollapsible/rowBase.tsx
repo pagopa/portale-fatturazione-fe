@@ -1,11 +1,16 @@
-import { Box, Collapse, IconButton, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { Box, Collapse, IconButton, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
 import { useState } from "react";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { useNavigate } from "react-router";
+import { PathPf } from "../../../../types/enum";
 
-const RowBase = ({row, setSelected,selected}) => {
+
+
+const RowBase = ({row,handleModifyMainState}) => {
     const [open, setOpen] = useState(false);
+    const navigate = useNavigate();
    
   
     /*  const handleClick = ( id: number) => {
@@ -40,6 +45,11 @@ const RowBase = ({row, setSelected,selected}) => {
     }else if(row.inviata === 3){
         tooltipObj = {label:'Cancellata',title:'La fattura è stata cancellata',color:'info'};
     }*/
+
+    const handleOnDetail = (row) => {  
+        handleModifyMainState({docContabileSelected:{contractId:row.contractId,quarter:row.yearQuarter}}); 
+        navigate(PathPf.DETTAGLIO_DOC_CONTABILE);
+    };
  
     return(
         
@@ -55,15 +65,17 @@ const RowBase = ({row, setSelected,selected}) => {
                         {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
                 </TableCell>
-                <TableCell sx={{color:'#0D6EFD',fontWeight: 'bold'}} >{ row.name?.length > 50 ? row.name.slice(0, 50) + '...' : row.name}</TableCell>
+                <TableCell sx={{color:'#0D6EFD',fontWeight: 'bold',cursor:'pointer'}} onClick={()=> handleOnDetail(row)}  >{ row.name?.length > 50 ? row.name.slice(0, 50) + '...' : row.name}</TableCell>
                 <TableCell align='center'>{row.contractId}</TableCell>
                 <TableCell align='center' >{row.yearQuarter}</TableCell>
                 <TableCell align='center' >{row.bollo}</TableCell>
                 <TableCell align='center'>{row.riferimentoData !== null ? new Date(row.riferimentoData).toLocaleString().split(',')[0] : ''}</TableCell>
-                <TableCell align='center' onClick={()=>{
-                    console.log('click on arrow');           
-                } }>
-                    <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
+                <TableCell align='center' onClick={()=> handleOnDetail(row)}>
+                    <Tooltip title="Dettaglio">
+                        <IconButton>
+                            <ArrowForwardIcon sx={{ color: '#1976D2'}} /> 
+                        </IconButton>
+                    </Tooltip>
                 </TableCell>
             </TableRow>
             <TableRow >
@@ -91,7 +103,7 @@ const RowBase = ({row, setSelected,selected}) => {
                                             <TableCell>{obj.codiceArticolo}</TableCell>
                                             <TableCell>{obj.category}</TableCell>
                                             <TableCell>{obj.quantita}</TableCell>
-                                            <TableCell align="right" component="th" scope="row">{obj.importo.toLocaleString("de-DE", { style: "currency", currency: "EUR",maximumFractionDigits: 14 })}</TableCell>
+                                            <TableCell align="right" component="th" scope="row">{obj.importo.toLocaleString("de-DE", {style: "currency", currency: "EUR",maximumFractionDigits: 14 })}</TableCell>
                                             <TableCell>{obj.codIva}</TableCell>
                                             <TableCell>{obj.condizioni}</TableCell>
                                             <TableCell>{obj.causale}</TableCell>  

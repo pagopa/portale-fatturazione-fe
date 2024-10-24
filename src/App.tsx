@@ -37,6 +37,9 @@ import DocumentiContabili from './page/prod_pagopa/documentiContabiliPagopa';
 import { GlobalContext } from './store/context/globalContext';
 import useIsTabActive from './reusableFunction/tabIsActiv';
 import { redirect } from './api/api';
+import DettaglioDocContabile from './page/prod_pagopa/dettaglioDocumentoContabile';
+
+
 
 const App = ({ instance }) => {
 
@@ -126,6 +129,7 @@ const App = ({ instance }) => {
                                     <Route path="/auth/azure" element={<AuthAzure  />} />
                                     <Route path="azure" element={<Azure />} />
                                     <Route path="/auth" element={<Auth  />} />
+                                    <Route path={PathPf.DETTAGLIO_DOC_CONTABILE} element={<DettaglioDocContabile mainState={mainState}  dispatchMainState={dispatchMainState}></DettaglioDocContabile>}/>
                                     <Route path="*" element={<Navigate to={PathPf.ANAGRAFICAPSP} replace />} />
                                 </Routes>
                             </Grid>

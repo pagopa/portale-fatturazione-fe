@@ -24,9 +24,11 @@ const BasicAlerts:React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
 
+
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState, showAlert, setShowAlert} = globalContextObj;
  
+    const profilo = mainState.profilo
     console.log(showAlert,'show');
 
     const handleModifyMainState = (valueObj) => {
@@ -69,17 +71,20 @@ const BasicAlerts:React.FC = () => {
 
             const logout = mainState.apiError === 401 || mainState.apiError === 403 || mainState.apiError === 419;
             setCss('main_container_alert_component_show');
+            
             const timer = setTimeout(() => {
     
                 setCss('main_container_alert_component_hidden');
                 setShowAlert(false);
                 
                 if(logout){
-                    localStorage.clear();
-                    window.location.href = redirect;
+                    if(profilo.auth === 'PAGOPA'){
+                        window.location.href = '/azureLogin';
+                    }else{
+                        localStorage.clear();
+                        window.location.href = redirect;
+                    }
                 }
-                
-                
             }, 3000);
 
             return () =>{
