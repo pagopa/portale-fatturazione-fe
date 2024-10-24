@@ -114,27 +114,25 @@ const App = ({ instance }) => {
                 <div className="App">
                     <BasicAlerts></BasicAlerts>
                     <HeaderPostLogin   />
-                    <div>
-                        <HeaderNavComponent   />
-                        <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
-                            <Grid item xs={2}>
-                                <SideNavPagopa/>
-                            </Grid> 
-                            <Grid item xs={10} sx={{minHeight:'600px'}}>
-                                <Routes>
-                                    <Route path={'/messaggi'} element={<Messaggi  />} />
-                                    <Route path={PathPf.ANAGRAFICAPSP} element={<AnagraficaPsp ></AnagraficaPsp>}/>
-                                    <Route path={PathPf.DOCUMENTICONTABILI} element={<DocumentiContabili ></DocumentiContabili>}/>
-                                    <Route path="/azureLogin" element={<AzureLogin/>} />
-                                    <Route path="/auth/azure" element={<AuthAzure  />} />
-                                    <Route path="azure" element={<Azure />} />
-                                    <Route path="/auth" element={<Auth  />} />
-                                    <Route path={PathPf.DETTAGLIO_DOC_CONTABILE} element={<DettaglioDocContabile></DettaglioDocContabile>}/>
-                                    <Route path="*" element={<Navigate to={PathPf.ANAGRAFICAPSP} replace />} />
-                                </Routes>
-                            </Grid>
+                    <HeaderNavComponent   />
+                    <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
+                        <Grid item xs={2}>
+                            <SideNavPagopa/>
+                        </Grid> 
+                        <Grid item xs={10} sx={{minHeight:'600px'}}>
+                            <Routes>
+                                <Route path={'/messaggi'} element={<Messaggi  />} />
+                                <Route path={PathPf.ANAGRAFICAPSP} element={<AnagraficaPsp ></AnagraficaPsp>}/>
+                                <Route path={PathPf.DOCUMENTICONTABILI} element={<DocumentiContabili ></DocumentiContabili>}/>
+                                <Route path="/azureLogin" element={<AzureLogin/>} />
+                                <Route path="/auth/azure" element={<AuthAzure  />} />
+                                <Route path="azure" element={<Azure />} />
+                                <Route path="/auth" element={<Auth  />} />
+                                <Route path={PathPf.DETTAGLIO_DOC_CONTABILE} element={<DettaglioDocContabile></DettaglioDocContabile>}/>
+                                <Route path="*" element={<Navigate to={PathPf.ANAGRAFICAPSP} replace />} />
+                            </Routes>
                         </Grid>
-                    </div>
+                    </Grid>
                     <FooterComponent  />
                 </div>
             </ThemeProvider>
@@ -146,36 +144,34 @@ const App = ({ instance }) => {
                 <div className="App" >
                     <BasicAlerts></BasicAlerts>
                     <HeaderPostLogin  />
-                    <div >
-                        <HeaderNavComponent    />
-                        <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
-                            <Grid item xs={2}>
-                                <SideNavComponent />
-                            </Grid> 
-                            <Grid item xs={10}>
-                                <Routes>
-                                    <Route path="/auth" element={<Auth  />} />
-                                    <Route path="/auth/azure" element={<AuthAzure  />} />                 
-                                    <Route path="azure" element={<Azure />} />
-                                    <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte />} />
-                                    <Route path={PathPf.LISTA_MODULICOMMESSA} element={<PagoPaListaModuliCommessa/>}/>
-                                    <Route path={PathPf.MODULOCOMMESSA} element={<ModuloCommessaInserimentoUtEn30/>} />
-                                    <Route path={PathPf.PDF_COMMESSA} element={<ModuloCommessaPdf/>} />
-                                    <Route path={PathPf.LISTA_DATI_FATTURAZIONE} element={<PagoPaListaDatiFatturazione/>} />
-                                    <Route path={PathPf.LISTA_REL} element={<RelPage />} />
-                                    <Route path={PathPf.PDF_REL} element={<RelPdfPage/>} />
-                                    <Route path={PathPf.ADESIONE_BANDO} element={<AdesioneBando/>} />
-                                    <Route path={PathPf.FATTURAZIONE} element={<Fatturazione/>} />
-                                    <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio />} />
-                                    <Route path={'/messaggi'} element={<Messaggi />} />
-                                    <Route path={'/accertamenti'} element={<Accertamenti/>} />
-                                    <Route path="*" element={<Navigate to={PathPf.LISTA_DATI_FATTURAZIONE} replace />} />
-                                    <Route path="/azureLogin" element={<AzureLogin />} />
-                                    <Route path="/error"  element={<ErrorPage />} />
-                                </Routes>
-                            </Grid>
+                    <HeaderNavComponent    />
+                    <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
+                        <Grid item xs={2}>
+                            <SideNavComponent />
+                        </Grid> 
+                        <Grid item xs={10}>
+                            <Routes>
+                                <Route path="/auth" element={<Auth  />} />
+                                <Route path="/auth/azure" element={<AuthAzure  />} />                 
+                                <Route path="azure" element={<Azure />} />
+                                <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte />} />
+                                <Route path={PathPf.LISTA_MODULICOMMESSA} element={<PagoPaListaModuliCommessa/>}/>
+                                <Route path={PathPf.MODULOCOMMESSA} element={<ModuloCommessaInserimentoUtEn30/>} />
+                                <Route path={PathPf.PDF_COMMESSA} element={<ModuloCommessaPdf/>} />
+                                <Route path={PathPf.LISTA_DATI_FATTURAZIONE} element={<PagoPaListaDatiFatturazione/>} />
+                                <Route path={PathPf.LISTA_REL} element={<RelPage />} />
+                                <Route path={PathPf.PDF_REL} element={<RelPdfPage/>} />
+                                <Route path={PathPf.ADESIONE_BANDO} element={<AdesioneBando/>} />
+                                <Route path={PathPf.FATTURAZIONE} element={<Fatturazione/>} />
+                                <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio />} />
+                                <Route path={'/messaggi'} element={<Messaggi />} />
+                                <Route path={'/accertamenti'} element={<Accertamenti/>} />
+                                <Route path="*" element={<Navigate to={PathPf.LISTA_DATI_FATTURAZIONE} replace />} />
+                                <Route path="/azureLogin" element={<AzureLogin />} />
+                                <Route path="/error"  element={<ErrorPage />} />
+                            </Routes>
                         </Grid>
-                    </div>
+                    </Grid>
                     <FooterComponent  />
                 </div>
             </ThemeProvider>
@@ -188,31 +184,29 @@ const App = ({ instance }) => {
                 <div className="App">
                     <BasicAlerts></BasicAlerts>
                     <HeaderPostLogin  />
-                    <div>
-                        <HeaderNavComponent   />
-                        <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
-                            <Grid item xs={2}>
-                                <SideNavComponent/>
-                            </Grid> 
-                            <Grid item xs={10}>
-                                <Routes>
-                                    <Route path="/auth" element={<Auth  />} />
-                                    <Route path="/auth/azure" element={<AuthAzure  />} />
-                                    <Route path="azure" element={<Azure />} />
-                                    <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte ></AreaPersonaleUtenteEnte>}/>                                     
-                                    <Route path={PathPf.LISTA_COMMESSE} element={<ModuloCommessaElencoUtPa  />} />           
-                                    <Route path={PathPf.MODULOCOMMESSA} element={<ModuloCommessaInserimentoUtEn30 />} />                 
-                                    <Route path={PathPf.PDF_COMMESSA} element={<ModuloCommessaPdf  />} />
-                                    <Route path={PathPf.LISTA_REL} element={<RelPage  />} />
-                                    <Route path={PathPf.PDF_REL} element={<RelPdfPage  />} />                           
-                                    <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio/>} />
-                                    <Route path="*" element={<Navigate to={PathPf.DATI_FATTURAZIONE} replace />} />
-                                    <Route path="/azureLogin" element={<AzureLogin />} />
-                                    <Route path="/error"  element={<ErrorPage />} />
-                                </Routes>
-                            </Grid>
+                    <HeaderNavComponent   />
+                    <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
+                        <Grid item xs={2}>
+                            <SideNavComponent/>
+                        </Grid> 
+                        <Grid item xs={10}>
+                            <Routes>
+                                <Route path="/auth" element={<Auth  />} />
+                                <Route path="/auth/azure" element={<AuthAzure  />} />
+                                <Route path="azure" element={<Azure />} />
+                                <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte ></AreaPersonaleUtenteEnte>}/>                                     
+                                <Route path={PathPf.LISTA_COMMESSE} element={<ModuloCommessaElencoUtPa  />} />           
+                                <Route path={PathPf.MODULOCOMMESSA} element={<ModuloCommessaInserimentoUtEn30 />} />                 
+                                <Route path={PathPf.PDF_COMMESSA} element={<ModuloCommessaPdf  />} />
+                                <Route path={PathPf.LISTA_REL} element={<RelPage  />} />
+                                <Route path={PathPf.PDF_REL} element={<RelPdfPage  />} />                           
+                                <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio/>} />
+                                <Route path="*" element={<Navigate to={PathPf.DATI_FATTURAZIONE} replace />} />
+                                <Route path="/azureLogin" element={<AzureLogin />} />
+                                <Route path="/error"  element={<ErrorPage />} />
+                            </Routes>
                         </Grid>
-                    </div>
+                    </Grid>
                     <FooterComponent  />
                 </div>
             </ThemeProvider>
@@ -225,25 +219,23 @@ const App = ({ instance }) => {
                 <div className="App">
                     <BasicAlerts  ></BasicAlerts>
                     <HeaderPostLogin />
-                    <div>
-                        <HeaderNavComponent />
-                        <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>            
-                            <Grid item xs={2}>
-                                <SideNavComponent/>
-                            </Grid> 
-                            <Grid item xs={10}>
-                                <Routes>                    
-                                    <Route path="/auth" element={<Auth />} />                        
-                                    <Route path="/auth/azure" element={<AuthAzure  />} />
-                                    <Route path="azure" element={<Azure />} />     
-                                    <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio />} />
-                                    <Route path="*" element={<Navigate to={PathPf.LISTA_NOTIFICHE} replace />} />
-                                    <Route path="/azureLogin" element={<AzureLogin />} />
-                                    <Route path="/error"  element={<ErrorPage/>} />
-                                </Routes>
-                            </Grid>
+                    <HeaderNavComponent />
+                    <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>            
+                        <Grid item xs={2}>
+                            <SideNavComponent/>
+                        </Grid> 
+                        <Grid item xs={10}>
+                            <Routes>                    
+                                <Route path="/auth" element={<Auth />} />                        
+                                <Route path="/auth/azure" element={<AuthAzure  />} />
+                                <Route path="azure" element={<Azure />} />     
+                                <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio />} />
+                                <Route path="*" element={<Navigate to={PathPf.LISTA_NOTIFICHE} replace />} />
+                                <Route path="/azureLogin" element={<AzureLogin />} />
+                                <Route path="/error"  element={<ErrorPage/>} />
+                            </Routes>
                         </Grid>
-                    </div>
+                    </Grid>
                     <FooterComponent  />
                 </div>
             </ThemeProvider>
@@ -254,16 +246,14 @@ const App = ({ instance }) => {
             <ThemeProvider theme={theme}>
                 <div className="App">
                     <HeaderPostLogin />
-                    <div>
-                        <HeaderNavComponent  />
-                        <Routes>
-                            <Route path="/auth" element={<Auth  />} />
-                            <Route path="/auth/azure" element={<AuthAzure  />} />
-                            <Route path="azure" element={<Azure />} />
-                            <Route path="*" element={<Navigate to={"/azureLogin"} replace />} />
-                            <Route path="/azureLogin" element={<AzureLogin/>} />
-                        </Routes>
-                    </div>
+                    <HeaderNavComponent  />
+                    <Routes>
+                        <Route path="/auth" element={<Auth  />} />
+                        <Route path="/auth/azure" element={<AuthAzure  />} />
+                        <Route path="azure" element={<Azure />} />
+                        <Route path="*" element={<Navigate to={"/azureLogin"} replace />} />
+                        <Route path="/azureLogin" element={<AzureLogin/>} />
+                    </Routes>
                     <FooterComponent  />
                 </div>
             </ThemeProvider>

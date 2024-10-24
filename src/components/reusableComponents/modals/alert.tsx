@@ -84,7 +84,7 @@ const BasicAlerts:React.FC = () => {
                         window.location.href = redirect;
                     }
                 }
-            }, 3000);
+            }, 2500);
 
             return () =>{
                 clearTimeout(timer);
