@@ -1,6 +1,6 @@
 import { Typography } from "@mui/material";
 import { } from '@mui/material';
-import React , { useState, useEffect} from 'react';
+import React , { useState, useEffect, useContext} from 'react';
 import { TextField,Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { getTipologiaProfilo, manageError} from "../api/api";
@@ -18,17 +18,18 @@ import { downloadNotifchePagoPa, getContestazionePagoPa, getTipologiaEntiComplet
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import GridCustom from "../components/reusableComponents/grid/gridCustom";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
-import { deleteFilterToLocalStorageNotifiche, getFiltersFromLocalStorageNotifiche, getProfilo, getStatusApp, getToken, profiliEnti, setFilterToLocalStorageNotifiche } from "../reusableFunction/actionLocalStorage";
+import { deleteFilterToLocalStorageNotifiche, getFiltersFromLocalStorageNotifiche,  profiliEnti, setFilterToLocalStorageNotifiche } from "../reusableFunction/actionLocalStorage";
 import {mesi, mesiGrid, mesiWithZero, tipoNotifica } from "../reusableFunction/reusableArrayObj";
 import { getCurrentFinancialYear } from "../reusableFunction/function";
+import { GlobalContext } from "../store/context/globalContext";
 
-const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMainState}) => {
+const ReportDettaglio : React.FC = () => {
+    const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState, mainState} = globalContextObj;
 
-    const token =  getToken();
-    const profilo =  getProfilo();
-    const statusApp = getStatusApp();
-    const enti = profiliEnti();
-
+    const enti = profiliEnti(mainState);
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
     const currentMonth = (new Date()).getMonth() + 1;
     const currString = currentMonth;
     const currentYear = (new Date()).getFullYear();
@@ -140,6 +141,8 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
             mese: 0
         }
     });
+
+   
   
     useEffect(() => {
        
@@ -157,14 +160,14 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
             setRowsPerPage(result.rowsPerPage);
             setBodyDownload(result.bodyGetLista);
 
-            if(profilo.auth === 'SELFCARE' && statusApp.datiFatturazione === true){
+            if(profilo.auth === 'SELFCARE' && mainState.datiFatturazione === true){
                 getlistaNotifiche( result.page + 1, result.rowsPerPage,result.bodyGetLista); 
             }else if(profilo.auth === 'PAGOPA'){
                 getRecapitistConsolidatori();
                 getlistaNotifichePagoPa( result.page + 1, result.rowsPerPage,result.bodyGetLista);
             }
         }else{
-            if(profilo.auth === 'SELFCARE' && statusApp.datiFatturazione === true){
+            if(profilo.auth === 'SELFCARE' && mainState.datiFatturazione === true){
                 getlistaNotifiche( page + 1, rowsPerPage,bodyGetLista); 
             }else if(profilo.auth === 'PAGOPA'){
                 getRecapitistConsolidatori();
@@ -195,7 +198,7 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
     },[bodyGetLista]);
 
     useEffect(()=>{
-        if(statusApp.datiFatturazione === false || statusApp.datiFatturazioneNotCompleted){
+        if((mainState.datiFatturazione === false || mainState.datiFatturazioneNotCompleted) && enti){
             setOpenModalRedirect(true);
         }
     },[]);
@@ -569,10 +572,11 @@ const ReportDettaglio : React.FC<ReportDettaglioProps> = ({mainState,dispatchMai
             }));
     };
 
-    const getContestazioneModal = async(idNotifica:string) =>{
+    const getContestazioneModal = async(el) =>{
+        const idNotifica = el.id;
         setShowLoadingGrid(true);
         if(enti){
-            await getContestazione(token, profilo.nonce , idNotifica )
+            await getContestazione(token, profilo.nonce , idNotifica)
                 .then((res)=>{
                     //se i tempi di creazione di una contestazione sono scaduti show pop up info
                     if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){

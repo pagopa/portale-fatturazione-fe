@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import { manageError, redirect } from '../api/api';
 import { Button, Box, Typography, FormControl, InputLabel,Select, MenuItem,} from '@mui/material';
 import GridComponent from '../components/commessaElenco/grid';
@@ -12,14 +12,19 @@ import { getDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api
 import { PathPf } from '../types/enum';
 import { getProfilo, getStatusApp, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from '../reusableFunction/actionLocalStorage';
 import { fixResponseForDataGrid } from '../reusableFunction/function';
+import { GlobalContext } from '../store/context/globalContext';
 
-const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatchMainState,mainState, valueSelect, setValueSelect}) => {
+const ModuloCommessaElencoUtPa: React.FC = () => {
 
-    const token =  getToken();
-    const profilo =  getProfilo();
-    const statusApp = getStatusApp();
+    const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState, mainState} = globalContextObj;
+
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
     const navigate = useNavigate();
-    const enti = profiliEnti();
+    const enti = profiliEnti(mainState);
+
+    const [valueSelect, setValueSelect] = useState('');
     
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -33,8 +38,8 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
   
     useEffect(()=>{
-        handleModifyMainState(statusApp);
-        if(statusApp.datiFatturazione === false || statusApp.datiFatturazioneNotCompleted){
+    
+        if(mainState.datiFatturazione === false || mainState.datiFatturazioneNotCompleted){
             setOpenModalRedirect(true);
         }
     },[]);
@@ -74,15 +79,9 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
     const getDatiFat = async () =>{
         await getDatiFatturazione(token,profilo.nonce).then(( ) =>{      
             handleModifyMainState({datiFatturazione:true});
-            
-            setInfoToStatusApplicationLoacalStorage(statusApp,{datiFatturazione:true});
-            
-
         }).catch(err =>{
             if(err?.response?.status === 404){
-              
                 handleModifyMainState({datiFatturazione:false});
-                setInfoToStatusApplicationLoacalStorage(statusApp,{datiFatturazione:false});
             }
         });
     };
@@ -95,26 +94,16 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
             //cliccando sulla side nav Modulo commessa e sono un ente qualsiasi
             await getDatiFat();
             await getDatiModuloCommessa(token, profilo.nonce).then((res)=>{
-                 
                 if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
                         
                     handleModifyMainState({
                         inserisciModificaCommessa:'INSERT',
                         statusPageInserimentoCommessa:'mutable',
                         userClickOn:undefined,
-                        primoInserimetoCommessa:true
-                    });
-                    const newState = {
+                        primoInserimetoCommessa:true,
                         mese:res.data.mese,
                         anno:res.data.anno,
-                        inserisciModificaCommessa:'INSERT',
-                        userClickOn:undefined,
-                        primoInserimetoCommessa:true
-                    };
-
-                  
-                    setInfoToStatusApplicationLoacalStorage(statusApp,newState);
-                 
+                    });
                     navigate(PathPf.MODULOCOMMESSA);
                 }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0 ){
     
@@ -122,14 +111,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
                         inserisciModificaCommessa:'MODIFY',
                         statusPageInserimentoCommessa:'immutable',
                         primoInserimetoCommessa:false});
-    
-                    const newState = {
-                        inserisciModificaCommessa:'MODIFY',
-                        primoInserimetoCommessa:false
-                    };
-                    
-                    setInfoToStatusApplicationLoacalStorage(statusApp,newState);
-                   
+
                     navigate(PathPf.LISTA_COMMESSE);
                 }else if(res.data.modifica === false && res.data.moduliCommessa.length === 0){
 
@@ -137,13 +119,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
                         inserisciModificaCommessa:'NO_ACTION',
                         statusPageInserimentoCommessa:'immutable',
                         primoInserimetoCommessa:false});
-                
-                    const newState = {
-                        inserisciModificaCommessa:'NO_ACTION',
-                        primoInserimetoCommessa:false
-                    };
-            
-                    setInfoToStatusApplicationLoacalStorage(statusApp,newState);
+        
                     navigate(PathPf.LISTA_COMMESSE);
                 }else if(res.data.modifica === false && res.data.moduliCommessa.length > 0){
                     handleModifyMainState({
@@ -151,13 +127,6 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
                         statusPageInserimentoCommessa:'immutable',
                         primoInserimetoCommessa:false}); 
 
-                    const newState = {
-                        inserisciModificaCommessa:'NO_ACTION',
-                        primoInserimetoCommessa:false
-                    };
-                   
-
-                    setInfoToStatusApplicationLoacalStorage(statusApp,newState);
                     navigate(PathPf.LISTA_COMMESSE);
                 }
             }).catch((err) =>{
@@ -228,7 +197,7 @@ const ModuloCommessaElencoUtPa: React.FC<VisualModuliCommessaProps> = ({dispatch
                         }
                     </Box>
                 </div>
-                {(statusApp.primoInserimetoCommessa && enti) &&
+                {(mainState.primoInserimetoCommessa && enti) &&
                 <Button variant="contained" onClick={()=>{
                     handleListItemClickModuloCommessa();
                 }}>Inserisci modulo commessa</Button>

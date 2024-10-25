@@ -1,25 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Grid, Typography, InputLabel } from '@mui/material';
-import { TerzoContainerModCommessa, CategorieTotali} from '../../types/typeModuloCommessaInserimento';
+import {  CategorieTotali} from '../../types/typeModuloCommessaInserimento';
 import { useNavigate } from 'react-router';
 import { getDatiConfigurazioneCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
-import { getProfilo, getStatusApp, getToken } from '../../reusableFunction/actionLocalStorage';
 import { month } from '../../reusableFunction/reusableArrayObj';
 import { createDateFromString } from '../../reusableFunction/function';
+import { GlobalContext } from '../../store/context/globalContext';
 
-const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali, dataModifica}) => {
+const TerzoContainerInsCom  = ({valueTotali, dataModifica}) => {
+
+    const globalContextObj = useContext(GlobalContext);
+    const {mainState} = globalContextObj;
     
     const navigate = useNavigate();
-    const token =  getToken();
-    const profilo =  getProfilo();
-    const statusApplication = getStatusApp();
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
 
     
     let mese = '';
     let anno = 2000;
-    if(statusApplication.inserisciModificaCommessa === 'MODIFY' ){
-        mese = month[statusApplication.mese -1 ];
-        anno = statusApplication.anno;
+    if(mainState.inserisciModificaCommessa === 'MODIFY' ){
+        mese = month[Number(mainState.mese) -1 ];
+        anno = Number(mainState.anno);
     }else{
         const mon = new Date().getMonth();
         const date = new Date();
@@ -167,7 +169,7 @@ const TerzoContainerInsCom : React.FC<TerzoContainerModCommessa> = ({valueTotali
             </Grid>
             <hr className="mx-3 mt-5" />
             {
-                statusApplication.inserisciModificaCommessa === 'INSERT' ? null :
+                mainState.inserisciModificaCommessa === 'INSERT' ? null :
                     <div className="d-flex justify-content-around marginTopBottom24">
                         <div className='d-flex'>
                             <InputLabel  sx={{ marginRight:'20px'}}  size={"normal"}>Data modifica</InputLabel>

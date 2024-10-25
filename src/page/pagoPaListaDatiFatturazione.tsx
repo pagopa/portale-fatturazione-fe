@@ -1,8 +1,8 @@
 import {  Typography } from "@mui/material";
 import { Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
 import { getTipologiaProfilo, manageError, } from '../api/api';
-import { BodyGetListaDatiFatturazione, GridElementListaFatturazione, ListaDatiFatturazioneProps, ResponseDownloadListaFatturazione } from "../types/typeListaDatiFatturazione";
-import { useEffect, useState } from "react";
+import { BodyGetListaDatiFatturazione, GridElementListaFatturazione, ResponseDownloadListaFatturazione } from "../types/typeListaDatiFatturazione";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import {BodyListaDatiFatturazione, Params} from '../types/typesGeneral';
@@ -13,17 +13,27 @@ import { downloadDocumentoListaDatiFatturazionePagoPa, listaDatiFatturazionePago
 import { saveAs } from "file-saver";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../types/enum";
-import { deleteFilterToLocalStorage, getFiltersFromLocalStorage, getInfoPageFromLocalStorage, getProfilo, getToken, profiliEnti, setFilterToLocalStorage, setInfoPageToLocalStorage, setInfoToProfiloLoacalStorage } from "../reusableFunction/actionLocalStorage";
+import { deleteFilterToLocalStorage, getFiltersFromLocalStorage, getInfoPageFromLocalStorage,setFilterToLocalStorage, setInfoPageToLocalStorage, setInfoToProfiloLoacalStorage } from "../reusableFunction/actionLocalStorage";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
+import { GlobalContext } from "../store/context/globalContext";
 
 
-const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({dispatchMainState}) =>{
-    const token =  getToken();
-    const profilo =  getProfilo();
+const PagoPaListaDatiFatturazione:React.FC = () =>{
+    const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState,mainState} = globalContextObj;
+
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
+   
     const navigate = useNavigate();
-    const enti = profiliEnti();
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
 
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [profili, setProfili] = useState(['']);
@@ -60,14 +70,14 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({dispa
         }
         
     }, []);
-
+    /*
     useEffect(()=>{
         if(token === undefined){
             window.location.href = '/azureLogin';
         }else if(profilo.auth === 'PAGOPA'){
             // se un utente ha già selezionato un elemento nella grid avrà in memoria l'idEnte, per errore se andrà nella pagina '/'
         // modificando a mano l'url andrà a modificare i dati fatturazione dell'ultimo utente selezionato
-            delete profilo.idEnte;
+   
             const newProfilo = profilo; 
             localStorage.setItem('profilo', JSON.stringify(newProfilo));
         }else if(enti){
@@ -75,7 +85,7 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({dispa
         }
     },[]);
 
-
+*/
 
     useEffect(()=>{
         if(bodyGetLista.idEnti?.length  !== 0 || bodyGetLista.prodotto !== '' || bodyGetLista.profilo !== ''){
@@ -174,12 +184,8 @@ const PagoPaListaDatiFatturazione:React.FC<ListaDatiFatturazioneProps> = ({dispa
         event.preventDefault();
         // l'evento verrà eseguito solo se l'utente farà il clik sul 
         if(columsSelectedGrid  === 'ragioneSociale' || columsSelectedGrid === 'action' ){
-            setInfoToProfiloLoacalStorage(profilo,{
-                idEnte:params.row.idEnte,
-                prodotto:params.row.prodotto,
-            });
-            const string = JSON.stringify({nomeEnteClickOn:params.row.ragioneSociale});
-            localStorage.setItem('statusApplication', string);
+            const oldProfilo = mainState.profilo;
+            handleModifyMainState({profilo:{...oldProfilo,...{idEnte:params.row.idEnte,prodotto:params.row.prodotto}},nomeEnteClickOn:params.row.ragioneSociale});
             navigate(PathPf.DATI_FATTURAZIONE);
         }
     };

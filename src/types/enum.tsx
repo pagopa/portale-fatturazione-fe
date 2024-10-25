@@ -17,5 +17,8 @@ export enum PathPf {
     PDF_REL = '/relpdf',
     ADESIONE_BANDO = '/adesionealbando',
     FATTURAZIONE = '/fatturazione',
-    MESSAGGI = '/messaggi'
+    MESSAGGI = '/messaggi',
+    ANAGRAFICAPSP = '/anagraficapsp',
+    DOCUMENTICONTABILI = '/documenticontabilipagopa',
+    DETTAGLIO_DOC_CONTABILE = "/dettagliodoccontabile"
 }

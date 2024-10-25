@@ -1,8 +1,6 @@
-export const profiliEnti = () => {
-    const getProfilo = localStorage.getItem('profilo') || '{}';
-    const profilo =  JSON.parse(getProfilo);
-    
-    const profiloValue = profilo.profilo;
+export const profiliEnti = (mainState) => {
+   
+    const profiloValue = mainState.profilo.profilo;
     
     const result = profiloValue === "PA" || profiloValue === "GSP" || profiloValue === "SCP" || profiloValue === "PSP" || profiloValue === "AS" || profiloValue === "SA" || profiloValue === "PT";
     return result;
@@ -18,6 +16,13 @@ export const getToken = () =>{
 export const getProfilo = () =>{
     const profilo = localStorage.getItem('profilo') || '{}';
     const result =  JSON.parse(profilo);
+
+    return result;
+};
+
+export const getProdotti = () =>{
+    const prodotti = localStorage.getItem('prodotti') || '{}';
+    const result =  JSON.parse(prodotti);
 
     return result;
 };

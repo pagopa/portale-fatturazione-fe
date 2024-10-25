@@ -9,6 +9,8 @@ import { fattureInvioSapPa, fattureResetSapPa } from '../../api/apiPagoPa/fattur
 import { getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
 import { manageError } from '../../api/api';
 import { month } from '../../reusableFunction/reusableArrayObj';
+import { useContext } from 'react';
+import { GlobalContext } from '../../store/context/globalContext';
 
 const style = {
     position: 'absolute' as const,
@@ -23,8 +25,10 @@ const style = {
 
 const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,mese,anno,dispatchMainState,getListaFatture,bodyFatturazioneDownload}) => {
 
-    const token =  getToken();
-    const profilo =  getProfilo();
+    const globalContextObj = useContext(GlobalContext);
+    const {mainState} = globalContextObj;
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
 
     const [value, setValue] = React.useState('');
   

@@ -1,87 +1,97 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useReducer, useContext} from 'react';
 import { useLocation, useNavigate } from 'react-router';
-import {HeaderProduct} from '@pagopa/mui-italia';
+import {HeaderProduct,PartyEntity, ProductEntity} from '@pagopa/mui-italia';
 import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
 import Badge from '@mui/material/Badge';
 import { MainState } from '../../types/typesGeneral';
 import { IconButton } from '@mui/material';
 import { getMessaggiCount } from '../../api/apiPagoPa/centroMessaggi/api';
-import { getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
+import { getProdotti, getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
 import { PathPf } from '../../types/enum';
-
-
-type PartySwitchItem = {
-    id: string;
-    name: string;
-    productRole?: string;
-    logoUrl?: string;
-    parentName?: string;
-};
-type LinkType = "internal" | "external";
-type ProductSwitchItem = {
-    id: string;
-    title: string;
-    productUrl: string;
-    linkType: LinkType;
-};
-type PartyEntity = PartySwitchItem;
-type ProductEntity = ProductSwitchItem;
+import { GlobalContext } from '../../store/context/globalContext';
 
 type HeaderNavProps = {
-    mainState:MainState
+    mainState:MainState,
+    dispatchMainState:any,
 }
 
-const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState}) => {
+
+
+
+const HeaderNavComponent : React.FC = () => {
    
+    const globalContextObj = useContext(GlobalContext);
+    const {mainState, dispatchMainState } = globalContextObj;
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
     const location = useLocation();
     const navigate = useNavigate();
-    const getUserDetails = localStorage.getItem('profilo') || '{}';
-    const UserDetailsParsed = JSON.parse(getUserDetails);
-    const profilo =  getProfilo();
-    const token = getToken();
 
-  
+
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
     
-    const camelizeDescizioneRuolo = () =>{
-       
-        const allLower =  UserDetailsParsed.descrizioneRuolo?.toLowerCase();
-        const ruolo = allLower?.charAt(0).toUpperCase() + allLower?.slice(1);
-        return {name:UserDetailsParsed.nomeEnte, ruolo };
+   
+    const url = window.location.origin;
 
-    }; 
-    const [user, setuser] = useState({name:'', ruolo:'' });
+
     const [countMessages, setCountMessages] = useState(0);
+  
+ 
 
-    useEffect(()=>{
-        setuser(camelizeDescizioneRuolo());
+   
+  
+
+    const products:ProductEntity[] = [
+        {
+            id: 'prod-pn',
+            title:'SEND - Servizio Notifiche Digitali',
+            productUrl:"",
+            linkType:"external"
+        },
+        {
+            id: 'prod-pagopa',
+            title:'Piattaforma pagoPA',
+            productUrl:"",
+            linkType:"external"
+        }
+    ];
+
+   
+
     
-    },[getUserDetails]);
-
-    const productsList : Array<ProductEntity>  = [
+    const arrayProducts:ProductEntity[] = [
         {
             id: '1',
-            title: 'SEND - Servizio Notifiche Digitali',
-            productUrl: '#send',
-            linkType: 'external',
-        }];
+            title:'SEND - Servizio Notifiche Digitali',
+            productUrl:"",
+            linkType:"external"
+        }
+    ];
 
-    //const cdnPath = 'https://assets.cdn.io.italia.it/logos/organizations/';
-    const name = user.name;
+   
+
+ 
+
 
     const partyList : Array<PartyEntity> = [
         {
-            id: '0',
+            id:'0',
             logoUrl: ``,
-            name: name,
-            productRole: user.ruolo,
-        },
+            name:profilo.nomeEnte ,
+            productRole: "Amministratore",
+        }
     ];
 
     const hideHeadernav = location.pathname === '/auth' ||
                             location.pathname === '/azure' ||
                             location.pathname === '/auth/azure'||
                             location.pathname === '/azureLogin'||
-                            !UserDetailsParsed.auth;
+                            !profilo.auth;
 
 
     //logica per il centro messaggi sospesa
@@ -95,26 +105,46 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState}) => {
     };
     
     useEffect(()=>{
-        if(mainState.authenticated === true && profilo.auth === 'PAGOPA'){
-            getCount();
-            const interval = setInterval(async() => {
-                await getCount();
-            }, 3000);
+        if(globalContextObj.mainState.authenticated === true && profilo.auth === 'PAGOPA'){
+            
+            const interval = setInterval(() => {
+                getCount();
+            }, 4000);
       
             return () => clearInterval(interval); 
          
         }
-    },[mainState.authenticated]);
+    },[globalContextObj.mainState.authenticated]);
 
+
+
+
+   
     const conditionalHeder = profilo.auth === 'PAGOPA' ?  (<div style={{display:'flex', backgroundColor:'white'}}>
         <div style={{width:'95%'}}>
-            <HeaderProduct
-                productId="1"
-                productsList={productsList}
-                onSelectedProduct={(p) => console.log('Selected Item:', p.title)}
-                partyList={partyList}
-            ></HeaderProduct>
+            <div key={profilo.prodotto}>
+                <HeaderProduct
+                    productId={profilo.prodotto}
+                    productsList={products}
+                    onSelectedProduct={(e) => {
+                        const newProfilo:any = mainState.prodotti.find((el:any) => el.prodotto === e.id);
+                        handleModifyMainState({
+                            profilo:newProfilo
+                        });
+                        if(newProfilo.profilo === 'prod-pagopa'){
+                            navigate(PathPf.ANAGRAFICAPSP);
+                        }else{
+                            navigate(PathPf.LISTA_DATI_FATTURAZIONE);
+                        }
+                      
+                    }}
+                    partyList={partyList}
+                ></HeaderProduct>
+            </div>
+
+            
         </div>
+        {profilo.auth === 'PAGOPA' &&
         <div className="d-flex justify-content-center m-auto">
             <Badge
                 badgeContent={countMessages}
@@ -122,7 +152,6 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState}) => {
                 variant="standard"
             >
                 <IconButton onClick={()=> {
-            
                     navigate(PathPf.MESSAGGI);
                 } }  color="default">
                     <MarkEmailUnreadIcon fontSize="medium" 
@@ -135,12 +164,13 @@ const HeaderNavComponent : React.FC<HeaderNavProps> =({mainState}) => {
 
             </Badge>
         </div>
+        }
    
     </div>) :
         (<div >
             <HeaderProduct
-                productId="1"
-                productsList={productsList}
+                productId='1'
+                productsList={arrayProducts}
                 onSelectedProduct={(p) => console.log('Selected Item:', p.title)}
                 partyList={partyList}
             ></HeaderProduct>

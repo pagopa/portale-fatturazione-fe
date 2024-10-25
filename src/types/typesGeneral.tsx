@@ -1,4 +1,6 @@
 
+import { AutocompleteMultiselect, OptionMultiselectCheckboxPsp, OptionMultiselectCheckboxQarter } from "./typeAngraficaPsp";
+import { RequestBodyListaDocContabiliPagopa } from "./typeDocumentiContabili";
 import { DataGridCommessa } from "./typeModuloCommessaElenco";
 
 export interface ModalProps {
@@ -58,7 +60,7 @@ export type TokenObject = {
 }
 
 export type AuthAzureProps = {
-    dispatchMainState:any,
+    //dispatchMainState:any,
 }
 
 export type BodyListaDatiFatturazione = {
@@ -81,13 +83,43 @@ export interface MainState{
     inserisciModificaCommessa:string |undefined, // INSERT MODIFY  se il sevizio get commessa mi restituisce true []
     statusPageDatiFatturazione:string,
     statusPageInserimentoCommessa:string,
-    nonce:string,
+    nomeEnteClickOn:string,
     datiFatturazione:boolean, // parametro utilizato in modulo commessa per capire se accettare l'inserimento commessa o fare il redirect t dati fatturazione se non sono stati inseriti
-    relSelected:string|null,
+    relSelected:{
+        nomeEnteClickOn:string,
+        mese:number,
+        anno:number,
+        idElement:string
+    },
     apiError:number|string|null,
     authenticated:boolean,
     badgeContent:number,
     messaggioSelected:null|Messaggi
+    prodotti:ProfiloObject[],
+    profilo:any,
+    docContabileSelected:{contractId:string,quarter:string},
+    filterDocContabili:{
+        body:RequestBodyListaDocContabiliPagopa,
+        valueAutocomplete:AutocompleteMultiselect[],
+        valueQuarters:OptionMultiselectCheckboxQarter[],
+        infoPage:{row:number,page:number}
+    }
+}
+
+export type ProfiloObject = {
+    idTipoContratto: any,
+    prodotto: string,
+    idEnte: null,
+    profilo: string,
+    email: string,
+    ruolo: string,
+    descrizioneRuolo: string,
+    gruppoRuolo: string,
+    nomeEnte: null|string,
+    nonce: string,
+    valido: string,
+    jwt: string,
+    auth: string
 }
 
 export interface BodyDownloadDatiFatturazione{
@@ -149,7 +181,7 @@ export interface BodyListaNotificheConsolidatore{
 
 type RequestError = {
     status:number,
-    statusText: string
+    statusText?: string
 }
 
 interface ResponseError {

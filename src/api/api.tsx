@@ -16,8 +16,8 @@ export const manageError = (res:ManageErrorResponse,dispatchMainState) =>{
     if(res?.response?.request?.status === 401){
         handleModifyMainState({apiError:res.response.request.status});
         
-    }else if(res?.response?.request?.status   === 404){
-     
+    }else if(res?.response?.request?.status === 404){
+        console.log('rrr');
         handleModifyMainState({apiError:res.response.request.status});
     }else if(res?.response?.request?.status   === 419){
         handleModifyMainState({apiError:res.response.request.status});
@@ -73,6 +73,11 @@ export const managePresaInCarico = (res:string,dispatchMainState) =>{
 
 export const pagopaLogin = async (tokenObject:TokenObject) => {
     const result = await axios.post(`${url}/api/auth/pagopa/login`, tokenObject);
+    return result;
+};
+
+export const pagopaLogin2 = async (tokenObject:TokenObject) => {
+    const result = await axios.post(`${url}/api/v2/auth/pagopa/login`, tokenObject);
     return result;
 };
 

@@ -7,11 +7,12 @@ import {
     Box, FormControl, InputLabel,Select, MenuItem, Button
 } from '@mui/material';
 import { manageError } from '../../api/api'; 
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useContext} from 'react';
 import YupString from '../../validations/string/index';
 import { createContestazione, modifyContestazioneConsolidatore, modifyContestazioneEnte,modifyContestazioneRecapitista, tipologiaTipoContestazione } from '../../api/apiSelfcare/notificheSE/api';
 import { modifyContestazioneEntePagoPa } from '../../api/apiPagoPa/notifichePA/api';
 import { getFiltersFromLocalStorageNotifiche, getProfilo, getToken, profiliEnti } from '../../reusableFunction/actionLocalStorage';
+import { GlobalContext } from '../../store/context/globalContext';
 
 const style = {
     position: 'absolute' as const,
@@ -26,9 +27,13 @@ const style = {
 
 const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open, contestazioneSelected, setContestazioneSelected, funGetNotifiche, funGetNotifichePagoPa, openModalLoading, page, rows, valueRispostaEnte, contestazioneStatic,dispatchMainState}) => {
 
-    const enti = profiliEnti();
-    const token =  getToken();
-    const profilo =  getProfilo();
+    const globalContextObj = useContext(GlobalContext);
+    const {mainState} = globalContextObj;
+
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
+    const enti = profiliEnti(mainState);
+   
 
   
     const [tipoContestazioni, setTipoContestazioni] = useState<TipoContestazione[]>([]);
@@ -259,7 +264,7 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
 
     const requiredString = (string:string , nomeTextBox:string) =>{
         YupString.required().validate(string).then(()=>{
-            console.log('prova',nomeTextBox);
+            console.log('prova');
         }).catch(()=>{
             console.log('prova errore',nomeTextBox);
         });

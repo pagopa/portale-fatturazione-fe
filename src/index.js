@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { PublicClientApplication, EventType } from '@azure/msal-browser';
 import { msalConfig } from './authConfig';
 import './i18n';
+import GlobalContextProvider from './store/context/globalContext';
 
 /**
  * MSAL should be instantiated outside of the component tree to prevent it from being re-instantiated on re-renders.
@@ -27,10 +28,15 @@ msalInstance.addEventCallback((event) => {
     }
 });
 
+
+
 // eslint-disable-next-line no-undef
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <App instance={msalInstance}/>
+    <GlobalContextProvider>
+        <App instance={msalInstance}/>
+    </GlobalContextProvider>
+   
 );
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

@@ -1,20 +1,26 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Grid , Typography} from '@mui/material';
 import LabelComponent from './label';
 import { PrimoContainerInsComProps } from '../../types/typeModuloCommessaInserimento';
 import { getProfilo, getStatusApp } from '../../reusableFunction/actionLocalStorage';
 import { month } from '../../reusableFunction/reusableArrayObj';
+import { GlobalContext } from '../../store/context/globalContext';
 
 const PrimoContainerInsCom : React.FC<PrimoContainerInsComProps> = () => {
-    const statusApplication = getStatusApp();
-    const profilo =  getProfilo();
+    const globalContextObj = useContext(GlobalContext);
+    const {mainState} = globalContextObj;
+   
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
+    
+ 
 
     let mese = '';
     let anno = 2000;
-    if(statusApplication.inserisciModificaCommessa === 'MODIFY' ){
-        mese = month[statusApplication.mese -1 ];
-        anno = statusApplication.anno;
-    }else if(statusApplication.inserisciModificaCommessa === 'INSERT'){
+    if(mainState.inserisciModificaCommessa === 'MODIFY' ){
+        mese = month[Number(mainState.mese) -1 ];
+        anno = Number(mainState.anno);
+    }else if(mainState.inserisciModificaCommessa === 'INSERT'){
         const mon = new Date().getMonth();
         const date = new Date();
         if(mon === 11){

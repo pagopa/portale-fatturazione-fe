@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
 import { Button, Typography } from "@mui/material";
@@ -20,16 +20,19 @@ import { OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { mesiGrid, mesiWithZero } from "../reusableFunction/reusableArrayObj";
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
+import { GlobalContext } from "../store/context/globalContext";
 
 
 
-const RelPage : React.FC<RelPageProps> = ({dispatchMainState}) =>{
+const RelPage : React.FC = () =>{
 
-    const token =  getToken();
-    const profilo =  getProfilo();
-    const statusApp = getStatusApp();
+    const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState,mainState} = globalContextObj;
+
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
     const navigate = useNavigate();
-    const enti = profiliEnti();
+    const enti = profiliEnti(mainState);
     const result = getFiltersFromLocalStorageRel();
 
     const handleModifyMainState = (valueObj) => {
@@ -106,14 +109,14 @@ const RelPage : React.FC<RelPageProps> = ({dispatchMainState}) =>{
     },[textValue]);
 
     useEffect(()=>{
-        if(statusApp.datiFatturazione === false || statusApp.datiFatturazioneNotCompleted){
+        if((mainState.datiFatturazione === false || mainState.datiFatturazioneNotCompleted) && enti){
             setOpenModalRedirect(true);
         }
     },[]);
 
     const getlistaRel = async (bodyRel,nPage,nRows) => {
         
-        if(enti && statusApp.datiFatturazione === true){
+        if(enti && mainState.datiFatturazione === true){
             setGetListaRelRunning(true);
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const {idEnti, ...newBody} = bodyRel;
@@ -234,14 +237,12 @@ const RelPage : React.FC<RelPageProps> = ({dispatchMainState}) =>{
         setFilterToLocalStorageRel(bodyDownload,textValue,valueAutocomplete, page, parseInt(event.target.value, 10),valuetipologiaFattura);
     };
    
-    const setIdRel = async(idRel) => {
-        handleModifyMainState({relSelected:idRel});
+    const setIdRel = async(el) => {
+        handleModifyMainState({relSelected:el});
         navigate(PathPf.PDF_REL);
-    
     };  
 
     const getListTipologiaFattura = async(anno,mese) => {
-     
         const result = getFiltersFromLocalStorageRel();
         if(enti){
             await getTipologieFatture(token, profilo.nonce, {mese,anno}).then((res)=>{

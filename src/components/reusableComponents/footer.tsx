@@ -1,7 +1,11 @@
 import { CompanyLinkType, Footer } from '@pagopa/mui-italia';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 import '../../style/areaPersonaleUtenteEnte.css';
+import { GlobalContext } from '../../store/context/globalContext';
+import { redirect } from '../../api/api';
+import useIsTabActive from '../../reusableFunction/tabIsActiv';
+import { getProfilo } from '../../reusableFunction/actionLocalStorage';
 
 type LangCode = "it" | "en";
 type LinkType = "internal" | "external";
@@ -38,7 +42,13 @@ type PreLoginFooterLinksType = {
     };
 };
 
-const FooterComponent = ({mainState}) => {
+const FooterComponent = () => {
+
+    const globalContextObj = useContext(GlobalContext);
+    const {mainState} = globalContextObj;
+
+
+ 
     
     const [ lang, setLang ] = useState<LangCode>("it"); 
     const location = useLocation();

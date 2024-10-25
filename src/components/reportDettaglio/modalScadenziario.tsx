@@ -4,12 +4,13 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { manageError } from '../../api/api';
-import { Dispatch, useEffect, useState } from 'react';
+import { Dispatch, useContext, useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import { getTipologieScadenziario } from '../../api/apiPagoPa/notifichePA/api';
 import { getProfilo } from '../../reusableFunction/actionLocalStorage';
 import { ActionReducerType } from '../../reducer/reducerMainState';
+import { GlobalContext } from '../../store/context/globalContext';
 
 const style = {
     position: 'absolute' as const,
@@ -38,9 +39,11 @@ interface Scadenziario {
 
 const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce,dispatchMainState}) => {
 
-    const getToken = localStorage.getItem('token') || '{}';
-    const token =  JSON.parse(getToken).token;
-    const profilo =  getProfilo();
+    const globalContextObj = useContext(GlobalContext);
+    const {mainState} = globalContextObj;
+
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
 
     const handleClose = () => setOpen(false);
 

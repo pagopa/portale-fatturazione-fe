@@ -1,8 +1,10 @@
 import { HeaderAccount } from '@pagopa/mui-italia';
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { redirect } from '../../api/api';
 import {useMsal } from '@azure/msal-react';
 import { loginRequest } from '../../authConfig';
+import { useContext } from 'react';
+import { GlobalContext } from '../../store/context/globalContext';
 
 
 type JwtUser = {
@@ -12,13 +14,13 @@ type JwtUser = {
     email?: string;
 };
 
-const HeaderPostLogin = ({mainState}) => {
+const HeaderPostLogin = () => {
+    const globalContextObj = useContext(GlobalContext);
+    const {mainState} = globalContextObj;
 
     const location  = useLocation();
+    const navigate = useNavigate();
 
-    const getDataUser = localStorage.getItem('profilo')|| '{}';
-
-    const dataUser = JSON.parse(getDataUser);
     const pagoPALink = {
         label: 'PagoPA S.p.A.',
         href: 'https://www.pagopa.it/',
@@ -28,7 +30,7 @@ const HeaderPostLogin = ({mainState}) => {
   
     const user: JwtUser = {
         id: '1',
-        name: dataUser.nomeEnte,
+        name: mainState.profilo.nomeEnte,
         surname: "",
         email: "",
     };
@@ -58,9 +60,7 @@ const HeaderPostLogin = ({mainState}) => {
     };
 
 
-    const getProfiloFromLocalStorage = localStorage.getItem('profilo') || '{}';
 
-    const checkIfUserIsAutenticated = JSON.parse(getProfiloFromLocalStorage).auth;
 
     const hideShowHeaderLogin =  location.pathname === '/auth' ||
                                  location.pathname === '/azure' ||
@@ -81,21 +81,17 @@ const HeaderPostLogin = ({mainState}) => {
                     onAssistanceClick={() => onEmailClick()}
                     onLogin={handleLoginRedirect}
                     onLogout={() => {
-                        if(checkIfUserIsAutenticated === 'PAGOPA'){
+                        if(mainState.prodotti.length > 0){
                             localStorage.clear();
-                            window.location.href = '/azureLogin';
+                            navigate('/azureLogin');
                         }else{
                             localStorage.clear();
                             window.location.href = redirect;
                         }
                     }}
                     onDocumentationClick={()=>onButtonClick()}
-                   
                 />
             }
-           
-               
-            
         </div>
     );
 };

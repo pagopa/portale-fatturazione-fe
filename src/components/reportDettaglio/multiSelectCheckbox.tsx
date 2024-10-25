@@ -4,13 +4,9 @@ import Autocomplete from '@mui/material/Autocomplete';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { MultiselectNotificheProps, OptionMultiselectChackbox } from '../../types/typeReportDettaglio';
-import { BodyListaNotifiche} from '../../types/typesGeneral';
 import { useLocation } from 'react-router';
 import { PathPf } from '../../types/enum';
-import { BodyFatturazione } from '../../types/typeFatturazione';
-import { BodyDownloadModuliCommessa } from '../../types/typeListaModuliCommessa';
-import { BodyRel } from '../../types/typeRel';
-import { BodyGetListaDatiFatturazione } from '../../types/typeListaDatiFatturazione';
+
 
 
 const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetLista, dataSelect,setTextValue,valueAutocomplete, setValueAutocomplete}) => {

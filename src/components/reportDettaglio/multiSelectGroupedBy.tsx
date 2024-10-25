@@ -10,14 +10,17 @@ import { useEffect , useState} from 'react';
 import { BodyListaNotifiche} from '../../types/typesGeneral';
 import { flagContestazione } from '../../api/apiSelfcare/notificheSE/api';
 import { getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
+import { GlobalContext } from '../../store/context/globalContext';
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
-const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({ setBodyGetLista, setValueFgContestazione, valueFgContestazione, dispatchMainState}) => {
+const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({ setBodyGetLista, setValueFgContestazione, valueFgContestazione, dispatchMainState,mainState}) => {
 
-    const token =  getToken();
-    const profilo = getProfilo();
+
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
+
 
     const [fgContestazione, setFgContestazione] = useState<FlagContestazione[]>([]);
 

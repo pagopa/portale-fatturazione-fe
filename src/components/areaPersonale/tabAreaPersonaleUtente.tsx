@@ -19,10 +19,7 @@ interface TabAreaProps{
 }
 
 
-const TabAreaPersonaleUtente: React.FC<TabAreaProps> = ({mainState,datiFatturazione,setDatiFatturazione,setStatusButtonConferma}) => {
-  
-    const parseProfilo  =  getProfilo();
-
+const TabAreaPersonaleUtente = ({mainState,datiFatturazione,setDatiFatturazione,setStatusButtonConferma}) => {
     const valueOptionRadioTipoOrdine = [
         {descrizione:'Dati ordine d\'acquisto', id:"1"},
         {descrizione:'Dati contratto', id:"2"}
@@ -201,11 +198,11 @@ const TabAreaPersonaleUtente: React.FC<TabAreaProps> = ({mainState,datiFatturazi
                 <div className="d-flex justify-content-around marginTopBottom24">
                     <div className='d-flex'>
                         <InputLabel  sx={{ marginRight:'20px'}}  size={"normal"}>Data primo accesso</InputLabel>
-                        {mainState.datiFatturazione && <Typography >{createDateFromString(parseProfilo.dataPrimo)}</Typography>}
+                        {mainState.datiFatturazione && <Typography >{createDateFromString(datiFatturazione.dataCreazione)}</Typography>}
                     </div>
                     <div className='d-flex'>
                         <InputLabel sx={{ marginRight:'20px'}}  size={"normal"}>Data ultimo accesso</InputLabel>
-                        {mainState.datiFatturazione && <Typography >{createDateFromString(parseProfilo.dataUltimo)}</Typography>}
+                        {mainState.datiFatturazione && <Typography >{createDateFromString(datiFatturazione.dataModifica)}</Typography>}
                     </div>
                 </div>
             </div>

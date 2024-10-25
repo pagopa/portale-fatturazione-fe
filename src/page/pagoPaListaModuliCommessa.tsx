@@ -3,7 +3,7 @@ import { Params } from "../types/typesGeneral";
 import { Typography } from "@mui/material";
 import { Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
 import { manageError } from '../api/api';
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { DataGrid, GridRowParams,GridEventListener,MuiEvent, GridColDef} from '@mui/x-data-grid';
@@ -19,14 +19,24 @@ import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeRepo
 import { currentMonth, getCurrentFinancialYear } from "../reusableFunction/function";
 import { currentYear, mesi, mesiGrid, mesiWithZero } from "../reusableFunction/reusableArrayObj";
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
+import { GlobalContext } from "../store/context/globalContext";
 
 
-const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchMainState}) =>{
+const PagoPaListaModuliCommessa:React.FC = () =>{
+    const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState,mainState} = globalContextObj;
 
-    const token =  getToken();
-    const profilo =  getProfilo();
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
+    
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
     const navigate = useNavigate();
-    const enti = profiliEnti();
+    const enti = profiliEnti(mainState);
     const currString = currentMonth();
 
     const [prodotti, setProdotti] = useState([{nome:''}]);
@@ -59,7 +69,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
         }
         
     }, []);
- 
+    /*
     useEffect(()=>{
         if(token === undefined){
             window.location.href = '/azureLogin';
@@ -73,7 +83,7 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
             navigate(PathPf.DATI_FATTURAZIONE);
         }
     },[]);
-
+*/
     useEffect(()=>{
         if( bodyGetLista.prodotto !== '' || bodyGetLista?.idEnti.length !== 0 ){
             setStatusAnnulla('show');
@@ -165,23 +175,17 @@ const PagoPaListaModuliCommessa:React.FC<ListaModuliCommessaProps> = ({dispatchM
         event.preventDefault();
         // l'evento verrà eseguito solo se l'utente farà il clik sul  mese e action
         if(columsSelectedGrid  === 'regioneSociale' ||columsSelectedGrid  === 'action' ){
-            const newState = {
-                mese:params.row.mese,
-                anno:params.row.anno,
-                userClickOn:'GRID',
-                inserisciModificaCommessa:"MODIFY",
-                nomeEnteClickOn:params.row.ragioneSociale
-            };
-            const string = JSON.stringify(newState);
-            localStorage.setItem('statusApplication', string);
-
-            const newProfilo = {...profilo,...{
+            const oldProfilo = mainState.profilo;
+            handleModifyMainState({profilo:{...oldProfilo,...{
                 idTipoContratto: params.row.idTipoContratto,
                 prodotto:params.row.prodotto,
-                idEnte:params.row.idEnte
-            }};
-            const stringProfilo = JSON.stringify(newProfilo);
-            localStorage.setItem('profilo', stringProfilo);
+                idEnte:params.row.idEnte,
+               
+            }},mese:params.row.mese,
+            anno:params.row.anno,
+            userClickOn:'GRID',
+            inserisciModificaCommessa:"MODIFY",
+            nomeEnteClickOn:params.row.ragioneSociale});
             navigate(PathPf.MODULOCOMMESSA);
         }
     };

@@ -15,10 +15,10 @@ interface PageTitleProps {
     mainState:MainState
 }
 
-const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState, setOpen,mainState}) => {
+const PageTitleNavigation = ({dispatchMainState, setOpen, mainState}) => {
 
-    const profilo =  getProfilo();
-    const statusApp = getStatusApp();
+    const profilo =  mainState.profilo;
+
     const navigate = useNavigate();
 
     const handleModifyMainState = (valueObj) => {
@@ -72,7 +72,7 @@ const PageTitleNavigation : React.FC<PageTitleProps>   = ({dispatchMainState, se
                     </div>
             }
             <div className="marginTop24">
-                <Typography variant="h4">{titleNavigation} {profilo.auth === 'PAGOPA' && `/ ${statusApp.nomeEnteClickOn}`} </Typography>
+                <Typography variant="h4">{titleNavigation} {profilo.auth === 'PAGOPA' && `/ ${mainState.nomeEnteClickOn}`} </Typography>
             </div>
             {mainState.statusPageDatiFatturazione === 'immutable' && profilo.ruolo === 'R/W' ? (
                 <div className="text-end">

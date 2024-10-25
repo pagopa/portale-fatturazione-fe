@@ -22,6 +22,10 @@ interface DettaglioMessaggioProps{
 
 const DettaglioMessaggio : React.FC<DettaglioMessaggioProps> = ({mainState,dispatchMainState}) =>{
 
+   
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
+
     const { id } = useParams();
     const navigate = useNavigate();
   
@@ -54,9 +58,7 @@ const DettaglioMessaggio : React.FC<DettaglioMessaggioProps> = ({mainState,dispa
         readMessage();
     },[mainState.messaggioSelected]);
 
-   
-    const token = getToken();
-    const profilo = getProfilo();
+
 
 
     const [showDownloading,setShowDownloading] = useState(false);

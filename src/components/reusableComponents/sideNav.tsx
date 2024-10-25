@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useState, useEffect } from 'react';
 import {
     List,
@@ -20,18 +20,22 @@ import { getDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/ap
 import { PathPf } from '../../types/enum';
 import AnnouncementIcon from '@mui/icons-material/Announcement';
 import ReceiptIcon from '@mui/icons-material/Receipt';
-import { getProfilo, getStatusApp, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from '../../reusableFunction/actionLocalStorage';
+import { profiliEnti } from '../../reusableFunction/actionLocalStorage';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
+import { GlobalContext } from '../../store/context/globalContext';
 
-const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState, setOpenBasicModal_DatFat_ModCom}) => {
+const SideNavComponent: React.FC = () => {
+
+    const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState,mainState,setOpenBasicModal_DatFat_ModCom} = globalContextObj;
 
     const navigate = useNavigate();
     const location = useLocation();
-    const enti = profiliEnti();
-    const token = getToken();
-    const profilo = getProfilo();
-    const statusApp = getStatusApp();
+    const enti = profiliEnti(mainState);
+  
 
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -39,6 +43,9 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
             value:valueObj
         });
     };
+
+
+
 
     const [selectedIndex, setSelectedIndex] = useState<number | null>(0);
     
@@ -85,12 +92,12 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
             
             handleModifyMainState({datiFatturazione:true});
           
-            setInfoToStatusApplicationLoacalStorage(statusApp,{datiFatturazione:true});
+            //setInfoToStatusApplicationLoacalStorage(statusApp,{datiFatturazione:true});
           
         }).catch(err =>{
             if(err?.response?.status === 404){
                 handleModifyMainState({datiFatturazione:false});
-                setInfoToStatusApplicationLoacalStorage(statusApp,{datiFatturazione:false});
+                //setInfoToStatusApplicationLoacalStorage(statusApp,{datiFatturazione:false});
             }
         });
 
@@ -125,8 +132,11 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
                         inserisciModificaCommessa:'INSERT',
                         statusPageInserimentoCommessa:'mutable',
                         userClickOn:undefined,
-                        primoInserimetoCommessa:true
+                        primoInserimetoCommessa:true,
+                        mese:res.data.mese,
+                        anno:res.data.anno,
                     });
+                    /*
                     const newState = {
                         mese:res.data.mese,
                         anno:res.data.anno,
@@ -134,9 +144,9 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
                         userClickOn:undefined,
                         primoInserimetoCommessa:true
                     };
-
+*/
                   
-                    setInfoToStatusApplicationLoacalStorage(statusApp,newState);
+                    //setInfoToStatusApplicationLoacalStorage(statusApp,newState);
                  
                     navigate(PathPf.MODULOCOMMESSA);
                 }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0 ){
@@ -145,14 +155,14 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
                         inserisciModificaCommessa:'MODIFY',
                         statusPageInserimentoCommessa:'immutable',
                         primoInserimetoCommessa:false});
-    
+                    /*
                     const newState = {
                         inserisciModificaCommessa:'MODIFY',
                         primoInserimetoCommessa:false
                     };
                     
                     setInfoToStatusApplicationLoacalStorage(statusApp,newState);
-                   
+                   */
                     navigate(PathPf.LISTA_COMMESSE);
                 }else if(res.data.modifica === false && res.data.moduliCommessa.length === 0){
 
@@ -160,20 +170,20 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
                         inserisciModificaCommessa:'NO_ACTION',
                         statusPageInserimentoCommessa:'immutable',
                         primoInserimetoCommessa:false});
-                
+                    /*
                     const newState = {
                         inserisciModificaCommessa:'NO_ACTION',
                         primoInserimetoCommessa:false
                     };
             
-                    setInfoToStatusApplicationLoacalStorage(statusApp,newState);
+                    setInfoToStatusApplicationLoacalStorage(statusApp,newState);*/
                     navigate(PathPf.LISTA_COMMESSE);
                 }else if(res.data.modifica === false && res.data.moduliCommessa.length > 0){
                     handleModifyMainState({
                         inserisciModificaCommessa:'NO_ACTION',
                         statusPageInserimentoCommessa:'immutable',
                         primoInserimetoCommessa:false}); 
-
+                    /*
                     const newState = {
                         inserisciModificaCommessa:'NO_ACTION',
                         primoInserimetoCommessa:false
@@ -181,6 +191,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
                    
 
                     setInfoToStatusApplicationLoacalStorage(statusApp,newState);
+                    */
                     navigate(PathPf.LISTA_COMMESSE);
                 }
             }).catch((err) =>{
@@ -357,9 +368,7 @@ const SideNavComponent: React.FC<SideNavProps> = ({dispatchMainState, mainState,
                                     </ListItemIcon>
                                     <ListItemText primary="Documenti contabili" />
                                 </ListItemButton>
-                                
                             </>}
-                            
                         </>
                         }
                     </List>

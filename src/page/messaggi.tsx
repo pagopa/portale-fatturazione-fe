@@ -1,5 +1,5 @@
 import {Box, Button, Chip, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TablePagination, Typography } from "@mui/material";
-import { Dispatch, useEffect, useState } from "react";
+import { Dispatch, useContext, useEffect, useState } from "react";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
 import { downloadMessaggioPagoPaCsv, downloadMessaggioPagoPaZipExel, getListaMessaggi, readMessaggioPagoPa} from "../api/apiPagoPa/centroMessaggi/api";
@@ -15,6 +15,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { month } from "../reusableFunction/reusableArrayObj";
 import { ActionReducerType } from "../reducer/reducerMainState";
+import { GlobalContext } from "../store/context/globalContext";
 
 
 
@@ -56,11 +57,14 @@ interface FilterMessaggi{
 }
 
 
-const Messaggi : React.FC<MessaggiProps> = ({dispatchMainState}) => {
+const Messaggi : React.FC<any> = () => {
 
-    const token = getToken();
-    const profilo = getProfilo();
+    const globalContextObj = useContext(GlobalContext);
+    const {mainState} = globalContextObj;
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
     const currentYear = (new Date()).getFullYear();
+
   
     const [bodyCentroMessaggi, setBodyCentroMessaggi] = useState<FilterMessaggi>({
         anno:currentYear,
@@ -92,7 +96,7 @@ const Messaggi : React.FC<MessaggiProps> = ({dispatchMainState}) => {
         }).catch((err)=>{
             setGridData([]);
             setCountMessaggi(0);
-            manageError(err,dispatchMainState);
+            manageError(err,globalContextObj.dispatchMainState);
         });
     };
 
@@ -113,9 +117,8 @@ const Messaggi : React.FC<MessaggiProps> = ({dispatchMainState}) => {
                 setShowDownloading(false);
                 readMessage(item.idMessaggio);
             }).catch(((err)=>{
-                console.log(err,'err');
                 setShowDownloading(false);
-                manageError(err,dispatchMainState);
+                manageError(err,globalContextObj.dispatchMainState);
                 getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra);
             }));
         }else if(contentType === "application/zip"){
@@ -128,7 +131,7 @@ const Messaggi : React.FC<MessaggiProps> = ({dispatchMainState}) => {
                 
                 }).catch(((err)=>{
                     setShowDownloading(false);
-                    manageError(err,dispatchMainState);
+                    manageError(err,globalContextObj.dispatchMainState);
                     getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra);
                 }));
         }else if(contentType ==="application/vnd.ms-excel"){
@@ -138,7 +141,7 @@ const Messaggi : React.FC<MessaggiProps> = ({dispatchMainState}) => {
                 setShowDownloading(false);
                 readMessage(item.idMessaggio);
             }).catch((err)=>{
-                manageError(err,dispatchMainState);
+                manageError(err,globalContextObj.dispatchMainState);
                 setShowDownloading(false);
                 getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra);
             }); 
@@ -342,7 +345,6 @@ const Messaggi : React.FC<MessaggiProps> = ({dispatchMainState}) => {
                 }}>
                     <TimelineNotification >
                         {gridData.map((item: Messaggio) => {
-                            console.log(item,'item');
                             let statoMessaggio = '';
                             let colorMessaggio;
                             let disableDownload = false;

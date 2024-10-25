@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Alert, { AlertColor } from '@mui/material/Alert';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useContext, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { MainState } from '../../../types/typesGeneral';
 import { redirect } from '../../../api/api';
@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { PathPf } from '../../../types/enum';
 import { ActionReducerType } from '../../../reducer/reducerMainState';
+import { GlobalContext } from '../../../store/context/globalContext';
 
 
 type AlertProps = {
@@ -19,9 +20,15 @@ type AlertProps = {
     dispatchMainState:Dispatch<ActionReducerType>
 }
 
-const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, dispatchMainState}) => {
+const BasicAlerts:React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+
+
+    const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState,mainState, showAlert, setShowAlert} = globalContextObj;
+ 
+    const profilo = mainState.profilo;
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -50,36 +57,44 @@ const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, di
     
     const [css, setCss] = useState('main_container_alert_component');
 
+
     React.useEffect(()=>{
+        if(mainState.apiError !== null){
+            setShowAlert(true);
+        }
 
+    },[mainState.apiError]);
 
-
-        if(visible === true && mainState.apiError !== null){
+    React.useEffect(()=>{
+        if(showAlert === true && mainState.apiError !== null){
 
             const logout = mainState.apiError === 401 || mainState.apiError === 403 || mainState.apiError === 419;
             setCss('main_container_alert_component_show');
+            
             const timer = setTimeout(() => {
     
                 setCss('main_container_alert_component_hidden');
-                setVisible(false);
-
-                if(logout){
-                    localStorage.clear();
-                    window.location.href = redirect;
-                }
+                setShowAlert(false);
                 
-            }, 8000);
+                if(logout){
+                    if(profilo.auth === 'PAGOPA'){
+                        window.location.href = '/azureLogin';
+                    }else{
+                        localStorage.clear();
+                        window.location.href = redirect;
+                    }
+                }
+            }, 2500);
 
             return () =>{
                 clearTimeout(timer);
                 
             }; 
         }
-        
-    },[visible]);
+    },[showAlert,mainState.apiError]);
 
     React.useEffect(()=>{
-        if(visible === false  && mainState.apiError !== null){
+        if(showAlert === false  && mainState.apiError !== null){
            
             const timer = setTimeout(() => {
                 handleModifyMainState({apiError:null});
@@ -88,12 +103,12 @@ const BasicAlerts:React.FC <AlertProps> =  ({setVisible , visible, mainState, di
                 clearTimeout(timer);
             }; 
         }
-    },[visible]);
+    },[showAlert]);
 
     return createPortal(
         <div className={css}>
             
-            <Alert sx={{display:'flex', justifyContent:'center'}} severity={colorAlert}  variant="standard">{mainState.apiError && t(`errori.${mainState.apiError}`)} 
+            <Alert sx={{display:'flex', justifyContent:'center'}} severity={colorAlert}  variant="standard">{t(`errori.${mainState.apiError}`)} 
                 {mainState.apiError === 'PRESA_IN_CARICO_DOCUMENTO' &&
                 <IconButton sx={{marginLeft:'20px'}} onClick={()=> {
                     setCss('main_container_alert_component_hidden');
