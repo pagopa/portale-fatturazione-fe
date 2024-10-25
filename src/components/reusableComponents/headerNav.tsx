@@ -131,6 +131,12 @@ const HeaderNavComponent : React.FC = () => {
                         handleModifyMainState({
                             profilo:newProfilo
                         });
+                        if(newProfilo.profilo === 'prod-pagopa'){
+                            navigate(PathPf.ANAGRAFICAPSP);
+                        }else{
+                            navigate(PathPf.LISTA_DATI_FATTURAZIONE);
+                        }
+                      
                     }}
                     partyList={partyList}
                 ></HeaderProduct>
