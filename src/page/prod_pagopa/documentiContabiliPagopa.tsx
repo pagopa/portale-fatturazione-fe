@@ -201,16 +201,21 @@ const DocumentiContabili:React.FC = () =>{
     const onDownloadButton = async() =>{
         setShowLoading(true);
         
-        await downloadDocContabili(token,profilo.nonce, filtersDownload).then(response => response.blob()).then((res) => {
+        await downloadDocContabili(token,profilo.nonce, filtersDownload).then(response =>{
+            if(response.status !== 200){
+                setShowLoading(false);
+                manageError({response:{request:{status:Number(response.status)}},message:''},dispatchMainState);
+            }else{
+                return response.blob();
+            }
+        }).then((res) => {
             let fileName = '';
             if(filtersDownload.contractIds.length === 1 || gridData.length === 1){
                 fileName = `Documenti contabili / ${gridData[0].name}.xlsx`;
             }else{
                 fileName = `Documenti contabili.xlsx`;
             }
-           
             saveAs( res,fileName );
-           
             setShowLoading(false);
         }).catch(err => {
             setShowLoading(false);
@@ -442,9 +447,9 @@ const DocumentiContabili:React.FC = () =>{
                 {
                     gridData.length > 0 &&
                     <>
-                        <Button sx={{marginRight:'10px',width:'216px'}} onClick={() => onDownloadReportButton()}
+                        <Button sx={{marginRight:'10px',width:'300px'}} onClick={() => onDownloadReportButton()}
                         >
-                Download Report
+                Download Financial Report
                             <DownloadIcon sx={{marginLeft:'10px'}}></DownloadIcon>
                         </Button>
                         <Button onClick={() =>
