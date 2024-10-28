@@ -40,7 +40,7 @@ const RowBase = ({row,handleModifyMainState}) => {
                 <TableCell align='center'>{row.contractId}</TableCell>
                 <TableCell align='center' >{row.yearQuarter}</TableCell>
                 <TableCell align='center' >{row.bollo}</TableCell>
-                <TableCell align='center'>{row.riferimentoData !== null ? new Date(row.riferimentoData).toLocaleString().split(',')[0] : ''}</TableCell>
+                <TableCell align='center'>{(row.riferimentoData !== null && row.riferimentoData !== "0001-01-01T00:00:00") ? new Date(row.riferimentoData).toLocaleString().split(',')[0] : ''}</TableCell>
                 <TableCell align='center' onClick={()=> handleOnDetail(row)}>
                     <Tooltip title="Dettaglio">
                         <IconButton>

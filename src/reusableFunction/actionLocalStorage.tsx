@@ -152,13 +152,19 @@ export const getInfoPageFromLocalStorageFatture = () => {
     return result;
 };
 
-export const setFilterToLocalStorageDocConPA = (body,textValue,valueAutocomplete, page, rowsPerPage,valueQuarters) => {
-    localStorage.setItem("filtersDocContabiliPA", JSON.stringify({body,textValue,valueAutocomplete, page, rowsPerPage,valueQuarters}));
+export const setFilterToLocalStorageDocConPA = (body,textValue,valueAutocomplete,valueQuarters) => {
+    localStorage.setItem("filtersDocContabiliPA", JSON.stringify({body,textValue,valueAutocomplete,valueQuarters}));
 };
 
 export const setFilterPageRowDocConPA = (page, rowsPerPage) => {
-    const oldFilters = getInfoPageFromLocalStorageDocConPA();
-    localStorage.setItem("filtersDocContabiliPA", JSON.stringify({...oldFilters, ...{page, rowsPerPage}}));
+
+    localStorage.setItem("filtersDocContabiliPageRowPA", JSON.stringify({page, rowsPerPage}));
+};
+
+export const getFilterPageRowDocConPA = () => {
+    const infoPage = localStorage.getItem('filtersDocContabiliPageRowPA') || '{}';
+    const result =  JSON.parse(infoPage);
+    return result;
 };
 
 

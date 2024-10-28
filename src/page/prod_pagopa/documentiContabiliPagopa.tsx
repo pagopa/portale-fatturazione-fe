@@ -7,7 +7,7 @@ import ModalLoading from "../../components/reusableComponents/modals/modalLoadin
 import { manageError } from "../../api/api";
 import { AutocompleteMultiselect, GridElementListaPsp, OptionMultiselectCheckboxQarter, OptionMultiselectCheckboxPsp, } from "../../types/typeAngraficaPsp";
 import { downloadPsp, getListaNamePsp } from "../../api/apiPagoPa/anagraficaPspPA/api";
-import { deleteFilterToLocalStorageDocConPA, getInfoPageFromLocalStorageDocConPA, getProfilo, getToken, setFilterToLocalStorageDocConPA } from "../../reusableFunction/actionLocalStorage";
+import { deleteFilterToLocalStorageDocConPA, getFilterPageRowDocConPA, getInfoPageFromLocalStorageDocConPA, getProfilo, getToken, setFilterPageRowDocConPA, setFilterToLocalStorageDocConPA } from "../../reusableFunction/actionLocalStorage";
 import MultiselectWithKeyValue from "../../components/anagraficaPsp/multiselectKeyValue";
 import { RequestBodyListaDocContabiliPagopa } from "../../types/typeDocumentiContabili";
 import { downloadDocContabili, downloadFinancialReportDocContabili, getListaDocumentiContabiliPa, getQuartersDocContabiliPa, getYearsDocContabiliPa } from "../../api/apiPagoPa/documentiContabiliPA/api";
@@ -23,6 +23,7 @@ import { GlobalContext } from "../../store/context/globalContext";
 const DocumentiContabili:React.FC = () =>{
 
     const localStorageFilters = getInfoPageFromLocalStorageDocConPA();
+    const localStorageFilterPageRow = getFilterPageRowDocConPA();
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState} = globalContextObj;
  
@@ -137,6 +138,7 @@ const DocumentiContabili:React.FC = () =>{
             setBodyGetLista((prev)=>({...prev,...{quarters:[]}}));
         }
         getQuarters();
+        
     },[bodyGetLista.year]);
 
 
@@ -182,8 +184,12 @@ const DocumentiContabili:React.FC = () =>{
             .then((res)=>{
                 setYearOnSelect(res.data);
                 if(res.data.length > 0){
-                   
 
+                    if(Object.keys(localStorageFilterPageRow).length > 0){
+                        setPage(localStorageFilterPageRow.page);
+                        setRowsPerPage(localStorageFilterPageRow.rowsPerPage);
+                    }
+                   
                     if(Object.keys(localStorageFilters).length > 0){
                         setBodyGetLista(localStorageFilters.body);
                         setFiltersDownload(localStorageFilters.body);
@@ -191,10 +197,6 @@ const DocumentiContabili:React.FC = () =>{
                         setTextValue(localStorageFilters.textValue);
                         getListaDocGrid(localStorageFilters.body);
                         setValueQuarters(localStorageFilters.valueQuarters);
-                        setPage(localStorageFilters.page);
-                        setRowsPerPage(localStorageFilters.rowsPerPage);
-                       
-
                     }else{
                         setBodyGetLista((prev) => ({...prev,...{year:res.data[0]}}));
                         setFiltersDownload((prev) => ({...prev,...{year:res.data[0]}}));
@@ -276,7 +278,8 @@ const DocumentiContabili:React.FC = () =>{
         getListaDocGrid(bodyGetLista); 
         setPage(0);
         setRowsPerPage(10);
-        setFilterToLocalStorageDocConPA(bodyGetLista,textValue,valueAutocomplete, 0, 10,valueQuarters);
+        setFilterPageRowDocConPA(0,10);
+        setFilterToLocalStorageDocConPA(bodyGetLista,textValue,valueAutocomplete,valueQuarters);
         //handleModifyMainState({filterDocContabili:{body:bodyGetLista,valueAutocomplete:valueAutocomplete, valueQuarters:valueQuarters, infoPage:{page:0,row:10}}});
         //setFilterToLocalStorageRel(bodyRel,textValue,valueAutocomplete, 0, 10,valuetipologiaFattura);
     };
@@ -452,6 +455,8 @@ const DocumentiContabili:React.FC = () =>{
                                     setDataSelect([]);
                                     setValueAutocomplete([]);
                                     setValueQuarters([]);
+                                    setPage(0);
+                                    setRowsPerPage(10);
                                     deleteFilterToLocalStorageDocConPA();
                                     /*setBodyGetLista({idEnti:[],prodotto:'',profilo:''});
                                     setInfoPageListaDatiFat({ page: 0, pageSize: 100 });

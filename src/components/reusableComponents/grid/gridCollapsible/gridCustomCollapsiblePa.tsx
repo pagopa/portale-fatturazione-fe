@@ -74,7 +74,7 @@ const CollapsibleTablePa = ({headerNames,page,setPage,rowsPerPage,setRowsPerPage
             value:valueObj
         });
     };
-    console.log(dataPaginated);
+
     
    
 

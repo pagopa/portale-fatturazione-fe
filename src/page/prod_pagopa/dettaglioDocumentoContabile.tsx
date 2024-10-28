@@ -235,7 +235,7 @@ const DettaglioDocContabile : React.FC = () =>{
                         <TextDettaglioPdf description='Numero' value={docContabile.report.numero}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Report data' value={docContabile.report.data !== '' ? new Date(docContabile.report.data).toISOString().split('T')[0]:''}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Bollo' value={docContabile.report.bollo}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Data di riferimento' value={docContabile.report.riferimentoData !== '' ? new Date(docContabile.report.riferimentoData).toISOString().split('T')[0]:''}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Data di riferimento' value={(docContabile.report.riferimentoData !== '' && docContabile.report.riferimentoData !== "0001-01-01T00:00:00") ? new Date(docContabile.report.riferimentoData).toISOString().split('T')[0]:''}></TextDettaglioPdf>
                     </div>
                 </div>
             </div>
