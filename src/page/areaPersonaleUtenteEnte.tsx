@@ -318,13 +318,13 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
             
     // check su ogni elemento dello state statusBottonConferma
     const enableDisableConferma = Object.values(statusBottonConferma).every(element => element === false);
-            
+   
     const ifAnyTextAreaIsEmpty = (
         datiFatturazione.notaLegale === false 
                 || datiFatturazione.pec === ''
                 || datiFatturazione.contatti.length === 0
     );
-            
+    
     if(loadingData){
         return(
             <SuspenseDatiFatturazione></SuspenseDatiFatturazione>

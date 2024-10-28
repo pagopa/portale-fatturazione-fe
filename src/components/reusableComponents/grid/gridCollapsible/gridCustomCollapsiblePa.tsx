@@ -14,6 +14,7 @@ import Row from './rowWithCheckbox';
 import RowBase from './rowBase';
 import { MainState } from '../../../../types/typesGeneral';
 import { GlobalContext } from '../../../../store/context/globalContext';
+import { getInfoPageFromLocalStorageDocConPA, setFilterPageRowDocConPA } from '../../../../reusableFunction/actionLocalStorage';
 
 
 export interface DocContabili {
@@ -56,14 +57,16 @@ export interface GridCollapsibleBase{
     //setOpenResetFilterModal:any,
     //monthFilterIsEqualMonthDownload:boolean,
     //showedData:FattureObj[],
-    //setShowedData: Dispatch<SetStateAction<FattureObj[]>>,
+    //setDataPaginated: Dispatch<SetStateAction<FattureObj[]>>,
 }
 
 
-const CollapsibleTablePa = ({data, headerNames,page,setPage,rowsPerPage,setRowsPerPage}) => {
+const CollapsibleTablePa = ({headerNames,page,setPage,rowsPerPage,setRowsPerPage,count,dataPaginated}) => {
+
+   
    
     const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState, mainState} = globalContextObj;
+    const {dispatchMainState} = globalContextObj;
  
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -71,27 +74,7 @@ const CollapsibleTablePa = ({data, headerNames,page,setPage,rowsPerPage,setRowsP
             value:valueObj
         });
     };
-   
-   
-   
-   
-    const [count, setCount] = useState(0);
-    const [showedData, setShowedData] = useState<DocContabili[]>([]);
-  
-    
-    
-    useEffect(()=>{
-
-        setCount(data.length);
-        setShowedData(data.slice(0, 10));
-        /*
-        const filter = mainState.filterDocContabili;
-        const newInfoPage = {infoPage:{page:page,row:rowsPerPage}};
-        const newFilter = {...filter,...newInfoPage};
-
-        handleModifyMainState({filterDocContabili:newFilter});*/
-    },[data]);
-    
+    console.log(dataPaginated);
     
    
 
@@ -107,11 +90,12 @@ const CollapsibleTablePa = ({data, headerNames,page,setPage,rowsPerPage,setRowsP
             from = newPage * rowsPerPage;
         }
     
-        setShowedData(data.slice(from, rowsPerPage + from));
+        //setDataPaginated(data.slice(from, rowsPerPage + from));
         setPage(newPage);
-        const filters = mainState.filterDocContabili;
-        const newFilters = {...filters,  ...{infoPage:{row:rowsPerPage,page:newPage}}};
-        handleModifyMainState({filterDocContabili:newFilters});
+        setFilterPageRowDocConPA(newPage,rowsPerPage);
+        // const filters = mainState.filterDocContabili;
+        //const newFilters = {...filters,  ...{infoPage:{row:rowsPerPage,page:newPage}}};
+        //handleModifyMainState({filterDocContabili:newFilters});
     };
     
     const handleChangeRowsPerPage = (
@@ -119,12 +103,13 @@ const CollapsibleTablePa = ({data, headerNames,page,setPage,rowsPerPage,setRowsP
     ) => {
        
     
-        setShowedData(data.slice(0, event.target.value));
+        //setDataPaginated(data.slice(0, event.target.value));
         setRowsPerPage(event.target.value);
         setPage(0);
-        const filters = mainState.filterDocContabili;
-        const newFilters = {...filters,  ...{infoPage:{row:event.target.value,page:0}}};
-        handleModifyMainState({filterDocContabili:newFilters});
+        setFilterPageRowDocConPA(0,event.target.value);
+        // const filters = mainState.filterDocContabili;
+        // const newFilters = {...filters,  ...{infoPage:{row:event.target.value,page:0}}};
+        //handleModifyMainState({filterDocContabili:newFilters});
     };
 
 
@@ -155,9 +140,9 @@ const CollapsibleTablePa = ({data, headerNames,page,setPage,rowsPerPage,setRowsP
                                     })}
                                 </TableRow>
                             </TableHead>
-                            {data.length === 0 ? <TableBody  style={{height: '50px'}}>
+                            {dataPaginated.length === 0 ? <TableBody  style={{height: '50px'}}>
 
-                            </TableBody>: showedData.map((row) => {
+                            </TableBody>: dataPaginated.map((row) => {
                                 return(
                                     <RowBase key={row.id} 
                                         row={row}

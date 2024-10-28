@@ -151,3 +151,26 @@ export const getInfoPageFromLocalStorageFatture = () => {
     const result =  JSON.parse(infoPage);
     return result;
 };
+
+export const setFilterToLocalStorageDocConPA = (body,textValue,valueAutocomplete, page, rowsPerPage,valueQuarters) => {
+    localStorage.setItem("filtersDocContabiliPA", JSON.stringify({body,textValue,valueAutocomplete, page, rowsPerPage,valueQuarters}));
+};
+
+export const setFilterPageRowDocConPA = (page, rowsPerPage) => {
+    const oldFilters = getInfoPageFromLocalStorageDocConPA();
+    localStorage.setItem("filtersDocContabiliPA", JSON.stringify({...oldFilters, ...{page, rowsPerPage}}));
+};
+
+
+
+
+
+export const getInfoPageFromLocalStorageDocConPA = () => {
+    const infoPage = localStorage.getItem('filtersDocContabiliPA') || '{}';
+    const result =  JSON.parse(infoPage);
+    return result;
+};
+
+export const deleteFilterToLocalStorageDocConPA = () => {
+    localStorage.removeItem("filtersDocContabiliPA");
+}; 
