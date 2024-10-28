@@ -97,13 +97,7 @@ export interface MainState{
     messaggioSelected:null|Messaggi
     prodotti:ProfiloObject[],
     profilo:any,
-    docContabileSelected:{contractId:string,quarter:string},
-    filterDocContabili:{
-        body:RequestBodyListaDocContabiliPagopa,
-        valueAutocomplete:AutocompleteMultiselect[],
-        valueQuarters:OptionMultiselectCheckboxQarter[],
-        infoPage:{row:number,page:number}
-    }
+    docContabileSelected:{contractId:string,quarter:string}
 }
 
 export type ProfiloObject = {

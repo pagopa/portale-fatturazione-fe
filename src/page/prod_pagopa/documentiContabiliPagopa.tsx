@@ -48,13 +48,16 @@ const DocumentiContabili:React.FC = () =>{
         membershipId: '',
         recipientId: '',
         abi: '',
-        quarters:[]});
+        quarters:[],
+        year:''});
     const [bodyGetLista, setBodyGetLista] = useState<RequestBodyListaDocContabiliPagopa>({
         contractIds:[],
         membershipId: '',
         recipientId: '',
         abi: '',
-        quarters:[]});
+        quarters:[],
+        year:''});
+    console.log(bodyGetLista);
     const [getListaLoading, setGetListaLoading] = useState(false);
     const [dataSelect, setDataSelect] = useState<OptionMultiselectCheckboxPsp[]>([]);
     const [dataSelectQuarter, setDataSelectQuarter] = useState<OptionMultiselectCheckboxQarter[]>([]);
@@ -65,7 +68,7 @@ const DocumentiContabili:React.FC = () =>{
     const [showLoading,setShowLoading] = useState(false);
 
     const [yearOnSelect,setYearOnSelect] = useState<string[]>([]);
-    const [valueYear,setValueYear] = useState('');
+  
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -90,14 +93,15 @@ const DocumentiContabili:React.FC = () =>{
         }
         if(infoPageResult.page > 0){
             setInfoPageListaDatiFat(infoPageResult);
-        }*/
+        }
         setBodyGetLista(mainState.filterDocContabili.body);
         setFiltersDownload(mainState.filterDocContabili.body);
         setValueAutocomplete(mainState.filterDocContabili.valueAutocomplete);
         setValueQuarters(mainState.filterDocContabili.valueQuarters);
-        getListaDocGrid(mainState.filterDocContabili.body);
+        
         setPage(mainState.filterDocContabili.infoPage.page);
         setRowsPerPage(mainState.filterDocContabili.infoPage.row);
+        */
         getYears();
     }, []);
 
@@ -106,7 +110,7 @@ const DocumentiContabili:React.FC = () =>{
    
 
  
-
+    
 
     useEffect(()=>{
         if(bodyGetLista.contractIds.length  !== 0 || bodyGetLista.membershipId !== '' || bodyGetLista.recipientId !== ''|| bodyGetLista.abi !== '' || bodyGetLista.quarters.length > 0){
@@ -128,11 +132,15 @@ const DocumentiContabili:React.FC = () =>{
     },[textValue]);
 
     useEffect(()=>{
-        if(valueYear !== ''){
+      
+        if(bodyGetLista.year !== ''){
             getQuarters();
+            setValueQuarters([]);
+            setBodyGetLista((prev)=>({...prev,...{quarters:[]}}));
+            
         }
        
-    },[valueYear]);
+    },[bodyGetLista.year]);
 
 
 
@@ -177,8 +185,9 @@ const DocumentiContabili:React.FC = () =>{
             .then((res)=>{
                 setYearOnSelect(res.data);
                 if(res.data.length > 0){
-                    setValueYear(res.data[0]);
+                    setBodyGetLista((prev) => ({...prev,...{year:res.data[0]}}));
                 }
+                getListaDocGrid({...bodyGetLista,...{year:res.data[0]}});
             })
             .catch(((err)=>{
                 manageError(err,dispatchMainState); 
@@ -187,7 +196,7 @@ const DocumentiContabili:React.FC = () =>{
 
     const getQuarters = async () =>{
        
-        await getQuartersDocContabiliPa(token, profilo.nonce,{year:valueYear})
+        await getQuartersDocContabiliPa(token, profilo.nonce,{year:bodyGetLista.year})
             .then((res)=>{
                 setDataSelectQuarter(res.data);
             })
@@ -252,7 +261,7 @@ const DocumentiContabili:React.FC = () =>{
         getListaDocGrid(bodyGetLista); 
         setPage(0);
         setRowsPerPage(10);
-        handleModifyMainState({filterDocContabili:{body:bodyGetLista,valueAutocomplete:valueAutocomplete, valueQuarters:valueQuarters, infoPage:{page:0,row:10}}});
+        //handleModifyMainState({filterDocContabili:{body:bodyGetLista,valueAutocomplete:valueAutocomplete, valueQuarters:valueQuarters, infoPage:{page:0,row:10}}});
         //setFilterToLocalStorageRel(bodyRel,textValue,valueAutocomplete, 0, 10,valuetipologiaFattura);
     };
    
@@ -306,8 +315,8 @@ const DocumentiContabili:React.FC = () =>{
                                 id="Anno_doc_contabili"
                                 label='Anno'
                                 labelId="search-by-label"
-                                onChange={(e) => setValueYear(e.target.value)}
-                                value={valueYear}
+                                onChange={(e) => setBodyGetLista((prev) => ({...prev,...{year:e.target.value}}))}
+                                value={bodyGetLista.year}
                             >
                                 {yearOnSelect.map((el) => (
                                     <MenuItem
@@ -419,13 +428,14 @@ const DocumentiContabili:React.FC = () =>{
                                         membershipId: '',
                                         recipientId: '',
                                         abi: '',
-                                        quarters:[]};
+                                        quarters:[],
+                                        year:yearOnSelect[0]};
                                     getListaDocGrid(newBody);
                                     setBodyGetLista(newBody);
                                     setFiltersDownload(newBody);
                                     setDataSelect([]);
                                     setValueAutocomplete([]);
-                                    setValueQuarters([]);
+                                    //setValueQuarters([]);
                                     
                                     /*setBodyGetLista({idEnti:[],prodotto:'',profilo:''});
                                     setInfoPageListaDatiFat({ page: 0, pageSize: 100 });

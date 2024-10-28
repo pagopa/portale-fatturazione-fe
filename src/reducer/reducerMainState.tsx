@@ -27,17 +27,6 @@ const initialState =  {
     prodotti:[],
     profilo:{},
     docContabileSelected:{contractId:'',quarter:''},
-    filterDocContabili:{
-        body:{
-            contractIds:[],
-            membershipId: '',
-            recipientId: '',
-            abi: '',
-            quarters:[]},
-        valueAutocomplete:[],
-        valueQuarters:[],
-        infoPage:{row:10,page:0}
-    }
 };
 
 

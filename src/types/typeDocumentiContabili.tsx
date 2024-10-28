@@ -5,7 +5,8 @@ export interface RequestBodyListaDocContabiliPagopa{
     membershipId: string,
     recipientId: string,
     abi: string,
-    quarters:string[]
+    quarters:string[],
+    year:string
 }
 
 

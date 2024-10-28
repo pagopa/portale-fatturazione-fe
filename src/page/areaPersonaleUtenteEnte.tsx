@@ -355,7 +355,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                             size="medium"
                             type='submit'
                             onClick={(e) => hendleSubmitDatiFatturazione(e)}
-                            disabled={false}
+                            disabled={!enableDisableConferma || ifAnyTextAreaIsEmpty}
                         >
                     Salva
                         </Button>
