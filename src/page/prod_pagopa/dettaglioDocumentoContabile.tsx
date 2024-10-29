@@ -88,10 +88,10 @@ const DettaglioDocContabile : React.FC = () =>{
 
 
     useEffect(()=>{
-        if(mainState.docContabileSelected.contractId === '' || mainState.docContabileSelected.quarter === ''){
+        if(mainState.docContabileSelected.key === ''){
             navigate(PathPf.DOCUMENTICONTABILI);
         }else{
-            getDocContabile({contractId:mainState.docContabileSelected.contractId,quarter:mainState.docContabileSelected.quarter});
+            getDocContabile({key:mainState.docContabileSelected.key});
         }
     },[]);
 
@@ -200,7 +200,7 @@ const DettaglioDocContabile : React.FC = () =>{
                 </div>
             </div>
             <div className='d-flex justify-content-between mt-4 me-5 ms-5'>
-                <Button disabled={docContabile.report.reports[0] === ''} onClick={()=> downloadFile(docContabile.report.reports[0],"Detailed Report")} >Download Detailed Report <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+                <Button disabled={docContabile.report.reports.length === 0 || docContabile.report.reports[0] === ''} onClick={()=> downloadFile(docContabile.report.reports[0],"Detailed Report")} >Download Detailed Report <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
                 <Button disabled={docContabile.report.reports[1] === ''} onClick={()=> downloadFile(docContabile.report.reports[1],"Download Agent Quarter Report")} >Download Agent Quarter Report <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
             </div>
             <div className="bg-white mb-5 me-5 ms-5">
@@ -257,7 +257,7 @@ const DettaglioDocContabile : React.FC = () =>{
                                                         <TableCell sx={{ width:"300px"}} >ID Categoria</TableCell>
                                                         <TableCell sx={{ width:"300px"}} >Codice articolo</TableCell>
                                                         <TableCell sx={{ width:"300px"}}>Quantità</TableCell>
-                                                        <TableCell align="center" sx={{ width:"300px"}}>Importo</TableCell>
+                                                        <TableCell align="center" sx={{ width:"300px"}}>Importo €</TableCell>
                                                     </TableRow>
                                                 </TableHead>
                                                 <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
@@ -266,7 +266,7 @@ const DettaglioDocContabile : React.FC = () =>{
                                                         <TableCell sx={{ width:"300px"}}>{singlePosizione.category}</TableCell>
                                                         <TableCell sx={{ width:"300px"}}>{singlePosizione.codiceArticolo}</TableCell>
                                                         <TableCell sx={{ width:"300px"}}>{singlePosizione.quantita}</TableCell>
-                                                        <TableCell  sx={{ width:"300px"}}align="right">{singlePosizione.importo.toLocaleString("de-DE", { style: "currency", currency: "EUR",maximumFractionDigits: 14 })}</TableCell> 
+                                                        <TableCell  sx={{ width:"300px"}}align="right">{singlePosizione.importo.toLocaleString("de-DE", { style: 'decimal',maximumFractionDigits: 14})}</TableCell> 
                                                     </TableRow>
                                               
                                                 </TableBody>

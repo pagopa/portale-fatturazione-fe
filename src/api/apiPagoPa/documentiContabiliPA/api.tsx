@@ -63,7 +63,7 @@ export const downloadFinancialReportDocContabili = async (token:string, nonce:st
 };
 
 
-export const getDetailsDocContabilePa = async (token:string, nonce:string , body:{contractId:string,quarter:string}) => {
+export const getDetailsDocContabilePa = async (token:string, nonce:string , body:{key:string}) => {
     const response =  await axios.post(`${url}/api/v2/pagopa/financialreports/dettaglio?nonce=${nonce}`,
         body,
         { headers: {

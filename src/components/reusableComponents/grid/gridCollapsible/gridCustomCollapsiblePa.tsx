@@ -6,18 +6,17 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { useContext, useEffect, useState } from 'react';
+import { useContext} from 'react';
 import { Card, TablePagination} from '@mui/material';
-import { FattureObj, GridCollapsible, HeaderCollapsible } from '../../../../types/typeFatturazione';
-import TablePaginationDemo from './tablePagination';
-import Row from './rowWithCheckbox';
+import { HeaderCollapsible } from '../../../../types/typeFatturazione';
 import RowBase from './rowBase';
 import { MainState } from '../../../../types/typesGeneral';
 import { GlobalContext } from '../../../../store/context/globalContext';
-import { getInfoPageFromLocalStorageDocConPA, setFilterPageRowDocConPA } from '../../../../reusableFunction/actionLocalStorage';
+import { setFilterPageRowDocConPA } from '../../../../reusableFunction/actionLocalStorage';
 
 
 export interface DocContabili {
+    key:string
     name: string,
     contractId: string,
     tipoDoc: string,
@@ -118,7 +117,7 @@ const CollapsibleTablePa = ({headerNames,page,setPage,rowsPerPage,setRowsPerPage
         <>
             <div style={{overflowX:'auto'}}>
                 
-                <Card sx={{width: '1300px'}}  >
+                <Card sx={{width: '1200px'}}  >
                     
                     <TableContainer component={Paper}>
                         
@@ -144,7 +143,7 @@ const CollapsibleTablePa = ({headerNames,page,setPage,rowsPerPage,setRowsPerPage
 
                             </TableBody>: dataPaginated.map((row) => {
                                 return(
-                                    <RowBase key={row.id} 
+                                    <RowBase key={row.key} 
                                         row={row}
                                         handleModifyMainState={handleModifyMainState}
                                     ></RowBase>

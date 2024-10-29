@@ -97,7 +97,7 @@ export interface MainState{
     messaggioSelected:null|Messaggi
     prodotti:ProfiloObject[],
     profilo:any,
-    docContabileSelected:{contractId:string,quarter:string}
+    docContabileSelected:{key:string}
 }
 
 export type ProfiloObject = {

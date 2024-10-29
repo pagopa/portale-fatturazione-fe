@@ -291,8 +291,8 @@ const DocumentiContabili:React.FC = () =>{
         {name:"",align:"left",id:1},
         {name:"Nome PSP",align:"left",id:2},
         {name:"ID Contratto",align:"center",id:3},
+        {name:"Numero",align:"center",id:5},
         {name:"Trimestre",align:"center",id:4},
-        {name:"Bollo",align:"center",id:5},
         {name:"Data",align:"center",id:6},
         {name:"Arrow",align:"center",id:7},
         {name:"Arrow",align:"center",id:8}];

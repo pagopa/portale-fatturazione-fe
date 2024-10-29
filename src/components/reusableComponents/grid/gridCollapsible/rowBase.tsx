@@ -14,7 +14,7 @@ const RowBase = ({row,handleModifyMainState}) => {
    
 
     const handleOnDetail = (row) => {  
-        handleModifyMainState({docContabileSelected:{contractId:row.contractId,quarter:row.yearQuarter}}); 
+        handleModifyMainState({docContabileSelected:{key:row.key}}); 
         navigate(PathPf.DETTAGLIO_DOC_CONTABILE);
     };
  
@@ -35,12 +35,12 @@ const RowBase = ({row,handleModifyMainState}) => {
                    
                 </TableCell>
                 <Tooltip title={row.name}>
-                    <TableCell sx={{color:'#0D6EFD',fontWeight: 'bold',cursor:'pointer'}} onClick={()=> handleOnDetail(row)}  >{ row.name?.length > 50 ? row.name.slice(0, 50) + '...' : row.name}</TableCell>
+                    <TableCell sx={{color:'#0D6EFD',fontWeight: 'bold',cursor:'pointer',width:'450px'}} onClick={()=> handleOnDetail(row)}  >{ row.name?.length > 50 ? row.name.slice(0, 50) + '...' : row.name}</TableCell>
                 </Tooltip>
                 <TableCell align='center'>{row.contractId}</TableCell>
+                <TableCell align='center' >{row.numero}</TableCell>
                 <TableCell align='center' >{row.yearQuarter}</TableCell>
-                <TableCell align='center' >{row.bollo}</TableCell>
-                <TableCell align='center'>{(row.riferimentoData !== null && row.riferimentoData !== "0001-01-01T00:00:00") ? new Date(row.riferimentoData).toLocaleString().split(',')[0] : ''}</TableCell>
+                <TableCell align='center'>{new Date(row.data).toLocaleString().split(',')[0]}</TableCell>
                 <TableCell align='center' onClick={()=> handleOnDetail(row)}>
                     <Tooltip title="Dettaglio">
                         <IconButton>

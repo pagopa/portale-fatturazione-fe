@@ -26,7 +26,7 @@ const initialState =  {
     messaggioSelected:null,
     prodotti:[],
     profilo:{},
-    docContabileSelected:{contractId:'',quarter:''},
+    docContabileSelected:{key:''},
 };
 
 
