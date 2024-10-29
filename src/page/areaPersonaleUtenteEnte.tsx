@@ -195,9 +195,10 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
              
             if(err?.response?.status !== 404){
                 manageError(err,dispatchMainState);
+                navigate(PathPf.LISTA_DATI_FATTURAZIONE); 
             }
             setLoadingData(false);
-            navigate(PathPf.LISTA_DATI_FATTURAZIONE); 
+           
         });
     };
             
@@ -216,6 +217,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                     handleModifyMainState({
                         statusPageDatiFatturazione:'immutable',
                     });
+                    getDatiFatPagoPa();
                 }).catch(err => {
                     setOpenModalLoading(false);
                     manageError(err,dispatchMainState);
@@ -264,12 +266,14 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
             const {idEnte,prodotto,...body} = bodyPagoPa;
             // 2 - ed è un utente PAGOPA
             if(profilo.auth === 'PAGOPA'){
-                await insertDatiFatturazionePagoPa( token,profilo.nonce, bodyPagoPa).then(()  =>{
+                await insertDatiFatturazionePagoPa( token,profilo.nonce, bodyPagoPa).then((res)  =>{
+                    console.log(res,'res');
                     setOpenModalLoading(false);
                     handleModifyMainState({
                         statusPageDatiFatturazione:'immutable',
                         datiFatturazione:true
                     });
+                    getDatiFatPagoPa();
                 }).catch(err =>{
                     setOpenModalLoading(false);
                     manageError(err,dispatchMainState);
