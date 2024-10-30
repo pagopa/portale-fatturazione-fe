@@ -202,7 +202,7 @@ const TabAreaPersonaleUtente = ({mainState,datiFatturazione,setDatiFatturazione,
                     </div>
                     <div className='d-flex'>
                         <InputLabel sx={{ marginRight:'20px'}}  size={"normal"}>Data ultimo accesso</InputLabel>
-                        {mainState.datiFatturazione && <Typography >{createDateFromString(datiFatturazione.dataModifica)}</Typography>}
+                        {mainState.datiFatturazione && <Typography >{datiFatturazione.dataModifica && createDateFromString(datiFatturazione.dataModifica)}</Typography>}
                     </div>
                 </div>
             </div>
