@@ -15,7 +15,7 @@ const SelectStatoPdf : React.FC<SelecTipologiaPdf> = ({setValue, values}) =>{
         'Invalidata'
     ];
 
-    const caricata = values.caricata || null;
+  
     return (
         <Box sx={{width:'80%', marginLeft:'20px'}}  >
             <FormControl
@@ -23,7 +23,7 @@ const SelectStatoPdf : React.FC<SelecTipologiaPdf> = ({setValue, values}) =>{
                 size="medium"
             >
                 <InputLabel
-                    id="sea"
+                    id="RegPdf"
                 >
                                Stato PDF Reg. Es. 
                 </InputLabel>
@@ -34,12 +34,12 @@ const SelectStatoPdf : React.FC<SelecTipologiaPdf> = ({setValue, values}) =>{
                     onChange={(e) =>{
                         setValue((prev)=> ({...prev, ...{caricata:Number(e.target.value)}}));
                     }}         
-                    value={caricata?.toString() ||  ''}                  
+                    value={values.caricata?.toString() ||  ''}                  
                 >
                     {statoPdf.map((el,i) => (       
                         <MenuItem
-                            key={i}
-                            value={i.toString()}
+                            key={Math.random()}
+                            value={i}
                         >
                             {el}
                         </MenuItem>

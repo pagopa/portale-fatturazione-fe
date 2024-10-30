@@ -9,8 +9,7 @@ import { FlagContestazione, MultiSelectGroupedByProps } from '../../types/typeRe
 import { useEffect , useState} from 'react';
 import { BodyListaNotifiche} from '../../types/typesGeneral';
 import { flagContestazione } from '../../api/apiSelfcare/notificheSE/api';
-import { getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
-import { GlobalContext } from '../../store/context/globalContext';
+
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;

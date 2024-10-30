@@ -5,7 +5,6 @@ import RadioComponent from './radio';
 import DataComponent from './data';
 import DynamicInsert from './dynamicInsert';
 import TextFieldComponent from './textField';
-import { getProfilo } from '../../reusableFunction/actionLocalStorage';
 import { createDateFromString } from '../../reusableFunction/function';
 import { MainState } from '../../types/typesGeneral';
 import { DatiFatturazione, StateEnableConferma } from '../../types/typesAreaPersonaleUtenteEnte';
@@ -198,11 +197,11 @@ const TabAreaPersonaleUtente = ({mainState,datiFatturazione,setDatiFatturazione,
                 <div className="d-flex justify-content-around marginTopBottom24">
                     <div className='d-flex'>
                         <InputLabel  sx={{ marginRight:'20px'}}  size={"normal"}>Data primo accesso</InputLabel>
-                        {mainState.datiFatturazione && <Typography >{createDateFromString(datiFatturazione.dataCreazione)}</Typography>}
+                        {mainState.datiFatturazione && <Typography >{createDateFromString(mainState.profilo.dataPrimo)}</Typography>}
                     </div>
                     <div className='d-flex'>
                         <InputLabel sx={{ marginRight:'20px'}}  size={"normal"}>Data ultimo accesso</InputLabel>
-                        {mainState.datiFatturazione && <Typography >{datiFatturazione.dataModifica && createDateFromString(datiFatturazione.dataModifica)}</Typography>}
+                        {mainState.datiFatturazione && <Typography >{createDateFromString(mainState.profilo.dataUltimo)}</Typography>}
                     </div>
                 </div>
             </div>
