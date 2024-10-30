@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer, useContext} from 'react';
+import React, { useState, useEffect, useContext} from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import {HeaderProduct,PartyEntity, ProductEntity} from '@pagopa/mui-italia';
 import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
@@ -6,7 +6,6 @@ import Badge from '@mui/material/Badge';
 import { MainState } from '../../types/typesGeneral';
 import { IconButton } from '@mui/material';
 import { getMessaggiCount } from '../../api/apiPagoPa/centroMessaggi/api';
-import { getProdotti, getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
 import { PathPf } from '../../types/enum';
 import { GlobalContext } from '../../store/context/globalContext';
 import { getAuthProfilo, redirect } from '../../api/api';
