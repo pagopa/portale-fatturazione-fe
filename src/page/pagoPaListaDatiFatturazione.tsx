@@ -70,22 +70,7 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
         }
         
     }, []);
-    /*
-    useEffect(()=>{
-        if(token === undefined){
-            window.location.href = '/azureLogin';
-        }else if(profilo.auth === 'PAGOPA'){
-            // se un utente ha già selezionato un elemento nella grid avrà in memoria l'idEnte, per errore se andrà nella pagina '/'
-        // modificando a mano l'url andrà a modificare i dati fatturazione dell'ultimo utente selezionato
-   
-            const newProfilo = profilo; 
-            localStorage.setItem('profilo', JSON.stringify(newProfilo));
-        }else if(enti){
-            navigate(PathPf.DATI_FATTURAZIONE);
-        }
-    },[]);
 
-*/
 
     useEffect(()=>{
         if(bodyGetLista.idEnti?.length  !== 0 || bodyGetLista.prodotto !== '' || bodyGetLista.profilo !== ''){
@@ -227,12 +212,11 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                                 labelId="search-by-label"
                                 onChange={(e) => setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}))}
                                 value={bodyGetLista.prodotto || ''}
-                                disabled={status=== 'immutable' ? true : false}
                             >
                                 {prodotti.map((el) => (
                                     <MenuItem
                                         key={Math.random()}
-                                        value={el.nome}
+                                        value={el.nome||''}
                                     >
                                         {el.nome}
                                     </MenuItem>
@@ -257,13 +241,12 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                                 label='Seleziona Profilo'
                                 labelId="search-by-label"
                                 onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{profilo:e.target.value}}))}
-                                value={bodyGetLista.profilo}
-                                disabled={status=== 'immutable' ? true : false}
+                                value={bodyGetLista.profilo||''}
                             >
                                 {profili.map((el) => (
                                     <MenuItem
                                         key={Math.random()}
-                                        value={el}
+                                        value={el||''}
                                     >
                                         {el}
                                     </MenuItem>

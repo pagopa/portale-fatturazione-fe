@@ -296,26 +296,7 @@ const Fatturazione : React.FC = () =>{
                     </div>
                    
                     <div  className="col-3">
-                        <MultiSelectFatturazione
-                            setBody={setBodyFatturazione}
-                            list={tipologie}
-                            value={valueMulitselectTipologie}
-                            setValue={setValueMultiselectTipologie}
-                        ></MultiSelectFatturazione>
-                    </div>
-                    <div  className="col-3">
-                        <MultiselectCheckbox 
-                            setBodyGetLista={setBodyFatturazione}
-                            dataSelect={dataSelect}
-                            setTextValue={setTextValue}
-                            valueAutocomplete={valueAutocomplete}
-                            setValueAutocomplete={setValueAutocomplete}
-                        ></MultiselectCheckbox>
-                    </div>
-                </div>
-                <div className="row mt-5">
-                    <div  className="col-3">
-                        <FormControl sx={{width:'80%'}}>
+                        <FormControl sx={{width:'80%',marginLeft:'20px'}}>
                             <InputLabel id="stato_fatturazione">Stato</InputLabel>
                             <Select
                                 labelId="stato_fatturazione"
@@ -332,6 +313,27 @@ const Fatturazione : React.FC = () =>{
                                 <MenuItem value={1}>Non fatturate</MenuItem>
                             </Select>
                         </FormControl>
+                      
+                    </div>
+                    <div  className="col-3">
+                        <MultiSelectFatturazione
+                            setBody={setBodyFatturazione}
+                            list={tipologie}
+                            value={valueMulitselectTipologie}
+                            setValue={setValueMultiselectTipologie}
+                        ></MultiSelectFatturazione>
+                        
+                    </div>
+                </div>
+                <div className="row mt-5">
+                    <div  className="col-3">
+                        <MultiselectCheckbox 
+                            setBodyGetLista={setBodyFatturazione}
+                            dataSelect={dataSelect}
+                            setTextValue={setTextValue}
+                            valueAutocomplete={valueAutocomplete}
+                            setValueAutocomplete={setValueAutocomplete}
+                        ></MultiselectCheckbox>
                     </div>
                 </div>
                 <div className="row mt-5">

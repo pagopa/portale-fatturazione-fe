@@ -90,11 +90,8 @@ const DocumentiContabili:React.FC = () =>{
         getYears();
     }, []);
 
-    console.log(page,rowsPerPage);
 
     useEffect(()=>{
-        console.log('dentro');
-
         let from = 0;
         if(page === 0){
             from = 0;
@@ -160,6 +157,7 @@ const DocumentiContabili:React.FC = () =>{
             })
             .catch(((err)=>{
                 setGridData([]);
+                setCount(0);
                 setGetListaLoading(false);
                 manageError(err,dispatchMainState);
             })); 

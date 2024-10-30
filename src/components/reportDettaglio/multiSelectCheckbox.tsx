@@ -13,11 +13,7 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
 
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
-    const location = useLocation();
 
-    const customMargin = location.pathname === PathPf.FATTURAZIONE ? { width: '80%' ,marginLeft:'12px'} : { width: '80%'};
-
-   
 
     return (
         <Autocomplete
@@ -47,7 +43,7 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
                     </li>
                 );
             } }
-            style={customMargin}
+            style={{ width: '80%'}}
             renderInput={(params) =>{
                 return <TextField 
                     onChange={(e)=> setTextValue(e.target.value)} 
