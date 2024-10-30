@@ -42,8 +42,7 @@ const AuthAzureProdotti : React.FC = () => {
                         dataPrimo:storeProfilo.dataPrimo,
                         prodotto:storeProfilo.prodotto,
                         jwt:productSelected.jwt,
-                        nonce:storeProfilo.nonce,
-                        profilo:storeProfilo.profilo
+                        
                     };
                     //const storeJwt = {token:productSelected.jwt};
                     //localStorage.setItem('token', JSON.stringify(storeJwt));

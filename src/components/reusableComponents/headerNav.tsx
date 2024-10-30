@@ -9,6 +9,7 @@ import { getMessaggiCount } from '../../api/apiPagoPa/centroMessaggi/api';
 import { getProdotti, getProfilo, getToken } from '../../reusableFunction/actionLocalStorage';
 import { PathPf } from '../../types/enum';
 import { GlobalContext } from '../../store/context/globalContext';
+import { getAuthProfilo, redirect } from '../../api/api';
 
 type HeaderNavProps = {
     mainState:MainState,
@@ -36,7 +37,7 @@ const HeaderNavComponent : React.FC = () => {
     };
     
    
-    const url = window.location.origin;
+ 
 
 
     const [countMessages, setCountMessages] = useState(0);
@@ -116,6 +117,45 @@ const HeaderNavComponent : React.FC = () => {
         }
     },[globalContextObj.mainState.authenticated]);
 
+    const getProfilo = async (jwt, productSelected)=>{
+       
+        await getAuthProfilo(jwt).then((resp) => {
+            const storeProfilo = resp.data;
+            const profiloDetails = {
+                auth:storeProfilo.auth,
+                nomeEnte:storeProfilo.nomeEnte,
+                descrizioneRuolo:storeProfilo.descrizioneRuolo,
+                ruolo:storeProfilo.ruolo,
+                dataUltimo:storeProfilo.dataUltimo,
+                dataPrimo:storeProfilo.dataPrimo,
+                prodotto:storeProfilo.prodotto,
+                jwt:productSelected.jwt,
+                nonce:storeProfilo.nonce,
+                profilo:storeProfilo.profilo
+            };
+            //const storeJwt = {token:productSelected.jwt};
+            //localStorage.setItem('token', JSON.stringify(storeJwt));
+            //eliminare il nonce
+            handleModifyMainState({
+                ruolo:resp.data.ruolo,
+                action:'',
+                authenticated:true,
+                profilo:profiloDetails
+            });
+
+                   
+            if(productSelected.prodotto === 'prod-pagopa'){
+                navigate(PathPf.ANAGRAFICAPSP);
+            }else if(productSelected.prodotto === 'prod-pn'){
+                navigate(PathPf.LISTA_DATI_FATTURAZIONE);
+            }
+
+        }).catch(()=> {
+            window.location.href = redirect;
+        });
+      
+    };
+
 
 
 
@@ -128,14 +168,7 @@ const HeaderNavComponent : React.FC = () => {
                     productsList={products}
                     onSelectedProduct={(e) => {
                         const newProfilo:any = mainState.prodotti.find((el:any) => el.prodotto === e.id);
-                        handleModifyMainState({
-                            profilo:newProfilo
-                        });
-                        if(newProfilo.profilo === 'prod-pagopa'){
-                            navigate(PathPf.ANAGRAFICAPSP);
-                        }else{
-                            navigate(PathPf.LISTA_DATI_FATTURAZIONE);
-                        }
+                        getProfilo(newProfilo.jwt,newProfilo);
                       
                     }}
                     partyList={partyList}

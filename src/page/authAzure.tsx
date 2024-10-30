@@ -1,13 +1,11 @@
-import { pagopaLogin, redirect, pagopaLogin2 } from "../api/api";
+import {redirect, pagopaLogin2 } from "../api/api";
 import {InteractionRequiredAuthError,InteractionStatus,
 } from "@azure/msal-browser";
 import { useMsal } from "@azure/msal-react";
 import {useState, useEffect, useContext} from 'react';
 import { useNavigate } from "react-router";
-import { AuthAzureProps} from "../types/typesGeneral";
-import { loginRequest } from "../authConfig";
 import { GlobalContext } from "../store/context/globalContext";
-import { getProdotti, getProfilo } from "../reusableFunction/actionLocalStorage";
+
 
 
 
@@ -96,9 +94,10 @@ const AuthAzure : React.FC<any> = () =>{
             if(res.status === 200){
                 //localStorage.removeItem("statusApplication");
                 // store del token nella local storage per tutte le successive chiamate START
+                const infoProdotti = res.data.map((el) => ({jwt:el.jwt,prodotto:el.prodotto,descrizioneRuolo:el.descrizioneRuolo}));
                 handleModifyMainState({
                     authenticated:true,
-                    prodotti:res.data,
+                    prodotti:infoProdotti,
                     profilo:{},
                     mese:'',
                     anno:'',
