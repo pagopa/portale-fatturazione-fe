@@ -9,6 +9,7 @@ import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { saveAs } from "file-saver";
 import { GlobalContext } from '../../store/context/globalContext';
+import { getFiltersFromLocalStorageAnagrafica, setFilterToLocalStorageAnagrafica } from '../../reusableFunction/actionLocalStorage';
 
 
 
@@ -19,6 +20,7 @@ const AnagraficaPsp:React.FC = () =>{
  
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
+    const result = getFiltersFromLocalStorageAnagrafica();
 
     const [gridData, setGridData] = useState<GridElementListaPsp[]>([]);
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
@@ -41,29 +43,24 @@ const AnagraficaPsp:React.FC = () =>{
     const [valueAutocomplete, setValueAutocomplete] = useState<AutocompleteMultiselect[]>([]);
     const [showLoading,setShowLoading] = useState(false);
 
-    
+   
+
     useEffect(()=>{
-        /*
-        const result = getFiltersFromLocalStorage();
-        const infoPageResult = getInfoPageFromLocalStorage();
-       
-        getProdotti();
-        getProfili();
         if(Object.keys(result).length > 0){
-            setBodyGetLista(result.bodyGetLista);
+         
+            setBodyGetLista(result.body);
             setTextValue(result.textValue);
             setValueAutocomplete(result.valueAutocomplete);
-            getListaDatifatturazione(result.bodyGetLista);
-            setFiltersDownload(result.bodyGetLista);
+            getListaAnagraficaPspGrid(result.body,result.page + 1, result.rowsPerPage);
+            setPage(result.page);
+            setRowsPerPage(result.rowsPerPage);
+            setFiltersDownload(result.body);
         }else{
-            getListaDatifatturazione(bodyGetLista);
+            const realPage = page + 1;
+            getListaAnagraficaPspGrid(bodyGetLista,realPage,rowsPerPage);
+      
         }
-        if(infoPageResult.page > 0){
-            setInfoPageListaDatiFat(infoPageResult);
-        }*/
-        const realPage = page + 1;
-        getListaAnagraficaPspGrid(bodyGetLista,realPage,rowsPerPage);
-    }, []);
+    },[]);
 
  
 
@@ -162,6 +159,7 @@ const AnagraficaPsp:React.FC = () =>{
         setRowsPerPage(10);
         setFiltersDownload(bodyGetLista);
         getListaAnagraficaPspGrid(bodyGetLista,1,10); 
+        setFilterToLocalStorageAnagrafica(bodyGetLista,textValue,valueAutocomplete, 0, 10);
         //setFilterToLocalStorageRel(bodyRel,textValue,valueAutocomplete, 0, 10,valuetipologiaFattura);
     };
     const handleChangePage = (
@@ -171,8 +169,7 @@ const AnagraficaPsp:React.FC = () =>{
         const realPage = newPage + 1;
         getListaAnagraficaPspGrid(bodyGetLista,realPage, rowsPerPage);
         setPage(newPage);
-  
-        //setFilterToLocalStorageRel(bodyDownload,textValue,valueAutocomplete, newPage, rowsPerPage,valuetipologiaFattura);
+        setFilterToLocalStorageAnagrafica(bodyGetLista,textValue,valueAutocomplete, newPage, rowsPerPage);
     };
                 
     const handleChangeRowsPerPage = (
@@ -182,8 +179,7 @@ const AnagraficaPsp:React.FC = () =>{
         setPage(0);
         const realPage = page + 1;
         getListaAnagraficaPspGrid(bodyGetLista,realPage,parseInt(event.target.value, 10));
-
-        // setFilterToLocalStorageRel(bodyDownload,textValue,valueAutocomplete, page, parseInt(event.target.value, 10),valuetipologiaFattura);
+        setFilterToLocalStorageAnagrafica(bodyGetLista,textValue,valueAutocomplete, realPage, parseInt(event.target.value, 10));
     };
       
  

@@ -1,5 +1,5 @@
 import { Box, Divider, List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
-import { getProfilo } from "../../reusableFunction/actionLocalStorage";
+import { deleteFilterToLocalStorageAnagrafica, deleteFilterToLocalStorageDocConPA, deleteFilterToLocalStorageDocConPaginationPA, getProfilo } from "../../reusableFunction/actionLocalStorage";
 import { useContext, useEffect, useState } from "react";
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
@@ -27,10 +27,13 @@ const SideNavPagopa = () => {
 
     const handleListItemClickAnagrafica = () =>{
         navigate(PathPf.ANAGRAFICAPSP);
+        deleteFilterToLocalStorageDocConPA();
+        deleteFilterToLocalStorageDocConPaginationPA();
     };
 
     const handleListItemClickDocContabili = () =>{
         navigate(PathPf.DOCUMENTICONTABILI);
+        deleteFilterToLocalStorageAnagrafica();
     };
 
     const currentLocation = location.pathname;

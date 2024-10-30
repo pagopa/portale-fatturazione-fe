@@ -104,6 +104,10 @@ export const setFilterToLocalStorageRel = (bodyRel,textValue,valueAutocomplete, 
     localStorage.setItem("filtersRel", JSON.stringify({bodyRel,textValue,valueAutocomplete, page, rowsPerPage,valuetipologiaFattura}));
 }; 
 
+export const setFilterToLocalStorageAnagrafica = (body,textValue,valueAutocomplete, page, rowsPerPage) => {
+    localStorage.setItem("filtersAnagrafica", JSON.stringify({body,textValue,valueAutocomplete, page, rowsPerPage}));
+}; 
+
 export const deleteFilterToLocalStorageRel = () => {
     localStorage.removeItem("filtersRel");
 }; 
@@ -113,6 +117,13 @@ export const getFiltersFromLocalStorageRel = () => {
     const result =  JSON.parse(filtri);
     return result;
 };
+export const getFiltersFromLocalStorageAnagrafica = () => {
+    const filtri = localStorage.getItem('filtersAnagrafica') || '{}';
+    const result =  JSON.parse(filtri);
+    return result;
+};
+
+
 
 export const setFilterToLocalStorageNotifiche = (bodyGetLista,textValue,valueAutocomplete, page, rowsPerPage,valueFgContestazione) => {
     localStorage.setItem("filtersNotifiche", JSON.stringify({bodyGetLista,textValue,valueAutocomplete, page, rowsPerPage,valueFgContestazione}));
@@ -139,6 +150,17 @@ export const setInfoPageToLocalStorageFatture = (info) => {
 export const deleteFilterToLocalStorageFatture = () => {
     localStorage.removeItem("filtersFatture");
 }; 
+export const deleteFilterToLocalStorageAnagrafica = () => {
+    localStorage.removeItem("filtersAnagrafica");
+}; 
+
+export const deleteFilterToLocalStorageDocConPA = () => {
+    localStorage.removeItem("filtersDocContabiliPA");
+}; 
+
+export const deleteFilterToLocalStorageDocConPaginationPA = () => {
+    localStorage.removeItem("filtersDocContabiliPageRowPA");
+};
 
 export const getFiltersFromLocalStorageFatture = () => {
     const filtri = localStorage.getItem('filtersFatture') || '{}';
@@ -177,6 +199,3 @@ export const getInfoPageFromLocalStorageDocConPA = () => {
     return result;
 };
 
-export const deleteFilterToLocalStorageDocConPA = () => {
-    localStorage.removeItem("filtersDocContabiliPA");
-}; 
