@@ -263,12 +263,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 statusPageDatiFatturazione:'immutable',
             });
             setDataModifica(res.data.dataModifica);
-      
-            /*
-            localStorage.setItem('statusApplication',JSON.stringify({...statusApp, ...{
-                statusPageInserimentoCommessa:'immutable',
-                statusPageDatiFatturazione:'immutable',
-            }}));*/
             // aggiunta in seguito
             setTotaliModuloCommessa(res.data.totale);
         }else{
