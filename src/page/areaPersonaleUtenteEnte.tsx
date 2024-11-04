@@ -267,7 +267,6 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
             // 2 - ed è un utente PAGOPA
             if(profilo.auth === 'PAGOPA'){
                 await insertDatiFatturazionePagoPa( token,profilo.nonce, bodyPagoPa).then((res)  =>{
-                    console.log(res,'res');
                     setOpenModalLoading(false);
                     handleModifyMainState({
                         statusPageDatiFatturazione:'immutable',

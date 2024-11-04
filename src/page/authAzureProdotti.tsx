@@ -32,7 +32,6 @@ const AuthAzureProdotti : React.FC = () => {
         if(productSelected?.jwt){
             await getAuthProfilo(productSelected.jwt)
                 .then((resp) => {
-                    console.log(resp.data);
                     const storeProfilo = resp.data;
                     const profiloDetails = {
                         auth:storeProfilo.auth,
