@@ -1,27 +1,27 @@
 import React, { useState, useEffect, useContext} from 'react';
-import { manageError, redirect } from '../api/api';
+import { manageError, redirect } from '../../api/api';
 import { useNavigate} from 'react-router';
-import '../style/areaPersonaleUtenteEnte.css';
+import '../../style/areaPersonaleUtenteEnte.css';
 import { Button } from '@mui/material';
-import TabAreaPersonaleUtente from '../components/areaPersonale/tabAreaPersonaleUtente';
-import PageTitleNavigation from '../components/areaPersonale/pageTitleNavigation';
+import TabAreaPersonaleUtente from '../../components/areaPersonale/tabAreaPersonaleUtente';
+import PageTitleNavigation from '../../components/areaPersonale/pageTitleNavigation';
 import {
     DatiFatturazione,
     StateEnableConferma,
     SuccesResponseGetDatiFatturazione
-} from '../types/typesAreaPersonaleUtenteEnte';
+} from '../../types/typesAreaPersonaleUtenteEnte';
 import {  getDatiFatturazione,
     modifyDatiFatturazione,
-    insertDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
+    insertDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
 import {  getDatiFatturazionePagoPa,
     modifyDatiFatturazionePagoPa,
-    insertDatiFatturazionePagoPa, } from '../api/apiPagoPa/datiDiFatturazionePA/api';
-import BasicModal from '../components/reusableComponents/modals/modal';
-import ModalLoading from '../components/reusableComponents/modals/modalLoading';
-import {PathPf} from '../types/enum';
-import { profiliEnti, } from '../reusableFunction/actionLocalStorage';
-import SuspenseDatiFatturazione from '../components/areaPersonale/skeletonDatiFatturazione';
-import { GlobalContext } from '../store/context/globalContext';
+    insertDatiFatturazionePagoPa, } from '../../api/apiPagoPa/datiDiFatturazionePA/api';
+import BasicModal from '../../components/reusableComponents/modals/modal';
+import ModalLoading from '../../components/reusableComponents/modals/modalLoading';
+import {PathPf} from '../../types/enum';
+import { profiliEnti, } from '../../reusableFunction/actionLocalStorage';
+import SuspenseDatiFatturazione from '../../components/areaPersonale/skeletonDatiFatturazione';
+import { GlobalContext } from '../../store/context/globalContext';
         
         
         

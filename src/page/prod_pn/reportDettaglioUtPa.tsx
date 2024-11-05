@@ -1,27 +1,28 @@
 import { Typography } from "@mui/material";
-import { } from '@mui/material';
 import React , { useState, useEffect, useContext} from 'react';
 import { TextField,Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { getTipologiaProfilo, manageError} from "../api/api";
-import { ReportDettaglioProps, NotificheList, FlagContestazione, Contestazione, ElementMultiSelect, ListaRecCon, OptionMultiselectChackbox  } from "../types/typeReportDettaglio";
-import { BodyListaNotifiche } from "../types/typesGeneral";
-import ModalContestazione from '../components/reportDettaglio/modalContestazione';
-import ModalInfo from "../components/reusableComponents/modals/modalInfo";
-import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
+import { getTipologiaProfilo, manageError} from "../../api/api";
+import {NotificheList, FlagContestazione, Contestazione, ElementMultiSelect, ListaRecCon, OptionMultiselectChackbox  } from "../../types/typeReportDettaglio";
+import { BodyListaNotifiche } from "../../types/typesGeneral";
+import ModalContestazione from '../../components/reportDettaglio/modalContestazione';
+import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
+import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
 import DownloadIcon from '@mui/icons-material/Download';
-import MultiSelectStatoContestazione from "../components/reportDettaglio/multiSelectGroupedBy";
-import ModalLoading from "../components/reusableComponents/modals/modalLoading";
-import ModalScadenziario from "../components/reportDettaglio/modalScadenziario";
-import { downloadNotifche, downloadNotifcheConsolidatore, downloadNotifcheRecapitista, getContestazione, getContestazioneCosolidatore, getContestazioneRecapitista, listaEntiNotifichePage, listaEntiNotifichePageConsolidatore, listaNotifiche, listaNotificheConsolidatore, listaNotificheRecapitista } from "../api/apiSelfcare/notificheSE/api";
-import { downloadNotifchePagoPa, getContestazionePagoPa, getTipologiaEntiCompletiPagoPa, listaNotifichePagoPa } from "../api/apiPagoPa/notifichePA/api";
-import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
-import GridCustom from "../components/reusableComponents/grid/gridCustom";
-import ModalRedirect from "../components/commessaInserimento/madalRedirect";
-import { deleteFilterToLocalStorageNotifiche, getFiltersFromLocalStorageNotifiche,  profiliEnti, setFilterToLocalStorageNotifiche } from "../reusableFunction/actionLocalStorage";
-import {mesi, mesiGrid, mesiWithZero, tipoNotifica } from "../reusableFunction/reusableArrayObj";
-import { getCurrentFinancialYear } from "../reusableFunction/function";
-import { GlobalContext } from "../store/context/globalContext";
+import MultiSelectStatoContestazione from "../../components/reportDettaglio/multiSelectGroupedBy";
+import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
+import ModalScadenziario from "../../components/reportDettaglio/modalScadenziario";
+import { downloadNotifche, downloadNotifcheConsolidatore, downloadNotifcheRecapitista, getContestazione, getContestazioneCosolidatore, getContestazioneRecapitista, listaEntiNotifichePage, listaEntiNotifichePageConsolidatore, listaNotifiche, listaNotificheConsolidatore, listaNotificheRecapitista } from "../../api/apiSelfcare/notificheSE/api";
+import { downloadNotifchePagoPa, getContestazionePagoPa, getTipologiaEntiCompletiPagoPa, listaNotifichePagoPa } from "../../api/apiPagoPa/notifichePA/api";
+import { getTipologiaProdotto } from "../../api/apiSelfcare/moduloCommessaSE/api";
+import GridCustom from "../../components/reusableComponents/grid/gridCustom";
+import ModalRedirect from "../../components/commessaInserimento/madalRedirect";
+import { deleteFilterToLocalStorageNotifiche, getFiltersFromLocalStorageNotifiche,  profiliEnti, setFilterToLocalStorageNotifiche } from "../../reusableFunction/actionLocalStorage";
+import {mesi, mesiGrid, mesiWithZero, tipoNotifica } from "../../reusableFunction/reusableArrayObj";
+import { getCurrentFinancialYear } from "../../reusableFunction/function";
+import { GlobalContext } from "../../store/context/globalContext";
+import { useNavigate } from "react-router";
+import { PathPf } from "../../types/enum";
 
 const ReportDettaglio : React.FC = () => {
     const globalContextObj = useContext(GlobalContext);
@@ -30,6 +31,7 @@ const ReportDettaglio : React.FC = () => {
     const enti = profiliEnti(mainState);
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
+    const navigate = useNavigate();
     const currentMonth = (new Date()).getMonth() + 1;
     const currString = currentMonth;
     const currentYear = (new Date()).getFullYear();
@@ -742,21 +744,19 @@ const ReportDettaglio : React.FC = () => {
     const backgroundColorButtonScadenzario = (profilo.auth === 'PAGOPA' || enti) ? "#0062C3" : 'red';
   
     return (
-        <div className="mx-5">
+        <div className="mx-5 marginTop24">
             {/*title container start */}
-            <div className="d-flex marginTop24 ">
+            <div className="row">
                 <div className="col-9">
                     <Typography variant="h4">Report Dettaglio</Typography>
                 </div>
-                <div className="col-3 ">
-                    <Box sx={{width:'80%', marginLeft:'20px', display:'flex', justifyContent:'end'}}  >
-                        <Button  style={{
-                            backgroundColor:backgroundColorButtonScadenzario
-                        }} variant="contained"  onClick={()=> setShowModalScadenziario(true)} >
-                            <VisibilityIcon sx={{marginRight:'10px'}}></VisibilityIcon>
+                <div className="col-3 d-flex justify-content-end pe-5 ">
+                    <Button  style={{
+                        backgroundColor:backgroundColorButtonScadenzario
+                    }} variant="contained"  onClick={()=> setShowModalScadenziario(true)} >
+                        <VisibilityIcon sx={{marginRight:'10px'}}></VisibilityIcon>
                     Scadenzario
-                        </Button>
-                    </Box>
+                    </Button>
                 </div>
             </div>
             {/*title container end */}
@@ -1043,9 +1043,9 @@ const ReportDettaglio : React.FC = () => {
                     }
                 </div>
                 <div className="">
-                    <div className="d-flex justify-content-start mt-5">
-                        <div className=" d-flex align-items-center justify-content-center h-100">
-                            <div>
+                    <div className="row mt-5">
+                        <div className="col-9">
+                            <div className="d-flex justify-content-start">
                                 <Button 
                                     onClick={()=> onButtonFiltra()} 
                                     disabled={getNotificheWorking}
@@ -1062,6 +1062,9 @@ const ReportDettaglio : React.FC = () => {
                                     </Button>
                                 }
                             </div>               
+                        </div>
+                        <div className="col-3 d-flex justify-content-end pe-5">
+                            <Button className="" variant="contained" onClick={()=> navigate(PathPf.INSERIMENTO_CONTESTAZIONI)} >Inserisci contestazioni</Button>
                         </div>
                     </div>
                 </div>

@@ -1,26 +1,27 @@
 import React, { useContext, useEffect, useState } from "react";
-import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
-import SelectMese from "../components/reusableComponents/select/selectMese";
-import { Button, Typography } from "@mui/material";
-import SelectTipologiaFattura from "../components/reusableComponents/select/selectTipologiaFattura";
-import GridCustom from "../components/reusableComponents/grid/gridCustom";
-import { BodyRel, Rel, RelPageProps } from "../types/typeRel";
-import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
-import { manageError} from "../api/api";
 import { useNavigate } from "react-router";
 import DownloadIcon from '@mui/icons-material/Download';
-import { downloadListaRel, getListaRel, getTipologieFatture} from "../api/apiSelfcare/relSE/api";
-import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, downloadQuadraturaRelPagopa, getListaRelPagoPa, getTipologieFatturePagoPa } from "../api/apiPagoPa/relPA/api";
-import SelectStatoPdf from "../components/rel/selectStatoPdf";
-import ModalLoading from "../components/reusableComponents/modals/modalLoading";
+import { GlobalContext } from "../../store/context/globalContext";
+import { deleteFilterToLocalStorageRel, getFiltersFromLocalStorageRel, profiliEnti, setFilterToLocalStorageRel } from "../../reusableFunction/actionLocalStorage";
+import { BodyRel, Rel } from "../../types/typeRel";
+import { OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
+import { downloadListaRel, getListaRel, getTipologieFatture } from "../../api/apiSelfcare/relSE/api";
+import { mesiGrid, mesiWithZero } from "../../reusableFunction/reusableArrayObj";
+import { manageError } from "../../api/api";
+import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, downloadQuadraturaRelPagopa, getListaRelPagoPa, getTipologieFatturePagoPa } from "../../api/apiPagoPa/relPA/api";
+import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
+import { PathPf } from "../../types/enum";
 import { saveAs } from "file-saver";
-import { PathPf } from "../types/enum";
-import { deleteFilterToLocalStorageRel, getFiltersFromLocalStorageRel, getProfilo, getStatusApp, getToken, profiliEnti, setFilterToLocalStorageRel } from "../reusableFunction/actionLocalStorage";
-import { OptionMultiselectChackbox } from "../types/typeReportDettaglio";
-import { mesiGrid, mesiWithZero } from "../reusableFunction/reusableArrayObj";
-import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
-import ModalRedirect from "../components/commessaInserimento/madalRedirect";
-import { GlobalContext } from "../store/context/globalContext";
+import { Button, Typography } from "@mui/material";
+import SelectUltimiDueAnni from "../../components/reusableComponents/select/selectUltimiDueAnni";
+import SelectMese from "../../components/reusableComponents/select/selectMese";
+import SelectTipologiaFattura from "../../components/reusableComponents/select/selectTipologiaFattura";
+import SelectStatoPdf from "../../components/rel/selectStatoPdf";
+import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
+import GridCustom from "../../components/reusableComponents/grid/gridCustom";
+import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
+import ModalRedirect from "../../components/commessaInserimento/madalRedirect";
+
 
 
 

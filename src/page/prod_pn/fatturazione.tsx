@@ -1,26 +1,25 @@
 import { Button, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import { useContext, useEffect, useState } from "react";
-import { getProfilo, getToken } from "../reusableFunction/actionLocalStorage";
-import ModalLoading from "../components/reusableComponents/modals/modalLoading";
-import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
-import SelectMese from "../components/reusableComponents/select/selectMese";
-import { BodyFatturazione, FatturazioneProps, FattureObj, HeaderCollapsible, TipologiaSap} from "../types/typeFatturazione";
-import { downloadFatturePagopa, downloadFattureReportPagopa, fattureCancellazioneRipristinoPagoPa,fattureTipologiaSapPa, getFatturazionePagoPa, getTipologieFaPagoPa } from "../api/apiPagoPa/fatturazionePA/api";
-import { manageError, manageErrorDownload, managePresaInCarico } from "../api/api";
-import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
-import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
-import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
+import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
+import SelectUltimiDueAnni from "../../components/reusableComponents/select/selectUltimiDueAnni";
+import SelectMese from "../../components/reusableComponents/select/selectMese";
+import { BodyFatturazione, FatturazioneProps, FattureObj, HeaderCollapsible, TipologiaSap} from "../../types/typeFatturazione";
+import { downloadFatturePagopa, downloadFattureReportPagopa, fattureCancellazioneRipristinoPagoPa,fattureTipologiaSapPa, getFatturazionePagoPa, getTipologieFaPagoPa } from "../../api/apiPagoPa/fatturazionePA/api";
+import { manageError, manageErrorDownload, managePresaInCarico } from "../../api/api";
+import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
+import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
+import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
 import { saveAs } from "file-saver";
-import { month } from "../reusableFunction/reusableArrayObj";
-import MultiSelectFatturazione from "../components/fatturazione/multiSelect";
+import { month } from "../../reusableFunction/reusableArrayObj";
+import MultiSelectFatturazione from "../../components/fatturazione/multiSelect";
 import PreviewIcon from '@mui/icons-material/Preview';
-import ModalSap from "../components/fatturazione/modalSap";
+import ModalSap from "../../components/fatturazione/modalSap";
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
-import ModalConfermaRipristina from "../components/fatturazione/modalConfermaRipristina";
-import ModalResetFilter from "../components/fatturazione/modalResetFilter";
-import CollapsibleTable from "../components/reusableComponents/grid/gridCollapsible/gridCustomCollapsibleWithCheckbox";
-import { GlobalContext } from "../store/context/globalContext";
+import ModalConfermaRipristina from "../../components/fatturazione/modalConfermaRipristina";
+import ModalResetFilter from "../../components/fatturazione/modalResetFilter";
+import CollapsibleTable from "../../components/reusableComponents/grid/gridCollapsible/gridCustomCollapsibleWithCheckbox";
+import { GlobalContext } from "../../store/context/globalContext";
 
 const Fatturazione : React.FC = () =>{
 

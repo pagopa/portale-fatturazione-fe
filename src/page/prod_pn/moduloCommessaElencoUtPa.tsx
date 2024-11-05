@@ -1,18 +1,18 @@
 import React, {useState, useEffect, useContext} from 'react';
-import { manageError, redirect } from '../api/api';
+import { manageError, redirect } from '../../api/api';
 import { Button, Box, Typography, FormControl, InputLabel,Select, MenuItem,} from '@mui/material';
-import GridComponent from '../components/commessaElenco/grid';
+import GridComponent from '../../components/commessaElenco/grid';
 import { useNavigate } from 'react-router';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { VisualModuliCommessaProps,  DataGridCommessa , GetAnniResponse, ResponseGetListaCommesse} from '../types/typeModuloCommessaElenco';
-import { ManageErrorResponse } from '../types/typesGeneral';
-import { getAnni, getDatiModuloCommessa, getListaCommessaFiltered } from '../api/apiSelfcare/moduloCommessaSE/api';
-import ModalRedirect from '../components/commessaInserimento/madalRedirect';
-import { getDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
-import { PathPf } from '../types/enum';
-import { getProfilo, getStatusApp, getToken, profiliEnti, setInfoToStatusApplicationLoacalStorage } from '../reusableFunction/actionLocalStorage';
-import { fixResponseForDataGrid } from '../reusableFunction/function';
-import { GlobalContext } from '../store/context/globalContext';
+import { DataGridCommessa , GetAnniResponse, ResponseGetListaCommesse} from '../../types/typeModuloCommessaElenco';
+import { ManageErrorResponse } from '../../types/typesGeneral';
+import { getAnni, getDatiModuloCommessa, getListaCommessaFiltered } from '../../api/apiSelfcare/moduloCommessaSE/api';
+import ModalRedirect from '../../components/commessaInserimento/madalRedirect';
+import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
+import { PathPf } from '../../types/enum';
+import {profiliEnti} from '../../reusableFunction/actionLocalStorage';
+import { fixResponseForDataGrid } from '../../reusableFunction/function';
+import { GlobalContext } from '../../store/context/globalContext';
 
 const ModuloCommessaElencoUtPa: React.FC = () => {
 

@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { useRef } from 'react';
-import { MatriceArray } from '../../page/accertamenti';
+import { MatriceArray } from '../../page/prod_pn/accertamenti';
 
 const style = {
     position: 'absolute' as const,

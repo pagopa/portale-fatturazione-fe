@@ -1,25 +1,19 @@
 import { Button, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import { Dispatch, useContext, useEffect, useState } from "react";
-import {getProfilo, getToken } from "../reusableFunction/actionLocalStorage";
-import ModalLoading from "../components/reusableComponents/modals/modalLoading";
-import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
-import SelectMese from "../components/reusableComponents/select/selectMese";
+import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
+import SelectUltimiDueAnni from "../../components/reusableComponents/select/selectUltimiDueAnni";
+import SelectMese from "../../components/reusableComponents/select/selectMese";
 import { DataGrid, GridColDef, GridEventListener, GridRowParams, MuiEvent } from "@mui/x-data-grid";
-import { Params } from "../types/typesGeneral";
-import { getListaAccertamentiPagoPa, getListaAccertamentiPrenotazionePagoPa, getMatriceAccertamenti, getMatriceAccertamentiPagoPa } from "../api/apiPagoPa/accertamentiPA/api";
-import { manageError, managePresaInCarico } from "../api/api";
-import { Accertamento, BodyAccertamenti } from "../types/typeAccertamenti";
-import { mesiGrid } from "../reusableFunction/reusableArrayObj";
-import ModalMatriceAccertamenti from "../components/accertamenti/modalMatrice";
+import { Params } from "../../types/typesGeneral";
+import { getListaAccertamentiPagoPa, getListaAccertamentiPrenotazionePagoPa, getMatriceAccertamenti, getMatriceAccertamentiPagoPa } from "../../api/apiPagoPa/accertamentiPA/api";
+import { manageError, managePresaInCarico } from "../../api/api";
+import { Accertamento, BodyAccertamenti } from "../../types/typeAccertamenti";
+import { mesiGrid } from "../../reusableFunction/reusableArrayObj";
+import ModalMatriceAccertamenti from "../../components/accertamenti/modalMatrice";
 import { saveAs } from "file-saver";
-import { ActionReducerType } from "../reducer/reducerMainState";
-import { GlobalContext } from "../store/context/globalContext";
+import { GlobalContext } from "../../store/context/globalContext";
 
-
-interface AccertamentiProps {
-    dispatchMainState:Dispatch<ActionReducerType>
-}
 
 export interface MatriceArray {
     dataInizioValidita: string,

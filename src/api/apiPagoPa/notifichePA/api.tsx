@@ -72,3 +72,25 @@ export const getTipologiaEntiCompletiPagoPa = async (token:string, nonce:string 
     );
     return response;
 };
+
+export const getAnniContestazioni = async (token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/notifiche/pagopa/contestazioni/anni?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
+export const getMesiContestazioni = async (token:string, nonce:string , anno:string) => {
+    const response =  await axios.post(`${url}//api/notifiche/pagopa/contestazioni/mesi?nonce=${nonce}`,
+        {anno},
+        { headers: {
+            Authorization: 'Bearer ' + token,
+        },
+        }
+    );
+    return response;
+};
+
