@@ -1,7 +1,7 @@
 import axios from "axios";
 import { BodyListaNotifiche } from "../../../types/typesGeneral";
 import { url } from "../../api";
-import { ModalBodyContestazioneModifyPagoPa } from "../../../types/typeReportDettaglio";
+import { BodyUploadContestazioni, ModalBodyContestazioneModifyPagoPa } from "../../../types/typeReportDettaglio";
 
 export const listaNotifichePagoPa = async (token:string, nonce:string , page:number, pageSize:number, body: BodyListaNotifiche) => {
     const response =  await axios.post(`${url}/api/notifiche/pagopa?page=${page}&pageSize=${pageSize}&nonce=${nonce}`,
@@ -84,7 +84,7 @@ export const getAnniContestazioni = async (token:string, nonce:string) => {
 };
 
 export const getMesiContestazioni = async (token:string, nonce:string , anno:string) => {
-    const response =  await axios.post(`${url}//api/notifiche/pagopa/contestazioni/mesi?nonce=${nonce}`,
+    const response =  await axios.post(`${url}/api/notifiche/pagopa/contestazioni/mesi?nonce=${nonce}`,
         {anno},
         { headers: {
             Authorization: 'Bearer ' + token,
@@ -94,3 +94,26 @@ export const getMesiContestazioni = async (token:string, nonce:string , anno:str
     return response;
 };
 
+export const getEntiContestazioni = async (token:string, nonce:string , descrizione:string) => {
+    const response =  await axios.post(`${url}/api/notifiche/pagopa/contestazioni/enti?nonce=${nonce}`,
+        {descrizione},
+        { headers: {
+            Authorization: 'Bearer ' + token,
+        },
+        }
+    );
+    return response;
+};
+
+
+export const uploadContestazioniAzure = async (token:string, nonce:string , body:BodyUploadContestazioni) => {
+    const response =  await axios.post(`${url}/api/notifiche/pagopa/contestazioni/upload?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token,
+            ContentType : 'multipart/form-data',
+        },
+        }
+    );
+    return response;
+};

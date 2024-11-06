@@ -147,4 +147,16 @@ export interface ListaRecCon {
     descrizione: string
 }
 
+export interface BodyUploadContestazioni{
+    idEnte:string,
+    contractId:string,
+    mese:string,
+    anno:string,
+    totalChunks:number,
+    chunkIndex:number,
+    fileId:string,
+    file:string
+
+}
+
 
