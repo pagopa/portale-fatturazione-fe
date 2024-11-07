@@ -31,15 +31,6 @@ const DocumentiContabili:React.FC = () =>{
     const profilo =  mainState.profilo;
 
 
-    const handleModifyMainState = (valueObj) => {
-        dispatchMainState({
-            type:'MODIFY_MAIN_STATE',
-            value:valueObj
-        });
-    };
-
-
-
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
@@ -456,14 +447,6 @@ const DocumentiContabili:React.FC = () =>{
                                     setPage(0);
                                     setRowsPerPage(10);
                                     deleteFilterToLocalStorageDocConPA();
-                                    /*setBodyGetLista({idEnti:[],prodotto:'',profilo:''});
-                                    setInfoPageListaDatiFat({ page: 0, pageSize: 100 });
-                                    setInfoPageToLocalStorage({ page: 0, pageSize: 100 });
-                                    getListaDatifatturazione({idEnti:[],prodotto:'',profilo:''});
-                                    setFiltersDownload({idEnti:[],prodotto:'',profilo:''});
-                                    setDataSelect([]);
-                                    setValueAutocomplete([]);
-                                    deleteFilterToLocalStorage();*/
                                 } }
                                 sx={{marginLeft:'24px'}} >
                         Annulla filtri

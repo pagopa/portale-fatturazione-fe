@@ -53,6 +53,8 @@ const BasicAlerts:React.FC = () => {
         colorAlert = 'warning';
     }else if(mainState.apiError === 410){
         colorAlert = 'warning';
+    }else if(mainState.apiError === "NO_ENTE_FILTRI_CONTESTAZIONE"){
+        colorAlert = 'warning';
     }
     
     const [css, setCss] = useState('main_container_alert_component');
@@ -84,7 +86,7 @@ const BasicAlerts:React.FC = () => {
                         window.location.href = redirect;
                     }
                 }
-            }, 2500);
+            }, 3000);
 
             return () =>{
                 clearTimeout(timer);

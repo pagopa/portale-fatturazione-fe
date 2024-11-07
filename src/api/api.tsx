@@ -69,6 +69,18 @@ export const managePresaInCarico = (res:string,dispatchMainState) =>{
     
 };
 
+export const manageStringMessage = (res:string,dispatchMainState) =>{
+
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
+    handleModifyMainState({apiError:res});
+    
+};
+
 
 
 export const pagopaLogin = async (tokenObject:TokenObject) => {

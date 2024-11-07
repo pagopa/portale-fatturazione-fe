@@ -367,7 +367,7 @@ const Messaggi : React.FC<any> = () => {
                                 disableDownload = true;
                             }
                             return (
-                                <div id={item.lettura ? 'div_timeline_single_messagge_non_lette' :'div_timeline_single_messagge_lette'}>
+                                <div key={item.idMessaggio} id={item.lettura ? 'div_timeline_single_messagge_non_lette' :'div_timeline_single_messagge_lette'}>
                                     <TimelineNotificationItem 
                                         key={item.idMessaggio}>
                                         <TimelineNotificationOppositeContent >
