@@ -1,4 +1,4 @@
-import { Autocomplete, Box,Button,FormControl, InputLabel, MenuItem, Select, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from "@mui/material";
+import { Autocomplete, Box,Button,FormControl, InputLabel, MenuItem, Select, Table, TableBody, TableCell, TableHead, TableRow, TextField, Tooltip, Typography } from "@mui/material";
 import MarkUnreadChatAltIcon from '@mui/icons-material/MarkUnreadChatAlt';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked, SingleFileInput } from "@pagopa/mui-italia";
@@ -7,17 +7,19 @@ import { PathPf } from "../../types/enum";
 import {  useContext, useEffect, useState } from "react";
 import { getAnniContestazioni, getEntiContestazioni, getMesiContestazioni, recapContestazioniAzure, uploadContestazioniAzure } from "../../api/apiPagoPa/notifichePA/api";
 import { GlobalContext } from "../../store/context/globalContext";
-import { manageError, manageStringMessage } from "../../api/api";
+import { manageError, managePresaInCarico, manageStringMessage } from "../../api/api";
 import { useId } from 'react';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { month } from "../../reusableFunction/reusableArrayObj";
+import ModalInvioContestazioni from "../../components/reportDettaglio/modalConfermaContestazioni";
 interface MeseContetazione{
     descrizione: string,
     mese: string
 }
 
 export interface BodyContestazionePage{
-    year:string,
-    month:string,
+    anno:string,
+    mese:string,
     idEnte: string,
     contractId: string
 }
@@ -49,11 +51,13 @@ const InserimentoContestazioni = () =>{
     const navigate = useNavigate();
 
     const [body,setBody] = useState<BodyContestazionePage>({
-        year:'',
-        month:'',
+        anno:'',
+        mese:'',
         idEnte: "",
         contractId: ""
     });
+
+  
   
 
     const [valueYears,setValueYears] = useState<string[]>([]);
@@ -62,7 +66,8 @@ const InserimentoContestazioni = () =>{
     const [textValueEnti, setTextValueEnti] = useState('');
     const [loadingEnti, setloadingEnti] = useState(false);
     const [arrayReacpCon, setArrayRecapCon] = useState<RecapObjContestazioni[]>([]);
-   
+    const [nameEnteTitle, setEnteTitle] = useState<string>('');
+    const [openModalConferma, setOpenModalConferma] = useState(false);
 
     useEffect(()=>{
         getAnni();
@@ -75,16 +80,18 @@ const InserimentoContestazioni = () =>{
         if(body.contractId === '' && valueMesi.length > 0){
             manageStringMessage('NO_ENTE_FILTRI_CONTESTAZIONE',dispatchMainState);
         }
-    },[body.month]);
+    },[body.mese]);
 
     useEffect(()=>{
-        if(body.year !== ''){
+        if(body.anno !== ''){
             getMesi();
         }
-    },[body.year]);
+    },[body.anno]);
 
     useEffect(()=>{
-        if(body.year !== ''&& body.month !== '' && body.contractId !== ''){
+        if(body.anno !== ''&& body.mese !== '' && body.contractId !== ''){
+
+            setFile(null);
             recapContestazioni();
         }
     },[body]);
@@ -107,7 +114,7 @@ const InserimentoContestazioni = () =>{
             .then((res)=>{
               
                 setValueYears(res.data);
-                setBody((prev)=> ({...prev, ...{year:res.data[0]}}));
+                setBody((prev)=> ({...prev, ...{anno:res.data[0]}}));
             })
             .catch((err)=>{
                 //manageError(err,dispatchMainState);
@@ -115,13 +122,13 @@ const InserimentoContestazioni = () =>{
     };
 
     const getMesi = async() => {
-        await getMesiContestazioni(token,profilo.nonce,body.year)
+        await getMesiContestazioni(token,profilo.nonce,body.anno)
             .then((res)=>{
                 setValueMesi(res.data);
                 if(res.data.length > 0){
-                    setBody((prev)=> ({...prev, ...{month:res.data[0].mese}}));
+                    setBody((prev)=> ({...prev, ...{mese:res.data[0].mese}}));
                 }else{
-                    setBody((prev)=> ({...prev, ...{month:''}}));
+                    setBody((prev)=> ({...prev, ...{mese:''}}));
                 }
             })
             .catch((err)=>{
@@ -133,7 +140,7 @@ const InserimentoContestazioni = () =>{
         setloadingEnti(true);
         await getEntiContestazioni(token,profilo.nonce,textValueEnti)
             .then((res)=>{
-                console.log(res,'enti');
+
                 setValueEnti(res.data);
                 setloadingEnti(false);
             })
@@ -147,8 +154,10 @@ const InserimentoContestazioni = () =>{
         await recapContestazioniAzure(token,profilo.nonce,body)
             .then((res)=>{
                 setArrayRecapCon(res.data);
+                
 
             }).catch((err)=>{
+                setArrayRecapCon([]);
                 manageError(err,dispatchMainState);
             });
     };
@@ -158,6 +167,7 @@ const InserimentoContestazioni = () =>{
     const [file, setFile] = useState<File|null>(null);
     const [uploading, setUploading] = useState(false);
     const [progress, setProgress] = useState(0);
+    //setProgress((prevProgress) => (prevProgress >= 100 ? 0 : prevProgress + 10));
     
 
     const handleSelect = (file: File) => {
@@ -167,18 +177,25 @@ const InserimentoContestazioni = () =>{
     const handleRemove = () => {
         setFile(null);
     };
+
+
+    const handleShowModalConferma = () => {
+        setOpenModalConferma(true);
+       
+    };
    
- 
+  
     const uploadFile = async () => {
         const fileId = crypto.randomUUID();
         if (!file) return;
-      
-        const chunkSize:number = 4 * 1024 * 1024; // 4 MB
+       
+        const chunkSize:number = 1 * 1024 * 1024; // 4 MB
         const totalChunks = Math.ceil(file.size / chunkSize);
-        const uploadPromises = [];
+       
         let start = 0;
         setUploading(true);
         while (start < file.size) {
+         
             const end = Math.min(start + chunkSize, file.size);
             const chunk = file.slice(start, end);
             const formData = new FormData();
@@ -188,30 +205,38 @@ const InserimentoContestazioni = () =>{
             formData.append('totalChunks', totalChunks.toString());
             formData.append('idEnte', body.idEnte);
             formData.append('contractId', body.contractId);
-            formData.append('month', body.month);
-            formData.append('year', body.year);
+            formData.append('mese', body.mese);
+            formData.append('anno', body.anno);
  
             // Create a promise for each chunk upload
             await uploadContestazioniAzure(token,profilo.nonce,formData).then((res)=>{
-                console.log(res);
+                console.log(res,'AAAA');
+                setProgress((prevProgress) => (prevProgress >= 101 ? 0 : prevProgress + (100/totalChunks)));
+                if(res.data.item2 === true){
+                    managePresaInCarico('PRESA_IN_CARICO_DOCUMENTO',dispatchMainState);
+                }
                 console.log('Chunk uploaded successfully',Math.floor(start / chunkSize));
             }).catch((err)=>{
-                console.log(err);
+               
                 console.error('Error uploading chunks:', err);
+                setUploading(false);
+                setProgress(0);
+                setOpenModalConferma(false);
             });
  
-            // uploadPromises.push(uploadPromise);
             start = end;
         }
         setUploading(false);
         setProgress(0);
+        setOpenModalConferma(false);
+        setFile(null);
     };
    
-    console.log(body,file,'prova');
-
+    
+    
 
     return (
-        <div className="mx-5">
+        <div className="mx-5" style={{minHeight:'600px'}}>
             <div className='d-flex marginTop24'>
                 <ButtonNaked
                     color="primary"
@@ -232,7 +257,7 @@ const InserimentoContestazioni = () =>{
             <div className="marginTop24">
                 <div className="row ">
                     <div className="col-9">
-                        <Typography variant="h4">Contestazioni</Typography>
+                        <Typography variant="h4">Inserisci contestazioni</Typography>
                     </div>
                 </div>
             </div>
@@ -248,9 +273,9 @@ const InserimentoContestazioni = () =>{
                                 <Select
                                     label='Anno'
                                     onChange={(e) => {
-                                        setBody((prev)=> ({...prev, ...{year:e.target.value,month:''}}));
+                                        setBody((prev)=> ({...prev, ...{anno:e.target.value,mese:''}}));
                                     }}
-                                    value={body.year}
+                                    value={body.anno}
                                 >
                                     {valueYears.map((el) => (
                                         <MenuItem
@@ -274,9 +299,9 @@ const InserimentoContestazioni = () =>{
                                 <Select
                                     label='Mese'
                                     onChange={(e) => {
-                                        setBody((prev)=> ({...prev, ...{month:e.target.value}}));
+                                        setBody((prev)=> ({...prev, ...{mese:e.target.value}}));
                                     }}
-                                    value={body.month}
+                                    value={body.mese}
                                 >
                                     {valueMesi.map((el:MeseContetazione) => (
                                         <MenuItem
@@ -300,8 +325,11 @@ const InserimentoContestazioni = () =>{
                                 onChange={(event, value) => {
                                     if(value){
                                         setBody((prev) => ({...prev,...{idEnte:value.idEnte,contractId:value.contractId}}));
+                                        setEnteTitle(value.ragioneSociale);
                                     }else{
                                         setBody((prev) => ({...prev,...{idEnte:'',contractId:''}}));
+                                        setEnteTitle('');
+                                        setArrayRecapCon([]);
                                     }
                                 }}
                                 renderInput={(params) => {
@@ -314,33 +342,31 @@ const InserimentoContestazioni = () =>{
                         </Box>
                     </div>
                 </div>
-                {(((body.contractId === '') && (file === null)) || (body.contractId !== '')) &&
+             
                 <div className=" d-flex justify-content-end mt-5">
-                    <Button onClick={uploadFile} disabled={(body.contractId === '') || (!file)} variant="outlined">
+                    <Button onClick={handleShowModalConferma} disabled={!file} variant="outlined">
                             Upload
                         <CloudUploadIcon sx={{marginLeft:'10px'}} fontSize="large" />
                     </Button>
                 </div>
-                }
-                {(body.contractId !== '') &&
+                {(body.contractId !== '' && arrayReacpCon.length > 0) &&
                 <div className="marginTop24  mt-5">
                     <SingleFileInput  value={file} accept={[".csv"]} onFileSelected={handleSelect} onFileRemoved={handleRemove} dropzoneLabel="Trascina il tuo file.csv" dropzoneButton="Carica file" rejectedLabel="Tipo di file non supportato" />
                 </div>
                 }
-                
-
+                {arrayReacpCon.length > 0 &&
                 <div className="bg-white my-5 p-1 ">
                     <div className="row text-center">  
                         <div  className="col-12">
-                            <Box sx={{ backgroundColor:'#F8F8F8', padding:'10px'}}>
-                                <Typography variant="h4">Nome Ente</Typography>
+                            <Box sx={{ margin: 2 ,backgroundColor:'#F8F8F8', padding:'10px'}}>
+                                <Typography variant="h4">{nameEnteTitle} {month[Number(body.mese)-1]} {body.anno}</Typography>
                             </Box>
                             <Box sx={{ margin: 2 , backgroundColor:'#F8F8F8', padding:'10px'}}>
                                 <Table size="small" aria-label="purchases">
                                     <TableHead>
                                         <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
-                                            <TableCell align="center" sx={{ width:"300px"}} >Tipologia Fattura</TableCell>
-                                            <TableCell align="center" sx={{ width:"300px"}} >Tipologia Contestazione</TableCell>
+                                            <TableCell align="left" sx={{ width:"300px"}} >Tipologia Fattura</TableCell>
+                                            <TableCell align="left" sx={{ width:"300px"}} >Tipologia Contestazione</TableCell>
                                             <TableCell align="center" sx={{ width:"300px"}}>Flag Contestazione</TableCell>
                                             <TableCell align="center" sx={{ width:"300px"}}>Tot. Not. Analog.</TableCell>
                                             <TableCell align="center" sx={{ width:"300px"}}>Tot. Not. Digit.</TableCell>
@@ -351,8 +377,8 @@ const InserimentoContestazioni = () =>{
                                         {arrayReacpCon.map((sigleRec:RecapObjContestazioni)=>{
                                             return (
                                                 <TableRow key={Math.random()}>
-                                                    <TableCell align="center"  sx={{ width:"300px"}} >{sigleRec.tipologiaFattura}</TableCell>
-                                                    <TableCell align="center" sx={{ width:"300px"}} >{sigleRec.flagContestazione}</TableCell>
+                                                    <TableCell align="left"  sx={{ width:"300px"}} >{sigleRec.tipologiaFattura}</TableCell>
+                                                    <TableCell align="left" sx={{ width:"300px"}} >{sigleRec.flagContestazione}</TableCell>
                                                     <TableCell align="right" sx={{ width:"300px"}}>{sigleRec.idFlagContestazione}</TableCell>
                                                     <TableCell align="right" sx={{ width:"300px"}}>{sigleRec.totaleNotificheAnalogiche}</TableCell>
                                                     <TableCell align="right" sx={{ width:"300px"}}>{sigleRec.totaleNotificheDigitali}</TableCell>
@@ -367,11 +393,20 @@ const InserimentoContestazioni = () =>{
                                 
                     </div>
                 </div>
+                }
               
                
                 
                 
             </div>
+            <ModalInvioContestazioni 
+                open={openModalConferma} 
+                setOpen={setOpenModalConferma}
+                onButtonComferma={uploadFile}
+                info={{mese:body.mese, anno:body.anno,ente:nameEnteTitle}}
+                progress={progress}
+                uploading={uploading}
+            ></ModalInvioContestazioni>
            
         </div>
     );

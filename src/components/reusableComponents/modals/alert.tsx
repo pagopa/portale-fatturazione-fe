@@ -54,7 +54,7 @@ const BasicAlerts:React.FC = () => {
     }else if(mainState.apiError === 410){
         colorAlert = 'warning';
     }else if(mainState.apiError === "NO_ENTE_FILTRI_CONTESTAZIONE"){
-        colorAlert = 'warning';
+        colorAlert = 'info';
     }
     
     const [css, setCss] = useState('main_container_alert_component');
