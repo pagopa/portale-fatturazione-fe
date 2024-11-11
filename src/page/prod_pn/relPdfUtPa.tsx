@@ -1,5 +1,5 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { ButtonNaked, SingleFileInput} from '@pagopa/mui-italia';
+import { ButtonNaked, SingleFileInput } from '@pagopa/mui-italia';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { Button, Typography } from "@mui/material";
 import { useNavigate } from 'react-router';

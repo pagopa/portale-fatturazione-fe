@@ -13,7 +13,7 @@ import ModalUploadPdf from "../../components/rel/modalUploadPdf";
 import { GlobalContext } from "../../store/context/globalContext";
 
 
-const AdesioneBando : React.FC = () => {
+const AdesioneBando = () => {
 
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState} = globalContextObj;
@@ -147,7 +147,7 @@ const AdesioneBando : React.FC = () => {
                         </Button>
                     </div>
                     <div id='singleInputRel' style={{minWidth: '400px', height:'40px'}}>
-                        <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".xlsx"]} onFileSelected={(e) => uploadAdesioneDoc(e)} onFileRemoved={() => setFile(null)} dropzoneLabel={"Inserisci il File di Adesione al bando"} rejectedLabel="Tipo file non supportato" dropzoneButton={"Upload"} ></SingleFileInput>
+                        <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".xlsx"]} onFileSelected={(e) => uploadAdesioneDoc(e)} onFileRemoved={() => setFile(null)} dropzoneLabel={"Inserisci il File di Adesione al bando"} rejectedLabel="Tipo file non supportato" dropzoneButton={''} ></SingleFileInput>
                     </div> 
                 </div>
                 
