@@ -183,23 +183,23 @@ const InserimentoContestazioni = () =>{
         setOpenModalConferma(true);
        
     };
-   
+    console.log(file?.name,'file');
   
     const uploadFile = async () => {
         const fileId = crypto.randomUUID();
         if (!file) return;
        
-        const chunkSize:number = 1 * 1024 * 1024; // 4 MB
+        const chunkSize:number = 5 * 1024 * 1024; // 4 MB
         const totalChunks = Math.ceil(file.size / chunkSize);
        
         let start = 0;
         setUploading(true);
         while (start < file.size) {
-         
+            
             const end = Math.min(start + chunkSize, file.size);
             const chunk = file.slice(start, end);
             const formData = new FormData();
-            formData.append('file', chunk, file.name);
+            formData.append('fileName', chunk, file.name);
             formData.append('fileId', fileId); // Include the unique file ID
             formData.append('chunkIndex', Math.floor(start / chunkSize).toString());
             formData.append('totalChunks', totalChunks.toString());
@@ -217,11 +217,15 @@ const InserimentoContestazioni = () =>{
                 }
                 console.log('Chunk uploaded successfully',Math.floor(start / chunkSize));
             }).catch((err)=>{
-               
-                console.error('Error uploading chunks:', err);
                 setUploading(false);
                 setProgress(0);
                 setOpenModalConferma(false);
+                setFile(null);
+               
+           
+                throw new Error('Upload failed on chunk ' + Math.floor(start / chunkSize)); // Stop all uploads
+                console.error('Error uploading chunks:', err);
+               
             });
  
             start = end;
@@ -351,7 +355,7 @@ const InserimentoContestazioni = () =>{
                 </div>
                 {(body.contractId !== '' && arrayReacpCon.length > 0) &&
                 <div className="marginTop24  mt-5">
-                    <SingleFileInput  value={file} accept={[".csv"]} onFileSelected={handleSelect} onFileRemoved={handleRemove} dropzoneLabel="Trascina il tuo file.csv" dropzoneButton="Carica file" rejectedLabel="Tipo di file non supportato" />
+                    <SingleFileInput  value={file} accept={[".csv,.xlsx"]} onFileSelected={handleSelect} onFileRemoved={handleRemove} dropzoneLabel="Trascina il tuo file.csv" dropzoneButton="Carica file" rejectedLabel="Tipo di file non supportato" />
                 </div>
                 }
                 {arrayReacpCon.length > 0 &&
