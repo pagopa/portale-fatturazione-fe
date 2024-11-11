@@ -38,7 +38,7 @@ const BasicAlerts:React.FC = () => {
     };
 
   
-    let colorAlert:AlertColor = 'success';
+    let colorAlert:AlertColor = 'info';
     if(mainState.apiError === 401 || mainState.apiError === 403 ){
         colorAlert = 'error';
     }else if(mainState.apiError === 419){
@@ -47,7 +47,7 @@ const BasicAlerts:React.FC = () => {
         colorAlert = 'error';
     }else if(mainState.apiError === 400){
         colorAlert = 'error';
-    }else if(mainState.apiError === 404 || mainState.apiError === '404_DOWNLOAD' || mainState.apiError === 'PRESA'){
+    }else if(mainState.apiError === 404 || mainState.apiError === '404_DOWNLOAD' || mainState.apiError === 'PRESA_IN_CARICO_DOCUMENTO'|| mainState.apiError === '404_NO_CONTESTAZIONI'){
         colorAlert = "info";
     }else if(mainState.apiError === "Network Error"){
         colorAlert = 'warning';
@@ -55,6 +55,8 @@ const BasicAlerts:React.FC = () => {
         colorAlert = 'warning';
     }else if(mainState.apiError === "NO_ENTE_FILTRI_CONTESTAZIONE"){
         colorAlert = 'info';
+    }else if(mainState.apiError||''.toString().slice(0,4) === "409_"){
+        colorAlert = 'error';
     }
     
     const [css, setCss] = useState('main_container_alert_component');
@@ -107,10 +109,15 @@ const BasicAlerts:React.FC = () => {
         }
     },[showAlert]);
 
+    const test = mainState.apiError ||'';
+
+    const checkIfShowMessageDirectly =  test.toString().slice(0,4) !== '409_';
+    console.log( test.toString().slice(0,4),'pippo',mainState.apiError);
+
     return createPortal(
         <div className={css}>
             
-            <Alert sx={{display:'flex', justifyContent:'center'}} severity={colorAlert}  variant="standard">{t(`errori.${mainState.apiError}`)} 
+            <Alert sx={{display:'flex', justifyContent:'center'}} severity={colorAlert}  variant="standard">{checkIfShowMessageDirectly ? t(`errori.${mainState.apiError}`):test.toString().slice(4)} 
                 {mainState.apiError === 'PRESA_IN_CARICO_DOCUMENTO' &&
                 <IconButton sx={{marginLeft:'20px'}} onClick={()=> {
                     setCss('main_container_alert_component_hidden');

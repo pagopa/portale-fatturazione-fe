@@ -12,6 +12,7 @@ import { useId } from 'react';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { month } from "../../reusableFunction/reusableArrayObj";
 import ModalInvioContestazioni from "../../components/reportDettaglio/modalConfermaContestazioni";
+import { styled, width } from "@mui/system";
 interface MeseContetazione{
     descrizione: string,
     mese: string
@@ -39,6 +40,18 @@ interface RecapObjContestazioni{
     totaleNotificheDigitali: number
       
 }
+
+const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+});
 
 const InserimentoContestazioni = () =>{
     const globalContextObj = useContext(GlobalContext);
@@ -158,7 +171,13 @@ const InserimentoContestazioni = () =>{
 
             }).catch((err)=>{
                 setArrayRecapCon([]);
-                manageError(err,dispatchMainState);
+                if(err?.response?.request?.status === 404){
+                    manageStringMessage('404_NO_CONTESTAZIONI',dispatchMainState);
+                }else{
+                    manageError(err,dispatchMainState);
+                }
+                
+               
             });
     };
 
@@ -194,42 +213,46 @@ const InserimentoContestazioni = () =>{
        
         let start = 0;
         setUploading(true);
-        while (start < file.size) {
+        try{
+            while (start < file.size) {
             
-            const end = Math.min(start + chunkSize, file.size);
-            const chunk = file.slice(start, end);
-            const formData = new FormData();
-            formData.append('fileName', chunk, file.name);
-            formData.append('fileId', fileId); // Include the unique file ID
-            formData.append('chunkIndex', Math.floor(start / chunkSize).toString());
-            formData.append('totalChunks', totalChunks.toString());
-            formData.append('idEnte', body.idEnte);
-            formData.append('contractId', body.contractId);
-            formData.append('mese', body.mese);
-            formData.append('anno', body.anno);
- 
-            // Create a promise for each chunk upload
-            await uploadContestazioniAzure(token,profilo.nonce,formData).then((res)=>{
-                console.log(res,'AAAA');
-                setProgress((prevProgress) => (prevProgress >= 101 ? 0 : prevProgress + (100/totalChunks)));
-                if(res.data.item2 === true){
-                    managePresaInCarico('PRESA_IN_CARICO_DOCUMENTO',dispatchMainState);
-                }
-                console.log('Chunk uploaded successfully',Math.floor(start / chunkSize));
-            }).catch((err)=>{
-                setUploading(false);
-                setProgress(0);
-                setOpenModalConferma(false);
-                setFile(null);
-               
-           
-                throw new Error('Upload failed on chunk ' + Math.floor(start / chunkSize)); // Stop all uploads
-                console.error('Error uploading chunks:', err);
-               
-            });
- 
-            start = end;
+                const end = Math.min(start + chunkSize, file.size);
+                const chunk = file.slice(start, end);
+                const formData = new FormData();
+                formData.append('fileChunk', chunk, file.name);
+                formData.append('fileId', fileId); // Include the unique file ID
+                formData.append('chunkIndex', Math.floor(start / chunkSize).toString());
+                formData.append('totalChunks', totalChunks.toString());
+                formData.append('idEnte', body.idEnte);
+                formData.append('contractId', body.contractId);
+                formData.append('mese', body.mese);
+                formData.append('anno', body.anno);
+     
+                // Create a promise for each chunk upload
+                await uploadContestazioniAzure(token,profilo.nonce,formData).then((res)=>{
+                    console.log(res,'AAAA');
+                    setProgress((prevProgress) => (prevProgress >= 101 ? 0 : prevProgress + (100/totalChunks)));
+                    if(res.data.item2 === true){
+                        managePresaInCarico('PRESA_IN_CARICO_DOCUMENTO',dispatchMainState);
+                    }
+                    console.log('Chunk uploaded successfully',Math.floor(start / chunkSize));
+                }).catch((err)=>{
+                    console.log(err,'topxxxx',err.response.data.detail);
+                    manageStringMessage('409_'+err.response.data.detail,dispatchMainState);
+                    throw new Error(err.response.data.details); // Stop all uploads
+                });
+     
+                start = end;
+            }
+        }catch(err){
+            
+            setUploading(false);
+            setProgress(0);
+            setOpenModalConferma(false);
+            setFile(null);
+            
         }
+       
         setUploading(false);
         setProgress(0);
         setOpenModalConferma(false);
@@ -348,15 +371,17 @@ const InserimentoContestazioni = () =>{
                 </div>
              
                 <div className=" d-flex justify-content-end mt-5">
-                    <Button onClick={handleShowModalConferma} disabled={!file} variant="outlined">
+                    <Button sx={{width:'250px'}} onClick={handleShowModalConferma} disabled={!file} variant="outlined">
                             Upload
                         <CloudUploadIcon sx={{marginLeft:'10px'}} fontSize="large" />
                     </Button>
                 </div>
                 {(body.contractId !== '' && arrayReacpCon.length > 0) &&
-                <div className="marginTop24  mt-5">
-                    <SingleFileInput  value={file} accept={[".csv,.xlsx"]} onFileSelected={handleSelect} onFileRemoved={handleRemove} dropzoneLabel="Trascina il tuo file.csv" dropzoneButton="Carica file" rejectedLabel="Tipo di file non supportato" />
-                </div>
+                    <div  id='singleInput' className="d-flex justify-content-end marginTop24   mt-3">
+                        <div style={{minWidth:'250px'}}>
+                            <SingleFileInput  value={file} accept={[".csv,.xlsx"]} onFileSelected={handleSelect} onFileRemoved={handleRemove} dropzoneLabel="Trascina il tuo file.csv" dropzoneButton="" rejectedLabel="Tipo di file non supportato" />
+                        </div>
+                    </div>
                 }
                 {arrayReacpCon.length > 0 &&
                 <div className="bg-white my-5 p-1 ">

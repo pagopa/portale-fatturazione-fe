@@ -82,22 +82,29 @@ background-color:white;
 #loader_download_contestazione .MuiFormControl-root .MuiBox-root p{
   color: #0073E6;
   font-weight: 600;
-  
+}
+#loader_download_contestazione.MuiFormControl-root .MuiBox-root button button{
+  display: none;
 }
 
-#singleInputRel .MuiFormControl-root .MuiFormLabel-root{
+#singleInput .MuiFormControl-root .MuiFormLabel-root{
   margin-bottom: 0px;
 
 
 }
 
-#singleInputRel .MuiFormControl-root .MuiBox-root .MuiBox-root, #singleInputRel .MuiFormControl-root .MuiBox-root{
+#singleInput .MuiFormControl-root .MuiBox-root .MuiBox-root, #singleInput .MuiFormControl-root .MuiBox-root{
 height: 48px;
 }
 
- #singleInputRel .MuiFormControl-root .MuiBox-root{
+ #singleInput .MuiFormControl-root .MuiBox-root{
   min-height: 48px;
 }
+
+#singleInput .MuiFormControl-root .MuiBox-root button button{
+  display: none;
+}
+
 
 /* css Alert component */
 @keyframes smooth-appear {

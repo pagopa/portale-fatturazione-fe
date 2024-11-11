@@ -61,7 +61,6 @@ const ModalInvioContestazioni : React.FC<PropsModalContestazioni> =({setOpen, op
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-                
                 <Box sx={style}>
                     {!uploading ?
                         <>
@@ -93,19 +92,24 @@ const ModalInvioContestazioni : React.FC<PropsModalContestazioni> =({setOpen, op
                         </> :
                         <>
                             <div className='text-center'>
-                                <Typography id="modal-modal-title" variant="h6" component="h2">
-                                Attendere la fine del processo...
-                                </Typography>
+                                <div className='d-flex justify-content-center'>
+                                    <Typography id="modal-modal-title" variant="h6" component="h2">
+             Operazione in corso  
+                                    </Typography>
+                                </div>
+                                <div className='d-flex justify-content-center mt-3'>
+                                    <Typography id="modal-modal-title" variant="body1" gutterBottom>
+            Attendere la fine del processo  
+                                    </Typography>
+                                </div>
                                 <div className='mt-5'>
                                     <CircularProgressWithLabel value={Math.floor(progress)}></CircularProgressWithLabel>
                                 </div>
                                
                             </div>
                         </>
-                       
                     }
-                </Box>
-                
+                </Box> 
             </Modal>
         </div>
     );
