@@ -41,7 +41,8 @@ export interface Messaggio {
     rhash: string,
     contentType: string,
     contentLanguage: string,
-    idReport: number
+    idReport: number,
+    ragioneSociale?:string
 }
 
 interface MessaggiProps {
@@ -390,7 +391,7 @@ const Messaggi : React.FC<any> = () => {
                                             </Typography>
                                             {item.stato && <Chip size="small" label={statoMessaggio} color={colorMessaggio} />}
                                             {item.tipologiaDocumento && <Typography color="text.primary" variant="caption-semibold" component="div">
-                                                {`${item.categoriaDocumento} : ${item.tipologiaDocumento}`}
+                                                {`${item.categoriaDocumento} : ${(item.categoriaDocumento === 'CONTESTAZIONE') ? item?.ragioneSociale :item.tipologiaDocumento}`}
                                             </Typography>}
                                             {item.anno && <Typography color="text.primary" variant="caption-semibold" component="div">
                                                 {`${month[item.mese-1]}/${item.anno}  `}
