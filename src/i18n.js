@@ -25,7 +25,7 @@ i18n.use(Backend)
                         'FATTURA_SOSPESA_RIPRISTINATA':"Operazione andata a buon fine",
                         'PRESA_IN_CARICO_DOCUMENTO':"Azione presa in carico. Vai ai messaggi per visualizzare lo stato di elaborazione",
                         'NO_ENTE_FILTRI_CONTESTAZIONE':"Per procedere con l'UPLOAD delle contestazioni bisogna inserire il filtro 'Rag Soc. Ente'",
-                        "404_NO_CONTESTAZIONI": 'Non sono presenti contestazioni'
+                        "404_NO_CONTESTAZIONI": 'Non sono presenti notifiche per il mese di riferimento selezionato'
                     }
                 }
             }
