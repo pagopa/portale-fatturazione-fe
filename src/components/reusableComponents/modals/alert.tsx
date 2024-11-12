@@ -112,7 +112,6 @@ const BasicAlerts:React.FC = () => {
     const test = mainState.apiError ||'';
 
     const checkIfShowMessageDirectly =  test.toString().slice(0,4) !== '409_';
-    console.log( test.toString().slice(0,4),'pippo',mainState.apiError);
 
     return createPortal(
         <div className={css}>

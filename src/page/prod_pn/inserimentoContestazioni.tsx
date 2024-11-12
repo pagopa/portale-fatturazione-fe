@@ -192,7 +192,7 @@ const InserimentoContestazioni = () =>{
         setOpenModalConferma(true);
        
     };
-    console.log(file?.name,'file');
+
   
     const uploadFile = async () => {
         const fileId = crypto.randomUUID();
@@ -220,14 +220,13 @@ const InserimentoContestazioni = () =>{
      
                 // Create a promise for each chunk upload
                 await uploadContestazioniAzure(token,profilo.nonce,formData).then((res)=>{
-                    console.log(res,'AAAA');
+                
                     setProgress((prevProgress) => (prevProgress >= 101 ? 0 : prevProgress + (100/totalChunks)));
                     if(res.data.item2 === true){
                         managePresaInCarico('PRESA_IN_CARICO_DOCUMENTO',dispatchMainState);
                     }
-                    console.log('Chunk uploaded successfully',Math.floor(start / chunkSize));
+                  
                 }).catch((err)=>{
-                    console.log(err,'topxxxx',err.response.data.detail);
                     manageStringMessage('409_'+err.response.data.detail,dispatchMainState);
                     throw new Error(err.response.data.details); // Stop all uploads
                 });
