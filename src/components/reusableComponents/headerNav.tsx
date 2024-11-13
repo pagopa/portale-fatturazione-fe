@@ -109,7 +109,7 @@ const HeaderNavComponent : React.FC = () => {
             
             const interval = setInterval(() => {
                 getCount();
-            }, 9000);
+            }, 4000);
       
             return () => clearInterval(interval); 
          

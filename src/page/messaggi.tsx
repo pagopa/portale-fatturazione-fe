@@ -16,6 +16,7 @@ import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { month } from "../reusableFunction/reusableArrayObj";
 import { ActionReducerType } from "../reducer/reducerMainState";
 import { GlobalContext } from "../store/context/globalContext";
+import PreviewIcon from '@mui/icons-material/Preview';
 
 
 
@@ -402,8 +403,8 @@ const Messaggi : React.FC<any> = () => {
                                           
                                             </Typography>
                                            
-                                            {item.stato !== '3' && <ButtonNaked  onClick={()=> downloadMessaggio(item,item.contentType)} disabled={disableDownload} target="_blank" variant="naked" color="primary" weight="light" startIcon={<AttachFileIcon />}>
-                Download documento
+                                            {item.stato !== '3' && <ButtonNaked  onClick={()=> downloadMessaggio(item,item.contentType)} disabled={disableDownload} target="_blank" variant="naked" color="primary" weight="light" startIcon={(item.categoriaDocumento === 'CONTESTAZIONE') ? <PreviewIcon/>:<AttachFileIcon />}>
+                                                {(item.categoriaDocumento === 'CONTESTAZIONE') ? 'Visualizza documento' : 'Download documento'}
                                             </ButtonNaked>}
                                          
 
