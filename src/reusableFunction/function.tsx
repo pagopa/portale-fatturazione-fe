@@ -64,3 +64,20 @@ export const getIdByTipo = (string:string, array:ArrayTipologieCommesse[]) =>{
     return getAllObjs[0].id;
  
 };
+
+
+export const findStatoContestazioni = (code:number) => {
+    let result = '';
+
+    if(code === 0){
+        result = 'PRESA IN CARICO';
+    }else if(code === 1){
+        result = 'IN ELABORAZIONE';
+    }else if(code === 2){
+        result = 'ELABORATO';
+    }else if(code === 3){
+        result = 'NON DISPONIBILE';
+    }
+
+    return result;
+};

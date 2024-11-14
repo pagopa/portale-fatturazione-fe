@@ -40,6 +40,7 @@ import Fatturazione from './page/prod_pn/fatturazione';
 import Accertamenti from './page/prod_pn/accertamenti';
 import ModuloCommessaElencoUtPa from './page/prod_pn/moduloCommessaElencoUtPa';
 import InserimentoContestazioni from './page/prod_pn/inserimentoContestazioni';
+import Storico from './page/prod_pn/storicoContestazioni';
 
 
 
@@ -144,6 +145,7 @@ const App = ({ instance }) => {
                                 <Route path={PathPf.FATTURAZIONE} element={<Fatturazione/>} />
                                 <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio />} />
                                 <Route path={PathPf.INSERIMENTO_CONTESTAZIONI} element={<InserimentoContestazioni />} />
+                                <Route path={PathPf.STORICO_CONTEST} element={<Storico />} />
                                 <Route path={'/messaggi'} element={<Messaggi />} />
                                 <Route path={'/accertamenti'} element={<Accertamenti/>} />
                                 <Route path="*" element={<Navigate to={PathPf.LISTA_DATI_FATTURAZIONE} replace />} />

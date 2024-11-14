@@ -24,6 +24,7 @@ const MultiSelectFatturazione : React.FC<MultiSelectFatturazioneProps> =  ({setB
                 setBody((prev) => ({...prev,...{tipologiaFattura:value}}));
             }}
             id="checkboxes-tipologie"
+            limitTags={1}
             options={list}
             value={value}
             disableCloseOnSelect

@@ -28,6 +28,7 @@ const MultiselectWithKeyValue : React.FC <MultiselectWithKeyValueProps> = ({setB
                 setValueAutocomplete(value);
             }}
             id={keyId}
+            limitTags={1}
             options={dataSelect}
             disableCloseOnSelect
             getOptionLabel={(option:AutocompleteMultiselect) =>{

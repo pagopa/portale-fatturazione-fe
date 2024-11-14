@@ -224,6 +224,21 @@ const SideNavComponent: React.FC = () => {
         
     };
 
+    const handleListItemClickStorico = () =>{
+        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.FATTURAZIONE}}));
+        }else{
+            localStorage.removeItem("filtersRel");
+            localStorage.removeItem("filtersListaDatiFatturazione");
+            localStorage.removeItem("pageRowListaDatiFatturazione");
+            localStorage.removeItem("filtersNotifiche");
+            localStorage.removeItem("filtersModuliCommessa");
+            localStorage.removeItem("pageRowListaModuliCommessa");
+            navigate(PathPf.STORICO_CONTEST);
+        }
+        
+    };
+
     /*
     const handleListItemClickCentroMessaggi = () =>{
         navigate("/centromessaggi");
@@ -308,9 +323,8 @@ const SideNavComponent: React.FC = () => {
                             </ListItemIcon>
                             <ListItemText primary="Notifiche" />
                         </ListItemButton>
-                        <ListItemButton selected={selectedIndex === 8} onClick={() => handleListItemClickNotifiche()}>
+                        <ListItemButton selected={selectedIndex === 8} onClick={() => handleListItemClickStorico()}>
                             <ListItemIcon>
-                           
                                 <YoutubeSearchedForIcon fontSize="inherit" />
                             </ListItemIcon>
                             <ListItemText primary="Storico contestazioni" />

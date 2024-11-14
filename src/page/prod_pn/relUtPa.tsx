@@ -500,7 +500,8 @@ const RelPage : React.FC = () =>{
                         rows={rowsPerPage}
                         headerNames={['Ragione Sociale','Tipologia Fattura', 'Reg. Es. PDF','ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale','']}
                         apiGet={setIdRel}
-                        disabled={getListaRelRunning}></GridCustom>
+                        disabled={getListaRelRunning}
+                        widthSize="2000px"></GridCustom>
                 </div>
             </div>
             <ModalLoading 

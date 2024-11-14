@@ -30,10 +30,6 @@ const SelectUltimiDueAnni : React.FC<SelectUltimiDueAnniProps> = ({setValue, val
                         }
                     }}
                     value={values.anno}
-                    //IconComponent={SearchIcon}
-                            
-                    disabled={status=== 'immutable' ? true : false}
-                            
                 >
                     {getCurrentFinancialYear().map((el) => (
                                 
