@@ -22,6 +22,8 @@ import ReceiptIcon from '@mui/icons-material/Receipt';
 import { profiliEnti } from '../../reusableFunction/actionLocalStorage';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import { GlobalContext } from '../../store/context/globalContext';
+import YoutubeSearchedForIcon from '@mui/icons-material/YoutubeSearchedFor';
+
 
 const SideNavComponent: React.FC = () => {
 
@@ -261,6 +263,8 @@ const SideNavComponent: React.FC = () => {
             setSelectedIndex(null);
         }else if(currentLocation === "/accertamenti"){
             setSelectedIndex(7);
+        }else if(currentLocation === PathPf.STORICO_CONTEST){
+            setSelectedIndex(8);
         }
     },[currentLocation]);
 
@@ -303,6 +307,13 @@ const SideNavComponent: React.FC = () => {
                                 <MarkUnreadChatAltIcon fontSize="inherit" />
                             </ListItemIcon>
                             <ListItemText primary="Notifiche" />
+                        </ListItemButton>
+                        <ListItemButton selected={selectedIndex === 8} onClick={() => handleListItemClickNotifiche()}>
+                            <ListItemIcon>
+                           
+                                <YoutubeSearchedForIcon fontSize="inherit" />
+                            </ListItemIcon>
+                            <ListItemText primary="Storico contestazioni" />
                         </ListItemButton>
                         {!recOrConsIsLogged &&
                         <>

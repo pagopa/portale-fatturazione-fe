@@ -21,5 +21,6 @@ export enum PathPf {
     ANAGRAFICAPSP = '/anagraficapsp',
     DOCUMENTICONTABILI = '/documenticontabilipagopa',
     DETTAGLIO_DOC_CONTABILE = "/dettagliodoccontabile",
-    INSERIMENTO_CONTESTAZIONI = "/contestazioni"
+    INSERIMENTO_CONTESTAZIONI = "/contestazioni",
+    STORICO_CONTEST = "/storico"
 }
