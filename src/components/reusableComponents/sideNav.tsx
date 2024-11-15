@@ -327,7 +327,7 @@ const SideNavComponent: React.FC = () => {
                             <ListItemIcon>
                                 <YoutubeSearchedForIcon fontSize="inherit" />
                             </ListItemIcon>
-                            <ListItemText primary="Storico contestazioni" />
+                            <ListItemText primary="Contestazioni" />
                         </ListItemButton>
                         {!recOrConsIsLogged &&
                         <>

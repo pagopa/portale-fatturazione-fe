@@ -341,6 +341,7 @@ const DocumentiContabili:React.FC = () =>{
                 <div className="col-3">
                     <Autocomplete
                         multiple
+                        sx={{width:'80%',height:'59px',marginLeft:'20px' }}
                         onChange={(event, value) => {
                             const arrayId = value.map(el => el.value);
                             setBodyGetLista((prev) => ({...prev,...{quarters:arrayId}}));
@@ -364,7 +365,6 @@ const DocumentiContabili:React.FC = () =>{
                                 {option.quarter}
                             </li>
                         )}
-                        style={{ width: '80%',height:'59px' }}
                         renderInput={(params) => {
                 
                             return <TextField {...params}

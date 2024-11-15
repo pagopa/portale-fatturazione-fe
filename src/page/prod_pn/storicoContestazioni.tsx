@@ -87,6 +87,14 @@ const Storico = () => {
     },[]);
 
     useEffect(()=>{
+        if(bodyGetLista.idEnti.length > 0 ||bodyGetLista.idTipologiaReports.length > 0 || bodyGetLista.mese !== ''){
+            setStatusAnnulla('show');
+        }else{
+            setStatusAnnulla('hidden');
+        }
+    },[bodyGetLista]);
+
+    useEffect(()=>{
         const timer = setTimeout(() => {
             if(textValue.length >= 3){
                 listaEntiNotifichePageOnSelect();
@@ -156,6 +164,8 @@ const Storico = () => {
                 setGetListaContestazioniRunning(false);
             })
             .catch((err)=>{
+                setDataGrid([]);
+                setTotalContestazioni(0);
                 setGetListaContestazioniRunning(false);
                 manageError(err,dispatchMainState);
             });
@@ -198,7 +208,7 @@ const Storico = () => {
             <div className="marginTop24">
                 <div className="row ">
                     <div className="col-9">
-                        <Typography variant="h4">Storico contestazioni</Typography>
+                        <Typography variant="h4">Contestazioni</Typography>
                     </div>
                 </div>
                 <div className="mb-5 mt-5 marginTop24" >
@@ -254,9 +264,9 @@ const Storico = () => {
                                         }}
                                         value={bodyGetLista.mese}
                                     >
-                                        {mesi.map((el) => (
+                                        {mesi.map((el,i) => (
                                             <MenuItem
-                                                key={Math.random()}
+                                                key={i}
                                                 value={Object.keys(el)[0].toString()}
                                             >
                                                 {Object.values(el)[0]}
@@ -268,10 +278,9 @@ const Storico = () => {
                         </div>
                         <div className="col-3 "> 
                             <Autocomplete
-                                sx={{width:'80%'}}
+                                sx={{width:'80%',height:'59px' }}
                                 multiple
                                 onChange={(event, value) => {
-                                    console.log(value);
                                     setTipologiaSelected(value);
                                     const allId = value.map(el => el.idTipologiaReport);
                                     setBodyGetLista((prev) => ({...prev,...{idTipologiaReports:allId}}));
@@ -293,7 +302,6 @@ const Storico = () => {
                                         { option.categoriaDocumento}
                                     </li>
                                 )}
-                                style={{ width: '80%',height:'59px' }}
                                 renderInput={(params) => {
                 
                                     return <TextField {...params}
@@ -335,7 +343,22 @@ const Storico = () => {
                                     <Button
                                         onClick={()=>{
                                             setGetListaContestazioniRunning(true);
-                                            getListaContestazioni({...bodyGetLista,...{anno:valueYears[0]}},page,rowsPerPage);
+                                            setBodyGetLista({
+                                                anno:valueYears[0],
+                                                mese:'',
+                                                idEnti:[],
+                                                idTipologiaReports:[]
+                                            });
+                                            setValueAutocomplete([]);
+                                            setDataSelect([]);
+                                            setTipologiaSelected([]);
+                                            getListaContestazioni({...{
+                                                mese:'',
+                                                idEnti:[],
+                                                idTipologiaReports:[]
+                                            },...{anno:valueYears[0]}}
+                                            ,1,10);
+
                                             /*
                                             setInfoPageListaCom({ page: 0, pageSize: 100 });
                                             setInfoPageToLocalStorageCommessa({ page: 0, pageSize: 100 });

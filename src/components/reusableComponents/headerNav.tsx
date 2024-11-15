@@ -35,17 +35,10 @@ const HeaderNavComponent : React.FC = () => {
         });
     };
     
-   
- 
-
 
     const [countMessages, setCountMessages] = useState(0);
   
  
-
-   
-  
-
     const products:ProductEntity[] = [
         {
             id: 'prod-pn',
@@ -61,9 +54,6 @@ const HeaderNavComponent : React.FC = () => {
         }
     ];
 
-   
-
-    
     const arrayProducts:ProductEntity[] = [
         {
             id: '1',
@@ -72,10 +62,6 @@ const HeaderNavComponent : React.FC = () => {
             linkType:"external"
         }
     ];
-
-   
-
- 
 
 
     const partyList : Array<PartyEntity> = [

@@ -16,10 +16,10 @@ const MultiselectWithKeyValue : React.FC <MultiselectWithKeyValueProps> = ({setB
 
     const customMargin = location.pathname === PathPf.FATTURAZIONE ? { width: '80%' ,marginLeft:'12px'} : { width: '80%'};
 
-   
 
     return (
         <Autocomplete
+            sx={{width:'80%'}}
             multiple
             onChange={(event, value:AutocompleteMultiselect[]) => {
                 const arrayIds = value.map((obj:AutocompleteMultiselect) => obj[keyId]);
@@ -50,7 +50,6 @@ const MultiselectWithKeyValue : React.FC <MultiselectWithKeyValueProps> = ({setB
                     </li>
                 );
             } }
-            style={customMargin}
             renderInput={(params) =>{
                 return <TextField 
                     onChange={(e)=> setTextValue(e.target.value)} 
