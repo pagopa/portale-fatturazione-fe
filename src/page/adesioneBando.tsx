@@ -146,8 +146,8 @@ const AdesioneBando : React.FC = () => {
                             <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
                         </Button>
                     </div>
-                    <div id='singleInputRel' style={{minWidth: '300px', height:'40px'}}>
-                        <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".xlsx"]} onFileSelected={(e)=> uploadAdesioneDoc(e)} onFileRemoved={() => setFile(null)}  dropzoneLabel={"Inserisci il File di Adesione al bando"} rejectedLabel="Tipo file non supportato" ></SingleFileInput>
+                    <div id='singleInput' style={{minWidth: '300px', height:'40px'}}>
+                        <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".xlsx"]} onFileSelected={(e) => uploadAdesioneDoc(e)} onFileRemoved={() => setFile(null)} dropzoneLabel={"Inserisci il File di Adesione al bando"} rejectedLabel="Tipo file non supportato" dropzoneButton={""} ></SingleFileInput>
                     </div> 
                 </div>
                 
