@@ -19,7 +19,7 @@ import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import GridCustom from "../components/reusableComponents/grid/gridCustom";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 import { deleteFilterToLocalStorageNotifiche, getFiltersFromLocalStorageNotifiche,  profiliEnti, setFilterToLocalStorageNotifiche } from "../reusableFunction/actionLocalStorage";
-import {mesi, mesiGrid, mesiWithZero, tipoNotifica } from "../reusableFunction/reusableArrayObj";
+import {mesi, mesiFix, mesiGrid, mesiWithZero, tipoNotifica } from "../reusableFunction/reusableArrayObj";
 import { getCurrentFinancialYear } from "../reusableFunction/function";
 import { GlobalContext } from "../store/context/globalContext";
 
@@ -30,7 +30,7 @@ const ReportDettaglio : React.FC = () => {
     const enti = profiliEnti(mainState);
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
-    const currentMonth = (new Date()).getMonth() + 1;
+    const currentMonth = 1; //(new Date()).getMonth() + 1;
     const currString = currentMonth;
     const currentYear = (new Date()).getFullYear();
 
@@ -203,7 +203,15 @@ const ReportDettaglio : React.FC = () => {
         }
     },[]);
 
+   
     
+    useEffect(()=>{
+       
+        setBodyGetLista((prev)=>({...prev, ...{mese:1}}));
+
+    },[bodyGetLista.anno]);
+
+
    
     useEffect(()=>{
         const timer = setTimeout(() => {
@@ -746,7 +754,7 @@ const ReportDettaglio : React.FC = () => {
             {/*title container start */}
             <div className="d-flex marginTop24 ">
                 <div className="col-9">
-                    <Typography variant="h4">Report Dettaglio</Typography>
+                    <Typography variant="h4">Notifiche</Typography>
                 </div>
                 <div className="col-3 ">
                     <Box sx={{width:'80%', marginLeft:'20px', display:'flex', justifyContent:'end'}}  >
@@ -809,23 +817,26 @@ const ReportDettaglio : React.FC = () => {
                                 </InputLabel>
                                 <Select
                                     id="sea"
-                                    label='Seleziona Prodotto'
-                                    labelId="search-by-label"
+                                    label='Seleziona Mese'
                                     onChange={(e) =>{
                                         const value = Number(e.target.value);
                                         setBodyGetLista((prev)=> ({...prev, ...{mese:value}}));
                                     }}
                                     value={bodyGetLista.mese}
-                                    disabled={status=== 'immutable' ? true : false}
                                 >
-                                    {mesi.map((el) => (
-                                        <MenuItem
-                                            key={Math.random()}
-                                            value={Object.keys(el)[0].toString()}
-                                        >
-                                            {Object.values(el)[0]}
-                                        </MenuItem>
-                                    ))}
+                                    {mesi.map((el) =>{
+                                        console.log(el);
+                                        return(
+                                            <MenuItem
+                                                key={Math.random()}
+                                                value={Object.keys(el)[0].toString()}
+                                                disabled={(Object.keys(el)[0] === '11' || Object.keys(el)[0] === '12')&& bodyGetLista.anno === 2024}
+                                            >
+                                                {Object.values(el)[0]}
+                                            </MenuItem>
+                                            
+                                        );
+                                    })}
                                 </Select>
                             </FormControl>
                         </Box>
@@ -847,7 +858,6 @@ const ReportDettaglio : React.FC = () => {
                                     labelId="search-by-label_notifiche"
                                     onChange={(e) => setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}))}
                                     value={bodyGetLista.prodotto}
-                                    disabled={status=== 'immutable' ? true : false}
                                 >
                                     {prodotti.map((el) => (
                                         <MenuItem
@@ -900,7 +910,6 @@ const ReportDettaglio : React.FC = () => {
                                         setBodyGetLista((prev)=> ({...prev, ...{tipoNotifica:value}}));
                                     }}
                                     value={bodyGetLista.tipoNotifica || ''}        
-                                    disabled={status=== 'immutable' ? true : false}
                                 >
                                     {tipoNotifica.map((el) => (     
                                         <MenuItem
