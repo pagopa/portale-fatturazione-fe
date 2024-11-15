@@ -825,7 +825,6 @@ const ReportDettaglio : React.FC = () => {
                                     value={bodyGetLista.mese}
                                 >
                                     {mesi.map((el) =>{
-                                        console.log(el);
                                         return(
                                             <MenuItem
                                                 key={Math.random()}
