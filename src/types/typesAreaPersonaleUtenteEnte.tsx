@@ -32,7 +32,7 @@ export interface DatiFatturazione{
     pec:string,
     notaLegale:boolean,
     prodotto:string,
-    codiceSDI:string
+    codiceSDI:string|null
 }
 
 export interface DatiFatturazionePost{
@@ -42,9 +42,10 @@ export interface DatiFatturazionePost{
     idDocumento:string,
     codCommessa:string,
     contatti: Contatti[],
-    dataDocumento:string,
+    dataDocumento:string|null,
     pec:string,
-    notaLegale:boolean
+    notaLegale:boolean,
+    codiceSDI:string|null
 }
 
 export interface DatiFatturazionePostPagopa {
@@ -54,11 +55,12 @@ export interface DatiFatturazionePostPagopa {
     idDocumento:string,
     codCommessa:string,
     contatti: Contatti[],
-    dataDocumento:string| null,
+    dataDocumento:string|null,
     pec:string,
     notaLegale:boolean,
     prodotto:string,
-    idEnte:string
+    idEnte:string,
+    codiceSDI:string|null
 }
 export interface AreaPersonaleContext {
     datiFatturazione:DatiFatturazione, 
@@ -138,6 +140,7 @@ export interface StateEnableConferma {
     'Mail Pec':boolean,
     'ID Documento':boolean,
     "Codice Commessa/Convenzione":boolean,
+    'SDI':boolean
 }
 
 

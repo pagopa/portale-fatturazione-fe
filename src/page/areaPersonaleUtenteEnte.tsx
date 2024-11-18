@@ -7,6 +7,7 @@ import TabAreaPersonaleUtente from '../components/areaPersonale/tabAreaPersonale
 import PageTitleNavigation from '../components/areaPersonale/pageTitleNavigation';
 import {
     DatiFatturazione,
+    DatiFatturazionePostPagopa,
     StateEnableConferma,
     SuccesResponseGetDatiFatturazione
 } from '../types/typesAreaPersonaleUtenteEnte';
@@ -60,7 +61,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
         prodotto:'',
         map:'',
         id:0,
-        codiceSDI:''
+        codiceSDI:null
     });
             
     // state creato per il tasto conferma , abilitato nel caso in cui tutti values sono true
@@ -70,6 +71,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
         'Mail Pec':false,
         'ID Documento':false,
         "Codice Commessa/Convenzione":false,
+        "SDI":false
     });
 
             
@@ -213,7 +215,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
         if(mainState.datiFatturazione === true){
             // 1 - ed è un utente PAGOPA
             if(profilo.auth === 'PAGOPA'){
-                const newDatiFatturazione = {...datiFatturazione, ...{idEnte:profilo.idEnte,prodotto:profilo.prodotto}};
+                const newDatiFatturazione:DatiFatturazionePostPagopa = {...datiFatturazione, ...{idEnte:profilo.idEnte,prodotto:profilo.prodotto}};
                         
                 await modifyDatiFatturazionePagoPa(token,profilo.nonce, newDatiFatturazione ).then(() =>{
                     setOpenModalLoading(false);
@@ -253,7 +255,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
             }
         }else{
             // 2 - se l'user NON ha I dati fatturazione
-            const bodyPagoPa = {
+            const bodyPagoPa:DatiFatturazionePostPagopa  = {
                 tipoCommessa:datiFatturazione.tipoCommessa,
                 splitPayment:datiFatturazione.splitPayment,
                 cup: datiFatturazione.cup,
@@ -264,7 +266,8 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                 dataDocumento:new Date().toISOString(),
                 pec:datiFatturazione.pec,
                 idEnte:profilo.idEnte,
-                prodotto:profilo.prodotto
+                prodotto:profilo.prodotto,
+                codiceSDI:datiFatturazione.codiceSDI
             };
             const {idEnte,prodotto,...body} = bodyPagoPa;
             // 2 - ed è un utente PAGOPA
@@ -329,7 +332,10 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
         datiFatturazione.notaLegale === false 
                 || datiFatturazione.pec === ''
                 || datiFatturazione.contatti.length === 0
+                || datiFatturazione.codiceSDI === '' || datiFatturazione.codiceSDI === null
     );
+
+    console.log(ifAnyTextAreaIsEmpty, statusBottonConferma,datiFatturazione);
     
     if(loadingData){
         return(
