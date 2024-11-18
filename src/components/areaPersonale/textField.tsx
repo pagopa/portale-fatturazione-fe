@@ -43,8 +43,10 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
     
     const validationTextArea = (max: number, validation:string, input:string|number)=>{
         
-        YupString.max(max, validation)
-            .validate(input)
+        YupString.max(max, validation).matches(/^[a-zA-Z0-9]*$/,  {
+            message: "Non è possibile inserire caratteri speciali",
+            excludeEmptyString: true
+        }).validate(input)
             .then(()=>{
             /* if(datiFatturazione.cup === '' && datiFatturazione.idDocumento !== '' && keyObject === 'cup'){
             setErrorValidation(true);
@@ -62,18 +64,12 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
                 setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
             } );
         
+        /*
         YupString.matches(/^[a-zA-Z0-9_.-]*$/,  {
             message: "Non è possibile inserire caratteri speciali",
             excludeEmptyString: true
         }).validate(input)
             .then(()=>{
-                /* if(datiFatturazione.cup === '' && datiFatturazione.idDocumento !== '' && keyObject === 'cup'){
-                    setErrorValidation(true);
-                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
-                }else{
-                   
-                }
-*/
                 setErrorValidation(false);
                 setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
             
@@ -82,7 +78,7 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
                 setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
             } );
         
-        
+        */
     }; 
     
     const validationTextAreaEmail = (element:string)=>{
@@ -148,7 +144,11 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
             autoComplete='off'
             error={errorValidation}
             onChange={(e)=>{setDatiFatturazione((prevState: DatiFatturazione) =>{
-                const newValue = {[keyObject]:e.target.value};
+                let val = e.target.value;
+                if(keyObject === 'codiceSDI'){
+                    val = val.toLocaleUpperCase();
+                }
+                const newValue = {[keyObject]:val};
                 const newState = {...prevState, ...newValue};
                 return newState;
             } );}}

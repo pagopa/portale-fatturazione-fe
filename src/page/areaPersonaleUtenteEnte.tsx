@@ -59,7 +59,8 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
         notaLegale:false,
         prodotto:'',
         map:'',
-        id:0
+        id:0,
+        codiceSDI:''
     });
             
     // state creato per il tasto conferma , abilitato nel caso in cui tutti values sono true
@@ -148,7 +149,8 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                 notaLegale:false,
                 prodotto:'',
                 map:'',
-                id:0
+                id:0,
+                codiceSDI:''
                         
             });
             if(err?.response?.status !== 404){
@@ -189,7 +191,8 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                 notaLegale:false,
                 prodotto:'',
                 map:'',
-                id:0
+                id:0,
+                codiceSDI:''
                         
             });
              

@@ -31,7 +31,8 @@ export interface DatiFatturazione{
     dataDocumento: null | string,
     pec:string,
     notaLegale:boolean,
-    prodotto:string
+    prodotto:string,
+    codiceSDI:string
 }
 
 export interface DatiFatturazionePost{
