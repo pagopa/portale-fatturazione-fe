@@ -62,7 +62,7 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
                 setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
             } );
         
-        YupString.matches(/^[a-zA-Z0-9_.-]*$/,  {
+        YupString.matches(/^[a-zA-Z0-9]*$/,  {
             message: "Non è possibile inserire caratteri speciali",
             excludeEmptyString: true
         }).validate(input)
