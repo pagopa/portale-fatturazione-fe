@@ -1,28 +1,41 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { manageError } from '../api/api';
-import { getListaStorico } from '../api/apiPagoPa/storicoContestazioni/api';
-import { BodyStoricoContestazioni } from '../page/prod_pn/storicoContestazioni';
+import { getListaStorico, getTipoReportCon } from '../api/apiPagoPa/storicoContestazioni/api';
+import { BodyStoricoContestazioni, ContestazioneRowGrid, TipologieDoc } from '../page/prod_pn/storicoContestazioni';
 import { month } from '../reusableFunction/reusableArrayObj';
+import { getAnniContestazioni } from '../api/apiPagoPa/notifichePA/api';
 
 
-function usePaginatedFetch(apiUrl, initialPage = 1, initialPageSize = 10, dispatchMainState) {
+function usePaginatedFetch(apiUrl, initialPage = 1, initialPageSize = 10, globalContextObj) {
+
+    const {dispatchMainState,mainState} = globalContextObj;
+
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
+
     const [bodyGetLista,setBodyGetLista] = useState<BodyStoricoContestazioni>({
         anno:'',
         mese:'',
         idEnti:[],
         idTipologiaReports:[]
     });
-    const [data, setData] = useState([]);
+
     const [loading, setLoading] = useState(false);
-    const [page, setPage] = useState(initialPage);
-    const [pageSize, setPageSize] = useState(initialPageSize);
-    const [totalPages, setTotalPages] = useState(1); // To manage total pages if available
+    const [dataGrid,setDataGrid] = useState<ContestazioneRowGrid[]>([]);
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [totalContestazioni, setTotalContestazioni]  = useState(0); // To manage total pages if available
+    const [valueYears, setValueYears] = useState<string[]>([]);
+    const [tipologieDoc, setTipologieDoc] = useState<TipologieDoc[]>([]);
+
+
+ 
 
 
     const getListaContestazioni = async(body,pag, rowpag) => {
         
-        await getListaStorico('','',body,pag,rowpag)
+        await getListaStorico(token,profilo,body,pag,rowpag)
             .then((res)=>{
 
                 // ordino i dati in base all'header della grid
@@ -39,42 +52,58 @@ function usePaginatedFetch(apiUrl, initialPage = 1, initialPageSize = 10, dispat
                         dataInserimento:new Date(obj.dataInserimento).toISOString().split('T')[0]
                     };
                 });
-                //setDataGrid(orderDataCustom);
-                //setTotalContestazioni(res.data.count);
-                //setGetListaContestazioniRunning(false);
+                setDataGrid(orderDataCustom);
+                setTotalContestazioni(res.data.count);
+                setLoading(false);
             })
             .catch((err)=>{
-                //setDataGrid([]);
-                //setTotalContestazioni(0);
-                //setGetListaContestazioniRunning(false);
+                setDataGrid([]);
+                setTotalContestazioni(0);
+                setLoading(false);
                 manageError(err,dispatchMainState);
             });
     };
 
 
+    const getAnni = async() => {
+        setLoading(true);
+        await getAnniContestazioni(token,profilo.nonce)
+            .then((res)=>{
+                setBodyGetLista((prev)=> ({...prev, ...{anno:res.data[0]}}));
+                setValueYears(res.data);
+                getListaContestazioni({...bodyGetLista,...{anno:res.data[0]}},page+1,rowsPerPage);
+            })
+            .catch((err)=>{
+                setLoading(false);
+                manageError(err,dispatchMainState);
+            });
+    };
+
+    const listaTipoReport = async () =>{
+        await getTipoReportCon(token, profilo.nonce)
+            .then((res)=>{
+                setTipologieDoc(res.data);
+            })
+            .catch(((err)=>{
+                setTipologieDoc([]);
+                manageError(err,dispatchMainState);
+            }));
+    };
+
+    useEffect(()=>{
+        listaTipoReport(); 
+        getAnni();
+       
+    },[]);
+
 
     useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
 
-            try {
-                const response = await axios.get(apiUrl, {
-                    params: { page, pageSize },
-                });
+        getListaContestazioni(bodyGetLista,page,rowsPerPage);
+        
+    }, [apiUrl, page, page]);
 
-                setData(response.data.items || []); // Adjust based on API response structure
-                setTotalPages(response.data.totalPages || 1); // Adjust if the API provides this
-            } catch (err:any) {
-                manageError(err,dispatchMainState);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchData();
-    }, [apiUrl, page, pageSize]);
-
-    return { data, loading, page, setPage, pageSize, setPageSize, totalPages };
+    return { dataGrid, loading, page, setPage, setRowsPerPage, totalContestazioni,valueYears };
 }
 
 export default usePaginatedFetch;

@@ -21,7 +21,7 @@ export interface BodyStoricoContestazioni{
     idTipologiaReports:number[]
 }
 
-interface TipologieDoc {
+export interface TipologieDoc {
     idTipologiaReport: number,
     categoriaDocumento: string,
     tipologiaDocumento: string
