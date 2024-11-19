@@ -56,7 +56,7 @@ export const downloadDocumentoListaDatiFatturazionePagoPa = async (token:string,
     return response;
 };
 
-export const getValidationCodiceSdi = async (token:string, nonce:string ,body: DatiFatturazionePostPagopa) => {
+export const getValidationCodiceSdi = async (token:string, nonce:string ,body: {idEnte:string,codiceSDI:string|null}) => {
     const response =  await axios.post(`${url}/api/datifatturazione/pagopa/codiceSDI?nonce=${nonce}`,
         body,
         { headers: {

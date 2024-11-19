@@ -38,7 +38,16 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
             setErrorValidation(false);
             setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
         }
+        
     },[datiFatturazione.cup]);
+
+    //logica aggiunta pe lo SDI 19/11
+
+    useEffect(()=>{
+        if(keyObject === 'codiceSDI'){
+            validationSDI(dataValidation.max,dataValidation.validation ,value);
+        }
+    },[]);
     
     
     const validationTextArea = (max: number, validation:string, input:string|number)=>{
@@ -48,13 +57,6 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
             excludeEmptyString: true
         }).validate(input)
             .then(()=>{
-            /* if(datiFatturazione.cup === '' && datiFatturazione.idDocumento !== '' && keyObject === 'cup'){
-            setErrorValidation(true);
-            setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
-            }else{
-            setErrorValidation(false);
-            setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
-            }*/
             
                 setErrorValidation(false);
                 setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
@@ -63,22 +65,23 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
                 setErrorValidation(true);
                 setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
             } );
-        
-        /*
-        YupString.matches(/^[a-zA-Z0-9_.-]*$/,  {
+    }; 
+
+    const validationSDI = (max: number, validation:string, input:string|number)=>{
+        console.log('dentro vali');
+        YupString.max(max, validation).matches(/^[A-Z0-9]*$/,  {
             message: "Non è possibile inserire caratteri speciali",
             excludeEmptyString: true
         }).validate(input)
             .then(()=>{
+            
                 setErrorValidation(false);
                 setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
-            
-            }).catch(() =>{
+            })
+            .catch(() =>{
                 setErrorValidation(true);
                 setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
             } );
-        
-        */
     }; 
     
     const validationTextAreaEmail = (element:string)=>{
@@ -114,10 +117,13 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
     
     const hendleOnMouseOut = (e: React.SyntheticEvent<EventTarget>) =>{
         e.persist();
+        console.log('ciao');
         if(keyObject === 'pec'){
             validationTextAreaEmail(value);
         }else if(keyObject ==='idDocumento' || keyObject === 'codCommessa'){
             validationIdDocumento(dataValidation.max,dataValidation.validation ,value);
+        }else if(keyObject === 'codiceSDI'){
+            validationSDI(dataValidation.max,dataValidation.validation ,value);
         }else{
             validationTextArea(dataValidation.max,dataValidation.validation ,value);
         }

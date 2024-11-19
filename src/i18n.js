@@ -23,7 +23,8 @@ i18n.use(Backend)
                         "Network Error":"La connessione Internet risulta non attiva",
                         'PRESA':"Azione presa in carico",
                         'FATTURA_SOSPESA_RIPRISTINATA':"Operazione andata a buon fine",
-                        'PRESA_IN_CARICO_DOCUMENTO':"Azione presa in carico. Vai ai messaggi per visualizzare lo stato di elaborazione"
+                        'PRESA_IN_CARICO_DOCUMENTO':"Azione presa in carico. Vai ai messaggi per visualizzare lo stato di elaborazione",
+                        
                     }
                 }
             }

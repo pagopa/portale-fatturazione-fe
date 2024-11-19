@@ -16,7 +16,8 @@ import {  getDatiFatturazione,
     insertDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
 import {  getDatiFatturazionePagoPa,
     modifyDatiFatturazionePagoPa,
-    insertDatiFatturazionePagoPa, } from '../api/apiPagoPa/datiDiFatturazionePA/api';
+    insertDatiFatturazionePagoPa,
+    getValidationCodiceSdi, } from '../api/apiPagoPa/datiDiFatturazionePA/api';
 import BasicModal from '../components/reusableComponents/modals/modal';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import {PathPf} from '../types/enum';
@@ -61,7 +62,9 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
         prodotto:'',
         map:'',
         id:0,
-        codiceSDI:null
+        codiceSDI:null,
+        contractCodiceSDI:null
+
     });
             
     // state creato per il tasto conferma , abilitato nel caso in cui tutti values sono true
@@ -85,19 +88,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
         }
     },[]);
             
-    /*
-    // se non c'è il token viene fatto il redirect al portale di accesso 
-    useEffect(()=>{
-        if(token === undefined){
-            window.location.href = redirect;
-        }
-        /* se l'utente PagoPA modifa l'url e cerca di accedere al path '/' 
-                senza aver prima selezionato una row della grid lista dati fatturazione viene fatto il redirect automatico a  PathPf.LISTA_DATI_FATTURAZIONE
-        if(profilo.auth === 'PAGOPA' && !profilo.idEnte){
-            window.location.href = PathPf.LISTA_DATI_FATTURAZIONE;
-        }
-    },[]);
-            */
+  
     // get dati fatturazione SELFCARE
     const getDatiFat = async () =>{
         setLoadingData(true);
@@ -152,7 +143,8 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                 prodotto:'',
                 map:'',
                 id:0,
-                codiceSDI:''
+                codiceSDI:null,
+                contractCodiceSDI:null
                         
             });
             if(err?.response?.status !== 404){
@@ -171,7 +163,12 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                 datiFatturazione:true,
                 statusPageDatiFatturazione:'immutable'
             });
-            setDatiFatturazione(res.data); 
+            let result = res.data;
+            if(res.data.codiceSDI === null || res.data.codiceSDI === ''){
+                result = {...res.data, codiceSDI:res.data.contractCodiceSDI};
+            }
+            console.log(res.data, 'ecco');
+            setDatiFatturazione(result); 
             setLoadingData(false);
         }).catch(err =>{
             handleModifyMainState({
@@ -194,7 +191,8 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                 prodotto:'',
                 map:'',
                 id:0,
-                codiceSDI:''
+                codiceSDI:null,
+                contractCodiceSDI:null
                         
             });
              
@@ -211,22 +209,31 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
     const hendleSubmitDatiFatturazione = async (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) =>{
         e.preventDefault();
         setOpenModalLoading(true);
+        console.log('1');
         //  1 - se l'user ha già dati fatturazione
         if(mainState.datiFatturazione === true){
             // 1 - ed è un utente PAGOPA
             if(profilo.auth === 'PAGOPA'){
+                console.log('pppp');
                 const newDatiFatturazione:DatiFatturazionePostPagopa = {...datiFatturazione, ...{idEnte:profilo.idEnte,prodotto:profilo.prodotto}};
-                        
-                await modifyDatiFatturazionePagoPa(token,profilo.nonce, newDatiFatturazione ).then(() =>{
-                    setOpenModalLoading(false);
-                    handleModifyMainState({
-                        statusPageDatiFatturazione:'immutable',
+                await getValidationCodiceSdi(token,profilo.nonce,{idEnte:datiFatturazione.idEnte,codiceSDI:datiFatturazione.codiceSDI})
+                    .then(async ()=> {
+                        await modifyDatiFatturazionePagoPa(token,profilo.nonce, newDatiFatturazione ).then(() =>{
+                            setOpenModalLoading(false);
+                            handleModifyMainState({
+                                statusPageDatiFatturazione:'immutable',
+                            });
+                            getDatiFatPagoPa();
+                        }).catch(err => {
+                            setOpenModalLoading(false);
+                            manageError(err,dispatchMainState);
+                        });
+    
+                    }).catch((err)=>{
+                        setOpenModalLoading(false);
+                        handleModifyMainState({apiError:'NO'+err.response.data.detail});
                     });
-                    getDatiFatPagoPa();
-                }).catch(err => {
-                    setOpenModalLoading(false);
-                    manageError(err,dispatchMainState);
-                });
+              
             }else{
                 // 1 - ed è un utente SELFCARE
                 await modifyDatiFatturazione(datiFatturazione, token,profilo.nonce)
@@ -315,6 +322,16 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                         
             } 
         }   
+    };
+
+    const sdiIsValid = async() =>{
+        await getValidationCodiceSdi(token,profilo.nonce,{idEnte:datiFatturazione.idEnte,codiceSDI:datiFatturazione.codiceSDI})
+            .then((res)=>{
+                console.log(res);
+
+            }).catch((err)=>{
+                console.log(err);
+            });
     };
             
     const onIndietroButtonPagoPa = () =>{
