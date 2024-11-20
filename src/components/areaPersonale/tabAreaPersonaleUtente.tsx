@@ -170,11 +170,11 @@ const TabAreaPersonaleUtente = ({mainState,datiFatturazione,setDatiFatturazione,
                     <Box sx={{ display: 'grid'}}>
                         <TextFieldComponent
                             required
-                            helperText="È il codice univoco necessario per ricevere le fatture elettroniche. Può essere del tuo ente o della sua Unità organizzativa di riferimento."
-                            label="SDI"
+                            helperText="È il codice univoco necessario per ricevere le fatture elettroniche. Può essere del tuo ente o della sua Unità organizzativa di riferimento.(max 7 caratteri alfanumerici)"
+                            label="Codice univoco o SDI"
                             placeholder="Codice univoco o SDI"
                             fullWidth={false}
-                            value={datiFatturazione.codiceSDI}
+                            value={datiFatturazione.codiceSDI||''}
                             keyObject='codiceSDI'
                             dataValidation={{max:7,validation:'Max 7 caratteri alfanumerici'}}
                             mainState={mainState}

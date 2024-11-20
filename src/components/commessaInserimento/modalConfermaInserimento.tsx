@@ -4,7 +4,6 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { ModalConfermaInsProps } from '../../types/typeModuloCommessaInserimento';
-import { getStatusApp } from '../../reusableFunction/actionLocalStorage';
 import { month } from '../../reusableFunction/reusableArrayObj';
 const style = {
     position: 'absolute' as const,
@@ -15,6 +14,7 @@ const style = {
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
+    borderRadius:'20px'
 };
 
 const ModalConfermaInserimento : React.FC<ModalConfermaInsProps> =({setOpen, open, onButtonComfermaPopUp, mainState}) => {

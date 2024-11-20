@@ -1,16 +1,41 @@
-import React, {useState,useEffect} from 'react';
+import React, {useState,useEffect, useContext} from 'react';
 import {TextField,} from '@mui/material';
 import {DatiFatturazione, TextFieldProps, StateEnableConferma}  from '../../types/typesAreaPersonaleUtenteEnte';
 import { _YupPec} from '../../validations/email/index';
 import YupString from '../../validations/string/index';
+import { getValidationCodiceSdi } from '../../api/apiPagoPa/datiDiFatturazionePA/api';
+import { GlobalContext } from '../../store/context/globalContext';
+
+
 
 const TextFieldComponent : React.FC<TextFieldProps> = props => {
+
+    const globalContextObj = useContext(GlobalContext);
+    const {
+        setOpenModalInfo
+    } = globalContextObj;
+
+  
     
     const {
-        helperText, label, placeholder, fullWidth,value,keyObject, dataValidation, required,mainState,setDatiFatturazione,setStatusButtonConferma, datiFatturazione
+        helperText,
+        label,
+        placeholder,
+        fullWidth,
+        value,
+        keyObject,
+        dataValidation,
+        required,
+        mainState,
+        setDatiFatturazione,
+        setStatusButtonConferma,
+        datiFatturazione,
     } = props;
     
     const [errorValidation, setErrorValidation] = useState(false);
+
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
     
     // ogni qual volta csul click indietro richaimo i dati di fatturazione e setto tutti gli errori a false
     /* useEffect(()=>{
@@ -41,13 +66,43 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
         
     },[datiFatturazione.cup]);
 
-    //logica aggiunta pe lo SDI 19/11
+    //logica aggiunta pe lo SDI 19/11 start
 
+    const sdiIsValid = async() =>{
+        await getValidationCodiceSdi(token,profilo.nonce,{idEnte:profilo.idEnte,codiceSDI:datiFatturazione.codiceSDI})
+            .then((res)=>{
+                setErrorValidation(false);
+                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+
+            }).catch((err)=>{
+                setOpenModalInfo({open:true,sentence:err.response.data.detail});
+                setErrorValidation(true);
+                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
+                
+              
+                console.log(err,'ooo');
+               
+            });
+    } ;
+    /*
     useEffect(()=>{
         if(keyObject === 'codiceSDI'){
+            const timer = setTimeout(() => {
+                if((datiFatturazione.codiceSDI||'').length >= 3){ 
+                    sdiIsValid ();
+                }
+            }, 500);
+            return () => clearTimeout(timer);
+        }
+        
+    },[datiFatturazione.codiceSDI]);
+*/
+    useEffect(()=>{
+        if(keyObject === 'codiceSDI' && mainState.statusPageDatiFatturazione === 'mutable' && mainState.datiFatturazione ){
             validationSDI(dataValidation.max,dataValidation.validation ,value);
         }
-    },[]);
+    },[mainState.statusPageDatiFatturazione]);
+    //logica aggiunta pe lo SDI 19/11 end
     
     
     const validationTextArea = (max: number, validation:string, input:string|number)=>{
@@ -68,15 +123,12 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
     }; 
 
     const validationSDI = (max: number, validation:string, input:string|number)=>{
-        console.log('dentro vali');
         YupString.max(max, validation).matches(/^[A-Z0-9]*$/,  {
             message: "Non è possibile inserire caratteri speciali",
             excludeEmptyString: true
         }).validate(input)
             .then(()=>{
-            
-                setErrorValidation(false);
-                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+                sdiIsValid(); 
             })
             .catch(() =>{
                 setErrorValidation(true);
@@ -159,7 +211,10 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
                 return newState;
             } );}}
             onBlur={(e)=> hendleOnMouseOut(e)}
+            onFocus={()=> setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) )}
         />
+   
+       
     );
 };
 

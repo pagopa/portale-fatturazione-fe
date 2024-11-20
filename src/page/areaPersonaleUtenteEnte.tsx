@@ -16,21 +16,29 @@ import {  getDatiFatturazione,
     insertDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
 import {  getDatiFatturazionePagoPa,
     modifyDatiFatturazionePagoPa,
-    insertDatiFatturazionePagoPa,
-    getValidationCodiceSdi, } from '../api/apiPagoPa/datiDiFatturazionePA/api';
+    insertDatiFatturazionePagoPa } from '../api/apiPagoPa/datiDiFatturazionePA/api';
 import BasicModal from '../components/reusableComponents/modals/modal';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import {PathPf} from '../types/enum';
 import { profiliEnti, } from '../reusableFunction/actionLocalStorage';
 import SuspenseDatiFatturazione from '../components/areaPersonale/skeletonDatiFatturazione';
 import { GlobalContext } from '../store/context/globalContext';
+import ModalInfo from '../components/reusableComponents/modals/modalInfo';
+
         
         
         
 const AreaPersonaleUtenteEnte : React.FC = () => {
 
     const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState,openBasicModal_DatFat_ModCom,setOpenBasicModal_DatFat_ModCom} = globalContextObj;
+    const {
+        dispatchMainState,
+        mainState,
+        openBasicModal_DatFat_ModCom,
+        setOpenBasicModal_DatFat_ModCom,
+        setOpenModalInfo,
+        openModalInfo
+    } = globalContextObj;
    
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
@@ -45,6 +53,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
     };
   
     const [openModalLoading, setOpenModalLoading] = useState(false);
+    
     const [loadingData, setLoadingData] = useState(false);
     const [datiFatturazione, setDatiFatturazione] = useState<DatiFatturazione>({
         tipoCommessa:'',
@@ -216,23 +225,18 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
             if(profilo.auth === 'PAGOPA'){
                 console.log('pppp');
                 const newDatiFatturazione:DatiFatturazionePostPagopa = {...datiFatturazione, ...{idEnte:profilo.idEnte,prodotto:profilo.prodotto}};
-                await getValidationCodiceSdi(token,profilo.nonce,{idEnte:datiFatturazione.idEnte,codiceSDI:datiFatturazione.codiceSDI})
-                    .then(async ()=> {
-                        await modifyDatiFatturazionePagoPa(token,profilo.nonce, newDatiFatturazione ).then(() =>{
-                            setOpenModalLoading(false);
-                            handleModifyMainState({
-                                statusPageDatiFatturazione:'immutable',
-                            });
-                            getDatiFatPagoPa();
-                        }).catch(err => {
-                            setOpenModalLoading(false);
-                            manageError(err,dispatchMainState);
-                        });
-    
-                    }).catch((err)=>{
-                        setOpenModalLoading(false);
-                        handleModifyMainState({apiError:'NO'+err.response.data.detail});
+                await modifyDatiFatturazionePagoPa(token,profilo.nonce, newDatiFatturazione ).then(() =>{
+                    setOpenModalLoading(false);
+                    handleModifyMainState({
+                        statusPageDatiFatturazione:'immutable',
                     });
+                    getDatiFatPagoPa();
+                }).catch(err => {
+                    setOpenModalLoading(false);
+                    manageError(err,dispatchMainState);
+                });
+
+              
               
             }else{
                 // 1 - ed è un utente SELFCARE
@@ -324,15 +328,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
         }   
     };
 
-    const sdiIsValid = async() =>{
-        await getValidationCodiceSdi(token,profilo.nonce,{idEnte:datiFatturazione.idEnte,codiceSDI:datiFatturazione.codiceSDI})
-            .then((res)=>{
-                console.log(res);
-
-            }).catch((err)=>{
-                console.log(err);
-            });
-    };
+ 
             
     const onIndietroButtonPagoPa = () =>{
         if(mainState.statusPageDatiFatturazione === 'immutable' &&  profilo.auth === 'PAGOPA'){
@@ -363,7 +359,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
     return (
                 
         <div >
-            <PageTitleNavigation dispatchMainState={dispatchMainState} setOpen={setOpenBasicModal_DatFat_ModCom} mainState={mainState} /> 
+            <PageTitleNavigation  setOpen={setOpenBasicModal_DatFat_ModCom}  /> 
             {/* tab 1 e 2 start */}
             <div className='mt-5'>
                 <TabAreaPersonaleUtente mainState={mainState} datiFatturazione={datiFatturazione} setDatiFatturazione={setDatiFatturazione} setStatusButtonConferma={setStatusButtonConferma} />
@@ -391,6 +387,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                     </div>
                 )}
             </div>
+            <ModalInfo setOpen={setOpenModalInfo} open={openModalInfo}></ModalInfo>
             <BasicModal setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} dispatchMainState={dispatchMainState} getDatiFat={getDatiFat} getDatiFatPagoPa={getDatiFatPagoPa} mainState={mainState}></BasicModal>
             <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}></ModalLoading>
             {/*   <BasicAlerts typeAlert={'error'} setVisible={setAlertVisible}  visible={alertVisible}></BasicAlerts>*/}

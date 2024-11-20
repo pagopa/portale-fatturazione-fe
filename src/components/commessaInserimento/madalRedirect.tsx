@@ -18,6 +18,7 @@ const style = {
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
+    borderRadius:'20px'
 };
 
 const ModalRedirect : React.FC<ModalProps> =({setOpen, open, sentence}) => {

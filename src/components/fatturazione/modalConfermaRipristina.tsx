@@ -16,6 +16,7 @@ const style = {
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
+    borderRadius:'20px'
 };
 
 const ModalConfermaRipristina : React.FC<ModalConfermaRipristinaProps> =({setOpen, open, onButtonComferma,filterInfo,fattureSelectedArr}) => {

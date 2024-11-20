@@ -107,12 +107,12 @@ const BasicAlerts:React.FC = () => {
         }
     },[showAlert]);
 
-    
+  
 
     return createPortal(
         <div className={css}>
             
-            <Alert sx={{display:'flex', justifyContent:'center'}} severity={colorAlert}  variant="standard">{((mainState.apiError||'').slice(0,2) === 'NO') ? (mainState.apiError||'').slice(2): t(`errori.${mainState.apiError}`)} 
+            <Alert sx={{display:'flex', justifyContent:'center'}} severity={colorAlert}  variant="standard">{t(`errori.${mainState.apiError}`)} 
                 {mainState.apiError === 'PRESA_IN_CARICO_DOCUMENTO' &&
                 <IconButton sx={{marginLeft:'20px'}} onClick={()=> {
                     setCss('main_container_alert_component_hidden');

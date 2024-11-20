@@ -1,6 +1,3 @@
-
-import { AutocompleteMultiselect, OptionMultiselectCheckboxPsp, OptionMultiselectCheckboxQarter } from "./typeAngraficaPsp";
-import { RequestBodyListaDocContabiliPagopa } from "./typeDocumentiContabili";
 import { DataGridCommessa } from "./typeModuloCommessaElenco";
 
 export interface ModalProps {
