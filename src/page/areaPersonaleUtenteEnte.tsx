@@ -80,7 +80,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
     const [statusBottonConferma, setStatusButtonConferma] = useState<StateEnableConferma>({
         'CUP':false,
         'CIG':false,
-        'Mail Pec':false,
+        'PEC':false,
         'ID Documento':false,
         "Codice Commessa/Convenzione":false,
         "SDI":false

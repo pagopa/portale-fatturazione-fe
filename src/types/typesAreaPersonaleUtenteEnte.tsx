@@ -139,7 +139,7 @@ export interface DynamicInsertProps {
 export interface StateEnableConferma {
     CUP:boolean,
     CIG:boolean,
-    'Mail Pec':boolean,
+    'PEC':boolean,
     'ID Documento':boolean,
     "Codice Commessa/Convenzione":boolean,
     'SDI':boolean

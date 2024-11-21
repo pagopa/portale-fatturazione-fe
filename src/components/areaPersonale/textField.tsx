@@ -160,8 +160,22 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
                     setErrorValidation(false);
                     setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
                 }
-            })
-            .catch(() =>{
+            }).catch(() =>{
+                setErrorValidation(true);
+                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
+            } );
+    };
+
+    const validationCodCommessa = (max: number, validation:string, input:string|number) => {
+        
+        YupString.max(max, validation)
+            .validate(input)
+            .then(()=>{
+             
+                setErrorValidation(false);
+                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+                
+            }).catch(() =>{
                 setErrorValidation(true);
                 setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
             } );
@@ -172,13 +186,17 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
         console.log('ciao');
         if(keyObject === 'pec'){
             validationTextAreaEmail(value);
-        }else if(keyObject ==='idDocumento' || keyObject === 'codCommessa'){
+        }else if(keyObject ==='idDocumento'){
             validationIdDocumento(dataValidation.max,dataValidation.validation ,value);
         }else if(keyObject === 'codiceSDI'){
             validationSDI(dataValidation.max,dataValidation.validation ,value);
+        }else if(keyObject === 'codCommessa'){
+            validationCodCommessa(dataValidation.max,dataValidation.validation ,value);
         }else{
             validationTextArea(dataValidation.max,dataValidation.validation ,value);
         }
+
+        
     };
     
     let makeTextInputDisable = true;
