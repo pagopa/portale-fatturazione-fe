@@ -98,7 +98,8 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
     },[datiFatturazione.codiceSDI]);
 */
     useEffect(()=>{
-        if(keyObject === 'codiceSDI' && mainState.statusPageDatiFatturazione === 'mutable' && mainState.datiFatturazione ){
+        if(keyObject === 'codiceSDI' && mainState.statusPageDatiFatturazione === 'mutable' && mainState.datiFatturazione && value !== '' ){
+            //console.log('dentro effect',mainState.statusPageDatiFatturazione,{value:value});
             validationSDI(dataValidation.max,dataValidation.validation ,value);
         }
     },[mainState.statusPageDatiFatturazione]);
