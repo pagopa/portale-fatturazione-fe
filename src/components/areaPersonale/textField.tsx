@@ -5,6 +5,7 @@ import { _YupPec} from '../../validations/email/index';
 import YupString from '../../validations/string/index';
 import { getValidationCodiceSdi } from '../../api/apiPagoPa/datiDiFatturazionePA/api';
 import { GlobalContext } from '../../store/context/globalContext';
+import { getValidationCodiceSdiEnte } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
 
 
 
@@ -69,20 +70,30 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
     //logica aggiunta pe lo SDI 19/11 start
 
     const sdiIsValid = async() =>{
-        await getValidationCodiceSdi(token,profilo.nonce,{idEnte:profilo.idEnte,codiceSDI:datiFatturazione.codiceSDI})
-            .then((res)=>{
-                setErrorValidation(false);
-                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+        if(profilo.auth === 'PAGOPA'){
+            await getValidationCodiceSdi(token,profilo.nonce,{idEnte:profilo.idEnte,codiceSDI:datiFatturazione.codiceSDI})
+                .then((res)=>{
+                    setErrorValidation(false);
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
 
-            }).catch((err)=>{
-                setOpenModalInfo({open:true,sentence:err.response.data.detail});
-                setErrorValidation(true);
-                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
-                
-              
-                console.log(err,'ooo');
-               
-            });
+                }).catch((err)=>{
+                    setOpenModalInfo({open:true,sentence:err.response.data.detail});
+                    setErrorValidation(true);
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
+                });
+        }else{
+            await getValidationCodiceSdiEnte(token,profilo.nonce,{codiceSDI:datiFatturazione.codiceSDI})
+                .then((res)=>{
+                    setErrorValidation(false);
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+
+                }).catch((err)=>{
+                    setOpenModalInfo({open:true,sentence:err.response.data.detail});
+                    setErrorValidation(true);
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
+                });
+        }
+       
     } ;
     /*
     useEffect(()=>{
@@ -98,7 +109,7 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
     },[datiFatturazione.codiceSDI]);
 */
     useEffect(()=>{
-        if(keyObject === 'codiceSDI' && mainState.statusPageDatiFatturazione === 'mutable' && mainState.datiFatturazione && value !== '' ){
+        if(keyObject === 'codiceSDI' && mainState.statusPageDatiFatturazione === 'mutable' && mainState.datiFatturazione){
             //console.log('dentro effect',mainState.statusPageDatiFatturazione,{value:value});
             validationSDI(dataValidation.max,dataValidation.validation ,value);
         }
@@ -125,9 +136,8 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
 
     const validationSDI = (max: number, validation:string, input:string|number)=>{
         YupString.max(max, validation).matches(/^[A-Z0-9]*$/,  {
-            message: "Non è possibile inserire caratteri speciali",
-            excludeEmptyString: true
-        }).validate(input)
+            message: "Non è possibile inserire caratteri speciali"
+        }).required().validate(input)
             .then(()=>{
                 sdiIsValid(); 
             })

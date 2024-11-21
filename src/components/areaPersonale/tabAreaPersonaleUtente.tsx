@@ -171,7 +171,7 @@ const TabAreaPersonaleUtente = ({mainState,datiFatturazione,setDatiFatturazione,
                         <TextFieldComponent
                             required
                             helperText="È il codice univoco necessario per ricevere le fatture elettroniche. Può essere del tuo ente o della sua Unità organizzativa di riferimento.(max 7 caratteri alfanumerici)"
-                            label="SDI"
+                            label="Codice univoco o SDI"
                             placeholder="Codice univoco o SDI"
                             fullWidth={false}
                             value={datiFatturazione.codiceSDI||''}

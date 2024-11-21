@@ -39,3 +39,13 @@ export const insertDatiFatturazione = async (datiFatturazione: DatiFatturazioneP
     );
     return response;
 };
+
+export const getValidationCodiceSdiEnte = async (token:string, nonce:string ,body: {codiceSDI:string|null}) => {
+    const response =  await axios.post(`${url}/api/datifatturazione/codiceSDI?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+};

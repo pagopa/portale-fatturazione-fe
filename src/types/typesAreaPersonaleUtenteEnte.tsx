@@ -142,7 +142,7 @@ export interface StateEnableConferma {
     'PEC':boolean,
     'ID Documento':boolean,
     "Codice Commessa/Convenzione":boolean,
-    'SDI':boolean
+    'Codice univoco o SDI':boolean
 }
 
 

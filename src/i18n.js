@@ -15,7 +15,7 @@ i18n.use(Backend)
                         403:"Utente non autenticato. Effettuare nuovamente l'accesso",
                         419:"Sessione scaduta. Effettuare nuovamente l'accesso",
                         500:"L'operazione non è andata a buon fine. Si prega di riprovare",
-                        400:"L'operazione non è andata a buon fine. Contattare l'assistenza",
+                        400:"L'operazione non è andata a buon fine. Contattare l'assistenza",// mauro messaggio 
                         404:"La ricerca non ha prodotto risultati",
                         410:"La risorsa non è più disponibile",
                         '404_DOWNLOAD':"L'azione di download non ha prodotto risultati",

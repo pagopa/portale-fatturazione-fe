@@ -83,7 +83,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
         'PEC':false,
         'ID Documento':false,
         "Codice Commessa/Convenzione":false,
-        "SDI":false
+        "Codice univoco o SDI":false
     });
 
             
@@ -121,8 +121,12 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                     datiFatturazioneNotCompleted:datiFatturazioneNotCompleted
                 });
             }
+            let result = res.data;
+            if(res.data.codiceSDI === null || res.data.codiceSDI === ''){
+                result = {...res.data, codiceSDI:res.data.contractCodiceSDI};
+            }
            
-            setDatiFatturazione(res.data);
+            setDatiFatturazione(result);
             setLoadingData(false);
             //checkCommessa();
                     
@@ -348,7 +352,6 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                 || datiFatturazione.codiceSDI === '' || datiFatturazione.codiceSDI === null
     );
 
-    console.log(ifAnyTextAreaIsEmpty, statusBottonConferma,datiFatturazione);
     
     if(loadingData){
         return(
