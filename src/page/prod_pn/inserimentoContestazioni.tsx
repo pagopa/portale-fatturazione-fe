@@ -8,11 +8,10 @@ import {  useContext, useEffect, useState } from "react";
 import { getAnniContestazioni, getEntiContestazioni, getMesiContestazioni, recapContestazioniAzure, uploadContestazioniAzure } from "../../api/apiPagoPa/notifichePA/api";
 import { GlobalContext } from "../../store/context/globalContext";
 import { manageError, managePresaInCarico, manageStringMessage } from "../../api/api";
-import { useId } from 'react';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { month } from "../../reusableFunction/reusableArrayObj";
 import ModalInvioContestazioni from "../../components/reportDettaglio/modalConfermaContestazioni";
-import { styled, width } from "@mui/system";
+
 interface MeseContetazione{
     descrizione: string,
     mese: string

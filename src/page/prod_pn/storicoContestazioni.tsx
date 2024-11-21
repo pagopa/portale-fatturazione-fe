@@ -82,8 +82,7 @@ const Storico = () => {
 
     useEffect(()=>{
         listaTipoReport(); 
-        getAnni();
-       
+        getAnni(); 
     },[]);
 
     useEffect(()=>{
@@ -108,8 +107,7 @@ const Storico = () => {
         await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} )
             .then((res)=>{
                 setDataSelect(res.data);
-            })
-            .catch(((err)=>{
+            }).catch(((err)=>{
                 setDataSelect([]);
                 manageError(err,dispatchMainState);
             }));
@@ -119,8 +117,7 @@ const Storico = () => {
         await getTipoReportCon(token, profilo.nonce)
             .then((res)=>{
                 setTipologieDoc(res.data);
-            })
-            .catch(((err)=>{
+            }).catch(((err)=>{
                 setTipologieDoc([]);
                 manageError(err,dispatchMainState);
             }));
@@ -133,8 +130,7 @@ const Storico = () => {
                 setBodyGetLista((prev)=> ({...prev, ...{anno:res.data[0]}}));
                 setValueYears(res.data);
                 getListaContestazioni({...bodyGetLista,...{anno:res.data[0]}},page+1,rowsPerPage);
-            })
-            .catch((err)=>{
+            }).catch((err)=>{
                 setGetListaContestazioniRunning(false);
                 manageError(err,dispatchMainState);
             });
@@ -162,8 +158,7 @@ const Storico = () => {
                 setDataGrid(orderDataCustom);
                 setTotalContestazioni(res.data.count);
                 setGetListaContestazioniRunning(false);
-            })
-            .catch((err)=>{
+            }).catch((err)=>{
                 setDataGrid([]);
                 setTotalContestazioni(0);
                 setGetListaContestazioniRunning(false);
