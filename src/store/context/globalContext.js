@@ -34,8 +34,9 @@ export const GlobalContext = createContext({
     showAlert:true,
     setShowAlert:(prev) => null,
     setOpenModalInfo:(prev) => null,
-    openModalInfo:{open:false,sentence:''}
-
+    openModalInfo:{open:false,sentence:''},
+    errorAlert:{error:0,message:''},
+    setErrorAlert:(prev) => null
 
 });
 
@@ -48,7 +49,11 @@ function GlobalContextProvider({children}){
   
     const [showAlert, setShowAlert] = useState(true);
 
+
     const [openModalInfo, setOpenModalInfo] = useState({open:false,sentence:''});
+
+    //nuova logica errori da implemnetare sull'applicazione  22/11
+    const [errorAlert, setErrorAlert] = useState({error:0,message:''});
 
     // eslint-disable-next-line no-undef
     
@@ -67,7 +72,10 @@ function GlobalContextProvider({children}){
         showAlert,
         setShowAlert,
         openModalInfo,
-        setOpenModalInfo
+        setOpenModalInfo,
+        errorAlert,
+        setErrorAlert
+
     };
 
 

@@ -24,6 +24,7 @@ import { profiliEnti, } from '../reusableFunction/actionLocalStorage';
 import SuspenseDatiFatturazione from '../components/areaPersonale/skeletonDatiFatturazione';
 import { GlobalContext } from '../store/context/globalContext';
 import ModalInfo from '../components/reusableComponents/modals/modalInfo';
+import { error } from 'console';
 
         
         
@@ -37,7 +38,8 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
         openBasicModal_DatFat_ModCom,
         setOpenBasicModal_DatFat_ModCom,
         setOpenModalInfo,
-        openModalInfo
+        openModalInfo,
+        setErrorAlert
     } = globalContextObj;
    
     const token =  mainState.profilo.jwt;
@@ -237,11 +239,11 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                     getDatiFatPagoPa();
                 }).catch(err => {
                     setOpenModalLoading(false);
-                    manageError(err,dispatchMainState);
+                    console.log(err);
+                    setErrorAlert({error:err.response.status,message:err.response.data.detail});
+                    //handleModifyMainState({apiError:err.response.data.detail});
+                    //manageError(err,dispatchMainState);
                 });
-
-              
-              
             }else{
                 // 1 - ed è un utente SELFCARE
                 await modifyDatiFatturazione(datiFatturazione, token,profilo.nonce)
@@ -265,7 +267,8 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                         }
                     }).catch(err => {
                         setOpenModalLoading(false);
-                        manageError(err,dispatchMainState);
+                        setErrorAlert({error:err.response.status,message:err.response.data.detail});
+                        //manageError(err,dispatchMainState);
                     });
             }
         }else{
@@ -296,7 +299,8 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                     getDatiFatPagoPa();
                 }).catch(err =>{
                     setOpenModalLoading(false);
-                    manageError(err,dispatchMainState);
+                    setErrorAlert({error:err.response.status,message:err.response.data.detail});
+                    //manageError(err,dispatchMainState);
                 });
                 
             }else{
@@ -325,7 +329,8 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                     }  
                 }).catch(err =>{
                     setOpenModalLoading(false);
-                    manageError(err,dispatchMainState);
+                    setErrorAlert({error:err.response.status,message:err.response.data.detail});
+                    //manageError(err,dispatchMainState);
                 }); 
                         
             } 
@@ -383,7 +388,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                             size="medium"
                             type='submit'
                             onClick={(e) => hendleSubmitDatiFatturazione(e)}
-                            disabled={!enableDisableConferma || ifAnyTextAreaIsEmpty}
+                            disabled={false}
                         >
                     Salva
                         </Button>
