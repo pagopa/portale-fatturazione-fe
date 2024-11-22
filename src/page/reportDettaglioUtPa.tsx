@@ -490,6 +490,7 @@ const ReportDettaglio : React.FC = () => {
                 setTotalNotifiche(res.data.count); 
                 setShowLoadingGrid(false);
             }).catch((error)=>{
+                console.log(error);
                 // abilita button filtra e annulla filtri all'arrivo dei dati
                 setNotificheList([]);
                 setTotalNotifiche(0);

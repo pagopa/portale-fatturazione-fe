@@ -13,10 +13,12 @@ import {
 } from '../types/typesAreaPersonaleUtenteEnte';
 import {  getDatiFatturazione,
     modifyDatiFatturazione,
-    insertDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
+    insertDatiFatturazione, 
+    getSdi} from '../api/apiSelfcare/datiDiFatturazioneSE/api';
 import {  getDatiFatturazionePagoPa,
     modifyDatiFatturazionePagoPa,
-    insertDatiFatturazionePagoPa } from '../api/apiPagoPa/datiDiFatturazionePA/api';
+    insertDatiFatturazionePagoPa, 
+    getSdiPagoPa} from '../api/apiPagoPa/datiDiFatturazionePA/api';
 import BasicModal from '../components/reusableComponents/modals/modal';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import {PathPf} from '../types/enum';
@@ -132,36 +134,42 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
             setLoadingData(false);
             //checkCommessa();
                     
-        }).catch(err =>{
+        }).catch(async(err) =>{
                     
             if(err?.response?.status === 404){
-                // setInfoToStatusApplicationLoacalStorage(statusApp,{datiFatturazione:false});
-                handleModifyMainState({
-                    datiFatturazione:false,
-                    statusPageDatiFatturazione:'mutable'
+                // se l'ente non ha i dati di fatturazione potrebbe avere lo SDI
+
+                await getSdi(token,profilo.nonce).then((res)=>{
+                    console.log(res, 'res SDI');
+                    handleModifyMainState({
+                        datiFatturazione:false,
+                        statusPageDatiFatturazione:'mutable'
+                    });
+
+                    setDatiFatturazione({
+                        tipoCommessa:'',
+                        idEnte:'',
+                        splitPayment:true,
+                        cup: '',
+                        idDocumento:'',
+                        codCommessa:'',
+                        contatti:[],
+                        dataCreazione:'',
+                        dataModifica:'',
+                        dataDocumento:null,
+                        pec:'',
+                        notaLegale:false,
+                        prodotto:'',
+                        map:'',
+                        id:0,
+                        codiceSDI:res.data.contractCodiceSDI,
+                        contractCodiceSDI:null
+                    });
+                }).catch((err)=>{
+                    manageError(err,dispatchMainState);
                 });
-                //checkCommessa();
+
             }
-            setDatiFatturazione({
-                tipoCommessa:'',
-                idEnte:'',
-                splitPayment:true,
-                cup: '',
-                idDocumento:'',
-                codCommessa:'',
-                contatti:[],
-                dataCreazione:'',
-                dataModifica:'',
-                dataDocumento:null,
-                pec:'',
-                notaLegale:false,
-                prodotto:'',
-                map:'',
-                id:0,
-                codiceSDI:null,
-                contractCodiceSDI:null
-                        
-            });
             if(err?.response?.status !== 404){
                 manageError(err,dispatchMainState);
             }
@@ -169,7 +177,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
         });
     };
             
-            
+    console.log(datiFatturazione,'???');
     // get dati fatturazione PAGOPA
     const getDatiFatPagoPa = async () =>{
         setLoadingData(true);
@@ -182,41 +190,46 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
             if(res.data.codiceSDI === null || res.data.codiceSDI === ''){
                 result = {...res.data, codiceSDI:res.data.contractCodiceSDI};
             }
-            console.log(res.data, 'ecco');
             setDatiFatturazione(result); 
             setLoadingData(false);
-        }).catch(err =>{
-            handleModifyMainState({
-                datiFatturazione:false,
-                statusPageDatiFatturazione:'mutable'
-            });
-            setDatiFatturazione({
-                tipoCommessa:'',
-                idEnte:'',
-                splitPayment:true,
-                cup: '',
-                idDocumento:'',
-                codCommessa:'',
-                contatti:[],
-                dataCreazione:'',
-                dataModifica:'',
-                dataDocumento:null,
-                pec:'',
-                notaLegale:false,
-                prodotto:'',
-                map:'',
-                id:0,
-                codiceSDI:null,
-                contractCodiceSDI:null
-                        
-            });
-             
+        }).catch(async(err) =>{
+           
             if(err?.response?.status !== 404){
                 manageError(err,dispatchMainState);
                 navigate(PathPf.LISTA_DATI_FATTURAZIONE); 
             }
-            setLoadingData(false);
+
+            await getSdiPagoPa(token,profilo.nonce,profilo.idEnte, profilo.prodotto).then((res)=>{
+                console.log(res, 'res SDI pagopa');
+                setDatiFatturazione({
+                    tipoCommessa:'',
+                    idEnte:'',
+                    splitPayment:true,
+                    cup: '',
+                    idDocumento:'',
+                    codCommessa:'',
+                    contatti:[],
+                    dataCreazione:'',
+                    dataModifica:'',
+                    dataDocumento:null,
+                    pec:'',
+                    notaLegale:false,
+                    prodotto:'',
+                    map:'',
+                    id:0,
+                    codiceSDI:res.data.contractCodiceSDI,
+                    contractCodiceSDI:null
+                });
+                handleModifyMainState({
+                    datiFatturazione:false,
+                    statusPageDatiFatturazione:'mutable'
+                });
+                
+            }).catch((err)=>{
+                manageError(err,dispatchMainState);
+            });
            
+            setLoadingData(false);
         });
     };
             
@@ -290,7 +303,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
             const {idEnte,prodotto,...body} = bodyPagoPa;
             // 2 - ed è un utente PAGOPA
             if(profilo.auth === 'PAGOPA'){
-                await insertDatiFatturazionePagoPa( token,profilo.nonce, bodyPagoPa).then((res)  =>{
+                await insertDatiFatturazionePagoPa( token,profilo.nonce, bodyPagoPa).then(()  =>{
                     setOpenModalLoading(false);
                     handleModifyMainState({
                         statusPageDatiFatturazione:'immutable',
@@ -388,7 +401,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                             size="medium"
                             type='submit'
                             onClick={(e) => hendleSubmitDatiFatturazione(e)}
-                            disabled={false}
+                            disabled={!enableDisableConferma || ifAnyTextAreaIsEmpty}
                         >
                     Salva
                         </Button>

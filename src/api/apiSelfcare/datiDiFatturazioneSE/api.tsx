@@ -11,9 +11,6 @@ export const getDatiFatturazione  = async (token:string, nonce:string) => {
             Authorization: 'Bearer ' + token
         }});
     return response;
-     
-   
-   
 };
 
 
@@ -47,5 +44,15 @@ export const getValidationCodiceSdiEnte = async (token:string, nonce:string ,bod
             Authorization: 'Bearer ' + token
         },}
     );
+    return response;
+};
+
+export const getSdi  = async (token:string, nonce:string) => {
+  
+    const response = await axios.get(
+        `${url}/api/datifatturazione/ente/contractCodiceSDI?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }});
     return response;
 };

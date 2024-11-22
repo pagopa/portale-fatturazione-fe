@@ -66,3 +66,12 @@ export const getValidationCodiceSdi = async (token:string, nonce:string ,body: {
     return response;
 };
 
+export const getSdiPagoPa  = async (token:string, nonce:string, idente:string, prodotto:string) => {
+    const response = await axios.get(
+        `${url}/api/datifatturazione/pagopa/ente/contractCodiceSDI?nonce=${nonce}&idEnte=${idente}&prodotto=${prodotto}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }});
+    return response;
+};
+
