@@ -115,12 +115,12 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
                     </Button>
                 </div>
             </div>
-            <div className="d-flex mt-3 ">
+            <div className=" mt-3 ">
                 {arrElement.map((el : Email) => {
                     const { email} = el;
                     return (
-                        <div className='d-flex' key={Math.random()}>
-                            <div className='d-flex align-items-center w-100'>
+                        <div className='d-flex w-auto' key={Math.random()}>
+                            <div className='d-flex align-items-center'>
                                 <Typography
                                     variant="caption-semibold"
                                     fontSize="large"
