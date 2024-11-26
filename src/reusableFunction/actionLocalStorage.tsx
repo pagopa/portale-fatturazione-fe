@@ -1,6 +1,6 @@
 export const profiliEnti = (mainState) => {
    
-    const profiloValue = mainState.profilo.profilo;
+    const profiloValue = mainState?.profilo?.profilo||'';
     
     const result = profiloValue === "PA" || profiloValue === "GSP" || profiloValue === "SCP" || profiloValue === "PSP" || profiloValue === "AS" || profiloValue === "SA" || profiloValue === "PT";
     return result;

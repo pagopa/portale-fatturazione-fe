@@ -86,7 +86,7 @@ const App = ({ instance }) => {
 
     },[mainState.profilo.jwt]);
 */
-    const recOrConsIsLogged = profilo?.profilo === 'REC' || profilo.profilo ==='CON';
+    const recOrConsIsLogged = profilo.profilo === 'REC' || profilo.profilo ==='CON';
     let route;
 
     if(prodotti.length > 0 && mainState.authenticated === true && !profilo.auth){
