@@ -38,6 +38,7 @@ import { GlobalContext } from './store/context/globalContext';
 import useIsTabActive from './reusableFunction/tabIsActiv';
 import { redirect } from './api/api';
 import DettaglioDocContabile from './page/prod_pagopa/dettaglioDocumentoContabile';
+import BundleError from './components/reusableComponents/bundleError';
 
 
 
@@ -47,8 +48,8 @@ const App = ({ instance }) => {
     const {dispatchMainState,mainState} = globalContextObj;
 
     const enti = profiliEnti(mainState);
-    const prodotti = mainState.prodotti;
-    const profilo = mainState.profilo;
+    const prodotti = mainState?.prodotti;
+    const profilo = mainState?.profilo;
 
     const globalLocalStorage = localStorage.getItem('globalState') || '{}';
     const result =  JSON.parse(globalLocalStorage);
@@ -86,7 +87,7 @@ const App = ({ instance }) => {
 
     },[mainState.profilo.jwt]);
 */
-    const recOrConsIsLogged = profilo.profilo === 'REC' || profilo.profilo ==='CON';
+    const recOrConsIsLogged = profilo?.profilo === 'REC' || profilo.profilo ==='CON';
     let route;
 
     if(prodotti.length > 0 && mainState.authenticated === true && !profilo.auth){

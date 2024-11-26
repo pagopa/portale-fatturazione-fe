@@ -34,7 +34,7 @@ msalInstance.addEventCallback((event) => {
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <GlobalContextProvider>
-        <App instance={msalInstance}/>
+        <App instance={msalInstance}/> 
     </GlobalContextProvider>
    
 );

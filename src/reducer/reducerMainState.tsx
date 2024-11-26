@@ -42,5 +42,6 @@ export function reducerMainState(mainState:MainState, action:ActionReducerType) 
 
 export function loadState (){
     const savedState = localStorage.getItem('globalState');
-    return savedState ? JSON.parse(savedState) : initialState;
+    //const globalIsNotEmpty = Object.keys(JSON.parse(savedState||'{}')).length > 0;
+    return savedState  ? JSON.parse(savedState) : initialState;
 }
