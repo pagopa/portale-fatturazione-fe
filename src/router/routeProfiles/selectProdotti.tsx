@@ -4,7 +4,8 @@ import { useContext, useEffect } from "react";
 import useIsTabActive from "../../reusableFunction/tabIsActiv";
 import { GlobalContext } from "../../store/context/globalContext";
 import { redirect } from "../../api/api";
-import LayoutLoggedOut from "../../components/reusableComponents/layoutLoggedOut";
+import LayoutLoggedOut from "../../layout/layoutLoggedOut";
+
 
 
 const SelectProdottiRoute = () => {

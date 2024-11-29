@@ -18,7 +18,8 @@ import Azure from "../page/azure";
 import AzureLogin from "../page/azureLogin";
 import ErrorPage from "../page/error";
 import { PathPf } from "../types/enum";
-import LayoutLoggedOut from '../components/reusableComponents/layoutLoggedOut';
+import LayoutLoggedOut from '../layout/layoutLoggedOut';
+
 
 
 

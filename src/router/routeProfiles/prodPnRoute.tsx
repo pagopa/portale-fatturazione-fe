@@ -1,9 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import {  Route } from "react-router-dom";
-
 import { GlobalContext } from "../../store/context/globalContext";
-import Layout from "../../components/reusableComponents/layOutLoggedIn";
-import SideNavComponent from "../../components/reusableComponents/sideNav";
 import Accertamenti from "../../page/accertamenti";
 import AdesioneBando from "../../page/adesioneBando";
 import AreaPersonaleUtenteEnte from "../../page/areaPersonaleUtenteEnte";
@@ -19,6 +16,8 @@ import ReportDettaglio from "../../page/reportDettaglioUtPa";
 import { PathPf } from "../../types/enum";
 import useIsTabActive from "../../reusableFunction/tabIsActiv";
 import { redirect } from "../../api/api";
+import SideNavComponent from "../../layout/sideNav";
+import Layout from "../../layout/layOutLoggedIn";
 
 
 const ProdPnRoute = () => {

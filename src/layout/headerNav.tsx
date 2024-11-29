@@ -4,10 +4,10 @@ import {HeaderProduct,PartyEntity, ProductEntity} from '@pagopa/mui-italia';
 import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
 import Badge from '@mui/material/Badge';
 import { IconButton } from '@mui/material';
-import { getMessaggiCount } from '../../api/apiPagoPa/centroMessaggi/api';
-import { PathPf } from '../../types/enum';
-import { GlobalContext } from '../../store/context/globalContext';
-import { getAuthProfilo, redirect } from '../../api/api';
+import { GlobalContext } from '../store/context/globalContext';
+import { getAuthProfilo, redirect } from '../api/api';
+import { getMessaggiCount } from '../api/apiPagoPa/centroMessaggi/api';
+import { PathPf } from '../types/enum';
 
 
 const HeaderNavComponent : React.FC = () => {

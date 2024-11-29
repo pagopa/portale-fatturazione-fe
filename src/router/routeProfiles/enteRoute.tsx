@@ -1,9 +1,6 @@
-import React, { useContext, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import {  Route} from "react-router-dom";
-import { profiliEnti } from "../../reusableFunction/actionLocalStorage";
 import { GlobalContext } from "../../store/context/globalContext";
-import Layout from "../../components/reusableComponents/layOutLoggedIn";
-import SideNavComponent from "../../components/reusableComponents/sideNav";
 import AreaPersonaleUtenteEnte from "../../page/areaPersonaleUtenteEnte";
 import ModuloCommessaElencoUtPa from "../../page/moduloCommessaElencoUtPa";
 import ModuloCommessaInserimentoUtEn30 from "../../page/moduloCommessaInserimentoUtEn30";
@@ -14,6 +11,8 @@ import ReportDettaglio from "../../page/reportDettaglioUtPa";
 import { PathPf } from "../../types/enum";
 import useIsTabActive from "../../reusableFunction/tabIsActiv";
 import { redirect } from '../../api/api';
+import SideNavComponent from "../../layout/sideNav";
+import Layout from "../../layout/layOutLoggedIn";
 
 const EnteRoute = () => {
 

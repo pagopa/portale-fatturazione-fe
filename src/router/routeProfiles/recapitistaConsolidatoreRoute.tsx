@@ -1,12 +1,13 @@
 import { Route } from "react-router-dom";
-import Layout from "../../components/reusableComponents/layOutLoggedIn";
-import SideNavComponent from "../../components/reusableComponents/sideNav";
+
 import ReportDettaglio from "../../page/reportDettaglioUtPa";
 import { PathPf } from "../../types/enum";
 import { useContext, useEffect } from "react";
 import useIsTabActive from "../../reusableFunction/tabIsActiv";
 import { GlobalContext } from "../../store/context/globalContext";
 import { redirect } from "../../api/api";
+import SideNavComponent from "../../layout/sideNav";
+import Layout from "../../layout/layOutLoggedIn";
 
 
 const RecConRoute = () => {

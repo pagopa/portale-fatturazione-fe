@@ -1,8 +1,7 @@
 import { useContext, useEffect } from "react";
 import {  Route } from "react-router-dom";
 import { GlobalContext } from "../../store/context/globalContext";
-import Layout from "../../components/reusableComponents/layOutLoggedIn";
-import SideNavPagopa from "../../components/sideNavs/sideNavPagoPA";
+import SideNavPagopa from "../../layout/sideNavs/sideNavPagoPA";
 import Messaggi from "../../page/messaggi";
 import AnagraficaPsp from "../../page/prod_pagopa/anagraficaPspPagopa";
 import DettaglioDocContabile from "../../page/prod_pagopa/dettaglioDocumentoContabile";
@@ -10,6 +9,7 @@ import DocumentiContabili from "../../page/prod_pagopa/documentiContabiliPagopa"
 import { PathPf } from "../../types/enum";
 import useIsTabActive from "../../reusableFunction/tabIsActiv";
 import { redirect } from "../../api/api";
+import Layout from "../../layout/layOutLoggedIn";
 
 
 const PagoPaRoute = () => {

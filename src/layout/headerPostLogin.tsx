@@ -1,10 +1,11 @@
+import { useMsal } from '@azure/msal-react';
 import { HeaderAccount } from '@pagopa/mui-italia';
-import { useLocation, useNavigate } from 'react-router';
-import { redirect } from '../../api/api';
-import {useMsal } from '@azure/msal-react';
-import { loginRequest } from '../../authConfig';
 import { useContext } from 'react';
-import { GlobalContext } from '../../store/context/globalContext';
+import { useLocation, useNavigate } from 'react-router';
+import { loginRequest } from '../authConfig';
+import { GlobalContext } from '../store/context/globalContext';
+import { redirect } from '../api/api';
+
 
 
 type JwtUser = {

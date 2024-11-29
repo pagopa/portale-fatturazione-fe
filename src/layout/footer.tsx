@@ -1,11 +1,7 @@
 import { CompanyLinkType, Footer } from '@pagopa/mui-italia';
-import { useContext, useEffect, useState } from 'react';
-import { useLocation } from 'react-router';
-import '../../style/areaPersonaleUtenteEnte.css';
-import { GlobalContext } from '../../store/context/globalContext';
-import { redirect } from '../../api/api';
-import useIsTabActive from '../../reusableFunction/tabIsActiv';
-import { getProfilo } from '../../reusableFunction/actionLocalStorage';
+import { useContext, useState } from 'react';
+import { GlobalContext } from '../store/context/globalContext';
+
 
 type LangCode = "it" | "en";
 type LinkType = "internal" | "external";
@@ -46,12 +42,7 @@ const FooterComponent = () => {
 
     const globalContextObj = useContext(GlobalContext);
     const {mainState} = globalContextObj;
-
-
- 
-    
     const [ lang, setLang ] = useState<LangCode>("it"); 
-    const location = useLocation();
 
     const LANGUAGES = {
         it: {
@@ -247,21 +238,8 @@ const FooterComponent = () => {
     };
       
 
-  
-
-    const hideFooter = location.pathname === '/auth' ||
-    location.pathname === '/azure' ||
-    location.pathname === '/auth/azure';
-
-
-
-      
-
-
-
     return (
         <div>
-            {!hideFooter && 
             <Footer
                 loggedUser={mainState.authenticated}
                 companyLink={pagoPALink}
@@ -277,9 +255,8 @@ const FooterComponent = () => {
                 }
                 productsJsonUrl="https://dev.selfcare.pagopa.it/assets/products.json"
                 hideProductsColumn={false}
-            /> }
+            /> 
         </div>
-
     );
 };
 

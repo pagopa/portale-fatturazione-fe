@@ -1,9 +1,9 @@
 import { Grid } from "@mui/material";
-
 import { Outlet } from "react-router-dom";
+import FooterComponent from "./footer";
 import HeaderNavComponent from "./headerNav";
 import HeaderPostLogin from "./headerPostLogin";
-import FooterComponent from "./footer";
+
 
 
 const Layout = ({sideNav}) => {
