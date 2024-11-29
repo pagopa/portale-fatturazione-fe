@@ -108,7 +108,13 @@ export const getTipologiaProfilo = async (token:string, nonce:string) => {
     return response;
 };
 
+export const getManuale = async () => {
 
+    const response =  await fetch(`${url}/api/tipologia/manuale/download`);
+    return response;
+};
+
+/* Servizio download manuare url forse da cancellare in seguito
 export const getManuale = async () => {
 
     const result = fetch(`${url}/api/tipologia/manuale`)  // URL to the API endpoint
@@ -127,4 +133,5 @@ export const getManuale = async () => {
 
     return result;
 };
+*/
 

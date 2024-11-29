@@ -1,11 +1,12 @@
 import { HeaderAccount } from '@pagopa/mui-italia';
 import { useLocation, useNavigate } from 'react-router';
-import { getManuale, redirect } from '../../api/api';
+import { getManuale, manageError, redirect } from '../../api/api';
 import {useMsal } from '@azure/msal-react';
 import { loginRequest } from '../../authConfig';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { GlobalContext } from '../../store/context/globalContext';
-import axios from 'axios';
+import { saveAs } from "file-saver";
+import ModalLoading from './modals/modalLoading';
 
 
 type JwtUser = {
@@ -17,7 +18,7 @@ type JwtUser = {
 
 const HeaderPostLogin = () => {
     const globalContextObj = useContext(GlobalContext);
-    const {mainState} = globalContextObj;
+    const {mainState,dispatchMainState} = globalContextObj;
 
     const location  = useLocation();
     const navigate = useNavigate();
@@ -36,75 +37,21 @@ const HeaderPostLogin = () => {
         email: "",
     };
 
-    const [urlProva, setUrlProva] = useState('');
+    const [showDownloading, setShowDownloading] = useState(false);
     // start actions sul manuale operativo , download del manuale
 
-    useEffect(()=>{
-        if(urlProva !== ''){
-            const link = document.createElement("a");
-            link.href = urlProva;
-            link.download = 'ciao.pdf';
-            document.body.appendChild(link);
-        
-            link.click();
-        
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(urlProva);
-            setUrlProva('');
-        }
-
-    },[urlProva]);
-
+   
     const onButtonClick = async () => {
-        
+        setShowDownloading(true);
 
-        await getManuale().then(async(res) => {
-            try {
-                /* 
-                console.log(res, 'pippo');
-                // setUrlProva(res);
-                const link = document.createElement("a");
-                link.href = res;
-                link.download = 'ciao.pdf';
-                document.body.appendChild(link);
-        
-                link.click();
-        
-                document.body.removeChild(link);
-                window.URL.revokeObjectURL(res);
-              
-                
-                // Make GET request with responseType set to 'blob'
-                await axios.get(res,{
-                    responseType: 'blob', // Ensures the response is treated as binary data
-                    headers: {
-                        'Content-Type': 'application/pdf', // Optional, depending on server
-                    },
-                }).then((response)=>{
-                    console.log(response, 'BLOB');
-                   
-                }).catch((err)=> console.log('errore catch',err,'yyy'));
-  */
-                console.log(res,'RESRES');
-                await fetch(res)  // URL to the API endpoint
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        console.log(response,'mimmo');
-                    })
-                    .then(data => {
-                        return data; // Handle the response data
-                    })
-                    .catch(error => {
-                        console.error('There was a problem with the fetch operation:', error);
-                    });
-     
-            } catch (error) {
-                console.error('Error downloading blob from Azure:', error);
-            }
+        await getManuale().then(response => response.blob()).then((res) => {
+            setShowDownloading(false);
+            const fileName = 'Manuale Utente Portale Fatturazione.pdf';
+            saveAs( res,fileName );
+        }).catch(err => {
+            setShowDownloading(false);
+            manageError(err,dispatchMainState);
         });
-
     };
     //end actions sul manuale operativo , download del manuale
     // start on click su assistenza redirect alla tua apllicazione predefinita per l'invio mail
@@ -135,22 +82,30 @@ const HeaderPostLogin = () => {
 
         <div className="div_header">
             {hideShowHeaderLogin ? null : 
-                <HeaderAccount
-                    rootLink={pagoPALink}
-                    loggedUser={statusUser}
-                    onAssistanceClick={() => onEmailClick()}
-                    onLogin={handleLoginRedirect}
-                    onLogout={() => {
-                        if(mainState.prodotti.length > 0){
-                            localStorage.clear();
-                            navigate('/azureLogin');
-                        }else{
-                            localStorage.clear();
-                            window.location.href = redirect;
-                        }
-                    }}
-                    onDocumentationClick={()=>onButtonClick()}
-                />
+                <>
+                    <HeaderAccount
+                        rootLink={pagoPALink}
+                        loggedUser={statusUser}
+                        onAssistanceClick={() => onEmailClick()}
+                        onLogin={handleLoginRedirect}
+                        onLogout={() => {
+                            if(mainState.prodotti.length > 0){
+                                localStorage.clear();
+                                navigate('/azureLogin');
+                            }else{
+                                localStorage.clear();
+                                window.location.href = redirect;
+                            }
+                        }}
+                        onDocumentationClick={()=>onButtonClick()}
+                    />
+                    <ModalLoading 
+                        open={showDownloading} 
+                        setOpen={setShowDownloading}
+                        sentence={'Downloading...'} >
+                    </ModalLoading>
+                </>
+               
             }
         </div>
     );
