@@ -1,21 +1,13 @@
 import React, { useState, useEffect, useContext} from 'react';
-import { useLocation, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import {HeaderProduct,PartyEntity, ProductEntity} from '@pagopa/mui-italia';
 import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
 import Badge from '@mui/material/Badge';
-import { MainState } from '../../types/typesGeneral';
 import { IconButton } from '@mui/material';
 import { getMessaggiCount } from '../../api/apiPagoPa/centroMessaggi/api';
 import { PathPf } from '../../types/enum';
 import { GlobalContext } from '../../store/context/globalContext';
 import { getAuthProfilo, redirect } from '../../api/api';
-
-type HeaderNavProps = {
-    mainState:MainState,
-    dispatchMainState:any,
-}
-
-
 
 
 const HeaderNavComponent : React.FC = () => {
@@ -24,7 +16,6 @@ const HeaderNavComponent : React.FC = () => {
     const {mainState, dispatchMainState } = globalContextObj;
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
-    const location = useLocation();
     const navigate = useNavigate();
 
 
@@ -34,18 +25,9 @@ const HeaderNavComponent : React.FC = () => {
             value:valueObj
         });
     };
-    
-   
- 
-
 
     const [countMessages, setCountMessages] = useState(0);
-  
  
-
-   
-  
-
     const products:ProductEntity[] = [
         {
             id: 'prod-pn',
@@ -73,11 +55,6 @@ const HeaderNavComponent : React.FC = () => {
         }
     ];
 
-   
-
- 
-
-
     const partyList : Array<PartyEntity> = [
         {
             id:'0',
@@ -86,13 +63,6 @@ const HeaderNavComponent : React.FC = () => {
             productRole: "Amministratore",
         }
     ];
-
-    const hideHeadernav = location.pathname === '/auth' ||
-                            location.pathname === '/azure' ||
-                            location.pathname === '/auth/azure'||
-                            location.pathname === '/azureLogin'||
-                            !profilo.auth;
-
 
     //logica per il centro messaggi sospesa
     const getCount = async () =>{
@@ -210,9 +180,7 @@ const HeaderNavComponent : React.FC = () => {
     
     return (
         <>
-            {hideHeadernav ? null :
-                conditionalHeder
-            }
+            {conditionalHeder}
         </>
 
     );
