@@ -1,6 +1,5 @@
-import React, { useContext, useEffect } from "react";
+import { useEffect } from "react";
 import {  Route } from "react-router-dom";
-import { GlobalContext } from "../../store/context/globalContext";
 import Accertamenti from "../../page/accertamenti";
 import AdesioneBando from "../../page/adesioneBando";
 import AreaPersonaleUtenteEnte from "../../page/areaPersonaleUtenteEnte";
@@ -14,30 +13,15 @@ import RelPdfPage from "../../page/relPdfUtPa";
 import RelPage from "../../page/relUtPa";
 import ReportDettaglio from "../../page/reportDettaglioUtPa";
 import { PathPf } from "../../types/enum";
-import useIsTabActive from "../../reusableFunction/tabIsActiv";
-import { redirect } from "../../api/api";
 import SideNavComponent from "../../layout/sideNav";
-import Layout from "../../layout/layOutLoggedIn";
+import LayoutAzure from "../../layout/layOutLoggedInAzure";
 
 
 const ProdPnRoute = () => {
 
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState} = globalContextObj;
-    const profilo = mainState.profilo;
+  
 
-    const globalLocalStorage = localStorage.getItem('globalState') || '{}';
-    const result =  JSON.parse(globalLocalStorage);
-
-    const tabActive = useIsTabActive();
-    useEffect(()=>{
-        if(mainState.authenticated === true  && tabActive === true &&(profilo.nonce !== result.profilo.nonce)){
-            window.location.href = redirect;
-        }
-    },[tabActive]);
-
-
-    const prodPnRoute =  <Route element={<Layout sideNav={<SideNavComponent />}></Layout>}>
+    const prodPnRoute =  <Route element={<LayoutAzure  sideNav={<SideNavComponent />}></LayoutAzure >}>
         <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte />} />
         <Route path={PathPf.LISTA_MODULICOMMESSA} element={<PagoPaListaModuliCommessa/>}/>
         <Route path={PathPf.MODULOCOMMESSA} element={<ModuloCommessaInserimentoUtEn30/>} />

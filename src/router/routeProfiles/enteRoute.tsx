@@ -9,28 +9,14 @@ import RelPdfPage from "../../page/relPdfUtPa";
 import RelPage from "../../page/relUtPa";
 import ReportDettaglio from "../../page/reportDettaglioUtPa";
 import { PathPf } from "../../types/enum";
-import useIsTabActive from "../../reusableFunction/tabIsActiv";
-import { redirect } from '../../api/api';
 import SideNavComponent from "../../layout/sideNav";
-import Layout from "../../layout/layOutLoggedIn";
+import LayoutEnte from "../../layout/layOutLoggedInEnte";
 
 const EnteRoute = () => {
 
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState} = globalContextObj;
-    const profilo = mainState.profilo;
-
-    const globalLocalStorage = localStorage.getItem('globalState') || '{}';
-    const result =  JSON.parse(globalLocalStorage);
-
-    const tabActive = useIsTabActive();
-    useEffect(()=>{
-        if(mainState.authenticated === true  && tabActive === true &&(profilo.nonce !== result.profilo.nonce)){
-            window.location.href = redirect;
-        }
-    },[tabActive]);
+ 
    
-    const enteRoute =  <Route element={<Layout sideNav={<SideNavComponent/>}></Layout>}>
+    const enteRoute =  <Route element={<LayoutEnte sideNav={<SideNavComponent/>}></LayoutEnte>}>
         <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte ></AreaPersonaleUtenteEnte>}/>                                     
         <Route path={PathPf.LISTA_COMMESSE} element={<ModuloCommessaElencoUtPa  />} />           
         <Route path={PathPf.MODULOCOMMESSA} element={<ModuloCommessaInserimentoUtEn30 />} />                 

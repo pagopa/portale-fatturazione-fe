@@ -1,34 +1,18 @@
-import { useContext, useEffect } from "react";
 import {  Route } from "react-router-dom";
-import { GlobalContext } from "../../store/context/globalContext";
 import SideNavPagopa from "../../layout/sideNavs/sideNavPagoPA";
 import Messaggi from "../../page/messaggi";
 import AnagraficaPsp from "../../page/prod_pagopa/anagraficaPspPagopa";
 import DettaglioDocContabile from "../../page/prod_pagopa/dettaglioDocumentoContabile";
 import DocumentiContabili from "../../page/prod_pagopa/documentiContabiliPagopa";
 import { PathPf } from "../../types/enum";
-import useIsTabActive from "../../reusableFunction/tabIsActiv";
-import { redirect } from "../../api/api";
-import Layout from "../../layout/layOutLoggedIn";
+import LayoutAzure from "../../layout/layOutLoggedInAzure";
+
 
 
 const PagoPaRoute = () => {
 
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState} = globalContextObj;
-    const profilo = mainState.profilo;
 
-    const globalLocalStorage = localStorage.getItem('globalState') || '{}';
-    const result =  JSON.parse(globalLocalStorage);
-
-    const tabActive = useIsTabActive();
-    useEffect(()=>{
-        if(mainState.authenticated === true  && tabActive === true &&(profilo.nonce !== result.profilo.nonce)){
-            window.location.href = redirect;
-        }
-    },[tabActive]);
-
-    const prodPagopaRoute =  <Route element={<Layout sideNav={<SideNavPagopa/>}></Layout>}>
+    const prodPagopaRoute =  <Route element={<LayoutAzure sideNav={<SideNavPagopa/>}></LayoutAzure>}>
         <Route path={'/messaggi'} element={<Messaggi  />} />
         <Route path={PathPf.ANAGRAFICAPSP} element={<AnagraficaPsp ></AnagraficaPsp>}/>
         <Route path={PathPf.DOCUMENTICONTABILI} element={<DocumentiContabili ></DocumentiContabili>}/>

@@ -1,16 +1,16 @@
 import { Grid } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import FooterComponent from "./footer";
-import HeaderNavComponent from "./headerNav";
-import HeaderPostLogin from "./headerPostLogin";
+import HeaderPostLogin from "./headerLoginLogout";
+import HeaderProductEnte from "./headerProduct/headerProductEnte";
 
 
 
-const Layout = ({sideNav}) => {
+const LayoutEnte = ({sideNav}) => {
     return (
         <>
             <HeaderPostLogin/>
-            <HeaderNavComponent/>
+            <HeaderProductEnte/>
             <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
                 <Grid item xs={2}>
                     {sideNav}
@@ -25,4 +25,4 @@ const Layout = ({sideNav}) => {
     );
 };
 
-export default Layout;
+export default LayoutEnte;

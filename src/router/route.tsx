@@ -1,6 +1,6 @@
 import '../App.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { profiliEnti } from "../reusableFunction/actionLocalStorage";
 import { GlobalContext } from "../store/context/globalContext";
 import EnteRoute from "./routeProfiles/enteRoute";
@@ -10,7 +10,7 @@ import PagoPaRoute from "./routeProfiles/pagoPaRoute";
 import RecConRoute from "./routeProfiles/recapitistaConsolidatoreRoute";
 import { ThemeProvider} from '@mui/material';
 import {theme} from '@pagopa/mui-italia';
-import {Routes, Route, Navigate } from "react-router";
+import {Routes, Route, Navigate} from "react-router";
 import BasicAlerts from "../components/reusableComponents/modals/alert";
 import Auth from "../page/auth";
 import AuthAzure from "../page/authAzure";
@@ -19,6 +19,8 @@ import AzureLogin from "../page/azureLogin";
 import ErrorPage from "../page/error";
 import { PathPf } from "../types/enum";
 import LayoutLoggedOut from '../layout/layoutLoggedOut';
+import { BrowserRouter } from 'react-router-dom';
+import useIsTabActive from '../reusableFunction/tabIsActiv';
 
 
 
@@ -33,8 +35,23 @@ const RouteProfile = () => {
     const isPagoPaProfile = mainState.profilo.prodotto === 'prod-pagopa' && mainState.prodotti.length > 0 && mainState.authenticated;
     const isRececapitistaOrConsolidatore = (mainState.profilo?.profilo === 'REC' || mainState.profilo?.profilo ==='CON') && mainState.authenticated;
 
-    
-    let route;
+
+    const profilo = mainState.profilo;
+
+    const globalLocalStorage = localStorage.getItem('globalState') || '{}';
+    const result =  JSON.parse(globalLocalStorage);
+
+    const tabActive = useIsTabActive();
+    useEffect(()=>{
+        if(mainState.authenticated === true  && tabActive === true &&(profilo.nonce !== result.profilo.nonce)){
+            window.location.href = redirect;
+        }
+    },[tabActive]);
+
+
+
+
+    let route  = <Route/>;
     let redirect = "/azureLogin";
 
     if(isEnte){
@@ -54,22 +71,25 @@ const RouteProfile = () => {
         redirect = PathPf.LISTA_NOTIFICHE;
     }
 
-
     return (
-        <ThemeProvider theme={theme}>
-            <div className="App">
-                <BasicAlerts></BasicAlerts>
-                <Routes>
-                    <Route path="/auth" element={<Auth/>} />
-                    <Route path="/auth/azure" element={<AuthAzure/>} />
-                    <Route path="/azure" element={<Azure/>} />
-                    <Route path="/azureLogin" element={<LayoutLoggedOut page={<AzureLogin/>}></LayoutLoggedOut>}></Route>
-                    <Route path="/error"  element={<ErrorPage/>} />
-                    <Route path="*" element={<Navigate  to={redirect} replace />} />
-                    {route}
-                </Routes>
-            </div>
-        </ThemeProvider>
+        <BrowserRouter>
+            <ThemeProvider theme={theme}>
+                <div className="App">
+                    <BasicAlerts></BasicAlerts>
+                    <Routes>
+                        <Route path="/auth" element={<Auth/>} />
+                        <Route path="/auth/azure" element={<AuthAzure/>} />
+                        <Route path="/azure" element={<Azure/>} />
+                        <Route path="/azureLogin" element={<LayoutLoggedOut page={<AzureLogin/>}></LayoutLoggedOut>}></Route>
+                        <Route path="/error"  element={<ErrorPage/>} />
+                        <Route path="*" element={<Navigate  to={redirect} replace />} />
+                        {route}
+                    </Routes>
+                </div>
+            </ThemeProvider>
+        </BrowserRouter>
+
+
     );
 
   

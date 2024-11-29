@@ -1,6 +1,6 @@
 import { Grid } from "@mui/material";
 import FooterComponent from "./footer";
-import HeaderPostLogin from "./headerPostLogin";
+import HeaderPostLogin from "./headerLoginLogout";
 
 
 const LayoutLoggedOut = ({page}) => {
