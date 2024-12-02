@@ -238,6 +238,7 @@ const App = ({ instance }) => {
         route = <Router>
             <ThemeProvider theme={theme}>
                 <div className="App">
+                    <BasicAlerts></BasicAlerts>
                     <HeaderPostLogin />
                     <HeaderNavComponent  />
                     <Routes>

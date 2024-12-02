@@ -1,6 +1,6 @@
 import { HeaderAccount } from '@pagopa/mui-italia';
 import { useLocation, useNavigate } from 'react-router';
-import { getManuale, manageError, redirect } from '../../api/api';
+import { getManuale, manageError, managePresaInCarico, redirect } from '../../api/api';
 import {useMsal } from '@azure/msal-react';
 import { loginRequest } from '../../authConfig';
 import { useContext, useState } from 'react';
@@ -43,14 +43,21 @@ const HeaderPostLogin = () => {
    
     const onButtonClick = async () => {
         setShowDownloading(true);
-
-        await getManuale().then(response => response.blob()).then((res) => {
+        await getManuale().then((response) =>{
             setShowDownloading(false);
-            const fileName = 'Manuale Utente Portale Fatturazione.pdf';
-            saveAs( res,fileName );
-        }).catch(err => {
+            if(response.status !== 200){
+                managePresaInCarico('ERRORE_MANUALE',dispatchMainState);
+            }else{
+                response.blob().then((res) => {
+                    setShowDownloading(false);
+                    const fileName = 'Manuale Utente Portale Fatturazione.pdf';
+                    saveAs( res,fileName );
+                }); 
+            }
+        } ).catch((err) => {
+            console.log(err);
             setShowDownloading(false);
-            manageError(err,dispatchMainState);
+            managePresaInCarico('ERRORE_MANUALE',dispatchMainState);
         });
     };
     //end actions sul manuale operativo , download del manuale

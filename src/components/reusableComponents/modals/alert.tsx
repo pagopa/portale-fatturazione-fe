@@ -49,7 +49,7 @@ const BasicAlerts:React.FC = () => {
         colorAlert = 'error';
     }else if(mainState.apiError === 404 || mainState.apiError === '404_DOWNLOAD' || mainState.apiError === 'PRESA'){
         colorAlert = "info";
-    }else if(mainState.apiError === "Network Error"){
+    }else if(mainState.apiError === "Network Error"|| mainState.apiError === 'ERRORE_MANUALE' ){
         colorAlert = 'warning';
     }else if(mainState.apiError === 410){
         colorAlert = 'warning';
