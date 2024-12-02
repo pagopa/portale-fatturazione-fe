@@ -1,10 +1,12 @@
 import { HeaderAccount } from '@pagopa/mui-italia';
 import { useLocation, useNavigate } from 'react-router';
-import { redirect } from '../../api/api';
+import { getManuale, manageError, redirect } from '../../api/api';
 import {useMsal } from '@azure/msal-react';
 import { loginRequest } from '../../authConfig';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { GlobalContext } from '../../store/context/globalContext';
+import { saveAs } from "file-saver";
+import ModalLoading from './modals/modalLoading';
 
 
 type JwtUser = {
@@ -16,7 +18,7 @@ type JwtUser = {
 
 const HeaderPostLogin = () => {
     const globalContextObj = useContext(GlobalContext);
-    const {mainState} = globalContextObj;
+    const {mainState,dispatchMainState} = globalContextObj;
 
     const location  = useLocation();
     const navigate = useNavigate();
@@ -35,16 +37,21 @@ const HeaderPostLogin = () => {
         email: "",
     };
 
+    const [showDownloading, setShowDownloading] = useState(false);
     // start actions sul manuale operativo , download del manuale
 
-    const onButtonClick = () => {
-        const pdfUrl = "/ManualeUtentePortaleFatturazione5.pdf";
-        const link = document.createElement("a");
-        link.href = pdfUrl;
-        link.download = "ManualeUtentePortaleFatturazione.pdf";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+   
+    const onButtonClick = async () => {
+        setShowDownloading(true);
+
+        await getManuale().then(response => response.blob()).then((res) => {
+            setShowDownloading(false);
+            const fileName = 'Manuale Utente Portale Fatturazione.pdf';
+            saveAs( res,fileName );
+        }).catch(err => {
+            setShowDownloading(false);
+            manageError(err,dispatchMainState);
+        });
     };
     //end actions sul manuale operativo , download del manuale
     // start on click su assistenza redirect alla tua apllicazione predefinita per l'invio mail
@@ -75,22 +82,30 @@ const HeaderPostLogin = () => {
 
         <div className="div_header">
             {hideShowHeaderLogin ? null : 
-                <HeaderAccount
-                    rootLink={pagoPALink}
-                    loggedUser={statusUser}
-                    onAssistanceClick={() => onEmailClick()}
-                    onLogin={handleLoginRedirect}
-                    onLogout={() => {
-                        if(mainState.prodotti.length > 0){
-                            localStorage.clear();
-                            navigate('/azureLogin');
-                        }else{
-                            localStorage.clear();
-                            window.location.href = redirect;
-                        }
-                    }}
-                    onDocumentationClick={()=>onButtonClick()}
-                />
+                <>
+                    <HeaderAccount
+                        rootLink={pagoPALink}
+                        loggedUser={statusUser}
+                        onAssistanceClick={() => onEmailClick()}
+                        onLogin={handleLoginRedirect}
+                        onLogout={() => {
+                            if(mainState.prodotti.length > 0){
+                                localStorage.clear();
+                                navigate('/azureLogin');
+                            }else{
+                                localStorage.clear();
+                                window.location.href = redirect;
+                            }
+                        }}
+                        onDocumentationClick={()=>onButtonClick()}
+                    />
+                    <ModalLoading 
+                        open={showDownloading} 
+                        setOpen={setShowDownloading}
+                        sentence={'Downloading...'} >
+                    </ModalLoading>
+                </>
+               
             }
         </div>
     );
