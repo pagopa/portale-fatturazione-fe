@@ -50,7 +50,7 @@ export const currentMonth = () =>{
 
 export const getCurrentFinancialYear = () => {
     const thisYear = (new Date()).getFullYear();
-    const yearArray = [0, 1].map((count) => `${thisYear - count}`);
+    const yearArray = [-1,0,1].map((count) => `${thisYear - count}`);
     return yearArray;
 };
 

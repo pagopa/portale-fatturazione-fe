@@ -72,6 +72,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
             const finalData = fixResponseForDataGrid(res.data);
             setGridData(finalData);
         }).catch((err:ManageErrorResponse)=>{
+            setGridData([]);
             manageError(err,dispatchMainState);
         });
     };
