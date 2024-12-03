@@ -1,4 +1,4 @@
-import { Card, Table, TableBody, TableCell, TableHead, TablePagination, TableRow } from "@mui/material";
+import { Card, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Rel } from "../../../types/typeRel";
 import { NotificheList } from "../../../types/typeReportDettaglio";
@@ -87,17 +87,18 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                                         const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
                                                         const valueEl = (i === 0 && value?.toString().length > 50) ? value?.toString().slice(0, 50) + '...' : value;
                                                         return (
-                                                            <TableCell
-                                                                sx={cssFirstColum} 
-                                                                key={Math.random()}
-                                                                onClick={()=>{
-                                                                    if(i === 0){
-                                                                        handleClickOnGrid(element);
-                                                                    }            
-                                                                } }
-                                                            >
-                                                                {valueEl}
-                                                            </TableCell>
+                                                            <Tooltip key={Math.random()} title={value}>
+                                                                <TableCell
+                                                                    sx={cssFirstColum} 
+                                                                    onClick={()=>{
+                                                                        if(i === 0){
+                                                                            handleClickOnGrid(element);
+                                                                        }            
+                                                                    } }
+                                                                >
+                                                                    {valueEl}
+                                                                </TableCell>
+                                                            </Tooltip>
                                                         );
                                                     })
                                                 }

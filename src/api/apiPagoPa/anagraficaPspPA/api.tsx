@@ -37,3 +37,20 @@ export const downloadPsp = async (token:string, nonce:string , body:RequestBodyL
         });
     return response;
 };
+
+export const getListaAnniPsp = async (token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/v2/pagopa/psps/years?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+}; 
+
+export const getListaQuarters = async (token:string, nonce:string , body:{year:string}) => {
+    const response =  await axios.post(`${url}/api/v2/pagopa/psps/quarters?nonce=${nonce}`,
+        body,
+        { headers: { Authorization: 'Bearer ' + token }}
+    );
+    return response;
+};

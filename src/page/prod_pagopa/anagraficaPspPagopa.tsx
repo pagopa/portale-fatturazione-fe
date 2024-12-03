@@ -1,26 +1,29 @@
 import DownloadIcon from '@mui/icons-material/Download';
 import { useContext, useEffect, useState } from "react";
-import { AutocompleteMultiselect, GridElementListaPsp, OptionMultiselectCheckboxPsp, RequestBodyListaAnagraficaPsp } from "../../types/typeAngraficaPsp";
-import { downloadPsp, getListaAnagraficaPsp, getListaNamePsp } from "../../api/apiPagoPa/anagraficaPspPA/api";
+import { AutocompleteMultiselect, GridElementListaPsp, OptionMultiselectCheckboxPsp, OptionMultiselectCheckboxQarter, RequestBodyListaAnagraficaPsp } from "../../types/typeAngraficaPsp";
+import { downloadPsp, getListaAnagraficaPsp, getListaAnniPsp, getListaNamePsp, getListaQuarters } from "../../api/apiPagoPa/anagraficaPspPA/api";
 import { manageError } from "../../api/api";
 import MultiselectWithKeyValue from "../../components/anagraficaPsp/multiselectKeyValue";
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Autocomplete, Box, Button, Checkbox, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { saveAs } from "file-saver";
 import { GlobalContext } from '../../store/context/globalContext';
-import { getFiltersFromLocalStorageAnagrafica, setFilterToLocalStorageAnagrafica } from '../../reusableFunction/actionLocalStorage';
-
+import { getFilterPageRowAnagrafica, getFiltersFromLocalStorageAnagrafica, setFilterToLocalStorageAnagrafica } from '../../reusableFunction/actionLocalStorage';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
 
 
 const AnagraficaPsp:React.FC = () =>{
+
+    const localStorageFilters = getFiltersFromLocalStorageAnagrafica();
+    const localStorageFilterPageRow = getFilterPageRowAnagrafica();
 
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState} = globalContextObj;
  
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
-    const result = getFiltersFromLocalStorageAnagrafica();
 
     const [gridData, setGridData] = useState<GridElementListaPsp[]>([]);
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
@@ -28,12 +31,15 @@ const AnagraficaPsp:React.FC = () =>{
         contractIds:[],
         membershipId: '',
         recipientId: '',
-        abi: ''});
+        abi: '',
+        yearQuarter:''});
     const [bodyGetLista, setBodyGetLista] = useState<RequestBodyListaAnagraficaPsp>({
         contractIds:[],
         membershipId: '',
         recipientId: '',
-        abi: ''});
+        abi: '',
+        yearQuarter:''
+    });
     const [getListaLoading, setGetListaLoading] = useState(false);
     const [dataSelect, setDataSelect] = useState<OptionMultiselectCheckboxPsp[]>([]);
     const [page, setPage] = useState(0);
@@ -43,9 +49,15 @@ const AnagraficaPsp:React.FC = () =>{
     const [valueAutocomplete, setValueAutocomplete] = useState<AutocompleteMultiselect[]>([]);
     const [showLoading,setShowLoading] = useState(false);
 
-   
+    const [yearOnSelect,setYearOnSelect] = useState<string[]>([]);
+    const [year,setYear] = useState<string>('');
+    const [dataSelectQuarter, setDataSelectQuarter] = useState<OptionMultiselectCheckboxQarter[]>([]);
+    const [valueQuarters, setValueQuarters] = useState<OptionMultiselectCheckboxQarter[]>([]);
 
+   
     useEffect(()=>{
+        getYears();
+        /*
         if(Object.keys(result).length > 0){
          
             setBodyGetLista(result.body);
@@ -59,8 +71,43 @@ const AnagraficaPsp:React.FC = () =>{
             const realPage = page + 1;
             getListaAnagraficaPspGrid(bodyGetLista,realPage,rowsPerPage);
       
-        }
+        }*/
     },[]);
+
+    useEffect(()=>{
+        if(year !== ''){
+            getQuarters(year);
+        }
+       
+    },[year]);
+    
+    const getYears = async () =>{
+        setGetListaLoading(true);
+        await getListaAnniPsp(token, profilo.nonce)
+            .then((res)=>{
+                setYearOnSelect(res.data);
+                if(res.data.length > 0){
+                    setYear(res.data[0]);
+                    getListaAnagraficaPspGrid(bodyGetLista,page+1,rowsPerPage);
+                }
+                //getListaAnagraficaPspGrid({...bodyGetLista,...{year:res.data[0]}},realPage,rowsPerPage);
+            }).catch(((err)=>{
+                setGetListaLoading(false);
+                manageError(err,dispatchMainState); 
+            }));
+    };
+
+    const getQuarters = async (y) =>{
+        await getListaQuarters(token, profilo.nonce,{year:y})
+            .then((res)=>{
+                setDataSelectQuarter(res.data);
+                setValueQuarters([]);
+            }).catch(((err)=>{
+                setDataSelectQuarter([]);
+                setValueQuarters([]);
+                manageError(err,dispatchMainState); 
+            }));
+    };
 
  
 
@@ -132,6 +179,11 @@ const AnagraficaPsp:React.FC = () =>{
                 manageError(err,dispatchMainState); 
             }));
     };
+
+
+
+   
+
    
     const onDownloadButton = async() =>{
         setShowLoading(true);
@@ -181,6 +233,11 @@ const AnagraficaPsp:React.FC = () =>{
         getListaAnagraficaPspGrid(bodyGetLista,realPage,parseInt(event.target.value, 10));
         setFilterToLocalStorageAnagrafica(bodyGetLista,textValue,valueAutocomplete, realPage, parseInt(event.target.value, 10));
     };
+
+
+    
+    const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+    const checkedIcon = <CheckBoxIcon fontSize="small" />;
       
  
 
@@ -192,6 +249,73 @@ const AnagraficaPsp:React.FC = () =>{
             </div>
             {/*title container end */}
             <div className="row mb-5 mt-5" >
+                <div className="col-3">
+                    <Box sx={{width:'80%'}} >
+                        <FormControl
+                            fullWidth
+                            size="medium"
+                        >
+                            <InputLabel
+                                id="Anno_doc_contabili"
+                            >
+                                Anno
+                            </InputLabel>
+                            <Select
+                                id="Anno_doc_contabili"
+                                label='Anno'
+                                labelId="search-by-label"
+                                onChange={(e) => setYear(e.target.value)}
+                                value={year}
+                            >
+                                {yearOnSelect.map((el) => (
+                                    <MenuItem
+                                        key={Math.random()}
+                                        value={el}
+                                    >
+                                        {el}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Box>
+                </div>
+                <div className="col-3">
+                    <Autocomplete
+                        multiple
+                        limitTags={1}
+                        onChange={(event, value) => {
+                            const arrayId = value.map(el => el.value);
+                            setBodyGetLista((prev) => ({...prev,...{quarters:arrayId}}));
+                            setValueQuarters(value);
+                        }}
+                        id="checkboxes-quarters"
+                        options={dataSelectQuarter}
+                        value={valueQuarters}
+                        disableCloseOnSelect
+                        isOptionEqualToValue={(option, value) => option.value === value.value}
+                        getOptionLabel={(option:OptionMultiselectCheckboxQarter) => {
+                            return option.quarter;}}
+                        renderOption={(props, option,{ selected }) =>(
+                            <li {...props}>
+                                <Checkbox
+                                    icon={icon}
+                                    checkedIcon={checkedIcon}
+                                    style={{ marginRight: 8 }}
+                                    checked={selected}
+                                />
+                                {option.quarter}
+                            </li>
+                        )}
+                        style={{ width: '80%',height:'59px' }}
+                        renderInput={(params) => {
+                
+                            return <TextField {...params}
+                                label="Trimestre" 
+                                placeholder="Trimestre" />;
+                        }}
+           
+                    />
+                </div>
                 <div  className="col-3">
                     <MultiselectWithKeyValue 
                         setBodyGetLista={setBodyGetLista}
@@ -205,8 +329,11 @@ const AnagraficaPsp:React.FC = () =>{
                         keyArrayName={"contractIds"}/>
                         
                 </div>
+            </div>
+            <div className="row mb-5 mt-5" >
+               
                 <div className="col-3">
-                    <Box sx={{width:'80%',marginLeft:'20px'}} >
+                    <Box sx={{width:'80%'}} >
                         <TextField
                             fullWidth
                             label='Membership ID'
@@ -217,7 +344,7 @@ const AnagraficaPsp:React.FC = () =>{
                     </Box>
                 </div>
                 <div className="col-3">
-                    <Box sx={{width:'80%',marginLeft:'20px'}} >
+                    <Box sx={{width:'80%'}} >
                         <TextField
                             fullWidth
                             label='Recipient ID'
@@ -228,7 +355,7 @@ const AnagraficaPsp:React.FC = () =>{
                     </Box>
                 </div>
                 <div className="col-3">
-                    <Box sx={{width:'80%',marginLeft:'20px'}} >
+                    <Box sx={{width:'80%'}} >
                         <TextField
                             fullWidth
                             label='Codice ABI'
@@ -245,6 +372,7 @@ const AnagraficaPsp:React.FC = () =>{
                 <div className=" d-flex justify-content-center align-items-center">
                     <div>
                         <Button 
+                            disabled={getListaLoading}
                             onClick={()=> {
                                 /* getListaDatifatturazione(bodyGetLista);
                                 setInfoPageListaDatiFat({ page: 0, pageSize: 100 });
@@ -264,7 +392,8 @@ const AnagraficaPsp:React.FC = () =>{
                                         contractIds:[],
                                         membershipId: '',
                                         recipientId: '',
-                                        abi: ''};
+                                        abi: '',
+                                        yearQuarter:''};
                                     getListaAnagraficaPspGrid(newBody,1,10);
                                     setBodyGetLista(newBody);
                                     setFiltersDownload(newBody);

@@ -16,7 +16,7 @@ const SideNavPagopa = () => {
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
 
-    const [selectedIndex, setSelectedIndex] = useState<number>(0);
+    const [selectedIndex, setSelectedIndex] = useState<number|null>(0);
 
     const hideShowSidenav = location.pathname === '/auth' ||
     location.pathname === '/azure' ||
@@ -42,6 +42,8 @@ const SideNavPagopa = () => {
             setSelectedIndex(0);
         }else if(currentLocation === PathPf.DOCUMENTICONTABILI){
             setSelectedIndex(1);
+        }else if(currentLocation === "/messaggi"){
+            setSelectedIndex(null);
         }
        
     },[currentLocation]);

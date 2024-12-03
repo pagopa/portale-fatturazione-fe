@@ -7,7 +7,7 @@ import ModalLoading from "../../components/reusableComponents/modals/modalLoadin
 import { manageError } from "../../api/api";
 import { AutocompleteMultiselect, OptionMultiselectCheckboxQarter, OptionMultiselectCheckboxPsp, } from "../../types/typeAngraficaPsp";
 import { getListaNamePsp } from "../../api/apiPagoPa/anagraficaPspPA/api";
-import { deleteFilterToLocalStorageDocConPA, getFilterPageRowDocConPA, getInfoPageFromLocalStorageDocConPA, getProfilo, getToken, setFilterPageRowDocConPA, setFilterToLocalStorageDocConPA } from "../../reusableFunction/actionLocalStorage";
+import { deleteFilterToLocalStorageDocConPA, getFilterPageRowDocConPA, getInfoPageFromLocalStorageDocConPA, setFilterPageRowDocConPA, setFilterToLocalStorageDocConPA } from "../../reusableFunction/actionLocalStorage";
 import MultiselectWithKeyValue from "../../components/anagraficaPsp/multiselectKeyValue";
 import { RequestBodyListaDocContabiliPagopa } from "../../types/typeDocumentiContabili";
 import { downloadDocContabili, downloadFinancialReportDocContabili, getListaDocumentiContabiliPa, getQuartersDocContabiliPa, getYearsDocContabiliPa } from "../../api/apiPagoPa/documentiContabiliPA/api";
@@ -30,16 +30,6 @@ const DocumentiContabili:React.FC = () =>{
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 
-
-    const handleModifyMainState = (valueObj) => {
-        dispatchMainState({
-            type:'MODIFY_MAIN_STATE',
-            value:valueObj
-        });
-    };
-
-
-
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
@@ -52,14 +42,17 @@ const DocumentiContabili:React.FC = () =>{
         recipientId: '',
         abi: '',
         quarters:[],
-        year:''});
+        year:''
+    });
+
     const [bodyGetLista, setBodyGetLista] = useState<RequestBodyListaDocContabiliPagopa>({
         contractIds:[],
         membershipId: '',
         recipientId: '',
         abi: '',
         quarters:[],
-        year:''});
+        year:''
+    });
    
     const [getListaLoading, setGetListaLoading] = useState(false);
     const [dataSelect, setDataSelect] = useState<OptionMultiselectCheckboxPsp[]>([]);
@@ -78,14 +71,7 @@ const DocumentiContabili:React.FC = () =>{
 
     const [count, setCount] = useState(0);
     const [dataPaginated,setDataPaginated] = useState<DocContabili[]>([]);
-  
 
-    
-      
-    
-
- 
-  
     useEffect(()=>{
         getYears();
     }, []);
@@ -101,12 +87,6 @@ const DocumentiContabili:React.FC = () =>{
         setDataPaginated(gridData.slice(from, rowsPerPage + from));
     }, [page,rowsPerPage,gridData]);
 
-   
-
-   
-
- 
-    
 
     useEffect(()=>{
         if(bodyGetLista.contractIds.length  !== 0 || bodyGetLista.membershipId !== '' || bodyGetLista.recipientId !== ''|| bodyGetLista.abi !== '' || bodyGetLista.quarters.length > 0){
@@ -200,11 +180,8 @@ const DocumentiContabili:React.FC = () =>{
                         setFiltersDownload((prev) => ({...prev,...{year:res.data[0]}}));
                         getListaDocGrid({...bodyGetLista,...{year:res.data[0]}});
                     }
-                   
                 }
-                
-            })
-            .catch(((err)=>{
+            }).catch(((err)=>{
                 manageError(err,dispatchMainState); 
             }));
     };
@@ -214,8 +191,7 @@ const DocumentiContabili:React.FC = () =>{
         await getQuartersDocContabiliPa(token, profilo.nonce,{year:bodyGetLista.year})
             .then((res)=>{
                 setDataSelectQuarter(res.data);
-            })
-            .catch(((err)=>{
+            }).catch(((err)=>{
                 manageError(err,dispatchMainState); 
             }));
     };
@@ -305,20 +281,8 @@ const DocumentiContabili:React.FC = () =>{
             </div>
             {/*title container end */}
             <div className="row mb-5 mt-5" >
-                <div  className="col-3">
-                    <MultiselectWithKeyValue 
-                        setBodyGetLista={setBodyGetLista}
-                        setValueAutocomplete={setValueAutocomplete}
-                        dataSelect={dataSelect}
-                        valueAutocomplete={valueAutocomplete}
-                        setTextValue={setTextValue}
-                        keyId={"contractId"}
-                        valueId={'name'}
-                        label={"Nome PSP"} 
-                        keyArrayName={"contractIds"}/>
-                </div>
                 <div className="col-3">
-                    <Box sx={{width:'80%',marginLeft:'20px'}} >
+                    <Box sx={{width:'80%'}} >
                         <FormControl
                             fullWidth
                             size="medium"
@@ -383,18 +347,18 @@ const DocumentiContabili:React.FC = () =>{
            
                     />
                 </div>
-                <div className="col-3">
-                    <Box sx={{width:'80%',marginLeft:'20px'}} >
-                        <TextField
-                            fullWidth
-                            label='ABI'
-                            placeholder='ABI'
-                            value={bodyGetLista.abi}
-                            onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{abi:e.target.value}}))}            
-                        />
-                    </Box>
+                <div  className="col-3">
+                    <MultiselectWithKeyValue 
+                        setBodyGetLista={setBodyGetLista}
+                        setValueAutocomplete={setValueAutocomplete}
+                        dataSelect={dataSelect}
+                        valueAutocomplete={valueAutocomplete}
+                        setTextValue={setTextValue}
+                        keyId={"contractId"}
+                        valueId={'name'}
+                        label={"Nome PSP"} 
+                        keyArrayName={"contractIds"}/>
                 </div>
-               
             </div>
             <div className="row mb-5 mt-5" >
                 <div className="col-3">
@@ -409,13 +373,24 @@ const DocumentiContabili:React.FC = () =>{
                     </Box>
                 </div>
                 <div className="col-3">
-                    <Box sx={{width:'80%',marginLeft:'20px'}} >
+                    <Box sx={{width:'80%'}} >
                         <TextField
                             fullWidth
                             label='Recipient ID'
                             placeholder='Recipient ID'
                             value={bodyGetLista.recipientId}
                             onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{recipientId:e.target.value}}))}            
+                        />
+                    </Box>
+                </div>
+                <div className="col-3">
+                    <Box sx={{width:'80%'}} >
+                        <TextField
+                            fullWidth
+                            label='Codice ABI'
+                            placeholder='Codice ABI'
+                            value={bodyGetLista.abi}
+                            onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{abi:e.target.value}}))}            
                         />
                     </Box>
                 </div>
@@ -492,7 +467,7 @@ const DocumentiContabili:React.FC = () =>{
                     </>
                 }
             </div>
-            <div className="mt-1 mb-5" style={{ width: '100%'}}>
+            <div className="mt-1 mb-5">
                 <CollapsibleTablePa 
                     headerNames={headersObjGrid}
                     setPage={setPage}

@@ -5,6 +5,7 @@ import { AutocompleteMultiselect, MultiselectWithKeyValueProps,  RequestBodyList
 import { useLocation } from "react-router";
 import { PathPf } from "../../types/enum";
 import { RequestBodyListaDocContabiliPagopa } from '../../types/typeDocumentiContabili';
+import { height } from '@mui/system';
 
 
 
@@ -21,6 +22,7 @@ const MultiselectWithKeyValue : React.FC <MultiselectWithKeyValueProps> = ({setB
     return (
         <Autocomplete
             multiple
+            limitTags={1}
             onChange={(event, value:AutocompleteMultiselect[]) => {
                 const arrayIds = value.map((obj:AutocompleteMultiselect) => obj[keyId]);
                

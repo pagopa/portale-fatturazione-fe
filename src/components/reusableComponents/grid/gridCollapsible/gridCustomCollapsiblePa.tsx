@@ -117,7 +117,7 @@ const CollapsibleTablePa = ({headerNames,page,setPage,rowsPerPage,setRowsPerPage
         <>
             <div style={{overflowX:'auto'}}>
                 
-                <Card sx={{width: '1200px'}}  >
+                <Card sx={{width: 'auto'}}  >
                     
                     <TableContainer component={Paper}>
                         
