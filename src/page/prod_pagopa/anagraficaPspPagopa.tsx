@@ -111,7 +111,12 @@ const AnagraficaPsp:React.FC = () =>{
 
 
     useEffect(()=>{
-        if(bodyGetLista.contractIds.length  !== 0 || bodyGetLista.membershipId !== '' || bodyGetLista.recipientId !== ''|| bodyGetLista.abi !== ''){
+        if( bodyGetLista.contractIds.length  !== 0 ||
+            bodyGetLista.membershipId !== '' ||
+            bodyGetLista.recipientId !== ''||
+            bodyGetLista.abi !== ''||
+            bodyGetLista.quarters.length !== 0
+        ){
             setStatusAnnulla('show');
         }else{
             setStatusAnnulla('hidden');
@@ -400,7 +405,8 @@ const AnagraficaPsp:React.FC = () =>{
                                     setPage(0);
                                     setDataSelect([]);
                                     setValueAutocomplete([]);
-                                    
+                                    setDataSelectQuarter([]);
+                                    setValueQuarters([]);
                                     /*setBodyGetLista({idEnti:[],prodotto:'',profilo:''});
                                     setInfoPageListaDatiFat({ page: 0, pageSize: 100 });
                                     setInfoPageToLocalStorage({ page: 0, pageSize: 100 });
