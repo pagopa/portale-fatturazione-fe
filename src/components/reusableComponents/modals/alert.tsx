@@ -102,14 +102,10 @@ const BasicAlerts:React.FC = () => {
                 
             }; 
         }
-<<<<<<< HEAD
         if(mainState.apiError === null){
             setCss('main_container_alert_component');
         }
     },[showAlert,mainState.apiError]);
-=======
-    },[showAlert,mainState.apiError,errorAlert]);
->>>>>>> issues/492
 
     React.useEffect(()=>{
         if(showAlert === false  && (mainState.apiError !== null || errorAlert.error !== 0)){
