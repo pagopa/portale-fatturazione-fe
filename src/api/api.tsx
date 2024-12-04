@@ -17,7 +17,6 @@ export const manageError = (res:ManageErrorResponse,dispatchMainState) =>{
         handleModifyMainState({apiError:res.response.request.status});
         
     }else if(res?.response?.request?.status === 404){
-        console.log('11');
         handleModifyMainState({apiError:res.response.request.status});
     }else if(res?.response?.request?.status   === 419){
         handleModifyMainState({apiError:res.response.request.status});

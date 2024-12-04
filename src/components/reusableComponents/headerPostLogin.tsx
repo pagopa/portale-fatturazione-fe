@@ -55,7 +55,6 @@ const HeaderPostLogin = () => {
                 }); 
             }
         } ).catch((err) => {
-            console.log(err);
             setShowDownloading(false);
             managePresaInCarico('ERRORE_MANUALE',dispatchMainState);
         });

@@ -66,7 +66,6 @@ const BasicAlerts:React.FC = () => {
     },[mainState.apiError]);
 
     React.useEffect(()=>{
-        console.log(showAlert,mainState.apiError,'+++');
         if(showAlert === true && mainState.apiError !== null){
 
             const logout = mainState.apiError === 401 || mainState.apiError === 403 || mainState.apiError === 419;
