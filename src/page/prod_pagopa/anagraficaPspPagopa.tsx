@@ -145,6 +145,7 @@ const AnagraficaPsp:React.FC = () =>{
                         contractId:obj.contractId,
                         documentName:obj.name,
                         contractId2:obj.contractId,
+                        yearQuarter:obj.yearQuarter,
                         providerNames:obj.providerNames,
                         pecMail:obj.pecMail,
                         sdiCode:obj.sdiCode,
@@ -438,7 +439,7 @@ const AnagraficaPsp:React.FC = () =>{
                     total={totalPsp}
                     page={page}
                     rows={rowsPerPage}
-                    headerNames={['Nome PSP','ID Contratto','Nome Fornitore','E-mail PEC','Codice SDI','Codice ABI','E-Mail Ref. Fattura','Data','']}
+                    headerNames={['Nome PSP','ID Contratto','Trimestre','Nome Fornitore','E-mail PEC','Codice SDI','Codice ABI','E-Mail Ref. Fattura','Data','']}
                     disabled={getListaLoading}></GridCustom>
             </div>
             <div>

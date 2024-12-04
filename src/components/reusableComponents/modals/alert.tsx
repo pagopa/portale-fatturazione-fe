@@ -66,6 +66,7 @@ const BasicAlerts:React.FC = () => {
     },[mainState.apiError]);
 
     React.useEffect(()=>{
+        console.log(showAlert,mainState.apiError,'+++');
         if(showAlert === true && mainState.apiError !== null){
 
             const logout = mainState.apiError === 401 || mainState.apiError === 403 || mainState.apiError === 419;
@@ -85,11 +86,15 @@ const BasicAlerts:React.FC = () => {
                     }
                 }
             }, 2500);
-
+          
             return () =>{
+                
                 clearTimeout(timer);
                 
             }; 
+        }
+        if(mainState.apiError === null){
+            setCss('main_container_alert_component');
         }
     },[showAlert,mainState.apiError]);
 
