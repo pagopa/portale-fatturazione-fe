@@ -405,7 +405,6 @@ const AnagraficaPsp:React.FC = () =>{
                                     setPage(0);
                                     setDataSelect([]);
                                     setValueAutocomplete([]);
-                                    setDataSelectQuarter([]);
                                     setValueQuarters([]);
                                     /*setBodyGetLista({idEnti:[],prodotto:'',profilo:''});
                                     setInfoPageListaDatiFat({ page: 0, pageSize: 100 });
