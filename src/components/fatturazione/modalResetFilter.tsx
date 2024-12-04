@@ -15,6 +15,7 @@ const style = {
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
+    borderRadius:'20px'
 };
 
 const ModalResetFilter : React.FC<ModalResetFilterProps> =({setOpen, open, filterInfo,getListaFatture,filterNotExecuted}) => {

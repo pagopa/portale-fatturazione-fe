@@ -87,14 +87,14 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
     const colorEmailInserted = status === 'immutable' ? '#C3CAD1': 'black';
 
     return (
-        <div>
+        <div className=''>
             <div className='d-flex'>
                 <TextField
                     required
                     label={`Email amministrativo`}
                     placeholder="Email amministrativo"
                     helperText={`max ${3 - arrElement?.length}`}
-                    sx={{ width: '30%' }}
+                    sx={{width:'65%'}}
                     type='text'
                     value={element||''}
                     onChange={(e)=>handleElement(e)}
@@ -105,7 +105,7 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
                 <div className='d-flex align-items-center'>
                     <Button
                         variant="contained"
-                        sx={{ marginLeft: '20px' }}
+                        sx={{ marginLeft: '20px'}}
                         size="small"
                         onClick={(e) => handleSubmit(e)}
                         disabled={validation || dynamicInsertDisable}    
@@ -119,8 +119,8 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
                 {arrElement.map((el : Email) => {
                     const { email} = el;
                     return (
-                        <div className='d-flex' key={Math.random()}>
-                            <div className='d-flex align-items-center w-25'>
+                        <div className='d-flex w-auto' key={Math.random()}>
+                            <div className='d-flex align-items-center'>
                                 <Typography
                                     variant="caption-semibold"
                                     fontSize="large"
@@ -129,7 +129,7 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
                                     {email}
                                 </Typography>
                             </div>
-                            <div>
+                            <div className='d-flex ms-3'>
                                 {status === 'immutable' ? null:
                                     <IconButton
                                         aria-label="Edit"

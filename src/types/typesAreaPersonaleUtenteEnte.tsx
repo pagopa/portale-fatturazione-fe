@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from "react";
 import { InfoOpen, MainState } from "./typesGeneral";
 
 export interface SuccesResponseGetDatiFatturazione {
@@ -31,7 +32,9 @@ export interface DatiFatturazione{
     dataDocumento: null | string,
     pec:string,
     notaLegale:boolean,
-    prodotto:string
+    prodotto:string,
+    codiceSDI:string|null,
+    contractCodiceSDI:string|null
 }
 
 export interface DatiFatturazionePost{
@@ -41,9 +44,10 @@ export interface DatiFatturazionePost{
     idDocumento:string,
     codCommessa:string,
     contatti: Contatti[],
-    dataDocumento:string,
+    dataDocumento:string|null,
     pec:string,
-    notaLegale:boolean
+    notaLegale:boolean,
+    codiceSDI:string|null
 }
 
 export interface DatiFatturazionePostPagopa {
@@ -53,11 +57,12 @@ export interface DatiFatturazionePostPagopa {
     idDocumento:string,
     codCommessa:string,
     contatti: Contatti[],
-    dataDocumento:string| null,
+    dataDocumento:string|null,
     pec:string,
     notaLegale:boolean,
     prodotto:string,
-    idEnte:string
+    idEnte:string,
+    codiceSDI:string|null
 }
 export interface AreaPersonaleContext {
     datiFatturazione:DatiFatturazione, 
@@ -134,9 +139,10 @@ export interface DynamicInsertProps {
 export interface StateEnableConferma {
     CUP:boolean,
     CIG:boolean,
-    'Mail Pec':boolean,
+    'PEC':boolean,
     'ID Documento':boolean,
     "Codice Commessa/Convenzione":boolean,
+    'Codice univoco o SDI':boolean
 }
 
 

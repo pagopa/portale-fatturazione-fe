@@ -1,10 +1,9 @@
 import { Typography } from "@mui/material";
-import { } from '@mui/material';
 import React , { useState, useEffect, useContext} from 'react';
 import { TextField,Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { getTipologiaProfilo, manageError} from "../api/api";
-import { ReportDettaglioProps, NotificheList, FlagContestazione, Contestazione, ElementMultiSelect, ListaRecCon, OptionMultiselectChackbox  } from "../types/typeReportDettaglio";
+import {  NotificheList, FlagContestazione, Contestazione, ElementMultiSelect, ListaRecCon, OptionMultiselectChackbox  } from "../types/typeReportDettaglio";
 import { BodyListaNotifiche } from "../types/typesGeneral";
 import ModalContestazione from '../components/reportDettaglio/modalContestazione';
 import ModalInfo from "../components/reusableComponents/modals/modalInfo";
@@ -19,13 +18,13 @@ import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import GridCustom from "../components/reusableComponents/grid/gridCustom";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 import { deleteFilterToLocalStorageNotifiche, getFiltersFromLocalStorageNotifiche,  profiliEnti, setFilterToLocalStorageNotifiche } from "../reusableFunction/actionLocalStorage";
-import {mesi, mesiFix, mesiGrid, mesiWithZero, tipoNotifica } from "../reusableFunction/reusableArrayObj";
+import {mesi, mesiGrid, mesiWithZero, tipoNotifica } from "../reusableFunction/reusableArrayObj";
 import { getCurrentFinancialYear } from "../reusableFunction/function";
 import { GlobalContext } from "../store/context/globalContext";
 
 const ReportDettaglio : React.FC = () => {
     const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState, mainState} = globalContextObj;
+    const {dispatchMainState, mainState,setOpenModalInfo,openModalInfo} = globalContextObj;
 
     const enti = profiliEnti(mainState);
     const token =  mainState.profilo.jwt;
@@ -80,7 +79,6 @@ const ReportDettaglio : React.FC = () => {
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
     const [valueFgContestazione, setValueFgContestazione] = useState<FlagContestazione[]>([]);       
     const [open, setOpen] = useState(false);
-    const [openModalInfo, setOpenModalInfo] = useState(false);
     const [showLoading, setShowLoading] = useState(false);
     const [showLoadingGrid, setShowLoadingGrid] = useState(false);
     const [showModalScadenziario, setShowModalScadenziario ] = useState(false);   
@@ -492,6 +490,7 @@ const ReportDettaglio : React.FC = () => {
                 setTotalNotifiche(res.data.count); 
                 setShowLoadingGrid(false);
             }).catch((error)=>{
+                console.log(error);
                 // abilita button filtra e annulla filtri all'arrivo dei dati
                 setNotificheList([]);
                 setTotalNotifiche(0);
@@ -589,7 +588,7 @@ const ReportDettaglio : React.FC = () => {
                     //se i tempi di creazione di una contestazione sono scaduti show pop up info
                     if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
                         setShowLoadingGrid(false);
-                        setOpenModalInfo(true);
+                        setOpenModalInfo({open:true,sentence:'Non è possibile creare una contestazione.'});
                     }else{
                     // atrimenti show pop up creazione contestazione
                         setShowLoadingGrid(false);
@@ -609,7 +608,7 @@ const ReportDettaglio : React.FC = () => {
                     setShowLoadingGrid(false);
                     //se i tempi di creazione di una contestazione sono scaduti show pop up info
                     if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
-                        setOpenModalInfo(true);
+                        setOpenModalInfo({open:true,sentence:'Non è possibile creare una contestazione.'});
                     }else{
                         // atrimenti show pop up creazione contestazione
                         setOpen(true); 
@@ -627,7 +626,7 @@ const ReportDettaglio : React.FC = () => {
                     setShowLoadingGrid(false);
                     //se i tempi di creazione di una contestazione sono scaduti show pop up info
                     if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
-                        setOpenModalInfo(true);
+                        setOpenModalInfo({open:true,sentence:'Non è possibile creare una contestazione.'});
                     }else{
                         // atrimenti show pop up creazione contestazione
                         setOpen(true); 
@@ -644,7 +643,7 @@ const ReportDettaglio : React.FC = () => {
                 setShowLoadingGrid(false);
                 //se i tempi di creazione di una contestazione sono scaduti show pop up info
                 if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
-                    setOpenModalInfo(true);
+                    setOpenModalInfo({open:true,sentence:'Non è possibile creare una contestazione.'});
                 }else{
                     // atrimenti show pop up creazione contestazione
                     setOpen(true); 
@@ -1121,11 +1120,9 @@ const ReportDettaglio : React.FC = () => {
                 open={openModalRedirect}
                 sentence={`Per poter visualizzare la lista delle Notifiche è obbligatorio fornire i seguenti dati di fatturazione:`}>
             </ModalRedirect>
-            <ModalInfo
+            <ModalInfo 
                 open={openModalInfo} 
-                setOpen={setOpenModalInfo}
-                sentence={'Non è possibile creare una contestazione.'} >
-            </ModalInfo>
+                setOpen={setOpenModalInfo}/>
             <ModalLoading 
                 open={showLoading} 
                 setOpen={setShowLoading}

@@ -14,6 +14,7 @@ const style = {
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
+    borderRadius:'20px'
 };
 
 const ModalUploadPdf : React.FC<ModalProps> =({setOpen, open}) => {

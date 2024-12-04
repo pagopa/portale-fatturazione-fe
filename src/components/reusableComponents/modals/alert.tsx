@@ -11,6 +11,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { PathPf } from '../../../types/enum';
 import { ActionReducerType } from '../../../reducer/reducerMainState';
 import { GlobalContext } from '../../../store/context/globalContext';
+import { error } from 'console';
 
 
 type AlertProps = {
@@ -26,7 +27,14 @@ const BasicAlerts:React.FC = () => {
 
 
     const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState, showAlert, setShowAlert} = globalContextObj;
+    const {
+        dispatchMainState,
+        mainState,
+        showAlert,
+        setShowAlert,
+        errorAlert,
+        setErrorAlert
+    } = globalContextObj;
  
     const profilo = mainState.profilo;
 
@@ -39,36 +47,38 @@ const BasicAlerts:React.FC = () => {
 
   
     let colorAlert:AlertColor = 'success';
-    if(mainState.apiError === 401 || mainState.apiError === 403 ){
+    if(mainState.apiError === 401 || mainState.apiError === 403|| errorAlert.error === 401 ){
         colorAlert = 'error';
-    }else if(mainState.apiError === 419){
+    }else if(mainState.apiError === 419 || errorAlert.error === 419 ){
         colorAlert = 'error';
-    }else if(mainState.apiError === 500){
+    }else if(mainState.apiError === 500 || errorAlert.error === 500){
         colorAlert = 'error';
-    }else if(mainState.apiError === 400){
+    }else if(mainState.apiError === 400 || errorAlert.error === 400){
         colorAlert = 'error';
-    }else if(mainState.apiError === 404 || mainState.apiError === '404_DOWNLOAD' || mainState.apiError === 'PRESA'){
+    }else if(errorAlert.error === 404 || mainState.apiError === 404 || mainState.apiError === '404_DOWNLOAD' || mainState.apiError === 'PRESA'){
         colorAlert = "info";
     }else if(mainState.apiError === "Network Error"|| mainState.apiError === 'ERRORE_MANUALE' ){
         colorAlert = 'warning';
-    }else if(mainState.apiError === 410){
+    }else if(mainState.apiError === 410 || errorAlert.error === 410){
         colorAlert = 'warning';
+    }else if((mainState.apiError||'').slice(0,2) === 'NO'){
+        colorAlert = 'error';
     }
     
     const [css, setCss] = useState('main_container_alert_component');
 
 
     React.useEffect(()=>{
-        if(mainState.apiError !== null){
+        if(mainState.apiError !== null || errorAlert.error !== 0){
             setShowAlert(true);
         }
 
-    },[mainState.apiError]);
+    },[mainState.apiError,errorAlert.error]);
 
     React.useEffect(()=>{
-        if(showAlert === true && mainState.apiError !== null){
+        if(showAlert === true && (mainState.apiError !== null || errorAlert.error !== 0)){
 
-            const logout = mainState.apiError === 401 || mainState.apiError === 403 || mainState.apiError === 419;
+            const logout = mainState.apiError === 401 || mainState.apiError === 403 || mainState.apiError === 419|| errorAlert.error === 401 || errorAlert.error === 403 || errorAlert.error === 419 ;
             setCss('main_container_alert_component_show');
             
             const timer = setTimeout(() => {
@@ -92,16 +102,25 @@ const BasicAlerts:React.FC = () => {
                 
             }; 
         }
+<<<<<<< HEAD
         if(mainState.apiError === null){
             setCss('main_container_alert_component');
         }
     },[showAlert,mainState.apiError]);
+=======
+    },[showAlert,mainState.apiError,errorAlert]);
+>>>>>>> issues/492
 
     React.useEffect(()=>{
-        if(showAlert === false  && mainState.apiError !== null){
+        if(showAlert === false  && (mainState.apiError !== null || errorAlert.error !== 0)){
            
             const timer = setTimeout(() => {
-                handleModifyMainState({apiError:null});
+                if(mainState.apiError !== null){
+                    handleModifyMainState({apiError:null});
+                }else if( errorAlert.error !== 0){
+                    setErrorAlert({error:0,message:''});
+                }
+                
             }, 500);
             return () =>{
                 clearTimeout(timer);
@@ -109,10 +128,11 @@ const BasicAlerts:React.FC = () => {
         }
     },[showAlert]);
 
+  
+
     return createPortal(
         <div className={css}>
-            
-            <Alert sx={{display:'flex', justifyContent:'center'}} severity={colorAlert}  variant="standard">{t(`errori.${mainState.apiError}`)} 
+            <Alert sx={{display:'flex', justifyContent:'center'}} severity={colorAlert}  variant="standard">{t(`errori.${mainState.apiError}`, {defaultValue: errorAlert.message})} 
                 {mainState.apiError === 'PRESA_IN_CARICO_DOCUMENTO' &&
                 <IconButton sx={{marginLeft:'20px'}} onClick={()=> {
                     setCss('main_container_alert_component_hidden');

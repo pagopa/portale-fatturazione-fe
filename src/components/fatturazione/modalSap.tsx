@@ -21,6 +21,7 @@ const style = {
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
+    borderRadius:'20px'
 };
 
 const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,mese,anno,dispatchMainState,getListaFatture,bodyFatturazioneDownload}) => {

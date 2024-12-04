@@ -32,8 +32,11 @@ export const GlobalContext = createContext({
     openBasicModal_DatFat_ModCom:{visible:false,clickOn:''},
     setOpenBasicModal_DatFat_ModCom:(prev) => null,
     showAlert:true,
-    setShowAlert:(prev) => null
-
+    setShowAlert:(prev) => null,
+    setOpenModalInfo:(prev) => null,
+    openModalInfo:{open:false,sentence:''},
+    errorAlert:{error:0,message:''},
+    setErrorAlert:(prev) => null
 
 });
 
@@ -45,6 +48,12 @@ function GlobalContextProvider({children}){
     const [openBasicModal_DatFat_ModCom, setOpenBasicModal_DatFat_ModCom] = useState({visible:false,clickOn:''});
   
     const [showAlert, setShowAlert] = useState(true);
+
+
+    const [openModalInfo, setOpenModalInfo] = useState({open:false,sentence:''});
+
+    //nuova logica errori da implemnetare sull'applicazione  22/11
+    const [errorAlert, setErrorAlert] = useState({error:0,message:''});
 
     // eslint-disable-next-line no-undef
     
@@ -61,7 +70,12 @@ function GlobalContextProvider({children}){
         openBasicModal_DatFat_ModCom,
         setOpenBasicModal_DatFat_ModCom,
         showAlert,
-        setShowAlert
+        setShowAlert,
+        openModalInfo,
+        setOpenModalInfo,
+        errorAlert,
+        setErrorAlert
+
     };
 
 

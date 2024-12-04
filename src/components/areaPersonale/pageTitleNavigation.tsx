@@ -4,10 +4,10 @@ import { ButtonNaked } from '@pagopa/mui-italia';
 import DnsIcon from '@mui/icons-material/Dns';
 import {  useNavigate } from 'react-router';
 import { PathPf } from '../../types/enum';
-import { getProfilo, getStatusApp } from '../../reusableFunction/actionLocalStorage';
 import { InfoOpen, MainState } from '../../types/typesGeneral';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useContext } from 'react';
 import { ActionReducerType } from '../../reducer/reducerMainState';
+import { GlobalContext } from '../../store/context/globalContext';
 
 interface PageTitleProps {
     dispatchMainState:Dispatch<ActionReducerType>,
@@ -15,7 +15,11 @@ interface PageTitleProps {
     mainState:MainState
 }
 
-const PageTitleNavigation = ({dispatchMainState, setOpen, mainState}) => {
+const PageTitleNavigation = ({setOpen}) => {
+
+    const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState,mainState} = globalContextObj;
+   
 
     const profilo =  mainState.profilo;
 

@@ -22,7 +22,7 @@ const style = {
     width: '90%',
     bgcolor: 'background.paper',
     boxShadow: 24,
-    p: 4,
+    p: 4
 };
 
 const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open, contestazioneSelected, setContestazioneSelected, funGetNotifiche, funGetNotifichePagoPa, openModalLoading, page, rows, valueRispostaEnte, contestazioneStatic,dispatchMainState}) => {
