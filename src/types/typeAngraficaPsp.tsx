@@ -8,7 +8,7 @@ export interface RequestBodyListaAnagraficaPsp{
     membershipId: string,
     recipientId: string,
     abi: string,
-    yearQuarter:string
+    quarters:string[]
 }
 /*
 export interface MultiselectWithKeyValueProps {

@@ -9,15 +9,13 @@ import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { saveAs } from "file-saver";
 import { GlobalContext } from '../../store/context/globalContext';
-import { getFilterPageRowAnagrafica, getFiltersFromLocalStorageAnagrafica, setFilterToLocalStorageAnagrafica } from '../../reusableFunction/actionLocalStorage';
+import { setFilterToLocalStorageAnagrafica } from '../../reusableFunction/actionLocalStorage';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 
 
 const AnagraficaPsp:React.FC = () =>{
 
-    const localStorageFilters = getFiltersFromLocalStorageAnagrafica();
-    const localStorageFilterPageRow = getFilterPageRowAnagrafica();
 
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState} = globalContextObj;
@@ -32,13 +30,13 @@ const AnagraficaPsp:React.FC = () =>{
         membershipId: '',
         recipientId: '',
         abi: '',
-        yearQuarter:''});
+        quarters:[]});
     const [bodyGetLista, setBodyGetLista] = useState<RequestBodyListaAnagraficaPsp>({
         contractIds:[],
         membershipId: '',
         recipientId: '',
         abi: '',
-        yearQuarter:''
+        quarters:[]
     });
     const [getListaLoading, setGetListaLoading] = useState(false);
     const [dataSelect, setDataSelect] = useState<OptionMultiselectCheckboxPsp[]>([]);
@@ -393,7 +391,7 @@ const AnagraficaPsp:React.FC = () =>{
                                         membershipId: '',
                                         recipientId: '',
                                         abi: '',
-                                        yearQuarter:''};
+                                        quarters:[]};
                                     getListaAnagraficaPspGrid(newBody,1,10);
                                     setBodyGetLista(newBody);
                                     setFiltersDownload(newBody);
