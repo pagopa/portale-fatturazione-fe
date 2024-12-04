@@ -105,7 +105,7 @@ const BasicAlerts:React.FC = () => {
         if(mainState.apiError === null){
             setCss('main_container_alert_component');
         }
-    },[showAlert,mainState.apiError]);
+    },[showAlert,mainState.apiError,errorAlert]);
 
     React.useEffect(()=>{
         if(showAlert === false  && (mainState.apiError !== null || errorAlert.error !== 0)){
