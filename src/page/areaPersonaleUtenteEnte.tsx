@@ -140,7 +140,6 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                 // se l'ente non ha i dati di fatturazione potrebbe avere lo SDI
 
                 await getSdi(token,profilo.nonce).then((res)=>{
-                    console.log(res, 'res SDI');
                     handleModifyMainState({
                         datiFatturazione:false,
                         statusPageDatiFatturazione:'mutable'
@@ -177,7 +176,6 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
         });
     };
             
-    console.log(datiFatturazione,'???');
     // get dati fatturazione PAGOPA
     const getDatiFatPagoPa = async () =>{
         setLoadingData(true);
@@ -200,7 +198,6 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
             }
 
             await getSdiPagoPa(token,profilo.nonce,profilo.idEnte, profilo.prodotto).then((res)=>{
-                console.log(res, 'res SDI pagopa');
                 setDatiFatturazione({
                     tipoCommessa:'',
                     idEnte:'',
@@ -237,12 +234,12 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
     const hendleSubmitDatiFatturazione = async (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) =>{
         e.preventDefault();
         setOpenModalLoading(true);
-        console.log('1');
+   
         //  1 - se l'user ha già dati fatturazione
         if(mainState.datiFatturazione === true){
             // 1 - ed è un utente PAGOPA
             if(profilo.auth === 'PAGOPA'){
-                console.log('pppp');
+             
                 const newDatiFatturazione:DatiFatturazionePostPagopa = {...datiFatturazione, ...{idEnte:profilo.idEnte,prodotto:profilo.prodotto}};
                 await modifyDatiFatturazionePagoPa(token,profilo.nonce, newDatiFatturazione ).then(() =>{
                     setOpenModalLoading(false);
@@ -252,7 +249,6 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                     getDatiFatPagoPa();
                 }).catch(err => {
                     setOpenModalLoading(false);
-                    console.log(err);
                     setErrorAlert({error:err.response.status,message:err.response.data.detail});
                     //handleModifyMainState({apiError:err.response.data.detail});
                     //manageError(err,dispatchMainState);

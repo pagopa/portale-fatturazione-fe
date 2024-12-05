@@ -110,7 +110,6 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
 */
     useEffect(()=>{
         if(keyObject === 'codiceSDI' && mainState.statusPageDatiFatturazione === 'mutable' && mainState.datiFatturazione){
-            //console.log('dentro effect',mainState.statusPageDatiFatturazione,{value:value});
             validationSDI(dataValidation.max,dataValidation.validation ,value);
         }
     },[mainState.statusPageDatiFatturazione]);
@@ -194,7 +193,6 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
     
     const hendleOnMouseOut = (e: React.SyntheticEvent<EventTarget>) =>{
         e.persist();
-        console.log('ciao');
         if(keyObject === 'pec'){
             validationTextAreaEmail(value);
         }else if(keyObject ==='idDocumento'){
