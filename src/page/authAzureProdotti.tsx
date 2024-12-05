@@ -3,7 +3,7 @@ import { getAuthProfilo, redirect } from "../api/api";
 import MultipleSelectProdotti from "../components/authSelectProdottiPa/selectProdotti";
 import { PathPf } from "../types/enum";
 import { ProfiloObject } from "../types/typesGeneral";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { Button, Typography } from "@mui/material";
 import DivProdotto from "../components/authSelectProdottiPa/divProdotto";
 import { GlobalContext } from "../store/context/globalContext";
@@ -87,7 +87,7 @@ const AuthAzureProdotti : React.FC = () => {
                     </div>
                     {!productSelected? 
                         <div className=" d-flex align-items-center justify-content-center mt-5">
-                            <MultipleSelectProdotti productSelected={productSelected} setProductSelected={setProductSelected}></MultipleSelectProdotti>
+                            <MultipleSelectProdotti  setProductSelected={setProductSelected}></MultipleSelectProdotti>
                         </div> :
                         <div className=" d-flex align-items-center justify-content-center mt-5">
                             <DivProdotto productSelected={productSelected} setProductSelected={setProductSelected}/>

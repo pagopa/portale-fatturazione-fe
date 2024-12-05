@@ -11,17 +11,18 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import DnsIcon from '@mui/icons-material/Dns';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
-import {manageError} from '../../api/api';
 import MarkUnreadChatAltIcon from '@mui/icons-material/MarkUnreadChatAlt';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
-import { getDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
-import { PathPf } from '../../types/enum';
 import AnnouncementIcon from '@mui/icons-material/Announcement';
 import ReceiptIcon from '@mui/icons-material/Receipt';
-import { profiliEnti } from '../../reusableFunction/actionLocalStorage';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
-import { GlobalContext } from '../../store/context/globalContext';
+import { GlobalContext } from '../store/context/globalContext';
+import { manageError } from '../api/api';
+import { getDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
+import { getDatiModuloCommessa } from '../api/apiSelfcare/moduloCommessaSE/api';
+import { profiliEnti } from '../reusableFunction/actionLocalStorage';
+import { PathPf } from '../types/enum';
+
 
 const SideNavComponent: React.FC = () => {
 
