@@ -115,24 +115,5 @@ export const getManuale = async () => {
     return response;
 };
 
-/* Servizio download manuare url forse da cancellare in seguito
-export const getManuale = async () => {
 
-    const result = fetch(`${url}/api/tipologia/manuale`)  // URL to the API endpoint
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();  // or response.text() if it's not JSON
-        })
-        .then(data => {
-            return data; // Handle the response data
-        })
-        .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-        });
-
-    return result;
-};
-*/
 
