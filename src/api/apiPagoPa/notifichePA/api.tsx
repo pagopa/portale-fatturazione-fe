@@ -83,3 +83,14 @@ export const getAnniNotifiche = async (token:string, nonce:string) => {
 
     return response;
 };
+
+export const getMesiNotifiche = async (token:string, nonce:string , body:{anno:string}) => {
+    const response =  await axios.post(`${url}/api/notifiche/mesi?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token,
+        },
+        }
+    );
+    return response;
+};

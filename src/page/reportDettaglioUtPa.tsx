@@ -13,7 +13,7 @@ import MultiSelectStatoContestazione from "../components/reportDettaglio/multiSe
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import ModalScadenziario from "../components/reportDettaglio/modalScadenziario";
 import { downloadNotifche, downloadNotifcheConsolidatore, downloadNotifcheRecapitista, getContestazione, getContestazioneCosolidatore, getContestazioneRecapitista, listaEntiNotifichePage, listaEntiNotifichePageConsolidatore, listaNotifiche, listaNotificheConsolidatore, listaNotificheRecapitista } from "../api/apiSelfcare/notificheSE/api";
-import { downloadNotifchePagoPa, getContestazionePagoPa, getTipologiaEntiCompletiPagoPa, listaNotifichePagoPa } from "../api/apiPagoPa/notifichePA/api";
+import { downloadNotifchePagoPa, getAnniNotifiche, getContestazionePagoPa, getTipologiaEntiCompletiPagoPa, listaNotifichePagoPa } from "../api/apiPagoPa/notifichePA/api";
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import GridCustom from "../components/reusableComponents/grid/gridCustom";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
@@ -147,6 +147,7 @@ const ReportDettaglio : React.FC = () => {
         const result = getFiltersFromLocalStorageNotifiche();
         
         getProdotti();
+        getAnni();
         if(Object.keys(result).length > 0 ){
        
             getProfili();
@@ -219,6 +220,16 @@ const ReportDettaglio : React.FC = () => {
         }, 800);
         return () => clearTimeout(timer);
     },[textValue]);
+
+
+
+    const getAnni = async () => {
+        await getAnniNotifiche(token, profilo.nonce).then((res)=> {
+            console.log(res,'ANNI');
+        }).catch((err)=>{
+            console.log(err,'ERR ANNI');
+        });
+    };
 
     // servizio che popola la select con la checkbox
     const listaEntiNotifichePageOnSelect = async () =>{
@@ -788,7 +799,6 @@ const ReportDettaglio : React.FC = () => {
                                         setBodyGetLista((prev)=> ({...prev, ...{anno:value}}));
                                     }}
                                     value={bodyGetLista.anno}
-                                    disabled={status=== 'immutable' ? true : false}
                                 >
                                     {getCurrentFinancialYear().map((el) => (
                                         <MenuItem
