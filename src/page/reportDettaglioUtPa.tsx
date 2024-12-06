@@ -13,7 +13,7 @@ import MultiSelectStatoContestazione from "../components/reportDettaglio/multiSe
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import ModalScadenziario from "../components/reportDettaglio/modalScadenziario";
 import { downloadNotifche, downloadNotifcheConsolidatore, downloadNotifcheRecapitista, getContestazione, getContestazioneCosolidatore, getContestazioneRecapitista, listaEntiNotifichePage, listaEntiNotifichePageConsolidatore, listaNotifiche, listaNotificheConsolidatore, listaNotificheRecapitista } from "../api/apiSelfcare/notificheSE/api";
-import { downloadNotifchePagoPa, getAnniNotifiche, getContestazionePagoPa, getTipologiaEntiCompletiPagoPa, listaNotifichePagoPa } from "../api/apiPagoPa/notifichePA/api";
+import { downloadNotifchePagoPa, getAnniNotifiche, getContestazionePagoPa, getMesiNotifiche, getTipologiaEntiCompletiPagoPa, listaNotifichePagoPa } from "../api/apiPagoPa/notifichePA/api";
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import GridCustom from "../components/reusableComponents/grid/gridCustom";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
@@ -86,8 +86,8 @@ const ReportDettaglio : React.FC = () => {
     const [bodyGetLista, setBodyGetLista] = useState<BodyListaNotifiche>({
         profilo:'',
         prodotto:'',
-        anno:currentYear,
-        mese:currString, 
+        anno:0,
+        mese:0, 
         tipoNotifica:null,
         statoContestazione:[],
         cap:null,
@@ -100,8 +100,8 @@ const ReportDettaglio : React.FC = () => {
     const [bodyDownload, setBodyDownload] = useState<BodyListaNotifiche>({
         profilo:'',
         prodotto:'',
-        anno:currentYear,
-        mese:currString, 
+        anno:0,
+        mese:0, 
         tipoNotifica:null,
         statoContestazione:[],
         cap:null,
@@ -140,6 +140,14 @@ const ReportDettaglio : React.FC = () => {
         }
     });
 
+    const [arrayAnni,setArrayAnni] = useState<number[]>([]);
+    const [arrayMesi,setArrayMesi] = useState<{mese:number,descrizione:string}[]>([]);
+
+    ////////////////////////////////////////////
+
+
+    ///////////////////////////////////////////////////
+
    
   
     useEffect(() => {
@@ -170,7 +178,7 @@ const ReportDettaglio : React.FC = () => {
                 getlistaNotifiche( page + 1, rowsPerPage,bodyGetLista); 
             }else if(profilo.auth === 'PAGOPA'){
                 getRecapitistConsolidatori();
-                getlistaNotifichePagoPa( page + 1, rowsPerPage,bodyGetLista);
+                // getlistaNotifichePagoPa( page + 1, rowsPerPage,bodyGetLista);
             }
         }
         
@@ -203,12 +211,12 @@ const ReportDettaglio : React.FC = () => {
     },[]);
 
    
-    
+  
     useEffect(()=>{
-       
-        setBodyGetLista((prev)=>({...prev, ...{mese:1}}));
-
-    },[bodyGetLista.anno]);
+        if(bodyGetLista.anno !== 0){
+            getMesi(bodyGetLista.anno);
+        }
+    },[]);
 
 
    
@@ -224,9 +232,33 @@ const ReportDettaglio : React.FC = () => {
 
 
     const getAnni = async () => {
+        setGetNotificheWorking(true);
         await getAnniNotifiche(token, profilo.nonce).then((res)=> {
-            console.log(res,'ANNI');
+            const allYearToNumber = res.data.map( el => Number(el));
+            setArrayAnni(allYearToNumber);
+            if(res.data.length > 0){
+                
+                setBodyGetLista((prev)=> ({...prev, ...{anno:allYearToNumber[0]}}));
+               
+            }
         }).catch((err)=>{
+            setGetNotificheWorking(false);
+            manageError(err,dispatchMainState);
+            console.log(err,'ERR ANNI');
+        });
+    };
+
+    const getMesi = async (anno) => {
+        await getMesiNotifiche(token, profilo.nonce,{anno}).then((res)=> {
+            setArrayMesi(res.data);
+            if(res.data.length > 0){
+                console.log(bodyGetLista,'body body');
+                setBodyGetLista((prev)=> ({...prev, ...{mese:Number(res.data[0].mese)}}));
+            }  
+            setGetNotificheWorking(false);
+        }).catch((err)=>{
+            manageError(err,dispatchMainState);
+            setGetNotificheWorking(false);
             console.log(err,'ERR ANNI');
         });
     };
@@ -247,9 +279,7 @@ const ReportDettaglio : React.FC = () => {
                     setDataSelect(res.data);
                 })
                 .catch(((err)=>{
-                   
                     manageError(err,dispatchMainState);
-                    
                 }));
         }
     };
@@ -348,8 +378,8 @@ const ReportDettaglio : React.FC = () => {
         const newBody = {
             profilo:'',
             prodotto:'',
-            anno:currentYear,
-            mese:currString, 
+            anno:arrayAnni[0],
+            mese:0,
             tipoNotifica:null,
             statoContestazione:[],
             cap:null,
@@ -797,10 +827,14 @@ const ReportDettaglio : React.FC = () => {
                                     onChange={(e) => {
                                         const value = Number(e.target.value);
                                         setBodyGetLista((prev)=> ({...prev, ...{anno:value}}));
+                                        if(value > 0){
+                                            getMesi(e.target.value.toString());
+                                        }
+                                       
                                     }}
                                     value={bodyGetLista.anno}
                                 >
-                                    {getCurrentFinancialYear().map((el) => (
+                                    {arrayAnni.map((el) => (
                                         <MenuItem
                                             key={Math.random()}
                                             value={el}
@@ -830,16 +864,15 @@ const ReportDettaglio : React.FC = () => {
                                         const value = Number(e.target.value);
                                         setBodyGetLista((prev)=> ({...prev, ...{mese:value}}));
                                     }}
-                                    value={bodyGetLista.mese}
+                                    value={bodyGetLista.mese||''}
                                 >
-                                    {mesi.map((el) =>{
+                                    {arrayMesi.map((el) =>{
                                         return(
                                             <MenuItem
-                                                key={Math.random()}
-                                                value={Object.keys(el)[0].toString()}
-                                                disabled={(Object.keys(el)[0] === '11' || Object.keys(el)[0] === '12')&& bodyGetLista.anno === 2024}
+                                                key={el.mese}
+                                                value={el.mese}
                                             >
-                                                {Object.values(el)[0]}
+                                                {el.descrizione}
                                             </MenuItem>
                                             
                                         );
