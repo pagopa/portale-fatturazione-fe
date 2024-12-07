@@ -192,8 +192,8 @@ const ReportDettaglio : React.FC = () => {
                     bodyGetLista.statoContestazione.length !== 0 ||
                     bodyGetLista.cap !== null ||
                     bodyGetLista.idEnti?.length !== 0 ||
-                    bodyGetLista.mese !== currString ||
-                    bodyGetLista.anno !== currentYear||
+                    bodyGetLista.mese !== Number(arrayMesi[0]?.mese) ||
+                    bodyGetLista.anno !== arrayAnni[0]||
                     bodyGetLista.recipientId !== null ||
                     bodyGetLista.consolidatori?.length !== 0 ||
                     bodyGetLista.recapitisti?.length !== 0  
@@ -210,14 +210,13 @@ const ReportDettaglio : React.FC = () => {
         }
     },[]);
 
-   
-  
     useEffect(()=>{
-        if(bodyGetLista.anno !== 0){
-            getMesi(bodyGetLista.anno);
-        }
-    },[]);
 
+        if(bodyGetLista.anno !== 0 && bodyGetLista.anno !== arrayAnni[0]){
+            getMesi(bodyGetLista.anno.toString());
+        }
+
+    },[bodyGetLista.anno]);
 
    
     useEffect(()=>{
@@ -239,7 +238,7 @@ const ReportDettaglio : React.FC = () => {
             if(res.data.length > 0){
                 
                 setBodyGetLista((prev)=> ({...prev, ...{anno:allYearToNumber[0]}}));
-               
+                getMesi(res.data[0]);
             }
         }).catch((err)=>{
             setGetNotificheWorking(false);
@@ -390,6 +389,7 @@ const ReportDettaglio : React.FC = () => {
             consolidatori:[]
 
         };
+        getAnni();
         setStatusAnnulla('hidden');
         setValueFgContestazione([]);
         setDataSelect([]);
@@ -826,13 +826,9 @@ const ReportDettaglio : React.FC = () => {
                                     labelId="search-by-label"
                                     onChange={(e) => {
                                         const value = Number(e.target.value);
-                                        setBodyGetLista((prev)=> ({...prev, ...{anno:value}}));
-                                        if(value > 0){
-                                            getMesi(e.target.value.toString());
-                                        }
-                                       
+                                        setBodyGetLista((prev)=> ({...prev, ...{anno:value}}));  
                                     }}
-                                    value={bodyGetLista.anno}
+                                    value={bodyGetLista.anno||''}
                                 >
                                     {arrayAnni.map((el) => (
                                         <MenuItem
