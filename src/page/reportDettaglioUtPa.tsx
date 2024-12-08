@@ -1,5 +1,5 @@
 import { Typography } from "@mui/material";
-import React , { useState, useEffect, useContext} from 'react';
+import React , { useState, useEffect, useContext, useRef} from 'react';
 import { TextField,Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { getTipologiaProfilo, manageError} from "../api/api";
@@ -17,9 +17,8 @@ import { downloadNotifchePagoPa, getAnniNotifiche, getContestazionePagoPa, getMe
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import GridCustom from "../components/reusableComponents/grid/gridCustom";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
-import { deleteFilterToLocalStorageNotifiche, getFiltersFromLocalStorageNotifiche,  profiliEnti, setFilterToLocalStorageNotifiche } from "../reusableFunction/actionLocalStorage";
-import {mesi, mesiGrid, mesiWithZero, tipoNotifica } from "../reusableFunction/reusableArrayObj";
-import { getCurrentFinancialYear } from "../reusableFunction/function";
+import { deleteFilterToLocalStorageNotifiche, profiliEnti, setFilterToLocalStorageNotifiche } from "../reusableFunction/actionLocalStorage";
+import { mesiGrid, mesiWithZero, tipoNotifica } from "../reusableFunction/reusableArrayObj";
 import { GlobalContext } from "../store/context/globalContext";
 
 const ReportDettaglio : React.FC = () => {
@@ -29,9 +28,9 @@ const ReportDettaglio : React.FC = () => {
     const enti = profiliEnti(mainState);
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
-    const currentMonth = 1; //(new Date()).getMonth() + 1;
-    const currString = currentMonth;
-    const currentYear = (new Date()).getFullYear();
+
+    const isInitialRender = useRef(true);
+ 
 
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [profili, setProfili] = useState([]);
@@ -143,15 +142,13 @@ const ReportDettaglio : React.FC = () => {
     const [arrayAnni,setArrayAnni] = useState<number[]>([]);
     const [arrayMesi,setArrayMesi] = useState<{mese:number,descrizione:string}[]>([]);
 
-    ////////////////////////////////////////////
-
-
-    ///////////////////////////////////////////////////
+   
 
    
   
     useEffect(() => {
-       
+        funInitialRender();
+        /*
         const result = getFiltersFromLocalStorageNotifiche();
         
         getProdotti();
@@ -175,14 +172,96 @@ const ReportDettaglio : React.FC = () => {
             }
         }else{
             if(profilo.auth === 'SELFCARE' && mainState.datiFatturazione === true){
+                
                 getlistaNotifiche( page + 1, rowsPerPage,bodyGetLista); 
             }else if(profilo.auth === 'PAGOPA'){
+                console.log(bodyGetLista,'ecco la');
                 getRecapitistConsolidatori();
-                // getlistaNotifichePagoPa( page + 1, rowsPerPage,bodyGetLista);
+                getlistaNotifichePagoPa( page + 1, rowsPerPage,bodyGetLista);
             }
         }
-        
+        */
     }, []);
+
+  
+
+    ////////////////////////////////////////////
+   
+
+
+    useEffect(()=>{
+        console.log('fuori', isInitialRender.current);
+        if(bodyGetLista.anno !== 0 &&  isInitialRender.current === false){
+            console.log('dentroo', isInitialRender.current);
+            getMesi(bodyGetLista.anno.toString());
+        }
+    },[bodyGetLista.anno]);
+   
+
+    const funInitialRender = async() => {
+        getProdotti();
+        getProfili();
+        getRecapitistConsolidatori();
+        const newBody = {
+            profilo:'',
+            prodotto:'',
+            anno:0,
+            mese:0,
+            tipoNotifica:null,
+            statoContestazione:[],
+            cap:null,
+            iun:null,
+            idEnti:[],
+            recipientId:null,
+            recapitisti:[],
+            consolidatori:[]
+
+        };
+
+        //  setBodyGetLista(newBody);
+        //setBodyDownload(newBody)
+       
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const {idEnti, recapitisti, consolidatori, ...body} = newBody;
+        setGetNotificheWorking(true);
+        await getAnniNotifiche(token, profilo.nonce).then(async(resAnno)=> {
+            const allYearToNumber = resAnno.data.map( el => Number(el));
+            setArrayAnni(allYearToNumber);
+            if(resAnno.data.length > 0){
+            
+                await getMesiNotifiche(token, profilo.nonce,{anno:resAnno.data[0]}).then((resMese)=> {
+                    setArrayMesi(resMese.data);
+                   
+
+                    if(profilo.auth === 'SELFCARE' && mainState.datiFatturazione === true){
+                
+                        getlistaNotifiche( 1, 10,{...body,...{mese:Number(resMese.data[0].mese),anno:Number(resAnno.data[0])}}); 
+                    }else if(profilo.auth === 'PAGOPA'){
+                        getlistaNotifichePagoPa( 1, 10,{...newBody,...{mese:Number(resMese.data[0].mese),anno:Number(resAnno.data[0])}});
+                    }
+                    // reset del body sia list che download
+                    setBodyGetLista({...newBody,...{mese:Number(resMese.data[0].mese),anno:Number(resAnno.data[0])}});
+                    setBodyDownload({...newBody,...{mese:Number(resMese.data[0].mese),anno:Number(resAnno.data[0])}});
+                }).catch((err)=>{
+                    manageError(err,dispatchMainState);
+                    setGetNotificheWorking(false);
+           
+                });
+            }
+            if (isInitialRender.current) {
+                isInitialRender.current = false; // Mark as not initial render
+            }
+        //getire l'assenza di mesi
+        }).catch((err)=>{
+            setGetNotificheWorking(false);
+            manageError(err,dispatchMainState);
+ 
+        });
+    };
+
+    ///////////////////////////////////////////////////
+
+   
 
     useEffect(()=>{
         if( 
@@ -210,13 +289,7 @@ const ReportDettaglio : React.FC = () => {
         }
     },[]);
 
-    useEffect(()=>{
 
-        if(bodyGetLista.anno !== 0 && bodyGetLista.anno !== arrayAnni[0]){
-            getMesi(bodyGetLista.anno.toString());
-        }
-
-    },[bodyGetLista.anno]);
 
    
     useEffect(()=>{
@@ -238,12 +311,12 @@ const ReportDettaglio : React.FC = () => {
             if(res.data.length > 0){
                 
                 setBodyGetLista((prev)=> ({...prev, ...{anno:allYearToNumber[0]}}));
-                getMesi(res.data[0]);
+                //getMesi(res.data[0]);
             }
         }).catch((err)=>{
             setGetNotificheWorking(false);
             manageError(err,dispatchMainState);
-            console.log(err,'ERR ANNI');
+        
         });
     };
 
@@ -251,14 +324,14 @@ const ReportDettaglio : React.FC = () => {
         await getMesiNotifiche(token, profilo.nonce,{anno}).then((res)=> {
             setArrayMesi(res.data);
             if(res.data.length > 0){
-                console.log(bodyGetLista,'body body');
+           
                 setBodyGetLista((prev)=> ({...prev, ...{mese:Number(res.data[0].mese)}}));
             }  
             setGetNotificheWorking(false);
         }).catch((err)=>{
             manageError(err,dispatchMainState);
             setGetNotificheWorking(false);
-            console.log(err,'ERR ANNI');
+        
         });
     };
 
@@ -372,32 +445,24 @@ const ReportDettaglio : React.FC = () => {
             return element;
         }
     });
+
+
+    
   
     const onAnnullaFiltri = async () =>{
-        const newBody = {
-            profilo:'',
-            prodotto:'',
-            anno:arrayAnni[0],
-            mese:0,
-            tipoNotifica:null,
-            statoContestazione:[],
-            cap:null,
-            iun:null,
-            idEnti:[],
-            recipientId:null,
-            recapitisti:[],
-            consolidatori:[]
-
-        };
-        getAnni();
+        // to make call equal on initial render
+        isInitialRender.current = true;
+       
         setStatusAnnulla('hidden');
         setValueFgContestazione([]);
         setDataSelect([]);
-        setBodyGetLista(newBody);
-        setBodyDownload(newBody);
         setValueAutocomplete([]);
         deleteFilterToLocalStorageNotifiche();
-        setGetNotificheWorking(true);
+        setPage(0);
+        setRowsPerPage(10);
+
+        funInitialRender();
+        /*
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const {idEnti, recapitisti, consolidatori, ...body} = newBody;
         if(enti){
@@ -453,6 +518,7 @@ const ReportDettaglio : React.FC = () => {
                     manageError(error, dispatchMainState);
                 });
         }
+                */
     };     
 
     const getlistaNotifiche = async (nPage:number, nRow:number, bodyParameter) => {
@@ -532,6 +598,7 @@ const ReportDettaglio : React.FC = () => {
                 setShowLoadingGrid(false);
             }).catch((error)=>{
                 // abilita button filtra e annulla filtri all'arrivo dei dati
+                console.log('dentro error');
                 setNotificheList([]);
                 setTotalNotifiche(0);
                 setGetNotificheWorking(false);
@@ -572,7 +639,6 @@ const ReportDettaglio : React.FC = () => {
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
         setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
       
         setFilterToLocalStorageNotifiche(bodyDownload,textValue,valueAutocomplete, page, parseInt(event.target.value, 10),valueFgContestazione);
         const realPage = page + 1;
