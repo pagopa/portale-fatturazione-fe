@@ -35,6 +35,8 @@ const ReportDettaglio : React.FC = () => {
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 
+    const filters = JSON.parse(localStorage.getItem('filters')|| '{}') ;
+
     const isInitialRender = useRef(true);
  
 
@@ -150,13 +152,13 @@ const ReportDettaglio : React.FC = () => {
 
     useEffect(() => {
 
-        const filters = JSON.parse(localStorage.getItem('filters')|| '{}') ;
-        if(filters){
+        
+        if(Object.keys(filters).length > 0 && filters.pathPage === PathPf.LISTA_NOTIFICHE){
             //funInitialRender(bodyGetLista);
             console.log(filters);
-            funInitialRender(filters.body);
+            funInitialRender(filters.body, true);
         }else{
-            funInitialRender(bodyGetLista);
+            funInitialRender(bodyGetLista, false);
         }
 
         //per prendere i dati dalla local fai una seconda funzione inital render
@@ -211,10 +213,10 @@ const ReportDettaglio : React.FC = () => {
     },[bodyGetLista.anno]);
    
 
-    const funInitialRender = async(newBody) => {
+    const funInitialRender = async(newBody, dataFromLocalStorage) => {
         getProdotti();
         getProfili();
-        getRecapitistConsolidatori();
+       
     
 
         //  setBodyGetLista(newBody);
@@ -225,22 +227,44 @@ const ReportDettaglio : React.FC = () => {
         setGetNotificheWorking(true);
         await getAnniNotifiche(token, profilo.nonce).then(async(resAnno)=> {
             const allYearToNumber = resAnno.data.map( el => Number(el));
+            let annoToSet = resAnno.data[0];
+            if(dataFromLocalStorage){
+                annoToSet = filters.body.anno;
+            }
             setArrayAnni(allYearToNumber);
             if(resAnno.data.length > 0){
             
-                await getMesiNotifiche(token, profilo.nonce,{anno:resAnno.data[0]}).then((resMese)=> {
+                await getMesiNotifiche(token, profilo.nonce,{anno:annoToSet?.toString()}).then((resMese)=> {
                     setArrayMesi(resMese.data);
+                    let meseToSet = resMese.data[0].mese;
+                    let page = 1;
+                    let row = 10;
+                    if(dataFromLocalStorage){
+                       
+                        setTextValue(filters.textAutocomplete);
+                        setValueAutocomplete(filters.valueAutocomplete);
+                        setValueFgContestazione(filters.valueFgContestazione);
+                        setPage(filters.page);
+                        setRowsPerPage(filters.row);
+    
+                        meseToSet = filters.body.mese;
+                        page = filters.page;
+                        row = filters.row;
+                    }
                    
 
                     if(profilo.auth === 'SELFCARE' && mainState.datiFatturazione === true){
                 
-                        getlistaNotifiche( 1, 10,{...body,...{mese:Number(resMese.data[0].mese),anno:Number(resAnno.data[0])}}); 
+                        getlistaNotifiche( page, row,{...body,...{mese:Number(meseToSet),anno:Number(annoToSet)}}); 
+                    }else if((profilo.auth === 'SELFCARE') && (profilo.profilo === 'CON' || profilo.profilo === 'REC')){
+                        getlistaNotifiche( page, row,{...body,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
                     }else if(profilo.auth === 'PAGOPA'){
-                        getlistaNotifichePagoPa( 1, 10,{...newBody,...{mese:Number(resMese.data[0].mese),anno:Number(resAnno.data[0])}});
+                        getlistaNotifichePagoPa( page, row,{...newBody,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
+                        getRecapitistConsolidatori();
                     }
                     // reset del body sia list che download
-                    setBodyGetLista({...newBody,...{mese:Number(resMese.data[0].mese),anno:Number(resAnno.data[0])}});
-                    setBodyDownload({...newBody,...{mese:Number(resMese.data[0].mese),anno:Number(resAnno.data[0])}});
+                    setBodyGetLista({...newBody,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
+                    setBodyDownload({...newBody,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
                     console.log(2);
                 }).catch((err)=>{
                     manageError(err,dispatchMainState);
@@ -292,7 +316,7 @@ const ReportDettaglio : React.FC = () => {
    
     useEffect(()=>{
         const timer = setTimeout(() => {
-            if(textValue.length >= 3){
+            if(textValue?.length >= 3){
                 listaEntiNotifichePageOnSelect();
             }
         }, 800);
@@ -473,7 +497,7 @@ const ReportDettaglio : React.FC = () => {
             recapitisti:[],
             consolidatori:[]
 
-        });
+        },false);
         /*
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const {idEnti, recapitisti, consolidatori, ...body} = newBody;
@@ -534,11 +558,12 @@ const ReportDettaglio : React.FC = () => {
     };     
 
     const getlistaNotifiche = async (nPage:number, nRow:number, bodyParameter) => {
-        setShowLoadingGrid(true);
         // elimino idEnti dal paylod della get notifiche lato selfcare
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const {idEnti, recapitisti, consolidatori, ...newBody} = bodyParameter;
+        console.log('rec rec',profilo.profilo);
         // disable button filtra e annulla filtri nell'attesa dei dati
+        setShowLoadingGrid(true);
         setGetNotificheWorking(true);
         if(enti){
             await listaNotifiche(token,profilo.nonce,nPage, nRow, newBody)
@@ -559,8 +584,10 @@ const ReportDettaglio : React.FC = () => {
                     manageError(error, dispatchMainState);
                 });
         }else if(profilo.profilo === 'REC'){
+           
             await listaNotificheRecapitista(token,profilo.nonce,nPage, nRow, newBody)
                 .then((res)=>{
+                    
                     setNotificheList(res.data.notifiche);
                     setTotalNotifiche(res.data.count);
                     // abilita button filtra e annulla filtri all'arrivo dei dati
@@ -628,7 +655,7 @@ const ReportDettaglio : React.FC = () => {
             body:bodyGetLista,
             textAutocomplete:textValue,
             valueAutocomplete:valueAutocomplete,
-            page:0,
+            page:1,
             row:10,
             valueFgContestazione:valueFgContestazione
         }));
@@ -653,12 +680,14 @@ const ReportDettaglio : React.FC = () => {
             getlistaNotifichePagoPa(realPage,rowsPerPage, bodyGetLista);
         }
         setPage(newPage);
+        console.log('dentro handle');
         localStorage.setItem("filters", JSON.stringify({
-            bodyDownload,
+            pathPage:PathPf.LISTA_NOTIFICHE,
+            body:bodyDownload,
             textValue,
             valueAutocomplete,
-            newPage,
-            rowsPerPage,
+            page:realPage,
+            row:rowsPerPage,
             valueFgContestazione
         }));
        
@@ -671,11 +700,12 @@ const ReportDettaglio : React.FC = () => {
     ) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         localStorage.setItem("filters", JSON.stringify({
-            bodyDownload,
+            pathPage:PathPf.LISTA_NOTIFICHE,
+            body:bodyDownload,
             textValue,
             valueAutocomplete,
             page,
-            rowsPerPage:parseInt(event.target.value, 10),
+            row:parseInt(event.target.value, 10),
             valueFgContestazione
         }));
       
