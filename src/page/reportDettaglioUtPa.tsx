@@ -20,10 +20,16 @@ import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 import { deleteFilterToLocalStorageNotifiche, profiliEnti, setFilterToLocalStorageNotifiche } from "../reusableFunction/actionLocalStorage";
 import { mesiGrid, mesiWithZero, tipoNotifica } from "../reusableFunction/reusableArrayObj";
 import { GlobalContext } from "../store/context/globalContext";
+import { PathPf } from "../types/enum";
 
 const ReportDettaglio : React.FC = () => {
     const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState, mainState,setOpenModalInfo,openModalInfo} = globalContextObj;
+    const {
+        dispatchMainState,
+        mainState,
+        setOpenModalInfo,
+        openModalInfo
+    } = globalContextObj;
 
     const enti = profiliEnti(mainState);
     const token =  mainState.profilo.jwt;
@@ -142,12 +148,19 @@ const ReportDettaglio : React.FC = () => {
     const [arrayAnni,setArrayAnni] = useState<number[]>([]);
     const [arrayMesi,setArrayMesi] = useState<{mese:number,descrizione:string}[]>([]);
 
-   
-
-   
-  
     useEffect(() => {
-        funInitialRender();
+
+        const filters = JSON.parse(localStorage.getItem('filters')|| '{}') ;
+        if(filters){
+            //funInitialRender(bodyGetLista);
+            console.log(filters);
+            funInitialRender(filters.body);
+        }else{
+            funInitialRender(bodyGetLista);
+        }
+
+        //per prendere i dati dalla local fai una seconda funzione inital render
+        
         /*
         const result = getFiltersFromLocalStorageNotifiche();
         
@@ -190,33 +203,19 @@ const ReportDettaglio : React.FC = () => {
 
 
     useEffect(()=>{
-        console.log('fuori', isInitialRender.current);
-        if(bodyGetLista.anno !== 0 &&  isInitialRender.current === false){
+        console.log(bodyGetLista.anno,'change year', isInitialRender.current);
+        if((bodyGetLista.anno !== 0) &&  (isInitialRender.current === false)){
             console.log('dentroo', isInitialRender.current);
             getMesi(bodyGetLista.anno.toString());
         }
     },[bodyGetLista.anno]);
    
 
-    const funInitialRender = async() => {
+    const funInitialRender = async(newBody) => {
         getProdotti();
         getProfili();
         getRecapitistConsolidatori();
-        const newBody = {
-            profilo:'',
-            prodotto:'',
-            anno:0,
-            mese:0,
-            tipoNotifica:null,
-            statoContestazione:[],
-            cap:null,
-            iun:null,
-            idEnti:[],
-            recipientId:null,
-            recapitisti:[],
-            consolidatori:[]
-
-        };
+    
 
         //  setBodyGetLista(newBody);
         //setBodyDownload(newBody)
@@ -242,15 +241,14 @@ const ReportDettaglio : React.FC = () => {
                     // reset del body sia list che download
                     setBodyGetLista({...newBody,...{mese:Number(resMese.data[0].mese),anno:Number(resAnno.data[0])}});
                     setBodyDownload({...newBody,...{mese:Number(resMese.data[0].mese),anno:Number(resAnno.data[0])}});
+                    console.log(2);
                 }).catch((err)=>{
                     manageError(err,dispatchMainState);
                     setGetNotificheWorking(false);
            
                 });
             }
-            if (isInitialRender.current) {
-                isInitialRender.current = false; // Mark as not initial render
-            }
+          
         //getire l'assenza di mesi
         }).catch((err)=>{
             setGetNotificheWorking(false);
@@ -461,7 +459,21 @@ const ReportDettaglio : React.FC = () => {
         setPage(0);
         setRowsPerPage(10);
 
-        funInitialRender();
+        funInitialRender({
+            profilo:'',
+            prodotto:'',
+            anno:0,
+            mese:0,
+            tipoNotifica:null,
+            statoContestazione:[],
+            cap:null,
+            iun:null,
+            idEnti:[],
+            recipientId:null,
+            recapitisti:[],
+            consolidatori:[]
+
+        });
         /*
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const {idEnti, recapitisti, consolidatori, ...body} = newBody;
@@ -611,12 +623,23 @@ const ReportDettaglio : React.FC = () => {
         setPage(0);
         setRowsPerPage(10);
         setBodyDownload(bodyGetLista);
-        setFilterToLocalStorageNotifiche(bodyGetLista,textValue,valueAutocomplete, 0, 10,valueFgContestazione);
+        localStorage.setItem("filters", JSON.stringify({
+            pathPage:PathPf.LISTA_NOTIFICHE,
+            body:bodyGetLista,
+            textAutocomplete:textValue,
+            valueAutocomplete:valueAutocomplete,
+            page:0,
+            row:10,
+            valueFgContestazione:valueFgContestazione
+        }));
+
+        //setFilterToLocalStorageNotifiche(bodyGetLista,textValue,valueAutocomplete, 0, 10,valueFgContestazione);
         if(profilo.auth === 'SELFCARE'){
             getlistaNotifiche(1, 10,bodyGetLista);
         }else{
             getlistaNotifichePagoPa(1, 10,bodyGetLista);
         }  
+      
     };
                 
     const handleChangePage = (
@@ -630,8 +653,16 @@ const ReportDettaglio : React.FC = () => {
             getlistaNotifichePagoPa(realPage,rowsPerPage, bodyGetLista);
         }
         setPage(newPage);
+        localStorage.setItem("filters", JSON.stringify({
+            bodyDownload,
+            textValue,
+            valueAutocomplete,
+            newPage,
+            rowsPerPage,
+            valueFgContestazione
+        }));
        
-        setFilterToLocalStorageNotifiche(bodyDownload,textValue,valueAutocomplete, newPage, rowsPerPage,valueFgContestazione);
+        //setFilterToLocalStorageNotifiche(bodyDownload,textValue,valueAutocomplete, newPage, rowsPerPage,valueFgContestazione);
        
     };
                     
@@ -639,8 +670,17 @@ const ReportDettaglio : React.FC = () => {
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
         setRowsPerPage(parseInt(event.target.value, 10));
+        localStorage.setItem("filters", JSON.stringify({
+            bodyDownload,
+            textValue,
+            valueAutocomplete,
+            page,
+            rowsPerPage:parseInt(event.target.value, 10),
+            valueFgContestazione
+        }));
       
-        setFilterToLocalStorageNotifiche(bodyDownload,textValue,valueAutocomplete, page, parseInt(event.target.value, 10),valueFgContestazione);
+        //setFilterToLocalStorageNotifiche(bodyDownload,textValue,valueAutocomplete, page, parseInt(event.target.value, 10),valueFgContestazione);
+       
         const realPage = page + 1;
         if(profilo.auth === 'SELFCARE'){
             getlistaNotifiche(realPage,parseInt(event.target.value, 10),bodyGetLista);
@@ -891,8 +931,13 @@ const ReportDettaglio : React.FC = () => {
                                     label='Seleziona Prodotto'
                                     labelId="search-by-label"
                                     onChange={(e) => {
+                                        if (isInitialRender.current) {
+                                            console.log(1);
+                                            isInitialRender.current = false; 
+                                        }
                                         const value = Number(e.target.value);
                                         setBodyGetLista((prev)=> ({...prev, ...{anno:value}}));  
+
                                     }}
                                     value={bodyGetLista.anno||''}
                                 >

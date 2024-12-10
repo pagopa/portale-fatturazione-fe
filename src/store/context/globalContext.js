@@ -35,28 +35,23 @@ export const GlobalContext = createContext({
     setShowAlert:(prev) => null,
     setOpenModalInfo:(prev) => null,
     openModalInfo:{open:false,sentence:''},
+    // logic error alert to implement on all error message
     errorAlert:{error:0,message:''},
     setErrorAlert:(prev) => null
-
 });
 
 
 function GlobalContextProvider({children}){
 
     const [mainState, dispatchMainState] = useReducer(reducerMainState,loadState());
-
     const [openBasicModal_DatFat_ModCom, setOpenBasicModal_DatFat_ModCom] = useState({visible:false,clickOn:''});
-  
     const [showAlert, setShowAlert] = useState(true);
-
-
     const [openModalInfo, setOpenModalInfo] = useState({open:false,sentence:''});
-
     //nuova logica errori da implemnetare sull'applicazione  22/11
     const [errorAlert, setErrorAlert] = useState({error:0,message:''});
+  
 
     // eslint-disable-next-line no-undef
-    
     useEffect(() => {
         // eslint-disable-next-line no-undef
         localStorage.setItem('globalState', JSON.stringify(mainState));
@@ -75,7 +70,6 @@ function GlobalContextProvider({children}){
         setOpenModalInfo,
         errorAlert,
         setErrorAlert
-
     };
 
 

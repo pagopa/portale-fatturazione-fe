@@ -44,6 +44,7 @@ const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({ 
             multiple
             onChange={(event, value) => {
                 const arrayIdContestazioni = value.map(obj=> obj.id);
+                console.log(value,999);
                 setValueFgContestazione(value);
                 setBodyGetLista((prev:BodyListaNotifiche) => ({...prev,...{statoContestazione:arrayIdContestazioni}}));
                 
