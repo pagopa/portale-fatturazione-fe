@@ -129,28 +129,11 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                                 
                     }}}
                     component="div"
-                    page={page}
+                    page={total > 0 ? page:0}
                     count={total}
                     rowsPerPage={rows}
                     onPageChange={changePage}
                     onRowsPerPageChange={changeRow}
-                    SelectProps={{
-                        disabled: disabled
-                    }}
-                    backIconButtonProps={
-                        disabled
-                            ? {
-                                disabled: disabled
-                            }
-                            : undefined
-                    }
-                    nextIconButtonProps={
-                        disabled
-                            ? {
-                                disabled: disabled
-                            }
-                            : undefined
-                    }
                 ></TablePagination>
             </div>
         </div>

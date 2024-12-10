@@ -214,6 +214,7 @@ const ReportDettaglio : React.FC = () => {
    
 
     const funInitialRender = async(newBody, dataFromLocalStorage) => {
+        setGetNotificheWorking(true);
         getProdotti();
         getProfili();
        
@@ -224,7 +225,7 @@ const ReportDettaglio : React.FC = () => {
        
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const {idEnti, recapitisti, consolidatori, ...body} = newBody;
-        setGetNotificheWorking(true);
+       
         await getAnniNotifiche(token, profilo.nonce).then(async(resAnno)=> {
             const allYearToNumber = resAnno.data.map( el => Number(el));
             let annoToSet = resAnno.data[0];
@@ -234,11 +235,27 @@ const ReportDettaglio : React.FC = () => {
             setArrayAnni(allYearToNumber);
             if(resAnno.data.length > 0){
             
-                await getMesiNotifiche(token, profilo.nonce,{anno:annoToSet?.toString()}).then((resMese)=> {
+                await getMesiNotifiche(token, profilo.nonce,{anno:annoToSet?.toString()}).then(async(resMese)=> {
                     setArrayMesi(resMese.data);
                     let meseToSet = resMese.data[0].mese;
                     let page = 1;
                     let row = 10;
+                  
+                   
+
+                    if(profilo.auth === 'SELFCARE' && mainState.datiFatturazione === true){
+                
+                        await getlistaNotifiche( page, row,{...body,...{mese:Number(meseToSet),anno:Number(annoToSet)}}); 
+                    }else if((profilo.auth === 'SELFCARE') && (profilo.profilo === 'CON' || profilo.profilo === 'REC')){
+                        await getlistaNotifiche( page, row,{...body,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
+                    }else if(profilo.auth === 'PAGOPA'){
+                        await getlistaNotifichePagoPa( page, row,{...newBody,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
+                        await getRecapitistConsolidatori();
+                    }
+                    // reset del body sia list che download
+                    setBodyGetLista({...newBody,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
+                    setBodyDownload({...newBody,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
+
                     if(dataFromLocalStorage){
                        
                         setTextValue(filters.textAutocomplete);
@@ -251,20 +268,6 @@ const ReportDettaglio : React.FC = () => {
                         page = filters.page;
                         row = filters.row;
                     }
-                   
-
-                    if(profilo.auth === 'SELFCARE' && mainState.datiFatturazione === true){
-                
-                        getlistaNotifiche( page, row,{...body,...{mese:Number(meseToSet),anno:Number(annoToSet)}}); 
-                    }else if((profilo.auth === 'SELFCARE') && (profilo.profilo === 'CON' || profilo.profilo === 'REC')){
-                        getlistaNotifiche( page, row,{...body,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
-                    }else if(profilo.auth === 'PAGOPA'){
-                        getlistaNotifichePagoPa( page, row,{...newBody,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
-                        getRecapitistConsolidatori();
-                    }
-                    // reset del body sia list che download
-                    setBodyGetLista({...newBody,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
-                    setBodyDownload({...newBody,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
                     console.log(2);
                 }).catch((err)=>{
                     manageError(err,dispatchMainState);
@@ -473,15 +476,9 @@ const ReportDettaglio : React.FC = () => {
   
     const onAnnullaFiltri = async () =>{
         // to make call equal on initial render
+        localStorage.removeItem("filters");
+        
         isInitialRender.current = true;
-       
-        setStatusAnnulla('hidden');
-        setValueFgContestazione([]);
-        setDataSelect([]);
-        setValueAutocomplete([]);
-        deleteFilterToLocalStorageNotifiche();
-        setPage(0);
-        setRowsPerPage(10);
 
         funInitialRender({
             profilo:'',
@@ -498,6 +495,17 @@ const ReportDettaglio : React.FC = () => {
             consolidatori:[]
 
         },false);
+       
+        setStatusAnnulla('hidden');
+        setValueFgContestazione([]);
+        setDataSelect([]);
+        setValueAutocomplete([]);
+        //deleteFilterToLocalStorageNotifiche();
+        
+        setPage(0);
+        setRowsPerPage(10);
+
+      
         /*
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const {idEnti, recapitisti, consolidatori, ...body} = newBody;
