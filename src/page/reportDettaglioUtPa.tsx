@@ -154,8 +154,7 @@ const ReportDettaglio : React.FC = () => {
 
         
         if(Object.keys(filters).length > 0 && filters.pathPage === PathPf.LISTA_NOTIFICHE){
-            //funInitialRender(bodyGetLista);
-            console.log(filters);
+            //funInitialRender(bodyGetLista)
             funInitialRender(filters.body, true);
         }else{
             funInitialRender(bodyGetLista, false);
@@ -205,9 +204,7 @@ const ReportDettaglio : React.FC = () => {
 
 
     useEffect(()=>{
-        console.log(bodyGetLista.anno,'change year', isInitialRender.current);
         if((bodyGetLista.anno !== 0) &&  (isInitialRender.current === false)){
-            console.log('dentroo', isInitialRender.current);
             getMesi(bodyGetLista.anno.toString());
         }
     },[bodyGetLista.anno]);
@@ -268,7 +265,6 @@ const ReportDettaglio : React.FC = () => {
                         page = filters.page;
                         row = filters.row;
                     }
-                    console.log(2);
                 }).catch((err)=>{
                     manageError(err,dispatchMainState);
                     setGetNotificheWorking(false);
@@ -569,7 +565,6 @@ const ReportDettaglio : React.FC = () => {
         // elimino idEnti dal paylod della get notifiche lato selfcare
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const {idEnti, recapitisti, consolidatori, ...newBody} = bodyParameter;
-        console.log('rec rec',profilo.profilo);
         // disable button filtra e annulla filtri nell'attesa dei dati
         setShowLoadingGrid(true);
         setGetNotificheWorking(true);
@@ -645,7 +640,7 @@ const ReportDettaglio : React.FC = () => {
                 setShowLoadingGrid(false);
             }).catch((error)=>{
                 // abilita button filtra e annulla filtri all'arrivo dei dati
-                console.log('dentro error');
+        
                 setNotificheList([]);
                 setTotalNotifiche(0);
                 setGetNotificheWorking(false);
@@ -688,7 +683,7 @@ const ReportDettaglio : React.FC = () => {
             getlistaNotifichePagoPa(realPage,rowsPerPage, bodyGetLista);
         }
         setPage(newPage);
-        console.log('dentro handle');
+      
         localStorage.setItem("filters", JSON.stringify({
             pathPage:PathPf.LISTA_NOTIFICHE,
             body:bodyDownload,
@@ -970,7 +965,7 @@ const ReportDettaglio : React.FC = () => {
                                     labelId="search-by-label"
                                     onChange={(e) => {
                                         if (isInitialRender.current) {
-                                            console.log(1);
+                                           
                                             isInitialRender.current = false; 
                                         }
                                         const value = Number(e.target.value);
