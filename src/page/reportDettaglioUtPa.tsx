@@ -937,6 +937,7 @@ const ReportDettaglio : React.FC = () => {
                 <div className="col-3 ">
                     <Box sx={{width:'80%', marginLeft:'20px', display:'flex', justifyContent:'end'}}  >
                         <Button  style={{
+                            width:'160px',
                             backgroundColor:backgroundColorButtonScadenzario
                         }} variant="contained"  onClick={()=> setShowModalScadenziario(true)} >
                             <VisibilityIcon sx={{marginRight:'10px'}}></VisibilityIcon>

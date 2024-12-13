@@ -112,5 +112,18 @@ export const getTipologieFatturePagoPa = async (token:string, nonce:string , bod
     return response;
 };
 
+export const downloadReportRelPagoPa = async ( token:string ,nonce:string) => {
+    const response = await fetch(`${url}/api/rel/pagopa/nonfatturate?nonce=${nonce}`, 
+        {
+            headers: {
+                Authorization: 'Bearer '+token
+            },
+            method: 'GET',
+        });
+    return response;
+};
+
+
+
 
 

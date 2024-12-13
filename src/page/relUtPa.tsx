@@ -1,26 +1,27 @@
 import React, { useContext, useEffect, useState } from "react";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
-import { Button, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import SelectTipologiaFattura from "../components/reusableComponents/select/selectTipologiaFattura";
 import GridCustom from "../components/reusableComponents/grid/gridCustom";
-import { BodyRel, Rel, RelPageProps } from "../types/typeRel";
+import { BodyRel, Rel } from "../types/typeRel";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { manageError} from "../api/api";
 import { useNavigate } from "react-router";
 import DownloadIcon from '@mui/icons-material/Download';
 import { downloadListaRel, getListaRel, getTipologieFatture} from "../api/apiSelfcare/relSE/api";
-import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, downloadQuadraturaRelPagopa, getListaRelPagoPa, getTipologieFatturePagoPa } from "../api/apiPagoPa/relPA/api";
+import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, downloadQuadraturaRelPagopa, downloadReportRelPagoPa, getListaRelPagoPa, getTipologieFatturePagoPa } from "../api/apiPagoPa/relPA/api";
 import SelectStatoPdf from "../components/rel/selectStatoPdf";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { saveAs } from "file-saver";
 import { PathPf } from "../types/enum";
-import { deleteFilterToLocalStorageRel, getFiltersFromLocalStorageRel, getProfilo, getStatusApp, getToken, profiliEnti, setFilterToLocalStorageRel } from "../reusableFunction/actionLocalStorage";
+import { deleteFilterToLocalStorageRel, getFiltersFromLocalStorageRel, profiliEnti, setFilterToLocalStorageRel } from "../reusableFunction/actionLocalStorage";
 import { OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { mesiGrid, mesiWithZero } from "../reusableFunction/reusableArrayObj";
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 import { GlobalContext } from "../store/context/globalContext";
+import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
 
 
 
@@ -368,12 +369,39 @@ const RelPage : React.FC = () =>{
                 manageError(err,dispatchMainState);
             });
     };
+
+
+
+    const downloadReport = async () => {
+        setShowLoading(true);
+        await downloadReportRelPagoPa(token, profilo.nonce).then(response => response.blob()).then((res)=>{
+            const fileName = `Report regolare esecuzione non fatturate.xlsx`;
+            saveAs(res,fileName );
+            setShowLoading(false);
+        }).catch((err)=>{
+            manageError(err,dispatchMainState);
+            setShowLoading(false);
+        });
+    };
+
+
     const  hiddenAnnullaFiltri = bodyRel.tipologiaFattura === null && bodyRel.idEnti?.length === 0 && bodyRel.caricata === null; 
     return (
        
         <div className="mx-5">
-            <div className="marginTop24 ">
-                <Typography variant="h4">Regolare Esecuzione</Typography>
+            <div className="d-flex marginTop24 ">
+                <div className="col-9">
+                    <Typography variant="h4">Regolare Esecuzione</Typography>
+                </div>
+                <div className="col-3 ">
+                    <Box sx={{width:'80%', marginLeft:'20px', display:'flex', justifyContent:'end'}}  >
+                        <Button sx={{width:'250px'}} variant="contained"  onClick={()=> downloadReport()} >
+                            <ArrowCircleDownIcon sx={{marginRight:'10px'}}></ArrowCircleDownIcon>
+                    Report non fatturate
+                        </Button>
+                    </Box>
+                </div>
+               
             </div>
             <div className="mt-5">
                 <div className="row">
