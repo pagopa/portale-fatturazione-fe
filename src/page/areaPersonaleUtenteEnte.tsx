@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext} from 'react';
-import { manageError, redirect } from '../api/api';
+import { manageError} from '../api/api';
 import { useNavigate} from 'react-router';
 import '../style/areaPersonaleUtenteEnte.css';
 import { Button } from '@mui/material';
@@ -26,7 +26,7 @@ import { profiliEnti, } from '../reusableFunction/actionLocalStorage';
 import SuspenseDatiFatturazione from '../components/areaPersonale/skeletonDatiFatturazione';
 import { GlobalContext } from '../store/context/globalContext';
 import ModalInfo from '../components/reusableComponents/modals/modalInfo';
-import { error } from 'console';
+
 
         
         
@@ -48,6 +48,10 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
     const enti = profiliEnti(mainState);
+
+    if(!profilo.idEnte && profilo.auth === 'PAGOPA'){
+        navigate(PathPf.LISTA_DATI_FATTURAZIONE);
+    }
             
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({

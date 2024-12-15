@@ -101,6 +101,12 @@ const Fatturazione : React.FC = () =>{
        
         getTipologieFatturazione();
         setValueMultiselectTipologie([]);
+
+        // added 15/12
+        setGridData([]);
+        setDisableButtonSap(true);
+        setDisableButtonReset(true);
+        // added 15/12
       
     },[bodyFatturazione.mese,bodyFatturazione.anno,bodyFatturazione.cancellata]);
 
