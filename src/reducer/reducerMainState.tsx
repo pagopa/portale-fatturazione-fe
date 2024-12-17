@@ -1,3 +1,4 @@
+import { redirect } from "../api/api";
 import { MainState } from "../types/typesGeneral";
 export interface ActionReducerType{
     type:string,
@@ -31,6 +32,7 @@ const initialState =  {
 
 
 export function reducerMainState(mainState:MainState, action:ActionReducerType) {
+
     const updateInfoObj = action.value;
     if (action.type === 'MODIFY_MAIN_STATE') {
     
@@ -41,7 +43,13 @@ export function reducerMainState(mainState:MainState, action:ActionReducerType) 
 }
 
 export function loadState (){
-    const savedState = localStorage.getItem('globalState');
-    const globalIsNotEmpty = Object.keys(JSON.parse(savedState||'{}')).length > 0;
-    return (savedState && globalIsNotEmpty) ? JSON.parse(savedState) : initialState;
+    try{
+        const savedState = localStorage.getItem('globalState');
+        const globalIsNotEmpty = Object.keys(JSON.parse(savedState||'{}')).length > 0;
+        return (savedState && globalIsNotEmpty) ? JSON.parse(savedState) : initialState;
+    }catch(err){
+        localStorage.clear();
+        return initialState;
+    }
+   
 }

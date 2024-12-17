@@ -1,28 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
-const BundleError: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [error, setError] = useState<Error | null>(null);
+const  BundleError = ({ children }: { children: React.ReactNode }) => {
+    const [hasError, setHasError] = useState(false);
 
-    const resetError = () => setError(null);
-
-    useEffect(() => {
-    // Example for logging error to an external service
-        if (error) {
-            console.error("Caught an error:", error);
-        }
-    }, [error]);
+    const handleError = (error: Error) => {
+        console.error("Caught an error:", error);
+        setHasError(true);
+    };
 
     try {
-        if (error) throw error;
+        if (hasError) throw new Error("Something went wrong!");
         return <>{children}</>;
-    } catch (err) {
-        return (
-            <div role="alert" style={{ padding: "1rem", textAlign: "center" }}>
-                <h2>Oops! An error occurred</h2>
-                <p>{(err as Error).message}</p>
-                <button onClick={resetError}>Retry</button>
-            </div>
-        );
+    } catch (error) {
+        handleError(error as Error);
+        return <div>Oops! An error occurred.</div>;
     }
 };
 

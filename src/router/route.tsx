@@ -30,7 +30,7 @@ const RouteProfile = () => {
     const globalContextObj = useContext(GlobalContext);
     const {mainState} = globalContextObj;
     const isEnte = profiliEnti(mainState);
-    const isLoggedWithoutProfile = mainState.prodotti.length > 0 && mainState.authenticated === true && !mainState.profilo.auth;
+    const isLoggedWithoutProfile = mainState.prodotti?.length > 0 && mainState.authenticated === true && !mainState.profilo.auth;
     const isProdPnProfile = mainState.profilo.prodotto === 'prod-pn' && mainState.prodotti.length > 0 && mainState.authenticated;
     const isPagoPaProfile = mainState.profilo.prodotto === 'prod-pagopa' && mainState.prodotti.length > 0 && mainState.authenticated;
     const isRececapitistaOrConsolidatore = (mainState.profilo?.profilo === 'REC' || mainState.profilo?.profilo ==='CON') && mainState.authenticated;
