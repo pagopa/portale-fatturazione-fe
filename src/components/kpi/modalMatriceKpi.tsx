@@ -19,24 +19,24 @@ const style = {
     borderRadius:'20px'
 };
 
-const ModalMatriceAccertamenti = ({setOpen, open, data, value, setValue,downloadDocMatrice}) => {
+const ModalMatriceKpi = ({setOpen, open}) => {
  
-
+    // data, value, setValue,downloadDocMatrice
     const dataFine = useRef('');
 
    
     const handleClose = () =>{
         setOpen(false);
-        setValue('');
+        //setValue('');
         dataFine.current = '';
     }; 
 
     const onButtonScarica = () => {
-
+        /*
         const objSelected : MatriceArray = data.find(el => el.dataInizioValidita === value);
 
         downloadDocMatrice(objSelected.dataInizioValidita,objSelected.dataFineValidita);
-        handleClose();
+        handleClose();*/
     };
 
 
@@ -53,7 +53,7 @@ const ModalMatriceAccertamenti = ({setOpen, open, data, value, setValue,download
                     <div className='d-flex justify-content-between'>
                         <div className='m-auto'>
                             <Typography  id="modal-modal-title" variant="h6" component="h2">
-                              Scarica la matrice recapitisti 
+                              Scarica la matrice KPI 
                             </Typography>
                         </div>
 
@@ -63,39 +63,38 @@ const ModalMatriceAccertamenti = ({setOpen, open, data, value, setValue,download
                             </div>
                         </div>
                     </div>
-                    <div className=''>
-                        <div className='mt-5'>
-                            <div className="d-flex justify-content-center">
-                                <FormControl color="primary" focused  sx={{width:'70%'}}>
-                                    <InputLabel id="demo-simple-select-label">Data inizio</InputLabel>
-                                    <Select
-                                        labelId="demo-simple-select-label"
-                                        id="select_matrice"
-                                        value={value}
-                                        label="Data inizio"
-                                        onChange={(e)=>{ 
+                    <div className='mt-5'>
+                        <div className="d-flex justify-content-center">
+                            <FormControl color="primary" focused  sx={{width:'70%'}}>
+                                <InputLabel id="demo-simple-select-label">Anno</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="select_matrice"
+                                    value={1992}
+                                    label="Anno"
+                                    onChange={(e)=>{ 
+                                        /*
                                             setValue(e.target.value);
                                             const objSelected = data.find(el => el.dataInizioValidita === e.target.value);
                                             dataFine.current = new Date(objSelected.dataFineValidita).toLocaleString().split(",")[0];
-                                        }}
-                                    >
-                                        {data.map((el)=>{
-                                            return  <MenuItem key={el.dataInizioValidita} value={el.dataInizioValidita}>{new Date(el.dataInizioValidita).toLocaleString().split(",")[0]}</MenuItem>;
-                                        })}
-                                    </Select>
-                                </FormControl>
-                            </div>
-                            <div className='d-flex justify-content-center mt-5'>
-                                {dataFine.current !== '' && <TextField sx={{width:'70%'}} label="Data fine" color="error" focused value={dataFine.current} />}
-                            </div>
+                                            */
+                                    }}
+                                >
+                                    {[1,2].map((el)=>{
+                                        return <h1>1992</h1>; //<MenuItem key={el.dataInizioValidita} value={el.dataInizioValidita}>{new Date(el.dataInizioValidita).toLocaleString().split(",")[0]}</MenuItem>;
+                                    })}
+                                </Select>
+                            </FormControl>
                         </div>
-                       
+                        <div className='d-flex justify-content-center mt-5'>
+                            {/*dataFine.current !== '' && <TextField sx={{width:'70%'}} label="Quarter" color="error" focused value={dataFine.current} />*/}
+                            <TextField sx={{width:'70%'}} label="Quarter"   value={dataFine.current} />
+                        </div>
                     </div>
-                   
                     <div className='container_buttons_modal d-flex justify-content-center mt-5'>
                         <Button 
                             sx={{marginRight:'20px'}} 
-                            disabled={value === ''}
+                            disabled={false}//disabled={value === ''}
                             variant="contained"
                             onClick={()=>{
                                 onButtonScarica();
@@ -109,4 +108,4 @@ const ModalMatriceAccertamenti = ({setOpen, open, data, value, setValue,download
         </div>
     );
 };
-export default  ModalMatriceAccertamenti;
+export default  ModalMatriceKpi;

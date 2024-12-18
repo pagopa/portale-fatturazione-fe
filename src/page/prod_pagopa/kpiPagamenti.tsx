@@ -16,6 +16,7 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { DocContabili } from "../../components/reusableComponents/grid/gridCollapsible/gridCustomCollapsiblePa";
 import { HeaderCollapsible } from "../../types/typeFatturazione";
 import { GlobalContext } from "../../store/context/globalContext";
+import ModalMatriceKpi from "../../components/kpi/modalMatriceKpi";
 
 
 
@@ -68,6 +69,7 @@ const KpiPagamenti:React.FC = () =>{
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [showPopUpMatrice,setShowPopUpMatrice] = useState(false);
 
     const [count, setCount] = useState(0);
     const [dataPaginated,setDataPaginated] = useState<DocContabili[]>([]);
@@ -249,13 +251,27 @@ const KpiPagamenti:React.FC = () =>{
         {name:"Arrow",align:"center",id:7},
         {name:"Arrow",align:"center",id:8}];
       
+
+
  
 
     return(
         <div className="mx-5">
             {/*title container start */}
-            <div className="marginTop24 ">
-                <Typography variant="h4">KPI Pagamenti</Typography>
+            <div className="d-flex marginTop24 ">
+                <div className="col-9">
+                    <Typography variant="h4">KPI Pagamenti</Typography>
+                </div>
+                <div className="col-3 ">
+                    <Box sx={{width:'80%', marginLeft:'20px', display:'flex', justifyContent:'end'}}  >
+                        <Button  style={{
+                            width:'160px'
+                        }} variant="outlined"  onClick={()=> setShowPopUpMatrice(true)} >
+                           
+                    Matrice KPI
+                        </Button>
+                    </Box>
+                </div>
             </div>
             {/*title container end */}
             <div className="row mb-5 mt-5" >
@@ -447,6 +463,14 @@ const KpiPagamenti:React.FC = () =>{
                 setOpen={setShowLoading}
                 sentence={'Downloading...'} >
             </ModalLoading>
+            <ModalMatriceKpi 
+                open={showPopUpMatrice} 
+                setOpen={setShowPopUpMatrice}
+                //data={dataMatrice}
+                // setValue={setValueSelectMatrice}
+                //value={valueSelectMatrice}
+                //downloadDocMatrice={downloadDocMatrice}
+            ></ModalMatriceKpi>
         </div>
     );
 }; 
