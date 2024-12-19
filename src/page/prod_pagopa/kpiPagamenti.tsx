@@ -7,7 +7,7 @@ import ModalLoading from "../../components/reusableComponents/modals/modalLoadin
 import { manageError } from "../../api/api";
 import { AutocompleteMultiselect, OptionMultiselectCheckboxQarter, OptionMultiselectCheckboxPsp, } from "../../types/typeAngraficaPsp";
 import { getListaNamePsp } from "../../api/apiPagoPa/anagraficaPspPA/api";
-import { deleteFilterToLocalStorageDocConPA, getFilterPageRowDocConPA, getInfoPageFromLocalStorageDocConPA, setFilterPageRowDocConPA, setFilterToLocalStorageDocConPA } from "../../reusableFunction/actionLocalStorage";
+import { setFilterPageRowDocConPA, setFilterToLocalStorageDocConPA } from "../../reusableFunction/actionLocalStorage";
 import MultiselectWithKeyValue from "../../components/anagraficaPsp/multiselectKeyValue";
 import { RequestBodyListaDocContabiliPagopa } from "../../types/typeDocumentiContabili";
 import { downloadDocContabili,  getListaDocumentiContabiliPa, getQuartersDocContabiliPa, getYearsDocContabiliPa } from "../../api/apiPagoPa/documentiContabiliPA/api";
@@ -23,8 +23,6 @@ import ModalMatriceKpi from "../../components/kpi/modalMatriceKpi";
 
 const KpiPagamenti:React.FC = () =>{
 
-    const localStorageFilters = getInfoPageFromLocalStorageDocConPA();
-    const localStorageFilterPageRow = getFilterPageRowDocConPA();
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState} = globalContextObj;
  
@@ -110,14 +108,10 @@ const KpiPagamenti:React.FC = () =>{
     },[textValue]);
 
     useEffect(()=>{
-      
-        if(bodyGetLista.year !== '' && localStorageFilters?.body?.year !== bodyGetLista.year){
-            
-            setValueQuarters([]);
-            setBodyGetLista((prev)=>({...prev,...{quarters:[]}}));
+
+        if(bodyGetLista.year !== ''){
+            getQuarters();
         }
-        getQuarters();
-        
     },[bodyGetLista.year]);
 
 
@@ -164,24 +158,10 @@ const KpiPagamenti:React.FC = () =>{
             .then((res)=>{
                 setYearOnSelect(res.data);
                 if(res.data.length > 0){
-
-                    if(Object.keys(localStorageFilterPageRow).length > 0){
-                        setPage(localStorageFilterPageRow.page);
-                        setRowsPerPage(localStorageFilterPageRow.rowsPerPage);
-                    }
-                   
-                    if(Object.keys(localStorageFilters).length > 0){
-                        setBodyGetLista(localStorageFilters.body);
-                        setFiltersDownload(localStorageFilters.body);
-                        setValueAutocomplete(localStorageFilters.valueAutocomplete);
-                        setTextValue(localStorageFilters.textValue);
-                        getListaDocGrid(localStorageFilters.body);
-                        setValueQuarters(localStorageFilters.valueQuarters);
-                    }else{
-                        setBodyGetLista((prev) => ({...prev,...{year:res.data[0]}}));
-                        setFiltersDownload((prev) => ({...prev,...{year:res.data[0]}}));
-                        getListaDocGrid({...bodyGetLista,...{year:res.data[0]}});
-                    }
+                    setBodyGetLista((prev) => ({...prev,...{year:res.data[0]}}));
+                    setFiltersDownload((prev) => ({...prev,...{year:res.data[0]}}));
+                    
+                    getListaDocGrid({...bodyGetLista,...{year:res.data[0]}});
                 }
             }).catch(((err)=>{
                 manageError(err,dispatchMainState); 
@@ -193,7 +173,9 @@ const KpiPagamenti:React.FC = () =>{
         await getQuartersDocContabiliPa(token, profilo.nonce,{year:bodyGetLista.year})
             .then((res)=>{
                 setDataSelectQuarter(res.data);
+                setValueQuarters([]);
             }).catch(((err)=>{
+                setValueQuarters([]);
                 manageError(err,dispatchMainState); 
             }));
     };
@@ -232,10 +214,6 @@ const KpiPagamenti:React.FC = () =>{
         getListaDocGrid(bodyGetLista); 
         setPage(0);
         setRowsPerPage(10);
-        setFilterPageRowDocConPA(0,10);
-        setFilterToLocalStorageDocConPA(bodyGetLista,textValue,valueAutocomplete,valueQuarters);
-        //handleModifyMainState({filterDocContabili:{body:bodyGetLista,valueAutocomplete:valueAutocomplete, valueQuarters:valueQuarters, infoPage:{page:0,row:10}}});
-        //setFilterToLocalStorageRel(bodyRel,textValue,valueAutocomplete, 0, 10,valuetipologiaFattura);
     };
    
                 
@@ -470,7 +448,7 @@ const KpiPagamenti:React.FC = () =>{
                 open={showPopUpMatrice} 
                 setOpen={setShowPopUpMatrice}
                 anni={yearOnSelect}
-                quarters={dataSelectQuarter}
+                setShowLoading={setShowLoading}
                 // setValue={setValueSelectMatrice}
                 //value={valueSelectMatrice}
                 //downloadDocMatrice={downloadDocMatrice}

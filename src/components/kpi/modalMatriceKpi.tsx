@@ -3,10 +3,15 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
-import { useRef } from 'react';
-import { MatriceArray } from '../../page/accertamenti';
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { useEffect,  useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
+import { getQuartersDocContabiliPa } from '../../api/apiPagoPa/documentiContabiliPA/api';
+import { GlobalContext } from '../../store/context/globalContext';
+import { OptionMultiselectCheckboxQarter } from '../../types/typeAngraficaPsp';
+import { manageError } from '../../api/api';
+import { getMatriceKpi } from '../../api/apiPagoPa/kpi/api';
+import { saveAs } from "file-saver";
 const style = {
     position: 'absolute' as const,
     top: '50%',
@@ -19,20 +24,57 @@ const style = {
     borderRadius:'20px'
 };
 
-const ModalMatriceKpi = ({setOpen, open,anni,quarters}) => {
+const ModalMatriceKpi = ({setOpen, open,anni,setShowLoading}) => {
+
+    const globalContextObj = React.useContext(GlobalContext);
+    const {dispatchMainState,mainState} = globalContextObj;
+ 
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
  
     // data, value, setValue,downloadDocMatric
     const [annoSelected, setAnnoSelected] = React.useState('');
-    const [quarterSelected, setQuarterSelected] = React.useState('');
 
-    console.log(quarters);
+    const [quarterSelected, setQuarterSelected] = React.useState('');
+    const [dataSelectQuarter, setDataSelectQuarter] = useState<OptionMultiselectCheckboxQarter[]>([]);
+
+
     const handleClose = () =>{
         setOpen(false);
         setAnnoSelected('');
         setQuarterSelected('');
     }; 
 
-    const onButtonScarica = () => {
+    const getQuarters = async () =>{
+       
+        await getQuartersDocContabiliPa(token, profilo.nonce,{year:annoSelected})
+            .then((res)=>{
+                setDataSelectQuarter(res.data);
+                setQuarterSelected('');
+            }).catch(((err)=>{
+                setQuarterSelected('');
+                manageError(err,dispatchMainState); 
+            }));
+    };
+
+    useEffect(()=>{
+      
+        if(annoSelected !== '' && open){
+            getQuarters();
+        }
+    },[annoSelected]);
+
+    const onButtonScarica = async() => {
+
+        setShowLoading(true);
+        await getMatriceKpi(token, profilo.nonce,'').then(response => response.blob()).then((res)=>{
+            const fileName = `Report kpi.xlsx`;
+            saveAs(res,fileName );
+            setShowLoading(false);
+        }).catch((err)=>{
+            manageError(err,dispatchMainState);
+            setShowLoading(false);
+        });
         /*
         const objSelected : MatriceArray = data.find(el => el.dataInizioValidita === value);
 
@@ -106,7 +148,7 @@ const ModalMatriceKpi = ({setOpen, open,anni,quarters}) => {
                                             */
                                     }}
                                 >
-                                    {quarters.map((el,i)=>{
+                                    {dataSelectQuarter.map((el,i)=>{
                                         return <MenuItem key={i} value={el.value}>{el.quarter}</MenuItem>;
                                     })}
                                 </Select>
