@@ -381,8 +381,8 @@ const KpiPagamenti:React.FC = () =>{
                     <Box sx={{width:'80%'}} >
                         <TextField
                             fullWidth
-                            label='Codice ABI'
-                            placeholder='Codice ABI'
+                            label='Provider name'
+                            placeholder='Provider name'
                             value={bodyGetLista.abi}
                             onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{abi:e.target.value}}))}            
                         />
@@ -395,8 +395,8 @@ const KpiPagamenti:React.FC = () =>{
                     <div>
                         <Button 
                             onClick={()=> {
-                             
-                                onButtonFiltra();
+                                console.log('filtri');
+                                //onButtonFiltra();
                             } } 
                             sx={{ marginTop: 'auto', marginBottom: 'auto'}}
                             variant="contained"> Filtra
@@ -404,6 +404,8 @@ const KpiPagamenti:React.FC = () =>{
                         {statusAnnulla === 'hidden'? null :
                             <Button
                                 onClick={()=>{
+                                    console.log('annulla');
+                                    /*
                                     const newBody = {
                                         contractIds:[],
                                         membershipId: '',
@@ -420,7 +422,7 @@ const KpiPagamenti:React.FC = () =>{
                                     setPage(0);
                                     setRowsPerPage(10);
                                     deleteFilterToLocalStorageDocConPA();
-                                 
+                                 */
                                 } }
                                 sx={{marginLeft:'24px'}} >
                         Annulla filtri
@@ -433,7 +435,8 @@ const KpiPagamenti:React.FC = () =>{
                 {
                     gridData.length > 0 &&
                         <Button onClick={() =>
-                            onDownloadButton()
+                            //onDownloadButton()
+                            console.log('download')
                         }
                         disabled={getListaLoading}
                         >
