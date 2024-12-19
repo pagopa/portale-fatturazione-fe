@@ -19,16 +19,17 @@ const style = {
     borderRadius:'20px'
 };
 
-const ModalMatriceKpi = ({setOpen, open}) => {
+const ModalMatriceKpi = ({setOpen, open,anni,quarters}) => {
  
-    // data, value, setValue,downloadDocMatrice
-    const dataFine = useRef('');
+    // data, value, setValue,downloadDocMatric
+    const [annoSelected, setAnnoSelected] = React.useState('');
+    const [quarterSelected, setQuarterSelected] = React.useState('');
 
-   
+    console.log(quarters);
     const handleClose = () =>{
         setOpen(false);
-        //setValue('');
-        dataFine.current = '';
+        setAnnoSelected('');
+        setQuarterSelected('');
     }; 
 
     const onButtonScarica = () => {
@@ -70,25 +71,46 @@ const ModalMatriceKpi = ({setOpen, open}) => {
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="select_matrice"
-                                    value={1992}
+                                    value={annoSelected||''}
                                     label="Anno"
                                     onChange={(e)=>{ 
+                                        
+                                        setAnnoSelected(e.target.value);
                                         /*
-                                            setValue(e.target.value);
                                             const objSelected = data.find(el => el.dataInizioValidita === e.target.value);
                                             dataFine.current = new Date(objSelected.dataFineValidita).toLocaleString().split(",")[0];
                                             */
                                     }}
                                 >
-                                    {[1,2].map((el)=>{
-                                        return <h1>1992</h1>; //<MenuItem key={el.dataInizioValidita} value={el.dataInizioValidita}>{new Date(el.dataInizioValidita).toLocaleString().split(",")[0]}</MenuItem>;
+                                    {anni.map((el)=>{
+                                        return <MenuItem key={el} value={el}>{el}</MenuItem>;
                                     })}
                                 </Select>
                             </FormControl>
                         </div>
                         <div className='d-flex justify-content-center mt-5'>
                             {/*dataFine.current !== '' && <TextField sx={{width:'70%'}} label="Quarter" color="error" focused value={dataFine.current} />*/}
-                            <TextField sx={{width:'70%'}} label="Quarter"   value={dataFine.current} />
+                            <FormControl color="primary" focused  sx={{width:'70%'}}>
+                                <InputLabel id="demo-simple-select-label">Quarter</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="select_matrice"
+                                    value={quarterSelected||''}
+                                    label="Quarter"
+                                    onChange={(e)=>{ 
+                                        
+                                        setQuarterSelected(e.target.value);
+                                        /*
+                                            const objSelected = data.find(el => el.dataInizioValidita === e.target.value);
+                                            dataFine.current = new Date(objSelected.dataFineValidita).toLocaleString().split(",")[0];
+                                            */
+                                    }}
+                                >
+                                    {quarters.map((el,i)=>{
+                                        return <MenuItem key={i} value={el.value}>{el.quarter}</MenuItem>;
+                                    })}
+                                </Select>
+                            </FormControl>
                         </div>
                     </div>
                     <div className='container_buttons_modal d-flex justify-content-center mt-5'>

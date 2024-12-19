@@ -401,11 +401,11 @@ const KpiPagamenti:React.FC = () =>{
                             sx={{ marginTop: 'auto', marginBottom: 'auto'}}
                             variant="contained"> Filtra
                         </Button>
-                        {statusAnnulla === 'hidden'? null :
+                        { /*statusAnnulla === 'hidden'? null :
                             <Button
                                 onClick={()=>{
                                     console.log('annulla');
-                                    /*
+                                    
                                     const newBody = {
                                         contractIds:[],
                                         membershipId: '',
@@ -422,11 +422,11 @@ const KpiPagamenti:React.FC = () =>{
                                     setPage(0);
                                     setRowsPerPage(10);
                                     deleteFilterToLocalStorageDocConPA();
-                                 */
+                               
                                 } }
                                 sx={{marginLeft:'24px'}} >
                         Annulla filtri
-                            </Button>}
+                            </Button>*/}  
                     </div>
                 </div>
             </div>
@@ -469,7 +469,8 @@ const KpiPagamenti:React.FC = () =>{
             <ModalMatriceKpi 
                 open={showPopUpMatrice} 
                 setOpen={setShowPopUpMatrice}
-                //data={dataMatrice}
+                anni={yearOnSelect}
+                quarters={dataSelectQuarter}
                 // setValue={setValueSelectMatrice}
                 //value={valueSelectMatrice}
                 //downloadDocMatrice={downloadDocMatrice}
