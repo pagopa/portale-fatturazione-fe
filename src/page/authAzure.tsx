@@ -5,6 +5,7 @@ import { useMsal } from "@azure/msal-react";
 import {useState, useEffect, useContext} from 'react';
 import { useNavigate } from "react-router";
 import { GlobalContext } from "../store/context/globalContext";
+import Loader from "../components/reusableComponents/loader";
 
 
 
@@ -130,6 +131,11 @@ const AuthAzure : React.FC<any> = () =>{
 
     return (
         <>
+            <div className="d-flex justify-content-center align-items-center" style={{height: '100vh'}}>
+                <div id='loader_on_gate_pages'>
+                    <Loader sentence={'Autenticazione in corso...'}></Loader> 
+                </div>
+            </div>
         </>
     ); 
 };

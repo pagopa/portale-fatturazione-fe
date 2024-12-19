@@ -5,6 +5,7 @@ import { LoginProps} from '../types/typesGeneral';
 import { getDatiModuloCommessa } from '../api/apiSelfcare/moduloCommessaSE/api';
 import { PathPf } from '../types/enum';
 import { GlobalContext } from '../store/context/globalContext';
+import Loader from '../components/reusableComponents/loader';
 
 // Blank page utilizzata per l'accesso degli utenti tramite  Selfcare
 
@@ -147,7 +148,13 @@ const Auth : React.FC<any> = () =>{
     },[]);
    
     return (
-        <></>
+        <>
+            <div className="d-flex justify-content-center align-items-center" style={{height: '100vh'}}>
+                <div id='loader_on_gate_pages'>
+                    <Loader sentence={'Autenticazione in corso...'}></Loader> 
+                </div>
+            </div>
+        </>
     );
 };
 

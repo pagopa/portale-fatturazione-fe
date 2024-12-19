@@ -5,6 +5,7 @@ import {InteractionStatus,
 } from "@azure/msal-browser";
 
 import { GlobalContext } from "../store/context/globalContext";
+import Loader from "../components/reusableComponents/loader";
 
 //Pagina di accesso con l'autenticazione AZURE
 
@@ -68,6 +69,11 @@ const Azure : React.FC<any> = () =>{
 
     return (
         <>
+            <div className="d-flex justify-content-center align-items-center" style={{height: '100vh'}}>
+                <div id='loader_on_gate_pages'>
+                    <Loader sentence={'Autenticazione in corso...'}></Loader> 
+                </div>
+            </div>
         </>
     );
 };
