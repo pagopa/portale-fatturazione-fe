@@ -26,4 +26,20 @@ export const getListaKpi = async (token:string, nonce:string , body:RequestBodyK
     return response;
 };
 
+export const downloadKpiList = async (token:string, nonce:string,body: RequestBodyKpi) => {
+    const response = await fetch(`${url}/api/v2/pagopa/kpipagamenti/document?nonce=${nonce}`, 
+        {
+            headers: {
+                Authorization: 'Bearer '+token,
+                'Content-type':'application/json'
+            },
+            method: 'POST',
+            body:JSON.stringify(body),
+        });
+    
+    return response;
+};
+
+
+
 

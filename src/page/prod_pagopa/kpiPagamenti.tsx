@@ -15,8 +15,9 @@ import { HeaderCollapsible } from "../../types/typeFatturazione";
 import { GlobalContext } from "../../store/context/globalContext";
 import ModalMatriceKpi from "../../components/kpi/modalMatriceKpi";
 import { kpiObj, RequestBodyKpi } from "../../types/typeKpi";
-import { getListaKpi } from "../../api/apiPagoPa/kpi/api";
+import { downloadKpiList, getListaKpi } from "../../api/apiPagoPa/kpi/api";
 import RowBaseKpi from "../../components/reusableComponents/grid/gridCollapsible/rowBaseKpi";
+import { saveAs } from "file-saver";
 
 
 
@@ -181,23 +182,21 @@ const KpiPagamenti:React.FC = () =>{
     };
 
     
-    /*
+
     const onDownloadButton = async() =>{
         setShowLoading(true);
         
-        await downloadDocContabili(token,profilo.nonce, filtersDownload).then(response =>{
-            if(response.status !== 200){
-                setShowLoading(false);
-                manageError({response:{request:{status:Number(response.status)}},message:''},dispatchMainState);
-            }else{
+        await downloadKpiList(token,profilo.nonce, filtersDownload).then(response =>{
+            if (response.ok) {
                 return response.blob();
             }
+            throw '404';
         }).then((res) => {
             let fileName = '';
             if(filtersDownload.contractIds.length === 1 || gridData.length === 1){
-                fileName = `Documenti contabili / ${gridData[0].name}.xlsx`;
+                fileName = `Lista pagamenti KPI/${filtersDownload.year}/${gridData[0].name}.xlsx`;
             }else{
-                fileName = `Documenti contabili.xlsx`;
+                fileName = `Lista pagamenti KPI/${filtersDownload.year}.xlsx`;
             }
             saveAs( res,fileName );
             setShowLoading(false);
@@ -207,7 +206,7 @@ const KpiPagamenti:React.FC = () =>{
         });
     };
 
-  */
+
 
     const onButtonFiltra = () =>{
         setFiltersDownload(bodyGetLista);
@@ -411,10 +410,9 @@ const KpiPagamenti:React.FC = () =>{
                 {
                     gridData.length > 0 &&
                         <Button onClick={() =>
-                            //onDownloadButton()
-                            console.log('download')
+                            onDownloadButton()
                         }
-                        disabled={true}//getListaLoading}
+                        disabled={gridData.length < 1 ||getListaLoading}
                         >
                 Download Risultati
                             <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
