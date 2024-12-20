@@ -9,7 +9,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { getQuartersDocContabiliPa } from '../../api/apiPagoPa/documentiContabiliPA/api';
 import { GlobalContext } from '../../store/context/globalContext';
 import { OptionMultiselectCheckboxQarter } from '../../types/typeAngraficaPsp';
-import { manageError } from '../../api/api';
+import { manageError, manageErrorDownload } from '../../api/api';
 import { getMatriceKpi } from '../../api/apiPagoPa/kpi/api';
 import { saveAs } from "file-saver";
 const style = {
@@ -43,6 +43,7 @@ const ModalMatriceKpi = ({setOpen, open,anni,setShowLoading}) => {
         setOpen(false);
         setAnnoSelected('');
         setQuarterSelected('');
+        setDataSelectQuarter([]);
     }; 
 
     const getQuarters = async () =>{
@@ -65,21 +66,28 @@ const ModalMatriceKpi = ({setOpen, open,anni,setShowLoading}) => {
     },[annoSelected]);
 
     const onButtonScarica = async() => {
-
+        handleClose();
         setShowLoading(true);
-        await getMatriceKpi(token, profilo.nonce,'').then(response => response.blob()).then((res)=>{
-            const fileName = `Report kpi.xlsx`;
-            saveAs(res,fileName );
-            setShowLoading(false);
-        }).catch((err)=>{
-            manageError(err,dispatchMainState);
-            setShowLoading(false);
-        });
-        /*
-        const objSelected : MatriceArray = data.find(el => el.dataInizioValidita === value);
-
-        downloadDocMatrice(objSelected.dataInizioValidita,objSelected.dataFineValidita);
-        handleClose();*/
+       
+        await getMatriceKpi(token, profilo.nonce,quarterSelected)
+            .then(response =>{
+                if (response.ok) {
+                    return response.blob();
+                }
+                throw '404';
+            })
+            .then((res)=>{
+                console.log(res);
+                const fileName = `Matrice KPI ${quarterSelected}.xlsx`;
+                saveAs(res,fileName );
+                setShowLoading(false);
+            }).catch((err)=>{
+                manageErrorDownload(err,dispatchMainState);
+                setShowLoading(false);
+            });
+        
+      
+        
     };
 
 
@@ -137,6 +145,7 @@ const ModalMatriceKpi = ({setOpen, open,anni,setShowLoading}) => {
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="select_matrice"
+                                    disabled={dataSelectQuarter.length < 1}
                                     value={quarterSelected||''}
                                     label="Quarter"
                                     onChange={(e)=>{ 
@@ -158,7 +167,7 @@ const ModalMatriceKpi = ({setOpen, open,anni,setShowLoading}) => {
                     <div className='container_buttons_modal d-flex justify-content-center mt-5'>
                         <Button 
                             sx={{marginRight:'20px'}} 
-                            disabled={false}//disabled={value === ''}
+                            disabled={annoSelected === '' || quarterSelected === ''}//disabled={value === ''}
                             variant="contained"
                             onClick={()=>{
                                 onButtonScarica();

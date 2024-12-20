@@ -9,13 +9,14 @@ import { AutocompleteMultiselect, OptionMultiselectCheckboxQarter, OptionMultise
 import { getListaNamePsp } from "../../api/apiPagoPa/anagraficaPspPA/api";
 import { deleteFilterToLocalStorageDocConPA, getFilterPageRowDocConPA, getInfoPageFromLocalStorageDocConPA, setFilterPageRowDocConPA, setFilterToLocalStorageDocConPA } from "../../reusableFunction/actionLocalStorage";
 import MultiselectWithKeyValue from "../../components/anagraficaPsp/multiselectKeyValue";
-import { RequestBodyListaDocContabiliPagopa } from "../../types/typeDocumentiContabili";
+import { DocContabili, RequestBodyListaDocContabiliPagopa } from "../../types/typeDocumentiContabili";
 import { downloadDocContabili, downloadFinancialReportDocContabili, getListaDocumentiContabiliPa, getQuartersDocContabiliPa, getYearsDocContabiliPa } from "../../api/apiPagoPa/documentiContabiliPA/api";
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import CollapsibleTablePa, { DocContabili } from "../../components/reusableComponents/grid/gridCollapsible/gridCustomCollapsiblePa";
+import CollapsibleTablePa from "../../components/reusableComponents/grid/gridCollapsible/gridCustomCollapsiblePa";
 import { HeaderCollapsible } from "../../types/typeFatturazione";
 import { GlobalContext } from "../../store/context/globalContext";
+import RowBase from "../../components/reusableComponents/grid/gridCollapsible/rowBase";
 
 
 
@@ -476,6 +477,7 @@ const DocumentiContabili:React.FC = () =>{
                     setRowsPerPage={setRowsPerPage}
                     count={count}
                     dataPaginated={dataPaginated}
+                    RowComponent={RowBase}
                 ></CollapsibleTablePa>
             </div>
             <div>
@@ -484,6 +486,11 @@ const DocumentiContabili:React.FC = () =>{
                 open={showLoading} 
                 setOpen={setShowLoading}
                 sentence={'Downloading...'} >
+            </ModalLoading>
+            <ModalLoading 
+                open={getListaLoading} 
+                setOpen={setGetListaLoading}
+                sentence={'Loading...'} >
             </ModalLoading>
         </div>
     );

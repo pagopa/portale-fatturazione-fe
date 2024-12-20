@@ -454,6 +454,11 @@ const AnagraficaPsp:React.FC = () =>{
                 setOpen={setShowLoading}
                 sentence={'Downloading...'} >
             </ModalLoading>
+            <ModalLoading 
+                open={getListaLoading} 
+                setOpen={setGetListaLoading}
+                sentence={'Loading...'} >
+            </ModalLoading>
         </div>
     );
 }; 

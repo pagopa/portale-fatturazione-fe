@@ -2,8 +2,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { MainState } from "./typesGeneral";
 import { ActionReducerType } from "../reducer/reducerMainState";
-import { DocContabili } from "../components/reusableComponents/grid/gridCollapsible/gridCustomCollapsiblePa";
-
 export interface BodyFatturazione{
     anno:number,
     mese:number,

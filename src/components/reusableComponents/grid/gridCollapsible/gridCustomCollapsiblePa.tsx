@@ -13,38 +13,9 @@ import RowBase from './rowBase';
 import { MainState } from '../../../../types/typesGeneral';
 import { GlobalContext } from '../../../../store/context/globalContext';
 import { setFilterPageRowDocConPA } from '../../../../reusableFunction/actionLocalStorage';
+import { DocContabili } from '../../../../types/typeDocumentiContabili';
 
 
-export interface DocContabili {
-    key:string
-    name: string,
-    contractId: string,
-    tipoDoc: string,
-    codiceAggiuntivo: string,
-    vatCode: string,
-    valuta: string,
-    id:number,
-    numero: string,
-    data: string,
-    bollo: string,
-    riferimentoData: string,
-    yearQuarter: string,
-    posizioni: [
-        {
-            category: string,
-            progressivoRiga: number,
-            codiceArticolo: string,
-            descrizioneRiga: string,
-            quantita:number,
-            importo: number,
-            codIva: string,
-            condizioni: string,
-            causale: string,
-            indTipoRiga: string
-        }
-    ],
-    reports: string[]
-}
 
 export interface GridCollapsibleBase{
     data:DocContabili[],
@@ -60,7 +31,7 @@ export interface GridCollapsibleBase{
 }
 
 
-const CollapsibleTablePa = ({headerNames,page,setPage,rowsPerPage,setRowsPerPage,count,dataPaginated}) => {
+const CollapsibleTablePa = ({headerNames,page,setPage,rowsPerPage,setRowsPerPage,count,dataPaginated,RowComponent}) => {
 
    
    
@@ -116,13 +87,9 @@ const CollapsibleTablePa = ({headerNames,page,setPage,rowsPerPage,setRowsPerPage
     return (
         <>
             <div style={{overflowX:'auto'}}>
-                
                 <Card sx={{width: 'auto'}}  >
-                    
                     <TableContainer component={Paper}>
-                        
                         <Table aria-label="collapsible table">
-                           
                             <TableHead sx={{backgroundColor:'#f2f2f2'}}>
                                 <TableRow>
                                     <TableCell padding="checkbox">
@@ -143,14 +110,13 @@ const CollapsibleTablePa = ({headerNames,page,setPage,rowsPerPage,setRowsPerPage
 
                             </TableBody>: dataPaginated.map((row) => {
                                 return(
-                                    <RowBase key={row.key} 
+                                    <RowComponent key={row.key} 
                                         row={row}
                                         handleModifyMainState={handleModifyMainState}
-                                    ></RowBase>
+                                    ></RowComponent>
                                 ); })}
                         </Table>
                     </TableContainer>
-                   
                 </Card>
             </div>
             <div className="mt-3"> 
