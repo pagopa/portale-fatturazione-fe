@@ -32,7 +32,7 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
     };
    
     const navigate = useNavigate();
-    const token =  mainState.profilo.jwt;
+    const token =  mainState.profil.jwt;
     const profilo =  mainState.profilo;
 
     const [prodotti, setProdotti] = useState([{nome:''}]);

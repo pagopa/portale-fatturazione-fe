@@ -7,6 +7,7 @@ import { useContext, useState } from "react";
 import { Button, Typography } from "@mui/material";
 import DivProdotto from "../components/authSelectProdottiPa/divProdotto";
 import { GlobalContext } from "../store/context/globalContext";
+import Loader from "../components/reusableComponents/loader";
 
 const AuthAzureProdotti : React.FC = () => {
 
@@ -15,6 +16,7 @@ const AuthAzureProdotti : React.FC = () => {
     const navigate = useNavigate();
 
     const [productSelected, setProductSelected] = useState<ProfiloObject|null>(null);
+    const [loading, setLoading] = useState(false);
    
 
     const handleModifyMainState = (valueObj) => {
@@ -29,7 +31,9 @@ const AuthAzureProdotti : React.FC = () => {
 
 
     const getProfilo = async ()=>{
+        
         if(productSelected?.jwt){
+            setLoading(true);
             await getAuthProfilo(productSelected.jwt)
                 .then((resp) => {
                     const storeProfilo = resp.data;
@@ -61,8 +65,9 @@ const AuthAzureProdotti : React.FC = () => {
                     }else if(productSelected.prodotto === 'prod-pn'){
                         navigate(PathPf.LISTA_DATI_FATTURAZIONE);
                     }
-
+                    setLoading(false);
                 }).catch(()=> {
+                    setLoading(false);
                     window.location.href = redirect;
                 });
         }
@@ -108,6 +113,11 @@ const AuthAzureProdotti : React.FC = () => {
                     </div>
                 </div>
                 <div className="col">
+                    <div className="d-flex justify-content-center align-items-center">
+                        <div id='loader_on_gate_pages'>
+                            <Loader sentence={'Attendere...'}></Loader> 
+                        </div>
+                    </div>
                 </div>
             </div>
             }
