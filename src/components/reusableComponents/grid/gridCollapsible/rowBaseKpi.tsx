@@ -10,10 +10,22 @@ import LinkIcon from '@mui/icons-material/Link';
 const RowBaseKpi = ({row,handleModifyMainState}) => {
     const [open, setOpen] = useState(false);
     const navigate = useNavigate();
+
+    const disableIcon = row.link === '' || row.link === null;
    
 
-    const handleOnDetail = () => {  
-        console.log('go to link');
+    const handleOnDownloadLink = (url,name) => {
+        console.log(row);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = name;
+        document.body.appendChild(link);
+
+        link.click();
+
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        //saveAs(url,name);     
     };
  
     return(
@@ -41,10 +53,10 @@ const RowBaseKpi = ({row,handleModifyMainState}) => {
                 <Tooltip title={row.kpiList}>
                     <TableCell align='center' >{ row.kpiList?.length > 15 ? row.kpiList.slice(0, 15) + '...' : row.kpiList}</TableCell>
                 </Tooltip>
-                <TableCell align='center' onClick={()=> handleOnDetail()}>
-                    <Tooltip title="Link">
-                        <IconButton>
-                            <LinkIcon sx={{ color: '#1976D2'}} /> 
+                <TableCell align='center' onClick={()=> handleOnDownloadLink(row.link, 'KPI')}>
+                    <Tooltip   title="Link">
+                        <IconButton  disabled={disableIcon}>
+                            <LinkIcon sx={disableIcon ?{color:'grey'} :{ color: '#1976D2'}}  /> 
                         </IconButton>
                     </Tooltip>
                 </TableCell>
