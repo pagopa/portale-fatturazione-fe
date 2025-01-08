@@ -15,6 +15,8 @@ function  BundleError({ error, resetErrorBoundary }){
         line2 = error.stack?.split("\n")[1];
     }
 
+    const infoDate = new Date().toISOString();
+
     return  ( <ThemeProvider theme={theme}>
         <div className='container d-flex align-items-center justify-content-center' style={{height: '100vh'}}>
             <div>
@@ -41,7 +43,6 @@ function  BundleError({ error, resetErrorBoundary }){
                     <Typography sx={{textAlign:'center'}} variant="body1">
                     Contattare l'amministratore del sito web e fornire i seguenti dati:
                         <div>
-                            <ListItemText primary="Data e ora di emissione" />
                             <ListItemText primary="Screen dell'errore mostrato" />
                         </div>
                     </Typography>
@@ -53,6 +54,9 @@ function  BundleError({ error, resetErrorBoundary }){
                     </Typography>
                     <Typography variant="h6" sx={{textAlign:'center', marginBottom:'24px'}} >
                         {line2}
+                    </Typography>
+                    <Typography variant="h6" sx={{textAlign:'center', marginBottom:'24px'}} >
+                        {infoDate}
                     </Typography>
                 </div>
                 <div className='container d-flex align-items-center justify-content-center mt-5'>

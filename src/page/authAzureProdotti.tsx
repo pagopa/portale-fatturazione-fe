@@ -103,23 +103,23 @@ const AuthAzureProdotti : React.FC = () => {
                 </div>
             </div>
             {productSelected && 
-            <div className="row mt-3">
+                <div className="row mt-3">
 
-                <div className="col">
-                </div>
-                <div className="col">
-                    <div className=" d-flex align-items-center justify-content-center mt-5">
-                        <Button variant="contained" onClick={()=> getProfilo()}>Accedi</Button>
+                    <div className="col">
+                    </div>
+                    <div className="col">
+                        {!loading ? <div className=" d-flex align-items-center justify-content-center mt-5">
+                            <Button variant="contained" onClick={()=> getProfilo()}>Accedi</Button>
+                        </div>:
+                            <div className="d-flex justify-content-center align-items-center mt-5">
+                                <div id='loader_on_gate_pages'>
+                                    <Loader sentence={'Attendere...'}></Loader> 
+                                </div>
+                            </div>}
+                    </div>
+                    <div className="col">
                     </div>
                 </div>
-                <div className="col">
-                    <div className="d-flex justify-content-center align-items-center">
-                        <div id='loader_on_gate_pages'>
-                            <Loader sentence={'Attendere...'}></Loader> 
-                        </div>
-                    </div>
-                </div>
-            </div>
             }
             
 
