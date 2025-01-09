@@ -10,6 +10,7 @@ import Paper from '@mui/material/Paper';
 import { getTipologieScadenziario } from '../../api/apiPagoPa/notifichePA/api';
 import { ActionReducerType } from '../../reducer/reducerMainState';
 import { GlobalContext } from '../../store/context/globalContext';
+import CloseIcon from '@mui/icons-material/Close';
 
 
 const style = {
@@ -82,18 +83,19 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce,d
                 
                 <Box sx={style}>
                   
-                    <div className='d-flex justify-content-between'>
-                        <div className='ms-3 mt-auto mb-auto'>
+                    <div className='d-flex justify-content-between ms-3 mt-auto mb-auto w-100' >
+                        <div className='d-flex justify-content-center align-items-center'>
                             <Typography  id="modal-modal-title" variant="h6" component="h2">
                                 Scadenzario
                             </Typography>
                         </div>
-                        <div>
-                            <Button variant="contained"  onClick={()=> handleClose() }> X </Button>
+                        
+                        <div className='icon_close me-5'>
+                            <CloseIcon onClick={handleClose} id='close_icon' sx={{color:'#17324D'}}></CloseIcon>
                         </div>
+                       
                     </div>
                     <div className='mt-3'>
-                        
                         <TableContainer component={Paper}>
                             <Table aria-label="simple table">
                                 <div style={{overflowY: "auto",maxHeight: "75vh"}}>
