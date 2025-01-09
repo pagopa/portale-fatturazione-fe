@@ -228,12 +228,12 @@ const ReportDettaglio : React.FC = () => {
             if(resAnno.data.length > 0){
             
                 await getMesiNotifiche(token, profilo.nonce,{anno:annoToSet?.toString()}).then(async(resMese)=> {
-                    const makeCamelCaseMonth = resMese.data.map(el =>{
-                        el.descrizione = el.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase();
-                        return el;
-                    } );
-                    setArrayMesi(makeCamelCaseMonth);
-                    let meseToSet = makeCamelCaseMonth[0].mese;
+                    /*const makeCamelCaseMonth = res.data.map(el =>{
+                el.descrizione = el.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase();
+                return el;
+            } );*/
+                    setArrayMesi(resMese.data);
+                    let meseToSet = resMese.data[0].mese;
                     let page = 1;
                     let row = 10;
                   
@@ -339,14 +339,14 @@ const ReportDettaglio : React.FC = () => {
 
     const getMesi = async (anno) => {
         await getMesiNotifiche(token, profilo.nonce,{anno}).then((res)=> {
-            const makeCamelCaseMonth = res.data.map(el =>{
+            /*const makeCamelCaseMonth = res.data.map(el =>{
                 el.descrizione = el.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase();
                 return el;
-            } );
-            setArrayMesi(makeCamelCaseMonth);
+            } );*/
+            setArrayMesi(res.data);
             if(res.data.length > 0){
            
-                setBodyGetLista((prev)=> ({...prev, ...{mese:Number(makeCamelCaseMonth[0].mese)}}));
+                setBodyGetLista((prev)=> ({...prev, ...{mese:Number(res.data[0].mese)}}));
             }  
             setGetNotificheWorking(false);
         }).catch((err)=>{
