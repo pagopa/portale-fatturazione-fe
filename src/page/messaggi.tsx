@@ -62,14 +62,14 @@ const Messaggi : React.FC<any> = () => {
         anno:null,
         mese:null,
         tipologiaDocumento:[],
-        letto:false
+        letto:null
     });
 
     const [bodyCentroMessaggiOnFiltra, setBodyCentroMessaggiOnFiltra] = useState<FilterMessaggi>({
         anno:null,
         mese:null,
         tipologiaDocumento:[],
-        letto:false
+        letto:null
     });
 
     const [gridData, setGridData] = useState<Messaggio[]>([]);
@@ -220,11 +220,14 @@ const Messaggi : React.FC<any> = () => {
                                 <Select
                                     labelId="select-lettura"
                                     id="select-lettura"
-                                    value={bodyCentroMessaggi.letto?.toString()||''}
+                                    value={bodyCentroMessaggi.letto?.toString()||'tutti'}
                                     label="Lettura"
                                     onChange={(e:SelectChangeEvent)=> {
+                                        console.log(e.target.value,'dd');
                                         let val;
-                                        if(e.target.value === 'true'){
+                                        if(e.target.value === 'tutti'){
+                                            val = null;
+                                        }else if(e.target.value === 'true'){
                                             val = true;
                                         }else{
                                             val = false;
@@ -232,6 +235,7 @@ const Messaggi : React.FC<any> = () => {
                                         setBodyCentroMessaggi((prev)=>({...prev,...{letto:val}}));
                                     }}
                                 >
+                                    <MenuItem value={'tutti'}>Tutti</MenuItem>
                                     <MenuItem value={'true'}>Si</MenuItem>
                                     <MenuItem value={'false'}>No</MenuItem>
                                 </Select>
@@ -302,19 +306,19 @@ const Messaggi : React.FC<any> = () => {
                                 anno:null,
                                 mese:null,
                                 tipologiaDocumento:[],
-                                letto: false
+                                letto: null
                             });
                             setBodyCentroMessaggi({
                                 anno:null,
                                 mese:null,
                                 tipologiaDocumento:[],
-                                letto:false
+                                letto:null
                             });
                             setBodyCentroMessaggiOnFiltra({
                                 anno:null,
                                 mese:null,
                                 tipologiaDocumento:[],
-                                letto:false
+                                letto:null
                             });
                             setPage(0);
                             setRowsPerPage(10);
