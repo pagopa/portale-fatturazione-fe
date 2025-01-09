@@ -200,7 +200,7 @@ export interface SelectUltimiDueAnniProps{
 
 export interface SelectMeseProps{
     values:{
-        anno:number,
+        anno:number|null,
         mese:number|null,
         tipologiaFattura?:null| string|string[],
         idEnti?:string[],

@@ -211,10 +211,11 @@ const DocumentiContabili:React.FC = () =>{
             }
         }).then((res) => {
             let fileName = '';
-            if(filtersDownload.contractIds.length === 1 || gridData.length === 1){
-                fileName = `Documenti contabili / ${gridData[0].name}.xlsx`;
+            const stringQuarterSelected = filtersDownload.quarters.map(el => "Q" + el.slice(5)).join("_");
+            if(filtersDownload.contractIds.length === 1){
+                fileName = `Documenti contabili/${gridData[0].name}/${gridData[0].riferimentoData.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
             }else{
-                fileName = `Documenti contabili.xlsx`;
+                fileName = `Documenti contabili/${gridData[0].riferimentoData.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
             }
             saveAs( res,fileName );
             setShowLoading(false);
@@ -233,13 +234,13 @@ const DocumentiContabili:React.FC = () =>{
             }else{
                 return response.blob();
             }
-           
         }).then((res) => {
             let fileName = '';
-            if(filtersDownload.contractIds.length === 1 || gridData.length === 1){
-                fileName = `Financial report PDND /${gridData[0].name}/${gridData[0].riferimentoData.substring(0, 4)}.xlsx`;
+            const stringQuarterSelected = filtersDownload.quarters.map(el => "Q" + el.slice(5)).join("_");
+            if(filtersDownload.contractIds.length === 1){
+                fileName = `Financial report PFND/${gridData[0].name}/${gridData[0].riferimentoData.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
             }else{
-                fileName = `Financial report PDND /${gridData[0].riferimentoData.substring(0, 4)}.xlsx`;
+                fileName = `Financial report PFND/${gridData[0].riferimentoData.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
             }
             saveAs( res,fileName );
             setShowLoading(false);
@@ -315,6 +316,7 @@ const DocumentiContabili:React.FC = () =>{
                 <div className="col-3">
                     <Autocomplete
                         multiple
+                        limitTags={2}
                         onChange={(event, value) => {
                             const arrayId = value.map(el => el.value);
                             setBodyGetLista((prev) => ({...prev,...{quarters:arrayId}}));

@@ -1,10 +1,8 @@
 import {Box, Button, Chip, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TablePagination, Typography } from "@mui/material";
-import { Dispatch, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
 import { downloadMessaggioPagoPaCsv, downloadMessaggioPagoPaZipExel, getListaMessaggi, readMessaggioPagoPa} from "../api/apiPagoPa/centroMessaggi/api";
-import { getProfilo, getToken } from "../reusableFunction/actionLocalStorage";
-import { MainState } from "../types/typesGeneral";
 import { ButtonNaked, TimelineNotification, TimelineNotificationContent, TimelineNotificationDot, TimelineNotificationItem, TimelineNotificationOppositeContent, TimelineNotificationSeparator } from "@pagopa/mui-italia";
 import { TimelineConnector } from "@mui/lab";
 import AttachFileIcon from '@mui/icons-material/AttachFile';
@@ -14,7 +12,6 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { month } from "../reusableFunction/reusableArrayObj";
-import { ActionReducerType } from "../reducer/reducerMainState";
 import { GlobalContext } from "../store/context/globalContext";
 
 
@@ -44,13 +41,8 @@ export interface Messaggio {
     idReport: number
 }
 
-interface MessaggiProps {
-    mainState:MainState,
-    dispatchMainState:Dispatch<ActionReducerType>
-}
-
 interface FilterMessaggi{
-    anno:number,
+    anno:number|null,
     mese:null|number,
     tipologiaDocumento:string[]|[],
     letto:null|boolean
@@ -63,25 +55,25 @@ const Messaggi : React.FC<any> = () => {
     const {mainState} = globalContextObj;
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
-    const currentYear = (new Date()).getFullYear();
+
 
   
     const [bodyCentroMessaggi, setBodyCentroMessaggi] = useState<FilterMessaggi>({
-        anno:currentYear,
+        anno:null,
         mese:null,
         tipologiaDocumento:[],
-        letto:null
+        letto:false
     });
 
     const [bodyCentroMessaggiOnFiltra, setBodyCentroMessaggiOnFiltra] = useState<FilterMessaggi>({
-        anno:currentYear,
+        anno:null,
         mese:null,
         tipologiaDocumento:[],
-        letto:null
+        letto:false
     });
 
     const [gridData, setGridData] = useState<Messaggio[]>([]);
-
+    const [getListaLoading, setGetListaLoading] = useState(false);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [countMessaggi, setCountMessaggi] = useState(0);
@@ -90,10 +82,13 @@ const Messaggi : React.FC<any> = () => {
    
 
     const getMessaggi = async (pa,ro,body) =>{
+        setGetListaLoading(true);
         await getListaMessaggi(token,profilo.nonce,body,pa,ro).then((res)=>{
+            setGetListaLoading(false);
             setGridData(res.data.messaggi);
             setCountMessaggi(res.data.count);
         }).catch((err)=>{
+            setGetListaLoading(false);
             setGridData([]);
             setCountMessaggi(0);
             manageError(err,globalContextObj.dispatchMainState);
@@ -218,6 +213,31 @@ const Messaggi : React.FC<any> = () => {
             </div>
             <div className="mt-5">
                 <div className="row">
+                    <div  className="col-3">
+                        <Box sx={{width:'80%'}}>
+                            <FormControl fullWidth>
+                                <InputLabel id="select lettura">Lettura</InputLabel>
+                                <Select
+                                    labelId="select-lettura"
+                                    id="select-lettura"
+                                    value={bodyCentroMessaggi.letto?.toString()||''}
+                                    label="Lettura"
+                                    onChange={(e:SelectChangeEvent)=> {
+                                        let val;
+                                        if(e.target.value === 'true'){
+                                            val = true;
+                                        }else{
+                                            val = false;
+                                        }
+                                        setBodyCentroMessaggi((prev)=>({...prev,...{letto:val}}));
+                                    }}
+                                >
+                                    <MenuItem value={'true'}>Si</MenuItem>
+                                    <MenuItem value={'false'}>No</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Box>
+                    </div>
                     <div className="col-3">
                         <SelectUltimiDueAnni values={bodyCentroMessaggi} setValue={setBodyCentroMessaggi}></SelectUltimiDueAnni>
                     </div>
@@ -261,32 +281,6 @@ const Messaggi : React.FC<any> = () => {
                         </Box>
                     </div>
                     */}
-                    <div  className="col-3">
-                        <Box sx={{width:'80%', marginLeft:'20px'}}>
-                            <FormControl fullWidth>
-                                <InputLabel id="select lettura">Lettura</InputLabel>
-                                <Select
-                                    labelId="select-lettura"
-                                    id="select-lettura"
-                                    value={bodyCentroMessaggi.letto?.toString()||''}
-                                    label="Lettura"
-                                    onChange={(e:SelectChangeEvent)=> {
-                                        let val;
-                                        if(e.target.value === 'true'){
-                                            val = true;
-                                        }else{
-                                            val = false;
-                                        }
-                                        setBodyCentroMessaggi((prev)=>({...prev,...{letto:val}}));
-                                    }}
-                                >
-                                    <MenuItem value={'true'}>Si</MenuItem>
-                                    <MenuItem value={'false'}>No</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </div>
-                    
                 </div>
                 <div className="d-flex mt-5">
                    
@@ -305,22 +299,22 @@ const Messaggi : React.FC<any> = () => {
                     <Button
                         onClick={()=>{
                             getMessaggi(1,10,{
-                                anno:currentYear,
+                                anno:null,
                                 mese:null,
                                 tipologiaDocumento:[],
-                                letto: null
+                                letto: false
                             });
                             setBodyCentroMessaggi({
-                                anno:currentYear,
+                                anno:null,
                                 mese:null,
                                 tipologiaDocumento:[],
-                                letto:null
+                                letto:false
                             });
                             setBodyCentroMessaggiOnFiltra({
-                                anno:currentYear,
+                                anno:null,
                                 mese:null,
                                 tipologiaDocumento:[],
-                                letto:null
+                                letto:false
                             });
                             setPage(0);
                             setRowsPerPage(10);
@@ -441,6 +435,11 @@ const Messaggi : React.FC<any> = () => {
                 open={showDownloading} 
                 setOpen={setShowDownloading}
                 sentence={'Downloading...'} >
+            </ModalLoading>
+            <ModalLoading 
+                open={getListaLoading} 
+                setOpen={setGetListaLoading}
+                sentence={'Loading...'} >
             </ModalLoading>
         </div>
     );

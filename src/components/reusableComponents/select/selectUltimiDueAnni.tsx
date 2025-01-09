@@ -2,7 +2,7 @@ import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { Box } from "@mui/system";
 import React from "react";
 import { SelectUltimiDueAnniProps } from "../../../types/typesGeneral";
-import { getCurrentFinancialYear } from "../../../reusableFunction/function";
+import { get2FinancialYear} from "../../../reusableFunction/function";
 
 const SelectUltimiDueAnni : React.FC<SelectUltimiDueAnniProps> = ({setValue, values, getTipologia}) =>{
     return (
@@ -11,16 +11,13 @@ const SelectUltimiDueAnni : React.FC<SelectUltimiDueAnniProps> = ({setValue, val
                 fullWidth
                 size="medium"
             >
-                <InputLabel
-                    id="sea"
-                >
-                            Anno
-                            
+                <InputLabel>
+                            Anno   
                 </InputLabel>
                 <Select
                     id="selectAnno"
-                    label='Seleziona Prodotto'
-                    labelId="search-by-label"
+                    label='Seleziona Anno'
+                    labelId="Anno mess"
                     onChange={(e) => {
                                 
                         const value = Number(e.target.value);
@@ -29,13 +26,9 @@ const SelectUltimiDueAnni : React.FC<SelectUltimiDueAnniProps> = ({setValue, val
                             getTipologia(values.mese,e.target.value);
                         }
                     }}
-                    value={values.anno}
-                    //IconComponent={SearchIcon}
-                            
-                    disabled={status=== 'immutable' ? true : false}
-                            
+                    value={values.anno||''}     
                 >
-                    {getCurrentFinancialYear().map((el) => (
+                    {get2FinancialYear().map((el) => (
                                 
                         <MenuItem
                             key={Math.random()}

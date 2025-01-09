@@ -17,7 +17,7 @@ import { downloadNotifchePagoPa, getAnniNotifiche, getContestazionePagoPa, getMe
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import GridCustom from "../components/reusableComponents/grid/gridCustom";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
-import { deleteFilterToLocalStorageNotifiche, profiliEnti, setFilterToLocalStorageNotifiche } from "../reusableFunction/actionLocalStorage";
+import { profiliEnti} from "../reusableFunction/actionLocalStorage";
 import { mesiGrid, mesiWithZero, tipoNotifica } from "../reusableFunction/reusableArrayObj";
 import { GlobalContext } from "../store/context/globalContext";
 import { PathPf } from "../types/enum";
@@ -214,12 +214,7 @@ const ReportDettaglio : React.FC = () => {
         setGetNotificheWorking(true);
         getProdotti();
         getProfili();
-       
     
-
-        //  setBodyGetLista(newBody);
-        //setBodyDownload(newBody)
-       
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const {idEnti, recapitisti, consolidatori, ...body} = newBody;
        
@@ -233,15 +228,16 @@ const ReportDettaglio : React.FC = () => {
             if(resAnno.data.length > 0){
             
                 await getMesiNotifiche(token, profilo.nonce,{anno:annoToSet?.toString()}).then(async(resMese)=> {
-                    setArrayMesi(resMese.data);
-                    let meseToSet = resMese.data[0].mese;
+                    const makeCamelCaseMonth = resMese.data.map(el =>{
+                        el.descrizione = el.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase();
+                        return el;
+                    } );
+                    setArrayMesi(makeCamelCaseMonth);
+                    let meseToSet = makeCamelCaseMonth[0].mese;
                     let page = 1;
                     let row = 10;
                   
-                   
-
                     if(profilo.auth === 'SELFCARE' && mainState.datiFatturazione === true){
-                
                         await getlistaNotifiche( page, row,{...body,...{mese:Number(meseToSet),anno:Number(annoToSet)}}); 
                     }else if((profilo.auth === 'SELFCARE') && (profilo.profilo === 'CON' || profilo.profilo === 'REC')){
                         await getlistaNotifiche( page, row,{...body,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
@@ -343,10 +339,14 @@ const ReportDettaglio : React.FC = () => {
 
     const getMesi = async (anno) => {
         await getMesiNotifiche(token, profilo.nonce,{anno}).then((res)=> {
-            setArrayMesi(res.data);
+            const makeCamelCaseMonth = res.data.map(el =>{
+                el.descrizione = el.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase();
+                return el;
+            } );
+            setArrayMesi(makeCamelCaseMonth);
             if(res.data.length > 0){
            
-                setBodyGetLista((prev)=> ({...prev, ...{mese:Number(res.data[0].mese)}}));
+                setBodyGetLista((prev)=> ({...prev, ...{mese:Number(makeCamelCaseMonth[0].mese)}}));
             }  
             setGetNotificheWorking(false);
         }).catch((err)=>{
@@ -993,13 +993,10 @@ const ReportDettaglio : React.FC = () => {
                                 fullWidth
                                 size="medium"
                             >
-                                <InputLabel
-                                    id="sea"
-                                >
+                                <InputLabel>
                                 Mese
                                 </InputLabel>
                                 <Select
-                                    id="sea"
                                     label='Seleziona Mese'
                                     onChange={(e) =>{
                                         const value = Number(e.target.value);

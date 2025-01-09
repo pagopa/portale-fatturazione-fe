@@ -16,7 +16,6 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 
 const AnagraficaPsp:React.FC = () =>{
 
-
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState} = globalContextObj;
  
@@ -194,14 +193,15 @@ const AnagraficaPsp:React.FC = () =>{
         
         await downloadPsp(token,profilo.nonce, filtersDownload).then(response => response.blob()).then((res) => {
             let fileName = '';
-            if(filtersDownload.contractIds.length === 1 || gridData.length === 1){
-                fileName = `Anagrafica PSP / ${gridData[0].documentName}.xlsx`;
+            const stringQuarterSelected = filtersDownload.quarters.map(el => "Q" + el.slice(5)).join("_");
+            const yearSelected = gridData[0].yearQuarter?.slice(0,4);
+            
+            if(filtersDownload.contractIds.length === 1){
+                fileName = `Anagrafica PSP/${gridData[0].documentName}/${yearSelected}/${stringQuarterSelected}.xlsx`;
             }else{
-                fileName = `Anagrafica PSP.xlsx`;
+                fileName = `Anagrafica PSP/${yearSelected}/${stringQuarterSelected}.xlsx`;
             }
-           
             saveAs( res,fileName );
-           
             setShowLoading(false);
         }).catch(err => {
             setShowLoading(false);
@@ -286,7 +286,7 @@ const AnagraficaPsp:React.FC = () =>{
                 <div className="col-3">
                     <Autocomplete
                         multiple
-                        limitTags={1}
+                        limitTags={2}
                         onChange={(event, value) => {
                             const arrayId = value.map(el => el.value);
                             setBodyGetLista((prev) => ({...prev,...{quarters:arrayId}}));
@@ -310,7 +310,7 @@ const AnagraficaPsp:React.FC = () =>{
                                 {option.quarter}
                             </li>
                         )}
-                        style={{ width: '80%',height:'59px' }}
+                        style={{ width: '80%',height:'59px'}}
                         renderInput={(params) => {
                 
                             return <TextField {...params}

@@ -53,6 +53,11 @@ export const getCurrentFinancialYear = () => {
     const yearArray = [-1,0,1].map((count) => `${thisYear - count}`);
     return yearArray;
 };
+export const get2FinancialYear = () => {
+    const thisYear = (new Date()).getFullYear();
+    const yearArray = [0,1].map((count) => `${thisYear - count}`);
+    return yearArray;
+};
 
 export const getIdByTipo = (string:string, array:ArrayTipologieCommesse[]) =>{
       

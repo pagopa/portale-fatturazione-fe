@@ -65,6 +65,8 @@ export interface GridElementListaPsp {
     sdiCode: null|number|string,
     membershipId: string,
     recipientId: string,
-    yearMonth: string
+    yearMonth: string,
+    yearQuarter?:string
+
 }
 

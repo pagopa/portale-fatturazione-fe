@@ -193,10 +193,11 @@ const KpiPagamenti:React.FC = () =>{
             throw '404';
         }).then((res) => {
             let fileName = '';
-            if(filtersDownload.contractIds.length === 1 || gridData.length === 1){
-                fileName = `Lista pagamenti KPI/${filtersDownload.year}/${gridData[0].name}.xlsx`;
+            const stringQuarterSelected = filtersDownload.quarters.map(el => "Q" + el.slice(5)).join("_");
+            if(filtersDownload.contractIds.length === 1){
+                fileName = `Lista pagamenti KPI/${gridData[0].name}/${filtersDownload.year}/${stringQuarterSelected}.xlsx`;
             }else{
-                fileName = `Lista pagamenti KPI/${filtersDownload.year}.xlsx`;
+                fileName = `Lista pagamenti KPI/${filtersDownload.year}/${stringQuarterSelected}.xlsx`;
             }
             saveAs( res,fileName );
             setShowLoading(false);
@@ -285,6 +286,7 @@ const KpiPagamenti:React.FC = () =>{
                 <div className="col-3">
                     <Autocomplete
                         multiple
+                        limitTags={2}
                         onChange={(event, value) => {
                             const arrayId = value.map(el => el.value);
                             setBodyGetLista((prev) => ({...prev,...{quarters:arrayId}}));
