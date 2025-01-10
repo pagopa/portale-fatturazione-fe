@@ -7,11 +7,12 @@ import { useContext, useState } from "react";
 import { Button, Typography } from "@mui/material";
 import DivProdotto from "../components/authSelectProdottiPa/divProdotto";
 import { GlobalContext } from "../store/context/globalContext";
+import { getMessaggiCount } from "../api/apiPagoPa/centroMessaggi/api";
 
 const AuthAzureProdotti : React.FC = () => {
 
     const globalContextObj = useContext(GlobalContext); 
-    const {dispatchMainState} = globalContextObj;
+    const {dispatchMainState,setCountMessages } = globalContextObj;
     const navigate = useNavigate();
 
     const [productSelected, setProductSelected] = useState<ProfiloObject|null>(null);
@@ -24,9 +25,14 @@ const AuthAzureProdotti : React.FC = () => {
         });
     };
 
-   
-  
-
+    const getCount = async (token,nonce) =>{
+        await getMessaggiCount(token,nonce).then((res)=>{
+            const numMessaggi = res.data;
+            setCountMessages(numMessaggi);
+        }).catch((err)=>{
+            console.log(err);
+        });
+    };
 
     const getProfilo = async ()=>{
         if(productSelected?.jwt){
@@ -55,7 +61,7 @@ const AuthAzureProdotti : React.FC = () => {
                         profilo:profiloDetails
                     });
 
-                   
+                    getCount(productSelected.jwt,storeProfilo.nonce);
                     if(productSelected.prodotto === 'prod-pagopa'){
                         navigate(PathPf.ANAGRAFICAPSP);
                     }else if(productSelected.prodotto === 'prod-pn'){

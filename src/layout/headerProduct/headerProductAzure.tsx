@@ -12,7 +12,7 @@ import { PathPf } from '../../types/enum';
 const HeaderProductAzure = () => {
    
     const globalContextObj = useContext(GlobalContext);
-    const {mainState, dispatchMainState } = globalContextObj;
+    const {mainState, dispatchMainState,setCountMessages,countMessages } = globalContextObj;
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
@@ -25,8 +25,6 @@ const HeaderProductAzure = () => {
         });
     };
 
-    const [countMessages, setCountMessages] = useState(0);
- 
     const products:ProductEntity[] = [
         {
             id: 'prod-pn',
@@ -65,13 +63,12 @@ const HeaderProductAzure = () => {
         if(globalContextObj.mainState.authenticated === true ){
             const interval = setInterval(() => {
                 getCount();
-            }, 5000);
+            }, 20000);
             return () => clearInterval(interval); 
         }
     },[globalContextObj.mainState.authenticated]);
 
     const getProfilo = async (jwt, productSelected)=>{
-       
         await getAuthProfilo(jwt).then((resp) => {
             const storeProfilo = resp.data;
             const profiloDetails = {
@@ -93,21 +90,16 @@ const HeaderProductAzure = () => {
                 authenticated:true,
                 profilo:profiloDetails
             });
-     
             if(productSelected.prodotto === 'prod-pagopa'){
                 navigate(PathPf.ANAGRAFICAPSP);
             }else if(productSelected.prodotto === 'prod-pn'){
                 navigate(PathPf.LISTA_DATI_FATTURAZIONE);
             }
-
         }).catch(()=> {
             window.location.href = redirect;
         });
-      
     };
 
-
-    
     return (
         <div style={{display:'flex', backgroundColor:'white'}}>
             <div style={{width:'95%'}}>

@@ -1,11 +1,10 @@
 import { Button, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import { useContext, useEffect, useState } from "react";
-import { getProfilo, getToken } from "../reusableFunction/actionLocalStorage";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
-import { BodyFatturazione, FatturazioneProps, FattureObj, HeaderCollapsible, TipologiaSap} from "../types/typeFatturazione";
+import { BodyFatturazione, FattureObj, HeaderCollapsible, TipologiaSap} from "../types/typeFatturazione";
 import { downloadFatturePagopa, downloadFattureReportPagopa, fattureCancellazioneRipristinoPagoPa,fattureTipologiaSapPa, getFatturazionePagoPa, getTipologieFaPagoPa } from "../api/apiPagoPa/fatturazionePA/api";
 import { manageError, manageErrorDownload, managePresaInCarico } from "../api/api";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
@@ -21,11 +20,12 @@ import ModalConfermaRipristina from "../components/fatturazione/modalConfermaRip
 import ModalResetFilter from "../components/fatturazione/modalResetFilter";
 import CollapsibleTable from "../components/reusableComponents/grid/gridCollapsible/gridCustomCollapsibleWithCheckbox";
 import { GlobalContext } from "../store/context/globalContext";
+import { getMessaggiCount } from "../api/apiPagoPa/centroMessaggi/api";
 
 const Fatturazione : React.FC = () =>{
 
     const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState, mainState} = globalContextObj;
+    const {dispatchMainState, mainState,setCountMessages} = globalContextObj;
 
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
@@ -52,10 +52,6 @@ const Fatturazione : React.FC = () =>{
     const [responseTipologieSap, setResponseTipologieSap] = useState<TipologiaSap[]>([]);
     const [fattureSelected, setFattureSelected] = useState<number[]>([]);
     
-
-  
-    
- 
     const [bodyFatturazione, setBodyFatturazione] = useState<BodyFatturazione>({
         anno:currentYear,
         mese:monthNumber,
@@ -72,9 +68,7 @@ const Fatturazione : React.FC = () =>{
     });
 
     useEffect(()=>{
-      
         getlistaFatturazione(bodyFatturazione);
-        
     },[]);
 
     useEffect(()=>{
@@ -84,8 +78,6 @@ const Fatturazione : React.FC = () =>{
             setStatusAnnulla('hidden');
         }
     },[bodyFatturazione]);
-
-  
    
     useEffect(()=>{
         const timer = setTimeout(() => {
@@ -98,16 +90,13 @@ const Fatturazione : React.FC = () =>{
 
    
     useEffect(()=>{
-       
         getTipologieFatturazione();
         setValueMultiselectTipologie([]);
-
         // added 15/12
         setGridData([]);
         setDisableButtonSap(true);
         setDisableButtonReset(true);
         // added 15/12
-      
     },[bodyFatturazione.mese,bodyFatturazione.anno,bodyFatturazione.cancellata]);
 
     const getTipologieFatturazione =  async() => {
@@ -115,8 +104,7 @@ const Fatturazione : React.FC = () =>{
             .then((res)=>{
                 setTipologie(res.data);
                 setBodyFatturazione((prev)=>({...prev,...{tipologiaFattura:[]}}));
-                setBodyFatturazioneDownload((prev)=>({...prev,...{tipologiaFattura:[]}}));
-                            
+                setBodyFatturazioneDownload((prev)=>({...prev,...{tipologiaFattura:[]}}));           
             })
             .catch(((err)=>{
                 setTipologie([]);
@@ -132,11 +120,9 @@ const Fatturazione : React.FC = () =>{
         await  getFatturazionePagoPa(token,profilo.nonce,body)
             .then((res)=>{
                 const data = res.data.map(el => el?.fattura);
-              
                 setGridData(data);
                 setShowLoadingGrid(false);
                 setBodyFatturazioneDownload(bodyFatturazione);
-                
             }).catch((error)=>{
                 if(error?.response?.status === 404){
                     setGridData([]);
@@ -145,8 +131,16 @@ const Fatturazione : React.FC = () =>{
                 setShowLoadingGrid(false);
                 manageError(error, dispatchMainState);
             });  
-            
         getTipologieFattureInvioSap(body.anno,body.mese);
+    };
+
+    const getCount = async () =>{
+        await getMessaggiCount(token,profilo.nonce).then((res)=>{
+            const numMessaggi = res.data;
+            setCountMessages(numMessaggi);
+        }).catch((err)=>{
+            console.log(err);
+        });
     };
 
 
@@ -155,13 +149,15 @@ const Fatturazione : React.FC = () =>{
             .then(()=>{
                 getlistaFatturazione(bodyFatturazioneDownload);
                 managePresaInCarico('FATTURA_SOSPESA_RIPRISTINATA',dispatchMainState);
+                // add branch 536 10/01/25
+                getCount();
+                // add branch 536 10/01/25
             }).catch((error)=>{
                
                 getlistaFatturazione(bodyFatturazioneDownload);
                 manageError(error, dispatchMainState);
             });      
     };
-
 
     // servizio che popola la select con la checkbox
     const listaEntiNotifichePageOnSelect = async () =>{
@@ -213,14 +209,10 @@ const Fatturazione : React.FC = () =>{
 
     const fattureSelectedArr = () =>{
         return fattureSelected.map((el)=>{
-  
             return gridData.filter((obj:FattureObj) => obj.idfattura === el ).pop();
         });
     };
  
-   
-
-
     /*
     const downloadListaReportFatturazione = async () => {
         await fatturePrenotazioneReportPagoPa(token,profilo.nonce, bodyFatturazioneDownload)
@@ -254,10 +246,8 @@ const Fatturazione : React.FC = () =>{
     // logic modal ON BUTTON SAP
 
     const getTipologieFattureInvioSap = async(anno,mese) =>{
-
         await fattureTipologiaSapPa(token, profilo.nonce, {anno,mese} )
             .then((res)=>{
-                
                 const anableInvioSap = res.data.filter((el)=> el.azione === 0).length;
                 const anableReset = res.data.filter((el)=> el.azione === 1).length;
                 if(anableInvioSap > 0){
@@ -270,11 +260,9 @@ const Fatturazione : React.FC = () =>{
                 }else{
                     setDisableButtonReset(true);
                 }
-                
                 setResponseTipologieSap(res.data);
             })
             .catch((()=>{
-            //manageError(err,dispatchMainState);
                 setDisableButtonSap(true);
                 setDisableButtonReset(true);
                 setResponseTipologieSap([]);
@@ -282,7 +270,6 @@ const Fatturazione : React.FC = () =>{
     };
 
     const onButtonSap = (who) => {
-
         setOpenSapModal((prev)=>({...prev,...{show:true,who}}));
     };
   

@@ -34,19 +34,15 @@ const ReportDettaglio : React.FC = () => {
     const enti = profiliEnti(mainState);
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
-
     const filters = JSON.parse(localStorage.getItem('filters')|| '{}') ;
-
     const isInitialRender = useRef(true);
  
-
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [profili, setProfili] = useState([]);
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
     const [notificheList, setNotificheList] = useState<NotificheList[]>([]);
     const [textValue, setTextValue] = useState('');
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
-    
     const [listaRecapitista, setListaRecapitisti] = useState<ListaRecCon[]>([]);
     const [listaConsolidatori, setListaConsolidatori] = useState<ListaRecCon[]>([]);
     const [getNotificheWorking, setGetNotificheWorking] = useState(false);
@@ -151,15 +147,11 @@ const ReportDettaglio : React.FC = () => {
     const [arrayMesi,setArrayMesi] = useState<{mese:number,descrizione:string}[]>([]);
 
     useEffect(() => {
-
-        
         if(Object.keys(filters).length > 0 && filters.pathPage === PathPf.LISTA_NOTIFICHE){
-            //funInitialRender(bodyGetLista)
             funInitialRender(filters.body, true);
         }else{
             funInitialRender(bodyGetLista, false);
         }
-
         //per prendere i dati dalla local fai una seconda funzione inital render
         
         /*
@@ -214,10 +206,8 @@ const ReportDettaglio : React.FC = () => {
         setGetNotificheWorking(true);
         getProdotti();
         getProfili();
-    
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const {idEnti, recapitisti, consolidatori, ...body} = newBody;
-       
         await getAnniNotifiche(token, profilo.nonce).then(async(resAnno)=> {
             const allYearToNumber = resAnno.data.map( el => Number(el));
             let annoToSet = resAnno.data[0];
@@ -226,7 +216,6 @@ const ReportDettaglio : React.FC = () => {
             }
             setArrayAnni(allYearToNumber);
             if(resAnno.data.length > 0){
-            
                 await getMesiNotifiche(token, profilo.nonce,{anno:annoToSet?.toString()}).then(async(resMese)=> {
                     /*const makeCamelCaseMonth = res.data.map(el =>{
                 el.descrizione = el.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase();
@@ -248,9 +237,7 @@ const ReportDettaglio : React.FC = () => {
                     // reset del body sia list che download
                     setBodyGetLista({...newBody,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
                     setBodyDownload({...newBody,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
-
                     if(dataFromLocalStorage){
-                       
                         setTextValue(filters.textAutocomplete);
                         setValueAutocomplete(filters.valueAutocomplete);
                         setValueFgContestazione(filters.valueFgContestazione);
@@ -264,22 +251,15 @@ const ReportDettaglio : React.FC = () => {
                 }).catch((err)=>{
                     manageError(err,dispatchMainState);
                     setGetNotificheWorking(false);
-           
                 });
             }
-          
         //getire l'assenza di mesi
         }).catch((err)=>{
             setGetNotificheWorking(false);
             manageError(err,dispatchMainState);
- 
         });
     };
-
     ///////////////////////////////////////////////////
-
-   
-
     useEffect(()=>{
         if( 
             bodyGetLista.profilo !== '' ||
@@ -306,9 +286,6 @@ const ReportDettaglio : React.FC = () => {
         }
     },[]);
 
-
-
-   
     useEffect(()=>{
         const timer = setTimeout(() => {
             if(textValue?.length >= 3){
@@ -318,17 +295,13 @@ const ReportDettaglio : React.FC = () => {
         return () => clearTimeout(timer);
     },[textValue]);
 
-
-
     const getAnni = async () => {
         setGetNotificheWorking(true);
         await getAnniNotifiche(token, profilo.nonce).then((res)=> {
             const allYearToNumber = res.data.map( el => Number(el));
             setArrayAnni(allYearToNumber);
             if(res.data.length > 0){
-                
                 setBodyGetLista((prev)=> ({...prev, ...{anno:allYearToNumber[0]}}));
-                //getMesi(res.data[0]);
             }
         }).catch((err)=>{
             setGetNotificheWorking(false);
@@ -345,14 +318,12 @@ const ReportDettaglio : React.FC = () => {
             } );*/
             setArrayMesi(res.data);
             if(res.data.length > 0){
-           
                 setBodyGetLista((prev)=> ({...prev, ...{mese:Number(res.data[0].mese)}}));
             }  
             setGetNotificheWorking(false);
         }).catch((err)=>{
             manageError(err,dispatchMainState);
             setGetNotificheWorking(false);
-        
         });
     };
 
@@ -467,15 +438,10 @@ const ReportDettaglio : React.FC = () => {
         }
     });
 
-
-    
-  
     const onAnnullaFiltri = async () =>{
         // to make call equal on initial render
         localStorage.removeItem("filters");
-        
         isInitialRender.current = true;
-
         funInitialRender({
             profilo:'',
             prodotto:'',
@@ -489,19 +455,13 @@ const ReportDettaglio : React.FC = () => {
             recipientId:null,
             recapitisti:[],
             consolidatori:[]
-
         },false);
-       
         setStatusAnnulla('hidden');
         setValueFgContestazione([]);
         setDataSelect([]);
         setValueAutocomplete([]);
-        //deleteFilterToLocalStorageNotifiche();
-        
         setPage(0);
         setRowsPerPage(10);
-
-      
         /*
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const {idEnti, recapitisti, consolidatori, ...body} = newBody;
@@ -587,10 +547,8 @@ const ReportDettaglio : React.FC = () => {
                     manageError(error, dispatchMainState);
                 });
         }else if(profilo.profilo === 'REC'){
-           
             await listaNotificheRecapitista(token,profilo.nonce,nPage, nRow, newBody)
                 .then((res)=>{
-                    
                     setNotificheList(res.data.notifiche);
                     setTotalNotifiche(res.data.count);
                     // abilita button filtra e annulla filtri all'arrivo dei dati
@@ -640,7 +598,6 @@ const ReportDettaglio : React.FC = () => {
                 setShowLoadingGrid(false);
             }).catch((error)=>{
                 // abilita button filtra e annulla filtri all'arrivo dei dati
-        
                 setNotificheList([]);
                 setTotalNotifiche(0);
                 setGetNotificheWorking(false);
@@ -662,14 +619,12 @@ const ReportDettaglio : React.FC = () => {
             row:10,
             valueFgContestazione:valueFgContestazione
         }));
-
         //setFilterToLocalStorageNotifiche(bodyGetLista,textValue,valueAutocomplete, 0, 10,valueFgContestazione);
         if(profilo.auth === 'SELFCARE'){
             getlistaNotifiche(1, 10,bodyGetLista);
         }else{
             getlistaNotifichePagoPa(1, 10,bodyGetLista);
         }  
-      
     };
                 
     const handleChangePage = (
@@ -683,7 +638,6 @@ const ReportDettaglio : React.FC = () => {
             getlistaNotifichePagoPa(realPage,rowsPerPage, bodyGetLista);
         }
         setPage(newPage);
-      
         localStorage.setItem("filters", JSON.stringify({
             pathPage:PathPf.LISTA_NOTIFICHE,
             body:bodyDownload,
@@ -693,9 +647,6 @@ const ReportDettaglio : React.FC = () => {
             row:rowsPerPage,
             valueFgContestazione
         }));
-       
-        //setFilterToLocalStorageNotifiche(bodyDownload,textValue,valueAutocomplete, newPage, rowsPerPage,valueFgContestazione);
-       
     };
                     
     const handleChangeRowsPerPage = (
@@ -711,9 +662,6 @@ const ReportDettaglio : React.FC = () => {
             row:parseInt(event.target.value, 10),
             valueFgContestazione
         }));
-      
-        //setFilterToLocalStorageNotifiche(bodyDownload,textValue,valueAutocomplete, page, parseInt(event.target.value, 10),valueFgContestazione);
-       
         const realPage = page + 1;
         if(profilo.auth === 'SELFCARE'){
             getlistaNotifiche(realPage,parseInt(event.target.value, 10),bodyGetLista);
@@ -724,9 +672,7 @@ const ReportDettaglio : React.FC = () => {
     };
 
     const getRecapitistConsolidatori = async() =>{
-     
         await getTipologiaEntiCompletiPagoPa(token, profilo.nonce, 'REC').then((res)=>{     
-            
             setListaRecapitisti(res.data);
         }).catch(((err)=>{
             manageError(err,dispatchMainState);
@@ -843,7 +789,6 @@ const ReportDettaglio : React.FC = () => {
             const {idEnti, recapitisti, consolidatori, ...bodyEnti} = bodyDownload;
             await downloadNotifche(token, profilo.nonce,bodyEnti )
                 .then((res)=>{
-                  
                     const blob = new Blob([res.data], { type: 'text/csv' });
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
@@ -955,9 +900,7 @@ const ReportDettaglio : React.FC = () => {
                                 fullWidth
                                 size="medium"
                             >
-                                <InputLabel
-                                    id="sea"
-                                >
+                                <InputLabel>
                             Anno
                                 </InputLabel>
                                 <Select
@@ -966,20 +909,17 @@ const ReportDettaglio : React.FC = () => {
                                     labelId="search-by-label"
                                     onChange={(e) => {
                                         if (isInitialRender.current) {
-                                           
                                             isInitialRender.current = false; 
                                         }
                                         const value = Number(e.target.value);
                                         setBodyGetLista((prev)=> ({...prev, ...{anno:value}}));  
-
                                     }}
                                     value={bodyGetLista.anno||''}
                                 >
                                     {arrayAnni.map((el) => (
                                         <MenuItem
                                             key={Math.random()}
-                                            value={el}
-                                        >
+                                            value={el}>
                                             {el}
                                         </MenuItem>
                                     ))}
@@ -987,7 +927,7 @@ const ReportDettaglio : React.FC = () => {
                             </FormControl>
                         </Box>
                     </div>
-                    <div className="col-3  ">
+                    <div className="col-3">
                         <Box sx={{width:'80%', marginLeft:'20px'}}  >
                             <FormControl
                                 fullWidth
@@ -1012,7 +952,6 @@ const ReportDettaglio : React.FC = () => {
                                             >
                                                 {el.descrizione}
                                             </MenuItem>
-                                            
                                         );
                                     })}
                                 </Select>
@@ -1025,9 +964,7 @@ const ReportDettaglio : React.FC = () => {
                                 fullWidth
                                 size="medium"
                             >
-                                <InputLabel
-                                    id="sea"
-                                >
+                                <InputLabel>
                                     Seleziona Prodotto
                                 </InputLabel>
                                 <Select
@@ -1074,9 +1011,7 @@ const ReportDettaglio : React.FC = () => {
                                 fullWidth
                                 size="medium"
                             >
-                                <InputLabel
-                                    id="sea"
-                                >
+                                <InputLabel>
                                             Tipo Notifica     
                                 </InputLabel>
                                 <Select
@@ -1102,7 +1037,7 @@ const ReportDettaglio : React.FC = () => {
                         </Box>
                     </div>
                     <div className=" col-3 ">
-                        <Box sx={{width:'80%', marginLeft:'20px'}} >
+                        <Box sx={{width:'80%', marginLeft:'20px'}}>
                             <MultiSelectStatoContestazione 
                                 mainState={mainState}
                                 dispatchMainState={dispatchMainState}
@@ -1166,9 +1101,7 @@ const ReportDettaglio : React.FC = () => {
                                     fullWidth
                                     size="medium"
                                 >
-                                    <InputLabel
-                                        id="selectCons"
-                                    >
+                                    <InputLabel>
                                             Consolidatore     
                                     </InputLabel>
                                     <Select
@@ -1205,7 +1138,6 @@ const ReportDettaglio : React.FC = () => {
                                             Recapitista     
                                     </InputLabel>
                                     <Select
-                                        id="sea"
                                         label='Recapitista'
                                         labelId="search-by-label"
                                         onChange={(e) =>{

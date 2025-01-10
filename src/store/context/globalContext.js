@@ -37,7 +37,9 @@ export const GlobalContext = createContext({
     openModalInfo:{open:false,sentence:''},
     // logic error alert to implement on all error message
     errorAlert:{error:0,message:''},
-    setErrorAlert:(prev) => null
+    setErrorAlert:(prev) => null,
+    countMessages:0,
+    setCountMessages:(prev) => null
 });
 
 
@@ -47,6 +49,7 @@ function GlobalContextProvider({children}){
     const [openBasicModal_DatFat_ModCom, setOpenBasicModal_DatFat_ModCom] = useState({visible:false,clickOn:''});
     const [showAlert, setShowAlert] = useState(true);
     const [openModalInfo, setOpenModalInfo] = useState({open:false,sentence:''});
+    const [countMessages, setCountMessages] = useState(0);
     //nuova logica errori da implemnetare sull'applicazione  22/11
     const [errorAlert, setErrorAlert] = useState({error:0,message:''});
   
@@ -69,7 +72,9 @@ function GlobalContextProvider({children}){
         openModalInfo,
         setOpenModalInfo,
         errorAlert,
-        setErrorAlert
+        setErrorAlert,
+        countMessages,
+        setCountMessages
     };
 
 

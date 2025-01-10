@@ -14,6 +14,7 @@ import ModalMatriceAccertamenti from "../components/accertamenti/modalMatrice";
 import { saveAs } from "file-saver";
 import { ActionReducerType } from "../reducer/reducerMainState";
 import { GlobalContext } from "../store/context/globalContext";
+import { getMessaggiCount } from "../api/apiPagoPa/centroMessaggi/api";
 
 
 interface AccertamentiProps {
@@ -28,7 +29,7 @@ export interface MatriceArray {
 const Accertamenti : React.FC = () =>{
 
     const globalContextObj = useContext(GlobalContext);
-    const {mainState,dispatchMainState} = globalContextObj;
+    const {mainState,dispatchMainState,setCountMessages} = globalContextObj;
 
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
@@ -58,9 +59,7 @@ const Accertamenti : React.FC = () =>{
         idEnti:[]
     });
     
-    
     useEffect(()=>{
-        
         getListaAccertamenti(new Date().getFullYear(),null);
         getListaMatrice();
     },[]);
@@ -77,7 +76,6 @@ const Accertamenti : React.FC = () =>{
                 setGridData([]);
                 setShowLoadingGrid(false);
                 manageError(err,dispatchMainState);
-            
             }));
         
     };
@@ -106,14 +104,25 @@ const Accertamenti : React.FC = () =>{
             }));
     };
 
+    const getCount = async () =>{
+        await getMessaggiCount(token,profilo.nonce).then((res)=>{
+            const numMessaggi = res.data;
+            setCountMessages(numMessaggi);
+        }).catch((err)=>{
+            console.log(err);
+        });
+    };
+
     const downloadAccertamento = async (id) => {
         await getListaAccertamentiPrenotazionePagoPa(token,profilo.nonce, {idReport:id})
             .then(()=>{
                 managePresaInCarico('PRESA_IN_CARICO_DOCUMENTO',dispatchMainState);
+                // add branch 536 10/01/25
+                getCount();
+                // add branch 536 10/01/25
             })
             .catch(((err)=>{
                 manageError(err,dispatchMainState);
-            
             }));
     };
     /*
@@ -191,9 +200,7 @@ const Accertamenti : React.FC = () =>{
         {field: 'action', headerName: '',sortable: false,width:70,headerAlign: 'left',disableColumnMenu :true,renderCell: ((param:{id:any,row:Accertamento}) => ( <DownloadIcon sx={{marginLeft:'10px',color: '#1976D2', cursor: 'pointer'}} onClick={()=> downloadAccertamento(param.id)}></DownloadIcon>)),}
     ];
     
-    
-    
-    
+
     return (
         <div className="mx-5 mb-5">
             <div className="marginTop24 ">
@@ -207,27 +214,6 @@ const Accertamenti : React.FC = () =>{
                     <div  className="col-3">
                         <SelectMese values={bodyAccertamenti} setValue={setBodyAccertamenti}></SelectMese>
                     </div>
-                    {/* 
-            <div  className="col-3">
-            <MultiSelectBase
-            setBody={setBodyFatturazione}
-            list={tipologie}
-            value={valueMulitselectTipologie}
-            setValue={setValueMultiselectTipologie}
-            label={'Tipologia Fattura'}
-            placeholder={"Tipologia Fattura"}
-            ></MultiSelectBase>
-            </div>
-            <div  className="col-3">
-            <MultiselectCheckbox 
-            setBodyGetLista={setBodyFatturazione}
-            dataSelect={dataSelect}
-            setTextValue={setTextValue}
-            valueAutocomplete={valueAutocomplete}
-            setValueAutocomplete={setValueAutocomplete}
-            ></MultiselectCheckbox>
-            </div>
-            */}
                 </div>
                 <div className=" mt-5">
                     <div className="row">
@@ -257,15 +243,9 @@ const Accertamenti : React.FC = () =>{
                                 </Button>
                             }
                         </div>
-            
-            
-            
                     </div>
                 </div>
-            
             </div>
-            
-            
             <div className="mt-5 mb-5" style={{ width: '100%'}}>
                 <div className="d-flex justify-content-end">
                     <Button onClick={()=> setShowPopUpMatrice(true)} variant="outlined">Matrice fornitori</Button>
@@ -305,8 +285,7 @@ const Accertamenti : React.FC = () =>{
                     value={valueSelectMatrice}
                     downloadDocMatrice={downloadDocMatrice}
                 ></ModalMatriceAccertamenti>
-            </div>
-                
+            </div> 
         </div>
     );
 };
