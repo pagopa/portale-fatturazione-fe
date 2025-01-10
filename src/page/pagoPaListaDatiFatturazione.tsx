@@ -49,6 +49,7 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
     const [showLoading,setShowLoading] = useState(false);
 
     // al primo reload se torno inditro da dettaglio dati tturazione ho gli stessi filtri per il download
+    // start branch 537
     
     useEffect(()=>{
         const result = getFiltersFromLocalStorage();
