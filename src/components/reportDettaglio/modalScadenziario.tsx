@@ -57,7 +57,8 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce,d
 
         getTipologieScadenziario(token, nonce )
             .then((res)=>{
-                setDatiScadenziario(res.data.reverse());
+              
+                setDatiScadenziario(res.data);
               
             })
             .catch(((err)=>{

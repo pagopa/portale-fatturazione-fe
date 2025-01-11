@@ -195,7 +195,7 @@ const AnagraficaPsp:React.FC = () =>{
             let fileName = '';
             const stringQuarterSelected = filtersDownload.quarters.map(el => "Q" + el.slice(5)).join("_");
             const yearSelected = gridData[0].yearQuarter?.slice(0,4);
-            
+            console.log(filtersDownload.contractIds.length);
             if(filtersDownload.contractIds.length === 1){
                 fileName = `Anagrafica PSP/${gridData[0].documentName}/${yearSelected}/${stringQuarterSelected}.xlsx`;
             }else{
