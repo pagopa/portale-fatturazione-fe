@@ -20,11 +20,16 @@ import { currentMonth, getCurrentFinancialYear } from "../reusableFunction/funct
 import { currentYear, mesi, mesiGrid, mesiWithZero } from "../reusableFunction/reusableArrayObj";
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
 import { GlobalContext } from "../store/context/globalContext";
+import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
 
 
 const PagoPaListaModuliCommessa:React.FC = () =>{
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState} = globalContextObj;
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
+    const navigate = useNavigate();
+    const currString = currentMonth();
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -33,11 +38,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
         });
     };
     
-    const token =  mainState.profilo.jwt;
-    const profilo =  mainState.profilo;
-    const navigate = useNavigate();
-    const enti = profiliEnti(mainState);
-    const currString = currentMonth();
+    
 
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [gridData, setGridData] = useState<GridElementListaCommesse[]>([]);
@@ -49,41 +50,17 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
     const [bodyDownload, setBodyDownload] = useState<BodyDownloadModuliCommessa>({idEnti:[],prodotto:'', anno:currentYear, mese:currString});
     const [showLoading,setShowLoading] = useState(false);
+    const { 
+        filters,
+        updateFilters,
+        resetFilters,
+        isInitialRender
+    } = useSavedFilters(PathPf.LISTA_MODULICOMMESSA,{});
 
     useEffect(()=>{
-        const result = getFiltersFromLocalStorageCommessa();
-        const infoPageResult = getInfoPageFromLocalStorageCommessa();
-       
         getProdotti();
-        if(Object.keys(result).length > 0){
-            setBodyGetLista(result.bodyGetLista);
-            setTextValue(result.textValue);
-            setValueAutocomplete(result.valueAutocomplete);
-            getListaCommesse(result.bodyGetLista);
-            setBodyDownload(result.bodyGetLista);
-        }else{
-            getListaCommesse(bodyGetLista);
-        }
-        if(infoPageResult.page > 0){
-            setInfoPageListaCom(infoPageResult);
-        }
-        
     }, []);
-    /*
-    useEffect(()=>{
-        if(token === undefined){
-            window.location.href = '/azureLogin';
-        }else if(profilo.auth === 'PAGOPA'){
-            // se un utente ha già selezionato un elemento nella grid avrà in memoria l'idEnte, per errore se andrà nella pagina '/8'
-        // modificando a mano l'url andrà a modificare il modulo commessa dell'ultima commessa  selezionata
-            delete profilo.idEnte;
-            const newProfilo = profilo; 
-            localStorage.setItem('profilo', JSON.stringify(newProfilo));
-        }else if(enti){
-            navigate(PathPf.DATI_FATTURAZIONE);
-        }
-    },[]);
-*/
+  
     useEffect(()=>{
         if( bodyGetLista.prodotto !== '' || bodyGetLista?.idEnti.length !== 0 ){
             setStatusAnnulla('show');
@@ -95,7 +72,6 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
    
     useEffect(()=>{
         const timer = setTimeout(() => {
-         
             if(textValue.length >= 3){
                 listaEntiNotifichePageOnSelect();
             }
@@ -107,8 +83,19 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
         await getTipologiaProdotto(token, profilo.nonce )
             .then((res)=>{
                 setProdotti(res.data);
-            })
-            .catch(((err)=>{
+                if(isInitialRender.current && Object.keys(filters).length > 0){
+                    setBodyGetLista(filters.body);
+                    setTextValue(filters.textValue);
+                    setValueAutocomplete(filters.valueAutocomplete);
+                    getListaCommesse(filters.body);
+                    setBodyDownload(filters.body);
+                    setInfoPageListaCom({page:filters.page,pageSize:filters.rows});
+                    isInitialRender.current = false;
+                }else{
+                    getListaCommesse(bodyGetLista);
+                }
+            }).catch(((err)=>{
+                isInitialRender.current = false;
                 manageError(err,dispatchMainState);
             }));
     };
@@ -117,8 +104,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
         await listaModuloCommessaPagopa(body ,token, profilo.nonce)
             .then((res)=>{
                 setGridData(res.data);
-            })
-            .catch((err)=>{
+            }).catch((err)=>{
                 setGridData([]);
                 manageError(err,dispatchMainState);
             }); 
@@ -129,8 +115,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
             .then((res)=>{
                 setBodyGetLista({idEnti:[],prodotto:'', anno:currentYear, mese:currString});
                 setGridData(res.data);
-            })
-            .catch((err)=>{
+            }).catch((err)=>{
                 manageError(err,dispatchMainState);
             }); 
     };
@@ -140,8 +125,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
             await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} )
                 .then((res)=>{
                     setDataSelect(res.data) ;
-                })
-                .catch(((err)=>{
+                }).catch(((err)=>{
                     manageError(err,dispatchMainState);
                 }));
         }
@@ -157,8 +141,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                 }
                 saveAs("data:text/plain;base64," + res.data.documento,fileName);
                 setShowLoading(false);
-            })
-            .catch((err)=>{
+            }).catch((err)=>{
                 manageError(err,dispatchMainState);
             });
     };
@@ -181,13 +164,52 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                 prodotto:params.row.prodotto,
                 idEnte:params.row.idEnte,
                
-            }},mese:params.row.mese,
+            }},
+            mese:params.row.mese,
             anno:params.row.anno,
             userClickOn:'GRID',
             inserisciModificaCommessa:"MODIFY",
             nomeEnteClickOn:params.row.ragioneSociale});
             navigate(PathPf.MODULOCOMMESSA);
         }
+    };
+
+    const onChangePageOrRowGrid = (e) => {
+        updateFilters(
+            {
+                body:bodyGetLista,
+                pathPage:PathPf.LISTA_MODULICOMMESSA,
+                textValue,
+                valueAutocomplete,
+                page:e.page,
+                rows:e.pageSize
+            });
+        setInfoPageListaCom(e);
+    };
+
+    const onButtonFiltra = () => {
+        setInfoPageListaCom({ page: 0, pageSize: 100 });
+        getListaCommesse(bodyGetLista);
+        setBodyDownload(bodyGetLista);
+        updateFilters(
+            {
+                body:bodyGetLista,
+                pathPage:PathPf.LISTA_MODULICOMMESSA,
+                textValue,
+                valueAutocomplete,
+                page:infoPageListaCom.page,
+                rows:infoPageListaCom.pageSize
+            });
+    };
+
+    const onButtonAnnulla = () =>{
+        setInfoPageListaCom({ page: 0, pageSize: 100 });
+        getListaCommesseOnAnnulla();
+        setBodyGetLista({idEnti:[],prodotto:'', anno:currentYear, mese:currString});
+        setBodyDownload({idEnti:[],prodotto:'', anno:currentYear, mese:currString});
+        setDataSelect([]);
+        setValueAutocomplete([]);
+        resetFilters();
     };
 
     const columns: GridColDef[] = [
@@ -213,17 +235,13 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
             </div>
             <div className="mb-5 mt-5 marginTop24" >
                 <div className="row">
-
-                
                     <div className="col-3">
                         <Box sx={{ width: '80%' }}>
                             <FormControl
                                 fullWidth
                                 size="medium"
                             >
-                                <InputLabel
-                                    id="sea"
-                                >
+                                <InputLabel>
                                 Anno
                                 </InputLabel>
                                 <Select
@@ -232,7 +250,6 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                                     labelId="search-by-label"
                                     onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{anno:e.target.value}}))}
                                     value={bodyGetLista.anno}
-                                    disabled={status=== 'immutable' ? true : false}
                                 >
                                     {getCurrentFinancialYear().map((el) => (
                                         <MenuItem
@@ -253,9 +270,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                                 fullWidth
                                 size="medium"
                             >
-                                <InputLabel
-                                    id="sea"
-                                >
+                                <InputLabel>
                                 Mese
                                 </InputLabel>
                                 <Select
@@ -266,7 +281,6 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                                         setBodyGetLista((prev)=> ({...prev, ...{mese:e.target.value}}));
                                     }}
                                     value={bodyGetLista.mese}
-                                    disabled={status=== 'immutable' ? true : false}
                                 >
                                     {mesi.map((el) => (
                                         <MenuItem
@@ -286,9 +300,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                                 fullWidth
                                 size="medium"
                             >
-                                <InputLabel
-                                    id="sea"
-                                >
+                                <InputLabel>
                                 Seleziona Prodotto
                                 </InputLabel>
                                 <Select
@@ -297,7 +309,6 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                                     labelId="search-by-label"
                                     onChange={(e) => setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}))}
                                     value={bodyGetLista.prodotto}
-                                    disabled={status=== 'immutable' ? true : false}
                                 >
                                     {prodotti.map((el) => (
                                         <MenuItem
@@ -323,31 +334,16 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                 </div>
             </div>
             <div className="d-flex" >
-                
                 <div className=" d-flex justify-content-center align-items-center">
                     <div>
                         <Button 
-                            onClick={()=>{
-                                setInfoPageListaCom({ page: 0, pageSize: 100 });
-                                setInfoPageToLocalStorageCommessa({ page: 0, pageSize: 100 });
-                                getListaCommesse(bodyGetLista);
-                                setBodyDownload(bodyGetLista);
-                                setFilterToLocalStorageCommessa(bodyGetLista,textValue,valueAutocomplete);
-                            } } 
+                            onClick={onButtonFiltra} 
                             sx={{ marginTop: 'auto', marginBottom: 'auto'}}
                             variant="contained"> Filtra
                         </Button>
                         {statusAnnulla === 'hidden' ? null :
                             <Button
-                                onClick={()=>{
-                                    setInfoPageListaCom({ page: 0, pageSize: 100 });
-                                    setInfoPageToLocalStorageCommessa({ page: 0, pageSize: 100 });
-                                    getListaCommesseOnAnnulla();
-                                    setBodyDownload({idEnti:[],prodotto:'', anno:currentYear, mese:currString});
-                                    setDataSelect([]);
-                                    deleteFilterToLocalStorageCommessa();
-                                    setValueAutocomplete([]);
-                                } }
+                                onClick={onButtonAnnulla}
                                 sx={{marginLeft:'24px'}} >
                     Annulla filtri
                             </Button>
@@ -358,7 +354,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
             {/* grid */}
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
                 {gridData.length > 0 &&
-                <Button onClick={()=>downloadExelListaCommessa() } >
+                <Button onClick={downloadExelListaCommessa} >
             Download Risultati
                     <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
                 </Button>
@@ -376,7 +372,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                 getRowId={(row) => row?.key}
                 onRowClick={handleEvent}
                 onCellClick={handleOnCellClick}
-                onPaginationModelChange={(e)=>{setInfoPageListaCom(e); setInfoPageToLocalStorageCommessa(e);}}
+                onPaginationModelChange={(e)=> onChangePageOrRowGrid(e)}
                 paginationModel={infoPageListaCom}
                 />
             </div>

@@ -47,7 +47,6 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
     const [textValue, setTextValue] = useState('');
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
     const [showLoading,setShowLoading] = useState(false);
-
     const { 
         filters,
         updateFilters,
@@ -61,9 +60,6 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
     useEffect(()=>{  
         getProdotti();
         getProfili();
-        if(!isInitialRender.current ){
-            getListaDatifatturazione(bodyGetLista);
-        }
     }, []);
 
     useEffect(()=>{
@@ -101,16 +97,21 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
             .then((res)=>{
                 setProfili(res.data);
                 if(isInitialRender.current && Object.keys(filters).length > 0){
+                    getListaDatifatturazione(filters.body);
                     setBodyGetLista(filters.body);
                     setTextValue(filters.textValue);
                     setValueAutocomplete(filters.valueAutocomplete);
                     getListaDatifatturazione(filters.body);
                     setFiltersDownload(filters.body);
                     setInfoPageListaDatiFat({page:filters.page,pageSize:filters.rows});
+                    isInitialRender.current = false;
+                }else{
+                    getListaDatifatturazione(bodyGetLista);
                 }
             })
             .catch(((err)=>{
                 manageError(err,dispatchMainState);
+                isInitialRender.current = false;
             }));
     };
 
@@ -120,13 +121,13 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
             .then((res)=>{
                 setGridData(res.data);
                 setGetListaLoading(false);
-                isInitialRender.current = false;
+               
             })
             .catch(((err)=>{
                 setGridData([]);
                 setGetListaLoading(false);
                 manageError(err,dispatchMainState);
-                isInitialRender.current = false;
+               
             })); 
     };
 
