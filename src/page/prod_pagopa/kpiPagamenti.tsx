@@ -18,17 +18,21 @@ import { kpiObj, RequestBodyKpi } from "../../types/typeKpi";
 import { downloadKpiList, getListaKpi } from "../../api/apiPagoPa/kpi/api";
 import RowBaseKpi from "../../components/reusableComponents/grid/gridCollapsible/rowBaseKpi";
 import { saveAs } from "file-saver";
-
-
-
+import { PathPf } from "../../types/enum";
+import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 
 const KpiPagamenti:React.FC = () =>{
 
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState} = globalContextObj;
- 
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
+    const { 
+        filters,
+        updateFilters,
+        resetFilters,
+        isInitialRender
+    } = useSavedFilters(PathPf.KPI,{});
 
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -60,16 +64,11 @@ const KpiPagamenti:React.FC = () =>{
     const [valueQuarters, setValueQuarters] = useState<OptionMultiselectCheckboxQarter[]>([]);
     const [textValue, setTextValue] = useState<string>('');
     const [valueAutocomplete, setValueAutocomplete] = useState<AutocompleteMultiselect[]>([]);
-
     const [showLoading,setShowLoading] = useState(false);
-
     const [yearOnSelect,setYearOnSelect] = useState<string[]>([]);
-  
-
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [showPopUpMatrice,setShowPopUpMatrice] = useState(false);
-
     const [count, setCount] = useState(0);
     const [dataPaginated,setDataPaginated] = useState<kpiObj[]>([]);
 
@@ -109,30 +108,24 @@ const KpiPagamenti:React.FC = () =>{
     },[textValue]);
 
     useEffect(()=>{
-
+        if(bodyGetLista.year !== '' && !isInitialRender.current){
+            setValueQuarters([]);
+            setBodyGetLista((prev)=>({...prev,...{quarters:[]}}));
+        }
         if(bodyGetLista.year !== ''){
             getQuarters();
         }
     },[bodyGetLista.year]);
 
-
-
-
-
     const getListaKpiGrid = async(body:RequestBodyKpi) =>{
         setGetListaLoading(true);
         await getListaKpi(token, profilo.nonce, body)
             .then((res)=>{
-                console.log(res,'lista');
-                
                 const data = res.data.kpiPagamentiScontoReports;
-               
                 setGridData(data);
                 setCount(res.data.count);
                 setGetListaLoading(false);
-                
-            })
-            .catch(((err)=>{
+            }).catch(((err)=>{
                 setGridData([]);
                 setCount(0);
                 setGetListaLoading(false);
@@ -140,29 +133,35 @@ const KpiPagamenti:React.FC = () =>{
             })); 
     };
 
-
     // servizio che popola la select con la checkbox
     const listaNamePspOnSelect = async () =>{
-       
         await getListaNamePsp(token, profilo.nonce, {name:textValue} )
             .then((res)=>{
                 setDataSelect(res.data);
-            })
-            .catch(((err)=>{
+            }).catch(((err)=>{
                 manageError(err,dispatchMainState); 
             }));
     };
 
     const getYears = async () =>{
-       
         await getYearsDocContabiliPa(token, profilo.nonce)
             .then((res)=>{
                 setYearOnSelect(res.data);
                 if(res.data.length > 0){
-                    setBodyGetLista((prev) => ({...prev,...{year:res.data[0]}}));
-                    setFiltersDownload((prev) => ({...prev,...{year:res.data[0]}}));
-                    
-                    getListaKpiGrid({...bodyGetLista,...{year:res.data[0]}});
+                    if(isInitialRender.current && Object.keys(filters).length > 0){
+                        setBodyGetLista(filters.body);
+                        setFiltersDownload(filters.body);
+                        setValueAutocomplete(filters.valueAutocomplete);
+                        setTextValue(filters.textValue);
+                        getListaKpiGrid(filters.body);
+                        setValueQuarters(filters.valueQuarters);
+                        setPage(filters.page);
+                        setRowsPerPage(filters.rows);
+                    }else{
+                        setBodyGetLista((prev) => ({...prev,...{year:res.data[0]}}));
+                        setFiltersDownload((prev) => ({...prev,...{year:res.data[0]}}));
+                        getListaKpiGrid({...bodyGetLista,...{year:res.data[0]}});
+                    }
                 }
             }).catch(((err)=>{
                 manageError(err,dispatchMainState); 
@@ -170,22 +169,20 @@ const KpiPagamenti:React.FC = () =>{
     };
 
     const getQuarters = async () =>{
-       
         await getQuartersDocContabiliPa(token, profilo.nonce,{year:bodyGetLista.year})
             .then((res)=>{
                 setDataSelectQuarter(res.data);
-                setValueQuarters([]);
+                isInitialRender.current = false;
             }).catch(((err)=>{
+                isInitialRender.current = false;
                 setValueQuarters([]);
+                setDataSelectQuarter([]);
                 manageError(err,dispatchMainState); 
             }));
     };
 
-    
-
     const onDownloadButton = async() =>{
         setShowLoading(true);
-        
         await downloadKpiList(token,profilo.nonce, filtersDownload).then(response =>{
             if (response.ok) {
                 return response.blob();
@@ -207,18 +204,42 @@ const KpiPagamenti:React.FC = () =>{
         });
     };
 
-
-
     const onButtonFiltra = () =>{
+        updateFilters(
+            {
+                body:bodyGetLista,
+                pathPage:PathPf.KPI,
+                textValue,
+                valueAutocomplete,
+                valueQuarters,
+                page:0,
+                rows:10
+            });
         setFiltersDownload(bodyGetLista);
         getListaKpiGrid(bodyGetLista); 
         setPage(0);
         setRowsPerPage(10);
     };
-   
-                
-    
 
+    const onButtonAnnulla = () => {            
+        const newBody = {
+            contractIds:[],
+            membershipId: '',
+            recipientId: '',
+            providerName: '',
+            quarters:[],
+            year:yearOnSelect[0]};
+        getListaKpiGrid(newBody);
+        setBodyGetLista(newBody);
+        setFiltersDownload(newBody);
+        setDataSelect([]);
+        setValueAutocomplete([]);
+        setValueQuarters([]);
+        setPage(0);
+        setRowsPerPage(10);
+        resetFilters();
+    };
+   
     const headersObjGrid : HeaderCollapsible[] = [
         {name:"",align:"left",id:1},
         {name:"Nome KPI",align:"left",id:2},
@@ -229,10 +250,6 @@ const KpiPagamenti:React.FC = () =>{
         {name:"Lista KPI",align:"center",id:7},
         {name:"Arrow",align:"center",id:8}];
       
-
-
- 
-
     return(
         <div className="mx-5">
             {/*title container start */}
@@ -245,7 +262,6 @@ const KpiPagamenti:React.FC = () =>{
                         <Button  style={{
                             width:'160px'
                         }} variant="outlined"  onClick={()=> setShowPopUpMatrice(true)} >
-                           
                     Matrice KPI
                         </Button>
                     </Box>
@@ -317,7 +333,6 @@ const KpiPagamenti:React.FC = () =>{
                                 label="Trimestre" 
                                 placeholder="Trimestre" />;
                         }}
-           
                     />
                 </div>
                 <div  className="col-3">
@@ -369,38 +384,17 @@ const KpiPagamenti:React.FC = () =>{
                 </div>
             </div>
             <div className="d-flex" >
-              
                 <div className=" d-flex justify-content-center align-items-center">
                     <div>
                         <Button 
-                            onClick={()=> {
-                                onButtonFiltra();
-                            } } 
+                            onClick={onButtonFiltra} 
                             disabled={getListaLoading}
                             sx={{ marginTop: 'auto', marginBottom: 'auto'}}
                             variant="contained"> Filtra
                         </Button>
                         { statusAnnulla === 'hidden'? null :
                             <Button
-                                onClick={()=>{
-                                    console.log('annulla');
-                                    
-                                    const newBody = {
-                                        contractIds:[],
-                                        membershipId: '',
-                                        recipientId: '',
-                                        providerName: '',
-                                        quarters:[],
-                                        year:yearOnSelect[0]};
-                                    getListaKpiGrid(newBody);
-                                    setBodyGetLista(newBody);
-                                    setFiltersDownload(newBody);
-                                    setDataSelect([]);
-                                    setValueAutocomplete([]);
-                                    setValueQuarters([]);
-                                    setPage(0);
-                                    setRowsPerPage(10);
-                                } }
+                                onClick={onButtonAnnulla}
                                 sx={{marginLeft:'24px'}} >
                         Annulla filtri
                             </Button>}  
@@ -411,10 +405,8 @@ const KpiPagamenti:React.FC = () =>{
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
                 {
                     gridData.length > 0 &&
-                        <Button onClick={() =>
-                            onDownloadButton()
-                        }
-                        disabled={gridData.length < 1 ||getListaLoading}
+                        <Button onClick={onDownloadButton}
+                            disabled={gridData.length < 1 ||getListaLoading}
                         >
                 Download Risultati
                             <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
@@ -431,9 +423,9 @@ const KpiPagamenti:React.FC = () =>{
                     count={count}
                     dataPaginated={dataPaginated}
                     RowComponent={RowBaseKpi}
+                    updateFilters={updateFilters}
+                    body={bodyGetLista}
                 ></CollapsibleTablePa>
-            </div>
-            <div>
             </div>
             <ModalLoading 
                 open={showLoading} 
@@ -450,9 +442,6 @@ const KpiPagamenti:React.FC = () =>{
                 setOpen={setShowPopUpMatrice}
                 anni={yearOnSelect}
                 setShowLoading={setShowLoading}
-                // setValue={setValueSelectMatrice}
-                //value={valueSelectMatrice}
-                //downloadDocMatrice={downloadDocMatrice}
             ></ModalMatriceKpi>
         </div>
     );

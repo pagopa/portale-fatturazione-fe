@@ -196,7 +196,7 @@ const ReportDettaglio : React.FC = () => {
 
 
     useEffect(()=>{
-        if((bodyGetLista.anno !== 0) &&  (isInitialRender.current === false)){
+        if((bodyGetLista.anno !== 0) && (isInitialRender.current === false)){
             getMesi(bodyGetLista.anno.toString());
         }
     },[bodyGetLista.anno]);
@@ -222,7 +222,12 @@ const ReportDettaglio : React.FC = () => {
                 return el;
             } );*/
                     setArrayMesi(resMese.data);
+
                     let meseToSet = resMese.data[0].mese;
+                    if(dataFromLocalStorage){
+                        meseToSet = filters.body.mese;
+                    }
+                    
                     let page = 1;
                     let row = 10;
                   

@@ -7,7 +7,7 @@ import LinkIcon from '@mui/icons-material/Link';
 
 
 
-const RowBaseKpi = ({row,handleModifyMainState}) => {
+const RowBaseKpi = ({row}) => {
     const [open, setOpen] = useState(false);
     const navigate = useNavigate();
 
@@ -53,11 +53,17 @@ const RowBaseKpi = ({row,handleModifyMainState}) => {
                 <Tooltip title={row.kpiList}>
                     <TableCell align='center' >{ row.kpiList?.length > 15 ? row.kpiList.slice(0, 15) + '...' : row.kpiList}</TableCell>
                 </Tooltip>
-                <TableCell align='center' onClick={()=> handleOnDownloadLink(row.link, 'KPI')}>
-                    <Tooltip   title="Link">
-                        <IconButton  disabled={disableIcon}>
-                            <LinkIcon sx={disableIcon ?{color:'grey'} :{ color: '#1976D2'}}  /> 
-                        </IconButton>
+                <TableCell align='center' onClick={()=> {
+                    if(!disableIcon){
+                        handleOnDownloadLink(row.link, 'KPI');
+                    }
+                }}>
+                    <Tooltip  title="Download csv">
+                        <span>
+                            <IconButton  disabled={disableIcon}>
+                                <LinkIcon sx={disableIcon ?{color:'grey'} :{ color: '#1976D2'}}  /> 
+                            </IconButton>
+                        </span>
                     </Tooltip>
                 </TableCell>
             </TableRow>

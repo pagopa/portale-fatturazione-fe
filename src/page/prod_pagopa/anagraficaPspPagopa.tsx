@@ -1,5 +1,5 @@
 import DownloadIcon from '@mui/icons-material/Download';
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { AutocompleteMultiselect, GridElementListaPsp, OptionMultiselectCheckboxPsp, OptionMultiselectCheckboxQarter, RequestBodyListaAnagraficaPsp } from "../../types/typeAngraficaPsp";
 import { downloadPsp, getListaAnagraficaPsp, getListaAnniPsp, getListaNamePsp, getListaQuarters } from "../../api/apiPagoPa/anagraficaPspPA/api";
 import { manageError } from "../../api/api";
@@ -9,19 +9,22 @@ import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { saveAs } from "file-saver";
 import { GlobalContext } from '../../store/context/globalContext';
-import { setFilterToLocalStorageAnagrafica } from '../../reusableFunction/actionLocalStorage';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import { PathPf } from '../../types/enum';
+import useSavedFilters from '../../hooks/useSaveFiltersLocalStorage';
 
 
 const AnagraficaPsp:React.FC = () =>{
 
+    
+
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState} = globalContextObj;
- 
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 
+   
     const [gridData, setGridData] = useState<GridElementListaPsp[]>([]);
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
     const [filtersDownload, setFiltersDownload] = useState<RequestBodyListaAnagraficaPsp>({
@@ -37,6 +40,8 @@ const AnagraficaPsp:React.FC = () =>{
         abi: '',
         quarters:[]
     });
+   
+
     const [getListaLoading, setGetListaLoading] = useState(false);
     const [dataSelect, setDataSelect] = useState<OptionMultiselectCheckboxPsp[]>([]);
     const [page, setPage] = useState(0);
@@ -45,69 +50,26 @@ const AnagraficaPsp:React.FC = () =>{
     const [textValue, setTextValue] = useState<string>('');
     const [valueAutocomplete, setValueAutocomplete] = useState<AutocompleteMultiselect[]>([]);
     const [showLoading,setShowLoading] = useState(false);
-
     const [yearOnSelect,setYearOnSelect] = useState<string[]>([]);
     const [year,setYear] = useState<string>('');
     const [dataSelectQuarter, setDataSelectQuarter] = useState<OptionMultiselectCheckboxQarter[]>([]);
     const [valueQuarters, setValueQuarters] = useState<OptionMultiselectCheckboxQarter[]>([]);
-
-   
+    const { 
+        filters,
+        updateFilters,
+        resetFilters,
+        isInitialRender
+    } = useSavedFilters(PathPf.ANAGRAFICAPSP,{});
+ 
     useEffect(()=>{
         getYears();
-        /*
-        if(Object.keys(result).length > 0){
-         
-            setBodyGetLista(result.body);
-            setTextValue(result.textValue);
-            setValueAutocomplete(result.valueAutocomplete);
-            getListaAnagraficaPspGrid(result.body,result.page + 1, result.rowsPerPage);
-            setPage(result.page);
-            setRowsPerPage(result.rowsPerPage);
-            setFiltersDownload(result.body);
-        }else{
-            const realPage = page + 1;
-            getListaAnagraficaPspGrid(bodyGetLista,realPage,rowsPerPage);
-      
-        }*/
     },[]);
 
     useEffect(()=>{
         if(year !== ''){
             getQuarters(year);
         }
-       
     },[year]);
-    
-    const getYears = async () =>{
-        setGetListaLoading(true);
-        await getListaAnniPsp(token, profilo.nonce)
-            .then((res)=>{
-                setYearOnSelect(res.data);
-                if(res.data.length > 0){
-                    setYear(res.data[0]);
-                    getListaAnagraficaPspGrid(bodyGetLista,page+1,rowsPerPage);
-                }
-                //getListaAnagraficaPspGrid({...bodyGetLista,...{year:res.data[0]}},realPage,rowsPerPage);
-            }).catch(((err)=>{
-                setGetListaLoading(false);
-                manageError(err,dispatchMainState); 
-            }));
-    };
-
-    const getQuarters = async (y) =>{
-        await getListaQuarters(token, profilo.nonce,{year:y})
-            .then((res)=>{
-                setDataSelectQuarter(res.data);
-                setValueQuarters([]);
-            }).catch(((err)=>{
-                setDataSelectQuarter([]);
-                setValueQuarters([]);
-                manageError(err,dispatchMainState); 
-            }));
-    };
-
- 
-
 
     useEffect(()=>{
         if( bodyGetLista.contractIds.length  !== 0 ||
@@ -122,8 +84,6 @@ const AnagraficaPsp:React.FC = () =>{
         }
     },[bodyGetLista]);
 
-
-   
     useEffect(()=>{
         const timer = setTimeout(() => {
             if(textValue.length >= 3){ 
@@ -132,15 +92,60 @@ const AnagraficaPsp:React.FC = () =>{
         }, 800);
         return () => clearTimeout(timer);
     },[textValue]);
+    
+    const getYears = async () =>{
+        setGetListaLoading(true);
+        await getListaAnniPsp(token, profilo.nonce)
+            .then((res)=>{
+                setYearOnSelect(res.data);
+                if(res.data.length > 0){
+                    if(isInitialRender.current && Object.keys(filters).length > 0){
+                        setBodyGetLista(filters.body);
+                        setFiltersDownload(filters.body);
+                        setTextValue(filters.textValue);
+                        setValueAutocomplete(filters.valueAutocomplete);
+                        getListaAnagraficaPspGrid(filters.body,filters.page, filters.rows);
+                        setPage(filters.page);
+                        setRowsPerPage(filters.rows);
+                        setFiltersDownload(filters.body);
+                        setYear(filters.year);
+                        getListaAnagraficaPspGrid(filters.body,filters.page,filters.rows);
+                    }else{
+                        setYear(res.data[0]);
+                        getListaAnagraficaPspGrid(bodyGetLista,page+1,rowsPerPage);
+                    }
+                }
+            }).catch(((err)=>{
+                setGetListaLoading(false);
+                manageError(err,dispatchMainState); 
+            }));
+    };
 
-
+    const getQuarters = async (y) =>{
+        await getListaQuarters(token, profilo.nonce,{year:y})
+            .then((res)=>{
+                setDataSelectQuarter(res.data);
+                console.log('dentro quarter', isInitialRender.current);
+                if(isInitialRender.current && Object.keys(filters).length > 0){
+                    setValueQuarters(filters.valueQuarters);
+                }else{
+                    setValueQuarters([]);
+                }
+                setGetListaLoading(false);
+                isInitialRender.current = false;
+            }).catch(((err)=>{
+                isInitialRender.current = false;
+                setDataSelectQuarter([]);
+                setValueQuarters([]);
+                manageError(err,dispatchMainState); 
+                setGetListaLoading(false);
+            }));
+    };
 
     const getListaAnagraficaPspGrid = async(body:RequestBodyListaAnagraficaPsp, page:number,rowsPerPage:number) =>{
         setGetListaLoading(true);
         await getListaAnagraficaPsp(token, profilo.nonce, body,page,rowsPerPage)
             .then((res)=>{
-
-             
                 // ordino i dati in base all'header della grid
                 const orderDataCustom = res.data.psPs.map((obj)=>{
                     // inserire come prima chiave l'id se non si vuol renderlo visibile nella grid
@@ -161,19 +166,20 @@ const AnagraficaPsp:React.FC = () =>{
                 setGridData(orderDataCustom);
                 setTotalPsp(res.data.count);
                 setGetListaLoading(false);
+                
             })
             .catch(((err)=>{
                 setGridData([]);
                 setTotalPsp(0);
                 setGetListaLoading(false);
                 manageError(err,dispatchMainState);
+              
             })); 
     };
 
 
     // servizio che popola la select con la checkbox
     const listaNamePspOnSelect = async () =>{
-       
         await getListaNamePsp(token, profilo.nonce, {name:textValue} )
             .then((res)=>{
                 setDataSelect(res.data);
@@ -183,11 +189,6 @@ const AnagraficaPsp:React.FC = () =>{
             }));
     };
 
-
-
-   
-
-   
     const onDownloadButton = async() =>{
         setShowLoading(true);
         
@@ -215,9 +216,37 @@ const AnagraficaPsp:React.FC = () =>{
         setRowsPerPage(10);
         setFiltersDownload(bodyGetLista);
         getListaAnagraficaPspGrid(bodyGetLista,1,10); 
-        setFilterToLocalStorageAnagrafica(bodyGetLista,textValue,valueAutocomplete, 0, 10);
-        //setFilterToLocalStorageRel(bodyRel,textValue,valueAutocomplete, 0, 10,valuetipologiaFattura);
+        updateFilters(
+            {
+                body:bodyGetLista,
+                pathPage:PathPf.ANAGRAFICAPSP,
+                textValue,
+                valueAutocomplete,
+                valueQuarters,
+                year,
+                page:1,
+                rows:10
+            });
     };
+
+    const onButtonAnnulla = () => {
+        const newBody = {
+            contractIds:[],
+            membershipId: '',
+            recipientId: '',
+            abi: '',
+            quarters:[]};
+        getListaAnagraficaPspGrid(newBody,1,10);
+        setBodyGetLista(newBody);
+        setFiltersDownload(newBody);
+        setRowsPerPage(10);
+        setPage(0);
+        setDataSelect([]);
+        setValueAutocomplete([]);
+        setValueQuarters([]);
+        resetFilters();
+    };
+
     const handleChangePage = (
         event: React.MouseEvent<HTMLButtonElement> | null,
         newPage: number,
@@ -225,7 +254,16 @@ const AnagraficaPsp:React.FC = () =>{
         const realPage = newPage + 1;
         getListaAnagraficaPspGrid(bodyGetLista,realPage, rowsPerPage);
         setPage(newPage);
-        setFilterToLocalStorageAnagrafica(bodyGetLista,textValue,valueAutocomplete, newPage, rowsPerPage);
+        updateFilters({
+            body:bodyGetLista,
+            pathPage:PathPf.ANAGRAFICAPSP,
+            textValue,
+            valueAutocomplete,
+            valueQuarters,
+            year,
+            page:realPage,
+            rows:rowsPerPage
+        });
     };
                 
     const handleChangeRowsPerPage = (
@@ -235,16 +273,22 @@ const AnagraficaPsp:React.FC = () =>{
         setPage(0);
         const realPage = page + 1;
         getListaAnagraficaPspGrid(bodyGetLista,realPage,parseInt(event.target.value, 10));
-        setFilterToLocalStorageAnagrafica(bodyGetLista,textValue,valueAutocomplete, realPage, parseInt(event.target.value, 10));
+        updateFilters({
+            body:bodyGetLista,
+            pathPage:PathPf.ANAGRAFICAPSP,
+            textValue,
+            valueAutocomplete,
+            valueQuarters,
+            year,
+            page:realPage,
+            rows:parseInt(event.target.value, 10)
+        });
     };
 
 
-    
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
       
- 
-
     return(
         <div className="mx-5">
             {/*title container start */}
@@ -312,12 +356,10 @@ const AnagraficaPsp:React.FC = () =>{
                         )}
                         style={{ width: '80%',height:'59px'}}
                         renderInput={(params) => {
-                
                             return <TextField {...params}
                                 label="Trimestre" 
                                 placeholder="Trimestre" />;
                         }}
-           
                     />
                 </div>
                 <div  className="col-3">
@@ -331,11 +373,9 @@ const AnagraficaPsp:React.FC = () =>{
                         valueId={'name'}
                         label={"Nome PSP"} 
                         keyArrayName={"contractIds"}/>
-                        
                 </div>
             </div>
             <div className="row mb-5 mt-5" >
-               
                 <div className="col-3">
                     <Box sx={{width:'80%'}} >
                         <TextField
@@ -369,66 +409,30 @@ const AnagraficaPsp:React.FC = () =>{
                         />
                     </Box>
                 </div>
-               
             </div>
             <div className="d-flex" >
-              
                 <div className=" d-flex justify-content-center align-items-center">
                     <div>
                         <Button 
                             disabled={getListaLoading}
-                            onClick={()=> {
-                                /* getListaDatifatturazione(bodyGetLista);
-                                setInfoPageListaDatiFat({ page: 0, pageSize: 100 });
-                                setFiltersDownload(bodyGetLista);
-                                setFilterToLocalStorage(bodyGetLista,textValue,valueAutocomplete);
-                                setInfoPageToLocalStorage({ page: 0, pageSize: 100 }); */
-                                //getListaAnagraficaPspGrid(bodyGetLista,page,rowsPerPage);
-                                onButtonFiltra();
-                            } } 
+                            onClick={onButtonFiltra} 
                             sx={{ marginTop: 'auto', marginBottom: 'auto'}}
                             variant="contained"> Filtra
                         </Button>
                         {statusAnnulla === 'hidden'? null :
                             <Button
-                                onClick={()=>{
-                                    const newBody = {
-                                        contractIds:[],
-                                        membershipId: '',
-                                        recipientId: '',
-                                        abi: '',
-                                        quarters:[]};
-                                    getListaAnagraficaPspGrid(newBody,1,10);
-                                    setBodyGetLista(newBody);
-                                    setFiltersDownload(newBody);
-                                    setRowsPerPage(10);
-                                    setPage(0);
-                                    setDataSelect([]);
-                                    setValueAutocomplete([]);
-                                    setValueQuarters([]);
-                                    /*setBodyGetLista({idEnti:[],prodotto:'',profilo:''});
-                                    setInfoPageListaDatiFat({ page: 0, pageSize: 100 });
-                                    setInfoPageToLocalStorage({ page: 0, pageSize: 100 });
-                                    getListaDatifatturazione({idEnti:[],prodotto:'',profilo:''});
-                                    setFiltersDownload({idEnti:[],prodotto:'',profilo:''});
-                                    setDataSelect([]);
-                                    setValueAutocomplete([]);
-                                    deleteFilterToLocalStorage();*/
-                                } }
+                                onClick={onButtonAnnulla}
                                 sx={{marginLeft:'24px'}} >
                         Annulla filtri
                             </Button>}
                     </div>
                 </div>
             </div>
-            {/* grid */}
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
                 {
                     gridData.length > 0 &&
-                <Button onClick={() =>
-                    onDownloadButton()
-                }
-                disabled={getListaLoading}
+                <Button onClick={ onDownloadButton}
+                    disabled={getListaLoading}
                 >
                 Download Risultati
                     <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
@@ -446,8 +450,6 @@ const AnagraficaPsp:React.FC = () =>{
                     rows={rowsPerPage}
                     headerNames={['Nome PSP','ID Contratto','Trimestre','Nome Fornitore','E-mail PEC','Codice SDI','Codice ABI','E-Mail Ref. Fattura','Data','']}
                     disabled={getListaLoading}></GridCustom>
-            </div>
-            <div>
             </div>
             <ModalLoading 
                 open={showLoading} 

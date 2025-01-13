@@ -9,13 +9,10 @@ import Paper from '@mui/material/Paper';
 import { useContext} from 'react';
 import { Card, TablePagination} from '@mui/material';
 import { HeaderCollapsible } from '../../../../types/typeFatturazione';
-import RowBase from './rowBase';
 import { MainState } from '../../../../types/typesGeneral';
 import { GlobalContext } from '../../../../store/context/globalContext';
-import { setFilterPageRowDocConPA } from '../../../../reusableFunction/actionLocalStorage';
 import { DocContabili } from '../../../../types/typeDocumentiContabili';
-
-
+import { PathPf } from '../../../../types/enum';
 
 export interface GridCollapsibleBase{
     data:DocContabili[],
@@ -31,10 +28,8 @@ export interface GridCollapsibleBase{
 }
 
 
-const CollapsibleTablePa = ({headerNames,page,setPage,rowsPerPage,setRowsPerPage,count,dataPaginated,RowComponent}) => {
+const CollapsibleTablePa = ({headerNames,page,setPage,rowsPerPage,setRowsPerPage,count,dataPaginated,RowComponent,updateFilters,body}) => {
 
-   
-   
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState} = globalContextObj;
  
@@ -45,44 +40,37 @@ const CollapsibleTablePa = ({headerNames,page,setPage,rowsPerPage,setRowsPerPage
         });
     };
 
-    
-   
-
     const handleChangePage = (
         event: React.MouseEvent<HTMLButtonElement> | null,
         newPage: number,
     ) => {
-
-        let from = 0;
-        if(newPage === 0){
-            from = 0;
-        }else{
-            from = newPage * rowsPerPage;
-        }
-    
-        //setDataPaginated(data.slice(from, rowsPerPage + from));
         setPage(newPage);
-        setFilterPageRowDocConPA(newPage,rowsPerPage);
-        // const filters = mainState.filterDocContabili;
-        //const newFilters = {...filters,  ...{infoPage:{row:rowsPerPage,page:newPage}}};
-        //handleModifyMainState({filterDocContabili:newFilters});
+        updateFilters({
+            page:newPage,
+            rows:rowsPerPage,
+            pathPage:PathPf.DOCUMENTICONTABILI,
+            body:body,
+            textValue:'',
+            valueAutocomplete:[],
+            valueQuarters:[],
+        });
     };
     
     const handleChangeRowsPerPage = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
-       
-    
-        //setDataPaginated(data.slice(0, event.target.value));
         setRowsPerPage(event.target.value);
         setPage(0);
-        setFilterPageRowDocConPA(0,event.target.value);
-        // const filters = mainState.filterDocContabili;
-        // const newFilters = {...filters,  ...{infoPage:{row:event.target.value,page:0}}};
-        //handleModifyMainState({filterDocContabili:newFilters});
+        updateFilters({
+            page:0,
+            rows:event.target.value,
+            pathPage:PathPf.DOCUMENTICONTABILI,
+            body:body,
+            textValue:'',
+            valueAutocomplete:[],
+            valueQuarters:[],
+        });
     };
-
-
 
     return (
         <>
@@ -107,7 +95,6 @@ const CollapsibleTablePa = ({headerNames,page,setPage,rowsPerPage,setRowsPerPage
                                 </TableRow>
                             </TableHead>
                             {dataPaginated.length === 0 ? <TableBody  style={{height: '50px'}}>
-
                             </TableBody>: dataPaginated.map((row) => {
                                 return(
                                     <RowComponent key={row.key} 
