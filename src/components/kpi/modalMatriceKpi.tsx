@@ -78,7 +78,7 @@ const ModalMatriceKpi = ({setOpen, open,anni,setShowLoading}) => {
             })
             .then((res)=>{
                 console.log(res);
-                const fileName = `Matrice KPI ${quarterSelected}.xlsx`;
+                const fileName = `Matrice KPI/${quarterSelected}.xlsx`;
                 saveAs(res,fileName );
                 setShowLoading(false);
             }).catch((err)=>{
