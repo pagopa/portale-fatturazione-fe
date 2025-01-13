@@ -39,7 +39,7 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
                             style={{ marginRight: 8 }}
                             checked={selected}
                         />
-                        {option.descrizione}
+                        {option.descrizione||''}
                     </li>
                 );
             } }
