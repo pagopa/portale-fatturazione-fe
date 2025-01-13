@@ -223,6 +223,9 @@ const ReportDettaglio : React.FC = () => {
             } );*/
                     setArrayMesi(resMese.data);
                     let meseToSet = resMese.data[0].mese;
+                    if(dataFromLocalStorage){
+                        meseToSet = filters.body.mese;
+                    }
                     let page = 1;
                     let row = 10;
                   
