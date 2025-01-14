@@ -11,13 +11,14 @@ import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { SingleFileInput } from "@pagopa/mui-italia";
 import ModalUploadPdf from "../components/rel/modalUploadPdf";
 import { GlobalContext } from "../store/context/globalContext";
+import { PathPf } from "../types/enum";
+import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
 
 
 const AdesioneBando : React.FC = () => {
 
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState} = globalContextObj;
-
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 
@@ -29,12 +30,13 @@ const AdesioneBando : React.FC = () => {
     const [loadingUpload, setLoadingUpload] = useState<boolean>(false);
     const [errorUpload, setErrorUpload] = useState<boolean>(false);
     const [openModalConfirmUploadDoc, setOpenModalConfirmUploadDoc] = useState<boolean>(false);
+    const {resetFilters} = useSavedFilters(PathPf.ADESIONE_BANDO,{});
 
     
     useEffect(()=>{
      
         getListaAsseverazione();
-        
+        resetFilters();
     },[]);
 
   
