@@ -21,13 +21,14 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,se
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [count, setCount] = useState(0);
     const [showedData, setShowedData] = useState<FattureObj[]>([]);
-   
+    console.log({selected});
     useEffect(()=>{
         if(firstRender){
             setPage(infoPageLocalStorage.page);
             setRowsPerPage(infoPageLocalStorage.rows);
             setShowedData(data.slice(0, 10));
             setCount(data.length);
+          
         }else{
             setCount(data.length);
             setPage(0);
@@ -47,10 +48,6 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,se
         }
         setShowedData(data.slice(from, rowsPerPage + from));
     },[page,rowsPerPage]);
-
-
-
-
 
 
     return (
@@ -103,7 +100,8 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,se
                                             setSelected={setSelected}
                                             selected={selected}
                                             setOpenResetFilterModal={setOpenResetFilterModal}
-                                            monthFilterIsEqualMonthDownload={monthFilterIsEqualMonthDownload} ></Row>
+                                            monthFilterIsEqualMonthDownload={monthFilterIsEqualMonthDownload}
+                                        ></Row>
                                     ); })}
                         </Table>
                     </TableContainer>

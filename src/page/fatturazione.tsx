@@ -87,7 +87,24 @@ const Fatturazione : React.FC = () =>{
             getlistaFatturazione(bodyFatturazione);
         }
     },[]);
-    console.log({bodyFatturazioneDownload});
+
+    useEffect(()=>{
+        if(!isInitialRender.current){
+            updateFilters({
+                pathPage:PathPf.FATTURAZIONE,
+                body:bodyFatturazione,
+                textValue:textValue,
+                valueAutocomplete,
+                tipologie:tipologie,
+                fattureSelected:fattureSelected,
+                valueMulitselectTipologie:valueMulitselectTipologie,
+                page:0,
+                rows:10,
+            });
+        }
+       
+    },[fattureSelected]);
+    
     useEffect(()=>{
         if(bodyFatturazione.idEnti.length !== 0 || bodyFatturazione.tipologiaFattura.length !== 0 || bodyFatturazione.cancellata === true ){
             setStatusAnnulla('show');

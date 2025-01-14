@@ -221,10 +221,9 @@ const ReportDettaglio : React.FC = () => {
                     setGetNotificheWorking(false);
                 });
             }
-            isInitialRender.current = false;
+           
         //getire l'assenza di mesi
         }).catch((err)=>{
-            isInitialRender.current = false;
             setGetNotificheWorking(false);
             manageError(err,dispatchMainState);
         });
@@ -510,7 +509,7 @@ const ReportDettaglio : React.FC = () => {
             body:bodyGetLista,
             textAutocomplete:textValue,
             valueAutocomplete:valueAutocomplete,
-            page:1,
+            page:0,
             rows:10,
             valueFgContestazione:valueFgContestazione
         });
@@ -519,6 +518,8 @@ const ReportDettaglio : React.FC = () => {
         }else{
             getlistaNotifichePagoPa(1, 10,bodyGetLista);
         }  
+        isInitialRender.current = false;
+        
     };
                 
     const handleChangePage = (
@@ -789,8 +790,10 @@ const ReportDettaglio : React.FC = () => {
                                 <Select
                                     label='Seleziona Prodotto'
                                     onChange={(e) => {
+                                        isInitialRender.current = false;
                                         const value = Number(e.target.value);
                                         setBodyGetLista((prev)=> ({...prev, ...{anno:value}}));  
+                                        
                                     }}
                                     value={bodyGetLista.anno||''}
                                 >
