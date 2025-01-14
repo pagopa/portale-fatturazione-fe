@@ -21,9 +21,7 @@ import { PathPf } from "../types/enum";
 import LayoutLoggedOut from '../layout/layoutLoggedOut';
 import { BrowserRouter } from 'react-router-dom';
 import useIsTabActive from '../reusableFunction/tabIsActiv';
-
-
-
+import { redirect } from '../api/api';
 
 
 const RouteProfile = () => {
@@ -34,43 +32,42 @@ const RouteProfile = () => {
     const isProdPnProfile = mainState.profilo.prodotto === 'prod-pn' && mainState.prodotti.length > 0 && mainState.authenticated;
     const isPagoPaProfile = mainState.profilo.prodotto === 'prod-pagopa' && mainState.prodotti.length > 0 && mainState.authenticated;
     const isRececapitistaOrConsolidatore = (mainState.profilo?.profilo === 'REC' || mainState.profilo?.profilo ==='CON') && mainState.authenticated;
-
-
     const profilo = mainState.profilo;
 
     const globalLocalStorage = localStorage.getItem('globalState') || '{}';
     const result =  JSON.parse(globalLocalStorage);
 
-    const tabActive = useIsTabActive();
-    useEffect(()=>{
-        if(mainState.authenticated === true  && tabActive === true &&(profilo.nonce !== result.profilo.nonce)){
-            window.location.href = redirect;
-        }
-    },[tabActive]);
-
-
-
-
     let route  = <Route/>;
-    let redirect = "/azureLogin";
+    let redirectRoute = "/azureLogin";
 
     if(isEnte){
         route = EnteRoute();
-        redirect = PathPf.DATI_FATTURAZIONE;
+        redirectRoute = PathPf.DATI_FATTURAZIONE;
     }else if(isLoggedWithoutProfile){
         route = SelectProdottiRoute();
-        redirect = "/selezionaprodotto";
+        redirectRoute = "/selezionaprodotto";
     }else if(isProdPnProfile){
         route = ProdPnRoute();
-        redirect = PathPf.LISTA_DATI_FATTURAZIONE;
+        redirectRoute = PathPf.LISTA_DATI_FATTURAZIONE;
     }else if(isPagoPaProfile){
         route = PagoPaRoute();
-        redirect = PathPf.ANAGRAFICAPSP;
+        redirectRoute = PathPf.ANAGRAFICAPSP;
     }else if(isRececapitistaOrConsolidatore){
         route = RecConRoute();
-        redirect = PathPf.LISTA_NOTIFICHE;
+        redirectRoute = PathPf.LISTA_NOTIFICHE;
     }
 
+    const tabActive = useIsTabActive();
+   
+    useEffect(()=>{
+        if(mainState.authenticated === true  && tabActive === true){
+            if(profilo?.nonce  !== result?.profilo?.nonce){
+                window.location.href = redirect;
+            }
+        }
+    },[tabActive]);
+
+   
     return (
         <BrowserRouter>
             <ThemeProvider theme={theme}>
@@ -82,18 +79,13 @@ const RouteProfile = () => {
                         <Route path="/azure" element={<Azure/>} />
                         <Route path="/azureLogin" element={<LayoutLoggedOut page={<AzureLogin/>}></LayoutLoggedOut>}></Route>
                         <Route path="/error"  element={<ErrorPage/>} />
-                        <Route path="*" element={<Navigate  to={redirect} replace />} />
+                        <Route path="*" element={<Navigate  to={redirectRoute} replace />} />
                         {route}
                     </Routes>
                 </div>
             </ThemeProvider>
         </BrowserRouter>
-
-
     );
-
-  
-  
 };
 
 export default RouteProfile;
