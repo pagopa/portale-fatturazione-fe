@@ -65,7 +65,7 @@ const RouteProfile = () => {
                 window.location.href = redirect;
             }
         }
-    },[tabActive,profilo]);
+    },[tabActive]);
 
    
     return (
