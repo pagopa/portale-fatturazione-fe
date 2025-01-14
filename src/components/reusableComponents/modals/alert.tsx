@@ -11,7 +11,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { PathPf } from '../../../types/enum';
 import { ActionReducerType } from '../../../reducer/reducerMainState';
 import { GlobalContext } from '../../../store/context/globalContext';
-import { error } from 'console';
+
 
 
 type AlertProps = {
