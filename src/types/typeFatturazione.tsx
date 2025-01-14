@@ -65,6 +65,11 @@ export interface GridCollapsible{
     monthFilterIsEqualMonthDownload:boolean,
     selected:number[]
     setSelected:any
+    updateFilters:any,
+    pathPage:string,
+    body:any,
+    firstRender:boolean,
+    infoPageLocalStorage:any
     //showedData:FattureObj[],
     //setShowedData: Dispatch<SetStateAction<FattureObj[]>>,
 }

@@ -209,7 +209,7 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
     const onChangePageOrRowGrid = (e) => {
         updateFilters(
             {
-                body:bodyGetLista,
+                body:filtersDownload,
                 pathPage:PathPf.LISTA_DATI_FATTURAZIONE,
                 textValue,
                 valueAutocomplete,

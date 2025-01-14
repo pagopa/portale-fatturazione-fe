@@ -446,7 +446,7 @@ const DocumentiContabili:React.FC = () =>{
                     dataPaginated={dataPaginated}
                     RowComponent={RowBase}
                     updateFilters={updateFilters}
-                    body={bodyGetLista}
+                    body={filtersDownload}
                 ></CollapsibleTablePa>
             </div>
             <div>

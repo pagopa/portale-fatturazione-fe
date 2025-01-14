@@ -424,7 +424,7 @@ const KpiPagamenti:React.FC = () =>{
                     dataPaginated={dataPaginated}
                     RowComponent={RowBaseKpi}
                     updateFilters={updateFilters}
-                    body={bodyGetLista}
+                    body={filtersDownload}
                 ></CollapsibleTablePa>
             </div>
             <ModalLoading 

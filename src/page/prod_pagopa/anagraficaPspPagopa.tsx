@@ -252,10 +252,10 @@ const AnagraficaPsp:React.FC = () =>{
         newPage: number,
     ) => {
         const realPage = newPage + 1;
-        getListaAnagraficaPspGrid(bodyGetLista,realPage, rowsPerPage);
+        getListaAnagraficaPspGrid(filtersDownload,realPage, rowsPerPage);
         setPage(newPage);
         updateFilters({
-            body:bodyGetLista,
+            body:filtersDownload,
             pathPage:PathPf.ANAGRAFICAPSP,
             textValue,
             valueAutocomplete,
@@ -272,9 +272,9 @@ const AnagraficaPsp:React.FC = () =>{
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
         const realPage = page + 1;
-        getListaAnagraficaPspGrid(bodyGetLista,realPage,parseInt(event.target.value, 10));
+        getListaAnagraficaPspGrid(filtersDownload,realPage,parseInt(event.target.value, 10));
         updateFilters({
-            body:bodyGetLista,
+            body:filtersDownload,
             pathPage:PathPf.ANAGRAFICAPSP,
             textValue,
             valueAutocomplete,

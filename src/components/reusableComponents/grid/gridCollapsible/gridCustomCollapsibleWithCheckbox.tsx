@@ -15,19 +15,27 @@ import Row from './rowWithCheckbox';
 
 
 
-const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,setOpenConfermaModal,setOpenResetFilterModal,monthFilterIsEqualMonthDownload,selected, setSelected}) => {
+
+const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,setOpenConfermaModal,setOpenResetFilterModal,monthFilterIsEqualMonthDownload,selected, setSelected,updateFilters,pathPage,body,firstRender,infoPageLocalStorage}) => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [count, setCount] = useState(0);
     const [showedData, setShowedData] = useState<FattureObj[]>([]);
    
     useEffect(()=>{
-        setCount(data.length);
-        setPage(0);
-        setRowsPerPage(10);
-        setShowedData(data.slice(0, 10));
-        setSelected([]);
-       
+        if(firstRender){
+            setPage(infoPageLocalStorage.page);
+            setRowsPerPage(infoPageLocalStorage.rows);
+            setShowedData(data.slice(0, 10));
+            setCount(data.length);
+        }else{
+            setCount(data.length);
+            setPage(0);
+            setRowsPerPage(10);
+            setShowedData(data.slice(0, 10));
+            setSelected([]);
+        }
+        
     },[data]);
     
     useEffect(()=>{
@@ -105,9 +113,12 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,se
                 <TablePaginationDemo 
                     setRowsPerPage={setRowsPerPage}
                     setPage={setPage}
-                    page={page}
+                    page={count > 0 ? page:0}
                     rowsPerPage={rowsPerPage}
                     count={count}
+                    updateFilters={updateFilters}
+                    pathPage={pathPage}
+                    body={body}
                 ></TablePaginationDemo>
             </div>  
         </>

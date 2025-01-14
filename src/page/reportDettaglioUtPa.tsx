@@ -21,6 +21,7 @@ import { profiliEnti} from "../reusableFunction/actionLocalStorage";
 import { mesiGrid, mesiWithZero, tipoNotifica } from "../reusableFunction/reusableArrayObj";
 import { GlobalContext } from "../store/context/globalContext";
 import { PathPf } from "../types/enum";
+import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
 
 const ReportDettaglio : React.FC = () => {
     const globalContextObj = useContext(GlobalContext);
@@ -34,8 +35,6 @@ const ReportDettaglio : React.FC = () => {
     const enti = profiliEnti(mainState);
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
-    const filters = JSON.parse(localStorage.getItem('filters')|| '{}') ;
-    const isInitialRender = useRef(true);
  
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [profili, setProfili] = useState([]);
@@ -142,58 +141,24 @@ const ReportDettaglio : React.FC = () => {
             mese: 0
         }
     });
-
     const [arrayAnni,setArrayAnni] = useState<number[]>([]);
     const [arrayMesi,setArrayMesi] = useState<{mese:number,descrizione:string}[]>([]);
+    const { 
+        filters,
+        updateFilters,
+        resetFilters,
+        isInitialRender
+    } = useSavedFilters(PathPf.LISTA_NOTIFICHE,{});
 
     useEffect(() => {
-        if(Object.keys(filters).length > 0 && filters.pathPage === PathPf.LISTA_NOTIFICHE){
+        if(isInitialRender.current && Object.keys(filters).length > 0){
             funInitialRender(filters.body, true);
+            
         }else{
             funInitialRender(bodyGetLista, false);
         }
-        //per prendere i dati dalla local fai una seconda funzione inital render
-        
-        /*
-        const result = getFiltersFromLocalStorageNotifiche();
-        
-        getProdotti();
-        getAnni();
-        if(Object.keys(result).length > 0 ){
-       
-            getProfili();
-            setBodyGetLista(result.bodyGetLista);
-            setTextValue(result.textValue);
-            setValueAutocomplete(result.valueAutocomplete);
-            setValueFgContestazione(result.valueFgContestazione);
-            setPage(result.page);
-            setRowsPerPage(result.rowsPerPage);
-            setBodyDownload(result.bodyGetLista);
 
-            if(profilo.auth === 'SELFCARE' && mainState.datiFatturazione === true){
-                getlistaNotifiche( result.page + 1, result.rowsPerPage,result.bodyGetLista); 
-            }else if(profilo.auth === 'PAGOPA'){
-                getRecapitistConsolidatori();
-                getlistaNotifichePagoPa( result.page + 1, result.rowsPerPage,result.bodyGetLista);
-            }
-        }else{
-            if(profilo.auth === 'SELFCARE' && mainState.datiFatturazione === true){
-                
-                getlistaNotifiche( page + 1, rowsPerPage,bodyGetLista); 
-            }else if(profilo.auth === 'PAGOPA'){
-                console.log(bodyGetLista,'ecco la');
-                getRecapitistConsolidatori();
-                getlistaNotifichePagoPa( page + 1, rowsPerPage,bodyGetLista);
-            }
-        }
-        */
     }, []);
-
-  
-
-    ////////////////////////////////////////////
-   
-
 
     useEffect(()=>{
         if((bodyGetLista.anno !== 0) && (isInitialRender.current === false)){
@@ -222,12 +187,10 @@ const ReportDettaglio : React.FC = () => {
                 return el;
             } );*/
                     setArrayMesi(resMese.data);
-
                     let meseToSet = resMese.data[0].mese;
                     if(dataFromLocalStorage){
                         meseToSet = filters.body.mese;
                     }
-                    
                     let page = 1;
                     let row = 10;
                   
@@ -247,24 +210,26 @@ const ReportDettaglio : React.FC = () => {
                         setValueAutocomplete(filters.valueAutocomplete);
                         setValueFgContestazione(filters.valueFgContestazione);
                         setPage(filters.page);
-                        setRowsPerPage(filters.row);
+                        setRowsPerPage(filters.rows);
     
                         meseToSet = filters.body.mese;
                         page = filters.page;
-                        row = filters.row;
+                        row = filters.rows;
                     }
                 }).catch((err)=>{
                     manageError(err,dispatchMainState);
                     setGetNotificheWorking(false);
                 });
             }
+            isInitialRender.current = false;
         //getire l'assenza di mesi
         }).catch((err)=>{
+            isInitialRender.current = false;
             setGetNotificheWorking(false);
             manageError(err,dispatchMainState);
         });
     };
-    ///////////////////////////////////////////////////
+
     useEffect(()=>{
         if( 
             bodyGetLista.profilo !== '' ||
@@ -300,21 +265,6 @@ const ReportDettaglio : React.FC = () => {
         return () => clearTimeout(timer);
     },[textValue]);
 
-    const getAnni = async () => {
-        setGetNotificheWorking(true);
-        await getAnniNotifiche(token, profilo.nonce).then((res)=> {
-            const allYearToNumber = res.data.map( el => Number(el));
-            setArrayAnni(allYearToNumber);
-            if(res.data.length > 0){
-                setBodyGetLista((prev)=> ({...prev, ...{anno:allYearToNumber[0]}}));
-            }
-        }).catch((err)=>{
-            setGetNotificheWorking(false);
-            manageError(err,dispatchMainState);
-        
-        });
-    };
-
     const getMesi = async (anno) => {
         await getMesiNotifiche(token, profilo.nonce,{anno}).then((res)=> {
             /*const makeCamelCaseMonth = res.data.map(el =>{
@@ -335,21 +285,17 @@ const ReportDettaglio : React.FC = () => {
     // servizio che popola la select con la checkbox
     const listaEntiNotifichePageOnSelect = async () =>{
         if(profilo.profilo === 'CON'){
-            await listaEntiNotifichePageConsolidatore(token, profilo.nonce, {descrizione:textValue} )
-                .then((res)=>{
-                    setDataSelect(res.data);
-                })
-                .catch(((err)=>{
-                    manageError(err,dispatchMainState);
-                }));
+            await listaEntiNotifichePageConsolidatore(token, profilo.nonce, {descrizione:textValue} ).then((res)=>{
+                setDataSelect(res.data);
+            }).catch(((err)=>{
+                manageError(err,dispatchMainState);
+            }));
         }else if(profilo.auth === 'PAGOPA'){
-            await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} )
-                .then((res)=>{
-                    setDataSelect(res.data);
-                })
-                .catch(((err)=>{
-                    manageError(err,dispatchMainState);
-                }));
+            await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} ).then((res)=>{
+                setDataSelect(res.data);
+            }).catch(((err)=>{
+                manageError(err,dispatchMainState);
+            }));
         }
     };
 
@@ -443,10 +389,10 @@ const ReportDettaglio : React.FC = () => {
         }
     });
 
-    const onAnnullaFiltri = async () =>{
+    const onAnnullaFiltri = () =>{
         // to make call equal on initial render
         localStorage.removeItem("filters");
-        isInitialRender.current = true;
+        
         funInitialRender({
             profilo:'',
             prodotto:'',
@@ -467,63 +413,7 @@ const ReportDettaglio : React.FC = () => {
         setValueAutocomplete([]);
         setPage(0);
         setRowsPerPage(10);
-        /*
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const {idEnti, recapitisti, consolidatori, ...body} = newBody;
-        if(enti){
-            await listaNotifiche(token,profilo.nonce,1,10, body)
-                .then((res)=>{
-                    setNotificheList(res.data.notifiche);
-                    setTotalNotifiche(res.data.count); 
-                    setGetNotificheWorking(false);   
-                }).catch((error)=>{
-                    setNotificheList([]);
-                    setTotalNotifiche(0);
-                    setGetNotificheWorking(false);
-                    manageError(error, dispatchMainState);
-                });
-        }else if(profilo.profilo === 'REC'){
-            await listaNotificheRecapitista(token,profilo.nonce,1, 10, body)
-                .then((res)=>{
-                    setNotificheList(res.data.notifiche);
-                    setTotalNotifiche(res.data.count);
-                    // abilita button filtra e annulla filtri all'arrivo dei dati
-                    setGetNotificheWorking(false);
-                }).catch((error)=>{
-                // abilita button filtra e annulla filtri all'arrivo dei dati
-                    setGetNotificheWorking(false);
-                    setNotificheList([]);
-                    setTotalNotifiche(0);
-                    manageError(error, dispatchMainState);
-                });
-        }else if(profilo.profilo === 'CON'){
-            await listaNotificheConsolidatore(token,profilo.nonce,1, 10, body)
-                .then((res)=>{
-                    setNotificheList(res.data.notifiche);
-                    setTotalNotifiche(res.data.count);
-                    // abilita button filtra e annulla filtri all'arrivo dei dati
-                    setGetNotificheWorking(false);
-                }).catch((error)=>{
-                // abilita button filtra e annulla filtri all'arrivo dei dati
-                    setGetNotificheWorking(false);
-                    setNotificheList([]);
-                    setTotalNotifiche(0);
-                    manageError(error, dispatchMainState);
-                });
-        }else if(profilo.auth === 'PAGOPA'){
-            await listaNotifichePagoPa(token,profilo.nonce,1,10, newBody)
-                .then((res)=>{
-                    setNotificheList(res.data.notifiche);
-                    setTotalNotifiche(res.data.count);
-                    setGetNotificheWorking(false);
-                }).catch((error)=>{
-                    setNotificheList([]);
-                    setTotalNotifiche(0);
-                    setGetNotificheWorking(false);
-                    manageError(error, dispatchMainState);
-                });
-        }
-                */
+        resetFilters();
     };     
 
     const getlistaNotifiche = async (nPage:number, nRow:number, bodyParameter) => {
@@ -615,16 +505,15 @@ const ReportDettaglio : React.FC = () => {
         setPage(0);
         setRowsPerPage(10);
         setBodyDownload(bodyGetLista);
-        localStorage.setItem("filters", JSON.stringify({
+        updateFilters({
             pathPage:PathPf.LISTA_NOTIFICHE,
             body:bodyGetLista,
             textAutocomplete:textValue,
             valueAutocomplete:valueAutocomplete,
             page:1,
-            row:10,
+            rows:10,
             valueFgContestazione:valueFgContestazione
-        }));
-        //setFilterToLocalStorageNotifiche(bodyGetLista,textValue,valueAutocomplete, 0, 10,valueFgContestazione);
+        });
         if(profilo.auth === 'SELFCARE'){
             getlistaNotifiche(1, 10,bodyGetLista);
         }else{
@@ -638,40 +527,40 @@ const ReportDettaglio : React.FC = () => {
     ) => {
         const realPage = newPage + 1;
         if(profilo.auth === 'SELFCARE'){
-            getlistaNotifiche(realPage,rowsPerPage, bodyGetLista);
+            getlistaNotifiche(realPage,rowsPerPage, bodyDownload);
         }else if(profilo.auth === 'PAGOPA'){
-            getlistaNotifichePagoPa(realPage,rowsPerPage, bodyGetLista);
+            getlistaNotifichePagoPa(realPage,rowsPerPage, bodyDownload);
         }
         setPage(newPage);
-        localStorage.setItem("filters", JSON.stringify({
+        updateFilters({
             pathPage:PathPf.LISTA_NOTIFICHE,
             body:bodyDownload,
             textValue,
             valueAutocomplete,
             page:realPage,
-            row:rowsPerPage,
+            rows:rowsPerPage,
             valueFgContestazione
-        }));
+        });
     };
                     
     const handleChangeRowsPerPage = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
         setRowsPerPage(parseInt(event.target.value, 10));
-        localStorage.setItem("filters", JSON.stringify({
+        updateFilters({
             pathPage:PathPf.LISTA_NOTIFICHE,
             body:bodyDownload,
             textValue,
             valueAutocomplete,
             page,
-            row:parseInt(event.target.value, 10),
+            rows:parseInt(event.target.value, 10),
             valueFgContestazione
-        }));
+        });
         const realPage = page + 1;
         if(profilo.auth === 'SELFCARE'){
-            getlistaNotifiche(realPage,parseInt(event.target.value, 10),bodyGetLista);
+            getlistaNotifiche(realPage,parseInt(event.target.value, 10),bodyDownload);
         }else if(profilo.auth === 'PAGOPA'){
-            getlistaNotifichePagoPa(realPage,parseInt(event.target.value, 10),bodyGetLista);
+            getlistaNotifichePagoPa(realPage,parseInt(event.target.value, 10),bodyDownload);
         }  
                           
     };
@@ -690,23 +579,19 @@ const ReportDettaglio : React.FC = () => {
     };
                         
     const getProdotti = async() => {
-        await getTipologiaProdotto(token, profilo.nonce )
-            .then((res)=>{          
-                setProdotti(res.data);
-            })
-            .catch(((err)=>{
-                manageError(err,dispatchMainState);
-            }));
+        await getTipologiaProdotto(token, profilo.nonce ).then((res)=>{          
+            setProdotti(res.data);
+        }).catch(((err)=>{
+            manageError(err,dispatchMainState);
+        }));
     };
                                             
     const getProfili = async() => {
-        await getTipologiaProfilo(token, profilo.nonce )
-            .then((res)=>{              
-                setProfili(res.data);
-            })
-            .catch(((err)=>{
-                manageError(err,dispatchMainState);
-            }));
+        await getTipologiaProfilo(token, profilo.nonce ).then((res)=>{              
+            setProfili(res.data);
+        }).catch(((err)=>{
+            manageError(err,dispatchMainState);
+        }));
     };
 
     const getContestazioneModal = async(el) =>{
@@ -812,66 +697,59 @@ const ReportDettaglio : React.FC = () => {
         }else if(profilo.profilo === 'REC'){
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const {idEnti, recapitisti, consolidatori, ...bodyRecapitista} = bodyDownload;
-            await downloadNotifcheRecapitista(token, profilo.nonce,bodyRecapitista )
-                .then((res)=>{
-                    const blob = new Blob([res.data], { type: 'text/csv' });
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.setAttribute('hidden', '');
-                    a.setAttribute('href', url);
-                    a.setAttribute('download',`Notifiche /${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`);
-                    document.body.appendChild(a);
-                    a.click();
-                    setShowLoading(false);
-                    document.body.removeChild(a); 
-                })
-                .catch(((err)=>{
-                    manageError(err,dispatchMainState);
-                    setShowLoading(false);
-                }));
+            await downloadNotifcheRecapitista(token, profilo.nonce,bodyRecapitista ).then((res)=>{
+                const blob = new Blob([res.data], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.setAttribute('hidden', '');
+                a.setAttribute('href', url);
+                a.setAttribute('download',`Notifiche /${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`);
+                document.body.appendChild(a);
+                a.click();
+                setShowLoading(false);
+                document.body.removeChild(a); 
+            }).catch(((err)=>{
+                manageError(err,dispatchMainState);
+                setShowLoading(false);
+            }));
         }else if(profilo.profilo === 'CON'){
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { idEnti, recapitisti, consolidatori, ...bodyConsolidatore} = bodyDownload;
-            await downloadNotifcheConsolidatore(token, profilo.nonce,bodyConsolidatore )
-                .then((res)=>{
-                    const blob = new Blob([res.data], { type: 'text/csv' });
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.setAttribute('hidden', '');
-                    a.setAttribute('href', url);
-                    a.setAttribute('download', `Notifiche /${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`);
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    setShowLoading(false);
-                })
-                .catch(((err)=>{
-                    manageError(err,dispatchMainState);
-                    setShowLoading(false);
-                }));
+            await downloadNotifcheConsolidatore(token, profilo.nonce,bodyConsolidatore ).then((res)=>{
+                const blob = new Blob([res.data], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.setAttribute('hidden', '');
+                a.setAttribute('href', url);
+                a.setAttribute('download', `Notifiche /${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`);
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setShowLoading(false);
+            }).catch(((err)=>{
+                manageError(err,dispatchMainState);
+                setShowLoading(false);
+            }));
         }else if(profilo.auth === 'PAGOPA'){
-            await downloadNotifchePagoPa(token, profilo.nonce,bodyDownload)
-                .then((res)=>{
-                  
-                    let fileName = `Notifiche /${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`;
-                    if(bodyDownload.idEnti.length === 1){
-                        fileName = `Notifiche /${notificheList[0].ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`;
-                    }
-                    const blob = new Blob([res.data], { type: 'text/csv' });
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.setAttribute('hidden', '');
-                    a.setAttribute('href', url);
-                    a.setAttribute('download',fileName);
-                    document.body.appendChild(a);
-                    a.click();
-                    setShowLoading(false);
-                    document.body.removeChild(a); 
-                })
-                .catch(((err)=>{
-                    manageError(err,dispatchMainState);
-                    setShowLoading(false);
-                }));
+            await downloadNotifchePagoPa(token, profilo.nonce,bodyDownload).then((res)=>{
+                let fileName = `Notifiche /${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`;
+                if(bodyDownload.idEnti.length === 1){
+                    fileName = `Notifiche /${notificheList[0].ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`;
+                }
+                const blob = new Blob([res.data], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.setAttribute('hidden', '');
+                a.setAttribute('href', url);
+                a.setAttribute('download',fileName);
+                document.body.appendChild(a);
+                a.click();
+                setShowLoading(false);
+                document.body.removeChild(a); 
+            }).catch(((err)=>{
+                manageError(err,dispatchMainState);
+                setShowLoading(false);
+            }));
         }
     }; 
  
@@ -899,7 +777,7 @@ const ReportDettaglio : React.FC = () => {
             {/*title container end */}
             <div className="mt-5 mb-5 ">
                 <div className="row">
-                    <div className="col-3   ">
+                    <div className="col-3">
                         <Box sx={{width:'80%'}} >
                             <FormControl
                                 fullWidth
@@ -909,13 +787,8 @@ const ReportDettaglio : React.FC = () => {
                             Anno
                                 </InputLabel>
                                 <Select
-                                    id="sea"
                                     label='Seleziona Prodotto'
-                                    labelId="search-by-label"
                                     onChange={(e) => {
-                                        if (isInitialRender.current) {
-                                            isInitialRender.current = false; 
-                                        }
                                         const value = Number(e.target.value);
                                         setBodyGetLista((prev)=> ({...prev, ...{anno:value}}));  
                                     }}
@@ -1171,15 +1044,13 @@ const ReportDettaglio : React.FC = () => {
                         <div className=" d-flex align-items-center justify-content-center h-100">
                             <div>
                                 <Button 
-                                    onClick={()=> onButtonFiltra()} 
+                                    onClick={onButtonFiltra} 
                                     disabled={getNotificheWorking}
                                     variant="contained"> Filtra  
                                 </Button>                
                                 {statusAnnulla === 'hidden' ? null :
                                     <Button
-                                        onClick={()=>{
-                                            onAnnullaFiltri();   
-                                        } }
+                                        onClick={onAnnullaFiltri}
                                         disabled={getNotificheWorking}
                                         sx={{marginLeft:'24px'}} >
                                                     Annulla filtri
@@ -1195,9 +1066,7 @@ const ReportDettaglio : React.FC = () => {
                 <div>
                     <Button
                         disabled={getNotificheWorking}
-                        onClick={()=> {
-                            downloadNotificheOnDownloadButton(); 
-                        }}  >
+                        onClick={downloadNotificheOnDownloadButton}  >
                                   Download Risultati 
                         <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
                     </Button>

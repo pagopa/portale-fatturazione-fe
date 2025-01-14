@@ -1,4 +1,4 @@
-import { BodyDownloadModuliCommessa, GridElementListaCommesse, ListaModuliCommessaProps } from "../types/typeListaModuliCommessa";
+import { BodyDownloadModuliCommessa, GridElementListaCommesse} from "../types/typeListaModuliCommessa";
 import { Params } from "../types/typesGeneral";
 import { Typography } from "@mui/material";
 import { Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
@@ -13,7 +13,6 @@ import { downloadDocumentoListaModuloCommessaPagoPa, listaModuloCommessaPagopa }
 import { saveAs } from "file-saver";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../types/enum";
-import { deleteFilterToLocalStorageCommessa, getFiltersFromLocalStorageCommessa, getInfoPageFromLocalStorageCommessa, getProfilo, getToken, profiliEnti, setFilterToLocalStorageCommessa, setInfoPageToLocalStorageCommessa } from "../reusableFunction/actionLocalStorage";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { currentMonth, getCurrentFinancialYear } from "../reusableFunction/function";
@@ -38,8 +37,6 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
         });
     };
     
-    
-
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [gridData, setGridData] = useState<GridElementListaCommesse[]>([]);
     const [bodyGetLista, setBodyGetLista] = useState<BodyDownloadModuliCommessa>({idEnti:[],prodotto:'', anno:currentYear, mese:currString});
@@ -177,7 +174,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
     const onChangePageOrRowGrid = (e) => {
         updateFilters(
             {
-                body:bodyGetLista,
+                body:bodyDownload,
                 pathPage:PathPf.LISTA_MODULICOMMESSA,
                 textValue,
                 valueAutocomplete,

@@ -15,6 +15,8 @@ import { saveAs } from "file-saver";
 import { ActionReducerType } from "../reducer/reducerMainState";
 import { GlobalContext } from "../store/context/globalContext";
 import { getMessaggiCount } from "../api/apiPagoPa/centroMessaggi/api";
+import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
+import { PathPf } from "../types/enum";
 
 
 interface AccertamentiProps {
@@ -58,9 +60,22 @@ const Accertamenti : React.FC = () =>{
         tipologiaFattura:[],
         idEnti:[]
     });
+    const { 
+        filters,
+        updateFilters,
+        resetFilters,
+        isInitialRender
+    } = useSavedFilters('/accertamenti',{});
     
     useEffect(()=>{
-        getListaAccertamenti(new Date().getFullYear(),null);
+        if(isInitialRender.current && Object.keys(filters).length > 0){
+            getListaAccertamenti(filters.body.anno,filters.body.mese);
+            setBodyAccertamenti(filters.body);
+            setInfoPageAccertamenti({page:filters.page,pageSize:filters.rows});
+        }else{
+            getListaAccertamenti(new Date().getFullYear(),null);
+            
+        }
         getListaMatrice();
     },[]);
     
@@ -77,7 +92,7 @@ const Accertamenti : React.FC = () =>{
                 setShowLoadingGrid(false);
                 manageError(err,dispatchMainState);
             }));
-        
+        isInitialRender.current = false;
     };
     
     const getListaMatrice = async () =>{
@@ -168,6 +183,39 @@ const Accertamenti : React.FC = () =>{
     
     };
     */
+
+    const onButtonFiltra = () =>{
+        updateFilters({
+            pathPage:'/accertamenti',
+            body:bodyAccertamenti,
+            page:0,
+            rows:10,
+        });
+        getListaAccertamenti(bodyAccertamenti.anno, bodyAccertamenti.mese);
+    };
+
+    const onButtonAnnulla = () => {
+        getListaAccertamenti(new Date().getFullYear(),null);
+        setBodyAccertamenti({
+            anno:currentYear,
+            mese:null,
+            tipologiaFattura:[],
+            idEnti:[]
+        });
+        resetFilters();
+    };
+
+
+    const onChangePageOrRowGrid = (e) => {
+        updateFilters(
+            {
+                body:bodyAccertamenti,
+                pathPage:'/accertamenti',
+                page:e.page,
+                rows:e.pageSize
+            });
+        setInfoPageAccertamenti(e);
+    };
     
     let columsSelectedGrid = '';
     const handleOnCellClick = (params:Params) =>{
@@ -219,9 +267,7 @@ const Accertamenti : React.FC = () =>{
                     <div className="row">
                         <div className="col-1">
                             <Button 
-                                onClick={()=>{
-                                    getListaAccertamenti(bodyAccertamenti.anno, bodyAccertamenti.mese);
-                                } } 
+                                onClick={onButtonFiltra} 
                                 sx={{ marginTop: 'auto', marginBottom: 'auto'}}
                                 variant="contained"> Filtra
                             </Button>
@@ -229,15 +275,7 @@ const Accertamenti : React.FC = () =>{
                         <div className="col-2">
                             {bodyAccertamenti.mese === null ? null :
                                 <Button
-                                    onClick={()=>{
-                                        getListaAccertamenti(new Date().getFullYear(),null);
-                                        setBodyAccertamenti({
-                                            anno:currentYear,
-                                            mese:null,
-                                            tipologiaFattura:[],
-                                            idEnti:[]
-                                        });
-                                    } }
+                                    onClick={onButtonAnnulla}
                                     sx={{marginLeft:'24px'}} >
                 Annulla filtri
                                 </Button>
@@ -256,8 +294,7 @@ const Accertamenti : React.FC = () =>{
                         backgroundColor: 'white',
                     }
                 }}
-                onPaginationModelChange={(e)=>{
-                    setInfoPageAccertamenti(e);}}
+                onPaginationModelChange={(e)=> onChangePageOrRowGrid(e)}
                 paginationModel={infoPageAccertamenti}
                 rows={gridData} 
                 columns={columns}

@@ -15,13 +15,14 @@ import SelectStatoPdf from "../components/rel/selectStatoPdf";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { saveAs } from "file-saver";
 import { PathPf } from "../types/enum";
-import { deleteFilterToLocalStorageRel, getFiltersFromLocalStorageRel, profiliEnti, setFilterToLocalStorageRel } from "../reusableFunction/actionLocalStorage";
+import {profiliEnti} from "../reusableFunction/actionLocalStorage";
 import { OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { mesiGrid, mesiWithZero } from "../reusableFunction/reusableArrayObj";
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 import { GlobalContext } from "../store/context/globalContext";
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
+import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
 
 
 
@@ -34,7 +35,8 @@ const RelPage : React.FC = () =>{
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
     const enti = profiliEnti(mainState);
-    const result = getFiltersFromLocalStorageRel();
+ 
+   
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -60,7 +62,6 @@ const RelPage : React.FC = () =>{
     const [tipologiaFatture, setTipologiaFatture] = useState<string[]>([]);
     const [valuetipologiaFattura, setValueTipologiaFattura] = useState<string>('');
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
-
     const [bodyDownload, setBodyDownload] = useState<BodyRel>({
         anno:currentYear,
         mese:month,
@@ -77,20 +78,26 @@ const RelPage : React.FC = () =>{
         idContratto:null,
         caricata:null
     });
+    const { 
+        filters,
+        updateFilters,
+        resetFilters,
+        isInitialRender
+    } = useSavedFilters(PathPf.LISTA_REL,{});
 
  
 
     useEffect(()=>{
-        if(Object.keys(result).length > 0){
+        if(isInitialRender.current && Object.keys(filters).length > 0){
          
-            setBodyRel(result.bodyRel);
-            setTextValue(result.textValue);
-            setValueAutocomplete(result.valueAutocomplete);
-            getlistaRel(result.bodyRel,result.page + 1, result.rowsPerPage);
-            setPage(result.page);
-            setRowsPerPage(result.rowsPerPage);
-            setBodyDownload(result.bodyRel);
-            getListTipologiaFattura(result.bodyRel.anno,result.bodyRel.mese);
+            setBodyRel(filters.body);
+            setTextValue(filters.textValue);
+            setValueAutocomplete(filters.valueAutocomplete);
+            getlistaRel(filters.body,filters.page + 1, filters.rows);
+            setPage(filters.page);
+            setRowsPerPage(filters.rows);
+            setBodyDownload(filters.body);
+            getListTipologiaFattura(filters.body.anno,filters.body.mese);
         }else{
             const realPage = page + 1;
             getlistaRel(bodyRel,realPage, rowsPerPage);
@@ -145,6 +152,7 @@ const RelPage : React.FC = () =>{
                     setData(orderDataCustom);
                     setTotalNotifiche(res.data.count);
                     setGetListaRelRunning(false);
+
                 }).catch((error)=>{
                     if(error?.response?.status === 404){
                         setData([]);
@@ -190,7 +198,8 @@ const RelPage : React.FC = () =>{
                     setGetListaRelRunning(false);
                     manageError(error, dispatchMainState);
                 });
-        }            
+        }     
+        isInitialRender.current = false;       
     };
 
     // servizio che popola la select con la checkbox
@@ -209,11 +218,53 @@ const RelPage : React.FC = () =>{
     };
 
     const onButtonFiltra = () =>{
+        updateFilters({
+            pathPage:PathPf.LISTA_REL,
+            body:bodyRel,
+            textValue,
+            valueAutocomplete:valueAutocomplete,
+            page:0,
+            rows:10,
+            valuetipologiaFattura
+        });
         setPage(0);
         setRowsPerPage(10);
         setBodyDownload(bodyRel);
         getlistaRel(bodyRel,1,10); 
-        setFilterToLocalStorageRel(bodyRel,textValue,valueAutocomplete, 0, 10,valuetipologiaFattura);
+    };
+
+    const onButtonAnnulla = () => {
+        setBodyRel({
+            anno:currentYear,
+            mese:month,
+            tipologiaFattura:null,
+            idEnti:[],
+            idContratto:null,
+            caricata:null
+        });
+        setBodyDownload({
+            anno:currentYear,
+            mese:month,
+            tipologiaFattura:null,
+            idEnti:[],
+            idContratto:null,
+            caricata:null
+        });
+        setValueTipologiaFattura('');
+        setData([]);
+        setPage(0);
+        setRowsPerPage(10);
+        setValueAutocomplete([]);
+        getlistaRel({
+            anno:currentYear,
+            mese:month,
+            tipologiaFattura:null,
+            idEnti:[],
+            idContratto:null,
+            caricata:null
+        },1,10);
+        resetFilters();
+    
     };
 
     const handleChangePage = (
@@ -223,8 +274,15 @@ const RelPage : React.FC = () =>{
         const realPage = newPage + 1;
         getlistaRel(bodyRel,realPage, rowsPerPage);
         setPage(newPage);
-      
-        setFilterToLocalStorageRel(bodyDownload,textValue,valueAutocomplete, newPage, rowsPerPage,valuetipologiaFattura);
+        updateFilters({
+            pathPage:PathPf.LISTA_REL,
+            body:bodyDownload,
+            textValue,
+            valueAutocomplete:valueAutocomplete,
+            page:newPage,
+            rows:rowsPerPage,
+            valuetipologiaFattura
+        });
     };
                     
     const handleChangeRowsPerPage = (
@@ -234,8 +292,15 @@ const RelPage : React.FC = () =>{
         setPage(0);
         const realPage = page + 1;
         getlistaRel(bodyRel,realPage,parseInt(event.target.value, 10));
-   
-        setFilterToLocalStorageRel(bodyDownload,textValue,valueAutocomplete, page, parseInt(event.target.value, 10),valuetipologiaFattura);
+        updateFilters({
+            pathPage:PathPf.LISTA_REL,
+            body:bodyDownload,
+            textValue,
+            valueAutocomplete:valueAutocomplete,
+            page:0,
+            rows:parseInt(event.target.value, 10),
+            valuetipologiaFattura
+        });
     };
    
     const setIdRel = async(el) => {
@@ -244,13 +309,12 @@ const RelPage : React.FC = () =>{
     };  
 
     const getListTipologiaFattura = async(anno,mese) => {
-        const result = getFiltersFromLocalStorageRel();
         if(enti){
             await getTipologieFatture(token, profilo.nonce, {mese,anno}).then((res)=>{
                 setTipologiaFatture(res.data);
                
-                if(result.valuetipologiaFattura){
-                    setValueTipologiaFattura(result.valuetipologiaFattura);
+                if(filters.valuetipologiaFattura){
+                    setValueTipologiaFattura(filters.valuetipologiaFattura);
                 }else{
                     setValueTipologiaFattura('');
                 }
@@ -264,13 +328,11 @@ const RelPage : React.FC = () =>{
         }else if(profilo.auth === 'PAGOPA'){
             await getTipologieFatturePagoPa(token, profilo.nonce, {mese,anno}).then((res)=>{
                 setTipologiaFatture(res.data);
-                if(result.valuetipologiaFattura){
-                    setValueTipologiaFattura(result.valuetipologiaFattura);
+                if(filters.valuetipologiaFattura){
+                    setValueTipologiaFattura(filters.valuetipologiaFattura);
                 }else{
                     setValueTipologiaFattura('');
-                }
-                
-                
+                } 
             }).catch((()=>{
                 setTipologiaFatture([]);
                 setValueTipologiaFattura("");
@@ -281,7 +343,6 @@ const RelPage : React.FC = () =>{
     };
 
     const getListTipologiaFatturaOnChangeMonthYear = async(mese,anno) => {
-  
         if(enti){
             await getTipologieFatture(token, profilo.nonce, {mese,anno}).then((res)=>{
                 setTipologiaFatture(res.data);
@@ -434,48 +495,14 @@ const RelPage : React.FC = () =>{
                 <div className="row mt-5">
                     <div className="col-1">
                         <Button
-                            onClick={()=>{
-                                onButtonFiltra();
-                            }}
+                            onClick={onButtonFiltra}
                             variant="contained"
                             disabled={getListaRelRunning}>Filtra</Button>
                     </div>
                     {!hiddenAnnullaFiltri && 
                     <div className="col-2">
-                        <Button onClick={()=>{
-                            setBodyRel({
-                                anno:currentYear,
-                                mese:month,
-                                tipologiaFattura:null,
-                                idEnti:[],
-                                idContratto:null,
-                                caricata:null
-                            });
-                            setBodyDownload({
-                                anno:currentYear,
-                                mese:month,
-                                tipologiaFattura:null,
-                                idEnti:[],
-                                idContratto:null,
-                                caricata:null
-                            });
-                            setValueTipologiaFattura('');
-                            setData([]);
-                            setPage(0);
-                            setRowsPerPage(10);
-                            deleteFilterToLocalStorageRel();
-                            setValueAutocomplete([]);
-                            getlistaRel({
-                                anno:currentYear,
-                                mese:month,
-                                tipologiaFattura:null,
-                                idEnti:[],
-                                idContratto:null,
-                                caricata:null
-                            },1,10);
-                            
-                        }} 
-                        disabled={getListaRelRunning}
+                        <Button onClick={onButtonAnnulla} 
+                            disabled={getListaRelRunning}
                         >Annulla Filtri</Button>
                     </div>
                     }
@@ -486,9 +513,7 @@ const RelPage : React.FC = () =>{
                 <div className="d-flex justify-content-start">
                     {profilo.auth === 'PAGOPA'&&
                    
-                   <Button onClick={()=> {
-                       downloadQuadratura();
-                   }} >
+                   <Button onClick={downloadQuadratura} >
                      Quadratura notifiche Rel 
                        <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
                    </Button>  }
@@ -498,9 +523,7 @@ const RelPage : React.FC = () =>{
                    
                         <Button
                             disabled={getListaRelRunning  || !disableDownloadListaPdf}
-                            onClick={()=> {
-                                downloadListaPdfPagopa();
-                            }}  >
+                            onClick={downloadListaPdfPagopa}>
                                   Download documenti firmati 
                             <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
                         </Button>
@@ -508,9 +531,7 @@ const RelPage : React.FC = () =>{
                     }
                     <Button
                         disabled={getListaRelRunning}
-                        onClick={()=> {
-                            downloadListaRelExel();
-                        }}  >
+                        onClick={downloadListaRelExel}  >
                                   Download risultati 
                         <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
                     </Button>
