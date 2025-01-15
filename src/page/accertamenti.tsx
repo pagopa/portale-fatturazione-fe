@@ -74,10 +74,19 @@ const Accertamenti : React.FC = () =>{
             setInfoPageAccertamenti({page:filters.page,pageSize:filters.rows});
         }else{
             getListaAccertamenti(new Date().getFullYear(),null);
-            
+            isInitialRender.current = false;
         }
         getListaMatrice();
     },[]);
+
+    useEffect(()=>{
+        if(!isInitialRender.current){
+            console.log('dentro1');
+            setGridData([]);
+            setInfoPageAccertamenti({ page: 0, pageSize: 100 });
+        }
+ 
+    },[bodyAccertamenti]);
     
     
     const getListaAccertamenti = async(anno,mese) => {

@@ -156,6 +156,7 @@ const ReportDettaglio : React.FC = () => {
             
         }else{
             funInitialRender(bodyGetLista, false);
+            //isInitialRender.current = false;
         }
 
     }, []);
@@ -247,7 +248,17 @@ const ReportDettaglio : React.FC = () => {
         }else{           
             setStatusAnnulla('hidden');
         }
+
+        if(!isInitialRender.current){
+            console.log('dentro1');
+            setNotificheList([]);
+            setPage(0);
+            setRowsPerPage(10);  
+            setTotalNotifiche(0);
+        }
     },[bodyGetLista]);
+
+    
 
     useEffect(()=>{
         if((mainState.datiFatturazione === false || mainState.datiFatturazioneNotCompleted) && enti){

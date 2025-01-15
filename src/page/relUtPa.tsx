@@ -102,10 +102,20 @@ const RelPage : React.FC = () =>{
             const realPage = page + 1;
             getlistaRel(bodyRel,realPage, rowsPerPage);
             getListTipologiaFattura(bodyRel.anno, bodyRel.mese);
+            isInitialRender.current = false; 
       
         }
     },[]);
 
+    useEffect(()=>{
+        if(!isInitialRender.current){
+            console.log('dentro1', isInitialRender.current);
+            setData([]);
+            setTotalNotifiche(0);
+            setPage(0);
+            setRowsPerPage(10); 
+        }
+    },[bodyRel]);
  
     useEffect(()=>{
         const timer = setTimeout(() => {
@@ -444,6 +454,8 @@ const RelPage : React.FC = () =>{
             setShowLoading(false);
         });
     };
+
+    
 
 
     const  hiddenAnnullaFiltri = bodyRel.tipologiaFattura === null && bodyRel.idEnti?.length === 0 && bodyRel.caricata === null; 

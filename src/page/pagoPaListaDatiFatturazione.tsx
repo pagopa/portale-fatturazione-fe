@@ -63,12 +63,22 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
     }, []);
 
     useEffect(()=>{
+        console.log('dentro0',isInitialRender.current);
         if(bodyGetLista.idEnti?.length  !== 0 || bodyGetLista.prodotto !== '' || bodyGetLista.profilo !== ''){
             setStatusAnnulla('show');
         }else{
             setStatusAnnulla('hidden');
         }
+        if(!isInitialRender.current){
+            console.log('dentro1');
+            setGridData([]);
+            setInfoPageListaDatiFat({ page: 0, pageSize: 100 });
+            
+        }
+       
     },[bodyGetLista]);
+
+    
 
     useEffect(()=>{
         const timer = setTimeout(() => {
@@ -107,6 +117,7 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                     isInitialRender.current = false;
                 }else{
                     getListaDatifatturazione(bodyGetLista);
+                    isInitialRender.current = false;
                 }
             })
             .catch(((err)=>{

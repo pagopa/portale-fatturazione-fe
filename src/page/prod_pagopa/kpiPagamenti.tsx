@@ -94,7 +94,20 @@ const KpiPagamenti:React.FC = () =>{
         }else{
             setStatusAnnulla('hidden');
         }
+
     },[bodyGetLista]);
+
+
+    const isEqual = JSON.stringify(filters.body) === JSON.stringify(bodyGetLista);
+    useEffect(()=>{
+        if(!isInitialRender.current && !isEqual){
+            setGridData([]);
+            setPage(0);
+            setRowsPerPage(10);
+            setCount(0);
+        }
+       
+    },[isEqual]);
 
 
    
@@ -111,9 +124,7 @@ const KpiPagamenti:React.FC = () =>{
         if(bodyGetLista.year !== '' && !isInitialRender.current){
             setValueQuarters([]);
             setBodyGetLista((prev)=>({...prev,...{quarters:[]}}));
-        }
-        if(bodyGetLista.year !== ''){
-            getQuarters();
+            getQuarters(bodyGetLista.year);
         }
     },[bodyGetLista.year]);
 
@@ -157,10 +168,15 @@ const KpiPagamenti:React.FC = () =>{
                         setValueQuarters(filters.valueQuarters);
                         setPage(filters.page);
                         setRowsPerPage(filters.rows);
+                        getQuarters(filters.body.year);
+
+                        
                     }else{
                         setBodyGetLista((prev) => ({...prev,...{year:res.data[0]}}));
                         setFiltersDownload((prev) => ({...prev,...{year:res.data[0]}}));
                         getListaKpiGrid({...bodyGetLista,...{year:res.data[0]}});
+                        getQuarters(res.data[0]);
+                      
                     }
                 }
             }).catch(((err)=>{
@@ -168,8 +184,8 @@ const KpiPagamenti:React.FC = () =>{
             }));
     };
 
-    const getQuarters = async () =>{
-        await getQuartersDocContabiliPa(token, profilo.nonce,{year:bodyGetLista.year})
+    const getQuarters = async (y) =>{
+        await getQuartersDocContabiliPa(token, profilo.nonce,{year:y})
             .then((res)=>{
                 setDataSelectQuarter(res.data);
                 isInitialRender.current = false;
@@ -238,6 +254,18 @@ const KpiPagamenti:React.FC = () =>{
         setPage(0);
         setRowsPerPage(10);
         resetFilters();
+    };
+
+    const onUpdateFiltersGrid = (page, rows) => {
+        updateFilters({
+            page:page,
+            rows:rows,
+            pathPage:PathPf.KPI,
+            body:bodyGetLista,
+            textValue:textValue,
+            valueAutocomplete:valueAutocomplete,
+            valueQuarters:valueQuarters,
+        });
     };
    
     const headersObjGrid : HeaderCollapsible[] = [
@@ -423,7 +451,7 @@ const KpiPagamenti:React.FC = () =>{
                     count={count}
                     dataPaginated={dataPaginated}
                     RowComponent={RowBaseKpi}
-                    updateFilters={updateFilters}
+                    updateFilters={onUpdateFiltersGrid}
                     body={filtersDownload}
                 ></CollapsibleTablePa>
             </div>

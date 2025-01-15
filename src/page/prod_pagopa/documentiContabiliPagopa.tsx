@@ -96,6 +96,17 @@ const DocumentiContabili:React.FC = () =>{
         }
     },[bodyGetLista]);
 
+    const isEqual = JSON.stringify(filters.body) === JSON.stringify(bodyGetLista);
+    useEffect(()=>{
+        if(!isInitialRender.current && !isEqual){
+            setGridData([]);
+            setPage(0);
+            setRowsPerPage(10);
+            setCount(0);
+        }
+       
+    },[isEqual]);
+
     useEffect(()=>{
         const timer = setTimeout(() => {
             if(textValue.length >= 3){ 
@@ -109,9 +120,7 @@ const DocumentiContabili:React.FC = () =>{
         if(bodyGetLista.year !== '' && !isInitialRender.current){
             setValueQuarters([]);
             setBodyGetLista((prev)=>({...prev,...{quarters:[]}}));
-        }
-        if(bodyGetLista.year !== '' ){
-            getQuarters();
+            getQuarters(bodyGetLista.year);
         }
     },[bodyGetLista.year]);
 
@@ -144,7 +153,7 @@ const DocumentiContabili:React.FC = () =>{
                 manageError(err,dispatchMainState); 
             }));
     };
-
+    console.log({valueQuarters,dataSelectQuarter});
     const getYears = async () =>{
         await getYearsDocContabiliPa(token, profilo.nonce)
             .then((res)=>{
@@ -159,10 +168,14 @@ const DocumentiContabili:React.FC = () =>{
                         setValueQuarters(filters.valueQuarters);
                         setPage(filters.page);
                         setRowsPerPage(filters.rows);
+                        getQuarters(filters.body.year);
+                       
                     }else{
                         setBodyGetLista((prev) => ({...prev,...{year:res.data[0]}}));
                         setFiltersDownload((prev) => ({...prev,...{year:res.data[0]}}));
                         getListaDocGrid({...bodyGetLista,...{year:res.data[0]}});
+                        getQuarters(res.data[0]);
+                        
                     }
                 }
             }).catch(((err)=>{
@@ -170,8 +183,8 @@ const DocumentiContabili:React.FC = () =>{
             }));
     };
 
-    const getQuarters = async () =>{
-        await getQuartersDocContabiliPa(token, profilo.nonce,{year:bodyGetLista.year})
+    const getQuarters = async (y) =>{
+        await getQuartersDocContabiliPa(token, profilo.nonce,{year:y})
             .then((res)=>{
                 setDataSelectQuarter(res.data);
                 isInitialRender.current = false;
@@ -238,9 +251,9 @@ const DocumentiContabili:React.FC = () =>{
             {
                 body:bodyGetLista,
                 pathPage:PathPf.DOCUMENTICONTABILI,
-                textValue,
-                valueAutocomplete,
-                valueQuarters,
+                textValue:textValue,
+                valueAutocomplete:valueAutocomplete,
+                valueQuarters:valueQuarters,
                 page:0,
                 rows:10
             });
@@ -248,6 +261,18 @@ const DocumentiContabili:React.FC = () =>{
         getListaDocGrid(bodyGetLista); 
         setPage(0);
         setRowsPerPage(10);
+    };
+
+    const onUpdateFiltersGrid = (page, rows) => {
+        updateFilters({
+            page:page,
+            rows:rows,
+            pathPage:PathPf.DOCUMENTICONTABILI,
+            body:bodyGetLista,
+            textValue:textValue,
+            valueAutocomplete:valueAutocomplete,
+            valueQuarters:valueQuarters,
+        });
     };
 
     const onButtonAnnulla = () => {
@@ -445,7 +470,7 @@ const DocumentiContabili:React.FC = () =>{
                     count={count}
                     dataPaginated={dataPaginated}
                     RowComponent={RowBase}
-                    updateFilters={updateFilters}
+                    updateFilters={onUpdateFiltersGrid}
                     body={filtersDownload}
                 ></CollapsibleTablePa>
             </div>

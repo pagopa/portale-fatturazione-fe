@@ -32,7 +32,7 @@ export interface MultiselectWithKeyValueProps {
     keyId:string,
     label:string,
     keyArrayName:string,
-    valueId:string
+    valueId:string,
 }
 
 export interface OptionMultiselectCheckboxPsp{

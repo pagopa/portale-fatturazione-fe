@@ -5,7 +5,7 @@ import { AutocompleteMultiselect, MultiselectWithKeyValueProps,  RequestBodyList
 import { useLocation } from "react-router";
 import { PathPf } from "../../types/enum";
 import { RequestBodyListaDocContabiliPagopa } from '../../types/typeDocumentiContabili';
-import { positions } from '@mui/system';
+
 
 
 
@@ -27,7 +27,7 @@ const MultiselectWithKeyValue : React.FC <MultiselectWithKeyValueProps> = ({setB
             disablePortal
             onChange={(event, value:AutocompleteMultiselect[]) => {
                 const arrayIds = value.map((obj:AutocompleteMultiselect) => obj[keyId]);
-               
+                
                 setBodyGetLista((prev:RequestBodyListaAnagraficaPsp|RequestBodyListaDocContabiliPagopa) => ({...prev,...{[keyArrayName]:arrayIds}}));
                 setValueAutocomplete(value);
             }}

@@ -111,6 +111,14 @@ const Fatturazione : React.FC = () =>{
         }else{
             setStatusAnnulla('hidden');
         }
+
+        if(!isInitialRender.current){
+            console.log('dentro1');
+            setGridData([]);
+            setFattureSelected([]);  
+            setDisableButtonSap(true);
+            setDisableButtonReset(true);
+        }
     },[bodyFatturazione]);
    
     useEffect(()=>{

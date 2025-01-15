@@ -45,15 +45,7 @@ const CollapsibleTablePa = ({headerNames,page,setPage,rowsPerPage,setRowsPerPage
         newPage: number,
     ) => {
         setPage(newPage);
-        updateFilters({
-            page:newPage,
-            rows:rowsPerPage,
-            pathPage:PathPf.DOCUMENTICONTABILI,
-            body:body,
-            textValue:'',
-            valueAutocomplete:[],
-            valueQuarters:[],
-        });
+        updateFilters( newPage,rowsPerPage);
     };
     
     const handleChangeRowsPerPage = (
@@ -61,15 +53,7 @@ const CollapsibleTablePa = ({headerNames,page,setPage,rowsPerPage,setRowsPerPage
     ) => {
         setRowsPerPage(event.target.value);
         setPage(0);
-        updateFilters({
-            page:0,
-            rows:event.target.value,
-            pathPage:PathPf.DOCUMENTICONTABILI,
-            body:body,
-            textValue:'',
-            valueAutocomplete:[],
-            valueQuarters:[],
-        });
+        updateFilters( 0,event.target.value);
     };
 
     return (

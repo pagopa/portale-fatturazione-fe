@@ -64,6 +64,11 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
         }else{
             setStatusAnnulla('hidden');
         }
+        if(!isInitialRender.current){
+            console.log('dentro1');
+            setGridData([]);
+            setInfoPageListaCom({ page: 0, pageSize: 100 });   
+        }
     },[bodyGetLista]);
 
    
@@ -90,6 +95,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                     isInitialRender.current = false;
                 }else{
                     getListaCommesse(bodyGetLista);
+                    isInitialRender.current = false;
                 }
             }).catch(((err)=>{
                 isInitialRender.current = false;

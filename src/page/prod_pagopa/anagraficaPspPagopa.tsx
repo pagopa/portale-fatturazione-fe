@@ -1,5 +1,5 @@
 import DownloadIcon from '@mui/icons-material/Download';
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect,  useState } from "react";
 import { AutocompleteMultiselect, GridElementListaPsp, OptionMultiselectCheckboxPsp, OptionMultiselectCheckboxQarter, RequestBodyListaAnagraficaPsp } from "../../types/typeAngraficaPsp";
 import { downloadPsp, getListaAnagraficaPsp, getListaAnniPsp, getListaNamePsp, getListaQuarters } from "../../api/apiPagoPa/anagraficaPspPA/api";
 import { manageError } from "../../api/api";
@@ -14,10 +14,7 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { PathPf } from '../../types/enum';
 import useSavedFilters from '../../hooks/useSaveFiltersLocalStorage';
 
-
 const AnagraficaPsp:React.FC = () =>{
-
-    
 
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState} = globalContextObj;
@@ -62,27 +59,48 @@ const AnagraficaPsp:React.FC = () =>{
     } = useSavedFilters(PathPf.ANAGRAFICAPSP,{});
  
     useEffect(()=>{
+        console.log(1);
         getYears();
     },[]);
 
     useEffect(()=>{
-        if(year !== ''){
+        if(year !== '' && !isInitialRender.current){
+            console.log('effect 1');
+            setValueQuarters([]);
+            setBodyGetLista((prev)=>({...prev,...{quarters:[]}}));
             getQuarters(year);
         }
     },[year]);
 
     useEffect(()=>{
+        console.log('effect 2');
         if( bodyGetLista.contractIds.length  !== 0 ||
             bodyGetLista.membershipId !== '' ||
             bodyGetLista.recipientId !== ''||
             bodyGetLista.abi !== ''||
             bodyGetLista.quarters.length !== 0
-        ){
-            setStatusAnnulla('show');
+        ){ setStatusAnnulla('show');
         }else{
             setStatusAnnulla('hidden');
         }
     },[bodyGetLista]);
+
+    
+    const isEqual = JSON.stringify(filters.body) === JSON.stringify(bodyGetLista);
+    const isEqualYear = filters.year === year;
+    useEffect(()=>{
+        if(!isInitialRender.current && (!isEqual || !isEqualYear)){
+            setGridData([]);
+            setPage(0);
+            setRowsPerPage(10);
+            setTotalPsp(0);
+        }
+       
+    },[isEqual,isEqualYear]);
+
+    
+    console.log({isEqual});
+
 
     useEffect(()=>{
         const timer = setTimeout(() => {
@@ -95,24 +113,25 @@ const AnagraficaPsp:React.FC = () =>{
     
     const getYears = async () =>{
         setGetListaLoading(true);
+        console.log(2);
         await getListaAnniPsp(token, profilo.nonce)
             .then((res)=>{
+            
                 setYearOnSelect(res.data);
                 if(res.data.length > 0){
+              
                     if(isInitialRender.current && Object.keys(filters).length > 0){
-                        setBodyGetLista(filters.body);
-                        setFiltersDownload(filters.body);
-                        setTextValue(filters.textValue);
-                        setValueAutocomplete(filters.valueAutocomplete);
-                        getListaAnagraficaPspGrid(filters.body,filters.page, filters.rows);
-                        setPage(filters.page);
-                        setRowsPerPage(filters.rows);
-                        setFiltersDownload(filters.body);
+                        console.log(2,'initial');
                         setYear(filters.year);
                         getListaAnagraficaPspGrid(filters.body,filters.page,filters.rows);
+                        getQuarters(filters.year);
+                        
+                        
                     }else{
+                        console.log(2,'NOT initial');
                         setYear(res.data[0]);
                         getListaAnagraficaPspGrid(bodyGetLista,page+1,rowsPerPage);
+                        getQuarters(res.data[0]);
                     }
                 }
             }).catch(((err)=>{
@@ -120,16 +139,23 @@ const AnagraficaPsp:React.FC = () =>{
                 manageError(err,dispatchMainState); 
             }));
     };
-
+ 
     const getQuarters = async (y) =>{
+        console.log(4);
         await getListaQuarters(token, profilo.nonce,{year:y})
             .then((res)=>{
                 setDataSelectQuarter(res.data);
-                console.log('dentro quarter', isInitialRender.current);
+    
                 if(isInitialRender.current && Object.keys(filters).length > 0){
+                    console.log(4,'initial');
                     setValueQuarters(filters.valueQuarters);
-                }else{
-                    setValueQuarters([]);
+                    setBodyGetLista(filters.body);
+                    setFiltersDownload(filters.body);
+                    setTextValue(filters.textValue);
+                    setValueAutocomplete(filters.valueAutocomplete);
+                    setPage(filters.page);
+                    setRowsPerPage(filters.rows);
+                    setFiltersDownload(filters.body);
                 }
                 setGetListaLoading(false);
                 isInitialRender.current = false;
@@ -143,6 +169,7 @@ const AnagraficaPsp:React.FC = () =>{
     };
 
     const getListaAnagraficaPspGrid = async(body:RequestBodyListaAnagraficaPsp, page:number,rowsPerPage:number) =>{
+        console.log(3);
         setGetListaLoading(true);
         await getListaAnagraficaPsp(token, profilo.nonce, body,page,rowsPerPage)
             .then((res)=>{
@@ -191,12 +218,10 @@ const AnagraficaPsp:React.FC = () =>{
 
     const onDownloadButton = async() =>{
         setShowLoading(true);
-        
         await downloadPsp(token,profilo.nonce, filtersDownload).then(response => response.blob()).then((res) => {
             let fileName = '';
             const stringQuarterSelected = filtersDownload.quarters.map(el => "Q" + el.slice(5)).join("_");
             const yearSelected = gridData[0].yearQuarter?.slice(0,4);
-            console.log(filtersDownload.contractIds.length);
             if(filtersDownload.contractIds.length === 1){
                 fileName = `Anagrafica PSP/${gridData[0].documentName}/${yearSelected}/${stringQuarterSelected}.xlsx`;
             }else{
@@ -261,7 +286,7 @@ const AnagraficaPsp:React.FC = () =>{
             valueAutocomplete,
             valueQuarters,
             year,
-            page:realPage,
+            page:newPage,
             rows:rowsPerPage
         });
     };
