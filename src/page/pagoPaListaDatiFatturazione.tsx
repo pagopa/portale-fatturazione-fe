@@ -114,15 +114,12 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                     getListaDatifatturazione(filters.body);
                     setFiltersDownload(filters.body);
                     setInfoPageListaDatiFat({page:filters.page,pageSize:filters.rows});
-                    isInitialRender.current = false;
                 }else{
                     getListaDatifatturazione(bodyGetLista);
-                    isInitialRender.current = false;
                 }
             })
             .catch(((err)=>{
                 manageError(err,dispatchMainState);
-                isInitialRender.current = false;
             }));
     };
 
@@ -132,13 +129,13 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
             .then((res)=>{
                 setGridData(res.data);
                 setGetListaLoading(false);
-               
+                isInitialRender.current = false;
             })
             .catch(((err)=>{
                 setGridData([]);
                 setGetListaLoading(false);
                 manageError(err,dispatchMainState);
-               
+                isInitialRender.current = false;
             })); 
     };
 
@@ -202,8 +199,8 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                 pathPage:PathPf.LISTA_DATI_FATTURAZIONE,
                 textValue,
                 valueAutocomplete,
-                page:infoPageListaDatiFat.page,
-                rows:infoPageListaDatiFat.pageSize
+                page:0,
+                rows:100
             });
     };
 

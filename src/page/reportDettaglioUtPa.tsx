@@ -156,13 +156,13 @@ const ReportDettaglio : React.FC = () => {
             
         }else{
             funInitialRender(bodyGetLista, false);
-            //isInitialRender.current = false;
+            isInitialRender.current = false;
         }
 
     }, []);
 
     useEffect(()=>{
-        if((bodyGetLista.anno !== 0) && (isInitialRender.current === false)){
+        if((bodyGetLista.anno !== 0) && (!isInitialRender.current)){
             getMesi(bodyGetLista.anno.toString());
         }
     },[bodyGetLista.anno]);
@@ -195,14 +195,6 @@ const ReportDettaglio : React.FC = () => {
                     let page = 1;
                     let row = 10;
                   
-                    if(profilo.auth === 'SELFCARE' && mainState.datiFatturazione === true){
-                        await getlistaNotifiche( page, row,{...body,...{mese:Number(meseToSet),anno:Number(annoToSet)}}); 
-                    }else if((profilo.auth === 'SELFCARE') && (profilo.profilo === 'CON' || profilo.profilo === 'REC')){
-                        await getlistaNotifiche( page, row,{...body,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
-                    }else if(profilo.auth === 'PAGOPA'){
-                        await getlistaNotifichePagoPa( page, row,{...newBody,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
-                        await getRecapitistConsolidatori();
-                    }
                     // reset del body sia list che download
                     setBodyGetLista({...newBody,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
                     setBodyDownload({...newBody,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
@@ -214,8 +206,17 @@ const ReportDettaglio : React.FC = () => {
                         setRowsPerPage(filters.rows);
     
                         meseToSet = filters.body.mese;
-                        page = filters.page;
+                        page = filters.page + 1;
                         row = filters.rows;
+                    }
+
+                    if(profilo.auth === 'SELFCARE' && mainState.datiFatturazione === true){
+                        await getlistaNotifiche( page, row,{...body,...{mese:Number(meseToSet),anno:Number(annoToSet)}}); 
+                    }else if((profilo.auth === 'SELFCARE') && (profilo.profilo === 'CON' || profilo.profilo === 'REC')){
+                        await getlistaNotifiche( page, row,{...body,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
+                    }else if(profilo.auth === 'PAGOPA'){
+                        await getlistaNotifichePagoPa( page, row,{...newBody,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
+                        await getRecapitistConsolidatori();
                     }
                 }).catch((err)=>{
                     manageError(err,dispatchMainState);
@@ -487,7 +488,8 @@ const ReportDettaglio : React.FC = () => {
                     setShowLoadingGrid(false);
                     manageError(error, dispatchMainState);
                 });
-        }           
+        }     
+        isInitialRender.current = false;      
     };
 
     const getlistaNotifichePagoPa = async (nPage:number, nRow:number, bodyParameter) => {
@@ -508,7 +510,8 @@ const ReportDettaglio : React.FC = () => {
                 setGetNotificheWorking(false);
                 setShowLoadingGrid(false);
                 manageError(error, dispatchMainState);
-            });       
+            });     
+        isInitialRender.current = false;   
     };
 
     const onButtonFiltra = () =>{
@@ -549,7 +552,7 @@ const ReportDettaglio : React.FC = () => {
             body:bodyDownload,
             textValue,
             valueAutocomplete,
-            page:realPage,
+            page:newPage,
             rows:rowsPerPage,
             valueFgContestazione
         });
@@ -802,6 +805,7 @@ const ReportDettaglio : React.FC = () => {
                                     label='Seleziona Prodotto'
                                     onChange={(e) => {
                                         isInitialRender.current = false;
+                                        console.log('reload');
                                         const value = Number(e.target.value);
                                         setBodyGetLista((prev)=> ({...prev, ...{anno:value}}));  
                                         

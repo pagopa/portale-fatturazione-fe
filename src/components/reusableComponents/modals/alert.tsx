@@ -12,8 +12,6 @@ import { PathPf } from '../../../types/enum';
 import { ActionReducerType } from '../../../reducer/reducerMainState';
 import { GlobalContext } from '../../../store/context/globalContext';
 
-
-
 type AlertProps = {
     setVisible:Dispatch<SetStateAction<boolean>>,
     visible:boolean,
@@ -46,7 +44,8 @@ const BasicAlerts:React.FC = () => {
     };
 
   
-    let colorAlert:AlertColor = 'success';
+    let colorAlert:AlertColor = 'success'; 
+    //let colorAlert:AlertColor = 'warning';
     if(mainState.apiError === 401 || mainState.apiError === 403|| errorAlert.error === 401 ){
         colorAlert = 'error';
     }else if(mainState.apiError === 419 || errorAlert.error === 419 ){
@@ -63,7 +62,9 @@ const BasicAlerts:React.FC = () => {
         colorAlert = 'warning';
     }else if((mainState.apiError||'').slice(0,2) === 'NO'){
         colorAlert = 'error';
-    }
+    }/*else if(!mainState.apiError && !errorAlert.error){
+        colorAlert = 'warning';
+    }*/
     
     const [css, setCss] = useState('main_container_alert_component');
 
@@ -128,7 +129,8 @@ const BasicAlerts:React.FC = () => {
 
     return createPortal(
         <div className={css}>
-            <Alert sx={{display:'flex', justifyContent:'center'}} severity={colorAlert}  variant="standard">{t(`errori.${mainState.apiError}`, {defaultValue: errorAlert.message})} 
+            {/*<Alert sx={{display:'flex', justifyContent:'center'}} severity={colorAlert}  variant="standard">{t(`errori.${mainState.apiError||errorAlert.message}`, {defaultValue:t(`errori.400`)})} */}
+            <Alert sx={{display:'flex', justifyContent:'center'}} severity={colorAlert}  variant="standard">{t(`errori.${mainState.apiError}`, {defaultValue:errorAlert.message})} 
                 {mainState.apiError === 'PRESA_IN_CARICO_DOCUMENTO' &&
                 <IconButton sx={{marginLeft:'20px'}} onClick={()=> {
                     setCss('main_container_alert_component_hidden');

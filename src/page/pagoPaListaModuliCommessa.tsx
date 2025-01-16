@@ -92,7 +92,6 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                     getListaCommesse(filters.body);
                     setBodyDownload(filters.body);
                     setInfoPageListaCom({page:filters.page,pageSize:filters.rows});
-                    isInitialRender.current = false;
                 }else{
                     getListaCommesse(bodyGetLista);
                     isInitialRender.current = false;
@@ -107,9 +106,11 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
         await listaModuloCommessaPagopa(body ,token, profilo.nonce)
             .then((res)=>{
                 setGridData(res.data);
+                isInitialRender.current = false;
             }).catch((err)=>{
                 setGridData([]);
                 manageError(err,dispatchMainState);
+                isInitialRender.current = false;
             }); 
     };
 
@@ -200,8 +201,8 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                 pathPage:PathPf.LISTA_MODULICOMMESSA,
                 textValue,
                 valueAutocomplete,
-                page:infoPageListaCom.page,
-                rows:infoPageListaCom.pageSize
+                page:0,
+                rows:100
             });
     };
 
