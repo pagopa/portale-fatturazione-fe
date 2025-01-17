@@ -97,20 +97,6 @@ const KpiPagamenti:React.FC = () =>{
 
     },[bodyGetLista]);
 
-
-    const isEqual = JSON.stringify(filters.body) === JSON.stringify(bodyGetLista);
-    useEffect(()=>{
-        if(!isInitialRender.current && !isEqual){
-            setGridData([]);
-            setPage(0);
-            setRowsPerPage(10);
-            setCount(0);
-        }
-       
-    },[isEqual]);
-
-
-   
     useEffect(()=>{
         const timer = setTimeout(() => {
             if(textValue.length >= 3){ 
@@ -220,6 +206,13 @@ const KpiPagamenti:React.FC = () =>{
         });
     };
 
+    const clearOnChangeFilter = () => {
+        setGridData([]);
+        setPage(0);
+        setRowsPerPage(10);
+        setCount(0);
+    };
+
     const onButtonFiltra = () =>{
         updateFilters(
             {
@@ -312,7 +305,10 @@ const KpiPagamenti:React.FC = () =>{
                                 id="Anno_doc_contabili"
                                 label='Anno'
                                 labelId="search-by-label"
-                                onChange={(e) => setBodyGetLista((prev) => ({...prev,...{year:e.target.value}}))}
+                                onChange={(e) =>{
+                                    clearOnChangeFilter(); 
+                                    setBodyGetLista((prev) => ({...prev,...{year:e.target.value}}));
+                                }}
                                 value={bodyGetLista.year}
                             >
                                 {yearOnSelect.map((el) => (
@@ -335,6 +331,7 @@ const KpiPagamenti:React.FC = () =>{
                             const arrayId = value.map(el => el.value);
                             setBodyGetLista((prev) => ({...prev,...{quarters:arrayId}}));
                             setValueQuarters(value);
+                            clearOnChangeFilter(); 
                         }}
                         id="checkboxes-quarters"
                         options={dataSelectQuarter}
@@ -366,6 +363,7 @@ const KpiPagamenti:React.FC = () =>{
                 <div  className="col-3">
                     <MultiselectWithKeyValue 
                         setBodyGetLista={setBodyGetLista}
+                        clearOnChangeFilter={clearOnChangeFilter}
                         setValueAutocomplete={setValueAutocomplete}
                         dataSelect={dataSelect}
                         valueAutocomplete={valueAutocomplete}
@@ -384,7 +382,10 @@ const KpiPagamenti:React.FC = () =>{
                             label='Membership ID'
                             placeholder='Membership ID'
                             value={bodyGetLista.membershipId}
-                            onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{membershipId:e.target.value}}))}            
+                            onChange={(e) =>{
+                                clearOnChangeFilter();
+                                setBodyGetLista((prev)=> ({...prev, ...{membershipId:e.target.value}})); 
+                            }}            
                         />
                     </Box>
                 </div>
@@ -395,7 +396,10 @@ const KpiPagamenti:React.FC = () =>{
                             label='Recipient ID'
                             placeholder='Recipient ID'
                             value={bodyGetLista.recipientId}
-                            onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{recipientId:e.target.value}}))}            
+                            onChange={(e) =>{
+                                clearOnChangeFilter();
+                                setBodyGetLista((prev)=> ({...prev, ...{recipientId:e.target.value}}));
+                            }}            
                         />
                     </Box>
                 </div>
@@ -406,7 +410,10 @@ const KpiPagamenti:React.FC = () =>{
                             label='Provider name/ID'
                             placeholder='Provider name/ID'
                             value={bodyGetLista.providerName}
-                            onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{providerName:e.target.value}}))}            
+                            onChange={(e) =>{
+                                clearOnChangeFilter();
+                                setBodyGetLista((prev)=> ({...prev, ...{providerName:e.target.value}}));
+                            }}            
                         />
                     </Box>
                 </div>

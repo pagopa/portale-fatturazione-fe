@@ -87,7 +87,7 @@ const DocumentiContabili:React.FC = () =>{
         setDataPaginated(gridData.slice(from, rowsPerPage + from));
     }, [page,rowsPerPage,gridData]);
 
-    console.log({page,rowsPerPage});
+   
     useEffect(()=>{
         if(bodyGetLista.contractIds.length  !== 0 || bodyGetLista.membershipId !== '' || bodyGetLista.recipientId !== ''|| bodyGetLista.abi !== '' || bodyGetLista.quarters.length > 0){
             setStatusAnnulla('show');
@@ -95,17 +95,13 @@ const DocumentiContabili:React.FC = () =>{
             setStatusAnnulla('hidden');
         }
     },[bodyGetLista]);
-
-    const isEqual = JSON.stringify(filters.body) === JSON.stringify(bodyGetLista);
-    useEffect(()=>{
-        if(!isInitialRender.current && !isEqual){
-            setGridData([]);
-            setPage(0);
-            setRowsPerPage(10);
-            setCount(0);
-        }
-       
-    },[isEqual]);
+   
+    const clearOnChangeFilter = () => {
+        setGridData([]);
+        setPage(0);
+        setRowsPerPage(10);
+        setCount(0);
+    };
 
     useEffect(()=>{
         const timer = setTimeout(() => {
@@ -327,7 +323,10 @@ const DocumentiContabili:React.FC = () =>{
                                 id="Anno_doc_contabili"
                                 label='Anno'
                                 labelId="search-by-label"
-                                onChange={(e) => setBodyGetLista((prev) => ({...prev,...{year:e.target.value}}))}
+                                onChange={(e) =>{
+                                    clearOnChangeFilter();
+                                    setBodyGetLista((prev) => ({...prev,...{year:e.target.value}}));
+                                }}
                                 value={bodyGetLista.year}
                             >
                                 {yearOnSelect.map((el) => (
@@ -350,6 +349,7 @@ const DocumentiContabili:React.FC = () =>{
                             const arrayId = value.map(el => el.value);
                             setBodyGetLista((prev) => ({...prev,...{quarters:arrayId}}));
                             setValueQuarters(value);
+                            clearOnChangeFilter();
                         }}
                         id="checkboxes-quarters"
                         options={dataSelectQuarter}
@@ -381,6 +381,7 @@ const DocumentiContabili:React.FC = () =>{
                     <MultiselectWithKeyValue 
                         setBodyGetLista={setBodyGetLista}
                         setValueAutocomplete={setValueAutocomplete}
+                        clearOnChangeFilter={clearOnChangeFilter}
                         dataSelect={dataSelect}
                         valueAutocomplete={valueAutocomplete}
                         setTextValue={setTextValue}
@@ -398,7 +399,10 @@ const DocumentiContabili:React.FC = () =>{
                             label='Membership ID'
                             placeholder='Membership ID'
                             value={bodyGetLista.membershipId}
-                            onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{membershipId:e.target.value}}))}            
+                            onChange={(e) =>{
+                                clearOnChangeFilter();
+                                setBodyGetLista((prev)=> ({...prev, ...{membershipId:e.target.value}}));
+                            }}            
                         />
                     </Box>
                 </div>
@@ -409,7 +413,9 @@ const DocumentiContabili:React.FC = () =>{
                             label='Recipient ID'
                             placeholder='Recipient ID'
                             value={bodyGetLista.recipientId}
-                            onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{recipientId:e.target.value}}))}            
+                            onChange={(e) =>{
+                                clearOnChangeFilter();
+                                setBodyGetLista((prev)=> ({...prev, ...{recipientId:e.target.value}}));} }             
                         />
                     </Box>
                 </div>
@@ -420,7 +426,10 @@ const DocumentiContabili:React.FC = () =>{
                             label='Codice ABI'
                             placeholder='Codice ABI'
                             value={bodyGetLista.abi}
-                            onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{abi:e.target.value}}))}            
+                            onChange={(e) =>{
+                                clearOnChangeFilter();
+                                setBodyGetLista((prev)=> ({...prev, ...{abi:e.target.value}}));} 
+                            }             
                         />
                     </Box>
                 </div>

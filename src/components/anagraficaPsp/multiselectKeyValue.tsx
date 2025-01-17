@@ -10,7 +10,7 @@ import { RequestBodyListaDocContabiliPagopa } from '../../types/typeDocumentiCon
 
 
 
-const MultiselectWithKeyValue : React.FC <MultiselectWithKeyValueProps> = ({setBodyGetLista,setValueAutocomplete,dataSelect,valueAutocomplete,setTextValue,keyId,label,keyArrayName,valueId}) => {
+const MultiselectWithKeyValue : React.FC <MultiselectWithKeyValueProps> = ({setBodyGetLista,setValueAutocomplete,dataSelect,valueAutocomplete,setTextValue,keyId,label,keyArrayName,valueId,clearOnChangeFilter}) => {
 
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -27,7 +27,7 @@ const MultiselectWithKeyValue : React.FC <MultiselectWithKeyValueProps> = ({setB
             disablePortal
             onChange={(event, value:AutocompleteMultiselect[]) => {
                 const arrayIds = value.map((obj:AutocompleteMultiselect) => obj[keyId]);
-                
+                clearOnChangeFilter();
                 setBodyGetLista((prev:RequestBodyListaAnagraficaPsp|RequestBodyListaDocContabiliPagopa) => ({...prev,...{[keyArrayName]:arrayIds}}));
                 setValueAutocomplete(value);
             }}

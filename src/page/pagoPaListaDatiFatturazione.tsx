@@ -43,7 +43,7 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
     const [getListaLoading, setGetListaLoading] = useState(false);
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
     const [bodyGetLista, setBodyGetLista] = useState<BodyGetListaDatiFatturazione>({idEnti:[],prodotto:'',profilo:''});
-    const [infoPageListaDatiFat , setInfoPageListaDatiFat] = useState({ page: 0, pageSize: 100 });
+    const [infoPageListaDatiFat , setInfoPageListaDatiFat] = useState({ page: 0, pageSize: 10 });
     const [textValue, setTextValue] = useState('');
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
     const [showLoading,setShowLoading] = useState(false);
@@ -354,6 +354,7 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                         backgroundColor: 'white',
                     }
                 }}
+                pageSizeOptions={[10, 25, 50]}
                 onPaginationModelChange={(e)=> onChangePageOrRowGrid(e)}
                 paginationModel={infoPageListaDatiFat}
                 rows={gridData} 

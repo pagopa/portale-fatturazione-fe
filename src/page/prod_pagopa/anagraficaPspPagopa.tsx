@@ -83,24 +83,9 @@ const AnagraficaPsp:React.FC = () =>{
         }else{
             setStatusAnnulla('hidden');
         }
+
+        
     },[bodyGetLista]);
-
-    
-    const isEqual = JSON.stringify(filters.body) === JSON.stringify(bodyGetLista);
-    const isEqualYear = filters.year === year;
-    useEffect(()=>{
-        if(!isInitialRender.current && (!isEqual || !isEqualYear)){
-            setGridData([]);
-            setPage(0);
-            setRowsPerPage(10);
-            setTotalPsp(0);
-        }
-       
-    },[isEqual,isEqualYear]);
-
-    
-    console.log({isEqual});
-
 
     useEffect(()=>{
         const timer = setTimeout(() => {
@@ -116,17 +101,13 @@ const AnagraficaPsp:React.FC = () =>{
         console.log(2);
         await getListaAnniPsp(token, profilo.nonce)
             .then((res)=>{
-            
                 setYearOnSelect(res.data);
                 if(res.data.length > 0){
-              
                     if(isInitialRender.current && Object.keys(filters).length > 0){
                         console.log(2,'initial');
                         setYear(filters.year);
-                        getListaAnagraficaPspGrid(filters.body,filters.page,filters.rows);
+                        getListaAnagraficaPspGrid(filters.body,filters.page+1,filters.rows);
                         getQuarters(filters.year);
-                        
-                        
                     }else{
                         console.log(2,'NOT initial');
                         setYear(res.data[0]);
@@ -141,13 +122,12 @@ const AnagraficaPsp:React.FC = () =>{
     };
  
     const getQuarters = async (y) =>{
-        console.log(4);
         await getListaQuarters(token, profilo.nonce,{year:y})
             .then((res)=>{
                 setDataSelectQuarter(res.data);
-    
+                console.log(4);
                 if(isInitialRender.current && Object.keys(filters).length > 0){
-                    console.log(4,'initial');
+                   
                     setValueQuarters(filters.valueQuarters);
                     setBodyGetLista(filters.body);
                     setFiltersDownload(filters.body);
@@ -158,6 +138,7 @@ const AnagraficaPsp:React.FC = () =>{
                     setFiltersDownload(filters.body);
                 }
                 setGetListaLoading(false);
+                console.log(4,'dentro');
                 isInitialRender.current = false;
             }).catch(((err)=>{
                 isInitialRender.current = false;
@@ -172,7 +153,7 @@ const AnagraficaPsp:React.FC = () =>{
         console.log(3);
         setGetListaLoading(true);
         await getListaAnagraficaPsp(token, profilo.nonce, body,page,rowsPerPage)
-            .then((res)=>{
+            .then(async(res)=>{
                 // ordino i dati in base all'header della grid
                 const orderDataCustom = res.data.psPs.map((obj)=>{
                     // inserire come prima chiave l'id se non si vuol renderlo visibile nella grid
@@ -190,10 +171,10 @@ const AnagraficaPsp:React.FC = () =>{
                         signedDate:new Date(obj.signedDate).toISOString().split('T')[0],
                     };
                 });
-                setGridData(orderDataCustom);
-                setTotalPsp(res.data.count);
+                await setGridData(orderDataCustom);
+                await setTotalPsp(res.data.count);
                 setGetListaLoading(false);
-                
+                console.log(3 , 'dentro');
             })
             .catch(((err)=>{
                 setGridData([]);
@@ -235,7 +216,7 @@ const AnagraficaPsp:React.FC = () =>{
         });
     };
 
-
+   
     const onButtonFiltra = () =>{
         setPage(0);
         setRowsPerPage(10);
@@ -249,7 +230,7 @@ const AnagraficaPsp:React.FC = () =>{
                 valueAutocomplete,
                 valueQuarters,
                 year,
-                page:1,
+                page:0,
                 rows:10
             });
     };
@@ -271,6 +252,15 @@ const AnagraficaPsp:React.FC = () =>{
         setValueQuarters([]);
         resetFilters();
     };
+
+    const clearOnChangeFilter = () => {
+        setGridData([]);
+        setPage(0);
+        setRowsPerPage(10);
+        setTotalPsp(0);
+    };
+  
+
 
     const handleChangePage = (
         event: React.MouseEvent<HTMLButtonElement> | null,
@@ -337,7 +327,10 @@ const AnagraficaPsp:React.FC = () =>{
                                 id="Anno_doc_contabili"
                                 label='Anno'
                                 labelId="search-by-label"
-                                onChange={(e) => setYear(e.target.value)}
+                                onChange={(e) =>{
+                                    clearOnChangeFilter();
+                                    setYear(e.target.value);
+                                } }
                                 value={year}
                             >
                                 {yearOnSelect.map((el) => (
@@ -360,6 +353,7 @@ const AnagraficaPsp:React.FC = () =>{
                             const arrayId = value.map(el => el.value);
                             setBodyGetLista((prev) => ({...prev,...{quarters:arrayId}}));
                             setValueQuarters(value);
+                            clearOnChangeFilter();
                         }}
                         id="checkboxes-quarters"
                         options={dataSelectQuarter}
@@ -394,6 +388,7 @@ const AnagraficaPsp:React.FC = () =>{
                         dataSelect={dataSelect}
                         valueAutocomplete={valueAutocomplete}
                         setTextValue={setTextValue}
+                        clearOnChangeFilter={clearOnChangeFilter}
                         keyId={"contractId"}
                         valueId={'name'}
                         label={"Nome PSP"} 
@@ -408,7 +403,10 @@ const AnagraficaPsp:React.FC = () =>{
                             label='Membership ID'
                             placeholder='Membership ID'
                             value={bodyGetLista.membershipId}
-                            onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{membershipId:e.target.value}}))}            
+                            onChange={(e) =>{
+                                clearOnChangeFilter();
+                                setBodyGetLista((prev)=> ({...prev, ...{membershipId:e.target.value}}));
+                            } }             
                         />
                     </Box>
                 </div>
@@ -419,7 +417,10 @@ const AnagraficaPsp:React.FC = () =>{
                             label='Recipient ID'
                             placeholder='Recipient ID'
                             value={bodyGetLista.recipientId}
-                            onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{recipientId:e.target.value}}))}            
+                            onChange={(e) => {
+                                clearOnChangeFilter();
+                                setBodyGetLista((prev)=> ({...prev, ...{recipientId:e.target.value}}));
+                            } }            
                         />
                     </Box>
                 </div>
@@ -430,7 +431,10 @@ const AnagraficaPsp:React.FC = () =>{
                             label='Codice ABI'
                             placeholder='Codice ABI'
                             value={bodyGetLista.abi}
-                            onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{abi:e.target.value}}))}            
+                            onChange={(e) =>{
+                                clearOnChangeFilter();
+                                setBodyGetLista((prev)=> ({...prev, ...{abi:e.target.value}}));
+                            }}            
                         />
                     </Box>
                 </div>

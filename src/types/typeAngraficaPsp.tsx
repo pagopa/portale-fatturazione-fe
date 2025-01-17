@@ -33,6 +33,7 @@ export interface MultiselectWithKeyValueProps {
     label:string,
     keyArrayName:string,
     valueId:string,
+    clearOnChangeFilter?:any
 }
 
 export interface OptionMultiselectCheckboxPsp{
