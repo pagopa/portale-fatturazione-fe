@@ -3,7 +3,7 @@ import { Box } from "@mui/system";
 import { SelectMeseProps } from "../../../types/typesGeneral";
 import { mesi } from "../../../reusableFunction/reusableArrayObj";
 
-const SelectMese : React.FC<SelectMeseProps> = ({setValue, values, getTipologia}) =>{
+const SelectMese : React.FC<SelectMeseProps> = ({setValue, values, getTipologia,clearOnChangeFilter}) =>{
 
     return (
         <Box sx={{width:'80%', marginLeft:'20px'}}  >
@@ -27,6 +27,7 @@ const SelectMese : React.FC<SelectMeseProps> = ({setValue, values, getTipologia}
                         if(getTipologia){
                             getTipologia(e.target.value, values.anno);
                         }
+                        clearOnChangeFilter();
                         
                     }}         
                     value={values.mese||''}             

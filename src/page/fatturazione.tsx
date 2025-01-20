@@ -111,14 +111,6 @@ const Fatturazione : React.FC = () =>{
         }else{
             setStatusAnnulla('hidden');
         }
-
-        if(!isInitialRender.current){
-            console.log('dentro1');
-            setGridData([]);
-            setFattureSelected([]);  
-            setDisableButtonSap(true);
-            setDisableButtonReset(true);
-        }
     },[bodyFatturazione]);
    
     useEffect(()=>{
@@ -136,12 +128,7 @@ const Fatturazione : React.FC = () =>{
             console.log('pippo');
             getTipologieFatturazione(bodyFatturazione.anno,bodyFatturazione.mese,bodyFatturazione.cancellata);
             setValueMultiselectTipologie([]);
-            // added 15/12
-            setGridData([]);
-            setDisableButtonSap(true);
-            setDisableButtonReset(true);
         }
-        // added 15/12
     },[bodyFatturazione.mese,bodyFatturazione.anno,bodyFatturazione.cancellata]);
 
     const getTipologieFatturazione =  async(anno,mese,cancellata) => {
@@ -308,6 +295,13 @@ const Fatturazione : React.FC = () =>{
         setOpenSapModal((prev)=>({...prev,...{show:true,who}}));
     };
 
+    const clearOnChangeFilter = () => {
+        setGridData([]);
+        setFattureSelected([]);  
+        setDisableButtonSap(true);
+        setDisableButtonReset(true); 
+    };
+
     const onButtonFiltra = () => {
         updateFilters({
             pathPage:PathPf.FATTURAZIONE,
@@ -360,10 +354,10 @@ const Fatturazione : React.FC = () =>{
             <div className="mt-5">
                 <div className="row">
                     <div className="col-3">
-                        <SelectUltimiDueAnni values={bodyFatturazione} setValue={setBodyFatturazione}></SelectUltimiDueAnni>
+                        <SelectUltimiDueAnni values={bodyFatturazione} setValue={setBodyFatturazione} clearOnChangeFilter={clearOnChangeFilter}></SelectUltimiDueAnni>
                     </div>
                     <div  className="col-3">
-                        <SelectMese values={bodyFatturazione} setValue={setBodyFatturazione}></SelectMese>
+                        <SelectMese values={bodyFatturazione} setValue={setBodyFatturazione} clearOnChangeFilter={clearOnChangeFilter}></SelectMese>
                     </div>
                     <div  className="col-3">
                         <FormControl sx={{width:'80%',marginLeft:'20px'}}>
@@ -375,9 +369,9 @@ const Fatturazione : React.FC = () =>{
                                 label="Stato"
                                 onChange={(e)=>{
                                     const value = e.target.value === 0 ? false : true;
-                               
-                                    setBodyFatturazione((prev)=>({...prev,...{cancellata:value}}));}
-                                }
+                                    setBodyFatturazione((prev)=>({...prev,...{cancellata:value}}));
+                                    clearOnChangeFilter();
+                                }}
                             >
                                 <MenuItem value={0}>Fatturate</MenuItem>
                                 <MenuItem value={1}>Non fatturate</MenuItem>
@@ -390,6 +384,7 @@ const Fatturazione : React.FC = () =>{
                             list={tipologie}
                             value={valueMulitselectTipologie}
                             setValue={setValueMultiselectTipologie}
+                            clearOnChangeFilter={clearOnChangeFilter}
                         ></MultiSelectFatturazione>
                     </div>
                 </div>
@@ -401,6 +396,7 @@ const Fatturazione : React.FC = () =>{
                             setTextValue={setTextValue}
                             valueAutocomplete={valueAutocomplete}
                             setValueAutocomplete={setValueAutocomplete}
+                            clearOnChangeFilter={clearOnChangeFilter}
                         ></MultiselectCheckbox>
                     </div>
                 </div>

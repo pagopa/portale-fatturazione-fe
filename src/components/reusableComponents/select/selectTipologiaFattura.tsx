@@ -7,9 +7,10 @@ interface SelecTipologiaProps{
     types:string[],
     setBody:Dispatch<SetStateAction<BodyRel>>,
     setValue:Dispatch<SetStateAction<string>>,
+    clearOnChangeFilter:any
 }
 
-const SelectTipologiaFattura : React.FC<SelecTipologiaProps> = ({setValue,value, types, setBody}) =>{
+const SelectTipologiaFattura : React.FC<SelecTipologiaProps> = ({setValue,value, types, setBody,clearOnChangeFilter}) =>{
 
    
     return (
@@ -32,6 +33,7 @@ const SelectTipologiaFattura : React.FC<SelecTipologiaProps> = ({setValue,value,
                             setValue(e.target.value);
                             setBody((prev)=>({...prev,...{tipologiaFattura:e.target.value}}));
                         }
+                        clearOnChangeFilter();
                     }}     
                     value={value}       
                 >

@@ -39,7 +39,7 @@ const Accertamenti : React.FC = () =>{
     
     const [gridData, setGridData] = useState<Accertamento[]>([]);
     
-    const [infoPageAccertamenti , setInfoPageAccertamenti] = useState({ page: 0, pageSize: 100 });
+    const [infoPageAccertamenti , setInfoPageAccertamenti] = useState({ page: 0, pageSize: 10 });
     const [showLoadingGrid,setShowLoadingGrid] = useState(false);
     const [showDownloading,setShowDownloading] = useState(false);
     const [showPopUpMatrice,setShowPopUpMatrice] = useState(false);
@@ -79,14 +79,6 @@ const Accertamenti : React.FC = () =>{
         getListaMatrice();
     },[]);
 
-    useEffect(()=>{
-        if(!isInitialRender.current){
-            console.log('dentro1');
-            setGridData([]);
-            setInfoPageAccertamenti({ page: 0, pageSize: 100 });
-        }
- 
-    },[bodyAccertamenti]);
     
     
     const getListaAccertamenti = async(anno,mese) => {
@@ -193,6 +185,11 @@ const Accertamenti : React.FC = () =>{
     };
     */
 
+    const clearOnChangeFilter = () => {
+        setGridData([]);
+        setInfoPageAccertamenti({ page: 0, pageSize: 10 });
+    };
+
     const onButtonFiltra = () =>{
         updateFilters({
             pathPage:'/accertamenti',
@@ -266,10 +263,10 @@ const Accertamenti : React.FC = () =>{
             <div className="mt-5">
                 <div className="row">
                     <div className="col-3">
-                        <SelectUltimiDueAnni values ={bodyAccertamenti} setValue={setBodyAccertamenti}></SelectUltimiDueAnni>
+                        <SelectUltimiDueAnni values ={bodyAccertamenti} setValue={setBodyAccertamenti} clearOnChangeFilter={clearOnChangeFilter}></SelectUltimiDueAnni>
                     </div>
                     <div  className="col-3">
-                        <SelectMese values={bodyAccertamenti} setValue={setBodyAccertamenti}></SelectMese>
+                        <SelectMese values={bodyAccertamenti} setValue={setBodyAccertamenti} clearOnChangeFilter={clearOnChangeFilter}></SelectMese>
                     </div>
                 </div>
                 <div className=" mt-5">
@@ -310,6 +307,7 @@ const Accertamenti : React.FC = () =>{
                 getRowId={(row) => row.idReport}
                 onRowClick={handleEvent}
                 onCellClick={handleOnCellClick}
+                pageSizeOptions={[10, 25, 50,100]}
                 />
             </div>
             <div>

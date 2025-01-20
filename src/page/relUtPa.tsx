@@ -106,16 +106,6 @@ const RelPage : React.FC = () =>{
       
         }
     },[]);
-
-    useEffect(()=>{
-        if(!isInitialRender.current){
-            console.log('dentro1', isInitialRender.current);
-            setData([]);
-            setTotalNotifiche(0);
-            setPage(0);
-            setRowsPerPage(10); 
-        }
-    },[bodyRel]);
  
     useEffect(()=>{
         const timer = setTimeout(() => {
@@ -225,6 +215,13 @@ const RelPage : React.FC = () =>{
                    
                 }));
         }
+    };
+
+    const clearOnChangeFilter = () => {
+        setData([]);
+        setTotalNotifiche(0);
+        setPage(0);
+        setRowsPerPage(10); 
     };
 
     const onButtonFiltra = () =>{
@@ -479,16 +476,16 @@ const RelPage : React.FC = () =>{
             <div className="mt-5">
                 <div className="row">
                     <div className="col-3">
-                        <SelectUltimiDueAnni values ={bodyRel} setValue={setBodyRel} getTipologia={getListTipologiaFatturaOnChangeMonthYear}></SelectUltimiDueAnni>
+                        <SelectUltimiDueAnni values ={bodyRel} setValue={setBodyRel} getTipologia={getListTipologiaFatturaOnChangeMonthYear} clearOnChangeFilter={clearOnChangeFilter}></SelectUltimiDueAnni>
                     </div>
                     <div  className="col-3">
-                        <SelectMese values={bodyRel} setValue={setBodyRel} getTipologia={getListTipologiaFatturaOnChangeMonthYear}></SelectMese>
+                        <SelectMese values={bodyRel} setValue={setBodyRel} getTipologia={getListTipologiaFatturaOnChangeMonthYear} clearOnChangeFilter={clearOnChangeFilter}></SelectMese>
                     </div>
                     <div  className="col-3">
-                        <SelectTipologiaFattura value={valuetipologiaFattura} setBody={setBodyRel} setValue={setValueTipologiaFattura} types={tipologiaFatture}></SelectTipologiaFattura>
+                        <SelectTipologiaFattura value={valuetipologiaFattura} setBody={setBodyRel} setValue={setValueTipologiaFattura} types={tipologiaFatture} clearOnChangeFilter={clearOnChangeFilter}></SelectTipologiaFattura>
                     </div>
                     <div className="col-3">
-                        <SelectStatoPdf values={bodyRel} setValue={setBodyRel}></SelectStatoPdf>
+                        <SelectStatoPdf values={bodyRel} setValue={setBodyRel} clearOnChangeFilter={clearOnChangeFilter}></SelectStatoPdf>
                     </div>
                 </div>
                 <div className="row mt-5">
@@ -500,6 +497,7 @@ const RelPage : React.FC = () =>{
                                 setTextValue={setTextValue}
                                 valueAutocomplete={valueAutocomplete}
                                 setValueAutocomplete={setValueAutocomplete}
+                                clearOnChangeFilter={clearOnChangeFilter}
                             ></MultiselectCheckbox>
                         </div>
                     }

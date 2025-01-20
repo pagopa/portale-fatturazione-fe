@@ -195,7 +195,8 @@ export interface BodyCreateContestazione{
 export interface SelectUltimiDueAnniProps{
     values:any,
     setValue: (value:any) => void,
-    getTipologia?:any
+    getTipologia?:any,
+    clearOnChangeFilter?:any
 }
 
 export interface SelectMeseProps{
@@ -208,7 +209,8 @@ export interface SelectMeseProps{
         caricata?:null|number,
     },
     setValue: (value:any) => void
-    getTipologia?:any
+    getTipologia?:any,
+    clearOnChangeFilter?:any
 }
 
 export interface MultiSelectBaseProps{

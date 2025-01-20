@@ -4,10 +4,11 @@ import { BodyRel } from "../../types/typeRel";
 import { Dispatch, SetStateAction } from "react";
 interface SelecTipologiaPdf{
     setValue: Dispatch<SetStateAction<BodyRel>>,
-    values:BodyRel
+    values:BodyRel,
+    clearOnChangeFilter:any
 }
 
-const SelectStatoPdf : React.FC<SelecTipologiaPdf> = ({setValue, values}) =>{
+const SelectStatoPdf : React.FC<SelecTipologiaPdf> = ({setValue, values,clearOnChangeFilter}) =>{
 
     const statoPdf = [
         'Non Caricata',
@@ -33,6 +34,7 @@ const SelectStatoPdf : React.FC<SelecTipologiaPdf> = ({setValue, values}) =>{
                     labelId="search-by-label"
                     onChange={(e) =>{
                         setValue((prev)=> ({...prev, ...{caricata:Number(e.target.value)}}));
+                        clearOnChangeFilter();
                     }}         
                     value={values.caricata?.toString() ||  ''}                  
                 >

@@ -249,14 +249,6 @@ const ReportDettaglio : React.FC = () => {
         }else{           
             setStatusAnnulla('hidden');
         }
-
-        if(!isInitialRender.current){
-            console.log('dentro1');
-            setNotificheList([]);
-            setPage(0);
-            setRowsPerPage(10);  
-            setTotalNotifiche(0);
-        }
     },[bodyGetLista]);
 
     
@@ -512,6 +504,13 @@ const ReportDettaglio : React.FC = () => {
                 manageError(error, dispatchMainState);
             });     
         isInitialRender.current = false;   
+    };
+
+    const clearOnChangeFilter = () => {
+        setNotificheList([]);
+        setPage(0);
+        setRowsPerPage(10);  
+        setTotalNotifiche(0); 
     };
 
     const onButtonFiltra = () =>{
@@ -805,10 +804,9 @@ const ReportDettaglio : React.FC = () => {
                                     label='Seleziona Prodotto'
                                     onChange={(e) => {
                                         isInitialRender.current = false;
-                                        console.log('reload');
                                         const value = Number(e.target.value);
                                         setBodyGetLista((prev)=> ({...prev, ...{anno:value}}));  
-                                        
+                                        clearOnChangeFilter();
                                     }}
                                     value={bodyGetLista.anno||''}
                                 >
@@ -837,6 +835,7 @@ const ReportDettaglio : React.FC = () => {
                                     onChange={(e) =>{
                                         const value = Number(e.target.value);
                                         setBodyGetLista((prev)=> ({...prev, ...{mese:value}}));
+                                        clearOnChangeFilter();
                                     }}
                                     value={bodyGetLista.mese||''}
                                 >
@@ -867,7 +866,10 @@ const ReportDettaglio : React.FC = () => {
                                     id="prodotto_notifiche"
                                     label='Seleziona Prodotto'
                                     labelId="search-by-label_notifiche"
-                                    onChange={(e) => setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}))}
+                                    onChange={(e) =>{
+                                        clearOnChangeFilter();
+                                        setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}));
+                                    }}
                                     value={bodyGetLista.prodotto}
                                 >
                                     {prodotti.map((el) => (
@@ -889,13 +891,16 @@ const ReportDettaglio : React.FC = () => {
                                 label='IUN'
                                 placeholder='IUN'
                                 value={bodyGetLista.iun || ''}
-                                onChange={(e) => setBodyGetLista((prev)=>{             
-                                    if(e.target.value === ''){
-                                        return {...prev, ...{iun:null}};
-                                    }else{
-                                        return {...prev, ...{iun:e.target.value}};
-                                    }
-                                } )}            
+                                onChange={(e) =>{
+                                    clearOnChangeFilter();
+                                    setBodyGetLista((prev)=>{             
+                                        if(e.target.value === ''){
+                                            return {...prev, ...{iun:null}};
+                                        }else{
+                                            return {...prev, ...{iun:e.target.value}};
+                                        }
+                                    });}
+                                }            
                             />
                         </Box>
                     </div>
@@ -917,6 +922,7 @@ const ReportDettaglio : React.FC = () => {
                                     onChange={(e) =>{
                                         const value = Number(e.target.value);
                                         setBodyGetLista((prev)=> ({...prev, ...{tipoNotifica:value}}));
+                                        clearOnChangeFilter();
                                     }}
                                     value={bodyGetLista.tipoNotifica || ''}        
                                 >
@@ -939,7 +945,8 @@ const ReportDettaglio : React.FC = () => {
                                 dispatchMainState={dispatchMainState}
                                 setBodyGetLista={setBodyGetLista}
                                 valueFgContestazione={valueFgContestazione}
-                                setValueFgContestazione={setValueFgContestazione}></MultiSelectStatoContestazione>
+                                setValueFgContestazione={setValueFgContestazione}
+                                clearOnChangeFilter={clearOnChangeFilter}></MultiSelectStatoContestazione>
                         </Box>
                     </div>
                     <div className="col-3 ">
@@ -949,13 +956,16 @@ const ReportDettaglio : React.FC = () => {
                                 label='CAP'
                                 placeholder='CAP'
                                 value={bodyGetLista.cap || ''}
-                                onChange={(e) => setBodyGetLista((prev)=>{               
-                                    if(e.target.value === ''){
-                                        return {...prev, ...{cap:null}};
-                                    }else{
-                                        return {...prev, ...{cap:e.target.value}};
-                                    }
-                                } )}
+                                onChange={(e) =>{
+                                    clearOnChangeFilter();
+                                    setBodyGetLista((prev)=>{               
+                                        if(e.target.value === ''){
+                                            return {...prev, ...{cap:null}};
+                                        }else{
+                                            return {...prev, ...{cap:e.target.value}};
+                                        }
+                                    });
+                                }}
                             />
                         </Box>
                     </div>
@@ -966,13 +976,16 @@ const ReportDettaglio : React.FC = () => {
                                 label='Recipient ID'
                                 placeholder='Recipient ID'
                                 value={bodyGetLista.recipientId || ''}
-                                onChange={(e) => setBodyGetLista((prev)=>{                
-                                    if(e.target.value === ''){
-                                        return {...prev, ...{recipientId:null}};
-                                    }else{
-                                        return {...prev, ...{recipientId:e.target.value}};
-                                    }
-                                } )}                     
+                                onChange={(e) =>{
+                                    clearOnChangeFilter();
+                                    setBodyGetLista((prev)=>{                
+                                        if(e.target.value === ''){
+                                            return {...prev, ...{recipientId:null}};
+                                        }else{
+                                            return {...prev, ...{recipientId:e.target.value}};
+                                        }
+                                    });
+                                }}                     
                             />
                         </Box>
                     </div>                         
@@ -986,6 +999,7 @@ const ReportDettaglio : React.FC = () => {
                             setTextValue={setTextValue}
                             valueAutocomplete={valueAutocomplete}
                             setValueAutocomplete={setValueAutocomplete}
+                            clearOnChangeFilter={clearOnChangeFilter}
                         ></MultiselectCheckbox>
                     </div>
                     }
@@ -1005,6 +1019,7 @@ const ReportDettaglio : React.FC = () => {
                                         label='Consolidatore'
                                         labelId="search-by-label"
                                         onChange={(e) =>{
+                                            clearOnChangeFilter();
                                             const value = e.target.value;
                                             setBodyGetLista((prev)=> ({...prev, ...{consolidatori:[value]}}));
                                         }}
@@ -1037,6 +1052,7 @@ const ReportDettaglio : React.FC = () => {
                                         label='Recapitista'
                                         labelId="search-by-label"
                                         onChange={(e) =>{
+                                            clearOnChangeFilter();
                                             const value = e.target.value;
                                             setBodyGetLista((prev)=> ({...prev, ...{recapitisti:[value]}}));
                                         }}

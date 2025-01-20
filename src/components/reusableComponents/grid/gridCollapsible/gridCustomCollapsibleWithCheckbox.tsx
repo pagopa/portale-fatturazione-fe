@@ -23,12 +23,12 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,se
     const [showedData, setShowedData] = useState<FattureObj[]>([]);
     console.log({selected});
     useEffect(()=>{
-        if(firstRender){
+        if(firstRender && infoPageLocalStorage.rows){
+            console.log({infoPageLocalStorage});
             setPage(infoPageLocalStorage.page);
             setRowsPerPage(infoPageLocalStorage.rows);
             setShowedData(data.slice(0, 10));
             setCount(data.length);
-          
         }else{
             setCount(data.length);
             setPage(0);

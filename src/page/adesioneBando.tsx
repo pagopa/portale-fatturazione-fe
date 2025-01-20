@@ -23,20 +23,24 @@ const AdesioneBando : React.FC = () => {
     const profilo =  mainState.profilo;
 
     const [gridData, setGridData] = useState<Asseverazione[]>([]);
-    const [infoPageBando , setInfoPageBando] = useState({ page: 0, pageSize: 100 });
+    const [infoPageBando , setInfoPageBando] = useState({ page: 0, pageSize: 10 });
     const [showLoadingGrid,setShowLoadingGrid] = useState(false);
     const [showDownloading,setShowDownloading] = useState(false);
     const [file, setFile] = useState<File | null>(null);
     const [loadingUpload, setLoadingUpload] = useState<boolean>(false);
     const [errorUpload, setErrorUpload] = useState<boolean>(false);
     const [openModalConfirmUploadDoc, setOpenModalConfirmUploadDoc] = useState<boolean>(false);
-    const {resetFilters} = useSavedFilters(PathPf.ADESIONE_BANDO,{});
+
+    const { 
+        filters,
+        updateFilters,
+        resetFilters,
+        isInitialRender
+    } = useSavedFilters(PathPf.ADESIONE_BANDO,{});
 
     
     useEffect(()=>{
-     
         getListaAsseverazione();
-        resetFilters();
     },[]);
 
   
@@ -47,11 +51,16 @@ const AdesioneBando : React.FC = () => {
             .then((res)=>{
                 setGridData(res.data);
                 setShowLoadingGrid(false);
+                if(isInitialRender.current && filters.rows){
+                    setInfoPageBando({page:filters.page,pageSize:filters.rows});
+                }
+                isInitialRender.current = false;
             })
             .catch((err)=>{
                 setShowLoadingGrid(false);
                 setGridData([]);
                 manageError(err,dispatchMainState);
+                isInitialRender.current = false;
             });
     };
 
@@ -120,8 +129,6 @@ const AdesioneBando : React.FC = () => {
       
     };
 
-    
-
     const columns: GridColDef[] = [
         { field: 'ragioneSociale', headerName: 'Ragione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:{row:Asseverazione}) => <a className="mese_alidita text-primary fw-bolder" >{param.row.ragioneSociale}</a>},
         { field: 'prodotto', headerName: 'Prodotto', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
@@ -172,6 +179,12 @@ const AdesioneBando : React.FC = () => {
                     }
                 }}
                 onPaginationModelChange={(e)=>{
+                    console.log(e);
+                    updateFilters({
+                        pathPage:PathPf.ADESIONE_BANDO,
+                        page:e.page,
+                        rows:e.pageSize,
+                    });
                     setInfoPageBando(e);}}
                 paginationModel={infoPageBando}
                 rows={gridData} 
@@ -179,6 +192,7 @@ const AdesioneBando : React.FC = () => {
                 getRowId={(row) => row.idEnte}
                 onRowClick={handleEvent}
                 onCellClick={handleOnCellClick}
+                pageSizeOptions={[10, 25, 50,100]}
                 />
             </div>
             <div>

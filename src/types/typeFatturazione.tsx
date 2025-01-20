@@ -19,7 +19,8 @@ export interface MultiSelectFatturazioneProps{
     setBody:Dispatch<SetStateAction<BodyFatturazione>>,
     list:string[],
     value:string[],
-    setValue:Dispatch<SetStateAction<string[]>>
+    setValue:Dispatch<SetStateAction<string[]>>,
+    clearOnChangeFilter:any
 }
 
 type Posizioni = {

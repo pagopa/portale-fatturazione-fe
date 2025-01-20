@@ -4,7 +4,7 @@ import React from "react";
 import { SelectUltimiDueAnniProps } from "../../../types/typesGeneral";
 import { get2FinancialYear} from "../../../reusableFunction/function";
 
-const SelectUltimiDueAnni : React.FC<SelectUltimiDueAnniProps> = ({setValue, values, getTipologia}) =>{
+const SelectUltimiDueAnni : React.FC<SelectUltimiDueAnniProps> = ({setValue, values, getTipologia,clearOnChangeFilter}) =>{
     return (
         <Box sx={{width:'80%'}} >
             <FormControl
@@ -19,7 +19,7 @@ const SelectUltimiDueAnni : React.FC<SelectUltimiDueAnniProps> = ({setValue, val
                     label='Seleziona Anno'
                     labelId="Anno mess"
                     onChange={(e) => {
-                                
+                        clearOnChangeFilter();  
                         const value = Number(e.target.value);
                         setValue((prev)=> ({...prev, ...{anno:value}}));
                         if(getTipologia){

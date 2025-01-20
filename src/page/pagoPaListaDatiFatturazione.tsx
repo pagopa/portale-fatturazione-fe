@@ -69,13 +69,6 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
         }else{
             setStatusAnnulla('hidden');
         }
-        if(!isInitialRender.current){
-            console.log('dentro1');
-            setGridData([]);
-            setInfoPageListaDatiFat({ page: 0, pageSize: 100 });
-            
-        }
-       
     },[bodyGetLista]);
 
     
@@ -189,9 +182,15 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
     };
 
 
+    const clearOnChangeFilter = () => {
+        setGridData([]);
+        setInfoPageListaDatiFat({ page: 0, pageSize: 10 });
+    };
+
+
     const onButtonFiltra = () => {
         getListaDatifatturazione(bodyGetLista);
-        setInfoPageListaDatiFat({ page: 0, pageSize: 100 });
+        setInfoPageListaDatiFat({ page: 0, pageSize: 10 });
         setFiltersDownload(bodyGetLista);
         updateFilters(
             {
@@ -200,13 +199,13 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                 textValue,
                 valueAutocomplete,
                 page:0,
-                rows:100
+                rows:10
             });
     };
 
     const onButtonAnnulla = () => {
         setBodyGetLista({idEnti:[],prodotto:'',profilo:''});
-        setInfoPageListaDatiFat({ page: 0, pageSize: 100 });
+        setInfoPageListaDatiFat({ page: 0, pageSize: 10 });
         getListaDatifatturazione({idEnti:[],prodotto:'',profilo:''});
         setFiltersDownload({idEnti:[],prodotto:'',profilo:''});
         setDataSelect([]);
@@ -262,7 +261,10 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                                 id="sea"
                                 label='Seleziona Prodotto'
                                 labelId="search-by-label"
-                                onChange={(e) => setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}))}
+                                onChange={(e) =>{
+                                    clearOnChangeFilter();
+                                    setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}));
+                                }}
                                 value={bodyGetLista.prodotto}
                             >
                                 {prodotti.map((el) => (
@@ -292,7 +294,10 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                                 id="sea"
                                 label='Seleziona Profilo'
                                 labelId="search-by-label"
-                                onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{profilo:e.target.value}}))}
+                                onChange={(e) => {
+                                    clearOnChangeFilter();
+                                    setBodyGetLista((prev)=> ({...prev, ...{profilo:e.target.value}}));
+                                }}
                                 value={bodyGetLista.profilo||''}
                             >
                                 {profili.map((el) => (
@@ -314,11 +319,11 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                         setTextValue={setTextValue}
                         valueAutocomplete={valueAutocomplete}
                         setValueAutocomplete={setValueAutocomplete}
+                        clearOnChangeFilter={clearOnChangeFilter}
                     ></MultiselectCheckbox>
                 </div>
             </div>
-            <div className="d-flex" >
-              
+            <div className="d-flex">
                 <div className=" d-flex justify-content-center align-items-center">
                     <div>
                         <Button 
@@ -354,7 +359,7 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                         backgroundColor: 'white',
                     }
                 }}
-                pageSizeOptions={[10, 25, 50]}
+                pageSizeOptions={[10, 25, 50,100]}
                 onPaginationModelChange={(e)=> onChangePageOrRowGrid(e)}
                 paginationModel={infoPageListaDatiFat}
                 rows={gridData} 

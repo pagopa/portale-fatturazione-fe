@@ -40,7 +40,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [gridData, setGridData] = useState<GridElementListaCommesse[]>([]);
     const [bodyGetLista, setBodyGetLista] = useState<BodyDownloadModuliCommessa>({idEnti:[],prodotto:'', anno:currentYear, mese:currString});
-    const [infoPageListaCom , setInfoPageListaCom] = useState({ page: 0, pageSize: 100 });
+    const [infoPageListaCom , setInfoPageListaCom] = useState({ page: 0, pageSize: 10 });
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
     const [textValue, setTextValue] = useState('');
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
@@ -63,11 +63,6 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
             setStatusAnnulla('show');
         }else{
             setStatusAnnulla('hidden');
-        }
-        if(!isInitialRender.current){
-            console.log('dentro1');
-            setGridData([]);
-            setInfoPageListaCom({ page: 0, pageSize: 100 });   
         }
     },[bodyGetLista]);
 
@@ -191,8 +186,14 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
         setInfoPageListaCom(e);
     };
 
+
+    const clearOnChangeFilter = () => {
+        setGridData([]);
+        setInfoPageListaCom({ page: 0, pageSize: 10 });  
+    };
+
     const onButtonFiltra = () => {
-        setInfoPageListaCom({ page: 0, pageSize: 100 });
+        setInfoPageListaCom({ page: 0, pageSize: 10 });
         getListaCommesse(bodyGetLista);
         setBodyDownload(bodyGetLista);
         updateFilters(
@@ -202,12 +203,12 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                 textValue,
                 valueAutocomplete,
                 page:0,
-                rows:100
+                rows:10
             });
     };
 
     const onButtonAnnulla = () =>{
-        setInfoPageListaCom({ page: 0, pageSize: 100 });
+        setInfoPageListaCom({ page: 0, pageSize: 10 });
         getListaCommesseOnAnnulla();
         setBodyGetLista({idEnti:[],prodotto:'', anno:currentYear, mese:currString});
         setBodyDownload({idEnti:[],prodotto:'', anno:currentYear, mese:currString});
@@ -252,7 +253,10 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                                     id="sea"
                                     label='Seleziona Prodotto'
                                     labelId="search-by-label"
-                                    onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{anno:e.target.value}}))}
+                                    onChange={(e) =>{
+                                        clearOnChangeFilter();
+                                        setBodyGetLista((prev)=> ({...prev, ...{anno:e.target.value}}));
+                                    }  }
                                     value={bodyGetLista.anno}
                                 >
                                     {getCurrentFinancialYear().map((el) => (
@@ -283,6 +287,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                                     labelId="search-by-label"
                                     onChange={(e) =>{
                                         setBodyGetLista((prev)=> ({...prev, ...{mese:e.target.value}}));
+                                        clearOnChangeFilter();
                                     }}
                                     value={bodyGetLista.mese}
                                 >
@@ -311,7 +316,10 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                                     id="sea"
                                     label='Seleziona Prodotto'
                                     labelId="search-by-label"
-                                    onChange={(e) => setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}))}
+                                    onChange={(e) =>{
+                                        clearOnChangeFilter();
+                                        setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}));
+                                    }}
                                     value={bodyGetLista.prodotto}
                                 >
                                     {prodotti.map((el) => (
@@ -333,6 +341,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                             setTextValue={setTextValue}
                             valueAutocomplete={valueAutocomplete}
                             setValueAutocomplete={setValueAutocomplete}
+                            clearOnChangeFilter={clearOnChangeFilter}
                         ></MultiselectCheckbox>
                     </div>
                 </div>
@@ -378,6 +387,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                 onCellClick={handleOnCellClick}
                 onPaginationModelChange={(e)=> onChangePageOrRowGrid(e)}
                 paginationModel={infoPageListaCom}
+                pageSizeOptions={[10, 25, 50,100]}
                 />
             </div>
             <ModalLoading 
