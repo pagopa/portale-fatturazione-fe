@@ -1,12 +1,10 @@
-import { Button, Typography } from "@mui/material";
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import { Dispatch, useContext, useEffect, useState } from "react";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
-import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
-import SelectMese from "../components/reusableComponents/select/selectMese";
 import { DataGrid, GridColDef, GridEventListener, GridRowParams, MuiEvent } from "@mui/x-data-grid";
 import { Params } from "../types/typesGeneral";
-import { getListaAccertamentiPagoPa, getListaAccertamentiPrenotazionePagoPa, getMatriceAccertamenti, getMatriceAccertamentiPagoPa } from "../api/apiPagoPa/accertamentiPA/api";
+import { getAnniAccertamenti, getListaAccertamentiPagoPa, getListaAccertamentiPrenotazionePagoPa, getMatriceAccertamenti, getMatriceAccertamentiPagoPa, getMesiAccertamenti } from "../api/apiPagoPa/accertamentiPA/api";
 import { manageError, managePresaInCarico } from "../api/api";
 import { Accertamento, BodyAccertamenti } from "../types/typeAccertamenti";
 import { mesiGrid } from "../reusableFunction/reusableArrayObj";
@@ -16,8 +14,6 @@ import { ActionReducerType } from "../reducer/reducerMainState";
 import { GlobalContext } from "../store/context/globalContext";
 import { getMessaggiCount } from "../api/apiPagoPa/centroMessaggi/api";
 import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
-import { PathPf } from "../types/enum";
-
 
 interface AccertamentiProps {
     dispatchMainState:Dispatch<ActionReducerType>
@@ -35,27 +31,19 @@ const Accertamenti : React.FC = () =>{
 
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
-    const currentYear = (new Date()).getFullYear();
+
     
     const [gridData, setGridData] = useState<Accertamento[]>([]);
-    
+    const [arrayYears,setArrayYears] = useState<number[]>([]);
+    const [arrayMonths,setArrayMonths] = useState<{mese:string,descrizione:string}[]>([]);
     const [infoPageAccertamenti , setInfoPageAccertamenti] = useState({ page: 0, pageSize: 10 });
     const [showLoadingGrid,setShowLoadingGrid] = useState(false);
     const [showDownloading,setShowDownloading] = useState(false);
     const [showPopUpMatrice,setShowPopUpMatrice] = useState(false);
     const [dataMatrice, setDataMatrice] = useState<MatriceArray[]>([]);
     const [valueSelectMatrice,setValueSelectMatrice ] = useState('');
-    /*
-    const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
-    const [textValue, setTextValue] = useState('');
-    const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
-    const [statusAnnulla, setStatusAnnulla] = useState<string>('hidden');
-    const [tipologie, setTipologie] = useState<string[]>([]);
-    const [valueMulitselectTipologie, setValueMultiselectTipologie] = useState<string[]>([]);
-    const [showedData, setShowedData] = useState<FattureObj[]>([]);
-    const idElement = useId();*/
     const [bodyAccertamenti, setBodyAccertamenti] = useState<BodyAccertamenti>({
-        anno:currentYear,
+        anno:0,
         mese:null,
         tipologiaFattura:[],
         idEnti:[]
@@ -68,23 +56,62 @@ const Accertamenti : React.FC = () =>{
     } = useSavedFilters('/accertamenti',{});
     
     useEffect(()=>{
-        if(isInitialRender.current && Object.keys(filters).length > 0){
-            getListaAccertamenti(filters.body.anno,filters.body.mese);
-            setBodyAccertamenti(filters.body);
-            setInfoPageAccertamenti({page:filters.page,pageSize:filters.rows});
-        }else{
-            getListaAccertamenti(new Date().getFullYear(),null);
-            isInitialRender.current = false;
-        }
-        getListaMatrice();
+        getAnni();
+        getListaMatrice(); 
     },[]);
 
-    
-    
+    useEffect(()=>{
+        if(!isInitialRender.current){
+            getMesi(bodyAccertamenti.anno?.toString());
+        }
+    },[bodyAccertamenti.anno]);
+
+    const getAnni = async() => {
+        setShowLoadingGrid(true);
+        await getAnniAccertamenti(token, profilo.nonce).then((res)=>{
+            const arrayNumber = res.data.map(el => Number(el.toString()));
+            setArrayYears(arrayNumber);
+            if(isInitialRender.current && Object.keys(filters).length > 0){
+                getMesi(filters.body.anno?.toString());
+            }else{
+                setBodyAccertamenti((prev)=> ({...prev,...{anno:Number(res.data[0])}}));
+                getMesi(res.data[0]);
+                getListaAccertamenti(res.data[0],null);
+                isInitialRender.current = false;
+            }
+               
+        }).catch((err)=>{
+            setArrayYears([]);
+            setShowLoadingGrid(false);
+            manageError(err,dispatchMainState);
+        });
+    };
+
+    const getMesi = async(year) =>{
+        await getMesiAccertamenti(token, profilo.nonce,{anno:year}).then((res)=>{
+                   
+            setArrayMonths(res.data);
+            if(isInitialRender.current && Object.keys(filters).length > 0){
+                setBodyAccertamenti(filters.body);
+                getListaAccertamenti(filters.body.anno, filters.body.mese);
+            }else{
+                getListaAccertamenti(Number(year),null);
+            }
+        }).catch((err)=>{
+            setArrayMonths([]);
+            setBodyAccertamenti((prev)=> ({...prev,...{mese:0}}));
+            setShowLoadingGrid(false);
+            manageError(err,dispatchMainState);
+        });
+    };
+
     const getListaAccertamenti = async(anno,mese) => {
         setShowLoadingGrid(true);
         await getListaAccertamentiPagoPa(token, profilo.nonce, {anno,mese} )
             .then((res)=>{
+                if(isInitialRender.current && Object.keys(filters).length > 0){
+                    setInfoPageAccertamenti({page:filters.page,pageSize:filters.rows});
+                }
                 setGridData(res.data);
                 setShowLoadingGrid(false);
             })
@@ -141,49 +168,6 @@ const Accertamenti : React.FC = () =>{
                 manageError(err,dispatchMainState);
             }));
     };
-    /*
-    const downloadAccertamento = async (id,mese,anno,descrizione, contentType) => {
-    setShowDownloading(true);
-    if(contentType === "text/csv"){
-    
-    await getDownloadSingleAccertamentoPagoPaCsv(token,profilo.nonce, {idReport:id}).then((res)=>{
-    const blob = new Blob([res.data], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.setAttribute('hidden', '');
-    a.setAttribute('href', url);
-    a.setAttribute('download',`Accertamento/${descrizione}/${mese}/${anno}.csv`);
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);   
-    setShowDownloading(false);
-    }).catch(((err)=>{
-    setShowDownloading(false);
-    manageError(err,dispatchMainState);
-    }));
-    }else if(contentType === "application/zip"){
-    
-    await getDownloadSingleAccertamentoPagoPaZipExel(token,profilo.nonce, {idReport:id}).then(response => response.blob())
-    .then((res)=>{
-    
-    saveAs(res,`Accertamento/${descrizione}/${mese}/${anno}.zip`);
-    setShowDownloading(false);
-    }).catch(((err)=>{
-    setShowDownloading(false);
-    manageError(err,dispatchMainState);
-    }));
-    }else if(contentType ==="application/vnd.ms-excel"){
-    await getDownloadSingleAccertamentoPagoPaZipExel(token,profilo.nonce, {idReport:id}).then(response => response.blob()).then((res)=>{
-    saveAs( res,`Accertamento/${descrizione}/${mese}/${anno}.xlsx` );
-    setShowDownloading(false);
-    }).catch((err)=>{
-    manageError(err,dispatchMainState);
-    setShowDownloading(false);
-    }); 
-    }
-    
-    };
-    */
 
     const clearOnChangeFilter = () => {
         setGridData([]);
@@ -201,16 +185,15 @@ const Accertamenti : React.FC = () =>{
     };
 
     const onButtonAnnulla = () => {
-        getListaAccertamenti(new Date().getFullYear(),null);
+        getListaAccertamenti(arrayYears[0],null);
         setBodyAccertamenti({
-            anno:currentYear,
+            anno:arrayYears[0],
             mese:null,
             tipologiaFattura:[],
             idEnti:[]
         });
         resetFilters();
     };
-
 
     const onChangePageOrRowGrid = (e) => {
         updateFilters(
@@ -263,10 +246,68 @@ const Accertamenti : React.FC = () =>{
             <div className="mt-5">
                 <div className="row">
                     <div className="col-3">
-                        <SelectUltimiDueAnni values ={bodyAccertamenti} setValue={setBodyAccertamenti} clearOnChangeFilter={clearOnChangeFilter}></SelectUltimiDueAnni>
+                        <Box sx={{width:'80%'}} >
+                            <FormControl
+                                fullWidth
+                                size="medium"
+                            >
+                                <InputLabel>
+                            Anno   
+                                </InputLabel>
+                                <Select
+                                    label='Seleziona Anno'
+                                    onChange={(e) => {
+                                        clearOnChangeFilter();  
+                                        const value = Number(e.target.value);
+                                        setBodyAccertamenti((prev)=> ({...prev, ...{anno:value}}));
+                                    }}
+                                    value={bodyAccertamenti.anno||''}     
+                                >
+                                    {arrayYears.map((el) => (
+                                
+                                        <MenuItem
+                                            key={Math.random()}
+                                            value={el}
+                                        >
+                                            {el}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Box>
                     </div>
                     <div  className="col-3">
-                        <SelectMese values={bodyAccertamenti} setValue={setBodyAccertamenti} clearOnChangeFilter={clearOnChangeFilter}></SelectMese>
+                        <Box sx={{width:'80%', marginLeft:'20px'}}  >
+                            <FormControl
+                                fullWidth
+                                size="medium"
+                            >
+                                <InputLabel>
+                                Mese   
+                                </InputLabel>
+                                <Select
+                                    label='Mese'
+                                    onChange={(e) =>{
+                                        const value = Number(e.target.value);
+                                        setBodyAccertamenti((prev)=> ({...prev, ...{mese:value}}));
+                                        clearOnChangeFilter();
+                                    }}         
+                                    value={bodyAccertamenti.mese||''}             
+                                >
+                                    {arrayMonths.map((el) => (
+                                    
+                                        <MenuItem
+                                            key={Math.random()}
+                                            value={el.mese}
+                                        >
+                                            {el?.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase()}
+                                        </MenuItem>
+                                    
+                                    ))}
+                                    
+                                </Select>
+                            </FormControl>
+                        </Box>
                     </div>
                 </div>
                 <div className=" mt-5">
