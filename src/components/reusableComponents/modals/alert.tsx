@@ -45,7 +45,7 @@ const BasicAlerts:React.FC = () => {
 
   
     let colorAlert:AlertColor = 'success'; 
-    //let colorAlert:AlertColor = 'warning';
+   
     if(mainState.apiError === 401 || mainState.apiError === 403|| errorAlert.error === 401 ){
         colorAlert = 'error';
     }else if(mainState.apiError === 419 || errorAlert.error === 419 ){
@@ -62,9 +62,9 @@ const BasicAlerts:React.FC = () => {
         colorAlert = 'warning';
     }else if((mainState.apiError||'').slice(0,2) === 'NO'){
         colorAlert = 'error';
-    }/*else if(!mainState.apiError && !errorAlert.error){
+    }else if(!mainState.apiError && !errorAlert.error){
         colorAlert = 'warning';
-    }*/
+    }
     
     const [css, setCss] = useState('main_container_alert_component');
 
@@ -73,20 +73,15 @@ const BasicAlerts:React.FC = () => {
         if(mainState.apiError !== null || errorAlert.error !== 0){
             setShowAlert(true);
         }
-
     },[mainState.apiError,errorAlert.error]);
 
     React.useEffect(()=>{
         if(showAlert === true && (mainState.apiError !== null || errorAlert.error !== 0)){
-
             const logout = mainState.apiError === 401 || mainState.apiError === 403 || mainState.apiError === 419|| errorAlert.error === 401 || errorAlert.error === 403 || errorAlert.error === 419 ;
             setCss('main_container_alert_component_show');
-            
             const timer = setTimeout(() => {
-    
                 setCss('main_container_alert_component_hidden');
                 setShowAlert(false);
-                
                 if(logout){
                     if(profilo.auth === 'PAGOPA'){
                         window.location.href = '/azureLogin';
@@ -96,11 +91,8 @@ const BasicAlerts:React.FC = () => {
                     }
                 }
             }, 2500);
-          
             return () =>{
-                
                 clearTimeout(timer);
-                
             }; 
         }
         if(mainState.apiError === null){
@@ -110,14 +102,12 @@ const BasicAlerts:React.FC = () => {
 
     React.useEffect(()=>{
         if(showAlert === false  && (mainState.apiError !== null || errorAlert.error !== 0)){
-           
             const timer = setTimeout(() => {
                 if(mainState.apiError !== null){
                     handleModifyMainState({apiError:null});
                 }else if( errorAlert.error !== 0){
                     setErrorAlert({error:0,message:''});
                 }
-                
             }, 500);
             return () =>{
                 clearTimeout(timer);
@@ -125,12 +115,9 @@ const BasicAlerts:React.FC = () => {
         }
     },[showAlert]);
 
-  
-
     return createPortal(
         <div className={css}>
-            {/*<Alert sx={{display:'flex', justifyContent:'center'}} severity={colorAlert}  variant="standard">{t(`errori.${mainState.apiError||errorAlert.message}`, {defaultValue:t(`errori.400`)})} */}
-            <Alert sx={{display:'flex', justifyContent:'center'}} severity={colorAlert}  variant="standard">{t(`errori.${mainState.apiError}`, {defaultValue:errorAlert.message})} 
+            <Alert sx={{display:'flex', justifyContent:'center'}} severity={colorAlert}  variant="standard">{t(`errori.${mainState.apiError||errorAlert.message}`, {defaultValue:t(`errori.400`)})} 
                 {mainState.apiError === 'PRESA_IN_CARICO_DOCUMENTO' &&
                 <IconButton sx={{marginLeft:'20px'}} onClick={()=> {
                     setCss('main_container_alert_component_hidden');
@@ -139,17 +126,13 @@ const BasicAlerts:React.FC = () => {
                     <ArrowForwardIcon fontSize="medium" 
                         sx={{
                             color: '#17324D',
-                        }}
-                            
+                        }} 
                     />
                 </IconButton>
                 }
             </Alert>
-                
-          
         </div>,
         document.getElementById("modal-alert")|| document.body
     );
 };
-
 export default BasicAlerts;

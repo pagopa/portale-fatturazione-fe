@@ -12,11 +12,12 @@ import { FattureObj, GridCollapsible } from '../../../../types/typeFatturazione'
 import TablePaginationDemo from './tablePagination';
 import EnhancedTableToolbar from './enhanceTableToolbar';
 import Row from './rowWithCheckbox';
+import { PathPf } from '../../../../types/enum';
 
 
 
 
-const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,setOpenConfermaModal,setOpenResetFilterModal,monthFilterIsEqualMonthDownload,selected, setSelected,updateFilters,pathPage,body,firstRender,infoPageLocalStorage}) => {
+const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,setOpenConfermaModal,setOpenResetFilterModal,monthFilterIsEqualMonthDownload,selected, setSelected,updateFilters,pathPage,body,firstRender,infoPageLocalStorage,upadateOnSelctedChange}) => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [count, setCount] = useState(0);
@@ -24,7 +25,7 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,se
     console.log({selected});
     useEffect(()=>{
         if(firstRender && infoPageLocalStorage.rows){
-            console.log({infoPageLocalStorage});
+        
             setPage(infoPageLocalStorage.page);
             setRowsPerPage(infoPageLocalStorage.rows);
             setShowedData(data.slice(0, 10));
@@ -38,6 +39,14 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,se
         }
         
     },[data]);
+
+
+    useEffect(()=>{
+        if(!firstRender){
+            upadateOnSelctedChange(page,rowsPerPage);
+        }
+       
+    },[selected]);
     
     useEffect(()=>{
         let from = 0;

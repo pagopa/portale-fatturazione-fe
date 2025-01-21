@@ -1,11 +1,11 @@
-import { Button, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import { useContext, useEffect, useState } from "react";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
 import { BodyFatturazione, FattureObj, HeaderCollapsible, TipologiaSap} from "../types/typeFatturazione";
-import { downloadFatturePagopa, downloadFattureReportPagopa, fattureCancellazioneRipristinoPagoPa,fattureTipologiaSapPa, getFatturazionePagoPa, getTipologieFaPagoPa } from "../api/apiPagoPa/fatturazionePA/api";
+import { downloadFatturePagopa, downloadFattureReportPagopa, fattureCancellazioneRipristinoPagoPa,fattureTipologiaSapPa, getAnniDocEmessiPagoPa, getFatturazionePagoPa, getMesiDocEmessiPagoPa, getTipologieFaPagoPa } from "../api/apiPagoPa/fatturazionePA/api";
 import { manageError, manageErrorDownload, managePresaInCarico } from "../api/api";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
@@ -31,11 +31,10 @@ const Fatturazione : React.FC = () =>{
 
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
-    const currentYear = (new Date()).getFullYear();
-    const currentMonth = (new Date()).getMonth() + 1;
-    const monthNumber = Number(currentMonth);
 
     const [gridData, setGridData] = useState<FattureObj[]>([]);
+    const [arrayYears,setArrayYears] = useState<number[]>([]);
+    const [arrayMonths,setArrayMonths] = useState<{mese:string,descrizione:string}[]>([]);
     const [showLoadingGrid,setShowLoadingGrid] = useState(false);
     const [showDownloading,setShowDownloading] = useState(false);
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
@@ -53,15 +52,15 @@ const Fatturazione : React.FC = () =>{
     const [fattureSelected, setFattureSelected] = useState<number[]>([]);
     
     const [bodyFatturazione, setBodyFatturazione] = useState<BodyFatturazione>({
-        anno:currentYear,
-        mese:monthNumber,
+        anno:0,
+        mese:0,
         tipologiaFattura:[],
         idEnti:[],
         cancellata:false
     });
     const [bodyFatturazioneDownload, setBodyFatturazioneDownload] = useState<BodyFatturazione>({
-        anno:currentYear,
-        mese:monthNumber,
+        anno:0,
+        mese:0,
         tipologiaFattura:[],
         idEnti:[],
         cancellata:false
@@ -74,36 +73,17 @@ const Fatturazione : React.FC = () =>{
     } = useSavedFilters(PathPf.FATTURAZIONE,{});
 
     useEffect(()=>{
-        if(isInitialRender.current && Object.keys(filters).length > 0){
-            setBodyFatturazione(filters.body);
-            setBodyFatturazioneDownload(filters.body);
-            setTipologie(filters.tipologie);
-            setValueAutocomplete(filters.valueAutocomplete);
-            setTextValue(filters.textValue);
-            setValueMultiselectTipologie(filters.valueMulitselectTipologie);
-            setFattureSelected(filters.fattureSelected);
-            getlistaFatturazione(filters.body);
-        }else{
-            getlistaFatturazione(bodyFatturazione);
-        }
+        getAnni();
     },[]);
 
     useEffect(()=>{
         if(!isInitialRender.current){
-            updateFilters({
-                pathPage:PathPf.FATTURAZIONE,
-                body:bodyFatturazione,
-                textValue:textValue,
-                valueAutocomplete,
-                tipologie:tipologie,
-                fattureSelected:fattureSelected,
-                valueMulitselectTipologie:valueMulitselectTipologie,
-                page:0,
-                rows:10,
-            });
+            getMesi(bodyFatturazione.anno?.toString());
         }
-       
-    },[fattureSelected]);
+        
+    },[bodyFatturazione.anno]);
+
+    
     
     useEffect(()=>{
         if(bodyFatturazione.idEnti.length !== 0 || bodyFatturazione.tipologiaFattura.length !== 0 || bodyFatturazione.cancellata === true ){
@@ -125,11 +105,53 @@ const Fatturazione : React.FC = () =>{
    
     useEffect(()=>{
         if(!isInitialRender.current){
-            console.log('pippo');
             getTipologieFatturazione(bodyFatturazione.anno,bodyFatturazione.mese,bodyFatturazione.cancellata);
             setValueMultiselectTipologie([]);
         }
     },[bodyFatturazione.mese,bodyFatturazione.anno,bodyFatturazione.cancellata]);
+
+
+    const getAnni = async() => {
+        await getAnniDocEmessiPagoPa(token, profilo.nonce).then((res)=>{
+            const arrayNumber = res.data.map(el => Number(el.toString()));
+            setArrayYears(arrayNumber);
+            if(isInitialRender.current && Object.keys(filters).length > 0){
+                getMesi(filters.body.anno?.toString());
+            }else{
+                setBodyFatturazione((prev)=> ({...prev,...{anno:Number(res.data[0])}}));
+                getMesi(res.data[0]);
+            }
+            
+        }).catch((err)=>{
+            setArrayYears([]);
+            manageError(err,dispatchMainState);
+        });
+    };
+
+
+    const getMesi = async(year) =>{
+        await getMesiDocEmessiPagoPa(token, profilo.nonce,{anno:year}).then((res)=>{
+            
+            setArrayMonths(res.data);
+            if(isInitialRender.current && Object.keys(filters).length > 0){
+                setBodyFatturazione(filters.body);
+                setBodyFatturazioneDownload(filters.body);
+                setTipologie(filters.tipologie);
+                setValueAutocomplete(filters.valueAutocomplete);
+                setTextValue(filters.textValue);
+                setValueMultiselectTipologie(filters.valueMulitselectTipologie);
+                setFattureSelected(filters.fattureSelected);
+                getlistaFatturazione(filters.body);
+            }else{
+                setBodyFatturazione((prev)=> ({...prev,...{mese:res.data[0].mese}}));
+                getlistaFatturazione({...bodyFatturazione,...{anno:Number(year),mese:res.data[0].mese}});
+            }
+        }).catch((err)=>{
+            setArrayMonths([]);
+            setBodyFatturazione((prev)=> ({...prev,...{mese:0}}));
+            manageError(err,dispatchMainState);
+        });
+    };
 
     const getTipologieFatturazione =  async(anno,mese,cancellata) => {
         await getTipologieFaPagoPa(token, profilo.nonce, {anno:anno,mese:mese,cancellata:cancellata}  )
@@ -150,7 +172,6 @@ const Fatturazione : React.FC = () =>{
 
     
     const getlistaFatturazione = async (body) => {
-       
         setShowLoadingGrid(true);
         setDisableButtonSap(true);
         await  getFatturazionePagoPa(token,profilo.nonce,body)
@@ -171,8 +192,6 @@ const Fatturazione : React.FC = () =>{
         if(isInitialRender.current){
             getTipologieFatturazione(body.anno,body.mese, body.cancellata);
         }
-        
-        
     };
 
     const getCount = async () =>{
@@ -318,23 +337,19 @@ const Fatturazione : React.FC = () =>{
     };
 
     const onButtonAnnulla = () => {
-        getlistaFatturazione({
-            anno:currentYear,
-            mese:monthNumber,
-            tipologiaFattura:[],
-            idEnti:[],
-            cancellata:false
-        });
+
+        getMesi(arrayYears[0]?.toString());
+        
         setBodyFatturazione({
-            anno:currentYear,
-            mese:monthNumber,
+            anno:arrayYears[0],
+            mese:0,
             tipologiaFattura:[],
             idEnti:[],
             cancellata:false
         });
         setBodyFatturazioneDownload({
-            anno:currentYear,
-            mese:monthNumber,
+            anno:arrayYears[0],
+            mese:0,
             tipologiaFattura:[],
             idEnti:[],
             cancellata:false
@@ -344,8 +359,21 @@ const Fatturazione : React.FC = () =>{
         setValueAutocomplete([]);
         resetFilters();
     };
-  
-
+    
+    const upadateOnSelctedChange = (page,rowsPerPage) =>{
+     
+        updateFilters({
+            pathPage:PathPf.FATTURAZIONE,
+            body:bodyFatturazione,
+            textValue:textValue,
+            valueAutocomplete,
+            tipologie:tipologie,
+            fattureSelected:fattureSelected,
+            valueMulitselectTipologie:valueMulitselectTipologie,
+            page:page,
+            rows:rowsPerPage,
+        });
+    };
     return (
         <div className="mx-5 mb-5">
             <div className="marginTop24 ">
@@ -354,10 +382,67 @@ const Fatturazione : React.FC = () =>{
             <div className="mt-5">
                 <div className="row">
                     <div className="col-3">
-                        <SelectUltimiDueAnni values={bodyFatturazione} setValue={setBodyFatturazione} clearOnChangeFilter={clearOnChangeFilter}></SelectUltimiDueAnni>
+                        <Box sx={{width:'80%'}} >
+                            <FormControl
+                                fullWidth
+                                size="medium"
+                            >
+                                <InputLabel>
+                            Anno   
+                                </InputLabel>
+                                <Select
+                                    label='Seleziona Anno'
+                                    onChange={(e) => {
+                                        clearOnChangeFilter();  
+                                        const value = Number(e.target.value);
+                                        setBodyFatturazione((prev)=> ({...prev, ...{anno:value}}));
+                                    }}
+                                    value={bodyFatturazione.anno||''}     
+                                >
+                                    {arrayYears.map((el) => (
+                                        <MenuItem
+                                            key={Math.random()}
+                                            value={el}
+                                        >
+                                            {el}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Box>
                     </div>
                     <div  className="col-3">
-                        <SelectMese values={bodyFatturazione} setValue={setBodyFatturazione} clearOnChangeFilter={clearOnChangeFilter}></SelectMese>
+                        <Box sx={{width:'80%', marginLeft:'20px'}}  >
+                            <FormControl
+                                fullWidth
+                                size="medium"
+                            >
+                                <InputLabel
+                                    id="sea"
+                                >
+                                Mese   
+                                </InputLabel>
+                                <Select
+                                    label='Seleziona Prodotto'
+                                    onChange={(e) =>{
+                                        const value = Number(e.target.value);
+                                        setBodyFatturazione((prev)=> ({...prev, ...{mese:value}}));
+                                        clearOnChangeFilter();
+                                    }}         
+                                    value={bodyFatturazione.mese||''}             
+                                >
+                                    {arrayMonths.map((el) => (
+                                    
+                                        <MenuItem
+                                            key={Math.random()}
+                                            value={el.mese}
+                                        >
+                                            {el.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase()}
+                                        </MenuItem>
+                                    ))} 
+                                </Select>
+                            </FormControl>
+                        </Box>
                     </div>
                     <div  className="col-3">
                         <FormControl sx={{width:'80%',marginLeft:'20px'}}>
@@ -464,6 +549,7 @@ const Fatturazione : React.FC = () =>{
                     fattureSelected:fattureSelected}}
                 infoPageLocalStorage={{page:filters.page,rows:filters.rows}}
                 firstRender={isInitialRender.current}
+                upadateOnSelctedChange={upadateOnSelctedChange}
             ></CollapsibleTable>
             <div>
                 <ModalLoading 

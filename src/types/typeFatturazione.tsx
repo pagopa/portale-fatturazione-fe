@@ -70,7 +70,8 @@ export interface GridCollapsible{
     pathPage:string,
     body:any,
     firstRender:boolean,
-    infoPageLocalStorage:any
+    infoPageLocalStorage:any,
+    upadateOnSelctedChange:any
     //showedData:FattureObj[],
     //setShowedData: Dispatch<SetStateAction<FattureObj[]>>,
 }
