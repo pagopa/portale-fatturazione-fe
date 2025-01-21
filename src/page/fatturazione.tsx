@@ -112,6 +112,7 @@ const Fatturazione : React.FC = () =>{
 
 
     const getAnni = async() => {
+        setShowLoadingGrid(true);
         await getAnniDocEmessiPagoPa(token, profilo.nonce).then((res)=>{
             const arrayNumber = res.data.map(el => Number(el.toString()));
             setArrayYears(arrayNumber);
@@ -124,6 +125,7 @@ const Fatturazione : React.FC = () =>{
             
         }).catch((err)=>{
             setArrayYears([]);
+            setShowLoadingGrid(false);
             manageError(err,dispatchMainState);
         });
     };
@@ -149,6 +151,7 @@ const Fatturazione : React.FC = () =>{
         }).catch((err)=>{
             setArrayMonths([]);
             setBodyFatturazione((prev)=> ({...prev,...{mese:0}}));
+            setShowLoadingGrid(false);
             manageError(err,dispatchMainState);
         });
     };
