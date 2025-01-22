@@ -63,7 +63,6 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
     }, []);
 
     useEffect(()=>{
-        console.log('dentro0',isInitialRender.current);
         if(bodyGetLista.idEnti?.length  !== 0 || bodyGetLista.prodotto !== '' || bodyGetLista.profilo !== ''){
             setStatusAnnulla('show');
         }else{
@@ -156,7 +155,6 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                 fileName = `Dati di fatturazione / ${gridData[0]?.ragioneSociale}.xlsx`;
             }
             saveAs("data:text/plain;base64," + res.data.documento,fileName);
-            console.log(res);
             setShowLoading(false);
         }).catch(err => {
             manageError(err,dispatchMainState);

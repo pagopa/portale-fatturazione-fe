@@ -59,13 +59,11 @@ const AnagraficaPsp:React.FC = () =>{
     } = useSavedFilters(PathPf.ANAGRAFICAPSP,{});
  
     useEffect(()=>{
-        console.log(1);
         getYears();
     },[]);
 
     useEffect(()=>{
         if(year !== '' && !isInitialRender.current){
-            console.log('effect 1');
             setValueQuarters([]);
             setBodyGetLista((prev)=>({...prev,...{quarters:[]}}));
             getQuarters(year);
@@ -73,7 +71,6 @@ const AnagraficaPsp:React.FC = () =>{
     },[year]);
 
     useEffect(()=>{
-        console.log('effect 2');
         if( bodyGetLista.contractIds.length  !== 0 ||
             bodyGetLista.membershipId !== '' ||
             bodyGetLista.recipientId !== ''||
@@ -98,18 +95,16 @@ const AnagraficaPsp:React.FC = () =>{
     
     const getYears = async () =>{
         setGetListaLoading(true);
-        console.log(2);
+
         await getListaAnniPsp(token, profilo.nonce)
             .then((res)=>{
                 setYearOnSelect(res.data);
                 if(res.data.length > 0){
                     if(isInitialRender.current && Object.keys(filters).length > 0){
-                        console.log(2,'initial');
                         setYear(filters.year);
                         getListaAnagraficaPspGrid(filters.body,filters.page+1,filters.rows);
                         getQuarters(filters.year);
                     }else{
-                        console.log(2,'NOT initial');
                         setYear(res.data[0]);
                         getListaAnagraficaPspGrid(bodyGetLista,page+1,rowsPerPage);
                         getQuarters(res.data[0]);
@@ -125,7 +120,6 @@ const AnagraficaPsp:React.FC = () =>{
         await getListaQuarters(token, profilo.nonce,{year:y})
             .then((res)=>{
                 setDataSelectQuarter(res.data);
-                console.log(4);
                 if(isInitialRender.current && Object.keys(filters).length > 0){
                    
                     setValueQuarters(filters.valueQuarters);
@@ -138,7 +132,6 @@ const AnagraficaPsp:React.FC = () =>{
                     setFiltersDownload(filters.body);
                 }
                 setGetListaLoading(false);
-                console.log(4,'dentro');
                 isInitialRender.current = false;
             }).catch(((err)=>{
                 isInitialRender.current = false;
@@ -150,7 +143,6 @@ const AnagraficaPsp:React.FC = () =>{
     };
 
     const getListaAnagraficaPspGrid = async(body:RequestBodyListaAnagraficaPsp, page:number,rowsPerPage:number) =>{
-        console.log(3);
         setGetListaLoading(true);
         await getListaAnagraficaPsp(token, profilo.nonce, body,page,rowsPerPage)
             .then(async(res)=>{
@@ -174,7 +166,6 @@ const AnagraficaPsp:React.FC = () =>{
                 await setGridData(orderDataCustom);
                 await setTotalPsp(res.data.count);
                 setGetListaLoading(false);
-                console.log(3 , 'dentro');
             })
             .catch(((err)=>{
                 setGridData([]);

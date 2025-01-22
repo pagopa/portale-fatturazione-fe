@@ -845,7 +845,7 @@ const ReportDettaglio : React.FC = () => {
                                                 key={el.mese}
                                                 value={el.mese}
                                             >
-                                                {el.descrizione}
+                                                {el?.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase()}
                                             </MenuItem>
                                         );
                                     })}

@@ -15,7 +15,6 @@ const RowBaseKpi = ({row}) => {
    
 
     const handleOnDownloadLink = (url,name) => {
-        console.log(row);
         const link = document.createElement("a");
         link.href = url;
         link.download = name;

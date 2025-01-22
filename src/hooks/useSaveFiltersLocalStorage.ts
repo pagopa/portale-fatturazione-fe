@@ -21,7 +21,7 @@ function useSavedFilters(key, defaultFilters = {}) {
         // Retrieve saved filters from local storage on initial load
         const savedFilters = localStorage.getItem('filters')||'{}';
         const parsedFilters = JSON.parse(savedFilters);
-        console.log({parsedFilters});
+
         if(parsedFilters?.pathPage === key){
             
             return parsedFilters;
@@ -49,7 +49,6 @@ function useSavedFilters(key, defaultFilters = {}) {
                 ...newFilters
                 
             }));
-            console.log({prevFilters});
             return  ({
                 ...prevFilters,
                 ...newFilters

@@ -219,7 +219,6 @@ const Messaggi : React.FC<any> = () => {
                                     value={bodyCentroMessaggi.letto?.toString()||'tutti'}
                                     label="Lettura"
                                     onChange={(e:SelectChangeEvent)=> {
-                                        console.log(e.target.value,'dd');
                                         let val;
                                         if(e.target.value === 'tutti'){
                                             val = null;

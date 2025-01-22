@@ -149,7 +149,7 @@ const DocumentiContabili:React.FC = () =>{
                 manageError(err,dispatchMainState); 
             }));
     };
-    console.log({valueQuarters,dataSelectQuarter});
+
     const getYears = async () =>{
         await getYearsDocContabiliPa(token, profilo.nonce)
             .then((res)=>{

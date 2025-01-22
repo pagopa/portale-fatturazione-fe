@@ -1,11 +1,144 @@
-{
-    "sendEnte":{
-
+{   
+    "globals":{
+       "filter":"Filtra",
+       "cancel":"Annulla filtri",
+       "modify":"Modifica",
+       "save":"Salva",
+       "back":"Indietro",
+       "addEmail":"Aggiungi Email",
+       "monthsArray":["Gennaio","eccc eccc"],
+       "filters":{
+            "year":"Anno",
+            "month":"Mese",
+            "product":"Seleziona prodotto",
+            "profile":"Seleziona profilo",
+            "companyName":"Rag Soc. Ente",
+            "iun":"IUN",
+            "notificationType":"Tipo notifica",
+            "contestation":"Contestazione",
+            "cap":"CAP",
+            "recipient ID":"Recipient ID",
+            "consolidator":"Consolidatore",
+            "recapitista":"Recapitista",
+            "invoiceType":"Tipologia fattura",
+            "pdfState":"Stato PDF Rag. Es.",
+            "state":"Stato",
+            "quarter":"Trimestre",
+            "pspName":"Nome PSP",
+            "membershipId":"Membership ID",
+            "recipientId":"Recipient ID",
+            "abiCode":"Codice ABI",
+            "yearFilter":"Filtra per anno"
+        }
+     },
+    "datiDiFatturazione":{
+        "header":{
+            "title":"Dati di fatturazione",
+            "modifyTitle":"Modifica dati di fatturazione"
+        },
+        "purchaseData":"Dati ordine d'acquisto",
+        "contractData":"Dati contratto",
+        "splitPayment":"Split Payment",
+        "pec":"PEC",
+        "docId":"ID Documento",
+        "docDate":"Data documento",
+        "comCode":"Codice Commessa/Convenzione",
+        "administEmail":"Email amministrativo",
+        "sdi":"Codice univoco SDI",
+        "art56":"Gli accordi di adesione a SEND sono esclusi dall'applicazione del Codice dei Contratti Pubblici ai sensi dell'art. 56, comma 1, lett a) del D.lgs. 36/2023 pertanto non sono sottoposti alla disciplina della tracciabilità dei flussi finanziari di cui alla L. 136/2010, come indicato dall'ANAC nelle relative Linee Guida. Conseguentemente, il CIG non deve essere acquisito e riportato nelle fatture",
+        "dateFirstAccess":"Data primo accesso",
+        "dateLastaccess":"Data ultimo accesso"
     },
-    "sendPa":{
-
-    },
-    "pagoPa":{
+    "listaDatiDiFatturazione":{
+        "title":"Lista dati fatturazione"
         
+
+
+    },
+    "moduloCommessa":{
+        "header":{
+            "title":"Modulo commessa",
+            "modifyTitle":"Modifica modulo commessa"
+        },
+        "yearMonth":"Mese/Anno",
+        "contractType":"Tipo Contratto",
+        "natTerritory":"Territorio nazionale",
+        "notNatTerritory":"Territorio diverso da nazionale",
+        "totNot":"Totale notifiche da processare",
+        "text1":"Numero complessivo delle notifiche da processare in via digitale nel mese di",
+        "text2":"Numero complessivo delle notifiche da processare in via analogica tramite Raccomandata A/R nel mese di",
+        "text3":"Numero complessivo delle notifiche da processare in via analogica del tipo notifica ex L. 890/1982 nel mese di",
+        "tot":"Totale",
+        "text4":"Notifiche Digitali: Art. 2 comma 6 Anticipo pari al 50% per le notifiche oggetto della commessa di",
+        "text5":"Notifiche Analogiche: Art. 2 comma 6 Anticipo pari al 50% per le notifiche analogiche oggetto della commessa di",
+        "textTotIva":"TOTALE MODULO COMMESSA NETTO IVA",
+        "modifyDate":"Data modifica",
+        "showDetails":"Vedi anteprima"
+
+    },
+    "dettaglioModuloCommessa":{
+       "header":{
+        "title":"Modulo commessa"
+        },
+        "adherent":"SOGGETTO ADERENTE",
+        "registered":"SEDE LEGALE COMPLETA",
+        "pIva":"PARTITA IVA/CODICE FISCALE",
+        "cup":"CUP",
+        "cig":"CIG",
+        "split":"SOGGETTO SPLIT PAYMENT",
+        "pec":"PEC",
+        "emailContact":"EMAIL RIFERIMENTO CONTATTI",
+        "compileData":"DATA DI COMPILAZIONE",
+        "natTerritory":"Territorio nazionale",
+        "notNatTerritory":"Territorio diverso da nazionale",
+        "totNot":"Totale notifiche da processare",
+        "text1":"Numero complessivo delle notifiche da processare in via digitale nel mese di",
+        "text2":"Numero complessivo delle notifiche da processare in via analogica tramite Raccomandata A/R nel mese di",
+        "text3":"Numero complessivo delle notifiche da processare in via analogica del tipo notifica ex L. 890/1982 nel mese di",
+        "text4":"Notifiche Digitali: Art. 2 comma 6 Anticipo pari al 50% per le notifiche oggetto della commessa di",
+        "text5":"Notifiche Analogiche: Art. 2 comma 6 Anticipo pari al 50% per le notifiche analogiche oggetto della commessa di",
+        "textTotIva":"TOTALE MODULO COMMESSA NETTO IVA"
+    },
+    "elencoCommesse":{
+        "header":{
+        },
+        "infoText":"N.B. il Modulo Commessa per le previsioni dei consumi deve essere inserito dal giorno 1 al giorno 15 di ogni mese"
+        
+    },
+    "listaModuliCommessa":{
+       "header":{
+        }
+    },
+    "notifiche":{
+"header":{
+        }
+    },
+    "regolareEsecuzione":{
+"header":{
+        }
+    },
+    "adesioneAlBando":{
+"header":{
+        }
+    },
+    "docEmessiSend":{
+"header":{
+        }
+    },
+    "docContabiliSend":{
+"header":{
+        }
+    },
+    "anagraficaPspPa":{
+"header":{
+        }
+    },
+    "docContabiliPa":{
+"header":{
+        }
+    },
+    "kpiPa":{
+"header":{
+        }
     }
 }

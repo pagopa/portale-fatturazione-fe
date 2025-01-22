@@ -76,8 +76,7 @@ const Accertamenti : React.FC = () =>{
             }else{
                 setBodyAccertamenti((prev)=> ({...prev,...{anno:Number(res.data[0])}}));
                 getMesi(res.data[0]);
-                getListaAccertamenti(res.data[0],null);
-                isInitialRender.current = false;
+                getListaAccertamenti(Number(res.data[0]),null);
             }
                
         }).catch((err)=>{
@@ -94,12 +93,10 @@ const Accertamenti : React.FC = () =>{
             if(isInitialRender.current && Object.keys(filters).length > 0){
                 setBodyAccertamenti(filters.body);
                 getListaAccertamenti(filters.body.anno, filters.body.mese);
-            }else{
-                getListaAccertamenti(Number(year),null);
             }
         }).catch((err)=>{
             setArrayMonths([]);
-            setBodyAccertamenti((prev)=> ({...prev,...{mese:0}}));
+            setBodyAccertamenti((prev)=> ({...prev,...{mese:null}}));
             setShowLoadingGrid(false);
             manageError(err,dispatchMainState);
         });
@@ -185,7 +182,7 @@ const Accertamenti : React.FC = () =>{
     };
 
     const onButtonAnnulla = () => {
-        getListaAccertamenti(arrayYears[0],null);
+        getListaAccertamenti(Number(arrayYears[0]),null);
         setBodyAccertamenti({
             anno:arrayYears[0],
             mese:null,

@@ -179,7 +179,6 @@ const AdesioneBando : React.FC = () => {
                     }
                 }}
                 onPaginationModelChange={(e)=>{
-                    console.log(e);
                     updateFilters({
                         pathPage:PathPf.ADESIONE_BANDO,
                         page:e.page,
