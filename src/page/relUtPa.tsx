@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
 import SelectTipologiaFattura from "../components/reusableComponents/select/selectTipologiaFattura";
 import GridCustom from "../components/reusableComponents/grid/gridCustom";
 import { BodyRel, Rel } from "../types/typeRel";
@@ -9,8 +9,8 @@ import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckb
 import { manageError} from "../api/api";
 import { useNavigate } from "react-router";
 import DownloadIcon from '@mui/icons-material/Download';
-import { downloadListaRel, getListaRel, getTipologieFatture} from "../api/apiSelfcare/relSE/api";
-import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, downloadQuadraturaRelPagopa, downloadReportRelPagoPa, getListaRelPagoPa, getTipologieFatturePagoPa } from "../api/apiPagoPa/relPA/api";
+import { downloadListaRel, getAnniRelSend, getListaRel, getMesiRelSend, getTipologieFatture} from "../api/apiSelfcare/relSE/api";
+import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, downloadQuadraturaRelPagopa, downloadReportRelPagoPa, getAnniRel, getListaRelPagoPa, getMesiRel, getTipologieFatturePagoPa } from "../api/apiPagoPa/relPA/api";
 import SelectStatoPdf from "../components/rel/selectStatoPdf";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { saveAs } from "file-saver";
@@ -45,9 +45,7 @@ const RelPage : React.FC = () =>{
         });
     };
 
-    const currentYear = (new Date()).getFullYear();
-    const currentMonth = (new Date()).getMonth() + 1;
-    const month = Number(currentMonth);
+  
   
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -55,6 +53,8 @@ const RelPage : React.FC = () =>{
     const [totalNotifiche, setTotalNotifiche]  = useState(0);
     const [dataSelect, setDataSelect] = useState([]);
     const [data, setData] = useState<Rel[]>([]);
+    const [arrayYears,setArrayYears] = useState<number[]>([]);
+    const [arrayMonths,setArrayMonths] = useState<{mese:string,descrizione:string}[]>([]);
     const [getListaRelRunning, setGetListaRelRunning] = useState(false);
     const [disableDownloadListaPdf, setDisableListaPdf] = useState(true);
     const [textValue, setTextValue] = useState('');
@@ -63,16 +63,16 @@ const RelPage : React.FC = () =>{
     const [valuetipologiaFattura, setValueTipologiaFattura] = useState<string>('');
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
     const [bodyDownload, setBodyDownload] = useState<BodyRel>({
-        anno:currentYear,
-        mese:month,
+        anno:0,
+        mese:0,
         tipologiaFattura:null,
         idEnti:[],
         idContratto:null,
         caricata:null
     });
     const [bodyRel, setBodyRel] = useState<BodyRel>({
-        anno:currentYear,
-        mese:month,
+        anno:0,
+        mese:0,
         tipologiaFattura:null,
         idEnti:[],
         idContratto:null,
@@ -88,24 +88,39 @@ const RelPage : React.FC = () =>{
  
 
     useEffect(()=>{
+        getAnni();
+        /*
         if(isInitialRender.current && Object.keys(filters).length > 0){
          
             setBodyRel(filters.body);
             setTextValue(filters.textValue);
             setValueAutocomplete(filters.valueAutocomplete);
-            getlistaRel(filters.body,filters.page + 1, filters.rows);
+            getlista(filters.body,filters.page + 1, filters.rows);
             setPage(filters.page);
             setRowsPerPage(filters.rows);
             setBodyDownload(filters.body);
             getListTipologiaFattura(filters.body.anno,filters.body.mese);
         }else{
             const realPage = page + 1;
-            getlistaRel(bodyRel,realPage, rowsPerPage);
+            getlista(bodyRel,realPage, rowsPerPage);
             getListTipologiaFattura(bodyRel.anno, bodyRel.mese);
             isInitialRender.current = false; 
       
-        }
+        }*/
     },[]);
+
+    useEffect(()=>{
+        if(!isInitialRender.current){
+            console.log('dentro');
+            getListTipologiaFatturaOnChangeMonthYear(bodyRel.mese,bodyRel.anno);
+        }
+    },[bodyRel.mese]);
+
+    useEffect(()=>{
+        if(!isInitialRender.current){
+            getMesi(bodyRel.anno?.toString());
+        }
+    },[bodyRel.anno]);
  
     useEffect(()=>{
         const timer = setTimeout(() => {
@@ -122,8 +137,105 @@ const RelPage : React.FC = () =>{
         }
     },[]);
 
-    const getlistaRel = async (bodyRel,nPage,nRows) => {
+    const getAnni = async() => {
         
+        if(enti && mainState.datiFatturazione === true){
+            setGetListaRelRunning(true);
+            await getAnniRelSend(token, profilo.nonce).then((res)=>{
+                const arrayNumber = res.data.map(el => Number(el.toString()));
+                setArrayYears(arrayNumber);
+                if(isInitialRender.current && Object.keys(filters).length > 0){
+                    getMesi(filters.body.anno?.toString());
+                }else{
+                    setBodyRel((prev)=> ({...prev,...{anno:Number(res.data[0])}}));
+                    getMesi(res.data[0]);
+                }
+            }).catch((err)=>{
+                setArrayYears([]);
+                setGetListaRelRunning(false);
+                manageError(err,dispatchMainState);
+            });
+        }else if(profilo.auth === 'PAGOPA'){
+            setGetListaRelRunning(true);
+            await getAnniRel(token, profilo.nonce).then((res)=>{
+                const arrayNumber = res.data.map(el => Number(el.toString()));
+                setArrayYears(arrayNumber);
+                if(isInitialRender.current && Object.keys(filters).length > 0){
+                    getMesi(filters.body.anno?.toString());
+                }else{
+                    setBodyRel((prev)=> ({...prev,...{anno:Number(res.data[0])}}));
+                    getMesi(res.data[0]);
+                    
+                }
+            }).catch((err)=>{
+                setArrayYears([]);
+                setGetListaRelRunning(false);
+                manageError(err,dispatchMainState);
+            });
+        }
+       
+    };
+
+    const getMesi = async(year) =>{
+        
+        if(enti && mainState.datiFatturazione === true){
+            setGetListaRelRunning(true);
+            await getMesiRelSend(token, profilo.nonce,{anno:year}).then((res)=>{
+                setArrayMonths(res.data);
+                if(isInitialRender.current && Object.keys(filters).length > 0){
+                    getListTipologiaFattura(filters.body.anno,filters.body.mese);
+                    setTextValue(filters.textValue);
+                    setPage(filters.page);
+                    setRowsPerPage(filters.rows);
+                    setBodyDownload(filters.body);
+                    setBodyRel(filters.body);
+                    getlista(filters.body,filters.page + 1, filters.rows);
+                }else if(isInitialRender.current){
+                    setBodyRel((prev)=> ({...prev,...{mese:res.data[0].mese}}));
+                    getListTipologiaFattura(year, res.data[0].mese);
+                    getlista({...bodyRel,...{anno:year,mese:res.data[0].mese}},1,rowsPerPage);
+                }else{
+                    setBodyRel((prev)=> ({...prev,...{mese:res.data[0].mese}}));
+                }
+            }).catch((err)=>{
+                setArrayMonths([]);
+                setBodyRel((prev)=> ({...prev,...{mese:0}}));
+                setGetListaRelRunning(false);
+                manageError(err,dispatchMainState);
+            });
+        }else if(profilo.auth === 'PAGOPA'){
+            setGetListaRelRunning(true);
+            await getMesiRel(token, profilo.nonce,{anno:year}).then((res)=>{
+                setArrayMonths(res.data);
+                if(isInitialRender.current && Object.keys(filters).length > 0){
+                    setTextValue(filters.textValue);
+                    setValueAutocomplete(filters.valueAutocomplete);
+                    getlista(filters.body,filters.page + 1, filters.rows);
+                    setPage(filters.page);
+                    setRowsPerPage(filters.rows);
+                    setBodyDownload(filters.body);
+                    getListTipologiaFattura(filters.body.anno,filters.body.mese);
+                    setBodyRel(filters.body);
+                }else if(isInitialRender.current){
+                    setBodyRel((prev)=> ({...prev,...{mese:res.data[0].mese}}));
+                    getListTipologiaFattura(year, res.data[0].mese);
+                    getlista({...bodyRel,...{anno:year,mese:res.data[0].mese}},1,rowsPerPage);
+                }else{
+                    setBodyRel((prev)=> ({...prev,...{mese:res.data[0].mese}}));
+                }
+            }).catch((err)=>{
+                setArrayMonths([]);
+                setBodyRel((prev)=> ({...prev,...{mese:0}}));
+                setGetListaRelRunning(false);
+                manageError(err,dispatchMainState);
+            });
+        }
+       
+    };
+
+
+    const getlista = async (bodyRel,nPage,nRows) => {
+        console.log('zorro');
         if(enti && mainState.datiFatturazione === true){
             setGetListaRelRunning(true);
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -152,7 +264,6 @@ const RelPage : React.FC = () =>{
                     setData(orderDataCustom);
                     setTotalNotifiche(res.data.count);
                     setGetListaRelRunning(false);
-
                 }).catch((error)=>{
                     if(error?.response?.status === 404){
                         setData([]);
@@ -163,41 +274,40 @@ const RelPage : React.FC = () =>{
                 });
         }else if(profilo.auth === 'PAGOPA'){
             setGetListaRelRunning(true);
-            await  getListaRelPagoPa(token,profilo.nonce,nPage, nRows, bodyRel)
-                .then((res)=>{
-                    // controllo che tutte le rel abbiano il pdf caricato, se TRUE abilito il button download
-                    const checkIfAllCaricata = res.data.relTestate.every(v => v.caricata === 1);
-                    setDisableListaPdf(checkIfAllCaricata);
-                    // ordino i dati in base all'header della grid
-                    const orderDataCustom = res.data.relTestate.map((obj)=>{
-                        // inserire come prima chiave l'id se non si vuol renderlo visibile nella grid
-                        // 'id serve per la chiamata get dettaglio dell'elemento selezionato nella grid
-                        return {
-                            idTestata:obj.idTestata,
-                            ragioneSociale:obj.ragioneSociale,
-                            tipologiaFattura:obj.tipologiaFattura,
-                            firmata:obj.firmata,
-                            idContratto:obj.idContratto,
-                            anno:obj.anno,
-                            mese:mesiGrid[obj.mese],
-                            totaleAnalogico:obj.totaleAnalogico.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
-                            totaleDigitale:obj.totaleDigitale.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
-                            totaleNotificheAnalogiche:obj.totaleNotificheAnalogiche,
-                            totaleNotificheDigitali:obj.totaleNotificheDigitali,
-                            totale:obj.totale.toLocaleString("de-DE", { style: "currency", currency: "EUR" })
-                        };
-                    });
-                    setData(orderDataCustom);
-                    setTotalNotifiche(res.data.count);
-                    setGetListaRelRunning(false);
-                }).catch((error)=>{
-                    if(error?.response?.status === 404){
-                        setData([]);
-                        setTotalNotifiche(0);
-                    }
-                    setGetListaRelRunning(false);
-                    manageError(error, dispatchMainState);
+            await  getListaRelPagoPa(token,profilo.nonce,nPage, nRows, bodyRel).then((res)=>{
+                // controllo che tutte le rel abbiano il pdf caricato, se TRUE abilito il button download
+                const checkIfAllCaricata = res.data.relTestate.every(v => v.caricata === 1);
+                setDisableListaPdf(checkIfAllCaricata);
+                // ordino i dati in base all'header della grid
+                const orderDataCustom = res.data.relTestate.map((obj)=>{
+                    // inserire come prima chiave l'id se non si vuol renderlo visibile nella grid
+                    // 'id serve per la chiamata get dettaglio dell'elemento selezionato nella grid
+                    return {
+                        idTestata:obj.idTestata,
+                        ragioneSociale:obj.ragioneSociale,
+                        tipologiaFattura:obj.tipologiaFattura,
+                        firmata:obj.firmata,
+                        idContratto:obj.idContratto,
+                        anno:obj.anno,
+                        mese:mesiGrid[obj.mese],
+                        totaleAnalogico:obj.totaleAnalogico.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
+                        totaleDigitale:obj.totaleDigitale.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
+                        totaleNotificheAnalogiche:obj.totaleNotificheAnalogiche,
+                        totaleNotificheDigitali:obj.totaleNotificheDigitali,
+                        totale:obj.totale.toLocaleString("de-DE", { style: "currency", currency: "EUR" })
+                    };
                 });
+                setData(orderDataCustom);
+                setTotalNotifiche(res.data.count);
+                setGetListaRelRunning(false);
+            }).catch((error)=>{
+                if(error?.response?.status === 404){
+                    setData([]);
+                    setTotalNotifiche(0);
+                }
+                setGetListaRelRunning(false);
+                manageError(error, dispatchMainState);
+            });
         }     
         isInitialRender.current = false;       
     };
@@ -205,15 +315,11 @@ const RelPage : React.FC = () =>{
     // servizio che popola la select con la checkbox
     const listaEntiNotifichePageOnSelect = async () =>{
         if(profilo.auth === 'PAGOPA'){
-            await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} )
-                .then((res)=>{
-                    setDataSelect(res.data);
-                })
-                .catch(((err)=>{
-                   
-                    manageError(err,dispatchMainState);
-                   
-                }));
+            await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} ).then((res)=>{
+                setDataSelect(res.data);
+            }).catch(((err)=>{
+                manageError(err,dispatchMainState);
+            }));
         }
     };
 
@@ -237,21 +343,31 @@ const RelPage : React.FC = () =>{
         setPage(0);
         setRowsPerPage(10);
         setBodyDownload(bodyRel);
-        getlistaRel(bodyRel,1,10); 
+        getlista(bodyRel,1,10); 
     };
 
-    const onButtonAnnulla = () => {
+    const onButtonAnnulla = async () => {
+        let firstMonth = {mese:0};
+        if(enti){
+            firstMonth = await getMesiRelSend(token, profilo.nonce,{anno:arrayYears[0]?.toString()})
+                .then(res => res.data[0])
+                .catch(err => manageError(err,dispatchMainState));
+        }else if(profilo.auth === 'PAGOPA'){
+            firstMonth = await getMesiRel(token, profilo.nonce,{anno:arrayYears[0]?.toString()})
+                .then(res => res.data[0])
+                .catch(err => manageError(err,dispatchMainState));
+        }
         setBodyRel({
-            anno:currentYear,
-            mese:month,
+            anno:arrayYears[0],
+            mese:firstMonth.mese,
             tipologiaFattura:null,
             idEnti:[],
             idContratto:null,
             caricata:null
         });
         setBodyDownload({
-            anno:currentYear,
-            mese:month,
+            anno:arrayYears[0],
+            mese:firstMonth.mese,
             tipologiaFattura:null,
             idEnti:[],
             idContratto:null,
@@ -262,9 +378,9 @@ const RelPage : React.FC = () =>{
         setPage(0);
         setRowsPerPage(10);
         setValueAutocomplete([]);
-        getlistaRel({
-            anno:currentYear,
-            mese:month,
+        getlista({
+            anno:arrayYears[0],
+            mese:firstMonth.mese,
             tipologiaFattura:null,
             idEnti:[],
             idContratto:null,
@@ -279,7 +395,7 @@ const RelPage : React.FC = () =>{
         newPage: number,
     ) => {
         const realPage = newPage + 1;
-        getlistaRel(bodyRel,realPage, rowsPerPage);
+        getlista(bodyRel,realPage, rowsPerPage);
         setPage(newPage);
         updateFilters({
             pathPage:PathPf.LISTA_REL,
@@ -298,7 +414,7 @@ const RelPage : React.FC = () =>{
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
         const realPage = page + 1;
-        getlistaRel(bodyRel,realPage,parseInt(event.target.value, 10));
+        getlista(bodyRel,realPage,parseInt(event.target.value, 10));
         updateFilters({
             pathPage:PathPf.LISTA_REL,
             body:bodyDownload,
@@ -319,14 +435,11 @@ const RelPage : React.FC = () =>{
         if(enti){
             await getTipologieFatture(token, profilo.nonce, {mese,anno}).then((res)=>{
                 setTipologiaFatture(res.data);
-               
                 if(filters.valuetipologiaFattura){
                     setValueTipologiaFattura(filters.valuetipologiaFattura);
                 }else{
                     setValueTipologiaFattura('');
                 }
-                
-                
             }).catch((()=>{
                 setTipologiaFatture([]);
                 setValueTipologiaFattura("");
@@ -346,7 +459,7 @@ const RelPage : React.FC = () =>{
                 // manageError(err,dispatchMainState);
             }));
         }
-       
+        
     };
 
     const getListTipologiaFatturaOnChangeMonthYear = async(mese,anno) => {
@@ -361,6 +474,7 @@ const RelPage : React.FC = () =>{
                 setValueTipologiaFattura('');
                 setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
                 setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
+               
                 // manageError(err,dispatchMainState);
             }));
         }else if(profilo.auth === 'PAGOPA'){
@@ -378,7 +492,7 @@ const RelPage : React.FC = () =>{
             }));
 
         }
-       
+        setGetListaRelRunning(false);
     };
 
     const downloadListaRelExel = async() =>{
@@ -387,16 +501,16 @@ const RelPage : React.FC = () =>{
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const {idEnti, ...newBody} = bodyDownload;
             await downloadListaRel(token,profilo.nonce,newBody).then((res)=>{
-                saveAs("data:text/plain;base64," + res.data.documento,`Regolari esecuzioni /${data[0]?.ragioneSociale}/ ${mesiWithZero[bodyDownload.mese-1]}/ ${bodyDownload.anno}.xlsx` );
+                saveAs("data:text/plain;base64," + res.data.documento,`Regolari esecuzioni/${data[0]?.ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]}/${bodyDownload.anno}.xlsx` );
                 setShowLoading(false);
             }).catch((err)=>{
                 manageError(err,dispatchMainState);
             }); 
         }else{
             await downloadListaRelPagopa(token,profilo.nonce,bodyDownload).then((res)=>{
-                let fileName = `Regolari esecuzioni /${mesiWithZero[bodyDownload.mese-1]}/ ${bodyDownload.anno}.xlsx`;
+                let fileName = `Regolari esecuzioni/${mesiWithZero[bodyDownload.mese-1]}/${bodyDownload.anno}.xlsx`;
                 if(bodyDownload.idEnti.length === 1){
-                    fileName = `Regolari esecuzioni /${data[0]?.ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]}/ ${bodyDownload.anno}.xlsx`;
+                    fileName = `Regolari esecuzioni/${data[0]?.ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]}/${bodyDownload.anno}.xlsx`;
                 }
                 saveAs("data:text/plain;base64," + res.data.documento,fileName );
                 setShowLoading(false);
@@ -409,9 +523,9 @@ const RelPage : React.FC = () =>{
     const downloadQuadratura = async() => {
         setShowLoading(true);
         downloadQuadraturaRelPagopa(token,profilo.nonce,bodyDownload).then((res)=>{
-            let fileName = `Quadratura regolari esecuzioni /${mesiWithZero[bodyDownload.mese-1]}/ ${bodyDownload.anno}.xlsx`;
+            let fileName = `Quadratura regolari esecuzioni/${mesiWithZero[bodyDownload.mese-1]}/${bodyDownload.anno}.xlsx`;
             if(bodyDownload.idEnti.length === 1){
-                fileName = `Quadratura regolare esecuzione /${data[0]?.ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]}/ ${bodyDownload.anno}.xlsx`;
+                fileName = `Quadratura regolare esecuzione/${data[0]?.ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]}/${bodyDownload.anno}.xlsx`;
             }
             saveAs("data:text/plain;base64," + res.data.documento,fileName );
             setShowLoading(false);
@@ -426,9 +540,9 @@ const RelPage : React.FC = () =>{
         await downloadListaRelPdfZipPagopa(token,profilo.nonce,bodyRel)
             .then(response => response.blob())
             .then(blob => {
-                let fileName = `REL /Firmate / ${mesiWithZero[bodyRel.mese -1]} / ${bodyRel.anno}.zip`;
+                let fileName = `REL /Firmate/${mesiWithZero[bodyRel.mese -1]}/${bodyRel.anno}.zip`;
                 if(bodyDownload.idEnti.length === 1){
-                    fileName = `REL /Firmate /${data[0]?.ragioneSociale}/${mesiWithZero[bodyRel.mese -1]} / ${bodyRel.anno}.zip`;
+                    fileName = `REL /Firmate/${data[0]?.ragioneSociale}/${mesiWithZero[bodyRel.mese -1]}/${bodyRel.anno}.zip`;
                 }
                 saveAs(blob,fileName );
                 setShowLoading(false);
@@ -476,10 +590,66 @@ const RelPage : React.FC = () =>{
             <div className="mt-5">
                 <div className="row">
                     <div className="col-3">
-                        <SelectUltimiDueAnni values ={bodyRel} setValue={setBodyRel} getTipologia={getListTipologiaFatturaOnChangeMonthYear} clearOnChangeFilter={clearOnChangeFilter}></SelectUltimiDueAnni>
+                        <Box sx={{width:'80%'}} >
+                            <FormControl
+                                fullWidth
+                                size="medium"
+                            >
+                                <InputLabel>
+                            Anno   
+                                </InputLabel>
+                                <Select
+                                    label='Seleziona Anno'
+                                    onChange={(e) => {
+                                        clearOnChangeFilter();  
+                                        const value = Number(e.target.value);
+                                        setBodyRel((prev)=> ({...prev, ...{anno:value}}));
+                                    }}
+                                    value={bodyRel.anno||''}     
+                                >
+                                    {arrayYears.map((el) => (
+                                        <MenuItem
+                                            key={Math.random()}
+                                            value={el}
+                                        >
+                                            {el}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Box>
                     </div>
                     <div  className="col-3">
-                        <SelectMese values={bodyRel} setValue={setBodyRel} getTipologia={getListTipologiaFatturaOnChangeMonthYear} clearOnChangeFilter={clearOnChangeFilter}></SelectMese>
+                        <Box sx={{width:'80%', marginLeft:'20px'}}  >
+                            <FormControl
+                                fullWidth
+                                size="medium"
+                            >
+                                <InputLabel>
+                                Mese   
+                                </InputLabel>
+                                <Select
+                                    label='Mese'
+                                    onChange={(e) =>{
+                                        const value = Number(e.target.value);
+                                        setBodyRel((prev)=> ({...prev, ...{mese:value}}));
+                                        clearOnChangeFilter();
+                                    }}         
+                                    value={bodyRel.mese||''}             
+                                >
+                                    {arrayMonths.map((el) => (
+                                        <MenuItem
+                                            key={Math.random()}
+                                            value={el.mese}
+                                        >
+                                            {el?.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase()}
+                                        </MenuItem>
+                                    
+                                    ))}
+                                    
+                                </Select>
+                            </FormControl>
+                        </Box>
                     </div>
                     <div  className="col-3">
                         <SelectTipologiaFattura value={valuetipologiaFattura} setBody={setBodyRel} setValue={setValueTipologiaFattura} types={tipologiaFatture} clearOnChangeFilter={clearOnChangeFilter}></SelectTipologiaFattura>

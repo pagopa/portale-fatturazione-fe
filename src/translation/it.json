@@ -6,6 +6,7 @@
        "save":"Salva",
        "back":"Indietro",
        "addEmail":"Aggiungi Email",
+       "downloadResults":"Download risultati",
        "monthsArray":["Gennaio","eccc eccc"],
        "filters":{
             "year":"Anno",
@@ -110,35 +111,47 @@
         }
     },
     "notifiche":{
-"header":{
-        }
+        "header":{
+            "title":"Notifiche",
+            "secondTitle":"Dettaglio"
+                },
+        "topButton":"Scarica report di dettaglio notifiche Reg. Es."        
+    
     },
     "regolareEsecuzione":{
-"header":{
-        }
-    },
+        "header":{
+            "title":"Regolare esecuzione",
+            "button":"Report non fatturate"
+                }
+            },
+    "deatailsRegolareEsecuzione":{
+        "header":{
+            "title":"Regolare esecuzione",
+            "button":"Report non fatturate"
+                }
+            },        
     "adesioneAlBando":{
-"header":{
-        }
-    },
+        "header":{
+                }
+            },
     "docEmessiSend":{
-"header":{
-        }
-    },
+        "header":{
+                }
+            },
     "docContabiliSend":{
-"header":{
-        }
-    },
+        "header":{
+                }
+            },
     "anagraficaPspPa":{
-"header":{
-        }
-    },
+        "header":{
+                }
+            },
     "docContabiliPa":{
-"header":{
-        }
-    },
+        "header":{
+                }
+            },
     "kpiPa":{
-"header":{
-        }
-    }
+        "header":{
+                }
+            }
 }

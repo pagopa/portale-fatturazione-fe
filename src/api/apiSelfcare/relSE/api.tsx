@@ -96,3 +96,22 @@ export const getTipologieFatture = async (token:string, nonce:string , body: {me
     );
     return response;
 };
+
+export const getAnniRelSend = async (token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/rel/anni?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }}
+    );
+    return response;
+}; 
+
+export const getMesiRelSend = async (token:string, nonce:string , body:{anno:string}) => {
+    const response =  await axios.post(`${url}/api/rel/mesi?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token,
+        }}
+    );
+    return response;
+};

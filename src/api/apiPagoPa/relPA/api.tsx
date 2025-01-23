@@ -123,6 +123,25 @@ export const downloadReportRelPagoPa = async ( token:string ,nonce:string) => {
     return response;
 };
 
+export const getAnniRel = async (token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/rel/pagopa/anni?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }}
+    );
+    return response;
+}; 
+
+export const getMesiRel = async (token:string, nonce:string , body:{anno:string}) => {
+    const response =  await axios.post(`${url}/api/rel/pagopa/mesi?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token,
+        }}
+    );
+    return response;
+};
+
 
 
 

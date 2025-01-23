@@ -63,7 +63,7 @@ const HeaderProductAzure = () => {
         if(globalContextObj.mainState.authenticated === true ){
             const interval = setInterval(() => {
                 getCount();
-            }, 20000);
+            }, 30000);
             return () => clearInterval(interval); 
         }
     },[globalContextObj.mainState.authenticated]);
