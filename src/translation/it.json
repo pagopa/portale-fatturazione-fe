@@ -113,22 +113,66 @@
     "notifiche":{
         "header":{
             "title":"Notifiche",
-            "secondTitle":"Dettaglio"
+            "secondTitle":"Dettaglio",
+            "button":"Scadenzario"
                 },
-        "topButton":"Scarica report di dettaglio notifiche Reg. Es."        
-    
+        "modal":{
+            "title1":"Crea contestazione",
+            "title2":"Contestazione",
+            "contestationType":"Tipo Contestazione",
+            "contestationNote":"Note Contestazione",
+            "supportSend":"SUPPORTO SEND",
+            "answare":"Risposta",
+            "recapitista":"Recapitista",
+            "consolidatore":"Consolidatore",
+            "buttons":{
+                "make":"Crea contestazione",
+                "cancel":"Annulla contestazione",
+                "answer":"Rispondi",
+                "modifyNote":"Modifica nota",
+                "modifyAnsware":"Modifica risposta",
+                "reject":"Rifiuta contestazione",
+                "asnswerReject":"Rispondi e rifiuta contestazione",
+                "modifyReject":"Modifica e rifiuta contestazione",
+                "answerAcceptSend":"Rispondi e accetta contestazione SEND",
+                "acceptanswareSend":"Accetta risposta SEND"
+            }
+        }        
     },
     "regolareEsecuzione":{
         "header":{
             "title":"Regolare esecuzione",
             "button":"Report non fatturate"
-                }
+                },
+         "buttons":{
+            "quadratura":"Quadratura notifiche Rel",
+            "downloadDoc":"Download documenti firmati"
+         }       
             },
     "deatailsRegolareEsecuzione":{
         "header":{
             "title":"Regolare esecuzione",
-            "button":"Report non fatturate"
-                }
+            "title2":"Dettaglio"
+                },
+        "topButton":"Scarica report di dettaglio notifiche Reg. Es.",
+        "bottomButtonLeft":"Scarica PDF Reg. Es.",
+        "bottomButtonRigth":"Scarica PDF Firmato",
+        "entityMember":"Soggetto aderente",
+        "typeInvoice":"Tipologia Fattura",
+        "docId":"ID Documento",
+        "year":"Anno",
+        "month":"Mese",
+        "cup":"CUP",
+        "analogNot":"N. Notifiche Analogiche",
+        "digitalNot":"N. Notifiche Digitali",
+        "totNot":"N. Totale Notifiche",
+        "totAnalog":"Totale Imponibile Analogico",
+        "totDigit":"Totale Imponibile Digitale",
+        "totImp":"Totale Imponibile",
+        "iva":"Iva",
+        "totIvaAnalog":"Totale Ivato Analogico",
+        "totIvaDig":"Totale Ivato Digitale",
+        "totIva":"Totale Ivato"
             },        
     "adesioneAlBando":{
         "header":{
