@@ -182,7 +182,6 @@ const RelPdfPage : React.FC = () =>{
             });
         }else if(profilo.auth === 'PAGOPA'){
             await getLogPagoPaRelDocumentoFirmato(token, profilo.nonce,body).then((res) =>{
-                console.log(res.data,'mimmo');
                 setLastUpdateDocFirmato(res.data[0].dataEvento);
             }).catch(()=>{
                 //manageError(err,dispatchMainState);

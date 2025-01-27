@@ -111,7 +111,6 @@ const RelPage : React.FC = () =>{
 
     useEffect(()=>{
         if(!isInitialRender.current){
-            console.log('dentro');
             getListTipologiaFatturaOnChangeMonthYear(bodyRel.mese,bodyRel.anno);
         }
     },[bodyRel.mese]);
@@ -235,7 +234,7 @@ const RelPage : React.FC = () =>{
 
 
     const getlista = async (bodyRel,nPage,nRows) => {
-        console.log('zorro');
+
         if(enti && mainState.datiFatturazione === true){
             setGetListaRelRunning(true);
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
