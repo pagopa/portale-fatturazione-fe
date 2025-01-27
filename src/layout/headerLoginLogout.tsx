@@ -1,7 +1,7 @@
 import { useMsal } from '@azure/msal-react';
 import { HeaderAccount } from '@pagopa/mui-italia';
 import { useContext } from 'react';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { loginRequest } from '../authConfig';
 import { GlobalContext } from '../store/context/globalContext';
 import { redirect } from '../api/api';
@@ -19,6 +19,7 @@ const HeaderPostLogin = () => {
     const globalContextObj = useContext(GlobalContext);
     const {mainState} = globalContextObj;
     const navigate = useNavigate();
+    const location = useLocation();
 
     const pagoPALink = {
         label: 'PagoPA S.p.A.',
@@ -48,7 +49,13 @@ const HeaderPostLogin = () => {
     //end actions sul manuale operativo , download del manuale
     // start on click su assistenza redirect alla tua apllicazione predefinita per l'invio mail
     function onEmailClick() {
-        window.open(`mailto:fatturazione@assistenza.pagopa.it`);
+        if(mainState.profilo.auth === "PAGOPA" || location.pathname === '/azureLogin' || mainState.prodotti.length > 0){
+            window.open(`mailto:fatturazione@assistenza.pagopa.it`);
+            
+        }else{
+            window.location.href = "https://uat.selfcare.pagopa.it/assistenza?productId=prod-pf";
+        }
+        
     }
     // end on click su assistenza redirect alla tua apllicazione predefinita per l'invio mail
 
@@ -59,7 +66,7 @@ const HeaderPostLogin = () => {
     };
 
     const statusUser = mainState.authenticated && user;
-
+    console.log(window.location.href,'???');
     return (
 
         <div className="div_header">

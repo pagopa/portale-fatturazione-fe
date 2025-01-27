@@ -1,19 +1,17 @@
 import { Grid } from "@mui/material";
 import FooterComponent from "./footer";
-import HeaderPostLogin from "./headerLoginLogout";
+import HeaderLogAzure from "./mainHeader/headerLogInOutAzure";
 
 
 const LayoutLoggedOut = ({page}) => {
     return (
         <>
-            <HeaderPostLogin/>
+            <HeaderLogAzure/>
             <Grid sx={{ height: '100%' }}>
                 {page}
             </Grid>
             <FooterComponent  />
         </>
-      
     );
 };
-
 export default LayoutLoggedOut;

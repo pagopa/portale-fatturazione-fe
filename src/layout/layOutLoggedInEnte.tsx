@@ -3,13 +3,15 @@ import { Outlet } from "react-router-dom";
 import FooterComponent from "./footer";
 import HeaderPostLogin from "./headerLoginLogout";
 import HeaderProductEnte from "./headerProduct/headerProductEnte";
+import HeaderLogEnte from "./mainHeader/headerLogInOutEnte";
+
 
 
 
 const LayoutEnte = ({sideNav}) => {
     return (
         <>
-            <HeaderPostLogin/>
+            <HeaderLogEnte/>
             <HeaderProductEnte/>
             <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
                 <Grid item xs={2}>

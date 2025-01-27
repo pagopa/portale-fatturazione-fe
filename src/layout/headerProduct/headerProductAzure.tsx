@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext} from 'react';
 import { useNavigate } from 'react-router';
-import {HeaderProduct,PartyEntity, ProductEntity} from '@pagopa/mui-italia';
+import {HeaderProduct, PartyEntity } from '@pagopa/mui-italia';
 import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
 import Badge from '@mui/material/Badge';
 import { IconButton } from '@mui/material';
@@ -8,6 +8,7 @@ import { GlobalContext } from '../../store/context/globalContext';
 import { getAuthProfilo, redirect } from '../../api/api';
 import { getMessaggiCount } from '../../api/apiPagoPa/centroMessaggi/api';
 import { PathPf } from '../../types/enum';
+import {  products } from '../../assets/dataLayout';
 
 const HeaderProductAzure = () => {
    
@@ -16,6 +17,16 @@ const HeaderProductAzure = () => {
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
+
+
+    const partyList : Array<PartyEntity> = [
+        {
+            id:'0',
+            logoUrl: ``,
+            name:profilo.nomeEnte ,
+            productRole: "Amministratore",
+        }
+    ];
 
 
     const handleModifyMainState = (valueObj) => {
@@ -27,30 +38,6 @@ const HeaderProductAzure = () => {
 
     const [countMessages, setCountMessages] = useState(0);
  
-    const products:ProductEntity[] = [
-        {
-            id: 'prod-pn',
-            title:'SEND - Servizio Notifiche Digitali',
-            productUrl:"",
-            linkType:"external"
-        },
-        {
-            id: 'prod-pagopa',
-            title:'Piattaforma pagoPA',
-            productUrl:"",
-            linkType:"external"
-        }
-    ];
-
-    const partyList : Array<PartyEntity> = [
-        {
-            id:'0',
-            logoUrl: ``,
-            name:profilo.nomeEnte ,
-            productRole: "Amministratore",
-        }
-    ];
-
     //logica per il centro messaggi sospesa
     const getCount = async () =>{
         await getMessaggiCount(token,profilo.nonce).then((res)=>{
@@ -105,8 +92,6 @@ const HeaderProductAzure = () => {
         });
       
     };
-
-
     
     return (
         <div style={{display:'flex', backgroundColor:'white'}}>

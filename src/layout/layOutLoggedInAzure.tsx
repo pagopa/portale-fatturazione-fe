@@ -3,13 +3,15 @@ import { Outlet } from "react-router-dom";
 import FooterComponent from "./footer";
 import HeaderPostLogin from "./headerLoginLogout";
 import HeaderProductAzure from "./headerProduct/headerProductAzure";
+import HeaderLogAzure from "./mainHeader/headerLogInOutAzure";
+
 
 
 
 const LayoutAzure = ({sideNav}) => {
     return (
         <>
-            <HeaderPostLogin/>
+            <HeaderLogAzure/>
             <HeaderProductAzure/>
             <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
                 <Grid item xs={2}>

@@ -1,11 +1,13 @@
 import { Box, Button, Grid, ListItemText, ThemeProvider, Typography} from '@mui/material';
 import {CompanyLinkType, Footer, FooterLinksType, HeaderAccount, PreLoginFooterLinksType, theme} from '@pagopa/mui-italia';
 import { IllusError } from "@pagopa/mui-italia";
-import FooterComponent from '../../layout/footer';
 
-import HeaderPostLogin from '../../layout/headerLoginLogout';
 
 function  BundleError({ error, resetErrorBoundary }){
+  
+    const profile = localStorage.getItem('globalState') || '{}';
+    const result =  JSON.parse(profile);
+    console.log(result);
 
     let line1 = error.message;
     let line2 = '';
@@ -221,20 +223,29 @@ function  BundleError({ error, resetErrorBoundary }){
         },
     };
   
-   
-
+    
+    const redirectAssistenza = process.env.REACT_REDIRECT_ASSISTENZA||'';
+    console.log(redirectAssistenza,'ciao');
 
     return  ( <ThemeProvider theme={theme}>
         <div className="div_header">
             <HeaderAccount
                 rootLink={pagoPALinkHeader}
                 enableLogin={false}
-                onAssistanceClick={() => console.log('cioa')}
-                onLogout={() =>  localStorage.clear()}
+                onAssistanceClick={() => {
+                    console.log('1');
+                    if(result.profilo.auth === 'PAGOPA'){
+                        window.open(`mailto:fatturazione@assistenza.pagopa.it`);
+                    }else{
+                        console.log('3');
+                        window.location.href = "https://uat.selfcare.pagopa.it/assistenza?productId=prod-pf";
+                        localStorage.clear(); 
+                    }
+                }}
             />
         </div>
 
-        <div className='container d-flex align-items-center justify-content-center' style={{height: '100vh'}}>
+        <div className='container d-flex align-items-center justify-content-center my-5'>
             <div>
                 <div >
                     <Box sx={{textAlign:'center', paddingTop:'24px'}} >
@@ -257,50 +268,49 @@ function  BundleError({ error, resetErrorBoundary }){
                 </div>
                 <div className='bg-light rounded-3 m-3 p-3'>
                     <Typography sx={{textAlign:'center'}} variant="body1">
-                    Contattare l'amministratore del sito web e fornire i seguenti dati:
-                        <div>
-                            <ListItemText primary="Screen dell'errore mostrato" />
-                        </div>
+                        <ListItemText primary="Contattare l'assistenza del Portale Fatturazione e fornire i seguenti dati" />
                     </Typography>
                 </div>
                 
                 <div  className='bg-light rounded-3 m-4 p-4 border border-danger'>
-                    <Typography variant="h6" sx={{textAlign:'center', marginBottom:'24px'}} >
+                    <Typography id="textError1"  variant="h6" sx={{textAlign:'center', marginBottom:'24px'}} >
                         {line1}
                     </Typography>
-                    <Typography variant="h6" sx={{textAlign:'center', marginBottom:'24px'}} >
+                    <Typography id="textError2" variant="h6" sx={{textAlign:'center', marginBottom:'24px'}} >
                         {line2}
                     </Typography>
-                    <Typography variant="h6" sx={{textAlign:'center', marginBottom:'24px'}} >
+                    <Typography id="textError3" variant="h6" sx={{textAlign:'center', marginBottom:'24px'}} >
                         {infoDate}
                     </Typography>
                 </div>
-                <div className='container d-flex align-items-center justify-content-center mt-5'>
+                <div className='d-flex align-items-center justify-content-center mt-5'>
                     <Button 
+                        id="copyButton"
                         variant="contained"
                         onClick={()=> resetErrorBoundary()}
-                    >Reload</Button>
+                    >{result.profilo.auth === 'PAGOPA' ? "Reset" : "Copia la descrizione dell'errore"}</Button>
                 </div>
             </div>
-            
-    
         </div>
-        <Footer
-            loggedUser={false}
-            companyLink={pagoPALink}
-            legalInfo={companyLegalInfo}
-            postLoginLinks={postLoginLinks}
-            languages={LANGUAGES}
-            currentLangCode={'it'}
-            preLoginLinks={preLoginLinks}
-            onLanguageChanged={
-                () => {
-                    console.log("Changed Language");
+        <div>
+            <Footer
+                loggedUser={false}
+                companyLink={pagoPALink}
+                legalInfo={companyLegalInfo}
+                postLoginLinks={postLoginLinks}
+                languages={LANGUAGES}
+                currentLangCode={'it'}
+                preLoginLinks={preLoginLinks}
+                onLanguageChanged={
+                    () => {
+                        console.log("Changed Language");
+                    }
                 }
-            }
-            productsJsonUrl="https://dev.selfcare.pagopa.it/assets/products.json"
-            hideProductsColumn={false}
-        /> 
+                productsJsonUrl="https://dev.selfcare.pagopa.it/assets/products.json"
+                hideProductsColumn={false}
+            /> 
+        </div>
+      
     </ThemeProvider>);
 }
 

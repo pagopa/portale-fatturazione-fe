@@ -242,3 +242,47 @@ export interface InfoOpen{
     visible:boolean,
     clickOn:string
 }
+
+
+export type JwtUser = {
+    id: string;
+    name?: string;
+    surname?: string;
+    email?: string;
+};
+
+export type LangCode = "it" | "en";
+export type LinkType = "internal" | "external";
+export type FooterLinksType = {
+    label: string;
+    href?: string;
+    ariaLabel: string;
+    linkType: LinkType;
+    onClick?: () => void;
+};
+
+export type PreLoginFooterSingleSectionType = {
+    title?: string;
+    links: Array<FooterLinksType>;
+};
+
+export type PreLoginFooterSocialLink = {
+    icon: string;
+    /** the url to witch the user will be redirect */
+    href?: string;
+    title: string;
+    ariaLabel: string;
+    /** if defined it will override the href behavior */
+    onClick?: () => void;
+};
+
+export type PreLoginFooterLinksType = {
+    aboutUs: PreLoginFooterSingleSectionType;
+    resources: PreLoginFooterSingleSectionType;
+    followUs: {
+        title: string;
+        socialLinks: Array<PreLoginFooterSocialLink>;
+        links: Array<FooterLinksType>;
+    };
+};
+
