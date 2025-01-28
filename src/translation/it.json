@@ -29,7 +29,8 @@
             "membershipId":"Membership ID",
             "recipientId":"Recipient ID",
             "abiCode":"Codice ABI",
-            "yearFilter":"Filtra per anno"
+            "yearFilter":"Filtra per anno",
+            "read":"Lettura"
         }
      },
     "datiDiFatturazione":{
@@ -175,24 +176,62 @@
         "totIva":"Totale Ivato"
             },        
     "adesioneAlBando":{
-        "header":{
-                }
-            },
+        "header": {
+            "title":"Adesione al bando",
+            "buttonExpot":"Export Doc. Asseverazione",
+            "buttonImport":"Inserisci il File di Adesione al bando"
+            }
+        },
     "docEmessiSend":{
         "header":{
+            "title":"Documenti emessi"
                 }
             },
+            "reset":"Reset",
+            "send":"Invia a SAP",
     "docContabiliSend":{
         "header":{
-                }
+            "title":"Documeti contabili"
+                },
+            "buttonMatrice":"Matrice fornitori",
+            "popUpMatrice":{
+                "title":"Scarica matrice recapitisti",
+                "start":"Data inizio",
+                "end":"Data fine",
+                "buttonPopUp":"Scarica"
+            }
             },
     "anagraficaPspPa":{
         "header":{
+            "title":"Anagrafica PSP"
                 }
             },
     "docContabiliPa":{
         "header":{
-                }
+            "title":"Documenti contabili"
+                },
+                "buttonFinancial":"Download Financial Report"
+            },
+     "dettaglioDocContabiliPa":{
+        "header":{
+            "header":"Documenti contabili",
+            "header2":"Dettaglio"
+                },
+        "buttonReport":"Download Detailed Report",
+        "buttonAgent":"Download Agent Quarter Report",
+        "container1":{
+            "title":"PSP",
+            "name":"NOME PSP",
+            "contractId":"ID CONTRATTO",
+            "date":"DATA",
+            "contractType":"TIPO CONTRATTO",
+            "abiCode":"CODICE ABI",
+            "triCode":"CODICE TRIBUTARIO",
+            "pIva":"P. IVA",
+            "membershipId":"MEMBERSHIP ID",
+            "recipientId":"RECIPIENT ID",
+            "lastUpdate":"ULTIMO AGGIORNAMNETO"
+        }
             },
     "kpiPa":{
         "header":{
