@@ -13,7 +13,7 @@ import {  products } from '../../assets/dataLayout';
 const HeaderProductAzure = () => {
    
     const globalContextObj = useContext(GlobalContext);
-    const {mainState, dispatchMainState } = globalContextObj;
+    const {mainState, dispatchMainState,setCountMessages,countMessages } = globalContextObj;
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
@@ -35,8 +35,6 @@ const HeaderProductAzure = () => {
             value:valueObj
         });
     };
-
-    const [countMessages, setCountMessages] = useState(0);
  
     //logica per il centro messaggi sospesa
     const getCount = async () =>{
@@ -52,13 +50,12 @@ const HeaderProductAzure = () => {
         if(globalContextObj.mainState.authenticated === true ){
             const interval = setInterval(() => {
                 getCount();
-            }, 5000);
+            }, 30000);
             return () => clearInterval(interval); 
         }
     },[globalContextObj.mainState.authenticated]);
 
     const getProfilo = async (jwt, productSelected)=>{
-       
         await getAuthProfilo(jwt).then((resp) => {
             const storeProfilo = resp.data;
             const profiloDetails = {
@@ -80,19 +77,15 @@ const HeaderProductAzure = () => {
                 authenticated:true,
                 profilo:profiloDetails
             });
-     
             if(productSelected.prodotto === 'prod-pagopa'){
                 navigate(PathPf.ANAGRAFICAPSP);
             }else if(productSelected.prodotto === 'prod-pn'){
                 navigate(PathPf.LISTA_DATI_FATTURAZIONE);
             }
-
         }).catch(()=> {
             window.location.href = redirect;
         });
-      
     };
-    
     return (
         <div style={{display:'flex', backgroundColor:'white'}}>
             <div style={{width:'95%'}}>

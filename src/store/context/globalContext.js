@@ -32,22 +32,29 @@ export const GlobalContext = createContext({
     openBasicModal_DatFat_ModCom:{visible:false,clickOn:''},
     setOpenBasicModal_DatFat_ModCom:(prev) => null,
     showAlert:true,
-    setShowAlert:(prev) => null
-
-
+    setShowAlert:(prev) => null,
+    setOpenModalInfo:(prev) => null,
+    openModalInfo:{open:false,sentence:''},
+    // logic error alert to implement on all error message
+    errorAlert:{error:0,message:''},
+    setErrorAlert:(prev) => null,
+    countMessages:0,
+    setCountMessages:(prev) => null
 });
 
 
 function GlobalContextProvider({children}){
 
     const [mainState, dispatchMainState] = useReducer(reducerMainState,loadState());
-
     const [openBasicModal_DatFat_ModCom, setOpenBasicModal_DatFat_ModCom] = useState({visible:false,clickOn:''});
-  
     const [showAlert, setShowAlert] = useState(true);
+    const [openModalInfo, setOpenModalInfo] = useState({open:false,sentence:''});
+    const [countMessages, setCountMessages] = useState(0);
+    //nuova logica errori da implemnetare sull'applicazione  22/11
+    const [errorAlert, setErrorAlert] = useState({error:0,message:''});
+  
 
     // eslint-disable-next-line no-undef
-    
     useEffect(() => {
         // eslint-disable-next-line no-undef
         localStorage.setItem('globalState', JSON.stringify(mainState));
@@ -61,7 +68,13 @@ function GlobalContextProvider({children}){
         openBasicModal_DatFat_ModCom,
         setOpenBasicModal_DatFat_ModCom,
         showAlert,
-        setShowAlert
+        setShowAlert,
+        openModalInfo,
+        setOpenModalInfo,
+        errorAlert,
+        setErrorAlert,
+        countMessages,
+        setCountMessages
     };
 
 

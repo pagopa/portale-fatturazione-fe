@@ -9,7 +9,7 @@ import { PathPf } from '../../types/enum';
 
 
 
-const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetLista, dataSelect,setTextValue,valueAutocomplete, setValueAutocomplete}) => {
+const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetLista, dataSelect,setTextValue,valueAutocomplete, setValueAutocomplete,clearOnChangeFilter}) => {
 
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -22,6 +22,7 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
                 const arrayIdEnte = value.map(obj=> obj.idEnte);
                 setBodyGetLista((prev:any) => ({...prev,...{idEnti:arrayIdEnte}}));
                 setValueAutocomplete(value);
+                clearOnChangeFilter();
             }}
             id="checkboxes-tags-demo"
             options={dataSelect}
@@ -39,7 +40,7 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
                             style={{ marginRight: 8 }}
                             checked={selected}
                         />
-                        {option.descrizione}
+                        {option.descrizione||''}
                     </li>
                 );
             } }

@@ -15,6 +15,7 @@ const style = {
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
+    borderRadius:'20px'
 };
 
 const ModalResetFilter : React.FC<ModalResetFilterProps> =({setOpen, open, filterInfo,getListaFatture,filterNotExecuted}) => {
@@ -32,11 +33,6 @@ const ModalResetFilter : React.FC<ModalResetFilterProps> =({setOpen, open, filte
        
     };
 
-  
-
-   
-       
-    
     return (
         <div>
             <Modal
@@ -52,12 +48,10 @@ const ModalResetFilter : React.FC<ModalResetFilterProps> =({setOpen, open, filte
                         </Typography>
                         <div className='mt-3'>
                             <Typography id="modal-modal-description" variant="body1">
-                                {`Il mese selezionato nei filtri "${month[filterNotExecuted.mese -1].toLocaleUpperCase()}" non è in linea con il mese "${month[filterInfo.mese -1].toLocaleUpperCase()}" delle fatture visualizzate`}
+                                {`Il mese selezionato nei filtri "${month[filterNotExecuted.mese -1]?.toLocaleUpperCase()}" non è in linea con il mese "${month[filterInfo.mese -1]?.toLocaleUpperCase()}" delle fatture visualizzate`}
                             </Typography>
                         </div>
-                        
                     </div>
-                   
                     <div className='container_buttons_modal d-flex justify-content-center'>
                         <Button 
                             sx={{marginRight:'20px'}} 

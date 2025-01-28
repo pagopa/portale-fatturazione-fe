@@ -8,15 +8,15 @@ import { month } from '../../reusableFunction/reusableArrayObj';
 const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHidden, idTipoSpedizione, rowNumber,setDatiCommessa,datiCommessa, mainState}) => {
 
 
-    const statusApplication = getStatusApp();
+
     const [input, setInput] = useState({nazionale:0, internazionale:0});
    
 
     let mese = '';
     let anno = 2000;
-    if(statusApplication.inserisciModificaCommessa === 'MODIFY' ){
-        mese = month[statusApplication.mese -1 ];
-        anno = statusApplication.anno;
+    if(mainState.inserisciModificaCommessa  === 'MODIFY' ){
+        mese = month[Number(mainState.mese) -1 ];
+        anno = Number(mainState.anno);
     }else{
         const mon = new Date().getMonth();
         const date = new Date();
@@ -27,6 +27,8 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
         }
         mese = month[mon + 1 ];
     }
+
+
     /*
  const [totaleNotifiche, setTotaleNotifiche] = useState(0);
 
@@ -117,8 +119,6 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
                     size="small"
                     value={findValueNazione(rowNumber)}
                     InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
-                    //error={errorNazionale}
-                    //onBlur={(e)=>hendleOnBlur(e)}
                     onChange={(e)=>{
                         let value = parseInt(e.target.value);
                       
@@ -159,8 +159,6 @@ const RowInserimentoCommessa : React.FC<RowInsComProps> = ({ sentence, textBoxHi
                             size="small"
                             value={findValueInternazionale(rowNumber)}
                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
-                            //error={errorInternazionale}
-                            //onBlur={(e)=>hendleOnBlur2(e)}
                             onChange={(e)=>{
                                 let value = parseInt(e.target.value);
                                 if(!value || value < 0){

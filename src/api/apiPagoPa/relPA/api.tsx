@@ -112,5 +112,37 @@ export const getTipologieFatturePagoPa = async (token:string, nonce:string , bod
     return response;
 };
 
+export const downloadReportRelPagoPa = async ( token:string ,nonce:string) => {
+    const response = await fetch(`${url}/api/rel/pagopa/nonfatturate?nonce=${nonce}`, 
+        {
+            headers: {
+                Authorization: 'Bearer '+token
+            },
+            method: 'GET',
+        });
+    return response;
+};
+
+export const getAnniRel = async (token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/rel/pagopa/anni?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }}
+    );
+    return response;
+}; 
+
+export const getMesiRel = async (token:string, nonce:string , body:{anno:string}) => {
+    const response =  await axios.post(`${url}/api/rel/pagopa/mesi?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token,
+        }}
+    );
+    return response;
+};
+
+
+
 
 

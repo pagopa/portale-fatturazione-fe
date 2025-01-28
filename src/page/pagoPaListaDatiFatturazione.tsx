@@ -13,11 +13,11 @@ import { downloadDocumentoListaDatiFatturazionePagoPa, listaDatiFatturazionePago
 import { saveAs } from "file-saver";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../types/enum";
-import { deleteFilterToLocalStorage, getFiltersFromLocalStorage, getInfoPageFromLocalStorage,setFilterToLocalStorage, setInfoPageToLocalStorage, setInfoToProfiloLoacalStorage } from "../reusableFunction/actionLocalStorage";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
 import { GlobalContext } from "../store/context/globalContext";
+import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
 
 
 const PagoPaListaDatiFatturazione:React.FC = () =>{
@@ -43,34 +43,24 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
     const [getListaLoading, setGetListaLoading] = useState(false);
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
     const [bodyGetLista, setBodyGetLista] = useState<BodyGetListaDatiFatturazione>({idEnti:[],prodotto:'',profilo:''});
-    const [infoPageListaDatiFat , setInfoPageListaDatiFat] = useState({ page: 0, pageSize: 100 });
+    const [infoPageListaDatiFat , setInfoPageListaDatiFat] = useState({ page: 0, pageSize: 10 });
     const [textValue, setTextValue] = useState('');
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
     const [showLoading,setShowLoading] = useState(false);
+    const { 
+        filters,
+        updateFilters,
+        resetFilters,
+        isInitialRender
+    } = useSavedFilters(PathPf.LISTA_DATI_FATTURAZIONE,{});
 
     // al primo reload se torno inditro da dettaglio dati tturazione ho gli stessi filtri per il download
+    // start branch 537
     
-    useEffect(()=>{
-        const result = getFiltersFromLocalStorage();
-        const infoPageResult = getInfoPageFromLocalStorage();
-       
+    useEffect(()=>{  
         getProdotti();
         getProfili();
-        if(Object.keys(result).length > 0){
-            setBodyGetLista(result.bodyGetLista);
-            setTextValue(result.textValue);
-            setValueAutocomplete(result.valueAutocomplete);
-            getListaDatifatturazione(result.bodyGetLista);
-            setFiltersDownload(result.bodyGetLista);
-        }else{
-            getListaDatifatturazione(bodyGetLista);
-        }
-        if(infoPageResult.page > 0){
-            setInfoPageListaDatiFat(infoPageResult);
-        }
-        
     }, []);
-
 
     useEffect(()=>{
         if(bodyGetLista.idEnti?.length  !== 0 || bodyGetLista.prodotto !== '' || bodyGetLista.profilo !== ''){
@@ -80,8 +70,8 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
         }
     },[bodyGetLista]);
 
+    
 
-   
     useEffect(()=>{
         const timer = setTimeout(() => {
             if(textValue.length >= 3){ 
@@ -97,6 +87,7 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
         await getTipologiaProdotto(token,profilo.nonce )
             .then((res)=>{
                 setProdotti(res.data);
+               
             })
             .catch(((err)=>{
                 manageError(err,dispatchMainState);
@@ -107,6 +98,17 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
         await getTipologiaProfilo(token,profilo.nonce)
             .then((res)=>{
                 setProfili(res.data);
+                if(isInitialRender.current && Object.keys(filters).length > 0){
+                    getListaDatifatturazione(filters.body);
+                    setBodyGetLista(filters.body);
+                    setTextValue(filters.textValue);
+                    setValueAutocomplete(filters.valueAutocomplete);
+                    getListaDatifatturazione(filters.body);
+                    setFiltersDownload(filters.body);
+                    setInfoPageListaDatiFat({page:filters.page,pageSize:filters.rows});
+                }else{
+                    getListaDatifatturazione(bodyGetLista);
+                }
             })
             .catch(((err)=>{
                 manageError(err,dispatchMainState);
@@ -119,11 +121,13 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
             .then((res)=>{
                 setGridData(res.data);
                 setGetListaLoading(false);
+                isInitialRender.current = false;
             })
             .catch(((err)=>{
                 setGridData([]);
                 setGetListaLoading(false);
                 manageError(err,dispatchMainState);
+                isInitialRender.current = false;
             })); 
     };
 
@@ -174,6 +178,51 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
             navigate(PathPf.DATI_FATTURAZIONE);
         }
     };
+
+
+    const clearOnChangeFilter = () => {
+        setGridData([]);
+        setInfoPageListaDatiFat({ page: 0, pageSize: 10 });
+    };
+
+
+    const onButtonFiltra = () => {
+        getListaDatifatturazione(bodyGetLista);
+        setInfoPageListaDatiFat({ page: 0, pageSize: 10 });
+        setFiltersDownload(bodyGetLista);
+        updateFilters(
+            {
+                body:bodyGetLista,
+                pathPage:PathPf.LISTA_DATI_FATTURAZIONE,
+                textValue,
+                valueAutocomplete,
+                page:0,
+                rows:10
+            });
+    };
+
+    const onButtonAnnulla = () => {
+        setBodyGetLista({idEnti:[],prodotto:'',profilo:''});
+        setInfoPageListaDatiFat({ page: 0, pageSize: 10 });
+        getListaDatifatturazione({idEnti:[],prodotto:'',profilo:''});
+        setFiltersDownload({idEnti:[],prodotto:'',profilo:''});
+        setDataSelect([]);
+        setValueAutocomplete([]);
+        resetFilters();
+    };
+
+    const onChangePageOrRowGrid = (e) => {
+        updateFilters(
+            {
+                body:filtersDownload,
+                pathPage:PathPf.LISTA_DATI_FATTURAZIONE,
+                textValue,
+                valueAutocomplete,
+                page:e.page,
+                rows:e.pageSize
+            });
+        setInfoPageListaDatiFat(e);
+    };
       
     const columns: GridColDef[] = [
         { field: 'ragioneSociale', headerName: 'Ragione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.ragioneSociale}</a>},
@@ -210,8 +259,11 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                                 id="sea"
                                 label='Seleziona Prodotto'
                                 labelId="search-by-label"
-                                onChange={(e) => setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}))}
-                                value={bodyGetLista.prodotto || ''}
+                                onChange={(e) =>{
+                                    clearOnChangeFilter();
+                                    setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}));
+                                }}
+                                value={bodyGetLista.prodotto}
                             >
                                 {prodotti.map((el) => (
                                     <MenuItem
@@ -240,7 +292,10 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                                 id="sea"
                                 label='Seleziona Profilo'
                                 labelId="search-by-label"
-                                onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{profilo:e.target.value}}))}
+                                onChange={(e) => {
+                                    clearOnChangeFilter();
+                                    setBodyGetLista((prev)=> ({...prev, ...{profilo:e.target.value}}));
+                                }}
                                 value={bodyGetLista.profilo||''}
                             >
                                 {profili.map((el) => (
@@ -262,36 +317,21 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                         setTextValue={setTextValue}
                         valueAutocomplete={valueAutocomplete}
                         setValueAutocomplete={setValueAutocomplete}
+                        clearOnChangeFilter={clearOnChangeFilter}
                     ></MultiselectCheckbox>
                 </div>
             </div>
-            <div className="d-flex" >
-              
+            <div className="d-flex">
                 <div className=" d-flex justify-content-center align-items-center">
                     <div>
                         <Button 
-                            onClick={()=>{
-                                getListaDatifatturazione(bodyGetLista);
-                                setInfoPageListaDatiFat({ page: 0, pageSize: 100 });
-                                setFiltersDownload(bodyGetLista);
-                                setFilterToLocalStorage(bodyGetLista,textValue,valueAutocomplete);
-                                setInfoPageToLocalStorage({ page: 0, pageSize: 100 }); 
-                            } } 
+                            onClick={onButtonFiltra} 
                             sx={{ marginTop: 'auto', marginBottom: 'auto'}}
                             variant="contained"> Filtra
                         </Button>
                         {statusAnnulla === 'hidden'? null :
                             <Button
-                                onClick={()=>{
-                                    setBodyGetLista({idEnti:[],prodotto:'',profilo:''});
-                                    setInfoPageListaDatiFat({ page: 0, pageSize: 100 });
-                                    setInfoPageToLocalStorage({ page: 0, pageSize: 100 });
-                                    getListaDatifatturazione({idEnti:[],prodotto:'',profilo:''});
-                                    setFiltersDownload({idEnti:[],prodotto:'',profilo:''});
-                                    setDataSelect([]);
-                                    setValueAutocomplete([]);
-                                    deleteFilterToLocalStorage();
-                                } }
+                                onClick={onButtonAnnulla}
                                 sx={{marginLeft:'24px'}} >
                         Annulla filtri
                             </Button>}
@@ -302,7 +342,7 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
                 {
                     gridData.length > 0 &&
-                <Button onClick={() =>onDownloadButton()}
+                <Button onClick={onDownloadButton}
                     disabled={getListaLoading}
                 >
                 Download Risultati
@@ -317,8 +357,8 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                         backgroundColor: 'white',
                     }
                 }}
-                onPaginationModelChange={(e)=>{
-                    setInfoPageListaDatiFat(e); setInfoPageToLocalStorage(e);}}
+                pageSizeOptions={[10, 25, 50,100]}
+                onPaginationModelChange={(e)=> onChangePageOrRowGrid(e)}
                 paginationModel={infoPageListaDatiFat}
                 rows={gridData} 
                 columns={columns}
@@ -327,8 +367,11 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                 onCellClick={handleOnCellClick}
                 />
             </div>
-            <div>
-            </div>
+            <ModalLoading 
+                open={getListaLoading} 
+                setOpen={setGetListaLoading}
+                sentence={'Loading...'} >
+            </ModalLoading>
             <ModalLoading 
                 open={showLoading} 
                 setOpen={setShowLoading}

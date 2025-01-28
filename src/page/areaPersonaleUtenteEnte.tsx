@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext} from 'react';
-import { manageError, redirect } from '../api/api';
+import { manageError} from '../api/api';
 import { useNavigate} from 'react-router';
 import '../style/areaPersonaleUtenteEnte.css';
 import { Button } from '@mui/material';
@@ -7,33 +7,51 @@ import TabAreaPersonaleUtente from '../components/areaPersonale/tabAreaPersonale
 import PageTitleNavigation from '../components/areaPersonale/pageTitleNavigation';
 import {
     DatiFatturazione,
+    DatiFatturazionePostPagopa,
     StateEnableConferma,
     SuccesResponseGetDatiFatturazione
 } from '../types/typesAreaPersonaleUtenteEnte';
 import {  getDatiFatturazione,
     modifyDatiFatturazione,
-    insertDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
+    insertDatiFatturazione, 
+    getSdi} from '../api/apiSelfcare/datiDiFatturazioneSE/api';
 import {  getDatiFatturazionePagoPa,
     modifyDatiFatturazionePagoPa,
-    insertDatiFatturazionePagoPa, } from '../api/apiPagoPa/datiDiFatturazionePA/api';
+    insertDatiFatturazionePagoPa, 
+    getSdiPagoPa} from '../api/apiPagoPa/datiDiFatturazionePA/api';
 import BasicModal from '../components/reusableComponents/modals/modal';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
 import {PathPf} from '../types/enum';
 import { profiliEnti, } from '../reusableFunction/actionLocalStorage';
 import SuspenseDatiFatturazione from '../components/areaPersonale/skeletonDatiFatturazione';
 import { GlobalContext } from '../store/context/globalContext';
+import ModalInfo from '../components/reusableComponents/modals/modalInfo';
+
+
         
         
         
 const AreaPersonaleUtenteEnte : React.FC = () => {
 
     const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState,openBasicModal_DatFat_ModCom,setOpenBasicModal_DatFat_ModCom} = globalContextObj;
+    const {
+        dispatchMainState,
+        mainState,
+        openBasicModal_DatFat_ModCom,
+        setOpenBasicModal_DatFat_ModCom,
+        setOpenModalInfo,
+        openModalInfo,
+        setErrorAlert
+    } = globalContextObj;
    
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
     const enti = profiliEnti(mainState);
+
+    if(!profilo.idEnte && profilo.auth === 'PAGOPA'){
+        navigate(PathPf.LISTA_DATI_FATTURAZIONE);
+    }
             
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -43,6 +61,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
     };
   
     const [openModalLoading, setOpenModalLoading] = useState(false);
+    
     const [loadingData, setLoadingData] = useState(false);
     const [datiFatturazione, setDatiFatturazione] = useState<DatiFatturazione>({
         tipoCommessa:'',
@@ -59,16 +78,20 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
         notaLegale:false,
         prodotto:'',
         map:'',
-        id:0
+        id:0,
+        codiceSDI:null,
+        contractCodiceSDI:null
+
     });
             
     // state creato per il tasto conferma , abilitato nel caso in cui tutti values sono true
     const [statusBottonConferma, setStatusButtonConferma] = useState<StateEnableConferma>({
         'CUP':false,
         'CIG':false,
-        'Mail Pec':false,
+        'PEC':false,
         'ID Documento':false,
         "Codice Commessa/Convenzione":false,
+        "Codice univoco o SDI":false
     });
 
             
@@ -82,19 +105,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
         }
     },[]);
             
-    /*
-    // se non c'è il token viene fatto il redirect al portale di accesso 
-    useEffect(()=>{
-        if(token === undefined){
-            window.location.href = redirect;
-        }
-        /* se l'utente PagoPA modifa l'url e cerca di accedere al path '/' 
-                senza aver prima selezionato una row della grid lista dati fatturazione viene fatto il redirect automatico a  PathPf.LISTA_DATI_FATTURAZIONE
-        if(profilo.auth === 'PAGOPA' && !profilo.idEnte){
-            window.location.href = PathPf.LISTA_DATI_FATTURAZIONE;
-        }
-    },[]);
-            */
+  
     // get dati fatturazione SELFCARE
     const getDatiFat = async () =>{
         setLoadingData(true);
@@ -118,46 +129,56 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                     datiFatturazioneNotCompleted:datiFatturazioneNotCompleted
                 });
             }
+            let result = res.data;
+            if(res.data.codiceSDI === null || res.data.codiceSDI === ''){
+                result = {...res.data, codiceSDI:res.data.contractCodiceSDI};
+            }
            
-            setDatiFatturazione(res.data);
+            setDatiFatturazione(result);
             setLoadingData(false);
             //checkCommessa();
                     
-        }).catch(err =>{
+        }).catch(async(err) =>{
                     
             if(err?.response?.status === 404){
-                // setInfoToStatusApplicationLoacalStorage(statusApp,{datiFatturazione:false});
-                handleModifyMainState({
-                    datiFatturazione:false,
-                    statusPageDatiFatturazione:'mutable'
+                // se l'ente non ha i dati di fatturazione potrebbe avere lo SDI
+
+                await getSdi(token,profilo.nonce).then((res)=>{
+                    handleModifyMainState({
+                        datiFatturazione:false,
+                        statusPageDatiFatturazione:'mutable'
+                    });
+
+                    setDatiFatturazione({
+                        tipoCommessa:'',
+                        idEnte:'',
+                        splitPayment:true,
+                        cup: '',
+                        idDocumento:'',
+                        codCommessa:'',
+                        contatti:[],
+                        dataCreazione:'',
+                        dataModifica:'',
+                        dataDocumento:null,
+                        pec:'',
+                        notaLegale:false,
+                        prodotto:'',
+                        map:'',
+                        id:0,
+                        codiceSDI:res.data.contractCodiceSDI,
+                        contractCodiceSDI:null
+                    });
+                }).catch((err)=>{
+                    manageError(err,dispatchMainState);
                 });
-                //checkCommessa();
+
             }
-            setDatiFatturazione({
-                tipoCommessa:'',
-                idEnte:'',
-                splitPayment:true,
-                cup: '',
-                idDocumento:'',
-                codCommessa:'',
-                contatti:[],
-                dataCreazione:'',
-                dataModifica:'',
-                dataDocumento:null,
-                pec:'',
-                notaLegale:false,
-                prodotto:'',
-                map:'',
-                id:0
-                        
-            });
             if(err?.response?.status !== 404){
                 manageError(err,dispatchMainState);
             }
             setLoadingData(false);     
         });
     };
-            
             
     // get dati fatturazione PAGOPA
     const getDatiFatPagoPa = async () =>{
@@ -167,38 +188,49 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                 datiFatturazione:true,
                 statusPageDatiFatturazione:'immutable'
             });
-            setDatiFatturazione(res.data); 
+            let result = res.data;
+            if(res.data.codiceSDI === null || res.data.codiceSDI === ''){
+                result = {...res.data, codiceSDI:res.data.contractCodiceSDI};
+            }
+            setDatiFatturazione(result); 
             setLoadingData(false);
-        }).catch(err =>{
-            handleModifyMainState({
-                datiFatturazione:false,
-                statusPageDatiFatturazione:'mutable'
-            });
-            setDatiFatturazione({
-                tipoCommessa:'',
-                idEnte:'',
-                splitPayment:true,
-                cup: '',
-                idDocumento:'',
-                codCommessa:'',
-                contatti:[],
-                dataCreazione:'',
-                dataModifica:'',
-                dataDocumento:null,
-                pec:'',
-                notaLegale:false,
-                prodotto:'',
-                map:'',
-                id:0
-                        
-            });
-             
+        }).catch(async(err) =>{
+           
             if(err?.response?.status !== 404){
                 manageError(err,dispatchMainState);
                 navigate(PathPf.LISTA_DATI_FATTURAZIONE); 
             }
-            setLoadingData(false);
+
+            await getSdiPagoPa(token,profilo.nonce,profilo.idEnte, profilo.prodotto).then((res)=>{
+                setDatiFatturazione({
+                    tipoCommessa:'',
+                    idEnte:'',
+                    splitPayment:true,
+                    cup: '',
+                    idDocumento:'',
+                    codCommessa:'',
+                    contatti:[],
+                    dataCreazione:'',
+                    dataModifica:'',
+                    dataDocumento:null,
+                    pec:'',
+                    notaLegale:false,
+                    prodotto:'',
+                    map:'',
+                    id:0,
+                    codiceSDI:res.data.contractCodiceSDI,
+                    contractCodiceSDI:null
+                });
+                handleModifyMainState({
+                    datiFatturazione:false,
+                    statusPageDatiFatturazione:'mutable'
+                });
+                
+            }).catch((err)=>{
+                manageError(err,dispatchMainState);
+            });
            
+            setLoadingData(false);
         });
     };
             
@@ -206,12 +238,13 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
     const hendleSubmitDatiFatturazione = async (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) =>{
         e.preventDefault();
         setOpenModalLoading(true);
+   
         //  1 - se l'user ha già dati fatturazione
         if(mainState.datiFatturazione === true){
             // 1 - ed è un utente PAGOPA
             if(profilo.auth === 'PAGOPA'){
-                const newDatiFatturazione = {...datiFatturazione, ...{idEnte:profilo.idEnte,prodotto:profilo.prodotto}};
-                        
+             
+                const newDatiFatturazione:DatiFatturazionePostPagopa = {...datiFatturazione, ...{idEnte:profilo.idEnte,prodotto:profilo.prodotto}};
                 await modifyDatiFatturazionePagoPa(token,profilo.nonce, newDatiFatturazione ).then(() =>{
                     setOpenModalLoading(false);
                     handleModifyMainState({
@@ -220,7 +253,9 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                     getDatiFatPagoPa();
                 }).catch(err => {
                     setOpenModalLoading(false);
-                    manageError(err,dispatchMainState);
+                    setErrorAlert({error:err.response.status,message:err.response.data.detail});
+                    //handleModifyMainState({apiError:err.response.data.detail});
+                    //manageError(err,dispatchMainState);
                 });
             }else{
                 // 1 - ed è un utente SELFCARE
@@ -245,12 +280,13 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                         }
                     }).catch(err => {
                         setOpenModalLoading(false);
-                        manageError(err,dispatchMainState);
+                        setErrorAlert({error:err.response.status,message:err.response.data.detail});
+                        //manageError(err,dispatchMainState);
                     });
             }
         }else{
             // 2 - se l'user NON ha I dati fatturazione
-            const bodyPagoPa = {
+            const bodyPagoPa:DatiFatturazionePostPagopa  = {
                 tipoCommessa:datiFatturazione.tipoCommessa,
                 splitPayment:datiFatturazione.splitPayment,
                 cup: datiFatturazione.cup,
@@ -261,12 +297,13 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                 dataDocumento:new Date().toISOString(),
                 pec:datiFatturazione.pec,
                 idEnte:profilo.idEnte,
-                prodotto:profilo.prodotto
+                prodotto:profilo.prodotto,
+                codiceSDI:datiFatturazione.codiceSDI
             };
             const {idEnte,prodotto,...body} = bodyPagoPa;
             // 2 - ed è un utente PAGOPA
             if(profilo.auth === 'PAGOPA'){
-                await insertDatiFatturazionePagoPa( token,profilo.nonce, bodyPagoPa).then((res)  =>{
+                await insertDatiFatturazionePagoPa( token,profilo.nonce, bodyPagoPa).then(()  =>{
                     setOpenModalLoading(false);
                     handleModifyMainState({
                         statusPageDatiFatturazione:'immutable',
@@ -275,7 +312,8 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                     getDatiFatPagoPa();
                 }).catch(err =>{
                     setOpenModalLoading(false);
-                    manageError(err,dispatchMainState);
+                    setErrorAlert({error:err.response.status,message:err.response.data.detail});
+                    //manageError(err,dispatchMainState);
                 });
                 
             }else{
@@ -304,12 +342,15 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                     }  
                 }).catch(err =>{
                     setOpenModalLoading(false);
-                    manageError(err,dispatchMainState);
+                    setErrorAlert({error:err.response.status,message:err.response.data.detail});
+                    //manageError(err,dispatchMainState);
                 }); 
                         
             } 
         }   
     };
+
+ 
             
     const onIndietroButtonPagoPa = () =>{
         if(mainState.statusPageDatiFatturazione === 'immutable' &&  profilo.auth === 'PAGOPA'){
@@ -326,7 +367,9 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
         datiFatturazione.notaLegale === false 
                 || datiFatturazione.pec === ''
                 || datiFatturazione.contatti.length === 0
+                || datiFatturazione.codiceSDI === '' || datiFatturazione.codiceSDI === null
     );
+
     
     if(loadingData){
         return(
@@ -337,7 +380,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
     return (
                 
         <div >
-            <PageTitleNavigation dispatchMainState={dispatchMainState} setOpen={setOpenBasicModal_DatFat_ModCom} mainState={mainState} /> 
+            <PageTitleNavigation  setOpen={setOpenBasicModal_DatFat_ModCom}  /> 
             {/* tab 1 e 2 start */}
             <div className='mt-5'>
                 <TabAreaPersonaleUtente mainState={mainState} datiFatturazione={datiFatturazione} setDatiFatturazione={setDatiFatturazione} setStatusButtonConferma={setStatusButtonConferma} />
@@ -365,6 +408,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                     </div>
                 )}
             </div>
+            <ModalInfo setOpen={setOpenModalInfo} open={openModalInfo}></ModalInfo>
             <BasicModal setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} dispatchMainState={dispatchMainState} getDatiFat={getDatiFat} getDatiFatPagoPa={getDatiFatPagoPa} mainState={mainState}></BasicModal>
             <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}></ModalLoading>
             {/*   <BasicAlerts typeAlert={'error'} setVisible={setAlertVisible}  visible={alertVisible}></BasicAlerts>*/}

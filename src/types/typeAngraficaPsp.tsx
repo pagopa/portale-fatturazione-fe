@@ -7,7 +7,8 @@ export interface RequestBodyListaAnagraficaPsp{
     contractIds: string[],
     membershipId: string,
     recipientId: string,
-    abi: string
+    abi: string,
+    quarters:string[]
 }
 /*
 export interface MultiselectWithKeyValueProps {
@@ -31,7 +32,8 @@ export interface MultiselectWithKeyValueProps {
     keyId:string,
     label:string,
     keyArrayName:string,
-    valueId:string
+    valueId:string,
+    clearOnChangeFilter?:any
 }
 
 export interface OptionMultiselectCheckboxPsp{
@@ -64,6 +66,8 @@ export interface GridElementListaPsp {
     sdiCode: null|number|string,
     membershipId: string,
     recipientId: string,
-    yearMonth: string
+    yearMonth: string,
+    yearQuarter?:string
+
 }
 

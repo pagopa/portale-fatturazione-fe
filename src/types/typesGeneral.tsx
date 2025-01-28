@@ -1,6 +1,3 @@
-
-import { AutocompleteMultiselect, OptionMultiselectCheckboxPsp, OptionMultiselectCheckboxQarter } from "./typeAngraficaPsp";
-import { RequestBodyListaDocContabiliPagopa } from "./typeDocumentiContabili";
 import { DataGridCommessa } from "./typeModuloCommessaElenco";
 
 export interface ModalProps {
@@ -198,12 +195,13 @@ export interface BodyCreateContestazione{
 export interface SelectUltimiDueAnniProps{
     values:any,
     setValue: (value:any) => void,
-    getTipologia?:any
+    getTipologia?:any,
+    clearOnChangeFilter?:any
 }
 
 export interface SelectMeseProps{
     values:{
-        anno:number,
+        anno:number|null,
         mese:number|null,
         tipologiaFattura?:null| string|string[],
         idEnti?:string[],
@@ -211,7 +209,8 @@ export interface SelectMeseProps{
         caricata?:null|number,
     },
     setValue: (value:any) => void
-    getTipologia?:any
+    getTipologia?:any,
+    clearOnChangeFilter?:any
 }
 
 export interface MultiSelectBaseProps{

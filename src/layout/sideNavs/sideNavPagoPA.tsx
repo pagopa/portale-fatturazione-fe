@@ -6,6 +6,7 @@ import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import { useNavigate } from "react-router";
 import { PathPf } from "../../types/enum";
 import { GlobalContext } from "../../store/context/globalContext";
+import PaymentsIcon from '@mui/icons-material/Payments';
 
 const SideNavPagopa = () => {
 
@@ -16,7 +17,7 @@ const SideNavPagopa = () => {
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
 
-    const [selectedIndex, setSelectedIndex] = useState<number>(0);
+    const [selectedIndex, setSelectedIndex] = useState<number|null>(0);
 
     const hideShowSidenav = location.pathname === '/auth' ||
     location.pathname === '/azure' ||
@@ -36,12 +37,20 @@ const SideNavPagopa = () => {
         deleteFilterToLocalStorageAnagrafica();
     };
 
+    const handleListItemClickKpi = () => {
+        navigate(PathPf.KPI);
+    };
+
     const currentLocation = location.pathname;
     useEffect(()=>{
         if(currentLocation === PathPf.ANAGRAFICAPSP){
             setSelectedIndex(0);
         }else if(currentLocation === PathPf.DOCUMENTICONTABILI){
             setSelectedIndex(1);
+        }else if(currentLocation === PathPf.KPI){
+            setSelectedIndex(2);
+        }else if(currentLocation === "/messaggi"){
+            setSelectedIndex(null);
         }
        
     },[currentLocation]);
@@ -68,6 +77,12 @@ const SideNavPagopa = () => {
                                 <ManageSearchIcon fontSize="inherit"></ManageSearchIcon>
                             </ListItemIcon>
                             <ListItemText primary="Documenti contabili" />
+                        </ListItemButton>
+                        <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClickKpi()}>
+                            <ListItemIcon>
+                                <PaymentsIcon fontSize="inherit"></PaymentsIcon>
+                            </ListItemIcon>
+                            <ListItemText primary="KPI Pagamenti" />
                         </ListItemButton>
                     </List>
                     <Divider />

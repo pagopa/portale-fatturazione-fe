@@ -2,8 +2,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { MainState } from "./typesGeneral";
 import { ActionReducerType } from "../reducer/reducerMainState";
-import { DocContabili } from "../components/reusableComponents/grid/gridCollapsible/gridCustomCollapsiblePa";
-
 export interface BodyFatturazione{
     anno:number,
     mese:number,
@@ -21,7 +19,8 @@ export interface MultiSelectFatturazioneProps{
     setBody:Dispatch<SetStateAction<BodyFatturazione>>,
     list:string[],
     value:string[],
-    setValue:Dispatch<SetStateAction<string[]>>
+    setValue:Dispatch<SetStateAction<string[]>>,
+    clearOnChangeFilter:any
 }
 
 type Posizioni = {
@@ -67,6 +66,12 @@ export interface GridCollapsible{
     monthFilterIsEqualMonthDownload:boolean,
     selected:number[]
     setSelected:any
+    updateFilters:any,
+    pathPage:string,
+    body:any,
+    firstRender:boolean,
+    infoPageLocalStorage:any,
+    upadateOnSelctedChange:any
     //showedData:FattureObj[],
     //setShowedData: Dispatch<SetStateAction<FattureObj[]>>,
 }

@@ -1,13 +1,19 @@
 import { TablePagination } from "@mui/material";
 
-const TablePaginationDemo = ({setPage, page, rowsPerPage, setRowsPerPage, count}) => {
+const TablePaginationDemo = ({setPage, page, rowsPerPage, setRowsPerPage,count,updateFilters,pathPage,body}) => {
         
-        
+   
     const handleChangePage = (
         event: React.MouseEvent<HTMLButtonElement> | null,
         newPage: number,
     ) => {
         setPage(newPage);
+        updateFilters({
+            pathPage:pathPage,
+            ...body,
+            page:newPage,
+            rows:10,
+        });
     };
         
     const handleChangeRowsPerPage = (
@@ -15,6 +21,12 @@ const TablePaginationDemo = ({setPage, page, rowsPerPage, setRowsPerPage, count}
     ) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
+        updateFilters({
+            pathPage:pathPage,
+            ...body,
+            page:0,
+            rows:parseInt(event.target.value, 10)
+        });
     };
         
     return (

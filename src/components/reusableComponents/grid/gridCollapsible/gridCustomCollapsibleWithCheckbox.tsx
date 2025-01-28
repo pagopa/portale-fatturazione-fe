@@ -12,37 +12,57 @@ import { FattureObj, GridCollapsible } from '../../../../types/typeFatturazione'
 import TablePaginationDemo from './tablePagination';
 import EnhancedTableToolbar from './enhanceTableToolbar';
 import Row from './rowWithCheckbox';
+import { PathPf } from '../../../../types/enum';
 
 
 
-const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,setOpenConfermaModal,setOpenResetFilterModal,monthFilterIsEqualMonthDownload,selected, setSelected}) => {
+
+const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,setOpenConfermaModal,setOpenResetFilterModal,monthFilterIsEqualMonthDownload,selected, setSelected,updateFilters,pathPage,body,firstRender,infoPageLocalStorage,upadateOnSelctedChange}) => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [count, setCount] = useState(0);
     const [showedData, setShowedData] = useState<FattureObj[]>([]);
    
     useEffect(()=>{
-        setCount(data.length);
-        setPage(0);
-        setRowsPerPage(10);
-        setShowedData(data.slice(0, 10));
-        setSelected([]);
-       
+        if(firstRender && infoPageLocalStorage.rows){
+            setPage(infoPageLocalStorage.page);
+            setRowsPerPage(infoPageLocalStorage.rows);
+
+            let from = infoPageLocalStorage.page;
+            if(from !== 0){
+                from = infoPageLocalStorage.page * infoPageLocalStorage.rows;
+            }
+            setShowedData(data.slice(from, infoPageLocalStorage.rows + from));
+            setCount(data.length);
+        }else{
+            setCount(data.length);
+            setPage(0);
+            setRowsPerPage(10);
+            setShowedData(data.slice(0, 10));
+            setSelected([]);
+        }
     },[data]);
+
+
+    useEffect(()=>{
+        if(!firstRender){
+            upadateOnSelctedChange(page,rowsPerPage);
+        }
+       
+    },[selected]);
     
     useEffect(()=>{
-        let from = 0;
-        if(page === 0){
-            from = 0;
-        }else{
-            from = page * rowsPerPage;
+        if(!(firstRender && infoPageLocalStorage.rows)){
+            let from = 0;
+            if(page === 0){
+                from = 0;
+            }else{
+                from = page * rowsPerPage;
+            }
+            setShowedData(data.slice(from, rowsPerPage + from));
         }
-        setShowedData(data.slice(from, rowsPerPage + from));
+        
     },[page,rowsPerPage]);
-
-
-
-
 
 
     return (
@@ -95,7 +115,8 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,se
                                             setSelected={setSelected}
                                             selected={selected}
                                             setOpenResetFilterModal={setOpenResetFilterModal}
-                                            monthFilterIsEqualMonthDownload={monthFilterIsEqualMonthDownload} ></Row>
+                                            monthFilterIsEqualMonthDownload={monthFilterIsEqualMonthDownload}
+                                        ></Row>
                                     ); })}
                         </Table>
                     </TableContainer>
@@ -105,9 +126,12 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,se
                 <TablePaginationDemo 
                     setRowsPerPage={setRowsPerPage}
                     setPage={setPage}
-                    page={page}
+                    page={count > 0 ? page:0}
                     rowsPerPage={rowsPerPage}
                     count={count}
+                    updateFilters={updateFilters}
+                    pathPage={pathPage}
+                    body={body}
                 ></TablePaginationDemo>
             </div>  
         </>

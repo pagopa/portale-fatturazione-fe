@@ -30,6 +30,38 @@ export interface DocContabile {
     psp: GridElementListaPsp
 }
 
+export interface DocContabili {
+    key:string
+    name: string,
+    contractId: string,
+    tipoDoc: string,
+    codiceAggiuntivo: string,
+    vatCode: string,
+    valuta: string,
+    id:number,
+    numero: string,
+    data: string,
+    bollo: string,
+    riferimentoData: string,
+    yearQuarter: string,
+    posizioni: [
+        {
+            category: string,
+            progressivoRiga: number,
+            codiceArticolo: string,
+            descrizioneRiga: string,
+            quantita:number,
+            importo: number,
+            codIva: string,
+            condizioni: string,
+            causale: string,
+            indTipoRiga: string
+        }
+    ],
+    reports: string[]
+}
+
+
 export interface PosizioniDocContabile {
     category:string;
     progressivoRiga:number;

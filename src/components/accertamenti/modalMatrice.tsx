@@ -6,7 +6,7 @@ import Modal from '@mui/material/Modal';
 import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { useRef } from 'react';
 import { MatriceArray } from '../../page/accertamenti';
-
+import CloseIcon from '@mui/icons-material/Close';
 const style = {
     position: 'absolute' as const,
     top: '50%',
@@ -16,6 +16,7 @@ const style = {
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
+    borderRadius:'20px'
 };
 
 const ModalMatriceAccertamenti = ({setOpen, open, data, value, setValue,downloadDocMatrice}) => {
@@ -50,15 +51,16 @@ const ModalMatriceAccertamenti = ({setOpen, open, data, value, setValue,download
             >
                 <Box sx={style}>
                     <div className='d-flex justify-content-between'>
-                        <div className='ms-3 mt-auto mb-auto'>
-                          
+                        <div className='m-auto'>
                             <Typography  id="modal-modal-title" variant="h6" component="h2">
-                                Scarica la matrice recapitisti 
+                              Scarica la matrice recapitisti 
                             </Typography>
-                          
                         </div>
-                        <div>
-                            <Button variant="contained"  onClick={()=> handleClose() }> X </Button>
+
+                        <div className="d-flex align-items-center justify-content-end">
+                            <div className='icon_close'>
+                                <CloseIcon onClick={()=> handleClose() } id='close_icon' sx={{color:'#17324D'}}></CloseIcon>
+                            </div>
                         </div>
                     </div>
                     <div className=''>

@@ -12,7 +12,7 @@ import { MultiSelectFatturazioneProps } from '../../types/typeFatturazione';
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
-const MultiSelectFatturazione : React.FC<MultiSelectFatturazioneProps> =  ({setBody,list,value,setValue}) => {
+const MultiSelectFatturazione : React.FC<MultiSelectFatturazioneProps> =  ({setBody,list,value,setValue,clearOnChangeFilter}) => {
 
 
     return (
@@ -22,6 +22,7 @@ const MultiSelectFatturazione : React.FC<MultiSelectFatturazioneProps> =  ({setB
             onChange={(event, value) => {
                 setValue(value);
                 setBody((prev) => ({...prev,...{tipologiaFattura:value}}));
+                clearOnChangeFilter();
             }}
             id="checkboxes-tipologie"
             options={list}

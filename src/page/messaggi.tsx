@@ -1,10 +1,8 @@
 import {Box, Button, Chip, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TablePagination, Typography } from "@mui/material";
-import { Dispatch, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
-import { downloadMessaggioPagoPaCsv, downloadMessaggioPagoPaZipExel, getListaMessaggi, readMessaggioPagoPa} from "../api/apiPagoPa/centroMessaggi/api";
-import { getProfilo, getToken } from "../reusableFunction/actionLocalStorage";
-import { MainState } from "../types/typesGeneral";
+import { downloadMessaggioPagoPaCsv, downloadMessaggioPagoPaZipExel, getListaMessaggi, getMessaggiCount, readMessaggioPagoPa} from "../api/apiPagoPa/centroMessaggi/api";
 import { ButtonNaked, TimelineNotification, TimelineNotificationContent, TimelineNotificationDot, TimelineNotificationItem, TimelineNotificationOppositeContent, TimelineNotificationSeparator } from "@pagopa/mui-italia";
 import { TimelineConnector } from "@mui/lab";
 import AttachFileIcon from '@mui/icons-material/AttachFile';
@@ -14,7 +12,6 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { month } from "../reusableFunction/reusableArrayObj";
-import { ActionReducerType } from "../reducer/reducerMainState";
 import { GlobalContext } from "../store/context/globalContext";
 
 
@@ -44,13 +41,8 @@ export interface Messaggio {
     idReport: number
 }
 
-interface MessaggiProps {
-    mainState:MainState,
-    dispatchMainState:Dispatch<ActionReducerType>
-}
-
 interface FilterMessaggi{
-    anno:number,
+    anno:number|null,
     mese:null|number,
     tipologiaDocumento:string[]|[],
     letto:null|boolean
@@ -60,43 +52,53 @@ interface FilterMessaggi{
 const Messaggi : React.FC<any> = () => {
 
     const globalContextObj = useContext(GlobalContext);
-    const {mainState} = globalContextObj;
+    const {mainState,setCountMessages} = globalContextObj;
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
-    const currentYear = (new Date()).getFullYear();
+
 
   
     const [bodyCentroMessaggi, setBodyCentroMessaggi] = useState<FilterMessaggi>({
-        anno:currentYear,
+        anno:null,
         mese:null,
         tipologiaDocumento:[],
         letto:null
     });
 
     const [bodyCentroMessaggiOnFiltra, setBodyCentroMessaggiOnFiltra] = useState<FilterMessaggi>({
-        anno:currentYear,
+        anno:null,
         mese:null,
         tipologiaDocumento:[],
         letto:null
     });
 
     const [gridData, setGridData] = useState<Messaggio[]>([]);
-
+    const [getListaLoading, setGetListaLoading] = useState(false);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [countMessaggi, setCountMessaggi] = useState(0);
-    //const [valueAutocomplete, setValueAutocomplete] = useState<string[]>([]);
     const [showDownloading, setShowDownloading] = useState(false);
    
-
     const getMessaggi = async (pa,ro,body) =>{
+        setGetListaLoading(true);
         await getListaMessaggi(token,profilo.nonce,body,pa,ro).then((res)=>{
+            setGetListaLoading(false);
             setGridData(res.data.messaggi);
             setCountMessaggi(res.data.count);
         }).catch((err)=>{
+            setGetListaLoading(false);
             setGridData([]);
             setCountMessaggi(0);
             manageError(err,globalContextObj.dispatchMainState);
+        });
+    };
+    //aggiorna il counter messaggi(icona in alto nell'header a destra)
+    const getCount = async () =>{
+        await getMessaggiCount(token,profilo.nonce).then((res)=>{
+            const numMessaggi = res.data;
+            setCountMessages(numMessaggi);
+        }).catch((err)=>{
+            console.log(err);
         });
     };
 
@@ -128,7 +130,6 @@ const Messaggi : React.FC<any> = () => {
                     saveAs(res,`${item.categoriaDocumento}/${item.tipologiaDocumento}/${month[item.mese-1]}/${item.anno}.zip`);
                     setShowDownloading(false);
                     readMessage(item.idMessaggio);
-                
                 }).catch(((err)=>{
                     setShowDownloading(false);
                     manageError(err,globalContextObj.dispatchMainState);
@@ -136,7 +137,6 @@ const Messaggi : React.FC<any> = () => {
                 }));
         }else if(contentType ==="application/vnd.ms-excel"){
             await downloadMessaggioPagoPaZipExel(token,profilo.nonce, {idMessaggio:item.idMessaggio}).then(response => response.blob()).then((res)=>{
-               
                 saveAs( res,`${item.categoriaDocumento}/${item.tipologiaDocumento}/${month[item.mese-1]}/${item.anno}.xlsx` );
                 setShowDownloading(false);
                 readMessage(item.idMessaggio);
@@ -148,15 +148,10 @@ const Messaggi : React.FC<any> = () => {
         }
     };
 
-
-  
-        
-    
-   
-
     const readMessage = async(id) => {
         await readMessaggioPagoPa(token,profilo.nonce,{idMessaggio:Number(id)}).then(()=>{
             getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra);
+            getCount();
         }).catch((err)=>{
             console.log(err);
             // da aggiungere un messaggio apposito
@@ -166,7 +161,6 @@ const Messaggi : React.FC<any> = () => {
     useEffect(()=>{
         getMessaggi(page+1, rowsPerPage, bodyCentroMessaggi);
     },[]);
-
 
     const handleChangePage = (
         event: React.MouseEvent<HTMLButtonElement> | null,
@@ -208,9 +202,6 @@ const Messaggi : React.FC<any> = () => {
             .substring(0, 3);
     }
 
-    
-
-  
     return (
         <div className="mx-5">
             <div className="marginTop24 ">
@@ -218,61 +209,20 @@ const Messaggi : React.FC<any> = () => {
             </div>
             <div className="mt-5">
                 <div className="row">
-                    <div className="col-3">
-                        <SelectUltimiDueAnni values={bodyCentroMessaggi} setValue={setBodyCentroMessaggi}></SelectUltimiDueAnni>
-                    </div>
                     <div  className="col-3">
-                        <SelectMese values={bodyCentroMessaggi} setValue={setBodyCentroMessaggi}></SelectMese>
-                    </div>
-                    {/* 
-                    <div  className="col-3">
-                        <Box sx={{width:'80%', marginLeft:'20px'}}  >
-                            <Autocomplete
-                                multiple
-                                fullWidth
-                                size="medium"
-                                onChange={(event, value,reason) => {
-                                    setBodyCentroMessaggi((prev:FilterCentroMessaggi) => ({...prev,...{tipologiaDocumento:value}}));
-                                }}
-                                id="checkboxes-tipologie-fatture"
-                                options={['fatturazione','prova']}
-                                value={bodyCentroMessaggi.tipologiaDocumento}
-                                disableCloseOnSelect
-                                getOptionLabel={(option:string) => option}
-                                renderOption={(props, option,{ selected }) =>(
-                                    <li {...props}>
-                                        <Checkbox
-                                            icon={icon}
-                                            checkedIcon={checkedIcon}
-                                            style={{ marginRight: 8 }}
-                                            checked={selected}
-                                        />
-                                        {option}
-                                    </li>
-                                )}
-                                renderInput={(params) => {
-                
-                                    return <TextField {...params}
-                                        label="Tipologia Documento" 
-                                        placeholder="Tipologia Documento" />;
-                                }}
-           
-                            />
-                        </Box>
-                    </div>
-                    */}
-                    <div  className="col-3">
-                        <Box sx={{width:'80%', marginLeft:'20px'}}>
+                        <Box sx={{width:'80%'}}>
                             <FormControl fullWidth>
                                 <InputLabel id="select lettura">Lettura</InputLabel>
                                 <Select
                                     labelId="select-lettura"
                                     id="select-lettura"
-                                    value={bodyCentroMessaggi.letto?.toString()||''}
+                                    value={bodyCentroMessaggi.letto?.toString()||'tutti'}
                                     label="Lettura"
                                     onChange={(e:SelectChangeEvent)=> {
                                         let val;
-                                        if(e.target.value === 'true'){
+                                        if(e.target.value === 'tutti'){
+                                            val = null;
+                                        }else if(e.target.value === 'true'){
                                             val = true;
                                         }else{
                                             val = false;
@@ -280,16 +230,21 @@ const Messaggi : React.FC<any> = () => {
                                         setBodyCentroMessaggi((prev)=>({...prev,...{letto:val}}));
                                     }}
                                 >
+                                    <MenuItem value={'tutti'}>Tutti</MenuItem>
                                     <MenuItem value={'true'}>Si</MenuItem>
                                     <MenuItem value={'false'}>No</MenuItem>
                                 </Select>
                             </FormControl>
                         </Box>
                     </div>
-                    
+                    <div className="col-3">
+                        <SelectUltimiDueAnni values={bodyCentroMessaggi} setValue={setBodyCentroMessaggi}></SelectUltimiDueAnni>
+                    </div>
+                    <div  className="col-3">
+                        <SelectMese values={bodyCentroMessaggi} setValue={setBodyCentroMessaggi}></SelectMese>
+                    </div>
                 </div>
                 <div className="d-flex mt-5">
-                   
                     <Button 
                         onClick={()=>{
                             getMessaggi(1,10,bodyCentroMessaggi);
@@ -305,19 +260,19 @@ const Messaggi : React.FC<any> = () => {
                     <Button
                         onClick={()=>{
                             getMessaggi(1,10,{
-                                anno:currentYear,
+                                anno:null,
                                 mese:null,
                                 tipologiaDocumento:[],
                                 letto: null
                             });
                             setBodyCentroMessaggi({
-                                anno:currentYear,
+                                anno:null,
                                 mese:null,
                                 tipologiaDocumento:[],
                                 letto:null
                             });
                             setBodyCentroMessaggiOnFiltra({
-                                anno:currentYear,
+                                anno:null,
                                 mese:null,
                                 tipologiaDocumento:[],
                                 letto:null
@@ -328,10 +283,8 @@ const Messaggi : React.FC<any> = () => {
                         sx={{marginLeft:'24px'}} >
                    Annulla filtri
                     </Button>
-                    
                 </div>
             </div>
-           
             <div className="mb-5 mt-5">
                 <Box sx={{
                     backgroundColor: "background.paper",
@@ -404,17 +357,13 @@ const Messaggi : React.FC<any> = () => {
                                             {item.stato !== '3' && <ButtonNaked  onClick={()=> downloadMessaggio(item,item.contentType)} disabled={disableDownload} target="_blank" variant="naked" color="primary" weight="light" startIcon={<AttachFileIcon />}>
                 Download documento
                                             </ButtonNaked>}
-                                         
-
                                         </TimelineNotificationContent>
                                     </TimelineNotificationItem>
-                                </div>
-                                
+                                </div> 
                             );
                         })}
                     </TimelineNotification>
                 </Box>
-
                 <div className="pt-3">                           
                     <TablePagination
                         sx={{'.MuiTablePagination-selectLabel': {
@@ -431,16 +380,18 @@ const Messaggi : React.FC<any> = () => {
                         SelectProps={{
                             disabled: false
                         }}
-                       
                     ></TablePagination>
                 </div>
             </div>         
-            <div>
-            </div>
             <ModalLoading 
                 open={showDownloading} 
                 setOpen={setShowDownloading}
                 sentence={'Downloading...'} >
+            </ModalLoading>
+            <ModalLoading 
+                open={getListaLoading} 
+                setOpen={setGetListaLoading}
+                sentence={'Loading...'} >
             </ModalLoading>
         </div>
     );

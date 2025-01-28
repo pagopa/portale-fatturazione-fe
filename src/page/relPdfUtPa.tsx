@@ -34,8 +34,6 @@ const RelPdfPage : React.FC = () =>{
     const navigate = useNavigate();
     const enti = profiliEnti(mainState);
 
-
-   
     const [showDownloading, setShowDownloading] = useState(false);
     const [lastUpdateDocFirmato, setLastUpdateDocFirmato] = useState('');
     const [file, setFile] = useState<File | null>(null);
@@ -69,7 +67,6 @@ const RelPdfPage : React.FC = () =>{
     });
     
     const meseOnDoc = rel?.mese || 0;
-
     useEffect(()=>{
         if(!token){
             window.location.href = redirect;
@@ -80,12 +77,9 @@ const RelPdfPage : React.FC = () =>{
     },[]);
 
     useEffect(()=>{
-        
         if(mainState.relSelected !== null){
             getRel(mainState.relSelected.id);
         }
-        
-        
     },[]);
 
     const downloadRelExel = async() =>{
@@ -100,7 +94,7 @@ const RelPdfPage : React.FC = () =>{
                 const a = document.createElement('a');
                 a.setAttribute('hidden', '');
                 a.setAttribute('href', url);
-                a.setAttribute('download',`Rel / Report di dettaglio / ${ rel?.ragioneSociale} / ${rel?.mese} / ${rel?.anno}.csv`);
+                a.setAttribute('download',`Rel/Report di dettaglio/${ rel?.ragioneSociale}/${rel?.mese}/${rel?.anno}.csv`);
                 document.body.appendChild(a);
                 a.click();
                 setShowDownloading(false);
@@ -119,7 +113,7 @@ const RelPdfPage : React.FC = () =>{
                 const a = document.createElement('a');
                 a.setAttribute('hidden', '');
                 a.setAttribute('href', url);
-                a.setAttribute('download',`Rel / Report di dettaglio / ${ rel?.ragioneSociale} / ${rel?.mese} / ${rel?.anno}.csv`);
+                a.setAttribute('download',`Rel/Report di dettaglio/${ rel?.ragioneSociale}/${rel?.mese}/${rel?.anno}.csv`);
                 document.body.appendChild(a);
                 a.click();
                 setShowDownloading(false);
@@ -158,7 +152,7 @@ const RelPdfPage : React.FC = () =>{
         setShowDownloading(true);
         if(enti){
             await getRelPdfFirmato(token, profilo.nonce, mainState.relSelected.id).then((res)=>{
-                saveAs("data:text/plain;base64," + res.data.documento,`REL firmata / ${ rel?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${rel?.anno}.pdf` );
+                saveAs("data:text/plain;base64," + res.data.documento,`REL firmata/${ rel?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${rel?.anno}.pdf` );
                 setShowDownloading(false);
             }).catch((err)=>{
                 manageError(err,dispatchMainState);
@@ -166,7 +160,7 @@ const RelPdfPage : React.FC = () =>{
             });
         }else{
             await getRelPdfFirmatoPagoPa(token, profilo.nonce, mainState.relSelected.id).then((res)=>{
-                saveAs("data:text/plain;base64," + res.data.documento,`REL firmata / ${ rel?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${rel?.anno}.pdf` );
+                saveAs("data:text/plain;base64," + res.data.documento,`REL firmata/${ rel?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${rel?.anno}.pdf` );
                 setShowDownloading(false);
             }).catch((err)=>{
                 manageError(err,dispatchMainState);
@@ -200,7 +194,7 @@ const RelPdfPage : React.FC = () =>{
         const wrapper = document.getElementById('file_download_rel');
         if(wrapper){
             wrapper.innerHTML = res.data;
-            generatePDF(targetRef, {filename: `Regolare Esecuzione / ${ rel?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${mainState.anno} .pdf`});
+            generatePDF(targetRef, {filename: `Regolare Esecuzione/${ rel?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${rel.anno}.pdf`});
             setShowDownloading(false);
         }
     };
@@ -356,7 +350,7 @@ const RelPdfPage : React.FC = () =>{
                             <Button sx={{width:'274px'}} onClick={() => downloadPdfRel()}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
                         </div>
                         <div id='singleInput' style={{minWidth: '300px', height:'40px'}}>
-                            <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".pdf"]} onFileSelected={(e) => uploadPdf(e)} onFileRemoved={() => setFile(null)} dropzoneLabel={(rel?.caricata === 1 || rel?.caricata === 2) ? 'Reinserisci nuovo PDF Reg. Es. firmato' : "Inserisci PDF Reg. Es. firmato"} rejectedLabel="Tipo file non supportato"  ></SingleFileInput>
+                            <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".pdf"]} onFileSelected={(e) => uploadPdf(e)} onFileRemoved={() => setFile(null)} dropzoneLabel={(rel?.caricata === 1 || rel?.caricata === 2) ? 'Reinserisci nuovo PDF Reg. Es. firmato' : "Inserisci PDF Reg. Es. firmato"} rejectedLabel="Tipo file non supportato" ></SingleFileInput>
                         </div> 
                     </>
                 }

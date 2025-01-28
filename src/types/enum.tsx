@@ -20,5 +20,6 @@ export enum PathPf {
     MESSAGGI = '/messaggi',
     ANAGRAFICAPSP = '/anagraficapsp',
     DOCUMENTICONTABILI = '/documenticontabilipagopa',
-    DETTAGLIO_DOC_CONTABILE = "/dettagliodoccontabile"
+    DETTAGLIO_DOC_CONTABILE = "/dettagliodoccontabile",
+    KPI = '/kpipagamenti'
 }

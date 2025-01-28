@@ -7,38 +7,28 @@ import ModalLoading from "../../components/reusableComponents/modals/modalLoadin
 import { manageError } from "../../api/api";
 import { AutocompleteMultiselect, OptionMultiselectCheckboxQarter, OptionMultiselectCheckboxPsp, } from "../../types/typeAngraficaPsp";
 import { getListaNamePsp } from "../../api/apiPagoPa/anagraficaPspPA/api";
-import { deleteFilterToLocalStorageDocConPA, getFilterPageRowDocConPA, getInfoPageFromLocalStorageDocConPA, getProfilo, getToken, setFilterPageRowDocConPA, setFilterToLocalStorageDocConPA } from "../../reusableFunction/actionLocalStorage";
 import MultiselectWithKeyValue from "../../components/anagraficaPsp/multiselectKeyValue";
-import { RequestBodyListaDocContabiliPagopa } from "../../types/typeDocumentiContabili";
+import { DocContabili, RequestBodyListaDocContabiliPagopa } from "../../types/typeDocumentiContabili";
 import { downloadDocContabili, downloadFinancialReportDocContabili, getListaDocumentiContabiliPa, getQuartersDocContabiliPa, getYearsDocContabiliPa } from "../../api/apiPagoPa/documentiContabiliPA/api";
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import CollapsibleTablePa, { DocContabili } from "../../components/reusableComponents/grid/gridCollapsible/gridCustomCollapsiblePa";
+import CollapsibleTablePa from "../../components/reusableComponents/grid/gridCollapsible/gridCustomCollapsiblePa";
 import { HeaderCollapsible } from "../../types/typeFatturazione";
 import { GlobalContext } from "../../store/context/globalContext";
+import RowBase from "../../components/reusableComponents/grid/gridCollapsible/rowBase";
+import { PathPf } from "../../types/enum";
+import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 
 
 
 
 const DocumentiContabili:React.FC = () =>{
 
-    const localStorageFilters = getInfoPageFromLocalStorageDocConPA();
-    const localStorageFilterPageRow = getFilterPageRowDocConPA();
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState} = globalContextObj;
  
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
-
-
-    const handleModifyMainState = (valueObj) => {
-        dispatchMainState({
-            type:'MODIFY_MAIN_STATE',
-            value:valueObj
-        });
-    };
-
-
 
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -52,14 +42,17 @@ const DocumentiContabili:React.FC = () =>{
         recipientId: '',
         abi: '',
         quarters:[],
-        year:''});
+        year:''
+    });
+
     const [bodyGetLista, setBodyGetLista] = useState<RequestBodyListaDocContabiliPagopa>({
         contractIds:[],
         membershipId: '',
         recipientId: '',
         abi: '',
         quarters:[],
-        year:''});
+        year:''
+    });
    
     const [getListaLoading, setGetListaLoading] = useState(false);
     const [dataSelect, setDataSelect] = useState<OptionMultiselectCheckboxPsp[]>([]);
@@ -67,30 +60,23 @@ const DocumentiContabili:React.FC = () =>{
     const [valueQuarters, setValueQuarters] = useState<OptionMultiselectCheckboxQarter[]>([]);
     const [textValue, setTextValue] = useState<string>('');
     const [valueAutocomplete, setValueAutocomplete] = useState<AutocompleteMultiselect[]>([]);
-
     const [showLoading,setShowLoading] = useState(false);
-
     const [yearOnSelect,setYearOnSelect] = useState<string[]>([]);
-  
-
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-
     const [count, setCount] = useState(0);
     const [dataPaginated,setDataPaginated] = useState<DocContabili[]>([]);
-  
-
+    const { 
+        filters,
+        updateFilters,
+        resetFilters,
+        isInitialRender
+    } = useSavedFilters(PathPf.DOCUMENTICONTABILI,{});
     
-      
-    
-
- 
-  
     useEffect(()=>{
         getYears();
     }, []);
-
-
+   
     useEffect(()=>{
         let from = 0;
         if(page === 0){
@@ -102,12 +88,6 @@ const DocumentiContabili:React.FC = () =>{
     }, [page,rowsPerPage,gridData]);
 
    
-
-   
-
- 
-    
-
     useEffect(()=>{
         if(bodyGetLista.contractIds.length  !== 0 || bodyGetLista.membershipId !== '' || bodyGetLista.recipientId !== ''|| bodyGetLista.abi !== '' || bodyGetLista.quarters.length > 0){
             setStatusAnnulla('show');
@@ -115,9 +95,14 @@ const DocumentiContabili:React.FC = () =>{
             setStatusAnnulla('hidden');
         }
     },[bodyGetLista]);
-
-
    
+    const clearOnChangeFilter = () => {
+        setGridData([]);
+        setPage(0);
+        setRowsPerPage(10);
+        setCount(0);
+    };
+
     useEffect(()=>{
         const timer = setTimeout(() => {
             if(textValue.length >= 3){ 
@@ -128,19 +113,12 @@ const DocumentiContabili:React.FC = () =>{
     },[textValue]);
 
     useEffect(()=>{
-      
-        if(bodyGetLista.year !== '' && localStorageFilters?.body?.year !== bodyGetLista.year){
-            
+        if(bodyGetLista.year !== '' && !isInitialRender.current){
             setValueQuarters([]);
             setBodyGetLista((prev)=>({...prev,...{quarters:[]}}));
+            getQuarters(bodyGetLista.year);
         }
-        getQuarters();
-        
     },[bodyGetLista.year]);
-
-
-
-
 
     const getListaDocGrid = async(body:RequestBodyListaDocContabiliPagopa) =>{
         setGetListaLoading(true);
@@ -152,10 +130,8 @@ const DocumentiContabili:React.FC = () =>{
                 });
                 setGridData(dataWithNewId);
                 setCount(dataWithNewId.length);
-                setGetListaLoading(false);
-                
-            })
-            .catch(((err)=>{
+                setGetListaLoading(false);  
+            }).catch(((err)=>{
                 setGridData([]);
                 setCount(0);
                 setGetListaLoading(false);
@@ -166,65 +142,59 @@ const DocumentiContabili:React.FC = () =>{
 
     // servizio che popola la select con la checkbox
     const listaNamePspOnSelect = async () =>{
-       
         await getListaNamePsp(token, profilo.nonce, {name:textValue} )
             .then((res)=>{
                 setDataSelect(res.data);
-            })
-            .catch(((err)=>{
+            }).catch(((err)=>{
                 manageError(err,dispatchMainState); 
             }));
     };
 
     const getYears = async () =>{
-       
         await getYearsDocContabiliPa(token, profilo.nonce)
             .then((res)=>{
                 setYearOnSelect(res.data);
                 if(res.data.length > 0){
-
-                    if(Object.keys(localStorageFilterPageRow).length > 0){
-                        setPage(localStorageFilterPageRow.page);
-                        setRowsPerPage(localStorageFilterPageRow.rowsPerPage);
-                    }
-                   
-                    if(Object.keys(localStorageFilters).length > 0){
-                        setBodyGetLista(localStorageFilters.body);
-                        setFiltersDownload(localStorageFilters.body);
-                        setValueAutocomplete(localStorageFilters.valueAutocomplete);
-                        setTextValue(localStorageFilters.textValue);
-                        getListaDocGrid(localStorageFilters.body);
-                        setValueQuarters(localStorageFilters.valueQuarters);
+                    if(isInitialRender.current && Object.keys(filters).length > 0){
+                        setBodyGetLista(filters.body);
+                        setFiltersDownload(filters.body);
+                        setValueAutocomplete(filters.valueAutocomplete);
+                        setTextValue(filters.textValue);
+                        getListaDocGrid(filters.body);
+                        setValueQuarters(filters.valueQuarters);
+                        setPage(filters.page);
+                        setRowsPerPage(filters.rows);
+                        getQuarters(filters.body.year);
+                       
                     }else{
                         setBodyGetLista((prev) => ({...prev,...{year:res.data[0]}}));
                         setFiltersDownload((prev) => ({...prev,...{year:res.data[0]}}));
                         getListaDocGrid({...bodyGetLista,...{year:res.data[0]}});
+                        getQuarters(res.data[0]);
+                        
                     }
-                   
                 }
-                
-            })
-            .catch(((err)=>{
+            }).catch(((err)=>{
                 manageError(err,dispatchMainState); 
             }));
     };
 
-    const getQuarters = async () =>{
-       
-        await getQuartersDocContabiliPa(token, profilo.nonce,{year:bodyGetLista.year})
+    const getQuarters = async (y) =>{
+        await getQuartersDocContabiliPa(token, profilo.nonce,{year:y})
             .then((res)=>{
                 setDataSelectQuarter(res.data);
-            })
-            .catch(((err)=>{
+                isInitialRender.current = false;
+            }).catch(((err)=>{
+                isInitialRender.current = false;
+                setValueQuarters([]);
+                setDataSelectQuarter([]);
                 manageError(err,dispatchMainState); 
             }));
     };
 
-    
-    
+
     const onDownloadButton = async() =>{
         setShowLoading(true);
-        
         await downloadDocContabili(token,profilo.nonce, filtersDownload).then(response =>{
             if(response.status !== 200){
                 setShowLoading(false);
@@ -234,10 +204,11 @@ const DocumentiContabili:React.FC = () =>{
             }
         }).then((res) => {
             let fileName = '';
-            if(filtersDownload.contractIds.length === 1 || gridData.length === 1){
-                fileName = `Documenti contabili / ${gridData[0].name}.xlsx`;
+            const stringQuarterSelected = filtersDownload.quarters.map(el => "Q" + el.slice(5)).join("_");
+            if(filtersDownload.contractIds.length === 1){
+                fileName = `Documenti contabili/${gridData[0].name}/${gridData[0].riferimentoData.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
             }else{
-                fileName = `Documenti contabili.xlsx`;
+                fileName = `Documenti contabili/${gridData[0].riferimentoData.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
             }
             saveAs( res,fileName );
             setShowLoading(false);
@@ -256,13 +227,13 @@ const DocumentiContabili:React.FC = () =>{
             }else{
                 return response.blob();
             }
-           
         }).then((res) => {
             let fileName = '';
-            if(filtersDownload.contractIds.length === 1 || gridData.length === 1){
-                fileName = `Financial report PDND /${gridData[0].name}/${gridData[0].riferimentoData.substring(0, 4)}.xlsx`;
+            const stringQuarterSelected = filtersDownload.quarters.map(el => "Q" + el.slice(5)).join("_");
+            if(filtersDownload.contractIds.length === 1){
+                fileName = `Financial report PF/${gridData[0].name}/${gridData[0].riferimentoData.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
             }else{
-                fileName = `Financial report PDND /${gridData[0].riferimentoData.substring(0, 4)}.xlsx`;
+                fileName = `Financial report PF/${gridData[0].riferimentoData.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
             }
             saveAs( res,fileName );
             setShowLoading(false);
@@ -272,19 +243,53 @@ const DocumentiContabili:React.FC = () =>{
     };
 
     const onButtonFiltra = () =>{
+        updateFilters(
+            {
+                body:bodyGetLista,
+                pathPage:PathPf.DOCUMENTICONTABILI,
+                textValue:textValue,
+                valueAutocomplete:valueAutocomplete,
+                valueQuarters:valueQuarters,
+                page:0,
+                rows:10
+            });
         setFiltersDownload(bodyGetLista);
         getListaDocGrid(bodyGetLista); 
         setPage(0);
         setRowsPerPage(10);
-        setFilterPageRowDocConPA(0,10);
-        setFilterToLocalStorageDocConPA(bodyGetLista,textValue,valueAutocomplete,valueQuarters);
-        //handleModifyMainState({filterDocContabili:{body:bodyGetLista,valueAutocomplete:valueAutocomplete, valueQuarters:valueQuarters, infoPage:{page:0,row:10}}});
-        //setFilterToLocalStorageRel(bodyRel,textValue,valueAutocomplete, 0, 10,valuetipologiaFattura);
+    };
+
+    const onUpdateFiltersGrid = (page, rows) => {
+        updateFilters({
+            page:page,
+            rows:rows,
+            pathPage:PathPf.DOCUMENTICONTABILI,
+            body:bodyGetLista,
+            textValue:textValue,
+            valueAutocomplete:valueAutocomplete,
+            valueQuarters:valueQuarters,
+        });
+    };
+
+    const onButtonAnnulla = () => {
+        const newBody = {
+            contractIds:[],
+            membershipId: '',
+            recipientId: '',
+            abi: '',
+            quarters:[],
+            year:yearOnSelect[0]};
+        getListaDocGrid(newBody);
+        setBodyGetLista(newBody);
+        setFiltersDownload(newBody);
+        setDataSelect([]);
+        setValueAutocomplete([]);
+        setValueQuarters([]);
+        setPage(0);
+        setRowsPerPage(10);
+        resetFilters();
     };
    
-                
-    
-
     const headersObjGrid : HeaderCollapsible[] = [
         {name:"",align:"left",id:1},
         {name:"Nome PSP",align:"left",id:2},
@@ -295,8 +300,6 @@ const DocumentiContabili:React.FC = () =>{
         {name:"Arrow",align:"center",id:7},
         {name:"Arrow",align:"center",id:8}];
       
- 
-
     return(
         <div className="mx-5">
             {/*title container start */}
@@ -305,20 +308,8 @@ const DocumentiContabili:React.FC = () =>{
             </div>
             {/*title container end */}
             <div className="row mb-5 mt-5" >
-                <div  className="col-3">
-                    <MultiselectWithKeyValue 
-                        setBodyGetLista={setBodyGetLista}
-                        setValueAutocomplete={setValueAutocomplete}
-                        dataSelect={dataSelect}
-                        valueAutocomplete={valueAutocomplete}
-                        setTextValue={setTextValue}
-                        keyId={"contractId"}
-                        valueId={'name'}
-                        label={"Nome PSP"} 
-                        keyArrayName={"contractIds"}/>
-                </div>
                 <div className="col-3">
-                    <Box sx={{width:'80%',marginLeft:'20px'}} >
+                    <Box sx={{width:'80%'}} >
                         <FormControl
                             fullWidth
                             size="medium"
@@ -332,7 +323,10 @@ const DocumentiContabili:React.FC = () =>{
                                 id="Anno_doc_contabili"
                                 label='Anno'
                                 labelId="search-by-label"
-                                onChange={(e) => setBodyGetLista((prev) => ({...prev,...{year:e.target.value}}))}
+                                onChange={(e) =>{
+                                    clearOnChangeFilter();
+                                    setBodyGetLista((prev) => ({...prev,...{year:e.target.value}}));
+                                }}
                                 value={bodyGetLista.year}
                             >
                                 {yearOnSelect.map((el) => (
@@ -350,10 +344,12 @@ const DocumentiContabili:React.FC = () =>{
                 <div className="col-3">
                     <Autocomplete
                         multiple
+                        limitTags={2}
                         onChange={(event, value) => {
                             const arrayId = value.map(el => el.value);
                             setBodyGetLista((prev) => ({...prev,...{quarters:arrayId}}));
                             setValueQuarters(value);
+                            clearOnChangeFilter();
                         }}
                         id="checkboxes-quarters"
                         options={dataSelectQuarter}
@@ -375,26 +371,25 @@ const DocumentiContabili:React.FC = () =>{
                         )}
                         style={{ width: '80%',height:'59px' }}
                         renderInput={(params) => {
-                
                             return <TextField {...params}
                                 label="Trimestre" 
                                 placeholder="Trimestre" />;
                         }}
-           
                     />
                 </div>
-                <div className="col-3">
-                    <Box sx={{width:'80%',marginLeft:'20px'}} >
-                        <TextField
-                            fullWidth
-                            label='ABI'
-                            placeholder='ABI'
-                            value={bodyGetLista.abi}
-                            onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{abi:e.target.value}}))}            
-                        />
-                    </Box>
+                <div  className="col-3">
+                    <MultiselectWithKeyValue 
+                        setBodyGetLista={setBodyGetLista}
+                        setValueAutocomplete={setValueAutocomplete}
+                        clearOnChangeFilter={clearOnChangeFilter}
+                        dataSelect={dataSelect}
+                        valueAutocomplete={valueAutocomplete}
+                        setTextValue={setTextValue}
+                        keyId={"contractId"}
+                        valueId={'name'}
+                        label={"Nome PSP"} 
+                        keyArrayName={"contractIds"}/>
                 </div>
-               
             </div>
             <div className="row mb-5 mt-5" >
                 <div className="col-3">
@@ -404,74 +399,58 @@ const DocumentiContabili:React.FC = () =>{
                             label='Membership ID'
                             placeholder='Membership ID'
                             value={bodyGetLista.membershipId}
-                            onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{membershipId:e.target.value}}))}            
+                            onChange={(e) =>{
+                                clearOnChangeFilter();
+                                setBodyGetLista((prev)=> ({...prev, ...{membershipId:e.target.value}}));
+                            }}            
                         />
                     </Box>
                 </div>
                 <div className="col-3">
-                    <Box sx={{width:'80%',marginLeft:'20px'}} >
+                    <Box sx={{width:'80%'}} >
                         <TextField
                             fullWidth
                             label='Recipient ID'
                             placeholder='Recipient ID'
                             value={bodyGetLista.recipientId}
-                            onChange={(e) =>  setBodyGetLista((prev)=> ({...prev, ...{recipientId:e.target.value}}))}            
+                            onChange={(e) =>{
+                                clearOnChangeFilter();
+                                setBodyGetLista((prev)=> ({...prev, ...{recipientId:e.target.value}}));} }             
+                        />
+                    </Box>
+                </div>
+                <div className="col-3">
+                    <Box sx={{width:'80%'}} >
+                        <TextField
+                            fullWidth
+                            label='Codice ABI'
+                            placeholder='Codice ABI'
+                            value={bodyGetLista.abi}
+                            onChange={(e) =>{
+                                clearOnChangeFilter();
+                                setBodyGetLista((prev)=> ({...prev, ...{abi:e.target.value}}));} 
+                            }             
                         />
                     </Box>
                 </div>
             </div>
             <div className="d-flex" >
-              
                 <div className=" d-flex justify-content-center align-items-center">
                     <div>
                         <Button 
-                            onClick={()=> {
-                                /* getListaDatifatturazione(bodyGetLista);
-                                setInfoPageListaDatiFat({ page: 0, pageSize: 100 });
-                                setFiltersDownload(bodyGetLista);
-                                setFilterToLocalStorage(bodyGetLista,textValue,valueAutocomplete);
-                                setInfoPageToLocalStorage({ page: 0, pageSize: 100 }); */
-                                //getListaAnagraficaPspGrid(bodyGetLista,page,rowsPerPage);
-                                onButtonFiltra();
-                            } } 
+                            onClick={onButtonFiltra} 
                             sx={{ marginTop: 'auto', marginBottom: 'auto'}}
                             variant="contained"> Filtra
                         </Button>
                         {statusAnnulla === 'hidden'? null :
                             <Button
-                                onClick={()=>{
-                                    const newBody = {
-                                        contractIds:[],
-                                        membershipId: '',
-                                        recipientId: '',
-                                        abi: '',
-                                        quarters:[],
-                                        year:yearOnSelect[0]};
-                                    getListaDocGrid(newBody);
-                                    setBodyGetLista(newBody);
-                                    setFiltersDownload(newBody);
-                                    setDataSelect([]);
-                                    setValueAutocomplete([]);
-                                    setValueQuarters([]);
-                                    setPage(0);
-                                    setRowsPerPage(10);
-                                    deleteFilterToLocalStorageDocConPA();
-                                    /*setBodyGetLista({idEnti:[],prodotto:'',profilo:''});
-                                    setInfoPageListaDatiFat({ page: 0, pageSize: 100 });
-                                    setInfoPageToLocalStorage({ page: 0, pageSize: 100 });
-                                    getListaDatifatturazione({idEnti:[],prodotto:'',profilo:''});
-                                    setFiltersDownload({idEnti:[],prodotto:'',profilo:''});
-                                    setDataSelect([]);
-                                    setValueAutocomplete([]);
-                                    deleteFilterToLocalStorage();*/
-                                } }
+                                onClick={onButtonAnnulla}
                                 sx={{marginLeft:'24px'}} >
                         Annulla filtri
                             </Button>}
                     </div>
                 </div>
             </div>
-            {/* grid */}
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
                 {
                     gridData.length > 0 &&
@@ -481,10 +460,8 @@ const DocumentiContabili:React.FC = () =>{
                 Download Financial Report
                             <DownloadIcon sx={{marginLeft:'10px'}}></DownloadIcon>
                         </Button>
-                        <Button onClick={() =>
-                            onDownloadButton()
-                        }
-                        disabled={getListaLoading}
+                        <Button onClick={onDownloadButton}
+                            disabled={getListaLoading}
                         >
                 Download Risultati
                             <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
@@ -492,7 +469,7 @@ const DocumentiContabili:React.FC = () =>{
                     </>
                 }
             </div>
-            <div className="mt-1 mb-5" style={{ width: '100%'}}>
+            <div className="mt-1 mb-5">
                 <CollapsibleTablePa 
                     headerNames={headersObjGrid}
                     setPage={setPage}
@@ -501,6 +478,9 @@ const DocumentiContabili:React.FC = () =>{
                     setRowsPerPage={setRowsPerPage}
                     count={count}
                     dataPaginated={dataPaginated}
+                    RowComponent={RowBase}
+                    updateFilters={onUpdateFiltersGrid}
+                    body={filtersDownload}
                 ></CollapsibleTablePa>
             </div>
             <div>
@@ -509,6 +489,11 @@ const DocumentiContabili:React.FC = () =>{
                 open={showLoading} 
                 setOpen={setShowLoading}
                 sentence={'Downloading...'} >
+            </ModalLoading>
+            <ModalLoading 
+                open={getListaLoading} 
+                setOpen={setGetListaLoading}
+                sentence={'Loading...'} >
             </ModalLoading>
         </div>
     );
