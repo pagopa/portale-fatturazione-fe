@@ -80,7 +80,7 @@ const HeaderPostLogin = () => {
     };
 
     const statusUser = mainState.authenticated && user;
-    console.log(window.location.href,'???');
+
     return (
 
         <div className="div_header">

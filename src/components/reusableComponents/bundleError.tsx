@@ -7,7 +7,6 @@ function  BundleError({ error, resetErrorBoundary }){
   
     const profile = localStorage.getItem('globalState') || '{}';
     const result =  JSON.parse(profile);
-    console.log(result);
 
     let line1 = error.message;
     let line2 = '';
@@ -224,8 +223,8 @@ function  BundleError({ error, resetErrorBoundary }){
     };
   
     
-    const redirectAssistenza = process.env.REACT_REDIRECT_ASSISTENZA||'';
-    console.log(redirectAssistenza,'ciao');
+
+
 
     return  ( <ThemeProvider theme={theme}>
         <div className="div_header">
@@ -233,11 +232,11 @@ function  BundleError({ error, resetErrorBoundary }){
                 rootLink={pagoPALinkHeader}
                 enableLogin={false}
                 onAssistanceClick={() => {
-                    console.log('1');
+             
                     if(result.profilo.auth === 'PAGOPA'){
                         window.open(`mailto:fatturazione@assistenza.pagopa.it`);
                     }else{
-                        console.log('3');
+        
                         window.location.href = "https://uat.selfcare.pagopa.it/assistenza?productId=prod-pf";
                         localStorage.clear(); 
                     }

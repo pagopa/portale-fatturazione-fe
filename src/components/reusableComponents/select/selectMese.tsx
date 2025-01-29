@@ -27,7 +27,10 @@ const SelectMese : React.FC<SelectMeseProps> = ({setValue, values, getTipologia,
                         if(getTipologia){
                             getTipologia(e.target.value, values.anno);
                         }
-                        clearOnChangeFilter();
+                        if(clearOnChangeFilter){
+                            clearOnChangeFilter();
+                        }
+                        
                         
                     }}         
                     value={values.mese||''}             

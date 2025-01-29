@@ -19,7 +19,9 @@ const SelectUltimiDueAnni : React.FC<SelectUltimiDueAnniProps> = ({setValue, val
                     label='Seleziona Anno'
                     labelId="Anno mess"
                     onChange={(e) => {
-                        clearOnChangeFilter();  
+                        if(clearOnChangeFilter){
+                            clearOnChangeFilter(); 
+                        }
                         const value = Number(e.target.value);
                         setValue((prev)=> ({...prev, ...{anno:value}}));
                         if(getTipologia){

@@ -21,7 +21,7 @@ const HeaderLogEnte = () => {
     
 
     function onEmailClick() {
-        console.log( assistenza,'??');
+
         window.location.href = process.env.REACT_APP_REDIRECT_ASSISTENZA ||'';
     }
   

@@ -76,8 +76,6 @@ const ModuloCommessaPdf : React.FC = () =>{
         ]
     });
 
-    console.log({dataPdf});
-
     useEffect(()=>{
     
         if(profilo.auth === 'PAGOPA'){
@@ -101,7 +99,6 @@ const ModuloCommessaPdf : React.FC = () =>{
         let secondo = res.data.datiModuloCommessa.find((obj:DatiCommessaPdf)=>obj.idTipoSpedizione === 1);
         let terzo = res.data.datiModuloCommessa.find((obj:DatiCommessaPdf)=>obj.idTipoSpedizione === 2);
         let quarto = res.data.datiModuloCommessa.find((obj:DatiCommessaPdf)=>obj.idTipoSpedizione === 0);
-        console.log(primo, secondo, terzo, quarto);
         if(primo === undefined){
             primo = {
                 totaleNotifiche: 0,
@@ -165,7 +162,6 @@ const ModuloCommessaPdf : React.FC = () =>{
         setShowLoadingDettaglio(true);
         getModuloCommessaPagoPaPdf(token, profilo.nonce,mainState.mese,mainState.anno,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto)
             .then((res)=>{
-                console.log(res.data);
                 toDoOnGetPdfSelfcarePagopa(res);
                 setShowLoadingDettaglio(false);
             }).catch((err)=>{
