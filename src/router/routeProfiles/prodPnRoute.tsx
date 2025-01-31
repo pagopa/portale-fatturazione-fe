@@ -13,15 +13,12 @@ import RelPdfPage from "../../page/relPdfUtPa";
 import RelPage from "../../page/relUtPa";
 import ReportDettaglio from "../../page/reportDettaglioUtPa";
 import { PathPf } from "../../types/enum";
-import SideNavComponent from "../../layout/sideNav";
 import LayoutAzure from "../../layout/layOutLoggedInAzure";
-
+import SideNavSend from "../../layout/sideNavs/sideNavSend";
+import PageTipologiaContratto from "../../page/tipologiaContratto";
 
 const ProdPnRoute = () => {
-
-  
-
-    const prodPnRoute =  <Route element={<LayoutAzure  sideNav={<SideNavComponent />}></LayoutAzure >}>
+    const prodPnRoute =  <Route element={<LayoutAzure  sideNav={<SideNavSend />}></LayoutAzure >}>
         <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte />} />
         <Route path={PathPf.LISTA_MODULICOMMESSA} element={<PagoPaListaModuliCommessa/>}/>
         <Route path={PathPf.MODULOCOMMESSA} element={<ModuloCommessaInserimentoUtEn30/>} />
@@ -34,6 +31,8 @@ const ProdPnRoute = () => {
         <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio />} />
         <Route path={'/messaggi'} element={<Messaggi />} />
         <Route path={'/accertamenti'} element={<Accertamenti/>} />
+        <Route path={PathPf.TIPOLOGIA_CONTRATTO} element={<PageTipologiaContratto/>} />
+        
     </Route>;
     return prodPnRoute;
 };

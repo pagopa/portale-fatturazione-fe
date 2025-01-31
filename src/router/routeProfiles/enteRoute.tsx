@@ -1,6 +1,4 @@
-import { useContext, useEffect } from "react";
 import {  Route} from "react-router-dom";
-import { GlobalContext } from "../../store/context/globalContext";
 import AreaPersonaleUtenteEnte from "../../page/areaPersonaleUtenteEnte";
 import ModuloCommessaElencoUtPa from "../../page/moduloCommessaElencoUtPa";
 import ModuloCommessaInserimentoUtEn30 from "../../page/moduloCommessaInserimentoUtEn30";
@@ -9,14 +7,12 @@ import RelPdfPage from "../../page/relPdfUtPa";
 import RelPage from "../../page/relUtPa";
 import ReportDettaglio from "../../page/reportDettaglioUtPa";
 import { PathPf } from "../../types/enum";
-import SideNavComponent from "../../layout/sideNav";
 import LayoutEnte from "../../layout/layOutLoggedInEnte";
+import SideNavEnte from "../../layout/sideNavs/sidNavEnte";
 
 const EnteRoute = () => {
 
- 
-   
-    const enteRoute =  <Route element={<LayoutEnte sideNav={<SideNavComponent/>}></LayoutEnte>}>
+    const enteRoute =  <Route element={<LayoutEnte sideNav={<SideNavEnte/>}></LayoutEnte>}>
         <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte ></AreaPersonaleUtenteEnte>}/>                                     
         <Route path={PathPf.LISTA_COMMESSE} element={<ModuloCommessaElencoUtPa  />} />           
         <Route path={PathPf.MODULOCOMMESSA} element={<ModuloCommessaInserimentoUtEn30 />} />                 

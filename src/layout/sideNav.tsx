@@ -23,7 +23,7 @@ import { getDatiModuloCommessa } from '../api/apiSelfcare/moduloCommessaSE/api';
 import { profiliEnti } from '../reusableFunction/actionLocalStorage';
 import { PathPf } from '../types/enum';
 
-
+//VECCHIA LOGICA , UNA VOLTA TESTATO CANCELLARE IL COMPONENTE
 const SideNavComponent: React.FC = () => {
 
     const globalContextObj = useContext(GlobalContext);
