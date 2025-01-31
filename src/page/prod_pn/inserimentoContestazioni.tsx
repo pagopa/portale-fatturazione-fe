@@ -367,7 +367,7 @@ const InserimentoContestazioni = () =>{
                 {(body.contractId !== '' && arrayReacpCon.length > 0) &&
                     <div  id='singleInput' className="d-flex justify-content-end marginTop24   mt-3">
                         <div style={{minWidth:'250px'}}>
-                            <SingleFileInput  value={file} accept={[".csv,.xlsx"]} onFileSelected={handleSelect} onFileRemoved={handleRemove} dropzoneLabel="Trascina il tuo file.csv" dropzoneButton="" rejectedLabel="Tipo di file non supportato" />
+                            <SingleFileInput  value={file} accept={[".csv,.xlsx"]} onFileSelected={handleSelect} onFileRemoved={handleRemove} dropzoneLabel="Trascina il tuo file.csv" rejectedLabel="Tipo di file non supportato" />
                         </div>
                     </div>
                 }

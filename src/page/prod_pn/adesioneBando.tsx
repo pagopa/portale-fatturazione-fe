@@ -147,7 +147,7 @@ const AdesioneBando = () => {
                         </Button>
                     </div>
                     <div id='singleInput' style={{minWidth: '400px', height:'40px'}}>
-                        <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".xlsx"]} onFileSelected={(e) => uploadAdesioneDoc(e)} onFileRemoved={() => setFile(null)} dropzoneLabel={"Inserisci il File di Adesione al bando"} rejectedLabel="Tipo file non supportato" dropzoneButton="" ></SingleFileInput>
+                        <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".xlsx"]} onFileSelected={(e) => uploadAdesioneDoc(e)} onFileRemoved={() => setFile(null)} dropzoneLabel={"Inserisci il File di Adesione al bando"} rejectedLabel="Tipo file non supportato" ></SingleFileInput>
                     </div> 
                 </div>
                 
