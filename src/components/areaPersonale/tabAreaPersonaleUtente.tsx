@@ -161,10 +161,29 @@ const TabAreaPersonaleUtente = ({mainState,datiFatturazione,setDatiFatturazione,
                 </div>
                 {/* secondo box   end */}
                 {/* terzo box   start */}
-                <div className="mt-3">
-                    <DynamicInsert status={mainState?.statusPageDatiFatturazione} arrElement={datiFatturazione.contatti} setData={setDatiFatturazione} mainState={mainState} datiFatturazione={datiFatturazione}/>
-                </div>
-                {/* terzo box   end */}
+                <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 2fr)', marginTop: '30px' }}>
+                    <Box sx={{ display: 'grid' }}>
+               
+                        <DynamicInsert status={mainState?.statusPageDatiFatturazione} arrElement={datiFatturazione.contatti} setData={setDatiFatturazione} mainState={mainState} datiFatturazione={datiFatturazione}/>
+                
+                    </Box>
+                    <Box sx={{ display: 'grid'}}>
+                        <TextFieldComponent
+                            required
+                            helperText="È il codice univoco necessario per ricevere le fatture elettroniche. Può essere del tuo ente o della sua Unità organizzativa di riferimento.(max 7 caratteri alfanumerici)"
+                            label="Codice univoco o SDI"
+                            placeholder="Codice univoco o SDI"
+                            fullWidth={false}
+                            value={datiFatturazione.codiceSDI||''}
+                            keyObject='codiceSDI'
+                            dataValidation={{max:7,validation:'Max 7 caratteri alfanumerici'}}
+                            mainState={mainState}
+                            setDatiFatturazione={setDatiFatturazione}
+                            setStatusButtonConferma={setStatusButtonConferma}
+                            datiFatturazione={datiFatturazione}
+                        />
+                    </Box>
+                </Box>
                 {/*checkbox start */}
                 <div className='d-flex marginTop24'>
                     <Typography sx={{marginRight:'10px', color:colorAsterisco}}  variant="h6">*</Typography>

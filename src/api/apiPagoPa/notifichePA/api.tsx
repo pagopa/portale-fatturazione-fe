@@ -84,6 +84,16 @@ export const getAnniContestazioni = async (token:string, nonce:string) => {
     return response;
 };
 
+export const getAnniNotifiche = async (token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/notifiche/anni?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
 export const getMesiContestazioni = async (token:string, nonce:string , anno:string) => {
     const response =  await axios.post(`${url}/api/notifiche/pagopa/contestazioni/mesi?nonce=${nonce}`,
         {anno},
@@ -122,7 +132,6 @@ export const uploadContestazioniAzure = async (token:string, nonce:string , form
 };
 
 export const recapContestazioniAzure = async (token:string, nonce:string , body:BodyContestazionePage) => {
-
     const response =  await axios.post(`${url}/api/notifiche/pagopa/contestazioni/recap?nonce=${nonce}`,
         body,
         { headers: {
@@ -134,3 +143,13 @@ export const recapContestazioniAzure = async (token:string, nonce:string , body:
     return response;
 };
 
+export const getMesiNotifiche = async (token:string, nonce:string , body:{anno:string}) => {
+    const response =  await axios.post(`${url}/api/notifiche/mesi?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token,
+        },
+        }
+    );
+    return response;
+};

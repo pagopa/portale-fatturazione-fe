@@ -17,7 +17,6 @@ export const manageError = (res:ManageErrorResponse,dispatchMainState) =>{
         handleModifyMainState({apiError:res.response.request.status});
         
     }else if(res?.response?.request?.status === 404){
-
         handleModifyMainState({apiError:res.response.request.status});
     }else if(res?.response?.request?.status   === 419){
         handleModifyMainState({apiError:res.response.request.status});
@@ -70,7 +69,7 @@ export const managePresaInCarico = (res:string,dispatchMainState) =>{
 };
 
 export const manageStringMessage = (res:string,dispatchMainState) =>{
-
+    console.log({res});
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
             type:'MODIFY_MAIN_STATE',
@@ -80,6 +79,8 @@ export const manageStringMessage = (res:string,dispatchMainState) =>{
     handleModifyMainState({apiError:res});
     
 };
+
+
 
 
 
@@ -119,3 +120,12 @@ export const getTipologiaProfilo = async (token:string, nonce:string) => {
     );
     return response;
 };
+
+export const getManuale = async () => {
+
+    const response =  await fetch(`${url}/api/tipologia/manuale/download`);
+    return response;
+};
+
+
+

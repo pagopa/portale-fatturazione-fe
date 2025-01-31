@@ -14,7 +14,7 @@ import { flagContestazione } from '../../api/apiSelfcare/notificheSE/api';
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
-const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({ setBodyGetLista, setValueFgContestazione, valueFgContestazione, dispatchMainState,mainState}) => {
+const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({ setBodyGetLista, setValueFgContestazione, valueFgContestazione, dispatchMainState,mainState,clearOnChangeFilter}) => {
 
 
     const token =  mainState.profilo.jwt;
@@ -46,6 +46,7 @@ const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({ 
                 const arrayIdContestazioni = value.map(obj=> obj.id);
                 setValueFgContestazione(value);
                 setBodyGetLista((prev:BodyListaNotifiche) => ({...prev,...{statoContestazione:arrayIdContestazioni}}));
+                clearOnChangeFilter();
                 
             }}
             value={valueFgContestazione}

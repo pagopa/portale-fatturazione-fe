@@ -5,6 +5,7 @@ import {InteractionStatus,
 } from "@azure/msal-browser";
 
 import { GlobalContext } from "../store/context/globalContext";
+import Loader from "../components/reusableComponents/loader";
 
 //Pagina di accesso con l'autenticazione AZURE
 
@@ -15,6 +16,41 @@ const Azure : React.FC<any> = () =>{
     /*if(checkIfUserIsAutenticated === 'PAGOPA'){
         navigate(PathPf.LISTA_DATI_FATTURAZIONE);
     }*/
+
+    const handleModifyMainState = (valueObj) => {
+        globalContextObj.dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
+
+
+    useEffect(()=>{
+        handleModifyMainState({
+            authenticated:false,
+            profilo:{},
+            prodotti:[],
+            mese:'',
+            anno:'',
+            nomeEnteClickOn:'',
+            datiFatturazione:false,// l'ente ha i dati di fatturazione?
+            userClickOn:undefined, // se l'utente clicca su un elemento di lista commesse setto GRID
+            inserisciModificaCommessa:undefined, // INSERT MODIFY  se il sevizio get commessa mi restituisce true []
+            primoInserimetoCommessa:true,// la commessa mese corrente è stata inserita?
+            statusPageDatiFatturazione:'immutable',
+            statusPageInserimentoCommessa:'immutable',
+            relSelected:{
+                nomeEnteClickOn:'',
+                mese:0,
+                anno:0,
+                idElement:''
+            },
+            apiError:null,
+            badgeContent:0,
+            messaggioSelected:null
+        });
+    
+    },[]);
 
     const { instance, inProgress, accounts } = useMsal();
 
@@ -33,6 +69,11 @@ const Azure : React.FC<any> = () =>{
 
     return (
         <>
+            <div className="d-flex justify-content-center align-items-center" style={{height: '100vh'}}>
+                <div id='loader_on_gate_pages'>
+                    <Loader sentence={'Autenticazione in corso...'}></Loader> 
+                </div>
+            </div>
         </>
     );
 };

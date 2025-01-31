@@ -85,7 +85,7 @@ export const fattureTipologiaSapPa = async (token:string, nonce:string, body:{an
     return response;
 };
 
-export const fattureInvioSapPa = async (token:string, nonce:string, body:{annoRiferimento: number,meseRiferimento: number,tipologiaFattura: string}) => {
+export const fattureInvioSapPa = async (token:string, nonce:string, body:{annoRiferimento:number,meseRiferimento: number,tipologiaFattura: string}) => {
     const response =  await axios.post(`${url}/api/fatture/invio/pipeline?nonce=${nonce}`,
         body,
         { headers: {
@@ -97,6 +97,25 @@ export const fattureInvioSapPa = async (token:string, nonce:string, body:{annoRi
 
 export const fattureResetSapPa = async (token:string, nonce:string, body:{annoRiferimento: number,meseRiferimento: number,tipologiaFattura: string}) => {
     const response =  await axios.post(`${url}/api/fatture/resetta/pipeline?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }}
+    );
+    return response;
+};
+
+export const getAnniDocEmessiPagoPa = async (token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/fatture/anni?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+};
+
+export const getMesiDocEmessiPagoPa = async (token:string, nonce:string, body:{anno: string}) => {
+    const response =  await axios.post(`${url}/api/fatture/mesi?nonce=${nonce}`,
         body,
         { headers: {
             Authorization: 'Bearer ' + token

@@ -13,7 +13,7 @@ import MultiSelectStatoContestazione from "../../components/reportDettaglio/mult
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import ModalScadenziario from "../../components/reportDettaglio/modalScadenziario";
 import { downloadNotifche, downloadNotifcheConsolidatore, downloadNotifcheRecapitista, getContestazione, getContestazioneCosolidatore, getContestazioneRecapitista, listaEntiNotifichePage, listaEntiNotifichePageConsolidatore, listaNotifiche, listaNotificheConsolidatore, listaNotificheRecapitista } from "../../api/apiSelfcare/notificheSE/api";
-import { downloadNotifchePagoPa, getContestazionePagoPa, getTipologiaEntiCompletiPagoPa, listaNotifichePagoPa } from "../../api/apiPagoPa/notifichePA/api";
+import { downloadNotifchePagoPa, getAnniNotifiche, getContestazionePagoPa, getMesiNotifiche, getTipologiaEntiCompletiPagoPa, listaNotifichePagoPa } from "../../api/apiPagoPa/notifichePA/api";
 import { getTipologiaProdotto } from "../../api/apiSelfcare/moduloCommessaSE/api";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalRedirect from "../../components/commessaInserimento/madalRedirect";
@@ -23,10 +23,16 @@ import { getCurrentFinancialYear } from "../../reusableFunction/function";
 import { GlobalContext } from "../../store/context/globalContext";
 import { useNavigate } from "react-router";
 import { PathPf } from "../../types/enum";
+import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 
 const ReportDettaglio : React.FC = () => {
     const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState, mainState} = globalContextObj;
+    const {
+        dispatchMainState,
+        mainState,
+        setOpenModalInfo,
+        openModalInfo
+    } = globalContextObj;
 
     const enti = profiliEnti(mainState);
     const token =  mainState.profilo.jwt;
@@ -42,7 +48,6 @@ const ReportDettaglio : React.FC = () => {
     const [notificheList, setNotificheList] = useState<NotificheList[]>([]);
     const [textValue, setTextValue] = useState('');
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
-    
     const [listaRecapitista, setListaRecapitisti] = useState<ListaRecCon[]>([]);
     const [listaConsolidatori, setListaConsolidatori] = useState<ListaRecCon[]>([]);
     const [getNotificheWorking, setGetNotificheWorking] = useState(false);
@@ -82,7 +87,6 @@ const ReportDettaglio : React.FC = () => {
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
     const [valueFgContestazione, setValueFgContestazione] = useState<FlagContestazione[]>([]);       
     const [open, setOpen] = useState(false);
-    const [openModalInfo, setOpenModalInfo] = useState(false);
     const [showLoading, setShowLoading] = useState(false);
     const [showLoadingGrid, setShowLoadingGrid] = useState(false);
     const [showModalScadenziario, setShowModalScadenziario ] = useState(false);   
@@ -90,8 +94,8 @@ const ReportDettaglio : React.FC = () => {
     const [bodyGetLista, setBodyGetLista] = useState<BodyListaNotifiche>({
         profilo:'',
         prodotto:'',
-        anno:currentYear,
-        mese:currString, 
+        anno:0,
+        mese:0, 
         tipoNotifica:null,
         statoContestazione:[],
         cap:null,
@@ -104,8 +108,8 @@ const ReportDettaglio : React.FC = () => {
     const [bodyDownload, setBodyDownload] = useState<BodyListaNotifiche>({
         profilo:'',
         prodotto:'',
-        anno:currentYear,
-        mese:currString, 
+        anno:0,
+        mese:0, 
         tipoNotifica:null,
         statoContestazione:[],
         cap:null,
@@ -143,41 +147,95 @@ const ReportDettaglio : React.FC = () => {
             mese: 0
         }
     });
+    const [arrayAnni,setArrayAnni] = useState<number[]>([]);
+    const [arrayMesi,setArrayMesi] = useState<{mese:number,descrizione:string}[]>([]);
+    const { 
+        filters,
+        updateFilters,
+        resetFilters,
+        isInitialRender
+    } = useSavedFilters(PathPf.LISTA_NOTIFICHE,{});
 
-   
-  
     useEffect(() => {
-       
-        const result = getFiltersFromLocalStorageNotifiche();
-        
-        getProdotti();
-        if(Object.keys(result).length > 0 ){
-       
-            getProfili();
-            setBodyGetLista(result.bodyGetLista);
-            setTextValue(result.textValue);
-            setValueAutocomplete(result.valueAutocomplete);
-            setValueFgContestazione(result.valueFgContestazione);
-            setPage(result.page);
-            setRowsPerPage(result.rowsPerPage);
-            setBodyDownload(result.bodyGetLista);
-
-            if(profilo.auth === 'SELFCARE' && mainState.datiFatturazione === true){
-                getlistaNotifiche( result.page + 1, result.rowsPerPage,result.bodyGetLista); 
-            }else if(profilo.auth === 'PAGOPA'){
-                getRecapitistConsolidatori();
-                getlistaNotifichePagoPa( result.page + 1, result.rowsPerPage,result.bodyGetLista);
-            }
+        if(isInitialRender.current && Object.keys(filters).length > 0){
+            funInitialRender(filters.body, true);
+            
         }else{
-            if(profilo.auth === 'SELFCARE' && mainState.datiFatturazione === true){
-                getlistaNotifiche( page + 1, rowsPerPage,bodyGetLista); 
-            }else if(profilo.auth === 'PAGOPA'){
-                getRecapitistConsolidatori();
-                getlistaNotifichePagoPa( page + 1, rowsPerPage,bodyGetLista);
-            }
+            funInitialRender(bodyGetLista, false);
+            isInitialRender.current = false;
         }
-        
+
     }, []);
+
+    useEffect(()=>{
+        if((bodyGetLista.anno !== 0) && (!isInitialRender.current)){
+            getMesi(bodyGetLista.anno.toString());
+        }
+    },[bodyGetLista.anno]);
+   
+
+    const funInitialRender = async(newBody, dataFromLocalStorage) => {
+        setGetNotificheWorking(true);
+        getProdotti();
+        getProfili();
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const {idEnti, recapitisti, consolidatori, ...body} = newBody;
+        await getAnniNotifiche(token, profilo.nonce).then(async(resAnno)=> {
+            const allYearToNumber = resAnno.data.map( el => Number(el));
+            let annoToSet = resAnno.data[0];
+            if(dataFromLocalStorage){
+                annoToSet = filters.body.anno;
+            }
+            setArrayAnni(allYearToNumber);
+            if(resAnno.data.length > 0){
+                await getMesiNotifiche(token, profilo.nonce,{anno:annoToSet?.toString()}).then(async(resMese)=> {
+                    /*const makeCamelCaseMonth = res.data.map(el =>{
+                el.descrizione = el.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase();
+                return el;
+            } );*/
+                    setArrayMesi(resMese.data);
+                    let meseToSet = resMese.data[0].mese;
+                    if(dataFromLocalStorage){
+                        meseToSet = filters.body.mese;
+                    }
+                    let page = 1;
+                    let row = 10;
+                  
+                    // reset del body sia list che download
+                    setBodyGetLista({...newBody,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
+                    setBodyDownload({...newBody,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
+                    if(dataFromLocalStorage){
+                        setTextValue(filters.textAutocomplete);
+                        setValueAutocomplete(filters.valueAutocomplete);
+                        setValueFgContestazione(filters.valueFgContestazione);
+                        setPage(filters.page);
+                        setRowsPerPage(filters.rows);
+    
+                        meseToSet = filters.body.mese;
+                        page = filters.page + 1;
+                        row = filters.rows;
+                    }
+
+                    if(profilo.auth === 'SELFCARE' && mainState.datiFatturazione === true){
+                        await getlistaNotifiche( page, row,{...body,...{mese:Number(meseToSet),anno:Number(annoToSet)}}); 
+                    }else if((profilo.auth === 'SELFCARE') && (profilo.profilo === 'CON' || profilo.profilo === 'REC')){
+                        await getlistaNotifiche( page, row,{...body,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
+                    }else if(profilo.auth === 'PAGOPA'){
+                        await getlistaNotifichePagoPa( page, row,{...newBody,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
+                        await getRecapitistConsolidatori();
+                    }
+                }).catch((err)=>{
+                    manageError(err,dispatchMainState);
+                    setGetNotificheWorking(false);
+                });
+            }
+           
+        //getire l'assenza di mesi
+        }).catch((err)=>{
+            setGetNotificheWorking(false);
+            manageError(err,dispatchMainState);
+        });
+    };
 
     useEffect(()=>{
         if( 
@@ -187,8 +245,8 @@ const ReportDettaglio : React.FC = () => {
                     bodyGetLista.statoContestazione.length !== 0 ||
                     bodyGetLista.cap !== null ||
                     bodyGetLista.idEnti?.length !== 0 ||
-                    bodyGetLista.mese !== currString ||
-                    bodyGetLista.anno !== currentYear||
+                    bodyGetLista.mese !== Number(arrayMesi[0]?.mese) ||
+                    bodyGetLista.anno !== arrayAnni[0]||
                     bodyGetLista.recipientId !== null ||
                     bodyGetLista.consolidatori?.length !== 0 ||
                     bodyGetLista.recapitisti?.length !== 0  
@@ -199,43 +257,54 @@ const ReportDettaglio : React.FC = () => {
         }
     },[bodyGetLista]);
 
+    
+
     useEffect(()=>{
         if((mainState.datiFatturazione === false || mainState.datiFatturazioneNotCompleted) && enti){
             setOpenModalRedirect(true);
         }
     },[]);
 
-    
-   
     useEffect(()=>{
         const timer = setTimeout(() => {
-            if(textValue.length >= 3){
+            if(textValue?.length >= 3){
                 listaEntiNotifichePageOnSelect();
             }
         }, 800);
         return () => clearTimeout(timer);
     },[textValue]);
 
+    const getMesi = async (anno) => {
+        await getMesiNotifiche(token, profilo.nonce,{anno}).then((res)=> {
+            /*const makeCamelCaseMonth = res.data.map(el =>{
+                el.descrizione = el.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase();
+                return el;
+            } );*/
+            setArrayMesi(res.data);
+            if(res.data.length > 0){
+                setBodyGetLista((prev)=> ({...prev, ...{mese:Number(res.data[0].mese)}}));
+            }  
+            setGetNotificheWorking(false);
+        }).catch((err)=>{
+            manageError(err,dispatchMainState);
+            setGetNotificheWorking(false);
+        });
+    };
+
     // servizio che popola la select con la checkbox
     const listaEntiNotifichePageOnSelect = async () =>{
         if(profilo.profilo === 'CON'){
-            await listaEntiNotifichePageConsolidatore(token, profilo.nonce, {descrizione:textValue} )
-                .then((res)=>{
-                    setDataSelect(res.data);
-                })
-                .catch(((err)=>{
-                    manageError(err,dispatchMainState);
-                }));
+            await listaEntiNotifichePageConsolidatore(token, profilo.nonce, {descrizione:textValue} ).then((res)=>{
+                setDataSelect(res.data);
+            }).catch(((err)=>{
+                manageError(err,dispatchMainState);
+            }));
         }else if(profilo.auth === 'PAGOPA'){
-            await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} )
-                .then((res)=>{
-                    setDataSelect(res.data);
-                })
-                .catch(((err)=>{
-                   
-                    manageError(err,dispatchMainState);
-                    
-                }));
+            await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} ).then((res)=>{
+                setDataSelect(res.data);
+            }).catch(((err)=>{
+                manageError(err,dispatchMainState);
+            }));
         }
     };
 
@@ -328,13 +397,16 @@ const ReportDettaglio : React.FC = () => {
             return element;
         }
     });
-  
-    const onAnnullaFiltri = async () =>{
-        const newBody = {
+
+    const onAnnullaFiltri = () =>{
+        // to make call equal on initial render
+        localStorage.removeItem("filters");
+        
+        funInitialRender({
             profilo:'',
             prodotto:'',
-            anno:currentYear,
-            mese:currString, 
+            anno:0,
+            mese:0,
             tipoNotifica:null,
             statoContestazione:[],
             cap:null,
@@ -343,79 +415,22 @@ const ReportDettaglio : React.FC = () => {
             recipientId:null,
             recapitisti:[],
             consolidatori:[]
-
-        };
+        },false);
         setStatusAnnulla('hidden');
         setValueFgContestazione([]);
         setDataSelect([]);
-        setBodyGetLista(newBody);
-        setBodyDownload(newBody);
         setValueAutocomplete([]);
-        deleteFilterToLocalStorageNotifiche();
-        setGetNotificheWorking(true);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const {idEnti, recapitisti, consolidatori, ...body} = newBody;
-        if(enti){
-            await listaNotifiche(token,profilo.nonce,1,10, body)
-                .then((res)=>{
-                    setNotificheList(res.data.notifiche);
-                    setTotalNotifiche(res.data.count); 
-                    setGetNotificheWorking(false);   
-                }).catch((error)=>{
-                    setNotificheList([]);
-                    setTotalNotifiche(0);
-                    setGetNotificheWorking(false);
-                    manageError(error, dispatchMainState);
-                });
-        }else if(profilo.profilo === 'REC'){
-            await listaNotificheRecapitista(token,profilo.nonce,1, 10, body)
-                .then((res)=>{
-                    setNotificheList(res.data.notifiche);
-                    setTotalNotifiche(res.data.count);
-                    // abilita button filtra e annulla filtri all'arrivo dei dati
-                    setGetNotificheWorking(false);
-                }).catch((error)=>{
-                // abilita button filtra e annulla filtri all'arrivo dei dati
-                    setGetNotificheWorking(false);
-                    setNotificheList([]);
-                    setTotalNotifiche(0);
-                    manageError(error, dispatchMainState);
-                });
-        }else if(profilo.profilo === 'CON'){
-            await listaNotificheConsolidatore(token,profilo.nonce,1, 10, body)
-                .then((res)=>{
-                    setNotificheList(res.data.notifiche);
-                    setTotalNotifiche(res.data.count);
-                    // abilita button filtra e annulla filtri all'arrivo dei dati
-                    setGetNotificheWorking(false);
-                }).catch((error)=>{
-                // abilita button filtra e annulla filtri all'arrivo dei dati
-                    setGetNotificheWorking(false);
-                    setNotificheList([]);
-                    setTotalNotifiche(0);
-                    manageError(error, dispatchMainState);
-                });
-        }else if(profilo.auth === 'PAGOPA'){
-            await listaNotifichePagoPa(token,profilo.nonce,1,10, newBody)
-                .then((res)=>{
-                    setNotificheList(res.data.notifiche);
-                    setTotalNotifiche(res.data.count);
-                    setGetNotificheWorking(false);
-                }).catch((error)=>{
-                    setNotificheList([]);
-                    setTotalNotifiche(0);
-                    setGetNotificheWorking(false);
-                    manageError(error, dispatchMainState);
-                });
-        }
+        setPage(0);
+        setRowsPerPage(10);
+        resetFilters();
     };     
 
     const getlistaNotifiche = async (nPage:number, nRow:number, bodyParameter) => {
-        setShowLoadingGrid(true);
         // elimino idEnti dal paylod della get notifiche lato selfcare
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const {idEnti, recapitisti, consolidatori, ...newBody} = bodyParameter;
         // disable button filtra e annulla filtri nell'attesa dei dati
+        setShowLoadingGrid(true);
         setGetNotificheWorking(true);
         if(enti){
             await listaNotifiche(token,profilo.nonce,nPage, nRow, newBody)
@@ -471,7 +486,8 @@ const ReportDettaglio : React.FC = () => {
                     setShowLoadingGrid(false);
                     manageError(error, dispatchMainState);
                 });
-        }           
+        }     
+        isInitialRender.current = false;      
     };
 
     const getlistaNotifichePagoPa = async (nPage:number, nRow:number, bodyParameter) => {
@@ -492,19 +508,37 @@ const ReportDettaglio : React.FC = () => {
                 setGetNotificheWorking(false);
                 setShowLoadingGrid(false);
                 manageError(error, dispatchMainState);
-            });       
+            });     
+        isInitialRender.current = false;   
+    };
+
+    const clearOnChangeFilter = () => {
+        setNotificheList([]);
+        setPage(0);
+        setRowsPerPage(10);  
+        setTotalNotifiche(0); 
     };
 
     const onButtonFiltra = () =>{
         setPage(0);
         setRowsPerPage(10);
         setBodyDownload(bodyGetLista);
-        setFilterToLocalStorageNotifiche(bodyGetLista,textValue,valueAutocomplete, 0, 10,valueFgContestazione);
+        updateFilters({
+            pathPage:PathPf.LISTA_NOTIFICHE,
+            body:bodyGetLista,
+            textAutocomplete:textValue,
+            valueAutocomplete:valueAutocomplete,
+            page:0,
+            rows:10,
+            valueFgContestazione:valueFgContestazione
+        });
         if(profilo.auth === 'SELFCARE'){
             getlistaNotifiche(1, 10,bodyGetLista);
         }else{
             getlistaNotifichePagoPa(1, 10,bodyGetLista);
         }  
+        isInitialRender.current = false;
+        
     };
                 
     const handleChangePage = (
@@ -513,36 +547,46 @@ const ReportDettaglio : React.FC = () => {
     ) => {
         const realPage = newPage + 1;
         if(profilo.auth === 'SELFCARE'){
-            getlistaNotifiche(realPage,rowsPerPage, bodyGetLista);
+            getlistaNotifiche(realPage,rowsPerPage, bodyDownload);
         }else if(profilo.auth === 'PAGOPA'){
-            getlistaNotifichePagoPa(realPage,rowsPerPage, bodyGetLista);
+            getlistaNotifichePagoPa(realPage,rowsPerPage, bodyDownload);
         }
         setPage(newPage);
-       
-        setFilterToLocalStorageNotifiche(bodyDownload,textValue,valueAutocomplete, newPage, rowsPerPage,valueFgContestazione);
-       
+        updateFilters({
+            pathPage:PathPf.LISTA_NOTIFICHE,
+            body:bodyDownload,
+            textValue,
+            valueAutocomplete,
+            page:newPage,
+            rows:rowsPerPage,
+            valueFgContestazione
+        });
     };
                     
     const handleChangeRowsPerPage = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
         setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-      
-        setFilterToLocalStorageNotifiche(bodyDownload,textValue,valueAutocomplete, page, parseInt(event.target.value, 10),valueFgContestazione);
+        updateFilters({
+            pathPage:PathPf.LISTA_NOTIFICHE,
+            body:bodyDownload,
+            textValue,
+            valueAutocomplete,
+            page,
+            rows:parseInt(event.target.value, 10),
+            valueFgContestazione
+        });
         const realPage = page + 1;
         if(profilo.auth === 'SELFCARE'){
-            getlistaNotifiche(realPage,parseInt(event.target.value, 10),bodyGetLista);
+            getlistaNotifiche(realPage,parseInt(event.target.value, 10),bodyDownload);
         }else if(profilo.auth === 'PAGOPA'){
-            getlistaNotifichePagoPa(realPage,parseInt(event.target.value, 10),bodyGetLista);
+            getlistaNotifichePagoPa(realPage,parseInt(event.target.value, 10),bodyDownload);
         }  
                           
     };
 
     const getRecapitistConsolidatori = async() =>{
-     
         await getTipologiaEntiCompletiPagoPa(token, profilo.nonce, 'REC').then((res)=>{     
-            
             setListaRecapitisti(res.data);
         }).catch(((err)=>{
             manageError(err,dispatchMainState);
@@ -555,23 +599,19 @@ const ReportDettaglio : React.FC = () => {
     };
                         
     const getProdotti = async() => {
-        await getTipologiaProdotto(token, profilo.nonce )
-            .then((res)=>{          
-                setProdotti(res.data);
-            })
-            .catch(((err)=>{
-                manageError(err,dispatchMainState);
-            }));
+        await getTipologiaProdotto(token, profilo.nonce ).then((res)=>{          
+            setProdotti(res.data);
+        }).catch(((err)=>{
+            manageError(err,dispatchMainState);
+        }));
     };
                                             
     const getProfili = async() => {
-        await getTipologiaProfilo(token, profilo.nonce )
-            .then((res)=>{              
-                setProfili(res.data);
-            })
-            .catch(((err)=>{
-                manageError(err,dispatchMainState);
-            }));
+        await getTipologiaProfilo(token, profilo.nonce ).then((res)=>{              
+            setProfili(res.data);
+        }).catch(((err)=>{
+            manageError(err,dispatchMainState);
+        }));
     };
 
     const getContestazioneModal = async(el) =>{
@@ -583,7 +623,7 @@ const ReportDettaglio : React.FC = () => {
                     //se i tempi di creazione di una contestazione sono scaduti show pop up info
                     if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
                         setShowLoadingGrid(false);
-                        setOpenModalInfo(true);
+                        setOpenModalInfo({open:true,sentence:'Non è possibile creare una contestazione.'});
                     }else{
                     // atrimenti show pop up creazione contestazione
                         setShowLoadingGrid(false);
@@ -603,7 +643,7 @@ const ReportDettaglio : React.FC = () => {
                     setShowLoadingGrid(false);
                     //se i tempi di creazione di una contestazione sono scaduti show pop up info
                     if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
-                        setOpenModalInfo(true);
+                        setOpenModalInfo({open:true,sentence:'Non è possibile creare una contestazione.'});
                     }else{
                         // atrimenti show pop up creazione contestazione
                         setOpen(true); 
@@ -621,7 +661,7 @@ const ReportDettaglio : React.FC = () => {
                     setShowLoadingGrid(false);
                     //se i tempi di creazione di una contestazione sono scaduti show pop up info
                     if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
-                        setOpenModalInfo(true);
+                        setOpenModalInfo({open:true,sentence:'Non è possibile creare una contestazione.'});
                     }else{
                         // atrimenti show pop up creazione contestazione
                         setOpen(true); 
@@ -638,7 +678,7 @@ const ReportDettaglio : React.FC = () => {
                 setShowLoadingGrid(false);
                 //se i tempi di creazione di una contestazione sono scaduti show pop up info
                 if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
-                    setOpenModalInfo(true);
+                    setOpenModalInfo({open:true,sentence:'Non è possibile creare una contestazione.'});
                 }else{
                     // atrimenti show pop up creazione contestazione
                     setOpen(true); 
@@ -659,7 +699,6 @@ const ReportDettaglio : React.FC = () => {
             const {idEnti, recapitisti, consolidatori, ...bodyEnti} = bodyDownload;
             await downloadNotifche(token, profilo.nonce,bodyEnti )
                 .then((res)=>{
-                  
                     const blob = new Blob([res.data], { type: 'text/csv' });
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
@@ -678,66 +717,59 @@ const ReportDettaglio : React.FC = () => {
         }else if(profilo.profilo === 'REC'){
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const {idEnti, recapitisti, consolidatori, ...bodyRecapitista} = bodyDownload;
-            await downloadNotifcheRecapitista(token, profilo.nonce,bodyRecapitista )
-                .then((res)=>{
-                    const blob = new Blob([res.data], { type: 'text/csv' });
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.setAttribute('hidden', '');
-                    a.setAttribute('href', url);
-                    a.setAttribute('download',`Notifiche /${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`);
-                    document.body.appendChild(a);
-                    a.click();
-                    setShowLoading(false);
-                    document.body.removeChild(a); 
-                })
-                .catch(((err)=>{
-                    manageError(err,dispatchMainState);
-                    setShowLoading(false);
-                }));
+            await downloadNotifcheRecapitista(token, profilo.nonce,bodyRecapitista ).then((res)=>{
+                const blob = new Blob([res.data], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.setAttribute('hidden', '');
+                a.setAttribute('href', url);
+                a.setAttribute('download',`Notifiche /${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`);
+                document.body.appendChild(a);
+                a.click();
+                setShowLoading(false);
+                document.body.removeChild(a); 
+            }).catch(((err)=>{
+                manageError(err,dispatchMainState);
+                setShowLoading(false);
+            }));
         }else if(profilo.profilo === 'CON'){
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { idEnti, recapitisti, consolidatori, ...bodyConsolidatore} = bodyDownload;
-            await downloadNotifcheConsolidatore(token, profilo.nonce,bodyConsolidatore )
-                .then((res)=>{
-                    const blob = new Blob([res.data], { type: 'text/csv' });
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.setAttribute('hidden', '');
-                    a.setAttribute('href', url);
-                    a.setAttribute('download', `Notifiche /${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`);
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    setShowLoading(false);
-                })
-                .catch(((err)=>{
-                    manageError(err,dispatchMainState);
-                    setShowLoading(false);
-                }));
+            await downloadNotifcheConsolidatore(token, profilo.nonce,bodyConsolidatore ).then((res)=>{
+                const blob = new Blob([res.data], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.setAttribute('hidden', '');
+                a.setAttribute('href', url);
+                a.setAttribute('download', `Notifiche /${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`);
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setShowLoading(false);
+            }).catch(((err)=>{
+                manageError(err,dispatchMainState);
+                setShowLoading(false);
+            }));
         }else if(profilo.auth === 'PAGOPA'){
-            await downloadNotifchePagoPa(token, profilo.nonce,bodyDownload)
-                .then((res)=>{
-                  
-                    let fileName = `Notifiche /${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`;
-                    if(bodyDownload.idEnti.length === 1){
-                        fileName = `Notifiche /${notificheList[0].ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`;
-                    }
-                    const blob = new Blob([res.data], { type: 'text/csv' });
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.setAttribute('hidden', '');
-                    a.setAttribute('href', url);
-                    a.setAttribute('download',fileName);
-                    document.body.appendChild(a);
-                    a.click();
-                    setShowLoading(false);
-                    document.body.removeChild(a); 
-                })
-                .catch(((err)=>{
-                    manageError(err,dispatchMainState);
-                    setShowLoading(false);
-                }));
+            await downloadNotifchePagoPa(token, profilo.nonce,bodyDownload).then((res)=>{
+                let fileName = `Notifiche /${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`;
+                if(bodyDownload.idEnti.length === 1){
+                    fileName = `Notifiche /${notificheList[0].ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`;
+                }
+                const blob = new Blob([res.data], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.setAttribute('hidden', '');
+                a.setAttribute('href', url);
+                a.setAttribute('download',fileName);
+                document.body.appendChild(a);
+                a.click();
+                setShowLoading(false);
+                document.body.removeChild(a); 
+            }).catch(((err)=>{
+                manageError(err,dispatchMainState);
+                setShowLoading(false);
+            }));
         }
     }; 
  
@@ -748,47 +780,46 @@ const ReportDettaglio : React.FC = () => {
             {/*title container start */}
             <div className="row">
                 <div className="col-9">
-                    <Typography variant="h4">Report Dettaglio</Typography>
+                    <Typography variant="h4">Notifiche</Typography>
                 </div>
-                <div className="col-3 d-flex justify-content-end pe-5 ">
-                    <Button  style={{
-                        backgroundColor:backgroundColorButtonScadenzario
-                    }} variant="contained"  onClick={()=> setShowModalScadenziario(true)} >
-                        <VisibilityIcon sx={{marginRight:'10px'}}></VisibilityIcon>
+                <div className="col-3 ">
+                    <Box sx={{width:'80%', marginLeft:'20px', display:'flex', justifyContent:'end'}}  >
+                        <Button  style={{
+                            width:'160px',
+                            backgroundColor:backgroundColorButtonScadenzario
+                        }} variant="contained"  onClick={()=> setShowModalScadenziario(true)} >
+                            <VisibilityIcon sx={{marginRight:'10px'}}></VisibilityIcon>
                     Scadenzario
-                    </Button>
+                        </Button>
+                    </Box>
                 </div>
             </div>
             {/*title container end */}
             <div className="mt-5 mb-5 ">
                 <div className="row">
-                    <div className="col-3   ">
+                    <div className="col-3">
                         <Box sx={{width:'80%'}} >
                             <FormControl
                                 fullWidth
                                 size="medium"
                             >
-                                <InputLabel
-                                    id="sea"
-                                >
+                                <InputLabel>
                             Anno
                                 </InputLabel>
                                 <Select
-                                    id="sea"
                                     label='Seleziona Prodotto'
-                                    labelId="search-by-label"
                                     onChange={(e) => {
+                                        isInitialRender.current = false;
                                         const value = Number(e.target.value);
-                                        setBodyGetLista((prev)=> ({...prev, ...{anno:value}}));
+                                        setBodyGetLista((prev)=> ({...prev, ...{anno:value}}));  
+                                        clearOnChangeFilter();
                                     }}
-                                    value={bodyGetLista.anno}
-                                    disabled={status=== 'immutable' ? true : false}
+                                    value={bodyGetLista.anno||''}
                                 >
-                                    {getCurrentFinancialYear().map((el) => (
+                                    {arrayAnni.map((el) => (
                                         <MenuItem
                                             key={Math.random()}
-                                            value={el}
-                                        >
+                                            value={el}>
                                             {el}
                                         </MenuItem>
                                     ))}
@@ -796,36 +827,34 @@ const ReportDettaglio : React.FC = () => {
                             </FormControl>
                         </Box>
                     </div>
-                    <div className="col-3  ">
+                    <div className="col-3">
                         <Box sx={{width:'80%', marginLeft:'20px'}}  >
                             <FormControl
                                 fullWidth
                                 size="medium"
                             >
-                                <InputLabel
-                                    id="sea"
-                                >
+                                <InputLabel>
                                 Mese
                                 </InputLabel>
                                 <Select
-                                    id="sea"
-                                    label='Seleziona Prodotto'
-                                    labelId="search-by-label"
+                                    label='Seleziona Mese'
                                     onChange={(e) =>{
                                         const value = Number(e.target.value);
                                         setBodyGetLista((prev)=> ({...prev, ...{mese:value}}));
+                                        clearOnChangeFilter();
                                     }}
-                                    value={bodyGetLista.mese}
-                                    disabled={status=== 'immutable' ? true : false}
+                                    value={bodyGetLista.mese||''}
                                 >
-                                    {mesi.map((el) => (
-                                        <MenuItem
-                                            key={Math.random()}
-                                            value={Object.keys(el)[0].toString()}
-                                        >
-                                            {Object.values(el)[0]}
-                                        </MenuItem>
-                                    ))}
+                                    {arrayMesi.map((el) =>{
+                                        return(
+                                            <MenuItem
+                                                key={el.mese}
+                                                value={el.mese}
+                                            >
+                                                {el?.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase()}
+                                            </MenuItem>
+                                        );
+                                    })}
                                 </Select>
                             </FormControl>
                         </Box>
@@ -836,18 +865,18 @@ const ReportDettaglio : React.FC = () => {
                                 fullWidth
                                 size="medium"
                             >
-                                <InputLabel
-                                    id="sea"
-                                >
+                                <InputLabel>
                                     Seleziona Prodotto
                                 </InputLabel>
                                 <Select
                                     id="prodotto_notifiche"
                                     label='Seleziona Prodotto'
                                     labelId="search-by-label_notifiche"
-                                    onChange={(e) => setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}))}
+                                    onChange={(e) =>{
+                                        clearOnChangeFilter();
+                                        setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}));
+                                    }}
                                     value={bodyGetLista.prodotto}
-                                    disabled={status=== 'immutable' ? true : false}
                                 >
                                     {prodotti.map((el) => (
                                         <MenuItem
@@ -868,13 +897,16 @@ const ReportDettaglio : React.FC = () => {
                                 label='IUN'
                                 placeholder='IUN'
                                 value={bodyGetLista.iun || ''}
-                                onChange={(e) => setBodyGetLista((prev)=>{             
-                                    if(e.target.value === ''){
-                                        return {...prev, ...{iun:null}};
-                                    }else{
-                                        return {...prev, ...{iun:e.target.value}};
-                                    }
-                                } )}            
+                                onChange={(e) =>{
+                                    clearOnChangeFilter();
+                                    setBodyGetLista((prev)=>{             
+                                        if(e.target.value === ''){
+                                            return {...prev, ...{iun:null}};
+                                        }else{
+                                            return {...prev, ...{iun:e.target.value}};
+                                        }
+                                    });}
+                                }            
                             />
                         </Box>
                     </div>
@@ -886,9 +918,7 @@ const ReportDettaglio : React.FC = () => {
                                 fullWidth
                                 size="medium"
                             >
-                                <InputLabel
-                                    id="sea"
-                                >
+                                <InputLabel>
                                             Tipo Notifica     
                                 </InputLabel>
                                 <Select
@@ -898,9 +928,9 @@ const ReportDettaglio : React.FC = () => {
                                     onChange={(e) =>{
                                         const value = Number(e.target.value);
                                         setBodyGetLista((prev)=> ({...prev, ...{tipoNotifica:value}}));
+                                        clearOnChangeFilter();
                                     }}
                                     value={bodyGetLista.tipoNotifica || ''}        
-                                    disabled={status=== 'immutable' ? true : false}
                                 >
                                     {tipoNotifica.map((el) => (     
                                         <MenuItem
@@ -915,13 +945,14 @@ const ReportDettaglio : React.FC = () => {
                         </Box>
                     </div>
                     <div className=" col-3 ">
-                        <Box sx={{width:'80%', marginLeft:'20px'}} >
+                        <Box sx={{width:'80%', marginLeft:'20px'}}>
                             <MultiSelectStatoContestazione 
                                 mainState={mainState}
                                 dispatchMainState={dispatchMainState}
                                 setBodyGetLista={setBodyGetLista}
                                 valueFgContestazione={valueFgContestazione}
-                                setValueFgContestazione={setValueFgContestazione}></MultiSelectStatoContestazione>
+                                setValueFgContestazione={setValueFgContestazione}
+                                clearOnChangeFilter={clearOnChangeFilter}></MultiSelectStatoContestazione>
                         </Box>
                     </div>
                     <div className="col-3 ">
@@ -931,13 +962,16 @@ const ReportDettaglio : React.FC = () => {
                                 label='CAP'
                                 placeholder='CAP'
                                 value={bodyGetLista.cap || ''}
-                                onChange={(e) => setBodyGetLista((prev)=>{               
-                                    if(e.target.value === ''){
-                                        return {...prev, ...{cap:null}};
-                                    }else{
-                                        return {...prev, ...{cap:e.target.value}};
-                                    }
-                                } )}
+                                onChange={(e) =>{
+                                    clearOnChangeFilter();
+                                    setBodyGetLista((prev)=>{               
+                                        if(e.target.value === ''){
+                                            return {...prev, ...{cap:null}};
+                                        }else{
+                                            return {...prev, ...{cap:e.target.value}};
+                                        }
+                                    });
+                                }}
                             />
                         </Box>
                     </div>
@@ -948,13 +982,16 @@ const ReportDettaglio : React.FC = () => {
                                 label='Recipient ID'
                                 placeholder='Recipient ID'
                                 value={bodyGetLista.recipientId || ''}
-                                onChange={(e) => setBodyGetLista((prev)=>{                
-                                    if(e.target.value === ''){
-                                        return {...prev, ...{recipientId:null}};
-                                    }else{
-                                        return {...prev, ...{recipientId:e.target.value}};
-                                    }
-                                } )}                     
+                                onChange={(e) =>{
+                                    clearOnChangeFilter();
+                                    setBodyGetLista((prev)=>{                
+                                        if(e.target.value === ''){
+                                            return {...prev, ...{recipientId:null}};
+                                        }else{
+                                            return {...prev, ...{recipientId:e.target.value}};
+                                        }
+                                    });
+                                }}                     
                             />
                         </Box>
                     </div>                         
@@ -968,6 +1005,7 @@ const ReportDettaglio : React.FC = () => {
                             setTextValue={setTextValue}
                             valueAutocomplete={valueAutocomplete}
                             setValueAutocomplete={setValueAutocomplete}
+                            clearOnChangeFilter={clearOnChangeFilter}
                         ></MultiselectCheckbox>
                     </div>
                     }
@@ -979,9 +1017,7 @@ const ReportDettaglio : React.FC = () => {
                                     fullWidth
                                     size="medium"
                                 >
-                                    <InputLabel
-                                        id="selectCons"
-                                    >
+                                    <InputLabel>
                                             Consolidatore     
                                     </InputLabel>
                                     <Select
@@ -989,6 +1025,7 @@ const ReportDettaglio : React.FC = () => {
                                         label='Consolidatore'
                                         labelId="search-by-label"
                                         onChange={(e) =>{
+                                            clearOnChangeFilter();
                                             const value = e.target.value;
                                             setBodyGetLista((prev)=> ({...prev, ...{consolidatori:[value]}}));
                                         }}
@@ -1018,10 +1055,10 @@ const ReportDettaglio : React.FC = () => {
                                             Recapitista     
                                     </InputLabel>
                                     <Select
-                                        id="sea"
                                         label='Recapitista'
                                         labelId="search-by-label"
                                         onChange={(e) =>{
+                                            clearOnChangeFilter();
                                             const value = e.target.value;
                                             setBodyGetLista((prev)=> ({...prev, ...{recapitisti:[value]}}));
                                         }}
@@ -1047,15 +1084,13 @@ const ReportDettaglio : React.FC = () => {
                         <div className="col-9">
                             <div className="d-flex justify-content-start">
                                 <Button 
-                                    onClick={()=> onButtonFiltra()} 
+                                    onClick={onButtonFiltra} 
                                     disabled={getNotificheWorking}
                                     variant="contained"> Filtra  
                                 </Button>                
                                 {statusAnnulla === 'hidden' ? null :
                                     <Button
-                                        onClick={()=>{
-                                            onAnnullaFiltri();   
-                                        } }
+                                        onClick={onAnnullaFiltri}
                                         disabled={getNotificheWorking}
                                         sx={{marginLeft:'24px'}} >
                                                     Annulla filtri
@@ -1074,9 +1109,7 @@ const ReportDettaglio : React.FC = () => {
                 <div>
                     <Button
                         disabled={getNotificheWorking}
-                        onClick={()=> {
-                            downloadNotificheOnDownloadButton(); 
-                        }}  >
+                        onClick={downloadNotificheOnDownloadButton}  >
                                   Download Risultati 
                         <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
                     </Button>
@@ -1117,11 +1150,9 @@ const ReportDettaglio : React.FC = () => {
                 open={openModalRedirect}
                 sentence={`Per poter visualizzare la lista delle Notifiche è obbligatorio fornire i seguenti dati di fatturazione:`}>
             </ModalRedirect>
-            <ModalInfo
+            <ModalInfo 
                 open={openModalInfo} 
-                setOpen={setOpenModalInfo}
-                sentence={'Non è possibile creare una contestazione.'} >
-            </ModalInfo>
+                setOpen={setOpenModalInfo}/>
             <ModalLoading 
                 open={showLoading} 
                 setOpen={setShowLoading}

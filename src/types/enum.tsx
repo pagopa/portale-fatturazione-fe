@@ -22,5 +22,6 @@ export enum PathPf {
     DOCUMENTICONTABILI = '/documenticontabilipagopa',
     DETTAGLIO_DOC_CONTABILE = "/dettagliodoccontabile",
     INSERIMENTO_CONTESTAZIONI = "/contestazioni",
-    STORICO_CONTEST = "/storico"
+    STORICO_CONTEST = "/storico",
+    KPI = '/kpipagamenti'
 }

@@ -13,6 +13,7 @@ const style = {
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
+    borderRadius:'20px'
 };
 const ModalLoading : React.FC<ModalProps> = ({setOpen, open, sentence}) => {
     const handleClose = (event:object, reason: string) =>{

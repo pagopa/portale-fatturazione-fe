@@ -5,7 +5,7 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { MultiselectNotificheProps, OptionMultiselectChackbox } from '../../types/typeReportDettaglio';
 
-const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetLista, dataSelect,setTextValue,valueAutocomplete, setValueAutocomplete}) => {
+const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetLista, dataSelect,setTextValue,valueAutocomplete, setValueAutocomplete,clearOnChangeFilter}) => {
 
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -19,6 +19,7 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
                 const arrayIdEnte = value.map(obj=> obj.idEnte);
                 setBodyGetLista((prev:any) => ({...prev,...{idEnti:arrayIdEnte}}));
                 setValueAutocomplete(value);
+                clearOnChangeFilter();
             }}
             limitTags={1}
             id="checkboxes-tags-demo"
@@ -37,7 +38,7 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
                             style={{ marginRight: 8 }}
                             checked={selected}
                         />
-                        {option.descrizione}
+                        {option.descrizione||''}
                     </li>
                 );
             } }

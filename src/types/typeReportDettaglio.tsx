@@ -37,6 +37,7 @@ export interface MultiSelectGroupedByProps{
     setValueFgContestazione:Dispatch<SetStateAction<FlagContestazione[]>>,
     valueFgContestazione: FlagContestazione[],
     dispatchMainState:Dispatch<ActionReducerType>,
+    clearOnChangeFilter:any
 }
 
 export interface ModalContestazioneProps{
@@ -129,7 +130,8 @@ export interface MultiselectNotificheProps{
     dataSelect:ElementMultiSelect[] ,
     setTextValue:Dispatch<SetStateAction<string>>,
     valueAutocomplete:OptionMultiselectChackbox[],
-    setValueAutocomplete:Dispatch<SetStateAction<OptionMultiselectChackbox[]>> ,
+    setValueAutocomplete:Dispatch<SetStateAction<OptionMultiselectChackbox[]>>,
+    clearOnChangeFilter?:any
 }
 
 export interface OptionMultiselectChackbox {

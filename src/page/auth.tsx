@@ -1,10 +1,10 @@
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { selfcareLogin, getAuthProfilo, manageError, redirect } from '../api/api';
 import {useContext, useEffect} from 'react';
-import { LoginProps} from '../types/typesGeneral';
 import { getDatiModuloCommessa } from '../api/apiSelfcare/moduloCommessaSE/api';
 import { PathPf } from '../types/enum';
 import { GlobalContext } from '../store/context/globalContext';
+import Loader from '../components/reusableComponents/loader';
 
 // Blank page utilizzata per l'accesso degli utenti tramite  Selfcare
 
@@ -35,11 +35,8 @@ const Auth : React.FC<any> = () =>{
   
     const [searchParams] = useSearchParams();
     const token = searchParams.get('selfcareToken');
-
     const navigate = useNavigate();
-
-
-
+    
     // terza chiamata fatta per verificare lo stato della commessa e eseguire azioni diverse a seconda del risultato 
     const getCommessa = async (infoProfilo) =>{
         await getDatiModuloCommessa(infoProfilo.jwt, infoProfilo.nonce).then((res)=>{
@@ -147,7 +144,13 @@ const Auth : React.FC<any> = () =>{
     },[]);
    
     return (
-        <></>
+        <>
+            <div className="d-flex justify-content-center align-items-center" style={{height: '100vh'}}>
+                <div id='loader_on_gate_pages'>
+                    <Loader sentence={'Autenticazione in corso...'}></Loader> 
+                </div>
+            </div>
+        </>
     );
 };
 

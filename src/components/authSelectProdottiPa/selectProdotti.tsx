@@ -23,7 +23,7 @@ const MenuProps = {
 
 
 
-export default function MultipleSelectProdotti({setProductSelected, productSelected}) {
+export default function MultipleSelectProdotti({setProductSelected}) {
 
     const globalContextObj = useContext(GlobalContext); 
     const {mainState} = globalContextObj;

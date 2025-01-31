@@ -1,6 +1,6 @@
 export const profiliEnti = (mainState) => {
    
-    const profiloValue = mainState.profilo.profilo;
+    const profiloValue = mainState?.profilo?.profilo||'';
     
     const result = profiloValue === "PA" || profiloValue === "GSP" || profiloValue === "SCP" || profiloValue === "PSP" || profiloValue === "AS" || profiloValue === "SA" || profiloValue === "PT";
     return result;
@@ -123,6 +123,12 @@ export const getFiltersFromLocalStorageAnagrafica = () => {
     return result;
 };
 
+export const getFilterPageRowAnagrafica = () => {
+    const infoPage = localStorage.getItem('filtersAnagraficaRow') || '{}';
+    const result =  JSON.parse(infoPage);
+    return result;
+};
+
 
 
 export const setFilterToLocalStorageNotifiche = (bodyGetLista,textValue,valueAutocomplete, page, rowsPerPage,valueFgContestazione) => {
@@ -190,12 +196,10 @@ export const getFilterPageRowDocConPA = () => {
 };
 
 
-
-
-
 export const getInfoPageFromLocalStorageDocConPA = () => {
     const infoPage = localStorage.getItem('filtersDocContabiliPA') || '{}';
     const result =  JSON.parse(infoPage);
     return result;
 };
+
 

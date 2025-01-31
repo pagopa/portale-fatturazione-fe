@@ -55,3 +55,23 @@ export const downloadDocumentoListaDatiFatturazionePagoPa = async (token:string,
     );
     return response;
 };
+
+export const getValidationCodiceSdi = async (token:string, nonce:string ,body: {idEnte:string,codiceSDI:string|null}) => {
+    const response =  await axios.post(`${url}/api/datifatturazione/pagopa/codiceSDI?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+};
+
+export const getSdiPagoPa  = async (token:string, nonce:string, idente:string, prodotto:string) => {
+    const response = await axios.get(
+        `${url}/api/datifatturazione/pagopa/ente/contractCodiceSDI?nonce=${nonce}&idEnte=${idente}&prodotto=${prodotto}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }});
+    return response;
+};
+

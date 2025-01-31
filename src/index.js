@@ -8,6 +8,7 @@ import { msalConfig } from './authConfig';
 import './i18n';
 import GlobalContextProvider from './store/context/globalContext';
 
+
 /**
  * MSAL should be instantiated outside of the component tree to prevent it from being re-instantiated on re-renders.
  * For more, visit: https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-react/docs/getting-started.md
@@ -33,9 +34,11 @@ msalInstance.addEventCallback((event) => {
 // eslint-disable-next-line no-undef
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
+  
     <GlobalContextProvider>
-        <App instance={msalInstance}/>
+        <App instance={msalInstance}/> 
     </GlobalContextProvider>
+
    
 );
 // If you want to start measuring performance in your app, pass a function

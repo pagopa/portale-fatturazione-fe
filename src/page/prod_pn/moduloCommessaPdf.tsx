@@ -95,14 +95,53 @@ const ModuloCommessaPdf : React.FC = () =>{
             tipo:"",
             idTipoSpedizione: 0
         }];
-        const primo = res.data.datiModuloCommessa.find((obj:DatiCommessaPdf)=>obj.idTipoSpedizione === 3);
-        const secondo = res.data.datiModuloCommessa.find((obj:DatiCommessaPdf)=>obj.idTipoSpedizione === 1);
-        const terzo = res.data.datiModuloCommessa.find((obj:DatiCommessaPdf)=>obj.idTipoSpedizione === 2);
-        const quarto = res.data.datiModuloCommessa.find((obj:DatiCommessaPdf)=>obj.idTipoSpedizione === 0);
-
-        if(primo !== undefined && secondo !== undefined && terzo !== undefined && quarto !== undefined){
-            final = [primo, secondo, terzo, quarto];
+        let primo = res.data.datiModuloCommessa.find((obj:DatiCommessaPdf)=>obj.idTipoSpedizione === 3);
+        let secondo = res.data.datiModuloCommessa.find((obj:DatiCommessaPdf)=>obj.idTipoSpedizione === 1);
+        let terzo = res.data.datiModuloCommessa.find((obj:DatiCommessaPdf)=>obj.idTipoSpedizione === 2);
+        let quarto = res.data.datiModuloCommessa.find((obj:DatiCommessaPdf)=>obj.idTipoSpedizione === 0);
+        if(primo === undefined){
+            primo = {
+                totaleNotifiche: 0,
+                numeroNotificheNazionali: 0,
+                numeroNotificheInternazionali: 0,
+                tipo:"",
+                idTipoSpedizione: 0
+            };
         }
+        if(secondo  === undefined){
+            secondo =  {
+                totaleNotifiche: 0,
+                numeroNotificheNazionali: 0,
+                numeroNotificheInternazionali: 0,
+                tipo:"",
+                idTipoSpedizione: 0
+            };
+        }
+
+        if(terzo  === undefined){
+            terzo =  {
+                totaleNotifiche: 0,
+                numeroNotificheNazionali: 0,
+                numeroNotificheInternazionali: 0,
+                tipo:"",
+                idTipoSpedizione: 0
+            };
+        }
+
+        if(quarto  === undefined){
+            quarto =  {
+                totaleNotifiche: 0,
+                numeroNotificheNazionali: 0,
+                numeroNotificheInternazionali: 0,
+                tipo:"",
+                idTipoSpedizione: 0
+            };
+        }
+        /* if(primo !== undefined  && secondo !== undefined && terzo !== undefined && quarto !== undefined){
+            console.log('pipo');
+            final = [primo, secondo, terzo, quarto];
+        }*/
+        final = [primo, secondo, terzo, quarto];
         setDataPdf({...res.data,...{datiModuloCommessa:final}});
         localStorage.setItem("tipo", res.data.tipoCommessa);
     };
@@ -251,26 +290,30 @@ const ModuloCommessaPdf : React.FC = () =>{
                                 </div>
                             </div>
                             {arrWithlabelDateMonth.map((singleObj:DatiModuloCommessaPdf)=>{
-                                return (
-                                    <div key={Math.random()} className="row mt-3">
-                                        <div className="col-7">
-                                            <Typography sx={{display:'flex',textAlign:'left'}} variant="caption">{singleObj.tipo}</Typography>
-                                        </div>
-                                        <div className="col-5">
-                                            <div className="row">
-                                                <div className="col">
-                                                    <Typography  variant="caption">{singleObj.numeroNotificheNazionali}</Typography>
-                                                </div>
-                                                <div className="col">
-                                                    <Typography  variant="caption">{singleObj.numeroNotificheInternazionali}</Typography>
-                                                </div>
-                                                <div className="col">
-                                                    <Typography  variant="caption">{singleObj.totaleNotifiche}</Typography>
+                                if(singleObj.tipo !== ''){
+
+                                
+                                    return (
+                                        <div key={Math.random()} className="row mt-3">
+                                            <div className="col-7">
+                                                <Typography sx={{display:'flex',textAlign:'left'}} variant="caption">{singleObj.tipo}</Typography>
+                                            </div>
+                                            <div className="col-5">
+                                                <div className="row">
+                                                    <div className="col">
+                                                        <Typography  variant="caption">{singleObj.numeroNotificheNazionali}</Typography>
+                                                    </div>
+                                                    <div className="col">
+                                                        <Typography  variant="caption">{singleObj.numeroNotificheInternazionali}</Typography>
+                                                    </div>
+                                                    <div className="col">
+                                                        <Typography  variant="caption">{singleObj.totaleNotifiche}</Typography>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                );
+                                    );
+                                }
                             })}
                             <hr></hr>
                             {dataPdf.datiModuloCommessaCosti.map((singleObj)=>{

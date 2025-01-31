@@ -73,3 +73,23 @@ export const getMatriceAccertamenti = async (token:string,nonce:string) => {
     return response;
 }; 
 
+export const getAnniAccertamenti = async (token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/accertamenti/anni?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+}; 
+
+export const getMesiAccertamenti = async (token:string, nonce:string , body:{anno:string}) => {
+    const response =  await axios.post(`${url}/api/accertamenti/mesi?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token,
+        },
+        }
+    );
+    return response;
+};
+

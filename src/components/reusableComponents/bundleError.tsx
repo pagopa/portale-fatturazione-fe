@@ -1,57 +1,33 @@
-import { CompanyLinkType, Footer } from '@pagopa/mui-italia';
-import { useContext, useEffect, useState } from 'react';
-import { useLocation } from 'react-router';
-import '../../style/areaPersonaleUtenteEnte.css';
-import { GlobalContext } from '../../store/context/globalContext';
-import { redirect } from '../../api/api';
-import useIsTabActive from '../../reusableFunction/tabIsActiv';
-import { getProfilo } from '../../reusableFunction/actionLocalStorage';
+import { Box, Button, Grid, ListItemText, ThemeProvider, Typography} from '@mui/material';
+import {CompanyLinkType, Footer, FooterLinksType, HeaderAccount, PreLoginFooterLinksType, theme} from '@pagopa/mui-italia';
+import { IllusError } from "@pagopa/mui-italia";
 
-type LangCode = "it" | "en";
-type LinkType = "internal" | "external";
-type FooterLinksType = {
-    label: string;
-    href?: string;
-    ariaLabel: string;
-    linkType: LinkType;
-    onClick?: () => void;
-};
 
-type PreLoginFooterSingleSectionType = {
-    title?: string;
-    links: Array<FooterLinksType>;
-};
+function  BundleError({ error, resetErrorBoundary }){
+  
+    const profile = localStorage.getItem('globalState') || '{}';
+    const result =  JSON.parse(profile);
 
-type PreLoginFooterSocialLink = {
-    icon: string;
-    /** the url to witch the user will be redirect */
-    href?: string;
-    title: string;
-    ariaLabel: string;
-    /** if defined it will override the href behavior */
-    onClick?: () => void;
-};
+    let line1 = error.message;
+    let line2 = '';
 
-type PreLoginFooterLinksType = {
-    aboutUs: PreLoginFooterSingleSectionType;
-    resources: PreLoginFooterSingleSectionType;
-    followUs: {
-        title: string;
-        socialLinks: Array<PreLoginFooterSocialLink>;
-        links: Array<FooterLinksType>;
+    if(error?.stack?.split("\n")[0]){
+        line1 = error?.stack?.split("\n")[0];
+    }
+
+    if(error.stack?.split("\n")[1]){
+        line2 = error.stack?.split("\n")[1];
+    }
+
+    const infoDate = new Date().toISOString();
+
+
+    const pagoPALinkHeader = {
+        label: 'PagoPA S.p.A.',
+        href: 'https://www.pagopa.it/',
+        ariaLabel: 'Link: vai al sito di PagoPA S.p.A.',
+        title: 'Sito di PagoPA S.p.A.',
     };
-};
-
-const FooterComponent = () => {
-
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState} = globalContextObj;
-
-
- 
-    
-    const [ lang, setLang ] = useState<LangCode>("it"); 
-    const location = useLocation();
 
     const LANGUAGES = {
         it: {
@@ -70,26 +46,26 @@ const FooterComponent = () => {
             fr: 'Français',
         },
     };
-
-
+    
+    
     const companyLegalInfo = (
         <>
             <strong>PagoPA S.p.A.</strong>
             {' '}
-      — società per azioni con socio unico -
-      capitale sociale di euro 1,000,000 interamente versato - sede legale in
-      Roma, Piazza Colonna 370,
+          — società per azioni con socio unico -
+          capitale sociale di euro 1,000,000 interamente versato - sede legale in
+          Roma, Piazza Colonna 370,
             <br />
-      CAP 00187 - n. di iscrizione a Registro Imprese di Roma, CF e P.IVA
-      15376371009
+          CAP 00187 - n. di iscrizione a Registro Imprese di Roma, CF e P.IVA
+          15376371009
         </>
     );
-
+    
     const pagoPALink: CompanyLinkType = {
         href: "https://www.pagopa.it/",
         ariaLabel: "Link: vai al sito di PagoPA S.p.A.",
     };
-      
+          
     const postLoginLinks: Array<FooterLinksType> = [
         {
             label: "Informativa Privacy",
@@ -116,8 +92,8 @@ const FooterComponent = () => {
             linkType: "internal",
         },
     ];
-
-
+    
+    
     const preLoginLinks: PreLoginFooterLinksType = {
         // First column
         aboutUs: {
@@ -245,30 +221,84 @@ const FooterComponent = () => {
             ],
         },
     };
-      
-
   
-
-    const hideFooter = location.pathname === '/auth' ||
-    location.pathname === '/azure' ||
-    location.pathname === '/auth/azure';
+    
 
 
 
-      
+    return  ( <ThemeProvider theme={theme}>
+        <div className="div_header">
+            <HeaderAccount
+                rootLink={pagoPALinkHeader}
+                enableLogin={false}
+                onAssistanceClick={() => {
+             
+                    if(result.profilo.auth === 'PAGOPA'){
+                        window.open(`mailto:fatturazione@assistenza.pagopa.it`);
+                    }else{
+        
+                        window.location.href = "https://uat.selfcare.pagopa.it/assistenza?productId=prod-pf";
+                        localStorage.clear(); 
+                    }
+                }}
+            />
+        </div>
 
-
-
-    return (
+        <div className='container d-flex align-items-center justify-content-center my-5'>
+            <div>
+                <div >
+                    <Box sx={{textAlign:'center', paddingTop:'24px'}} >
+                        <IllusError title='errore' />
+                    </Box>
+                </div>
+                <div className='m-3 p-3'>
+                    <Typography sx={{textAlign:'center'}} variant="h3">Qualcosa è andato storto</Typography>
+                </div>
+                <div className='bg-light rounded-3 m-3 p-3'>
+                    <Typography sx={{textAlign:'center'}} variant="body1">
+                    Siamo spiacenti, ma si è verificato un errore imprevisto durante l'utilizzo del portale.
+                    </Typography>
+                    <Typography sx={{textAlign:'center'}} variant="body1">
+                    Il nostro team sta lavorando per risolvere questo problema il più rapidamente possibile.
+                    </Typography>
+                    <Typography sx={{textAlign:'center'}} variant="body1">
+                    Grazie per la comprensione.
+                    </Typography>
+                </div>
+                <div className='bg-light rounded-3 m-3 p-3'>
+                    <Typography sx={{textAlign:'center'}} variant="body1">
+                        <ListItemText primary="Contattare l'assistenza del Portale Fatturazione e fornire i seguenti dati" />
+                    </Typography>
+                </div>
+                
+                <div  className='bg-light rounded-3 m-4 p-4 border border-danger'>
+                    <Typography id="textError1"  variant="h6" sx={{textAlign:'center', marginBottom:'24px'}} >
+                        {line1}
+                    </Typography>
+                    <Typography id="textError2" variant="h6" sx={{textAlign:'center', marginBottom:'24px'}} >
+                        {line2}
+                    </Typography>
+                    <Typography id="textError3" variant="h6" sx={{textAlign:'center', marginBottom:'24px'}} >
+                        {infoDate}
+                    </Typography>
+                </div>
+                <div className='d-flex align-items-center justify-content-center mt-5'>
+                    <Button 
+                        id="copyButton"
+                        variant="contained"
+                        onClick={()=> resetErrorBoundary()}
+                    >{result.profilo.auth === 'PAGOPA' ? "Reset" : "Copia la descrizione dell'errore"}</Button>
+                </div>
+            </div>
+        </div>
         <div>
-            {!hideFooter && 
             <Footer
-                loggedUser={mainState.authenticated}
+                loggedUser={false}
                 companyLink={pagoPALink}
                 legalInfo={companyLegalInfo}
                 postLoginLinks={postLoginLinks}
                 languages={LANGUAGES}
-                currentLangCode={lang}
+                currentLangCode={'it'}
                 preLoginLinks={preLoginLinks}
                 onLanguageChanged={
                     () => {
@@ -277,10 +307,10 @@ const FooterComponent = () => {
                 }
                 productsJsonUrl="https://dev.selfcare.pagopa.it/assets/products.json"
                 hideProductsColumn={false}
-            /> }
+            /> 
         </div>
+      
+    </ThemeProvider>);
+}
 
-    );
-};
-
-export default FooterComponent;
+export default BundleError;

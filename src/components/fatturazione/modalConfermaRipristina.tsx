@@ -16,6 +16,7 @@ const style = {
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
+    borderRadius:'20px'
 };
 
 const ModalConfermaRipristina : React.FC<ModalConfermaRipristinaProps> =({setOpen, open, onButtonComferma,filterInfo,fattureSelectedArr}) => {
@@ -58,7 +59,7 @@ const ModalConfermaRipristina : React.FC<ModalConfermaRipristinaProps> =({setOpe
                         </Typography>
                         <div className='mt-3'>
                             <Typography id="modal-modal-description" variant="body1" sx={{ mt: 2 }}>
-                                {`${filterInfo.cancellata ? 'Ripristino':'Sospensione'} delle fatture di ${month[filterInfo.mese-1].toLocaleUpperCase()}: confermi l'operazione?`}
+                                {`${filterInfo.cancellata ? 'Ripristino':'Sospensione'} delle fatture di ${month[filterInfo.mese-1]?.toLocaleUpperCase()}: confermi l'operazione?`}
                             </Typography>
                         </div>
                         

@@ -1,10 +1,13 @@
+import { useMsal } from '@azure/msal-react';
 import { HeaderAccount } from '@pagopa/mui-italia';
 import { useLocation, useNavigate } from 'react-router';
-import { redirect } from '../../api/api';
-import {useMsal } from '@azure/msal-react';
-import { loginRequest } from '../../authConfig';
-import { useContext } from 'react';
-import { GlobalContext } from '../../store/context/globalContext';
+import { loginRequest } from '../authConfig';
+import { useContext, useState } from 'react';
+import { saveAs } from "file-saver";
+import { GlobalContext } from '../store/context/globalContext';
+import {  getManuale, managePresaInCarico, redirect} from '../api/api';
+import ModalLoading from '../components/reusableComponents/modals/modalLoading';
+
 
 
 type JwtUser = {
@@ -16,7 +19,7 @@ type JwtUser = {
 
 const HeaderPostLogin = () => {
     const globalContextObj = useContext(GlobalContext);
-    const {mainState} = globalContextObj;
+    const {mainState,dispatchMainState} = globalContextObj;
 
     const location  = useLocation();
     const navigate = useNavigate();
@@ -35,21 +38,38 @@ const HeaderPostLogin = () => {
         email: "",
     };
 
+    const [showDownloading, setShowDownloading] = useState(false);
     // start actions sul manuale operativo , download del manuale
 
-    const onButtonClick = () => {
-        const pdfUrl = "/ManualeUtentePortaleFatturazione5.pdf";
-        const link = document.createElement("a");
-        link.href = pdfUrl;
-        link.download = "ManualeUtentePortaleFatturazione.pdf";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+   
+    const onButtonClick = async () => {
+        setShowDownloading(true);
+        await getManuale().then((response) =>{
+            setShowDownloading(false);
+            if(response.status !== 200){
+                managePresaInCarico('ERRORE_MANUALE',dispatchMainState);
+            }else{
+                response.blob().then((res) => {
+                    setShowDownloading(false);
+                    const fileName = 'Manuale Utente Portale Fatturazione.pdf';
+                    saveAs( res,fileName );
+                }); 
+            }
+        } ).catch((err) => {
+            setShowDownloading(false);
+            managePresaInCarico('ERRORE_MANUALE',dispatchMainState);
+        });
     };
     //end actions sul manuale operativo , download del manuale
     // start on click su assistenza redirect alla tua apllicazione predefinita per l'invio mail
     function onEmailClick() {
-        window.open(`mailto:fatturazione@assistenza.pagopa.it`);
+        if(mainState.profilo.auth === "PAGOPA" || location.pathname === '/azureLogin' || mainState.prodotti.length > 0){
+            window.open(`mailto:fatturazione@assistenza.pagopa.it`);
+            
+        }else{
+            window.location.href = "https://uat.selfcare.pagopa.it/assistenza?productId=prod-pf";
+        }
+        
     }
     // end on click su assistenza redirect alla tua apllicazione predefinita per l'invio mail
 
@@ -59,22 +79,12 @@ const HeaderPostLogin = () => {
         instance.loginRedirect(loginRequest).catch((error) => console.log(error));
     };
 
-
-
-
-    const hideShowHeaderLogin =  location.pathname === '/auth' ||
-                                 location.pathname === '/azure' ||
-                                 location.pathname === '/auth/azure'; 
-                                 
-    
     const statusUser = mainState.authenticated && user;
 
-
- 
     return (
 
         <div className="div_header">
-            {hideShowHeaderLogin ? null : 
+            <>
                 <HeaderAccount
                     rootLink={pagoPALink}
                     loggedUser={statusUser}
@@ -91,7 +101,12 @@ const HeaderPostLogin = () => {
                     }}
                     onDocumentationClick={()=>onButtonClick()}
                 />
-            }
+                <ModalLoading 
+                    open={showDownloading} 
+                    setOpen={setShowDownloading}
+                    sentence={'Downloading...'} >
+                </ModalLoading>
+            </>
         </div>
     );
 };

@@ -1,17 +1,12 @@
 import {
     Typography, Card, CardContent, CardActions, Button
 } from '@mui/material';
-
-import { useNavigate } from 'react-router';
 import {MonogramPagoPACompany} from '@pagopa/mui-italia';
-
 import { LoginProps } from '../types/typesGeneral';
 
 // pagina non utilizzata nell'applicazione, probabilmete verra utilizzata in seguito
 
 const LoginPage : React.FC<LoginProps> = () =>{
-
-    const navigate = useNavigate();
 
     const getDataUser = localStorage.getItem('dati')|| '{}';
     const dataUser = JSON.parse(getDataUser);

@@ -1,9 +1,10 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { ModalProps } from 'react-bootstrap';
+import { Dispatch, SetStateAction } from 'react';
+import CloseIcon from '@mui/icons-material/Close';
+
 
 const style = {
     position: 'absolute' as const,
@@ -14,46 +15,44 @@ const style = {
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
+    borderRadius:'20px'
 };
 
-const ModalInfo : React.FC<ModalProps> = ({setOpen, open, sentence}) => {
+export interface ModalInfoProps {
+    setOpen:Dispatch<SetStateAction<{open:boolean,sentence:string}>>,
+    open:{open:boolean,sentence:string}
+}
+
+const ModalInfo : React.FC<ModalInfoProps> = ({setOpen, open}) => {
    
-    const handleClose = () => setOpen(false);
+    const handleClose = () => setOpen({open:false, sentence:''});
 
     return (
-        <div>
-        
-            <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Box sx={style}>
-                    <div className='d-flex justify-content-center'>
-                        <Typography id="modal-modal-title" variant="h6" component="h2">
-        Attenzione!
-                        </Typography>
-                        
+        <Modal
+            open={open.open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+        >
+            <Box sx={style}>
+                <div className="d-flex align-items-center justify-content-end">
+                    <div className='icon_close'>
+                        <CloseIcon onClick={handleClose} id='close_icon' sx={{color:'#17324D'}}></CloseIcon>
                     </div>
-                    <div className='d-flex justify-content-center text-center'>
-                        <Typography id="modal-modal-description" variant="body1" sx={{ mt: 2 }}>
-                            {sentence}
-                        </Typography>
-                    </div>
-                   
-                    <div className='container_buttons_modal d-flex justify-content-center mt-3'>
-                        <Button 
-                            sx={{marginRight:'20px'}} 
-                            variant='outlined'
-                            onClick={()=>handleClose()}
-                        >Esci</Button>
-                    </div>
+                </div>
+                <div className='d-flex justify-content-center'>
                     
-                </Box>
-                
-            </Modal>
-        </div>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+        Attenzione!
+                    </Typography>    
+                </div>
+                <div className='d-flex justify-content-center text-center'>
+                    <Typography id="modal-modal-description" variant="body1" sx={{ mt: 2 }}>
+                        {open.sentence}
+                    </Typography>
+                </div> 
+            </Box>
+        </Modal>
     );
 };
 export default  ModalInfo;
