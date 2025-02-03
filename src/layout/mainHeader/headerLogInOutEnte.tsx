@@ -5,6 +5,7 @@ import { getManuale, managePresaInCarico, redirect } from '../../api/api';
 import { pagoPALinkHeder } from '../../assets/dataLayout';
 import { JwtUser } from '../../types/typesGeneral';
 import { saveAs } from "file-saver";
+import ModalLoading from '../../components/reusableComponents/modals/modalLoading';
 
 const HeaderLogEnte = () => {
     const globalContextObj = useContext(GlobalContext);
@@ -58,6 +59,11 @@ const HeaderLogEnte = () => {
                 }}
                 onDocumentationClick={()=>onButtonClick()}
             />
+            <ModalLoading 
+                open={showDownloading} 
+                setOpen={setShowDownloading}
+                sentence={'Downloading...'} >
+            </ModalLoading>
         </div>
     );
 };

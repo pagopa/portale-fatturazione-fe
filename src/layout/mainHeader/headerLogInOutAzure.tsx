@@ -8,6 +8,7 @@ import { pagoPALinkHeder } from '../../assets/dataLayout';
 import { JwtUser } from '../../types/typesGeneral';
 import { getManuale, managePresaInCarico } from '../../api/api';
 import { saveAs } from "file-saver";
+import ModalLoading from '../../components/reusableComponents/modals/modalLoading';
 
 const HeaderLogAzure = () => {
     const { instance } = useMsal();
@@ -72,6 +73,11 @@ const HeaderLogAzure = () => {
                 }}
                 onDocumentationClick={()=>onButtonClick()}
             />
+            <ModalLoading 
+                open={showDownloading} 
+                setOpen={setShowDownloading}
+                sentence={'Downloading...'} >
+            </ModalLoading>
         </div>
     );
 };
