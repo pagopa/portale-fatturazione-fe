@@ -33,7 +33,7 @@ const HeaderLogEnte = () => {
                     saveAs( res,fileName );
                 }); 
             }
-        } ).catch((err) => {
+        } ).catch(() => {
             setShowDownloading(false);
             managePresaInCarico('ERRORE_MANUALE',dispatchMainState);
         });

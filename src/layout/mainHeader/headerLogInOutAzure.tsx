@@ -38,7 +38,7 @@ const HeaderLogAzure = () => {
                     saveAs( res,fileName );
                 }); 
             }
-        } ).catch((err) => {
+        } ).catch(() => {
             setShowDownloading(false);
             managePresaInCarico('ERRORE_MANUALE',dispatchMainState);
         });
@@ -59,7 +59,6 @@ const HeaderLogAzure = () => {
     };
 
     const statusUser = mainState.authenticated && user;
-    console.log(window.location.href,'???');
     return (
         <div className="div_header">
             <HeaderAccount
