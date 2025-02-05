@@ -127,7 +127,7 @@ const SideNavSend : React.FC = () => {
         }else if(currentLocation === "/accertamenti"){
             setSelectedIndex(7);
         }else if(currentLocation === PathPf.TIPOLOGIA_CONTRATTO){
-            setSelectedIndex(7);
+            setSelectedIndex(8);
         }
     },[currentLocation]);
 
