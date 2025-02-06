@@ -13,7 +13,6 @@ import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
 import { PathPf } from "../../types/enum";
 import { saveAs } from "file-saver";
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
-
 import SelectTipologiaFattura from "../../components/reusableComponents/select/selectTipologiaFattura";
 import SelectStatoPdf from "../../components/rel/selectStatoPdf";
 import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
@@ -22,7 +21,7 @@ import ModalLoading from "../../components/reusableComponents/modals/modalLoadin
 import ModalRedirect from "../../components/commessaInserimento/madalRedirect";
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
-import JsonConfigDataRel from "../assets/configurations/conf_GridRegolareEsecuzione.json";
+
 
 
 const RelPage : React.FC = () =>{
