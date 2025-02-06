@@ -118,6 +118,15 @@ height: 48px;
    color: #0073E6;
    font-weight: 600;
  }
+
+ #loader_on_gate_pages .MuiFormControl-root .MuiBox-root{
+  min-height: 48px;
+  width: auto;
+  border:none;
+  background-color: #F2F2F2;
+  
+  }
+ 
 #loader_on_gate_pages .MuiFormControl-root .MuiBox-root p{
 
   font-weight: 600;

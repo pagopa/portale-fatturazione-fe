@@ -6,7 +6,8 @@ import {
     ListItemText,
     ListItemIcon,
     Box,
-    Divider
+    Divider,
+    Collapse
 } from '@mui/material';
 import { useNavigate, useLocation } from "react-router-dom";
 import DnsIcon from '@mui/icons-material/Dns';
@@ -23,6 +24,8 @@ import { getDatiModuloCommessa } from '../api/apiSelfcare/moduloCommessaSE/api';
 import { profiliEnti } from '../reusableFunction/actionLocalStorage';
 import { PathPf } from '../types/enum';
 import { GlobalContext } from '../store/context/globalContext';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 
 
 const SideNavComponent: React.FC = () => {
@@ -49,6 +52,7 @@ const SideNavComponent: React.FC = () => {
 
 
     const [selectedIndex, setSelectedIndex] = useState<number | null>(0);
+    const [open,setOpen] = useState(false);
     
     const handleListItemClick = async() => {
         
@@ -316,19 +320,34 @@ const SideNavComponent: React.FC = () => {
                             <ListItemText primary="Modulo commessa" />
                         </ListItemButton></>
                         }
-                        <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClickNotifiche()}>
-                            <ListItemIcon>
-                           
-                                <MarkUnreadChatAltIcon fontSize="inherit" />
-                            </ListItemIcon>
-                            <ListItemText primary="Notifiche" />
-                        </ListItemButton>
-                        <ListItemButton selected={selectedIndex === 8} onClick={() => handleListItemClickStorico()}>
-                            <ListItemIcon>
-                                <YoutubeSearchedForIcon fontSize="inherit" />
-                            </ListItemIcon>
-                            <ListItemText primary="Contestazioni" />
-                        </ListItemButton>
+                       
+                        {profilo.auth === 'PAGOPA' ?
+                            <>
+                                <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClickNotifiche()}>
+                                    <ListItemIcon>
+                                        <MarkUnreadChatAltIcon fontSize="inherit" />
+                                    </ListItemIcon>
+                                    <ListItemText primary="Notifiche" />
+                                    {open ? <ExpandLess onClick={()=> setOpen(false)} /> : <ExpandMore onClick={()=> setOpen(true)} />}
+                                </ListItemButton>
+                                <Collapse in={open} timeout="auto" unmountOnExit>
+                                    <List component="div" disablePadding>
+                                        <ListItemButton selected={selectedIndex === 8} onClick={() => handleListItemClickStorico()}>
+                                            <ListItemIcon>
+                                                <YoutubeSearchedForIcon fontSize="inherit" />
+                                            </ListItemIcon>
+                                            <ListItemText primary="Contestazioni" />
+                                        </ListItemButton>
+                                    </List>
+                                </Collapse>
+                            </> :
+                            <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClickNotifiche()}>
+                                <ListItemIcon>
+                                    <MarkUnreadChatAltIcon fontSize="inherit" />
+                                </ListItemIcon>
+                                <ListItemText primary="Notifiche" />
+                            </ListItemButton>
+                        }
                         {!recOrConsIsLogged &&
                         <>
                             <ListItemButton selected={selectedIndex === 3} onClick={() => handleListItemClickRel()}>

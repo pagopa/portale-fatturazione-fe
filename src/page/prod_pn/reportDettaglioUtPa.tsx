@@ -1067,9 +1067,11 @@ const ReportDettaglio : React.FC = () => {
                                 }
                             </div>               
                         </div>
+                        {profilo.auth === 'PAGOPA' && 
                         <div className="col-3 d-flex justify-content-end pe-5">
                             <Button className="" variant="contained" onClick={()=> navigate(PathPf.INSERIMENTO_CONTESTAZIONI)} >Inserisci contestazioni</Button>
                         </div>
+                        }
                     </div>
                 </div>
             </div>
