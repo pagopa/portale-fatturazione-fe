@@ -36,7 +36,7 @@ const RelPage : React.FC = () =>{
     const navigate = useNavigate();
     const enti = profiliEnti(mainState);
  
-    console.log({JsonConfigDataRel});
+
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
