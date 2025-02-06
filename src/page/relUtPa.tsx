@@ -23,7 +23,7 @@ import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 import { GlobalContext } from "../store/context/globalContext";
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
 import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
-
+import JsonConfigDataRel from "../assets/configurations/conf_GridRegolareEsecuzione.json";
 
 
 const RelPage : React.FC = () =>{
@@ -36,7 +36,7 @@ const RelPage : React.FC = () =>{
     const navigate = useNavigate();
     const enti = profiliEnti(mainState);
  
-   
+    console.log({JsonConfigDataRel});
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -89,24 +89,6 @@ const RelPage : React.FC = () =>{
 
     useEffect(()=>{
         getAnni();
-        /*
-        if(isInitialRender.current && Object.keys(filters).length > 0){
-         
-            setBodyRel(filters.body);
-            setTextValue(filters.textValue);
-            setValueAutocomplete(filters.valueAutocomplete);
-            getlista(filters.body,filters.page + 1, filters.rows);
-            setPage(filters.page);
-            setRowsPerPage(filters.rows);
-            setBodyDownload(filters.body);
-            getListTipologiaFattura(filters.body.anno,filters.body.mese);
-        }else{
-            const realPage = page + 1;
-            getlista(bodyRel,realPage, rowsPerPage);
-            getListTipologiaFattura(bodyRel.anno, bodyRel.mese);
-            isInitialRender.current = false; 
-      
-        }*/
     },[]);
 
     useEffect(()=>{

@@ -1,13 +1,16 @@
 import { HeaderAccount } from '@pagopa/mui-italia';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { GlobalContext } from '../../store/context/globalContext';
-import { redirect } from '../../api/api';
+import { getManuale, managePresaInCarico, redirect } from '../../api/api';
 import { pagoPALinkHeder } from '../../assets/dataLayout';
 import { JwtUser } from '../../types/typesGeneral';
+import { saveAs } from "file-saver";
+import ModalLoading from '../../components/reusableComponents/modals/modalLoading';
 
 const HeaderLogEnte = () => {
     const globalContextObj = useContext(GlobalContext);
-    const {mainState} = globalContextObj;
+    const {mainState,dispatchMainState} = globalContextObj;
+    const [showDownloading, setShowDownloading] = useState(false);
 
     
     const user: JwtUser = {
@@ -17,7 +20,24 @@ const HeaderLogEnte = () => {
         email: "",
     };
 
-    const assistenza = process.env;
+    const onButtonClick = async () => {
+        setShowDownloading(true);
+        await getManuale().then((response) =>{
+            setShowDownloading(false);
+            if(response.status !== 200){
+                managePresaInCarico('ERRORE_MANUALE',dispatchMainState);
+            }else{
+                response.blob().then((res) => {
+                    setShowDownloading(false);
+                    const fileName = 'Manuale Utente Portale Fatturazione.pdf';
+                    saveAs( res,fileName );
+                }); 
+            }
+        } ).catch(() => {
+            setShowDownloading(false);
+            managePresaInCarico('ERRORE_MANUALE',dispatchMainState);
+        });
+    };
     
 
     function onEmailClick() {
@@ -37,8 +57,13 @@ const HeaderLogEnte = () => {
                     localStorage.clear();
                     window.location.href = redirect;
                 }}
-                onDocumentationClick={()=>console.log('quando fa il merge implementa id download by api')}
+                onDocumentationClick={()=>onButtonClick()}
             />
+            <ModalLoading 
+                open={showDownloading} 
+                setOpen={setShowDownloading}
+                sentence={'Downloading...'} >
+            </ModalLoading>
         </div>
     );
 };

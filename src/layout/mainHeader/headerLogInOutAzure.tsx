@@ -1,18 +1,21 @@
 import { useMsal } from '@azure/msal-react';
 import { HeaderAccount } from '@pagopa/mui-italia';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { GlobalContext } from '../../store/context/globalContext';
 import { loginRequest } from '../../authConfig';
 import { pagoPALinkHeder } from '../../assets/dataLayout';
 import { JwtUser } from '../../types/typesGeneral';
+import { getManuale, managePresaInCarico } from '../../api/api';
+import { saveAs } from "file-saver";
+import ModalLoading from '../../components/reusableComponents/modals/modalLoading';
 
 const HeaderLogAzure = () => {
     const { instance } = useMsal();
     const globalContextObj = useContext(GlobalContext);
-    const {mainState} = globalContextObj;
+    const {mainState,dispatchMainState} = globalContextObj;
     const navigate = useNavigate();
-    const location = useLocation();
+    const [showDownloading, setShowDownloading] = useState(false);
 
     const user: JwtUser = {
         id: '1',
@@ -20,6 +23,27 @@ const HeaderLogAzure = () => {
         surname: "",
         email: "",
     };
+
+
+    const onButtonClick = async () => {
+        setShowDownloading(true);
+        await getManuale().then((response) =>{
+            setShowDownloading(false);
+            if(response.status !== 200){
+                managePresaInCarico('ERRORE_MANUALE',dispatchMainState);
+            }else{
+                response.blob().then((res) => {
+                    setShowDownloading(false);
+                    const fileName = 'Manuale Utente Portale Fatturazione.pdf';
+                    saveAs( res,fileName );
+                }); 
+            }
+        } ).catch(() => {
+            setShowDownloading(false);
+            managePresaInCarico('ERRORE_MANUALE',dispatchMainState);
+        });
+    };
+
 
     //end actions sul manuale operativo , download del manuale
     // start on click su assistenza redirect alla tua apllicazione predefinita per l'invio mail
@@ -35,7 +59,6 @@ const HeaderLogAzure = () => {
     };
 
     const statusUser = mainState.authenticated && user;
-    console.log(window.location.href,'???');
     return (
         <div className="div_header">
             <HeaderAccount
@@ -47,8 +70,13 @@ const HeaderLogAzure = () => {
                     localStorage.clear();
                     navigate('/azureLogin');
                 }}
-                onDocumentationClick={()=>console.log('quando fa il merge implementa id download by api')}
+                onDocumentationClick={()=>onButtonClick()}
             />
+            <ModalLoading 
+                open={showDownloading} 
+                setOpen={setShowDownloading}
+                sentence={'Downloading...'} >
+            </ModalLoading>
         </div>
     );
 };
