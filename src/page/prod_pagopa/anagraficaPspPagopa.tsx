@@ -469,7 +469,8 @@ const AnagraficaPsp:React.FC = () =>{
                     page={page}
                     rows={rowsPerPage}
                     headerNames={['Nome PSP','ID Contratto','Trimestre','Nome Fornitore','E-mail PEC','Codice SDI','Codice ABI','E-Mail Ref. Fattura','Data','']}
-                    disabled={getListaLoading}></GridCustom>
+                    disabled={getListaLoading}
+                    widthCustomSize="2000px"></GridCustom>
             </div>
             <ModalLoading 
                 open={showLoading} 

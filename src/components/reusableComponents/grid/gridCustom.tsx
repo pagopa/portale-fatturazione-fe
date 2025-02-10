@@ -1,11 +1,13 @@
-import { Card, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip } from "@mui/material";
+import { Card, Switch, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip, Typography } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Rel } from "../../../types/typeRel";
 import { NotificheList } from "../../../types/typeReportDettaglio";
 import { GridElementListaPsp } from "../../../types/typeAngraficaPsp";
+import { useState } from "react";
+import GridRowContratto from "../../tipologiaContratto/gridRow";
 
 interface GridCustomProps {
-    elements:NotificheList[]|Rel[]|GridElementListaPsp[],
+    elements:NotificheList[]|Rel[]|GridElementListaPsp[]|any[],
     changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
     changeRow:( event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
     page:number,
@@ -14,14 +16,23 @@ interface GridCustomProps {
     headerNames:string[],
     nameParameterApi:string,  // elemnto/i che servono alla chiamata get di dettaglio , in questo caso bisogna passare questi pametro/o nel MainState ma non posso visulizzarli nella grid
     apiGet?:(el:any)=>void, 
-    disabled:boolean
+    disabled:boolean,
+    widthCustomSize:string
 }
 
-const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, nameParameterApi, apiGet, disabled}) =>{
+const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, nameParameterApi, apiGet, disabled, widthCustomSize}) =>{
 
 
     const handleClickOnGrid = (element) =>{
-        if(apiGet){
+        if(apiGet && nameParameterApi === 'idContratto'){
+            const newDetailRel = {
+                name:element.ragioneSociale,
+                tipologiaContratto:element.tipologiaContratto,
+                id:element[nameParameterApi]
+            };
+            apiGet(newDetailRel);
+
+        }else if(apiGet){
             const newDetailRel = {
                 nomeEnteClickOn:element.ragioneSociale,
                 mese:element.mese,
@@ -30,13 +41,12 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
             };
             apiGet(newDetailRel);
         }
-       
     };
    
     return (
         <div>
             <div style={{overflowX:'auto'}}>
-                <Card sx={{width: '2000px'}}  >
+                <Card sx={{width: widthCustomSize}}  >
                     <Table >
                         <TableHead sx={{backgroundColor:'#f2f2f2'}}>
                             <TableRow>
@@ -57,12 +67,13 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                             <TableBody sx={{marginLeft:'20px'}}>
                                 {elements.map((element:Rel|NotificheList|GridElementListaPsp ) =>{
                                     // tolgo da ogni oggetto la prima chiave valore  perchè il cliente non vuole vedere es. l'id ma serve per la chiamata get di dettaglio 
+                                   
                                     const sliced = Object.fromEntries(
                                         Object.entries(element).slice(1)
                                     );
+                                  
                                     if(sliced?.tipologiaFattura === 'ASSEVERAZIONE'){
                                         return (
-                
                                             <TableRow key={Math.random()}>
                                                 {
                                                     Object.values(sliced).map((value:string, i:number)=>{
@@ -79,7 +90,10 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                                 }
                                             </TableRow>
                                         );
-                                    }else{
+                                    }else if(nameParameterApi=== 'idContratto'){
+                                        return (
+                                            <GridRowContratto sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} ></GridRowContratto>
+                                        );}else{
                                         return (
                                             <TableRow key={Math.random()}>
                                                 {
@@ -94,7 +108,7 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                                                         if(i === 0){
                                                                             handleClickOnGrid(element);
                                                                         }            
-                                                                    } }
+                                                                    }}
                                                                 >
                                                                     {valueEl}
                                                                 </TableCell>
@@ -107,18 +121,12 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                                 } }>
                                                     <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
                                                 </TableCell> }
-                                                
-                       
                                             </TableRow>
-                    
-                                        );
-                                    }
-                                    
+                                        );}
                                 } )}
                             </TableBody>
                         }
-                    </Table>
-                            
+                    </Table>      
                 </Card>
             </div>
             <div className="pt-3">                           

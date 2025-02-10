@@ -1118,7 +1118,8 @@ const ReportDettaglio : React.FC = () => {
                     rows={rowsPerPage}
                     headerNames={headerNames}
                     apiGet={getContestazioneModal}
-                    disabled={getNotificheWorking}></GridCustom>
+                    disabled={getNotificheWorking}
+                    widthCustomSize="2000px"></GridCustom>
             </div>             
             {/* MODAL */}                                 
             <ModalContestazione open={open} 

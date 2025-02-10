@@ -456,6 +456,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 open={openModalConfermaIns}
                 onButtonComfermaPopUp={onButtonComfermaPopUp}
                 mainState={mainState}
+                sentence={`Stai ${mainState.inserisciModificaCommessa === 'MODIFY' ? 'modificando': 'registrando'} il Modulo Commessa di ${month[Number(mainState.mese) - 1]} ${mainState.anno}: confermi l'operazione?`}
             ></ModalConfermaInserimento>
             <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}></ModalLoading>
         </>
