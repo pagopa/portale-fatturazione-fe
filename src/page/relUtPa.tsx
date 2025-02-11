@@ -1,9 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
-import SelectMese from "../components/reusableComponents/select/selectMese";
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
 import SelectTipologiaFattura from "../components/reusableComponents/select/selectTipologiaFattura";
-import GridCustom from "../components/reusableComponents/grid/gridCustom";
 import { BodyRel, Rel } from "../types/typeRel";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { manageError} from "../api/api";
@@ -23,8 +20,7 @@ import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 import { GlobalContext } from "../store/context/globalContext";
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
 import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
-
-
+import GridCustom from "../components/reusableComponents/grid/gridCustom";
 
 const RelPage : React.FC = () =>{
 
@@ -728,7 +724,8 @@ const RelPage : React.FC = () =>{
                         headerNames={['Ragione Sociale','Tipologia Fattura', 'Reg. Es. PDF','ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale','']}
                         apiGet={setIdRel}
                         disabled={getListaRelRunning}
-                        widthCustomSize="2000px"></GridCustom>
+                        widthCustomSize="2000px"
+                    ></GridCustom>
                 </div>
             </div>
             <ModalLoading 

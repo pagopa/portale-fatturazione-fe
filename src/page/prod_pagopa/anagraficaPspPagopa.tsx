@@ -5,7 +5,6 @@ import { downloadPsp, getListaAnagraficaPsp, getListaAnniPsp, getListaNamePsp, g
 import { manageError } from "../../api/api";
 import MultiselectWithKeyValue from "../../components/anagraficaPsp/multiselectKeyValue";
 import { Autocomplete, Box, Button, Checkbox, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
-import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { saveAs } from "file-saver";
 import { GlobalContext } from '../../store/context/globalContext';
@@ -13,6 +12,8 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { PathPf } from '../../types/enum';
 import useSavedFilters from '../../hooks/useSaveFiltersLocalStorage';
+import GridCustom from '../../components/reusableComponents/grid/gridCustom';
+
 
 const AnagraficaPsp:React.FC = () =>{
 
@@ -470,7 +471,8 @@ const AnagraficaPsp:React.FC = () =>{
                     rows={rowsPerPage}
                     headerNames={['Nome PSP','ID Contratto','Trimestre','Nome Fornitore','E-mail PEC','Codice SDI','Codice ABI','E-Mail Ref. Fattura','Data','']}
                     disabled={getListaLoading}
-                    widthCustomSize="2000px"></GridCustom>
+                    widthCustomSize="2000px"
+                ></GridCustom>
             </div>
             <ModalLoading 
                 open={showLoading} 

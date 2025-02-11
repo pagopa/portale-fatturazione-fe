@@ -15,13 +15,14 @@ import ModalScadenziario from "../components/reportDettaglio/modalScadenziario";
 import { downloadNotifche, downloadNotifcheConsolidatore, downloadNotifcheRecapitista, getContestazione, getContestazioneCosolidatore, getContestazioneRecapitista, listaEntiNotifichePage, listaEntiNotifichePageConsolidatore, listaNotifiche, listaNotificheConsolidatore, listaNotificheRecapitista } from "../api/apiSelfcare/notificheSE/api";
 import { downloadNotifchePagoPa, getAnniNotifiche, getContestazionePagoPa, getMesiNotifiche, getTipologiaEntiCompletiPagoPa, listaNotifichePagoPa } from "../api/apiPagoPa/notifichePA/api";
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
-import GridCustom from "../components/reusableComponents/grid/gridCustom";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 import { profiliEnti} from "../reusableFunction/actionLocalStorage";
 import { mesiGrid, mesiWithZero, tipoNotifica } from "../reusableFunction/reusableArrayObj";
 import { GlobalContext } from "../store/context/globalContext";
 import { PathPf } from "../types/enum";
 import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
+import GridCustom from "../components/reusableComponents/grid/gridCustom";
+
 
 const ReportDettaglio : React.FC = () => {
     const globalContextObj = useContext(GlobalContext);

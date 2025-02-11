@@ -1,11 +1,9 @@
-import { Card, Switch, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip, Typography } from "@mui/material";
+import { Card, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { GridElementListaPsp } from "../../../types/typeAngraficaPsp";
 import { Rel } from "../../../types/typeRel";
 import { NotificheList } from "../../../types/typeReportDettaglio";
-import { GridElementListaPsp } from "../../../types/typeAngraficaPsp";
-import { useState } from "react";
-import GridRowContratto from "../../tipologiaContratto/gridRow";
-
+import RowContratto from "./gridCustomBase/rowTipologiaContratto";
 interface GridCustomProps {
     elements:NotificheList[]|Rel[]|GridElementListaPsp[]|any[],
     changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
@@ -27,8 +25,8 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
         if(apiGet && nameParameterApi === 'idContratto'){
             const newDetailRel = {
                 name:element.ragioneSociale,
-                tipologiaContratto:element.tipologiaContratto,
-                id:element[nameParameterApi]
+                tipologiaContratto:element.tipoContratto,
+                idEnte:element.idEnte
             };
             apiGet(newDetailRel);
 
@@ -59,19 +57,15 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                 })}
                             </TableRow>
                         </TableHead>
-
                         {elements.length === 0 ?
-                            <TableBody  style={{height: '50px'}}>
-
+                            <TableBody key={Math.random()} style={{height: '50px'}}>
                             </TableBody> :
                             <TableBody sx={{marginLeft:'20px'}}>
                                 {elements.map((element:Rel|NotificheList|GridElementListaPsp ) =>{
                                     // tolgo da ogni oggetto la prima chiave valore  perchè il cliente non vuole vedere es. l'id ma serve per la chiamata get di dettaglio 
-                                   
                                     const sliced = Object.fromEntries(
                                         Object.entries(element).slice(1)
                                     );
-                                  
                                     if(sliced?.tipologiaFattura === 'ASSEVERAZIONE'){
                                         return (
                                             <TableRow key={Math.random()}>
@@ -92,8 +86,9 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                         );
                                     }else if(nameParameterApi=== 'idContratto'){
                                         return (
-                                            <GridRowContratto sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} ></GridRowContratto>
-                                        );}else{
+                                            <RowContratto key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} ></RowContratto>
+                                        );
+                                    }else{
                                         return (
                                             <TableRow key={Math.random()}>
                                                 {

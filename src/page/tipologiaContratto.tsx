@@ -3,7 +3,6 @@ import { Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/mater
 import {manageError, managePresaInCarico, } from '../api/api';
 import { GridElementListaFatturazione } from "../types/typeListaDatiFatturazione";
 import { useContext, useEffect, useState } from "react";
-import {  GridRowParams,GridEventListener,MuiEvent} from '@mui/x-data-grid';
 import DownloadIcon from '@mui/icons-material/Download';
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../types/enum";
@@ -12,12 +11,10 @@ import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeRepo
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
 import { GlobalContext } from "../store/context/globalContext";
 import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
-import GridCustom from "../components/reusableComponents/grid/gridCustom";
 import ModalConfermaInserimento from "../components/commessaInserimento/modalConfermaInserimento";
-import { getListaTipologiaFatturazionePagoPa } from "../api/apiPagoPa/tipologiaContratto/api";
-import { Params } from "../types/typesGeneral";
-
-
+import { downloadTipologiePagopa, getListaTipologiaFatturazionePagoPa, modifyContrattoPagoPa } from "../api/apiPagoPa/tipologiaContratto/api";
+import { saveAs } from "file-saver";
+import GridCustom from "../components/reusableComponents/grid/gridCustom";
 export interface BodyContratto {
     idEnti:{idEnte:string}[],
     tipologiaContratto:number|null
@@ -44,6 +41,7 @@ const PageTipologiaContratto :React.FC = () =>{
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalContratti, setTotalContratti]  = useState(0);
     const [sentence , setSentence] = useState<any>();
+    const [elementSelected, setElementSelected] = useState({idEnte:'', tipologiaContratto:0});
     const [openModalConfermaIns, setOpenModalConfermaIns] = useState(false);
     const { 
         filters,
@@ -53,8 +51,16 @@ const PageTipologiaContratto :React.FC = () =>{
     } = useSavedFilters(PathPf.TIPOLOGIA_CONTRATTO,{});
 
     useEffect(()=>{
-        getLista(page, rowsPerPage, bodyGetLista);
-
+        if(isInitialRender.current && Object.keys(filters).length > 0){
+            getLista(filters.page, filters.rows, filters.body);
+            setBodyGetLista(filters.body);
+            setTextValue(filters.textValue);
+            setValueAutocomplete(filters.valueAutocomplete);
+            setPage(filters.page);
+            setRowsPerPage(filters.rows);
+        }else{
+            getLista(page, rowsPerPage, bodyGetLista);
+        }
     },[]);
 
 
@@ -93,44 +99,28 @@ const PageTipologiaContratto :React.FC = () =>{
     };
 
     const getLista = async( p, rows, body) => {
+        setGetListaLoading(true);
         await getListaTipologiaFatturazionePagoPa(token, profilo.nonce, (p + 1), rows, body).then((res)=>{
             setTotalContratti(res.data.count);
 
             const dataToInsert = res.data.contratti.map((el)=> {
                 const result = {
-                    idContratto:el.idContratto,
+                    idEnte:el.idEnte,
                     ragioneSociale:el.ragioneSociale,
-                    ultimaModificaContratto:new Date(el.ultimaModificaContratto).toLocaleString().split(',')[0] || '',
+                    dataInserimento:el.dataInserimento ? new Date(el.dataInserimento).toLocaleString().split(',')[0] :'',
                     tipoContratto:el.tipoContratto
                 };
                 return result;
             });
             setGridData(dataToInsert);
+            setGetListaLoading(false);
         }).catch(((err)=>{
+            setGetListaLoading(false);
             setTotalContratti(0);
             setGridData([]);
             manageError(err,dispatchMainState);
         }));
     };
-
-   
-
-    let columsSelectedGrid = '';
-    const handleOnCellClick = (params:Params) =>{
-        columsSelectedGrid  = params.field;
-    };
-
-    const handleEvent: GridEventListener<'rowClick'> = (
-        params:GridRowParams,
-        event: MuiEvent<React.MouseEvent<HTMLElement>>,
-    ) => {
-        event.preventDefault();
-        // l'evento verrà eseguito solo se l'utente farà il clik sul 
-        if(columsSelectedGrid === 'action' ){
-            console.log("switch");
-        }
-    };
-
 
     const clearOnChangeFilter = () => {
         setGridData([]);
@@ -139,84 +129,110 @@ const PageTipologiaContratto :React.FC = () =>{
 
     const onButtonFiltra = () => {
         getLista(0,10,bodyGetLista);
-        /*
         updateFilters(
             {
-                body:null,
+                body:bodyGetLista,
                 pathPage:PathPf.TIPOLOGIA_CONTRATTO,
                 textValue,
                 valueAutocomplete,
                 page:0,
                 rows:10
-            });*/
+            });
     };
 
     const onButtonAnnulla = () => {
         getLista(0,10,{idEnti:[],tipologiaContratto:null});
         setBodyGetLista({idEnti:[],tipologiaContratto:null});
+        setValueAutocomplete([]);
+        setTextValue('');
+        resetFilters();
     };
-    console.log({page,rowsPerPage});
 
     const handleChangePage = (
         event: React.MouseEvent<HTMLButtonElement> | null,
         newPage: number,
     ) => {
         getLista(newPage,rowsPerPage, bodyGetLista);
-        console.log({newPage});
         setPage(newPage);
-        /*
         updateFilters({
-            pathPage:PathPf.LISTA_NOTIFICHE,
-            body:bodyDownload,
+            pathPage:PathPf.TIPOLOGIA_CONTRATTO,
+            body:bodyGetLista,
             textValue,
             valueAutocomplete,
             page:newPage,
             rows:rowsPerPage,
-            valueFgContestazione
-        });*/
-        console.log('change page');
+        
+        });
+   
     };
                     
     const handleChangeRowsPerPage = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
         setRowsPerPage(parseInt(event.target.value, 10));
-        /*updateFilters({
-            pathPage:PathPf.LISTA_NOTIFICHE,
-            body:bodyDownload,
+        updateFilters({
+            pathPage:PathPf.TIPOLOGIA_CONTRATTO,
+            body:bodyGetLista,
             textValue,
             valueAutocomplete,
             page,
-            rows:parseInt(event.target.value, 10),
-            valueFgContestazione
-        });*/
+            rows:parseInt(event.target.value, 10)
+        });
         const realPage = page + 1;
         getLista(realPage,parseInt(event.target.value, 10),bodyGetLista);
      
                           
     };
 
-    console.log({bodyGetLista});
+
+    const onDownload = async() => {
+        setShowLoading(true);
+        await downloadTipologiePagopa(token, profilo.nonce,bodyGetLista).then(
+            response => response.blob()).then(
+            (response)=>{
+                let fileName = `Lista tipologia contratto.xlsx`;
+                if(gridData.length === 1){
+                    fileName = `Tipologia contratto / ${gridData[0]?.ragioneSociale}.xlsx`;
+                }
+                setShowLoading(true);
+                saveAs(response,fileName);
+                setShowLoading(false);
+            }).catch(err =>{
+            manageError(err,dispatchMainState);
+        } );
+
+    };
 
     const changeContractType = (el) => {
-
+        console.log({el});
         const old = el.contractType === 0 ? 'PAC' : 'PAL';
         const newC = el.contractType === 1 ? 'PAL' : 'PAC';
-        const tag = <Typography>Stai modificando la tipologia contratto da {old} a<Box className="ms-2" component="span" fontWeight="bold">{newC}</Box> del comune di <Box component="span" fontWeight="bold">
+        const tag = <Typography>Stai modificando la tipologia contratto da {old} a<Box className="ms-2" component="span" fontWeight="bold">{newC}</Box> di <Box component="span" fontWeight="bold">
             { el.name} </Box>: confermi l'operazione?</Typography>;
         setSentence(tag);
+        setElementSelected(el);
         setOpenModalConfermaIns(true);
+    };
+    console.log({pippo:elementSelected});
+    const headerNames = [ 'Ragione Sociale' , 'Data inserimento' , ''];
+
+    const onButtonComfermaPopUp = async() => {
+
+        const typToSet = elementSelected.tipologiaContratto === 1 ? 2 : 1;
+
+        await modifyContrattoPagoPa(token, profilo.nonce,{idEnte:elementSelected.idEnte, tipologiaContratto:typToSet}).then((res)=> {
+
+            managePresaInCarico('CAMBIO_TIPOLOGIA_CONTRATTO',dispatchMainState);
+            setOpenModalConfermaIns(false);
+            getLista( page, rowsPerPage, bodyGetLista);
+
+        }).catch((err)=>{
+            manageError(err,dispatchMainState);
+            setOpenModalConfermaIns(false);
+        });
        
     };
-      
-
-    const headerNames = [ 'Ragione Sociale' , 'Data ultima modifica' , ''];
-
-
-    const onButtonComfermaPopUp = () => {
-
-        managePresaInCarico('CAMBIO_TIPOLOGIA_CONTRATTO',dispatchMainState);
-    };
+    console.log({bodyGetLista});
 
     return(
         <div className="mx-5">
@@ -291,6 +307,7 @@ const PageTipologiaContratto :React.FC = () =>{
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
                 <Button 
                     disabled={getListaLoading}
+                    onClick={onDownload}
                 >
                 Download Risultati
                     <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
