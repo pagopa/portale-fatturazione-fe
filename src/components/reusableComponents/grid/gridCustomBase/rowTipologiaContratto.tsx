@@ -9,7 +9,6 @@ const RowContratto = ({sliced, apiGet, handleClickOnGrid, element}) => {
         setTipologia(element.tipoContratto);
     },[element]);
 
-    console.log({pino:element});
     return (
         <TableRow key={element.idEnte}>
             {

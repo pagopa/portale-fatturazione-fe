@@ -20,7 +20,6 @@ export interface BodyContratto {
     tipologiaContratto:number|null
 }
 
-
 const PageTipologiaContratto :React.FC = () =>{
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState} = globalContextObj;
@@ -63,7 +62,6 @@ const PageTipologiaContratto :React.FC = () =>{
         }
     },[]);
 
-
     useEffect(()=>{
         if(bodyGetLista.idEnti?.length  !== 0 || bodyGetLista.tipologiaContratto !== null){
             setStatusAnnulla('show');
@@ -71,8 +69,6 @@ const PageTipologiaContratto :React.FC = () =>{
             setStatusAnnulla('hidden');
         }
     },[bodyGetLista]);
-
-    
 
     useEffect(()=>{
         const timer = setTimeout(() => {
@@ -83,11 +79,6 @@ const PageTipologiaContratto :React.FC = () =>{
         return () => clearTimeout(timer);
     },[textValue]);
 
-  
-
-
-
-    // servizio che popola la select con la checkbox
     const listaEntiPageOnSelect = async () =>{
         await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} )
             .then((res)=>{
@@ -102,7 +93,6 @@ const PageTipologiaContratto :React.FC = () =>{
         setGetListaLoading(true);
         await getListaTipologiaFatturazionePagoPa(token, profilo.nonce, (p + 1), rows, body).then((res)=>{
             setTotalContratti(res.data.count);
-
             const dataToInsert = res.data.contratti.map((el)=> {
                 const result = {
                     idEnte:el.idEnte,
@@ -125,7 +115,6 @@ const PageTipologiaContratto :React.FC = () =>{
     const clearOnChangeFilter = () => {
         setGridData([]);
     };
-
 
     const onButtonFiltra = () => {
         getLista(0,10,bodyGetLista);
@@ -160,10 +149,8 @@ const PageTipologiaContratto :React.FC = () =>{
             textValue,
             valueAutocomplete,
             page:newPage,
-            rows:rowsPerPage,
-        
+            rows:rowsPerPage
         });
-   
     };
                     
     const handleChangeRowsPerPage = (
@@ -179,11 +166,8 @@ const PageTipologiaContratto :React.FC = () =>{
             rows:parseInt(event.target.value, 10)
         });
         const realPage = page + 1;
-        getLista(realPage,parseInt(event.target.value, 10),bodyGetLista);
-     
-                          
+        getLista(realPage,parseInt(event.target.value, 10),bodyGetLista);                     
     };
-
 
     const onDownload = async() => {
         setShowLoading(true);
@@ -207,35 +191,28 @@ const PageTipologiaContratto :React.FC = () =>{
     };
 
     const changeContractType = (el) => {
-        console.log({el});
         const old = el.tipologiaContratto === 2 ? 'PAC' : 'PAL';
         const newC = el.tipologiaContratto === 2 ? 'PAL' : 'PAC';
-        const tag = <Typography>Stai modificando la tipologia contratto da {old} a<Box className="ms-2" component="span" fontWeight="bold">{newC}</Box> di <Box component="span" fontWeight="bold">
-            { el.name} </Box>: confermi l'operazione?</Typography>;
+        const tag = <Typography>Stai modificando la tipologia contratto da {old} a<Typography className="ms-2" component="span" fontWeight="bold">{newC}</Typography> di <Typography component="span" fontWeight="bold">
+            { el.name} </Typography>: confermi l'operazione?</Typography>;
         setSentence(tag);
         setElementSelected(el);
         setOpenModalConfermaIns(true);
     };
-    console.log({pippo:elementSelected});
+
     const headerNames = [ 'Ragione Sociale' , 'Data inserimento' , ''];
 
     const onButtonComfermaPopUp = async() => {
-
         const typToSet = elementSelected.tipologiaContratto === 1 ? 2 : 1;
-
         await modifyContrattoPagoPa(token, profilo.nonce,{idEnte:elementSelected.idEnte, tipologiaContratto:typToSet}).then((res)=> {
-
             managePresaInCarico('CAMBIO_TIPOLOGIA_CONTRATTO',dispatchMainState);
             setOpenModalConfermaIns(false);
             getLista( page, rowsPerPage, bodyGetLista);
-
         }).catch((err)=>{
             manageError(err,dispatchMainState);
             setOpenModalConfermaIns(false);
-        });
-       
+        });  
     };
-    console.log({bodyGetLista});
 
     return(
         <div className="mx-5">
