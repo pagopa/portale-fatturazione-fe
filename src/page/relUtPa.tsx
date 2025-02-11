@@ -573,12 +573,13 @@ const RelPage : React.FC = () =>{
                     <Typography variant="h4">Regolare Esecuzione</Typography>
                 </div>
                 <div className="col-3 ">
+                    {!enti &&
                     <Box sx={{width:'80%', marginLeft:'20px', display:'flex', justifyContent:'end'}}  >
                         <Button sx={{width:'250px'}} variant="contained"  onClick={()=> downloadReport()} >
                             <ArrowCircleDownIcon sx={{marginRight:'10px'}}></ArrowCircleDownIcon>
                     Report non fatturate
                         </Button>
-                    </Box>
+                    </Box>}
                 </div>
                
             </div>
