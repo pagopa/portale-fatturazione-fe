@@ -205,8 +205,8 @@ const PageTipologiaContratto :React.FC = () =>{
 
     const changeContractType = (el) => {
         console.log({el});
-        const old = el.contractType === 0 ? 'PAC' : 'PAL';
-        const newC = el.contractType === 1 ? 'PAL' : 'PAC';
+        const old = el.tipologiaContratto === 2 ? 'PAC' : 'PAL';
+        const newC = el.tipologiaContratto === 2 ? 'PAL' : 'PAC';
         const tag = <Typography>Stai modificando la tipologia contratto da {old} a<Box className="ms-2" component="span" fontWeight="bold">{newC}</Box> di <Box component="span" fontWeight="bold">
             { el.name} </Box>: confermi l'operazione?</Typography>;
         setSentence(tag);
