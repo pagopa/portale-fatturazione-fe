@@ -187,8 +187,12 @@ const PageTipologiaContratto :React.FC = () =>{
 
     const onDownload = async() => {
         setShowLoading(true);
-        await downloadTipologiePagopa(token, profilo.nonce,bodyGetLista).then(
-            response => response.blob()).then(
+        await downloadTipologiePagopa(token, profilo.nonce,bodyGetLista).then((response) =>{
+            if (response.ok) {
+                return response.blob();
+            }
+            throw '404';
+        }).then(
             (response)=>{
                 let fileName = `Lista tipologia contratto.xlsx`;
                 if(gridData.length === 1){
@@ -200,7 +204,6 @@ const PageTipologiaContratto :React.FC = () =>{
             }).catch(err =>{
             manageError(err,dispatchMainState);
         } );
-
     };
 
     const changeContractType = (el) => {

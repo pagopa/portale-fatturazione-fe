@@ -499,6 +499,7 @@ const RelPage : React.FC = () =>{
                 saveAs("data:text/plain;base64," + res.data.documento,`Regolari esecuzioni/${data[0]?.ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]}/${bodyDownload.anno}.xlsx` );
                 setShowLoading(false);
             }).catch((err)=>{
+                setShowLoading(false);
                 manageError(err,dispatchMainState);
             }); 
         }else{
@@ -510,6 +511,7 @@ const RelPage : React.FC = () =>{
                 saveAs("data:text/plain;base64," + res.data.documento,fileName );
                 setShowLoading(false);
             }).catch((err)=>{
+                setShowLoading(false);
                 manageError(err,dispatchMainState);
             }); 
         }
@@ -533,7 +535,12 @@ const RelPage : React.FC = () =>{
     const downloadListaPdfPagopa = async() =>{
         setShowLoading(true);
         await downloadListaRelPdfZipPagopa(token,profilo.nonce,bodyRel)
-            .then(response => response.blob())
+            .then((response) => {
+                if (response.ok) {
+                    return response.blob();
+                }
+                throw '404';
+            })
             .then(blob => {
                 let fileName = `REL /Firmate/${mesiWithZero[bodyRel.mese -1]}/${bodyRel.anno}.zip`;
                 if(bodyDownload.idEnti.length === 1){
@@ -551,7 +558,12 @@ const RelPage : React.FC = () =>{
 
     const downloadReport = async () => {
         setShowLoading(true);
-        await downloadReportRelPagoPa(token, profilo.nonce).then(response => response.blob()).then((res)=>{
+        await downloadReportRelPagoPa(token, profilo.nonce).then((response) => {
+            if (response.ok) {
+                return response.blob();
+            }
+            throw '404';
+        }).then((res)=>{
             const fileName = `Report regolare esecuzione non fatturate.xlsx`;
             saveAs(res,fileName );
             setShowLoading(false);
