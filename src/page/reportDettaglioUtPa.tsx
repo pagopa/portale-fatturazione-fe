@@ -32,11 +32,11 @@ const ReportDettaglio : React.FC = () => {
         setOpenModalInfo,
         openModalInfo
     } = globalContextObj;
-
+    
     const enti = profiliEnti(mainState);
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
- 
+    
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [profili, setProfili] = useState([]);
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
@@ -150,25 +150,22 @@ const ReportDettaglio : React.FC = () => {
         resetFilters,
         isInitialRender
     } = useSavedFilters(PathPf.LISTA_NOTIFICHE,{});
-
+    
     useEffect(() => {
         if(isInitialRender.current && Object.keys(filters).length > 0){
             funInitialRender(filters.body, true);
-            
         }else{
             funInitialRender(bodyGetLista, false);
             isInitialRender.current = false;
         }
-
     }, []);
-
+    
     useEffect(()=>{
         if((bodyGetLista.anno !== 0) && (!isInitialRender.current)){
             getMesi(bodyGetLista.anno.toString());
         }
     },[bodyGetLista.anno]);
-   
-
+    
     const funInitialRender = async(newBody, dataFromLocalStorage) => {
         setGetNotificheWorking(true);
         getProdotti();
@@ -184,10 +181,6 @@ const ReportDettaglio : React.FC = () => {
             setArrayAnni(allYearToNumber);
             if(resAnno.data.length > 0){
                 await getMesiNotifiche(token, profilo.nonce,{anno:annoToSet?.toString()}).then(async(resMese)=> {
-                    /*const makeCamelCaseMonth = res.data.map(el =>{
-                el.descrizione = el.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase();
-                return el;
-            } );*/
                     setArrayMesi(resMese.data);
                     let meseToSet = resMese.data[0].mese;
                     if(dataFromLocalStorage){
@@ -195,8 +188,7 @@ const ReportDettaglio : React.FC = () => {
                     }
                     let page = 1;
                     let row = 10;
-                  
-                    // reset del body sia list che download
+                    
                     setBodyGetLista({...newBody,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
                     setBodyDownload({...newBody,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
                     if(dataFromLocalStorage){
@@ -205,12 +197,12 @@ const ReportDettaglio : React.FC = () => {
                         setValueFgContestazione(filters.valueFgContestazione);
                         setPage(filters.page);
                         setRowsPerPage(filters.rows);
-    
+                        
                         meseToSet = filters.body.mese;
                         page = filters.page + 1;
                         row = filters.rows;
                     }
-
+                    
                     if(profilo.auth === 'SELFCARE' && mainState.datiFatturazione === true){
                         await getlistaNotifiche( page, row,{...body,...{mese:Number(meseToSet),anno:Number(annoToSet)}}); 
                     }else if((profilo.auth === 'SELFCARE') && (profilo.profilo === 'CON' || profilo.profilo === 'REC')){
@@ -224,42 +216,40 @@ const ReportDettaglio : React.FC = () => {
                     setGetNotificheWorking(false);
                 });
             }
-           
-        //getire l'assenza di mesi
         }).catch((err)=>{
             setGetNotificheWorking(false);
             manageError(err,dispatchMainState);
         });
     };
-
+    
     useEffect(()=>{
         if( 
             bodyGetLista.profilo !== '' ||
-                    bodyGetLista.prodotto !== '' ||
-                    bodyGetLista.tipoNotifica !== null ||
-                    bodyGetLista.statoContestazione.length !== 0 ||
-                    bodyGetLista.cap !== null ||
-                    bodyGetLista.idEnti?.length !== 0 ||
-                    bodyGetLista.mese !== Number(arrayMesi[0]?.mese) ||
-                    bodyGetLista.anno !== arrayAnni[0]||
-                    bodyGetLista.recipientId !== null ||
-                    bodyGetLista.consolidatori?.length !== 0 ||
-                    bodyGetLista.recapitisti?.length !== 0  
+            bodyGetLista.prodotto !== '' ||
+            bodyGetLista.tipoNotifica !== null ||
+            bodyGetLista.statoContestazione.length !== 0 ||
+            bodyGetLista.cap !== null ||
+            bodyGetLista.idEnti?.length !== 0 ||
+            bodyGetLista.mese !== Number(arrayMesi[0]?.mese) ||
+            bodyGetLista.anno !== arrayAnni[0]||
+            bodyGetLista.recipientId !== null ||
+            bodyGetLista.consolidatori?.length !== 0 ||
+            bodyGetLista.recapitisti?.length !== 0  
         ){
             setStatusAnnulla('show');
         }else{           
             setStatusAnnulla('hidden');
         }
     },[bodyGetLista]);
-
     
-
+    
+    
     useEffect(()=>{
         if((mainState.datiFatturazione === false || mainState.datiFatturazioneNotCompleted) && enti){
             setOpenModalRedirect(true);
         }
     },[]);
-
+    
     useEffect(()=>{
         const timer = setTimeout(() => {
             if(textValue?.length >= 3){
@@ -268,13 +258,9 @@ const ReportDettaglio : React.FC = () => {
         }, 800);
         return () => clearTimeout(timer);
     },[textValue]);
-
+    
     const getMesi = async (anno) => {
         await getMesiNotifiche(token, profilo.nonce,{anno}).then((res)=> {
-            /*const makeCamelCaseMonth = res.data.map(el =>{
-                el.descrizione = el.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase();
-                return el;
-            } );*/
             setArrayMesi(res.data);
             if(res.data.length > 0){
                 setBodyGetLista((prev)=> ({...prev, ...{mese:Number(res.data[0].mese)}}));
@@ -285,7 +271,7 @@ const ReportDettaglio : React.FC = () => {
             setGetNotificheWorking(false);
         });
     };
-
+    
     // servizio che popola la select con la checkbox
     const listaEntiNotifichePageOnSelect = async () =>{
         if(profilo.profilo === 'CON'){
@@ -302,7 +288,7 @@ const ReportDettaglio : React.FC = () => {
             }));
         }
     };
-
+    
     // Modifico l'oggetto notifica per fare il binding dei dati nel componente GRIDCUSTOM
     let headerNames: string[] = [];
     const notificheListWithOnere = notificheList.map((notifica:NotificheList) =>{
@@ -366,7 +352,7 @@ const ReportDettaglio : React.FC = () => {
         }else if(notifica.onere === 'CON'){
             newOnere = 'CONSOLIDATORE';
         }
-
+        
         const element = {
             idNotifica:notifica.idNotifica,
             contestazione:notifica.contestazione,
@@ -392,11 +378,9 @@ const ReportDettaglio : React.FC = () => {
             return element;
         }
     });
-
+    
     const onAnnullaFiltri = () =>{
         // to make call equal on initial render
-        localStorage.removeItem("filters");
-        
         funInitialRender({
             profilo:'',
             prodotto:'',
@@ -419,7 +403,7 @@ const ReportDettaglio : React.FC = () => {
         setRowsPerPage(10);
         resetFilters();
     };     
-
+    
     const getlistaNotifiche = async (nPage:number, nRow:number, bodyParameter) => {
         // elimino idEnti dal paylod della get notifiche lato selfcare
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -428,92 +412,88 @@ const ReportDettaglio : React.FC = () => {
         setShowLoadingGrid(true);
         setGetNotificheWorking(true);
         if(enti){
-            await listaNotifiche(token,profilo.nonce,nPage, nRow, newBody)
-                .then((res)=>{
-                    setNotificheList(res.data.notifiche);
-                    setTotalNotifiche(res.data.count);
-                    // abilita button filtra e annulla filtri all'arrivo dei dati
-                    setGetNotificheWorking(false);
-                    setShowLoadingGrid(false);
-                }).catch((error)=>{
+            await listaNotifiche(token,profilo.nonce,nPage, nRow, newBody).then((res)=>{
+                setNotificheList(res.data.notifiche);
+                setTotalNotifiche(res.data.count);
                 // abilita button filtra e annulla filtri all'arrivo dei dati
-                    if(error?.response?.status === 404){
-                        setNotificheList([]);
-                        setTotalNotifiche(0);
-                    }
-                    setGetNotificheWorking(false);
-                    setShowLoadingGrid(false);
-                    manageError(error, dispatchMainState);
-                });
+                setGetNotificheWorking(false);
+                setShowLoadingGrid(false);
+            }).catch((error)=>{
+                // abilita button filtra e annulla filtri all'arrivo dei dati
+                if(error?.response?.status === 404){
+                    setNotificheList([]);
+                    setTotalNotifiche(0);
+                }
+                setGetNotificheWorking(false);
+                setShowLoadingGrid(false);
+                manageError(error, dispatchMainState);
+            });
         }else if(profilo.profilo === 'REC'){
-            await listaNotificheRecapitista(token,profilo.nonce,nPage, nRow, newBody)
-                .then((res)=>{
-                    setNotificheList(res.data.notifiche);
-                    setTotalNotifiche(res.data.count);
-                    // abilita button filtra e annulla filtri all'arrivo dei dati
-                    setGetNotificheWorking(false);
-                    setShowLoadingGrid(false);
-                }).catch((error)=>{
-                    // abilita button filtra e annulla filtri all'arrivo dei dati
-                    if(error?.response?.status === 404){
-                        setNotificheList([]);
-                        setTotalNotifiche(0);
-                    }
-                    setGetNotificheWorking(false);
-                    setShowLoadingGrid(false);
-                    manageError(error, dispatchMainState);
-                });
+            await listaNotificheRecapitista(token,profilo.nonce,nPage, nRow, newBody).then((res)=>{
+                setNotificheList(res.data.notifiche);
+                setTotalNotifiche(res.data.count);
+                // abilita button filtra e annulla filtri all'arrivo dei dati
+                setGetNotificheWorking(false);
+                setShowLoadingGrid(false);
+            }).catch((error)=>{
+                // abilita button filtra e annulla filtri all'arrivo dei dati
+                if(error?.response?.status === 404){
+                    setNotificheList([]);
+                    setTotalNotifiche(0);
+                }
+                setGetNotificheWorking(false);
+                setShowLoadingGrid(false);
+                manageError(error, dispatchMainState);
+            });
         }else if(profilo.profilo === 'CON'){
-            await listaNotificheConsolidatore(token,profilo.nonce,nPage, nRow,newBody)
-                .then((res)=>{
-                    setNotificheList(res.data.notifiche);
-                    setTotalNotifiche(res.data.count);
-                    // abilita button filtra e annulla filtri all'arrivo dei dati
-                    setGetNotificheWorking(false);
-                    setShowLoadingGrid(false);
-                }).catch((error)=>{
-                    // abilita button filtra e annulla filtri all'arrivo dei dati
-                    if(error?.response?.status === 404){
-                        setNotificheList([]);
-                        setTotalNotifiche(0);
-                    }
-                    setGetNotificheWorking(false);
-                    setShowLoadingGrid(false);
-                    manageError(error, dispatchMainState);
-                });
+            await listaNotificheConsolidatore(token,profilo.nonce,nPage, nRow,newBody).then((res)=>{
+                setNotificheList(res.data.notifiche);
+                setTotalNotifiche(res.data.count);
+                // abilita button filtra e annulla filtri all'arrivo dei dati
+                setGetNotificheWorking(false);
+                setShowLoadingGrid(false);
+            }).catch((error)=>{
+                // abilita button filtra e annulla filtri all'arrivo dei dati
+                if(error?.response?.status === 404){
+                    setNotificheList([]);
+                    setTotalNotifiche(0);
+                }
+                setGetNotificheWorking(false);
+                setShowLoadingGrid(false);
+                manageError(error, dispatchMainState);
+            });
         }     
         isInitialRender.current = false;      
     };
-
+    
     const getlistaNotifichePagoPa = async (nPage:number, nRow:number, bodyParameter) => {
         // disable button filtra e annulla filtri nell'attesa dei dati
         setGetNotificheWorking(true);
         setShowLoadingGrid(true);
-        await listaNotifichePagoPa(token,profilo.nonce,nPage, nRow, bodyParameter)
-            .then((res)=>{
-                // abilita button filtra e annulla filtri all'arrivo dei dati
-                setGetNotificheWorking(false);
-                setNotificheList(res.data.notifiche);
-                setTotalNotifiche(res.data.count); 
-                setShowLoadingGrid(false);
-            }).catch((error)=>{
-                // abilita button filtra e annulla filtri all'arrivo dei dati
-                setNotificheList([]);
-                setTotalNotifiche(0);
-                setGetNotificheWorking(false);
-                setShowLoadingGrid(false);
-                manageError(error, dispatchMainState);
-            });     
+        await listaNotifichePagoPa(token,profilo.nonce,nPage, nRow, bodyParameter).then((res)=>{
+            // abilita button filtra e annulla filtri all'arrivo dei dati
+            setGetNotificheWorking(false);
+            setNotificheList(res.data.notifiche);
+            setTotalNotifiche(res.data.count); 
+            setShowLoadingGrid(false);
+        }).catch((error)=>{
+            // abilita button filtra e annulla filtri all'arrivo dei dati
+            setNotificheList([]);
+            setTotalNotifiche(0);
+            setGetNotificheWorking(false);
+            setShowLoadingGrid(false);
+            manageError(error, dispatchMainState);
+        });     
         isInitialRender.current = false;   
     };
-
+    
     const clearOnChangeFilter = () => {
         setNotificheList([]);
         setPage(0);
         setRowsPerPage(10);  
         setTotalNotifiche(0); 
     };
-
+    
     const onButtonFiltra = () =>{
         setPage(0);
         setRowsPerPage(10);
@@ -535,7 +515,7 @@ const ReportDettaglio : React.FC = () => {
         isInitialRender.current = false;
         
     };
-                
+    
     const handleChangePage = (
         event: React.MouseEvent<HTMLButtonElement> | null,
         newPage: number,
@@ -557,7 +537,7 @@ const ReportDettaglio : React.FC = () => {
             valueFgContestazione
         });
     };
-                    
+    
     const handleChangeRowsPerPage = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
@@ -577,9 +557,9 @@ const ReportDettaglio : React.FC = () => {
         }else if(profilo.auth === 'PAGOPA'){
             getlistaNotifichePagoPa(realPage,parseInt(event.target.value, 10),bodyDownload);
         }  
-                          
+        
     };
-
+    
     const getRecapitistConsolidatori = async() =>{
         await getTipologiaEntiCompletiPagoPa(token, profilo.nonce, 'REC').then((res)=>{     
             setListaRecapitisti(res.data);
@@ -592,7 +572,7 @@ const ReportDettaglio : React.FC = () => {
             manageError(err,dispatchMainState);
         }));
     };
-                        
+    
     const getProdotti = async() => {
         await getTipologiaProdotto(token, profilo.nonce ).then((res)=>{          
             setProdotti(res.data);
@@ -600,7 +580,7 @@ const ReportDettaglio : React.FC = () => {
             manageError(err,dispatchMainState);
         }));
     };
-                                            
+    
     const getProfili = async() => {
         await getTipologiaProfilo(token, profilo.nonce ).then((res)=>{              
             setProfili(res.data);
@@ -608,66 +588,60 @@ const ReportDettaglio : React.FC = () => {
             manageError(err,dispatchMainState);
         }));
     };
-
+    
     const getContestazioneModal = async(el) =>{
         const idNotifica = el.id;
         setShowLoadingGrid(true);
         if(enti){
-            await getContestazione(token, profilo.nonce , idNotifica)
-                .then((res)=>{
-                    //se i tempi di creazione di una contestazione sono scaduti show pop up info
-                    if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
-                        setShowLoadingGrid(false);
-                        setOpenModalInfo({open:true,sentence:'Non è possibile creare una contestazione.'});
-                    }else{
+            await getContestazione(token, profilo.nonce , idNotifica).then((res)=>{
+                //se i tempi di creazione di una contestazione sono scaduti show pop up info
+                if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
+                    setShowLoadingGrid(false);
+                    setOpenModalInfo({open:true,sentence:'Non è possibile creare una contestazione.'});
+                }else{
                     // atrimenti show pop up creazione contestazione
-                        setShowLoadingGrid(false);
-                        setOpen(true); 
-                        setContestazioneSelected(res.data);
-                        setContestazioneStatic(res.data);
-                        setValueRispostaEnte(res.data.contestazione.rispostaEnte);
-                    }           
-                })
-                .catch(((err)=>{
                     setShowLoadingGrid(false);
-                    manageError(err,dispatchMainState);
-                }));
+                    setOpen(true); 
+                    setContestazioneSelected(res.data);
+                    setContestazioneStatic(res.data);
+                    setValueRispostaEnte(res.data.contestazione.rispostaEnte);
+                }           
+            }).catch(((err)=>{
+                setShowLoadingGrid(false);
+                manageError(err,dispatchMainState);
+            }));
         }else if( profilo.profilo === 'REC'){
-            await getContestazioneRecapitista(token, profilo.nonce , idNotifica )
-                .then((res)=>{
-                    setShowLoadingGrid(false);
-                    //se i tempi di creazione di una contestazione sono scaduti show pop up info
-                    if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
-                        setOpenModalInfo({open:true,sentence:'Non è possibile creare una contestazione.'});
-                    }else{
-                        // atrimenti show pop up creazione contestazione
-                        setOpen(true); 
-                        setContestazioneSelected(res.data);
-                        setContestazioneStatic(res.data);
-                    }           
-                })
-                .catch(((err)=>{
-                    setShowLoadingGrid(false);
-                    manageError(err,dispatchMainState);
-                }));
+            await getContestazioneRecapitista(token, profilo.nonce , idNotifica ).then((res)=>{
+                setShowLoadingGrid(false);
+                //se i tempi di creazione di una contestazione sono scaduti show pop up info
+                if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
+                    setOpenModalInfo({open:true,sentence:'Non è possibile creare una contestazione.'});
+                }else{
+                    // atrimenti show pop up creazione contestazione
+                    setOpen(true); 
+                    setContestazioneSelected(res.data);
+                    setContestazioneStatic(res.data);
+                }           
+            }).catch(((err)=>{
+                setShowLoadingGrid(false);
+                manageError(err,dispatchMainState);
+            }));
         }else if( profilo.profilo === 'CON'){
-            await getContestazioneCosolidatore(token, profilo.nonce , idNotifica )
-                .then((res)=>{
-                    setShowLoadingGrid(false);
-                    //se i tempi di creazione di una contestazione sono scaduti show pop up info
-                    if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
-                        setOpenModalInfo({open:true,sentence:'Non è possibile creare una contestazione.'});
-                    }else{
-                        // atrimenti show pop up creazione contestazione
-                        setOpen(true); 
-                        setContestazioneSelected(res.data);
-                        setContestazioneStatic(res.data);
-                    }           
-                })
-                .catch(((err)=>{
-                    setShowLoadingGrid(false);
-                    manageError(err,dispatchMainState);
-                }));
+            await getContestazioneCosolidatore(token, profilo.nonce , idNotifica ).then((res)=>{
+                setShowLoadingGrid(false);
+                //se i tempi di creazione di una contestazione sono scaduti show pop up info
+                if(res.data.modifica === false && res.data.chiusura === false && res.data.contestazione.statoContestazione === 1){
+                    setOpenModalInfo({open:true,sentence:'Non è possibile creare una contestazione.'});
+                }else{
+                    // atrimenti show pop up creazione contestazione
+                    setOpen(true); 
+                    setContestazioneSelected(res.data);
+                    setContestazioneStatic(res.data);
+                }           
+            }).catch(((err)=>{
+                setShowLoadingGrid(false);
+                manageError(err,dispatchMainState);
+            }));
         }else if(profilo.auth === 'PAGOPA'){
             await getContestazionePagoPa(token, profilo.nonce , idNotifica ).then((res)=>{
                 setShowLoadingGrid(false);
@@ -686,29 +660,27 @@ const ReportDettaglio : React.FC = () => {
             }));
         }
     };
-
+    
     const downloadNotificheOnDownloadButton = async () =>{
         setShowLoading(true);
         if(enti){
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const {idEnti, recapitisti, consolidatori, ...bodyEnti} = bodyDownload;
-            await downloadNotifche(token, profilo.nonce,bodyEnti )
-                .then((res)=>{
-                    const blob = new Blob([res.data], { type: 'text/csv' });
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.setAttribute('hidden', '');
-                    a.setAttribute('href', url);
-                    a.setAttribute('download',`Notifiche /${notificheList[0].ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`);
-                    document.body.appendChild(a);
-                    a.click();
-                    setShowLoading(false);
-                    document.body.removeChild(a);        
-                })
-                .catch(((err)=>{
-                    setShowLoading(false);
-                    manageError(err,dispatchMainState);
-                }));
+            await downloadNotifche(token, profilo.nonce,bodyEnti ).then((res)=>{
+                const blob = new Blob([res.data], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.setAttribute('hidden', '');
+                a.setAttribute('href', url);
+                a.setAttribute('download',`Notifiche /${notificheList[0].ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`);
+                document.body.appendChild(a);
+                a.click();
+                setShowLoading(false);
+                document.body.removeChild(a);        
+            }).catch(((err)=>{
+                setShowLoading(false);
+                manageError(err,dispatchMainState);
+            }));
         }else if(profilo.profilo === 'REC'){
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const {idEnti, recapitisti, consolidatori, ...bodyRecapitista} = bodyDownload;
@@ -767,9 +739,9 @@ const ReportDettaglio : React.FC = () => {
             }));
         }
     }; 
- 
+    
     const backgroundColorButtonScadenzario = (profilo.auth === 'PAGOPA' || enti) ? "#0062C3" : 'red';
-  
+    
     return (
         <div className="mx-5">
             {/*title container start */}
@@ -784,7 +756,7 @@ const ReportDettaglio : React.FC = () => {
                             backgroundColor:backgroundColorButtonScadenzario
                         }} variant="contained"  onClick={()=> setShowModalScadenziario(true)} >
                             <VisibilityIcon sx={{marginRight:'10px'}}></VisibilityIcon>
-                    Scadenzario
+        Scadenzario
                         </Button>
                     </Box>
                 </div>
@@ -799,7 +771,7 @@ const ReportDettaglio : React.FC = () => {
                                 size="medium"
                             >
                                 <InputLabel>
-                            Anno
+        Anno
                                 </InputLabel>
                                 <Select
                                     label='Seleziona Prodotto'
@@ -829,7 +801,7 @@ const ReportDettaglio : React.FC = () => {
                                 size="medium"
                             >
                                 <InputLabel>
-                                Mese
+        Mese
                                 </InputLabel>
                                 <Select
                                     label='Seleziona Mese'
@@ -861,12 +833,10 @@ const ReportDettaglio : React.FC = () => {
                                 size="medium"
                             >
                                 <InputLabel>
-                                    Seleziona Prodotto
+        Seleziona Prodotto
                                 </InputLabel>
                                 <Select
-                                    id="prodotto_notifiche"
                                     label='Seleziona Prodotto'
-                                    labelId="search-by-label_notifiche"
                                     onChange={(e) =>{
                                         clearOnChangeFilter();
                                         setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}));
@@ -914,7 +884,7 @@ const ReportDettaglio : React.FC = () => {
                                 size="medium"
                             >
                                 <InputLabel>
-                                            Tipo Notifica     
+        Tipo Notifica     
                                 </InputLabel>
                                 <Select
                                     id="sea"
@@ -993,85 +963,85 @@ const ReportDettaglio : React.FC = () => {
                 </div>
                 <div className="row mt-5" >
                     {profilo.auth === 'PAGOPA' &&
-                    <div  className="col-3">
-                        <MultiselectCheckbox 
-                            setBodyGetLista={setBodyGetLista}
-                            dataSelect={dataSelect}
-                            setTextValue={setTextValue}
-                            valueAutocomplete={valueAutocomplete}
-                            setValueAutocomplete={setValueAutocomplete}
-                            clearOnChangeFilter={clearOnChangeFilter}
-                        ></MultiselectCheckbox>
-                    </div>
+            <div  className="col-3">
+                <MultiselectCheckbox 
+                    setBodyGetLista={setBodyGetLista}
+                    dataSelect={dataSelect}
+                    setTextValue={setTextValue}
+                    valueAutocomplete={valueAutocomplete}
+                    setValueAutocomplete={setValueAutocomplete}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                ></MultiselectCheckbox>
+            </div>
                     }
                     {profilo.auth === 'PAGOPA' && 
-                    <>
-                        <div className="col-3">
-                            <Box sx={{width:'80%', marginLeft:'20px'}} >
-                                <FormControl
-                                    fullWidth
-                                    size="medium"
-                                >
-                                    <InputLabel>
-                                            Consolidatore     
-                                    </InputLabel>
-                                    <Select
-                                        id="sea"
-                                        label='Consolidatore'
-                                        labelId="search-by-label"
-                                        onChange={(e) =>{
-                                            clearOnChangeFilter();
-                                            const value = e.target.value;
-                                            setBodyGetLista((prev)=> ({...prev, ...{consolidatori:[value]}}));
-                                        }}
-                                        value={bodyGetLista.consolidatori[0] || ''}        
+            <>
+                <div className="col-3">
+                    <Box sx={{width:'80%', marginLeft:'20px'}} >
+                        <FormControl
+                            fullWidth
+                            size="medium"
+                        >
+                            <InputLabel>
+            Consolidatore     
+                            </InputLabel>
+                            <Select
+                                id="sea"
+                                label='Consolidatore'
+                                labelId="search-by-label"
+                                onChange={(e) =>{
+                                    clearOnChangeFilter();
+                                    const value = e.target.value;
+                                    setBodyGetLista((prev)=> ({...prev, ...{consolidatori:[value]}}));
+                                }}
+                                value={bodyGetLista.consolidatori[0] || ''}        
+                            >
+                                {listaConsolidatori.map((el) => (     
+                                    <MenuItem
+                                        key={el.idEnte}
+                                        value={el.idEnte}
                                     >
-                                        {listaConsolidatori.map((el) => (     
-                                            <MenuItem
-                                                key={el.idEnte}
-                                                value={el.idEnte}
-                                            >
-                                                {el.descrizione}
-                                            </MenuItem>      
-                                        ))}       
-                                    </Select>
-                                </FormControl>
-                            </Box>
-                        </div>
-                        <div className="col-3">
-                            <Box sx={{width:'80%', marginLeft:'20px'}} >
-                                <FormControl
-                                    fullWidth
-                                    size="medium"
-                                >
-                                    <InputLabel
-                                        id="selectRecapitista"
+                                        {el.descrizione}
+                                    </MenuItem>      
+                                ))}       
+                            </Select>
+                        </FormControl>
+                    </Box>
+                </div>
+                <div className="col-3">
+                    <Box sx={{width:'80%', marginLeft:'20px'}} >
+                        <FormControl
+                            fullWidth
+                            size="medium"
+                        >
+                            <InputLabel
+                                id="selectRecapitista"
+                            >
+            Recapitista     
+                            </InputLabel>
+                            <Select
+                                label='Recapitista'
+                                labelId="search-by-label"
+                                onChange={(e) =>{
+                                    clearOnChangeFilter();
+                                    const value = e.target.value;
+                                    setBodyGetLista((prev)=> ({...prev, ...{recapitisti:[value]}}));
+                                }}
+                                value={bodyGetLista.recapitisti[0] || ''}        
+                            >
+                                {listaRecapitista.map((el) => (     
+                                    <MenuItem
+                                        key={el.idEnte}
+                                        value={el.idEnte}
                                     >
-                                            Recapitista     
-                                    </InputLabel>
-                                    <Select
-                                        label='Recapitista'
-                                        labelId="search-by-label"
-                                        onChange={(e) =>{
-                                            clearOnChangeFilter();
-                                            const value = e.target.value;
-                                            setBodyGetLista((prev)=> ({...prev, ...{recapitisti:[value]}}));
-                                        }}
-                                        value={bodyGetLista.recapitisti[0] || ''}        
-                                    >
-                                        {listaRecapitista.map((el) => (     
-                                            <MenuItem
-                                                key={el.idEnte}
-                                                value={el.idEnte}
-                                            >
-                                                {el.descrizione}
-                                            </MenuItem>      
-                                        ))}       
-                                    </Select>
-                                </FormControl>
-                            </Box>
-                        </div>
-                    </>
+                                        {el.descrizione}
+                                    </MenuItem>      
+                                ))}       
+                            </Select>
+                        </FormControl>
+                    </Box>
+                </div>
+            </>
                     }
                 </div>
                 <div className="">
@@ -1088,7 +1058,7 @@ const ReportDettaglio : React.FC = () => {
                                         onClick={onAnnullaFiltri}
                                         disabled={getNotificheWorking}
                                         sx={{marginLeft:'24px'}} >
-                                                    Annulla filtri
+            Annulla filtri
                                     </Button>
                                 }
                             </div>               
@@ -1102,7 +1072,7 @@ const ReportDettaglio : React.FC = () => {
                     <Button
                         disabled={getNotificheWorking}
                         onClick={downloadNotificheOnDownloadButton}  >
-                                  Download Risultati 
+            Download Risultati 
                         <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
                     </Button>
                 </div>           

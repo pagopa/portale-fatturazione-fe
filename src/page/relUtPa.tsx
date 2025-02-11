@@ -32,7 +32,7 @@ const RelPage : React.FC = () =>{
     const navigate = useNavigate();
     const enti = profiliEnti(mainState);
  
-   
+
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -85,24 +85,6 @@ const RelPage : React.FC = () =>{
 
     useEffect(()=>{
         getAnni();
-        /*
-        if(isInitialRender.current && Object.keys(filters).length > 0){
-         
-            setBodyRel(filters.body);
-            setTextValue(filters.textValue);
-            setValueAutocomplete(filters.valueAutocomplete);
-            getlista(filters.body,filters.page + 1, filters.rows);
-            setPage(filters.page);
-            setRowsPerPage(filters.rows);
-            setBodyDownload(filters.body);
-            getListTipologiaFattura(filters.body.anno,filters.body.mese);
-        }else{
-            const realPage = page + 1;
-            getlista(bodyRel,realPage, rowsPerPage);
-            getListTipologiaFattura(bodyRel.anno, bodyRel.mese);
-            isInitialRender.current = false; 
-      
-        }*/
     },[]);
 
     useEffect(()=>{
