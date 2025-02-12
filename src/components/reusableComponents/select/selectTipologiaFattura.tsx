@@ -2,10 +2,11 @@ import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { Box } from "@mui/system";
 import { Dispatch, SetStateAction } from "react";
 import { BodyRel } from "../../../types/typeRel";
+import { BodyLista } from "../../../page/listaDocEmessi";
 interface SelecTipologiaProps{
     value:string|null,
     types:string[],
-    setBody:Dispatch<SetStateAction<BodyRel>>,
+    setBody:Dispatch<SetStateAction<BodyRel>>|Dispatch<SetStateAction<BodyLista>>,
     setValue:Dispatch<SetStateAction<string>>,
     clearOnChangeFilter:any
 }

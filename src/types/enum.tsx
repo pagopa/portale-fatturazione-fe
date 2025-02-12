@@ -6,12 +6,12 @@ export enum Profilo {
 }
 
 export enum PathPf {
-    DATI_FATTURAZIONE = "/datidifatturazione", //
-    LISTA_DATI_FATTURAZIONE = "/listadatifatturazione",//listadatidifatturazione
-    MODULOCOMMESSA = "/modulocommessa", //8
+    DATI_FATTURAZIONE = "/datidifatturazione", 
+    LISTA_DATI_FATTURAZIONE = "/listadatifatturazione",
+    MODULOCOMMESSA = "/modulocommessa", 
     LISTA_MODULICOMMESSA = "/listamodulicommessa",
-    LISTA_COMMESSE = "/modulicommessa",  //4
-    PDF_COMMESSA = "/pdfmodulocommessa",//pdf
+    LISTA_COMMESSE = "/modulicommessa", 
+    PDF_COMMESSA = "/pdfmodulocommessa",
     LISTA_NOTIFICHE = "/listanotifiche",
     LISTA_REL = "/listarel",
     PDF_REL = "/relpdf",
@@ -22,5 +22,6 @@ export enum PathPf {
     DOCUMENTICONTABILI = "/documenticontabilipagopa",
     DETTAGLIO_DOC_CONTABILE = "/dettagliodoccontabile",
     KPI = "/kpipagamenti",
-    TIPOLOGIA_CONTRATTO = "/tipologiacontratto"
+    TIPOLOGIA_CONTRATTO = "/tipologiacontratto",
+    LISTA_DOC_EMESSI = "/listadocemessi"
 }

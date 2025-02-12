@@ -1,7 +1,6 @@
 import { Typography } from "@mui/material";
 import { Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
 import {manageError, managePresaInCarico, } from '../api/api';
-import { GridElementListaFatturazione } from "../types/typeListaDatiFatturazione";
 import { useContext, useEffect, useState } from "react";
 import DownloadIcon from '@mui/icons-material/Download';
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
@@ -20,6 +19,21 @@ export interface BodyContratto {
     tipologiaContratto:number|null
 }
 
+export interface Root {
+    count: number
+    contratti: Contratti[]
+}
+  
+export interface Contratti {
+    idEnte: string
+    ragioneSociale: string
+    ultimaModificaContratto: string
+    tipoContratto: number
+    descrizioneTipoContratto: string
+    idContratto: string
+    dataInserimento?: string
+}
+
 const PageTipologiaContratto :React.FC = () =>{
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState} = globalContextObj;
@@ -28,7 +42,7 @@ const PageTipologiaContratto :React.FC = () =>{
     const profilo =  mainState.profilo;
 
     const [contratti, setContratti] = useState([{id:0,descrizione:"Tutte"},{id:2,descrizione:"PAC"},{id:1,descrizione:"PAL"}]);
-    const [gridData, setGridData] = useState<GridElementListaFatturazione[]>([]);
+    const [gridData, setGridData] = useState<Contratti[]>([]);
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
     const [getListaLoading, setGetListaLoading] = useState(false);
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
