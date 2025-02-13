@@ -1,9 +1,12 @@
-import { Card, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip } from "@mui/material";
+import { Card, Checkbox, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { GridElementListaPsp } from "../../../types/typeAngraficaPsp";
 import { Rel } from "../../../types/typeRel";
 import { NotificheList } from "../../../types/typeReportDettaglio";
 import RowContratto from "./gridCustomBase/rowTipologiaContratto";
+import RowWhiteList from "./gridCustomBase/rowWhiteList";
+import EnhancedTableCustom from "./gridCustomBase/enhancedTabalToolbarCustom";
+import { SetStateAction } from "react";
 interface GridCustomProps {
     elements:NotificheList[]|Rel[]|GridElementListaPsp[]|any[],
     changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
@@ -15,10 +18,18 @@ interface GridCustomProps {
     nameParameterApi:string,  // elemnto/i che servono alla chiamata get di dettaglio , in questo caso bisogna passare questi pametro/o nel MainState ma non posso visulizzarli nella grid
     apiGet?:(el:any)=>void, 
     disabled:boolean,
-    widthCustomSize:string
+    widthCustomSize:string,
+    setOpenModal?:React.Dispatch<SetStateAction<{open:boolean,action:string}>>,
+    selected?:number[]|string[],
+    setSelected?:React.Dispatch<SetStateAction<number[]|string[]>>,
+    buttons?:{
+        stringIcon:string,
+        icon:React.ReactNode,
+        action:string
+    }[]
 }
 
-const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, nameParameterApi, apiGet, disabled, widthCustomSize}) =>{
+const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, nameParameterApi, apiGet, disabled, widthCustomSize, setOpenModal,selected, setSelected,buttons}) =>{
 
 
     const handleClickOnGrid = (element) =>{
@@ -40,20 +51,30 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
             apiGet(newDetailRel);
         }
     };
+       
    
     return (
         <div>
+            <EnhancedTableCustom  setOpenModal={setOpenModal} selected={selected} buttons={buttons} ></EnhancedTableCustom>
             <div style={{overflowX:'auto'}}>
                 <Card sx={{width: widthCustomSize}}  >
                     <Table >
                         <TableHead sx={{backgroundColor:'#f2f2f2'}}>
                             <TableRow>
                                 {headerNames.map((el)=>{
-                                    return (
-                                        <TableCell key={Math.random()}>
-                                            {el} 
-                                        </TableCell>
-                                    );
+                                    console.log({el});
+                                    if(el === "checkbox"){
+                                        return(
+                                            <Checkbox  checked />
+                                        );
+                                    }else{
+                                        return (
+                                            <TableCell key={Math.random()}>
+                                                {el} 
+                                            </TableCell>
+                                        );
+                                    }
+                                   
                                 })}
                             </TableRow>
                         </TableHead>
@@ -67,6 +88,7 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                         Object.entries(element).slice(1)
                                     );
                                     if(sliced?.tipologiaFattura === 'ASSEVERAZIONE'){
+                                        console.log('dentro ass');
                                         return (
                                             <TableRow key={Math.random()}>
                                                 {
@@ -84,9 +106,13 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                                 }
                                             </TableRow>
                                         );
-                                    }else if(nameParameterApi=== 'idContratto'){
+                                    }else if(nameParameterApi === 'idContratto'){
                                         return (
                                             <RowContratto key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} ></RowContratto>
+                                        );
+                                    }else if(nameParameterApi === 'idWhite'){
+                                        return (
+                                            <RowWhiteList key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element}></RowWhiteList>
                                         );
                                     }else{
                                         return (

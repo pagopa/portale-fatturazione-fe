@@ -17,6 +17,11 @@ import SelectTipologiaFattura from "../components/reusableComponents/select/sele
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { getTipologieFatturePagoPa } from "../api/apiPagoPa/relPA/api";
+import { mesi, mesiDescNome } from "../reusableFunction/reusableArrayObj";
+import { BodyWhite, getWhiteListPagoPa } from "../api/apiPagoPa/whiteListPA/whiteList";
+import { getTipologieFatture } from "../api/apiSelfcare/relSE/api";
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 export interface BodyLista {
     idEnti: string[]
@@ -26,23 +31,20 @@ export interface BodyLista {
     mese: number
 }
 
-export interface ListaDocEmessi {
+export interface WhitelistData {
     count: number
     whitelist: Whitelist[]
 }
   
 export interface Whitelist {
-    id: number
-    ragioneSociale: string
-    idEnte: string
-    anno: number
-    mese: number
-    dataInizio: string
-    dataFine: any
-    tipologiaFattura: string
-    idTipoContratto: number
-    tipoContratto: string
+    idWhite: number;
+    anno: number;
+    mese: number;
+    tipologiaFatture: string;
+    tipoContratto: string;
 }
+
+
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -54,7 +56,7 @@ const ListaDocEmessi = () => {
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 
-    const [gridData, setGridData] = useState<ListaDocEmessi[]>([]);
+    const [gridData, setGridData] = useState<Whitelist[]>([]);
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
     const [getListaLoading, setGetListaLoading] = useState(false);
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
@@ -63,19 +65,22 @@ const ListaDocEmessi = () => {
     const [showLoading,setShowLoading] = useState(false);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [totalContratti, setTotalContratti]  = useState(0);
+    const [totalElements, setTotalElements]  = useState(0);
     const [arrayYears,setArrayYears] = useState<number[]>([]);
     const [arrayMonths,setArrayMonths] = useState<{mese:string,descrizione:string}[]>([]);
     const [contratti, setContratti] = useState([{id:0,descrizione:"Tutte"},{id:2,descrizione:"PAC"},{id:1,descrizione:"PAL"}]);
     const [valuetipologiaFattura, setValueTipologiaFattura] = useState<string>('');
     const [tipologiaFatture, setTipologiaFatture] = useState<string[]>([]);
-    const [bodyGetLista, setBodyGetLista] = useState<BodyLista>({
+    const [selected, setSelected] = useState<string[]|number[]>([]);
+    const [openModalAction, setOpenModalAction] = useState<{open:boolean,action:string}>({open:false,action:''});
+    const [bodyGetLista, setBodyGetLista] = useState<BodyWhite>({
         idEnti: [],
         tipologiaContratto: 0,
-        tipologiaFattura:'',
+        tipologiaFattura:null,
         anno: 0,
         mese: 0
     });
+
  
 
     const { 
@@ -87,25 +92,29 @@ const ListaDocEmessi = () => {
 
     useEffect(()=>{
         getAnni();
-        
     },[]);
 
     useEffect(()=>{
-        if(!isInitialRender.current){
-            getMesi(bodyGetLista.anno?.toString());
+        if(bodyGetLista.idEnti.length !== 0 || bodyGetLista.tipologiaFattura !== '' || bodyGetLista.tipologiaContratto !== 0  ){
+            setStatusAnnulla('show');
+        }else{
+            setStatusAnnulla('hidden');
         }
-    },[bodyGetLista.anno]);
+    },[bodyGetLista]);
+
+
+
 
 
     const getAnni = async() => {
         setShowLoading(true);
         await getAnniAccertamenti(token, profilo.nonce).then((res)=>{
-            const arrayNumber = res.data.map(el => Number(el.toString()));
-            setArrayYears(arrayNumber);
+            //const arrayNumber = res.data.map(el => Number(el.toString()));
+            setArrayYears([2024]);
             if(isInitialRender.current && Object.keys(filters).length > 0){
                 getMesi(filters.body.anno?.toString());
             }else{
-                setBodyGetLista((prev)=> ({...prev,...{anno:Number(res.data[0])}}));
+                setBodyGetLista((prev)=> ({...prev,...{anno:2024}}));
                 getMesi(res.data[0]);
             }     
         }).catch((err)=>{
@@ -117,9 +126,11 @@ const ListaDocEmessi = () => {
 
     const getMesi = async(year) =>{
         await getMesiAccertamenti(token, profilo.nonce,{anno:year}).then((res)=>{    
-            setArrayMonths(res.data);
+            setArrayMonths(mesiDescNome);
+            const mese = mesiDescNome[mesiDescNome.length - 1].mese;
+            setBodyGetLista((prev)=> ({...prev,...{mese:mese}}));
             setShowLoading(false);
-            getListTipologiaFattura(bodyGetLista.anno,res.data[0].mese);
+            getListTipologiaFattura("2024","2");
         }).catch((err)=>{
             setArrayMonths([]);
             setShowLoading(false);
@@ -148,18 +159,94 @@ const ListaDocEmessi = () => {
     };
 
 
-    
     const getListTipologiaFattura = async(anno,mese) => {
+      
         await getTipologieFatturePagoPa(token, profilo.nonce, {mese,anno}).then((res)=>{
-            setTipologiaFatture(res.data);
+            setTipologiaFatture(['PRIMO SALDO', 'SECONDO SALDO', 'ANTICIPO','ACCONTO']);
             if(filters.valuetipologiaFattura){
                 setValueTipologiaFattura(filters.valuetipologiaFattura);
             }else{
                 setValueTipologiaFattura('');
             } 
-        }).catch((()=>{
+        }).catch(((err)=>{
             setTipologiaFatture([]);
             setValueTipologiaFattura("");
+            manageError(err,dispatchMainState);
+        }));
+        
+            
+    };
+
+
+    
+    const getLista = async(pg,row) => {
+        await getWhiteListPagoPa(token, profilo.nonce,pg,row,bodyGetLista).then((res)=>{
+
+            const objMock  = {
+                "count": 1,
+                "whitelist": [
+                    {
+                        "id": 1,
+                        "ragioneSociale": "Comune di San Mauro Torinese",
+                        "idEnte": "729352e9-5bb9-4aff-a6b5-ca0c80c0d3b4",
+                        "anno": 2024,
+                        "mese": 4,
+                        "dataInizio": "2025-02-11T00:00:00",
+                        "dataFine": null,
+                        "tipologiaFattura": "ACCONTO",
+                        "idTipoContratto": 1,
+                        "tipoContratto": "PAL"
+                    }
+                ]
+            };
+
+            const customObj = objMock.whitelist.map(el => {
+                return {
+                    idWhite:el.id,
+                    ragioneSociale:el.ragioneSociale,
+                    anno:el.anno,
+                    mese:el.mese,
+                    tipologiaFatture:el.tipologiaFattura,
+                    tipoContratto:el.tipoContratto
+
+                };
+            });
+            
+            setGridData(customObj);
+            setTotalElements(objMock.count);
+           
+        }).catch((()=>{
+            const objMock = {
+                "count": 1,
+                "whitelist": [
+                    {
+                        "id": 1,
+                        "ragioneSociale": "Comune di San Mauro Torinese",
+                        "idEnte": "729352e9-5bb9-4aff-a6b5-ca0c80c0d3b4",
+                        "anno": 2024,
+                        "mese": 4,
+                        "dataInizio": "2025-02-11T00:00:00",
+                        "dataFine": null,
+                        "tipologiaFattura": "ACCONTO",
+                        "idTipoContratto": 1,
+                        "tipoContratto": "PAL"
+                    }
+                ]
+            };
+            const customObj = objMock.whitelist.map(el => {
+                return {
+                    idWhite:el.id,
+                    ragioneSociale:el.ragioneSociale,
+                    anno:el.anno,
+                    mese:el.mese,
+                    tipologiaFatture:el.tipologiaFattura,
+                    tipoContratto:el.tipoContratto
+
+                };
+            });
+            
+            setGridData(customObj);
+            setTotalElements(objMock.count);
             // manageError(err,dispatchMainState);
         }));
                
@@ -170,7 +257,7 @@ const ListaDocEmessi = () => {
     };
 
     const onButtonFiltra = () => {
-        //getLista(0,10,bodyGetLista);
+        getLista(1,10);
         updateFilters(
             {
                 body:bodyGetLista,
@@ -188,8 +275,8 @@ const ListaDocEmessi = () => {
             idEnti: [],
             tipologiaContratto: 0,
             tipologiaFattura:'',
-            anno: 0,
-            mese: 0
+            anno: 2025,
+            mese: 1
         });
         setValueAutocomplete([]);
         setTextValue('');
@@ -250,8 +337,20 @@ const ListaDocEmessi = () => {
         //getLista(realPage,parseInt(event.target.value, 10),bodyGetLista);                     
     };
 
-    const headerNames = [ 'Ragione Sociale', 'Anno', 'Mese','Tipologia fattura', 'Tipo contratto', ''];
+    const headerNames = [ 'checkbox','Ragione Sociale', 'Anno', 'Mese','Tipologia fattura', 'Tipo contratto', ''];
 
+    const buttonsTopHeader = [{
+        stringIcon:"Elimina",
+        icon:<DeleteIcon sx={{ color: '#1976D2', cursor: 'pointer' }} />,
+        action:"Delete"
+    },
+    {
+        stringIcon:"Aggiungi",
+        icon:<AddCircleIcon sx={{ color: '#1976D2', cursor: 'pointer' }} />,
+        action:"Add"
+    }];
+
+    console.log({bodyGetLista, gridData});
     return (
         <div className="mx-5">
             {/*title container start */}
@@ -291,6 +390,7 @@ const ListaDocEmessi = () => {
                     </Box>
                 </div>
                 <div  className="col-3">
+                    {/* 
                     <Autocomplete
                         sx={{width:'80%',marginLeft:'20px'}}
                         multiple
@@ -320,7 +420,38 @@ const ListaDocEmessi = () => {
                                 label="Mesi" 
                                 placeholder="Mesi" />;
                         }}     
-                    />
+                    />*/}
+                    
+                    <Box sx={{width:'80%', marginLeft:'20px'}}  >
+                        <FormControl
+                            fullWidth
+                            size="medium"
+                        >
+                            <InputLabel>
+                            Mese
+                            </InputLabel>
+                            <Select
+                                label='Seleziona Mese'
+                                onChange={(e) =>{
+                                    //const value = Number(e.target.value);
+                                    setBodyGetLista((prev)=> ({...prev, ...{mese:e.target.value}}));
+                                    clearOnChangeFilter();
+                                }}
+                                value={bodyGetLista.mese||''}
+                            >
+                                {arrayMonths.map((el) =>{
+                                    return(
+                                        <MenuItem
+                                            key={el.mese}
+                                            value={el.mese}
+                                        >
+                                            {el?.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase()}
+                                        </MenuItem>
+                                    );
+                                })}
+                            </Select>
+                        </FormControl>
+                    </Box>
                 </div>
                 <div className="col-3">
                     <SelectTipologiaFattura value={valuetipologiaFattura} setBody={setBodyGetLista} setValue={setValueTipologiaFattura} types={tipologiaFatture} clearOnChangeFilter={clearOnChangeFilter}></SelectTipologiaFattura>
@@ -339,7 +470,7 @@ const ListaDocEmessi = () => {
                                 onChange={(e) =>{
                                     clearOnChangeFilter();
                                     if(e.target.value === 0){
-                                        setBodyGetLista((prev)=> ({...prev, ...{tipologiaContratto:null}}));
+                                        setBodyGetLista((prev)=> ({...prev, ...{tipologiaContratto:0}}));
                                     }else{
                                         setBodyGetLista((prev)=> ({...prev, ...{tipologiaContratto:Number(e.target.value)}}));
                                     }
@@ -400,16 +531,20 @@ const ListaDocEmessi = () => {
             </div>
             <div className="mt-1 mb-5" style={{ width: '100%'}}>
                 <GridCustom
-                    nameParameterApi='idContratto'
+                    nameParameterApi='idWhite'
                     elements={gridData}
                     changePage={handleChangePage}
                     changeRow={handleChangeRowsPerPage} 
-                    total={totalContratti}
+                    total={totalElements}
                     page={page}
                     rows={rowsPerPage}
                     headerNames={headerNames}
                     disabled={false}
-                    widthCustomSize="auto"></GridCustom>
+                    widthCustomSize="auto"
+                    setOpenModal={setOpenModalAction}
+                    selected={selected}
+                    setSelected={setSelected}
+                    buttons={buttonsTopHeader}></GridCustom>
             </div>
             <ModalLoading 
                 open={getListaLoading} 

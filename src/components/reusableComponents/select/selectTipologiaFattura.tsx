@@ -3,10 +3,11 @@ import { Box } from "@mui/system";
 import { Dispatch, SetStateAction } from "react";
 import { BodyRel } from "../../../types/typeRel";
 import { BodyLista } from "../../../page/listaDocEmessi";
+import { BodyWhite } from "../../../api/apiPagoPa/whiteListPA/whiteList";
 interface SelecTipologiaProps{
     value:string|null,
     types:string[],
-    setBody:Dispatch<SetStateAction<BodyRel>>|Dispatch<SetStateAction<BodyLista>>,
+    setBody:Dispatch<SetStateAction<BodyRel>>|Dispatch<SetStateAction<BodyLista>>|Dispatch<SetStateAction<BodyWhite>>,
     setValue:Dispatch<SetStateAction<string>>,
     clearOnChangeFilter:any
 }

@@ -7,6 +7,7 @@ import { BodyRel } from "./typeRel";
 import { BodyGetListaDatiFatturazione } from "./typeListaDatiFatturazione";
 import { BodyContratto } from "../page/tipologiaContratto";
 import { BodyLista } from "../page/listaDocEmessi";
+import { BodyWhite } from "../api/apiPagoPa/whiteListPA/whiteList";
 
 
 export interface ReportDettaglioProps {
@@ -127,7 +128,7 @@ export interface ElementMultiSelect {
 }
 
 export interface MultiselectNotificheProps{
-    setBodyGetLista:Dispatch<SetStateAction<BodyListaNotifiche>>|Dispatch<SetStateAction<BodyFatturazione>>|Dispatch<SetStateAction<BodyGetListaDatiFatturazione>>|Dispatch<SetStateAction<BodyDownloadModuliCommessa>>|Dispatch<SetStateAction<BodyRel>>|Dispatch<SetStateAction<BodyContratto>>|Dispatch<SetStateAction<BodyLista>>,  //{idEnti:[],prodotto:'',profilo:''}|BodyDownloadModuliCommessa|BodyRel
+    setBodyGetLista:Dispatch<SetStateAction<BodyListaNotifiche>>|Dispatch<SetStateAction<BodyFatturazione>>|Dispatch<SetStateAction<BodyGetListaDatiFatturazione>>|Dispatch<SetStateAction<BodyDownloadModuliCommessa>>|Dispatch<SetStateAction<BodyRel>>|Dispatch<SetStateAction<BodyContratto>>|Dispatch<SetStateAction<BodyWhite>>,  //{idEnti:[],prodotto:'',profilo:''}|BodyDownloadModuliCommessa|BodyRel
     dataSelect:ElementMultiSelect[] ,
     setTextValue:Dispatch<SetStateAction<string>>,
     valueAutocomplete:OptionMultiselectChackbox[],
