@@ -6,22 +6,19 @@ import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "../store/context/globalContext";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
-import { BodyContratto } from "./tipologiaContratto";
 import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
 import { PathPf } from "../types/enum";
 import { saveAs } from "file-saver";
 import { manageError } from "../api/api";
-import { getAnniAccertamenti, getMesiAccertamenti } from "../api/apiPagoPa/accertamentiPA/api";
+
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
 import SelectTipologiaFattura from "../components/reusableComponents/select/selectTipologiaFattura";
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import { getTipologieFatturePagoPa } from "../api/apiPagoPa/relPA/api";
-import { mesi, mesiDescNome } from "../reusableFunction/reusableArrayObj";
-import { BodyWhite, getWhiteListPagoPa } from "../api/apiPagoPa/whiteListPA/whiteList";
-import { getTipologieFatture } from "../api/apiSelfcare/relSE/api";
+import { BodyWhite, getAnniWhite, getMesiWhite, getTipologiaFatturaWhite, getWhiteListPagoPa } from "../api/apiPagoPa/whiteListPA/whiteList";
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { mesiDescNome, month } from "../reusableFunction/reusableArrayObj";
 
 export interface BodyLista {
     idEnti: string[]
@@ -30,21 +27,17 @@ export interface BodyLista {
     anno: number
     mese: number
 }
-
 export interface WhitelistData {
     count: number
     whitelist: Whitelist[]
 }
-  
 export interface Whitelist {
-    idWhite: number;
+    idWhite?: number;
     anno: number;
     mese: number;
     tipologiaFatture: string;
     tipoContratto: string;
 }
-
-
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -67,21 +60,17 @@ const ListaDocEmessi = () => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalElements, setTotalElements]  = useState(0);
     const [arrayYears,setArrayYears] = useState<number[]>([]);
-    const [arrayMonths,setArrayMonths] = useState<{mese:string,descrizione:string}[]>([]);
     const [contratti, setContratti] = useState([{id:0,descrizione:"Tutte"},{id:2,descrizione:"PAC"},{id:1,descrizione:"PAL"}]);
     const [valuetipologiaFattura, setValueTipologiaFattura] = useState<string>('');
     const [tipologiaFatture, setTipologiaFatture] = useState<string[]>([]);
-    const [selected, setSelected] = useState<string[]|number[]>([]);
     const [openModalAction, setOpenModalAction] = useState<{open:boolean,action:string}>({open:false,action:''});
     const [bodyGetLista, setBodyGetLista] = useState<BodyWhite>({
         idEnti: [],
-        tipologiaContratto: 0,
+        tipologiaContratto:null,
         tipologiaFattura:null,
         anno: 0,
-        mese: 0
+        mesi: []
     });
-
- 
 
     const { 
         filters,
@@ -93,6 +82,7 @@ const ListaDocEmessi = () => {
     useEffect(()=>{
         getAnni();
     },[]);
+  
 
     useEffect(()=>{
         if(bodyGetLista.idEnti.length !== 0 || bodyGetLista.tipologiaFattura !== '' || bodyGetLista.tipologiaContratto !== 0  ){
@@ -102,42 +92,27 @@ const ListaDocEmessi = () => {
         }
     },[bodyGetLista]);
 
-
-
-
-
     const getAnni = async() => {
         setShowLoading(true);
-        await getAnniAccertamenti(token, profilo.nonce).then((res)=>{
+        await getAnniWhite(token, profilo.nonce).then((res)=>{
             //const arrayNumber = res.data.map(el => Number(el.toString()));
-            setArrayYears([2024]);
-            if(isInitialRender.current && Object.keys(filters).length > 0){
-                getMesi(filters.body.anno?.toString());
-            }else{
-                setBodyGetLista((prev)=> ({...prev,...{anno:2024}}));
-                getMesi(res.data[0]);
-            }     
+            setArrayYears(res.data); 
+            getListTipologiaFattura();
+            setBodyGetLista((prev)=>({...prev,...{anno:res.data[0]}}));
+            getLista(1,10,{
+                idEnti: [],
+                tipologiaContratto: null,
+                tipologiaFattura:null,
+                anno: res.data[0],
+                mesi: []
+            });
+            setShowLoading(false);
         }).catch((err)=>{
             setArrayYears([]);
             setShowLoading(false);
             manageError(err,dispatchMainState);
         });
     };
-
-    const getMesi = async(year) =>{
-        await getMesiAccertamenti(token, profilo.nonce,{anno:year}).then((res)=>{    
-            setArrayMonths(mesiDescNome);
-            const mese = mesiDescNome[mesiDescNome.length - 1].mese;
-            setBodyGetLista((prev)=> ({...prev,...{mese:mese}}));
-            setShowLoading(false);
-            getListTipologiaFattura("2024","2");
-        }).catch((err)=>{
-            setArrayMonths([]);
-            setShowLoading(false);
-            manageError(err,dispatchMainState);
-        });
-    };
-
 
     useEffect(()=>{
         const timer = setTimeout(() => {
@@ -159,95 +134,44 @@ const ListaDocEmessi = () => {
     };
 
 
-    const getListTipologiaFattura = async(anno,mese) => {
+    const getListTipologiaFattura = async() => {
       
-        await getTipologieFatturePagoPa(token, profilo.nonce, {mese,anno}).then((res)=>{
-            setTipologiaFatture(['PRIMO SALDO', 'SECONDO SALDO', 'ANTICIPO','ACCONTO']);
+        await getTipologiaFatturaWhite(token, profilo.nonce).then((res)=>{
+            setTipologiaFatture([...['Tutte'],...res.data]);
             if(filters.valuetipologiaFattura){
                 setValueTipologiaFattura(filters.valuetipologiaFattura);
             }else{
-                setValueTipologiaFattura('');
+                setValueTipologiaFattura('Tutte');
             } 
         }).catch(((err)=>{
             setTipologiaFatture([]);
             setValueTipologiaFattura("");
             manageError(err,dispatchMainState);
-        }));
-        
-            
+        }));   
     };
 
 
     
-    const getLista = async(pg,row) => {
-        await getWhiteListPagoPa(token, profilo.nonce,pg,row,bodyGetLista).then((res)=>{
+    const getLista = async(pg,row,body) => {
+        await getWhiteListPagoPa(token, profilo.nonce,pg,row,body).then((res)=>{
 
-            const objMock  = {
-                "count": 1,
-                "whitelist": [
-                    {
-                        "id": 1,
-                        "ragioneSociale": "Comune di San Mauro Torinese",
-                        "idEnte": "729352e9-5bb9-4aff-a6b5-ca0c80c0d3b4",
-                        "anno": 2024,
-                        "mese": 4,
-                        "dataInizio": "2025-02-11T00:00:00",
-                        "dataFine": null,
-                        "tipologiaFattura": "ACCONTO",
-                        "idTipoContratto": 1,
-                        "tipoContratto": "PAL"
-                    }
-                ]
-            };
-
-            const customObj = objMock.whitelist.map(el => {
+            const customObj = res.data.whitelist.map(el => {
                 return {
                     idWhite:el.id,
                     ragioneSociale:el.ragioneSociale,
                     anno:el.anno,
-                    mese:el.mese,
+                    mese:month[el.mese-1],
                     tipologiaFatture:el.tipologiaFattura,
                     tipoContratto:el.tipoContratto
 
                 };
             });
-            
+            console.log(res.data);
             setGridData(customObj);
-            setTotalElements(objMock.count);
+            setTotalElements(res.data.count);
            
-        }).catch((()=>{
-            const objMock = {
-                "count": 1,
-                "whitelist": [
-                    {
-                        "id": 1,
-                        "ragioneSociale": "Comune di San Mauro Torinese",
-                        "idEnte": "729352e9-5bb9-4aff-a6b5-ca0c80c0d3b4",
-                        "anno": 2024,
-                        "mese": 4,
-                        "dataInizio": "2025-02-11T00:00:00",
-                        "dataFine": null,
-                        "tipologiaFattura": "ACCONTO",
-                        "idTipoContratto": 1,
-                        "tipoContratto": "PAL"
-                    }
-                ]
-            };
-            const customObj = objMock.whitelist.map(el => {
-                return {
-                    idWhite:el.id,
-                    ragioneSociale:el.ragioneSociale,
-                    anno:el.anno,
-                    mese:el.mese,
-                    tipologiaFatture:el.tipologiaFattura,
-                    tipoContratto:el.tipoContratto
-
-                };
-            });
-            
-            setGridData(customObj);
-            setTotalElements(objMock.count);
-            // manageError(err,dispatchMainState);
+        }).catch(((err)=>{
+            manageError(err,dispatchMainState);
         }));
                
     };
@@ -257,7 +181,7 @@ const ListaDocEmessi = () => {
     };
 
     const onButtonFiltra = () => {
-        getLista(1,10);
+        getLista(1,10,bodyGetLista);
         updateFilters(
             {
                 body:bodyGetLista,
@@ -276,7 +200,7 @@ const ListaDocEmessi = () => {
             tipologiaContratto: 0,
             tipologiaFattura:'',
             anno: 2025,
-            mese: 1
+            mesi: []
         });
         setValueAutocomplete([]);
         setTextValue('');
@@ -350,7 +274,6 @@ const ListaDocEmessi = () => {
         action:"Add"
     }];
 
-    console.log({bodyGetLista, gridData});
     return (
         <div className="mx-5">
             {/*title container start */}
@@ -390,7 +313,6 @@ const ListaDocEmessi = () => {
                     </Box>
                 </div>
                 <div  className="col-3">
-                    {/* 
                     <Autocomplete
                         sx={{width:'80%',marginLeft:'20px'}}
                         multiple
@@ -400,7 +322,7 @@ const ListaDocEmessi = () => {
                             clearOnChangeFilter();
                         }}
                         id="checkboxes-tipologie"
-                        options={arrayMonths}
+                        options={mesiDescNome}
                         disableCloseOnSelect
                         getOptionLabel={(option) => option.descrizione}
                         renderOption={(props, option,{ selected }) =>(
@@ -420,38 +342,7 @@ const ListaDocEmessi = () => {
                                 label="Mesi" 
                                 placeholder="Mesi" />;
                         }}     
-                    />*/}
-                    
-                    <Box sx={{width:'80%', marginLeft:'20px'}}  >
-                        <FormControl
-                            fullWidth
-                            size="medium"
-                        >
-                            <InputLabel>
-                            Mese
-                            </InputLabel>
-                            <Select
-                                label='Seleziona Mese'
-                                onChange={(e) =>{
-                                    //const value = Number(e.target.value);
-                                    setBodyGetLista((prev)=> ({...prev, ...{mese:e.target.value}}));
-                                    clearOnChangeFilter();
-                                }}
-                                value={bodyGetLista.mese||''}
-                            >
-                                {arrayMonths.map((el) =>{
-                                    return(
-                                        <MenuItem
-                                            key={el.mese}
-                                            value={el.mese}
-                                        >
-                                            {el?.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase()}
-                                        </MenuItem>
-                                    );
-                                })}
-                            </Select>
-                        </FormControl>
-                    </Box>
+                    />
                 </div>
                 <div className="col-3">
                     <SelectTipologiaFattura value={valuetipologiaFattura} setBody={setBodyGetLista} setValue={setValueTipologiaFattura} types={tipologiaFatture} clearOnChangeFilter={clearOnChangeFilter}></SelectTipologiaFattura>
@@ -542,8 +433,6 @@ const ListaDocEmessi = () => {
                     disabled={false}
                     widthCustomSize="auto"
                     setOpenModal={setOpenModalAction}
-                    selected={selected}
-                    setSelected={setSelected}
                     buttons={buttonsTopHeader}></GridCustom>
             </div>
             <ModalLoading 

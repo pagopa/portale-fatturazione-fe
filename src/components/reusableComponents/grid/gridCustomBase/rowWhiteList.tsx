@@ -1,16 +1,44 @@
 import { Checkbox, TableCell, TableRow, Tooltip } from "@mui/material";
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Whitelist } from "../../../../page/listaDocEmessi";
+
+interface RowWhite {
+    sliced:any,
+    apiGet:any,
+    handleClickOnGrid:any,
+    element:any,
+    stateHeaderCheckbox:{checked:boolean,disabled:boolean},
+    setSelected:any,
+    checkIfChecked:any,
+    selected:number[]
+
+}
 
 
-const RowWhiteList = ({sliced, apiGet, handleClickOnGrid, element}) => {
-   
+const RowWhiteList :React.FC<RowWhite>  = ({sliced, apiGet, handleClickOnGrid, element,stateHeaderCheckbox, setSelected,selected,checkIfChecked}) => {
+
+    
+
+  
+    
+
+    const handleCheckSingleRow = () => {
+
+        if(checkIfChecked(element.idWhite)){
+            const newSelected =  selected.filter((el) => el !== element.idWhite);
+            setSelected(newSelected);
+        }else{
+            setSelected((prev)=>([...prev,...[element.idWhite]]));
+        }
+       
+       
+    };
+    console.log(sliced);
 
     return (
-        <TableRow key={element.idEnte}>
-            <Checkbox disabled checked />
+        <TableRow key={element.idWhite}>
+            <Checkbox onClick={handleCheckSingleRow} disabled={stateHeaderCheckbox.disabled} checked={stateHeaderCheckbox.checked ? stateHeaderCheckbox.checked : checkIfChecked(element.idWhite)} />
             {
                 Object.values(sliced).map((value:any, i:number)=>{
-                    const indexContractType =  Object.entries(sliced).findIndex(([key]) => key === 'tipoContratto');
                     // stato per loa switch utilizzato nella page tipologia contratto
                     const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
                     const valueEl = (i === 0 && value?.toString().length > 50) ? value?.toString().slice(0, 50) + '...' : value;

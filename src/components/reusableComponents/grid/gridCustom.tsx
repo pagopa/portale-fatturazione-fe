@@ -6,7 +6,8 @@ import { NotificheList } from "../../../types/typeReportDettaglio";
 import RowContratto from "./gridCustomBase/rowTipologiaContratto";
 import RowWhiteList from "./gridCustomBase/rowWhiteList";
 import EnhancedTableCustom from "./gridCustomBase/enhancedTabalToolbarCustom";
-import { SetStateAction } from "react";
+import { SetStateAction, useState } from "react";
+import { Whitelist } from "../../../page/listaDocEmessi";
 interface GridCustomProps {
     elements:NotificheList[]|Rel[]|GridElementListaPsp[]|any[],
     changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
@@ -29,8 +30,21 @@ interface GridCustomProps {
     }[]
 }
 
-const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, nameParameterApi, apiGet, disabled, widthCustomSize, setOpenModal,selected, setSelected,buttons}) =>{
+const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, nameParameterApi, apiGet, disabled, widthCustomSize, setOpenModal,buttons}) =>{
 
+
+    const [stateHeaderCheckbox, setStateHeaderChekbox] = useState({checked:false,disabled:false});
+    const [selected, setSelected] = useState<number[]>([]);
+
+    const clickOnCheckBoxHeader = () => {
+        setStateHeaderChekbox(prev => ({checked:!prev.checked,disabled:prev.disabled}));
+        if(stateHeaderCheckbox.checked){
+            setSelected([]);
+        }else{
+            setSelected(elements.map(el => el.idWhite));
+        }
+        
+    };
 
     const handleClickOnGrid = (element) =>{
         if(apiGet && nameParameterApi === 'idContratto'){
@@ -51,6 +65,10 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
             apiGet(newDetailRel);
         }
     };
+
+    const checkIfChecked = (id:any) => {
+        return selected.includes(id);
+    };
        
    
     return (
@@ -62,10 +80,9 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                         <TableHead sx={{backgroundColor:'#f2f2f2'}}>
                             <TableRow>
                                 {headerNames.map((el)=>{
-                                    console.log({el});
                                     if(el === "checkbox"){
                                         return(
-                                            <Checkbox  checked />
+                                            <Checkbox onClick={clickOnCheckBoxHeader} disabled={stateHeaderCheckbox.disabled} checked={stateHeaderCheckbox.checked} />
                                         );
                                     }else{
                                         return (
@@ -82,11 +99,13 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                             <TableBody key={Math.random()} style={{height: '50px'}}>
                             </TableBody> :
                             <TableBody sx={{marginLeft:'20px'}}>
-                                {elements.map((element:Rel|NotificheList|GridElementListaPsp ) =>{
+                                {elements.map((element:Rel|NotificheList|GridElementListaPsp|Whitelist ) =>{
                                     // tolgo da ogni oggetto la prima chiave valore  perchè il cliente non vuole vedere es. l'id ma serve per la chiamata get di dettaglio 
                                     const sliced = Object.fromEntries(
                                         Object.entries(element).slice(1)
                                     );
+
+                                    // probabilmente puoi eliminare questo if
                                     if(sliced?.tipologiaFattura === 'ASSEVERAZIONE'){
                                         console.log('dentro ass');
                                         return (
@@ -112,7 +131,7 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                         );
                                     }else if(nameParameterApi === 'idWhite'){
                                         return (
-                                            <RowWhiteList key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element}></RowWhiteList>
+                                            <RowWhiteList key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} stateHeaderCheckbox={stateHeaderCheckbox} setSelected={setSelected} selected={selected}  checkIfChecked={checkIfChecked} ></RowWhiteList>
                                         );
                                     }else{
                                         return (
