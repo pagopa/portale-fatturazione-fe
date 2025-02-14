@@ -6,7 +6,7 @@ import { BodyDownloadModuliCommessa } from "./typeListaModuliCommessa";
 import { BodyRel } from "./typeRel";
 import { BodyGetListaDatiFatturazione } from "./typeListaDatiFatturazione";
 import { BodyContratto } from "../page/tipologiaContratto";
-import { BodyLista } from "../page/listaDocEmessi";
+import { BodyLista } from "../page/whiteList";
 import { BodyWhite } from "../api/apiPagoPa/whiteListPA/whiteList";
 
 

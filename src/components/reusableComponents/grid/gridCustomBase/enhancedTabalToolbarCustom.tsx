@@ -2,7 +2,8 @@ import { Button, Toolbar, Tooltip, Typography } from "@mui/material";
 import { SetStateAction } from "react";
 
 interface EnhancedTable {
-    setOpenModal?:React.Dispatch<SetStateAction<boolean>>,//React.Dispatch<SetStateAction<{open:boolean,action:string}>>,
+    setOpenModal?:React.Dispatch<SetStateAction<boolean>>,
+    setOpenModalAdd?:React.Dispatch<SetStateAction<boolean>>,
     selected:number[],
     buttons?:{
         stringIcon:string,
@@ -13,7 +14,7 @@ interface EnhancedTable {
   
 
 const EnhancedTableCustom = (props: EnhancedTable) =>{
-    const { setOpenModal, buttons,selected } = props;
+    const { setOpenModal, buttons,selected, setOpenModalAdd  } = props;
     //const color = stato ? "#F2FAF2" : "#F2FAFE";
    
  
@@ -45,6 +46,8 @@ const EnhancedTableCustom = (props: EnhancedTable) =>{
                             <Button disabled={disableButton} variant="outlined" onClick={()=>{
                                 if(setOpenModal && el.action === "Delete"){
                                     setOpenModal(true);
+                                }else if(setOpenModalAdd && el.action === "Add" ){
+                                    setOpenModalAdd(true);
                                 }
                             }}>
                                 {el.icon}

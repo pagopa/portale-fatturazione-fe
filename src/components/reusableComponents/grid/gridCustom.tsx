@@ -7,7 +7,7 @@ import RowContratto from "./gridCustomBase/rowTipologiaContratto";
 import RowWhiteList from "./gridCustomBase/rowWhiteList";
 import EnhancedTableCustom from "./gridCustomBase/enhancedTabalToolbarCustom";
 import { SetStateAction, useEffect, useState } from "react";
-import { Whitelist } from "../../../page/listaDocEmessi";
+import { Whitelist } from "../../../page/whiteList";
 interface GridCustomProps {
     elements:NotificheList[]|Rel[]|GridElementListaPsp[]|any[],
     changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
@@ -20,7 +20,8 @@ interface GridCustomProps {
     apiGet?:(el:any)=>void, 
     disabled:boolean,
     widthCustomSize:string,
-    setOpenModal?:React.Dispatch<SetStateAction<boolean>>,//setOpenModal?:React.Dispatch<SetStateAction<{open:boolean,action:string}>>,
+    setOpenModalDelete?:React.Dispatch<SetStateAction<boolean>>,
+    setOpenModalAdd?:React.Dispatch<SetStateAction<boolean>>,
     selected?:number[],
     setSelected?:React.Dispatch<SetStateAction<number[]>>,
     buttons?:{
@@ -30,7 +31,7 @@ interface GridCustomProps {
     }[]
 }
 
-const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, nameParameterApi, apiGet, disabled, widthCustomSize, setOpenModal,buttons, selected, setSelected }) =>{
+const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, nameParameterApi, apiGet, disabled, widthCustomSize, setOpenModalDelete,setOpenModalAdd,buttons, selected, setSelected }) =>{
 
 
     const [stateHeaderCheckbox, setStateHeaderChekbox] = useState({checked:false,disabled:true});
@@ -91,7 +92,7 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
    
     return (
         <div>
-            <EnhancedTableCustom  setOpenModal={setOpenModal} selected={selected||[]} buttons={buttons} ></EnhancedTableCustom>
+            {nameParameterApi === "idWhite" && <EnhancedTableCustom  setOpenModal={setOpenModalDelete} setOpenModalAdd={setOpenModalAdd} selected={selected||[]} buttons={buttons} ></EnhancedTableCustom>}
             <div style={{overflowX:'auto'}}>
                 <Card sx={{width: widthCustomSize}}  >
                     <Table >

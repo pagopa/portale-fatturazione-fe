@@ -16,7 +16,7 @@ import { PathPf } from "../../types/enum";
 import LayoutAzure from "../../layout/layOutLoggedInAzure";
 import SideNavSend from "../../layout/sideNavs/sideNavSend";
 import PageTipologiaContratto from "../../page/tipologiaContratto";
-import ListaDocEmessi from "../../page/listaDocEmessi";
+import ListaDocEmessi from "../../page/whiteList";
 
 const ProdPnRoute = () => {
     const prodPnRoute =  <Route element={<LayoutAzure  sideNav={<SideNavSend />}></LayoutAzure >}>

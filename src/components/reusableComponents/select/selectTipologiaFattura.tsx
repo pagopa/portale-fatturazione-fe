@@ -2,7 +2,7 @@ import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { Box } from "@mui/system";
 import { Dispatch, SetStateAction } from "react";
 import { BodyRel } from "../../../types/typeRel";
-import { BodyLista } from "../../../page/listaDocEmessi";
+import { BodyLista } from "../../../page/whiteList";
 import { BodyWhite } from "../../../api/apiPagoPa/whiteListPA/whiteList";
 interface SelecTipologiaProps{
     value:string|null,

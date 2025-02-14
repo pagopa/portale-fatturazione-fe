@@ -8,9 +8,7 @@ import { GlobalContext } from "../store/context/globalContext";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
 import { PathPf } from "../types/enum";
-import { saveAs } from "file-saver";
 import { manageError, managePresaInCarico } from "../api/api";
-
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
 import SelectTipologiaFattura from "../components/reusableComponents/select/selectTipologiaFattura";
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
@@ -18,8 +16,10 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { BodyWhite, deleteWhiteListPagoPa, getAnniWhite, getMesiWhite, getTipologiaFatturaWhite, getWhiteListPagoPa } from "../api/apiPagoPa/whiteListPA/whiteList";
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { mesiDescNome, month } from "../reusableFunction/reusableArrayObj";
+import { month } from "../reusableFunction/reusableArrayObj";
 import ModalConfermaInserimento from "../components/commessaInserimento/modalConfermaInserimento";
+import ModalAggiungi from "../components/whiteList/modalAggiungi";
+
 
 export interface BodyLista {
     idEnti: string[]
@@ -68,6 +68,8 @@ const ListaDocEmessi = () => {
     const [valuetipologiaFattura, setValueTipologiaFattura] = useState<string>('');
     const [tipologiaFatture, setTipologiaFatture] = useState<string[]>([]);
     const [openModalAction, setOpenModalAction] = useState(false);
+    const [openModalAdd, setOpenModalAdd] = useState(false);
+  
     const [selected, setSelected] = useState<number[]>([]);
     const [bodyGetLista, setBodyGetLista] = useState<BodyWhite>({
         idEnti: [],
@@ -126,14 +128,12 @@ const ListaDocEmessi = () => {
         });
     };
     
-
     const getMesi = async(y) => {
         setGetListaLoading(true);
         await getMesiWhite(token, profilo.nonce, {anno:y}).then((res)=>{
             setArrayMonths(res.data);
             setValueMultiMonths([]);
             setBodyGetLista((prev)=>({...prev,...{mesi:[]}}));
-            
             setGetListaLoading(false);
         }).catch((err)=>{
             setArrayYears([]);
@@ -141,8 +141,6 @@ const ListaDocEmessi = () => {
             manageError(err,dispatchMainState);
         });
     };
-
-
 
     useEffect(()=>{
         const timer = setTimeout(() => {
@@ -165,7 +163,6 @@ const ListaDocEmessi = () => {
 
 
     const getListTipologiaFattura = async() => {
-      
         await getTipologiaFatturaWhite(token, profilo.nonce).then((res)=>{
             setTipologiaFatture([...["Tutte"],...res.data]);
             setBodyGetLista((prev)=> ({...prev, ...{tipologiaFattura:null}}));
@@ -177,11 +174,8 @@ const ListaDocEmessi = () => {
         }));   
     };
 
-
-    
     const getLista = async(pg,row,body) => {
         await getWhiteListPagoPa(token, profilo.nonce,pg,row,body).then((res)=>{
-
             const customObj = res.data.whitelist.map(el => {
                 return {
                     idWhite:el.id,
@@ -197,7 +191,6 @@ const ListaDocEmessi = () => {
             setGridData(customObj);
             setTotalElements(res.data.count);
             setSelected([]);
-           
         }).catch(((err)=>{
             setGridData([]);
             manageError(err,dispatchMainState);
@@ -212,7 +205,6 @@ const ListaDocEmessi = () => {
         }).catch((err)=>{
             console.log(err);
             manageError(err,dispatchMainState);
-            
         });
     };
 
@@ -316,7 +308,6 @@ const ListaDocEmessi = () => {
     };
 
     const headerNames = [ 'checkbox','Ragione Sociale', 'Anno', 'Mese','Tipologia fattura', 'Tipo contratto', ''];
-
     const buttonsTopHeader =  [
         {
             stringIcon:"Elimina",
@@ -328,7 +319,6 @@ const ListaDocEmessi = () => {
             icon:<AddCircleIcon sx={{ color:selected.length === 0 ? "#1976D2" : "#A2ADB8", cursor: 'pointer' }} />,
             action:"Add"
         }];
-    console.log({selected});
     return (
         <div className="mx-5">
             {/*title container start */}
@@ -489,11 +479,15 @@ const ListaDocEmessi = () => {
                     headerNames={headerNames}
                     disabled={false}
                     widthCustomSize="auto"
-                    setOpenModal={setOpenModalAction}
+                    setOpenModalDelete={setOpenModalAction}
+                    setOpenModalAdd={setOpenModalAdd}
                     buttons={buttonsTopHeader}
                     selected={selected}
                     setSelected={setSelected}></GridCustom>
             </div>
+            <ModalAggiungi 
+                open={openModalAdd}
+                setOpen={setOpenModalAdd} ></ModalAggiungi>
             <ModalLoading 
                 open={getListaLoading} 
                 setOpen={setGetListaLoading}
