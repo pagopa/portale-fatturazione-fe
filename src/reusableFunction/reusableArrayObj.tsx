@@ -24,50 +24,50 @@ export const tipoNotifica = [
 export  const mesiDescNome = [
     {
         "descrizione": "Gennaio",
-        "mese": "1"
+        "mese": 1
     },
     {
         "descrizione": "Febbraio",
-        "mese": "2"
+        "mese": 2
     },
     {
         "descrizione": "Marzo",
-        "mese": "3"
+        "mese": 3
     },
     {
         "descrizione": "Aprile",
-        "mese": "4"
+        "mese": 4
     },
     {
         "descrizione": "Maggio",
-        "mese": "5"
+        "mese": 5
     },
     {
         "descrizione": "Giugno",
-        "mese": "6"
+        "mese": 6
     },
     {
         "descrizione": "Luglio",
-        "mese": "7"
+        "mese": 7
     },
     {
         "descrizione": "Agosto",
-        "mese": "8"
+        "mese": 8
     },
     {
         "descrizione": "Settembre",
-        "mese": "9"
+        "mese": 9
     },
     {
         "descrizione": "Ottobre",
-        "mese": "10"
+        "mese": 10
     },
     {
         "descrizione": "Novembre",
-        "mese": "11"
+        "mese": 11
     },
     {
         "descrizione": "Dicembre",
-        "mese": "12"
+        "mese": 12
     }
 ];

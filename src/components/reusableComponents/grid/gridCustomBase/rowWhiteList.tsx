@@ -18,25 +18,21 @@ const RowWhiteList :React.FC<RowWhite>  = ({sliced, apiGet, handleClickOnGrid, e
 
     
 
-  
-    
-
     const handleCheckSingleRow = () => {
-
+        console.log('dentro');
         if(checkIfChecked(element.idWhite)){
             const newSelected =  selected.filter((el) => el !== element.idWhite);
             setSelected(newSelected);
         }else{
             setSelected((prev)=>([...prev,...[element.idWhite]]));
         }
-       
-       
     };
-    console.log(sliced);
+   
+   
 
     return (
-        <TableRow key={element.idWhite}>
-            <Checkbox onClick={handleCheckSingleRow} disabled={stateHeaderCheckbox.disabled} checked={stateHeaderCheckbox.checked ? stateHeaderCheckbox.checked : checkIfChecked(element.idWhite)} />
+        <TableRow>
+            <Checkbox onClick={handleCheckSingleRow} disabled={!element.cancella} checked={checkIfChecked(element.idWhite)} />
             {
                 Object.values(sliced).map((value:any, i:number)=>{
                     // stato per loa switch utilizzato nella page tipologia contratto

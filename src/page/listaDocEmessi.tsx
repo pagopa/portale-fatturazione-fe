@@ -19,6 +19,7 @@ import { BodyWhite, getAnniWhite, getMesiWhite, getTipologiaFatturaWhite, getWhi
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { mesiDescNome, month } from "../reusableFunction/reusableArrayObj";
+import ModalConfermaInserimento from "../components/commessaInserimento/modalConfermaInserimento";
 
 export interface BodyLista {
     idEnti: string[]
@@ -37,6 +38,7 @@ export interface Whitelist {
     mese: number;
     tipologiaFatture: string;
     tipoContratto: string;
+    cancella?:boolean;
 }
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
@@ -55,20 +57,23 @@ const ListaDocEmessi = () => {
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
     const [textValue, setTextValue] = useState('');
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
+    const [valueMotiselectMonths, setValueMultiMonths] = useState<{descrizione:string,mese:number}[]>([]);
     const [showLoading,setShowLoading] = useState(false);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalElements, setTotalElements]  = useState(0);
     const [arrayYears,setArrayYears] = useState<number[]>([]);
+    const [arrayMonths,setArrayMonths] = useState<{descrizione:string,mese:number}[]>([]);
     const [contratti, setContratti] = useState([{id:0,descrizione:"Tutte"},{id:2,descrizione:"PAC"},{id:1,descrizione:"PAL"}]);
     const [valuetipologiaFattura, setValueTipologiaFattura] = useState<string>('');
     const [tipologiaFatture, setTipologiaFatture] = useState<string[]>([]);
-    const [openModalAction, setOpenModalAction] = useState<{open:boolean,action:string}>({open:false,action:''});
+    const [openModalAction, setOpenModalAction] = useState(false);
+    const [selected, setSelected] = useState<number[]>([]);
     const [bodyGetLista, setBodyGetLista] = useState<BodyWhite>({
         idEnti: [],
         tipologiaContratto:null,
         tipologiaFattura:null,
-        anno: 0,
+        anno: null,
         mesi: []
     });
 
@@ -82,6 +87,13 @@ const ListaDocEmessi = () => {
     useEffect(()=>{
         getAnni();
     },[]);
+
+
+    useEffect(()=>{
+        if((bodyGetLista?.anno || 0) > 0){
+            getMesi(bodyGetLista.anno);
+        }
+    },[bodyGetLista.anno]);
   
 
     useEffect(()=>{
@@ -113,6 +125,24 @@ const ListaDocEmessi = () => {
             manageError(err,dispatchMainState);
         });
     };
+    
+
+    const getMesi = async(y) => {
+        setShowLoading(true);
+        await getMesiWhite(token, profilo.nonce, {anno:y}).then((res)=>{
+            setArrayMonths(res.data);
+            setValueMultiMonths([]);
+            setBodyGetLista((prev)=>({...prev,...{mesi:[]}}));
+            
+            setShowLoading(false);
+        }).catch((err)=>{
+            setArrayYears([]);
+            setShowLoading(false);
+            manageError(err,dispatchMainState);
+        });
+    };
+
+
 
     useEffect(()=>{
         const timer = setTimeout(() => {
@@ -138,11 +168,8 @@ const ListaDocEmessi = () => {
       
         await getTipologiaFatturaWhite(token, profilo.nonce).then((res)=>{
             setTipologiaFatture([...['Tutte'],...res.data]);
-            if(filters.valuetipologiaFattura){
-                setValueTipologiaFattura(filters.valuetipologiaFattura);
-            }else{
-                setValueTipologiaFattura('Tutte');
-            } 
+            setBodyGetLista((prev)=> ({...prev, ...{tipologiaFattura:"Tutte"}}));
+            setValueTipologiaFattura("Tutte");
         }).catch(((err)=>{
             setTipologiaFatture([]);
             setValueTipologiaFattura("");
@@ -162,13 +189,15 @@ const ListaDocEmessi = () => {
                     anno:el.anno,
                     mese:month[el.mese-1],
                     tipologiaFatture:el.tipologiaFattura,
-                    tipoContratto:el.tipoContratto
+                    tipoContratto:el.tipoContratto,
+                    cancella:el.cancella
 
                 };
             });
             console.log(res.data);
             setGridData(customObj);
             setTotalElements(res.data.count);
+            setSelected([]);
            
         }).catch(((err)=>{
             manageError(err,dispatchMainState);
@@ -178,6 +207,7 @@ const ListaDocEmessi = () => {
 
     const clearOnChangeFilter = () => {
         setGridData([]);
+        setSelected([]);
     };
 
     const onButtonFiltra = () => {
@@ -192,17 +222,26 @@ const ListaDocEmessi = () => {
                 rows:10
             });
     };
-
+    console.log({bodyGetLista});
     const onButtonAnnulla = () => {
         //getLista(0,10,{idEnti:[],tipologiaContratto:null});
+        getLista(1,10,{
+            idEnti: [],
+            tipologiaContratto: null,
+            tipologiaFattura:null,
+            anno: arrayYears[0],
+            mesi: []
+        });
         setBodyGetLista({
             idEnti: [],
-            tipologiaContratto: 0,
-            tipologiaFattura:'',
-            anno: 2025,
+            tipologiaContratto: null,
+            tipologiaFattura:"Tutte",
+            anno: arrayYears[0],
             mesi: []
         });
         setValueAutocomplete([]);
+        setValueMultiMonths([]);
+        setValueTipologiaFattura("Tutte");
         setTextValue('');
         resetFilters();
     };
@@ -261,19 +300,24 @@ const ListaDocEmessi = () => {
         //getLista(realPage,parseInt(event.target.value, 10),bodyGetLista);                     
     };
 
+    const onButtonComfermaPopUp = () => {
+        console.log('delete');
+    };
+
     const headerNames = [ 'checkbox','Ragione Sociale', 'Anno', 'Mese','Tipologia fattura', 'Tipo contratto', ''];
 
-    const buttonsTopHeader = [{
-        stringIcon:"Elimina",
-        icon:<DeleteIcon sx={{ color: '#1976D2', cursor: 'pointer' }} />,
-        action:"Delete"
-    },
-    {
-        stringIcon:"Aggiungi",
-        icon:<AddCircleIcon sx={{ color: '#1976D2', cursor: 'pointer' }} />,
-        action:"Add"
-    }];
-
+    const buttonsTopHeader =  [
+        {
+            stringIcon:"Elimina",
+            icon:<DeleteIcon sx={{ color: selected.length > 0 ? "#1976D2":"#A2ADB8" , cursor: 'pointer' }} />,
+            action:"Delete",
+        },
+        {
+            stringIcon:"Aggiungi",
+            icon:<AddCircleIcon sx={{ color:selected.length === 0 ? "#1976D2" : "#A2ADB8", cursor: 'pointer' }} />,
+            action:"Add"
+        }];
+    console.log({selected});
     return (
         <div className="mx-5">
             {/*title container start */}
@@ -317,12 +361,14 @@ const ListaDocEmessi = () => {
                         sx={{width:'80%',marginLeft:'20px'}}
                         multiple
                         onChange={(event, value) => {
-                            //setValue(value);
-                            //setBodyGetLista((prev) => ({...prev,...{tipologiaFattura:value}}));
+                            const valueArray = value.map((el) => Number(el.mese));
+                            setValueMultiMonths(value);
+                            setBodyGetLista((prev) => ({...prev,...{mesi:valueArray}}));
                             clearOnChangeFilter();
                         }}
                         id="checkboxes-tipologie"
-                        options={mesiDescNome}
+                        options={arrayMonths}
+                        value={valueMotiselectMonths}
                         disableCloseOnSelect
                         getOptionLabel={(option) => option.descrizione}
                         renderOption={(props, option,{ selected }) =>(
@@ -345,7 +391,7 @@ const ListaDocEmessi = () => {
                     />
                 </div>
                 <div className="col-3">
-                    <SelectTipologiaFattura value={valuetipologiaFattura} setBody={setBodyGetLista} setValue={setValueTipologiaFattura} types={tipologiaFatture} clearOnChangeFilter={clearOnChangeFilter}></SelectTipologiaFattura>
+                    <SelectTipologiaFattura value={bodyGetLista.tipologiaFattura} setBody={setBodyGetLista} setValue={setValueTipologiaFattura} types={tipologiaFatture} clearOnChangeFilter={clearOnChangeFilter}></SelectTipologiaFattura>
                 </div>
                 <div className="col-3">
                     <Box  style={{ width: '80%' }}>
@@ -433,7 +479,9 @@ const ListaDocEmessi = () => {
                     disabled={false}
                     widthCustomSize="auto"
                     setOpenModal={setOpenModalAction}
-                    buttons={buttonsTopHeader}></GridCustom>
+                    buttons={buttonsTopHeader}
+                    selected={selected}
+                    setSelected={setSelected}></GridCustom>
             </div>
             <ModalLoading 
                 open={getListaLoading} 
@@ -445,6 +493,13 @@ const ListaDocEmessi = () => {
                 setOpen={setShowLoading}
                 sentence={'Downloading...'} >
             </ModalLoading>
+            <ModalConfermaInserimento
+                setOpen={setOpenModalAction}
+                open={openModalAction}
+                onButtonComfermaPopUp={onButtonComfermaPopUp}
+                mainState={mainState}
+                sentence={"Sei sicuro di voler procedere"}
+            ></ModalConfermaInserimento>
         </div>
     );
 };

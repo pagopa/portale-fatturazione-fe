@@ -6,7 +6,7 @@ import { NotificheList } from "../../../types/typeReportDettaglio";
 import RowContratto from "./gridCustomBase/rowTipologiaContratto";
 import RowWhiteList from "./gridCustomBase/rowWhiteList";
 import EnhancedTableCustom from "./gridCustomBase/enhancedTabalToolbarCustom";
-import { SetStateAction, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { Whitelist } from "../../../page/listaDocEmessi";
 interface GridCustomProps {
     elements:NotificheList[]|Rel[]|GridElementListaPsp[]|any[],
@@ -20,9 +20,9 @@ interface GridCustomProps {
     apiGet?:(el:any)=>void, 
     disabled:boolean,
     widthCustomSize:string,
-    setOpenModal?:React.Dispatch<SetStateAction<{open:boolean,action:string}>>,
-    selected?:number[]|string[],
-    setSelected?:React.Dispatch<SetStateAction<number[]|string[]>>,
+    setOpenModal?:React.Dispatch<SetStateAction<boolean>>,//setOpenModal?:React.Dispatch<SetStateAction<{open:boolean,action:string}>>,
+    selected?:number[],
+    setSelected?:React.Dispatch<SetStateAction<number[]>>,
     buttons?:{
         stringIcon:string,
         icon:React.ReactNode,
@@ -30,18 +30,33 @@ interface GridCustomProps {
     }[]
 }
 
-const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, nameParameterApi, apiGet, disabled, widthCustomSize, setOpenModal,buttons}) =>{
+const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, nameParameterApi, apiGet, disabled, widthCustomSize, setOpenModal,buttons, selected, setSelected}) =>{
 
 
-    const [stateHeaderCheckbox, setStateHeaderChekbox] = useState({checked:false,disabled:false});
-    const [selected, setSelected] = useState<number[]>([]);
+    const [stateHeaderCheckbox, setStateHeaderChekbox] = useState({checked:false,disabled:true});
+
+    useEffect(()=>{
+        if(elements.length > 0){
+            setStateHeaderChekbox({checked:false,disabled:false});
+        }else{
+            setStateHeaderChekbox({checked:false,disabled:true});
+        }
+    },[elements]);
+
+    useEffect(()=>{
+        if(selected?.length === 0){
+            setStateHeaderChekbox({checked:false,disabled:false});
+        }
+
+    },[selected]);
+   
 
     const clickOnCheckBoxHeader = () => {
         setStateHeaderChekbox(prev => ({checked:!prev.checked,disabled:prev.disabled}));
-        if(stateHeaderCheckbox.checked){
+        if(stateHeaderCheckbox.checked && setSelected){
             setSelected([]);
-        }else{
-            setSelected(elements.map(el => el.idWhite));
+        }else if(setSelected){
+            setSelected(elements.filter(el => el.cancella).map(el => el.idWhite));
         }
         
     };
@@ -67,13 +82,16 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
     };
 
     const checkIfChecked = (id:any) => {
-        return selected.includes(id);
+        if(selected){
+            return selected.includes(id);
+        }
+       
     };
        
    
     return (
         <div>
-            <EnhancedTableCustom  setOpenModal={setOpenModal} selected={selected} buttons={buttons} ></EnhancedTableCustom>
+            <EnhancedTableCustom  setOpenModal={setOpenModal} selected={selected||[]} buttons={buttons} ></EnhancedTableCustom>
             <div style={{overflowX:'auto'}}>
                 <Card sx={{width: widthCustomSize}}  >
                     <Table >
@@ -101,10 +119,14 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                             <TableBody sx={{marginLeft:'20px'}}>
                                 {elements.map((element:Rel|NotificheList|GridElementListaPsp|Whitelist ) =>{
                                     // tolgo da ogni oggetto la prima chiave valore  perchè il cliente non vuole vedere es. l'id ma serve per la chiamata get di dettaglio 
-                                    const sliced = Object.fromEntries(
+                                    let sliced = Object.fromEntries(
                                         Object.entries(element).slice(1)
                                     );
-
+                                    if(nameParameterApi === 'idWhite'){
+                                        sliced = Object.fromEntries(
+                                            Object.entries(element).slice(1, -1)
+                                        );
+                                    }
                                     // probabilmente puoi eliminare questo if
                                     if(sliced?.tipologiaFattura === 'ASSEVERAZIONE'){
                                         console.log('dentro ass');
@@ -131,7 +153,7 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                         );
                                     }else if(nameParameterApi === 'idWhite'){
                                         return (
-                                            <RowWhiteList key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} stateHeaderCheckbox={stateHeaderCheckbox} setSelected={setSelected} selected={selected}  checkIfChecked={checkIfChecked} ></RowWhiteList>
+                                            <RowWhiteList key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} stateHeaderCheckbox={stateHeaderCheckbox} setSelected={setSelected} selected={selected||[]}  checkIfChecked={checkIfChecked} ></RowWhiteList>
                                         );
                                     }else{
                                         return (

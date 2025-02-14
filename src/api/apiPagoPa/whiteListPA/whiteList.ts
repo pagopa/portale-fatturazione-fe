@@ -5,7 +5,7 @@ export interface BodyWhite {
     idEnti: string[]
     tipologiaContratto: number|null
     tipologiaFattura: string|null
-    anno: number|string
+    anno: number|null
     mesi: number[]
 }
 
