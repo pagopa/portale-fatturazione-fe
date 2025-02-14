@@ -30,7 +30,7 @@ interface GridCustomProps {
     }[]
 }
 
-const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, nameParameterApi, apiGet, disabled, widthCustomSize, setOpenModal,buttons, selected, setSelected}) =>{
+const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, nameParameterApi, apiGet, disabled, widthCustomSize, setOpenModal,buttons, selected, setSelected }) =>{
 
 
     const [stateHeaderCheckbox, setStateHeaderChekbox] = useState({checked:false,disabled:true});

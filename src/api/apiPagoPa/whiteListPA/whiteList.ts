@@ -50,3 +50,15 @@ export const getWhiteListPagoPa = async (token:string, nonce:string, page:number
     );
     return response;
 };
+
+
+export const deleteWhiteListPagoPa = async (token:string, nonce:string, body:number[]) => {
+    const response =  await axios.delete(`${url}/api/fatture/pagopa/whitelist?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },
+        data:{ids:body}
+        }
+    );
+    return response;
+};

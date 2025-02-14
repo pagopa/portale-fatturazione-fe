@@ -9,13 +9,13 @@ import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeRepo
 import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
 import { PathPf } from "../types/enum";
 import { saveAs } from "file-saver";
-import { manageError } from "../api/api";
+import { manageError, managePresaInCarico } from "../api/api";
 
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
 import SelectTipologiaFattura from "../components/reusableComponents/select/selectTipologiaFattura";
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import { BodyWhite, getAnniWhite, getMesiWhite, getTipologiaFatturaWhite, getWhiteListPagoPa } from "../api/apiPagoPa/whiteListPA/whiteList";
+import { BodyWhite, deleteWhiteListPagoPa, getAnniWhite, getMesiWhite, getTipologiaFatturaWhite, getWhiteListPagoPa } from "../api/apiPagoPa/whiteListPA/whiteList";
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { mesiDescNome, month } from "../reusableFunction/reusableArrayObj";
@@ -105,7 +105,7 @@ const ListaDocEmessi = () => {
     },[bodyGetLista]);
 
     const getAnni = async() => {
-        setShowLoading(true);
+        setGetListaLoading(true);
         await getAnniWhite(token, profilo.nonce).then((res)=>{
             //const arrayNumber = res.data.map(el => Number(el.toString()));
             setArrayYears(res.data); 
@@ -118,26 +118,26 @@ const ListaDocEmessi = () => {
                 anno: res.data[0],
                 mesi: []
             });
-            setShowLoading(false);
+            setGetListaLoading(false);
         }).catch((err)=>{
             setArrayYears([]);
-            setShowLoading(false);
+            setGetListaLoading(false);
             manageError(err,dispatchMainState);
         });
     };
     
 
     const getMesi = async(y) => {
-        setShowLoading(true);
+        setGetListaLoading(true);
         await getMesiWhite(token, profilo.nonce, {anno:y}).then((res)=>{
             setArrayMonths(res.data);
             setValueMultiMonths([]);
             setBodyGetLista((prev)=>({...prev,...{mesi:[]}}));
             
-            setShowLoading(false);
+            setGetListaLoading(false);
         }).catch((err)=>{
             setArrayYears([]);
-            setShowLoading(false);
+            setGetListaLoading(false);
             manageError(err,dispatchMainState);
         });
     };
@@ -167,8 +167,8 @@ const ListaDocEmessi = () => {
     const getListTipologiaFattura = async() => {
       
         await getTipologiaFatturaWhite(token, profilo.nonce).then((res)=>{
-            setTipologiaFatture([...['Tutte'],...res.data]);
-            setBodyGetLista((prev)=> ({...prev, ...{tipologiaFattura:"Tutte"}}));
+            setTipologiaFatture([...["Tutte"],...res.data]);
+            setBodyGetLista((prev)=> ({...prev, ...{tipologiaFattura:null}}));
             setValueTipologiaFattura("Tutte");
         }).catch(((err)=>{
             setTipologiaFatture([]);
@@ -191,7 +191,6 @@ const ListaDocEmessi = () => {
                     tipologiaFatture:el.tipologiaFattura,
                     tipoContratto:el.tipoContratto,
                     cancella:el.cancella
-
                 };
             });
             console.log(res.data);
@@ -200,9 +199,21 @@ const ListaDocEmessi = () => {
             setSelected([]);
            
         }).catch(((err)=>{
+            setGridData([]);
             manageError(err,dispatchMainState);
-        }));
-               
+        }));     
+    };
+
+    const deleteElements = async () => {
+        await deleteWhiteListPagoPa(token, profilo.nonce,selected).then((res)=> {
+            getLista(1,10,bodyGetLista);
+            managePresaInCarico('CAMBIO_TIPOLOGIA_CONTRATTO',dispatchMainState);
+            console.log(res);
+        }).catch((err)=>{
+            console.log(err);
+            manageError(err,dispatchMainState);
+            
+        });
     };
 
     const clearOnChangeFilter = () => {
@@ -222,7 +233,7 @@ const ListaDocEmessi = () => {
                 rows:10
             });
     };
-    console.log({bodyGetLista});
+ 
     const onButtonAnnulla = () => {
         //getLista(0,10,{idEnti:[],tipologiaContratto:null});
         getLista(1,10,{
@@ -235,7 +246,7 @@ const ListaDocEmessi = () => {
         setBodyGetLista({
             idEnti: [],
             tipologiaContratto: null,
-            tipologiaFattura:"Tutte",
+            tipologiaFattura:null,
             anno: arrayYears[0],
             mesi: []
         });
@@ -301,7 +312,7 @@ const ListaDocEmessi = () => {
     };
 
     const onButtonComfermaPopUp = () => {
-        console.log('delete');
+        deleteElements();
     };
 
     const headerNames = [ 'checkbox','Ragione Sociale', 'Anno', 'Mese','Tipologia fattura', 'Tipo contratto', ''];
@@ -391,7 +402,7 @@ const ListaDocEmessi = () => {
                     />
                 </div>
                 <div className="col-3">
-                    <SelectTipologiaFattura value={bodyGetLista.tipologiaFattura} setBody={setBodyGetLista} setValue={setValueTipologiaFattura} types={tipologiaFatture} clearOnChangeFilter={clearOnChangeFilter}></SelectTipologiaFattura>
+                    <SelectTipologiaFattura value={valuetipologiaFattura} setBody={setBodyGetLista} setValue={setValueTipologiaFattura} types={tipologiaFatture} clearOnChangeFilter={clearOnChangeFilter}></SelectTipologiaFattura>
                 </div>
                 <div className="col-3">
                     <Box  style={{ width: '80%' }}>
