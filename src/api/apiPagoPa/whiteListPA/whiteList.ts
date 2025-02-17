@@ -92,3 +92,17 @@ export const whiteListAdd = async (token:string, nonce:string,body:{mesi: string
     );
     return response;
 };
+
+export const downloadWhiteListPagopa = async (token:string, nonce:string,body:BodyWhite) => {
+    const response = await fetch(`${url}/api/fatture/pagopa/whitelist/download?nonce=${nonce}`, 
+        {
+            headers: {
+                Authorization: 'Bearer '+token,
+                'Content-type':'application/json'
+            },
+            method: 'POST',
+            body:JSON.stringify(body),
+        });
+    return response;
+};
+

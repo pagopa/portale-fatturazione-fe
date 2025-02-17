@@ -13,12 +13,13 @@ import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
 import SelectTipologiaFattura from "../components/reusableComponents/select/selectTipologiaFattura";
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import { BodyWhite, deleteWhiteListPagoPa, getAnniWhite, getMesiWhite, getTipologiaFatturaWhite, getWhiteListPagoPa } from "../api/apiPagoPa/whiteListPA/whiteList";
+import { BodyWhite, deleteWhiteListPagoPa, downloadWhiteListPagopa, getAnniWhite, getMesiWhite, getTipologiaFatturaWhite, getWhiteListPagoPa } from "../api/apiPagoPa/whiteListPA/whiteList";
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { month } from "../reusableFunction/reusableArrayObj";
 import ModalConfermaInserimento from "../components/commessaInserimento/modalConfermaInserimento";
 import ModalAggiungi from "../components/whiteList/modalAggiungi";
+import { saveAs } from "file-saver";
 
 
 export interface BodyLista {
@@ -34,6 +35,7 @@ export interface WhitelistData {
 }
 export interface Whitelist {
     idWhite?: number;
+    ragioneSociale:string;
     anno: number;
     mese: number;
     tipologiaFatture: string;
@@ -248,28 +250,32 @@ const ListaDocEmessi = () => {
         setTextValue('');
         resetFilters();
     };
-    /*
+    
     const onDownload = async() => {
         setShowLoading(true);
-        await downloadTipologiePagopa(token, profilo.nonce,bodyGetLista).then((response) =>{
+        await downloadWhiteListPagopa(token, profilo.nonce,bodyGetLista).then((response) =>{
+
             if (response.ok) {
                 return response.blob();
             }
             throw '404';
+            
         }).then(
             (response)=>{
-                let fileName = `x.xlsx`;
+                const fileName = `White list Fatturazione.xlsx`;
+                /*
                 if(gridData.length === 1){
-                    fileName = `x.xlsx`;
-                }
+                    fileName = `White list Fatturazione/${gridData[0]?.ragioneSociale}.xlsx`;
+                }*/
                 setShowLoading(true);
                 saveAs(response,fileName);
                 setShowLoading(false);
             }).catch(err =>{
+            setShowLoading(false);
             manageError(err,dispatchMainState);
         } );
     };
-*/
+
 
     const handleChangePage = (
         event: React.MouseEvent<HTMLButtonElement> | null,
@@ -462,7 +468,7 @@ const ListaDocEmessi = () => {
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
                 <Button 
                     disabled={getListaLoading}
-                    onClick={()=> console.log('download')}
+                    onClick={onDownload}
                 >
                 Download Risultati
                     <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>

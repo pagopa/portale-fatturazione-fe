@@ -194,7 +194,7 @@ const PageTipologiaContratto :React.FC = () =>{
             (response)=>{
                 let fileName = `Lista tipologia contratto.xlsx`;
                 if(gridData.length === 1){
-                    fileName = `Tipologia contratto / ${gridData[0]?.ragioneSociale}.xlsx`;
+                    fileName = `Tipologia contratto/${gridData[0]?.ragioneSociale}.xlsx`;
                 }
                 setShowLoading(true);
                 saveAs(response,fileName);

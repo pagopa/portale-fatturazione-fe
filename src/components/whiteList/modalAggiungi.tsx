@@ -72,6 +72,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
             idEnte: null,
         });
         setValueMultiMonths([]);
+        setArrayMonths([]);
         setValueAutocomplete(null);
     },[]);
 
@@ -84,6 +85,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
                 idEnte: null,
             });
             setValueMultiMonths([]);
+            setArrayMonths([]);
         }
     },[bodyAdd.idEnte]);
 
@@ -92,6 +94,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
             getAnni(bodyAdd.tipologiaFattura, bodyAdd.idEnte);
             setBodyAdd((prev) => ({...prev,...{ mesi:[],anno: null,}}));
             setValueMultiMonths([]);
+            setArrayMonths([]);
         }
     },[bodyAdd.tipologiaFattura]);
 
@@ -285,7 +288,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
                         <div className="col-6">
                             <Autocomplete
                                 multiple
-                                disabled={bodyAdd.tipologiaFattura === null}
+                                disabled={bodyAdd.tipologiaFattura === null || bodyAdd.anno === null}
                                 onChange={(event, value) => {
                                     const valueArray = value.map((el) => Number(el.mese));
                                     setValueMultiMonths(value);
