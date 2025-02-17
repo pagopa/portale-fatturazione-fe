@@ -62,3 +62,33 @@ export const deleteWhiteListPagoPa = async (token:string, nonce:string, body:num
     );
     return response;
 };
+
+export const getAnniWhiteAdd = async (token:string, nonce:string,body:{tipologiaFattura: string, idEnte: string}) => {
+    const response =  await axios.post(`${url}/api/fatture/pagopa/whitelist/anni/modifica?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }}
+    );
+    return response;
+};
+
+export const getMesiWhiteAdd = async (token:string, nonce:string,body:{tipologiaFattura: string, idEnte: string,anno:number}) => {
+    const response =  await axios.post(`${url}/api/fatture/pagopa/whitelist/mesi/modifica?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }}
+    );
+    return response;
+};
+
+export const whiteListAdd = async (token:string, nonce:string,body:{mesi: string[],anno:number,tipologiaFattura:string,idEnte:string}) => {
+    const response =  await axios.post(`${url}/api/fatture/pagopa/whitelist/inserisci?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }}
+    );
+    return response;
+};

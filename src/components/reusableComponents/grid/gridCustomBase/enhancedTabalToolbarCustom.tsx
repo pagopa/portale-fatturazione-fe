@@ -44,9 +44,11 @@ const EnhancedTableCustom = (props: EnhancedTable) =>{
                     <Tooltip className="m-2" title={el.stringIcon}>
                         <span>
                             <Button disabled={disableButton} variant="outlined" onClick={()=>{
+                                console.log(el.action);
                                 if(setOpenModal && el.action === "Delete"){
                                     setOpenModal(true);
                                 }else if(setOpenModalAdd && el.action === "Add" ){
+                                    console.log("???");
                                     setOpenModalAdd(true);
                                 }
                             }}>

@@ -319,6 +319,7 @@ const ListaDocEmessi = () => {
             icon:<AddCircleIcon sx={{ color:selected.length === 0 ? "#1976D2" : "#A2ADB8", cursor: 'pointer' }} />,
             action:"Add"
         }];
+
     return (
         <div className="mx-5">
             {/*title container start */}
@@ -486,6 +487,7 @@ const ListaDocEmessi = () => {
                     setSelected={setSelected}></GridCustom>
             </div>
             <ModalAggiungi 
+                getLista={onButtonFiltra}
                 open={openModalAdd}
                 setOpen={setOpenModalAdd} ></ModalAggiungi>
             <ModalLoading 
