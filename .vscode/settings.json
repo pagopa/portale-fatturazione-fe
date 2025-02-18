@@ -3,7 +3,7 @@
         "node_modules{,/**}",
         ".vscode{,/**}"
     ],
-    "appService.defaultWebAppToDeploy": "",
+    "appService.defaultWebAppToDeploy": "/subscriptions/e94b082d-f723-4380-85ec-7998a33e8ad0/resourceGroups/fat-u-app-rg/providers/Microsoft.Web/sites/fat-u-app-fe",
     "appService.deploySubpath": "build",
     "zenMode.hideActivityBar": false,
     "workbench.settings.openDefaultKeybindings": false

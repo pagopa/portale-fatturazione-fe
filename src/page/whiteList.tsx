@@ -294,6 +294,11 @@ const ListaDocEmessi = () => {
         setTextValue('');
         resetFilters();
     };
+
+    const onButtonAggiungi = () => {
+        getAnni();
+        resetFilters();
+    };
     
     const onDownload = async() => {
         setShowLoading(true);
@@ -544,7 +549,7 @@ const ListaDocEmessi = () => {
             </div>
           
             <ModalAggiungi 
-                getLista={onButtonAnnulla}
+                getLista={onButtonAggiungi}
                 open={openModalAdd}
                 setOpen={setOpenModalAdd} ></ModalAggiungi>
             <ModalLoading 
