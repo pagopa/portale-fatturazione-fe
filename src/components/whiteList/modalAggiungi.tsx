@@ -146,11 +146,11 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
    
     const onButtonOK = async(body) => {
         setShowLoader(true);
-        await whiteListAdd(token, profilo.nonce, body).then((res)=>{
+        await whiteListAdd(token, profilo.nonce, body).then(async(res)=>{
             managePresaInCarico('CAMBIO_TIPOLOGIA_CONTRATTO',dispatchMainState);
             setShowLoader(false);
             setOpen(false);
-            getLista();
+            await getLista(body.anno);
             clearPopUp();
         }).catch((err)=>{
             setShowLoader(false);
