@@ -33,7 +33,7 @@ interface GridCustomProps {
 
 const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, nameParameterApi, apiGet, disabled, widthCustomSize, setOpenModalDelete,setOpenModalAdd,buttons, selected, setSelected }) =>{
 
-
+    /*
     const [stateHeaderCheckbox, setStateHeaderChekbox] = useState({checked:false,disabled:true});
 
     useEffect(()=>{
@@ -57,11 +57,11 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
         if(stateHeaderCheckbox.checked && setSelected){
             setSelected([]);
         }else if(setSelected){
-            setSelected(elements.filter(el => el.cancella).map(el => el.idWhite));
+            setSelected(prev => ([...prev,...elements.filter(el => el.cancella).map(el => el.idWhite)]));
         }
         
     };
-
+*/
     const handleClickOnGrid = (element) =>{
         if(apiGet && nameParameterApi === 'idContratto'){
             const newDetailRel = {
@@ -88,6 +88,30 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
         }
        
     };
+
+    /*
+     <TableRow>
+                                {headerNames.map((el)=>{
+                                    if(el === "checkbox"){
+                                        return(
+                                            <td key={Math.random()}>
+                                                <Checkbox  onClick={clickOnCheckBoxHeader} disabled={stateHeaderCheckbox.disabled} checked={stateHeaderCheckbox.checked} />
+                                            </td>   
+                                        );
+                                    }else{
+                                        return (
+                                            <TableCell key={Math.random()}>
+                                                {el} 
+                                            </TableCell>
+                                        );
+                                    }
+                                   
+                                })}
+                               
+                            </TableRow>
+
+                            <RowWhiteList key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} stateHeaderCheckbox={stateHeaderCheckbox} setSelected={setSelected} selected={selected||[]}  checkIfChecked={checkIfChecked} ></RowWhiteList>
+     */
        
    
     return (
@@ -99,19 +123,16 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                         <TableHead sx={{backgroundColor:'#f2f2f2'}}>
                             <TableRow>
                                 {headerNames.map((el)=>{
-                                    if(el === "checkbox"){
-                                        return(
-                                            <Checkbox onClick={clickOnCheckBoxHeader} disabled={stateHeaderCheckbox.disabled} checked={stateHeaderCheckbox.checked} />
-                                        );
-                                    }else{
-                                        return (
-                                            <TableCell key={Math.random()}>
-                                                {el} 
-                                            </TableCell>
-                                        );
-                                    }
+                                  
+                                    return (
+                                        <TableCell key={Math.random()}>
+                                            {el} 
+                                        </TableCell>
+                                    );
+                                })
                                    
-                                })}
+                                }
+                               
                             </TableRow>
                         </TableHead>
                         {elements.length === 0 ?
@@ -128,33 +149,15 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                             Object.entries(element).slice(1, -1)
                                         );
                                     }
-                                    // probabilmente puoi eliminare questo if
-                                    if(sliced?.tipologiaFattura === 'ASSEVERAZIONE'){
-                                        console.log('dentro ass');
-                                        return (
-                                            <TableRow key={Math.random()}>
-                                                {
-                                                    Object.values(sliced).map((value:string, i:number)=>{
-                                                        const cssFirstColum = i === 0 ? {color:'#606060', fontWeight: 'bold', cursor: 'pointer'} : null;
-                                                        return (
-                                                            <TableCell
-                                                                key={Math.random()}
-                                                                sx={cssFirstColum} 
-                                                            >
-                                                                {value}
-                                                            </TableCell>
-                                                        );
-                                                    })
-                                                }
-                                            </TableRow>
-                                        );
-                                    }else if(nameParameterApi === 'idContratto'){
+                                   
+                                    if(nameParameterApi === 'idContratto'){
                                         return (
                                             <RowContratto key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} ></RowContratto>
                                         );
                                     }else if(nameParameterApi === 'idWhite'){
                                         return (
-                                            <RowWhiteList key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} stateHeaderCheckbox={stateHeaderCheckbox} setSelected={setSelected} selected={selected||[]}  checkIfChecked={checkIfChecked} ></RowWhiteList>
+                                            <RowWhiteList key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} setSelected={setSelected} selected={selected||[]}  checkIfChecked={checkIfChecked} ></RowWhiteList>
+                                            
                                         );
                                     }else{
                                         return (

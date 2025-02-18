@@ -22,14 +22,11 @@ const SelectTipologiaFattura : React.FC<SelecTipologiaProps> = ({setValue,value,
                 size="medium"
             >
                 <InputLabel
-                    id="sea"
                 >
                                 Tipologia Fattura  
                 </InputLabel>
                 <Select
-                    id="sea"
                     label='Seleziona Prodotto'
-                    labelId="search-by-label"
                     onChange={(e) =>{
                         if(e.target.value){
                             setValue(e.target.value);

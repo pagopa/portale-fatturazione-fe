@@ -20,6 +20,7 @@ import { month } from "../reusableFunction/reusableArrayObj";
 import ModalConfermaInserimento from "../components/commessaInserimento/modalConfermaInserimento";
 import ModalAggiungi from "../components/whiteList/modalAggiungi";
 import { saveAs } from "file-saver";
+import { headerNames } from "../assets/configurations/config_GridWhiteList";
 
 
 export interface BodyLista {
@@ -59,7 +60,7 @@ const ListaDocEmessi = () => {
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
     const [textValue, setTextValue] = useState('');
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
-    const [valueMotiselectMonths, setValueMultiMonths] = useState<{descrizione:string,mese:number}[]>([]);
+    const [valueSelectMonths, setValueSelectMonths] = useState<{descrizione:string,mese:number}[]>([]);
     const [showLoading,setShowLoading] = useState(false);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -94,14 +95,24 @@ const ListaDocEmessi = () => {
 
 
     useEffect(()=>{
-        if((bodyGetLista?.anno || 0) > 0){
+        if((bodyGetLista?.anno || 0) > 0 && !isInitialRender.current){
             getMesi(bodyGetLista.anno);
         }
     },[bodyGetLista.anno]);
+
+    useEffect(()=>{
+        if(!isInitialRender.current){
+            updateFilters( {
+                selected:selected
+            });
+        }
+       
+    },[selected]);
   
 
     useEffect(()=>{
-        if(bodyGetLista.idEnti.length !== 0 || bodyGetLista.tipologiaFattura !== '' || bodyGetLista.tipologiaContratto !== 0  ){
+        if(bodyGetLista.idEnti.length !== 0 || bodyGetLista.mesi.length !== 0 || bodyGetLista.tipologiaFattura !== null || bodyGetLista.tipologiaContratto !== null  ){
+            console.log({bodyGetLista});
             setStatusAnnulla('show');
         }else{
             setStatusAnnulla('hidden');
@@ -111,17 +122,28 @@ const ListaDocEmessi = () => {
     const getAnni = async() => {
         setGetListaLoading(true);
         await getAnniWhite(token, profilo.nonce).then((res)=>{
-            //const arrayNumber = res.data.map(el => Number(el.toString()));
             setArrayYears(res.data); 
             getListTipologiaFattura();
-            setBodyGetLista((prev)=>({...prev,...{anno:res.data[0]}}));
-            getLista(1,10,{
-                idEnti: [],
-                tipologiaContratto: null,
-                tipologiaFattura:null,
-                anno: res.data[0],
-                mesi: []
-            });
+            if(isInitialRender.current && Object.keys(filters).length > 0){
+                setBodyGetLista(filters.body);
+                getMesi(filters.body.anno);
+                getLista(filters.page+1, filters.rows,filters.body);
+                setPage(filters.page);
+                setRowsPerPage(filters.rows);
+                setTextValue(filters.textValue);
+                setValueAutocomplete(filters.valueAutocomplete);
+            }else{
+                setBodyGetLista((prev)=>({...prev,...{anno:res.data[0]}}));
+                getMesi(res.data[0]);
+                getLista(1,10,{
+                    idEnti: [],
+                    tipologiaContratto: null,
+                    tipologiaFattura:null,
+                    anno: res.data[0],
+                    mesi: []
+                });
+            }
+           
             setGetListaLoading(false);
         }).catch((err)=>{
             setArrayYears([]);
@@ -134,8 +156,12 @@ const ListaDocEmessi = () => {
         setGetListaLoading(true);
         await getMesiWhite(token, profilo.nonce, {anno:y}).then((res)=>{
             setArrayMonths(res.data);
-            setValueMultiMonths([]);
-            setBodyGetLista((prev)=>({...prev,...{mesi:[]}}));
+            if(isInitialRender.current && Object.keys(filters).length > 0){
+                setValueSelectMonths(filters.valueSelectMonths);
+            }else{
+                setValueSelectMonths([]);
+                setBodyGetLista((prev)=>({...prev,...{mesi:[]}}));
+            }
             setGetListaLoading(false);
         }).catch((err)=>{
             setArrayYears([]);
@@ -157,8 +183,7 @@ const ListaDocEmessi = () => {
         await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} )
             .then((res)=>{
                 setDataSelect(res.data);
-            })
-            .catch(((err)=>{
+            }).catch(((err)=>{
                 manageError(err,dispatchMainState);
             }));
     };
@@ -167,8 +192,12 @@ const ListaDocEmessi = () => {
     const getListTipologiaFattura = async() => {
         await getTipologiaFatturaWhite(token, profilo.nonce).then((res)=>{
             setTipologiaFatture([...["Tutte"],...res.data]);
-            setBodyGetLista((prev)=> ({...prev, ...{tipologiaFattura:null}}));
-            setValueTipologiaFattura("Tutte");
+            if(isInitialRender.current && Object.keys(filters).length > 0){
+                setValueTipologiaFattura(filters.valuetipologiaFattura);
+            }else{
+                setBodyGetLista((prev)=> ({...prev, ...{tipologiaFattura:null}}));
+                setValueTipologiaFattura("Tutte");
+            }
         }).catch(((err)=>{
             setTipologiaFatture([]);
             setValueTipologiaFattura("");
@@ -177,6 +206,7 @@ const ListaDocEmessi = () => {
     };
 
     const getLista = async(pg,row,body) => {
+        setGetListaLoading(true);
         await getWhiteListPagoPa(token, profilo.nonce,pg,row,body).then((res)=>{
             const customObj = res.data.whitelist.map(el => {
                 return {
@@ -189,23 +219,31 @@ const ListaDocEmessi = () => {
                     cancella:el.cancella
                 };
             });
-            console.log(res.data);
             setGridData(customObj);
             setTotalElements(res.data.count);
-            setSelected([]);
+            if(isInitialRender.current && Object.keys(filters).length > 0){
+                setSelected(filters.selected);
+            }
+            setGetListaLoading(false);
         }).catch(((err)=>{
             setGridData([]);
+            setTotalElements(0);
+            setGetListaLoading(false);
             manageError(err,dispatchMainState);
         }));     
     };
 
     const deleteElements = async () => {
+        setGetListaLoading(true);
         await deleteWhiteListPagoPa(token, profilo.nonce,selected).then((res)=> {
             getLista(1,10,bodyGetLista);
             managePresaInCarico('CAMBIO_TIPOLOGIA_CONTRATTO',dispatchMainState);
-            console.log(res);
+            setSelected([]);
+            updateFilters( {
+                selected:[]
+            });
         }).catch((err)=>{
-            console.log(err);
+            setGetListaLoading(false);
             manageError(err,dispatchMainState);
         });
     };
@@ -220,16 +258,22 @@ const ListaDocEmessi = () => {
         updateFilters(
             {
                 body:bodyGetLista,
-                pathPage:PathPf.TIPOLOGIA_CONTRATTO,
+                pathPage:PathPf.LISTA_DOC_EMESSI,
                 textValue,
                 valueAutocomplete,
+                valueSelectMonths,
+                valuetipologiaFattura,
                 page:0,
-                rows:10
+                rows:10,
+                selected:selected
             });
+        setPage(0);
+        setRowsPerPage(10);
+        setSelected([]);
     };
+
  
     const onButtonAnnulla = () => {
-        //getLista(0,10,{idEnti:[],tipologiaContratto:null});
         getLista(1,10,{
             idEnti: [],
             tipologiaContratto: null,
@@ -245,7 +289,7 @@ const ListaDocEmessi = () => {
             mesi: []
         });
         setValueAutocomplete([]);
-        setValueMultiMonths([]);
+        setValueSelectMonths([]);
         setValueTipologiaFattura("Tutte");
         setTextValue('');
         resetFilters();
@@ -254,19 +298,16 @@ const ListaDocEmessi = () => {
     const onDownload = async() => {
         setShowLoading(true);
         await downloadWhiteListPagopa(token, profilo.nonce,bodyGetLista).then((response) =>{
-
             if (response.ok) {
                 return response.blob();
             }
             throw '404';
-            
         }).then(
             (response)=>{
-                const fileName = `White list Fatturazione.xlsx`;
-                /*
-                if(gridData.length === 1){
-                    fileName = `White list Fatturazione/${gridData[0]?.ragioneSociale}.xlsx`;
-                }*/
+                let fileName = `White list Fatturazione.xlsx`;
+                if(dataSelect.length === 1){
+                    fileName = `White list Fatturazione/${dataSelect[0].descrizione}.xlsx`;
+                }
                 setShowLoading(true);
                 saveAs(response,fileName);
                 setShowLoading(false);
@@ -281,15 +322,18 @@ const ListaDocEmessi = () => {
         event: React.MouseEvent<HTMLButtonElement> | null,
         newPage: number,
     ) => {
-        //getLista(newPage,rowsPerPage, bodyGetLista);
+        getLista(newPage + 1,rowsPerPage, bodyGetLista);
         setPage(newPage);
         updateFilters({
-            pathPage:PathPf.TIPOLOGIA_CONTRATTO,
+            pathPage:PathPf.LISTA_DOC_EMESSI,
             body:bodyGetLista,
             textValue,
             valueAutocomplete,
+            valueSelectMonths,
+            valuetipologiaFattura,
             page:newPage,
-            rows:rowsPerPage
+            rows:rowsPerPage,
+            selected:selected
         });
     };
                     
@@ -297,23 +341,26 @@ const ListaDocEmessi = () => {
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
         setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
         updateFilters({
-            pathPage:PathPf.TIPOLOGIA_CONTRATTO,
+            pathPage:PathPf.LISTA_DOC_EMESSI,
             body:bodyGetLista,
             textValue,
             valueAutocomplete,
-            page,
-            rows:parseInt(event.target.value, 10)
+            valueSelectMonths,
+            valuetipologiaFattura,
+            page:0,
+            rows:parseInt(event.target.value, 10),
+            selected:selected
         });
-        const realPage = page + 1;
-        //getLista(realPage,parseInt(event.target.value, 10),bodyGetLista);                     
+    
+        getLista(1,parseInt(event.target.value, 10),bodyGetLista);                     
     };
 
     const onButtonComfermaPopUp = () => {
         deleteElements();
     };
 
-    const headerNames = [ 'checkbox','Ragione Sociale', 'Anno', 'Mese','Tipologia fattura', 'Tipo contratto', ''];
     const buttonsTopHeader =  [
         {
             stringIcon:"Elimina",
@@ -325,6 +372,8 @@ const ListaDocEmessi = () => {
             icon:<AddCircleIcon sx={{ color:selected.length === 0 ? "#1976D2" : "#A2ADB8", cursor: 'pointer' }} />,
             action:"Add"
         }];
+
+   
 
     return (
         <div className="mx-5">
@@ -366,17 +415,18 @@ const ListaDocEmessi = () => {
                 </div>
                 <div  className="col-3">
                     <Autocomplete
+                        limitTags={1}
                         sx={{width:'80%',marginLeft:'20px'}}
                         multiple
                         onChange={(event, value) => {
                             const valueArray = value.map((el) => Number(el.mese));
-                            setValueMultiMonths(value);
+                            setValueSelectMonths(value);
                             setBodyGetLista((prev) => ({...prev,...{mesi:valueArray}}));
                             clearOnChangeFilter();
                         }}
-                        id="checkboxes-tipologie"
+                        isOptionEqualToValue={(option, value) => option.descrizione === value.descrizione}
                         options={arrayMonths}
-                        value={valueMotiselectMonths}
+                        value={valueSelectMonths}
                         disableCloseOnSelect
                         getOptionLabel={(option) => option.descrizione}
                         renderOption={(props, option,{ selected }) =>(
@@ -492,8 +542,9 @@ const ListaDocEmessi = () => {
                     selected={selected}
                     setSelected={setSelected}></GridCustom>
             </div>
+          
             <ModalAggiungi 
-                getLista={onButtonFiltra}
+                getLista={onButtonAnnulla}
                 open={openModalAdd}
                 setOpen={setOpenModalAdd} ></ModalAggiungi>
             <ModalLoading 

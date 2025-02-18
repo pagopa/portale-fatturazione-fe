@@ -41,7 +41,7 @@ const EnhancedTableCustom = (props: EnhancedTable) =>{
                     disableButton = true;
                 }
                 return (
-                    <Tooltip className="m-2" title={el.stringIcon}>
+                    <Tooltip key={el.action} className="m-2" title={el.stringIcon}>
                         <span>
                             <Button disabled={disableButton} variant="outlined" onClick={()=>{
                                 console.log(el.action);
@@ -55,6 +55,7 @@ const EnhancedTableCustom = (props: EnhancedTable) =>{
                                 {el.icon}
                             </Button>
                         </span>
+                       
                     </Tooltip>
                 );
             })

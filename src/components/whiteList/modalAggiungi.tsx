@@ -176,7 +176,6 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
         setValueAutocomplete(null);
     };
 
-    console.log({bodyAdd});
 
     return (
         <div>
@@ -287,6 +286,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
                         </div>
                         <div className="col-6">
                             <Autocomplete
+                                limitTags={1}
                                 multiple
                                 disabled={bodyAdd.tipologiaFattura === null || bodyAdd.anno === null}
                                 onChange={(event, value) => {

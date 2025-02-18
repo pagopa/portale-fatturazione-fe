@@ -6,7 +6,7 @@ interface RowWhite {
     apiGet:any,
     handleClickOnGrid:any,
     element:any,
-    stateHeaderCheckbox:{checked:boolean,disabled:boolean},
+    //stateHeaderCheckbox:{checked:boolean,disabled:boolean},
     setSelected:any,
     checkIfChecked:any,
     selected:number[]
@@ -14,12 +14,11 @@ interface RowWhite {
 }
 
 
-const RowWhiteList :React.FC<RowWhite>  = ({sliced, apiGet, handleClickOnGrid, element,stateHeaderCheckbox, setSelected,selected,checkIfChecked}) => {
+const RowWhiteList :React.FC<RowWhite>  = ({sliced, apiGet, handleClickOnGrid, element, setSelected,selected,checkIfChecked}) => {
 
     
 
     const handleCheckSingleRow = () => {
-        console.log('dentro');
         if(checkIfChecked(element.idWhite)){
             const newSelected =  selected.filter((el) => el !== element.idWhite);
             setSelected(newSelected);
@@ -32,7 +31,10 @@ const RowWhiteList :React.FC<RowWhite>  = ({sliced, apiGet, handleClickOnGrid, e
 
     return (
         <TableRow>
-            <Checkbox onClick={handleCheckSingleRow} disabled={!element.cancella} checked={checkIfChecked(element.idWhite)} />
+            <td>
+                <Checkbox key={Math.random()} onClick={handleCheckSingleRow} disabled={!element.cancella} checked={checkIfChecked(element.idWhite)} />
+            </td>
+                
             {
                 Object.values(sliced).map((value:any, i:number)=>{
                     // stato per loa switch utilizzato nella page tipologia contratto
@@ -41,9 +43,11 @@ const RowWhiteList :React.FC<RowWhite>  = ({sliced, apiGet, handleClickOnGrid, e
                 
                     return (
                         <Tooltip key={Math.random()} title={value}>
+                         
                             <TableCell sx={cssFirstColum}>
                                 {valueEl}
                             </TableCell>
+                         
                         </Tooltip>
                     );
                     

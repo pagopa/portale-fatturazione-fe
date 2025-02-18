@@ -137,8 +137,10 @@ const SideNavSend : React.FC = () => {
             setSelectedIndex(7);
         }else if(currentLocation === PathPf.TIPOLOGIA_CONTRATTO){
             setSelectedIndex(8);
+            setOpen(true);
         }else if(currentLocation === PathPf.LISTA_DOC_EMESSI){
             setSelectedIndex(9);
+            setOpen2(true);
         }
     },[currentLocation]);
 
