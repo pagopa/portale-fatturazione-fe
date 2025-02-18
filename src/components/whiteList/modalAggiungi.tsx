@@ -13,6 +13,7 @@ import { manageError, managePresaInCarico } from '../../api/api';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { getAnniWhiteAdd, getMesiWhiteAdd, getTipologiaFatturaWhite, whiteListAdd } from '../../api/apiPagoPa/whiteListPA/whiteList';
+import Loader from '../reusableComponents/loader';
 
 const style = {
     position: 'absolute' as const,
@@ -56,6 +57,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
     const [tipologiaFatture, setTipologiaFatture] = useState<string[]>([]);
     const [arrayYears,setArrayYears] = useState<number[]>([]);
     const [arrayMonths,setArrayMonths] = useState<{descrizione:string,mese:number}[]>([]);
+    const [showLoader, setShowLoader] = useState(false);
     const [bodyAdd, setBodyAdd] = useState<Bodyadd>({
         mesi: [],
         anno: null,
@@ -65,17 +67,8 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
 
     useEffect(()=>{
         getListTipologiaFattura();
-        setBodyAdd({
-            mesi: [],
-            anno: null,
-            tipologiaFattura: null,
-            idEnte: null,
-        });
-        setValueMultiMonths([]);
-        setArrayMonths([]);
-        setValueAutocomplete(null);
     },[]);
-
+  
     useEffect(()=>{
         if(bodyAdd.idEnte === null){
             setBodyAdd({
@@ -152,12 +145,15 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
   
    
     const onButtonOK = async(body) => {
+        setShowLoader(true);
         await whiteListAdd(token, profilo.nonce, body).then((res)=>{
             managePresaInCarico('CAMBIO_TIPOLOGIA_CONTRATTO',dispatchMainState);
+            setShowLoader(false);
             setOpen(false);
             getLista();
             clearPopUp();
         }).catch((err)=>{
+            setShowLoader(false);
             setOpen(false);
             manageError(err,dispatchMainState);
             clearPopUp();
@@ -174,6 +170,9 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
         });
         setValueMultiMonths([]);
         setValueAutocomplete(null);
+        setArrayMonths([]);
+        setDataSelect([]);
+        setTextValue('');
     };
 
 
@@ -317,13 +316,18 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
                             />
                         </div>
                     </div>
-                    <div className='container_buttons_modal d-flex justify-content-center mt-5'>
-                        <Button  
-                            disabled={bodyAdd.anno === null || bodyAdd.mesi.length === 0 || bodyAdd.anno === null}
-                            variant='contained'
-                            onClick={()=> onButtonOK(bodyAdd)}
-                        >Aggiungi</Button>
-                    </div>
+                    {!showLoader ?
+                        <div className='container_buttons_modal d-flex justify-content-center mt-5'>
+                            <Button  
+                                disabled={bodyAdd.anno === null || bodyAdd.mesi.length === 0 || bodyAdd.anno === null}
+                                variant='contained'
+                                onClick={()=> onButtonOK(bodyAdd)}
+                            >Aggiungi</Button>
+                        </div>:
+                        <div id='loader_on_modal' className='container_buttons_modal d-flex justify-content-center mt-5'>
+                            <Loader sentence={'Attendere...'}></Loader> 
+                        </div>}
+                    
                 </Box>
             </Modal>
         </div>
