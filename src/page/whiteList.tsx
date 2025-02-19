@@ -152,24 +152,24 @@ const ListaDocEmessi = () => {
                    
                     if(add){
                         console.log({add});
-                        setBodyGetLista((prev)=>({...prev,...{anno:add}}));
-                        getMesi(add);
-                        getLista(1,10,{
+                        const bodyToSet = {
                             idEnti: [],
                             tipologiaContratto: null,
                             tipologiaFattura:null,
                             anno: add,
                             mesi: []
-                        });
+                        };
+                        setBodyGetLista(bodyToSet);
+                        getMesi(add);
+                        getLista(1,10,bodyToSet);
+                        setValueSelectMonths([]);
+                        setValueAutocomplete([]);
+                        setValueTipologiaFattura('');
+                        setPage(0);
+                        setRowsPerPage(10);
                         updateFilters(
                             {
-                                body:{
-                                    idEnti: [],
-                                    tipologiaContratto: null,
-                                    tipologiaFattura:null,
-                                    anno: add,
-                                    mesi: []
-                                },
+                                body:bodyToSet,
                                 pathPage:PathPf.LISTA_DOC_EMESSI,
                                 textValue,
                                 valueAutocomplete,
