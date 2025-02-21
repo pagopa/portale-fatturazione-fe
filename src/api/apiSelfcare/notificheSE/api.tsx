@@ -145,6 +145,17 @@ export const downloadNotifche = async (token:string, nonce:string , body: BodyLi
     return response;
 };
 
+export const downloadNotifcheInps = async (token:string, nonce:string , body: BodyListaNotificheSelfcare) => {
+    const response =  await axios.post(`${url}/api/notifiche/ente/documento/ricerca?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token,
+        }
+        }
+    );
+    return response;
+};
+
 
 export const downloadNotifcheRecapitista = async (token:string, nonce:string , body: BodyListaNotificheSelfcare) => {
     const response =  await axios.post(`${url}/api/notifiche/recapitista/documento/ricerca?binary=false&nonce=${nonce}`,
