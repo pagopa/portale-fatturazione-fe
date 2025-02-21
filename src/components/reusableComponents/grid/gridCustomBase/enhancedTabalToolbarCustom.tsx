@@ -15,8 +15,7 @@ interface EnhancedTable {
 
 const EnhancedTableCustom = (props: EnhancedTable) =>{
     const { setOpenModal, buttons,selected, setOpenModalAdd  } = props;
-    //const color = stato ? "#F2FAF2" : "#F2FAFE";
-    console.log({selected});
+  
     const bgColor = selected.length < 1 ? "#F2FAF2" : "rgba(23, 50, 77, 0.08)";
   
    

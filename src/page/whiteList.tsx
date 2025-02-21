@@ -81,7 +81,7 @@ const ListaDocEmessi = () => {
         anno: null,
         mesi: []
     });
-
+ 
     const { 
         filters,
         updateFilters,
@@ -105,8 +105,7 @@ const ListaDocEmessi = () => {
             updateFilters( {
                 selected:selected
             });
-        }
-       
+        } 
     },[selected]);
   
 
@@ -119,96 +118,92 @@ const ListaDocEmessi = () => {
         }
     },[bodyGetLista]);
 
-    const getAnni = async(add = null) => {
-        setGetListaLoading(true);
-        await getAnniWhite(token, profilo.nonce).then((res)=>{
-            if(res.data.length === 0){
-                setBodyGetLista({
-                    idEnti: [],
-                    tipologiaContratto:null,
-                    tipologiaFattura:null,
-                    anno: null,
-                    mesi: []
-                });
-                setArrayYears([]);
-                setArrayMonths([]);
-                setValueSelectMonths([]);
-                setTipologiaFatture([]);
-                setValueAutocomplete([]);
-                setGridData([]);
-                setTotalElements(0);
+    const getAnni = async(year = null, action = '' ) => {
+        await getAnniWhite(token, profilo.nonce).then(async(res)=>{
+            setArrayYears(res.data);
+            await getListTipologiaFattura();
+            if(isInitialRender.current && Object.keys(filters).length > 0){
+                console.log(3);
+                //se ci sono gli anni ed è il primorender e ci sono i filtri nella local storage
+                setBodyGetLista(filters.body);
+                await getMesi(filters.body.anno);
+                await getLista(filters.page+1, filters.rows,filters.body);
+                setPage(filters.page);
+                setRowsPerPage(filters.rows);
+                setTextValue(filters.textValue);
+                setValueAutocomplete(filters.valueAutocomplete);
             }else{
-                setArrayYears(res.data); 
-                getListTipologiaFattura();
-                if(isInitialRender.current && Object.keys(filters).length > 0){
-                    setBodyGetLista(filters.body);
-                    getMesi(filters.body.anno);
-                    getLista(filters.page+1, filters.rows,filters.body);
-                    setPage(filters.page);
-                    setRowsPerPage(filters.rows);
-                    setTextValue(filters.textValue);
-                    setValueAutocomplete(filters.valueAutocomplete);
-                }else{
+                setGetListaLoading(true);
+                setPage(0);
+                setRowsPerPage(10);
+                setValueSelectMonths([]);
+                setValueAutocomplete([]);
+                if(res.data.length === 0){
+                    console.log(1);
+                    //se NON ci sono gli anni
+                    setBodyGetLista({
+                        idEnti: [],
+                        tipologiaContratto:null,
+                        tipologiaFattura:null,
+                        anno: null,
+                        mesi: []
+                    });
+                    setArrayMonths([]);
+                    setGridData([]);
+                    setTotalElements(0);
+                }else if(year &&( action === 'Add' || (action === 'Delete' && res.data.includes(year) ))){
+                    console.log('new');
+                    const bodyToSet = {
+                        idEnti: [],
+                        tipologiaContratto: null,
+                        tipologiaFattura:null,
+                        anno: year,
+                        mesi: []
+                    };
+                    setBodyGetLista(bodyToSet);
+                    await getMesi(year);
+                    await getLista(1,10,bodyToSet);
+                }else if(year && action === 'Delete' &&  !res.data.includes(year)){
+                    console.log('new');
+                    const bodyToSet = {
+                        idEnti: [],
+                        tipologiaContratto: null,
+                        tipologiaFattura:null,
+                        anno: res.data[0],
+                        mesi: []
+                    };
+                    setBodyGetLista(bodyToSet);
+                    await getMesi(res.data[0]);
+                    await getLista(1,10,bodyToSet);
                    
-                    if(add){
-                        console.log({add});
-                        const bodyToSet = {
-                            idEnti: [],
-                            tipologiaContratto: null,
-                            tipologiaFattura:null,
-                            anno: add,
-                            mesi: []
-                        };
-                        setBodyGetLista(bodyToSet);
-                        getMesi(add);
-                        getLista(1,10,bodyToSet);
-                        setValueSelectMonths([]);
-                        setValueAutocomplete([]);
-                        setValueTipologiaFattura('');
-                        setPage(0);
-                        setRowsPerPage(10);
-                        updateFilters(
-                            {
-                                body:bodyToSet,
-                                pathPage:PathPf.LISTA_DOC_EMESSI,
-                                textValue,
-                                valueAutocomplete,
-                                valueSelectMonths,
-                                valuetipologiaFattura,
-                                page:0,
-                                rows:10,
-                                selected:selected
-                            });
+                }else{
+                    console.log(2);
+                    //se ci sono gli anni
+                    
+                    if(isInitialRender.current && Object.keys(filters).length > 0){
+                        console.log(3);
+                        //se ci sono gli anni ed è il primorender e ci sono i filtri nella local storage
+                        setBodyGetLista(filters.body);
+                        await getMesi(filters.body.anno);
+                        await getLista(filters.page+1, filters.rows,filters.body);
+                        setPage(filters.page);
+                        setRowsPerPage(filters.rows);
+                        setTextValue(filters.textValue);
+                        setValueAutocomplete(filters.valueAutocomplete);
                     }else{
+                        console.log(5);
+                        //se ci sono gli anni  e render n(x) NON ci sono i filtri nella local storage
                         setBodyGetLista((prev)=>({...prev,...{anno:res.data[0]}}));
-                        getMesi(res.data[0]);
-                        getLista(1,10,{
+                        await getMesi(res.data[0]);
+                        await getLista(1,10,{
                             idEnti: [],
                             tipologiaContratto: null,
                             tipologiaFattura:null,
                             anno: res.data[0],
                             mesi: []
                         });
-                        updateFilters(
-                            {
-                                body:{
-                                    idEnti: [],
-                                    tipologiaContratto: null,
-                                    tipologiaFattura:null,
-                                    anno: res.data[0],
-                                    mesi: []
-                                },
-                                pathPage:PathPf.LISTA_DOC_EMESSI,
-                                textValue,
-                                valueAutocomplete,
-                                valueSelectMonths,
-                                valuetipologiaFattura,
-                                page:0,
-                                rows:10,
-                                selected:selected
-                            });
-                    }
-                }  
+                    }  
+                }
             }
             setGetListaLoading(false);
         }).catch((err)=>{
@@ -230,10 +225,12 @@ const ListaDocEmessi = () => {
                 setBodyGetLista((prev)=>({...prev,...{mesi:[]}}));
             }
             setGetListaLoading(false);
+            isInitialRender.current = false;
         }).catch((err)=>{
             setArrayYears([]);
             setGetListaLoading(false);
             manageError(err,dispatchMainState);
+            isInitialRender.current = false;
         });
     };
 
@@ -300,17 +297,23 @@ const ListaDocEmessi = () => {
         }));     
     };
 
-    const deleteElements = async () => {
+    const deleteElements = async (y) => {
         setGetListaLoading(true);
+        resetFilters();
         await deleteWhiteListPagoPa(token, profilo.nonce,selected).then(async(res)=> {
+            await getAnni(y, 'Delete'); 
+            managePresaInCarico('INSER_DELETE_WHITE_LIST',dispatchMainState);
             setSelected([]);
-            await getAnni(); 
-            managePresaInCarico('CAMBIO_TIPOLOGIA_CONTRATTO',dispatchMainState);
-            resetFilters();
         }).catch((err)=>{
+            console.log({err});
             setGetListaLoading(false);
             manageError(err,dispatchMainState);
         });
+    };
+
+    const onButtonAggiungi = async(yearAdd) => {
+        resetFilters();
+        getAnni(yearAdd, "Add");
     };
 
     const clearOnChangeFilter = () => {
@@ -360,10 +363,7 @@ const ListaDocEmessi = () => {
         resetFilters();
     };
 
-    const onButtonAggiungi = (y) => {
-        getAnni(y);
-        resetFilters();
-    };
+   
     
     const onDownload = async() => {
         setShowLoading(true);
@@ -428,7 +428,7 @@ const ListaDocEmessi = () => {
     };
 
     const onButtonComfermaPopUp = () => {
-        deleteElements();
+        deleteElements(bodyGetLista.anno);
     };
 
     const buttonsTopHeader =  [

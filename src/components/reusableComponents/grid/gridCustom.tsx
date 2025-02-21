@@ -6,7 +6,7 @@ import { NotificheList } from "../../../types/typeReportDettaglio";
 import RowContratto from "./gridCustomBase/rowTipologiaContratto";
 import RowWhiteList from "./gridCustomBase/rowWhiteList";
 import EnhancedTableCustom from "./gridCustomBase/enhancedTabalToolbarCustom";
-import { SetStateAction, useEffect, useState } from "react";
+import { SetStateAction } from "react";
 import { Whitelist } from "../../../page/whiteList";
 interface GridCustomProps {
     elements:NotificheList[]|Rel[]|GridElementListaPsp[]|any[],

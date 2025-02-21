@@ -147,7 +147,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
     const onButtonOK = async(body) => {
         setShowLoader(true);
         await whiteListAdd(token, profilo.nonce, body).then(async(res)=>{
-            managePresaInCarico('CAMBIO_TIPOLOGIA_CONTRATTO',dispatchMainState);
+            managePresaInCarico('INSER_DELETE_WHITE_LIST',dispatchMainState);
             setShowLoader(false);
             setOpen(false);
             await getLista(body.anno);
@@ -159,7 +159,6 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
             clearPopUp();
         });
     };
-
 
     const clearPopUp = () => {
         setBodyAdd({
@@ -174,7 +173,6 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
         setDataSelect([]);
         setTextValue('');
     };
-
 
     return (
         <div>
