@@ -665,7 +665,11 @@ const ReportDettaglio : React.FC = () => {
         setShowLoading(true);
         if(enti){
             const {idEnti, recapitisti, consolidatori, ...bodyEnti} = bodyDownload;
-            if(profilo.idEnte === '234c45ca-da5f-4067-a4d6-1391774162b4' && bodyDownload.anno === 2024 && bodyDownload.mese === 1){
+            const tempAnno = 2025;
+            const tempMese = 1;
+            const tempIdEnte = "53b40136-65f2-424b-acfb-7fae17e35c60";
+            //const tempIdEnte = "'234c45ca-da5f-4067-a4d6-1391774162b4";
+            if(profilo.idEnte === tempIdEnte && bodyDownload.anno === tempAnno && bodyDownload.mese === tempMese){
                 console.log('dentro');
                 await downloadNotifcheInps(token, profilo.nonce,bodyEnti ).then((res)=>{
                     console.log(res);
