@@ -10,7 +10,6 @@ import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
 import { PathPf } from "../types/enum";
 import { manageError, managePresaInCarico } from "../api/api";
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
-import SelectTipologiaFattura from "../components/reusableComponents/select/selectTipologiaFattura";
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { BodyWhite, deleteWhiteListPagoPa, downloadWhiteListPagopa, getAnniWhite, getMesiWhite, getTipologiaFatturaWhite, getWhiteListPagoPa } from "../api/apiPagoPa/whiteListPA/whiteList";
@@ -93,7 +92,6 @@ const ListaDocEmessi = () => {
         getAnni();
     },[]);
 
-
     useEffect(()=>{
         if((bodyGetLista.anno || 0) > 0 && !isInitialRender.current){
             getMesi(bodyGetLista.anno);
@@ -132,6 +130,7 @@ const ListaDocEmessi = () => {
                 setRowsPerPage(filters.rows);
                 setTextValue(filters.textValue);
                 setValueAutocomplete(filters.valueAutocomplete);
+                setSelected(filters.selected);
             }else{
                 setGetListaLoading(true);
                 setPage(0);
@@ -177,33 +176,19 @@ const ListaDocEmessi = () => {
                     await getLista(1,10,bodyToSet);
                    
                 }else{
-                    console.log(2);
-                    //se ci sono gli anni
-                    
-                    if(isInitialRender.current && Object.keys(filters).length > 0){
-                        console.log(3);
-                        //se ci sono gli anni ed è il primorender e ci sono i filtri nella local storage
-                        setBodyGetLista(filters.body);
-                        await getMesi(filters.body.anno);
-                        await getLista(filters.page+1, filters.rows,filters.body);
-                        setPage(filters.page);
-                        setRowsPerPage(filters.rows);
-                        setTextValue(filters.textValue);
-                        setValueAutocomplete(filters.valueAutocomplete);
-                    }else{
-                        console.log(5);
-                        //se ci sono gli anni  e render n(x) NON ci sono i filtri nella local storage
-                        setBodyGetLista((prev)=>({...prev,...{anno:res.data[0]}}));
-                        await getMesi(res.data[0]);
-                        await getLista(1,10,{
-                            idEnti: [],
-                            tipologiaContratto: null,
-                            tipologiaFattura:null,
-                            anno: res.data[0],
-                            mesi: []
-                        });
-                    }  
-                }
+                    console.log(5);
+                    //se ci sono gli anni  e render n(x) NON ci sono i filtri nella local storage
+                    setBodyGetLista((prev)=>({...prev,...{anno:res.data[0]}}));
+                    await getMesi(res.data[0]);
+                    await getLista(1,10,{
+                        idEnti: [],
+                        tipologiaContratto: null,
+                        tipologiaFattura:null,
+                        anno: res.data[0],
+                        mesi: []
+                    });
+                }  
+                
             }
             setGetListaLoading(false);
         }).catch((err)=>{
@@ -285,9 +270,6 @@ const ListaDocEmessi = () => {
             });
             setGridData(customObj);
             setTotalElements(res.data.count);
-            if(isInitialRender.current && Object.keys(filters).length > 0){
-                setSelected(filters.selected);
-            }
             setGetListaLoading(false);
         }).catch(((err)=>{
             setGridData([]);

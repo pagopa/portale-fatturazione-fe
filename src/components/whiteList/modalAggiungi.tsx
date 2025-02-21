@@ -50,7 +50,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 
-    const [valueAutocomplete, setValueAutocomplete] = useState<{idEnte:string,descrizione:string}|null>();
+    const [valueAutocomplete, setValueAutocomplete] = useState<{descrizione:string,idEnte:string}>({descrizione:'',idEnte:''});
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
     const [textValue, setTextValue] = useState('');
     const [valueMotiselectMonths, setValueMultiMonths] = useState<{descrizione:string,mese:number}[]>([]);
@@ -168,7 +168,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
             idEnte: null,
         });
         setValueMultiMonths([]);
-        setValueAutocomplete(null);
+        setValueAutocomplete({descrizione:'',idEnte:''});
         setArrayMonths([]);
         setDataSelect([]);
         setTextValue('');
@@ -196,20 +196,23 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
                         <div  className="col-6">
                             <Autocomplete
                                 onChange={(event, value) => {
-                                    setBodyAdd((prev:any) => ({...prev,...{idEnte:value?.idEnte||null}}));
-                                    console.log(value);
-                                    setValueAutocomplete(value||null);
+                                    console.log({value, valueAutocomplete});
+                                    setBodyAdd((prev:any) => ({...prev,...{idEnte:value?.idEnte}}));
+                                    if(value){
+                                        setValueAutocomplete(value);
+                                    }
+                                    
                                 }}
                                 options={dataSelect}
                                 disableCloseOnSelect
-                                getOptionLabel={(option:OptionMultiselectChackbox) => (option.descrizione)}
+                                getOptionLabel={(option) => option.descrizione||''}
                                 value={valueAutocomplete}
                                 isOptionEqualToValue={(option, value) => option.idEnte === value.idEnte}
                                 renderOption={(props, option) =>{
                                     const newProps = {...props,...{key:option.idEnte}};
                                     return (
                                         <li {...newProps}   >
-                                            {option.descrizione||''}
+                                            {option.descrizione}
                                         </li>
                                     );
                                 } }
