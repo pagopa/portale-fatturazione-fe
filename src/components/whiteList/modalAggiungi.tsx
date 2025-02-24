@@ -88,6 +88,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
             setBodyAdd((prev) => ({...prev,...{ mesi:[],anno: null,}}));
             setValueMultiMonths([]);
             setArrayMonths([]);
+            
         }
     },[bodyAdd.tipologiaFattura]);
 
