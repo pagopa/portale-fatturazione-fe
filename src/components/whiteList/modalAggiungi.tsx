@@ -135,6 +135,8 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
     };
 
     const getMesi = async(tipologiaFattura,idEnte,anno) => {
+
+        console.log('dentro AGGIUNGI');
         await getMesiWhiteAdd(token, profilo.nonce,{tipologiaFattura:tipologiaFattura, idEnte:idEnte,anno:anno}).then((res)=>{
             setArrayMonths(res.data);
             setValueMultiMonths([]);

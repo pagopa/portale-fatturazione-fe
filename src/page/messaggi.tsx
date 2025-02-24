@@ -14,9 +14,6 @@ import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { month } from "../reusableFunction/reusableArrayObj";
 import { GlobalContext } from "../store/context/globalContext";
 
-
-
-
 export interface Messaggio {
     idMessaggio:number,
     idEnte: null|string|number,
