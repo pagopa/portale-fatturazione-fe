@@ -202,6 +202,8 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
                                     setBodyAdd((prev:any) => ({...prev,...{idEnte:value?.idEnte}}));
                                     if(value){
                                         setValueAutocomplete(value);
+                                    }else{
+                                        setValueAutocomplete({descrizione:'',idEnte:''});
                                     }
                                     
                                 }}
