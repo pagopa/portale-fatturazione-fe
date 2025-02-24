@@ -665,7 +665,7 @@ const ReportDettaglio : React.FC = () => {
         setShowLoading(true);
         if(enti){
             const {idEnti, recapitisti, consolidatori, ...bodyEnti} = bodyDownload;
-            const tempAnno = 2025;
+            /* const tempAnno = 2025;
             const tempMese = 1;
             const tempIdEnte = "53b40136-65f2-424b-acfb-7fae17e35c60";
             //const tempIdEnte = "'234c45ca-da5f-4067-a4d6-1391774162b4";
@@ -687,25 +687,25 @@ const ReportDettaglio : React.FC = () => {
                     setShowLoading(false);
                     manageError(err,dispatchMainState);
                 });
-            }else{
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            }else{   }*/  
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 
-                await downloadNotifche(token, profilo.nonce,bodyEnti ).then((res)=>{
-                    const blob = new Blob([res.data], { type: 'text/csv' });
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.setAttribute('hidden', '');
-                    a.setAttribute('href', url);
-                    a.setAttribute('download',`Notifiche /${notificheList[0].ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`);
-                    document.body.appendChild(a);
-                    a.click();
-                    setShowLoading(false);
-                    document.body.removeChild(a);        
-                }).catch(((err)=>{
-                    setShowLoading(false);
-                    manageError(err,dispatchMainState);
-                }));
-            }
+            await downloadNotifche(token, profilo.nonce,bodyEnti ).then((res)=>{
+                const blob = new Blob([res.data], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.setAttribute('hidden', '');
+                a.setAttribute('href', url);
+                a.setAttribute('download',`Notifiche /${notificheList[0].ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`);
+                document.body.appendChild(a);
+                a.click();
+                setShowLoading(false);
+                document.body.removeChild(a);        
+            }).catch(((err)=>{
+                setShowLoading(false);
+                manageError(err,dispatchMainState);
+            }));
+          
           
         }else if(profilo.profilo === 'REC'){
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
