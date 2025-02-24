@@ -50,7 +50,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 
-    const [valueAutocomplete, setValueAutocomplete] = useState<{descrizione:string,idEnte:string}>({descrizione:'',idEnte:''});
+    const [valueAutocomplete, setValueAutocomplete] = useState<{descrizione:string|null,idEnte:string|null}>({descrizione:null,idEnte:null});
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
     const [textValue, setTextValue] = useState('');
     const [valueMotiselectMonths, setValueMultiMonths] = useState<{descrizione:string,mese:number}[]>([]);
@@ -68,7 +68,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
     useEffect(()=>{
         getListTipologiaFattura();
     },[]);
-  
+    console.log({bodyAdd});
     useEffect(()=>{
         if(bodyAdd.idEnte === null){
             setBodyAdd({
@@ -79,6 +79,18 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
             });
             setValueMultiMonths([]);
             setArrayMonths([]);
+            setArrayYears([]);
+        }
+        if(bodyAdd.idEnte){
+            setBodyAdd((prev) => ({
+                ...prev,
+                ...{
+                    mesi: [],
+                    anno: null,
+                    tipologiaFattura: null
+                }
+            }));
+            setValueMultiMonths([]);
         }
     },[bodyAdd.idEnte]);
 
@@ -171,7 +183,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
             idEnte: null,
         });
         setValueMultiMonths([]);
-        setValueAutocomplete({descrizione:'',idEnte:''});
+        setValueAutocomplete({descrizione:null,idEnte:null});
         setArrayMonths([]);
         setDataSelect([]);
         setTextValue('');
@@ -200,13 +212,12 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
                             <Autocomplete
                                 onChange={(event, value) => {
                                     console.log({value, valueAutocomplete});
-                                    setBodyAdd((prev:any) => ({...prev,...{idEnte:value?.idEnte}}));
+                                    setBodyAdd((prev:any) => ({...prev,...{idEnte:value?.idEnte||null}}));
                                     if(value){
                                         setValueAutocomplete(value);
                                     }else{
-                                        setValueAutocomplete({descrizione:'',idEnte:''});
+                                        setValueAutocomplete({descrizione:null,idEnte:null});
                                     }
-                                    
                                 }}
                                 options={dataSelect}
                                 disableCloseOnSelect
