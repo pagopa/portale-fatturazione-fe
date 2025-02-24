@@ -345,7 +345,6 @@ const ListaDocEmessi = () => {
         resetFilters();
     };
 
-   
     
     const onDownload = async() => {
         setShowLoading(true);
@@ -356,10 +355,14 @@ const ListaDocEmessi = () => {
             throw '404';
         }).then(
             (response)=>{
-                let fileName = `White list Fatturazione.xlsx`;
-                if(dataSelect.length === 1){
-                    fileName = `White list Fatturazione/${dataSelect[0].descrizione}.xlsx`;
+                let fileName = `White list Fatturazione/${bodyGetLista.anno}.xlsx`;
+                if(bodyGetLista.idEnti.length === 1){
+                    fileName = `White list Fatturazione/${dataSelect[0].descrizione}/${bodyGetLista.anno}.xlsx`;
                 }
+                if(bodyGetLista.idEnti.length === 1 && bodyGetLista.mesi.length === 1){
+                    fileName = `White list Fatturazione/${dataSelect[0].descrizione}/${month[bodyGetLista?.mesi[0] -1]}/${bodyGetLista.anno}.xlsx`;
+                }
+                
                 setShowLoading(true);
                 saveAs(response,fileName);
                 setShowLoading(false);
