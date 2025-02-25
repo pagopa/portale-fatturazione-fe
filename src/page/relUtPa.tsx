@@ -3,7 +3,7 @@ import { Box, Button, FormControl, InputLabel, MenuItem, Select, Typography } fr
 import SelectTipologiaFattura from "../components/reusableComponents/select/selectTipologiaFattura";
 import { BodyRel, Rel } from "../types/typeRel";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
-import { manageError} from "../api/api";
+import { manageError, manageErrorDownload} from "../api/api";
 import { useNavigate } from "react-router";
 import DownloadIcon from '@mui/icons-material/Download';
 import { downloadListaRel, getAnniRelSend, getListaRel, getMesiRelSend, getTipologieFatture} from "../api/apiSelfcare/relSE/api";
@@ -125,6 +125,7 @@ const RelPage : React.FC = () =>{
                     getMesi(filters.body.anno?.toString());
                 }else{
                     setBodyRel((prev)=> ({...prev,...{anno:Number(res.data[0])}}));
+                    setBodyDownload((prev)=> ({...prev,...{anno:Number(res.data[0])}}));
                     getMesi(res.data[0]);
                 }
             }).catch((err)=>{
@@ -141,6 +142,7 @@ const RelPage : React.FC = () =>{
                     getMesi(filters.body.anno?.toString());
                 }else{
                     setBodyRel((prev)=> ({...prev,...{anno:Number(res.data[0])}}));
+                    setBodyDownload((prev)=> ({...prev,...{anno:Number(res.data[0])}}));
                     getMesi(res.data[0]);
                     
                 }
@@ -166,17 +168,21 @@ const RelPage : React.FC = () =>{
                     setRowsPerPage(filters.rows);
                     setBodyDownload(filters.body);
                     setBodyRel(filters.body);
+                    setBodyDownload(filters.body);
                     getlista(filters.body,filters.page + 1, filters.rows);
                 }else if(isInitialRender.current){
                     setBodyRel((prev)=> ({...prev,...{mese:res.data[0].mese}}));
+                    setBodyDownload((prev)=> ({...prev,...{mese:res.data[0].mese}}));
                     getListTipologiaFattura(year, res.data[0].mese);
                     getlista({...bodyRel,...{anno:year,mese:res.data[0].mese}},1,rowsPerPage);
                 }else{
                     setBodyRel((prev)=> ({...prev,...{mese:res.data[0].mese}}));
+                    setBodyDownload((prev)=> ({...prev,...{mese:res.data[0].mese}}));
                 }
             }).catch((err)=>{
                 setArrayMonths([]);
                 setBodyRel((prev)=> ({...prev,...{mese:0}}));
+                setBodyDownload((prev)=> ({...prev,...{mese:0}}));
                 setGetListaRelRunning(false);
                 manageError(err,dispatchMainState);
             });
@@ -195,14 +201,17 @@ const RelPage : React.FC = () =>{
                     setBodyRel(filters.body);
                 }else if(isInitialRender.current){
                     setBodyRel((prev)=> ({...prev,...{mese:res.data[0].mese}}));
+                    setBodyDownload((prev)=> ({...prev,...{mese:res.data[0].mese}}));
                     getListTipologiaFattura(year, res.data[0].mese);
                     getlista({...bodyRel,...{anno:year,mese:res.data[0].mese}},1,rowsPerPage);
                 }else{
                     setBodyRel((prev)=> ({...prev,...{mese:res.data[0].mese}}));
+                    setBodyDownload((prev)=> ({...prev,...{mese:res.data[0].mese}}));
                 }
             }).catch((err)=>{
                 setArrayMonths([]);
                 setBodyRel((prev)=> ({...prev,...{mese:0}}));
+                setBodyDownload((prev)=> ({...prev,...{mese:0}}));
                 setGetListaRelRunning(false);
                 manageError(err,dispatchMainState);
             });
@@ -510,7 +519,10 @@ const RelPage : React.FC = () =>{
             setShowLoading(false);
         }).catch((err)=>{
             setShowLoading(false);
-            manageError(err,dispatchMainState);
+            if(err){
+                manageErrorDownload('404',dispatchMainState);
+            }
+           
         });  
     };
   
@@ -521,18 +533,19 @@ const RelPage : React.FC = () =>{
                 if (response.ok) {
                     return response.blob();
                 }
+                setShowLoading(false);
+                
                 throw '404';
-            })
-            .then(blob => {
+            }).then(blob => {
                 let fileName = `REL /Firmate/${mesiWithZero[bodyRel.mese -1]}/${bodyRel.anno}.zip`;
                 if(bodyDownload.idEnti.length === 1){
                     fileName = `REL /Firmate/${data[0]?.ragioneSociale}/${mesiWithZero[bodyRel.mese -1]}/${bodyRel.anno}.zip`;
                 }
                 saveAs(blob,fileName );
                 setShowLoading(false);
-            })
-            .catch(err => {
-                manageError(err,dispatchMainState);
+            }).catch(err => {
+                manageErrorDownload(err,dispatchMainState);
+            
             });
     };
 
@@ -550,7 +563,7 @@ const RelPage : React.FC = () =>{
             saveAs(res,fileName );
             setShowLoading(false);
         }).catch((err)=>{
-            manageError(err,dispatchMainState);
+            manageErrorDownload(err,dispatchMainState);
             setShowLoading(false);
         });
     };

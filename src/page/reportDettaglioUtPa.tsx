@@ -12,7 +12,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import MultiSelectStatoContestazione from "../components/reportDettaglio/multiSelectGroupedBy";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import ModalScadenziario from "../components/reportDettaglio/modalScadenziario";
-import { downloadNotifche, downloadNotifcheConsolidatore, downloadNotifcheRecapitista, getContestazione, getContestazioneCosolidatore, getContestazioneRecapitista, listaEntiNotifichePage, listaEntiNotifichePageConsolidatore, listaNotifiche, listaNotificheConsolidatore, listaNotificheRecapitista } from "../api/apiSelfcare/notificheSE/api";
+import { downloadNotifche, downloadNotifcheConsolidatore, downloadNotifcheInps, downloadNotifcheRecapitista, getContestazione, getContestazioneCosolidatore, getContestazioneRecapitista, listaEntiNotifichePage, listaEntiNotifichePageConsolidatore, listaNotifiche, listaNotificheConsolidatore, listaNotificheRecapitista } from "../api/apiSelfcare/notificheSE/api";
 import { downloadNotifchePagoPa, getAnniNotifiche, getContestazionePagoPa, getMesiNotifiche, getTipologiaEntiCompletiPagoPa, listaNotifichePagoPa } from "../api/apiPagoPa/notifichePA/api";
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
@@ -660,12 +660,36 @@ const ReportDettaglio : React.FC = () => {
             }));
         }
     };
-    
+    console.log({profilo});
     const downloadNotificheOnDownloadButton = async () =>{
         setShowLoading(true);
         if(enti){
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const {idEnti, recapitisti, consolidatori, ...bodyEnti} = bodyDownload;
+            /* const tempAnno = 2025;
+            const tempMese = 1;
+            const tempIdEnte = "53b40136-65f2-424b-acfb-7fae17e35c60";
+            //const tempIdEnte = "'234c45ca-da5f-4067-a4d6-1391774162b4";
+            if(profilo.idEnte === tempIdEnte && bodyDownload.anno === tempAnno && bodyDownload.mese === tempMese){
+                console.log('dentro');
+                await downloadNotifcheInps(token, profilo.nonce,bodyEnti ).then((res)=>{
+                    console.log(res);
+                    const link = document.createElement("a");
+                    link.href = res.data;
+                    document.body.appendChild(link);
+            
+                    link.click();
+            
+                    document.body.removeChild(link);
+                    window.URL.revokeObjectURL(res.data);
+            
+                    setShowLoading(false);
+                }).catch((err)=>{
+                    setShowLoading(false);
+                    manageError(err,dispatchMainState);
+                });
+            }else{   }*/  
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                
             await downloadNotifche(token, profilo.nonce,bodyEnti ).then((res)=>{
                 const blob = new Blob([res.data], { type: 'text/csv' });
                 const url = window.URL.createObjectURL(blob);
@@ -681,6 +705,8 @@ const ReportDettaglio : React.FC = () => {
                 setShowLoading(false);
                 manageError(err,dispatchMainState);
             }));
+          
+          
         }else if(profilo.profilo === 'REC'){
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const {idEnti, recapitisti, consolidatori, ...bodyRecapitista} = bodyDownload;

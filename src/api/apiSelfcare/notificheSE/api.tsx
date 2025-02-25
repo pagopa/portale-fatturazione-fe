@@ -135,11 +135,27 @@ export const downloadNotifche = async (token:string, nonce:string , body: BodyLi
         body,
         { headers: {
             Authorization: 'Bearer ' + token,
+            "Accept" : "application/octet-stream, application/json, text/plain, */*"
         },
+        responseType: 'arraybuffer',
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity
         }
     );
     return response;
 };
+
+export const downloadNotifcheInps = async (token:string, nonce:string , body: BodyListaNotificheSelfcare) => {
+    const response =  await axios.post(`${url}/api/notifiche/ente/documento/ricerca?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token,
+        }
+        }
+    );
+    return response;
+};
+
 
 export const downloadNotifcheRecapitista = async (token:string, nonce:string , body: BodyListaNotificheSelfcare) => {
     const response =  await axios.post(`${url}/api/notifiche/recapitista/documento/ricerca?binary=false&nonce=${nonce}`,

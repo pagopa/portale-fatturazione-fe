@@ -1,6 +1,7 @@
 import { Typography } from "@mui/material";
 import { Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
-import {manageError, managePresaInCarico, } from '../api/api';
+import {manageError, manageErrorDownload, managePresaInCarico, } from '../api/api';
+import { GridElementListaFatturazione } from "../types/typeListaDatiFatturazione";
 import { useContext, useEffect, useState } from "react";
 import DownloadIcon from '@mui/icons-material/Download';
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
@@ -200,7 +201,7 @@ const PageTipologiaContratto :React.FC = () =>{
                 saveAs(response,fileName);
                 setShowLoading(false);
             }).catch(err =>{
-            manageError(err,dispatchMainState);
+            manageErrorDownload(err,dispatchMainState);
         } );
     };
 
