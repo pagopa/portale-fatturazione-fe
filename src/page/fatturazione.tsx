@@ -1,9 +1,7 @@
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, Tooltip, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import { useContext, useEffect, useState } from "react";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
-import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
-import SelectMese from "../components/reusableComponents/select/selectMese";
 import { BodyFatturazione, FattureObj, HeaderCollapsible, TipologiaSap} from "../types/typeFatturazione";
 import { downloadFatturePagopa, downloadFattureReportPagopa, fattureCancellazioneRipristinoPagoPa,fattureTipologiaSapPa, getAnniDocEmessiPagoPa, getFatturazionePagoPa, getMesiDocEmessiPagoPa, getTipologieFaPagoPa } from "../api/apiPagoPa/fatturazionePA/api";
 import { manageError, manageErrorDownload, managePresaInCarico } from "../api/api";
@@ -23,6 +21,8 @@ import { GlobalContext } from "../store/context/globalContext";
 import { getMessaggiCount } from "../api/apiPagoPa/centroMessaggi/api";
 import { PathPf } from "../types/enum";
 import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
+import IosShareIcon from '@mui/icons-material/IosShare';
+import ModalJsonSap from "../components/fatturazione/modalJsonSap";
 
 const Fatturazione : React.FC = () =>{
 
@@ -50,6 +50,7 @@ const Fatturazione : React.FC = () =>{
     const [openResetFilterModal,setOpenResetFilterModal] = useState(false);
     const [responseTipologieSap, setResponseTipologieSap] = useState<TipologiaSap[]>([]);
     const [fattureSelected, setFattureSelected] = useState<number[]>([]);
+    const [openModalJson,setOpenModalJson] = useState(false);
     
     const [bodyFatturazione, setBodyFatturazione] = useState<BodyFatturazione>({
         anno:0,
@@ -507,6 +508,11 @@ const Fatturazione : React.FC = () =>{
                     </div>
                     <div className="col-6">
                         <div className="d-flex flex-row-reverse">
+                            <Tooltip  className="mx-2" title="Invia REL firmate">
+                                <span>
+                                    <Button  onClick={()=> setOpenModalJson(true)} disabled={disableButtonSap}  variant="outlined"><IosShareIcon></IosShareIcon></Button>
+                                </span>
+                            </Tooltip>
                             <Button sx={{width:'216px'}} onClick={()=> onButtonSap(0)} disabled={disableButtonSap}  variant="outlined">Invia a SAP <PreviewIcon sx={{marginLeft:'20px'}}></PreviewIcon></Button>
                             <Button sx={{width:'216px',marginRight:'10px'}} onClick={()=> onButtonSap(1)} disabled={disableButtonReset} color="error"  variant="outlined">Reset <RestartAltIcon sx={{marginLeft:'20px'}}></RestartAltIcon></Button>
                         </div>
@@ -587,6 +593,9 @@ const Fatturazione : React.FC = () =>{
                 filterInfo={bodyFatturazioneDownload}
                 filterNotExecuted={bodyFatturazione}
                 getListaFatture={getlistaFatturazione}></ModalResetFilter>
+            <ModalJsonSap
+                setOpen={setOpenModalJson}
+                open={openModalJson}></ModalJsonSap>
         </div>
     );
 };

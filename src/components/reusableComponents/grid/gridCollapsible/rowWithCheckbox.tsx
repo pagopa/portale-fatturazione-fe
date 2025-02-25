@@ -93,7 +93,7 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
                 <TableCell align='center'>{row.dataFattura !== null ? new Date(row.dataFattura).toLocaleString().split(',')[0] : ''}</TableCell>
             </TableRow>
             <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={5}>
+                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box sx={{ margin: 2 , backgroundColor:'#F8F8F8', padding:'10px'}}>
                             <Typography sx={{marginLeft:"6px"}} variant="h6" gutterBottom component="div">
