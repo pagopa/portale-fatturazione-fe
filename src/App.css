@@ -187,5 +187,13 @@
    border-radius: 30px;
    margin:3px
  }
+
+ #loader_popup_json_to_sap .MuiFormControl-root .MuiBox-root{
+  min-height: 48px;
+  border:none;
+  background-color: #F8F8F8;
+  
+  
+  }
  
  
