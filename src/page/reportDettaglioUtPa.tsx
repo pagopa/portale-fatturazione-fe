@@ -660,36 +660,12 @@ const ReportDettaglio : React.FC = () => {
             }));
         }
     };
-    console.log({profilo});
+
     const downloadNotificheOnDownloadButton = async () =>{
         setShowLoading(true);
         if(enti){
-            const {idEnti, recapitisti, consolidatori, ...bodyEnti} = bodyDownload;
-            /* const tempAnno = 2025;
-            const tempMese = 1;
-            const tempIdEnte = "53b40136-65f2-424b-acfb-7fae17e35c60";
-            //const tempIdEnte = "'234c45ca-da5f-4067-a4d6-1391774162b4";
-            if(profilo.idEnte === tempIdEnte && bodyDownload.anno === tempAnno && bodyDownload.mese === tempMese){
-                console.log('dentro');
-                await downloadNotifcheInps(token, profilo.nonce,bodyEnti ).then((res)=>{
-                    console.log(res);
-                    const link = document.createElement("a");
-                    link.href = res.data;
-                    document.body.appendChild(link);
-            
-                    link.click();
-            
-                    document.body.removeChild(link);
-                    window.URL.revokeObjectURL(res.data);
-            
-                    setShowLoading(false);
-                }).catch((err)=>{
-                    setShowLoading(false);
-                    manageError(err,dispatchMainState);
-                });
-            }else{   }*/  
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                
+            const {idEnti, recapitisti, consolidatori, ...bodyEnti} = bodyDownload; 
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars  
             await downloadNotifche(token, profilo.nonce,bodyEnti ).then((res)=>{
                 const blob = new Blob([res.data], { type: 'text/csv' });
                 const url = window.URL.createObjectURL(blob);

@@ -68,7 +68,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
     useEffect(()=>{
         getListTipologiaFattura();
     },[]);
-    console.log({bodyAdd});
+  
     useEffect(()=>{
         if(bodyAdd.idEnte === null){
             setBodyAdd({
@@ -148,8 +148,6 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
     };
 
     const getMesi = async(tipologiaFattura,idEnte,anno) => {
-
-        console.log('dentro AGGIUNGI');
         await getMesiWhiteAdd(token, profilo.nonce,{tipologiaFattura:tipologiaFattura, idEnte:idEnte,anno:anno}).then((res)=>{
             setArrayMonths(res.data);
             setValueMultiMonths([]);
@@ -211,7 +209,6 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
                         <div  className="col-6">
                             <Autocomplete
                                 onChange={(event, value) => {
-                                    console.log({value, valueAutocomplete});
                                     setBodyAdd((prev:any) => ({...prev,...{idEnte:value?.idEnte||null}}));
                                     if(value){
                                         setValueAutocomplete(value);

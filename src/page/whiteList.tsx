@@ -109,7 +109,6 @@ const ListaDocEmessi = () => {
 
     useEffect(()=>{
         if(bodyGetLista.idEnti.length !== 0 || bodyGetLista.mesi.length !== 0 || bodyGetLista.tipologiaFattura !== null || bodyGetLista.tipologiaContratto !== null  ){
-            console.log({bodyGetLista});
             setStatusAnnulla('show');
         }else{
             setStatusAnnulla('hidden');
@@ -121,7 +120,6 @@ const ListaDocEmessi = () => {
             setArrayYears(res.data);
             await getListTipologiaFattura();
             if(isInitialRender.current && Object.keys(filters).length > 0){
-                console.log(3);
                 //se ci sono gli anni ed è il primorender e ci sono i filtri nella local storage
                 setBodyGetLista(filters.body);
                 await getMesi(filters.body.anno);
@@ -138,7 +136,6 @@ const ListaDocEmessi = () => {
                 setValueSelectMonths([]);
                 setValueAutocomplete([]);
                 if(res.data.length === 0){
-                    console.log(1);
                     //se NON ci sono gli anni
                     setBodyGetLista({
                         idEnti: [],
@@ -151,7 +148,6 @@ const ListaDocEmessi = () => {
                     setGridData([]);
                     setTotalElements(0);
                 }else if(year &&( action === 'Add' || (action === 'Delete' && res.data.includes(year) ))){
-                    console.log('new');
                     const bodyToSet = {
                         idEnti: [],
                         tipologiaContratto: null,
@@ -163,7 +159,7 @@ const ListaDocEmessi = () => {
                     await getMesi(year);
                     await getLista(1,10,bodyToSet);
                 }else if(year && action === 'Delete' &&  !res.data.includes(year)){
-                    console.log('new');
+        
                     const bodyToSet = {
                         idEnti: [],
                         tipologiaContratto: null,
@@ -176,8 +172,6 @@ const ListaDocEmessi = () => {
                     await getLista(1,10,bodyToSet);
                    
                 }else{
-                    console.log(5);
-                    //se ci sono gli anni  e render n(x) NON ci sono i filtri nella local storage
                     setBodyGetLista((prev)=>({...prev,...{anno:res.data[0]}}));
                     await getMesi(res.data[0]);
                     await getLista(1,10,{
@@ -287,7 +281,6 @@ const ListaDocEmessi = () => {
             managePresaInCarico('INSER_DELETE_WHITE_LIST',dispatchMainState);
             setSelected([]);
         }).catch((err)=>{
-            console.log({err});
             setGetListaLoading(false);
             manageError(err,dispatchMainState);
         });
