@@ -106,8 +106,16 @@ const RelPdfPage : React.FC = () =>{
             });
         }else{
             await getRelExelPagoPa(token, profilo.nonce, mainState.relSelected.id).then((res)=>{
-                // saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio / ${ rel?.ragioneSociale} / ${rel?.mese} / ${rel?.anno}.xlsx` );
-                // setShowDownloading(false);
+                const link = document.createElement("a");
+                link.href = res.data;
+                link.download = `Rel/Report di dettaglio/${ rel?.ragioneSociale}/${rel?.mese}/${rel?.anno}.csv`;
+                document.body.appendChild(link);
+            
+                link.click();
+            
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(res.data);
+                /* 
                 const blob = new Blob([res.data], { type: 'text/csv' });
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -117,7 +125,7 @@ const RelPdfPage : React.FC = () =>{
                 document.body.appendChild(a);
                 a.click();
                 setShowDownloading(false);
-                document.body.removeChild(a);
+                document.body.removeChild(a);*/
                 
             }).catch((err)=>{
                 manageError(err,dispatchMainState);
