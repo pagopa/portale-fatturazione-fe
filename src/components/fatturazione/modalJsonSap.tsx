@@ -3,14 +3,14 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { FormControl, InputLabel, MenuItem, Select, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { FormControl, InputLabel, MenuItem, Select, Table, TableCell, TableHead, TableRow } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import { GlobalContext } from '../../store/context/globalContext';
 import { getListaJsonFatturePagoPa, invioListaJsonFatturePagoPa, sendListaJsonFatturePagoPa } from '../../api/apiPagoPa/fatturazionePA/api';
 import CloseIcon from '@mui/icons-material/Close';
 import { manageError } from '../../api/api';
 import RowJsonSap from './rowPopJson';
-import { maxHeight } from '@mui/system';
+
 
 
 const style = {
@@ -18,7 +18,8 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 1500,
+    width: '70%',
+    height:'80%',
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
@@ -57,6 +58,7 @@ const ModalJsonSap = ({open,setOpen}) => {
     useEffect(()=>{
         if(open || tipologia !== 'Tutte'){
             getLista(tipologia);
+            setSelected([]);
         }
     },[open,tipologia]);
 
@@ -116,9 +118,14 @@ const ModalJsonSap = ({open,setOpen}) => {
         await invioListaJsonFatturePagoPa(token,profilo.nonce,selected).then((res)=>{
 
          
-            console.log({rea:res.data});
+            setOpen(false);
+            setSelected([]);
+            setTipologia('Tutte');
           
         }).catch((err)=>{
+            setOpen(false);
+            setSelected([]);
+            setTipologia('Tutte');
             manageError(err, dispatchMainState);
         });
       
@@ -127,6 +134,7 @@ const ModalJsonSap = ({open,setOpen}) => {
     const handleClose = () => {
         setTipologia('Tutte');
         setOpen(false);
+        setSelected([]);
     };
 
     return (
@@ -150,7 +158,7 @@ const ModalJsonSap = ({open,setOpen}) => {
                         </div>
                     </div>
                     <div className='d-flex  mt-5'>
-                        <Box sx={{width:'50%'}}  >
+                        <Box sx={{width:'250px'}}  >
                             <FormControl
                                 fullWidth
                                 size="medium"
@@ -180,44 +188,40 @@ const ModalJsonSap = ({open,setOpen}) => {
                         </Box>   
                     </div>
                     <div>
-                        <Box sx={{ backgroundColor:'#F8F8F8', padding:'20px',marginTop:'40px',width:'95%'}}>
-                            <div className='d-flex justify-content-center'>
-                                <Typography  variant="h6" gutterBottom component="div">
-                                    Fatture
-                                </Typography>
-                            </div>
-                            <Box
-                                sx={{
-                                    overflowY: "auto",
-                                    whiteSpace: "nowrap",
-                                    maxHeight: "500px"
-                                }}
-                            >
-                                <Table  aria-label="purchases">
-                                    <TableHead sx={{position: "sticky", top:'0',zIndex:"2",backgroundColor: "#E3E6E9"}}>
-                                        <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
-                                            <TableCell sx={{ marginLeft:"16px"}} ></TableCell>
-                                            <TableCell sx={{ marginLeft:"16px"}} ></TableCell>
-                                            <TableCell align='center' sx={{ marginLeft:"16px"}} >Tipologia Fattura</TableCell>
-                                            <TableCell align='center' sx={{ marginLeft:"16px"}}>Numero Fatture</TableCell>
-                                            <TableCell align='center' sx={{ marginLeft:"16px"}}>Anno</TableCell>
-                                            <TableCell align='center' sx={{ marginLeft:"16px"}}>Mese</TableCell>
-                                            <TableCell align='center' sx={{ marginLeft:"16px"}}>Importo imponibile</TableCell>
-                                        </TableRow>
-                                    </TableHead>
+                        <Box
+                            sx={{
+                                overflowY: "auto",
+                                whiteSpace: "nowrap",
+                                backgroundColor:'#F8F8F8',
+                                height:'500px',
+                                marginY:'5%'
+                            }}
+                        >
+                            <Table  aria-label="purchases">
+                                <TableHead sx={{position: "sticky", top:'0',zIndex:"2",backgroundColor: "#E3E6E9"}}>
+                                    <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
+                                        <TableCell sx={{ marginLeft:"16px"}} ></TableCell>
+                                        <TableCell sx={{ marginLeft:"16px"}} ></TableCell>
+                                        <TableCell align='center' sx={{ marginLeft:"16px"}} >Tipologia Fattura</TableCell>
+                                        <TableCell align='center' sx={{ marginLeft:"16px"}}>Numero Fatture</TableCell>
+                                        <TableCell align='center' sx={{ marginLeft:"16px"}}>Anno</TableCell>
+                                        <TableCell align='center' sx={{ marginLeft:"16px"}}>Mese</TableCell>
+                                        <TableCell align='center' sx={{ marginLeft:"16px"}}>Importo imponibile</TableCell>
+                                    </TableRow>
+                                </TableHead>
                                
-                                    {listaFatture.map((el) =>{
+                                {listaFatture.map((el) =>{
                                    
-                                        return(
+                                    return(
                                           
-                                            <RowJsonSap row={el} setSelected={setSelected} selected={selected} apiDetail={getDetailSingleRow} lista={listaFatture}></RowJsonSap>
+                                        <RowJsonSap row={el} setSelected={setSelected} selected={selected} apiDetail={getDetailSingleRow} lista={listaFatture}></RowJsonSap>
                                            
-                                        );
-                                    } )}
+                                    );
+                                } )}
                               
-                                </Table>
-                            </Box>
+                            </Table>
                         </Box>
+                       
                     </div>
                     <div className='container_buttons_modal d-flex justify-content-center mt-5'>
                         <Button  

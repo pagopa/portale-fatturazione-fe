@@ -34,7 +34,7 @@ const RowJsonSap = ({row,setSelected,selected,apiDetail,lista}) => {
         }else{
             setDetailsSingleRow([]);
         }
-
+        
 
     },[open]);
 
@@ -48,9 +48,19 @@ const RowJsonSap = ({row,setSelected,selected,apiDetail,lista}) => {
         console.log('ciao');
     };
 
-    const isSelected = lista.find(el => (el.annoRiferimento === row.annoRiferimento) );
+    const isSelected = selected.some(el =>{
+        const result = el.annoRiferimento === row.annoRiferimento &&
+             el.meseRiferimento === row.meseRiferimento &&
+              el.tipologiaFattura === row.tipologiaFattura;
 
- 
+        return result;
+    });
+
+    const isEqual = (obj1, obj2) => 
+        Object.keys(obj1).length === Object.keys(obj2).length &&
+        Object.keys(obj1).every(key => obj1[key] === obj2[key]);
+
+    console.log({isSelected,selected});
     return(
         
         <TableBody sx={{minHeight:"100px"}}>
@@ -59,14 +69,22 @@ const RowJsonSap = ({row,setSelected,selected,apiDetail,lista}) => {
                     <Checkbox
                         
                         color="primary"
-                        indeterminate={false}
-                        checked={false}
+                        checked={isSelected}
                         disabled={false}
                         onChange={()=>{
-                            setSelected(prev => ([...prev,{ 
-                                annoRiferimento: row.annoRiferimento,
-                                meseRiferimento: row.meseRiferimento,
-                                tipologiaFattura: row.tipologiaFattura}]));
+                            if(!isSelected){
+                                setSelected(prev => ([...prev,{ 
+                                    annoRiferimento: row.annoRiferimento,
+                                    meseRiferimento: row.meseRiferimento,
+                                    tipologiaFattura: row.tipologiaFattura}]));
+                            }else{
+                                const deleteEl = selected.filter(obj => !isEqual(obj, { 
+                                    annoRiferimento: row.annoRiferimento,
+                                    meseRiferimento: row.meseRiferimento,
+                                    tipologiaFattura: row.tipologiaFattura}));
+                                console.log({deleteEl, row});
+                                setSelected(deleteEl);
+                            }
                         }}
                         inputProps={{
                             'aria-label': 'select all desserts',
@@ -100,7 +118,7 @@ const RowJsonSap = ({row,setSelected,selected,apiDetail,lista}) => {
                 Dettaglio 
                                 </Typography>
                                 <Table size="small" aria-label="purchases">
-                                    <div
+                                    <Box
                                         style={{
                                             overflowY: "auto",
                                             maxHeight: "250px",
@@ -135,7 +153,7 @@ const RowJsonSap = ({row,setSelected,selected,apiDetail,lista}) => {
                                             ))
                                             }
                                         </TableBody>
-                                    </div>
+                                    </Box>
                                 </Table>
                             </Box>
                         }
