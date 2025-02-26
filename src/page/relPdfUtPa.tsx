@@ -4,7 +4,7 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { Rel, RelPagePdfProps} from "../types/typeRel";
 import { Button, Typography } from "@mui/material";
 import { useNavigate } from 'react-router';
-import {manageError } from '../api/api';
+import {manageError, manageErrorDownload } from '../api/api';
 import { useContext, useEffect, useRef, useState} from 'react';
 import TextDettaglioPdf from '../components/commessaPdf/textDettaglioPdf';
 import { ResponseDownloadPdf } from '../types/typeModuloCommessaInserimento';
@@ -126,9 +126,8 @@ const RelPdfPage : React.FC = () =>{
                 a.click();
                 setShowDownloading(false);
                 document.body.removeChild(a);*/
-                
-            }).catch((err)=>{
-                manageError(err,dispatchMainState);
+            }).catch(()=>{
+                manageErrorDownload('404',dispatchMainState);
                 setShowDownloading(false);
             });
         }
