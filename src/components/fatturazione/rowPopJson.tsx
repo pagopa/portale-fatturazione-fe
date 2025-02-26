@@ -83,7 +83,7 @@ const RowJsonSap = ({row,setSelected,selected,apiDetail,lista}) => {
                 <TableCell align='center' sx={{color:'#0D6EFD',fontWeight: 'bold'}}>{row.tipologiaFattura}</TableCell>
                 <TableCell align='center'>{row.numeroFatture}</TableCell>
                 <TableCell align='center' >{row.annoRiferimento}</TableCell>
-                <TableCell align='center' >{month[row.meseRiferimento + 1]}</TableCell>
+                <TableCell align='center' >{month[row.meseRiferimento - 1]}</TableCell>
                 <TableCell align='right' >{row.importo.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</TableCell>
             </TableRow>
            
@@ -123,7 +123,7 @@ const RowJsonSap = ({row,setSelected,selected,apiDetail,lista}) => {
                                                         {obj.tipologiaFattura}
                                                     </TableCell>
                                                     <TableCell  component="th" scope="row"> {obj.annoRiferimento} </TableCell>
-                                                    <TableCell align="center" >{month[obj.meseRiferimento+1]}</TableCell>
+                                                    <TableCell align="center" >{month[obj.meseRiferimento-1]}</TableCell>
                                                     <TableCell>{new Date(obj.dataFattura).toLocaleString().split(",")[0]||''}</TableCell>
                                                     <TableCell  align="right"component="th" scope="row">
                                                         {obj.importo.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
