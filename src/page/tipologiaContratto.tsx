@@ -20,6 +20,21 @@ export interface BodyContratto {
     tipologiaContratto:number|null
 }
 
+export interface Root {
+    count: number
+    contratti: Contratti[]
+}
+  
+export interface Contratti {
+    idEnte: string
+    ragioneSociale: string
+    ultimaModificaContratto: string
+    tipoContratto: number
+    descrizioneTipoContratto: string
+    idContratto: string
+    dataInserimento?: string
+}
+
 const PageTipologiaContratto :React.FC = () =>{
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState} = globalContextObj;
@@ -28,7 +43,7 @@ const PageTipologiaContratto :React.FC = () =>{
     const profilo =  mainState.profilo;
 
     const [contratti, setContratti] = useState([{id:0,descrizione:"Tutte"},{id:2,descrizione:"PAC"},{id:1,descrizione:"PAL"}]);
-    const [gridData, setGridData] = useState<GridElementListaFatturazione[]>([]);
+    const [gridData, setGridData] = useState<Contratti[]>([]);
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
     const [getListaLoading, setGetListaLoading] = useState(false);
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
@@ -180,7 +195,7 @@ const PageTipologiaContratto :React.FC = () =>{
             (response)=>{
                 let fileName = `Lista tipologia contratto.xlsx`;
                 if(gridData.length === 1){
-                    fileName = `Tipologia contratto / ${gridData[0]?.ragioneSociale}.xlsx`;
+                    fileName = `Tipologia contratto/${gridData[0]?.ragioneSociale}.xlsx`;
                 }
                 setShowLoading(true);
                 saveAs(response,fileName);

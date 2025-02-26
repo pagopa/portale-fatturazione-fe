@@ -1,9 +1,13 @@
-import { Card, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip } from "@mui/material";
+import { Card, Checkbox, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { GridElementListaPsp } from "../../../types/typeAngraficaPsp";
 import { Rel } from "../../../types/typeRel";
 import { NotificheList } from "../../../types/typeReportDettaglio";
 import RowContratto from "./gridCustomBase/rowTipologiaContratto";
+import RowWhiteList from "./gridCustomBase/rowWhiteList";
+import EnhancedTableCustom from "./gridCustomBase/enhancedTabalToolbarCustom";
+import { SetStateAction } from "react";
+import { Whitelist } from "../../../page/whiteList";
 interface GridCustomProps {
     elements:NotificheList[]|Rel[]|GridElementListaPsp[]|any[],
     changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
@@ -15,12 +19,49 @@ interface GridCustomProps {
     nameParameterApi:string,  // elemnto/i che servono alla chiamata get di dettaglio , in questo caso bisogna passare questi pametro/o nel MainState ma non posso visulizzarli nella grid
     apiGet?:(el:any)=>void, 
     disabled:boolean,
-    widthCustomSize:string
+    widthCustomSize:string,
+    setOpenModalDelete?:React.Dispatch<SetStateAction<boolean>>,
+    setOpenModalAdd?:React.Dispatch<SetStateAction<boolean>>,
+    selected?:number[],
+    setSelected?:React.Dispatch<SetStateAction<number[]>>,
+    buttons?:{
+        stringIcon:string,
+        icon:React.ReactNode,
+        action:string
+    }[]
 }
 
-const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, nameParameterApi, apiGet, disabled, widthCustomSize}) =>{
+const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, nameParameterApi, apiGet, disabled, widthCustomSize, setOpenModalDelete,setOpenModalAdd,buttons, selected, setSelected }) =>{
 
+    /*
+    const [stateHeaderCheckbox, setStateHeaderChekbox] = useState({checked:false,disabled:true});
 
+    useEffect(()=>{
+        if(elements.length > 0){
+            setStateHeaderChekbox({checked:false,disabled:false});
+        }else{
+            setStateHeaderChekbox({checked:false,disabled:true});
+        }
+    },[elements]);
+
+    useEffect(()=>{
+        if(selected?.length === 0){
+            setStateHeaderChekbox({checked:false,disabled:false});
+        }
+
+    },[selected]);
+   
+
+    const clickOnCheckBoxHeader = () => {
+        setStateHeaderChekbox(prev => ({checked:!prev.checked,disabled:prev.disabled}));
+        if(stateHeaderCheckbox.checked && setSelected){
+            setSelected([]);
+        }else if(setSelected){
+            setSelected(prev => ([...prev,...elements.filter(el => el.cancella).map(el => el.idWhite)]));
+        }
+        
+    };
+*/
     const handleClickOnGrid = (element) =>{
         if(apiGet && nameParameterApi === 'idContratto'){
             const newDetailRel = {
@@ -40,53 +81,83 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
             apiGet(newDetailRel);
         }
     };
+
+    const checkIfChecked = (id:any) => {
+        if(selected){
+            return selected.includes(id);
+        }
+       
+    };
+
+    /*
+     <TableRow>
+                                {headerNames.map((el)=>{
+                                    if(el === "checkbox"){
+                                        return(
+                                            <td key={Math.random()}>
+                                                <Checkbox  onClick={clickOnCheckBoxHeader} disabled={stateHeaderCheckbox.disabled} checked={stateHeaderCheckbox.checked} />
+                                            </td>   
+                                        );
+                                    }else{
+                                        return (
+                                            <TableCell key={Math.random()}>
+                                                {el} 
+                                            </TableCell>
+                                        );
+                                    }
+                                   
+                                })}
+                               
+                            </TableRow>
+
+                            <RowWhiteList key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} stateHeaderCheckbox={stateHeaderCheckbox} setSelected={setSelected} selected={selected||[]}  checkIfChecked={checkIfChecked} ></RowWhiteList>
+     */
+       
    
     return (
         <div>
+            {nameParameterApi === "idWhite" && <EnhancedTableCustom  setOpenModal={setOpenModalDelete} setOpenModalAdd={setOpenModalAdd} selected={selected||[]} buttons={buttons} ></EnhancedTableCustom>}
             <div style={{overflowX:'auto'}}>
                 <Card sx={{width: widthCustomSize}}  >
                     <Table >
                         <TableHead sx={{backgroundColor:'#f2f2f2'}}>
                             <TableRow>
                                 {headerNames.map((el)=>{
+                                  
                                     return (
                                         <TableCell key={Math.random()}>
                                             {el} 
                                         </TableCell>
                                     );
-                                })}
+                                })
+                                   
+                                }
+                               
                             </TableRow>
                         </TableHead>
                         {elements.length === 0 ?
                             <TableBody key={Math.random()} style={{height: '50px'}}>
                             </TableBody> :
                             <TableBody sx={{marginLeft:'20px'}}>
-                                {elements.map((element:Rel|NotificheList|GridElementListaPsp ) =>{
+                                {elements.map((element:Rel|NotificheList|GridElementListaPsp|Whitelist ) =>{
                                     // tolgo da ogni oggetto la prima chiave valore  perchè il cliente non vuole vedere es. l'id ma serve per la chiamata get di dettaglio 
-                                    const sliced = Object.fromEntries(
+                                    let sliced = Object.fromEntries(
                                         Object.entries(element).slice(1)
                                     );
-                                    if(sliced?.tipologiaFattura === 'ASSEVERAZIONE'){
-                                        return (
-                                            <TableRow key={Math.random()}>
-                                                {
-                                                    Object.values(sliced).map((value:string, i:number)=>{
-                                                        const cssFirstColum = i === 0 ? {color:'#606060', fontWeight: 'bold', cursor: 'pointer'} : null;
-                                                        return (
-                                                            <TableCell
-                                                                key={Math.random()}
-                                                                sx={cssFirstColum} 
-                                                            >
-                                                                {value}
-                                                            </TableCell>
-                                                        );
-                                                    })
-                                                }
-                                            </TableRow>
+                                    if(nameParameterApi === 'idWhite'){
+                                        sliced = Object.fromEntries(
+                                            Object.entries(element).slice(1, -1)
                                         );
-                                    }else if(nameParameterApi=== 'idContratto'){
+                                    }
+                                   
+                                    if(nameParameterApi === 'idContratto'){
                                         return (
                                             <RowContratto key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} ></RowContratto>
+                                        );
+                                    }else if(nameParameterApi === 'idWhite'){
+                                        return (
+                                            <RowWhiteList key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} setSelected={setSelected} selected={selected||[]}  checkIfChecked={checkIfChecked} ></RowWhiteList>
+                                            
                                         );
                                     }else{
                                         return (

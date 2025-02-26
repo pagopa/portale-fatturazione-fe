@@ -20,3 +20,54 @@ export const tipoNotifica = [
     {"Analogico RS Nazionali": 4}, 
     {"Analogico RS Internazionali": 5}, 
     {"Analogico 890":6}];
+
+export  const mesiDescNome = [
+    {
+        "descrizione": "Gennaio",
+        "mese": 1
+    },
+    {
+        "descrizione": "Febbraio",
+        "mese": 2
+    },
+    {
+        "descrizione": "Marzo",
+        "mese": 3
+    },
+    {
+        "descrizione": "Aprile",
+        "mese": 4
+    },
+    {
+        "descrizione": "Maggio",
+        "mese": 5
+    },
+    {
+        "descrizione": "Giugno",
+        "mese": 6
+    },
+    {
+        "descrizione": "Luglio",
+        "mese": 7
+    },
+    {
+        "descrizione": "Agosto",
+        "mese": 8
+    },
+    {
+        "descrizione": "Settembre",
+        "mese": 9
+    },
+    {
+        "descrizione": "Ottobre",
+        "mese": 10
+    },
+    {
+        "descrizione": "Novembre",
+        "mese": 11
+    },
+    {
+        "descrizione": "Dicembre",
+        "mese": 12
+    }
+];

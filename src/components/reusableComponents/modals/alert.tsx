@@ -58,7 +58,7 @@ const BasicAlerts:React.FC = () => {
         colorAlert = "info";
     }else if(mainState.apiError === "Network Error"|| mainState.apiError === 'ERRORE_MANUALE' ){
         colorAlert = 'warning';
-    }else if(mainState.apiError === 410 || errorAlert.error === 410){
+    }else if(mainState.apiError === 410 || mainState.apiError === 409 || errorAlert.error === 410){
         colorAlert = 'warning';
     }else if((mainState.apiError||'').slice(0,2) === 'NO'){
         colorAlert = 'error';

@@ -2,10 +2,12 @@ import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { Box } from "@mui/system";
 import { Dispatch, SetStateAction } from "react";
 import { BodyRel } from "../../../types/typeRel";
+import { BodyLista } from "../../../page/whiteList";
+import { BodyWhite } from "../../../api/apiPagoPa/whiteListPA/whiteList";
 interface SelecTipologiaProps{
     value:string|null,
     types:string[],
-    setBody:Dispatch<SetStateAction<BodyRel>>,
+    setBody:Dispatch<SetStateAction<BodyRel>>|Dispatch<SetStateAction<BodyLista>>|Dispatch<SetStateAction<BodyWhite>>,
     setValue:Dispatch<SetStateAction<string>>,
     clearOnChangeFilter:any
 }
@@ -20,14 +22,11 @@ const SelectTipologiaFattura : React.FC<SelecTipologiaProps> = ({setValue,value,
                 size="medium"
             >
                 <InputLabel
-                    id="sea"
                 >
                                 Tipologia Fattura  
                 </InputLabel>
                 <Select
-                    id="sea"
                     label='Seleziona Prodotto'
-                    labelId="search-by-label"
                     onChange={(e) =>{
                         if(e.target.value){
                             setValue(e.target.value);

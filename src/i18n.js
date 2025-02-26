@@ -13,6 +13,7 @@ i18n.use(Backend)
                     errori:{
                         401:"Utente non autenticato. Effettuare nuovamente l'accesso",
                         403:"Utente non autenticato. Effettuare nuovamente l'accesso",
+                        409:"L'operazione non è andata a buon fine",
                         419:"Sessione scaduta. Effettuare nuovamente l'accesso",
                         500:"L'operazione non è andata a buon fine. Si prega di riprovare",
                         400:"L'operazione non è andata a buon fine. Contattare l'assistenza",// mauro messaggio 
@@ -24,6 +25,7 @@ i18n.use(Backend)
                         'PRESA':"Azione presa in carico",
                         'FATTURA_SOSPESA_RIPRISTINATA':"Operazione andata a buon fine",
                         'CAMBIO_TIPOLOGIA_CONTRATTO':"Operazione andata a buon fine",
+                        'INSER_DELETE_WHITE_LIST':"Operazione andata a buon fine",
                         'PRESA_IN_CARICO_DOCUMENTO':"Azione presa in carico. Vai ai messaggi per visualizzare lo stato di elaborazione",
                         'ERRORE_MANUALE':'Manuale momentaneamente non disponibile'
                     }

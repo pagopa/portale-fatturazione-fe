@@ -22,6 +22,7 @@ import { PathPf } from '../../types/enum';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 
 
 const SideNavSend : React.FC = () => {
@@ -33,6 +34,7 @@ const SideNavSend : React.FC = () => {
 
     const [selectedIndex, setSelectedIndex] = useState<number | null>(0);
     const [open, setOpen] = useState(false);
+    const [open2, setOpen2] = useState(false);
     
     const handleListItemClick = async() => {
         if(((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)|| (mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA))){
@@ -96,7 +98,14 @@ const SideNavSend : React.FC = () => {
         }else{
             navigate(PathPf.TIPOLOGIA_CONTRATTO);
         }
-        
+    };
+
+    const handleListItemClickListDocEmessi = () =>{
+        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.FATTURAZIONE}}));
+        }else{
+            navigate(PathPf.LISTA_DOC_EMESSI);
+        }
     };
     
     const currentLocation = location.pathname;
@@ -128,6 +137,10 @@ const SideNavSend : React.FC = () => {
             setSelectedIndex(7);
         }else if(currentLocation === PathPf.TIPOLOGIA_CONTRATTO){
             setSelectedIndex(8);
+            setOpen(true);
+        }else if(currentLocation === PathPf.LISTA_DOC_EMESSI){
+            setSelectedIndex(9);
+            setOpen2(true);
         }
     },[currentLocation]);
 
@@ -139,7 +152,7 @@ const SideNavSend : React.FC = () => {
         }}
         >
             <List component="nav" aria-label="main piattaforma-notifiche sender">
-                <><ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick()}>
+                <ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick()}>
                     <ListItemIcon>
                         <DnsIcon fontSize="inherit"></DnsIcon>
                     </ListItemIcon>
@@ -161,7 +174,7 @@ const SideNavSend : React.FC = () => {
                         <ViewModuleIcon fontSize="inherit" />
                     </ListItemIcon>
                     <ListItemText primary="Modulo commessa" />
-                </ListItemButton></>
+                </ListItemButton>
                 <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClickNotifiche()}>
                     <ListItemIcon>
                         <MarkUnreadChatAltIcon fontSize="inherit" />
@@ -185,7 +198,18 @@ const SideNavSend : React.FC = () => {
                         <ReceiptIcon fontSize="inherit" />
                     </ListItemIcon>
                     <ListItemText primary="Documenti emessi" />
-                </ListItemButton>  
+                    {open2 ? <ExpandLess onClick={()=> setOpen2(false)} /> : <ExpandMore onClick={()=> setOpen2(true)} />}
+                </ListItemButton> 
+                <Collapse in={open2} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                        <ListItemButton selected={selectedIndex === 9} sx={{ pl: 4 }} onClick={() => handleListItemClickListDocEmessi()}>
+                            <ListItemIcon>
+                                <FormatListBulletedIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Lista" />
+                        </ListItemButton>
+                    </List>
+                </Collapse> 
                 <ListItemButton selected={selectedIndex === 7} onClick={() => handleListItemClickAccertamenti()}>
                     <ListItemIcon>
                         <ManageSearchIcon fontSize="inherit"></ManageSearchIcon>

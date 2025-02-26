@@ -32,9 +32,6 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,m
 
     const [value, setValue] = React.useState('');
   
-  
-  
-
     const onButtonInvia = async() =>{
         // se l'utente ha selezionato il button invia a sap 
         handleClose();
@@ -44,27 +41,22 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,m
                     getListaFatture(bodyFatturazioneDownload);
                 }).catch(((err)=>{
                     manageError(err,dispatchMainState);
-              
                 }));
         }
         if(open.who === 1){
             await fattureResetSapPa(token, profilo.nonce, {annoRiferimento:anno,meseRiferimento:mese,tipologiaFattura:value} )
                 .then(()=>{
-                   
                     getListaFatture(bodyFatturazioneDownload);
                 }).catch(((err)=>{
                     manageError(err,dispatchMainState);
                 }));
         }
-      
     };
    
     const handleClose = () => {
         setValue('');
         setOpen((prev)=>({...prev,...{show:false}}));
     };
-
-   
 
     return (
         <div>
@@ -76,16 +68,12 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,m
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                  
                     <div className='d-flex justify-content-between'>
-                       
                         <div className='d-flex align-items-center'>
                             <Typography id="modal-modal-title" variant="h6" >
                                 {open.who === 0 ? "Seleziona le fatture da inviare" : "Seleziona le fatture da rielaborare"}
                             </Typography>
                         </div>
-                            
-                       
                         <div>
                             <Button variant="contained"  onClick={()=> handleClose() }> X </Button>
                         </div>
@@ -105,13 +93,10 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,m
                                     id="tipologiaFatturaSap"
                                     label='Tipologia Fattura'
                                     labelId="search-by-label"
-                                    onChange={(e) =>{
-                                        setValue(e.target.value);
-                                    }}     
+                                    onChange={(e) =>setValue(e.target.value)}     
                                     value={value}       
                                 >
                                     {responseTipologiaSap.filter(el => el.azione === open.who).map((el) =>{ 
-                                    
                                         return (            
                                             <MenuItem
                                                 key={Math.random()}
@@ -120,15 +105,12 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,m
                                                 {el.tipologiaFattura}
                                             </MenuItem>              
                                         );
-                                    } )}
-                                    
+                                    } )}   
                                 </Select>
                             </FormControl>
                         </Box>   
                     </div>
                     <div>
-                       
-                      
                         <Box sx={{ backgroundColor:'#F8F8F8', padding:'10px',marginTop:'40px',width:'80%'}}>
                             <Typography sx={{marginLeft:"6px"}} variant="h6" gutterBottom component="div">
                                     Fatture
@@ -161,9 +143,7 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,m
                                 </TableBody>
                             </Table>
                         </Box>
-                   
                     </div>
-                   
                     <div className='container_buttons_modal d-flex justify-content-center mt-5'>
                         <Button  
                             disabled={value === ''}
@@ -171,9 +151,7 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,m
                             onClick={()=> onButtonInvia()}
                         >{open.who === 0 ? "INVIA" : "RESET"}</Button>
                     </div>
-                    
                 </Box>
-                
             </Modal>
         </div>
     );

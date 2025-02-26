@@ -513,8 +513,16 @@ const Fatturazione : React.FC = () =>{
                                     <Button  onClick={()=> setOpenModalJson(true)} disabled={disableButtonSap}  variant="outlined"><IosShareIcon></IosShareIcon></Button>
                                 </span>
                             </Tooltip>
-                            <Button sx={{width:'216px'}} onClick={()=> onButtonSap(0)} disabled={disableButtonSap}  variant="outlined">Invia a SAP <PreviewIcon sx={{marginLeft:'20px'}}></PreviewIcon></Button>
-                            <Button sx={{width:'216px',marginRight:'10px'}} onClick={()=> onButtonSap(1)} disabled={disableButtonReset} color="error"  variant="outlined">Reset <RestartAltIcon sx={{marginLeft:'20px'}}></RestartAltIcon></Button>
+                            <Tooltip  className="mx-2" title="Invia a SAP">
+                                <span>
+                                    <Button onClick={()=> onButtonSap(0)} disabled={disableButtonSap}  variant="outlined">  <PreviewIcon></PreviewIcon></Button>
+                                </span>
+                            </Tooltip>
+                            <Tooltip  className="mx-2" title="Reset">
+                                <span>
+                                    <Button  onClick={()=> onButtonSap(1)} disabled={disableButtonReset} color="error"  variant="outlined"><RestartAltIcon></RestartAltIcon></Button>
+                                </span>
+                            </Tooltip>
                         </div>
                     </div>
                 </div>
