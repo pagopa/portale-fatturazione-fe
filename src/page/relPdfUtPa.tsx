@@ -87,7 +87,7 @@ const RelPdfPage : React.FC = () =>{
         if(enti){
             await getRelExel(token, profilo.nonce, mainState.relSelected.id).then((res)=>{
                 //saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio/ ${ rel?.ragioneSociale} /${rel?.mese}/${rel?.anno}.xlsx` );
-                //setShowDownloading(false);
+                setShowDownloading(false);
                 
                 const blob = new Blob([res.data], { type: 'text/csv' });
                 const url = window.URL.createObjectURL(blob);
@@ -106,6 +106,8 @@ const RelPdfPage : React.FC = () =>{
             });
         }else{
             await getRelExelPagoPa(token, profilo.nonce, mainState.relSelected.id).then((res)=>{
+               
+                setShowDownloading(false);
                 const link = document.createElement("a");
                 link.href = res.data;
                 link.download = `Rel/Report di dettaglio/${ rel?.ragioneSociale}/${rel?.mese}/${rel?.anno}.csv`;
