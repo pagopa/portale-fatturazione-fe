@@ -87,8 +87,6 @@ const RelPdfPage : React.FC = () =>{
         if(enti){
             await getRelExel(token, profilo.nonce, mainState.relSelected.id).then((res)=>{
                 //saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio/ ${ rel?.ragioneSociale} /${rel?.mese}/${rel?.anno}.xlsx` );
-                setShowDownloading(false);
-                
                 const blob = new Blob([res.data], { type: 'text/csv' });
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
