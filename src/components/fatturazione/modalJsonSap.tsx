@@ -52,6 +52,8 @@ const ModalJsonSap = ({open,setOpen}) => {
     const [selected,setSelected] = useState<SelectedJsonSap[]>([]);
     const [tipologia, setTipologia] = useState('Tutte');
 
+    console.log({selected});
+
     useEffect(()=>{
         if(open || tipologia !== 'Tutte'){
             getLista(tipologia);
@@ -109,8 +111,6 @@ const ModalJsonSap = ({open,setOpen}) => {
         });
     };
 
-
-    console.log({tipologieFatture});
     const onButtonInvia = async() =>{
         // se l'utente ha selezionato il button invia a sap 
         await invioListaJsonFatturePagoPa(token,profilo.nonce,selected).then((res)=>{

@@ -48,7 +48,7 @@ const RowJsonSap = ({row,setSelected,selected,apiDetail,lista}) => {
         console.log('ciao');
     };
 
-    const isSelected = (id: number) => selected.indexOf(id) !== -1;
+    const isSelected = lista.find(el => (el.annoRiferimento === row.annoRiferimento) );
 
  
     return(
@@ -63,7 +63,10 @@ const RowJsonSap = ({row,setSelected,selected,apiDetail,lista}) => {
                         checked={false}
                         disabled={false}
                         onChange={()=>{
-                            console.log('prova');
+                            setSelected(prev => ([...prev,{ 
+                                annoRiferimento: row.annoRiferimento,
+                                meseRiferimento: row.meseRiferimento,
+                                tipologiaFattura: row.tipologiaFattura}]));
                         }}
                         inputProps={{
                             'aria-label': 'select all desserts',
