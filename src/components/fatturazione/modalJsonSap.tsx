@@ -10,6 +10,7 @@ import { getListaJsonFatturePagoPa, invioListaJsonFatturePagoPa, sendListaJsonFa
 import CloseIcon from '@mui/icons-material/Close';
 import { manageError } from '../../api/api';
 import RowJsonSap from './rowPopJson';
+import { maxHeight } from '@mui/system';
 
 
 const style = {
@@ -189,7 +190,7 @@ const ModalJsonSap = ({open,setOpen}) => {
                                 sx={{
                                     overflowY: "auto",
                                     whiteSpace: "nowrap",
-                                    maxHeight: "600px"
+                                    maxHeight: "500px"
                                 }}
                             >
                                 <Table  aria-label="purchases">
