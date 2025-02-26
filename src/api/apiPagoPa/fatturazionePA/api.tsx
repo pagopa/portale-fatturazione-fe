@@ -143,6 +143,16 @@ export const getListaJsonFatturePagoPa = async (token:string, nonce:string) => {
     return response;
 };
 
+export const invioListaJsonFatturePagoPa = async (token:string, nonce:string,body:{annoRiferimento: number,meseRiferimento: number,tipologiaFattura: string}[]) => {
+    const response =  await axios.put(`${url}/api/fatture/invio/sap/multiplo?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }}
+    );
+    return response;
+};
+
 
 
 

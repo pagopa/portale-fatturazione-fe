@@ -6,7 +6,7 @@ import Modal from '@mui/material/Modal';
 import { FormControl, InputLabel, MenuItem, Select, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import { GlobalContext } from '../../store/context/globalContext';
-import { getListaJsonFatturePagoPa, sendListaJsonFatturePagoPa } from '../../api/apiPagoPa/fatturazionePA/api';
+import { getListaJsonFatturePagoPa, invioListaJsonFatturePagoPa, sendListaJsonFatturePagoPa } from '../../api/apiPagoPa/fatturazionePA/api';
 import CloseIcon from '@mui/icons-material/Close';
 import { manageError } from '../../api/api';
 import RowJsonSap from './rowPopJson';
@@ -108,10 +108,19 @@ const ModalJsonSap = ({open,setOpen}) => {
         });
     };
 
+
     console.log({tipologieFatture});
     const onButtonInvia = async() =>{
         // se l'utente ha selezionato il button invia a sap 
-        console.log('ciao');
+        await invioListaJsonFatturePagoPa(token,profilo.nonce,selected).then((res)=>{
+
+         
+            console.log({rea:res.data});
+          
+        }).catch((err)=>{
+            manageError(err, dispatchMainState);
+        });
+      
     };
    
     const handleClose = () => {
@@ -124,7 +133,6 @@ const ModalJsonSap = ({open,setOpen}) => {
         
             <Modal
                 open={open}
-                onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
@@ -171,42 +179,50 @@ const ModalJsonSap = ({open,setOpen}) => {
                         </Box>   
                     </div>
                     <div>
-                        <Box sx={{ backgroundColor:'#F8F8F8', padding:'20px',marginTop:'40px',width:'80%'}}>
+                        <Box sx={{ backgroundColor:'#F8F8F8', padding:'20px',marginTop:'40px',width:'95%'}}>
                             <div className='d-flex justify-content-center'>
                                 <Typography  variant="h6" gutterBottom component="div">
                                     Fatture
                                 </Typography>
                             </div>
-                            
-                            <Table size="small" aria-label="purchases">
-                                <TableHead>
-                                    <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
-                                        <TableCell sx={{ marginLeft:"16px"}} ></TableCell>
-                                        <TableCell sx={{ marginLeft:"16px"}} ></TableCell>
-                                        <TableCell align='center' sx={{ marginLeft:"16px"}} >Tipologia Fattura</TableCell>
-                                        <TableCell align='center' sx={{ marginLeft:"16px"}}>Numero Fatture</TableCell>
-                                        <TableCell align='center' sx={{ marginLeft:"16px"}}>Anno</TableCell>
-                                        <TableCell align='center' sx={{ marginLeft:"16px"}}>Mese</TableCell>
-                                        <TableCell align='center' sx={{ marginLeft:"16px"}}>Importo imponibile</TableCell>
-                                    </TableRow>
-                                </TableHead>
+                            <Box
+                                sx={{
+                                    overflowY: "auto",
+                                    whiteSpace: "nowrap",
+                                    maxHeight: "600px"
+                                }}
+                            >
+                                <Table  aria-label="purchases">
+                                    <TableHead sx={{position: "sticky", top:'0',zIndex:"2",backgroundColor: "#E3E6E9"}}>
+                                        <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
+                                            <TableCell sx={{ marginLeft:"16px"}} ></TableCell>
+                                            <TableCell sx={{ marginLeft:"16px"}} ></TableCell>
+                                            <TableCell align='center' sx={{ marginLeft:"16px"}} >Tipologia Fattura</TableCell>
+                                            <TableCell align='center' sx={{ marginLeft:"16px"}}>Numero Fatture</TableCell>
+                                            <TableCell align='center' sx={{ marginLeft:"16px"}}>Anno</TableCell>
+                                            <TableCell align='center' sx={{ marginLeft:"16px"}}>Mese</TableCell>
+                                            <TableCell align='center' sx={{ marginLeft:"16px"}}>Importo imponibile</TableCell>
+                                        </TableRow>
+                                    </TableHead>
                                
-                                {listaFatture.map((el) =>{
+                                    {listaFatture.map((el) =>{
                                    
-                                    return(
+                                        return(
                                           
-                                        <RowJsonSap row={el} setSelected={setSelected} selected={selected} apiDetail={getDetailSingleRow}></RowJsonSap>
+                                            <RowJsonSap row={el} setSelected={setSelected} selected={selected} apiDetail={getDetailSingleRow} lista={listaFatture}></RowJsonSap>
                                            
-                                    );
-                                } )}
+                                        );
+                                    } )}
                               
-                            </Table>
+                                </Table>
+                            </Box>
                         </Box>
                     </div>
                     <div className='container_buttons_modal d-flex justify-content-center mt-5'>
                         <Button  
                             variant='contained'
-                            onClick={()=> onButtonInvia()}
+                            disabled={selected.length < 1}
+                            onClick={onButtonInvia}
                         >INVIA</Button>
                     </div>
                 </Box> 

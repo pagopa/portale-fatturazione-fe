@@ -1,4 +1,4 @@
-import { Box, Checkbox, Chip, Collapse, IconButton, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
+import { Box, Checkbox, Chip, Collapse, IconButton, Skeleton, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -18,7 +18,7 @@ interface DetailsSingleRow
 }
 
 
-const RowJsonSap = ({row,setSelected,selected,apiDetail}) => {
+const RowJsonSap = ({row,setSelected,selected,apiDetail,lista}) => {
 
     
     const [open, setOpen] = useState(false);
@@ -31,9 +31,17 @@ const RowJsonSap = ({row,setSelected,selected,apiDetail}) => {
                 meseRiferimento: row.meseRiferimento,
                 tipologiaFattura:row.tipologiaFattura},
             setDetailsSingleRow);  
+        }else{
+            setDetailsSingleRow([]);
         }
 
+
     },[open]);
+
+    useEffect(()=>{
+        setOpen(false);
+        setDetailsSingleRow([]);
+    },[lista]);
    
   
     const handleClick = ( id: number) => {
@@ -62,7 +70,7 @@ const RowJsonSap = ({row,setSelected,selected,apiDetail}) => {
                         }}
                     />
                 </TableCell>
-                <TableCell sx={{width:'80px'}}>
+                <TableCell >
                     <IconButton
                         sx={{color:'#227AFC'}}
                         aria-label="expand row"
@@ -78,57 +86,56 @@ const RowJsonSap = ({row,setSelected,selected,apiDetail}) => {
                 <TableCell align='center' >{month[row.meseRiferimento + 1]}</TableCell>
                 <TableCell align='right' >{row.importo.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</TableCell>
             </TableRow>
+           
             <TableRow>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0, borderColor:"white" }} colSpan={12}>
+                   
                     <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Box sx={{ margin: 2 , padding:'10px'}}>
-                            <Typography sx={{marginLeft:"6px"}} variant="h6" gutterBottom component="div">
+                        {detailsSingleRow.length < 1 && open ?<Skeleton variant="text" sx={{ fontSize: '1rem',height:'250px' }} /> :
+                            <Box sx={{ margin: 2 , padding:'10px'}}>
+                                <Typography sx={{marginLeft:"6px"}} variant="h6" gutterBottom component="div">
                 Dettaglio 
-                            </Typography>
-                            <Table size="small" aria-label="purchases">
-                                <Box
-                                    sx={{
-                                        overflowY: "auto",
-                                        whiteSpace: "nowrap",
-                                        maxHeight: "600px",
-                                        width:"100%"
-                                    }}
-                                >
-                                    <TableHead sx={{position: "sticky", top:'0',zIndex:"1",backgroundColor: "white"}}>
-                                        <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
-                                            <TableCell sx={{ marginLeft:"16px"}} >Ragione sociale</TableCell>
-                                            <TableCell sx={{ marginLeft:"16px"}} >Tipologia Fattura</TableCell>
-                                            <TableCell sx={{ marginLeft:"16px"}}>Anno</TableCell>
-                                            <TableCell sx={{ marginLeft:"16px"}}>Mese</TableCell>
-                                            <TableCell sx={{ marginLeft:"16px"}}>Data</TableCell>
-                                            <TableCell sx={{ marginLeft:"16px"}}>Importo</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                               
-                                    <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
-                                      
-                                   
-                                        { detailsSingleRow.map((obj) => (
-                                            <TableRow key={Math.random()}>
-                                                <TableCell>{obj.ragioneSociale}</TableCell>
-                                                <TableCell>
-                                                    {obj.tipologiaFattura}
-                                                </TableCell>
-                                                <TableCell  component="th" scope="row"> {obj.annoRiferimento} </TableCell>
-                                                <TableCell align="center" >{obj.meseRiferimento}</TableCell>
-                                                <TableCell>{obj.dataFattura}</TableCell>
-                                                <TableCell component="th" scope="row">
-                                                    {obj.importo.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
-                                                </TableCell>
-                                           
-                                           
+                                </Typography>
+                                <Table size="small" aria-label="purchases">
+                                    <div
+                                        style={{
+                                            overflowY: "auto",
+                                            maxHeight: "250px",
+                                            width: "100%"
+                                        }}
+                                    >
+                                        <TableHead  sx={{position: "sticky", top:'0',zIndex:"1",backgroundColor: "white"}}>
+                                            <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
+                                                <TableCell sx={{ marginLeft:"16px"}} >Ragione sociale</TableCell>
+                                                <TableCell sx={{ marginLeft:"16px"}} >Tipologia Fattura</TableCell>
+                                                <TableCell sx={{ marginLeft:"16px"}}>Anno</TableCell>
+                                                <TableCell sx={{ marginLeft:"16px"}}>Mese</TableCell>
+                                                <TableCell sx={{ marginLeft:"16px"}}>Data</TableCell>
+                                                <TableCell sx={{ marginLeft:"16px"}}>Importo</TableCell>
                                             </TableRow>
-                                        ))
-                                        }
-                                    </TableBody>
-                                </Box>
-                            </Table>
-                        </Box>
+                                        </TableHead>
+                               
+                                        <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
+                                            { detailsSingleRow.map((obj) => (
+                                                <TableRow key={Math.random()}>
+                                                    <TableCell>{obj.ragioneSociale}</TableCell>
+                                                    <TableCell>
+                                                        {obj.tipologiaFattura}
+                                                    </TableCell>
+                                                    <TableCell  component="th" scope="row"> {obj.annoRiferimento} </TableCell>
+                                                    <TableCell align="center" >{month[obj.meseRiferimento+1]}</TableCell>
+                                                    <TableCell>{new Date(obj.dataFattura).toLocaleString().split(",")[0]||''}</TableCell>
+                                                    <TableCell  align="right"component="th" scope="row">
+                                                        {obj.importo.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))
+                                            }
+                                        </TableBody>
+                                    </div>
+                                </Table>
+                            </Box>
+                        }
                     </Collapse>
                 </TableCell>
             </TableRow> 
