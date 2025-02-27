@@ -23,6 +23,7 @@ import { PathPf } from "../types/enum";
 import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
 import IosShareIcon from '@mui/icons-material/IosShare';
 import ModalJsonSap from "../components/fatturazione/modalJsonSap";
+import { useNavigate } from "react-router";
 
 const Fatturazione : React.FC = () =>{
 
@@ -31,6 +32,8 @@ const Fatturazione : React.FC = () =>{
 
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
+
+    const navigate = useNavigate();
 
     const [gridData, setGridData] = useState<FattureObj[]>([]);
     const [arrayYears,setArrayYears] = useState<number[]>([]);
@@ -421,9 +424,7 @@ const Fatturazione : React.FC = () =>{
                                 fullWidth
                                 size="medium"
                             >
-                                <InputLabel
-                                    id="sea"
-                                >
+                                <InputLabel>
                                 Mese   
                                 </InputLabel>
                                 <Select
@@ -510,7 +511,7 @@ const Fatturazione : React.FC = () =>{
                         <div className="d-flex flex-row-reverse">
                             <Tooltip  className="mx-2" title="Invia REL firmate">
                                 <span>
-                                    <Button  onClick={()=> setOpenModalJson(true)}  variant="outlined"><IosShareIcon></IosShareIcon></Button>
+                                    <Button   onClick={()=> navigate(PathPf.JSON_TO_SAP)   /* setOpenModalJson(true)*/}  variant="outlined"><IosShareIcon></IosShareIcon></Button>
                                 </span>
                             </Tooltip>
                             <Tooltip  className="mx-2" title="Invia a SAP">

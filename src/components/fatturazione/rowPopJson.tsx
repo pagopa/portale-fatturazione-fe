@@ -19,7 +19,7 @@ interface DetailsSingleRow
 
 
 const RowJsonSap = ({row,setSelected,selected,apiDetail,lista}) => {
-
+    console.log({apiDetail});
     
     const [open, setOpen] = useState(false);
     const [detailsSingleRow, setDetailsSingleRow] = useState<DetailsSingleRow[]>([]);
@@ -34,19 +34,13 @@ const RowJsonSap = ({row,setSelected,selected,apiDetail,lista}) => {
         }else{
             setDetailsSingleRow([]);
         }
-        
-
     },[open]);
 
     useEffect(()=>{
         setOpen(false);
         setDetailsSingleRow([]);
     },[lista]);
-   
-  
-    const handleClick = ( id: number) => {
-        console.log('ciao');
-    };
+
 
     const isSelected = selected.some(el =>{
         const result = el.annoRiferimento === row.annoRiferimento &&

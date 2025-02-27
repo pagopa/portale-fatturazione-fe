@@ -17,6 +17,7 @@ import LayoutAzure from "../../layout/layOutLoggedInAzure";
 import SideNavSend from "../../layout/sideNavs/sideNavSend";
 import PageTipologiaContratto from "../../page/tipologiaContratto";
 import ListaDocEmessi from "../../page/whiteList";
+import InvioFatture from "../../page/invioFatture";
 
 const ProdPnRoute = () => {
     const prodPnRoute =  <Route element={<LayoutAzure  sideNav={<SideNavSend />}></LayoutAzure >}>
@@ -34,6 +35,7 @@ const ProdPnRoute = () => {
         <Route path={'/accertamenti'} element={<Accertamenti/>} />
         <Route path={PathPf.TIPOLOGIA_CONTRATTO} element={<PageTipologiaContratto/>} />
         <Route path={PathPf.LISTA_DOC_EMESSI} element={<ListaDocEmessi/>} />
+        <Route path={PathPf.JSON_TO_SAP} element={<InvioFatture/>} />
     </Route>;
     return prodPnRoute;
 };

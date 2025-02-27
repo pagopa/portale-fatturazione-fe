@@ -23,5 +23,6 @@ export enum PathPf {
     DETTAGLIO_DOC_CONTABILE = "/dettagliodoccontabile",
     KPI = "/kpipagamenti",
     TIPOLOGIA_CONTRATTO = "/tipologiacontratto",
-    LISTA_DOC_EMESSI = "/listadocemessi"
+    LISTA_DOC_EMESSI = "/listadocemessi",
+    JSON_TO_SAP = "/inviofatture"
 }

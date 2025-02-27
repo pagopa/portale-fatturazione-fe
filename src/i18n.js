@@ -28,7 +28,8 @@ i18n.use(Backend)
                         'INSER_DELETE_WHITE_LIST':"Operazione andata a buon fine",
                         "SEND_JSON_SAP_OK":"Operazione andata a buon fine",
                         'PRESA_IN_CARICO_DOCUMENTO':"Azione presa in carico. Vai ai messaggi per visualizzare lo stato di elaborazione",
-                        'ERRORE_MANUALE':'Manuale momentaneamente non disponibile'
+                        'ERRORE_MANUALE':'Manuale momentaneamente non disponibile',
+                        'ERROR_LIST_JSON_TO_SAP':"Dettaglio momentaneamente non disponibile"
                     }
                 }
             }

@@ -220,7 +220,7 @@ const ModalJsonSap = ({open,setOpen}) => {
                                    
                                     return(
                                           
-                                        <RowJsonSap row={el} setSelected={setSelected} selected={selected} apiDetail={getDetailSingleRow} lista={listaFatture}></RowJsonSap>
+                                        <RowJsonSap row={el} setSelected={setSelected} selected={selected} apiDetail={getDetailSingleRow} lista={listaFatture} ></RowJsonSap>
                                            
                                     );
                                 } )}
