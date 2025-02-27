@@ -10,6 +10,7 @@ import { getListaJsonFatturePagoPa, invioListaJsonFatturePagoPa, sendListaJsonFa
 import CloseIcon from '@mui/icons-material/Close';
 import { manageError, managePresaInCarico } from '../../api/api';
 import RowJsonSap from './rowPopJson';
+import Loader from '../reusableComponents/loader';
 
 
 
@@ -29,6 +30,7 @@ const style = {
 
 interface ListaFatture {
     tipologiaFattura: string,
+    statoInvio:number,
     numeroFatture: number,
     annoRiferimento: number,
     meseRiferimento: number,
@@ -52,6 +54,7 @@ const ModalJsonSap = ({open,setOpen}) => {
     const [tipologieFatture, setTipologie] = useState<string[]>([]);
     const [selected,setSelected] = useState<SelectedJsonSap[]>([]);
     const [tipologia, setTipologia] = useState('Tutte');
+    const [showLoader, setShowLoader] = useState(false);
 
     console.log({selected});
 
@@ -75,7 +78,8 @@ const ModalJsonSap = ({open,setOpen}) => {
             setTipologie([...["Tutte"],...uniqueArray]);
             let elOrdered = res.data.map(el => {
                 return {
-                    tipologiaFattura: el.tipologiaFattura,
+                    tipologiaFattura: el.tipologiaFattura,   
+                    statoInvio: el.statoInvio,
                     numeroFatture: el.numeroFatture,
                     annoRiferimento: el.annoRiferimento,
                     meseRiferimento: el.meseRiferimento,
@@ -114,16 +118,17 @@ const ModalJsonSap = ({open,setOpen}) => {
     };
 
     const onButtonInvia = async() =>{
+        setShowLoader(true);
         // se l'utente ha selezionato il button invia a sap 
         await invioListaJsonFatturePagoPa(token,profilo.nonce,selected).then((res)=>{
 
-         
-            setOpen(false);
+            setShowLoader(false);
+            getLista("Tutte");
             setSelected([]);
             setTipologia('Tutte');
             managePresaInCarico('SEND_JSON_SAP_OK',dispatchMainState);
         }).catch((err)=>{
-            setOpen(false);
+            setShowLoader(false);
             setSelected([]);
             setTipologia('Tutte');
             manageError(err, dispatchMainState);
@@ -203,6 +208,7 @@ const ModalJsonSap = ({open,setOpen}) => {
                                         <TableCell sx={{ marginLeft:"16px"}} ></TableCell>
                                         <TableCell sx={{ marginLeft:"16px"}} ></TableCell>
                                         <TableCell align='center' sx={{ marginLeft:"16px"}} >Tipologia Fattura</TableCell>
+                                        <TableCell align='center' sx={{ marginLeft:"16px"}} >Stato</TableCell>
                                         <TableCell align='center' sx={{ marginLeft:"16px"}}>Numero Fatture</TableCell>
                                         <TableCell align='center' sx={{ marginLeft:"16px"}}>Anno</TableCell>
                                         <TableCell align='center' sx={{ marginLeft:"16px"}}>Mese</TableCell>
@@ -223,13 +229,18 @@ const ModalJsonSap = ({open,setOpen}) => {
                         </Box>
                        
                     </div>
-                    <div className='container_buttons_modal d-flex justify-content-center mt-5'>
-                        <Button  
-                            variant='contained'
-                            disabled={selected.length < 1}
-                            onClick={onButtonInvia}
-                        >INVIA</Button>
-                    </div>
+                    {!showLoader ?
+                        <div className='container_buttons_modal d-flex justify-content-center mt-5'>
+                            <Button  
+                                variant='contained'
+                                disabled={selected.length < 1}
+                                onClick={onButtonInvia}
+                            >INVIA</Button>
+                        </div>:
+                        <div id='loader_on_modal' className='container_buttons_modal d-flex justify-content-center mt-5'>
+                            <Loader sentence={'Attendere...'}></Loader> 
+                        </div>}
+                    
                 </Box> 
             </Modal>
         </div>

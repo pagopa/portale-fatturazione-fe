@@ -61,6 +61,14 @@ const RowJsonSap = ({row,setSelected,selected,apiDetail,lista}) => {
         Object.keys(obj1).every(key => obj1[key] === obj2[key]);
 
     console.log({isSelected,selected});
+
+    let tooltipObj:any= {label:'...',title:'...'};
+    if(row.statoInvio === 0){
+        tooltipObj = {label:'Da inviare',title:'Da inviare',color:'info'};
+    }else if(row.statoInvio === 2){
+        tooltipObj = {label:'Elaborazione',title:'La fattura è in elaborazione',color:'warning'};
+    }
+
     return(
         
         <TableBody sx={{minHeight:"100px"}}>
@@ -70,7 +78,7 @@ const RowJsonSap = ({row,setSelected,selected,apiDetail,lista}) => {
                         
                         color="primary"
                         checked={isSelected}
-                        disabled={false}
+                        disabled={row.statoInvio === 2}
                         onChange={()=>{
                             if(!isSelected){
                                 setSelected(prev => ([...prev,{ 
@@ -102,12 +110,19 @@ const RowJsonSap = ({row,setSelected,selected,apiDetail,lista}) => {
                     </IconButton>
                 </TableCell>
                 <TableCell align='center' sx={{color:'#0D6EFD',fontWeight: 'bold'}}>{row.tipologiaFattura}</TableCell>
+                <TableCell align='center'>
+                    <Tooltip
+                        placement="bottom"
+                        title={tooltipObj.title}
+                    >
+                        <Chip label={tooltipObj.label} color={tooltipObj.color} />
+                    </Tooltip>
+                </TableCell>
                 <TableCell align='center'>{row.numeroFatture}</TableCell>
                 <TableCell align='center' >{row.annoRiferimento}</TableCell>
                 <TableCell align='center' >{month[row.meseRiferimento - 1]}</TableCell>
                 <TableCell align='right' >{row.importo.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</TableCell>
             </TableRow>
-           
             <TableRow>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0, borderColor:"white" }} colSpan={12}>
                    
