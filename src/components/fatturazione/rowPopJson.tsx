@@ -141,7 +141,7 @@ const RowJsonSap = ({row,setSelected,selected,apiDetail,lista}) => {
                                         }}
                                     >
                                         <TableHead  sx={{position: "sticky", top:'0',zIndex:"1",backgroundColor: "white"}}>
-                                            <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
+                                            <TableRow>
                                                 <TableCell sx={{ marginLeft:"16px"}} >Ragione sociale</TableCell>
                                                 <TableCell sx={{ marginLeft:"16px"}} >Tipologia Fattura</TableCell>
                                                 <TableCell sx={{ marginLeft:"16px"}}>Anno</TableCell>

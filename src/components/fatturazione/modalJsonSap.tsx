@@ -204,7 +204,7 @@ const ModalJsonSap = ({open,setOpen}) => {
                         >
                             <Table  aria-label="purchases">
                                 <TableHead sx={{position: "sticky", top:'0',zIndex:"2",backgroundColor: "#E3E6E9"}}>
-                                    <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
+                                    <TableRow >
                                         <TableCell sx={{ marginLeft:"16px"}} ></TableCell>
                                         <TableCell sx={{ marginLeft:"16px"}} ></TableCell>
                                         <TableCell align='center' sx={{ marginLeft:"16px"}} >Tipologia Fattura</TableCell>
