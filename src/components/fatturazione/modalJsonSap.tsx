@@ -8,7 +8,7 @@ import { useContext, useEffect, useState } from 'react';
 import { GlobalContext } from '../../store/context/globalContext';
 import { getListaJsonFatturePagoPa, invioListaJsonFatturePagoPa, sendListaJsonFatturePagoPa } from '../../api/apiPagoPa/fatturazionePA/api';
 import CloseIcon from '@mui/icons-material/Close';
-import { manageError } from '../../api/api';
+import { manageError, managePresaInCarico } from '../../api/api';
 import RowJsonSap from './rowPopJson';
 
 
@@ -89,7 +89,7 @@ const ModalJsonSap = ({open,setOpen}) => {
           
             setListaFatture(elOrdered);
         }).catch((err)=>{
-            console.log(err);
+            manageError(err, dispatchMainState);
         });
     };
 
@@ -121,7 +121,7 @@ const ModalJsonSap = ({open,setOpen}) => {
             setOpen(false);
             setSelected([]);
             setTipologia('Tutte');
-          
+            managePresaInCarico('SEND_JSON_SAP_OK',dispatchMainState);
         }).catch((err)=>{
             setOpen(false);
             setSelected([]);
@@ -193,8 +193,8 @@ const ModalJsonSap = ({open,setOpen}) => {
                                 overflowY: "auto",
                                 whiteSpace: "nowrap",
                                 backgroundColor:'#F8F8F8',
-                                height:'500px',
-                                marginY:'5%'
+                                height:'350px',
+                                marginY:'2%'
                             }}
                         >
                             <Table  aria-label="purchases">

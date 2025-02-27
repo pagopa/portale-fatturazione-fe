@@ -26,6 +26,7 @@ i18n.use(Backend)
                         'FATTURA_SOSPESA_RIPRISTINATA':"Operazione andata a buon fine",
                         'CAMBIO_TIPOLOGIA_CONTRATTO':"Operazione andata a buon fine",
                         'INSER_DELETE_WHITE_LIST':"Operazione andata a buon fine",
+                        "SEND_JSON_SAP_OK":"Operazione andata a buon fine",
                         'PRESA_IN_CARICO_DOCUMENTO':"Azione presa in carico. Vai ai messaggi per visualizzare lo stato di elaborazione",
                         'ERRORE_MANUALE':'Manuale momentaneamente non disponibile'
                     }

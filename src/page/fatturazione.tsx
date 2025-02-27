@@ -510,7 +510,7 @@ const Fatturazione : React.FC = () =>{
                         <div className="d-flex flex-row-reverse">
                             <Tooltip  className="mx-2" title="Invia REL firmate">
                                 <span>
-                                    <Button  onClick={()=> setOpenModalJson(true)} disabled={disableButtonSap}  variant="outlined"><IosShareIcon></IosShareIcon></Button>
+                                    <Button  onClick={()=> setOpenModalJson(true)}  variant="outlined"><IosShareIcon></IosShareIcon></Button>
                                 </span>
                             </Tooltip>
                             <Tooltip  className="mx-2" title="Invia a SAP">
