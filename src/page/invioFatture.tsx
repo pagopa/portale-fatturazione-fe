@@ -98,7 +98,7 @@ const InvioFatture = () => {
          
             setStateSingleRow(orderData);
         }).catch(()=>{
-            setStateSingleRow([]);
+            getLista(tipologia);
             managePresaInCarico("ERROR_LIST_JSON_TO_SAP",dispatchMainState);
         });
  

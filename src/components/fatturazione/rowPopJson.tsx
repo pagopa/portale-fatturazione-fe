@@ -121,7 +121,7 @@ const RowJsonSap = ({row,setSelected,selected,apiDetail,lista}) => {
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0, borderColor:"white" }} colSpan={12}>
                    
                     <Collapse in={open} timeout="auto" unmountOnExit>
-                        {detailsSingleRow.length < 1 && open ?<Skeleton variant="text" sx={{ fontSize: '1rem',height:'250px' }} /> :
+                        {detailsSingleRow.length < 1 && open ?<Skeleton variant="text" sx={{ fontSize: '1rem',height:'250px',margin: 2 , padding:'10px' }} /> :
                             <Box sx={{ margin: 2 , padding:'10px'}}>
                                 <Typography sx={{marginLeft:"6px"}} variant="h6" gutterBottom component="div">
                 Dettaglio 
