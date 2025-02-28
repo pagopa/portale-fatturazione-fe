@@ -141,7 +141,17 @@ const SideNavSend : React.FC = () => {
         }else if(currentLocation === PathPf.LISTA_DOC_EMESSI){
             setSelectedIndex(9);
             setOpen2(true);
+        }else if(currentLocation === PathPf.JSON_TO_SAP){
+            setSelectedIndex(5);
         }
+
+        if(open2 && (currentLocation !== PathPf.LISTA_DOC_EMESSI && currentLocation !== PathPf.FATTURAZIONE)){
+            setOpen2(false);
+        }
+        if(open && (currentLocation !== PathPf.TIPOLOGIA_CONTRATTO && currentLocation !== PathPf.LISTA_DATI_FATTURAZIONE)){
+            setOpen(false);
+        }
+
     },[currentLocation]);
 
     return (
@@ -206,7 +216,7 @@ const SideNavSend : React.FC = () => {
                             <ListItemIcon>
                                 <FormatListBulletedIcon />
                             </ListItemIcon>
-                            <ListItemText primary="Lista" />
+                            <ListItemText primary="White list" />
                         </ListItemButton>
                     </List>
                 </Collapse> 

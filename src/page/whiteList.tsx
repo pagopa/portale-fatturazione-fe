@@ -427,7 +427,7 @@ const ListaDocEmessi = () => {
         <div className="mx-5">
             {/*title container start */}
             <div className="marginTop24 ">
-                <Typography variant="h4">Lista </Typography>
+                <Typography variant="h4">White list </Typography>
             </div>
             {/*title container end */}
             <div className="row mb-5 mt-5" >

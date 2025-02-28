@@ -1,10 +1,11 @@
 import { Button, Toolbar, Tooltip, Typography } from "@mui/material";
 import { SetStateAction } from "react";
+import { SelectedJsonSap } from "../../../../page/invioFatture";
 
 interface EnhancedTable {
     setOpenModal?:React.Dispatch<SetStateAction<boolean>>,
     setOpenModalAdd?:React.Dispatch<SetStateAction<boolean>>,
-    selected:number[],
+    selected:number[]|SelectedJsonSap[],
     buttons?:{
         stringIcon:string,
         icon:React.ReactNode,

@@ -6,9 +6,11 @@ import { GlobalContext } from "../store/context/globalContext";
 import { getListaJsonFatturePagoPa, invioListaJsonFatturePagoPa, sendListaJsonFatturePagoPa } from "../api/apiPagoPa/fatturazionePA/api";
 import { manageError, managePresaInCarico } from "../api/api";
 import { Box } from "@mui/system";
-import { InputLabel, Select, MenuItem, FormControl, Table, TableCell, TableHead, TableRow, Button } from "@mui/material";
+import { InputLabel, Select, MenuItem, FormControl, Table, TableCell, TableHead, TableRow, Button, Toolbar, Typography } from "@mui/material";
 import RowJsonSap from "../components/fatturazione/rowPopJson";
 import Loader from "../components/reusableComponents/loader";
+import EnhancedTableCustom from "../components/reusableComponents/grid/gridCustomBase/enhancedTabalToolbarCustom";
+import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 
 
 interface ListaFatture {
@@ -20,7 +22,7 @@ interface ListaFatture {
     importo: number
 }
 
-interface SelectedJsonSap {
+export interface SelectedJsonSap {
     annoRiferimento: number,
     meseRiferimento: number,
     tipologiaFattura: string
@@ -40,20 +42,11 @@ const InvioFatture = () => {
     const [tipologia, setTipologia] = useState('Tutte');
     const [showLoader, setShowLoader] = useState(false);
 
-    
-    console.log({selected});
-    useEffect(()=>{
-      
-        getLista(tipologia);
-          
-    },[]);
 
     
     useEffect(()=>{
-        if( tipologia !== 'Tutte'){
-            getLista(tipologia);
-            setSelected([]);
-        }
+        getLista(tipologia);
+        setSelected([]);
     },[tipologia]);
     
     const getLista = async (tipologia) =>{
@@ -172,20 +165,42 @@ const InvioFatture = () => {
                         </div>
 
                         <div className="col-2">
-                            {!showLoader ?
-                                <div className="d-flex justify-content-center align-items-center" style={{height: "59px"}} >
-                                    <Button  
-                                        variant='outlined'
-                                        disabled={selected.length < 1}
-                                        onClick={onButtonInvia}
-                                    >Invia</Button>
-                                </div>
-                                :
-                                <div id='loader_on_modal' className='container_buttons_modal d-flex justify-content-center mt-5'>
-                                    <Loader sentence={'Attendere...'}></Loader> 
-                                </div>}
+                          
+                            <div className="d-flex justify-content-center align-items-center" style={{height: "59px"}} >
+                                <Button  
+                                    variant='outlined'
+                                    disabled={selected.length < 1}
+                                    onClick={onButtonInvia}
+                                >Invia</Button>
+                            </div>
                         </div>
                         <div className="row mt-5">
+                            <div className="col-12">
+                                { selected?.length > 0 ? <Toolbar
+                                    sx={{bgcolor:"rgba(23, 50, 77, 0.08)"}}
+                                >
+                                    <Typography
+                                        sx={{ flex: '1 1 100%' }}
+                                        color="inherit"
+                                        variant="subtitle1"
+                                        component="div"
+                                    >
+                                        {`${selected?.length}  Selezionate`} 
+                                    </Typography>
+                                </Toolbar>:
+                                   
+                                    <Typography
+                                        sx={{ flex: '1 1 100%', visibility: 'hidden', height:'64px' }} // Hidden placeholder to keep layout
+                                        variant="subtitle1"
+                                        component="div"
+                                    >
+                                        Placeholder
+                                    </Typography>
+                                }
+                            </div>
+                        </div>
+                       
+                        <div className="row">
                             <div className="col-12">
                                 <Box
                                     sx={{
@@ -222,6 +237,11 @@ const InvioFatture = () => {
                     </div>
                 </div>
             </div>
+            <ModalLoading 
+                open={showLoader} 
+                setOpen={setShowLoader}
+                sentence={'Loading...'} >
+            </ModalLoading>
         </>
        
     );
