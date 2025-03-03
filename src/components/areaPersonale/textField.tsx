@@ -159,36 +159,32 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
     }; 
     
     const validationIdDocumento = (max: number, validation:string, input:string|number) => {
-        
-        YupString.max(max, validation)
-            .validate(input)
-            .then(()=>{
-                if(datiFatturazione.cup !== '' && datiFatturazione.idDocumento === ''){
-                    setErrorValidation(true);
-                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
-                }else{
-                    setErrorValidation(false);
-                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
-                }
-            }).catch(() =>{
+        YupString.max(max, validation).matches(/^[a-zA-Z0-9/._\-\s]*$/,  {
+            message: "Non è possibile inserire caratteri speciali"
+        }).validate(input).then(()=>{
+            if(datiFatturazione.cup !== '' && datiFatturazione.idDocumento === ''){
                 setErrorValidation(true);
                 setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
-            } );
+            }else{
+                setErrorValidation(false);
+                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+            }
+        }).catch(() =>{
+            setErrorValidation(true);
+            setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
+        } );
     };
 
     const validationCodCommessa = (max: number, validation:string, input:string|number) => {
-        
-        YupString.max(max, validation)
-            .validate(input)
-            .then(()=>{
-             
-                setErrorValidation(false);
-                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
-                
-            }).catch(() =>{
-                setErrorValidation(true);
-                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
-            } );
+        YupString.max(max, validation).matches(/^[a-zA-Z0-9/._\-\s]*$/,  {
+            message: "Non è possibile inserire caratteri speciali"
+        }).validate(input).then(()=>{
+            setErrorValidation(false);
+            setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+        }).catch(() =>{
+            setErrorValidation(true);
+            setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
+        } );
     };
     
     const hendleOnMouseOut = (e: React.SyntheticEvent<EventTarget>) =>{
