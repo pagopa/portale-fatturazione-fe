@@ -148,7 +148,7 @@ const RowJsonSap = ({row,setSelected,selected,apiDetail,lista}) => {
                                         <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
                                             { detailsSingleRow.map((obj) => (
                                                 <TableRow key={Math.random()}>
-                                                    <TableCell>{obj.ragioneSociale}</TableCell>
+                                                    <TableCell>{obj.ragioneSociale?.length > 50 ? obj.ragioneSociale.slice(0, 50) + '...' : obj.ragioneSociale}</TableCell>
                                                     <TableCell>
                                                         {obj.tipologiaFattura}
                                                     </TableCell>

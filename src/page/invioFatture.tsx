@@ -212,7 +212,7 @@ const InvioFatture = () => {
                                     }}
                                 >
                                     <Table  aria-label="purchases">
-                                        <TableHead sx={{position: "sticky", top:'0',zIndex:"2",backgroundColor: "#E3E6E9"}}>
+                                        <TableHead sx={{position: "sticky", top:'0',zIndex:"2",backgroundColor: "#F2F2F2"}}>
                                             <TableRow >
                                                 <TableCell sx={{ marginLeft:"16px"}} ></TableCell>
                                                 <TableCell sx={{ marginLeft:"16px"}} ></TableCell>
