@@ -35,6 +35,7 @@ const RelPdfPage : React.FC = () =>{
     const enti = profiliEnti(mainState);
 
     const [showDownloading, setShowDownloading] = useState(false);
+    const [disableButtonDettaglioNot, setDisableButtonDettaglioNot] = useState(false);
     const [lastUpdateDocFirmato, setLastUpdateDocFirmato] = useState('');
     const [file, setFile] = useState<File | null>(null);
     const [loadingUpload, setLoadingUpload] = useState<boolean>(false);
@@ -126,8 +127,9 @@ const RelPdfPage : React.FC = () =>{
                 a.click();
                 setShowDownloading(false);
                 document.body.removeChild(a);*/
-            }).catch(()=>{
-                manageErrorDownload('404',dispatchMainState);
+            }).catch((err)=>{
+                manageErrorDownload('404_RIGHE_ID',dispatchMainState);
+                setDisableButtonDettaglioNot(true);
                 setShowDownloading(false);
             });
         }
@@ -185,13 +187,13 @@ const RelPdfPage : React.FC = () =>{
             await getLogRelDocumentoFirmato(token, profilo.nonce,bodySelf).then((res) =>{
                 setLastUpdateDocFirmato(res.data[0].dataEvento);
             }).catch(()=>{ 
-                //manageError(err,dispatchMainState);
+                manageErrorDownload('404',dispatchMainState);
             });
         }else if(profilo.auth === 'PAGOPA'){
             await getLogPagoPaRelDocumentoFirmato(token, profilo.nonce,body).then((res) =>{
                 setLastUpdateDocFirmato(res.data[0].dataEvento);
             }).catch(()=>{
-                //manageError(err,dispatchMainState);
+                manageErrorDownload('404',dispatchMainState);
             });
         }
         
@@ -307,7 +309,7 @@ const RelPdfPage : React.FC = () =>{
                 </div>
             </div>
             <div className='d-flex justify-content-end mt-4 me-5'>
-                <Button  onClick={()=> downloadRelExel()} >Scarica report di dettaglio notifiche Reg. Es. <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+                <Button disabled={disableButtonDettaglioNot}  onClick={()=> downloadRelExel()} >Scarica report di dettaglio notifiche Reg. Es. <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
             </div>
             <div className="bg-white mb-5 me-5 ms-5">
                 <div className="pt-5 pb-5 ">

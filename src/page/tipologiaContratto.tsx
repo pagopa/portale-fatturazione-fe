@@ -201,7 +201,7 @@ const PageTipologiaContratto :React.FC = () =>{
                 saveAs(response,fileName);
                 setShowLoading(false);
             }).catch(err =>{
-            manageErrorDownload(err,dispatchMainState);
+            manageErrorDownload('404',dispatchMainState);
         } );
     };
 

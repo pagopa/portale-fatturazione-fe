@@ -263,7 +263,7 @@ const Fatturazione : React.FC = () =>{
             setShowDownloading(false);
         }).catch(((err)=>{
             setShowDownloading(false);
-            manageErrorDownload(err,dispatchMainState);
+            manageErrorDownload('404',dispatchMainState);
         }));
     };
 

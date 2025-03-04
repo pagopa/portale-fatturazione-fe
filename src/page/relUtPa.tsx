@@ -503,7 +503,7 @@ const RelPage : React.FC = () =>{
                 setShowLoading(false);
             }).catch((err)=>{
                 setShowLoading(false);
-                manageError(err,dispatchMainState);
+                manageErrorDownload('404',dispatchMainState);
             }); 
         }
     };
@@ -544,7 +544,7 @@ const RelPage : React.FC = () =>{
                 saveAs(blob,fileName );
                 setShowLoading(false);
             }).catch(err => {
-                manageErrorDownload(err,dispatchMainState);
+                manageErrorDownload('404',dispatchMainState);
             
             });
     };
@@ -563,7 +563,7 @@ const RelPage : React.FC = () =>{
             saveAs(res,fileName );
             setShowLoading(false);
         }).catch((err)=>{
-            manageErrorDownload(err,dispatchMainState);
+            manageErrorDownload('404',dispatchMainState);
             setShowLoading(false);
         });
     };
