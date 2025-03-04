@@ -27,7 +27,8 @@ i18n.use(Backend)
                         'CAMBIO_TIPOLOGIA_CONTRATTO':"Operazione andata a buon fine",
                         'INSER_DELETE_WHITE_LIST':"Operazione andata a buon fine",
                         'PRESA_IN_CARICO_DOCUMENTO':"Azione presa in carico. Vai ai messaggi per visualizzare lo stato di elaborazione",
-                        'ERRORE_MANUALE':'Manuale momentaneamente non disponibile'
+                        'ERRORE_MANUALE':'Manuale momentaneamente non disponibile',
+                        "404_RIGHE_ID":"Il report di dettaglio notifiche Regolare Esecuzione sarà disponibile a breve"
                     }
                 }
             }

@@ -206,7 +206,7 @@ const SideNavSend : React.FC = () => {
                             <ListItemIcon>
                                 <FormatListBulletedIcon />
                             </ListItemIcon>
-                            <ListItemText primary="Lista" />
+                            <ListItemText primary="White list" />
                         </ListItemButton>
                     </List>
                 </Collapse> 
