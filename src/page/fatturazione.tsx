@@ -22,7 +22,6 @@ import { getMessaggiCount } from "../api/apiPagoPa/centroMessaggi/api";
 import { PathPf } from "../types/enum";
 import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
 import IosShareIcon from '@mui/icons-material/IosShare';
-import ModalJsonSap from "../components/fatturazione/modalJsonSap";
 import { useNavigate } from "react-router";
 
 const Fatturazione : React.FC = () =>{
@@ -602,9 +601,6 @@ const Fatturazione : React.FC = () =>{
                 filterInfo={bodyFatturazioneDownload}
                 filterNotExecuted={bodyFatturazione}
                 getListaFatture={getlistaFatturazione}></ModalResetFilter>
-            <ModalJsonSap
-                setOpen={setOpenModalJson}
-                open={openModalJson}></ModalJsonSap>
         </div>
     );
 };

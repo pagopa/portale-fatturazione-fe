@@ -11,6 +11,12 @@ import RowJsonSap from "../components/fatturazione/rowPopJson";
 import Loader from "../components/reusableComponents/loader";
 import EnhancedTableCustom from "../components/reusableComponents/grid/gridCustomBase/enhancedTabalToolbarCustom";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
+import { DataGrid, GridCallbackDetails, GridCellParams, GridColDef, GridEventListener, GridRowParams, MuiEvent } from "@mui/x-data-grid";
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { Params } from "../types/typesGeneral";
+import { useNavigate } from "react-router";
+import { month } from "../reusableFunction/reusableArrayObj";
+
 
 
 interface ListaFatture {
@@ -19,7 +25,8 @@ interface ListaFatture {
     numeroFatture: number,
     annoRiferimento: number,
     meseRiferimento: number,
-    importo: number
+    importo: number,
+    key?:number
 }
 
 export interface SelectedJsonSap {
@@ -35,12 +42,47 @@ const InvioFatture = () => {
     const {mainState,dispatchMainState,setErrorAlert} = globalContextObj;
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
+    const navigate = useNavigate();
     
-    const [listaFatture, setListaFatture] = useState<ListaFatture[]>([]);
+    const [listaFatture, setListaFatture] = useState<ListaFatture[]>([{tipologiaFattura: "tipologiaFattura",
+        key:1,   
+        statoInvio: 2,
+        numeroFatture: 3,
+        annoRiferimento:1,
+        meseRiferimento:2,
+        importo: 100},{tipologiaFattura: "tipologiaFattura",
+        key:2,   
+        statoInvio: 2,
+        numeroFatture: 3,
+        annoRiferimento:1,
+        meseRiferimento:2,
+        importo: 100},
+    {tipologiaFattura: "tipologiaFattura",
+        key:3,   
+        statoInvio: 2,
+        numeroFatture: 3,
+        annoRiferimento:1,
+        meseRiferimento:2,
+        importo: 100},
+    {tipologiaFattura: "tipologiaFattura",
+        key:4,   
+        statoInvio: 2,
+        numeroFatture: 3,
+        annoRiferimento:1,
+        meseRiferimento:2,
+        importo: 100},
+    {tipologiaFattura: "tipologiaFattura",
+        key:5,   
+        statoInvio: 2,
+        numeroFatture: 44,
+        annoRiferimento:1,
+        meseRiferimento:2,
+        importo: 100}]);
     const [tipologieFatture, setTipologie] = useState<string[]>([]);
     const [selected,setSelected] = useState<SelectedJsonSap[]>([]);
     const [tipologia, setTipologia] = useState('Tutte');
     const [showLoader, setShowLoader] = useState(false);
+    const [infoPage , setInfoPage] = useState({ page: 0, pageSize: 10 });
 
 
     
@@ -67,7 +109,7 @@ const InvioFatture = () => {
                     numeroFatture: el.numeroFatture,
                     annoRiferimento: el.annoRiferimento,
                     meseRiferimento: el.meseRiferimento,
-                    importo: el.importo
+                    importo: el.importo.toLocaleString("de-DE", { style: "currency", currency: "EUR" })
                 };
             }); 
     
@@ -90,9 +132,9 @@ const InvioFatture = () => {
                     ragioneSociale: el.ragioneSociale,
                     tipologiaFattura: el.tipologiaFattura,
                     annoRiferimento: el.annoRiferimento,
-                    meseRiferimento:el.meseRiferimento,
+                    meseRiferimento:month[el.meseRiferimento],
                     dataFattura:el.dataFattura,
-                    importo:el.importo
+                    importo:el.importo.toLocaleString("de-DE", { style: "currency", currency: "EUR" })
                 };
             });
          
@@ -122,8 +164,41 @@ const InvioFatture = () => {
         });
           
     };
-    
 
+    const columns: GridColDef[] = [
+        { field: 'tipologiaFattura', headerName: 'Tipologia Fattura', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.tipologiaFattura}</a>},
+        { field: 'statoInvio', headerName: 'Stato', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        { field: 'numeroFatture', headerName: 'Numero', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        { field: 'annoRiferimento', headerName: 'Anno', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        { field: 'meseRiferimento', headerName: 'Mese', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',valueFormatter: (value:any) =>  value.value !== null ? new Date(value.value).toLocaleString().split(',')[0] : ''},
+        { field: 'importo', headerName: 'Importo', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
+        {field: 'action', headerName: '',sortable: false,width:70,headerAlign: 'left',disableColumnMenu :true,renderCell: (() => ( <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }}/>)),}
+    ];
+
+
+    let columsSelectedGrid = '';
+    const handleOnCellClick = (params: GridCellParams, event: MuiEvent, details: GridCallbackDetails) =>{
+        columsSelectedGrid  = params.field;
+        console.log( {params,event,details});
+    };
+    
+    const handleEvent: GridEventListener<'rowClick'> = (
+        params:GridRowParams,
+        event: MuiEvent<React.MouseEvent<HTMLElement>>,
+    ) => {
+        event.preventDefault();
+        // l'evento verrà eseguito solo se l'utente farà il clik sul 
+        if(columsSelectedGrid  === 'tipologiaFattura' || columsSelectedGrid === 'action' ){
+            console.log('ciao');
+            navigate(PathPf.JSON_TO_SAP_DETAILS);
+        }
+        console.log( {params,event});
+    };
+
+    const onChangePageOrRowGrid = (e) => {
+        setInfoPage(e);
+    };
+    
 
     return(
         <>
@@ -199,19 +274,56 @@ const InvioFatture = () => {
                                 }
                             </div>
                         </div>
-                       
                         <div className="row">
                             <div className="col-12">
-                                <Box
+                                <div className="mt-1 mb-5" style={{ width: '100%'}}> 
+                                    <DataGrid
+                                        sx={{
+                                            height:'400px',
+                                            '& .MuiDataGrid-virtualScroller': {
+                                                backgroundColor: 'white',
+                                            }
+                                        }}
+                                        rows={listaFatture}
+                                        columns={columns}
+                                        getRowId={(row) => row.key}
+                                        pageSizeOptions={[10, 25, 50,100]}
+                                        checkboxSelection
+                                        onRowClick={handleEvent}
+                                        onCellClick={handleOnCellClick}
+                                        onRowSelectionModelChange={(newRowSelectionModel) => {
+                                            console.log({newRowSelectionModel});
+                                        }}
+                                        onPaginationModelChange={(e)=> onChangePageOrRowGrid(e)}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <ModalLoading 
+                open={showLoader} 
+                setOpen={setShowLoader}
+                sentence={'Loading...'} >
+            </ModalLoading>
+        </>
+       
+    );
+};
+
+export default InvioFatture;
+
+/*
+   <Box
                                     sx={{
                                         overflowY: "auto",
                                         whiteSpace: "nowrap",
                                         backgroundColor:'#F8F8F8',
                                         height:'500px',
                                         marginY:'2%'
-                                    }}
-                                >
-                                    <Table  aria-label="purchases">
+                                    }}>
+<Table  aria-label="purchases">
                                         <TableHead sx={{position: "sticky", top:'0',zIndex:"2",backgroundColor: "#F2F2F2"}}>
                                             <TableRow >
                                                 <TableCell sx={{ marginLeft:"16px"}} ></TableCell>
@@ -230,22 +342,5 @@ const InvioFatture = () => {
                                             );
                                         } )}
                               
-                                    </Table>
-                                </Box>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <ModalLoading 
-                open={showLoader} 
-                setOpen={setShowLoader}
-                sentence={'Loading...'} >
-            </ModalLoading>
-        </>
-       
-    );
-};
-
-export default InvioFatture;
-
+                                    </Table> 
+                                    </Box>*/

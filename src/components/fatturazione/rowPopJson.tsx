@@ -69,7 +69,6 @@ const RowJsonSap = ({row,setSelected,selected,apiDetail,lista}) => {
             <TableRow  sx={{ '& > *': { borderBottom: 'unset' } }}>
                 <TableCell padding="checkbox" sx={{width:'80px'}}>
                     <Checkbox
-                        
                         color="primary"
                         checked={isSelected}
                         disabled={row.statoInvio === 2}
