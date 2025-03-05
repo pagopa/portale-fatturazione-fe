@@ -10,7 +10,7 @@ import { useContext, useState } from "react";
 import { sendListaJsonFatturePagoPa } from "../api/apiPagoPa/fatturazionePA/api";
 import { GlobalContext } from "../store/context/globalContext";
 import { managePresaInCarico } from "../api/api";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 interface DetailsSingleRow 
 {
@@ -31,6 +31,9 @@ const InvioFattureDetails = () => {
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
+    const { id } = useParams();
+
+    console.log({id});
 
     const [loadingDetail, setLoadingDetail] = useState(true);
     const [detailsSingleRow, setDetailsSingleRow] = useState<DetailsSingleRow[]>([]);

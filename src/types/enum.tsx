@@ -25,5 +25,5 @@ export enum PathPf {
     TIPOLOGIA_CONTRATTO = "/tipologiacontratto",
     LISTA_DOC_EMESSI = "/listadocemessi",
     JSON_TO_SAP = "/inviofatture",
-    JSON_TO_SAP_DETAILS = "/inviofatturedettaglio"
+    JSON_TO_SAP_DETAILS = "/inviofatturedettaglio/:id"
 }

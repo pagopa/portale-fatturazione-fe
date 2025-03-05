@@ -6,16 +6,12 @@ import { GlobalContext } from "../store/context/globalContext";
 import { getListaJsonFatturePagoPa, invioListaJsonFatturePagoPa, sendListaJsonFatturePagoPa } from "../api/apiPagoPa/fatturazionePA/api";
 import { manageError, managePresaInCarico } from "../api/api";
 import { Box } from "@mui/system";
-import { InputLabel, Select, MenuItem, FormControl, Table, TableCell, TableHead, TableRow, Button, Toolbar, Typography } from "@mui/material";
-import RowJsonSap from "../components/fatturazione/rowPopJson";
-import Loader from "../components/reusableComponents/loader";
-import EnhancedTableCustom from "../components/reusableComponents/grid/gridCustomBase/enhancedTabalToolbarCustom";
+import { InputLabel, Select, MenuItem, FormControl, Button, Toolbar, Typography } from "@mui/material";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { DataGrid, GridCallbackDetails, GridCellParams, GridColDef, GridEventListener, GridRowParams, MuiEvent } from "@mui/x-data-grid";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { Params } from "../types/typesGeneral";
 import { useNavigate } from "react-router";
-import { month } from "../reusableFunction/reusableArrayObj";
+import { mesiGrid, month } from "../reusableFunction/reusableArrayObj";
 
 
 
@@ -26,7 +22,7 @@ interface ListaFatture {
     annoRiferimento: number,
     meseRiferimento: number,
     importo: number,
-    key?:number
+    id:string
 }
 
 export interface SelectedJsonSap {
@@ -44,40 +40,7 @@ const InvioFatture = () => {
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
     
-    const [listaFatture, setListaFatture] = useState<ListaFatture[]>([{tipologiaFattura: "tipologiaFattura",
-        key:1,   
-        statoInvio: 2,
-        numeroFatture: 3,
-        annoRiferimento:1,
-        meseRiferimento:2,
-        importo: 100},{tipologiaFattura: "tipologiaFattura",
-        key:2,   
-        statoInvio: 2,
-        numeroFatture: 3,
-        annoRiferimento:1,
-        meseRiferimento:2,
-        importo: 100},
-    {tipologiaFattura: "tipologiaFattura",
-        key:3,   
-        statoInvio: 2,
-        numeroFatture: 3,
-        annoRiferimento:1,
-        meseRiferimento:2,
-        importo: 100},
-    {tipologiaFattura: "tipologiaFattura",
-        key:4,   
-        statoInvio: 2,
-        numeroFatture: 3,
-        annoRiferimento:1,
-        meseRiferimento:2,
-        importo: 100},
-    {tipologiaFattura: "tipologiaFattura",
-        key:5,   
-        statoInvio: 2,
-        numeroFatture: 44,
-        annoRiferimento:1,
-        meseRiferimento:2,
-        importo: 100}]);
+    const [listaFatture, setListaFatture] = useState<ListaFatture[]>([]);
     const [tipologieFatture, setTipologie] = useState<string[]>([]);
     const [selected,setSelected] = useState<SelectedJsonSap[]>([]);
     const [tipologia, setTipologia] = useState('Tutte');
@@ -102,8 +65,9 @@ const InvioFatture = () => {
             }, []);
                 
             setTipologie([...["Tutte"],...uniqueArray]);
-            let elOrdered = res.data.map(el => {
+            let elOrdered = res.data.map((el) => {
                 return {
+                    id:el.tipologiaFattura+"-"+el.annoRiferimento+"-"+el.meseRiferimento,
                     tipologiaFattura: el.tipologiaFattura,   
                     statoInvio: el.statoInvio,
                     numeroFatture: el.numeroFatture,
@@ -114,7 +78,7 @@ const InvioFatture = () => {
             }); 
     
             if(tipologia !== 'Tutte'){
-                elOrdered = res.data.filter(el => el.tipologiaFattura === tipologia);
+                elOrdered = elOrdered.filter(el => el.tipologiaFattura === tipologia);
             }
               
             setListaFatture(elOrdered);
@@ -122,7 +86,9 @@ const InvioFatture = () => {
             manageError(err, dispatchMainState);
         });
     };
-    
+
+    console.log({listaFatture});
+    /*
     const getDetailSingleRow = async(body,setStateSingleRow) => {
       
         await sendListaJsonFatturePagoPa(token,profilo.nonce,body).then((res)=>{
@@ -145,7 +111,7 @@ const InvioFatture = () => {
         });
  
     };
-    
+    */
     const onButtonInvia = async() =>{
         setShowLoader(true);
         // se l'utente ha selezionato il button invia a sap 
@@ -170,7 +136,7 @@ const InvioFatture = () => {
         { field: 'statoInvio', headerName: 'Stato', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'numeroFatture', headerName: 'Numero', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'annoRiferimento', headerName: 'Anno', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'meseRiferimento', headerName: 'Mese', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',valueFormatter: (value:any) =>  value.value !== null ? new Date(value.value).toLocaleString().split(',')[0] : ''},
+        { field: 'meseRiferimento', headerName: 'Mese', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left', renderCell: (param:{row:any}) => <div className="MuiDataGrid-cellContent" title={mesiGrid[param.row.meseRiferimento]} role="presentation">{mesiGrid[param.row.meseRiferimento]}</div>},
         { field: 'importo', headerName: 'Importo', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         {field: 'action', headerName: '',sortable: false,width:70,headerAlign: 'left',disableColumnMenu :true,renderCell: (() => ( <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }}/>)),}
     ];
@@ -190,9 +156,8 @@ const InvioFatture = () => {
         // l'evento verrà eseguito solo se l'utente farà il clik sul 
         if(columsSelectedGrid  === 'tipologiaFattura' || columsSelectedGrid === 'action' ){
             console.log('ciao');
-            navigate(PathPf.JSON_TO_SAP_DETAILS);
+            navigate(PathPf.JSON_TO_SAP_DETAILS.replace(":id",params.row.id));
         }
-        console.log( {params,event});
     };
 
     const onChangePageOrRowGrid = (e) => {
@@ -284,15 +249,25 @@ const InvioFatture = () => {
                                                 backgroundColor: 'white',
                                             }
                                         }}
+                                        getRowId={(row) => row.id}
                                         rows={listaFatture}
                                         columns={columns}
-                                        getRowId={(row) => row.key}
                                         pageSizeOptions={[10, 25, 50,100]}
                                         checkboxSelection
                                         onRowClick={handleEvent}
                                         onCellClick={handleOnCellClick}
                                         onRowSelectionModelChange={(newRowSelectionModel) => {
-                                            console.log({newRowSelectionModel});
+                                           
+                                            const createObjectToSend = newRowSelectionModel.reduce((acc:any,singleEl) => {
+                                                const getElementWithSameId = listaFatture.filter((el:ListaFatture) => el?.id === singleEl);  
+                                                return [...acc,...getElementWithSameId];
+                                            },[]).map(el => ({
+                                                annoRiferimento: el.annoRiferimento,
+                                                meseRiferimento: el.meseRiferimento,
+                                                tipologiaFattura: el.tipologiaFattura
+                                            }));
+                                            console.log({createObjectToSend});
+                                            setSelected(createObjectToSend);
                                         }}
                                         onPaginationModelChange={(e)=> onChangePageOrRowGrid(e)}
                                     />
