@@ -6,9 +6,9 @@ import { GlobalContext } from "../store/context/globalContext";
 import { getListaJsonFatturePagoPa, invioListaJsonFatturePagoPa, sendListaJsonFatturePagoPa } from "../api/apiPagoPa/fatturazionePA/api";
 import { manageError, managePresaInCarico } from "../api/api";
 import { Box } from "@mui/system";
-import { InputLabel, Select, MenuItem, FormControl, Button, Toolbar, Typography } from "@mui/material";
+import { InputLabel, Select, MenuItem, FormControl, Button, Toolbar, Typography, Tooltip, TableCell, Chip } from "@mui/material";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
-import { DataGrid, GridCallbackDetails, GridCellParams, GridColDef, GridEventListener, GridRowParams, MuiEvent } from "@mui/x-data-grid";
+import { DataGrid, GridCallbackDetails, GridCellParams, GridColDef, GridEventListener, GridRowParams, GridRowSelectionModel, MuiEvent } from "@mui/x-data-grid";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useNavigate } from "react-router";
 import { mesiGrid, month } from "../reusableFunction/reusableArrayObj";
@@ -45,6 +45,7 @@ const InvioFatture = () => {
     const [selected,setSelected] = useState<SelectedJsonSap[]>([]);
     const [tipologia, setTipologia] = useState('Tutte');
     const [showLoader, setShowLoader] = useState(false);
+    const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
     const [infoPage , setInfoPage] = useState({ page: 0, pageSize: 10 });
 
 
@@ -52,6 +53,7 @@ const InvioFatture = () => {
     useEffect(()=>{
         getLista(tipologia);
         setSelected([]);
+        setRowSelectionModel([]);
     },[tipologia]);
     
     const getLista = async (tipologia) =>{
@@ -67,7 +69,7 @@ const InvioFatture = () => {
             setTipologie([...["Tutte"],...uniqueArray]);
             let elOrdered = res.data.map((el) => {
                 return {
-                    id:el.tipologiaFattura+"-"+el.annoRiferimento+"-"+el.meseRiferimento,
+                    id:el.annoRiferimento+"-"+el.meseRiferimento+"-"+el.tipologiaFattura,
                     tipologiaFattura: el.tipologiaFattura,   
                     statoInvio: el.statoInvio,
                     numeroFatture: el.numeroFatture,
@@ -82,6 +84,7 @@ const InvioFatture = () => {
             }
               
             setListaFatture(elOrdered);
+            
         }).catch((err)=>{
             manageError(err, dispatchMainState);
         });
@@ -120,25 +123,44 @@ const InvioFatture = () => {
             setShowLoader(false);
             getLista("Tutte");
             setSelected([]);
+            setRowSelectionModel([]);
             setTipologia('Tutte');
             managePresaInCarico('SEND_JSON_SAP_OK',dispatchMainState);
         }).catch((err)=>{
             setShowLoader(false);
             setSelected([]);
+            setRowSelectionModel([]);
             setTipologia('Tutte');
             manageError(err, dispatchMainState);
         });
           
     };
 
+    const statoFattura = (row) =>{
+        let tooltipObj:any= {label:'...',title:'...'};
+        if(row.statoInvio === 0){
+            tooltipObj = {label:'Da inviare',title:'Da inviare',color:'info'};
+        }else if(row.statoInvio === 2){
+            tooltipObj = {label:'Elaborazione',title:'La fattura è in elaborazione',color:'warning'};
+        }
+
+        return tooltipObj;
+    };
+   
+
+    
+
     const columns: GridColDef[] = [
-        { field: 'tipologiaFattura', headerName: 'Tipologia Fattura', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.tipologiaFattura}</a>},
-        { field: 'statoInvio', headerName: 'Stato', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'numeroFatture', headerName: 'Numero', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'annoRiferimento', headerName: 'Anno', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'meseRiferimento', headerName: 'Mese', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left', renderCell: (param:{row:any}) => <div className="MuiDataGrid-cellContent" title={mesiGrid[param.row.meseRiferimento]} role="presentation">{mesiGrid[param.row.meseRiferimento]}</div>},
-        { field: 'importo', headerName: 'Importo', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        {field: 'action', headerName: '',sortable: false,width:70,headerAlign: 'left',disableColumnMenu :true,renderCell: (() => ( <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }}/>)),}
+        { field: 'tipologiaFattura', headerName: 'Tipologia Fattura', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center",  renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.tipologiaFattura}</a>},
+        { field: 'statoInvio', headerName: 'Stato', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align:"center",renderCell: (param:any) =>
+            <TableCell align='center'>
+                <Chip label={statoFattura(param.row).label} color={statoFattura(param.row).color} />
+            </TableCell> },
+        { field: 'numeroFatture', headerName: 'Numero', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center" },
+        { field: 'annoRiferimento', headerName: 'Anno', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center"  },
+        { field: 'meseRiferimento', headerName: 'Mese', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center",  renderCell: (param:{row:any}) => <div className="MuiDataGrid-cellContent" title={mesiGrid[param.row.meseRiferimento]} role="presentation">{mesiGrid[param.row.meseRiferimento]}</div>},
+        { field: 'importo', headerName: 'Importo', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"right" },
+        {field: 'action', headerName: '',sortable: false,width:100,align:"center",disableColumnMenu :true,renderCell: (() => ( <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }}/>)),}
     ];
 
 
@@ -254,8 +276,16 @@ const InvioFatture = () => {
                                         columns={columns}
                                         pageSizeOptions={[10, 25, 50,100]}
                                         checkboxSelection
+                                        isRowSelectable={(params) => {
+                                            if(params.row.statoInvio === 2){
+                                                return params.row.disableCheckbox;
+                                            }else{
+                                                return !params.row.statoInvio;
+                                            }
+                                        }}
                                         onRowClick={handleEvent}
                                         onCellClick={handleOnCellClick}
+                                        rowSelectionModel={rowSelectionModel}
                                         onRowSelectionModelChange={(newRowSelectionModel) => {
                                            
                                             const createObjectToSend = newRowSelectionModel.reduce((acc:any,singleEl) => {
@@ -266,7 +296,8 @@ const InvioFatture = () => {
                                                 meseRiferimento: el.meseRiferimento,
                                                 tipologiaFattura: el.tipologiaFattura
                                             }));
-                                            console.log({createObjectToSend});
+                                            console.log({newRowSelectionModel});
+                                            setRowSelectionModel(newRowSelectionModel);
                                             setSelected(createObjectToSend);
                                         }}
                                         onPaginationModelChange={(e)=> onChangePageOrRowGrid(e)}

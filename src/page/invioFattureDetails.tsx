@@ -1,12 +1,11 @@
 import NavigatorHeader from "../components/reusableComponents/navigatorHeader";
 import IosShareIcon from '@mui/icons-material/IosShare';
 import { PathPf } from "../types/enum";
-import { TableHead, TableRow, TableCell, TableBody } from "@mui/material";
-import { Box } from "@mui/system";
-import { Table } from "react-bootstrap";
-import { month } from "../reusableFunction/reusableArrayObj";
+import { TableHead, TableRow, TableCell, TableBody, Typography, TableContainer, Table } from "@mui/material";
+import { Box, styled } from "@mui/system";
+import { mesiGrid, month } from "../reusableFunction/reusableArrayObj";
 import SkeletonRelPdf from "../components/rel/skeletonRelPdf";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { sendListaJsonFatturePagoPa } from "../api/apiPagoPa/fatturazionePA/api";
 import { GlobalContext } from "../store/context/globalContext";
 import { managePresaInCarico } from "../api/api";
@@ -32,27 +31,31 @@ const InvioFattureDetails = () => {
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
     const { id } = useParams();
-
-    console.log({id});
+    const idSplitted:string[] = id?.split('-')||["","",""];
 
     const [loadingDetail, setLoadingDetail] = useState(true);
     const [detailsSingleRow, setDetailsSingleRow] = useState<DetailsSingleRow[]>([]);
 
-    const getDetailSingleRow = async(body) => {
-          
-        await sendListaJsonFatturePagoPa(token,profilo.nonce,body).then((res)=>{
+    useEffect(()=>{
+        getDetailSingleRow();
+    },[]);
+
+    const getDetailSingleRow = async() => {
+
+       
+        await sendListaJsonFatturePagoPa(token,profilo.nonce,{annoRiferimento: Number(idSplitted[0]),meseRiferimento: Number(idSplitted[1]),tipologiaFattura: idSplitted[2]}).then((res)=>{
             // setErrorSingleRowDetail(false);
             const orderData = res.data.map(el => {
                 return {
-                    ragioneSociale: el.ragioneSociale,
+                    ragioneSociale: el.ragioneSociale?.toString().length > 50 ? el.ragioneSociale?.toString().slice(0, 40) + '...' : el.ragioneSociale,
                     tipologiaFattura: el.tipologiaFattura,
                     annoRiferimento: el.annoRiferimento,
-                    meseRiferimento:month[el.meseRiferimento],
+                    meseRiferimento:el.meseRiferimento,
                     dataFattura:el.dataFattura,
                     importo:el.importo.toLocaleString("de-DE", { style: "currency", currency: "EUR" })
                 };
             });
-             
+          
             setDetailsSingleRow(orderData);
             setLoadingDetail(false);
         }).catch(()=>{
@@ -72,7 +75,74 @@ const InvioFattureDetails = () => {
                 <div>
                     <NavigatorHeader pageFrom={"Documenti emessi/Inserimento fatture/"} pageIn={"Dettaglio"} backPath={PathPf.JSON_TO_SAP} icon={<IosShareIcon sx={{paddingBottom:"5px"}}  fontSize='small'></IosShareIcon>}></NavigatorHeader>
                 </div>
-                <div>
+
+                <div className="bg-white m-5">
+                    <div className="d-flex justify-content-center pt-3">
+                        <Typography variant="h4">{`${idSplitted[2]} ${mesiGrid[idSplitted[1]]} ${idSplitted[0]}`}</Typography>
+                    </div>
+                    <div className=" pb-3 ">
+                        <div className="container text-center">
+                            <div className="row">
+                                <div className="col-12" >
+                                    <Box  sx={{ margin: 2 , backgroundColor:'#F8F8F8', padding:'10px'}}>
+                                        <Box style={{
+                                            overflowY: "auto",
+                                            maxHeight: "500px",
+                                            margin: 2 ,
+                                            backgroundColor:'#F8F8F8',    
+                                        }} >
+                                            
+                                            <Table stickyHeader  >
+                                                <TableHead sx={{
+                                                    position: "sticky",
+                                                    top: 0,
+                                                    zIndex: 1   
+                                                }}>
+                                                    <TableRow >
+                                                        <TableCell align="center" >Ragione sociale</TableCell>
+                                                        <TableCell align="center" >Tipologia Fattura</TableCell>
+                                                        <TableCell align="center" >Anno</TableCell>
+                                                        <TableCell align="center" >Mese</TableCell>
+                                                        <TableCell align="center" >Data</TableCell>
+                                                        <TableCell align="center" >Importo</TableCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody   sx={{
+                                                    borderColor: "white",
+                                                    borderWidth: "thick",
+                                                }}>
+                                                    {detailsSingleRow.map((obj)=>{
+                                                        return ( 
+                                                            <TableRow key={Math.random()}>
+                                                                <TableCell sx={{color:'#0D6EFD',fontWeight: 'bold'}} >{obj.ragioneSociale?.length > 40 ? obj.ragioneSociale.slice(0, 50) + '...' : obj.ragioneSociale}</TableCell>
+                                                                <TableCell align="center">{obj.tipologiaFattura}</TableCell>
+                                                                <TableCell align="center" > {obj.annoRiferimento} </TableCell>
+                                                                <TableCell align="center">{month[obj.meseRiferimento-1]}</TableCell>
+                                                                <TableCell align="center">{new Date(obj.dataFattura).toLocaleString().split(",")[0]||''}</TableCell>
+                                                                <TableCell  align="right">
+                                                                    {obj.importo.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        );
+                                                    })}
+                                                </TableBody>
+                                            </Table>
+                                        </Box>
+                                    </Box>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+            </>
+        );
+    }
+};
+
+export default InvioFattureDetails;
+
+/*
+             <div>
                     <Table size="small" aria-label="purchases">
                         <Box
                             style={{
@@ -112,11 +182,5 @@ const InvioFattureDetails = () => {
                         </Box>
                     </Table>
                 </div>
-            </>
-        );
-    }
-
-    
-};
-
-export default InvioFattureDetails;
+            
+            */

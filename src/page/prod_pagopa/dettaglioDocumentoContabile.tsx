@@ -244,7 +244,6 @@ const DettaglioDocContabile : React.FC = () =>{
                     <Typography variant="h4">Posizioni</Typography>
                 </div>
                 <div className="pt-3 pb-3 ">
-                   
                     <div className="container text-center">
                         <div className="row">
                             {docContabile.report.posizioni.map((singlePosizione)=>{
@@ -261,27 +260,19 @@ const DettaglioDocContabile : React.FC = () =>{
                                                     </TableRow>
                                                 </TableHead>
                                                 <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
-                                               
                                                     <TableRow key={singlePosizione.progressivoRiga}>
                                                         <TableCell sx={{ width:"300px"}}>{singlePosizione.category}</TableCell>
                                                         <TableCell sx={{ width:"300px"}}>{singlePosizione.codiceArticolo}</TableCell>
                                                         <TableCell sx={{ width:"300px"}}>{singlePosizione.quantita}</TableCell>
                                                         <TableCell  sx={{ width:"300px"}}align="right">{singlePosizione.importo.toLocaleString("de-DE", { style: 'decimal',maximumFractionDigits: 14})}</TableCell> 
                                                     </TableRow>
-                                              
                                                 </TableBody>
                                             </Table>
                                         </Box>
                                     </div>
-
                                 );
-
                             })}
-                           
                         </div>
-                       
-                        
-                      
                     </div>
                 </div>
             </div>
