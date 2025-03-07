@@ -143,29 +143,22 @@ const DettaglioDocContabile : React.FC = () =>{
 
     const getDocContabile = async(obj) => {
         setLoadingDettaglio(true);
-       
         getDetailsDocContabilePa(token,profilo.nonce,obj).then((res) =>{
             setLoadingDettaglio(false);
             setDocContabile(res.data);
-           
         }).catch((err)=>{
             setLoadingDettaglio(false);
             navigate(PathPf.DOCUMENTICONTABILI);
             manageError(err,dispatchMainState);
-
         });
-        
     };  
 
     const downloadFile = (url,name) => {
-
         const link = document.createElement("a");
         link.href = url;
         link.download = name;
         document.body.appendChild(link);
-
         link.click();
-
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
         //saveAs(url,name);     

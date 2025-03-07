@@ -1,8 +1,8 @@
 import NavigatorHeader from "../components/reusableComponents/navigatorHeader";
 import IosShareIcon from '@mui/icons-material/IosShare';
 import { PathPf } from "../types/enum";
-import { TableHead, TableRow, TableCell, TableBody, Typography, TableContainer, Table, Button, Chip, Tooltip, IconButton, Dialog, DialogTitle, Autocomplete, TextField, Popover, Skeleton } from "@mui/material";
-import { Box, styled } from "@mui/system";
+import { TableHead, TableRow, TableCell, Typography, Table,  Tooltip, IconButton, TextField, Popover} from "@mui/material";
+import { Box} from "@mui/system";
 import { mesiGrid, month } from "../reusableFunction/reusableArrayObj";
 import SkeletonRelPdf from "../components/rel/skeletonRelPdf";
 import { useContext, useEffect, useState } from "react";
@@ -82,11 +82,9 @@ const InvioFattureDetails = () => {
             // setErrorSingleRowDetail(false);
             
             const x  = await filter(res).then(res => res).catch(err => console.log({err}));
-            console.log({x});
-            
             const orderData : DetailsSingleRow[] = x.map(el => {
                 return {
-                    ragioneSociale: el.ragioneSociale?.toString().length > 30 ? el.ragioneSociale?.toString().slice(0, 27) + '...' : el.ragioneSociale,
+                    ragioneSociale:el.ragioneSociale,
                     tipologiaFattura: el.tipologiaFattura,
                     annoRiferimento: el.annoRiferimento,
                     meseRiferimento:el.meseRiferimento,
@@ -96,11 +94,8 @@ const InvioFattureDetails = () => {
             });
             setDetailsSingleRow(orderData);
             setLoadingCustomAction(false);
-            setLoadingDetail(false);
-           
-           
+            setLoadingDetail(false); 
         }).catch((err)=>{
-            console.log({eeeeee:err});
             managePresaInCarico("ERROR_LIST_JSON_TO_SAP",dispatchMainState);
             navigate(PathPf.JSON_TO_SAP);
         });
@@ -129,10 +124,9 @@ const InvioFattureDetails = () => {
 
     if(loadingDetail){
         return(
-            <div className="m-5">
+            <div className="m-3">
                 <SkeletonRelPdf/>
-            </div>
-            
+            </div> 
         );
     }else{
         return(
@@ -186,7 +180,6 @@ const InvioFattureDetails = () => {
                                                                 <TextField onChange={(e) => setInputPopOver(e.target.value)} sx={{borderRadius:'20px'}} value={inputPopOver}  placeholder={"Min 3 caratteri"} variant="outlined" />
                                                             </Popover>
                                                             </>
-                                                            
                                                         </Tooltip></TableCell>
                                                         <TableCell align="center" >Data Fattura</TableCell>
                                                         <TableCell align="center" >T. Fattura</TableCell>
@@ -213,7 +206,7 @@ const InvioFattureDetails = () => {
                                                                 <Tooltip
                                                                     title={obj.ragioneSociale}
                                                                 ><TableCell sx={{color:'#0D6EFD',fontWeight: 'bold',width:"300px"}} >
-                                                                        {obj.ragioneSociale}
+                                                                        {obj.ragioneSociale?.toString().length > 30 ? obj.ragioneSociale?.toString().slice(0, 27) + '...' : obj.ragioneSociale}
                                                                     </TableCell>
                                                                 </Tooltip>
                                                                
@@ -227,7 +220,6 @@ const InvioFattureDetails = () => {
                                                             </TableRow>
                                                         );
                                                     })}
-                                             
                                             </Table>
                                         </Box>
                                     </Box>
@@ -242,47 +234,3 @@ const InvioFattureDetails = () => {
 };
 
 export default InvioFattureDetails;
-
-/*
-             <div>
-                    <Table size="small" aria-label="purchases">
-                        <Box
-                            style={{
-                                overflowY: "auto",
-                                maxHeight: "250px",
-                                width: "100%"
-                            }}
-                        >
-                            <TableHead  sx={{position: "sticky", top:'0',zIndex:"1",backgroundColor: "white"}}>
-                                <TableRow>
-                                    <TableCell sx={{ marginLeft:"16px"}} >Ragione sociale</TableCell>
-                                    <TableCell sx={{ marginLeft:"16px"}} >Tipologia Fattura</TableCell>
-                                    <TableCell sx={{ marginLeft:"16px"}}>Anno</TableCell>
-                                    <TableCell sx={{ marginLeft:"16px"}}>Mese</TableCell>
-                                    <TableCell sx={{ marginLeft:"16px"}}>Data</TableCell>
-                                    <TableCell sx={{ marginLeft:"16px"}}>Importo</TableCell>
-                                </TableRow>
-                            </TableHead>
-                                   
-                            <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
-                                { detailsSingleRow.map((obj) => (
-                                    <TableRow key={Math.random()}>
-                                        <TableCell>{obj.ragioneSociale?.length > 40 ? obj.ragioneSociale.slice(0, 50) + '...' : obj.ragioneSociale}</TableCell>
-                                        <TableCell>
-                                            {obj.tipologiaFattura}
-                                        </TableCell>
-                                        <TableCell  component="th" scope="row"> {obj.annoRiferimento} </TableCell>
-                                        <TableCell align="center" >{month[obj.meseRiferimento-1]}</TableCell>
-                                        <TableCell>{new Date(obj.dataFattura).toLocaleString().split(",")[0]||''}</TableCell>
-                                        <TableCell  align="right"component="th" scope="row">
-                                            {obj.importo.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                                }
-                            </TableBody>
-                        </Box>
-                    </Table>
-                </div>
-            
-            */

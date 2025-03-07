@@ -56,8 +56,6 @@ const ModalJsonSap = ({open,setOpen}) => {
     const [tipologia, setTipologia] = useState('Tutte');
     const [showLoader, setShowLoader] = useState(false);
 
-    console.log({selected});
-
     useEffect(()=>{
         if(open || tipologia !== 'Tutte'){
             getLista(tipologia);
@@ -110,7 +108,7 @@ const ModalJsonSap = ({open,setOpen}) => {
                     importo:el.importo
                 };
             });
-            console.log({rea:res.data});
+ 
             setStateSingleRow(orderData);
         }).catch((err)=>{
             manageError(err, dispatchMainState);

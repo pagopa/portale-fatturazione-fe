@@ -19,8 +19,7 @@ interface DetailsSingleRow
 
 
 const RowJsonSap = ({row,setSelected,selected,apiDetail,lista}) => {
-    console.log({apiDetail});
-    
+
     const [open, setOpen] = useState(false);
     const [detailsSingleRow, setDetailsSingleRow] = useState<DetailsSingleRow[]>([]);
 
@@ -54,8 +53,6 @@ const RowJsonSap = ({row,setSelected,selected,apiDetail,lista}) => {
         Object.keys(obj1).length === Object.keys(obj2).length &&
         Object.keys(obj1).every(key => obj1[key] === obj2[key]);
 
-    console.log({isSelected,selected});
-
     let tooltipObj:any= {label:'...',title:'...'};
     if(row.statoInvio === 0){
         tooltipObj = {label:'Da inviare',title:'Da inviare',color:'info'};
@@ -83,7 +80,6 @@ const RowJsonSap = ({row,setSelected,selected,apiDetail,lista}) => {
                                     annoRiferimento: row.annoRiferimento,
                                     meseRiferimento: row.meseRiferimento,
                                     tipologiaFattura: row.tipologiaFattura}));
-                                console.log({deleteEl, row});
                                 setSelected(deleteEl);
                             }
                         }}

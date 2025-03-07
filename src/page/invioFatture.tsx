@@ -65,19 +65,15 @@ const InvioFatture = () => {
             setSelected(filters.selectedInvio);
             setRowSelectionModel(filters.rowSelectionModelInvio);
             setInfoPage(filters.infoPageInvio);
-           
         }else{
-            console.log('dentro');
             getLista(tipologia);
             setSelected([]);
             setRowSelectionModel([]);
-          
         }
-        
         isInitialRender.current = false;
     },[tipologia]);
 
-    console.log({selected,isInitialRender,rowSelectionModel});
+
     useEffect(()=>{
         if(!isInitialRender.current){
             updateFilters({
@@ -181,7 +177,6 @@ const InvioFatture = () => {
     let columsSelectedGrid = '';
     const handleOnCellClick = (params: GridCellParams, event: MuiEvent, details: GridCallbackDetails) =>{
         columsSelectedGrid  = params.field;
-        console.log( {params,event,details});
     };
     
     const handleEvent: GridEventListener<'rowClick'> = (
@@ -191,7 +186,6 @@ const InvioFatture = () => {
         event.preventDefault();
         // l'evento verrà eseguito solo se l'utente farà il clik sul 
         if(columsSelectedGrid  === 'tipologiaFattura' || columsSelectedGrid === 'action' ){
-            console.log('ciao');
             navigate(PathPf.JSON_TO_SAP_DETAILS.replace(":id",params.row.id));
         }
     };
@@ -245,7 +239,7 @@ const InvioFatture = () => {
                             <div className="d-flex justify-content-center align-items-center" style={{height: "59px"}} >
                                 <Button  
                                     variant='outlined'
-                                    disabled={selected.length < 1}
+                                    disabled={selected?.length < 1}
                                     onClick={onButtonInvia}
                                 >Invia</Button>
                             </div>
@@ -310,7 +304,6 @@ const InvioFatture = () => {
                                                 meseRiferimento: el.meseRiferimento,
                                                 tipologiaFattura: el.tipologiaFattura
                                             }));
-                                            console.log({newRowSelectionModel});
                                             setRowSelectionModel(newRowSelectionModel);
                                             setSelected(createObjectToSend);
                                         }}

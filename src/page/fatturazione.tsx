@@ -1,9 +1,9 @@
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, Tooltip, Typography } from "@mui/material";
+import { Autocomplete, Box, Button, Checkbox, FormControl, InputLabel, MenuItem, Select, TextField, Tooltip, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import { useContext, useEffect, useState } from "react";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { BodyFatturazione, FattureObj, HeaderCollapsible, TipologiaSap} from "../types/typeFatturazione";
-import { downloadFatturePagopa, downloadFattureReportPagopa, fattureCancellazioneRipristinoPagoPa,fattureTipologiaSapPa, getAnniDocEmessiPagoPa, getFatturazionePagoPa, getMesiDocEmessiPagoPa, getTipologieFaPagoPa } from "../api/apiPagoPa/fatturazionePA/api";
+import { downloadFatturePagopa, downloadFattureReportPagopa, fattureCancellazioneRipristinoPagoPa,fattureTipologiaSapPa, getAnniDocEmessiPagoPa, getFatturazionePagoPa, getMesiDocEmessiPagoPa, getTipologieFaPagoPa, getTipologieFaPagoPaWithData } from "../api/apiPagoPa/fatturazionePA/api";
 import { manageError, manageErrorDownload, managePresaInCarico } from "../api/api";
 import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
@@ -23,8 +23,13 @@ import { PathPf } from "../types/enum";
 import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
 import IosShareIcon from '@mui/icons-material/IosShare';
 import { useNavigate } from "react-router";
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 
 const Fatturazione : React.FC = () =>{
+
+    const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+    const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState, mainState,setCountMessages} = globalContextObj;
@@ -52,7 +57,8 @@ const Fatturazione : React.FC = () =>{
     const [openResetFilterModal,setOpenResetFilterModal] = useState(false);
     const [responseTipologieSap, setResponseTipologieSap] = useState<TipologiaSap[]>([]);
     const [fattureSelected, setFattureSelected] = useState<number[]>([]);
-    const [openModalJson,setOpenModalJson] = useState(false);
+    const [dateTipologie, setDateTipologie] = useState<string[]>([]);
+    const [valueMulitselectDateTipologie, setValueMultiselectDateTipologie] = useState<string[]>([]);
     
     const [bodyFatturazione, setBodyFatturazione] = useState<BodyFatturazione>({
         anno:0,
@@ -61,6 +67,7 @@ const Fatturazione : React.FC = () =>{
         idEnti:[],
         cancellata:false
     });
+
     const [bodyFatturazioneDownload, setBodyFatturazioneDownload] = useState<BodyFatturazione>({
         anno:0,
         mese:0,
@@ -68,6 +75,7 @@ const Fatturazione : React.FC = () =>{
         idEnti:[],
         cancellata:false
     });
+
     const { 
         filters,
         updateFilters,
@@ -82,12 +90,9 @@ const Fatturazione : React.FC = () =>{
     useEffect(()=>{
         if(!isInitialRender.current){
             getMesi(bodyFatturazione.anno?.toString());
-        }
-        
+        } 
     },[bodyFatturazione.anno]);
 
-    
-    
     useEffect(()=>{
         if(bodyFatturazione.idEnti.length !== 0 || bodyFatturazione.tipologiaFattura.length !== 0 || bodyFatturazione.cancellata === true ){
             setStatusAnnulla('show');
@@ -113,6 +118,17 @@ const Fatturazione : React.FC = () =>{
         }
     },[bodyFatturazione.mese,bodyFatturazione.anno,bodyFatturazione.cancellata]);
 
+    useEffect(()=>{
+        if(bodyFatturazione.anno !== 0 && bodyFatturazione.mese !== 0 && !isInitialRender.current){
+            getDateTipologieFatturazione(bodyFatturazione);
+            setValueMultiselectDateTipologie([]);
+        }else if(isInitialRender.current && Object.keys(filters).length > 0){
+          
+            getDateTipologieFatturazione(filters.body);
+        }
+        
+    },[bodyFatturazione.anno,bodyFatturazione.mese,bodyFatturazione.cancellata,bodyFatturazione.idEnti,bodyFatturazione.tipologiaFattura]);
+    
 
     const getAnni = async() => {
         setShowLoadingGrid(true);
@@ -133,7 +149,6 @@ const Fatturazione : React.FC = () =>{
         });
     };
 
-
     const getMesi = async(year) =>{
         await getMesiDocEmessiPagoPa(token, profilo.nonce,{anno:year}).then((res)=>{
             
@@ -147,6 +162,9 @@ const Fatturazione : React.FC = () =>{
                 setValueMultiselectTipologie(filters.valueMulitselectTipologie);
                 setFattureSelected(filters.fattureSelected);
                 getlistaFatturazione(filters.body);
+                //new
+                
+                //new
             }else{
                 setBodyFatturazione((prev)=> ({...prev,...{mese:res.data[0].mese}}));
                 getlistaFatturazione({...bodyFatturazione,...{anno:Number(year),mese:res.data[0].mese}});
@@ -165,8 +183,9 @@ const Fatturazione : React.FC = () =>{
                 setTipologie(res.data);
                 if(!isInitialRender.current){
                     setBodyFatturazione((prev)=>({...prev,...{tipologiaFattura:[]}}));
-                    setBodyFatturazioneDownload((prev)=>({...prev,...{tipologiaFattura:[]}}));   
+                    setBodyFatturazioneDownload((prev)=>({...prev,...{tipologiaFattura:[]}})); 
                 }
+                
             }).catch(((err)=>{
                 setTipologie([]);
                 setBodyFatturazione((prev)=>({...prev,...{tipologiaFattura:[]}}));
@@ -176,13 +195,34 @@ const Fatturazione : React.FC = () =>{
         isInitialRender.current = false;
     };
 
-    
+    const getDateTipologieFatturazione =  async(body) => {
+        await getTipologieFaPagoPaWithData(token, profilo.nonce, body  )
+            .then((res)=>{
+                const result = res.data.map((el)=>{
+                    return el.tipologiaFattura+"-"+el.dataFattura?.split("T")[0];
+                });
+                setDateTipologie(result);
+                if(isInitialRender.current && Object.keys(filters).length > 0){
+                    setValueMultiselectDateTipologie(filters.valueMulitselectDateTipologie);
+                }
+            }).catch(((err)=>{
+                setDateTipologie([]);
+            }));
+        
+    };
+
     const getlistaFatturazione = async (body) => {
         setShowLoadingGrid(true);
         setDisableButtonSap(true);
         await  getFatturazionePagoPa(token,profilo.nonce,body)
             .then((res)=>{
-                const data = res.data.map(el => el?.fattura);
+                const dataString = valueMulitselectDateTipologie.map(el =>  el.split("-").slice(1).join("-"));
+                let data; 
+                if(dataString.length === 0){
+                    data = res.data.map(el => el?.fattura);
+                }else{
+                    data = res.data.map(el => el?.fattura).filter(obj => dataString.includes(obj.dataFattura));
+                }  
                 setGridData(data);
                 setShowLoadingGrid(false);
                 setBodyFatturazioneDownload(body);
@@ -337,6 +377,7 @@ const Fatturazione : React.FC = () =>{
             tipologie:tipologie,
             fattureSelected:fattureSelected,
             valueMulitselectTipologie:valueMulitselectTipologie,
+            valueMulitselectDateTipologie:valueMulitselectDateTipologie,
             page:0,
             rows:10,
         });
@@ -344,9 +385,7 @@ const Fatturazione : React.FC = () =>{
     };
 
     const onButtonAnnulla = () => {
-
         getMesi(arrayYears[0]?.toString());
-        
         setBodyFatturazione({
             anno:arrayYears[0],
             mese:0,
@@ -368,7 +407,6 @@ const Fatturazione : React.FC = () =>{
     };
     
     const upadateOnSelctedChange = (page,rowsPerPage) =>{
-     
         updateFilters({
             pathPage:PathPf.FATTURAZIONE,
             body:bodyFatturazione,
@@ -434,10 +472,9 @@ const Fatturazione : React.FC = () =>{
                                         setBodyFatturazione((prev)=> ({...prev, ...{mese:value}}));
                                         clearOnChangeFilter();
                                     }}         
-                                    value={bodyFatturazione.mese||''}             
+                                    value={bodyFatturazione.mese||''}
                                 >
                                     {arrayMonths.map((el) => (
-                                    
                                         <MenuItem
                                             key={Math.random()}
                                             value={el.mese}
@@ -489,25 +526,58 @@ const Fatturazione : React.FC = () =>{
                             clearOnChangeFilter={clearOnChangeFilter}
                         ></MultiselectCheckbox>
                     </div>
+                    <div  className="col-3">
+                        <Autocomplete
+                            limitTags={1}
+                            sx={{width:'80%',marginLeft:'20px'}}
+                            multiple
+                            onChange={(event, value) => {
+                                setValueMultiselectDateTipologie(value);
+                              
+                                clearOnChangeFilter();
+                            }}
+                            options={dateTipologie}
+                            value={valueMulitselectDateTipologie}
+                            disableCloseOnSelect
+                            getOptionLabel={(option:string) => option}
+                            renderOption={(props, option,{ selected }) =>(
+                                <li {...props}>
+                                    <Checkbox
+                                        icon={icon}
+                                        checkedIcon={checkedIcon}
+                                        style={{ marginRight: 8 }}
+                                        checked={selected}
+                                    />
+                                    {option}
+                                </li>
+                            )}
+                            style={{ width: '80%',height:'59px' }}
+                            renderInput={(params) => {
+                                    
+                                return <TextField {...params}
+                                    label="Data fattura" 
+                                    placeholder="Data fattura" />;
+                            }}
+                               
+                        />
+                    </div>
+                  
                 </div>
                 <div className="row mt-5">
-                    <div  className="col-6">
+                    <div  className="col-6 mt-5">
                         <div className="d-flex">
                             <Button 
-                                onClick={onButtonFiltra} 
-                                sx={{ marginTop: 'auto', marginBottom: 'auto'}}
-                                variant="contained"> Filtra
+                                onClick={onButtonFiltra}  sx={{ marginTop: 'auto', marginBottom: 'auto'}} variant="contained"> 
+                                Filtra
                             </Button>
                             {statusAnnulla === 'hidden' ? null :
-                                <Button
-                                    onClick={onButtonAnnulla}
-                                    sx={{marginLeft:'24px'}} >
+                                <Button onClick={onButtonAnnulla}sx={{marginLeft:'24px'}} >
                    Annulla filtri
                                 </Button>
                             }
                         </div>
                     </div>
-                    <div className="col-6">
+                    <div className="col-6 mt-5">
                         <div className="d-flex flex-row-reverse">
                             <Tooltip  className="mx-2" title="Invia fatture REL firmate">
                                 <span>
@@ -529,20 +599,15 @@ const Fatturazione : React.FC = () =>{
                 </div>
             </div>
             <div className="marginTop24" style={{display:'flex', justifyContent:'end', height:"48px"}}>
-                {
-                    gridData.length > 0 &&
+                { gridData.length > 0 &&
                         <>
                             { !bodyFatturazioneDownload.cancellata &&
-                                <Button sx={{marginRight:'10px',width:'216px'}} onClick={() => downloadListaReportFatturazione()}
-                                >
-                Download Report
-                                    <DownloadIcon sx={{marginLeft:'10px'}}></DownloadIcon>
+                                <Button sx={{marginRight:'10px',width:'216px'}} onClick={downloadListaReportFatturazione}
+                                > Download Report<DownloadIcon sx={{marginLeft:'10px'}}></DownloadIcon>
                                 </Button>
                             }
-                            <Button sx={{width:'216px'}} onClick={() => downloadListaFatturazione()}
-                            >
-                Download Risultati
-                                <DownloadIcon sx={{marginLeft:'10px'}}></DownloadIcon>
+                            <Button sx={{width:'216px'}} onClick={downloadListaFatturazione}>
+                                 Download Risultati<DownloadIcon sx={{marginLeft:'10px'}}></DownloadIcon>
                             </Button>
                         </>
                 }
