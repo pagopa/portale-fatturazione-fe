@@ -16,7 +16,7 @@ const RowContratto = ({sliced, apiGet, handleClickOnGrid, element}) => {
                     const indexContractType =  Object.entries(sliced).findIndex(([key]) => key === 'tipoContratto');
                     // stato per loa switch utilizzato nella page tipologia contratto
                     const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
-                    const valueEl = (i === 0 && value?.toString().length > 50) ? value?.toString().slice(0, 50) + '...' : value;
+                    const valueEl = (i === 0 && value?.toString().length > 50) ? value?.toString().slice(0, 47) + '...' : value;
                 
                     if(i === indexContractType){
                         return(

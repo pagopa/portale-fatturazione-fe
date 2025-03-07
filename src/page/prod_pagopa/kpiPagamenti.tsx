@@ -326,7 +326,7 @@ const KpiPagamenti:React.FC = () =>{
                 <div className="col-3">
                     <Autocomplete
                         multiple
-                        limitTags={2}
+                        limitTags={1}
                         onChange={(event, value) => {
                             const arrayId = value.map(el => el.value);
                             setBodyGetLista((prev) => ({...prev,...{quarters:arrayId}}));

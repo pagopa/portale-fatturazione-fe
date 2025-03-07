@@ -279,6 +279,7 @@ const Fatturazione : React.FC = () =>{
     const headersObjGrid : HeaderCollapsible[] = [
         {name:"",align:"left",id:1},
         {name:"Ragione Sociale",align:"left",id:2},
+        {name:"Data Fattura",align:"center",id:12},
         {name:"Elaborazione",align:"center",id:13},
         {name:"T. Fattura",align:"center",id:10},
         {name:"Ident.",align:"center",id:9},
@@ -289,7 +290,7 @@ const Fatturazione : React.FC = () =>{
         {name:"Divisa",align:"center",id:7},
         {name:"M. Pagamento",align:"center",id:8},
         {name:"Split",align:"center",id:11},
-        {name:"Data Fattura",align:"center",id:12}];
+    ];
 
 
     // logic modal ON BUTTON SAP
@@ -508,7 +509,7 @@ const Fatturazione : React.FC = () =>{
                     </div>
                     <div className="col-6">
                         <div className="d-flex flex-row-reverse">
-                            <Tooltip  className="mx-2" title="Invia REL firmate">
+                            <Tooltip  className="mx-2" title="Invia fatture REL firmate">
                                 <span>
                                     <Button   onClick={()=> navigate(PathPf.JSON_TO_SAP)   /* setOpenModalJson(true)*/}  variant="outlined"><IosShareIcon></IosShareIcon></Button>
                                 </span>

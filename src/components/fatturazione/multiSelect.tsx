@@ -17,6 +17,7 @@ const MultiSelectFatturazione : React.FC<MultiSelectFatturazioneProps> =  ({setB
 
     return (
         <Autocomplete
+            limitTags={1}
             sx={{width:'80%',marginLeft:'20px'}}
             multiple
             onChange={(event, value) => {

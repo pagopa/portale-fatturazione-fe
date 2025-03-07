@@ -17,6 +17,7 @@ const MultiSelectBase : React.FC<MultiSelectBaseProps> =  ({setBody,list,value,s
     return (
         <Box sx={{width:'80%', marginLeft:'20px'}}  >
             <Autocomplete
+                limitTags={1}
                 multiple
                 fullWidth
                 size="medium"

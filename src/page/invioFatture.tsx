@@ -12,6 +12,7 @@ import { DataGrid, GridCallbackDetails, GridCellParams, GridColDef, GridEventLis
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useNavigate } from "react-router";
 import { mesiGrid, month } from "../reusableFunction/reusableArrayObj";
+import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
 
 
 
@@ -35,7 +36,7 @@ export interface SelectedJsonSap {
 const InvioFatture = () => {
 
     const globalContextObj = useContext(GlobalContext);
-    const {mainState,dispatchMainState,setErrorAlert} = globalContextObj;
+    const {mainState,dispatchMainState} = globalContextObj;
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
@@ -48,13 +49,47 @@ const InvioFatture = () => {
     const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
     const [infoPage , setInfoPage] = useState({ page: 0, pageSize: 10 });
 
+    const { 
+        filters,
+        updateFilters,
+        resetFilters,
+        isInitialRender
+    } = useSavedFilters(PathPf.FATTURAZIONE,{});
+
 
     
     useEffect(()=>{
-        getLista(tipologia);
-        setSelected([]);
-        setRowSelectionModel([]);
+        if(isInitialRender.current && Object.keys(filters).length > 0){
+            getLista(filters.tipologiaInvio);
+            setTipologia(filters.tipologiaInvio);
+            setSelected(filters.selectedInvio);
+            setRowSelectionModel(filters.rowSelectionModelInvio);
+            setInfoPage(filters.infoPageInvio);
+           
+        }else{
+            console.log('dentro');
+            getLista(tipologia);
+            setSelected([]);
+            setRowSelectionModel([]);
+          
+        }
+        
+        isInitialRender.current = false;
     },[tipologia]);
+
+    console.log({selected,isInitialRender,rowSelectionModel});
+    useEffect(()=>{
+        if(!isInitialRender.current){
+            updateFilters({
+                pathPage:PathPf.FATTURAZIONE,
+                tipologiaInvio:tipologia,
+                selectedInvio:selected,
+                rowSelectionModelInvio:rowSelectionModel,
+                infoPageInvio:infoPage
+            });
+        }
+       
+    },[tipologia,selected,rowSelectionModel,infoPage]);
     
     const getLista = async (tipologia) =>{
         await getListaJsonFatturePagoPa(token,profilo.nonce).then((res)=>{
@@ -78,43 +113,20 @@ const InvioFatture = () => {
                     importo: el.importo.toLocaleString("de-DE", { style: "currency", currency: "EUR" })
                 };
             }); 
-    
             if(tipologia !== 'Tutte'){
                 elOrdered = elOrdered.filter(el => el.tipologiaFattura === tipologia);
             }
-              
             setListaFatture(elOrdered);
-            
+           
+           
         }).catch((err)=>{
             manageError(err, dispatchMainState);
         });
+        if(isInitialRender.current && Object.keys(filters).length > 0){
+            setTipologia(filters.tipologiaInvio);
+        }
     };
 
-    console.log({listaFatture});
-    /*
-    const getDetailSingleRow = async(body,setStateSingleRow) => {
-      
-        await sendListaJsonFatturePagoPa(token,profilo.nonce,body).then((res)=>{
-            // setErrorSingleRowDetail(false);
-            const orderData = res.data.map(el => {
-                return {
-                    ragioneSociale: el.ragioneSociale,
-                    tipologiaFattura: el.tipologiaFattura,
-                    annoRiferimento: el.annoRiferimento,
-                    meseRiferimento:month[el.meseRiferimento],
-                    dataFattura:el.dataFattura,
-                    importo:el.importo.toLocaleString("de-DE", { style: "currency", currency: "EUR" })
-                };
-            });
-         
-            setStateSingleRow(orderData);
-        }).catch(()=>{
-            getLista(tipologia);
-            managePresaInCarico("ERROR_LIST_JSON_TO_SAP",dispatchMainState);
-        });
- 
-    };
-    */
     const onButtonInvia = async() =>{
         setShowLoader(true);
         // se l'utente ha selezionato il button invia a sap 
@@ -154,7 +166,9 @@ const InvioFatture = () => {
         { field: 'tipologiaFattura', headerName: 'Tipologia Fattura', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center",  renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.tipologiaFattura}</a>},
         { field: 'statoInvio', headerName: 'Stato', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align:"center",renderCell: (param:any) =>
             <TableCell align='center'>
-                <Chip label={statoFattura(param.row).label} color={statoFattura(param.row).color} />
+                <span>
+                    <Chip label={statoFattura(param.row).label} color={statoFattura(param.row).color} />
+                </span>
             </TableCell> },
         { field: 'numeroFatture', headerName: 'Numero', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center" },
         { field: 'annoRiferimento', headerName: 'Anno', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center"  },
@@ -215,7 +229,7 @@ const InvioFatture = () => {
                                             return (            
                                                 <MenuItem
                                                     key={Math.random()}
-                                                    value={el}
+                                                    value={el||''}
                                                 >
                                                     {el}
                                                 </MenuItem>              
@@ -300,6 +314,7 @@ const InvioFatture = () => {
                                             setRowSelectionModel(newRowSelectionModel);
                                             setSelected(createObjectToSend);
                                         }}
+                                        paginationModel={infoPage}
                                         onPaginationModelChange={(e)=> onChangePageOrRowGrid(e)}
                                     />
                                 </div>

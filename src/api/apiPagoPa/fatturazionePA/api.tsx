@@ -153,6 +153,17 @@ export const invioListaJsonFatturePagoPa = async (token:string, nonce:string,bod
     return response;
 };
 
+export const getTipologieFaPagoPaWithData = async (token:string, nonce:string, body: {anno:number,mese:number,idEnti:string[],tipologiaFattura:string[],cancellata:boolean}) => {
+    const response =  await axios.post(`${url}/api/fatture/date?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },
+        }
+    );
+    return response;
+};
+
 
 
 

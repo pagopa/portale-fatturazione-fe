@@ -1,7 +1,7 @@
 import NavigatorHeader from "../components/reusableComponents/navigatorHeader";
 import IosShareIcon from '@mui/icons-material/IosShare';
 import { PathPf } from "../types/enum";
-import { TableHead, TableRow, TableCell, TableBody, Typography, TableContainer, Table } from "@mui/material";
+import { TableHead, TableRow, TableCell, TableBody, Typography, TableContainer, Table, Button, Chip, Tooltip, IconButton, Dialog, DialogTitle, Autocomplete, TextField, Popover, Skeleton } from "@mui/material";
 import { Box, styled } from "@mui/system";
 import { mesiGrid, month } from "../reusableFunction/reusableArrayObj";
 import SkeletonRelPdf from "../components/rel/skeletonRelPdf";
@@ -10,12 +10,16 @@ import { sendListaJsonFatturePagoPa } from "../api/apiPagoPa/fatturazionePA/api"
 import { GlobalContext } from "../store/context/globalContext";
 import { managePresaInCarico } from "../api/api";
 import { useNavigate, useParams } from "react-router";
+import FilterListIcon from '@mui/icons-material/FilterList';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import SkeletonGridLoading from "../components/reusableComponents/skeletonGridLoading";
 
 interface DetailsSingleRow 
 {
-    idFattura: number,
+    idFattura?: number,
     tipologiaFattura: string,
-    idEnte: string,
+    idEnte?: string,
     ragioneSociale: string,
     annoRiferimento: number,
     meseRiferimento: number,
@@ -30,40 +34,98 @@ const InvioFattureDetails = () => {
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
+
     const { id } = useParams();
     const idSplitted:string[] = id?.split('-')||["","",""];
 
     const [loadingDetail, setLoadingDetail] = useState(true);
+    const [loadingCustomAction, setLoadingCustomAction] = useState(false);
     const [detailsSingleRow, setDetailsSingleRow] = useState<DetailsSingleRow[]>([]);
+    const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+    const [inputPopOver, setInputPopOver] = useState('');
+    const [sortImport, setSortImport] = useState<boolean|null>(null);
+    
+    const open = Boolean(anchorEl);
+    const idPop = open ? 'simple-popover' : undefined;
+
 
     useEffect(()=>{
-        getDetailSingleRow();
-    },[]);
+        const timer = setTimeout(() => {
+            getDetailSingleRow();
+        }, 500);
+        return () => clearTimeout(timer);
+    },[inputPopOver, sortImport]);
+
+
+    const filter = async(data) => {
+        return await data.data.filter((item) => {
+            if(inputPopOver.length >= 3){
+                return item?.ragioneSociale?.toLowerCase().includes(inputPopOver.toLowerCase());
+            }else{
+                return item;
+            }
+        }).sort((a, b) => {
+            if(sortImport === null){
+                return b;
+            }else if(sortImport === true){
+                return  b.importo - a.importo;
+            }else{
+                return a.importo - b.importo;
+            }
+            
+        },[]);
+    };
 
     const getDetailSingleRow = async() => {
-
-       
-        await sendListaJsonFatturePagoPa(token,profilo.nonce,{annoRiferimento: Number(idSplitted[0]),meseRiferimento: Number(idSplitted[1]),tipologiaFattura: idSplitted[2]}).then((res)=>{
+        setLoadingCustomAction(true);
+        await sendListaJsonFatturePagoPa(token,profilo.nonce,{annoRiferimento: Number(idSplitted[0]),meseRiferimento: Number(idSplitted[1]),tipologiaFattura: idSplitted[2]}).then(async(res)=>{
             // setErrorSingleRowDetail(false);
-            const orderData = res.data.map(el => {
+            
+            const x  = await filter(res).then(res => res).catch(err => console.log({err}));
+            console.log({x});
+            
+            const orderData : DetailsSingleRow[] = x.map(el => {
                 return {
-                    ragioneSociale: el.ragioneSociale?.toString().length > 50 ? el.ragioneSociale?.toString().slice(0, 40) + '...' : el.ragioneSociale,
+                    ragioneSociale: el.ragioneSociale?.toString().length > 30 ? el.ragioneSociale?.toString().slice(0, 27) + '...' : el.ragioneSociale,
                     tipologiaFattura: el.tipologiaFattura,
                     annoRiferimento: el.annoRiferimento,
                     meseRiferimento:el.meseRiferimento,
                     dataFattura:el.dataFattura,
-                    importo:el.importo.toLocaleString("de-DE", { style: "currency", currency: "EUR" })
+                    importo:el.importo?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })
                 };
             });
-          
             setDetailsSingleRow(orderData);
+            setLoadingCustomAction(false);
             setLoadingDetail(false);
-        }).catch(()=>{
+           
+           
+        }).catch((err)=>{
+            console.log({eeeeee:err});
             managePresaInCarico("ERROR_LIST_JSON_TO_SAP",dispatchMainState);
             navigate(PathPf.JSON_TO_SAP);
         });
-     
     };
+
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClickArrow = () => {
+        setLoadingCustomAction(true);
+        if(sortImport === null){
+            setSortImport(true);
+        }else if(sortImport === true){
+            setSortImport(false);
+        }else if(sortImport === false){
+            setSortImport(null);
+        }
+    };
+    
+  
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+  
+  
 
     if(loadingDetail){
         return(
@@ -99,33 +161,70 @@ const InvioFattureDetails = () => {
                                                     zIndex: 1   
                                                 }}>
                                                     <TableRow >
-                                                        <TableCell align="center" >Ragione sociale</TableCell>
-                                                        <TableCell align="center" >Tipologia Fattura</TableCell>
+                                                        <TableCell align="center" > Ragione sociale  <Tooltip
+                                                            title={'Filtra'}  
+                                                        >
+                                                            <>   <Tooltip
+                                                                title="Filtra"   
+                                                            >
+                                                                <IconButton sx={{marginLeft:'10px'}} aria-describedby={idPop} onClick={handleClick} aria-label="Filtra" size="small">
+                                                                    <FilterListIcon></FilterListIcon>
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                                
+                                                            <Popover anchorOrigin={{
+                                                                vertical: 'top',
+                                                                horizontal: 'right',
+                                                            }} 
+                                                            open={open}
+                                                            anchorEl={anchorEl}
+                                                            onClose={handleClose}id={idPop}>
+                                                                    
+                                                                <TextField onChange={(e) => setInputPopOver(e.target.value)} sx={{borderRadius:'20px'}} value={inputPopOver}  placeholder={"Min 3 caratteri"} variant="outlined" />
+                                                            </Popover>
+                                                            </>
+                                                            
+                                                        </Tooltip></TableCell>
+                                                        <TableCell align="center" >Data Fattura</TableCell>
+                                                        <TableCell align="center" >T. Fattura</TableCell>
                                                         <TableCell align="center" >Anno</TableCell>
                                                         <TableCell align="center" >Mese</TableCell>
-                                                        <TableCell align="center" >Data</TableCell>
-                                                        <TableCell align="center" >Importo</TableCell>
+                                                        <TableCell align="center" >Importo
+                                                            <Tooltip
+                                                                title="Sort"   
+                                                            >
+                                                                <IconButton sx={{marginLeft:'10px'}}  onClick={handleClickArrow}  size="small">
+                                                                    {(sortImport === null || sortImport === true) ? <ArrowUpwardIcon></ArrowUpwardIcon>:<ArrowDownwardIcon></ArrowDownwardIcon>}
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                           
+                                                        </TableCell>
                                                     </TableRow>
                                                 </TableHead>
-                                                <TableBody   sx={{
-                                                    borderColor: "white",
-                                                    borderWidth: "thick",
-                                                }}>
-                                                    {detailsSingleRow.map((obj)=>{
+                                                {loadingCustomAction ? 
+                                                    <SkeletonGridLoading columnLength={10} rowLength={6}></SkeletonGridLoading> 
+                                                    : detailsSingleRow.map((obj)=>{
                                                         return ( 
                                                             <TableRow key={Math.random()}>
-                                                                <TableCell sx={{color:'#0D6EFD',fontWeight: 'bold'}} >{obj.ragioneSociale?.length > 40 ? obj.ragioneSociale.slice(0, 50) + '...' : obj.ragioneSociale}</TableCell>
+                                                                
+                                                                <Tooltip
+                                                                    title={obj.ragioneSociale}
+                                                                ><TableCell sx={{color:'#0D6EFD',fontWeight: 'bold',width:"300px"}} >
+                                                                        {obj.ragioneSociale}
+                                                                    </TableCell>
+                                                                </Tooltip>
+                                                               
+                                                                <TableCell align="center">{new Date(obj.dataFattura).toLocaleString().split(",")[0]||''}</TableCell>
                                                                 <TableCell align="center">{obj.tipologiaFattura}</TableCell>
                                                                 <TableCell align="center" > {obj.annoRiferimento} </TableCell>
                                                                 <TableCell align="center">{month[obj.meseRiferimento-1]}</TableCell>
-                                                                <TableCell align="center">{new Date(obj.dataFattura).toLocaleString().split(",")[0]||''}</TableCell>
                                                                 <TableCell  align="right">
-                                                                    {obj.importo.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
+                                                                    {obj.importo}
                                                                 </TableCell>
                                                             </TableRow>
                                                         );
                                                     })}
-                                                </TableBody>
+                                             
                                             </Table>
                                         </Box>
                                     </Box>

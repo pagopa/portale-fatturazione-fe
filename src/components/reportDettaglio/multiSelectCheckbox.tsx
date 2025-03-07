@@ -13,6 +13,7 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
 
     return (
         <Autocomplete
+            limitTags={1}
             multiple
             onChange={(event, value) => {
                 const arrayIdEnte = value.map(obj=> obj.idEnte);

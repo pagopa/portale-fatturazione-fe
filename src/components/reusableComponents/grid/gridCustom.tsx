@@ -88,31 +88,7 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
         }
        
     };
-
-    /*
-     <TableRow>
-                                {headerNames.map((el)=>{
-                                    if(el === "checkbox"){
-                                        return(
-                                            <td key={Math.random()}>
-                                                <Checkbox  onClick={clickOnCheckBoxHeader} disabled={stateHeaderCheckbox.disabled} checked={stateHeaderCheckbox.checked} />
-                                            </td>   
-                                        );
-                                    }else{
-                                        return (
-                                            <TableCell key={Math.random()}>
-                                                {el} 
-                                            </TableCell>
-                                        );
-                                    }
-                                   
-                                })}
-                               
-                            </TableRow>
-
-                            <RowWhiteList key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} stateHeaderCheckbox={stateHeaderCheckbox} setSelected={setSelected} selected={selected||[]}  checkIfChecked={checkIfChecked} ></RowWhiteList>
-     */
-       
+   
    
     return (
         <div>

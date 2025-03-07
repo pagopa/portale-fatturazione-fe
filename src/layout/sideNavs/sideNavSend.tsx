@@ -7,7 +7,8 @@ import {
     ListItemIcon,
     Box,
     Divider,
-    Collapse
+    Collapse,
+    IconButton
 } from '@mui/material';
 import { useNavigate, useLocation } from "react-router-dom";
 import DnsIcon from '@mui/icons-material/Dns';
@@ -143,6 +144,8 @@ const SideNavSend : React.FC = () => {
             setOpen2(true);
         }else if(currentLocation === PathPf.JSON_TO_SAP){
             setSelectedIndex(5);
+        }else if(currentLocation.toLowerCase().includes("/inviofatturedettaglio/")){
+            setSelectedIndex(5);
         }
 
         if(open2 && (currentLocation !== PathPf.LISTA_DOC_EMESSI && currentLocation !== PathPf.FATTURAZIONE)){
@@ -167,7 +170,13 @@ const SideNavSend : React.FC = () => {
                         <DnsIcon fontSize="inherit"></DnsIcon>
                     </ListItemIcon>
                     <ListItemText primary="Dati di fatturazione" />
-                    {open ? <ExpandLess onClick={()=> setOpen(false)} /> : <ExpandMore onClick={()=> setOpen(true)} />}
+                    {open ? 
+                        <IconButton onClick={()=> setOpen(false)}  size="small">
+                            <ExpandLess  />
+                        </IconButton>  :
+                        <IconButton onClick={()=> setOpen(true)}  size="small">
+                            <ExpandMore />
+                        </IconButton> }
                 </ListItemButton>
                 <Collapse in={open} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
@@ -208,7 +217,13 @@ const SideNavSend : React.FC = () => {
                         <ReceiptIcon fontSize="inherit" />
                     </ListItemIcon>
                     <ListItemText primary="Documenti emessi" />
-                    {open2 ? <ExpandLess onClick={()=> setOpen2(false)} /> : <ExpandMore onClick={()=> setOpen2(true)} />}
+                    {open2 ? 
+                        <IconButton onClick={()=> setOpen2(false)}  size="small">
+                            <ExpandLess  />
+                        </IconButton>  :
+                        <IconButton  onClick={()=> setOpen2(true)}  size="small">
+                            <ExpandMore />
+                        </IconButton>}
                 </ListItemButton> 
                 <Collapse in={open2} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
