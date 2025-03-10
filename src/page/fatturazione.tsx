@@ -124,7 +124,7 @@ const Fatturazione : React.FC = () =>{
           
             getDateTipologieFatturazione(filters.body);
         } 
-    },[bodyFatturazione.anno,bodyFatturazione.mese,bodyFatturazione.cancellata,bodyFatturazione.idEnti,bodyFatturazione.tipologiaFattura]);
+    },[bodyFatturazione.idEnti, bodyFatturazione.tipologiaFattura]);
     
     const getAnni = async() => {
         setShowLoadingGrid(true);
@@ -158,7 +158,7 @@ const Fatturazione : React.FC = () =>{
                 getlistaFatturazione(filters.body);
             }else{
                 setBodyFatturazione((prev)=> ({...prev,...{mese:res.data[0].mese}}));
-                getlistaFatturazione({...bodyFatturazione,...{anno:Number(year),mese:res.data[0].mese}});
+                getlistaFatturazione({...bodyFatturazione,...{anno:Number(year),mese:res.data[0].mese, tipologiaFattura:[],cancellata:false,idEnti:[]}});
             }
         }).catch((err)=>{
             setArrayMonths([]);
@@ -186,7 +186,7 @@ const Fatturazione : React.FC = () =>{
     };
 
     const getDateTipologieFatturazione =  async(body) => {
-        await getTipologieFaPagoPaWithData(token, profilo.nonce, body  )
+        await getTipologieFaPagoPaWithData(token, profilo.nonce, body)
             .then((res)=>{
                 const result = res.data.map((el)=>{
                     return el.tipologiaFattura+"-"+el.dataFattura?.split("T")[0];
