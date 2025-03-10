@@ -3,18 +3,17 @@ import NavigatorHeader from "../components/reusableComponents/navigatorHeader";
 import { PathPf } from "../types/enum";
 import IosShareIcon from '@mui/icons-material/IosShare';
 import { GlobalContext } from "../store/context/globalContext";
-import { getListaJsonFatturePagoPa, invioListaJsonFatturePagoPa, sendListaJsonFatturePagoPa } from "../api/apiPagoPa/fatturazionePA/api";
+import { getListaJsonFatturePagoPa, invioListaJsonFatturePagoPa } from "../api/apiPagoPa/fatturazionePA/api";
 import { manageError, managePresaInCarico } from "../api/api";
 import { Box } from "@mui/system";
-import { InputLabel, Select, MenuItem, FormControl, Button, Toolbar, Typography, Tooltip, TableCell, Chip } from "@mui/material";
+import { InputLabel, Select, MenuItem, FormControl, Button, Toolbar, Typography, TableCell, Chip } from "@mui/material";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
-import { DataGrid, GridCallbackDetails, GridCellParams, GridColDef, GridEventListener, GridRowParams, GridRowSelectionModel, MuiEvent } from "@mui/x-data-grid";
+import { DataGrid, GridCellParams, GridColDef, GridEventListener, GridRowParams, GridRowSelectionModel, MuiEvent } from "@mui/x-data-grid";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useNavigate } from "react-router";
-import { mesiGrid, month } from "../reusableFunction/reusableArrayObj";
+import { mesiGrid } from "../reusableFunction/reusableArrayObj";
 import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
-
-
+import { configGridJsonSap } from "../assets/configurations/config_GridInvioFattureJsonSap";
 
 interface ListaFatture {
     tipologiaFattura: string,
@@ -42,7 +41,7 @@ const InvioFatture = () => {
     const navigate = useNavigate();
     
     const [listaFatture, setListaFatture] = useState<ListaFatture[]>([]);
-    const [tipologieFatture, setTipologie] = useState<string[]>([]);
+    const [tipologieFatture, setTipologie] = useState<string[]>(['Tutte']);
     const [selected,setSelected] = useState<SelectedJsonSap[]>([]);
     const [tipologia, setTipologia] = useState('Tutte');
     const [showLoader, setShowLoader] = useState(false);
@@ -52,12 +51,9 @@ const InvioFatture = () => {
     const { 
         filters,
         updateFilters,
-        resetFilters,
         isInitialRender
-    } = useSavedFilters(PathPf.FATTURAZIONE,{});
+    } = useSavedFilters("/inviofatture",{});
 
-
-    
     useEffect(()=>{
         if(isInitialRender.current && Object.keys(filters).length > 0){
             getLista(filters.tipologiaInvio);
@@ -77,14 +73,13 @@ const InvioFatture = () => {
     useEffect(()=>{
         if(!isInitialRender.current){
             updateFilters({
-                pathPage:PathPf.FATTURAZIONE,
+                pathPage:"/inviofatture",
                 tipologiaInvio:tipologia,
                 selectedInvio:selected,
                 rowSelectionModelInvio:rowSelectionModel,
                 infoPageInvio:infoPage
             });
         }
-       
     },[tipologia,selected,rowSelectionModel,infoPage]);
     
     const getLista = async (tipologia) =>{
@@ -113,8 +108,6 @@ const InvioFatture = () => {
                 elOrdered = elOrdered.filter(el => el.tipologiaFattura === tipologia);
             }
             setListaFatture(elOrdered);
-           
-           
         }).catch((err)=>{
             manageError(err, dispatchMainState);
         });
@@ -125,9 +118,7 @@ const InvioFatture = () => {
 
     const onButtonInvia = async() =>{
         setShowLoader(true);
-        // se l'utente ha selezionato il button invia a sap 
-        await invioListaJsonFatturePagoPa(token,profilo.nonce,selected).then((res)=>{
-    
+        await invioListaJsonFatturePagoPa(token,profilo.nonce,selected).then(()=>{
             setShowLoader(false);
             getLista("Tutte");
             setSelected([]);
@@ -141,7 +132,6 @@ const InvioFatture = () => {
             setTipologia('Tutte');
             manageError(err, dispatchMainState);
         });
-          
     };
 
     const statoFattura = (row) =>{
@@ -151,13 +141,9 @@ const InvioFatture = () => {
         }else if(row.statoInvio === 2){
             tooltipObj = {label:'Elaborazione',title:'La fattura è in elaborazione',color:'warning'};
         }
-
         return tooltipObj;
     };
    
-
-    
-
     const columns: GridColDef[] = [
         { field: 'tipologiaFattura', headerName: 'Tipologia Fattura', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center",  renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.tipologiaFattura}</a>},
         { field: 'statoInvio', headerName: 'Stato', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align:"center",renderCell: (param:any) =>
@@ -175,7 +161,7 @@ const InvioFatture = () => {
 
 
     let columsSelectedGrid = '';
-    const handleOnCellClick = (params: GridCellParams, event: MuiEvent, details: GridCallbackDetails) =>{
+    const handleOnCellClick = (params: GridCellParams) =>{
         columsSelectedGrid  = params.field;
     };
     
@@ -184,7 +170,6 @@ const InvioFatture = () => {
         event: MuiEvent<React.MouseEvent<HTMLElement>>,
     ) => {
         event.preventDefault();
-        // l'evento verrà eseguito solo se l'utente farà il clik sul 
         if(columsSelectedGrid  === 'tipologiaFattura' || columsSelectedGrid === 'action' ){
             navigate(PathPf.JSON_TO_SAP_DETAILS.replace(":id",params.row.id));
         }
@@ -193,8 +178,9 @@ const InvioFatture = () => {
     const onChangePageOrRowGrid = (e) => {
         setInfoPage(e);
     };
-    
 
+
+    
     return(
         <>
             <div>
@@ -204,27 +190,13 @@ const InvioFatture = () => {
                 <div className="mt-5">
                     <div className="row">
                         <div className="col-3">
-                            <Box  >
-                                <FormControl
-                                    fullWidth
-                                    size="medium"
-                                >
-                                    <InputLabel>
-                                Tipologia Fattura  
-                                    </InputLabel>
-                                    <Select
-                                        label='Tipologia Fattura'
-                                        onChange={(e) =>{
-                                            setTipologia(e.target.value);
-                                        }}     
-                                        value={tipologia}       
-                                    >
+                            <Box>
+                                <FormControl fullWidth size="medium">
+                                    <InputLabel> Tipologia Fattura</InputLabel>
+                                    <Select label='Tipologia Fattura' onChange={(e) => setTipologia(e.target.value)} value={tipologia||''}>
                                         {tipologieFatture.map((el) =>{ 
                                             return (            
-                                                <MenuItem
-                                                    key={Math.random()}
-                                                    value={el||''}
-                                                >
+                                                <MenuItem key={Math.random()} value={el}>
                                                     {el}
                                                 </MenuItem>              
                                             );
@@ -233,37 +205,23 @@ const InvioFatture = () => {
                                 </FormControl>
                             </Box>   
                         </div>
-
-                        <div className="col-2">
-                          
-                            <div className="d-flex justify-content-center align-items-center" style={{height: "59px"}} >
-                                <Button  
-                                    variant='outlined'
-                                    disabled={selected?.length < 1}
-                                    onClick={onButtonInvia}
-                                >Invia</Button>
+                        <div className="col-2 text-center">
+                            <div className="d-flex justify-content-center align-items-center" style={{height:'59px'}}>
+                                <Button variant='outlined'disabled={selected?.length < 1} onClick={onButtonInvia}>
+                                    Invia
+                                </Button>
                             </div>
                         </div>
                         <div className="row mt-5">
                             <div className="col-12">
-                                { selected?.length > 0 ? <Toolbar
-                                    sx={{bgcolor:"rgba(23, 50, 77, 0.08)"}}
-                                >
-                                    <Typography
-                                        sx={{ flex: '1 1 100%' }}
-                                        color="inherit"
-                                        variant="subtitle1"
-                                        component="div"
-                                    >
-                                        {`${selected?.length}  Selezionate`} 
-                                    </Typography>
-                                </Toolbar>:
-                                   
-                                    <Typography
-                                        sx={{ flex: '1 1 100%', visibility: 'hidden', height:'64px' }} // Hidden placeholder to keep layout
-                                        variant="subtitle1"
-                                        component="div"
-                                    >
+                                { selected?.length > 0 ? 
+                                    <Toolbar sx={{bgcolor:"rgba(23, 50, 77, 0.08)"}}>
+                                        <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1"component="div">
+                                            {`${selected?.length}  Selezionate`} 
+                                        </Typography>
+                                    </Toolbar>
+                                    :
+                                    <Typography sx={{ flex: '1 1 100%', visibility: 'hidden', height:'64px' }} variant="subtitle1" component="div">
                                         Placeholder
                                     </Typography>
                                 }
@@ -281,7 +239,7 @@ const InvioFatture = () => {
                                         }}
                                         getRowId={(row) => row.id}
                                         rows={listaFatture}
-                                        columns={columns}
+                                        columns={configGridJsonSap(statoFattura)}
                                         pageSizeOptions={[10, 25, 50,100]}
                                         checkboxSelection
                                         isRowSelectable={(params) => {
@@ -295,7 +253,6 @@ const InvioFatture = () => {
                                         onCellClick={handleOnCellClick}
                                         rowSelectionModel={rowSelectionModel}
                                         onRowSelectionModelChange={(newRowSelectionModel) => {
-                                           
                                             const createObjectToSend = newRowSelectionModel.reduce((acc:any,singleEl) => {
                                                 const getElementWithSameId = listaFatture.filter((el:ListaFatture) => el?.id === singleEl);  
                                                 return [...acc,...getElementWithSameId];
@@ -322,39 +279,6 @@ const InvioFatture = () => {
                 sentence={'Loading...'} >
             </ModalLoading>
         </>
-       
     );
 };
-
 export default InvioFatture;
-
-/*
-   <Box
-                                    sx={{
-                                        overflowY: "auto",
-                                        whiteSpace: "nowrap",
-                                        backgroundColor:'#F8F8F8',
-                                        height:'500px',
-                                        marginY:'2%'
-                                    }}>
-<Table  aria-label="purchases">
-                                        <TableHead sx={{position: "sticky", top:'0',zIndex:"2",backgroundColor: "#F2F2F2"}}>
-                                            <TableRow >
-                                                <TableCell sx={{ marginLeft:"16px"}} ></TableCell>
-                                                <TableCell sx={{ marginLeft:"16px"}} ></TableCell>
-                                                <TableCell align='center' sx={{ marginLeft:"16px"}} >Tipologia Fattura</TableCell>
-                                                <TableCell align='center' sx={{ marginLeft:"16px"}} >Stato</TableCell>
-                                                <TableCell align='center' sx={{ marginLeft:"16px"}}>Numero Fatture</TableCell>
-                                                <TableCell align='center' sx={{ marginLeft:"16px"}}>Anno</TableCell>
-                                                <TableCell align='center' sx={{ marginLeft:"16px"}}>Mese</TableCell>
-                                                <TableCell align='center' sx={{ marginLeft:"16px"}}>Importo imponibile</TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        {listaFatture.map((el) =>{
-                                            return(
-                                                <RowJsonSap row={el} setSelected={setSelected} selected={selected} apiDetail={getDetailSingleRow} lista={listaFatture}></RowJsonSap>
-                                            );
-                                        } )}
-                              
-                                    </Table> 
-                                    </Box>*/
