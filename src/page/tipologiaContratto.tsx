@@ -1,6 +1,6 @@
 import { Typography } from "@mui/material";
 import { Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
-import {manageError, manageErrorDownload, managePresaInCarico, } from '../api/api';
+import {manageError, manageErrorDownload, managePresaInCarico } from '../api/api';
 import { GridElementListaFatturazione } from "../types/typeListaDatiFatturazione";
 import { useContext, useEffect, useState } from "react";
 import DownloadIcon from '@mui/icons-material/Download';
@@ -221,6 +221,7 @@ const PageTipologiaContratto :React.FC = () =>{
         const typToSet = elementSelected.tipologiaContratto === 1 ? 2 : 1;
         await modifyContrattoPagoPa(token, profilo.nonce,{idEnte:elementSelected.idEnte, tipologiaContratto:typToSet}).then((res)=> {
             managePresaInCarico('CAMBIO_TIPOLOGIA_CONTRATTO',dispatchMainState);
+            console.log('dentro');
             setOpenModalConfermaIns(false);
             getLista( page, rowsPerPage, bodyGetLista);
         }).catch((err)=>{
