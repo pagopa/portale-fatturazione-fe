@@ -108,7 +108,7 @@ const Fatturazione : React.FC = () =>{
 
    
     useEffect(()=>{
-        if(!isInitialRender.current){
+        if(!isInitialRender.current && bodyFatturazione.anno !== 0 && bodyFatturazione.mese !== 0){
             getTipologieFatturazione(bodyFatturazione.anno,bodyFatturazione.mese,bodyFatturazione.cancellata);
             setValueMultiselectTipologie([]);
         }
@@ -178,13 +178,14 @@ const Fatturazione : React.FC = () =>{
                     setBodyFatturazione((prev)=>({...prev,...{tipologiaFattura:[]}}));
                     setBodyFatturazioneDownload((prev)=>({...prev,...{tipologiaFattura:[]}})); 
                 }*/
-            }).catch(((err)=>{
+            }).catch((()=>{
                 setTipologie([]);
                 /*
                 setBodyFatturazione((prev)=>({...prev,...{tipologiaFattura:[]}}));
                 setBodyFatturazioneDownload((prev)=>({...prev,...{tipologiaFattura:[]}}));
-                */
+                
                 manageError(err,dispatchMainState);
+                */
             }));
         isInitialRender.current = false;
     };
@@ -436,7 +437,6 @@ const Fatturazione : React.FC = () =>{
                                     onChange={(e) => {
                                         callLista.current = false;
                                         clearOnChangeFilter();  
-                                        console.log({ee:e.target.value});
                                         getMesi(e.target.value.toString());
                                         setDataSelect([]);
                                         setValueMultiselectTipologie([]);

@@ -43,7 +43,6 @@ const BasicAlerts:React.FC = () => {
         });
     };
 
-    console.log({err:mainState.apiError});
     let colorAlert:AlertColor = 'success'; 
    
     if(mainState.apiError === 401 || mainState.apiError === 403|| errorAlert.error === 401 ){

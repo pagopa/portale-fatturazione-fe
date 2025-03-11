@@ -198,7 +198,6 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
         }else if(keyObject === 'codCommessa'){
             validationCodCommessa(dataValidation.max,dataValidation.validation ,value);
         }else{
-            console.log('dentro ultimo if');
             validationTextArea(dataValidation.max,dataValidation.validation ,value);
         }
 
