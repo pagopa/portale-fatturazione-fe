@@ -124,3 +124,46 @@ export const getMesiDocEmessiPagoPa = async (token:string, nonce:string, body:{a
     return response;
 };
 
+export const sendListaJsonFatturePagoPa = async (token:string, nonce:string, body:{annoRiferimento: number,meseRiferimento: number,tipologiaFattura: string}) => {
+    const response =  await axios.post(`${url}/api/fatture/invio/sap/multiplo/periodo?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }}
+    );
+    return response;
+};
+
+export const getListaJsonFatturePagoPa = async (token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/fatture/invio/sap/multiplo?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+};
+
+export const invioListaJsonFatturePagoPa = async (token:string, nonce:string,body:{annoRiferimento: number,meseRiferimento: number,tipologiaFattura: string}[]) => {
+    const response =  await axios.put(`${url}/api/fatture/invio/sap/multiplo?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }}
+    );
+    return response;
+};
+
+export const getTipologieFaPagoPaWithData = async (token:string, nonce:string, body: {anno:number,mese:number,idEnti:string[],tipologiaFattura:string[],cancellata:boolean}) => {
+    const response =  await axios.post(`${url}/api/fatture/date?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },
+        }
+    );
+    return response;
+};
+
+
+
+

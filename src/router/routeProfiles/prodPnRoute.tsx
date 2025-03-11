@@ -1,6 +1,5 @@
 import {  Route } from "react-router-dom";
 import { PathPf } from "../../types/enum";
-import SideNavComponent from "../../layout/sideNav";
 import LayoutAzure from "../../layout/layOutLoggedInAzure";
 import Messaggi from "../../page/messaggi";
 import Accertamenti from "../../page/prod_pn/accertamenti";
@@ -16,13 +15,14 @@ import RelPage from "../../page/prod_pn/relUtPa";
 import ReportDettaglio from "../../page/prod_pn/reportDettaglioUtPa";
 import InserimentoContestazioni from "../../page/prod_pn/inserimentoContestazioni";
 import Storico from "../../page/prod_pn/storicoContestazioni";
-
+import SideNavSend from "../../layout/sideNavs/sideNavSend";
+import PageTipologiaContratto from "../../page/tipologiaContratto";
+import ListaDocEmessi from "../../page/whiteList";
+import InvioFatture from "../../page/invioFatture";
+import InvioFattureDetails from "../../page/invioFattureDetails";
 
 const ProdPnRoute = () => {
-
-  
-
-    const prodPnRoute =  <Route element={<LayoutAzure  sideNav={<SideNavComponent />}></LayoutAzure >}>
+    const prodPnRoute =  <Route element={<LayoutAzure  sideNav={<SideNavSend />}></LayoutAzure >}>
         <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte />} />
         <Route path={PathPf.LISTA_MODULICOMMESSA} element={<PagoPaListaModuliCommessa/>}/>
         <Route path={PathPf.MODULOCOMMESSA} element={<ModuloCommessaInserimentoUtEn30/>} />
@@ -37,6 +37,11 @@ const ProdPnRoute = () => {
         <Route path={'/accertamenti'} element={<Accertamenti/>} />
         <Route path={PathPf.INSERIMENTO_CONTESTAZIONI} element={<InserimentoContestazioni />} />
         <Route path={PathPf.STORICO_CONTEST} element={<Storico />} />
+        <Route path={PathPf.TIPOLOGIA_CONTRATTO} element={<PageTipologiaContratto/>} />
+        <Route path={PathPf.LISTA_DOC_EMESSI} element={<ListaDocEmessi/>} />
+        <Route path={PathPf.JSON_TO_SAP} element={<InvioFatture/>} />
+        <Route path={PathPf.JSON_TO_SAP_DETAILS} element={<InvioFattureDetails/>} />
+        
     </Route>;
     return prodPnRoute;
 };

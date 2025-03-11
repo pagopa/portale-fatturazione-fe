@@ -3,7 +3,7 @@ import { Box, Button} from '@mui/material';
 import { useContext, useEffect, useState } from "react";
 import DownloadIcon from '@mui/icons-material/Download';
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
-import { manageError } from "../../api/api";
+import { manageError, manageErrorDownload } from "../../api/api";
 import { AutocompleteMultiselect, OptionMultiselectCheckboxQarter, OptionMultiselectCheckboxPsp, } from "../../types/typeAngraficaPsp";
 import { getListaNamePsp } from "../../api/apiPagoPa/anagraficaPspPA/api";
 import MultiselectWithKeyValue from "../../components/anagraficaPsp/multiselectKeyValue";
@@ -202,7 +202,7 @@ const KpiPagamenti:React.FC = () =>{
             setShowLoading(false);
         }).catch(err => {
             setShowLoading(false);
-            manageError(err,dispatchMainState);
+            manageErrorDownload('404',dispatchMainState);
         });
     };
 
@@ -326,7 +326,7 @@ const KpiPagamenti:React.FC = () =>{
                 <div className="col-3">
                     <Autocomplete
                         multiple
-                        limitTags={2}
+                        limitTags={1}
                         onChange={(event, value) => {
                             const arrayId = value.map(el => el.value);
                             setBodyGetLista((prev) => ({...prev,...{quarters:arrayId}}));

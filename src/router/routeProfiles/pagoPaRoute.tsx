@@ -9,7 +9,11 @@ import LayoutAzure from "../../layout/layOutLoggedInAzure";
 import KpiPagamenti from "../../page/prod_pagopa/kpiPagamenti";
 
 const PagoPaRoute = () => {
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> main
     const prodPagopaRoute =  <Route element={<LayoutAzure sideNav={<SideNavPagopa/>}></LayoutAzure>}>
         <Route path={'/messaggi'} element={<Messaggi  />} />
         <Route path={PathPf.ANAGRAFICAPSP} element={<AnagraficaPsp ></AnagraficaPsp>}/>

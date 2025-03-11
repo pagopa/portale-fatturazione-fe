@@ -143,29 +143,22 @@ const DettaglioDocContabile : React.FC = () =>{
 
     const getDocContabile = async(obj) => {
         setLoadingDettaglio(true);
-       
         getDetailsDocContabilePa(token,profilo.nonce,obj).then((res) =>{
             setLoadingDettaglio(false);
             setDocContabile(res.data);
-           
         }).catch((err)=>{
             setLoadingDettaglio(false);
             navigate(PathPf.DOCUMENTICONTABILI);
             manageError(err,dispatchMainState);
-
         });
-        
     };  
 
     const downloadFile = (url,name) => {
-
         const link = document.createElement("a");
         link.href = url;
         link.download = name;
         document.body.appendChild(link);
-
         link.click();
-
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
         //saveAs(url,name);     
@@ -244,7 +237,6 @@ const DettaglioDocContabile : React.FC = () =>{
                     <Typography variant="h4">Posizioni</Typography>
                 </div>
                 <div className="pt-3 pb-3 ">
-                   
                     <div className="container text-center">
                         <div className="row">
                             {docContabile.report.posizioni.map((singlePosizione)=>{
@@ -261,27 +253,19 @@ const DettaglioDocContabile : React.FC = () =>{
                                                     </TableRow>
                                                 </TableHead>
                                                 <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
-                                               
                                                     <TableRow key={singlePosizione.progressivoRiga}>
                                                         <TableCell sx={{ width:"300px"}}>{singlePosizione.category}</TableCell>
                                                         <TableCell sx={{ width:"300px"}}>{singlePosizione.codiceArticolo}</TableCell>
                                                         <TableCell sx={{ width:"300px"}}>{singlePosizione.quantita}</TableCell>
                                                         <TableCell  sx={{ width:"300px"}}align="right">{singlePosizione.importo.toLocaleString("de-DE", { style: 'decimal',maximumFractionDigits: 14})}</TableCell> 
                                                     </TableRow>
-                                              
                                                 </TableBody>
                                             </Table>
                                         </Box>
                                     </div>
-
                                 );
-
                             })}
-                           
                         </div>
-                       
-                        
-                      
                     </div>
                 </div>
             </div>

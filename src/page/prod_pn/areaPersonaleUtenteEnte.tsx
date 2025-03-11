@@ -133,14 +133,10 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
             }
            
             setDatiFatturazione(result);
-            setLoadingData(false);
-            //checkCommessa();
-                    
-        }).catch(async(err) =>{
-                    
+            setLoadingData(false);   
+        }).catch(async(err) =>{ 
             if(err?.response?.status === 404){
                 // se l'ente non ha i dati di fatturazione potrebbe avere lo SDI
-
                 await getSdi(token,profilo.nonce).then((res)=>{
                     handleModifyMainState({
                         datiFatturazione:false,

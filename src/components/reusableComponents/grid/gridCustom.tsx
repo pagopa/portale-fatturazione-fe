@@ -1,29 +1,84 @@
-import { Card, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip } from "@mui/material";
+import { Card, Checkbox, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { GridElementListaPsp } from "../../../types/typeAngraficaPsp";
 import { Rel } from "../../../types/typeRel";
 import { NotificheList } from "../../../types/typeReportDettaglio";
-import { GridElementListaPsp } from "../../../types/typeAngraficaPsp";
 import { ContestazioneRowGrid } from "../../../page/prod_pn/storicoContestazioni";
+import RowContratto from "./gridCustomBase/rowTipologiaContratto";
+import RowWhiteList from "./gridCustomBase/rowWhiteList";
+import EnhancedTableCustom from "./gridCustomBase/enhancedTabalToolbarCustom";
+import { SetStateAction } from "react";
+import { Whitelist } from "../../../page/whiteList";
 
-interface GridCustomProps {
-    elements:NotificheList[]|Rel[]|GridElementListaPsp[]|ContestazioneRowGrid[],
-    changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
-    changeRow:( event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
-    page:number,
-    total:number,
-    rows:number,
-    headerNames:string[],
-    nameParameterApi:string,  // elemnto/i che servono alla chiamata get di dettaglio , in questo caso bisogna passare questi pametro/o nel MainState ma non posso visulizzarli nella grid
-    apiGet?:(el:any)=>void, 
-    disabled:boolean,
+export interface GridCustomProps {
+    elements:NotificheList[]|Rel[]|GridElementListaPsp[]|ContestazioneRowGrid[]|any[]
+    changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void
+    changeRow:( event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
+    page:number
+    total:number
+    rows:number
+    headerNames:string[]
+    nameParameterApi:string 
+    apiGet?:(el:any)=>void 
+    disabled:boolean
     widthSize:string
+    widthCustomSize:string
+    setOpenModalDelete?:React.Dispatch<SetStateAction<boolean>>
+    setOpenModalAdd?:React.Dispatch<SetStateAction<boolean>>
+    selected?:number[]
+    setSelected?:React.Dispatch<SetStateAction<number[]>>
+    buttons?:{
+        stringIcon:string
+        icon:React.ReactNode
+        action:string
+    }[]
 }
 
-const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, nameParameterApi, apiGet, disabled,widthSize}) =>{
 
 
+
+
+const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, nameParameterApi, apiGet, disabled, widthCustomSize, setOpenModalDelete,setOpenModalAdd,buttons, selected, setSelected }) =>{
+
+    /*
+    const [stateHeaderCheckbox, setStateHeaderChekbox] = useState({checked:false,disabled:true});
+
+    useEffect(()=>{
+        if(elements.length > 0){
+            setStateHeaderChekbox({checked:false,disabled:false});
+        }else{
+            setStateHeaderChekbox({checked:false,disabled:true});
+        }
+    },[elements]);
+
+    useEffect(()=>{
+        if(selected?.length === 0){
+            setStateHeaderChekbox({checked:false,disabled:false});
+        }
+
+    },[selected]);
+   
+
+    const clickOnCheckBoxHeader = () => {
+        setStateHeaderChekbox(prev => ({checked:!prev.checked,disabled:prev.disabled}));
+        if(stateHeaderCheckbox.checked && setSelected){
+            setSelected([]);
+        }else if(setSelected){
+            setSelected(prev => ([...prev,...elements.filter(el => el.cancella).map(el => el.idWhite)]));
+        }
+        
+    };
+*/
     const handleClickOnGrid = (element) =>{
-        if(apiGet){
+        if(apiGet && nameParameterApi === 'idContratto'){
+            const newDetailRel = {
+                name:element.ragioneSociale,
+                tipologiaContratto:element.tipoContratto,
+                idEnte:element.idEnte
+            };
+            apiGet(newDetailRel);
+
+        }else if(apiGet){
             const newDetailRel = {
                 nomeEnteClickOn:element.ragioneSociale,
                 mese:element.mese,
@@ -32,54 +87,60 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
             };
             apiGet(newDetailRel);
         }
+    };
+
+    const checkIfChecked = (id:any) => {
+        if(selected){
+            return selected.includes(id);
+        }
        
     };
    
+   
     return (
         <div>
+            {nameParameterApi === "idWhite" && <EnhancedTableCustom  setOpenModal={setOpenModalDelete} setOpenModalAdd={setOpenModalAdd} selected={selected||[]} buttons={buttons} ></EnhancedTableCustom>}
             <div style={{overflowX:'auto'}}>
-                <Card sx={{width: widthSize}}  >
+                <Card sx={{width: widthCustomSize}}  >
                     <Table >
                         <TableHead sx={{backgroundColor:'#f2f2f2'}}>
                             <TableRow>
                                 {headerNames.map((el)=>{
+                                  
                                     return (
                                         <TableCell key={Math.random()}>
                                             {el} 
                                         </TableCell>
                                     );
-                                })}
+                                })
+                                   
+                                }
+                               
                             </TableRow>
                         </TableHead>
-
                         {elements.length === 0 ?
-                            <TableBody  style={{height: '50px'}}>
-
+                            <TableBody key={Math.random()} style={{height: '50px'}}>
                             </TableBody> :
                             <TableBody sx={{marginLeft:'20px'}}>
-                                {elements.map((element:Rel|NotificheList|GridElementListaPsp|ContestazioneRowGrid ) =>{
+                                {elements.map((element:Rel|NotificheList|GridElementListaPsp|ContestazioneRowGrid|Whitelist ) =>{
                                     // tolgo da ogni oggetto la prima chiave valore  perchè il cliente non vuole vedere es. l'id ma serve per la chiamata get di dettaglio 
-                                    const sliced = Object.fromEntries(
+                                    let sliced = Object.fromEntries(
                                         Object.entries(element).slice(1)
                                     );
-                                    if(sliced?.tipologiaFattura === 'ASSEVERAZIONE'){
+                                    if(nameParameterApi === 'idWhite'){
+                                        sliced = Object.fromEntries(
+                                            Object.entries(element).slice(1, -1)
+                                        );
+                                    }
+                                   
+                                    if(nameParameterApi === 'idContratto'){
                                         return (
-                
-                                            <TableRow key={Math.random()}>
-                                                {
-                                                    Object.values(sliced).map((value:string, i:number)=>{
-                                                        const cssFirstColum = i === 0 ? {color:'#606060', fontWeight: 'bold', cursor: 'pointer'} : null;
-                                                        return (
-                                                            <TableCell
-                                                                key={Math.random()}
-                                                                sx={cssFirstColum} 
-                                                            >
-                                                                {value}
-                                                            </TableCell>
-                                                        );
-                                                    })
-                                                }
-                                            </TableRow>
+                                            <RowContratto key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} ></RowContratto>
+                                        );
+                                    }else if(nameParameterApi === 'idWhite'){
+                                        return (
+                                            <RowWhiteList key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} setSelected={setSelected} selected={selected||[]}  checkIfChecked={checkIfChecked} ></RowWhiteList>
+                                            
                                         );
                                     }else{
                                         return (
@@ -96,7 +157,7 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                                                         if(i === 0){
                                                                             handleClickOnGrid(element);
                                                                         }            
-                                                                    } }
+                                                                    }}
                                                                 >
                                                                     {valueEl}
                                                                 </TableCell>
@@ -110,12 +171,11 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                                     <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
                                                 </TableCell> }
                                             </TableRow>
-                                        );
-                                    } 
+                                        );}
                                 } )}
                             </TableBody>
                         }
-                    </Table>   
+                    </Table>      
                 </Card>
             </div>
             <div className="pt-3">                           

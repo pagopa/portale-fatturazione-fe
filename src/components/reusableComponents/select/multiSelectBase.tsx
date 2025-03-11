@@ -14,10 +14,10 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 const MultiSelectBase : React.FC<MultiSelectBaseProps> =  ({setBody,list,value,setValue,label,placeholder}) => {
 
-
     return (
         <Box sx={{width:'80%', marginLeft:'20px'}}  >
             <Autocomplete
+                limitTags={1}
                 multiple
                 fullWidth
                 size="medium"
@@ -26,7 +26,6 @@ const MultiSelectBase : React.FC<MultiSelectBaseProps> =  ({setBody,list,value,s
                     setBody((prev) => ({...prev,...{tipologiaFattura:value}}));
 
                 }}
-                id="checkboxes-tipologie-fatture"
                 options={list}
                 value={value}
                 disableCloseOnSelect
@@ -43,7 +42,6 @@ const MultiSelectBase : React.FC<MultiSelectBaseProps> =  ({setBody,list,value,s
                     </li>
                 )}
                 renderInput={(params) => {
-                
                     return <TextField {...params}
                         label={label} 
                         placeholder={placeholder} />;

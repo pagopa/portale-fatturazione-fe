@@ -72,7 +72,8 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
                         {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
                 </TableCell>
-                <TableCell sx={{color:'#0D6EFD',fontWeight: 'bold'}} >{row.ragionesociale}</TableCell>
+                <TableCell sx={{color:'#0D6EFD',fontWeight: 'bold'}} >{row.ragionesociale?.toString().length > 50 ? row.ragionesociale?.toString().slice(0, 40) + '...' : row.ragionesociale}</TableCell>
+                <TableCell align='center'>{row.dataFattura !== null ? new Date(row.dataFattura).toLocaleString().split(',')[0] : ''}</TableCell>
                 <TableCell align='center'>
                     <Tooltip
                         placement="bottom"
@@ -90,10 +91,10 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
                 <TableCell align='center' >{row.divisa}</TableCell>
                 <TableCell align='center' >{row.metodoPagamento}</TableCell>
                 <TableCell align='center'>{row?.split?.toString()|| ''}</TableCell>
-                <TableCell align='center'>{row.dataFattura !== null ? new Date(row.dataFattura).toLocaleString().split(',')[0] : ''}</TableCell>
+                
             </TableRow>
             <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={5}>
+                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box sx={{ margin: 2 , backgroundColor:'#F8F8F8', padding:'10px'}}>
                             <Typography sx={{marginLeft:"6px"}} variant="h6" gutterBottom component="div">

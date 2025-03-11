@@ -87,7 +87,8 @@ const Auth : React.FC<any> = () =>{
                     profilo:storeProfilo.profilo, // profilo utilizzato per la gestione delle notifiche/contestazioni
                     nonce:storeProfilo.nonce,
                     user:{name:'', ruolo:storeProfilo.descrizioneRuolo, id:'1'},
-                    idTipoContratto: storeProfilo.idTipoContratto
+                    idTipoContratto: storeProfilo.idTipoContratto,
+                    idEnte:storeProfilo.idEnte
                 };
 
           

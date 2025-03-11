@@ -41,6 +41,7 @@ const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({ 
 
     return (
         <Autocomplete
+            limitTags={1}
             multiple
             onChange={(event, value) => {
                 const arrayIdContestazioni = value.map(obj=> obj.id);

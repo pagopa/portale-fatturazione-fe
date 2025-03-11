@@ -27,7 +27,7 @@ import { GlobalContext } from '../store/context/globalContext';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 
-
+//VECCHIA LOGICA , UNA VOLTA TESTATO CANCELLARE IL COMPONENTE
 const SideNavComponent: React.FC = () => {
 
     const globalContextObj = useContext(GlobalContext);

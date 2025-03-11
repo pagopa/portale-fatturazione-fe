@@ -34,6 +34,9 @@ export const manageError = (res:ManageErrorResponse,dispatchMainState) =>{
     }else if(res?.response?.request?.status  === 500){
         handleModifyMainState({apiError:res.response.request.status});
     
+    }else if(res?.response?.request?.status  === 409){
+        handleModifyMainState({apiError:res.response.request.status});
+    
     }else if(res?.message === "Network Error"){
         handleModifyMainState({apiError:"Network Error"});
         //window.location.href = '/error';
@@ -53,6 +56,8 @@ export const manageErrorDownload = (res:string,dispatchMainState) =>{
     if(res === '404'){
         const value = res+"_DOWNLOAD";
         handleModifyMainState({apiError:value});
+    }else if(res === '404_RIGHE_ID'){
+        handleModifyMainState({apiError:'404_RIGHE_ID'});
     }
 };
 

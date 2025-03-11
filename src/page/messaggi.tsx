@@ -15,9 +15,6 @@ import { month } from "../reusableFunction/reusableArrayObj";
 import { GlobalContext } from "../store/context/globalContext";
 import PreviewIcon from '@mui/icons-material/Preview';
 
-
-
-
 export interface Messaggio {
     idMessaggio:number,
     idEnte: null|string|number,

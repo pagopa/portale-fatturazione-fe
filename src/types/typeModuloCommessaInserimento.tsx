@@ -183,5 +183,6 @@ export interface ModalConfermaInsProps{
     setOpen:Dispatch<SetStateAction<boolean>>,
     open:boolean,
     onButtonComfermaPopUp:() => void,
-    mainState:MainState
+    mainState:MainState,
+    sentence:string
 }

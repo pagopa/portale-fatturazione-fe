@@ -56,37 +56,12 @@ const DettaglioMessaggio : React.FC<DettaglioMessaggioProps> = ({mainState}) =>{
         readMessage();
     },[mainState.messaggioSelected]);
 
-
-
-
     const [showDownloading,setShowDownloading] = useState(false);
-    /*
-    const downloadMessaggio = async (idMessaggio) => {
-        setShowDownloading(true);
-        await downloadMessaggioPagoPa(token,profilo.nonce,{idMessaggio}).then((response)=>{
-            if (response.ok) {
-                return response.blob();
-            }
-            throw '404';
-        }).then((response)=>{
-            const title = `Lista report.zip`;
-           
-            saveAs(response,title);
-            setShowDownloading(false);
-        }).catch(((err)=>{
-            setShowDownloading(false);
-            manageErrorDownload(err,dispatchMainState);
-        }));
-    };
-
-*/
+  
     const readMessage = async() => {
         await readMessaggioPagoPa(token,profilo.nonce,{idMessaggio:Number(id)}).then((res)=>{
-
             console.log(res);
-    
         }).catch((err)=>{
-           
             console.log(err);
         });
     };

@@ -14,6 +14,7 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
     return (
         <Autocomplete
             sx={{width:'80%',height:'59px' }}
+            limitTags={1}
             multiple
             onChange={(event, value) => {
                 const arrayIdEnte = value.map(obj=> obj.idEnte);
@@ -21,7 +22,6 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
                 setValueAutocomplete(value);
                 clearOnChangeFilter();
             }}
-            limitTags={1}
             id="checkboxes-tags-demo"
             options={dataSelect}
             disableCloseOnSelect

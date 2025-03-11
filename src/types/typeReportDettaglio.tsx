@@ -6,6 +6,9 @@ import { BodyDownloadModuliCommessa } from "./typeListaModuliCommessa";
 import { BodyRel } from "./typeRel";
 import { BodyGetListaDatiFatturazione } from "./typeListaDatiFatturazione";
 import { BodyStoricoContestazioni } from "../page/prod_pn/storicoContestazioni";
+import { BodyContratto } from "../page/tipologiaContratto";
+import { BodyLista } from "../page/whiteList";
+import { BodyWhite } from "../api/apiPagoPa/whiteListPA/whiteList";
 
 
 export interface ReportDettaglioProps {
@@ -126,7 +129,7 @@ export interface ElementMultiSelect {
 }
 
 export interface MultiselectNotificheProps{
-    setBodyGetLista:Dispatch<SetStateAction<BodyListaNotifiche>>|Dispatch<SetStateAction<BodyFatturazione>>|Dispatch<SetStateAction<BodyGetListaDatiFatturazione>>|Dispatch<SetStateAction<BodyDownloadModuliCommessa>>|Dispatch<SetStateAction<BodyRel>>|Dispatch<SetStateAction<BodyStoricoContestazioni>>,  //{idEnti:[],prodotto:'',profilo:''}|BodyDownloadModuliCommessa|BodyRel
+    setBodyGetLista:Dispatch<SetStateAction<BodyListaNotifiche>>|Dispatch<SetStateAction<BodyFatturazione>>|Dispatch<SetStateAction<BodyGetListaDatiFatturazione>>|Dispatch<SetStateAction<BodyDownloadModuliCommessa>>|Dispatch<SetStateAction<BodyRel>>|Dispatch<SetStateAction<BodyContratto>>|Dispatch<SetStateAction<BodyWhite>>|Dispatch<SetStateAction<BodyStoricoContestazioni>>,  //{idEnti:[],prodotto:'',profilo:''}|BodyDownloadModuliCommessa|BodyRel
     dataSelect:ElementMultiSelect[] ,
     setTextValue:Dispatch<SetStateAction<string>>,
     valueAutocomplete:OptionMultiselectChackbox[],

@@ -124,7 +124,7 @@ height: 48px;
   width: auto;
   border:none;
   background-color: #F2F2F2;
-  
+
   }
  
 #loader_on_gate_pages .MuiFormControl-root .MuiBox-root p{
@@ -132,7 +132,7 @@ height: 48px;
   font-weight: 600;
 }
 
- #loader_download_contestazione.MuiFormControl-root .MuiBox-root button button,#loader_on_gate_pages.MuiFormControl-root .MuiBox-root button button{
+ #loader_download_contestazione.MuiFormControl-root .MuiBox-root button button,#loader_on_gate_pages.MuiFormControl-root .MuiBox-root button button,#loader_on_modal.MuiFormControl-root .MuiBox-root button button{
    display: none;
  }
  
@@ -224,5 +224,20 @@ height: 48px;
    border-radius: 30px;
    margin:3px
  }
+
+ #loader_popup_json_to_sap .MuiFormControl-root .MuiBox-root{
+  min-height: 48px;
+  border:none;
+  background-color: #F8F8F8;
+ }
+  
+  
+ #loader_on_modal .MuiFormControl-root .MuiBox-root{
+  min-height: 48px;
+  width: auto;
+  border:none;
+  background-color: transparent;
+  }
+
  
  

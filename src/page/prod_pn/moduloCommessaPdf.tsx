@@ -137,10 +137,6 @@ const ModuloCommessaPdf : React.FC = () =>{
                 idTipoSpedizione: 0
             };
         }
-        /* if(primo !== undefined  && secondo !== undefined && terzo !== undefined && quarto !== undefined){
-            console.log('pipo');
-            final = [primo, secondo, terzo, quarto];
-        }*/
         final = [primo, secondo, terzo, quarto];
         setDataPdf({...res.data,...{datiModuloCommessa:final}});
         localStorage.setItem("tipo", res.data.tipoCommessa);

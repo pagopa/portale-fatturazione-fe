@@ -3,7 +3,7 @@ import { ButtonNaked, SingleFileInput } from '@pagopa/mui-italia';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { Button, Typography } from "@mui/material";
 import { useNavigate } from 'react-router';
-import {manageError } from '../../api/api';
+
 import { useContext, useEffect, useRef, useState} from 'react';
 import TextDettaglioPdf from '../../components/commessaPdf/textDettaglioPdf';
 import { ResponseDownloadPdf } from '../../types/typeModuloCommessaInserimento';
@@ -13,7 +13,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import ModalUploadPdf from '../../components/rel/modalUploadPdf';
 import { saveAs } from "file-saver";
 import generatePDF from 'react-to-pdf';
-import { redirect } from '../../api/api';
+import { manageError, manageErrorDownload, redirect } from '../../api/api';
 import ModalLoading from '../../components/reusableComponents/modals/modalLoading';
 import { PathPf } from '../../types/enum';
 import {profiliEnti } from '../../reusableFunction/actionLocalStorage';
@@ -35,6 +35,7 @@ const RelPdfPage : React.FC = () =>{
     const enti = profiliEnti(mainState);
 
     const [showDownloading, setShowDownloading] = useState(false);
+    const [disableButtonDettaglioNot, setDisableButtonDettaglioNot] = useState(false);
     const [lastUpdateDocFirmato, setLastUpdateDocFirmato] = useState('');
     const [file, setFile] = useState<File | null>(null);
     const [loadingUpload, setLoadingUpload] = useState<boolean>(false);
@@ -86,9 +87,7 @@ const RelPdfPage : React.FC = () =>{
         setShowDownloading(true);
         if(enti){
             await getRelExel(token, profilo.nonce, mainState.relSelected.id).then((res)=>{
-                //saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio/ ${ rel?.ragioneSociale} /${rel?.mese}/${rel?.anno}.xlsx` );
-                //setShowDownloading(false);
-                
+                /*saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio/ ${ rel?.ragioneSociale} /${rel?.mese}/${rel?.anno}.xlsx` );
                 const blob = new Blob([res.data], { type: 'text/csv' });
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -98,16 +97,38 @@ const RelPdfPage : React.FC = () =>{
                 document.body.appendChild(a);
                 a.click();
                 setShowDownloading(false);
-                document.body.removeChild(a);
+                document.body.removeChild(a);*/
+
+                setShowDownloading(false);
+                const link = document.createElement("a");
+                link.href = res.data;
+                link.download = `Rel/Report di dettaglio/${ rel?.ragioneSociale}/${rel?.mese}/${rel?.anno}.csv`;
+                document.body.appendChild(link);
+            
+                link.click();
+            
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(res.data);
                
-            }).catch((err)=>{
-                manageError(err,dispatchMainState);
+            }).catch(()=>{
+                manageErrorDownload('404_RIGHE_ID',dispatchMainState);
+                setDisableButtonDettaglioNot(true);
                 setShowDownloading(false);
             });
         }else{
             await getRelExelPagoPa(token, profilo.nonce, mainState.relSelected.id).then((res)=>{
-                // saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio / ${ rel?.ragioneSociale} / ${rel?.mese} / ${rel?.anno}.xlsx` );
-                // setShowDownloading(false);
+               
+                setShowDownloading(false);
+                const link = document.createElement("a");
+                link.href = res.data;
+                link.download = `Rel/Report di dettaglio/${ rel?.ragioneSociale}/${rel?.mese}/${rel?.anno}.csv`;
+                document.body.appendChild(link);
+            
+                link.click();
+            
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(res.data);
+                /* 
                 const blob = new Blob([res.data], { type: 'text/csv' });
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -117,10 +138,10 @@ const RelPdfPage : React.FC = () =>{
                 document.body.appendChild(a);
                 a.click();
                 setShowDownloading(false);
-                document.body.removeChild(a);
-                
+                document.body.removeChild(a);*/
             }).catch((err)=>{
-                manageError(err,dispatchMainState);
+                manageErrorDownload('404_RIGHE_ID',dispatchMainState);
+                setDisableButtonDettaglioNot(true);
                 setShowDownloading(false);
             });
         }
@@ -178,13 +199,13 @@ const RelPdfPage : React.FC = () =>{
             await getLogRelDocumentoFirmato(token, profilo.nonce,bodySelf).then((res) =>{
                 setLastUpdateDocFirmato(res.data[0].dataEvento);
             }).catch(()=>{ 
-                //manageError(err,dispatchMainState);
+                //manageErrorDownload('404',dispatchMainState);
             });
         }else if(profilo.auth === 'PAGOPA'){
             await getLogPagoPaRelDocumentoFirmato(token, profilo.nonce,body).then((res) =>{
                 setLastUpdateDocFirmato(res.data[0].dataEvento);
             }).catch(()=>{
-                //manageError(err,dispatchMainState);
+                //manageErrorDownload('404',dispatchMainState);
             });
         }
         
@@ -300,7 +321,7 @@ const RelPdfPage : React.FC = () =>{
                 </div>
             </div>
             <div className='d-flex justify-content-end mt-4 me-5'>
-                <Button  onClick={()=> downloadRelExel()} >Scarica report di dettaglio notifiche Reg. Es. <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+                <Button disabled={disableButtonDettaglioNot}  onClick={()=> downloadRelExel()} >Scarica report di dettaglio notifiche Reg. Es. <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
             </div>
             <div className="bg-white mb-5 me-5 ms-5">
                 <div className="pt-5 pb-5 ">

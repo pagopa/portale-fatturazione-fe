@@ -23,47 +23,34 @@ function useSavedFilters(key, defaultFilters = {}) {
         const parsedFilters = JSON.parse(savedFilters);
 
         if(parsedFilters?.pathPage === key){
-            
             return parsedFilters;
         }else{
             localStorage.removeItem('filters');
+            localStorage.removeItem('filtersNested_1');
             return defaultFilters;
         }
         
     });
-    /*
-    useEffect(() => {
-    // Save filters to local storage whenever they change
-        if(Object.keys(filters).length > 0){
-            isInitialRender.current = false;
-            localStorage.setItem('filters', JSON.stringify({...{pathPage:key},...filters}));
-        }
-    }, [filters]);
-    */
-    
+
     const updateFilters = (newFilters) => {
         isInitialRender.current = false;
         setFilters((prevFilters) =>{
             localStorage.setItem('filters', JSON.stringify({
                 ...prevFilters,
-                ...newFilters
-                
+                ...newFilters 
             }));
             return  ({
                 ...prevFilters,
                 ...newFilters
             });
         });
-       
     };
 
     const resetFilters = () => {
         setFilters(defaultFilters);
         localStorage.removeItem('filters');
+        
     };
-
-   
-
     return { filters, updateFilters, resetFilters,isInitialRender };
 }
 

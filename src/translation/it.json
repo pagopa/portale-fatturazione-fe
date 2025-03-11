@@ -2,10 +2,13 @@
 "globals":{
     "filter":"Filtra",
     "cancel":"Annulla filtri",
+    "baseCancel":"Annulla",
     "modify":"Modifica",
     "save":"Salva",
     "back":"Indietro",
+    "confirm":"Conferma",
     "addEmail":"Aggiungi Email",
+    "add":"Aggiungi",
     "downloadResults":"Download risultati",
     "monthsArray":["Gennaio","eccc eccc"],
     "filters":{
@@ -30,7 +33,8 @@
         "recipientId":"Recipient ID",
         "abiCode":"Codice ABI",
         "yearFilter":"Filtra per anno",
-        "read":"Lettura"
+        "read":"Lettura",
+        "contractType":"Tipologia contratto"
     },
     "gridHeaderLabels":{
         "ragSoc":"Rag. sociale",
@@ -98,7 +102,8 @@
         "kpiName":"Nome KPI",
         "recipientId":"Recipient ID",
         "totDiscount":"Totale sconto",
-        "kpiList":"Lista KPI"
+        "kpiList":"Lista KPI",
+        "updateDate":"Data aggiornamento"
     }
 },
 "datiDiFatturazione":{
@@ -302,5 +307,28 @@
         "title":"KPI pagamenti"
     },
     "buttonheader": "Matrice KPI"       
+},
+"whiteList":{
+    "header":{
+        "title":"Lista"
+    },
+    "buttonheader": "",
+    "buttonAdd": "Aggiungi",
+    "buttonDelete":"Elimina",
+    "popUpDelete":{
+        "attention":"Attenzione",
+        "sentence": "Sei sicuro di voler procedere"
+    },
+    "popUpAdd":{
+        "title":"Iserisci gli enti nella lista"
+    }        
+},
+"tipologiaContratto":{
+    "header":{
+        "title":"Tipologia contratto"
+    },
+    "popUpAction":{
+        "title":"Stai modificando la tipologia contratto da x a x di Abaco Spa : confermi l'operazione?"
+    }        
 }
 }

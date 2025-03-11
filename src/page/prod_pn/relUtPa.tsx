@@ -1,27 +1,26 @@
 import React, { useContext, useEffect, useState } from "react";
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
 import { useNavigate } from "react-router";
 import DownloadIcon from '@mui/icons-material/Download';
 import { GlobalContext } from "../../store/context/globalContext";
 import { profiliEnti,  } from "../../reusableFunction/actionLocalStorage";
-import { BodyRel, Rel } from "../../types/typeRel";
 import { OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
 import { downloadListaRel, getAnniRelSend, getListaRel, getMesiRelSend, getTipologieFatture } from "../../api/apiSelfcare/relSE/api";
 import { mesiGrid, mesiWithZero } from "../../reusableFunction/reusableArrayObj";
-import { manageError } from "../../api/api";
 import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, downloadQuadraturaRelPagopa, downloadReportRelPagoPa, getAnniRel, getListaRelPagoPa, getMesiRel, getTipologieFatturePagoPa } from "../../api/apiPagoPa/relPA/api";
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
 import { PathPf } from "../../types/enum";
 import { saveAs } from "file-saver";
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
-import SelectTipologiaFattura from "../../components/reusableComponents/select/selectTipologiaFattura";
 import SelectStatoPdf from "../../components/rel/selectStatoPdf";
-import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import ModalRedirect from "../../components/commessaInserimento/madalRedirect";
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
+import { manageError, manageErrorDownload } from "../../api/api";
+import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
+import SelectTipologiaFattura from "../../components/reusableComponents/select/selectTipologiaFattura";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
-
+import { Rel, BodyRel } from "../../types/typeRel";
 
 
 const RelPage : React.FC = () =>{
@@ -127,6 +126,7 @@ const RelPage : React.FC = () =>{
                     getMesi(filters.body.anno?.toString());
                 }else{
                     setBodyRel((prev)=> ({...prev,...{anno:Number(res.data[0])}}));
+                    setBodyDownload((prev)=> ({...prev,...{anno:Number(res.data[0])}}));
                     getMesi(res.data[0]);
                 }
             }).catch((err)=>{
@@ -143,6 +143,7 @@ const RelPage : React.FC = () =>{
                     getMesi(filters.body.anno?.toString());
                 }else{
                     setBodyRel((prev)=> ({...prev,...{anno:Number(res.data[0])}}));
+                    setBodyDownload((prev)=> ({...prev,...{anno:Number(res.data[0])}}));
                     getMesi(res.data[0]);
                     
                 }
@@ -168,17 +169,21 @@ const RelPage : React.FC = () =>{
                     setRowsPerPage(filters.rows);
                     setBodyDownload(filters.body);
                     setBodyRel(filters.body);
+                    setBodyDownload(filters.body);
                     getlista(filters.body,filters.page + 1, filters.rows);
                 }else if(isInitialRender.current){
                     setBodyRel((prev)=> ({...prev,...{mese:res.data[0].mese}}));
+                    setBodyDownload((prev)=> ({...prev,...{mese:res.data[0].mese}}));
                     getListTipologiaFattura(year, res.data[0].mese);
                     getlista({...bodyRel,...{anno:year,mese:res.data[0].mese}},1,rowsPerPage);
                 }else{
                     setBodyRel((prev)=> ({...prev,...{mese:res.data[0].mese}}));
+                    setBodyDownload((prev)=> ({...prev,...{mese:res.data[0].mese}}));
                 }
             }).catch((err)=>{
                 setArrayMonths([]);
                 setBodyRel((prev)=> ({...prev,...{mese:0}}));
+                setBodyDownload((prev)=> ({...prev,...{mese:0}}));
                 setGetListaRelRunning(false);
                 manageError(err,dispatchMainState);
             });
@@ -197,14 +202,17 @@ const RelPage : React.FC = () =>{
                     setBodyRel(filters.body);
                 }else if(isInitialRender.current){
                     setBodyRel((prev)=> ({...prev,...{mese:res.data[0].mese}}));
+                    setBodyDownload((prev)=> ({...prev,...{mese:res.data[0].mese}}));
                     getListTipologiaFattura(year, res.data[0].mese);
                     getlista({...bodyRel,...{anno:year,mese:res.data[0].mese}},1,rowsPerPage);
                 }else{
                     setBodyRel((prev)=> ({...prev,...{mese:res.data[0].mese}}));
+                    setBodyDownload((prev)=> ({...prev,...{mese:res.data[0].mese}}));
                 }
             }).catch((err)=>{
                 setArrayMonths([]);
                 setBodyRel((prev)=> ({...prev,...{mese:0}}));
+                setBodyDownload((prev)=> ({...prev,...{mese:0}}));
                 setGetListaRelRunning(false);
                 manageError(err,dispatchMainState);
             });
@@ -483,6 +491,7 @@ const RelPage : React.FC = () =>{
                 saveAs("data:text/plain;base64," + res.data.documento,`Regolari esecuzioni/${data[0]?.ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]}/${bodyDownload.anno}.xlsx` );
                 setShowLoading(false);
             }).catch((err)=>{
+                setShowLoading(false);
                 manageError(err,dispatchMainState);
             }); 
         }else{
@@ -494,7 +503,8 @@ const RelPage : React.FC = () =>{
                 saveAs("data:text/plain;base64," + res.data.documento,fileName );
                 setShowLoading(false);
             }).catch((err)=>{
-                manageError(err,dispatchMainState);
+                setShowLoading(false);
+                manageErrorDownload('404',dispatchMainState);
             }); 
         }
     };
@@ -510,24 +520,33 @@ const RelPage : React.FC = () =>{
             setShowLoading(false);
         }).catch((err)=>{
             setShowLoading(false);
-            manageError(err,dispatchMainState);
+            if(err){
+                manageErrorDownload('404',dispatchMainState);
+            }
+           
         });  
     };
   
     const downloadListaPdfPagopa = async() =>{
         setShowLoading(true);
         await downloadListaRelPdfZipPagopa(token,profilo.nonce,bodyRel)
-            .then(response => response.blob())
-            .then(blob => {
+            .then((response) => {
+                if (response.ok) {
+                    return response.blob();
+                }
+                setShowLoading(false);
+                
+                throw '404';
+            }).then(blob => {
                 let fileName = `REL /Firmate/${mesiWithZero[bodyRel.mese -1]}/${bodyRel.anno}.zip`;
                 if(bodyDownload.idEnti.length === 1){
                     fileName = `REL /Firmate/${data[0]?.ragioneSociale}/${mesiWithZero[bodyRel.mese -1]}/${bodyRel.anno}.zip`;
                 }
                 saveAs(blob,fileName );
                 setShowLoading(false);
-            })
-            .catch(err => {
-                manageError(err,dispatchMainState);
+            }).catch(err => {
+                manageErrorDownload('404',dispatchMainState);
+            
             });
     };
 
@@ -535,12 +554,17 @@ const RelPage : React.FC = () =>{
 
     const downloadReport = async () => {
         setShowLoading(true);
-        await downloadReportRelPagoPa(token, profilo.nonce).then(response => response.blob()).then((res)=>{
+        await downloadReportRelPagoPa(token, profilo.nonce).then((response) => {
+            if (response.ok) {
+                return response.blob();
+            }
+            throw '404';
+        }).then((res)=>{
             const fileName = `Report regolare esecuzione non fatturate.xlsx`;
             saveAs(res,fileName );
             setShowLoading(false);
         }).catch((err)=>{
-            manageError(err,dispatchMainState);
+            manageErrorDownload('404',dispatchMainState);
             setShowLoading(false);
         });
     };
@@ -557,12 +581,13 @@ const RelPage : React.FC = () =>{
                     <Typography variant="h4">Regolare Esecuzione</Typography>
                 </div>
                 <div className="col-3 ">
+                    {!enti &&
                     <Box sx={{width:'80%', marginLeft:'20px', display:'flex', justifyContent:'end'}}  >
                         <Button sx={{width:'250px'}} variant="contained"  onClick={()=> downloadReport()} >
                             <ArrowCircleDownIcon sx={{marginRight:'10px'}}></ArrowCircleDownIcon>
                     Report non fatturate
                         </Button>
-                    </Box>
+                    </Box>}
                 </div>
                
             </div>
@@ -708,7 +733,7 @@ const RelPage : React.FC = () =>{
                         headerNames={['Ragione Sociale','Tipologia Fattura', 'Reg. Es. PDF','ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale','']}
                         apiGet={setIdRel}
                         disabled={getListaRelRunning}
-                        widthSize="2000px"></GridCustom>
+                        widthCustomSize="2000px"></GridCustom>
                 </div>
             </div>
             <ModalLoading 
