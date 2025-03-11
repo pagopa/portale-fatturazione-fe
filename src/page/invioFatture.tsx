@@ -6,14 +6,12 @@ import { GlobalContext } from "../store/context/globalContext";
 import { getListaJsonFatturePagoPa, invioListaJsonFatturePagoPa } from "../api/apiPagoPa/fatturazionePA/api";
 import { manageError, managePresaInCarico } from "../api/api";
 import { Box } from "@mui/system";
-import { InputLabel, Select, MenuItem, FormControl, Button, Toolbar, Typography, TableCell, Chip } from "@mui/material";
+import { InputLabel, Select, MenuItem, FormControl, Button, Toolbar, Typography} from "@mui/material";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
-import { DataGrid, GridCellParams, GridColDef, GridEventListener, GridRowParams, GridRowSelectionModel, MuiEvent } from "@mui/x-data-grid";
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { DataGrid, GridCellParams, GridEventListener, GridRowParams, GridRowSelectionModel, MuiEvent } from "@mui/x-data-grid";
 import { useNavigate } from "react-router";
-import { mesiGrid } from "../reusableFunction/reusableArrayObj";
-import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
 import { configGridJsonSap } from "../assets/configurations/config_GridInvioFattureJsonSap";
+import useSavedFiltersNested from "../hooks/usaSaveFiltersLocalStorageNested";
 
 interface ListaFatture {
     tipologiaFattura: string,
@@ -51,36 +49,20 @@ const InvioFatture = () => {
     const { 
         filters,
         updateFilters,
-        isInitialRender
-    } = useSavedFilters("/inviofatture",{});
+        isInitialRender,
+        resetFilters
+    } = useSavedFiltersNested("/inviofatture",{});
 
     useEffect(()=>{
         if(isInitialRender.current && Object.keys(filters).length > 0){
             getLista(filters.tipologiaInvio);
-            setTipologia(filters.tipologiaInvio);
-            setSelected(filters.selectedInvio);
-            setRowSelectionModel(filters.rowSelectionModelInvio);
-            setInfoPage(filters.infoPageInvio);
         }else{
             getLista(tipologia);
             setSelected([]);
             setRowSelectionModel([]);
         }
-        isInitialRender.current = false;
+     
     },[tipologia]);
-
-
-    useEffect(()=>{
-        if(!isInitialRender.current){
-            updateFilters({
-                pathPage:"/inviofatture",
-                tipologiaInvio:tipologia,
-                selectedInvio:selected,
-                rowSelectionModelInvio:rowSelectionModel,
-                infoPageInvio:infoPage
-            });
-        }
-    },[tipologia,selected,rowSelectionModel,infoPage]);
     
     const getLista = async (tipologia) =>{
         await getListaJsonFatturePagoPa(token,profilo.nonce).then((res)=>{
@@ -104,7 +86,7 @@ const InvioFatture = () => {
                     importo: el.importo.toLocaleString("de-DE", { style: "currency", currency: "EUR" })
                 };
             }); 
-            if(tipologia !== 'Tutte'){
+            if(tipologia !== 'Tutte' ){
                 elOrdered = elOrdered.filter(el => el.tipologiaFattura === tipologia);
             }
             setListaFatture(elOrdered);
@@ -113,7 +95,11 @@ const InvioFatture = () => {
         });
         if(isInitialRender.current && Object.keys(filters).length > 0){
             setTipologia(filters.tipologiaInvio);
+            setSelected(filters.selectedInvio);
+            setRowSelectionModel(filters.rowSelectionModelInvio);
+            setInfoPage(filters.infoPageInvio);
         }
+        
     };
 
     const onButtonInvia = async() =>{
@@ -124,12 +110,14 @@ const InvioFatture = () => {
             setSelected([]);
             setRowSelectionModel([]);
             setTipologia('Tutte');
+            resetFilters();
             managePresaInCarico('SEND_JSON_SAP_OK',dispatchMainState);
         }).catch((err)=>{
             setShowLoader(false);
             setSelected([]);
             setRowSelectionModel([]);
             setTipologia('Tutte');
+            resetFilters();
             manageError(err, dispatchMainState);
         });
     };
@@ -143,21 +131,6 @@ const InvioFatture = () => {
         }
         return tooltipObj;
     };
-   
-    const columns: GridColDef[] = [
-        { field: 'tipologiaFattura', headerName: 'Tipologia Fattura', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center",  renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.tipologiaFattura}</a>},
-        { field: 'statoInvio', headerName: 'Stato', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align:"center",renderCell: (param:any) =>
-            <TableCell align='center'>
-                <span>
-                    <Chip label={statoFattura(param.row).label} color={statoFattura(param.row).color} />
-                </span>
-            </TableCell> },
-        { field: 'numeroFatture', headerName: 'Numero', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center" },
-        { field: 'annoRiferimento', headerName: 'Anno', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center"  },
-        { field: 'meseRiferimento', headerName: 'Mese', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center",  renderCell: (param:{row:any}) => <div className="MuiDataGrid-cellContent" title={mesiGrid[param.row.meseRiferimento]} role="presentation">{mesiGrid[param.row.meseRiferimento]}</div>},
-        { field: 'importo', headerName: 'Importo', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"right" },
-        {field: 'action', headerName: '',sortable: false,width:100,align:"center",disableColumnMenu :true,renderCell: (() => ( <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }}/>)),}
-    ];
 
 
     let columsSelectedGrid = '';
@@ -193,7 +166,17 @@ const InvioFatture = () => {
                             <Box>
                                 <FormControl fullWidth size="medium">
                                     <InputLabel> Tipologia Fattura</InputLabel>
-                                    <Select label='Tipologia Fattura' onChange={(e) => setTipologia(e.target.value)} value={tipologia||''}>
+                                    <Select label='Tipologia Fattura' onChange={(e) => {
+                                        setTipologia(e.target.value);
+                                        updateFilters({
+                                            pathPage:"/inviofatture",
+                                            tipologiaInvio:e.target.value,
+                                            selectedInvio:selected,
+                                            rowSelectionModelInvio:rowSelectionModel,
+                                            infoPageInvio:infoPage
+                                        });
+                                    } }
+                                    value={tipologia||''}>
                                         {tipologieFatture.map((el) =>{ 
                                             return (            
                                                 <MenuItem key={Math.random()} value={el}>
@@ -263,6 +246,13 @@ const InvioFatture = () => {
                                             }));
                                             setRowSelectionModel(newRowSelectionModel);
                                             setSelected(createObjectToSend);
+                                            updateFilters({
+                                                pathPage:"/inviofatture",
+                                                tipologiaInvio:tipologia,
+                                                selectedInvio:createObjectToSend,
+                                                rowSelectionModelInvio:newRowSelectionModel,
+                                                infoPageInvio:infoPage
+                                            });
                                         }}
                                         paginationModel={infoPage}
                                         onPaginationModelChange={(e)=> onChangePageOrRowGrid(e)}
