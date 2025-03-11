@@ -26,7 +26,6 @@ const MultiSelectFatturazione : React.FC<MultiSelectFatturazioneProps> =  ({setB
                 clearOnChangeFilter();
             }}
             id="checkboxes-tipologie"
-            limitTags={1}
             options={list}
             value={value}
             disableCloseOnSelect

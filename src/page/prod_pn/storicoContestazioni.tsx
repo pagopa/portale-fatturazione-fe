@@ -384,7 +384,7 @@ const Storico = () => {
                                 headerNames={['Ragione Sociale','Categoria Doc.', 'Stato','Mese','Anno','Data Inserimento','']}
                                 apiGet={setIdContestazione}
                                 disabled={getListaContestazioniRunning}
-                                widthSize="1300px"></GridCustom>
+                                widthCustomSize="1300px"></GridCustom>
                         </div>
                     </div>
                 </div>

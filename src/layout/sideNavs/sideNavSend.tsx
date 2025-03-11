@@ -24,6 +24,7 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+import GavelIcon from '@mui/icons-material/Gavel';
 
 
 const SideNavSend : React.FC = () => {
@@ -36,6 +37,8 @@ const SideNavSend : React.FC = () => {
     const [selectedIndex, setSelectedIndex] = useState<number | null>(0);
     const [open, setOpen] = useState(false);
     const [open2, setOpen2] = useState(false);
+    const [openContestazioni, setOpenContestazioni] = useState(false);
+    
     
     const handleListItemClick = async() => {
         if(((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)|| (mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA))){
@@ -87,7 +90,7 @@ const SideNavSend : React.FC = () => {
 
     const handleListItemClickAccertamenti = () =>{
         if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.FATTURAZIONE}}));
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:"/accertamenti"}}));
         }else{
             navigate("/accertamenti");
         }
@@ -95,7 +98,7 @@ const SideNavSend : React.FC = () => {
 
     const handleListItemClickTiplogiaContratto = () =>{
         if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.FATTURAZIONE}}));
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.TIPOLOGIA_CONTRATTO}}));
         }else{
             navigate(PathPf.TIPOLOGIA_CONTRATTO);
         }
@@ -103,11 +106,21 @@ const SideNavSend : React.FC = () => {
 
     const handleListItemClickListDocEmessi = () =>{
         if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.FATTURAZIONE}}));
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.LISTA_DOC_EMESSI}}));
         }else{
             navigate(PathPf.LISTA_DOC_EMESSI);
         }
     };
+
+    const handleListItemClickContestazioni = () =>{
+        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.STORICO_CONTEST}}));
+        }else{
+            navigate(PathPf.STORICO_CONTEST);
+        }
+    };
+
+
     
     const currentLocation = location.pathname;
 
@@ -146,6 +159,8 @@ const SideNavSend : React.FC = () => {
             setSelectedIndex(5);
         }else if(currentLocation.toLowerCase().includes("/inviofatturedettaglio/")){
             setSelectedIndex(5);
+        }else if(currentLocation === PathPf.STORICO_CONTEST){
+            setSelectedIndex(10);
         }
 
         if(open2 && (currentLocation !== PathPf.LISTA_DOC_EMESSI && currentLocation !== PathPf.FATTURAZIONE)){
@@ -153,6 +168,9 @@ const SideNavSend : React.FC = () => {
         }
         if(open && (currentLocation !== PathPf.TIPOLOGIA_CONTRATTO && currentLocation !== PathPf.LISTA_DATI_FATTURAZIONE)){
             setOpen(false);
+        }
+        if(openContestazioni && (currentLocation !== PathPf.STORICO_CONTEST && currentLocation !== PathPf.LISTA_NOTIFICHE)){
+            setOpenContestazioni(false);
         }
 
     },[currentLocation]);
@@ -188,7 +206,7 @@ const SideNavSend : React.FC = () => {
                         </ListItemButton>
                     </List>
                 </Collapse>
-                <ListItemButton selected={selectedIndex === 1} onClick={() => handleListItemClickModuloCommessa()}>
+                <ListItemButton selected={selectedIndex === 1} onClick={handleListItemClickModuloCommessa}>
                     <ListItemIcon>
                         <ViewModuleIcon fontSize="inherit" />
                     </ListItemIcon>
@@ -199,7 +217,24 @@ const SideNavSend : React.FC = () => {
                         <MarkUnreadChatAltIcon fontSize="inherit" />
                     </ListItemIcon>
                     <ListItemText primary="Notifiche" />
+                    {openContestazioni ? 
+                        <IconButton onClick={()=> setOpenContestazioni(false)}  size="small">
+                            <ExpandLess  />
+                        </IconButton>  :
+                        <IconButton onClick={()=> setOpenContestazioni(true)}  size="small">
+                            <ExpandMore />
+                        </IconButton> }
                 </ListItemButton>
+                <Collapse in={openContestazioni} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                        <ListItemButton selected={selectedIndex === 10} sx={{ pl: 4 }} onClick={handleListItemClickContestazioni}>
+                            <ListItemIcon>
+                                <GavelIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Contestazioni" />
+                        </ListItemButton>
+                    </List>
+                </Collapse>
                 <ListItemButton selected={selectedIndex === 3} onClick={() => handleListItemClickRel()}>
                     <ListItemIcon>
                         <ManageAccountsIcon fontSize="inherit" />
