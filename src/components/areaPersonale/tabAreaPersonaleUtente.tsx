@@ -112,7 +112,7 @@ const TabAreaPersonaleUtente = ({mainState,datiFatturazione,setDatiFatturazione,
                             <div>
                                 <TextFieldComponent
                                     required={datiFatturazione.cup !== ''}
-                                    helperText="max 20 caratteri"
+                                    helperText="max 20 caratteri alfanumerici e . / _ -"
                                     label="ID Documento"
                                     placeholder="Inserisci ID"
                                     fullWidth={false}
@@ -142,7 +142,7 @@ const TabAreaPersonaleUtente = ({mainState,datiFatturazione,setDatiFatturazione,
                         <div>
                             <TextFieldComponent
                                 required={false}
-                                helperText="max 100 caratteri"
+                                helperText="max 100 caratteri alfanumerici e . / _ -"
                                 label="Codice Commessa/Convenzione"
                                 placeholder="Commessa/Convenzione"
                                 fullWidth

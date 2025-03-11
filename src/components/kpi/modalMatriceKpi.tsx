@@ -81,7 +81,7 @@ const ModalMatriceKpi = ({setOpen, open,anni,setShowLoading}) => {
                 saveAs(res,fileName );
                 setShowLoading(false);
             }).catch((err)=>{
-                manageErrorDownload(err,dispatchMainState);
+                manageErrorDownload('404',dispatchMainState);
                 setShowLoading(false);
             });
         
