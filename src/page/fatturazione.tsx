@@ -87,11 +87,7 @@ const Fatturazione : React.FC = () =>{
         getAnni();
     },[]);
 
-    useEffect(()=>{
-        if(!isInitialRender.current){
-            getMesi(bodyFatturazione.anno?.toString());
-        } 
-    },[bodyFatturazione.anno]);
+  
 
     useEffect(()=>{
         if(bodyFatturazione.idEnti.length !== 0 || bodyFatturazione.tipologiaFattura.length !== 0 || bodyFatturazione.cancellata === true ){
@@ -123,10 +119,11 @@ const Fatturazione : React.FC = () =>{
             getDateTipologieFatturazione(bodyFatturazione);
             setValueMultiselectDateTipologie([]);
         }else if(isInitialRender.current && Object.keys(filters).length > 0){
-          
             getDateTipologieFatturazione(filters.body);
-        } 
-    },[bodyFatturazione.idEnti, bodyFatturazione.tipologiaFattura]);
+        }else if(isInitialRender.current && bodyFatturazione.anno !== 0 && bodyFatturazione.mese !== 0){
+            getDateTipologieFatturazione(bodyFatturazione);
+        }
+    },[bodyFatturazione]);
     
     const getAnni = async() => {
         setShowLoadingGrid(true);
@@ -136,7 +133,7 @@ const Fatturazione : React.FC = () =>{
             if(isInitialRender.current && Object.keys(filters).length > 0){
                 getMesi(filters.body.anno?.toString());
             }else{
-                setBodyFatturazione((prev)=> ({...prev,...{anno:Number(res.data[0])}}));
+                //setBodyFatturazione((prev)=> ({...prev,...{anno:Number(res.data[0])}}));
                 getMesi(res.data[0]);
             }   
         }).catch((err)=>{
@@ -159,7 +156,7 @@ const Fatturazione : React.FC = () =>{
                 setFattureSelected(filters.fattureSelected);
                 getlistaFatturazione(filters.body);
             }else{
-                setBodyFatturazione((prev)=> ({...prev,...{mese:res.data[0].mese}}));
+                setBodyFatturazione({anno:Number(year),mese:res.data[0].mese, tipologiaFattura:[],cancellata:false,idEnti:[]});
                 if(callLista.current){
                     getlistaFatturazione({...bodyFatturazione,...{anno:Number(year),mese:res.data[0].mese, tipologiaFattura:[],cancellata:false,idEnti:[]}});
                 }
@@ -177,14 +174,16 @@ const Fatturazione : React.FC = () =>{
         await getTipologieFaPagoPa(token, profilo.nonce, {anno:anno,mese:mese,cancellata:cancellata}  )
             .then((res)=>{
                 setTipologie(res.data);
-                if(!isInitialRender.current){
+                /* if(!isInitialRender.current){
                     setBodyFatturazione((prev)=>({...prev,...{tipologiaFattura:[]}}));
                     setBodyFatturazioneDownload((prev)=>({...prev,...{tipologiaFattura:[]}})); 
-                }
+                }*/
             }).catch(((err)=>{
                 setTipologie([]);
+                /*
                 setBodyFatturazione((prev)=>({...prev,...{tipologiaFattura:[]}}));
                 setBodyFatturazioneDownload((prev)=>({...prev,...{tipologiaFattura:[]}}));
+                */
                 manageError(err,dispatchMainState);
             }));
         isInitialRender.current = false;
@@ -384,7 +383,7 @@ const Fatturazione : React.FC = () =>{
     const onButtonAnnulla = () => {
         callAnnulla.current = true;
         resetFilters();
-        getMesi(arrayYears[0]?.toString());
+        getAnni();
         setBodyFatturazione({
             anno:arrayYears[0],
             mese:0,
@@ -437,8 +436,11 @@ const Fatturazione : React.FC = () =>{
                                     onChange={(e) => {
                                         callLista.current = false;
                                         clearOnChangeFilter();  
-                                        const value = Number(e.target.value);
-                                        setBodyFatturazione((prev)=> ({...prev, ...{anno:value}}));
+                                        console.log({ee:e.target.value});
+                                        getMesi(e.target.value.toString());
+                                        setDataSelect([]);
+                                        setValueMultiselectTipologie([]);
+                                        setValueAutocomplete([]);
                                     }}
                                     value={bodyFatturazione.anno||''}     
                                 >
