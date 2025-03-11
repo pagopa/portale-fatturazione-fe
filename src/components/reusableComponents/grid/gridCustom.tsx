@@ -21,7 +21,6 @@ export interface GridCustomProps {
     nameParameterApi:string 
     apiGet?:(el:any)=>void 
     disabled:boolean
-    widthSize:string
     widthCustomSize:string
     setOpenModalDelete?:React.Dispatch<SetStateAction<boolean>>
     setOpenModalAdd?:React.Dispatch<SetStateAction<boolean>>
