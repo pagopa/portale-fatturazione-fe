@@ -1,7 +1,6 @@
 import { Autocomplete, Box,Button,FormControl, InputLabel, MenuItem, Select, Table, TableBody, TableCell, TableHead, TableRow, TextField, Tooltip, Typography } from "@mui/material";
 import MarkUnreadChatAltIcon from '@mui/icons-material/MarkUnreadChatAlt';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { ButtonNaked, SingleFileInput } from "@pagopa/mui-italia";
+import { SingleFileInput } from "@pagopa/mui-italia";
 import { useNavigate } from "react-router";
 import { PathPf } from "../../types/enum";
 import {  useContext, useEffect, useState } from "react";
@@ -254,7 +253,7 @@ const InserimentoContestazioni = () =>{
     return (
         <>
             <div>
-                <NavigatorHeader pageFrom={"Notifiche/"} pageIn={"Inserisci contestazioni"} backPath={PathPf.LISTA_NOTIFICHE} icon={<MarkUnreadChatAltIcon sx={{paddingBottom:"5px"}}  fontSize='small'></MarkUnreadChatAltIcon>}></NavigatorHeader>
+                <NavigatorHeader pageFrom={"Notifiche/"} pageIn={"Inserisci contestazioni"} backPath={PathPf.LISTA_NOTIFICHE} icon={<MarkUnreadChatAltIcon  sx={{padding:"3px"}}  fontSize='small'></MarkUnreadChatAltIcon>}></NavigatorHeader>
             </div>
             <div className="mx-5" style={{minHeight:'600px'}}>
                 <div className="marginTop24">

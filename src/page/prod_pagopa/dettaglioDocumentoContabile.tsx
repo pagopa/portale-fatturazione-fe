@@ -15,6 +15,7 @@ import ModalLoading from "../../components/reusableComponents/modals/modalLoadin
 import { DocContabile } from "../../types/typeDocumentiContabili";
 import DownloadIcon from '@mui/icons-material/Download';
 import { GlobalContext } from "../../store/context/globalContext";
+import NavigatorHeader from "../../components/reusableComponents/navigatorHeader";
 
 
 const DettaglioDocContabile : React.FC = () =>{
@@ -172,25 +173,8 @@ const DettaglioDocContabile : React.FC = () =>{
 
     return (
         <div>
-            <div className=' marginTop24  '>
-                <div className='ms-5'>
-                    <ButtonNaked
-                        color="primary"
-                        onFocusVisible={() => { console.log('onFocus'); }}
-                        size="small"
-                        startIcon={<ArrowBackIcon />}
-                        onClick={() => navigate(PathPf.DOCUMENTICONTABILI)}
-                    >
-                    Indietro
-                    </ButtonNaked>
-                    <Typography sx={{marginLeft:'20px'}} variant="caption">
-                        <ManageSearchIcon sx={{paddingBottom:'3px'}}  fontSize='small'></ManageSearchIcon>
-                      Documenti contabili  /
-                    </Typography>
-                    <Typography sx={{fontWeight:'bold', marginLeft:'5px'}} variant="caption">
-                      Dettaglio
-                    </Typography>
-                </div>
+            <div>
+                <NavigatorHeader pageFrom={"Documenti contabili/"} pageIn={"Dettaglio"} backPath={PathPf.DOCUMENTICONTABILI} icon={<ManageSearchIcon  sx={{paddingBottom:"4px"}}  fontSize='small'></ManageSearchIcon>}></NavigatorHeader>
             </div>
             <div className='d-flex justify-content-between mt-4 me-5 ms-5'>
                 <Button disabled={docContabile.report.reports.length === 0 || docContabile.report.reports[0] === ''} onClick={()=> downloadFile(docContabile.report.reports[0],"Detailed Report")} >Download Detailed Report <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>

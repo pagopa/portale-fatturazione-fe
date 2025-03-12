@@ -26,7 +26,10 @@ export const GlobalContext = createContext({
         messaggioSelected:null,
         prodotti:[],
         profilo:{},
-        docContabileSelected:{key:''}
+        docContabileSelected:{key:''},
+        contestazioneSelected:{
+            reportId:0
+        }
     },
     dispatchMainState:({type,value}) => null,
     openBasicModal_DatFat_ModCom:{visible:false,clickOn:''},

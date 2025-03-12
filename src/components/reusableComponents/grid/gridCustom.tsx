@@ -77,14 +77,19 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
             };
             apiGet(newDetailRel);
 
+        }else if(apiGet && nameParameterApi === 'contestazionePage'){
+            const newDetail = {
+                id:element.reportId
+            };
+            apiGet(newDetail);
         }else if(apiGet){
-            const newDetailRel = {
+            const newDetail = {
                 nomeEnteClickOn:element.ragioneSociale,
                 mese:element.mese,
                 anno:element.anno,
                 id:element[nameParameterApi]
             };
-            apiGet(newDetailRel);
+            apiGet(newDetail);
         }
     };
 

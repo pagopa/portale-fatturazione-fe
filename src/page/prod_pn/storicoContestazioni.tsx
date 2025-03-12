@@ -13,6 +13,8 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { findStatoContestazioni } from "../../reusableFunction/function";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
+import { PathPf } from "../../types/enum";
+import { useNavigate } from "react-router";
 
 export interface BodyStoricoContestazioni{
     anno:string,
@@ -55,6 +57,14 @@ const Storico = () => {
 
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState} = globalContextObj;
+
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
+    const navigate = useNavigate();
      
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
@@ -74,6 +84,7 @@ const Storico = () => {
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
     const [dataGrid,setDataGrid] = useState<ContestazioneRowGrid[]>([]);
+    const [listaToMap,setListaToMap] = useState<ContestazioneRowGrid[]>([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalContestazioni, setTotalContestazioni]  = useState(0);
@@ -142,17 +153,21 @@ const Storico = () => {
             .then((res)=>{
 
                 // ordino i dati in base all'header della grid
+
+                setListaToMap(res.data.reports);
                 const orderDataCustom = res.data.reports.map((obj)=>{
                     // inserire come prima chiave l'id se non si vuol renderlo visibile nella grid
                     // 'id serve per la chiamata get dettaglio dell'elemento selezionato nella grid
                     return {
-                        uniqueId:obj.uniqueId,
+                        reportId:obj.reportId,
                         ragioneSociale:obj.ragioneSociale,
-                        categoriaDocumento:obj.categoriaDocumento,
-                        stato:findStatoContestazioni(obj.stato),
+                        dataInserimento:new Date(obj.dataInserimento).toISOString().replace("T", " ").substring(0, 19),
                         mese:month[obj.mese-1],
                         anno:obj.anno,
-                        dataInserimento:new Date(obj.dataInserimento).toISOString().split('T')[0]
+                        stato:findStatoContestazioni(obj.stato),
+                        categoriaDocumento:obj.categoriaDocumento,
+                        
+                        
                     };
                 });
                 setDataGrid(orderDataCustom);
@@ -174,8 +189,6 @@ const Storico = () => {
         const realPage = newPage + 1;
         getListaContestazioni(bodyGetLista,realPage, rowsPerPage);
         setPage(newPage);
-      
-        //setFilterToLocalStorageRel(bodyDownload,textValue,valueAutocomplete, newPage, rowsPerPage,valuetipologiaFattura);
     };
                     
     const handleChangeRowsPerPage = (
@@ -184,19 +197,18 @@ const Storico = () => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
         const realPage = page + 1;
-        getListaContestazioni(bodyGetLista,realPage,parseInt(event.target.value, 10));
-   
-        //setFilterToLocalStorageRel(bodyDownload,textValue,valueAutocomplete, page, parseInt(event.target.value, 10),valuetipologiaFattura);
+        getListaContestazioni(bodyGetLista,realPage,parseInt(event.target.value, 10));  
     };
 
 
-    const setIdContestazione = async(el) => {
-        //handleModifyMainState({relSelected:el});
-        //navigate(PathPf.PDF_REL);
-        console.log('ciao');
+    const handleClickOnDetail = (el) => {    
+        navigate(PathPf.STORICO_DETTAGLIO_CONTEST);
+        const singleEl = listaToMap.find(elem => elem.reportId === el.id);
+        handleModifyMainState({contestazioneSelected:singleEl});
+        
     };  
 
-    console.log(bodyGetLista);
+    const headerNames = ['Ragione Sociale','Data Inserimento',"Mese","Anno",'Stato','Categoria Doc.','']; // 'Mese','Anno'
 
     return (
         <div className="mx-5" style={{minHeight:'600px'}}>
@@ -214,13 +226,10 @@ const Storico = () => {
                                     fullWidth
                                     size="medium"
                                 >
-                                    <InputLabel
-                                        id="sea"
-                                    >
+                                    <InputLabel>
                                 Anno
                                     </InputLabel>
                                     <Select
-                                        id="sea"
                                         label='Anno'
                                         onChange={(e) =>{
                                             setBodyGetLista((prev)=> ({...prev, ...{anno:e.target.value}}));
@@ -245,15 +254,11 @@ const Storico = () => {
                                     fullWidth
                                     size="medium"
                                 >
-                                    <InputLabel
-                                        id="sea"
-                                    >
+                                    <InputLabel>
                                 Mese
                                     </InputLabel>
                                     <Select
-                                        id="sea"
-                                        label='Seleziona Prodotto'
-                                        labelId="search-by-label"
+                                        label="Mese"
                                         onChange={(e) =>{
                                             setBodyGetLista((prev)=> ({...prev, ...{mese:e.target.value}}));
                                         }}
@@ -324,13 +329,7 @@ const Storico = () => {
                                     onClick={()=>{
                                         setGetListaContestazioniRunning(true);
                                         getListaContestazioni(bodyGetLista,page+1,rowsPerPage);
-                                        /*
-                                        setInfoPageListaCom({ page: 0, pageSize: 100 });
-                                        setInfoPageToLocalStorageCommessa({ page: 0, pageSize: 100 });
-                                        getListaCommesse(bodyGetLista);
-                                        setBodyDownload(bodyGetLista);
-                                        setFilterToLocalStorageCommessa(bodyGetLista,textValue,valueAutocomplete);
-                                   */ } } 
+                                    } } 
                                     sx={{ marginTop: 'auto', marginBottom: 'auto'}}
                                     variant="contained"> Filtra
                                 </Button>
@@ -353,15 +352,6 @@ const Storico = () => {
                                                 idTipologiaReports:[]
                                             },...{anno:valueYears[0]}}
                                             ,1,10);
-
-                                            /*
-                                            setInfoPageListaCom({ page: 0, pageSize: 100 });
-                                            setInfoPageToLocalStorageCommessa({ page: 0, pageSize: 100 });
-                                            getListaCommesseOnAnnulla();
-                                            setBodyDownload({idEnti:[],prodotto:'', anno:currentYear, mese:currString});
-                                            setDataSelect([]);
-                                            deleteFilterToLocalStorageCommessa();
-                                            setValueAutocomplete([]);*/
                                         } }
                                         sx={{marginLeft:'24px'}} >
                     Annulla filtri
@@ -374,15 +364,15 @@ const Storico = () => {
                     <div className="mt-5">
                         <div className="mt-1 mb-5" style={{ width: '100%'}}>
                             <GridCustom
-                                nameParameterApi='uniqueId'
+                                nameParameterApi='contestazionePage'
                                 elements={dataGrid}
                                 changePage={handleChangePage}
                                 changeRow={handleChangeRowsPerPage} 
                                 total={totalContestazioni}
                                 page={page}
                                 rows={rowsPerPage}
-                                headerNames={['Ragione Sociale','Categoria Doc.', 'Stato','Mese','Anno','Data Inserimento','']}
-                                apiGet={setIdContestazione}
+                                headerNames={headerNames}
+                                apiGet={handleClickOnDetail}
                                 disabled={getListaContestazioniRunning}
                                 widthCustomSize="1300px"></GridCustom>
                         </div>

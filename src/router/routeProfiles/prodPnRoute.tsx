@@ -20,6 +20,7 @@ import PageTipologiaContratto from "../../page/tipologiaContratto";
 import ListaDocEmessi from "../../page/whiteList";
 import InvioFatture from "../../page/invioFatture";
 import InvioFattureDetails from "../../page/invioFattureDetails";
+import DettaglioStoricoContestazione from "../../page/prod_pn/dettaglioStoricoContestazione";
 
 const ProdPnRoute = () => {
     const prodPnRoute =  <Route element={<LayoutAzure  sideNav={<SideNavSend />}></LayoutAzure >}>
@@ -41,6 +42,8 @@ const ProdPnRoute = () => {
         <Route path={PathPf.LISTA_DOC_EMESSI} element={<ListaDocEmessi/>} />
         <Route path={PathPf.JSON_TO_SAP} element={<InvioFatture/>} />
         <Route path={PathPf.JSON_TO_SAP_DETAILS} element={<InvioFattureDetails/>} />
+        <Route path={PathPf.STORICO_DETTAGLIO_CONTEST} element={<DettaglioStoricoContestazione/>} />
+        
         
     </Route>;
     return prodPnRoute;

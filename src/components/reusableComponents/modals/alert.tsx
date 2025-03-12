@@ -43,38 +43,38 @@ const BasicAlerts:React.FC = () => {
         });
     };
 
-    console.log({1:errorAlert.error,2:mainState.apiError});
+
     let colorAlert:AlertColor = 'success'; 
    
     if(mainState.apiError === 401 || mainState.apiError === 403|| errorAlert.error === 401 ){
-        console.log(1);
+
         colorAlert = 'error';
     }else if(mainState.apiError === 419 || errorAlert.error === 419 ){
-        console.log(2);
+
         colorAlert = 'error';
     }else if(mainState.apiError === 500 || errorAlert.error === 500){
-        console.log(3);
+
         colorAlert = 'error';
     }else if(mainState.apiError === 400 || errorAlert.error === 400){
-        console.log(4);
+
         colorAlert = 'error';
     }else if(mainState.apiError === 404 ||errorAlert.error === 404|| mainState.apiError === '404_DOWNLOAD' || mainState.apiError === 'PRESA_IN_CARICO_DOCUMENTO'|| mainState.apiError === '404_NO_CONTESTAZIONI'||mainState.apiError === 'PRESA'|| mainState.apiError === '404_RIGHE_ID'){
-        console.log(5);
+
         colorAlert = "info";
     }else if(mainState.apiError === 410 || errorAlert.error === 410){
-        console.log(7);
+        colorAlert = 'error';
     }else if(mainState.apiError === "Network Error"|| mainState.apiError === 'ERRORE_MANUALE'|| mainState.apiError === "ERROR_LIST_JSON_TO_SAP" ){
         colorAlert = 'warning';
     }else if(mainState.apiError === 410 || mainState.apiError === 409 || errorAlert.error === 410){
         colorAlert = 'warning';
     }else if(mainState.apiError === "NO_ENTE_FILTRI_CONTESTAZIONE"){
-        console.log(10);
+
         colorAlert = 'info';
     }else if((mainState.apiError||'').toString().slice(0,4) === "409_"||(mainState.apiError||'').slice(0,2) === 'NO'){
-        console.log(11);
+
         colorAlert = 'error';
     }else if(!mainState.apiError && !errorAlert.error){
-        console.log(9);
+
         colorAlert = 'warning';
     }
     

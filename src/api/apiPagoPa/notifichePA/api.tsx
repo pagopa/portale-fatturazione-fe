@@ -153,3 +153,13 @@ export const getMesiNotifiche = async (token:string, nonce:string , body:{anno:s
     );
     return response;
 };
+
+
+export const getDettaglioContestazione = async (token:string, nonce:string , idReport:number) => {
+    const response =  await axios.get(`${url}/api/notifiche/pagopa/contestazioni/reports/steps?idreport=${idReport}&nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }}
+    );
+    return response;
+};
