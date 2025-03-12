@@ -1,4 +1,4 @@
-import { Typography } from "@mui/material";
+import { Tooltip, Typography } from "@mui/material";
 import React , { useState, useEffect, useContext} from 'react';
 import { TextField,Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -23,6 +23,8 @@ import { profiliEnti } from "../../reusableFunction/actionLocalStorage";
 import { mesiGrid, mesiWithZero, tipoNotifica } from "../../reusableFunction/reusableArrayObj";
 import { GlobalContext } from "../../store/context/globalContext";
 import { PathPf } from "../../types/enum";
+
+import NewReleasesIcon from '@mui/icons-material/NewReleases';
 
 
 
@@ -751,7 +753,6 @@ const ReportDettaglio : React.FC = () => {
     
     return (
         <div className="mx-5 marginTop24">
-            {/*title container start */}
             <div className="row">
                 <div className="col-9">
                     <Typography variant="h4">Notifiche</Typography>
@@ -763,7 +764,7 @@ const ReportDettaglio : React.FC = () => {
                             backgroundColor:backgroundColorButtonScadenzario
                         }} variant="contained"  onClick={()=> setShowModalScadenziario(true)} >
                             <VisibilityIcon sx={{marginRight:'10px'}}></VisibilityIcon>
-        Scadenzario
+                        Scadenzario
                         </Button>
                     </Box>
                 </div>
@@ -807,9 +808,7 @@ const ReportDettaglio : React.FC = () => {
                                 fullWidth
                                 size="medium"
                             >
-                                <InputLabel>
-        Mese
-                                </InputLabel>
+                                <InputLabel> Mese</InputLabel>
                                 <Select
                                     label='Seleziona Mese'
                                     onChange={(e) =>{
@@ -1051,31 +1050,34 @@ const ReportDettaglio : React.FC = () => {
             </>
                     }
                 </div>
-                <div className="">
-                    <div className="row mt-5">
-                        <div className="col-9">
-                            <div className="d-flex justify-content-start">
-                                <Button 
-                                    onClick={onButtonFiltra} 
+
+                <div className="row mt-5">
+                    <div className="col-9">
+                        <div className="d-flex justify-content-start">
+                            <Button 
+                                onClick={onButtonFiltra} 
+                                disabled={getNotificheWorking}
+                                variant="contained"> Filtra  
+                            </Button>                
+                            {statusAnnulla === 'hidden' ? null :
+                                <Button
+                                    onClick={onAnnullaFiltri}
                                     disabled={getNotificheWorking}
-                                    variant="contained"> Filtra  
-                                </Button>                
-                                {statusAnnulla === 'hidden' ? null :
-                                    <Button
-                                        onClick={onAnnullaFiltri}
-                                        disabled={getNotificheWorking}
-                                        sx={{marginLeft:'24px'}} >
-            Annulla filtri
-                                    </Button>
-                                }
-                            </div>               
-                        </div>
+                                    sx={{marginLeft:'24px'}} >
+                                    Annulla filtri
+                                </Button>
+                            }
+                        </div>               
+                    </div>
+                    <div className="col-3">
                         {profilo.auth === 'PAGOPA' && 
-                        <div className="col-3 d-flex justify-content-end pe-5">
-                            <Button className="" variant="contained" onClick={()=> navigate(PathPf.INSERIMENTO_CONTESTAZIONI)} >Inserisci contestazioni</Button>
+                        <div className="d-flex justify-content-end me">
+                            <Tooltip  title="Inserisci contestazioni" sx={{ marginRight:'32px'}}>
+                                <Button  variant="outlined" onClick={()=> navigate(PathPf.INSERIMENTO_CONTESTAZIONI)} ><NewReleasesIcon/></Button>
+                            </Tooltip>
                         </div>
                         }
-                    </div>
+                    </div>   
                 </div>
             </div>
             { notificheList.length > 0  &&

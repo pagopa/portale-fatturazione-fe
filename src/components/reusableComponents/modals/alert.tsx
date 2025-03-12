@@ -70,11 +70,8 @@ const BasicAlerts:React.FC = () => {
     }else if(mainState.apiError === "NO_ENTE_FILTRI_CONTESTAZIONE"){
         console.log(10);
         colorAlert = 'info';
-    }else if(mainState.apiError||''.toString().slice(0,4) === "409_"){
+    }else if((mainState.apiError||'').toString().slice(0,4) === "409_"||(mainState.apiError||'').slice(0,2) === 'NO'){
         console.log(11);
-        colorAlert = 'error';
-    }else if((mainState.apiError||'').slice(0,2) === 'NO'){
-        console.log(8);
         colorAlert = 'error';
     }else if(!mainState.apiError && !errorAlert.error){
         console.log(9);
@@ -105,7 +102,7 @@ const BasicAlerts:React.FC = () => {
                         window.location.href = redirect;
                     }
                 }
-            }, 2500);
+            }, 3500);
             return () =>{
                 clearTimeout(timer);
             }; 

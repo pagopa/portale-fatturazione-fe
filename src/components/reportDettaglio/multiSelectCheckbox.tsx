@@ -13,7 +13,7 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
 
     return (
         <Autocomplete
-            sx={{width:'80%',height:'59px' }}
+            sx={{width:'80%'}}
             limitTags={1}
             multiple
             onChange={(event, value) => {

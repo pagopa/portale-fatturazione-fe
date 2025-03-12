@@ -11,6 +11,7 @@ import { manageError, managePresaInCarico, manageStringMessage } from "../../api
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { month } from "../../reusableFunction/reusableArrayObj";
 import ModalInvioContestazioni from "../../components/reportDettaglio/modalConfermaContestazioni";
+import NavigatorHeader from "../../components/reusableComponents/navigatorHeader";
 
 interface MeseContetazione{
     descrizione: string,
@@ -251,127 +252,113 @@ const InserimentoContestazioni = () =>{
     
 
     return (
-        <div className="mx-5" style={{minHeight:'600px'}}>
-            <div className='d-flex marginTop24'>
-                <ButtonNaked
-                    color="primary"
-                    size="small"
-                    startIcon={<ArrowBackIcon />}
-                    onClick={() =>{
-                        navigate(PathPf.LISTA_NOTIFICHE);
-                    }}
-                >
-                        Indietro
-                </ButtonNaked>
-                <Typography sx={{ marginLeft:'20px'}} variant="caption">
-                    <MarkUnreadChatAltIcon sx={{paddingBottom:'3px'}}  fontSize='small'></MarkUnreadChatAltIcon>
-                         Notifiche 
-                </Typography>
-                <Typography sx={{fontWeight:'bold'}} variant="caption">/ Inserisci contestazioni</Typography> 
+        <>
+            <div>
+                <NavigatorHeader pageFrom={"Notifiche/"} pageIn={"Inserisci contestazioni"} backPath={PathPf.LISTA_NOTIFICHE} icon={<MarkUnreadChatAltIcon sx={{paddingBottom:"5px"}}  fontSize='small'></MarkUnreadChatAltIcon>}></NavigatorHeader>
             </div>
-            <div className="marginTop24">
-                <div className="row ">
-                    <div className="col-9">
-                        <Typography variant="h4">Inserisci contestazioni</Typography>
+            <div className="mx-5" style={{minHeight:'600px'}}>
+                <div className="marginTop24">
+                    <div className="row ">
+                        <div className="col-9">
+                            <Typography variant="h4">Inserisci contestazioni</Typography>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div className="mt-5">
-                <div className="row">
-                    <div className="col-3">
-                        <Box sx={{width:'80%'}} >
-                            <FormControl
-                                fullWidth
-                                size="medium"
-                            >
-                                <InputLabel>Anno</InputLabel>
-                                <Select
-                                    label='Anno'
-                                    onChange={(e) => {
-                                        setBody((prev)=> ({...prev, ...{anno:e.target.value,mese:''}}));
-                                    }}
-                                    value={body.anno}
+                <div className="mt-5">
+                    <div className="row">
+                        <div className="col-3">
+                            <Box sx={{width:'80%'}} >
+                                <FormControl
+                                    fullWidth
+                                    size="medium"
                                 >
-                                    {valueYears.map((el) => (
-                                        <MenuItem
-                                            key={Math.random()}
-                                            value={el}
-                                        >
-                                            {el}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </div>
-                    <div className="col-3">
-                        <Box sx={{width:'80%'}} >
-                            <FormControl
-                                fullWidth
-                                size="medium"
-                            >
-                                <InputLabel>Mese</InputLabel>
-                                <Select
-                                    label='Mese'
-                                    onChange={(e) => {
-                                        setBody((prev)=> ({...prev, ...{mese:e.target.value}}));
-                                    }}
-                                    value={body.mese}
-                                >
-                                    {valueMesi.map((el:MeseContetazione) => (
-                                        <MenuItem
-                                            key={el.mese}
-                                            value={el.mese}
-                                        >
-                                            {el.descrizione}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Box>
-                        
-                    </div>
-                    <div className="col-3">
-                        <Box sx={{width:'80%', marginLeft:'20px'}}  >
-                            <Autocomplete
-                                options={valueEnti}
-                                loading={loadingEnti}
-                                getOptionLabel={(option: EntiContestazionePage) => option.ragioneSociale}
-                                onChange={(event, value) => {
-                                    if(value){
-                                        setBody((prev) => ({...prev,...{idEnte:value.idEnte,contractId:value.contractId}}));
-                                        setEnteTitle(value.ragioneSociale);
-                                    }else{
-                                        setBody((prev) => ({...prev,...{idEnte:'',contractId:''}}));
-                                        setEnteTitle('');
-                                        setArrayRecapCon([]);
-                                    }
-                                }}
-                                renderInput={(params) => {
-                                    return <TextField 
-                                        onChange={(e)=>{
-                                            setTextValueEnti(e.target.value);
+                                    <InputLabel>Anno</InputLabel>
+                                    <Select
+                                        label='Anno'
+                                        onChange={(e) => {
+                                            setBody((prev)=> ({...prev, ...{anno:e.target.value,mese:''}}));
                                         }}
-                                        {...params} label="Rag Soc. Ente" />;}}
-                            />
-                        </Box>
+                                        value={body.anno}
+                                    >
+                                        {valueYears.map((el) => (
+                                            <MenuItem
+                                                key={Math.random()}
+                                                value={el}
+                                            >
+                                                {el}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                        </div>
+                        <div className="col-3">
+                            <Box sx={{width:'80%'}} >
+                                <FormControl
+                                    fullWidth
+                                    size="medium"
+                                >
+                                    <InputLabel>Mese</InputLabel>
+                                    <Select
+                                        label='Mese'
+                                        onChange={(e) => {
+                                            setBody((prev)=> ({...prev, ...{mese:e.target.value}}));
+                                        }}
+                                        value={body.mese}
+                                    >
+                                        {valueMesi.map((el:MeseContetazione) => (
+                                            <MenuItem
+                                                key={el.mese}
+                                                value={el.mese}
+                                            >
+                                                {el.descrizione}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                        </div>
+                        <div className="col-3">
+                            <Box sx={{width:'80%', marginLeft:'20px'}}  >
+                                <Autocomplete
+                                    options={valueEnti}
+                                    loading={loadingEnti}
+                                    getOptionLabel={(option: EntiContestazionePage) => option.ragioneSociale}
+                                    onChange={(event, value) => {
+                                        if(value){
+                                            setBody((prev) => ({...prev,...{idEnte:value.idEnte,contractId:value.contractId}}));
+                                            setEnteTitle(value.ragioneSociale);
+                                        }else{
+                                            setBody((prev) => ({...prev,...{idEnte:'',contractId:''}}));
+                                            setEnteTitle('');
+                                            setArrayRecapCon([]);
+                                        }
+                                    }}
+                                    renderInput={(params) => {
+                                        return <TextField 
+                                            onChange={(e)=>{
+                                                setTextValueEnti(e.target.value);
+                                            }}
+                                            {...params} label="Rag Soc. Ente" />;}}
+                                />
+                            </Box>
+                        </div>
                     </div>
-                </div>
              
-                <div className=" d-flex justify-content-end mt-5">
-                    <Button sx={{width:'250px'}} onClick={handleShowModalConferma} disabled={!file} variant="outlined">
+                    <div className=" d-flex justify-content-end mt-5">
+                        <Button sx={{width:'250px'}} onClick={handleShowModalConferma} disabled={!file} variant="outlined">
                             Upload
-                        <CloudUploadIcon sx={{marginLeft:'10px'}} fontSize="large" />
-                    </Button>
-                </div>
-                {(body.contractId !== '' && arrayReacpCon.length > 0) &&
+                            <CloudUploadIcon sx={{marginLeft:'10px'}} fontSize="large" />
+                        </Button>
+                    </div>
+                    {(body.contractId !== '' && arrayReacpCon.length > 0) &&
                     <div  id='singleInput' className="d-flex justify-content-end marginTop24   mt-3">
                         <div style={{minWidth:'250px'}}>
                             <SingleFileInput  value={file} accept={[".csv,.xlsx"]} onFileSelected={handleSelect} onFileRemoved={handleRemove} dropzoneLabel="Trascina il tuo file.csv" rejectedLabel="Tipo di file non supportato" />
                         </div>
                     </div>
-                }
-                {arrayReacpCon.length > 0 &&
+                    }
+                    {arrayReacpCon.length > 0 &&
                 <div className="bg-white my-5 p-1 ">
                     <div className="row text-center">  
                         <div  className="col-12">
@@ -410,22 +397,19 @@ const InserimentoContestazioni = () =>{
                                 
                     </div>
                 </div>
-                }
-              
-               
-                
-                
-            </div>
-            <ModalInvioContestazioni 
-                open={openModalConferma} 
-                setOpen={setOpenModalConferma}
-                onButtonComferma={uploadFile}
-                info={{mese:body.mese, anno:body.anno,ente:nameEnteTitle}}
-                progress={progress}
-                uploading={uploading}
-            ></ModalInvioContestazioni>
+                    }
+                </div>
+                <ModalInvioContestazioni 
+                    open={openModalConferma} 
+                    setOpen={setOpenModalConferma}
+                    onButtonComferma={uploadFile}
+                    info={{mese:body.mese, anno:body.anno,ente:nameEnteTitle}}
+                    progress={progress}
+                    uploading={uploading}
+                ></ModalInvioContestazioni>
            
-        </div>
+            </div>
+        </>
     );
 
 };
