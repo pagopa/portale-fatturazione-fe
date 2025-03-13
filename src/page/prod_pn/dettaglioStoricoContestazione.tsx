@@ -12,6 +12,7 @@ import { manageError } from "../../api/api";
 import { mesiGrid} from "../../reusableFunction/reusableArrayObj";
 import { findStatoContestazioni } from "../../reusableFunction/function";
 import DownloadIcon from '@mui/icons-material/Download';
+import { maxWidth } from "@mui/system";
 
 
 interface Contestazione {
@@ -49,6 +50,7 @@ const DettaglioStoricoContestazione = () => {
 
     const [loadingDettaglio,setLoadingDettaglio] = useState(false);
     const [arrayDetails,setArrayDetails] = useState<Contestazione[]>([]);
+    const [lastStepContestazioneObj, setLastStepContestazioneObj] = useState<Contestazione|null>(null);
 
     useEffect(()=>{
         if(singleContest?.reportId !== 0){
@@ -59,8 +61,15 @@ const DettaglioStoricoContestazione = () => {
     const getDettaglio = async() => {
         setLoadingDettaglio(true);
         await getDettaglioContestazione(token,profilo.nonce,singleContest?.reportId).then((res)=>{
-            console.log(res);
-            setArrayDetails(res.data);
+            const step11Obj = res.data.find((el) => {
+                return el.step === 11;
+            });
+           
+            setLastStepContestazioneObj(step11Obj||null);
+            const dataWithoutStep11 = res.data.filter((el) => {
+                return el.step !== 11;
+            });
+            setArrayDetails(dataWithoutStep11);
             setLoadingDettaglio(false);
         }).catch((err) => {
             manageError(err,dispatchMainState);
@@ -74,10 +83,13 @@ const DettaglioStoricoContestazione = () => {
 
     if(loadingDettaglio){
         return(
-            <SkeletonRelPdf></SkeletonRelPdf>
+            <div className="m-5">
+                <SkeletonRelPdf></SkeletonRelPdf>
+            </div>
+           
         );
     }
-    console.log({singleContest});
+    console.log({lastStepContestazioneObj});
 
     return (
         <div>
@@ -93,6 +105,14 @@ const DettaglioStoricoContestazione = () => {
                         <TextDettaglioPdf description='Categoria documento' value={singleContest.categoriaDocumento}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Data inserimento' value={new Date(singleContest.dataInserimento).toISOString().replace("T", " ").substring(0, 19)}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Stato' value={findStatoContestazioni(singleContest.stato)||''}></TextDettaglioPdf>
+                        {lastStepContestazioneObj && 
+                        <>
+                            <TextDettaglioPdf description='Totale Notifiche Digitali' value={lastStepContestazioneObj?.totaleNotificheDigitali||0}></TextDettaglioPdf>
+                            <TextDettaglioPdf description='Totale Notifiche Analogiche 890' value={lastStepContestazioneObj?.totaleNotificheAnalogiche890 || 0}></TextDettaglioPdf>
+                            <TextDettaglioPdf description='Totale Notifiche Analogiche AR' value={lastStepContestazioneObj?.totaleNotificheAnalogicheAR||0}></TextDettaglioPdf>
+                            <TextDettaglioPdf description='Totale Notifiche' value={lastStepContestazioneObj?.totaleNotifiche||0}></TextDettaglioPdf>
+                        </>
+                        }
                     </div>
                 </div>
             </div>
@@ -106,7 +126,7 @@ const DettaglioStoricoContestazione = () => {
                         <div className="row">
                             <div className="col-12" >
                                 <Box  sx={{ margin: 2 , backgroundColor:'#F8F8F8', padding:'10px'}}>
-                                    <Box style={{overflowY: "auto",maxHeight: "500px", margin:2, backgroundColor:'#F8F8F8'}}>
+                                    <Box style={{overflowY: "auto", maxHeight: "500px",margin:2, backgroundColor:'#F8F8F8'}}>
                                         <Table stickyHeader  >
                                             <TableHead sx={{position: "sticky",top: 0, zIndex: 1}}>
                                                 <TableRow >
@@ -114,6 +134,10 @@ const DettaglioStoricoContestazione = () => {
                                                     <TableCell align="center">Data Completamento</TableCell>
                                                     <TableCell align="center">Accettata</TableCell>
                                                     <TableCell align="center">Contestata Ente</TableCell>
+                                                    <TableCell align="center">Tot. Not. Digit.</TableCell>
+                                                    <TableCell align="center">Tot. Not. Analog. 890</TableCell>
+                                                    <TableCell align="center">Tot. Not. AR</TableCell>
+                                                    <TableCell align="center">Tot. Not.</TableCell>
                                                     <TableCell align="center"></TableCell>
                                                 </TableRow>
                                             </TableHead>
@@ -122,10 +146,13 @@ const DettaglioStoricoContestazione = () => {
                                                     <TableRow sx={{ borderBottom: '3px solid #ccc' }}  key={Math.random()}>
                                                         <TableCell  sx={{ borderBottomWidth: '3px' }}   align="center">{obj.descrizioneStep}</TableCell>
                                                         <TableCell sx={{ borderBottomWidth: '3px' }} align="center"  > {obj.dataCompletamento ?new Date(obj.dataCompletamento).toISOString().replace("T", " ").substring(0, 19):''} </TableCell>
-                                                        <TableCell sx={{ borderBottomWidth: '3px' }}  align="center">{obj.accettata}</TableCell>
-                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj.contestataEnte}</TableCell>
-                                                        <TableCell  sx={{ borderBottomWidth: '3px' }} align="center"><IconButton><DownloadIcon></DownloadIcon></IconButton></TableCell>
-                                                        
+                                                        <TableCell sx={{ borderBottomWidth: '3px' }}  align="center">{obj.accettata ? obj.accettata : "-" }</TableCell>
+                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj.contestataEnte ? obj.contestataEnte : "-" }</TableCell>
+                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj.totaleNotificheDigitali }</TableCell>
+                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj.totaleNotificheAnalogiche890}</TableCell>
+                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj.totaleNotificheAnalogicheAR}</TableCell>
+                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj.totaleNotificheDigitali}</TableCell>
+                                                        <TableCell  sx={{ borderBottomWidth: '3px' }} align="center"><IconButton disabled={obj.nomeDocumento ? false : true}><DownloadIcon></DownloadIcon></IconButton></TableCell>
                                                     </TableRow>
                                                 );
                                             })}
