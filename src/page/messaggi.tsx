@@ -6,7 +6,7 @@ import { downloadMessaggioPagoPaCsv, downloadMessaggioPagoPaZipExel, getListaMes
 import { ButtonNaked, TimelineNotification, TimelineNotificationContent, TimelineNotificationDot, TimelineNotificationItem, TimelineNotificationOppositeContent, TimelineNotificationSeparator } from "@pagopa/mui-italia";
 import { TimelineConnector } from "@mui/lab";
 import AttachFileIcon from '@mui/icons-material/AttachFile';
-import { manageError } from "../api/api";
+import { manageError, managePresaInCarico } from "../api/api";
 import { saveAs } from "file-saver";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -49,7 +49,7 @@ interface FilterMessaggi{
 const Messaggi : React.FC<any> = () => {
 
     const globalContextObj = useContext(GlobalContext);
-    const {mainState,setCountMessages} = globalContextObj;
+    const {mainState,setCountMessages,dispatchMainState} = globalContextObj;
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 
@@ -100,16 +100,22 @@ const Messaggi : React.FC<any> = () => {
     };
 
     const downloadMessaggio = async (item, contentType) => {
-        setShowDownloading(true);
-        if(contentType === "text/csv"){
-
+        
+        if(contentType === "text/csv" || contentType === "application/json"){
+            setShowDownloading(true);
             await downloadMessaggioPagoPaCsv(token,profilo.nonce, {idMessaggio:item.idMessaggio}).then((res)=>{
-                const blob = new Blob([res.data], { type: 'text/csv' });
+                const blob = new Blob([res.data], { type: contentType });
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.setAttribute('hidden', '');
                 a.setAttribute('href', url);
-                a.setAttribute('download',`${item.categoriaDocumento}/${item.tipologiaDocumento}/${month[item.mese-1]}/${item.anno}.csv`);
+                if(contentType === "text/csv"){
+                    a.setAttribute('download',`${item.categoriaDocumento}/${item.tipologiaDocumento}/${month[item.mese-1]}/${item.anno}.csv`);
+                }
+                if(contentType === "application/json"){
+                    a.setAttribute('download',`${item.categoriaDocumento}/${item.tipologiaDocumento}/${month[item.mese-1]}/${item.anno}.json`);
+                }
+                
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);   
@@ -121,7 +127,7 @@ const Messaggi : React.FC<any> = () => {
                 getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra);
             }));
         }else if(contentType === "application/zip"){
-        
+            setShowDownloading(true);
             await downloadMessaggioPagoPaZipExel(token,profilo.nonce, {idMessaggio:item.idMessaggio}).then(response => response.blob())
                 .then((res)=>{
                     saveAs(res,`${item.categoriaDocumento}/${item.tipologiaDocumento}/${month[item.mese-1]}/${item.anno}.zip`);
@@ -133,6 +139,7 @@ const Messaggi : React.FC<any> = () => {
                     getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra);
                 }));
         }else if(contentType ==="application/vnd.ms-excel"){
+            setShowDownloading(true);
             await downloadMessaggioPagoPaZipExel(token,profilo.nonce, {idMessaggio:item.idMessaggio}).then(response => response.blob()).then((res)=>{
                 saveAs( res,`${item.categoriaDocumento}/${item.tipologiaDocumento}/${month[item.mese-1]}/${item.anno}.xlsx` );
                 setShowDownloading(false);
@@ -142,6 +149,9 @@ const Messaggi : React.FC<any> = () => {
                 setShowDownloading(false);
                 getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra);
             }); 
+        }else{
+            //nome da cambiare quando sistemiamo la logica dell'errore
+            managePresaInCarico(400,dispatchMainState);
         }
     };
 
