@@ -22,6 +22,7 @@ import { createDateFromString } from '../../reusableFunction/function';
 import SkeletonRelPdf from '../../components/rel/skeletonRelPdf';
 import { GlobalContext } from '../../store/context/globalContext';
 import { Rel } from '../../types/typeRel';
+import NavigatorHeader from '../../components/reusableComponents/navigatorHeader';
 
 const RelPdfPage : React.FC = () =>{
 
@@ -300,25 +301,8 @@ const RelPdfPage : React.FC = () =>{
         <div>
             <div style={{ position:'absolute',zIndex:-1, top:'-1000px'}}  id='file_download_rel' ref={targetRef}>
             </div>
-            <div className=' marginTop24  '>
-                <div className='ms-5'>
-                    <ButtonNaked
-                        color="primary"
-                        onFocusVisible={() => { console.log('onFocus'); }}
-                        size="small"
-                        startIcon={<ArrowBackIcon />}
-                        onClick={() => navigate(PathPf.LISTA_REL)}
-                    >
-                    Indietro
-                    </ButtonNaked>
-                    <Typography sx={{marginLeft:'20px'}} variant="caption">
-                        <ManageAccountsIcon sx={{paddingBottom:'3px'}}  fontSize='small'></ManageAccountsIcon>
-                      Regolare Esecuzione /
-                    </Typography>
-                    <Typography sx={{fontWeight:'bold', marginLeft:'5px'}} variant="caption">
-                      Dettaglio
-                    </Typography>
-                </div>
+            <div>
+                <NavigatorHeader pageFrom={"Regolare Esecuzione/"} pageIn={"Dettaglio"} backPath={PathPf.LISTA_REL} icon={<ManageAccountsIcon  sx={{paddingBottom:"5px"}}  fontSize='small'></ManageAccountsIcon>}></NavigatorHeader>
             </div>
             <div className='d-flex justify-content-end mt-4 me-5'>
                 <Button disabled={disableButtonDettaglioNot}  onClick={()=> downloadRelExel()} >Scarica report di dettaglio notifiche Reg. Es. <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>

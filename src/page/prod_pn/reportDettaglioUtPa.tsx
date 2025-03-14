@@ -1073,7 +1073,7 @@ const ReportDettaglio : React.FC = () => {
                         {profilo.auth === 'PAGOPA' && 
                         <div className="d-flex justify-content-end me">
                             <Tooltip  title="Inserisci contestazioni" sx={{ marginRight:'32px'}}>
-                                <Button  variant="outlined" onClick={()=> navigate(PathPf.INSERIMENTO_CONTESTAZIONI)} ><NewReleasesIcon/></Button>
+                                <Button  variant="outlined" onClick={()=> navigate(PathPf.INSERIMENTO_CONTESTAZIONI)} >Inserisci contestazioni</Button>
                             </Tooltip>
                         </div>
                         }

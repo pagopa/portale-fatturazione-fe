@@ -167,12 +167,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             totaleNotifiche:calculateTot(datiCommessa.moduliCommessa,'totaleNotifiche')});
     },[datiCommessa]);
 
-
-
-    
-
-
-
     const handleGetDettaglioModuloCommessa = async () =>{
         setLoadingData(true);
         await getDettaglioModuloCommessa(token,mainState.anno,mainState.mese, profilo.nonce)

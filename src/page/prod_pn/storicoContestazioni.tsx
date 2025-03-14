@@ -164,7 +164,7 @@ const Storico = () => {
                         dataInserimento:new Date(obj.dataInserimento).toISOString().replace("T", " ").substring(0, 19),
                         mese:month[obj.mese-1],
                         anno:obj.anno,
-                        stato:findStatoContestazioni(obj.stato),
+                        stato:obj.descrizioneStato,
                         categoriaDocumento:obj.categoriaDocumento,
                         
                         

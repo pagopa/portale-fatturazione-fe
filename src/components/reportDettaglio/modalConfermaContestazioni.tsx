@@ -31,12 +31,11 @@ const style = {
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
+    borderRadius:'20px'
 };
 
 const ModalInvioContestazioni : React.FC<PropsModalContestazioni> =({setOpen, open, onButtonComferma,info,progress,uploading}) => {
     
-
-
     const handleClose = (event:object, reason: string) =>{
         if(reason !== 'backdropClick'){
             setOpen(false);
@@ -44,14 +43,14 @@ const ModalInvioContestazioni : React.FC<PropsModalContestazioni> =({setOpen, op
     };
    
     const handleConferma = () => {
-        //setOpen(false);
         onButtonComferma();
     };
 
     const handleAnnulla = () =>{
-        setOpen(false);
-             
+        setOpen(false);     
     };
+
+    console.log({progress});
 
     return (
         <div>

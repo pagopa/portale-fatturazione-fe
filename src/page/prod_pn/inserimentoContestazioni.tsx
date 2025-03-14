@@ -1,7 +1,6 @@
-import { Autocomplete, Box,Button,FormControl, InputLabel, MenuItem, Select, Table, TableBody, TableCell, TableHead, TableRow, TextField, Tooltip, Typography } from "@mui/material";
+import { Autocomplete, Box,Button,FormControl, IconButton, InputLabel, MenuItem, Select, Table, TableBody, TableCell, TableHead, TableRow, TextField, Tooltip, Typography } from "@mui/material";
 import MarkUnreadChatAltIcon from '@mui/icons-material/MarkUnreadChatAlt';
 import { SingleFileInput } from "@pagopa/mui-italia";
-import { useNavigate } from "react-router";
 import { PathPf } from "../../types/enum";
 import {  useContext, useEffect, useState } from "react";
 import { getAnniContestazioni, getEntiContestazioni, getMesiContestazioni, recapContestazioniAzure, uploadContestazioniAzure } from "../../api/apiPagoPa/notifichePA/api";
@@ -40,17 +39,11 @@ interface RecapObjContestazioni{
       
 }
 
-
-
 const InserimentoContestazioni = () =>{
     const globalContextObj = useContext(GlobalContext);
     const {mainState,dispatchMainState} = globalContextObj;
-
-
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
-
-    const navigate = useNavigate();
 
     const [body,setBody] = useState<BodyContestazionePage>({
         anno:'',
@@ -58,9 +51,6 @@ const InserimentoContestazioni = () =>{
         idEnte: "",
         contractId: ""
     });
-
-  
-  
 
     const [valueYears,setValueYears] = useState<string[]>([]);
     const [valueMesi,setValueMesi] = useState<MeseContetazione[]>([]);
@@ -92,14 +82,10 @@ const InserimentoContestazioni = () =>{
 
     useEffect(()=>{
         if(body.anno !== ''&& body.mese !== '' && body.contractId !== ''){
-
             setFile(null);
             recapContestazioni();
         }
     },[body]);
-
-    
-
 
     useEffect(()=>{
         const timer = setTimeout(() => {
@@ -114,11 +100,10 @@ const InserimentoContestazioni = () =>{
     const getAnni = async() => {
         await getAnniContestazioni(token,profilo.nonce)
             .then((res)=>{
-              
+
                 setValueYears(res.data);
                 setBody((prev)=> ({...prev, ...{anno:res.data[0]}}));
-            })
-            .catch((err)=>{
+            }).catch((err)=>{
                 //manageError(err,dispatchMainState);
             });
     };
@@ -132,8 +117,7 @@ const InserimentoContestazioni = () =>{
                 }else{
                     setBody((prev)=> ({...prev, ...{mese:''}}));
                 }
-            })
-            .catch((err)=>{
+            }).catch((err)=>{
                 //manageError(err,dispatchMainState);
             });
     };
@@ -142,11 +126,9 @@ const InserimentoContestazioni = () =>{
         setloadingEnti(true);
         await getEntiContestazioni(token,profilo.nonce,textValueEnti)
             .then((res)=>{
-
                 setValueEnti(res.data);
                 setloadingEnti(false);
-            })
-            .catch((err)=>{
+            }).catch((err)=>{
                 manageError(err,dispatchMainState);
                 setloadingEnti(false);
             });
@@ -156,28 +138,20 @@ const InserimentoContestazioni = () =>{
         await recapContestazioniAzure(token,profilo.nonce,body)
             .then((res)=>{
                 setArrayRecapCon(res.data);
-                
-
             }).catch((err)=>{
                 setArrayRecapCon([]);
                 if(err?.response?.request?.status === 404){
                     manageStringMessage('404_NO_CONTESTAZIONI',dispatchMainState);
                 }else{
                     manageError(err,dispatchMainState);
-                }
-                
-               
+                }   
             });
     };
-
-
 
     const [file, setFile] = useState<File|null>(null);
     const [uploading, setUploading] = useState(false);
     const [progress, setProgress] = useState(0);
-    //setProgress((prevProgress) => (prevProgress >= 100 ? 0 : prevProgress + 10));
-    
-
+   
     const handleSelect = (file: File) => {
         setFile(file);
     };
@@ -186,25 +160,19 @@ const InserimentoContestazioni = () =>{
         setFile(null);
     };
 
-
     const handleShowModalConferma = () => {
         setOpenModalConferma(true);
-       
     };
 
-  
     const uploadFile = async () => {
         const fileId = crypto.randomUUID();
         if (!file) return;
-       
         const chunkSize:number = 5 * 1024 * 1024; // 4 MB
         const totalChunks = Math.ceil(file.size / chunkSize);
-       
         let start = 0;
         setUploading(true);
         try{
             while (start < file.size) {
-            
                 const end = Math.min(start + chunkSize, file.size);
                 const chunk = file.slice(start, end);
                 const formData = new FormData();
@@ -216,15 +184,18 @@ const InserimentoContestazioni = () =>{
                 formData.append('contractId', body.contractId);
                 formData.append('mese', body.mese);
                 formData.append('anno', body.anno);
-     
+                console.log({totalChunks});
                 // Create a promise for each chunk upload
+                /// forse da eliminare, ho inserito questo per i file con le dimensioni di un solo chunk
+                if(totalChunks === 1 ){
+                    setProgress(50);
+                }
+                //
                 await uploadContestazioniAzure(token,profilo.nonce,formData).then((res)=>{
-                
                     setProgress((prevProgress) => (prevProgress >= 101 ? 0 : prevProgress + (100/totalChunks)));
                     if(res.data.item2 === true){
                         managePresaInCarico('PRESA_IN_CARICO_DOCUMENTO',dispatchMainState);
                     }
-                  
                 }).catch((err)=>{
                     manageStringMessage('409_'+err.response.data.detail,dispatchMainState);
                     throw new Error(err.response.data.details); // Stop all uploads
@@ -233,23 +204,18 @@ const InserimentoContestazioni = () =>{
                 start = end;
             }
         }catch(err){
-            
             setUploading(false);
             setProgress(0);
             setOpenModalConferma(false);
             setFile(null);
             
         }
-       
         setUploading(false);
         setProgress(0);
         setOpenModalConferma(false);
         setFile(null);
     };
    
-    
-    
-
     return (
         <>
             <div>
@@ -280,9 +246,7 @@ const InserimentoContestazioni = () =>{
                                         value={body.anno}
                                     >
                                         {valueYears.map((el) => (
-                                            <MenuItem
-                                                key={Math.random()}
-                                                value={el}
+                                            <MenuItem key={el} value={el}
                                             >
                                                 {el}
                                             </MenuItem>
@@ -343,17 +307,18 @@ const InserimentoContestazioni = () =>{
                             </Box>
                         </div>
                     </div>
-             
                     <div className=" d-flex justify-content-end mt-5">
-                        <Button sx={{width:'250px'}} onClick={handleShowModalConferma} disabled={!file} variant="outlined">
-                            Upload
-                            <CloudUploadIcon sx={{marginLeft:'10px'}} fontSize="large" />
-                        </Button>
+                        <IconButton  onClick={handleShowModalConferma} disabled={!file} size="medium">
+                            <Tooltip title={"Upload"}>
+                                <CloudUploadIcon sx={{color:'#2185E9'}} fontSize="large" />
+                            </Tooltip>
+                           
+                        </IconButton>
                     </div>
                     {(body.contractId !== '' && arrayReacpCon.length > 0) &&
-                    <div  id='singleInput' className="d-flex justify-content-end marginTop24   mt-3">
+                    <div  id='singleInput' className="d-flex justify-content-end marginTop24 mt-3">
                         <div style={{minWidth:'250px'}}>
-                            <SingleFileInput  value={file} accept={[".csv,.xlsx"]} onFileSelected={handleSelect} onFileRemoved={handleRemove} dropzoneLabel="Trascina il tuo file.csv" rejectedLabel="Tipo di file non supportato" />
+                            <SingleFileInput  value={file} accept={[".csv,.xlsx"]} onFileSelected={handleSelect} onFileRemoved={handleRemove} dropzoneLabel="Carica il tuo file.csv" rejectedLabel="Tipo di file non supportato" />
                         </div>
                     </div>
                     }
@@ -381,11 +346,11 @@ const InserimentoContestazioni = () =>{
                                             return (
                                                 <TableRow key={Math.random()}>
                                                     <TableCell align="left"  sx={{ width:"300px"}} >{sigleRec.tipologiaFattura}</TableCell>
-                                                    <TableCell align="left" sx={{ width:"300px"}} >{sigleRec.flagContestazione}</TableCell>
-                                                    <TableCell align="right" sx={{ width:"300px"}}>{sigleRec.idFlagContestazione}</TableCell>
-                                                    <TableCell align="right" sx={{ width:"300px"}}>{sigleRec.totaleNotificheAnalogiche}</TableCell>
-                                                    <TableCell align="right" sx={{ width:"300px"}}>{sigleRec.totaleNotificheDigitali}</TableCell>
-                                                    <TableCell align="right" sx={{ width:"300px"}}>{sigleRec.totale}</TableCell>
+                                                    <TableCell align="center" sx={{ width:"300px"}} >{sigleRec.flagContestazione}</TableCell>
+                                                    <TableCell align="center" sx={{ width:"300px"}}>{sigleRec.idFlagContestazione}</TableCell>
+                                                    <TableCell align="center" sx={{ width:"300px"}}>{sigleRec.totaleNotificheAnalogiche}</TableCell>
+                                                    <TableCell align="center" sx={{ width:"300px"}}>{sigleRec.totaleNotificheDigitali}</TableCell>
+                                                    <TableCell align="center" sx={{ width:"300px"}}>{sigleRec.totale}</TableCell>
                                                 </TableRow>
                                             );})}
                                     </TableBody>

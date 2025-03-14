@@ -163,3 +163,18 @@ export const getDettaglioContestazione = async (token:string, nonce:string , idR
     );
     return response;
 };
+
+export const getContestazioneExel = async ( token:string ,nonce:string , body:{ idreport:number,step:number|null}) => {
+    const response =  await axios.post(`${url}/api/notifiche/pagopa/contestazioni/reports/document?nonce=${nonce}`,  
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token,
+        },
+        }
+    );
+
+    return response;
+};
+
+
+ 
