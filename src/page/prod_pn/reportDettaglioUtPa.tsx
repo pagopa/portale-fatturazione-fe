@@ -1,4 +1,4 @@
-import { Tooltip, Typography } from "@mui/material";
+import { IconButton, Tooltip, Typography } from "@mui/material";
 import React , { useState, useEffect, useContext} from 'react';
 import { TextField,Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -23,9 +23,7 @@ import { profiliEnti } from "../../reusableFunction/actionLocalStorage";
 import { mesiGrid, mesiWithZero, tipoNotifica } from "../../reusableFunction/reusableArrayObj";
 import { GlobalContext } from "../../store/context/globalContext";
 import { PathPf } from "../../types/enum";
-
-import NewReleasesIcon from '@mui/icons-material/NewReleases';
-
+import EventNoteIcon from '@mui/icons-material/EventNote';
 
 
 const ReportDettaglio : React.FC = () => {
@@ -749,7 +747,7 @@ const ReportDettaglio : React.FC = () => {
         }
     }; 
     
-    const backgroundColorButtonScadenzario = (profilo.auth === 'PAGOPA' || enti) ? "#0062C3" : 'red';
+    //const backgroundColorButtonScadenzario = (profilo.auth === 'PAGOPA' || enti) ? "#0062C3" : 'red';
     
     return (
         <div className="mx-5 marginTop24">
@@ -759,13 +757,13 @@ const ReportDettaglio : React.FC = () => {
                 </div>
                 <div className="col-3 ">
                     <Box sx={{width:'80%', marginLeft:'20px', display:'flex', justifyContent:'end'}}  >
-                        <Button  style={{
-                            width:'160px',
-                            backgroundColor:backgroundColorButtonScadenzario
-                        }} variant="contained"  onClick={()=> setShowModalScadenziario(true)} >
-                            <VisibilityIcon sx={{marginRight:'10px'}}></VisibilityIcon>
-                        Scadenzario
-                        </Button>
+                        <Tooltip  title="Scadenzario">
+                            <Button  
+                                variant="outlined"
+                                size="medium"  onClick={()=> setShowModalScadenziario(true)} >
+                                <EventNoteIcon></EventNoteIcon>
+                            </Button>
+                        </Tooltip>
                     </Box>
                 </div>
             </div>
@@ -1068,16 +1066,7 @@ const ReportDettaglio : React.FC = () => {
                                 </Button>
                             }
                         </div>               
-                    </div>
-                    <div className="col-3">
-                        {profilo.auth === 'PAGOPA' && 
-                        <div className="d-flex justify-content-end me">
-                            <Tooltip  title="Inserisci contestazioni" sx={{ marginRight:'32px'}}>
-                                <Button  variant="outlined" onClick={()=> navigate(PathPf.INSERIMENTO_CONTESTAZIONI)} >Inserisci contestazioni</Button>
-                            </Tooltip>
-                        </div>
-                        }
-                    </div>   
+                    </div>  
                 </div>
             </div>
             { notificheList.length > 0  &&

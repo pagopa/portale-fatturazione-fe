@@ -159,7 +159,7 @@ const SideNavSend : React.FC = () => {
             setSelectedIndex(5);
         }else if(currentLocation.toLowerCase().includes("/inviofatturedettaglio/")){
             setSelectedIndex(5);
-        }else if(currentLocation === PathPf.STORICO_CONTEST){
+        }else if(currentLocation === PathPf.STORICO_CONTEST || currentLocation === PathPf.STORICO_DETTAGLIO_CONTEST){
             setSelectedIndex(10);
         }
 
@@ -169,7 +169,7 @@ const SideNavSend : React.FC = () => {
         if(open && (currentLocation !== PathPf.TIPOLOGIA_CONTRATTO && currentLocation !== PathPf.LISTA_DATI_FATTURAZIONE)){
             setOpen(false);
         }
-        if(openContestazioni && (currentLocation !== PathPf.STORICO_CONTEST && currentLocation !== PathPf.LISTA_NOTIFICHE)){
+        if(openContestazioni && (currentLocation !== PathPf.STORICO_CONTEST && currentLocation !== PathPf.LISTA_NOTIFICHE && currentLocation !== PathPf.STORICO_DETTAGLIO_CONTEST && currentLocation !== PathPf.INSERIMENTO_CONTESTAZIONI )){
             setOpenContestazioni(false);
         }
 

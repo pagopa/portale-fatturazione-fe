@@ -11,8 +11,9 @@ import {useState, useEffect, useContext} from 'react';
 import YupString from '../../validations/string/index';
 import { createContestazione, modifyContestazioneConsolidatore, modifyContestazioneEnte,modifyContestazioneRecapitista, tipologiaTipoContestazione } from '../../api/apiSelfcare/notificheSE/api';
 import { modifyContestazioneEntePagoPa } from '../../api/apiPagoPa/notifichePA/api';
-import { getFiltersFromLocalStorageNotifiche, getProfilo, getToken, profiliEnti } from '../../reusableFunction/actionLocalStorage';
+import { getFiltersFromLocalStorageNotifiche,profiliEnti } from '../../reusableFunction/actionLocalStorage';
 import { GlobalContext } from '../../store/context/globalContext';
+import CloseIcon from '@mui/icons-material/Close';
 
 const style = {
     position: 'absolute' as const,
@@ -484,15 +485,14 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    <div className='d-flex justify-content-between'>
-                        <div>
+                    <div className='d-flex justify-content-between ms-3 mt-auto mb-auto w-100' >
+                        <div className='d-flex justify-content-center align-items-center'>
                             <Typography id="modal-modal-title" variant="h6" component="h2">
                                 {contestazioneSelected.contestazione.statoContestazione === 1 ? 'Crea contestazione': 'Contestazione'}
-    
                             </Typography>
                         </div>
-                        <div>
-                            <Button variant="contained"  onClick={()=> handleClose() }> X </Button>
+                        <div className='icon_close me-5'>
+                            <CloseIcon onClick={handleClose} id='close_icon' sx={{color:'#17324D'}}></CloseIcon>
                         </div>
                     </div>
                     {/*BODY */}
@@ -503,15 +503,11 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                                     fullWidth
                                     size="medium"
                                 >
-                                    <InputLabel
-                                        id="tipoCon"
-                                    >
+                                    <InputLabel>
                                 Tipo Contestazione
                                     </InputLabel>
                                     <Select
-                                        id="tipoCon"
                                         label='Tipo Contestazione'
-                                        labelId="search-by-label"
                                         onChange={(e) =>{
                                             if(e.target.value === ''){
                                                 setContestazioneSelected((prev:Contestazione)=>{

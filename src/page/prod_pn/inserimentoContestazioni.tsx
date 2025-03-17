@@ -1,5 +1,4 @@
 import { Autocomplete, Box,Button,FormControl, IconButton, InputLabel, MenuItem, Select, Table, TableBody, TableCell, TableHead, TableRow, TextField, Tooltip, Typography } from "@mui/material";
-import MarkUnreadChatAltIcon from '@mui/icons-material/MarkUnreadChatAlt';
 import { SingleFileInput } from "@pagopa/mui-italia";
 import { PathPf } from "../../types/enum";
 import {  useContext, useEffect, useState } from "react";
@@ -10,6 +9,8 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { month } from "../../reusableFunction/reusableArrayObj";
 import ModalInvioContestazioni from "../../components/reportDettaglio/modalConfermaContestazioni";
 import NavigatorHeader from "../../components/reusableComponents/navigatorHeader";
+import GavelIcon from '@mui/icons-material/Gavel';
+
 
 interface MeseContetazione{
     descrizione: string,
@@ -219,7 +220,7 @@ const InserimentoContestazioni = () =>{
     return (
         <>
             <div>
-                <NavigatorHeader pageFrom={"Notifiche/"} pageIn={"Inserisci contestazioni"} backPath={PathPf.LISTA_NOTIFICHE} icon={<MarkUnreadChatAltIcon  sx={{padding:"3px"}}  fontSize='small'></MarkUnreadChatAltIcon>}></NavigatorHeader>
+                <NavigatorHeader pageFrom={"Contestazioni/"} pageIn={"Inserisci contestazioni"} backPath={PathPf.STORICO_CONTEST} icon={<GavelIcon  sx={{padding:"3px"}}  fontSize='small'></GavelIcon>}></NavigatorHeader>
             </div>
             <div className="mx-5" style={{minHeight:'600px'}}>
                 <div className="marginTop24">

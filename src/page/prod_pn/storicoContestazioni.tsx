@@ -1,4 +1,4 @@
-import { Autocomplete, Box, Button, Checkbox, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
+import { Autocomplete, Box, Button, Checkbox, FormControl, InputLabel, MenuItem, Select, TextField, Tooltip, Typography } from "@mui/material";
 import { mesi, month } from "../../reusableFunction/reusableArrayObj";
 import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
 import { useContext, useEffect, useState } from "react";
@@ -7,14 +7,14 @@ import { manageError } from "../../api/api";
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
 import { GlobalContext } from "../../store/context/globalContext";
 import { getListaStorico, getTipoReportCon } from "../../api/apiPagoPa/storicoContestazioni/api";
-import { getAnniContestazioni } from "../../api/apiPagoPa/notifichePA/api";
+import { getAnniContestazioni, getAnniNotifiche, getMesiNotifiche } from "../../api/apiPagoPa/notifichePA/api";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import { findStatoContestazioni } from "../../reusableFunction/function";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../../types/enum";
 import { useNavigate } from "react-router";
+import NoteAddIcon from '@mui/icons-material/NoteAdd';
 
 export interface BodyStoricoContestazioni{
     anno:string,
@@ -57,6 +57,9 @@ const Storico = () => {
 
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState} = globalContextObj;
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
+    const navigate = useNavigate();
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -64,10 +67,7 @@ const Storico = () => {
             value:valueObj
         });
     };
-    const navigate = useNavigate();
-     
-    const token =  mainState.profilo.jwt;
-    const profilo =  mainState.profilo;
+  
 
 
     const [bodyGetLista,setBodyGetLista] = useState<BodyStoricoContestazioni>({
@@ -89,6 +89,33 @@ const Storico = () => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalContestazioni, setTotalContestazioni]  = useState(0);
     const [getListaContestazioniRunning, setGetListaContestazioniRunning] = useState(false);
+
+
+    ////implementazione anni e mesi _________
+    const getAnni = async() => {
+        setGetListaContestazioniRunning(true);
+        await getAnniContestazioni(token,profilo.nonce)
+            .then((res)=>{
+                setBodyGetLista((prev)=> ({...prev, ...{anno:res.data[0]}}));
+                setValueYears(res.data);
+                getListaContestazioni({...bodyGetLista,...{anno:res.data[0]}},page+1,rowsPerPage);
+            }).catch((err)=>{
+                setGetListaContestazioniRunning(false);
+                manageError(err,dispatchMainState);
+            });
+    };
+    const getMesi = async (anno) => {
+        await getMesiNotifiche(token, profilo.nonce,{anno}).then((res)=> {
+            /*  setArrayMesi(res.data);
+            if(res.data.length > 0){
+                setBodyGetLista((prev)=> ({...prev, ...{mese:Number(res.data[0].mese)}}));
+            }  
+            setGetNotificheWorking(false);*/
+        }).catch((err)=>{
+            manageError(err,dispatchMainState);
+            
+        });
+    };
 
 
     useEffect(()=>{
@@ -115,70 +142,53 @@ const Storico = () => {
 
   
     const listaEntiNotifichePageOnSelect = async () =>{
-        await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} )
-            .then((res)=>{
-                setDataSelect(res.data);
-            }).catch(((err)=>{
-                setDataSelect([]);
-                manageError(err,dispatchMainState);
-            }));
+        await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} ).then((res)=>{
+            setDataSelect(res.data);
+        }).catch(((err)=>{
+            setDataSelect([]);
+            manageError(err,dispatchMainState);
+        }));
     };
 
     const listaTipoReport = async () =>{
-        await getTipoReportCon(token, profilo.nonce)
-            .then((res)=>{
-                setTipologieDoc(res.data);
-            }).catch(((err)=>{
-                setTipologieDoc([]);
-                manageError(err,dispatchMainState);
-            }));
+        await getTipoReportCon(token, profilo.nonce).then((res)=>{
+            setTipologieDoc(res.data);
+        }).catch(((err)=>{
+            setTipologieDoc([]);
+            manageError(err,dispatchMainState);
+        }));
     };
 
-    const getAnni = async() => {
-        setGetListaContestazioniRunning(true);
-        await getAnniContestazioni(token,profilo.nonce)
-            .then((res)=>{
-                setBodyGetLista((prev)=> ({...prev, ...{anno:res.data[0]}}));
-                setValueYears(res.data);
-                getListaContestazioni({...bodyGetLista,...{anno:res.data[0]}},page+1,rowsPerPage);
-            }).catch((err)=>{
-                setGetListaContestazioniRunning(false);
-                manageError(err,dispatchMainState);
-            });
-    };
+ 
 
     const getListaContestazioni = async(body,pag, rowpag) => {
-        
-        await getListaStorico(token,profilo.nonce,body,pag,rowpag)
-            .then((res)=>{
-
-                // ordino i dati in base all'header della grid
-
-                setListaToMap(res.data.reports);
-                const orderDataCustom = res.data.reports.map((obj)=>{
-                    // inserire come prima chiave l'id se non si vuol renderlo visibile nella grid
-                    // 'id serve per la chiamata get dettaglio dell'elemento selezionato nella grid
-                    return {
-                        reportId:obj.reportId,
-                        ragioneSociale:obj.ragioneSociale,
-                        dataInserimento:new Date(obj.dataInserimento).toISOString().replace("T", " ").substring(0, 19),
-                        mese:month[obj.mese-1],
-                        anno:obj.anno,
-                        stato:obj.descrizioneStato,
-                        categoriaDocumento:obj.categoriaDocumento,
+        await getListaStorico(token,profilo.nonce,body,pag,rowpag).then((res)=>{
+            // ordino i dati in base all'header della grid
+            setListaToMap(res.data.reports);
+            const orderDataCustom = res.data.reports.map((obj)=>{
+                // inserire come prima chiave l'id se non si vuol renderlo visibile nella grid
+                // 'id serve per la chiamata get dettaglio dell'elemento selezionato nella grid
+                return {
+                    reportId:obj.reportId,
+                    ragioneSociale:obj.ragioneSociale,
+                    dataInserimento:new Date(obj.dataInserimento).toISOString().replace("T", " ").substring(0, 19),
+                    mese:month[obj.mese-1],
+                    anno:obj.anno,
+                    stato:obj.descrizioneStato,
+                    categoriaDocumento:obj.categoriaDocumento,
                         
                         
-                    };
-                });
-                setDataGrid(orderDataCustom);
-                setTotalContestazioni(res.data.count);
-                setGetListaContestazioniRunning(false);
-            }).catch((err)=>{
-                setDataGrid([]);
-                setTotalContestazioni(0);
-                setGetListaContestazioniRunning(false);
-                manageError(err,dispatchMainState);
+                };
             });
+            setDataGrid(orderDataCustom);
+            setTotalContestazioni(res.data.count);
+            setGetListaContestazioniRunning(false);
+        }).catch((err)=>{
+            setDataGrid([]);
+            setTotalContestazioni(0);
+            setGetListaContestazioniRunning(false);
+            manageError(err,dispatchMainState);
+        });
     };
 
 
@@ -200,7 +210,6 @@ const Storico = () => {
         getListaContestazioni(bodyGetLista,realPage,parseInt(event.target.value, 10));  
     };
 
-
     const handleClickOnDetail = (el) => {    
         navigate(PathPf.STORICO_DETTAGLIO_CONTEST);
         const singleEl = listaToMap.find(elem => elem.reportId === el.id);
@@ -208,7 +217,7 @@ const Storico = () => {
         
     };  
 
-    const headerNames = ['Ragione Sociale','Data Inserimento',"Mese","Anno",'Stato','Categoria Doc.','']; // 'Mese','Anno'
+    const headerNames = ['Ragione Sociale','Data Inserimento',"Mese","Anno",'Stato','Categoria Doc.',''];
 
     return (
         <div className="mx-5" style={{minHeight:'600px'}}>
@@ -285,7 +294,6 @@ const Storico = () => {
                                     const allId = value.map(el => el.idTipologiaReport);
                                     setBodyGetLista((prev) => ({...prev,...{idTipologiaReports:allId}}));
                                 }}
-                                id="checkboxes-tipologie"
                                 limitTags={1}
                                 value={tipologiaSelcted}
                                 options={tipologieDoc}
@@ -303,12 +311,10 @@ const Storico = () => {
                                     </li>
                                 )}
                                 renderInput={(params) => {
-                
                                     return <TextField {...params}
                                         label="Categoria Doc." 
                                         placeholder="Categoria Doc." />;
                                 }}
-           
                             />
                         </div>
                         <div  className="col-3">
@@ -321,10 +327,9 @@ const Storico = () => {
                             ></MultiselectCheckbox>
                         </div>
                     </div>
-                    <div className="d-flex mt-5">
-                
-                        <div className=" d-flex justify-content-center align-items-center">
-                            <div>
+                    <div className="row mt-5">
+                        <div className="col-9">
+                            <div className=" d-flex justify-content-start ">
                                 <Button 
                                     onClick={()=>{
                                         setGetListaContestazioniRunning(true);
@@ -354,13 +359,19 @@ const Storico = () => {
                                             ,1,10);
                                         } }
                                         sx={{marginLeft:'24px'}} >
-                    Annulla filtri
+                                        Annulla filtri
                                     </Button>
                                 }
                             </div>
                         </div>
+                        <div className="col-3">
+                            <div className="d-flex justify-content-end me-5">
+                                <Tooltip  title="Inserisci contestazioni">
+                                    <Button  variant="outlined" onClick={()=> navigate(PathPf.INSERIMENTO_CONTESTAZIONI)} ><NoteAddIcon></NoteAddIcon></Button>
+                                </Tooltip>
+                            </div>
+                        </div>
                     </div>
-
                     <div className="mt-5">
                         <div className="mt-1 mb-5" style={{ width: '100%'}}>
                             <GridCustom
