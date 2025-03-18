@@ -104,7 +104,10 @@ const Messaggi : React.FC<any> = () => {
         if(contentType === "text/csv" || contentType === "application/json"){
             setShowDownloading(true);
             await downloadMessaggioPagoPaCsv(token,profilo.nonce, {idMessaggio:item.idMessaggio}).then((res)=>{
-                const blob = new Blob([res.data], { type: contentType });
+                if(contentType === "application/json"){
+                    res.data = JSON.stringify(res.data);
+                }
+                const blob = new Blob([res.data], { type: contentType});
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.setAttribute('hidden', '');
