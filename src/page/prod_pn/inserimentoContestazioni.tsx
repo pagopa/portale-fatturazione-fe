@@ -385,7 +385,7 @@ const InserimentoContestazioni = () =>{
                                     onClick={()=> file && setOpenModalConferma(true) }
                                     startIcon={<CloudUploadIcon />}
                                 >
-                                    {file ? "Invia":"Carica file"}
+                                    {file ? "Inserisci":"Carica file"}
                                     {!file &&
                                         <VisuallyHiddenInput
                                             type="file"
