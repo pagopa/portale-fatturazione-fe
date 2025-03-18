@@ -68,14 +68,13 @@ const BasicAlerts:React.FC = () => {
     }else if(mainState.apiError === 410 || mainState.apiError === 409 || errorAlert.error === 410){
         colorAlert = 'warning';
     }else if(mainState.apiError === "NO_ENTE_FILTRI_CONTESTAZIONE"){
-
         colorAlert = 'info';
     }else if((mainState.apiError||'').toString().slice(0,4) === "409_"||(mainState.apiError||'').slice(0,2) === 'NO'){
-
         colorAlert = 'error';
     }else if(!mainState.apiError && !errorAlert.error){
-
         colorAlert = 'warning';
+    }else if(mainState.apiError === "FORMAT_FILE_ERROR"){
+        colorAlert = 'error';
     }
     
     const [css, setCss] = useState('main_container_alert_component');

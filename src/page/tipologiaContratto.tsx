@@ -220,7 +220,6 @@ const PageTipologiaContratto :React.FC = () =>{
         const typToSet = elementSelected.tipologiaContratto === 1 ? 2 : 1;
         await modifyContrattoPagoPa(token, profilo.nonce,{idEnte:elementSelected.idEnte, tipologiaContratto:typToSet}).then((res)=> {
             managePresaInCarico('CAMBIO_TIPOLOGIA_CONTRATTO',dispatchMainState);
-            console.log('dentro');
             setOpenModalConfermaIns(false);
             getLista( page, rowsPerPage, bodyGetLista);
         }).catch((err)=>{

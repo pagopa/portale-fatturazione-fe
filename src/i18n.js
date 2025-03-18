@@ -32,7 +32,9 @@ i18n.use(Backend)
                         "404_NO_CONTESTAZIONI": 'Non sono presenti notifiche per il mese di riferimento selezionato',
                         'ERRORE_MANUALE':'Manuale momentaneamente non disponibile',
                         'ERROR_LIST_JSON_TO_SAP':"Dettaglio momentaneamente non disponibile",
-                        "404_RIGHE_ID":"Il report di dettaglio notifiche Regolare Esecuzione sarà disponibile a breve"
+                        "404_RIGHE_ID":"Il report di dettaglio notifiche Regolare Esecuzione sarà disponibile a breve",
+                        "FORMAT_FILE_ERROR":"Formato del file non ammesso. Inserire formato CSV"
+
                     }
                 }
             }

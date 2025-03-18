@@ -1,5 +1,5 @@
 import { Autocomplete, Box, Button, Checkbox, FormControl, InputLabel, MenuItem, Select, TextField, Tooltip, Typography } from "@mui/material";
-import { mesi, month } from "../../reusableFunction/reusableArrayObj";
+import { month } from "../../reusableFunction/reusableArrayObj";
 import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
 import { useContext, useEffect, useState } from "react";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
@@ -7,7 +7,7 @@ import { manageError } from "../../api/api";
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
 import { GlobalContext } from "../../store/context/globalContext";
 import { getListaStorico, getTipoReportCon } from "../../api/apiPagoPa/storicoContestazioni/api";
-import { getAnniContestazioni, getAnniNotifiche, getMesiNotifiche } from "../../api/apiPagoPa/notifichePA/api";
+import { getAnniContestazioni,  getMesiContestazioni} from "../../api/apiPagoPa/notifichePA/api";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
@@ -15,6 +15,8 @@ import ModalLoading from "../../components/reusableComponents/modals/modalLoadin
 import { PathPf } from "../../types/enum";
 import { useNavigate } from "react-router";
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
+import useSavedFiltersNested from "../../hooks/usaSaveFiltersLocalStorageNested";
+import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 
 export interface BodyStoricoContestazioni{
     anno:string,
@@ -61,14 +63,19 @@ const Storico = () => {
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
 
+    const { 
+        filters,
+        updateFilters,
+        isInitialRender,
+        resetFilters
+    } = useSavedFilters(PathPf.STORICO_CONTEST,{});
+
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
             type:'MODIFY_MAIN_STATE',
             value:valueObj
         });
     };
-  
-
 
     const [bodyGetLista,setBodyGetLista] = useState<BodyStoricoContestazioni>({
         anno:'',
@@ -76,6 +83,7 @@ const Storico = () => {
         idEnti:[],
         idTipologiaReports:[]
     });
+
     const [valueYears, setValueYears] = useState<string[]>([]);
     const [tipologieDoc, setTipologieDoc] = useState<TipologieDoc[]>([]);
     const [tipologiaSelcted,setTipologiaSelected] = useState<TipologieDoc[]>([]);
@@ -89,38 +97,11 @@ const Storico = () => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalContestazioni, setTotalContestazioni]  = useState(0);
     const [getListaContestazioniRunning, setGetListaContestazioniRunning] = useState(false);
-
-
-    ////implementazione anni e mesi _________
-    const getAnni = async() => {
-        setGetListaContestazioniRunning(true);
-        await getAnniContestazioni(token,profilo.nonce)
-            .then((res)=>{
-                setBodyGetLista((prev)=> ({...prev, ...{anno:res.data[0]}}));
-                setValueYears(res.data);
-                getListaContestazioni({...bodyGetLista,...{anno:res.data[0]}},page+1,rowsPerPage);
-            }).catch((err)=>{
-                setGetListaContestazioniRunning(false);
-                manageError(err,dispatchMainState);
-            });
-    };
-    const getMesi = async (anno) => {
-        await getMesiNotifiche(token, profilo.nonce,{anno}).then((res)=> {
-            /*  setArrayMesi(res.data);
-            if(res.data.length > 0){
-                setBodyGetLista((prev)=> ({...prev, ...{mese:Number(res.data[0].mese)}}));
-            }  
-            setGetNotificheWorking(false);*/
-        }).catch((err)=>{
-            manageError(err,dispatchMainState);
-            
-        });
-    };
-
+    const [arrayMesi,setArrayMesi] = useState<{descrizione:string,mese:string}[]>([]);
 
     useEffect(()=>{
         listaTipoReport(); 
-        getAnni(); 
+        getAnni();
     },[]);
 
     useEffect(()=>{
@@ -140,7 +121,45 @@ const Storico = () => {
         return () => clearTimeout(timer);
     },[textValue]);
 
-  
+    const clearOnChangeFilter = () => {
+        setDataGrid([]);
+        setPage(0);
+        setRowsPerPage(10);
+        setTotalContestazioni(0);
+    };
+
+    const getAnni = async() => {
+        setGetListaContestazioniRunning(true);
+        await getAnniContestazioni(token,profilo.nonce)
+            .then((res)=>{
+                setValueYears(res.data);
+                if(isInitialRender.current && Object.keys(filters).length > 0){
+                    setBodyGetLista(filters.body);
+                    getListaContestazioni(filters.body,filters.page+1,filters.rows);
+                    getMesi(filters.body.anno);
+                    setTipologiaSelected(filters.tipologiaSelcted);
+                    setValueAutocomplete(filters.valueAutocomplete);
+                    setPage(filters.page);
+                    setRowsPerPage(filters.rows);
+                }else{
+                    setBodyGetLista((prev)=> ({...prev, ...{anno:res.data[0]}}));
+                    getListaContestazioni({...bodyGetLista,...{anno:res.data[0]}},page+1,rowsPerPage);
+                    getMesi(res.data[0]);
+                }
+            }).catch((err)=>{
+                setGetListaContestazioniRunning(false);
+                manageError(err,dispatchMainState);
+            });
+    };
+    const getMesi = async (anno) => {
+        await getMesiContestazioni(token, profilo.nonce,anno).then((res)=> {
+            setArrayMesi(res.data);
+        }).catch((err)=>{
+            setArrayMesi([]);
+            manageError(err,dispatchMainState);  
+        });
+    };
+
     const listaEntiNotifichePageOnSelect = async () =>{
         await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} ).then((res)=>{
             setDataSelect(res.data);
@@ -159,9 +178,8 @@ const Storico = () => {
         }));
     };
 
- 
-
     const getListaContestazioni = async(body,pag, rowpag) => {
+        setGetListaContestazioniRunning(true);
         await getListaStorico(token,profilo.nonce,body,pag,rowpag).then((res)=>{
             // ordino i dati in base all'header della grid
             setListaToMap(res.data.reports);
@@ -175,9 +193,7 @@ const Storico = () => {
                     mese:month[obj.mese-1],
                     anno:obj.anno,
                     stato:obj.descrizioneStato,
-                    categoriaDocumento:obj.categoriaDocumento,
-                        
-                        
+                    categoriaDocumento:obj.categoriaDocumento       
                 };
             });
             setDataGrid(orderDataCustom);
@@ -191,7 +207,38 @@ const Storico = () => {
         });
     };
 
+    const handleAnnullaButton = () => {
+        setBodyGetLista({
+            anno:valueYears[0],
+            mese:'',
+            idEnti:[],
+            idTipologiaReports:[]
+        });
+        setValueAutocomplete([]);
+        setDataSelect([]);
+        setTipologiaSelected([]);
+        getListaContestazioni({
+            mese:'',
+            idEnti:[],
+            idTipologiaReports:[],
+            anno:valueYears[0]
+        },1,10);
+        resetFilters();
+    };
 
+    const handleFiltra = () => {
+        updateFilters({
+            pathPage:PathPf.STORICO_CONTEST,
+            body:bodyGetLista,
+            textValue:textValue,
+            valueAutocomplete,
+            tipologiaSelcted:tipologiaSelcted,
+            page:0,
+            rows:10,
+        });
+        getListaContestazioni(bodyGetLista,page+1,rowsPerPage);
+    };
+         
     const handleChangePage = (
         event: React.MouseEvent<HTMLButtonElement> | null,
         newPage: number,
@@ -199,6 +246,15 @@ const Storico = () => {
         const realPage = newPage + 1;
         getListaContestazioni(bodyGetLista,realPage, rowsPerPage);
         setPage(newPage);
+        updateFilters({
+            pathPage:PathPf.STORICO_CONTEST,
+            body:bodyGetLista,
+            textValue:textValue,
+            valueAutocomplete,
+            tipologiaSelcted:tipologiaSelcted,
+            page:newPage,
+            rows:rowsPerPage
+        });
     };
                     
     const handleChangeRowsPerPage = (
@@ -208,13 +264,21 @@ const Storico = () => {
         setPage(0);
         const realPage = page + 1;
         getListaContestazioni(bodyGetLista,realPage,parseInt(event.target.value, 10));  
+        updateFilters({
+            pathPage:PathPf.STORICO_CONTEST,
+            body:bodyGetLista,
+            textValue:textValue,
+            valueAutocomplete,
+            tipologiaSelcted:tipologiaSelcted,
+            page:0,
+            rows:parseInt(event.target.value, 10)
+        });
     };
 
     const handleClickOnDetail = (el) => {    
         navigate(PathPf.STORICO_DETTAGLIO_CONTEST);
         const singleEl = listaToMap.find(elem => elem.reportId === el.id);
         handleModifyMainState({contestazioneSelected:singleEl});
-        
     };  
 
     const headerNames = ['Ragione Sociale','Data Inserimento',"Mese","Anno",'Stato','Categoria Doc.',''];
@@ -230,7 +294,7 @@ const Storico = () => {
                 <div className="mb-5 mt-5 marginTop24" >
                     <div className="row">
                         <div className="col-3">
-                            <Box sx={{ width: '80%' }}>
+                            <Box sx={{ width:'80%'}}>
                                 <FormControl
                                     fullWidth
                                     size="medium"
@@ -241,13 +305,15 @@ const Storico = () => {
                                     <Select
                                         label='Anno'
                                         onChange={(e) =>{
-                                            setBodyGetLista((prev)=> ({...prev, ...{anno:e.target.value}}));
+                                            setBodyGetLista((prev)=> ({...prev, ...{anno:e.target.value,mese:''}}));
+                                            getMesi(e.target.value);
+                                            clearOnChangeFilter();
                                         }  }
                                         value={bodyGetLista.anno||''}
                                     >
                                         {valueYears.map((el:string) => (
                                             <MenuItem
-                                                key={Math.random()}
+                                                key={el}
                                                 value={el||''}
                                             >
                                                 {el}
@@ -258,41 +324,40 @@ const Storico = () => {
                             </Box>
                         </div>
                         <div className="col-3">
-                            <Box sx={{ width: '80%' }}>
+                            <Box sx={{width:'80%'}}  >
                                 <FormControl
                                     fullWidth
                                     size="medium"
                                 >
-                                    <InputLabel>
-                                Mese
-                                    </InputLabel>
+                                    <InputLabel> Mese</InputLabel>
                                     <Select
-                                        label="Mese"
+                                        label='Seleziona Mese'
                                         onChange={(e) =>{
                                             setBodyGetLista((prev)=> ({...prev, ...{mese:e.target.value}}));
+                                            clearOnChangeFilter();
                                         }}
-                                        value={bodyGetLista.mese}
+                                        value={bodyGetLista.mese||''}
                                     >
-                                        {mesi.map((el,i) => (
-                                            <MenuItem
-                                                key={i}
-                                                value={Object.keys(el)[0].toString()}
-                                            >
-                                                {Object.values(el)[0]}
-                                            </MenuItem>
-                                        ))}
+                                        {arrayMesi.map((el) =>{
+                                            return(
+                                                <MenuItem key={el.mese} value={el.mese}>
+                                                    {el?.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase()}
+                                                </MenuItem>
+                                            );
+                                        })}
                                     </Select>
                                 </FormControl>
                             </Box>
                         </div>
                         <div className="col-3 "> 
                             <Autocomplete
-                                sx={{width:'80%',height:'59px' }}
+                                sx={{width:'80%',height:'59px'}}
                                 multiple
                                 onChange={(event, value) => {
                                     setTipologiaSelected(value);
                                     const allId = value.map(el => el.idTipologiaReport);
                                     setBodyGetLista((prev) => ({...prev,...{idTipologiaReports:allId}}));
+                                    clearOnChangeFilter();
                                 }}
                                 limitTags={1}
                                 value={tipologiaSelcted}
@@ -324,6 +389,7 @@ const Storico = () => {
                                 setTextValue={setTextValue}
                                 valueAutocomplete={valueAutocomplete}
                                 setValueAutocomplete={setValueAutocomplete}
+                                clearOnChangeFilter={clearOnChangeFilter}
                             ></MultiselectCheckbox>
                         </div>
                     </div>
@@ -331,33 +397,13 @@ const Storico = () => {
                         <div className="col-9">
                             <div className=" d-flex justify-content-start ">
                                 <Button 
-                                    onClick={()=>{
-                                        setGetListaContestazioniRunning(true);
-                                        getListaContestazioni(bodyGetLista,page+1,rowsPerPage);
-                                    } } 
+                                    onClick={handleFiltra} 
                                     sx={{ marginTop: 'auto', marginBottom: 'auto'}}
                                     variant="contained"> Filtra
                                 </Button>
                                 {statusAnnulla === 'hidden' ? null :
                                     <Button
-                                        onClick={()=>{
-                                            setGetListaContestazioniRunning(true);
-                                            setBodyGetLista({
-                                                anno:valueYears[0],
-                                                mese:'',
-                                                idEnti:[],
-                                                idTipologiaReports:[]
-                                            });
-                                            setValueAutocomplete([]);
-                                            setDataSelect([]);
-                                            setTipologiaSelected([]);
-                                            getListaContestazioni({...{
-                                                mese:'',
-                                                idEnti:[],
-                                                idTipologiaReports:[]
-                                            },...{anno:valueYears[0]}}
-                                            ,1,10);
-                                        } }
+                                        onClick={handleAnnullaButton}
                                         sx={{marginLeft:'24px'}} >
                                         Annulla filtri
                                     </Button>
@@ -396,7 +442,6 @@ const Storico = () => {
                 sentence={'Loading...'}>
             </ModalLoading>
         </div>
-      
     );
 };
 

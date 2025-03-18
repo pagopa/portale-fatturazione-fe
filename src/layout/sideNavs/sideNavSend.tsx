@@ -159,7 +159,8 @@ const SideNavSend : React.FC = () => {
             setSelectedIndex(5);
         }else if(currentLocation.toLowerCase().includes("/inviofatturedettaglio/")){
             setSelectedIndex(5);
-        }else if(currentLocation === PathPf.STORICO_CONTEST || currentLocation === PathPf.STORICO_DETTAGLIO_CONTEST){
+        }else if(currentLocation === PathPf.STORICO_CONTEST || currentLocation === PathPf.STORICO_DETTAGLIO_CONTEST|| currentLocation === PathPf.INSERIMENTO_CONTESTAZIONI){
+            setOpenContestazioni(true);
             setSelectedIndex(10);
         }
 
@@ -220,10 +221,10 @@ const SideNavSend : React.FC = () => {
                     {openContestazioni ? 
                         <IconButton onClick={()=> setOpenContestazioni(false)}  size="small">
                             <ExpandLess  />
-                        </IconButton>  :
+                        </IconButton>:
                         <IconButton onClick={()=> setOpenContestazioni(true)}  size="small">
                             <ExpandMore />
-                        </IconButton> }
+                        </IconButton>}
                 </ListItemButton>
                 <Collapse in={openContestazioni} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>

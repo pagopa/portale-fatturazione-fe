@@ -83,7 +83,6 @@ const DettaglioStoricoContestazione = () => {
         setShowDownloading(true);
         await getContestazioneExel(token,profilo.nonce,body).then((res)=>{
             setShowDownloading(false);
-            console.log(res);
             const link = document.createElement("a");
             link.href = res.data;
           
@@ -132,7 +131,7 @@ const DettaglioStoricoContestazione = () => {
                                             <TableCell align="center" sx={{ width:"300px"}} >Contestate Ente</TableCell>
                                             <TableCell align="center" sx={{ width:"300px"}} >Risposte send</TableCell>
                                             <TableCell align="center" sx={{ width:"300px"}}>Risposte Recapitista</TableCell>
-                                            <TableCell align="center" sx={{ width:"300px"}}>Risposte Consolidatore.</TableCell>
+                                            <TableCell align="center" sx={{ width:"300px"}}>Risposte Consolidatore</TableCell>
                                             <TableCell align="center" sx={{ width:"300px"}}>Accettate</TableCell>
                                             <TableCell align="center" sx={{ width:"300px"}}>Rifiutate</TableCell>
                                         </TableRow>

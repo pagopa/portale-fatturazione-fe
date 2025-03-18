@@ -50,8 +50,6 @@ const ModalInvioContestazioni : React.FC<PropsModalContestazioni> =({setOpen, op
         setOpen(false);     
     };
 
-    console.log({progress});
-
     return (
         <div>
             <Modal
@@ -74,9 +72,7 @@ const ModalInvioContestazioni : React.FC<PropsModalContestazioni> =({setOpen, op
                                     <Typography sx={{ my:'auto',mr:1  }} variant="caption-semibold">{`${info.ente} ${month[Number(info.mese)-1]} ${info.anno} :`}</Typography>
                                     <Typography sx={{  my:'auto'}} variant="body1">Confermi l'operazione?</Typography>
                                 </div>
-                       
                             </div>
-                   
                             <div className='container_buttons_modal d-flex justify-content-center'>
                                 <Button 
                                     sx={{marginRight:'20px'}} 

@@ -62,7 +62,7 @@ export const manageErrorDownload = (res:string,dispatchMainState) =>{
 };
 
 export const managePresaInCarico = (res:string,dispatchMainState) =>{
-    console.log({res});
+ 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
             type:'MODIFY_MAIN_STATE',
@@ -74,7 +74,7 @@ export const managePresaInCarico = (res:string,dispatchMainState) =>{
 };
 
 export const manageStringMessage = (res:string,dispatchMainState) =>{
-    console.log({res});
+   
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
             type:'MODIFY_MAIN_STATE',
