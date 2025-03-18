@@ -213,7 +213,7 @@ const DettaglioStoricoContestazione = () => {
                                                         <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj.totaleNotificheDigitali ||"-"}</TableCell>
                                                         <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj.totaleNotificheAnalogiche890||"-"}</TableCell>
                                                         <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj.totaleNotificheAnalogicheAR||"-"}</TableCell>
-                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj.totaleNotificheDigitali||"-"}</TableCell>
+                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj.totaleNotifiche||"-"}</TableCell>
                                                         <TableCell  sx={{ borderBottomWidth: '3px' }} align="center"><IconButton onClick={() => downloadSigleDetail({idreport:obj.reportId,step:obj.step})} disabled={obj.nomeDocumento ? false : true}><DownloadIcon></DownloadIcon></IconButton></TableCell>
                                                     </TableRow>
                                                 );
