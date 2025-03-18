@@ -412,7 +412,7 @@ const Storico = () => {
                         </div>
                         <div className="col-3">
                             <div className="d-flex justify-content-end me-5">
-                                <Tooltip  title="Inserisci contestazioni">
+                                <Tooltip  title="Contestazioni multiple">
                                     <Button  variant="outlined" onClick={()=> navigate(PathPf.INSERIMENTO_CONTESTAZIONI)} ><NoteAddIcon></NoteAddIcon></Button>
                                 </Tooltip>
                             </div>

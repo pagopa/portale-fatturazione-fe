@@ -92,7 +92,7 @@ const InserimentoContestazioni = () =>{
         getAnni();
         if(isInitialRender.current && Object.keys(filters).length > 0 && filters.body.contractId === ""){
             manageStringMessage('NO_ENTE_FILTRI_CONTESTAZIONE',dispatchMainState);
-        }else if(!isInitialRender.current && body.contractId === ""){
+        }else if(body.contractId === ""  && body.idEnte === ""){
             manageStringMessage('NO_ENTE_FILTRI_CONTESTAZIONE',dispatchMainState);
         }
     },[]);
@@ -256,13 +256,13 @@ const InserimentoContestazioni = () =>{
     return (
         <>
             <div>
-                <NavigatorHeader pageFrom={"Contestazioni/"} pageIn={"Inserisci contestazioni"} backPath={PathPf.STORICO_CONTEST} icon={<GavelIcon  sx={{padding:"3px"}}  fontSize='small'></GavelIcon>}></NavigatorHeader>
+                <NavigatorHeader pageFrom={"Contestazioni/"} pageIn={"Contestazioni multiple"} backPath={PathPf.STORICO_CONTEST} icon={<GavelIcon  sx={{padding:"3px"}}  fontSize='small'></GavelIcon>}></NavigatorHeader>
             </div>
             <div className="mx-5" style={{minHeight:'600px'}}>
                 <div className="marginTop24">
                     <div className="row ">
                         <div className="col-9">
-                            <Typography variant="h4">Inserisci contestazioni</Typography>
+                            <Typography variant="h4">Contestazioni multiple</Typography>
                         </div>
                     </div>
                 </div>
