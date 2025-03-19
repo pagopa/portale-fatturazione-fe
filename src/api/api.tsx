@@ -61,7 +61,7 @@ export const manageErrorDownload = (res:string,dispatchMainState) =>{
     }
 };
 
-export const managePresaInCarico = (res:string,dispatchMainState) =>{
+export const managePresaInCarico = (res:string|number,dispatchMainState) =>{
  
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({

@@ -13,7 +13,6 @@ import useSavedFiltersNested from "../../hooks/usaSaveFiltersLocalStorageNested"
 import DeleteIcon from '@mui/icons-material/Delete';
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 
-
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -26,33 +25,28 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-
 interface MeseContetazione{
     descrizione: string,
     mese: string
 }
-
 export interface BodyContestazionePage{
     anno:string,
     mese:string,
     idEnte: string,
     contractId: string
 }
-
 interface EntiContestazionePage{
     ragioneSociale: string,
     idEnte: string,
     contractId: string
 }
-
 interface RecapObjContestazioni{
     tipologiaFattura: string
     idFlagContestazione: number
     flagContestazione: string
     totale: number
     totaleNotificheAnalogiche: number
-    totaleNotificheDigitali: number
-      
+    totaleNotificheDigitali: number  
 }
 
 const InserimentoContestazioni = () =>{
@@ -122,9 +116,7 @@ const InserimentoContestazioni = () =>{
     const getMesi = async(y) => {
         await getMesiContestazioni(token,profilo.nonce,y).then((res)=>{
             setValueMesi(res.data);
-            console.log('0000');
             if(isInitialRender.current && Object.keys(filters).length > 0){
-                console.log(1);
                 setBody(filters.body);
                 setTextValueEnti(filters.textValueEnti);
                 setValueAutocomplete(filters.valueAutocomplete);
@@ -134,7 +126,6 @@ const InserimentoContestazioni = () =>{
                     isInitialRender.current = false;
                 }
             }else if(res.data.length){
-                console.log(2);
                 setBody((prev)=> ({...prev, ...{anno:y,mese:res.data[0].mese}}));
                 updateFilters({
                     pathPage:PathPf.INSERIMENTO_CONTESTAZIONI,
@@ -178,7 +169,6 @@ const InserimentoContestazioni = () =>{
                 manageError(err,dispatchMainState);
             }   
         });
-        
     };
 
     const handleSelect = (file: File) => {
@@ -215,7 +205,6 @@ const InserimentoContestazioni = () =>{
                 if(totalChunks === 1 ){
                     setProgress(50);
                 }
-                //
                 await uploadContestazioniAzure(token,profilo.nonce,formData).then((res)=>{
                     setProgress((prevProgress) => (prevProgress >= 101 ? 0 : prevProgress + (100/totalChunks)));
                     if(res.data.item2 === true){
@@ -223,7 +212,7 @@ const InserimentoContestazioni = () =>{
                     }
                 }).catch((err)=>{
                     manageStringMessage('409_'+err.response.data.detail,dispatchMainState);
-                    throw new Error(err.response.data.details); // Stop all uploads
+                    throw new Error(err.response.data.details); 
                 });
                 start = end;
             }
@@ -248,10 +237,27 @@ const InserimentoContestazioni = () =>{
             contractId: ""
         });
         getAnni();
-        
     };
 
-   
+    const handleChangeAnno = (e) => {
+        getMesi(e.target.value);
+        setBody((prev)=> ({...prev, ...{anno:e.target.value}})); 
+        setFile(null);
+    };
+
+    const handleChangeMese = (e) => {
+        setBody((prev)=> ({...prev, ...{mese:e.target.value}}));
+        setFile(null);
+        if(body.contractId !== '' && body.idEnte !== ''){
+            recapContestazioni({...body,...{mese:e.target.value}});
+        }
+        updateFilters({
+            pathPage:PathPf.INSERIMENTO_CONTESTAZIONI,
+            body:{...body, ...{mese:e.target.value}},
+            textValueEnti,
+            valueAutocomplete
+        });
+    };
 
     return (
         <>
@@ -269,19 +275,12 @@ const InserimentoContestazioni = () =>{
                 <div className="mt-5">
                     <div className="row">
                         <div className="col-3">
-                            <Box sx={{width:'80%'}} >
-                                <FormControl
-                                    fullWidth
-                                    size="medium"
-                                >
+                            <Box sx={{width:'80%'}}>
+                                <FormControl fullWidth size="medium">
                                     <InputLabel>Anno</InputLabel>
                                     <Select
                                         label='Anno'
-                                        onChange={(e) => {
-                                            getMesi(e.target.value);
-                                            setBody((prev)=> ({...prev, ...{anno:e.target.value}})); 
-                                            setFile(null);
-                                        }}
+                                        onChange={handleChangeAnno}
                                         value={body.anno}
                                     >
                                         {valueYears.map((el) => (
@@ -295,33 +294,15 @@ const InserimentoContestazioni = () =>{
                         </div>
                         <div className="col-3">
                             <Box sx={{width:'80%'}} >
-                                <FormControl
-                                    fullWidth
-                                    size="medium"
-                                >
+                                <FormControl fullWidth size="medium">
                                     <InputLabel>Mese</InputLabel>
                                     <Select
                                         label='Mese'
-                                        onChange={(e) => {
-                                            setBody((prev)=> ({...prev, ...{mese:e.target.value}}));
-                                            setFile(null);
-                                            if(body.contractId !== '' && body.idEnte !== ''){
-                                                recapContestazioni({...body,...{mese:e.target.value}});
-                                            }
-                                            updateFilters({
-                                                pathPage:PathPf.INSERIMENTO_CONTESTAZIONI,
-                                                body:{...body, ...{mese:e.target.value}},
-                                                textValueEnti,
-                                                valueAutocomplete
-                                            });
-                                        }}
+                                        onChange={handleChangeMese}
                                         value={body.mese}
                                     >
                                         {valueMesi.map((el:MeseContetazione) => (
-                                            <MenuItem
-                                                key={el.mese}
-                                                value={el.mese}
-                                            >
+                                            <MenuItem key={el.mese} value={el.mese}>
                                                 {el?.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase()}
                                             </MenuItem>
                                         ))}
@@ -382,16 +363,11 @@ const InserimentoContestazioni = () =>{
                                     disabled={body.contractId === '' || arrayReacpCon.length === 0}
                                     component="label"
                                     variant="contained"
-                                    onClick={()=> file && setOpenModalConferma(true) }
+                                    onClick={()=> file && setOpenModalConferma(true)}
                                     startIcon={<CloudUploadIcon />}
                                 >
                                     {file ? "Inserisci":"Carica file"}
-                                    {!file &&
-                                        <VisuallyHiddenInput
-                                            type="file"
-                                            onChange={(e:any)=> handleSelect(e.target.files[0])}
-                                        />
-                                    }
+                                    {!file && <VisuallyHiddenInput type="file" onChange={(e:any)=> handleSelect(e.target.files[0])}/>}
                                 </Button>
                             </Tooltip>
                             {file &&
@@ -409,7 +385,7 @@ const InserimentoContestazioni = () =>{
                     </div>
                     {loadindDetail ? 
                         <div className="bg-white my-5 "> 
-                            <Skeleton variant="rectangular"  height={300} />
+                            <Skeleton variant="rectangular" height={300}/>
                         </div> :
                         <div className="bg-white my-5 ">
                             {arrayReacpCon.length > 0 &&
@@ -447,8 +423,7 @@ const InserimentoContestazioni = () =>{
                                     </Box>
                                 </div>
                             </div>}
-                        </div>
-                    }
+                        </div>}
                 </div>
                 <ModalInvioContestazioni 
                     open={openModalConferma} 

@@ -12,10 +12,7 @@ import { manageError, manageErrorDownload } from "../../api/api";
 import { mesiGrid} from "../../reusableFunction/reusableArrayObj";
 import { findStatoContestazioni } from "../../reusableFunction/function";
 import DownloadIcon from '@mui/icons-material/Download';
-import { maxWidth } from "@mui/system";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
-
-
 interface Contestazione {
     reportId: number;
     step:number;
@@ -38,7 +35,6 @@ interface Contestazione {
     nomeDocumento:string;
     dataCompletamento:Date;
 }
-
 
 const DettaglioStoricoContestazione = () => {
 
@@ -66,9 +62,7 @@ const DettaglioStoricoContestazione = () => {
             const step11Obj = res.data.find((el) => {
                 return el.step === 11;
             });
-           
             setLastStepContestazioneObj(step11Obj||null);
-           
             setArrayDetails(res.data);
             setLoadingDettaglio(false);
         }).catch((err) => {
@@ -78,34 +72,24 @@ const DettaglioStoricoContestazione = () => {
         });
     };
 
-
     const downloadSigleDetail = async(body) => {
         setShowDownloading(true);
         await getContestazioneExel(token,profilo.nonce,body).then((res)=>{
             setShowDownloading(false);
             const link = document.createElement("a");
             link.href = res.data;
-          
             document.body.appendChild(link);
-        
             link.click();
-        
             document.body.removeChild(link);
             window.URL.revokeObjectURL(res.data);
-
-        }).catch((err) => {
+        }).catch(() => {
             setShowDownloading(false);
             manageErrorDownload('404',dispatchMainState);
         });
     };
 
-
-    
-
     if(loadingDettaglio){
-        return(
-            <SkeletonRelPdf></SkeletonRelPdf>
-        );
+        return <SkeletonRelPdf/>;
     }
 
     return (
@@ -137,7 +121,7 @@ const DettaglioStoricoContestazione = () => {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
-                                        <TableRow key={Math.random()}>
+                                        <TableRow key={lastStepContestazioneObj?.reportId}>
                                             <TableCell align="center"  sx={{ width:"300px"}} >{lastStepContestazioneObj?.contestataEnte}</TableCell>
                                             <TableCell align="center" sx={{ width:"300px"}} >{lastStepContestazioneObj?.rispostaSend}</TableCell>
                                             <TableCell align="center" sx={{ width:"300px"}}>{lastStepContestazioneObj?.rispostaRecapitista}</TableCell>
@@ -157,7 +141,7 @@ const DettaglioStoricoContestazione = () => {
                                             </TableRow>
                                         </TableHead>
                                         <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
-                                            <TableRow key={Math.random()}>
+                                            <TableRow>
                                                 <TableCell align="center"  sx={{ width:"300px"}} ><Typography variant="button">{lastStepContestazioneObj?.fatturabile}</Typography></TableCell>
                                             </TableRow>  
                                         </TableBody>
@@ -171,8 +155,8 @@ const DettaglioStoricoContestazione = () => {
                                             </TableRow>
                                         </TableHead>
                                         <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
-                                            <TableRow key={Math.random()}>
-                                                <TableCell align="center"  sx={{ width:"300px"}} ><Typography variant="button">{lastStepContestazioneObj?.nonFatturabile}</Typography></TableCell>
+                                            <TableRow>
+                                                <TableCell align="center" sx={{ width:"300px"}} ><Typography variant="button">{lastStepContestazioneObj?.nonFatturabile}</Typography></TableCell>
                                             </TableRow>  
                                         </TableBody>
                                     </Table>
@@ -207,14 +191,14 @@ const DettaglioStoricoContestazione = () => {
                                             </TableHead>
                                             {arrayDetails.map((obj)=>{
                                                 return ( 
-                                                    <TableRow sx={{ borderBottom: '3px solid #ccc' }}  key={Math.random()}>
-                                                        <TableCell  sx={{ borderBottomWidth: '3px' }}   align="center">{obj.descrizioneStep ||"-"}</TableCell>
-                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center"  > {obj.dataCompletamento ?new Date(obj.dataCompletamento).toISOString().replace("T", " ").substring(0, 19):"-"} </TableCell>
-                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj.totaleNotificheDigitali ||"-"}</TableCell>
-                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj.totaleNotificheAnalogiche890||"-"}</TableCell>
-                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj.totaleNotificheAnalogicheAR||"-"}</TableCell>
-                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj.totaleNotifiche||"-"}</TableCell>
-                                                        <TableCell  sx={{ borderBottomWidth: '3px' }} align="center"><IconButton onClick={() => downloadSigleDetail({idreport:obj.reportId,step:obj.step})} disabled={obj.nomeDocumento ? false : true}><DownloadIcon></DownloadIcon></IconButton></TableCell>
+                                                    <TableRow key={Math.random()} sx={{ borderBottom: '3px solid #ccc' }}  >
+                                                        <TableCell  sx={{ borderBottomWidth: '3px' }}   align="center">{obj?.descrizioneStep ||"-"}</TableCell>
+                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center"  > {obj?.dataCompletamento ?new Date(obj.dataCompletamento).toISOString().replace("T", " ").substring(0, 19):"-"} </TableCell>
+                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotificheDigitali ||"-"}</TableCell>
+                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotificheAnalogiche890||"-"}</TableCell>
+                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotificheAnalogicheAR||"-"}</TableCell>
+                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotifiche||"-"}</TableCell>
+                                                        <TableCell  sx={{ borderBottomWidth: '3px' }} align="center"><IconButton onClick={() => downloadSigleDetail({idreport:obj.reportId,step:obj.step})} disabled={obj?.nomeDocumento ? false : true}><DownloadIcon color={obj?.nomeDocumento ? "primary" : "disabled"}></DownloadIcon></IconButton></TableCell>
                                                     </TableRow>
                                                 );
                                             })}

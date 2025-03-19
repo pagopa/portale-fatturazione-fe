@@ -94,13 +94,11 @@ const PageTipologiaContratto :React.FC = () =>{
     },[textValue]);
 
     const listaEntiPageOnSelect = async () =>{
-        await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} )
-            .then((res)=>{
-                setDataSelect(res.data);
-            })
-            .catch(((err)=>{
-                manageError(err,dispatchMainState);
-            }));
+        await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue}).then((res)=>{
+            setDataSelect(res.data);
+        }).catch(((err)=>{
+            manageError(err,dispatchMainState);
+        }));
     };
 
     const getLista = async( p, rows, body) => {
@@ -230,11 +228,9 @@ const PageTipologiaContratto :React.FC = () =>{
 
     return(
         <div className="mx-5">
-            {/*title container start */}
             <div className="marginTop24 ">
                 <Typography variant="h4">Tipologia contratto</Typography>
             </div>
-            {/*title container end */}
             <div className="row mb-5 mt-5" >
                 <div  className="col-3">
                     <MultiselectCheckbox 
@@ -248,10 +244,7 @@ const PageTipologiaContratto :React.FC = () =>{
                 </div>
                 <div className="col-3">
                     <Box  style={{ width: '80%' }}>
-                        <FormControl
-                            fullWidth
-                            size="medium"
-                        >
+                        <FormControl fullWidth size="medium">
                             <InputLabel>
                                 Tipologia contratto
                             </InputLabel>
@@ -268,10 +261,7 @@ const PageTipologiaContratto :React.FC = () =>{
                                 value={bodyGetLista.tipologiaContratto === null ? 0 : bodyGetLista.tipologiaContratto}
                             >
                                 {contratti.map((el) => (
-                                    <MenuItem
-                                        key={el.id}
-                                        value={el.id}
-                                    >
+                                    <MenuItem key={el.id} value={el.id}>
                                         {el.descrizione}
                                     </MenuItem>
                                 ))}
@@ -284,26 +274,18 @@ const PageTipologiaContratto :React.FC = () =>{
                 <div className=" d-flex justify-content-center align-items-center">
                     <div>
                         <Button 
-                            onClick={onButtonFiltra} 
-                            sx={{ marginTop: 'auto', marginBottom: 'auto'}}
-                            variant="contained"> Filtra
+                            onClick={onButtonFiltra} sx={{ marginTop: 'auto', marginBottom: 'auto'}}variant="contained"> Filtra
                         </Button>
                         {statusAnnulla === 'hidden'? null :
-                            <Button
-                                onClick={onButtonAnnulla}
-                                sx={{marginLeft:'24px'}} >
-                        Annulla filtri
+                            <Button 
+                                onClick={onButtonAnnulla} sx={{marginLeft:'24px'}} >Annulla filtri
                             </Button>}
                     </div>
                 </div>
             </div>
-            {/* grid */}
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
-                <Button 
-                    disabled={getListaLoading}
-                    onClick={onDownload}
-                >
-                Download Risultati
+                <Button disabled={getListaLoading} onClick={onDownload}>
+                     Download Risultati
                     <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
                 </Button>
             </div>

@@ -396,22 +396,18 @@ const Storico = () => {
                     <div className="row mt-5">
                         <div className="col-9">
                             <div className=" d-flex justify-content-start ">
-                                <Button 
-                                    onClick={handleFiltra} 
-                                    sx={{ marginTop: 'auto', marginBottom: 'auto'}}
-                                    variant="contained"> Filtra
+                                <Button onClick={handleFiltra} sx={{ marginTop: 'auto', marginBottom: 'auto'}}variant="contained">
+                                     Filtra
                                 </Button>
                                 {statusAnnulla === 'hidden' ? null :
-                                    <Button
-                                        onClick={handleAnnullaButton}
-                                        sx={{marginLeft:'24px'}} >
+                                    <Button onClick={handleAnnullaButton} sx={{marginLeft:'24px'}} >
                                         Annulla filtri
                                     </Button>
                                 }
                             </div>
                         </div>
                         <div className="col-3">
-                            <div className="d-flex justify-content-end me-5">
+                            <div className="d-flex justify-content-end me-5" style={{width:'80%'}}>
                                 <Tooltip  title="Contestazioni multiple">
                                     <Button  variant="outlined" onClick={()=> navigate(PathPf.INSERIMENTO_CONTESTAZIONI)} ><NoteAddIcon></NoteAddIcon></Button>
                                 </Tooltip>

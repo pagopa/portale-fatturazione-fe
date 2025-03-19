@@ -48,7 +48,6 @@ const InvioFattureDetails = () => {
     const open = Boolean(anchorEl);
     const idPop = open ? 'simple-popover' : undefined;
 
-
     useEffect(()=>{
         const timer = setTimeout(() => {
             getDetailSingleRow();
@@ -117,9 +116,7 @@ const InvioFattureDetails = () => {
     };
   
     if(loadingDetail){
-        return(
-            <SkeletonRelPdf/>
-        );
+        return <SkeletonRelPdf/>;
     }else{
         return(
             <>
