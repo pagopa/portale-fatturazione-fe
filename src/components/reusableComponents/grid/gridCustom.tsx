@@ -125,7 +125,7 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                     }else if(nameParameterApi === 'idWhite'){
                                         return <RowWhiteList key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} setSelected={setSelected} selected={selected||[]}  checkIfChecked={checkIfChecked} ></RowWhiteList>;
                                     }else if(nameParameterApi === 'idOrchestratore'){
-                                        return <RowOrchestratore key={Math.random()} sliced={sliced} handleClickOnGrid={handleClickOnGrid} element={element} headerNames={headerNames}></RowOrchestratore>;
+                                        return <RowOrchestratore key={Math.random()} sliced={sliced} headerNames={headerNames}></RowOrchestratore>;
                                     }else{
                                         return (
                                             <TableRow key={Math.random()}>

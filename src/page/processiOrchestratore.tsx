@@ -1,35 +1,32 @@
-import { Autocomplete, Checkbox, IconButton, TextField, Typography } from "@mui/material";
+import { Autocomplete, Checkbox,TextField, Tooltip, Typography } from "@mui/material";
 import { Box, Button} from '@mui/material';
 import { manageError } from '../api/api';
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { GridRowParams,GridEventListener,MuiEvent} from '@mui/x-data-grid';
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../types/enum";
 import { ElementMultiSelect} from "../types/typeReportDettaglio";
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
 import { GlobalContext } from "../store/context/globalContext";
-import CircleIcon from '@mui/icons-material/Circle';
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import DownloadIcon from '@mui/icons-material/Download';
 import { getListaActionMonitoring, getStatiMonitoring } from "../api/apiPagoPa/orchestratore/api";
 import { mesiGrid } from "../reusableFunction/reusableArrayObj";
-import { Params } from "../types/typesGeneral";
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import GridCustom from "../components/reusableComponents/grid/gridCustom";
-import { Data } from "react-csv/lib/core";
 import ListIcon from '@mui/icons-material/List';
-import { Tooltip } from "react-bootstrap";
-
+import { it } from "date-fns/locale";
+import dayjs from "dayjs";
+import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
 export interface DataGridOrchestratore {
     idOrchestratore:string,
     anno: number,
     mese: number,
     tipologia: string,
     fase: string,
-    dataEsecuzione: string,
+    dataEsecuzione: string ,
     dataFineContestazioni: string,
     dataFatturazione: string,
     esecuzione: string,
@@ -46,18 +43,10 @@ interface BodyOrchestratore{
 const ProcessiOrchestartore:React.FC = () =>{
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState} = globalContextObj;
-
-    const handleModifyMainState = (valueObj) => {
-        dispatchMainState({
-            type:'MODIFY_MAIN_STATE',
-            value:valueObj
-        });
-    };
-   
-    const navigate = useNavigate();
+    
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
-
+    
     const [gridData, setGridData] = useState<DataGridOrchestratore[]>([]);
     const [page, setPage] = useState(0);
     const [totalData, setTotalData]  = useState(0);
@@ -66,32 +55,37 @@ const ProcessiOrchestartore:React.FC = () =>{
     const [getListaLoading, setGetListaLoading] = useState(false);
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
     const [bodyGetLista, setBodyGetLista] = useState<BodyOrchestratore>({ init:new Date(),end:null,stati:[]});
-    const [textValue, setTextValue] = useState('');
     const [showLoading,setShowLoading] = useState(false);
     const [valueStati, setValueStati] = useState<{value: number, description: string}[]>([]);
-   
-    console.log({valueStati});
+    const [error,setError] = useState(false);
 
+    const { 
+        filters,
+        updateFilters,
+        resetFilters,
+        isInitialRender
+    } = useSavedFilters(PathPf.ORCHESTRATORE,{});
+    
     useEffect(()=>{
-        getListaDati(bodyGetLista,page, rowsPerPage);
+        if(isInitialRender.current && Object.keys(filters).length > 0){
+            getListaDati(filters.body,filters.page, filters.rows);
+            setValueStati(filters.valueStati);
+            setTotalData(filters.totalData);
+            setBodyGetLista({ init:new Date(filters?.body?.init)||null,end:new Date(filters?.body?.end)||null,stati:[]});
+        }else{
+            getListaDati(bodyGetLista,page, rowsPerPage);
+        }
+        console.log({body:filters.body,val:new Date});
         getStati();
+       
     },[]);
-
-    useEffect(()=>{
-        const timer = setTimeout(() => {
-            if(textValue.length >= 3){ 
-                listaEntiNotifichePageOnSelect();
-            }
-        }, 800);
-        return () => clearTimeout(timer);
-    },[textValue]);
-
-    const getListaDati = async(body:BodyOrchestratore,page,rows) =>{
+    
+    const getListaDati = async(bodyData:BodyOrchestratore,page,rows, reset = false) =>{
         setGetListaLoading(true);
-        await getListaActionMonitoring(token,profilo.nonce,body, page+1,rows).then((res)=>{
+        await getListaActionMonitoring(token,profilo.nonce,bodyData, page+1,rows).then((res)=>{
             setTotalData(res.data.count);
             setGetListaLoading(false);
-           
+            
             const dataWithID = res.data.items.map((el:DataGridOrchestratore) => {
                 el.idOrchestratore = el.tipologia+el.dataEsecuzione;
                 return {
@@ -108,22 +102,40 @@ const ProcessiOrchestartore:React.FC = () =>{
                     
                 };
             });
-            console.log({dataWithID});
             setGridData(dataWithID);
+            if(reset){
+                updateFilters({
+                    body:bodyData,
+                    pathPage:PathPf.ORCHESTRATORE,
+                    page:0,
+                    rows:10,
+                    valueStati:[],
+                    totalData:0
+                });
+            }else{
+                updateFilters({
+                    body:bodyData,
+                    pathPage:PathPf.ORCHESTRATORE,
+                    page:page,
+                    rows:rows,
+                    valueStati,
+                    totalData:res.data.count
+                });
+            }
         }).catch(((err)=>{
             setGridData([]);
             setGetListaLoading(false);
             manageError(err,dispatchMainState);
         })); 
     };
-
+    
     function transformObjectToArray(obj: Record<string, string>):{value: number, description: string}[]{
         return Object.entries(obj).map(([key, value]) => ({
             value: parseInt(key, 10), // Convert the key to an integer
             description: value
         }));
     }
-
+    
     function transformDateTime(input: string): string {
         if(input){
             const [datePart, timePart] = input.split("T"); // Split the input into date and time
@@ -139,72 +151,47 @@ const ProcessiOrchestartore:React.FC = () =>{
         return isNaN(date.getTime()); // Check if the date is invalid
     }
 
+    const formatDateToValidation = (date:any) => {
+        if(!isDateInvalid(date)){
+            return  dayjs(new Date(date)).format("YYYY-MM-DD").replace(/-/g,"");
+        }else{
+            return null;
+        }
+    };
+    
     const getStati = async() =>{
         setGetListaLoading(true);
         await getStatiMonitoring(token,profilo.nonce).then((res)=>{
             const result = transformObjectToArray(res.data);
             setArrayStati(result);
-            console.log(result);
         }).catch(((err)=>{
             manageError(err,dispatchMainState);
         })); 
     };
-
-    
-
-    // servizio che popola la select con la checkbox
-    const listaEntiNotifichePageOnSelect = async () =>{
-        await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue}).then((res)=>{
-            setDataSelect(res.data);
-        }).catch(((err)=>{
-            manageError(err,dispatchMainState);  
-        }));
-    };
-
-  
-
-    let columsSelectedGrid = '';
-    const handleOnCellClick = (params:Params) =>{
-        columsSelectedGrid  = params.field;
-    };
-
-    const handleEvent: GridEventListener<'rowClick'> = (
-        params:GridRowParams,
-        event: MuiEvent<React.MouseEvent<HTMLElement>>,
-    ) => {
-        event.preventDefault();
-        // l'evento verrà eseguito solo se l'utente farà il clik sul 
-        if(columsSelectedGrid  === 'ragioneSociale' || columsSelectedGrid === 'action' ){
-            const oldProfilo = mainState.profilo;
-            handleModifyMainState({profilo:{...oldProfilo,...{idEnte:params.row.idEnte,prodotto:params.row.prodotto}},nomeEnteClickOn:params.row.ragioneSociale});
-            navigate(PathPf.DATI_FATTURAZIONE);
-        }
-    };
-
-
+ 
     const clearOnChangeFilter = () => {
         setGridData([]);
         setPage(0);
+        setTotalData(0);
         setRowsPerPage(10);
     };
-
-
+    
     const onButtonFiltra = () => {
         getListaDati(bodyGetLista,0, 10);
         setPage(0);
         setRowsPerPage(10);
     };
-
+    
     const onButtonAnnulla = () => {
         setBodyGetLista({ init:null,end: null,stati:[]});
-        getListaDati({ init:null,end: null,stati:[]},0, 10);
+        getListaDati({ init:null,end: null,stati:[]},0, 10,true);
         setDataSelect([]);
         setValueStati([]);
         setPage(0);
         setRowsPerPage(10);
+        setError(false);
     };
-
-
+    
     const handleChangePage = (
         event: React.MouseEvent<HTMLButtonElement> | null,
         newPage: number,
@@ -212,15 +199,11 @@ const ProcessiOrchestartore:React.FC = () =>{
         const realPage = newPage;
         getListaDati(bodyGetLista,realPage, rowsPerPage);
         setPage(newPage);
-        /*updateFilters({
-            body:bodyGetLista,
-            pathPage:PathPf.ORCHESTRATORE,
-            textValue,
-            page:newPage,
-            rows:rowsPerPage
-        });*/
+        updateFilters({
+            page:newPage
+        });
     };
-                
+    
     const handleChangeRowsPerPage = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
@@ -228,23 +211,13 @@ const ProcessiOrchestartore:React.FC = () =>{
         setPage(0);
         const realPage = page;
         getListaDati(bodyGetLista,realPage,parseInt(event.target.value, 10));
-        /* updateFilters({
-            body:bodyGetLista,
-            pathPage:PathPf.ORCHESTRATORE,
-            textValue,
+        updateFilters({
             page:realPage,
             rows:parseInt(event.target.value, 10)
         });
-        */
+        
     };
-
-    /* let color = "#F2F2F2";
-            if(param.row['Esecuzione'] === '1'){
-                color = "green";
-            }
-            return ( <CircleIcon sx={{ color:color, cursor: 'pointer' }}/>);
-        }) }, */
-
+    
     const headersName: {label:string,align:string,width:number|string}[]= [
         {label:'Anno',align:'center',width:'100px'},
         { label: 'Mese',align:'center',width:'100px'},
@@ -255,34 +228,46 @@ const ProcessiOrchestartore:React.FC = () =>{
         { label: 'Data Fat.',align:'center',width:'130px' },
         { label: 'Count',align:'center',width:'80px' },
         { label: 'Esecuzione',align:'center',width:'130px' }];
-
+        
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
     console.log({bodyGetLista});
-  
     return(
         <div className="mx-5">
-            {/*title container start */}
             <div className="marginTop24 ">
                 <Typography variant="h4">Monitoring</Typography>
             </div>
-            {/*title container end */}
             <div className="row mb-5 mt-5" >
                 <div className="col-3">
                     <Box  style={{ width: '80%' }}>
-                        <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it} >
                             <DesktopDatePicker
                                 label={"Data inizio"}
                                 format="dd/MM/yyyy"
                                 value={bodyGetLista.init === '' ? null : bodyGetLista.init}
                                 onChange={(e:any | null)  => {
                                     if(e !== null && !isDateInvalid(e)){
-                                        console.log(e);
                                         setBodyGetLista(prev => ({...prev,...{init:e}}));
+                                        if(bodyGetLista.end !== null && ((formatDateToValidation(e)||0) > (formatDateToValidation(bodyGetLista.end)||0))){
+                                            setError(true);
+                                        }else{
+                                            setError(false);
+                                        }
                                     }else{
                                         setBodyGetLista(prev => ({...prev,...{init:null}}));
+                                        if(bodyGetLista.end !== null){
+                                            setError(true);
+                                        }else{
+                                            setError(false);
+                                        }
                                     }
                                     clearOnChangeFilter();
+                                    formatDateToValidation(e);
+                                }}
+                                slotProps={{
+                                    textField: {
+                                        error:error,
+                                    },
                                 }}
                             />
                         </LocalizationProvider>
@@ -290,19 +275,32 @@ const ProcessiOrchestartore:React.FC = () =>{
                 </div>
                 <div className="col-3">
                     <Box style={{ width: '80%' }}>
-                        <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it}>
                             <DesktopDatePicker
                                 label={"Data fine"}
                                 value={bodyGetLista.end === '' ? null : bodyGetLista.end}
                                 onChange={(e:any | null)  =>{
                                     if(e !== null && !isDateInvalid(e)){
                                         setBodyGetLista(prev => ({...prev,...{end:e}}));
+                                        if(bodyGetLista.init !== null && ((formatDateToValidation(e)||0) < (formatDateToValidation(bodyGetLista.init)||0))){
+                                            setError(true);
+                                        }else if(bodyGetLista.init === null && bodyGetLista.end !== null){
+                                            setError(true);
+                                        }else{
+                                            setError(false);
+                                        }
                                     }else{
                                         setBodyGetLista(prev => ({...prev,...{end:null}}));
+                                        setError(false);
                                     }
                                     clearOnChangeFilter();
                                 }}
                                 format="dd/MM/yyyy"
+                                slotProps={{
+                                    textField: {
+                                        error:error,
+                                    },
+                                }}
                             />
                         </LocalizationProvider>
                     </Box>
@@ -347,26 +345,29 @@ const ProcessiOrchestartore:React.FC = () =>{
                     <Box style={{ width: '50%' }}>
                         <Button 
                             onClick={() => onButtonFiltra()} 
+                            disabled={error}
                             variant="contained"> Filtra
                         </Button>
                     </Box>
                     <Box style={{ width: '50%' }}>
-                        <Button variant="outlined"
-                            onClick={() => onButtonAnnulla()} >
-                            <ListIcon></ListIcon>
-                        </Button>
+                        <Tooltip title="Lista completa">
+                            <Button variant="outlined"
+                                onClick={() => onButtonAnnulla()} >
+                                <ListIcon></ListIcon>
+                            </Button>
+                        </Tooltip>
                     </Box>
                 </div>
             </div>
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
                 {
                     gridData.length > 0 &&
-                <Button 
-                    disabled={getListaLoading}
-                >
-                Download Risultati
-                    <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
-                </Button>
+                    <Button 
+                        disabled={getListaLoading}
+                    >
+                    Download Risultati
+                        <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
+                    </Button>
                 }
             </div>
             <div className="mt-1 mb-5" style={{ width: '100%'}}>

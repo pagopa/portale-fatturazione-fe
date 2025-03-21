@@ -48,7 +48,6 @@ const SideNavSend : React.FC = () => {
     };
 
     const handleListItemClickModuloCommessa = async () => {
-        console.log('mod com ');
         if(((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)|| (mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA))){
             setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.LISTA_MODULICOMMESSA}}));
         }else if((mainState.statusPageDatiFatturazione === 'immutable'|| (mainState.statusPageInserimentoCommessa === 'immutable' && location.pathname === PathPf.MODULOCOMMESSA))){
@@ -114,7 +113,12 @@ const SideNavSend : React.FC = () => {
 
 
     const handleListItemClickOrchestratore = () => {
-        navigate(PathPf.ORCHESTRATORE);
+        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.FATTURAZIONE}}));
+        }else{
+            navigate(PathPf.ORCHESTRATORE);
+        }
+        
     };
     
     const currentLocation = location.pathname;
@@ -175,12 +179,6 @@ const SideNavSend : React.FC = () => {
         }}
         >
             <List component="nav" aria-label="main piattaforma-notifiche sender">
-                <ListItemButton selected={selectedIndex === 11} onClick={() => handleListItemClickOrchestratore()}>
-                    <ListItemIcon>
-                        <DvrIcon fontSize="inherit" />
-                    </ListItemIcon>
-                    <ListItemText primary="Monitoring" />
-                </ListItemButton>
                 <ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick()}>
                     <ListItemIcon>
                         <DnsIcon fontSize="inherit"></DnsIcon>
@@ -256,6 +254,12 @@ const SideNavSend : React.FC = () => {
                         <ManageSearchIcon fontSize="inherit"></ManageSearchIcon>
                     </ListItemIcon>
                     <ListItemText primary="Documenti contabili" />
+                </ListItemButton>
+                <ListItemButton selected={selectedIndex === 11} onClick={() => handleListItemClickOrchestratore()}>
+                    <ListItemIcon>
+                        <DvrIcon fontSize="inherit" />
+                    </ListItemIcon>
+                    <ListItemText primary="Monitoring" />
                 </ListItemButton>
             </List>
             <Divider />
