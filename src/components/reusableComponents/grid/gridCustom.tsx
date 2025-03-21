@@ -1,4 +1,4 @@
-import { Card, Checkbox, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip } from "@mui/material";
+import { Card, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { GridElementListaPsp } from "../../../types/typeAngraficaPsp";
 import { Rel } from "../../../types/typeRel";
@@ -8,6 +8,8 @@ import RowWhiteList from "./gridCustomBase/rowWhiteList";
 import EnhancedTableCustom from "./gridCustomBase/enhancedTabalToolbarCustom";
 import { SetStateAction } from "react";
 import { Whitelist } from "../../../page/whiteList";
+import { DataGridOrchestratore } from "../../../page/processiOrchestratore";
+import RowOrchestratore from "./gridCustomBase/rowOrchestratore";
 interface GridCustomProps {
     elements:NotificheList[]|Rel[]|GridElementListaPsp[]|any[],
     changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
@@ -15,7 +17,7 @@ interface GridCustomProps {
     page:number,
     total:number,
     rows:number,
-    headerNames:string[],
+    headerNames:string[]|{label:string,align:string,width:number|string}[],
     nameParameterApi:string,  // elemnto/i che servono alla chiamata get di dettaglio , in questo caso bisogna passare questi pametro/o nel MainState ma non posso visulizzarli nella grid
     apiGet?:(el:any)=>void, 
     disabled:boolean,
@@ -70,7 +72,6 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                 idEnte:element.idEnte
             };
             apiGet(newDetailRel);
-
         }else if(apiGet){
             const newDetailRel = {
                 nomeEnteClickOn:element.ragioneSociale,
@@ -85,8 +86,7 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
     const checkIfChecked = (id:any) => {
         if(selected){
             return selected.includes(id);
-        }
-       
+        }  
     };
    
    
@@ -99,42 +99,33 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                         <TableHead sx={{backgroundColor:'#f2f2f2'}}>
                             <TableRow>
                                 {headerNames.map((el)=>{
-                                  
-                                    return (
-                                        <TableCell key={Math.random()}>
-                                            {el} 
-                                        </TableCell>
-                                    );
-                                })
-                                   
-                                }
-                               
+                                    if(nameParameterApi === 'idOrchestratore'){
+                                        return<TableCell align={el.align} width={el.width} key={Math.random()}>{el.label}</TableCell>;
+                                    }else{
+                                        return <TableCell key={Math.random()}>{el}</TableCell>;
+                                    }
+                                    
+                                })}
                             </TableRow>
                         </TableHead>
                         {elements.length === 0 ?
                             <TableBody key={Math.random()} style={{height: '50px'}}>
                             </TableBody> :
                             <TableBody sx={{marginLeft:'20px'}}>
-                                {elements.map((element:Rel|NotificheList|GridElementListaPsp|Whitelist ) =>{
+                                {elements.map((element:Rel|NotificheList|GridElementListaPsp|Whitelist|DataGridOrchestratore ) =>{
                                     // tolgo da ogni oggetto la prima chiave valore  perchè il cliente non vuole vedere es. l'id ma serve per la chiamata get di dettaglio 
                                     let sliced = Object.fromEntries(
                                         Object.entries(element).slice(1)
                                     );
                                     if(nameParameterApi === 'idWhite'){
-                                        sliced = Object.fromEntries(
-                                            Object.entries(element).slice(1, -1)
-                                        );
+                                        sliced = Object.fromEntries(Object.entries(element).slice(1, -1));
                                     }
-                                   
                                     if(nameParameterApi === 'idContratto'){
-                                        return (
-                                            <RowContratto key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} ></RowContratto>
-                                        );
+                                        return <RowContratto key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} ></RowContratto>;
                                     }else if(nameParameterApi === 'idWhite'){
-                                        return (
-                                            <RowWhiteList key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} setSelected={setSelected} selected={selected||[]}  checkIfChecked={checkIfChecked} ></RowWhiteList>
-                                            
-                                        );
+                                        return <RowWhiteList key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} setSelected={setSelected} selected={selected||[]}  checkIfChecked={checkIfChecked} ></RowWhiteList>;
+                                    }else if(nameParameterApi === 'idOrchestratore'){
+                                        return <RowOrchestratore key={Math.random()} sliced={sliced} handleClickOnGrid={handleClickOnGrid} element={element} headerNames={headerNames}></RowOrchestratore>;
                                     }else{
                                         return (
                                             <TableRow key={Math.random()}>
@@ -158,9 +149,7 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                                         );
                                                     })
                                                 }
-                                                {apiGet && <TableCell onClick={()=>{
-                                                    handleClickOnGrid(element);            
-                                                } }>
+                                                {apiGet && <TableCell onClick={()=>{handleClickOnGrid(element);}}>
                                                     <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
                                                 </TableCell> }
                                             </TableRow>

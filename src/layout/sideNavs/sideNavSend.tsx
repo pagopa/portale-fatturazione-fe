@@ -48,6 +48,7 @@ const SideNavSend : React.FC = () => {
     };
 
     const handleListItemClickModuloCommessa = async () => {
+        console.log('mod com ');
         if(((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)|| (mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA))){
             setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.LISTA_MODULICOMMESSA}}));
         }else if((mainState.statusPageDatiFatturazione === 'immutable'|| (mainState.statusPageInserimentoCommessa === 'immutable' && location.pathname === PathPf.MODULOCOMMESSA))){

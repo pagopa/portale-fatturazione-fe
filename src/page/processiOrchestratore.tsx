@@ -1,37 +1,45 @@
-import {  Typography } from "@mui/material";
-import { Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
-import { getTipologiaProfilo, manageError, } from '../api/api';
-import { BodyGetListaDatiFatturazione } from "../types/typeListaDatiFatturazione";
+import { Autocomplete, Checkbox, IconButton, TextField, Typography } from "@mui/material";
+import { Box, Button} from '@mui/material';
+import { manageError } from '../api/api';
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import {BodyListaDatiFatturazione, Params} from '../types/typesGeneral';
-import { DataGrid, GridRowParams,GridEventListener,MuiEvent, GridColDef } from '@mui/x-data-grid';
-import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
-import {  listaDatiFatturazionePagopa } from "../api/apiPagoPa/datiDiFatturazionePA/api";
+import { GridRowParams,GridEventListener,MuiEvent} from '@mui/x-data-grid';
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../types/enum";
-import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
+import { ElementMultiSelect} from "../types/typeReportDettaglio";
 import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
 import { GlobalContext } from "../store/context/globalContext";
-import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
 import CircleIcon from '@mui/icons-material/Circle';
-import { DatePicker, DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import DownloadIcon from '@mui/icons-material/Download';
+import { getListaActionMonitoring, getStatiMonitoring } from "../api/apiPagoPa/orchestratore/api";
+import { mesiGrid } from "../reusableFunction/reusableArrayObj";
+import { Params } from "../types/typesGeneral";
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import GridCustom from "../components/reusableComponents/grid/gridCustom";
+import { Data } from "react-csv/lib/core";
+import ListIcon from '@mui/icons-material/List';
+import { Tooltip } from "react-bootstrap";
 
+export interface DataGridOrchestratore {
+    idOrchestratore:string,
+    anno: number,
+    mese: number,
+    tipologia: string,
+    fase: string,
+    dataEsecuzione: string,
+    dataFineContestazioni: string,
+    dataFatturazione: string,
+    esecuzione: string,
+    count: number
+}
 
-interface DataGrid {
-    id:number,
-    "Anno": number,
-    "Mese": number,
-    "TipologiaFattura": string,
-    "Fase": string,
-    "Data": string,
-    "DataF": string,
-    "DataFat":string,
-    "Esecuzione": string,
-    "Count": number
+interface BodyOrchestratore{
+    init: string|null|Date,
+    end: string|null|Date,
+    stati: number[]
 }
 
 
@@ -50,162 +58,24 @@ const ProcessiOrchestartore:React.FC = () =>{
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 
-    const [prodotti, setProdotti] = useState([{nome:''}]);
-    const [profili, setProfili] = useState(['']);
-    const [gridData, setGridData] = useState<DataGrid[]>([
-        {
-            id:1,
-            "Anno": 2024,
-            "Mese": 12,
-            "TipologiaFattura": "SECONDO SALDO",
-            "Fase": "REL 2",
-            "Data": "2025-03-20T00:00:00.000",
-            "DataF": "2025-02-08T00:00:00.000",
-            "DataFat":"2025-02-08T00:00:00.000",
-            "Esecuzione": "-",
-            "Count": 0
-        },
-        {
-            id:2,
-            "Anno": 2025,
-            "Mese": 4,
-            "TipologiaFattura": "ANTICIPO",
-            "Fase": "FATT 1",
-            "Data": "2025-03-20T00:00:00.000",
-            "DataF": "2025-03-20T00:00:00.000",
-            "DataFat":"2025-02-08T00:00:00.000",
-            "Esecuzione": "1",
-            "Count": 0
-        },
-        {
-            id:3,
-            "Anno": 2025,
-            "Mese": 1,
-            "TipologiaFattura": "PRIMO SALDO",
-            "Fase": "FATT 2",
-            "Data": "2025-03-31T00:00:00.000",
-            "DataF": "2025-03-31T00:00:00.000",
-            "DataFat":"2025-02-08T00:00:00.000",
-            "Esecuzione": "2",
-            "Count": 0
-        },
-        {
-            id:4,
-            "Anno": 2025,
-            "Mese": 2,
-            "TipologiaFattura": "PRIMO SALDO",
-            "Fase": "REL 1",
-            "Data": "2025-04-04T00:00:00.000",
-            "DataF": "2025-04-05T00:00:00.000",
-            "DataFat":"2025-02-08T00:00:00.000",
-            "Esecuzione": "-",
-            "Count": 0
-        },
-        {
-            id:5,
-            "Anno": 2025,
-            "Mese": 2,
-            "TipologiaFattura": "PRIMO SALDO",
-            "Fase": "FATT 1",
-            "Data": "2025-04-05T00:00:00.000",
-            "DataF": "2025-04-15T00:00:00.000",
-            "DataFat":"2025-02-08T00:00:00.000",
-            "Esecuzione": "1",
-            "Count": 0
-        },
-        {
-            id:6,
-            "Anno": 2025,
-            "Mese": 1,
-            "TipologiaFattura": "SECONDO SALDO",
-            "Fase": "REL 2",
-            "Data": "2025-04-22T00:00:00.000",
-            "DataF": "2025-03-09T00:00:00.000",
-            "DataFat":"2025-02-08T00:00:00.000",
-            "Esecuzione": "-",
-            "Count": 0
-        },
-        {
-            id:7,
-            "Anno": 2025,
-            "Mese": 1,
-            "TipologiaFattura": "SECONDO SALDO",
-            "Fase": "FATT 1",
-            "Data": "2025-04-30T00:00:00.000",
-            "DataF": "2025-04-30T00:00:00.000",
-            "DataFat":"2025-02-08T00:00:00.000",
-            "Esecuzione": "1",
-            "Count": 0
-        },
-        {
-            id:8,
-            "Anno": 2025,
-            "Mese": 2,
-            "TipologiaFattura": "PRIMO SALDO",
-            "Fase": "FATT 2",
-            "Data": "2025-04-30T00:00:00.000",
-            "DataF": "2025-04-30T00:00:00.000",
-            "DataFat":"2025-02-08T00:00:00.000",
-            "Esecuzione": "2",
-            "Count": 0
-        },
-        {
-            id:9,
-            "Anno": 2025,
-            "Mese": 2,
-            "TipologiaFattura": "SECONDO SALDO",
-            "Fase": "REL 2",
-            "Data": "2025-05-20T00:00:00.000",
-            "DataF": "2025-04-06T00:00:00.000",
-            "DataFat":"2025-02-08T00:00:00.000",
-            "Esecuzione": "-",
-            "Count": 0
-        },
-        {
-            id:10,
-            "Anno": 2025,
-            "Mese": 2,
-            "TipologiaFattura": "SECONDO SALDO",
-            "Fase": "FATT 1",
-            "Data": "2025-05-31T00:00:00.000",
-            "DataF": "2025-05-31T00:00:00.000",
-            "DataFat":"2025-02-08T00:00:00.000",
-            "Esecuzione": "-",
-            "Count": 0
-        }
-    ]
-    );
-    const [statusAnnulla, setStatusAnnulla] = useState('hidden');
-    const [filtersDownload, setFiltersDownload] = useState<BodyGetListaDatiFatturazione>({idEnti:[],prodotto:'',profilo:''});
+    const [gridData, setGridData] = useState<DataGridOrchestratore[]>([]);
+    const [page, setPage] = useState(0);
+    const [totalData, setTotalData]  = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [arrayStati,setArrayStati] = useState<{value: number, description: string}[]>([]);
     const [getListaLoading, setGetListaLoading] = useState(false);
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
-    const [bodyGetLista, setBodyGetLista] = useState<BodyGetListaDatiFatturazione>({idEnti:[],prodotto:'',profilo:''});
-    const [infoPageListaDatiFat , setInfoPageListaDatiFat] = useState({ page: 0, pageSize: 10 });
+    const [bodyGetLista, setBodyGetLista] = useState<BodyOrchestratore>({ init:new Date(),end:null,stati:[]});
     const [textValue, setTextValue] = useState('');
-    const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
     const [showLoading,setShowLoading] = useState(false);
-    const { 
-        filters,
-        updateFilters,
-        resetFilters,
-        isInitialRender
-    } = useSavedFilters(PathPf.LISTA_DATI_FATTURAZIONE,{});
-
-
-    useEffect(()=>{  
-        getProdotti();
-        getProfili();
-    }, []);
+    const [valueStati, setValueStati] = useState<{value: number, description: string}[]>([]);
+   
+    console.log({valueStati});
 
     useEffect(()=>{
-        if(bodyGetLista.idEnti?.length  !== 0 || bodyGetLista.prodotto !== '' || bodyGetLista.profilo !== ''){
-            setStatusAnnulla('show');
-        }else{
-            setStatusAnnulla('hidden');
-        }
-    },[bodyGetLista]);
-
-    
+        getListaDati(bodyGetLista,page, rowsPerPage);
+        getStati();
+    },[]);
 
     useEffect(()=>{
         const timer = setTimeout(() => {
@@ -216,69 +86,79 @@ const ProcessiOrchestartore:React.FC = () =>{
         return () => clearTimeout(timer);
     },[textValue]);
 
-  
-
-    const getProdotti = async() => {
-        await getTipologiaProdotto(token,profilo.nonce )
-            .then((res)=>{
-                setProdotti(res.data);
-               
-            })
-            .catch(((err)=>{
-                manageError(err,dispatchMainState);
-            }));
-    };
-
-    const getProfili = async() => {
-        await getTipologiaProfilo(token,profilo.nonce)
-            .then((res)=>{
-                setProfili(res.data);
-                if(isInitialRender.current && Object.keys(filters).length > 0){
-                    getListaDatifatturazione(filters.body);
-                    setBodyGetLista(filters.body);
-                    setTextValue(filters.textValue);
-                    setValueAutocomplete(filters.valueAutocomplete);
-                    getListaDatifatturazione(filters.body);
-                    setFiltersDownload(filters.body);
-                    setInfoPageListaDatiFat({page:filters.page,pageSize:filters.rows});
-                }else{
-                    getListaDatifatturazione(bodyGetLista);
-                }
-            })
-            .catch(((err)=>{
-                manageError(err,dispatchMainState);
-            }));
-    };
-
-    const getListaDatifatturazione = async(body:BodyListaDatiFatturazione) =>{
+    const getListaDati = async(body:BodyOrchestratore,page,rows) =>{
         setGetListaLoading(true);
-        await listaDatiFatturazionePagopa(body ,token,profilo.nonce)
-            .then((res)=>{
-                setGetListaLoading(false);
-                isInitialRender.current = false;
-            })
-            .catch(((err)=>{
-                setGridData([]);
-                setGetListaLoading(false);
-                manageError(err,dispatchMainState);
-                isInitialRender.current = false;
-            })); 
+        await getListaActionMonitoring(token,profilo.nonce,body, page+1,rows).then((res)=>{
+            setTotalData(res.data.count);
+            setGetListaLoading(false);
+           
+            const dataWithID = res.data.items.map((el:DataGridOrchestratore) => {
+                el.idOrchestratore = el.tipologia+el.dataEsecuzione;
+                return {
+                    idOrchestratore:el.idOrchestratore,
+                    anno:el.anno,
+                    mese:mesiGrid[el.mese],
+                    tipologia:el.tipologia,
+                    fase:el.fase,
+                    dataEsecuzione:transformDateTime(el.dataEsecuzione),
+                    dataFineContestazioni:transformDateTime(el.dataFineContestazioni),
+                    dataFatturazione:transformDateTime(el.dataFatturazione),
+                    count:el.count,
+                    esecuzione:el.esecuzione
+                    
+                };
+            });
+            console.log({dataWithID});
+            setGridData(dataWithID);
+        }).catch(((err)=>{
+            setGridData([]);
+            setGetListaLoading(false);
+            manageError(err,dispatchMainState);
+        })); 
     };
 
+    function transformObjectToArray(obj: Record<string, string>):{value: number, description: string}[]{
+        return Object.entries(obj).map(([key, value]) => ({
+            value: parseInt(key, 10), // Convert the key to an integer
+            description: value
+        }));
+    }
+
+    function transformDateTime(input: string): string {
+        if(input){
+            const [datePart, timePart] = input.split("T"); // Split the input into date and time
+            const [year, month, day] = datePart.split("-"); // Split the date into components
+            return `${day}-${month}-${year} ${timePart}`; // Rearrange and return the formatted string
+        }else{
+            return "";
+        }
+    }
+
+    function isDateInvalid(dateInput) {
+        const date = new Date(dateInput); // Create a Date object
+        return isNaN(date.getTime()); // Check if the date is invalid
+    }
+
+    const getStati = async() =>{
+        setGetListaLoading(true);
+        await getStatiMonitoring(token,profilo.nonce).then((res)=>{
+            const result = transformObjectToArray(res.data);
+            setArrayStati(result);
+            console.log(result);
+        }).catch(((err)=>{
+            manageError(err,dispatchMainState);
+        })); 
+    };
+
+    
 
     // servizio che popola la select con la checkbox
     const listaEntiNotifichePageOnSelect = async () =>{
-        if(profilo.auth === 'PAGOPA'){
-            await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} )
-                .then((res)=>{
-                    setDataSelect(res.data);
-                })
-                .catch(((err)=>{
-                 
-                    manageError(err,dispatchMainState);
-                   
-                }));
-        }
+        await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue}).then((res)=>{
+            setDataSelect(res.data);
+        }).catch(((err)=>{
+            manageError(err,dispatchMainState);  
+        }));
     };
 
   
@@ -304,68 +184,81 @@ const ProcessiOrchestartore:React.FC = () =>{
 
     const clearOnChangeFilter = () => {
         setGridData([]);
-        setInfoPageListaDatiFat({ page: 0, pageSize: 10 });
+        setPage(0);
+        setRowsPerPage(10);
     };
 
 
     const onButtonFiltra = () => {
-        getListaDatifatturazione(bodyGetLista);
-        setInfoPageListaDatiFat({ page: 0, pageSize: 10 });
-        setFiltersDownload(bodyGetLista);
-        updateFilters(
-            {
-                body:bodyGetLista,
-                pathPage:PathPf.LISTA_DATI_FATTURAZIONE,
-                textValue,
-                valueAutocomplete,
-                page:0,
-                rows:10
-            });
+        getListaDati(bodyGetLista,0, 10);
+        setPage(0);
+        setRowsPerPage(10);
     };
 
     const onButtonAnnulla = () => {
-        setBodyGetLista({idEnti:[],prodotto:'',profilo:''});
-        setInfoPageListaDatiFat({ page: 0, pageSize: 10 });
-        getListaDatifatturazione({idEnti:[],prodotto:'',profilo:''});
-        setFiltersDownload({idEnti:[],prodotto:'',profilo:''});
+        setBodyGetLista({ init:null,end: null,stati:[]});
+        getListaDati({ init:null,end: null,stati:[]},0, 10);
         setDataSelect([]);
-        setValueAutocomplete([]);
-        resetFilters();
+        setValueStati([]);
+        setPage(0);
+        setRowsPerPage(10);
     };
 
-    const onChangePageOrRowGrid = (e) => {
-        updateFilters(
-            {
-                body:filtersDownload,
-                pathPage:PathPf.LISTA_DATI_FATTURAZIONE,
-                textValue,
-                valueAutocomplete,
-                page:e.page,
-                rows:e.pageSize
-            });
-        setInfoPageListaDatiFat(e);
+
+    const handleChangePage = (
+        event: React.MouseEvent<HTMLButtonElement> | null,
+        newPage: number,
+    ) => {
+        const realPage = newPage;
+        getListaDati(bodyGetLista,realPage, rowsPerPage);
+        setPage(newPage);
+        /*updateFilters({
+            body:bodyGetLista,
+            pathPage:PathPf.ORCHESTRATORE,
+            textValue,
+            page:newPage,
+            rows:rowsPerPage
+        });*/
     };
-      
-  
-  
-    const columns: GridColDef[] = [
-        { field: 'Anno', headerName: 'Anno', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'center',align:'center'},
-        { field: 'Mese', headerName: 'Mese', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center' ,align:'center'},
-        { field: 'TipologiaFattura', headerName: 'Tipologia', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:'center' },
-        { field: 'Fase', headerName: 'Fase', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:'center' },
-        { field: 'Data', headerName: 'Data Esecuzione', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:'center',valueFormatter: (value:{value:string}) =>  value.value !== null ? new Date(value.value).toLocaleString().split(',')[0] : ''},
-        { field: 'DataF', headerName: 'Data Fine Cont.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:'center',valueFormatter: (value:{value:string}) =>  value.value !== null ? new Date(value.value).toLocaleString().split(',')[0] : '' },
-        { field: 'DataFat', headerName: 'Data Fat.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:'center',valueFormatter: (value:{value:string}) =>  value.value !== null ? new Date(value.value).toLocaleString().split(',')[0] : '' },
-        { field: 'Esecuzione', headerName: 'Esecuzione', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:'center',renderCell: ((param) =>{
-            let color = "#F2F2F2";
+                
+    const handleChangeRowsPerPage = (
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    ) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+        const realPage = page;
+        getListaDati(bodyGetLista,realPage,parseInt(event.target.value, 10));
+        /* updateFilters({
+            body:bodyGetLista,
+            pathPage:PathPf.ORCHESTRATORE,
+            textValue,
+            page:realPage,
+            rows:parseInt(event.target.value, 10)
+        });
+        */
+    };
+
+    /* let color = "#F2F2F2";
             if(param.row['Esecuzione'] === '1'){
                 color = "green";
             }
             return ( <CircleIcon sx={{ color:color, cursor: 'pointer' }}/>);
-        }) },
-        { field: 'Count', headerName: 'Count', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:'center' }
-    ];
+        }) }, */
 
+    const headersName: {label:string,align:string,width:number|string}[]= [
+        {label:'Anno',align:'center',width:'100px'},
+        { label: 'Mese',align:'center',width:'100px'},
+        { label: 'Tipologia',align:'center',width:'150px' },
+        { label: 'Fase',align:'center',width:'150px'},
+        { label: 'Data Esecuzione',align:'center',width:'130px' },
+        { label: 'Data Fine Cont.',align:'center',width:'130px' },
+        { label: 'Data Fat.',align:'center',width:'130px' },
+        { label: 'Count',align:'center',width:'80px' },
+        { label: 'Esecuzione',align:'center',width:'130px' }];
+
+    const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+    const checkedIcon = <CheckBoxIcon fontSize="small" />;
+    console.log({bodyGetLista});
   
     return(
         <div className="mx-5">
@@ -380,15 +273,16 @@ const ProcessiOrchestartore:React.FC = () =>{
                         <LocalizationProvider dateAdapter={AdapterDateFns}>
                             <DesktopDatePicker
                                 label={"Data inizio"}
-                               
-                                value={new Date()}
-                                onChange={(e:Date | null)  => console.log('ciao')}
-                                slotProps={{
-                                    textField: {
-                                        inputProps: {
-                                            placeholder: 'dd/mm/aaaa',
-                                        },
-                                    },
+                                format="dd/MM/yyyy"
+                                value={bodyGetLista.init === '' ? null : bodyGetLista.init}
+                                onChange={(e:any | null)  => {
+                                    if(e !== null && !isDateInvalid(e)){
+                                        console.log(e);
+                                        setBodyGetLista(prev => ({...prev,...{init:e}}));
+                                    }else{
+                                        setBodyGetLista(prev => ({...prev,...{init:null}}));
+                                    }
+                                    clearOnChangeFilter();
                                 }}
                             />
                         </LocalizationProvider>
@@ -399,36 +293,69 @@ const ProcessiOrchestartore:React.FC = () =>{
                         <LocalizationProvider dateAdapter={AdapterDateFns}>
                             <DesktopDatePicker
                                 label={"Data fine"}
-                               
-                                value={null}
-                                onChange={(e:Date | null)  => console.log('ciao')}
-                                slotProps={{
-                                    textField: {
-                                        inputProps: {
-                                            placeholder: 'dd/mm/aaaa',
-                                        },
-                                    },
+                                value={bodyGetLista.end === '' ? null : bodyGetLista.end}
+                                onChange={(e:any | null)  =>{
+                                    if(e !== null && !isDateInvalid(e)){
+                                        setBodyGetLista(prev => ({...prev,...{end:e}}));
+                                    }else{
+                                        setBodyGetLista(prev => ({...prev,...{end:null}}));
+                                    }
+                                    clearOnChangeFilter();
                                 }}
+                                format="dd/MM/yyyy"
                             />
                         </LocalizationProvider>
                     </Box>
                 </div>
-            </div>
-            <div className="d-flex mt-1">
-                <div className=" d-flex justify-content-center align-items-center">
-                    <div>
+                <div className="col-3">
+                    <Autocomplete
+                        multiple
+                        limitTags={1}
+                        onChange={(event, value) => {
+                            const arrayId = value.map(el => el.value);
+                            setBodyGetLista((prev) => ({...prev,...{stati:arrayId}}));
+                            setValueStati(value);
+                            clearOnChangeFilter();
+                        }}
+                        id="checkboxes-quarters"
+                        options={arrayStati}
+                        value={valueStati}
+                        disableCloseOnSelect
+                        isOptionEqualToValue={(option, value) => option.value === value.value}
+                        getOptionLabel={(option:{value: number, description: string}) => {
+                            return option.description;}}
+                        renderOption={(props, option,{ selected }) =>(
+                            <li {...props}>
+                                <Checkbox
+                                    icon={icon}
+                                    checkedIcon={checkedIcon}
+                                    style={{ marginRight: 8 }}
+                                    checked={selected}
+                                />
+                                {option.description}
+                            </li>
+                        )}
+                        style={{ width: '80%',height:'59px'}}
+                        renderInput={(params) => {
+                            return <TextField {...params}
+                                label="Stato" 
+                                placeholder="Stato" />;
+                        }}
+                    />
+                </div>
+                <div className="col-3 d-flex align-items-center justify-content-center">
+                    <Box style={{ width: '50%' }}>
                         <Button 
-                            onClick={onButtonFiltra} 
-                            sx={{ marginTop: 'auto', marginBottom: 'auto'}}
+                            onClick={() => onButtonFiltra()} 
                             variant="contained"> Filtra
                         </Button>
-                        {statusAnnulla === 'hidden'? null :
-                            <Button
-                                onClick={onButtonAnnulla}
-                                sx={{marginLeft:'24px'}} >
-                        Annulla filtri
-                            </Button>}
-                    </div>
+                    </Box>
+                    <Box style={{ width: '50%' }}>
+                        <Button variant="outlined"
+                            onClick={() => onButtonAnnulla()} >
+                            <ListIcon></ListIcon>
+                        </Button>
+                    </Box>
                 </div>
             </div>
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
@@ -442,22 +369,19 @@ const ProcessiOrchestartore:React.FC = () =>{
                 </Button>
                 }
             </div>
-            <div className=" mb-5" style={{ width: '100%'}}>
-                <DataGrid sx={{
-                    height:'400px',
-                    '& .MuiDataGrid-virtualScroller': {
-                        backgroundColor: 'white',
-                    }
-                }}
-                pageSizeOptions={[10, 25, 50,100]}
-                onPaginationModelChange={(e)=> onChangePageOrRowGrid(e)}
-                paginationModel={infoPageListaDatiFat}
-                rows={gridData} 
-                columns={columns}
-                getRowId={(row) => row.id}
-                onRowClick={handleEvent}
-                onCellClick={handleOnCellClick}
-                />
+            <div className="mt-1 mb-5" style={{ width: '100%'}}>
+                <GridCustom
+                    nameParameterApi='idOrchestratore'
+                    elements={gridData}
+                    changePage={handleChangePage}
+                    changeRow={handleChangeRowsPerPage} 
+                    total={totalData}
+                    page={page}
+                    rows={rowsPerPage}
+                    headerNames={headersName}
+                    disabled={getListaLoading}
+                    widthCustomSize="auto"
+                ></GridCustom>
             </div>
             <ModalLoading 
                 open={getListaLoading} 
