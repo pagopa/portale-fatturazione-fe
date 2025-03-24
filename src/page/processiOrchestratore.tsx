@@ -70,7 +70,7 @@ const ProcessiOrchestartore:React.FC = () =>{
             getListaDati(filters.body,filters.page, filters.rows);
             setValueStati(filters.valueStati);
             setTotalData(filters.totalData);
-            setBodyGetLista({ init:new Date(filters?.body?.init)||null,end:new Date(filters?.body?.end)||null,stati:[]});
+            setBodyGetLista({ init:filters.body.init ? new Date(filters.body.init):null,end:filters?.body?.end ? new Date(filters.body.end):null,stati:[]});
         }else{
             getListaDati(bodyGetLista,page, rowsPerPage);
         }
@@ -190,6 +190,7 @@ const ProcessiOrchestartore:React.FC = () =>{
     
     const onButtonFiltra = () => {
         getListaDati(bodyGetLista,0, 10);
+        console.log({bodyGetLista});
         setPage(0);
         setRowsPerPage(10);
     };
@@ -247,7 +248,7 @@ const ProcessiOrchestartore:React.FC = () =>{
                             <DesktopDatePicker
                                 label={"Data inizio"}
                                 format="dd/MM/yyyy"
-                                value={bodyGetLista.init === '' ? null : bodyGetLista.init}
+                                value={(bodyGetLista.init === ''||bodyGetLista.init === null) ? null : bodyGetLista.init}
                                 onChange={(e:any | null)  => {
                                     if(e !== null && !isDateInvalid(e)){
                                         setBodyGetLista(prev => ({...prev,...{init:e}}));
@@ -281,7 +282,7 @@ const ProcessiOrchestartore:React.FC = () =>{
                         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it}>
                             <DesktopDatePicker
                                 label={"Data fine"}
-                                value={bodyGetLista.end === '' ? null : bodyGetLista.end}
+                                value={(bodyGetLista.end === ''||bodyGetLista.end === null) ? null : bodyGetLista.end}
                                 onChange={(e:any | null)  =>{
                                     if(e !== null && !isDateInvalid(e)){
                                         setBodyGetLista(prev => ({...prev,...{end:e}}));
@@ -347,7 +348,7 @@ const ProcessiOrchestartore:React.FC = () =>{
                 <div className="col-3 d-flex align-items-center justify-content-center">
                     <Box style={{ width: '50%' }}>
                         <Button 
-                            onClick={() => onButtonFiltra()} 
+                            onClick={onButtonFiltra} 
                             disabled={error}
                             variant="contained"> Filtra
                         </Button>
@@ -356,7 +357,7 @@ const ProcessiOrchestartore:React.FC = () =>{
                         <Tooltip title="Lista completa">
                             <Button variant="outlined"
                                 disabled={bodyGetLista.init === null && bodyGetLista.end === null && bodyGetLista.stati.length === 0}
-                                onClick={() => onButtonAnnulla()} >
+                                onClick={onButtonAnnulla} >
                                 <ListIcon></ListIcon>
                             </Button>
                         </Tooltip>
