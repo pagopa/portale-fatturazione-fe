@@ -70,6 +70,8 @@ const ProcessiOrchestartore:React.FC = () =>{
             getListaDati(filters.body,filters.page, filters.rows);
             setValueStati(filters.valueStati);
             setTotalData(filters.totalData);
+            setPage(filters.page);
+            setRowsPerPage(filters.rows);
             setBodyGetLista({ init:filters.body.init ? new Date(filters.body.init):null,end:filters?.body?.end ? new Date(filters.body.end):null,stati:[]});
         }else{
             getListaDati(bodyGetLista,page, rowsPerPage);
@@ -222,10 +224,10 @@ const ProcessiOrchestartore:React.FC = () =>{
     ) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
-        const realPage = page;
-        getListaDati(bodyGetLista,realPage,parseInt(event.target.value, 10));
+       
+        getListaDati(bodyGetLista,0,parseInt(event.target.value, 10));
         updateFilters({
-            page:realPage,
+            page:0,
             rows:parseInt(event.target.value, 10)
         });
         
