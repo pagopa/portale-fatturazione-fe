@@ -21,3 +21,17 @@ export const getStatiMonitoring = async (token:string, nonce:string) => {
 
     return response;
 };
+
+export const downloadOrchestratore = async (token:string, nonce:string,body: {init: string|null|Date,end:string|null|Date,stati: number[]}) => {
+    const response = await fetch(`${url}/api/orchestratore/download?nonce=${nonce}`, 
+        {
+            headers: {
+                Authorization: 'Bearer '+token,
+                'Content-type':'application/json'
+            },
+            method: 'POST',
+            body:JSON.stringify(body),
+        });
+   
+    return response;
+};

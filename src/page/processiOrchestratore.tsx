@@ -2,16 +2,14 @@ import { Autocomplete, Checkbox,TextField, Tooltip, Typography } from "@mui/mate
 import { Box, Button} from '@mui/material';
 import { manageError } from '../api/api';
 import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../types/enum";
 import { ElementMultiSelect} from "../types/typeReportDettaglio";
-import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
 import { GlobalContext } from "../store/context/globalContext";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import DownloadIcon from '@mui/icons-material/Download';
-import { getListaActionMonitoring, getStatiMonitoring } from "../api/apiPagoPa/orchestratore/api";
+import { downloadOrchestratore, getListaActionMonitoring, getStatiMonitoring } from "../api/apiPagoPa/orchestratore/api";
 import { mesiGrid } from "../reusableFunction/reusableArrayObj";
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
@@ -21,6 +19,7 @@ import { it } from "date-fns/locale";
 import dayjs from "dayjs";
 import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
 import { headersName } from "../assets/configurations/config_GridOrchestratore";
+import { saveAs } from "file-saver";
 export interface DataGridOrchestratore {
     idOrchestratore:string,
     anno: number,
@@ -126,6 +125,20 @@ const ProcessiOrchestartore:React.FC = () =>{
             setGetListaLoading(false);
             manageError(err,dispatchMainState);
         })); 
+    };
+
+
+    const downloadListaOrchestratore = async () => {
+        setShowLoading(true);
+        await downloadOrchestratore(token,profilo.nonce, bodyGetLista).then(response => response.blob()).then((response)=>{
+            const title = `Lista processi.xlsx`;
+                
+            saveAs(response,title);
+            setShowLoading(false);
+        }).catch(((err)=>{
+            setShowLoading(false);
+            manageError(err,dispatchMainState);
+        }));
     };
     
     function transformObjectToArray(obj: Record<string, string>):{value: number, description: string}[]{
@@ -353,7 +366,7 @@ const ProcessiOrchestartore:React.FC = () =>{
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
                 {
                     gridData.length > 0 &&
-                    <Button disabled={getListaLoading}>
+                    <Button onClick={downloadListaOrchestratore} disabled={getListaLoading}>
                     Download Risultati
                         <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
                     </Button>
