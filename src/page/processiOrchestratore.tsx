@@ -20,6 +20,7 @@ import ListIcon from '@mui/icons-material/List';
 import { it } from "date-fns/locale";
 import dayjs from "dayjs";
 import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
+import { headersName } from "../assets/configurations/config_GridOrchestratore";
 export interface DataGridOrchestratore {
     idOrchestratore:string,
     anno: number,
@@ -38,7 +39,6 @@ interface BodyOrchestratore{
     end: string|null|Date,
     stati: number[]
 }
-
 
 const ProcessiOrchestartore:React.FC = () =>{
     const globalContextObj = useContext(GlobalContext);
@@ -94,10 +94,9 @@ const ProcessiOrchestartore:React.FC = () =>{
                     mese:mesiGrid[el.mese],
                     tipologia:el.tipologia,
                     fase:el.fase,
-                    dataEsecuzione:transformDateTime(el.dataEsecuzione),
-                    dataFineContestazioni:transformDateTime(el.dataFineContestazioni),
-                    dataFatturazione:transformDateTime(el.dataFatturazione),
-                    count:el.count,
+                    dataEsecuzione:transformDateTime(el.dataEsecuzione)||"--",
+                    dataFineContestazioni:transformDateTime(el.dataFineContestazioni)||"--",
+                    dataFatturazione:transformDateTime(el.dataFatturazione)||"--",
                     esecuzione:el.esecuzione
                     
                 };
@@ -218,16 +217,7 @@ const ProcessiOrchestartore:React.FC = () =>{
         
     };
     
-    const headersName: {label:string,align:string,width:number|string}[]= [
-        {label:'Anno',align:'center',width:'100px'},
-        { label: 'Mese',align:'center',width:'100px'},
-        { label: 'Tipologia',align:'center',width:'150px' },
-        { label: 'Fase',align:'center',width:'150px'},
-        { label: 'Data Esecuzione',align:'center',width:'130px' },
-        { label: 'Data Fine Cont.',align:'center',width:'130px' },
-        { label: 'Data Fat.',align:'center',width:'130px' },
-        { label: 'Count',align:'center',width:'80px' },
-        { label: 'Esecuzione',align:'center',width:'130px' }];
+   
         
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -352,6 +342,7 @@ const ProcessiOrchestartore:React.FC = () =>{
                     <Box style={{ width: '50%' }}>
                         <Tooltip title="Lista completa">
                             <Button variant="outlined"
+                                disabled={bodyGetLista.init === null && bodyGetLista.end === null && bodyGetLista.stati.length === 0}
                                 onClick={() => onButtonAnnulla()} >
                                 <ListIcon></ListIcon>
                             </Button>
@@ -362,9 +353,7 @@ const ProcessiOrchestartore:React.FC = () =>{
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
                 {
                     gridData.length > 0 &&
-                    <Button 
-                        disabled={getListaLoading}
-                    >
+                    <Button disabled={getListaLoading}>
                     Download Risultati
                         <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
                     </Button>

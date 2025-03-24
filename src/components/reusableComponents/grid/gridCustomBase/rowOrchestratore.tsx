@@ -6,10 +6,17 @@ import DangerousIcon from '@mui/icons-material/Dangerous';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 const RowOrchestratore = ({sliced,headerNames}) => {
-
+    let bgColorRow = "";
+    if(sliced.esecuzione === 1){
+        bgColorRow = "#F0FFF0";
+    }else if(sliced.esecuzione === 2){
+        bgColorRow ="#FFFAF0";
+    }else if(sliced.esecuzione === 3){
+        bgColorRow = "#FFF0F5";
+    }
 
     return (
-        <TableRow key={Math.random()}>
+        <TableRow sx={{backgroundColor:bgColorRow,borderTop:"2px solid #F2F2F2",borderBottom: "2px solid #F2F2F2"}} key={Math.random()}>
             {
                 Object.values(sliced).map((value:any, i:number)=>{
                     const indexEsec =  Object.entries(sliced).findIndex(([key]) => key === 'esecuzione');
@@ -20,6 +27,7 @@ const RowOrchestratore = ({sliced,headerNames}) => {
                     let titleTooltip = value;
                     let customValue = value;
                     
+                    console.log(value);
                     if(i === indexEsec){
                         color = "#636363";
                         titleTooltip = 'Programmato';
@@ -38,8 +46,9 @@ const RowOrchestratore = ({sliced,headerNames}) => {
                             color = "red";
                             customValue = <DangerousIcon sx={{color:color}}/>;
                         }
-                        
                     }
+                   
+
                     if(i === indexDataEs || i === indexDataCon || i === indexDataFat ){
                         customValue = value.split(" ")[0];  
                     }
