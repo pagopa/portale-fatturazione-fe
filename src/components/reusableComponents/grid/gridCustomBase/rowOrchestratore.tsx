@@ -26,8 +26,6 @@ const RowOrchestratore = ({sliced,headerNames}) => {
                     let color = '';
                     let titleTooltip = value;
                     let customValue = value;
-                    
-                    console.log(value);
                     if(i === indexEsec){
                         color = "#636363";
                         titleTooltip = 'Programmato';

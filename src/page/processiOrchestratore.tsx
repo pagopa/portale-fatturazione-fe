@@ -72,11 +72,10 @@ const ProcessiOrchestartore:React.FC = () =>{
             setTotalData(filters.totalData);
             setPage(filters.page);
             setRowsPerPage(filters.rows);
-            setBodyGetLista({ init:filters.body.init ? new Date(filters.body.init):null,end:filters?.body?.end ? new Date(filters.body.end):null,stati:[]});
+            setBodyGetLista({ init:filters.body.init ? new Date(filters.body.init):null,end:filters?.body?.end ? new Date(filters.body.end):null,stati:filters.body.stati});
         }else{
             getListaDati(bodyGetLista,page, rowsPerPage);
         }
-        console.log({body:filters.body,val:new Date});
         getStati();
        
     },[]);
@@ -105,6 +104,7 @@ const ProcessiOrchestartore:React.FC = () =>{
             });
             setGridData(dataWithID);
             if(reset){
+        
                 updateFilters({
                     body:bodyData,
                     pathPage:PathPf.ORCHESTRATORE,
@@ -114,12 +114,13 @@ const ProcessiOrchestartore:React.FC = () =>{
                     totalData:0
                 });
             }else{
+            
                 updateFilters({
                     body:bodyData,
                     pathPage:PathPf.ORCHESTRATORE,
                     page:page,
                     rows:rows,
-                    valueStati,
+                    valueStati:valueStati,
                     totalData:res.data.count
                 });
             }
@@ -168,7 +169,6 @@ const ProcessiOrchestartore:React.FC = () =>{
     
     const onButtonFiltra = () => {
         getListaDati(bodyGetLista,0, 10);
-        console.log({bodyGetLista});
         setPage(0);
         setRowsPerPage(10);
     };
