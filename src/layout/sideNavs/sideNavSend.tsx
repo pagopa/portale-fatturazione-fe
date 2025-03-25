@@ -89,7 +89,7 @@ const SideNavSend : React.FC = () => {
 
     const handleListItemClickAccertamenti = () =>{
         if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.FATTURAZIONE}}));
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:"/accertamenti"}}));
         }else{
             navigate("/accertamenti");
         }
@@ -97,7 +97,7 @@ const SideNavSend : React.FC = () => {
 
     const handleListItemClickTiplogiaContratto = () =>{
         if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.FATTURAZIONE}}));
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.TIPOLOGIA_CONTRATTO}}));
         }else{
             navigate(PathPf.TIPOLOGIA_CONTRATTO);
         }
@@ -105,7 +105,7 @@ const SideNavSend : React.FC = () => {
 
     const handleListItemClickListDocEmessi = () =>{
         if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.FATTURAZIONE}}));
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.LISTA_DOC_EMESSI}}));
         }else{
             navigate(PathPf.LISTA_DOC_EMESSI);
         }
@@ -114,7 +114,7 @@ const SideNavSend : React.FC = () => {
 
     const handleListItemClickOrchestratore = () => {
         if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.FATTURAZIONE}}));
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.ORCHESTRATORE}}));
         }else{
             navigate(PathPf.ORCHESTRATORE);
         }

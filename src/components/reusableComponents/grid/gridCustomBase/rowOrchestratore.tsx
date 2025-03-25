@@ -54,7 +54,7 @@ const RowOrchestratore = ({sliced,headerNames}) => {
                     }
                     
                     return(
-                        <Tooltip key={Math.random()} title={titleTooltip}>
+                        <Tooltip key={Math.random()} title={titleTooltip} placement="right">
                             <TableCell
                                 align={headerNames[i]?.align}>
                                 {customValue}

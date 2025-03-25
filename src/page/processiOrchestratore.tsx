@@ -20,6 +20,7 @@ import dayjs from "dayjs";
 import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
 import { headersName } from "../assets/configurations/config_GridOrchestratore";
 import { saveAs } from "file-saver";
+import { formatDateToValidation, isDateInvalid, transformDateTime, transformObjectToArray } from "../reusableFunction/function";
 export interface DataGridOrchestratore {
     idOrchestratore:string,
     anno: number,
@@ -61,7 +62,6 @@ const ProcessiOrchestartore:React.FC = () =>{
     const { 
         filters,
         updateFilters,
-        resetFilters,
         isInitialRender
     } = useSavedFilters(PathPf.ORCHESTRATORE,{});
     
@@ -98,6 +98,7 @@ const ProcessiOrchestartore:React.FC = () =>{
                     dataEsecuzione:transformDateTime(el.dataEsecuzione)||"--",
                     dataFineContestazioni:transformDateTime(el.dataFineContestazioni)||"--",
                     dataFatturazione:transformDateTime(el.dataFatturazione)||"--",
+                    counter:el.count||'--',
                     esecuzione:el.esecuzione
                     
                 };
@@ -133,7 +134,12 @@ const ProcessiOrchestartore:React.FC = () =>{
     const downloadListaOrchestratore = async () => {
         setShowLoading(true);
         await downloadOrchestratore(token,profilo.nonce, bodyGetLista).then(response => response.blob()).then((response)=>{
-            const title = `Lista processi.xlsx`;
+            let title = `Lista processi.xlsx`;
+            if(bodyGetLista.init && !bodyGetLista.end){
+                title = `Lista processi/Data inzio:${dayjs(new Date(bodyGetLista.init)).format("DD-MM-YYYY")}.xlsx`;
+            }else if(bodyGetLista.end && bodyGetLista.init){
+                title = `Lista processi/Data inzio:${dayjs(new Date(bodyGetLista.init)).format("DD-MM-YYYY")}/Data fine:${dayjs(new Date(bodyGetLista.end)).format("DD-MM-YYYY")}.xlsx`;
+            }
                 
             saveAs(response,title);
             setShowLoading(false);
@@ -141,36 +147,6 @@ const ProcessiOrchestartore:React.FC = () =>{
             setShowLoading(false);
             manageError(err,dispatchMainState);
         }));
-    };
-    
-    function transformObjectToArray(obj: Record<string, string>):{value: number, description: string}[]{
-        return Object.entries(obj).map(([key, value]) => ({
-            value: parseInt(key, 10), // Convert the key to an integer
-            description: value
-        }));
-    }
-    
-    function transformDateTime(input: string): string {
-        if(input){
-            const [datePart, timePart] = input.split("T"); // Split the input into date and time
-            const [year, month, day] = datePart.split("-"); // Split the date into components
-            return `${day}-${month}-${year} ${timePart}`; // Rearrange and return the formatted string
-        }else{
-            return "";
-        }
-    }
-
-    function isDateInvalid(dateInput) {
-        const date = new Date(dateInput); // Create a Date object
-        return isNaN(date.getTime()); // Check if the date is invalid
-    }
-
-    const formatDateToValidation = (date:any) => {
-        if(!isDateInvalid(date)){
-            return  dayjs(new Date(date)).format("YYYY-MM-DD").replace(/-/g,"");
-        }else{
-            return null;
-        }
     };
     
     const getStati = async() =>{
@@ -233,11 +209,9 @@ const ProcessiOrchestartore:React.FC = () =>{
         
     };
     
-   
-        
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
-    console.log({bodyGetLista});
+ 
     return(
         <div className="mx-5">
             <div className="marginTop24 ">
