@@ -577,10 +577,10 @@ const RelPage : React.FC = () =>{
                     {!enti &&
 
                     <Box sx={{width:'80%', marginLeft:'20px', display:'flex', justifyContent:'end'}}  >
-                        <Tooltip  className="mx-2" title="Invia fatture REL firmate">
+                        <Tooltip  className="mx-2" title="Report regolare esecuzione non fatturate">
                             <span>
                                 <Button  variant="outlined"  onClick={()=> downloadReport()} >
-                                    <SendIcon></SendIcon>
+                                    <ArrowCircleDownIcon></ArrowCircleDownIcon>
                                 </Button>
                             </span>
                         </Tooltip>
