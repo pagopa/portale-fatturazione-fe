@@ -37,7 +37,8 @@ export interface DataGridOrchestratore {
 interface BodyOrchestratore{
     init: string|null|Date,
     end: string|null|Date,
-    stati: number[]
+    stati: number[],
+    ordinamento:number
 }
 
 const ProcessiOrchestartore:React.FC = () =>{
@@ -54,7 +55,7 @@ const ProcessiOrchestartore:React.FC = () =>{
     const [arrayStati,setArrayStati] = useState<{value: number, description: string}[]>([]);
     const [getListaLoading, setGetListaLoading] = useState(false);
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
-    const [bodyGetLista, setBodyGetLista] = useState<BodyOrchestratore>({ init:new Date(),end:null,stati:[]});
+    const [bodyGetLista, setBodyGetLista] = useState<BodyOrchestratore>({ init:new Date(),end:null,stati:[],ordinamento:0});
     const [showLoading,setShowLoading] = useState(false);
     const [valueStati, setValueStati] = useState<{value: number, description: string}[]>([]);
     const [error,setError] = useState(false);
@@ -72,7 +73,12 @@ const ProcessiOrchestartore:React.FC = () =>{
             setTotalData(filters.totalData);
             setPage(filters.page);
             setRowsPerPage(filters.rows);
-            setBodyGetLista({ init:filters.body.init ? new Date(filters.body.init):null,end:filters?.body?.end ? new Date(filters.body.end):null,stati:filters.body.stati});
+            setBodyGetLista({ 
+                init:filters.body.init ? new Date(filters.body.init):null,
+                end:filters?.body?.end ? new Date(filters.body.end):null,
+                stati:filters.body.stati,
+                ordinamento:filters.body.ordinamento
+            });
         }else{
             getListaDati(bodyGetLista,page, rowsPerPage);
         }
@@ -90,11 +96,11 @@ const ProcessiOrchestartore:React.FC = () =>{
                 el.idOrchestratore = el.tipologia+el.dataEsecuzione;
                 return {
                     idOrchestratore:el.idOrchestratore,
+                    dataEsecuzione:transformDateTime(el.dataEsecuzione)||"--",
                     anno:el.anno,
                     mese:mesiGrid[el.mese],
                     tipologia:el.tipologia,
                     fase:el.fase,
-                    dataEsecuzione:transformDateTime(el.dataEsecuzione)||"--",
                     dataFineContestazioni:transformDateTime(el.dataFineContestazioni)||"--",
                     dataFatturazione:transformDateTime(el.dataFatturazione)||"--",
                     counter:el.count||'--',
@@ -174,8 +180,8 @@ const ProcessiOrchestartore:React.FC = () =>{
     };
     
     const onButtonAnnulla = () => {
-        setBodyGetLista({ init:null,end: null,stati:[]});
-        getListaDati({ init:null,end: null,stati:[]},0, 10,true);
+        setBodyGetLista({ init:null,end: null,stati:[],ordinamento:0});
+        getListaDati({ init:null,end: null,stati:[],ordinamento:0},0, 10,true);
         setDataSelect([]);
         setValueStati([]);
         setPage(0);
@@ -206,7 +212,15 @@ const ProcessiOrchestartore:React.FC = () =>{
             page:0,
             rows:parseInt(event.target.value, 10)
         });
-        
+    };
+
+
+    const headerAction = (newParam) => {
+        getListaDati({ ...bodyGetLista,...{ordinamento:newParam}},page, rowsPerPage);
+        setBodyGetLista({ ...bodyGetLista,...{ordinamento:newParam}});
+        updateFilters({
+            body:{ ...bodyGetLista,...{ordinamento:newParam}}
+        });
     };
     
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
@@ -361,6 +375,8 @@ const ProcessiOrchestartore:React.FC = () =>{
                     headerNames={headersName}
                     disabled={getListaLoading}
                     widthCustomSize="auto"
+                    body={bodyGetLista}
+                    headerAction={headerAction}
                 ></GridCustom>
             </div>
             <ModalLoading 

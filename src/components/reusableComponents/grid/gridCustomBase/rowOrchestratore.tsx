@@ -1,12 +1,11 @@
-import { TableCell, TableRow, Tooltip } from "@mui/material";
-import CircleIcon from '@mui/icons-material/Circle';
+import { TableCell, TableRow, Tooltip, Typography } from "@mui/material";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import InfoIcon from '@mui/icons-material/Info';
 import DangerousIcon from '@mui/icons-material/Dangerous';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 const RowOrchestratore = ({sliced,headerNames}) => {
-    let bgColorRow = "";
+    let bgColorRow = "#F0F8FF";
     if(sliced.esecuzione === 1){
         bgColorRow = "#F0FFF0";
     }else if(sliced.esecuzione === 2){
@@ -16,7 +15,11 @@ const RowOrchestratore = ({sliced,headerNames}) => {
     }
 
     return (
-        <TableRow sx={{backgroundColor:bgColorRow,borderTop:"2px solid #F2F2F2",borderBottom: "2px solid #F2F2F2"}} key={Math.random()}>
+        <TableRow sx={{
+            backgroundColor:bgColorRow,
+            borderTop:"4px solid #F2F2F2",
+            borderBottom: "2px solid #F2F2F2"
+        }} key={Math.random()}>
             {
                 Object.values(sliced).map((value:any, i:number)=>{
                     const indexEsec =  Object.entries(sliced).findIndex(([key]) => key === 'esecuzione');
@@ -39,27 +42,31 @@ const RowOrchestratore = ({sliced,headerNames}) => {
                             color = "orange";
                             customValue = <InfoIcon sx={{color:color}}/>;
                         }else if(value === 3){
-                            
                             titleTooltip = "Errore";
                             color = "red";
                             customValue = <DangerousIcon sx={{color:color}}/>;
                         }
                     }
-                   
-
                     if(i === indexDataEs || i === indexDataCon || i === indexDataFat ){
                         customValue = value.split(" ")[0];  
                     }
-                    
                     return(
-                        <Tooltip key={Math.random()} title={titleTooltip} placement="right">
-                            <TableCell
-                                align={headerNames[i]?.align}>
-                                {customValue}
-                            </TableCell>
-                        </Tooltip>
+                        <>
+                            {customValue !== "--" ?
+                                <Tooltip key={Math.random()} title={titleTooltip}  placement="right">
+                                    <TableCell
+                                        align={headerNames[i]?.align}>
+                                        <Typography style={{ fontSize: "1rem", fontWeight: 600 }} variant="caption-semibold">{customValue}</Typography> 
+                                        
+                                    </TableCell>
+                                </Tooltip>: 
+                                <TableCell
+                                    align={headerNames[i]?.align}>
+                                    {customValue} 
+                                </TableCell>
+                            }
+                        </>
                     );
-                   
                 })
             }
         </TableRow>

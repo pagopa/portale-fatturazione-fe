@@ -1,4 +1,4 @@
-import { Card, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip } from "@mui/material";
+import { Card, IconButton, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { GridElementListaPsp } from "../../../types/typeAngraficaPsp";
 import { Rel } from "../../../types/typeRel";
@@ -10,6 +10,8 @@ import { SetStateAction } from "react";
 import { Whitelist } from "../../../page/whiteList";
 import { DataGridOrchestratore } from "../../../page/processiOrchestratore";
 import RowOrchestratore from "./gridCustomBase/rowOrchestratore";
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 interface GridCustomProps {
     elements:NotificheList[]|Rel[]|GridElementListaPsp[]|any[],
     changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
@@ -30,40 +32,32 @@ interface GridCustomProps {
         stringIcon:string,
         icon:React.ReactNode,
         action:string
-    }[]
+    }[],
+    headerAction?:(val:any) =>void,
+    body?:any
 }
 
-const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, nameParameterApi, apiGet, disabled, widthCustomSize, setOpenModalDelete,setOpenModalAdd,buttons, selected, setSelected }) =>{
+const GridCustom : React.FC<GridCustomProps> = (
+    {elements,
+        changePage,
+        changeRow,
+        page,
+        total,
+        rows,
+        headerNames,
+        nameParameterApi,
+        apiGet,
+        disabled,
+        widthCustomSize,
+        setOpenModalDelete,
+        setOpenModalAdd,
+        buttons,
+        selected,
+        setSelected,
+        headerAction,
+        body
+    }) =>{
 
-    /*
-    const [stateHeaderCheckbox, setStateHeaderChekbox] = useState({checked:false,disabled:true});
-
-    useEffect(()=>{
-        if(elements.length > 0){
-            setStateHeaderChekbox({checked:false,disabled:false});
-        }else{
-            setStateHeaderChekbox({checked:false,disabled:true});
-        }
-    },[elements]);
-
-    useEffect(()=>{
-        if(selected?.length === 0){
-            setStateHeaderChekbox({checked:false,disabled:false});
-        }
-
-    },[selected]);
-   
-
-    const clickOnCheckBoxHeader = () => {
-        setStateHeaderChekbox(prev => ({checked:!prev.checked,disabled:prev.disabled}));
-        if(stateHeaderCheckbox.checked && setSelected){
-            setSelected([]);
-        }else if(setSelected){
-            setSelected(prev => ([...prev,...elements.filter(el => el.cancella).map(el => el.idWhite)]));
-        }
-        
-    };
-*/
     const handleClickOnGrid = (element) =>{
         if(apiGet && nameParameterApi === 'idContratto'){
             const newDetailRel = {
@@ -89,7 +83,7 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
         }  
     };
    
-   
+    console.log('rener',body?.ordinamento);
     return (
         <div>
             {nameParameterApi === "idWhite" && <EnhancedTableCustom  setOpenModal={setOpenModalDelete} setOpenModalAdd={setOpenModalAdd} selected={selected||[]} buttons={buttons} ></EnhancedTableCustom>}
@@ -98,9 +92,19 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                     <Table >
                         <TableHead sx={{backgroundColor:'#f2f2f2'}}>
                             <TableRow>
-                                {headerNames.map((el)=>{
+                                {headerNames.map((el,i)=>{
                                     if(nameParameterApi === 'idOrchestratore'){
-                                        return<TableCell align={el.align} width={el.width} key={Math.random()}>{el.label}</TableCell>;
+                                        return(
+                                           
+                                            <TableCell align={el.align} width={el.width} key={i}>{el.label}
+                                                {el.headerAction &&
+                                                <Tooltip title="Sort">
+                                                    <IconButton sx={{marginLeft:'10px'}}  onClick={()=> headerAction && headerAction((body?.ordinamento === 0) ? 1:0)}  size="small">
+                                                        {(body?.ordinamento === 0) ? <ArrowUpwardIcon></ArrowUpwardIcon>:<ArrowDownwardIcon></ArrowDownwardIcon>}
+                                                    </IconButton>
+                                                </Tooltip>}
+                                            </TableCell>
+                                        );
                                     }else{
                                         return <TableCell key={Math.random()}>{el}</TableCell>;
                                     }
