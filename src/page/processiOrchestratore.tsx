@@ -20,7 +20,7 @@ import dayjs from "dayjs";
 import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
 import { headersName } from "../assets/configurations/config_GridOrchestratore";
 import { saveAs } from "file-saver";
-import { formatDateToValidation, isDateInvalid, transformDateTime, transformObjectToArray } from "../reusableFunction/function";
+import { formatDateToValidation, isDateInvalid, transformDateTime, transformDateTimeWithNameMonth, transformObjectToArray } from "../reusableFunction/function";
 export interface DataGridOrchestratore {
     idOrchestratore:string,
     anno: number,
@@ -96,7 +96,7 @@ const ProcessiOrchestartore:React.FC = () =>{
                 el.idOrchestratore = el.tipologia+el.dataEsecuzione;
                 return {
                     idOrchestratore:el.idOrchestratore,
-                    dataEsecuzione:transformDateTime(el.dataEsecuzione)||"--",
+                    dataEsecuzione:transformDateTimeWithNameMonth(el.dataEsecuzione)||"--",
                     anno:el.anno,
                     mese:mesiGrid[el.mese],
                     tipologia:el.tipologia,
@@ -146,8 +146,7 @@ const ProcessiOrchestartore:React.FC = () =>{
                 title = `Lista processi/Data inzio:${dayjs(new Date(bodyGetLista.init)).format("DD-MM-YYYY")}.xlsx`;
             }else if(bodyGetLista.end && bodyGetLista.init){
                 title = `Lista processi/Data inzio:${dayjs(new Date(bodyGetLista.init)).format("DD-MM-YYYY")}/Data fine:${dayjs(new Date(bodyGetLista.end)).format("DD-MM-YYYY")}.xlsx`;
-            }
-                
+            }     
             saveAs(response,title);
             setShowLoading(false);
         }).catch(((err)=>{
@@ -232,8 +231,8 @@ const ProcessiOrchestartore:React.FC = () =>{
                 <Typography variant="h4">Monitoring</Typography>
             </div>
             <div className="row mb-5 mt-5" >
-                <div className="col-3">
-                    <Box  style={{ width: '80%' }}>
+                <div className="col-2">
+                    <Box >
                         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it} >
                             <DesktopDatePicker
                                 label={"Data inizio"}
@@ -267,8 +266,8 @@ const ProcessiOrchestartore:React.FC = () =>{
                         </LocalizationProvider>
                     </Box>
                 </div>
-                <div className="col-3">
-                    <Box style={{ width: '80%' }}>
+                <div className="col-2">
+                    <Box >
                         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it}>
                             <DesktopDatePicker
                                 label={"Data fine"}
@@ -299,7 +298,7 @@ const ProcessiOrchestartore:React.FC = () =>{
                         </LocalizationProvider>
                     </Box>
                 </div>
-                <div className="col-3">
+                <div className="col-2">
                     <Autocomplete
                         multiple
                         limitTags={1}
@@ -327,7 +326,7 @@ const ProcessiOrchestartore:React.FC = () =>{
                                 {option.description}
                             </li>
                         )}
-                        style={{ width: '80%',height:'59px'}}
+                        style={{ height:'59px'}}
                         renderInput={(params) => {
                             return <TextField {...params}
                                 label="Stato" 
@@ -335,7 +334,42 @@ const ProcessiOrchestartore:React.FC = () =>{
                         }}
                     />
                 </div>
-                <div className="col-3 d-flex align-items-center justify-content-center">
+                <div className="col-2">
+                    <Autocomplete
+                        multiple
+                        limitTags={1}
+                        onChange={(event, value) => {
+                            const arrayId = value.map(el => el.value);
+                            setBodyGetLista((prev) => ({...prev,...{stati:arrayId}}));
+                            setValueStati(value);
+                            clearOnChangeFilter();
+                        }}
+                        options={arrayStati}
+                        value={valueStati}
+                        disableCloseOnSelect
+                        isOptionEqualToValue={(option, value) => option.value === value.value}
+                        getOptionLabel={(option:{value: number, description: string}) => {
+                            return option.description;}}
+                        renderOption={(props, option,{ selected }) =>(
+                            <li {...props}>
+                                <Checkbox
+                                    icon={icon}
+                                    checkedIcon={checkedIcon}
+                                    style={{ marginRight: 8 }}
+                                    checked={selected}
+                                />
+                                {option.description}
+                            </li>
+                        )}
+                        style={{ height:'59px'}}
+                        renderInput={(params) => {
+                            return <TextField {...params}
+                                label="Tipologia" 
+                                placeholder="Tipologia" />;
+                        }}
+                    />
+                </div>
+                <div className="col-2 d-flex align-items-center justify-content-center">
                     <Box style={{ width: '50%' }}>
                         <Button 
                             onClick={onButtonFiltra} 

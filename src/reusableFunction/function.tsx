@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import { DataGridCommessa } from "../types/typeModuloCommessaElenco";
 import { ArrayTipologieCommesse, DatiModuloCommessaPdf, ModuliCommessa } from "../types/typeModuloCommessaInserimento";
+import { objMesiWithZero } from "./reusableArrayObj";
 
 export const fixResponseForDataGrid = (arr:DataGridCommessa[]) =>{
       
@@ -83,6 +84,16 @@ export  function transformDateTime(input: string): string {
         const [datePart, timePart] = input.split("T"); // Split the input into date and time
         const [year, month, day] = datePart.split("-"); // Split the date into components
         return `${day}-${month}-${year} ${timePart}`; // Rearrange and return the formatted string
+    }else{
+        return "";
+    }
+}
+
+export  function transformDateTimeWithNameMonth(input: string): string {
+    if(input){
+        const [datePart, timePart] = input.split("T"); // Split the input into date and time
+        const [year, month, day] = datePart.split("-"); // Split the date into components
+        return `${day}-${objMesiWithZero[month]}-${year} ${timePart}`; // Rearrange and return the formatted string
     }else{
         return "";
     }
