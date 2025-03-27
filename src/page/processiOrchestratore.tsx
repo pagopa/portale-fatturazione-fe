@@ -9,7 +9,7 @@ import { GlobalContext } from "../store/context/globalContext";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import DownloadIcon from '@mui/icons-material/Download';
-import { downloadOrchestratore, getListaActionMonitoring, getStatiMonitoring } from "../api/apiPagoPa/orchestratore/api";
+import { downloadOrchestratore, getFasiMonitoring, getListaActionMonitoring, getStatiMonitoring, getTipologieMonitoring } from "../api/apiPagoPa/orchestratore/api";
 import { mesiGrid } from "../reusableFunction/reusableArrayObj";
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
@@ -34,11 +34,13 @@ export interface DataGridOrchestratore {
     count: number
 }
 
-interface BodyOrchestratore{
+export interface BodyOrchestratore{
     init: string|null|Date,
     end: string|null|Date,
     stati: number[],
-    ordinamento:number
+    ordinamento:number,
+    tipologie:string[],
+    fasi:string[]
 }
 
 const ProcessiOrchestartore:React.FC = () =>{
@@ -53,13 +55,18 @@ const ProcessiOrchestartore:React.FC = () =>{
     const [totalData, setTotalData]  = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [arrayStati,setArrayStati] = useState<{value: number, description: string}[]>([]);
+    const [arrayTipologie,setArrayTipologie] = useState<{value: number, description: string}[]>([]);
+    const [arrayFasi,setArrayFasi] = useState<{value: number, description: string}[]>([]);
     const [getListaLoading, setGetListaLoading] = useState(false);
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
-    const [bodyGetLista, setBodyGetLista] = useState<BodyOrchestratore>({ init:new Date(),end:null,stati:[],ordinamento:0});
+    const [bodyGetLista, setBodyGetLista] = useState<BodyOrchestratore>({ init:new Date(),end:null,stati:[],ordinamento:0,tipologie:[],fasi:[]});
     const [showLoading,setShowLoading] = useState(false);
     const [valueStati, setValueStati] = useState<{value: number, description: string}[]>([]);
+    const [valueTipologie, setValueTipologie] = useState<{value: number, description: string}[]>([]);
+    const [valueFasi, setValueFasi] = useState<{value: number, description: string}[]>([]);
     const [error,setError] = useState(false);
 
+    const disableListaCompletaButton = bodyGetLista.init === null && bodyGetLista.end === null && bodyGetLista.stati.length === 0 && bodyGetLista.tipologie.length === 0 && bodyGetLista.fasi.length === 0;
     const { 
         filters,
         updateFilters,
@@ -70,6 +77,8 @@ const ProcessiOrchestartore:React.FC = () =>{
         if(isInitialRender.current && Object.keys(filters).length > 0){
             getListaDati(filters.body,filters.page, filters.rows);
             setValueStati(filters.valueStati);
+            setValueFasi(filters.valueFasi);
+            setValueTipologie(filters.valueTipologie);
             setTotalData(filters.totalData);
             setPage(filters.page);
             setRowsPerPage(filters.rows);
@@ -77,12 +86,16 @@ const ProcessiOrchestartore:React.FC = () =>{
                 init:filters.body.init ? new Date(filters.body.init):null,
                 end:filters?.body?.end ? new Date(filters.body.end):null,
                 stati:filters.body.stati,
-                ordinamento:filters.body.ordinamento
+                ordinamento:filters.body.ordinamento,
+                tipologie:filters.body.tipologie,
+                fasi:filters.body.fasi
             });
         }else{
             getListaDati(bodyGetLista,page, rowsPerPage);
         }
         getStati();
+        getTipologie();
+        getFasi();
        
     },[]);
     
@@ -105,7 +118,6 @@ const ProcessiOrchestartore:React.FC = () =>{
                     dataFatturazione:transformDateTime(el.dataFatturazione)||"--",
                     counter:el.count||'--',
                     esecuzione:el.esecuzione
-                    
                 };
             });
             setGridData(dataWithID);
@@ -117,6 +129,8 @@ const ProcessiOrchestartore:React.FC = () =>{
                     page:0,
                     rows:10,
                     valueStati:[],
+                    valueFasi:[],
+                    valueTipologie:[],
                     totalData:0
                 });
             }else{
@@ -127,6 +141,8 @@ const ProcessiOrchestartore:React.FC = () =>{
                     page:page,
                     rows:rows,
                     valueStati:valueStati,
+                    valueFasi:valueFasi,
+                    valueTipologie:valueTipologie,
                     totalData:res.data.count
                 });
             }
@@ -136,7 +152,6 @@ const ProcessiOrchestartore:React.FC = () =>{
             manageError(err,dispatchMainState);
         })); 
     };
-
 
     const downloadListaOrchestratore = async () => {
         setShowLoading(true);
@@ -161,10 +176,33 @@ const ProcessiOrchestartore:React.FC = () =>{
             const result = transformObjectToArray(res.data);
             setArrayStati(result);
         }).catch(((err)=>{
+            setArrayStati([]);
             manageError(err,dispatchMainState);
         })); 
     };
- 
+
+    const getTipologie = async() =>{
+        setGetListaLoading(true);
+        await getTipologieMonitoring(token,profilo.nonce).then((res)=>{
+            const result = transformObjectToArray(res.data);
+            setArrayTipologie(result);
+        }).catch(((err)=>{
+            setArrayTipologie([]);
+            manageError(err,dispatchMainState);
+        })); 
+    };
+
+    const getFasi = async() =>{
+        setGetListaLoading(true);
+        await getFasiMonitoring(token,profilo.nonce).then((res)=>{
+            const result = transformObjectToArray(res.data);
+            setArrayFasi(result);
+        }).catch(((err)=>{
+            setArrayFasi([]);
+            manageError(err,dispatchMainState);
+        })); 
+    };
+
     const clearOnChangeFilter = () => {
         setGridData([]);
         setPage(0);
@@ -179,10 +217,12 @@ const ProcessiOrchestartore:React.FC = () =>{
     };
     
     const onButtonAnnulla = () => {
-        setBodyGetLista({ init:null,end: null,stati:[],ordinamento:0});
-        getListaDati({ init:null,end: null,stati:[],ordinamento:0},0, 10,true);
+        setBodyGetLista({ init:null,end: null,stati:[],ordinamento:0,tipologie:[],fasi:[]});
+        getListaDati({ init:null,end: null,stati:[],ordinamento:0,tipologie:[],fasi:[]},0, 10,true);
         setDataSelect([]);
         setValueStati([]);
+        setValueTipologie([]);
+        setValueFasi([]);
         setPage(0);
         setRowsPerPage(10);
         setError(false);
@@ -339,13 +379,14 @@ const ProcessiOrchestartore:React.FC = () =>{
                         multiple
                         limitTags={1}
                         onChange={(event, value) => {
-                            const arrayId = value.map(el => el.value);
-                            setBodyGetLista((prev) => ({...prev,...{stati:arrayId}}));
-                            setValueStati(value);
+                            console.log(value);
+                            const arrayDesc = value.map(el => el.description);
+                            setBodyGetLista((prev) => ({...prev,...{tipologie:arrayDesc}}));
+                            setValueTipologie(value);
                             clearOnChangeFilter();
                         }}
-                        options={arrayStati}
-                        value={valueStati}
+                        options={arrayTipologie}
+                        value={valueTipologie}
                         disableCloseOnSelect
                         isOptionEqualToValue={(option, value) => option.value === value.value}
                         getOptionLabel={(option:{value: number, description: string}) => {
@@ -369,6 +410,42 @@ const ProcessiOrchestartore:React.FC = () =>{
                         }}
                     />
                 </div>
+                <div className="col-2">
+                    <Autocomplete
+                        multiple
+                        limitTags={1}
+                        onChange={(event, value) => {
+                            console.log(value);
+                            const arrayDesc = value.map(el => el.description);
+                            setBodyGetLista((prev) => ({...prev,...{fasi:arrayDesc}}));
+                            setValueFasi(value);
+                            clearOnChangeFilter();
+                        }}
+                        options={arrayFasi}
+                        value={valueFasi}
+                        disableCloseOnSelect
+                        isOptionEqualToValue={(option, value) => option.value === value.value}
+                        getOptionLabel={(option:{value: number, description: string}) => {
+                            return option.description;}}
+                        renderOption={(props, option,{ selected }) =>(
+                            <li {...props}>
+                                <Checkbox
+                                    icon={icon}
+                                    checkedIcon={checkedIcon}
+                                    style={{ marginRight: 8 }}
+                                    checked={selected}
+                                />
+                                {option.description}
+                            </li>
+                        )}
+                        style={{ height:'59px'}}
+                        renderInput={(params) => {
+                            return <TextField {...params}
+                                label="Fase" 
+                                placeholder="Fase" />;
+                        }}
+                    />
+                </div>
                 <div className="col-2 d-flex align-items-center justify-content-center">
                     <Box style={{ width: '50%' }}>
                         <Button 
@@ -380,7 +457,7 @@ const ProcessiOrchestartore:React.FC = () =>{
                     <Box style={{ width: '50%' }}>
                         <Tooltip title="Lista completa">
                             <Button variant="outlined"
-                                disabled={bodyGetLista.init === null && bodyGetLista.end === null && bodyGetLista.stati.length === 0}
+                                disabled={disableListaCompletaButton}
                                 onClick={onButtonAnnulla} >
                                 <ListIcon></ListIcon>
                             </Button>

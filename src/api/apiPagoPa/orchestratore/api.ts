@@ -1,7 +1,8 @@
 import axios from "axios";
 import { url } from "../../api";
+import { BodyOrchestratore } from "../../../page/processiOrchestratore";
 
-export const getListaActionMonitoring = async (token:string, nonce:string , body:{init: string|null|Date,end:string|null|Date,stati: number[],ordinamento:number},page:number,pageSize:number) => {
+export const getListaActionMonitoring = async (token:string, nonce:string , body:BodyOrchestratore,page:number,pageSize:number) => {
     const response =  await axios.post(`${url}/api/orchestratore?page=${page}&pageSize=${pageSize}&nonce=${nonce}`,
         body,
         { headers: {
@@ -20,7 +21,25 @@ export const getStatiMonitoring = async (token:string, nonce:string) => {
     return response;
 };
 
-export const downloadOrchestratore = async (token:string, nonce:string,body: {init: string|null|Date,end:string|null|Date,stati: number[]}) => {
+export const getTipologieMonitoring = async (token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/orchestratore/tipologie?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }}
+    );
+    return response;
+};
+
+export const getFasiMonitoring = async (token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/orchestratore/fasi?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }}
+    );
+    return response;
+};
+
+export const downloadOrchestratore = async (token:string, nonce:string,body:BodyOrchestratore) => {
     const response = await fetch(`${url}/api/orchestratore/download?nonce=${nonce}`, 
         { headers: {
             Authorization: 'Bearer '+token,
