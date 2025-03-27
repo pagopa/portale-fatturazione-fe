@@ -363,7 +363,7 @@ const ProcessiOrchestartore:React.FC = () =>{
                                     style={{ marginRight: 8 }}
                                     checked={selected}
                                 />
-                                {option.description}
+                                <Typography sx={{ fontSize: "0.875rem"}}>{option.description}</Typography>
                             </li>
                         )}
                         style={{ height:'59px'}}
@@ -399,7 +399,7 @@ const ProcessiOrchestartore:React.FC = () =>{
                                     style={{ marginRight: 8 }}
                                     checked={selected}
                                 />
-                                {option.description}
+                                <Typography sx={{ fontSize: "0.875rem"}}>{option.description}</Typography>
                             </li>
                         )}
                         style={{ height:'59px'}}
@@ -435,7 +435,7 @@ const ProcessiOrchestartore:React.FC = () =>{
                                     style={{ marginRight: 8 }}
                                     checked={selected}
                                 />
-                                {option.description}
+                                <Typography sx={{ fontSize: "0.875rem"}}>{option.description}</Typography>
                             </li>
                         )}
                         style={{ height:'59px'}}
