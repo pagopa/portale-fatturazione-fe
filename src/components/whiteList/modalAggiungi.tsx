@@ -230,8 +230,10 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
                                         </li>
                                     );
                                 } }
+                                style={{height:'59px'}}
                                 renderInput={(params) =>{
                                     return <TextField 
+                                        sx={{backgroundColor:"#F2F2F2"}}
                                         onChange={(e)=> setTextValue(e.target.value)} 
                                         {...params}
                                         label="Rag Soc. Ente" 
@@ -323,8 +325,10 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
                                         {option.descrizione}
                                     </li>
                                 )}
+                                style={{height:'59px'}}
                                 renderInput={(params) => {
                                     return <TextField {...params}
+                                        sx={{backgroundColor:"#F2F2F2"}}
                                         label="Mesi" 
                                         placeholder="Mesi" />;
                                 }}     

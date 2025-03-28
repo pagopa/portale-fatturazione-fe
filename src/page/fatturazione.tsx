@@ -492,7 +492,7 @@ const Fatturazione : React.FC = () =>{
                     <div  className="col-3">
                         <Autocomplete
                             limitTags={1}
-                            sx={{width:'80%',marginLeft:'20px'}}
+                            sx={{width:'80%',marginLeft:'20px',height:'59px'}}
                             multiple
                             onChange={(event, value) => {
                                 setValueMultiselectDateTipologie(value);
@@ -514,9 +514,9 @@ const Fatturazione : React.FC = () =>{
                                     {option}
                                 </li>
                             )}
-                            style={{ width: '80%',height:'59px' }}
                             renderInput={(params) => {
                                 return <TextField {...params}
+                                    sx={{backgroundColor:"#F2F2F2"}}
                                     label="Data fattura" 
                                     placeholder="Data fattura" />;
                             }}     

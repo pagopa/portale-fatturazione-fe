@@ -356,7 +356,7 @@ const ProcessiOrchestartore:React.FC = () =>{
                         getOptionLabel={(option:{value: number, description: string}) => {
                             return option.description;}}
                         renderOption={(props, option,{ selected }) =>(
-                            <li {...props}>
+                            <li  {...props}>
                                 <Checkbox
                                     icon={icon}
                                     checkedIcon={checkedIcon}
@@ -368,7 +368,7 @@ const ProcessiOrchestartore:React.FC = () =>{
                         )}
                         style={{ height:'59px'}}
                         renderInput={(params) => {
-                            return <TextField {...params}
+                            return <TextField sx={{backgroundColor:"#F2F2F2"}} {...params}
                                 label="Stato" 
                                 placeholder="Stato" />;
                         }}
@@ -404,7 +404,7 @@ const ProcessiOrchestartore:React.FC = () =>{
                         )}
                         style={{ height:'59px'}}
                         renderInput={(params) => {
-                            return <TextField {...params}
+                            return <TextField sx={{backgroundColor:"#F2F2F2"}} {...params}
                                 label="Tipologia" 
                                 placeholder="Tipologia" />;
                         }}
@@ -440,7 +440,7 @@ const ProcessiOrchestartore:React.FC = () =>{
                         )}
                         style={{ height:'59px'}}
                         renderInput={(params) => {
-                            return <TextField {...params}
+                            return <TextField sx={{backgroundColor:"#F2F2F2"}} {...params}
                                 label="Fase" 
                                 placeholder="Fase" />;
                         }}

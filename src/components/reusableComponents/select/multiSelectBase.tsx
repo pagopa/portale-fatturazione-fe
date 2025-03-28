@@ -41,8 +41,10 @@ const MultiSelectBase : React.FC<MultiSelectBaseProps> =  ({setBody,list,value,s
                         {option}
                     </li>
                 )}
+                style={{height:'59px'}}
                 renderInput={(params) => {
                     return <TextField {...params}
+                        sx={{backgroundColor:"#F2F2F2"}}
                         label={label} 
                         placeholder={placeholder} />;
                 }}

@@ -56,6 +56,7 @@ const MultiselectWithKeyValue : React.FC <MultiselectWithKeyValueProps> = ({setB
             style={customMargin}
             renderInput={(params) =>{
                 return <TextField 
+                    sx={{backgroundColor:"#F2F2F2"}}
                     onChange={(e)=> setTextValue(e.target.value)} 
                     {...params}
                     label={label} 
