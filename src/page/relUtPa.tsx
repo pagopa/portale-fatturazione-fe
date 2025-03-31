@@ -575,19 +575,16 @@ const RelPage : React.FC = () =>{
                 </div>
                 <div className="col-3 ">
                     {!enti &&
-
                     <Box sx={{width:'80%', marginLeft:'20px', display:'flex', justifyContent:'end'}}  >
-                        <Tooltip  className="mx-2" title="Report regolare esecuzione non fatturate">
+                        <Tooltip title="Report regolare esecuzione non fatturate">
                             <span>
                                 <Button  variant="outlined"  onClick={()=> downloadReport()} >
                                     <ArrowCircleDownIcon></ArrowCircleDownIcon>
                                 </Button>
                             </span>
                         </Tooltip>
-                        
                     </Box>}
                 </div>
-               
             </div>
             <div className="mt-5">
                 <div className="row">
@@ -646,9 +643,7 @@ const RelPage : React.FC = () =>{
                                         >
                                             {el?.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase()}
                                         </MenuItem>
-                                    
                                     ))}
-                                    
                                 </Select>
                             </FormControl>
                         </Box>

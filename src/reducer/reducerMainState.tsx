@@ -43,6 +43,18 @@ export function reducerMainState(mainState:MainState, action:ActionReducerType) 
 }
 
 export function loadState (){
+   
+    /*
+    try {
+        const bytes = CryptoJS.AES.decrypt(savedState, "GIULIA_MONTANELLO");
+        const globalIsNotEmpty = Object.keys(JSON.parse(bytes.toString(CryptoJS.enc.Utf8))).length > 0; // Convert back to object
+        return (savedState && globalIsNotEmpty) ? JSON.parse(bytes.toString(CryptoJS.enc.Utf8)) : initialState;
+    } catch (error) {
+        console.log(error);
+        localStorage.clear();
+        return initialState;
+    }*/
+    
     try{
         const savedState = localStorage.getItem('globalState');
         const globalIsNotEmpty = Object.keys(JSON.parse(savedState||'{}')).length > 0;

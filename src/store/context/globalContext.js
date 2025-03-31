@@ -59,6 +59,14 @@ function GlobalContextProvider({children}){
         // eslint-disable-next-line no-undef
         localStorage.setItem('globalState', JSON.stringify(mainState));
     }, [mainState]);
+
+    /*
+     // eslint-disable-next-line no-undef
+    useEffect(() => {
+        const hashedState = CryptoJS.HmacSHA256(JSON.stringify(mainState), "GIULIA_MONTANELLO").toString();
+        // eslint-disable-next-line no-undef
+        localStorage.setItem('globalState', JSON.stringify(hashedState));
+    }, [mainState]); */
    
  
 
