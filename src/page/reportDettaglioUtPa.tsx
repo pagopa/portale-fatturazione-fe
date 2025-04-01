@@ -667,6 +667,9 @@ const ReportDettaglio : React.FC = () => {
             const {idEnti, recapitisti, consolidatori, ...bodyEnti} = bodyDownload; 
             // eslint-disable-next-line @typescript-eslint/no-unused-vars  
             await downloadNotifche(token, profilo.nonce,bodyEnti ).then((res)=>{
+                console.log({res});
+                setShowLoading(false);
+                /*
                 const blob = new Blob([res.data], { type: 'text/csv' });
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -676,7 +679,7 @@ const ReportDettaglio : React.FC = () => {
                 document.body.appendChild(a);
                 a.click();
                 setShowLoading(false);
-                document.body.removeChild(a);        
+                document.body.removeChild(a);   */     
             }).catch(((err)=>{
                 setShowLoading(false);
                 manageError(err,dispatchMainState);

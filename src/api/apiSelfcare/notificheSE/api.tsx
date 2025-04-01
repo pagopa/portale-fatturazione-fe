@@ -199,3 +199,13 @@ export const listaEntiNotifichePage = async (token:string, nonce:string , body: 
     );
     return response;
 };
+
+
+export const getMessaggiCountEnte = async (token:string,nonce:string) => {
+    const response =  await axios.get(`${url}/api/notifiche/richiesta/count?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+}; 

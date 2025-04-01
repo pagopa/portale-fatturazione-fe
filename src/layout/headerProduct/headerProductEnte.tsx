@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import {HeaderProduct, PartyEntity} from '@pagopa/mui-italia';
 import { arrayProducts } from '../../assets/dataLayout';
 import { GlobalContext } from '../../store/context/globalContext';
@@ -6,12 +6,23 @@ import { Badge, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import SimCardDownloadIcon from '@mui/icons-material/SimCardDownload';
 import { PathPf } from '../../types/enum';
+import { getMessaggiCountEnte } from '../../api/apiSelfcare/notificheSE/api';
 
 const HeaderProductEnte : React.FC = () => {
     const globalContextObj = useContext(GlobalContext);
-    const {mainState, dispatchMainState,setCountMessages,countMessages } = globalContextObj;
+    const {mainState,setCountMessages, countMessages } = globalContextObj;
     const profilo =  mainState.profilo;
+    const token =  mainState.profilo.jwt;
     const navigate = useNavigate();
+
+    useEffect(()=>{
+        if(globalContextObj.mainState.authenticated === true ){
+            const interval = setInterval(() => {
+                getCount();
+            }, 5000);
+            return () => clearInterval(interval); 
+        }
+    },[globalContextObj.mainState.authenticated]);
 
     const partyList : Array<PartyEntity> = [
         {
@@ -21,6 +32,17 @@ const HeaderProductEnte : React.FC = () => {
             productRole: "Amministratore",
         }
     ];
+
+
+    //logica per il centro messaggi sospesa
+    const getCount = async () =>{
+        await getMessaggiCountEnte(token,profilo.nonce).then((res)=>{
+            const numMessaggi = res.data;
+            setCountMessages(numMessaggi);
+        }).catch((err)=>{
+            console.log(err);
+        });
+    };
    
     return (
        
@@ -39,7 +61,7 @@ const HeaderProductEnte : React.FC = () => {
             </div>
             <div className="d-flex justify-content-center m-auto">
                 <Badge
-                    badgeContent={1}
+                    badgeContent={countMessages}
                     color="primary"
                     variant="standard"
                 >
