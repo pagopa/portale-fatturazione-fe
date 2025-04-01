@@ -82,8 +82,7 @@ const GridCustom : React.FC<GridCustomProps> = (
             return selected.includes(id);
         }  
     };
-   
-    console.log('rener',body?.ordinamento);
+    
     return (
         <div>
             {nameParameterApi === "idWhite" && <EnhancedTableCustom  setOpenModal={setOpenModalDelete} setOpenModalAdd={setOpenModalAdd} selected={selected||[]} buttons={buttons} ></EnhancedTableCustom>}

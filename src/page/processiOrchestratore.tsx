@@ -379,7 +379,6 @@ const ProcessiOrchestartore:React.FC = () =>{
                         multiple
                         limitTags={1}
                         onChange={(event, value) => {
-                            console.log(value);
                             const arrayDesc = value.map(el => el.description);
                             setBodyGetLista((prev) => ({...prev,...{tipologie:arrayDesc}}));
                             setValueTipologie(value);
@@ -415,7 +414,6 @@ const ProcessiOrchestartore:React.FC = () =>{
                         multiple
                         limitTags={1}
                         onChange={(event, value) => {
-                            console.log(value);
                             const arrayDesc = value.map(el => el.description);
                             setBodyGetLista((prev) => ({...prev,...{fasi:arrayDesc}}));
                             setValueFasi(value);

@@ -34,7 +34,11 @@
         "abiCode":"Codice ABI",
         "yearFilter":"Filtra per anno",
         "read":"Lettura",
-        "contractType":"Tipologia contratto"
+        "contractType":"Tipologia contratto",
+        "typology":"Tipologia",
+        "phase":"Fase",
+        "startDate":"Data inizio",
+        "endDate":"Data fine"
     },
     "gridHeaderLabels":{
         "ragSoc":"Rag. sociale",
@@ -103,7 +107,20 @@
         "recipientId":"Recipient ID",
         "totDiscount":"Totale sconto",
         "kpiList":"Lista KPI",
-        "updateDate":"Data aggiornamento"
+        "updateDate":"Data aggiornamento",
+        "esecution":"Esecuzione",
+        "typology":"Tipologia",
+        "phase":"Fase",
+        "disputeEnd":"Fine Contes.",
+        "invoice":"Fatturazione",
+        "counter":"Counter",
+        "process":"Processo"
+    },
+    "tooltipLabel":{
+        "programmed":"Programmato",
+        "esecuted":"Eseguito",
+        "escutedNoData":"Eseguito no data",
+        "error":"Errore"
     }
 },
 "datiDiFatturazione":{
@@ -330,5 +347,11 @@
     "popUpAction":{
         "title":"Stai modificando la tipologia contratto da x a x di Abaco Spa : confermi l'operazione?"
     }        
+},
+"monitoring":{
+    "header":{
+        "title":"Monitoring"
+    },
+    "buttonShowList":"Lista completa"    
 }
 }

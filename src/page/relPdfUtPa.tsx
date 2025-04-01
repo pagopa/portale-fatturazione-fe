@@ -304,7 +304,6 @@ const RelPdfPage : React.FC = () =>{
                 <div className='ms-5'>
                     <ButtonNaked
                         color="primary"
-                        onFocusVisible={() => { console.log('onFocus'); }}
                         size="small"
                         startIcon={<ArrowBackIcon />}
                         onClick={() => navigate(PathPf.LISTA_REL)}
