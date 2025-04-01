@@ -5,6 +5,7 @@ import { GlobalContext } from '../../store/context/globalContext';
 import { Badge, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import SimCardDownloadIcon from '@mui/icons-material/SimCardDownload';
+import { PathPf } from '../../types/enum';
 
 const HeaderProductEnte : React.FC = () => {
     const globalContextObj = useContext(GlobalContext);
@@ -42,9 +43,7 @@ const HeaderProductEnte : React.FC = () => {
                     color="primary"
                     variant="standard"
                 >
-                    <IconButton onClick={()=> {
-                        console.log('navigate');
-                    } }  color="default">
+                    <IconButton onClick={() => navigate(PathPf.ASYNC_DOCUMENTI_ENTE)}  color="default">
                         <SimCardDownloadIcon fontSize="medium" sx={{color: '#17324D'}}
                         />
                     </IconButton>

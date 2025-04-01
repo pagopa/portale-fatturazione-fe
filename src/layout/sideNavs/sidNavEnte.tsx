@@ -126,6 +126,14 @@ const SideNavEnte: React.FC = () => {
         }
     };
 
+    const handleListItemAsyncDoc = async () => {
+        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.ASYNC_DOCUMENTI_ENTE}}));
+        }else{
+            navigate(PathPf.ASYNC_DOCUMENTI_ENTE);
+        }
+    };
+
     const currentLocation = location.pathname;
 
     useEffect(()=>{
@@ -155,6 +163,8 @@ const SideNavEnte: React.FC = () => {
             setSelectedIndex(null);
         }else if(currentLocation === "/accertamenti"){
             setSelectedIndex(7);
+        }else if(currentLocation === PathPf.ASYNC_DOCUMENTI_ENTE){
+            setSelectedIndex(8);
         }
     },[currentLocation]);
 
@@ -166,31 +176,31 @@ const SideNavEnte: React.FC = () => {
         }}
         >
             <List component="nav" aria-label="main piattaforma-notifiche sender">
-                <><ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick()}>
+                <><ListItemButton selected={selectedIndex === 0} onClick={handleListItemClick}>
                     <ListItemIcon>
                         <DnsIcon fontSize="inherit"></DnsIcon>
                     </ListItemIcon>
                     <ListItemText primary="Dati di fatturazione" />
                 </ListItemButton>
-                <ListItemButton selected={selectedIndex === 1} onClick={() => handleListItemClickModuloCommessa()}>
+                <ListItemButton selected={selectedIndex === 1} onClick={handleListItemClickModuloCommessa}>
                     <ListItemIcon>
                         <ViewModuleIcon fontSize="inherit" />
                     </ListItemIcon>
                     <ListItemText primary="Modulo commessa" />
                 </ListItemButton></>
-                <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClickNotifiche()}>
+                <ListItemButton selected={selectedIndex === 2} onClick={handleListItemClickNotifiche}>
                     <ListItemIcon>
                         <MarkUnreadChatAltIcon fontSize="inherit" />
                     </ListItemIcon>
                     <ListItemText primary="Notifiche" />
                 </ListItemButton>
-                <ListItemButton selected={selectedIndex === 3} onClick={() => handleListItemClickRel()}>
+                <ListItemButton selected={selectedIndex === 3} onClick={handleListItemClickRel}>
                     <ListItemIcon>
                         <ManageAccountsIcon fontSize="inherit" />
                     </ListItemIcon>
                     <ListItemText primary="Regolare esecuzione" />
                 </ListItemButton>
-                <ListItemButton selected={selectedIndex === 3} onClick={() => console.log('ciao')}>
+                <ListItemButton selected={selectedIndex === 8} onClick={handleListItemAsyncDoc}>
                     <ListItemIcon>
                         <SimCardDownloadIcon fontSize="inherit"/>
                     </ListItemIcon>

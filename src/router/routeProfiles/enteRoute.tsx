@@ -9,6 +9,7 @@ import ReportDettaglio from "../../page/reportDettaglioUtPa";
 import { PathPf } from "../../types/enum";
 import LayoutEnte from "../../layout/layOutLoggedInEnte";
 import SideNavEnte from "../../layout/sideNavs/sidNavEnte";
+import AsyncDocumenti from "../../page/asyncDocumenti";
 
 const EnteRoute = () => {
 
@@ -20,6 +21,7 @@ const EnteRoute = () => {
         <Route path={PathPf.LISTA_REL} element={<RelPage  />} />
         <Route path={PathPf.PDF_REL} element={<RelPdfPage  />} />                           
         <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio/>} />
+        <Route path={PathPf.ASYNC_DOCUMENTI_ENTE} element={<AsyncDocumenti/>} />
     </Route>;
     return enteRoute; 
   

@@ -26,5 +26,6 @@ export enum PathPf {
     LISTA_DOC_EMESSI = "/listadocemessi",
     JSON_TO_SAP = "/inviofatture",
     JSON_TO_SAP_DETAILS = "/inviofatturedettaglio/:id",
-    ORCHESTRATORE = "/orchestratore"
+    ORCHESTRATORE = "/orchestratore",
+    ASYNC_DOCUMENTI_ENTE = "/downloaddocumenti"
 }
