@@ -2,7 +2,7 @@ import { Typography } from "@mui/material";
 import React , { useState, useEffect, useContext, useRef} from 'react';
 import { TextField,Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { getTipologiaProfilo, manageError} from "../api/api";
+import { getTipologiaProfilo, manageError, managePresaInCarico} from "../api/api";
 import {  NotificheList, FlagContestazione, Contestazione, ElementMultiSelect, ListaRecCon, OptionMultiselectChackbox  } from "../types/typeReportDettaglio";
 import { BodyListaNotifiche } from "../types/typesGeneral";
 import ModalContestazione from '../components/reportDettaglio/modalContestazione';
@@ -669,6 +669,7 @@ const ReportDettaglio : React.FC = () => {
             await downloadNotifche(token, profilo.nonce,bodyEnti ).then((res)=>{
                 console.log({res});
                 setShowLoading(false);
+                managePresaInCarico('PRESA_IN_CARICO_DOCUMENTO',dispatchMainState);
                 /*
                 const blob = new Blob([res.data], { type: 'text/csv' });
                 const url = window.URL.createObjectURL(blob);

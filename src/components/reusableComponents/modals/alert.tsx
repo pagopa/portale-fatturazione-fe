@@ -122,13 +122,9 @@ const BasicAlerts:React.FC = () => {
                 {mainState.apiError === 'PRESA_IN_CARICO_DOCUMENTO' &&
                 <IconButton sx={{marginLeft:'20px'}} onClick={()=> {
                     setCss('main_container_alert_component_hidden');
-                    navigate(PathPf.MESSAGGI);
-                } }  color="default">
-                    <ArrowForwardIcon fontSize="medium" 
-                        sx={{
-                            color: '#17324D',
-                        }} 
-                    />
+                    navigate(profilo.auth === 'PAGOPA' ? PathPf.MESSAGGI : PathPf.ASYNC_DOCUMENTI_ENTE);
+                }}  color="default">
+                    <ArrowForwardIcon fontSize="medium" sx={{color: '#17324D'}}/>
                 </IconButton>
                 }
             </Alert>

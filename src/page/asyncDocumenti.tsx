@@ -3,53 +3,21 @@ import { GlobalContext } from "../store/context/globalContext";
 import { useNavigate } from "react-router";
 import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
 import { PathPf } from "../types/enum";
-import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
 import { manageError } from "../api/api";
-import { Typography, InputLabel, Select, MenuItem, Autocomplete, Checkbox, TextField, FormControl, Button } from "@mui/material";
+import { Typography, Button } from "@mui/material";
 import { Box } from "@mui/system";
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
-import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
 import GridCustom from "../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
-import { month } from "../reusableFunction/reusableArrayObj";
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { formatDateToValidation, isDateInvalid } from "../reusableFunction/function";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { getListaAsyncDoc } from "../api/apiSelfcare/asyncDoc/api";
+import { it } from "date-fns/locale";
 
-export interface BodyStoricoContestazioni{
-    anno:string,
-    mese:string,
-    idEnti:string[],
-    idTipologiaReports:number[]
-}
-
-export interface TipologieDoc {
-    idTipologiaReport: number,
-    categoriaDocumento: string,
-    tipologiaDocumento: string
-}
-
-export interface ContestazioneRowGrid {
-    reportId: string,
-    uniqueId: string,
-    json: string,
-    anno: number,
-    mese: number,
-    internalOrganizationId: string,
-    contractId: string,
-    actualContractId: string,
-    utenteId: string,
-    prodotto: string,
-    stato: number,
-    dataInserimento: string,
-    dataStepCorrente: string,
-    linkDocumento: string,
-    storage: string,
-    hash: string,
-    contentType: string,
-    contentLanguage: string,
-    tipologiaDocumento: string,
-    categoriaDocumento: string,
-    ragioneSociale: string
+export interface BodyAsyncDoc{
+    init: string|null|Date,
+    end: string|null|Date,
+    ordinamento:number
 }
 
 const AsyncDocumenti = () => {
@@ -57,7 +25,6 @@ const AsyncDocumenti = () => {
     const {dispatchMainState,mainState} = globalContextObj;
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
-    const navigate = useNavigate();
 
     const { 
         filters,
@@ -66,40 +33,22 @@ const AsyncDocumenti = () => {
         resetFilters
     } = useSavedFilters(PathPf.ASYNC_DOCUMENTI_ENTE,{});
 
-    const handleModifyMainState = (valueObj) => {
-        dispatchMainState({
-            type:'MODIFY_MAIN_STATE',
-            value:valueObj
-        });
-    };
-
-    const [bodyGetLista,setBodyGetLista] = useState<any>({
-        anno:'',
-        mese:'',
-        idEnti:[],
-        idTipologiaReports:[]
-    });
-
-    const [valueYears, setValueYears] = useState<string[]>([]);
-    const [tipologieDoc, setTipologieDoc] = useState<TipologieDoc[]>([]);
-    const [tipologiaSelcted,setTipologiaSelected] = useState<TipologieDoc[]>([]);
-    const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
     const [textValue, setTextValue] = useState('');
-    const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
-    const [dataGrid,setDataGrid] = useState<ContestazioneRowGrid[]>([]);
-    const [listaToMap,setListaToMap] = useState<ContestazioneRowGrid[]>([]);
+    const [dataGrid,setDataGrid] = useState([]);
+    const [totDoc,setTotDoc] = useState(0);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [totalContestazioni, setTotalContestazioni]  = useState(0);
-    const [getListaContestazioniRunning, setGetListaContestazioniRunning] = useState(false);
-    const [arrayMesi,setArrayMesi] = useState<{descrizione:string,mese:string}[]>([]);
+    const [bodyGetLista, setBodyGetLista] = useState<BodyAsyncDoc>({ init:new Date(),end:null,ordinamento:0});
+    const [error,setError] = useState(false);
+    const [showLoading,setShowLoading] = useState(false);
+    const [showDownloading,setShowDownloading] = useState(false);
 
     useEffect(()=>{
-        listaTipoReport(); 
-        getAnni();
+        listaDoc(bodyGetLista,page,rowsPerPage); 
+        
     },[]);
-
+    /*
     useEffect(()=>{
         if(bodyGetLista.idEnti.length > 0 ||bodyGetLista.idTipologiaReports.length > 0 || bodyGetLista.mese !== ''){
             setStatusAnnulla('show');
@@ -107,94 +56,48 @@ const AsyncDocumenti = () => {
             setStatusAnnulla('hidden');
         }
     },[bodyGetLista]);
-
-    useEffect(()=>{
-        const timer = setTimeout(() => {
-            if(textValue.length >= 3){
-                listaEntiNotifichePageOnSelect();
-            }
-        }, 800);
-        return () => clearTimeout(timer);
-    },[textValue]);
-
+*/
+ 
     const clearOnChangeFilter = () => {
         setDataGrid([]);
         setPage(0);
         setRowsPerPage(10);
-        setTotalContestazioni(0);
+        setTotDoc(0);
     };
 
-    const getAnni = async() => {
-        console.log('ciao');
-       
-    };
-    const getMesi = async (anno) => {
-        console.log('ciao');
-    };
-
-    const listaEntiNotifichePageOnSelect = async () =>{
-        await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} ).then((res)=>{
-            setDataSelect(res.data);
+    const listaDoc = async (body,pag,row) =>{
+        await getListaAsyncDoc(token, profilo.nonce, body,pag+1,row ).then((res)=>{
+            setDataGrid(res.data);
         }).catch(((err)=>{
-            setDataSelect([]);
+            setDataGrid([]);
             manageError(err,dispatchMainState);
         }));
     };
 
-    const listaTipoReport = async () =>{
-        console.log('ciao');
-    };
-
-    const getListaContestazioni = async(body,pag, rowpag) => {
-        
-        console.log('ciao');
-    };
-
     const handleAnnullaButton = () => {
-        setBodyGetLista({
-            anno:valueYears[0],
-            mese:'',
-            idEnti:[],
-            idTipologiaReports:[]
-        });
-        setValueAutocomplete([]);
-        setDataSelect([]);
-        setTipologiaSelected([]);
-        getListaContestazioni({
-            mese:'',
-            idEnti:[],
-            idTipologiaReports:[],
-            anno:valueYears[0]
-        },1,10);
+        setBodyGetLista({ init:new Date(),end:null,ordinamento:0});
+        listaDoc({ init:new Date(),end:null,ordinamento:0},1,10);
         resetFilters();
     };
 
     const handleFiltra = () => {
         updateFilters({
-            pathPage:PathPf.ASYNC_DOCUMENTI_ENTE,
             body:bodyGetLista,
-            textValue:textValue,
-            valueAutocomplete,
-            tipologiaSelcted:tipologiaSelcted,
             page:0,
             rows:10,
         });
-        getListaContestazioni(bodyGetLista,page+1,rowsPerPage);
+        listaDoc(bodyGetLista,page,rowsPerPage);
     };
          
     const handleChangePage = (
         event: React.MouseEvent<HTMLButtonElement> | null,
         newPage: number,
     ) => {
-        const realPage = newPage + 1;
-        getListaContestazioni(bodyGetLista,realPage, rowsPerPage);
+        listaDoc(bodyGetLista,newPage, rowsPerPage);
         setPage(newPage);
         updateFilters({
             pathPage:PathPf.ASYNC_DOCUMENTI_ENTE,
             body:bodyGetLista,
-            textValue:textValue,
-            valueAutocomplete,
-            tipologiaSelcted:tipologiaSelcted,
             page:newPage,
             rows:rowsPerPage
         });
@@ -205,24 +108,20 @@ const AsyncDocumenti = () => {
     ) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
-        const realPage = page + 1;
-        getListaContestazioni(bodyGetLista,realPage,parseInt(event.target.value, 10));  
+       
+        listaDoc(bodyGetLista,page,parseInt(event.target.value, 10));  
         updateFilters({
             pathPage:PathPf.ASYNC_DOCUMENTI_ENTE,
             body:bodyGetLista,
-            textValue:textValue,
-            valueAutocomplete,
-            tipologiaSelcted:tipologiaSelcted,
             page:0,
             rows:parseInt(event.target.value, 10)
         });
     };
 
-    const handleClickOnDetail = (el) => {    
-        navigate(PathPf.ASYNC_DOCUMENTI_ENTE);
-        const singleEl = listaToMap.find(elem => elem.reportId === el.id);
-        handleModifyMainState({contestazioneSelected:singleEl});
-    };  
+    const handleClickOnDetail = () =>{
+        console.log(999);
+    };
+ 
 
     const headerNames = ['Ragione Sociale','Data Inserimento',"Mese","Anno",'Stato','Categoria Doc.',''];
 
@@ -236,111 +135,88 @@ const AsyncDocumenti = () => {
                 </div>
                 <div className="mb-5 mt-5 marginTop24" >
                     <div className="row">
-                        <div className="col-3">
-                            <Box sx={{ width:'80%'}}>
-                                <FormControl
-                                    fullWidth
-                                    size="medium"
-                                >
-                                    <InputLabel>
-                                Anno
-                                    </InputLabel>
-                                    <Select
-                                        label='Anno'
-                                        onChange={(e) =>{
-                                            setBodyGetLista((prev)=> ({...prev, ...{anno:e.target.value,mese:''}}));
-                                            getMesi(e.target.value);
-                                            clearOnChangeFilter();
-                                        }  }
-                                        value={bodyGetLista.anno||''}
-                                    >
-                                        {valueYears.map((el:string) => (
-                                            <MenuItem
-                                                key={el}
-                                                value={el||''}
-                                            >
-                                                {el}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
-                            </Box>
-                        </div>
-                        <div className="col-3">
-                            <Box sx={{width:'80%'}}  >
-                                <FormControl
-                                    fullWidth
-                                    size="medium"
-                                >
-                                    <InputLabel> Mese</InputLabel>
-                                    <Select
-                                        label='Seleziona Mese'
-                                        onChange={(e) =>{
-                                            setBodyGetLista((prev)=> ({...prev, ...{mese:e.target.value}}));
+                        <div className="col-2">
+                            <Box >
+                                <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it}>
+                                    <DesktopDatePicker
+                                        label={"Data fine"}
+                                        value={(bodyGetLista.end === ''||bodyGetLista.end === null) ? null : bodyGetLista.end}
+                                        onChange={(e:any | null)  =>{
+                                            if(e !== null && !isDateInvalid(e)){
+                                                setBodyGetLista(prev => ({...prev,...{end:e}}));
+                                                if(bodyGetLista.init !== null && ((formatDateToValidation(e)||0) < (formatDateToValidation(bodyGetLista.init)||0))){
+                                                    setError(true);
+                                                }else if(bodyGetLista.init === null && bodyGetLista.end !== null){
+                                                    setError(true);
+                                                }else{
+                                                    setError(false);
+                                                }
+                                            }else{
+                                                setBodyGetLista(prev => ({...prev,...{end:null}}));
+                                                setError(false);
+                                            }
                                             clearOnChangeFilter();
                                         }}
-                                        value={bodyGetLista.mese||''}
-                                    >
-                                        {arrayMesi.map((el) =>{
-                                            return(
-                                                <MenuItem key={el.mese} value={el.mese}>
-                                                    {el?.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase()}
-                                                </MenuItem>
-                                            );
-                                        })}
-                                    </Select>
-                                </FormControl>
+                                        format="dd/MM/yyyy"
+                                        slotProps={{
+                                            textField: {
+                                                error:error,
+                                            },
+                                        }}
+                                    />
+                                </LocalizationProvider>
                             </Box>
                         </div>
-                        <div className="col-3 "> 
-                            <Autocomplete
-                                sx={{width:'80%',height:'59px'}}
-                                multiple
-                                onChange={(event, value) => {
-                                    setTipologiaSelected(value);
-                                    const allId = value.map(el => el.idTipologiaReport);
-                                    setBodyGetLista((prev) => ({...prev,...{idTipologiaReports:allId}}));
-                                    clearOnChangeFilter();
-                                }}
-                                limitTags={1}
-                                value={tipologiaSelcted}
-                                options={tipologieDoc}
-                                disableCloseOnSelect
-                                getOptionLabel={(option:TipologieDoc) => option.categoriaDocumento}
-                                renderOption={(props, option,{ selected }) =>(
-                                    <li {...props}>
-                                        <Checkbox
-                                            icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                                            checkedIcon={<CheckBoxIcon fontSize="small" />}
-                                            style={{ marginRight: 8 }}
-                                            checked={selected}
-                                        />
-                                        { option.categoriaDocumento}
-                                    </li>
-                                )}
-                                renderInput={(params) => {
-                                    return <TextField {...params}
-                                        label="Categoria Doc." 
-                                        placeholder="Categoria Doc." />;
-                                }}
-                            />
+                        <div className="col-2">
+                            <Box >
+                                <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it}>
+                                    <DesktopDatePicker
+                                        label={"Data fine"}
+                                        value={(bodyGetLista.end === ''||bodyGetLista.end === null) ? null : bodyGetLista.end}
+                                        onChange={(e:any | null)  =>{
+                                            if(e !== null && !isDateInvalid(e)){
+                                                setBodyGetLista(prev => ({...prev,...{end:e}}));
+                                                if(bodyGetLista.init !== null && ((formatDateToValidation(e)||0) < (formatDateToValidation(bodyGetLista.init)||0))){
+                                                    setError(true);
+                                                }else if(bodyGetLista.init === null && bodyGetLista.end !== null){
+                                                    setError(true);
+                                                }else{
+                                                    setError(false);
+                                                }
+                                            }else{
+                                                setBodyGetLista(prev => ({...prev,...{end:null}}));
+                                                setError(false);
+                                            }
+                                            clearOnChangeFilter();
+                                        }}
+                                        format="dd/MM/yyyy"
+                                        slotProps={{
+                                            textField: {
+                                                error:error,
+                                            },
+                                        }}
+                                    />
+                                </LocalizationProvider>
+                            </Box>
                         </div>
-                    
-                    </div>
-                    <div className="row mt-5">
-                        <div className="col-9">
-                            <div className=" d-flex justify-content-start ">
+                        <div className="col-2">
+                        </div>
+                        <div className="col-2 d-flex align-items-center justify-content-center"> 
+                            <Box style={{ width: '50%' }}>
                                 <Button onClick={handleFiltra} sx={{ marginTop: 'auto', marginBottom: 'auto'}}variant="contained">
                                      Filtra
                                 </Button>
+                            </Box>    
+                            <Box style={{ width: '50%' }}>
                                 {statusAnnulla === 'hidden' ? null :
                                     <Button onClick={handleAnnullaButton} sx={{marginLeft:'24px'}} >
                                         Annulla filtri
                                     </Button>
-                                }
-                            </div>
+                                } 
+                            </Box> 
                         </div>
                     </div>
+                   
                     <div className="mt-5">
                         <div className="mt-1 mb-5" style={{ width: '100%'}}>
                             <GridCustom
@@ -348,21 +224,26 @@ const AsyncDocumenti = () => {
                                 elements={dataGrid}
                                 changePage={handleChangePage}
                                 changeRow={handleChangeRowsPerPage} 
-                                total={totalContestazioni}
+                                total={totDoc}
                                 page={page}
                                 rows={rowsPerPage}
                                 headerNames={headerNames}
                                 apiGet={handleClickOnDetail}
-                                disabled={getListaContestazioniRunning}
+                                disabled={false}
                                 widthCustomSize="1300px"></GridCustom>
                         </div>
                     </div>
                 </div>
             </div>
             <ModalLoading 
-                open={getListaContestazioniRunning} 
-                setOpen={setGetListaContestazioniRunning} 
+                open={showLoading} 
+                setOpen={setShowLoading} 
                 sentence={'Loading...'}>
+            </ModalLoading>
+            <ModalLoading 
+                open={showDownloading} 
+                setOpen={setShowDownloading} 
+                sentence={'Downloading...'}>
             </ModalLoading>
         </div>
     );

@@ -19,7 +19,7 @@ const HeaderProductEnte : React.FC = () => {
         if(globalContextObj.mainState.authenticated === true ){
             const interval = setInterval(() => {
                 getCount();
-            }, 5000);
+            }, 10000);
             return () => clearInterval(interval); 
         }
     },[globalContextObj.mainState.authenticated]);
