@@ -161,7 +161,12 @@ const ProcessiOrchestartore:React.FC = () =>{
 
     const downloadListaOrchestratore = async () => {
         setShowLoading(true);
-        await downloadOrchestratore(token,profilo.nonce, bodyGetLista).then(response => response.blob()).then((response)=>{
+        const bodyWitoutTime:BodyOrchestratore = {
+            ...bodyGetLista,
+            init:bodyGetLista.init ?dayjs(bodyGetLista.init).format("YYYY-MM-DD") : new Date(),
+            end:bodyGetLista.end ?dayjs(bodyGetLista.end).format("YYYY-MM-DD") :null,
+        };
+        await downloadOrchestratore(token,profilo.nonce, bodyWitoutTime).then(response => response.blob()).then((response)=>{
             let title = `Lista processi.xlsx`;
             if(bodyGetLista.init && !bodyGetLista.end){
                 title = `Lista processi/Data inzio:${dayjs(new Date(bodyGetLista.init)).format("DD-MM-YYYY")}.xlsx`;
