@@ -101,7 +101,13 @@ const ProcessiOrchestartore:React.FC = () =>{
     
     const getListaDati = async(bodyData:BodyOrchestratore,page,rows, reset = false) =>{
         setGetListaLoading(true);
-        await getListaActionMonitoring(token,profilo.nonce,bodyData, page+1,rows).then((res)=>{
+        const bodyWitoutTime:BodyOrchestratore = {
+            ...bodyGetLista,
+            init:bodyGetLista.init ?dayjs(bodyGetLista.init).format("YYYY-MM-DD") : new Date(),
+            end:bodyGetLista.end ?dayjs(bodyGetLista.end).format("YYYY-MM-DD") :null,
+        };
+
+        await getListaActionMonitoring(token,profilo.nonce,bodyWitoutTime, page+1,rows).then((res)=>{
             setTotalData(res.data.count);
             setGetListaLoading(false);
             
@@ -264,7 +270,7 @@ const ProcessiOrchestartore:React.FC = () =>{
     
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
- 
+    console.log({bodyGetLista});
     return(
         <div className="mx-5">
             <div className="marginTop24 ">
@@ -314,6 +320,7 @@ const ProcessiOrchestartore:React.FC = () =>{
                                 value={(bodyGetLista.end === ''||bodyGetLista.end === null) ? null : bodyGetLista.end}
                                 onChange={(e:any | null)  =>{
                                     if(e !== null && !isDateInvalid(e)){
+                                        console.log(e);
                                         setBodyGetLista(prev => ({...prev,...{end:e}}));
                                         if(bodyGetLista.init !== null && ((formatDateToValidation(e)||0) < (formatDateToValidation(bodyGetLista.init)||0))){
                                             setError(true);
