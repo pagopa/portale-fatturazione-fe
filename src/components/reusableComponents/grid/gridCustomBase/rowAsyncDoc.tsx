@@ -39,7 +39,7 @@ const RowAsyncDoc = ({sliced,headerNames}) => {
                     return (
                         <TableCell
                             align={headerNames[i]?.align}>
-                            {headerNames[i]?.headerTooltip(titleTooltip === 0 ? "In Elaborazione" : "Elebaorato",customValue=== 0 ? "In Elaborazione" : "Elebaorato","info")}              
+                            {headerNames[i]?.headerTooltip(titleTooltip === 0 ? "In Elaborazione" : "Elaborato",customValue=== 0 ? "In Elaborazione" : "Elaborato","info")}              
                         </TableCell>
                     );
                 }else if(headerNames[i]?.gridAction){
