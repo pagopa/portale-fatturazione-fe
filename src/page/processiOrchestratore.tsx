@@ -275,7 +275,6 @@ const ProcessiOrchestartore:React.FC = () =>{
     
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
-    console.log({bodyGetLista});
     return(
         <div className="mx-5">
             <div className="marginTop24 ">
@@ -325,7 +324,6 @@ const ProcessiOrchestartore:React.FC = () =>{
                                 value={(bodyGetLista.end === ''||bodyGetLista.end === null) ? null : bodyGetLista.end}
                                 onChange={(e:any | null)  =>{
                                     if(e !== null && !isDateInvalid(e)){
-                                        console.log(e);
                                         setBodyGetLista(prev => ({...prev,...{end:e}}));
                                         if(bodyGetLista.init !== null && ((formatDateToValidation(e)||0) < (formatDateToValidation(bodyGetLista.init)||0))){
                                             setError(true);
