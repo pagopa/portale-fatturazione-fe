@@ -16,13 +16,7 @@ export const headerNameAsyncDoc: HeaderGridCustom[] = [
     {label:'Anno',align:'center',width:'100px',headerAction:false},
     { label: 'Mese',align:'center',width:'100px',headerAction:false},
     { label: 'Data Esecuzione',align:'center',width:'150px',headerAction:false},
-    { label: 'Stato',align:'center',width:'100px',headerAction:false,
-        headerTooltip:(title,label,color) =>  
-            <Tooltip
-                placement="bottom"
-                title={title} >
-                <Chip label={label} color={color} />
-            </Tooltip>},
+    { label: 'Stato',align:'center',width:'100px',headerAction:false, headerTooltip:(title,label,color) => <Chip label={label} color={color} /> },
     { label: 'Letto',align:'center',width:'30px',headerAction:false},
     { label: '',align:'center',width:'60',headerAction:false,
         gridAction:(fun,color) =>

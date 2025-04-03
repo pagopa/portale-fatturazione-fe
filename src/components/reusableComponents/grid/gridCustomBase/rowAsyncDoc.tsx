@@ -1,5 +1,6 @@
 import { TableCell, TableRow, Tooltip, Typography } from "@mui/material";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import { boolean } from "yup";
 
 const RowAsyncDoc = ({sliced,headerNames}) => {
     console.log({headerNames});
@@ -27,7 +28,7 @@ const RowAsyncDoc = ({sliced,headerNames}) => {
                     customValue = <CheckCircleOutlineIcon sx={{color:color}}/>;
                 }
                 console.log({xx:headerNames[i]?.headerTooltip,pp:headerNames[i]?.gridAction,value});
-                if(value === "--"){
+                if(value === "--" || typeof(value) === "boolean"){
                     return (
                         <TableCell
                             align={headerNames[i]?.align}>
@@ -38,11 +39,7 @@ const RowAsyncDoc = ({sliced,headerNames}) => {
                     return (
                         <TableCell
                             align={headerNames[i]?.align}>
-                            
-                          
-                            {headerNames[i]?.headerTooltip(titleTooltip === 0 ? "In Elaborazione" : "Elebaorato",customValue=== 0 ? "In Elaborazione" : "Elebaorato","info")}
-                            
-                                        
+                            {headerNames[i]?.headerTooltip(titleTooltip === 0 ? "In Elaborazione" : "Elebaorato",customValue=== 0 ? "In Elaborazione" : "Elebaorato","info")}              
                         </TableCell>
                     );
                 }else if(headerNames[i]?.gridAction){

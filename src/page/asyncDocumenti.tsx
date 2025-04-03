@@ -1,10 +1,9 @@
 import { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "../store/context/globalContext";
-import { useNavigate } from "react-router";
 import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
 import { PathPf } from "../types/enum";
 import { manageError } from "../api/api";
-import { Typography, Button } from "@mui/material";
+import { Typography, Button, Tooltip } from "@mui/material";
 import { Box } from "@mui/system";
 import GridCustom from "../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
@@ -15,6 +14,8 @@ import { getListaAsyncDoc } from "../api/apiSelfcare/asyncDoc/api";
 import { it } from "date-fns/locale";
 import { headerNameAsyncDoc } from "../assets/configurations/conf_GridAsyncDocEnte";
 import { mesiGrid } from "../reusableFunction/reusableArrayObj";
+import dayjs from "dayjs";
+import ListIcon from '@mui/icons-material/List';
 
 export interface BodyAsyncDoc{
     init: string|null|Date,
@@ -45,7 +46,7 @@ const AsyncDocumenti = () => {
         resetFilters
     } = useSavedFilters(PathPf.ASYNC_DOCUMENTI_ENTE,{});
 
-    const [statusAnnulla, setStatusAnnulla] = useState('hidden');
+ 
     const [dataGrid,setDataGrid] = useState([]);
     const [totDoc,setTotDoc] = useState(0);
     const [page, setPage] = useState(0);
@@ -55,6 +56,8 @@ const AsyncDocumenti = () => {
     const [showLoading,setShowLoading] = useState(false);
     const [showDownloading,setShowDownloading] = useState(false);
 
+    const disableListaCompletaButton = dayjs(bodyGetLista.init).format("YYYY-MM-DD") !== dayjs(new Date()).format("YYYY-MM-DD")  || bodyGetLista.end !== null;
+    console.log({bodyGetLista},new Date());
     useEffect(()=>{
         listaDoc(bodyGetLista,page,rowsPerPage); 
         
@@ -78,7 +81,13 @@ const AsyncDocumenti = () => {
 
     const listaDoc = async (body,pag,row) =>{
         setShowLoading(true);
-        await getListaAsyncDoc(token, profilo.nonce, body,pag+1,row ).then((res)=>{
+
+        const bodyWitoutTime:BodyAsyncDoc = {
+            ...body,
+            init:body.init ?dayjs(body.init).format("YYYY-MM-DD") : new Date(),
+            end:body.end ? dayjs(body.end).format("YYYY-MM-DD") :null,
+        };
+        await getListaAsyncDoc(token, profilo.nonce, bodyWitoutTime,pag+1,row ).then((res)=>{
 
             console.log(res.data);
             const result = res.data.items.map((el)=>{
@@ -106,7 +115,9 @@ const AsyncDocumenti = () => {
 
     const handleAnnullaButton = () => {
         setBodyGetLista({ init:new Date(),end:null,ordinamento:0});
-        listaDoc({ init:new Date(),end:null,ordinamento:0},1,10);
+        listaDoc({ init:new Date(),end:null,ordinamento:0},0,10);
+        setPage(0);
+        setRowsPerPage(10);
         resetFilters();
     };
 
@@ -240,21 +251,19 @@ const AsyncDocumenti = () => {
                                 </LocalizationProvider>
                             </Box>
                         </div>
-                        <div className="col-2">
-                        </div>
-                        <div className="col-2 d-flex align-items-center justify-content-center"> 
+                        <div className="col-3 d-flex align-items-center justify-content-center"> 
                             <Box style={{ width: '50%' }}>
                                 <Button onClick={handleFiltra} sx={{ marginTop: 'auto', marginBottom: 'auto'}}variant="contained">
                                      Filtra
                                 </Button>
-                            </Box>    
+                            </Box>   
                             <Box style={{ width: '50%' }}>
-                                {statusAnnulla === 'hidden' ? null :
-                                    <Button onClick={handleAnnullaButton} sx={{marginLeft:'24px'}} >
-                                        Annulla filtri
+                                {disableListaCompletaButton &&
+                                    <Button onClick={handleAnnullaButton}>
+                   Annulla filtri
                                     </Button>
-                                } 
-                            </Box> 
+                                }
+                            </Box>  
                         </div>
                     </div>
                    
