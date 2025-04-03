@@ -2,7 +2,11 @@ import { TableCell, TableRow, Tooltip, Typography } from "@mui/material";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 const RowAsyncDoc = ({sliced,headerNames}) => {
- 
+    console.log({headerNames});
+
+    const prova = () => {
+        console.log('download');
+    };
     return (
         <TableRow sx={{
             borderTop:"4px solid #F2F2F2",
@@ -11,7 +15,6 @@ const RowAsyncDoc = ({sliced,headerNames}) => {
         key={Math.random()}>
             { Object.values(sliced).map((value:any, i:number)=>{
                 const indexLetto =  Object.entries(sliced).findIndex(([key]) => key === 'letto');
-                const indexStato =  Object.entries(sliced).findIndex(([key]) => key === 'stato');
                 let titleTooltip = value;
                 let customValue = value;
                 if(i === indexLetto){
@@ -23,7 +26,7 @@ const RowAsyncDoc = ({sliced,headerNames}) => {
                     }
                     customValue = <CheckCircleOutlineIcon sx={{color:color}}/>;
                 }
-                console.log({xx:headerNames[i]?.headerTooltip});
+                console.log({xx:headerNames[i]?.headerTooltip,pp:headerNames[i]?.gridAction,value});
                 if(value === "--"){
                     return (
                         <TableCell
@@ -35,9 +38,18 @@ const RowAsyncDoc = ({sliced,headerNames}) => {
                     return (
                         <TableCell
                             align={headerNames[i]?.align}>
+                            
+                          
                             {headerNames[i]?.headerTooltip(titleTooltip === 0 ? "In Elaborazione" : "Elebaorato",customValue=== 0 ? "In Elaborazione" : "Elebaorato","info")}
-                            <Typography style={{ fontSize: "1rem", fontWeight: 600 }} variant="caption-semibold"></Typography> 
+                            
                                         
+                        </TableCell>
+                    );
+                }else if(headerNames[i]?.gridAction){
+                    return (
+                        <TableCell
+                            align={headerNames[i]?.align}>
+                            {headerNames[i]?.gridAction(prova,"primary")}                
                         </TableCell>
                     );
                 }else{

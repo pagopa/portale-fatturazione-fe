@@ -89,7 +89,8 @@ const AsyncDocumenti = () => {
                     mese:mesiGrid[el.mese],
                     dataFine:transformDateTime(el.dataFine).split(".")[0]||"--",
                     stato:el.stato,
-                    letto:el.letto
+                    letto:el.letto,
+                    action:''
                 };
                 return element;
             });
@@ -272,7 +273,7 @@ const AsyncDocumenti = () => {
                                 disabled={false}
                                 headerAction={headerAction}
                                 body={bodyGetLista}
-                                widthCustomSize="1300px"></GridCustom>
+                                widthCustomSize="auto"></GridCustom>
                         </div>
                     </div>
                 </div>
