@@ -45,8 +45,6 @@ const BasicAlerts:React.FC = () => {
 
     let colorAlert:AlertColor = 'success'; 
 
-
-   
     if(mainState.apiError === 401 || mainState.apiError === 403|| errorAlert.error === 401 ){
         colorAlert = 'error';
     }else if(mainState.apiError === 419 || errorAlert.error === 419 ){
@@ -91,7 +89,7 @@ const BasicAlerts:React.FC = () => {
                         window.location.href = redirect;
                     }
                 }
-            }, 2500);
+            }, 3000);
             return () =>{
                 clearTimeout(timer);
             }; 
@@ -119,7 +117,7 @@ const BasicAlerts:React.FC = () => {
     return createPortal(
         <div className={css}>
             <Alert sx={{display:'flex', justifyContent:'center'}} severity={colorAlert}  variant="standard">{t(`errori.${mainState.apiError||errorAlert.message}`, {defaultValue:t(`errori.400`)})} 
-                {mainState.apiError === 'PRESA_IN_CARICO_DOCUMENTO' &&
+                {(mainState.apiError === 'PRESA_IN_CARICO_DOCUMENTO'|| mainState.apiError === 'PRESA_IN_CARICO_DOCUMENTO_ENTE') &&
                 <IconButton sx={{marginLeft:'20px'}} onClick={()=> {
                     setCss('main_container_alert_component_hidden');
                     navigate(profilo.auth === 'PAGOPA' ? PathPf.MESSAGGI : PathPf.ASYNC_DOCUMENTI_ENTE);

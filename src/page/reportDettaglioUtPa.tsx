@@ -669,7 +669,7 @@ const ReportDettaglio : React.FC = () => {
             await downloadNotifche(token, profilo.nonce,bodyEnti ).then((res)=>{
                 console.log({res});
                 setShowLoading(false);
-                managePresaInCarico('PRESA_IN_CARICO_DOCUMENTO',dispatchMainState);
+                managePresaInCarico('PRESA_IN_CARICO_DOCUMENTO_ENTE',dispatchMainState);
                 /*
                 const blob = new Blob([res.data], { type: 'text/csv' });
                 const url = window.URL.createObjectURL(blob);

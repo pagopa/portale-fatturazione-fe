@@ -12,6 +12,8 @@ import { DataGridOrchestratore } from "../../../page/processiOrchestratore";
 import RowOrchestratore from "./gridCustomBase/rowOrchestratore";
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import { DataGridAsyncDoc } from "../../../page/asyncDocumenti";
+import RowAsyncDoc from "./gridCustomBase/rowAsyncDoc";
 interface GridCustomProps {
     elements:NotificheList[]|Rel[]|GridElementListaPsp[]|any[],
     changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
@@ -92,7 +94,7 @@ const GridCustom : React.FC<GridCustomProps> = (
                         <TableHead sx={{backgroundColor:'#f2f2f2'}}>
                             <TableRow>
                                 {headerNames.map((el,i)=>{
-                                    if(nameParameterApi === 'idOrchestratore'){
+                                    if(nameParameterApi === 'idOrchestratore' || nameParameterApi === "asyncDocEnte"){
                                         return(
                                            
                                             <TableCell align={el.align} width={el.width} key={i}>{el.label}
@@ -115,7 +117,7 @@ const GridCustom : React.FC<GridCustomProps> = (
                             <TableBody key={Math.random()} style={{height: '50px'}}>
                             </TableBody> :
                             <TableBody sx={{marginLeft:'20px'}}>
-                                {elements.map((element:Rel|NotificheList|GridElementListaPsp|Whitelist|DataGridOrchestratore ) =>{
+                                {elements.map((element:Rel|NotificheList|GridElementListaPsp|Whitelist|DataGridOrchestratore|DataGridAsyncDoc ) =>{
                                     // tolgo da ogni oggetto la prima chiave valore  perchè il cliente non vuole vedere es. l'id ma serve per la chiamata get di dettaglio 
                                     let sliced = Object.fromEntries(
                                         Object.entries(element).slice(1)
@@ -129,6 +131,8 @@ const GridCustom : React.FC<GridCustomProps> = (
                                         return <RowWhiteList key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} setSelected={setSelected} selected={selected||[]}  checkIfChecked={checkIfChecked} ></RowWhiteList>;
                                     }else if(nameParameterApi === 'idOrchestratore'){
                                         return <RowOrchestratore key={Math.random()} sliced={sliced} headerNames={headerNames}></RowOrchestratore>;
+                                    }else if(nameParameterApi === 'asyncDocEnte'){
+                                        return <RowAsyncDoc key={Math.random()} sliced={sliced} headerNames={headerNames}></RowAsyncDoc>;
                                     }else{
                                         return (
                                             <TableRow key={Math.random()}>

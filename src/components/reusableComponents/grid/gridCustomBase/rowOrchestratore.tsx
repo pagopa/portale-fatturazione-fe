@@ -19,7 +19,8 @@ const RowOrchestratore = ({sliced,headerNames}) => {
             backgroundColor:bgColorRow,
             borderTop:"4px solid #F2F2F2",
             borderBottom: "2px solid #F2F2F2"
-        }} key={Math.random()}>
+        }} 
+        key={Math.random()}>
             {
                 Object.values(sliced).map((value:any, i:number)=>{
                     const indexEsec =  Object.entries(sliced).findIndex(([key]) => key === 'esecuzione');
