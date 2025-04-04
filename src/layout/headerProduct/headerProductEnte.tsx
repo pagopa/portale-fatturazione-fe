@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import SimCardDownloadIcon from '@mui/icons-material/SimCardDownload';
 import { PathPf } from '../../types/enum';
 import { getMessaggiCountEnte } from '../../api/apiSelfcare/notificheSE/api';
+import DownloadIcon from '@mui/icons-material/Download';
 
 const HeaderProductEnte : React.FC = () => {
     const globalContextObj = useContext(GlobalContext);
@@ -71,7 +72,7 @@ const HeaderProductEnte : React.FC = () => {
                     variant="standard"
                 >
                     <IconButton onClick={() => navigate(PathPf.ASYNC_DOCUMENTI_ENTE)}  color="default">
-                        <SimCardDownloadIcon fontSize="medium" sx={{color: '#17324D'}}
+                        <DownloadIcon fontSize="medium" sx={{color: '#17324D'}}
                         />
                     </IconButton>
                 </Badge>

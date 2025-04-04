@@ -18,7 +18,7 @@ import { PathPf } from '../../types/enum';
 import { getDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
 import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
 import { manageError } from '../../api/api';
-import SimCardDownloadIcon from '@mui/icons-material/SimCardDownload';
+import DownloadIcon from '@mui/icons-material/Download';
 
 const SideNavEnte: React.FC = () => {
 
@@ -202,7 +202,7 @@ const SideNavEnte: React.FC = () => {
                 </ListItemButton>
                 <ListItemButton selected={selectedIndex === 8} onClick={handleListItemAsyncDoc}>
                     <ListItemIcon>
-                        <SimCardDownloadIcon fontSize="inherit"/>
+                        <DownloadIcon fontSize="inherit"/>
                     </ListItemIcon>
                     <ListItemText primary="Download documenti"/>
                 </ListItemButton>
