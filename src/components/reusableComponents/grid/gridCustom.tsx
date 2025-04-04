@@ -61,22 +61,28 @@ const GridCustom : React.FC<GridCustomProps> = (
     }) =>{
 
     const handleClickOnGrid = (element) =>{
+        let newDetail = {};
         if(apiGet && nameParameterApi === 'idContratto'){
-            const newDetailRel = {
+            newDetail = {
                 name:element.ragioneSociale,
                 tipologiaContratto:element.tipoContratto,
                 idEnte:element.idEnte
             };
-            apiGet(newDetailRel);
+          
+        }else if(apiGet && nameParameterApi ==='asyncDocEnte'){
+            newDetail = {
+                idReport:element?.idReport,
+            };
         }else if(apiGet){
-            const newDetailRel = {
+            newDetail = {
                 nomeEnteClickOn:element.ragioneSociale,
                 mese:element.mese,
                 anno:element.anno,
                 id:element[nameParameterApi]
             };
-            apiGet(newDetailRel);
+            
         }
+        apiGet && apiGet(newDetail);
     };
 
     const checkIfChecked = (id:any) => {
@@ -132,7 +138,7 @@ const GridCustom : React.FC<GridCustomProps> = (
                                     }else if(nameParameterApi === 'idOrchestratore'){
                                         return <RowOrchestratore key={Math.random()} sliced={sliced} headerNames={headerNames}></RowOrchestratore>;
                                     }else if(nameParameterApi === 'asyncDocEnte'){
-                                        return <RowAsyncDoc key={Math.random()} sliced={sliced} headerNames={headerNames}></RowAsyncDoc>;
+                                        return <RowAsyncDoc key={Math.random()} sliced={sliced} headerNames={headerNames} handleClickOnGrid={handleClickOnGrid} element={element}></RowAsyncDoc>;
                                     }else{
                                         return (
                                             <TableRow key={Math.random()}>

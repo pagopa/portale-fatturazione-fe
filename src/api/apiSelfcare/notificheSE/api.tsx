@@ -209,3 +209,12 @@ export const getMessaggiCountEnte = async (token:string,nonce:string) => {
     );
     return response;
 }; 
+
+export const getNotificheDownloadFromAsync = async ( token:string ,nonce:string , idReport:string) => {
+    const response =  await axios.get(`${url}/api/notifiche/richiesta/download?idReport=${idReport}&nonce=${nonce}`,  
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }}
+    );
+    return response;
+};

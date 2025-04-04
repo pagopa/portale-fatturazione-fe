@@ -3,19 +3,20 @@ import { GlobalContext } from "../store/context/globalContext";
 import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
 import { PathPf } from "../types/enum";
 import { manageError } from "../api/api";
-import { Typography, Button, Tooltip } from "@mui/material";
+import { Typography, Button } from "@mui/material";
 import { Box } from "@mui/system";
 import GridCustom from "../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { formatDateToValidation, isDateInvalid, transformDateTime } from "../reusableFunction/function";
+import { formatDateToValidation, isDateInvalid, transformDateTime, transformDateTimeWithNameMonth } from "../reusableFunction/function";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { getListaAsyncDoc } from "../api/apiSelfcare/asyncDoc/api";
 import { it } from "date-fns/locale";
 import { headerNameAsyncDoc } from "../assets/configurations/conf_GridAsyncDocEnte";
 import { mesiGrid } from "../reusableFunction/reusableArrayObj";
 import dayjs from "dayjs";
-import ListIcon from '@mui/icons-material/List';
+import { getMessaggiCountEnte, getNotificheDownloadFromAsync } from "../api/apiSelfcare/notificheSE/api";
+
 
 export interface BodyAsyncDoc{
     init: string|null|Date,
@@ -35,7 +36,7 @@ export interface DataGridAsyncDoc {
 
 const AsyncDocumenti = () => {
     const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState} = globalContextObj;
+    const {dispatchMainState,mainState,setCountMessages} = globalContextObj;
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 
@@ -51,27 +52,18 @@ const AsyncDocumenti = () => {
     const [totDoc,setTotDoc] = useState(0);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [bodyGetLista, setBodyGetLista] = useState<BodyAsyncDoc>({ init:new Date(),end:null,ordinamento:0});
+    const [bodyGetLista, setBodyGetLista] = useState<BodyAsyncDoc>({ init:null,end:null,ordinamento:0});
     const [error,setError] = useState(false);
     const [showLoading,setShowLoading] = useState(false);
     const [showDownloading,setShowDownloading] = useState(false);
 
-    const disableListaCompletaButton = dayjs(bodyGetLista.init).format("YYYY-MM-DD") !== dayjs(new Date()).format("YYYY-MM-DD")  || bodyGetLista.end !== null;
-    console.log({bodyGetLista},new Date());
+    const disableListaCompletaButton = bodyGetLista.init !== null || bodyGetLista.end !== null;
+   
     useEffect(()=>{
         listaDoc(bodyGetLista,page,rowsPerPage); 
         
     },[]);
-    /*
-    useEffect(()=>{
-        if(bodyGetLista.idEnti.length > 0 ||bodyGetLista.idTipologiaReports.length > 0 || bodyGetLista.mese !== ''){
-            setStatusAnnulla('show');
-        }else{
-            setStatusAnnulla('hidden');
-        }
-    },[bodyGetLista]);
-*/
- 
+
     const clearOnChangeFilter = () => {
         setDataGrid([]);
         setPage(0);
@@ -81,19 +73,16 @@ const AsyncDocumenti = () => {
 
     const listaDoc = async (body,pag,row) =>{
         setShowLoading(true);
-
         const bodyWitoutTime:BodyAsyncDoc = {
             ...body,
-            init:body.init ?dayjs(body.init).format("YYYY-MM-DD") : new Date(),
+            init:body.init ?dayjs(body.init).format("YYYY-MM-DD") : null,
             end:body.end ? dayjs(body.end).format("YYYY-MM-DD") :null,
         };
         await getListaAsyncDoc(token, profilo.nonce, bodyWitoutTime,pag+1,row ).then((res)=>{
-
-            console.log(res.data);
             const result = res.data.items.map((el)=>{
                 const element = {
                     reportId:el.reportId,
-                    dataInserimento:transformDateTime(el.dataInserimento).split(".")[0]||"--",
+                    dataInserimento:transformDateTimeWithNameMonth(el.dataInserimento)||"--",
                     anno:el.anno,
                     mese:mesiGrid[el.mese],
                     dataFine:transformDateTime(el.dataFine).split(".")[0]||"--",
@@ -113,12 +102,15 @@ const AsyncDocumenti = () => {
         }));
     };
 
+   
+
     const handleAnnullaButton = () => {
-        setBodyGetLista({ init:new Date(),end:null,ordinamento:0});
-        listaDoc({ init:new Date(),end:null,ordinamento:0},0,10);
+        setBodyGetLista({ init:null,end:null,ordinamento:0});
+        listaDoc({ init:null,end:null,ordinamento:0},0,10);
         setPage(0);
         setRowsPerPage(10);
         resetFilters();
+        setError(false);
     };
 
     const handleFiltra = () => {
@@ -159,8 +151,31 @@ const AsyncDocumenti = () => {
         });
     };
 
-    const handleClickOnDetail = () =>{
-        console.log(999);
+    const handleClickOnDetail = async(obj) =>{
+        setShowDownloading(true);
+        await getNotificheDownloadFromAsync(token, profilo.nonce,obj?.idReport).then((res)=>{
+            const link = document.createElement("a");
+            link.href = res.data;
+            link.download = `Notifiche.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(res.data);
+            setShowDownloading(false);
+        }).catch((err)=>{
+            console.log({err});
+            setShowDownloading(false);
+        });
+
+        await getMessaggiCountEnte(token,profilo.nonce).then((res)=>{
+            const numMessaggi = res.data;
+            setCountMessages(numMessaggi);
+        }).catch((err)=>{
+            console.log(err);
+        });
+
+        await listaDoc(bodyGetLista,page,rowsPerPage); 
+
     };
 
     const headerAction = (newParam) => {
@@ -171,9 +186,6 @@ const AsyncDocumenti = () => {
         });
     };
  
-
-    
-
     return (
         <div className="mx-5" style={{minHeight:'600px'}}>
             <div className="marginTop24">
@@ -230,7 +242,7 @@ const AsyncDocumenti = () => {
                                                 setBodyGetLista(prev => ({...prev,...{end:e}}));
                                                 if(bodyGetLista.init !== null && ((formatDateToValidation(e)||0) < (formatDateToValidation(bodyGetLista.init)||0))){
                                                     setError(true);
-                                                }else if(bodyGetLista.init === null && bodyGetLista.end !== null){
+                                                }else if(bodyGetLista.init === null && e !== null){
                                                     setError(true);
                                                 }else{
                                                     setError(false);
@@ -253,13 +265,13 @@ const AsyncDocumenti = () => {
                         </div>
                         <div className="col-3 d-flex align-items-center justify-content-center"> 
                             <Box style={{ width: '50%' }}>
-                                <Button onClick={handleFiltra} sx={{ marginTop: 'auto', marginBottom: 'auto'}}variant="contained">
+                                <Button disabled={error} onClick={handleFiltra} sx={{ marginTop: 'auto', marginBottom: 'auto'}}variant="contained">
                                      Filtra
                                 </Button>
                             </Box>   
                             <Box style={{ width: '50%' }}>
                                 {disableListaCompletaButton &&
-                                    <Button onClick={handleAnnullaButton}>
+                                    <Button disabled={error} onClick={handleAnnullaButton}>
                    Annulla filtri
                                     </Button>
                                 }

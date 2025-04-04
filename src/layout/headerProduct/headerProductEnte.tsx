@@ -16,10 +16,15 @@ const HeaderProductEnte : React.FC = () => {
     const navigate = useNavigate();
 
     useEffect(()=>{
+        getCount();
+    },[]);
+
+    
+    useEffect(()=>{
         if(globalContextObj.mainState.authenticated === true ){
             const interval = setInterval(() => {
                 getCount();
-            }, 10000);
+            }, 20000);
             return () => clearInterval(interval); 
         }
     },[globalContextObj.mainState.authenticated]);

@@ -29,6 +29,7 @@ i18n.use(Backend)
                         "SEND_JSON_SAP_OK":"Operazione andata a buon fine",
                         'PRESA_IN_CARICO_DOCUMENTO':"Azione presa in carico. Vai ai messaggi per visualizzare lo stato di elaborazione",
                         'PRESA_IN_CARICO_DOCUMENTO_ENTE':"Azione presa in carico. Visualizza lo stato di elaborazione",
+                        'NO_OPERAZIONE':"Al momento non è possibile effettuare l'operazione",
                         'ERRORE_MANUALE':'Manuale momentaneamente non disponibile',
                         'ERROR_LIST_JSON_TO_SAP':"Dettaglio momentaneamente non disponibile",
                         "404_RIGHE_ID":"Il report di dettaglio notifiche Regolare Esecuzione sarà disponibile a breve",

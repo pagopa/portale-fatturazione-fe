@@ -12,7 +12,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import MultiSelectStatoContestazione from "../components/reportDettaglio/multiSelectGroupedBy";
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import ModalScadenziario from "../components/reportDettaglio/modalScadenziario";
-import { downloadNotifche, downloadNotifcheConsolidatore, downloadNotifcheInps, downloadNotifcheRecapitista, getContestazione, getContestazioneCosolidatore, getContestazioneRecapitista, listaEntiNotifichePage, listaEntiNotifichePageConsolidatore, listaNotifiche, listaNotificheConsolidatore, listaNotificheRecapitista } from "../api/apiSelfcare/notificheSE/api";
+import { downloadNotifche, downloadNotifcheConsolidatore, downloadNotifcheInps, downloadNotifcheRecapitista, getContestazione, getContestazioneCosolidatore, getContestazioneRecapitista, getMessaggiCountEnte, listaEntiNotifichePage, listaEntiNotifichePageConsolidatore, listaNotifiche, listaNotificheConsolidatore, listaNotificheRecapitista } from "../api/apiSelfcare/notificheSE/api";
 import { downloadNotifchePagoPa, getAnniNotifiche, getContestazionePagoPa, getMesiNotifiche, getTipologiaEntiCompletiPagoPa, listaNotifichePagoPa } from "../api/apiPagoPa/notifichePA/api";
 import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
@@ -30,6 +30,7 @@ const ReportDettaglio : React.FC = () => {
         dispatchMainState,
         mainState,
         setOpenModalInfo,
+        setCountMessages,
         openModalInfo
     } = globalContextObj;
     
@@ -666,24 +667,25 @@ const ReportDettaglio : React.FC = () => {
         if(enti){
             const {idEnti, recapitisti, consolidatori, ...bodyEnti} = bodyDownload; 
             // eslint-disable-next-line @typescript-eslint/no-unused-vars  
-            await downloadNotifche(token, profilo.nonce,bodyEnti ).then((res)=>{
-                console.log({res});
+            await downloadNotifche(token, profilo.nonce,bodyEnti ).then(async(res)=>{
+           
                 setShowLoading(false);
                 managePresaInCarico('PRESA_IN_CARICO_DOCUMENTO_ENTE',dispatchMainState);
-                /*
-                const blob = new Blob([res.data], { type: 'text/csv' });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.setAttribute('hidden', '');
-                a.setAttribute('href', url);
-                a.setAttribute('download',`Notifiche /${notificheList[0].ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`);
-                document.body.appendChild(a);
-                a.click();
-                setShowLoading(false);
-                document.body.removeChild(a);   */     
+                await getMessaggiCountEnte(token,profilo.nonce).then((res)=>{
+                    const numMessaggi = res.data;
+                    setCountMessages(numMessaggi);
+                }).catch((err)=>{
+                    console.log(err);
+                });
             }).catch(((err)=>{
                 setShowLoading(false);
-                manageError(err,dispatchMainState);
+                if(err?.response?.status === 404){
+                    managePresaInCarico(400,dispatchMainState);
+                }else if(err?.response?.status === 400){
+                    managePresaInCarico('NO_OPERAZIONE',dispatchMainState);
+                }else{
+                    manageError(err,dispatchMainState);
+                }
             }));
           
           
