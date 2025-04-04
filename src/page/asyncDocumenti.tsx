@@ -16,8 +16,6 @@ import { headerNameAsyncDoc } from "../assets/configurations/conf_GridAsyncDocEn
 import { mesiGrid } from "../reusableFunction/reusableArrayObj";
 import dayjs from "dayjs";
 import { getMessaggiCountEnte, getNotificheDownloadFromAsync } from "../api/apiSelfcare/notificheSE/api";
-
-
 export interface BodyAsyncDoc{
     init: string|null|Date,
     end: string|null|Date,
@@ -47,7 +45,6 @@ const AsyncDocumenti = () => {
         resetFilters
     } = useSavedFilters(PathPf.ASYNC_DOCUMENTI_ENTE,{});
 
- 
     const [dataGrid,setDataGrid] = useState([]);
     const [totDoc,setTotDoc] = useState(0);
     const [page, setPage] = useState(0);
@@ -60,8 +57,19 @@ const AsyncDocumenti = () => {
     const disableListaCompletaButton = bodyGetLista.init !== null || bodyGetLista.end !== null;
    
     useEffect(()=>{
-        listaDoc(bodyGetLista,page,rowsPerPage); 
-        
+        if(isInitialRender.current && Object.keys(filters).length > 0){
+            listaDoc(filters.body,filters.page, filters.rows);
+            setTotDoc(filters.totalData);
+            setPage(filters.page);
+            setRowsPerPage(filters.rows);
+            setBodyGetLista({ 
+                init:filters.body.init ? new Date(filters.body.init):null,
+                end:filters?.body?.end ? new Date(filters.body.end):null,
+                ordinamento:filters.body.ordinamento,
+            });
+        }else{
+            listaDoc(bodyGetLista,page,rowsPerPage);
+        }
     },[]);
 
     const clearOnChangeFilter = () => {
@@ -95,10 +103,24 @@ const AsyncDocumenti = () => {
             setTotDoc(res.data.count);
             setDataGrid(result);
             setShowLoading(false);
+            updateFilters({
+                body:body,
+                pathPage:PathPf.ASYNC_DOCUMENTI_ENTE,
+                page:pag,
+                rows:row,
+                totalData:res.data.count
+            });
         }).catch(((err)=>{
             setDataGrid([]);
             setShowLoading(false);
             manageError(err,dispatchMainState);
+            updateFilters({
+                body:body,
+                pathPage:PathPf.ASYNC_DOCUMENTI_ENTE,
+                page:0,
+                rows:10,
+                totalData:0
+            });
         }));
     };
 
@@ -114,11 +136,6 @@ const AsyncDocumenti = () => {
     };
 
     const handleFiltra = () => {
-        updateFilters({
-            body:bodyGetLista,
-            page:0,
-            rows:10,
-        });
         listaDoc(bodyGetLista,page,rowsPerPage);
     };
          
@@ -128,12 +145,6 @@ const AsyncDocumenti = () => {
     ) => {
         listaDoc(bodyGetLista,newPage, rowsPerPage);
         setPage(newPage);
-        updateFilters({
-            pathPage:PathPf.ASYNC_DOCUMENTI_ENTE,
-            body:bodyGetLista,
-            page:newPage,
-            rows:rowsPerPage
-        });
     };
                     
     const handleChangeRowsPerPage = (
@@ -141,19 +152,12 @@ const AsyncDocumenti = () => {
     ) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
-       
         listaDoc(bodyGetLista,page,parseInt(event.target.value, 10));  
-        updateFilters({
-            pathPage:PathPf.ASYNC_DOCUMENTI_ENTE,
-            body:bodyGetLista,
-            page:0,
-            rows:parseInt(event.target.value, 10)
-        });
     };
 
     const handleClickOnDetail = async(obj) =>{
         setShowDownloading(true);
-        await getNotificheDownloadFromAsync(token, profilo.nonce,obj?.idReport).then((res)=>{
+        await getNotificheDownloadFromAsync(token, profilo.nonce,obj?.idReport).then(async(res)=>{
             const link = document.createElement("a");
             link.href = res.data;
             link.download = `Notifiche.csv`;
@@ -161,20 +165,23 @@ const AsyncDocumenti = () => {
             link.click();
             document.body.removeChild(link);
             window.URL.revokeObjectURL(res.data);
+
+            await getMessaggiCountEnte(token,profilo.nonce).then((res)=>{
+                const numMessaggi = res.data;
+                setCountMessages(numMessaggi);
+            }).catch((err)=>{
+                console.log(err);
+            });
+    
+            await listaDoc(bodyGetLista,page,rowsPerPage); 
             setShowDownloading(false);
         }).catch((err)=>{
             console.log({err});
             setShowDownloading(false);
+            manageError(err,dispatchMainState);
         });
 
-        await getMessaggiCountEnte(token,profilo.nonce).then((res)=>{
-            const numMessaggi = res.data;
-            setCountMessages(numMessaggi);
-        }).catch((err)=>{
-            console.log(err);
-        });
-
-        await listaDoc(bodyGetLista,page,rowsPerPage); 
+        
 
     };
 

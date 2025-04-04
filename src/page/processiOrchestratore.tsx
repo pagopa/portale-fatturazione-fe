@@ -150,6 +150,16 @@ const ProcessiOrchestartore:React.FC = () =>{
             setGridData([]);
             setGetListaLoading(false);
             manageError(err,dispatchMainState);
+            updateFilters({
+                body:bodyData,
+                pathPage:PathPf.ORCHESTRATORE,
+                page:0,
+                rows:10,
+                valueStati:valueStati,
+                valueFasi:valueFasi,
+                valueTipologie:valueTipologie,
+                totalData:0
+            });
         })); 
     };
 

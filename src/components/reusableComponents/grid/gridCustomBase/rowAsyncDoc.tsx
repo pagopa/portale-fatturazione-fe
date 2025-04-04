@@ -18,7 +18,6 @@ const RowAsyncDoc = ({sliced,headerNames,handleClickOnGrid,element}) => {
         chipBgColor = "error";
     }
 
-    console.log({sliced,element});
     return (
         <TableRow sx={{
             borderTop:"4px solid #F2F2F2",
@@ -30,7 +29,6 @@ const RowAsyncDoc = ({sliced,headerNames,handleClickOnGrid,element}) => {
                 const indexLetto =  Object.entries(sliced).findIndex(([key]) => key === 'letto');
                 let titleTooltip = value;
                 let customValue = value;
-                console.log({customValue});
                 if(i === indexLetto){
                     let color = "green";
                     titleTooltip = "Letto";
