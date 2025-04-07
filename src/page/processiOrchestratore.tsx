@@ -83,8 +83,8 @@ const ProcessiOrchestartore:React.FC = () =>{
             setPage(filters.page);
             setRowsPerPage(filters.rows);
             setBodyGetLista({ 
-                init:filters.body.init ? new Date(filters.body.init):null,
-                end:filters?.body?.end ? new Date(filters.body.end):null,
+                init:filters?.body?.init,
+                end:filters?.body?.end,
                 stati:filters.body.stati,
                 ordinamento:filters.body.ordinamento,
                 tipologie:filters.body.tipologie,
@@ -101,11 +101,26 @@ const ProcessiOrchestartore:React.FC = () =>{
     
     const getListaDati = async(bodyData:BodyOrchestratore,page,rows, reset = false) =>{
         setGetListaLoading(true);
-        const bodyWitoutTime:BodyOrchestratore = {
-            ...bodyGetLista,
-            init:bodyGetLista.init ?dayjs(bodyGetLista.init).format("YYYY-MM-DD") : new Date(),
-            end:bodyGetLista.end ?dayjs(bodyGetLista.end).format("YYYY-MM-DD") :null,
+        let  bodyWitoutTime:BodyOrchestratore = {
+            ...bodyData,
+            init:bodyData.init ?dayjs(bodyData.init).format("YYYY-MM-DD") : null,
+            end:bodyData.end ?dayjs(bodyData.end).format("YYYY-MM-DD") :null,
         };
+        if(reset){
+            bodyWitoutTime = { init:null,end:null,stati:[],ordinamento:0,tipologie:[],fasi:[]};
+        }else if(isInitialRender.current &&  Object.keys(filters).length > 0 ){
+            bodyWitoutTime = {
+                ...filters.body,
+                init:filters.body.init !== null ? dayjs(filters.body.init).format("YYYY-MM-DD") : null,
+                end:filters.body.end !== null ? dayjs(filters.body.end).format("YYYY-MM-DD") :null,
+            };
+        }else if(isInitialRender.current &&  !Object.keys(filters).length ){
+            bodyWitoutTime = {
+                ...bodyData,
+                init:bodyData.init ?dayjs(bodyData.init).format("YYYY-MM-DD") : dayjs(new Date()).format("YYYY-MM-DD"),
+                end:bodyData.end ?dayjs(bodyData.end).format("YYYY-MM-DD") :null,
+            };
+        }
 
         await getListaActionMonitoring(token,profilo.nonce,bodyWitoutTime, page+1,rows).then((res)=>{
             setTotalData(res.data.count);
@@ -128,7 +143,6 @@ const ProcessiOrchestartore:React.FC = () =>{
             });
             setGridData(dataWithID);
             if(reset){
-        
                 updateFilters({
                     body:bodyData,
                     pathPage:PathPf.ORCHESTRATORE,
@@ -152,10 +166,35 @@ const ProcessiOrchestartore:React.FC = () =>{
                     totalData:res.data.count
                 });
             }
+            isInitialRender.current = false;
         }).catch(((err)=>{
             setGridData([]);
             setGetListaLoading(false);
             manageError(err,dispatchMainState);
+            isInitialRender.current = false;
+            if(reset){
+                updateFilters({
+                    body:bodyData,
+                    pathPage:PathPf.ORCHESTRATORE,
+                    page:0,
+                    rows:10,
+                    valueStati:[],
+                    valueFasi:[],
+                    valueTipologie:[],
+                    totalData:0
+                });
+            }else{
+                updateFilters({
+                    body:bodyData,
+                    pathPage:PathPf.ORCHESTRATORE,
+                    page:page,
+                    rows:rows,
+                    valueStati:valueStati,
+                    valueFasi:valueFasi,
+                    valueTipologie:valueTipologie,
+                    totalData:0
+                });
+            }
         })); 
     };
 
@@ -266,13 +305,13 @@ const ProcessiOrchestartore:React.FC = () =>{
 
 
     const headerAction = (newParam) => {
-        getListaDati({ ...bodyGetLista,...{ordinamento:newParam}},page, rowsPerPage);
+        getListaDati({...bodyGetLista,...{ordinamento:newParam}},page, rowsPerPage);
         setBodyGetLista({ ...bodyGetLista,...{ordinamento:newParam}});
         updateFilters({
             body:{ ...bodyGetLista,...{ordinamento:newParam}}
         });
     };
-    
+ 
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
     return(
@@ -287,7 +326,7 @@ const ProcessiOrchestartore:React.FC = () =>{
                             <DesktopDatePicker
                                 label={"Data inizio"}
                                 format="dd/MM/yyyy"
-                                value={(bodyGetLista.init === ''||bodyGetLista.init === null) ? null : bodyGetLista.init}
+                                value={(bodyGetLista.init === ''||bodyGetLista.init === null) ? null : new Date(bodyGetLista.init)}
                                 onChange={(e:any | null)  => {
                                     if(e !== null && !isDateInvalid(e)){
                                         setBodyGetLista(prev => ({...prev,...{init:e}}));
@@ -321,13 +360,13 @@ const ProcessiOrchestartore:React.FC = () =>{
                         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it}>
                             <DesktopDatePicker
                                 label={"Data fine"}
-                                value={(bodyGetLista.end === ''||bodyGetLista.end === null) ? null : bodyGetLista.end}
+                                value={(bodyGetLista.end === ''||bodyGetLista.end === null) ? null : new Date(bodyGetLista.end)}
                                 onChange={(e:any | null)  =>{
                                     if(e !== null && !isDateInvalid(e)){
                                         setBodyGetLista(prev => ({...prev,...{end:e}}));
                                         if(bodyGetLista.init !== null && ((formatDateToValidation(e)||0) < (formatDateToValidation(bodyGetLista.init)||0))){
                                             setError(true);
-                                        }else if(bodyGetLista.init === null && bodyGetLista.end !== null){
+                                        }else if(bodyGetLista.init === null && e !== null){
                                             setError(true);
                                         }else{
                                             setError(false);
