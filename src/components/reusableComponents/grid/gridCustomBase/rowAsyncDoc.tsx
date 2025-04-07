@@ -10,11 +10,14 @@ const RowAsyncDoc = ({sliced,headerNames,handleClickOnGrid,element}) => {
     }
 
     let chipBgColor = "info";
-    if(sliced.stato === 1){
+    
+    if(sliced.stato === "Presa in carico"){
+        chipBgColor = "info";
+    }else if(sliced.stato === "Elaborato"){
         chipBgColor = "success";
-    }else if(sliced.stato === 2){
+    }else if(sliced.stato === "Elaborato no data"){
         chipBgColor ="warning";
-    }else if(sliced.stato === 3){
+    }else if(sliced.stato === "Errore"){
         chipBgColor = "error";
     }
 
@@ -24,7 +27,7 @@ const RowAsyncDoc = ({sliced,headerNames,handleClickOnGrid,element}) => {
             borderBottom: "2px solid #F2F2F2",
             backgroundColor:bgColorRow
         }} 
-        key={Math.random()}>
+        key={element.idReport}>
             { Object.values(sliced).map((value:any, i:number)=>{
                 const indexLetto =  Object.entries(sliced).findIndex(([key]) => key === 'letto');
                 let titleTooltip = value;
@@ -50,15 +53,14 @@ const RowAsyncDoc = ({sliced,headerNames,handleClickOnGrid,element}) => {
                     return (
                         <TableCell
                             align={headerNames[i]?.align}>
-                            {headerNames[i]?.headerTooltip(titleTooltip === 0 ? "In Elaborazione" : "Elaborato",customValue === 0 ? "In Elaborazione" : "Elaborato",chipBgColor)}              
+                            {headerNames[i]?.headerTooltip(titleTooltip,customValue,chipBgColor)}              
                         </TableCell>
                     );
                 }else if(headerNames[i]?.gridAction){
-
                     return (
                         <TableCell
                             align={headerNames[i]?.align}>
-                            {headerNames[i]?.gridAction(handleClickOnGrid,"primary",sliced.stato !== 1 ? true : false,{idReport:element.reportId})}                
+                            {headerNames[i]?.gridAction(handleClickOnGrid,"primary",sliced.stato !== "Elaborato" ? true : false,{idReport:element.reportId})}                
                         </TableCell>
                     );
                 }else{

@@ -49,7 +49,7 @@ const AsyncDocumenti = () => {
     const [totDoc,setTotDoc] = useState(0);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [bodyGetLista, setBodyGetLista] = useState<BodyAsyncDoc>({ init:null,end:null,ordinamento:0});
+    const [bodyGetLista, setBodyGetLista] = useState<BodyAsyncDoc>({ init:null,end:null,ordinamento:1});
     const [error,setError] = useState(false);
     const [showLoading,setShowLoading] = useState(false);
     const [showDownloading,setShowDownloading] = useState(false);
@@ -90,11 +90,11 @@ const AsyncDocumenti = () => {
             const result = res.data.items.map((el)=>{
                 const element = {
                     reportId:el.reportId,
-                    dataInserimento:transformDateTimeWithNameMonth(el.dataInserimento)||"--",
+                    dataInserimento:transformDateTimeWithNameMonth(el.dataInserimento)?.split(".")[0]||"--",
                     anno:el.anno,
                     mese:mesiGrid[el.mese],
-                    dataFine:transformDateTime(el.dataFine).split(".")[0]||"--",
-                    stato:el.stato,
+                    dataFine:transformDateTime(el.dataFine)?.split(".")[0]||"--",
+                    stato:el.descrizioneStato,
                     letto:el.letto,
                     action:''
                 };
@@ -127,8 +127,8 @@ const AsyncDocumenti = () => {
    
 
     const handleAnnullaButton = () => {
-        setBodyGetLista({ init:null,end:null,ordinamento:0});
-        listaDoc({ init:null,end:null,ordinamento:0},0,10);
+        setBodyGetLista({ init:null,end:null,ordinamento:1});
+        listaDoc({ init:null,end:null,ordinamento:1},0,10);
         setPage(0);
         setRowsPerPage(10);
         resetFilters();

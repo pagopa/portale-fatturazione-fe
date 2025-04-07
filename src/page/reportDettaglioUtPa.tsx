@@ -31,7 +31,8 @@ const ReportDettaglio : React.FC = () => {
         mainState,
         setOpenModalInfo,
         setCountMessages,
-        openModalInfo
+        openModalInfo,
+        setErrorAlert
     } = globalContextObj;
     
     const enti = profiliEnti(mainState);
@@ -679,7 +680,10 @@ const ReportDettaglio : React.FC = () => {
                 });
             }).catch(((err)=>{
                 setShowLoading(false);
-                if(err?.response?.status === 404){
+                
+                if(err?.response?.status === 300){
+                    setErrorAlert({error:"DOWNLOAD_NOTIFICHE_DOUBLE_REQUEST",message:"BACK_END_MESSAGE"});
+                }else if(err?.response?.status === 404){
                     managePresaInCarico(400,dispatchMainState);
                 }else if(err?.response?.status === 400){
                     managePresaInCarico('NO_OPERAZIONE',dispatchMainState);
@@ -1126,7 +1130,7 @@ const ReportDettaglio : React.FC = () => {
             <ModalLoading 
                 open={showLoading} 
                 setOpen={setShowLoading}
-                sentence={'Downloading...'} >
+                sentence={profilo.auth === "PAGOPA"?'Downloading...':"Elaborazione in corso"} >
             </ModalLoading>
             <ModalLoading 
                 open={showLoadingGrid} 
@@ -1142,3 +1146,5 @@ const ReportDettaglio : React.FC = () => {
     );
 };                                        
 export default ReportDettaglio;
+
+
