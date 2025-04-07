@@ -670,7 +670,8 @@ const ReportDettaglio : React.FC = () => {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars  
             await downloadNotifche(token, profilo.nonce,bodyEnti ).then(async(res)=>{
            
-                setShowLoading(false);
+                setShowLoading(false); 
+                console.log({res});
                 managePresaInCarico('PRESA_IN_CARICO_DOCUMENTO_ENTE',dispatchMainState);
                 await getMessaggiCountEnte(token,profilo.nonce).then((res)=>{
                     const numMessaggi = res.data;
@@ -680,12 +681,13 @@ const ReportDettaglio : React.FC = () => {
                 });
             }).catch(((err)=>{
                 setShowLoading(false);
-                
-                if(err?.response?.status === 300){
-                    setErrorAlert({error:"DOWNLOAD_NOTIFICHE_DOUBLE_REQUEST",message:"BACK_END_MESSAGE"});
-                }else if(err?.response?.status === 404){
+                console.log(err?.response?.request?.status);
+                if(err?.response?.request?.status === 300){
+                    managePresaInCarico("DOWNLOAD_NOTIFICHE_DOUBLE_REQUEST",dispatchMainState);
+                    console.log('dentro');
+                }else if(err?.response?.request?.status === 404){
                     managePresaInCarico(400,dispatchMainState);
-                }else if(err?.response?.status === 400){
+                }else if(err?.response?.request?.status === 400){
                     managePresaInCarico('NO_OPERAZIONE',dispatchMainState);
                 }else{
                     manageError(err,dispatchMainState);
@@ -1082,7 +1084,7 @@ const ReportDettaglio : React.FC = () => {
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
                 <div>
                     <Button
-                        disabled={getNotificheWorking}
+                        disabled={getNotificheWorking|| mainState.apiError !== null}
                         onClick={downloadNotificheOnDownloadButton}  >
             Download Risultati 
                         <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>

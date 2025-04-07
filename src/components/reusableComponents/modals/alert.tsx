@@ -55,7 +55,7 @@ const BasicAlerts:React.FC = () => {
         colorAlert = 'error';
     }else if(errorAlert.error === 404 || mainState.apiError === 404 || mainState.apiError === '404_DOWNLOAD' || mainState.apiError === 'PRESA'|| mainState.apiError === '404_RIGHE_ID'){
         colorAlert = "info";
-    }else if(mainState.apiError === "Network Error"|| mainState.apiError === 'ERRORE_MANUALE'|| mainState.apiError === "ERROR_LIST_JSON_TO_SAP"||mainState.apiError === "NO_OPERAZIONE"|| errorAlert.error === 300){
+    }else if(mainState.apiError === "Network Error"|| mainState.apiError === 'ERRORE_MANUALE'|| mainState.apiError === "ERROR_LIST_JSON_TO_SAP"||mainState.apiError === "NO_OPERAZIONE"|| mainState.apiError === "DOWNLOAD_NOTIFICHE_DOUBLE_REQUEST"){
         colorAlert = 'warning';
     }else if(mainState.apiError === 410 || mainState.apiError === 409 || errorAlert.error === 410){
         colorAlert = 'warning';

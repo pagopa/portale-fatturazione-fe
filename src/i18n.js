@@ -19,7 +19,6 @@ i18n.use(Backend)
                         400:"L'operazione non è andata a buon fine. Contattare l'assistenza",// mauro messaggio 
                         404:"La ricerca non ha prodotto risultati",
                         410:"La risorsa non è più disponibile",
-                        "DOWNLOAD_NOTIFICHE_DOUBLE_REQUEST":"Attendi l'esecuzione della richiesta precedente",
                         '404_DOWNLOAD':"L'azione di download non ha prodotto risultati",
                         '404_RAGIONE_SOCIALE':"La ricerca per Rag. Soc. Ente non ha prodotto risultati",
                         "Network Error":"La connessione Internet risulta non attiva",
@@ -34,6 +33,7 @@ i18n.use(Backend)
                         'ERRORE_MANUALE':'Manuale momentaneamente non disponibile',
                         'ERROR_LIST_JSON_TO_SAP':"Dettaglio momentaneamente non disponibile",
                         "404_RIGHE_ID":"Il report di dettaglio notifiche Regolare Esecuzione sarà disponibile a breve",
+                        "DOWNLOAD_NOTIFICHE_DOUBLE_REQUEST":"Attendi l'esecuzione della richiesta precedente",
                     }
                 }
             }
