@@ -16,6 +16,8 @@ import { headerNameAsyncDoc } from "../assets/configurations/conf_GridAsyncDocEn
 import { mesiGrid } from "../reusableFunction/reusableArrayObj";
 import dayjs from "dayjs";
 import { getMessaggiCountEnte, getNotificheDownloadFromAsync } from "../api/apiSelfcare/notificheSE/api";
+import ModalRedirect from "../components/commessaInserimento/madalRedirect";
+import { profiliEnti } from "../reusableFunction/actionLocalStorage";
 export interface BodyAsyncDoc{
     init: string|null|Date,
     end: string|null|Date,
@@ -37,6 +39,7 @@ const AsyncDocumenti = () => {
     const {dispatchMainState,mainState,setCountMessages} = globalContextObj;
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
+    const enti = profiliEnti(mainState);
 
     const { 
         filters,
@@ -53,6 +56,7 @@ const AsyncDocumenti = () => {
     const [error,setError] = useState(false);
     const [showLoading,setShowLoading] = useState(false);
     const [showDownloading,setShowDownloading] = useState(false);
+    const [openModalRedirect, setOpenModalRedirect] = useState(false);
 
     const disableListaCompletaButton = bodyGetLista.init !== null || bodyGetLista.end !== null;
    
@@ -69,6 +73,12 @@ const AsyncDocumenti = () => {
             });
         }else{
             listaDoc(bodyGetLista,page,rowsPerPage);
+        }
+    },[]);
+
+    useEffect(()=>{
+        if((mainState.datiFatturazione === false || mainState.datiFatturazioneNotCompleted) && enti){
+            setOpenModalRedirect(true);
         }
     },[]);
 
@@ -180,9 +190,6 @@ const AsyncDocumenti = () => {
             setShowDownloading(false);
             manageError(err,dispatchMainState);
         });
-
-        
-
     };
 
     const headerAction = (newParam) => {
@@ -316,6 +323,11 @@ const AsyncDocumenti = () => {
                 setOpen={setShowDownloading} 
                 sentence={'Downloading...'}>
             </ModalLoading>
+            <ModalRedirect
+                setOpen={setOpenModalRedirect} 
+                open={openModalRedirect}
+                sentence={`Per poter visualizzare la sezione Download Documenti è obbligatorio fornire i seguenti dati di fatturazione:`}>
+            </ModalRedirect>
         </div>
     );
 };

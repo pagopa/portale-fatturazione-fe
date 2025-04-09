@@ -28,6 +28,7 @@ const initialState =  {
     prodotti:[],
     profilo:{},
     docContabileSelected:{key:''},
+    statusQueryGetUri:[]
 };
 
 

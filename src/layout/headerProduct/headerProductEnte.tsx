@@ -4,9 +4,8 @@ import { arrayProducts } from '../../assets/dataLayout';
 import { GlobalContext } from '../../store/context/globalContext';
 import { Badge, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import SimCardDownloadIcon from '@mui/icons-material/SimCardDownload';
 import { PathPf } from '../../types/enum';
-import { getMessaggiCountEnte } from '../../api/apiSelfcare/notificheSE/api';
+import { getMessaggiCountEnte, getVerificaNotificheEnte } from '../../api/apiSelfcare/notificheSE/api';
 import DownloadIcon from '@mui/icons-material/Download';
 
 const HeaderProductEnte : React.FC = () => {
@@ -14,6 +13,7 @@ const HeaderProductEnte : React.FC = () => {
     const {mainState,setCountMessages, countMessages } = globalContextObj;
     const profilo =  mainState.profilo;
     const token =  mainState.profilo.jwt;
+    const statusQueryGetUri = mainState?.statusQueryGetUri;
     const navigate = useNavigate();
 
     useEffect(()=>{
@@ -30,6 +30,15 @@ const HeaderProductEnte : React.FC = () => {
         }
     },[globalContextObj.mainState.authenticated]);
 
+    useEffect(()=>{
+        if(globalContextObj.mainState.authenticated === true && statusQueryGetUri?.length > 0){
+            const interval = setInterval(() => {
+                getValidationNotifiche();
+            }, 2000);
+            return () => clearInterval(interval); 
+        }
+    },[globalContextObj.mainState.authenticated,statusQueryGetUri.length]);
+
     const partyList : Array<PartyEntity> = [
         {
             id:'0',
@@ -38,7 +47,6 @@ const HeaderProductEnte : React.FC = () => {
             productRole: "Amministratore",
         }
     ];
-
 
     //logica per il centro messaggi sospesa
     const getCount = async () =>{
@@ -49,11 +57,17 @@ const HeaderProductEnte : React.FC = () => {
             console.log(err);
         });
     };
+
+    const getValidationNotifiche = async() => {
+        await getVerificaNotificheEnte(token,profilo.nonce,{idEnte: profilo.idEnte,statusQueryGetUri:statusQueryGetUri[0]}).then((res)=>{
+            console.log({res});
+            //show alert message
+        }).catch((err)=>{
+            console.log(err);
+        });
+    };
    
     return (
-       
-
-
         <div style={{display:'flex', backgroundColor:'white'}}>
             <div style={{width:'95%'}}>
                 <div key={profilo.prodotto}>

@@ -134,13 +134,8 @@ export const downloadNotifche = async (token:string, nonce:string , body: BodyLi
     const response =  await axios.post(`${url}/api/notifiche/ente/documento/ricerca?nonce=${nonce}`,
         body,
         { headers: {
-            Authorization: 'Bearer ' + token,
-            "Accept" : "application/octet-stream, application/json, text/plain, */*"
-        },
-        responseType: 'arraybuffer',
-        maxContentLength: Infinity,
-        maxBodyLength: Infinity
-        }
+            Authorization: 'Bearer ' + token
+        }}
     );
     return response;
 };
@@ -215,6 +210,17 @@ export const getNotificheDownloadFromAsync = async ( token:string ,nonce:string 
         { headers: {
             Authorization: 'Bearer ' + token
         }}
+    );
+    return response;
+};
+
+export const getVerificaNotificheEnte = async (token:string, nonce:string , body:{idEnte: string,statusQueryGetUri: string}) => {
+    const response =  await axios.post(`${url}/api/notifiche/richiesta/verifica?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token,
+        },
+        }
     );
     return response;
 };

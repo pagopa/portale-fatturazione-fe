@@ -34,6 +34,13 @@ const ReportDettaglio : React.FC = () => {
         openModalInfo,
         setErrorAlert
     } = globalContextObj;
+
+    const handleModifyMainState = (valueObj) => {
+        globalContextObj.dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
     
     const enti = profiliEnti(mainState);
     const token =  mainState.profilo.jwt;
@@ -669,9 +676,8 @@ const ReportDettaglio : React.FC = () => {
             const {idEnti, recapitisti, consolidatori, ...bodyEnti} = bodyDownload; 
             // eslint-disable-next-line @typescript-eslint/no-unused-vars  
             await downloadNotifche(token, profilo.nonce,bodyEnti ).then(async(res)=>{
-           
                 setShowLoading(false); 
-                console.log({res});
+                handleModifyMainState({statusQueryGetUri:[...mainState.statusQueryGetUri,...[res?.data?.statusQueryGetUri]]});
                 managePresaInCarico('PRESA_IN_CARICO_DOCUMENTO_ENTE',dispatchMainState);
                 await getMessaggiCountEnte(token,profilo.nonce).then((res)=>{
                     const numMessaggi = res.data;
