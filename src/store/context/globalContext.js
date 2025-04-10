@@ -41,7 +41,7 @@ export const GlobalContext = createContext({
     errorAlert:{error:0,message:''},
     setErrorAlert:(prev) => null,
     countMessages:0,
-    setCountMessages:(prev) => null
+    setCountMessages:(prev) => null,
 });
 
 

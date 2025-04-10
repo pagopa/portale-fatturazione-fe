@@ -41,7 +41,7 @@ const ReportDettaglio : React.FC = () => {
             value:valueObj
         });
     };
-    
+
     const enti = profiliEnti(mainState);
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
@@ -679,6 +679,7 @@ const ReportDettaglio : React.FC = () => {
                 setShowLoading(false); 
                 handleModifyMainState({statusQueryGetUri:[...mainState.statusQueryGetUri,...[res?.data?.statusQueryGetUri]]});
                 managePresaInCarico('PRESA_IN_CARICO_DOCUMENTO_ENTE',dispatchMainState);
+                console.log(1);
                 await getMessaggiCountEnte(token,profilo.nonce).then((res)=>{
                     const numMessaggi = res.data;
                     setCountMessages(numMessaggi);
@@ -687,10 +688,8 @@ const ReportDettaglio : React.FC = () => {
                 });
             }).catch(((err)=>{
                 setShowLoading(false);
-                console.log(err?.response?.request?.status);
                 if(err?.response?.request?.status === 300){
                     managePresaInCarico("DOWNLOAD_NOTIFICHE_DOUBLE_REQUEST",dispatchMainState);
-                    console.log('dentro');
                 }else if(err?.response?.request?.status === 404){
                     managePresaInCarico(400,dispatchMainState);
                 }else if(err?.response?.request?.status === 400){

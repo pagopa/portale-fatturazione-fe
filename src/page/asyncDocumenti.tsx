@@ -61,7 +61,9 @@ const AsyncDocumenti = () => {
     const disableListaCompletaButton = bodyGetLista.init !== null || bodyGetLista.end !== null;
    
     useEffect(()=>{
-        if(isInitialRender.current && Object.keys(filters).length > 0){
+        if((mainState.datiFatturazione === false || mainState.datiFatturazioneNotCompleted) && enti){
+            setOpenModalRedirect(true);
+        }else if(isInitialRender.current && Object.keys(filters).length > 0){
             listaDoc(filters.body,filters.page, filters.rows);
             setTotDoc(filters.totalData);
             setPage(filters.page);
@@ -76,11 +78,13 @@ const AsyncDocumenti = () => {
         }
     },[]);
 
+    //DA VERIFICARE
     useEffect(()=>{
-        if((mainState.datiFatturazione === false || mainState.datiFatturazioneNotCompleted) && enti){
-            setOpenModalRedirect(true);
+        if(!isInitialRender.current){
+            listaDoc(bodyGetLista,page,rowsPerPage);
         }
-    },[]);
+    },[mainState.statusQueryGetUri.length]);
+
 
     const clearOnChangeFilter = () => {
         setDataGrid([]);
@@ -100,13 +104,15 @@ const AsyncDocumenti = () => {
             const result = res.data.items.map((el)=>{
                 const element = {
                     reportId:el.reportId,
+                    actionOpen:'',
                     dataInserimento:transformDateTimeWithNameMonth(el.dataInserimento)?.split(".")[0]||"--",
                     anno:el.anno,
                     mese:mesiGrid[el.mese],
                     dataFine:transformDateTime(el.dataFine)?.split(".")[0]||"--",
                     stato:el.descrizioneStato,
                     letto:el.letto,
-                    action:''
+                    action:'',
+                    DETTAGLIO:el.json
                 };
                 return element;
             });

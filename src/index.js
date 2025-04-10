@@ -7,6 +7,7 @@ import { PublicClientApplication, EventType } from '@azure/msal-browser';
 import { msalConfig } from './authConfig';
 import './i18n';
 import GlobalContextProvider from './store/context/globalContext';
+import { SnackbarProvider} from 'notistack';
 
 
 /**
@@ -36,7 +37,9 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   
     <GlobalContextProvider>
-        <App instance={msalInstance}/> 
+        <SnackbarProvider maxSnack={3} autoHideDuration={10000}>
+            <App instance={msalInstance}/> 
+        </SnackbarProvider>
     </GlobalContextProvider>
 
    

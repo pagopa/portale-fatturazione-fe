@@ -23,7 +23,6 @@ import { BrowserRouter } from 'react-router-dom';
 import useIsTabActive from '../reusableFunction/tabIsActiv';
 import { redirect } from '../api/api';
 
-
 const RouteProfile = () => {
     const globalContextObj = useContext(GlobalContext);
     const {mainState} = globalContextObj;
