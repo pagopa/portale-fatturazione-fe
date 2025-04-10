@@ -26,6 +26,14 @@ export const tipoNotifica = [
     {"Analogico RS Internazionali": 5}, 
     {"Analogico 890":6}];
 
+export const tipoNotificaArray = [
+    "Digitali",
+    "Analogico AR Nazionali", 
+    "Analogico AR Internazionali",
+    "Analogico RS Nazionali", 
+    "Analogico RS Internazionali", 
+    "Analogico 890"];
+
 export  const mesiDescNome = [
     {
         "descrizione": "Gennaio",
@@ -75,4 +83,8 @@ export  const mesiDescNome = [
         "descrizione": "Dicembre",
         "mese": 12
     }
+];
+
+export const statiContestazione = ["Non Contestata","Annullata","Contestata Ente","Risposta Send", "Risposta Recapitista",
+    "Risposta Consolidatore","Risposta Ente","Accettata","Rifiutata/Chiusa"
 ];

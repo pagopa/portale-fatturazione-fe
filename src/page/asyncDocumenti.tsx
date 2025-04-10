@@ -63,7 +63,7 @@ const AsyncDocumenti = () => {
     useEffect(()=>{
         if((mainState.datiFatturazione === false || mainState.datiFatturazioneNotCompleted) && enti){
             setOpenModalRedirect(true);
-        }else if(isInitialRender.current && Object.keys(filters).length > 0){
+        }else if(isInitialRender.current && Object.keys(filters)?.length > 0){
             listaDoc(filters.body,filters.page, filters.rows);
             setTotDoc(filters.totalData);
             setPage(filters.page);
@@ -83,7 +83,7 @@ const AsyncDocumenti = () => {
         if(!isInitialRender.current){
             listaDoc(bodyGetLista,page,rowsPerPage);
         }
-    },[mainState.statusQueryGetUri.length]);
+    },[mainState.statusQueryGetUri?.length]);
 
 
     const clearOnChangeFilter = () => {

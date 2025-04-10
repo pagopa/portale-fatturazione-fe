@@ -1,7 +1,7 @@
 import { Box, Collapse, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useState } from "react";
-import { mesiGrid } from "../../../../reusableFunction/reusableArrayObj";
+import { mesiGrid, statiContestazione, tipoNotificaArray } from "../../../../reusableFunction/reusableArrayObj";
 
 
 const RowAsyncDoc = ({sliced,headerNames,handleClickOnGrid,element}) => {
@@ -9,8 +9,13 @@ const RowAsyncDoc = ({sliced,headerNames,handleClickOnGrid,element}) => {
     const [open, setOpen] = useState(false);
 
     const {DETTAGLIO,...rest} = sliced;
-
     const dettaglioParsed = JSON.parse(DETTAGLIO);
+
+    const stringsStatiContest = dettaglioParsed?.StatoContestazione.map(el => statiContestazione[el]).join(' , ');
+
+
+
+  
     console.log({dettaglioParsed});
     let bgColorRow = "";
     if(sliced.letto){
@@ -114,10 +119,10 @@ const RowAsyncDoc = ({sliced,headerNames,handleClickOnGrid,element}) => {
                                     <TableRow>
                                         <TableCell align="center">{dettaglioParsed.Anno}</TableCell>
                                         <TableCell align="center">{mesiGrid[dettaglioParsed.Mese]||''}</TableCell>
-                                        <TableCell align="center">{dettaglioParsed.TipoNotifica||''}</TableCell>
+                                        <TableCell align="center">{tipoNotificaArray[dettaglioParsed?.TipoNotifica]||''}</TableCell>
                                         <TableCell align="center">{dettaglioParsed.Cup||''}</TableCell>
                                         <TableCell align="center">{dettaglioParsed.Iun||''}</TableCell>
-                                        <TableCell align="center">{dettaglioParsed.StatoContestazione||''}</TableCell>
+                                        <TableCell align="center">{stringsStatiContest ||''}</TableCell>
                                     </TableRow>
                                 </TableBody>
                             </Table>

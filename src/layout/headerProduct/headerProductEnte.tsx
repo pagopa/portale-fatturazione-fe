@@ -98,20 +98,21 @@ const HeaderProductEnte : React.FC = () => {
             console.log(3);
             // handleClickVariant("warning","Ciao mamma");
             if(res.data.runtimeStatus === "Completed"){
-                enqueueSnackbar(`Il file delle notifiche di ${mesiGrid[res.data.input.Mese]}/${res.data.input.Anno} è pronto per il download`, {variant:"success",anchorOrigin:{ horizontal: "left", vertical: "bottom" }});
+                enqueueSnackbar(`È possibile eseguire il download del file NOTIFICHE ${mesiGrid[res.data.input.Mese]}/${res.data.input.Anno}`, {variant:"success",anchorOrigin:{ horizontal: "left", vertical: "bottom" }});
                 const newStatusQueryUri = mainState.statusQueryGetUri.filter(el => el !== queryString);
                 handleModifyMainState({statusQueryGetUri:newStatusQueryUri});
                 return res;
             }else if(res.data.runtimeStatus === "Running"){
                 console.log('Running');
             }else{
-                enqueueSnackbar(`La creazione del file delle notifiche di ${mesiGrid[res.data.input.Mese]}/${res.data.input.Anno} nonè andata a buon fine. Si prega di riprovare`, {variant:"info",anchorOrigin:{ horizontal: "left", vertical: "bottom" }});
+                enqueueSnackbar(`La creazione del file delle notifiche di ${mesiGrid[res.data.input.Mese]}/${res.data.input.Anno} non è andata a buon fine. Si prega di riprovare`, {variant:"info",anchorOrigin:{ horizontal: "left", vertical: "bottom" }});
                 const newStatusQueryUri = mainState.statusQueryGetUri.filter(el => el !== queryString);
                 handleModifyMainState({statusQueryGetUri:newStatusQueryUri});
             }
-           
-        }).catch((err)=>{
-            console.log(err);
+        }).catch(()=>{
+            const newStatusQueryUri = mainState.statusQueryGetUri.filter(el => el !== queryString);
+            handleModifyMainState({statusQueryGetUri:newStatusQueryUri});
+            console.log("ERRORE NELLA VERIFICA");
         });
         return result;
     };
