@@ -59,6 +59,7 @@ const RowAsyncDoc = ({sliced,headerNames,handleClickOnGrid,element}) => {
                     if(value === "--" || typeof(value) === "boolean"){
                         return (
                             <TableCell
+                                key={i}
                                 align={headerNames[i]?.align}>
                                 {customValue} 
                             </TableCell>
@@ -66,6 +67,7 @@ const RowAsyncDoc = ({sliced,headerNames,handleClickOnGrid,element}) => {
                     }else if(headerNames[i]?.headerTooltip){
                         return (
                             <TableCell
+                                key={i}
                                 align={headerNames[i]?.align}>
                                 {headerNames[i]?.headerTooltip(titleTooltip,customValue,chipBgColor)}              
                             </TableCell>
@@ -73,6 +75,7 @@ const RowAsyncDoc = ({sliced,headerNames,handleClickOnGrid,element}) => {
                     }else if(headerNames[i]?.gridOpenDetail){
                         return (
                             <TableCell
+                                key={i}
                                 align={headerNames[i]?.align}>
                                 {headerNames[i]?.gridOpenDetail(false,open,setOpen)}              
                             </TableCell>
@@ -80,6 +83,7 @@ const RowAsyncDoc = ({sliced,headerNames,handleClickOnGrid,element}) => {
                     }else if(headerNames[i]?.gridAction){
                         return (
                             <TableCell
+                                key={i}
                                 align={headerNames[i]?.align}>
                                 {headerNames[i]?.gridAction(handleClickOnGrid,"primary",sliced.stato !== "Elaborato" ? true : false,{idReport:element.reportId})}                
                             </TableCell>

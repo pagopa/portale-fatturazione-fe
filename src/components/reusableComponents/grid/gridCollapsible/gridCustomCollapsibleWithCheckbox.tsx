@@ -86,16 +86,6 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,se
                             <TableHead sx={{backgroundColor:'#f2f2f2'}}>
                                 <TableRow>
                                     <TableCell padding="checkbox">
-                                        {/*
-                                        <Checkbox
-                                            color="primary"
-                                            indeterminate={false}
-                                            checked={false}
-                                            onChange={()=> console.log('ciao')}
-                                            inputProps={{
-                                                'aria-label': 'select all desserts',
-                                            }}
-                                        />*/}
                                     </TableCell>
                                     {headerNames.map((el)=>{
                                         return(

@@ -106,9 +106,12 @@ const GridCustom : React.FC<GridCustomProps> = (
                                             <TableCell align={el.align} width={el.width} key={i}>{el.label}
                                                 {el.headerAction &&
                                                 <Tooltip title="Sort">
-                                                    <IconButton disabled={ total === 0 ? true : false} sx={{marginLeft:'10px'}}  onClick={()=> headerAction && headerAction((body?.ordinamento === 0) ? 1:0)}  size="small">
-                                                        {(body?.ordinamento === 0) ? <ArrowUpwardIcon></ArrowUpwardIcon>:<ArrowDownwardIcon></ArrowDownwardIcon>}
-                                                    </IconButton>
+                                                    <span>
+                                                        <IconButton disabled={ total === 0 ? true : false} sx={{marginLeft:'10px'}}  onClick={()=> headerAction && headerAction((body?.ordinamento === 0) ? 1:0)}  size="small">
+                                                            {(body?.ordinamento === 0) ? <ArrowUpwardIcon></ArrowUpwardIcon>:<ArrowDownwardIcon></ArrowDownwardIcon>}
+                                                        </IconButton>
+                                                    </span>
+                                                   
                                                 </Tooltip>}
                                             </TableCell>
                                         );

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { createContext, useEffect, useReducer,useState } from "react";
 import {  loadState, reducerMainState } from "../../reducer/reducerMainState";
 
@@ -27,7 +28,6 @@ export const GlobalContext = createContext({
         prodotti:[],
         profilo:{},
         docContabileSelected:{key:''},
-        statusQueryGetUri:[]
 
     },
     dispatchMainState:({type,value}) => null,
@@ -42,10 +42,13 @@ export const GlobalContext = createContext({
     setErrorAlert:(prev) => null,
     countMessages:0,
     setCountMessages:(prev) => null,
+    statusQueryGetUri:[],
+    setStatusQueryGetUri:(prev) => null
 });
 
 
 function GlobalContextProvider({children}){
+    
 
     const [mainState, dispatchMainState] = useReducer(reducerMainState,loadState());
     const [openBasicModal_DatFat_ModCom, setOpenBasicModal_DatFat_ModCom] = useState({visible:false,clickOn:''});
@@ -54,13 +57,28 @@ function GlobalContextProvider({children}){
     const [countMessages, setCountMessages] = useState(0);
     //nuova logica errori da implemnetare sull'applicazione  22/11
     const [errorAlert, setErrorAlert] = useState({error:0,message:''});
+    const [statusQueryGetUri,setStatusQueryGetUri] = useState([]);
   
-
+   
+  
     // eslint-disable-next-line no-undef
     useEffect(() => {
         // eslint-disable-next-line no-undef
         localStorage.setItem('globalState', JSON.stringify(mainState));
     }, [mainState]);
+
+    useEffect(() => {
+        const loQueryGetUri = localStorage.getItem('statusQueryGetUri');
+        const loQueryGetUriIsNotEmpty = JSON.parse(loQueryGetUri||'[]').length > 0;
+        if(loQueryGetUriIsNotEmpty){
+            setStatusQueryGetUri(JSON.parse(loQueryGetUri));
+        }
+    }, []);
+
+    useEffect(() => {
+        // eslint-disable-next-line no-undef
+        localStorage.setItem('statusQueryGetUri', JSON.stringify(statusQueryGetUri));
+    }, [statusQueryGetUri]);
 
     /*
      // eslint-disable-next-line no-undef
@@ -84,7 +102,9 @@ function GlobalContextProvider({children}){
         errorAlert,
         setErrorAlert,
         countMessages,
-        setCountMessages
+        setCountMessages,
+        setStatusQueryGetUri,
+        statusQueryGetUri
     };
 
 

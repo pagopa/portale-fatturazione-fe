@@ -266,7 +266,7 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
         YupString.required().validate(string).then(()=>{
             console.log('prova');
         }).catch(()=>{
-            console.log('prova errore',nomeTextBox);
+            console.log('prova errore');
         });
     };
 

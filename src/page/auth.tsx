@@ -129,7 +129,8 @@ const Auth : React.FC<any> = () =>{
     // prima chiamata 
     const getSelfcare = async() =>{
         await selfcareLogin(token).then(res =>{
-            localStorage.clear();
+            localStorage.removeItem("globalState");
+            localStorage.removeItem("filters");
             if(res.status === 200){
                 getProfilo(res);  
             }

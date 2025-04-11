@@ -36,7 +36,7 @@ export interface DataGridAsyncDoc {
 
 const AsyncDocumenti = () => {
     const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState,setCountMessages} = globalContextObj;
+    const {dispatchMainState,mainState,setCountMessages,statusQueryGetUri} = globalContextObj;
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const enti = profiliEnti(mainState);
@@ -45,7 +45,7 @@ const AsyncDocumenti = () => {
         filters,
         updateFilters,
         isInitialRender,
-        resetFilters
+        resetFilters,
     } = useSavedFilters(PathPf.ASYNC_DOCUMENTI_ENTE,{});
 
     const [dataGrid,setDataGrid] = useState([]);
@@ -61,7 +61,7 @@ const AsyncDocumenti = () => {
     const disableListaCompletaButton = bodyGetLista.init !== null || bodyGetLista.end !== null;
    
     useEffect(()=>{
-        if((mainState.datiFatturazione === false || mainState.datiFatturazioneNotCompleted) && enti){
+        if(mainState.datiFatturazione === false || mainState.datiFatturazioneNotCompleted){
             setOpenModalRedirect(true);
         }else if(isInitialRender.current && Object.keys(filters)?.length > 0){
             listaDoc(filters.body,filters.page, filters.rows);
@@ -83,7 +83,7 @@ const AsyncDocumenti = () => {
         if(!isInitialRender.current){
             listaDoc(bodyGetLista,page,rowsPerPage);
         }
-    },[mainState.statusQueryGetUri?.length]);
+    },[statusQueryGetUri?.length]);
 
 
     const clearOnChangeFilter = () => {
@@ -192,7 +192,7 @@ const AsyncDocumenti = () => {
             await listaDoc(bodyGetLista,page,rowsPerPage); 
             setShowDownloading(false);
         }).catch((err)=>{
-            console.log({err});
+          
             setShowDownloading(false);
             manageError(err,dispatchMainState);
         });
