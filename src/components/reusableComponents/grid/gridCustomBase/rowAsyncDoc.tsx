@@ -7,16 +7,10 @@ import { mesiGrid, statiContestazione, tipoNotificaArray } from "../../../../reu
 const RowAsyncDoc = ({sliced,headerNames,handleClickOnGrid,element}) => {
     
     const [open, setOpen] = useState(false);
-
     const {DETTAGLIO,...rest} = sliced;
     const dettaglioParsed = JSON.parse(DETTAGLIO);
+    const stringsStatiContest = dettaglioParsed?.StatoContestazione?.map(el => statiContestazione[el]).join(' , ');
 
-    const stringsStatiContest = dettaglioParsed?.StatoContestazione.map(el => statiContestazione[el]).join(' , ');
-
-
-
-  
-    console.log({dettaglioParsed});
     let bgColorRow = "";
     if(sliced.letto){
         bgColorRow = "#F0FFF0";
@@ -106,7 +100,7 @@ const RowAsyncDoc = ({sliced,headerNames,handleClickOnGrid,element}) => {
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box sx={{ margin: 2 , backgroundColor:'#F8F8F8', padding:'10px'}}>
                             <Typography sx={{marginLeft:"6px"}} variant="h6" gutterBottom component="div">
-          QUERY PARAMS
+          Filtri applicati
                             </Typography>
                             <Table size="small" aria-label="purchases">
                                 <TableHead>

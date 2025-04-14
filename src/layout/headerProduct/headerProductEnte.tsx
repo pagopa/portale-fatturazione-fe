@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {HeaderProduct, PartyEntity} from '@pagopa/mui-italia';
 import { arrayProducts } from '../../assets/dataLayout';
 import { GlobalContext } from '../../store/context/globalContext';
@@ -9,55 +9,16 @@ import { getMessaggiCountEnte, getVerificaNotificheEnte } from '../../api/apiSel
 import DownloadIcon from '@mui/icons-material/Download';
 import {  useSnackbar } from 'notistack';
 import { mesiGrid } from '../../reusableFunction/reusableArrayObj';
-import useIsTabActive from '../../reusableFunction/tabIsActiv';
+
+
 
 const HeaderProductEnte : React.FC = () => {
     const globalContextObj = useContext(GlobalContext);
-    const {mainState,setCountMessages, countMessages,dispatchMainState,statusQueryGetUri,setStatusQueryGetUri } = globalContextObj;
+    const {mainState,setCountMessages, countMessages,statusQueryGetUri,setStatusQueryGetUri } = globalContextObj;
+    const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar();
     const profilo =  mainState.profilo;
     const token =  mainState.profilo.jwt;
-
-    const navigate = useNavigate();
-    const tabActive = useIsTabActive();
-    const { enqueueSnackbar } = useSnackbar();
-
-    useEffect(()=>{
-        getCount();
-    },[]);
-
-    
-    useEffect(()=>{
-        if(globalContextObj.mainState.authenticated === true ){
-            const interval = setInterval(() => {
-                getCount();
-            }, 20000);
-            return () => clearInterval(interval); 
-        }
-    },[globalContextObj.mainState.authenticated]);
-
-    useEffect(()=>{
-        let interval;
-        const callSequentially = async () => {
-            for (const el of statusQueryGetUri) {
-                const res = await getValidationNotifiche(el);
-    
-                if (res?.data.runtimeStatus === "Completed") {
-                    clearInterval(interval);
-                    return;
-                }
-            }
-        };
-    
-        if (globalContextObj.mainState.authenticated === true && statusQueryGetUri?.length > 0 && tabActive) {
-            interval = setInterval(async () => {
-                await callSequentially();
-            }, 10000);
-    
-            return () => {
-                clearInterval(interval); 
-            };
-        }
-    },[globalContextObj.mainState.authenticated,statusQueryGetUri?.length,tabActive]);
 
     const partyList : Array<PartyEntity> = [
         {
@@ -68,9 +29,57 @@ const HeaderProductEnte : React.FC = () => {
         }
     ];
 
+    const [isTabVisible, setIsTabVisible] = useState(true);
  
+    useEffect(()=>{
+        getCount();
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        return () => {
+            // eslint-disable-next-line no-undef
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    },[]);
 
-    //logica per il centro messaggi sospesa
+    const handleVisibilityChange = () => {
+        setIsTabVisible(document.visibilityState === 'visible');
+    };
+    
+    useEffect(()=>{
+        if(globalContextObj.mainState.authenticated === true ){
+            const interval = setInterval(() => {
+                getCount();
+            }, 20000);
+            return () => clearInterval(interval); 
+        }
+    },[globalContextObj.mainState.authenticated]);
+
+   
+    useEffect(()=>{
+        let interval2;
+        let stringsArray:string[] = [];
+        const callSequentially = async () => {
+            for (const el of statusQueryGetUri) {
+                const res = await getValidationNotifiche(el);
+                if (res) {
+                    stringsArray = [...stringsArray,res];
+                }
+            }
+            return;
+        };
+
+        if(globalContextObj.mainState.authenticated === true && statusQueryGetUri?.length > 0 && isTabVisible){
+            interval2 = setInterval( async() => {
+                await callSequentially();
+                const deleteQueryCompleted = statusQueryGetUri.filter(element => !stringsArray.includes(element));
+                setStatusQueryGetUri(deleteQueryCompleted);
+                stringsArray = [];
+            }, 10000); 
+        }
+        return () => {
+            clearInterval(interval2); 
+        };
+    },[globalContextObj.mainState.authenticated,statusQueryGetUri?.length,isTabVisible]);
+
     const getCount = async () =>{
         await getMessaggiCountEnte(token,profilo.nonce).then((res)=>{
             const numMessaggi = res.data;
@@ -83,16 +92,13 @@ const HeaderProductEnte : React.FC = () => {
     const getValidationNotifiche = async(queryString) => {
         const result = await getVerificaNotificheEnte(token,profilo.nonce,{idEnte: profilo.idEnte,statusQueryGetUri:queryString}).then((res)=>{
             if(res.data.runtimeStatus === "Completed"){
-                enqueueSnackbar(`È possibile eseguire il download del file NOTIFICHE ${mesiGrid[res.data.input.Mese]}/${res.data.input.Anno}`, {variant:"success",anchorOrigin:{ horizontal: "center", vertical: "bottom" }});
-                const newStatusQueryUri = statusQueryGetUri.filter(el => el !== queryString);
-                setStatusQueryGetUri(newStatusQueryUri);
-                return res;
+                enqueueSnackbar(`È possibile eseguire il download del file NOTIFICHE ${mesiGrid[res?.data?.input?.Mese]}/${res?.data?.input?.Anno}`, {variant:"success",anchorOrigin:{ horizontal: "center", vertical: "bottom" }});
+                return queryString;
             }else if(res.data.runtimeStatus === "Running"){
                 return;
             }else{
-                enqueueSnackbar(`La creazione del file delle notifiche di ${mesiGrid[res.data.input.Mese]}/${res.data.input.Anno} non è andata a buon fine. Si prega di riprovare`, {variant:"info",anchorOrigin:{ horizontal: "center", vertical: "bottom" }});
-                const newStatusQueryUri = statusQueryGetUri.filter(el => el !== queryString);
-                setStatusQueryGetUri(newStatusQueryUri);
+                enqueueSnackbar(`La creazione del file delle notifiche di ${mesiGrid[res?.data?.input?.Mese]}/${res?.data?.input?.Anno} non è andata a buon fine. Si prega di riprovare`, {variant:"info",anchorOrigin:{ horizontal: "center", vertical: "bottom" }});
+                return queryString;
             }
         }).catch(()=>{
             const newStatusQueryUri = statusQueryGetUri.filter(el => el !== queryString);

@@ -59,10 +59,10 @@ const DettaglioMessaggio : React.FC<DettaglioMessaggioProps> = ({mainState}) =>{
     const [showDownloading,setShowDownloading] = useState(false);
   
     const readMessage = async() => {
-        await readMessaggioPagoPa(token,profilo.nonce,{idMessaggio:Number(id)}).then((res)=>{
-            console.log(res);
+        await readMessaggioPagoPa(token,profilo.nonce,{idMessaggio:Number(id)}).then(()=>{
+            return;
         }).catch((err)=>{
-            console.log(err);
+            return;
         });
     };
    

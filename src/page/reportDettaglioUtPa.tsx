@@ -677,7 +677,7 @@ const ReportDettaglio : React.FC = () => {
                     const numMessaggi = res.data;
                     setCountMessages(numMessaggi);
                 }).catch((err)=>{
-                    console.log(err);
+                    return;
                 });
             }).catch(((err)=>{
                 setShowLoading(false);

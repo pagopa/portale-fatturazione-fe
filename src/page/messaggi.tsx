@@ -94,8 +94,8 @@ const Messaggi : React.FC<any> = () => {
         await getMessaggiCount(token,profilo.nonce).then((res)=>{
             const numMessaggi = res.data;
             setCountMessages(numMessaggi);
-        }).catch((err)=>{
-            console.log(err);
+        }).catch(()=>{
+            return;
         });
     };
 
@@ -162,8 +162,8 @@ const Messaggi : React.FC<any> = () => {
         await readMessaggioPagoPa(token,profilo.nonce,{idMessaggio:Number(id)}).then(()=>{
             getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra);
             getCount();
-        }).catch((err)=>{
-            console.log(err);
+        }).catch(()=>{
+            return;
             // da aggiungere un messaggio apposito
         });
     };

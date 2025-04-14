@@ -238,7 +238,7 @@ const Fatturazione : React.FC = () =>{
             const numMessaggi = res.data;
             setCountMessages(numMessaggi);
         }).catch((err)=>{
-            console.log(err);
+            return;
         });
     };
 

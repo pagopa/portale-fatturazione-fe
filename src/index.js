@@ -37,7 +37,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   
     <GlobalContextProvider>
-        <SnackbarProvider maxSnack={3} autoHideDuration={10000} >
+        <SnackbarProvider maxSnack={3} autoHideDuration={7000} >
             <App instance={msalInstance}/> 
         </SnackbarProvider>
     </GlobalContextProvider>

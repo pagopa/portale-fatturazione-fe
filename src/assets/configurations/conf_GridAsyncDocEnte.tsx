@@ -27,8 +27,9 @@ export const headerNameAsyncDoc: HeaderGridCustom[] = [
         </IconButton>
     },
     { label: 'Data Richiesta',align:'center',width:'160px', headerAction:true},
-    {label:'Anno',align:'center',width:'100px',headerAction:false},
+    { label: 'Anno',align:'center',width:'100px',headerAction:false},
     { label: 'Mese',align:'center',width:'100px',headerAction:false},
+    { label: 'Tot. Not.',align:'center',width:'80px',headerAction:false},
     { label: 'Data Esecuzione',align:'center',width:'150px',headerAction:false},
     { label: 'Stato',align:'center',width:'100px',headerAction:false, headerTooltip:(title,label,color) => <Chip label={label} color={color} /> },
     { label: 'Letto',align:'center',width:'30px',headerAction:false},

@@ -108,6 +108,7 @@ const AsyncDocumenti = () => {
                     dataInserimento:transformDateTimeWithNameMonth(el.dataInserimento)?.split(".")[0]||"--",
                     anno:el.anno,
                     mese:mesiGrid[el.mese],
+                    count:el.count|| "--",
                     dataFine:transformDateTime(el.dataFine)?.split(".")[0]||"--",
                     stato:el.descrizioneStato,
                     letto:el.letto,
