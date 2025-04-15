@@ -117,10 +117,10 @@ const RowAsyncDoc = ({sliced,headerNames,handleClickOnGrid,element}) => {
                                     <TableRow>
                                         <TableCell align="center">{dettaglioParsed.Anno}</TableCell>
                                         <TableCell align="center">{mesiGrid[dettaglioParsed.Mese-1]||''}</TableCell>
-                                        <TableCell align="center">{tipoNotificaArray[dettaglioParsed?.TipoNotifica-1]||''}</TableCell>
-                                        <TableCell align="center">{dettaglioParsed.Cap||''}</TableCell>
-                                        <TableCell align="center">{dettaglioParsed.Iun||''}</TableCell>
-                                        <TableCell align="center">{stringsStatiContest ||''}</TableCell>
+                                        <TableCell align="center">{tipoNotificaArray[dettaglioParsed?.TipoNotifica-1]||'--'}</TableCell>
+                                        <TableCell align="center">{dettaglioParsed.Cap||'--'}</TableCell>
+                                        <TableCell align="center">{dettaglioParsed.Iun||'--'}</TableCell>
+                                        <TableCell align="center">{stringsStatiContest ||'--'}</TableCell>
                                     </TableRow>
                                 </TableBody>
                             </Table>
