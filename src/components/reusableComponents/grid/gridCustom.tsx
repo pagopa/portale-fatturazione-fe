@@ -103,7 +103,7 @@ const GridCustom : React.FC<GridCustomProps> = (
                                     if(nameParameterApi === 'idOrchestratore' || nameParameterApi === "asyncDocEnte"){
                                         return(
                                            
-                                            <TableCell align={el.align} width={el.width} key={i}>{el.label}
+                                            <TableCell key={Math.random()} align={el.align} width={el.width}>{el.label}
                                                 {el.headerAction &&
                                                 <Tooltip title="Sort">
                                                     <span>
