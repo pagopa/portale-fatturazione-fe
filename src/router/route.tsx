@@ -38,7 +38,6 @@ const RouteProfile = () => {
 
     const globalLocalStorage = localStorage.getItem('globalState') || '{}';
     const result =  JSON.parse(globalLocalStorage);
-    console.log({mainData,mainState});
 
     useEffect(()=>{
         if(token && profilo.nonce){
@@ -51,7 +50,6 @@ const RouteProfile = () => {
             const newKeys = res?.data.map(el => el.apiKey).filter(el => el !== null);
             setMainData((prev) => ({...prev, apiKeyPage:{ keys:newKeys,ip:[],visible:true}}));
         }).catch((err)=>{
-            console.log({err,mainData});
             if(err.response.status === 401){
                 setMainData((prev) => ({...prev, apiKeyPage:{...prev.apiKeyPage,visible:false}}));
             }else if (err.response.status === 404){
