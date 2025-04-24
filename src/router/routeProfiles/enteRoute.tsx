@@ -10,7 +10,11 @@ import { PathPf } from "../../types/enum";
 import LayoutEnte from "../../layout/layOutLoggedInEnte";
 import SideNavEnte from "../../layout/sideNavs/sidNavEnte";
 
-const EnteRoute = () => {
+import ApiKeyEnte from "../../page/apiKeyEnte";
+
+
+
+const EnteRoute  : React.FC<{apiIsVisible:boolean}> = ({apiIsVisible}) => {
 
     const enteRoute =  <Route element={<LayoutEnte sideNav={<SideNavEnte/>}></LayoutEnte>}>
         <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte ></AreaPersonaleUtenteEnte>}/>                                     
@@ -20,6 +24,7 @@ const EnteRoute = () => {
         <Route path={PathPf.LISTA_REL} element={<RelPage  />} />
         <Route path={PathPf.PDF_REL} element={<RelPdfPage  />} />                           
         <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio/>} />
+        {apiIsVisible && <Route path={PathPf.API_KEY_ENTE} element={<ApiKeyEnte/>} />}
     </Route>;
     return enteRoute; 
   

@@ -22,7 +22,7 @@ import { manageError } from '../../api/api';
 const SideNavEnte: React.FC = () => {
 
     const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState,setOpenBasicModal_DatFat_ModCom} = globalContextObj;
+    const {dispatchMainState,mainState,setOpenBasicModal_DatFat_ModCom,mainData} = globalContextObj;
     const navigate = useNavigate();
     const location = useLocation();
     const token =  mainState.profilo.jwt;
@@ -125,6 +125,14 @@ const SideNavEnte: React.FC = () => {
         }
     };
 
+    const handleListItemClickApiKey = async () => {
+        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.API_KEY_ENTE}}));
+        }else{
+            navigate(PathPf.API_KEY_ENTE);
+        }
+    };
+
     const currentLocation = location.pathname;
 
     useEffect(()=>{
@@ -146,14 +154,8 @@ const SideNavEnte: React.FC = () => {
             setSelectedIndex(3);
         }else if(currentLocation === PathPf.PDF_REL){
             setSelectedIndex(3);
-        }else if(currentLocation === PathPf.ADESIONE_BANDO){
-            setSelectedIndex(4);
-        }else if(currentLocation === PathPf.FATTURAZIONE){
+        }else if(currentLocation ===  PathPf.API_KEY_ENTE){
             setSelectedIndex(5);
-        }else if(currentLocation === "/messaggi"){
-            setSelectedIndex(null);
-        }else if(currentLocation === "/accertamenti"){
-            setSelectedIndex(7);
         }
     },[currentLocation]);
 
@@ -189,6 +191,13 @@ const SideNavEnte: React.FC = () => {
                     </ListItemIcon>
                     <ListItemText primary="Regolare esecuzione" />
                 </ListItemButton>
+                {mainData.apiKeyPage.visible &&
+                <ListItemButton selected={selectedIndex === 5} onClick={() => handleListItemClickApiKey()}>
+                    <ListItemIcon>
+                        <ManageAccountsIcon fontSize="inherit" />
+                    </ListItemIcon>
+                    <ListItemText primary="API key"/>
+                </ListItemButton>}
             </List>
             <Divider />
         </Box>

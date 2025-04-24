@@ -1,6 +1,6 @@
 import '../App.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { profiliEnti } from "../reusableFunction/actionLocalStorage";
 import { GlobalContext } from "../store/context/globalContext";
 import EnteRoute from "./routeProfiles/enteRoute";
@@ -21,27 +21,52 @@ import { PathPf } from "../types/enum";
 import LayoutLoggedOut from '../layout/layoutLoggedOut';
 import { BrowserRouter } from 'react-router-dom';
 import useIsTabActive from '../reusableFunction/tabIsActiv';
-import { redirect } from '../api/api';
+import { getPageApiKeyVisible, redirect } from '../api/api';
 
 
 const RouteProfile = () => {
     const globalContextObj = useContext(GlobalContext);
-    const {mainState} = globalContextObj;
+    const  { mainState,setMainData,mainData}  = globalContextObj;
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
     const isEnte = profiliEnti(mainState);
     const isLoggedWithoutProfile = mainState.prodotti?.length > 0 && mainState.authenticated === true && !mainState.profilo.auth;
-    const isProdPnProfile = mainState.profilo.prodotto === 'prod-pn' && mainState.prodotti.length > 0 && mainState.authenticated;
-    const isPagoPaProfile = mainState.profilo.prodotto === 'prod-pagopa' && mainState.prodotti.length > 0 && mainState.authenticated;
+    const isProdPnProfile = mainState.profilo?.prodotto === 'prod-pn' && mainState.prodotti?.length > 0 && mainState.authenticated;
+    const isPagoPaProfile = mainState.profilo?.prodotto === 'prod-pagopa' && mainState.prodotti?.length > 0 && mainState.authenticated;
     const isRececapitistaOrConsolidatore = (mainState.profilo?.profilo === 'REC' || mainState.profilo?.profilo ==='CON') && mainState.authenticated;
-    const profilo = mainState.profilo;
+ 
 
     const globalLocalStorage = localStorage.getItem('globalState') || '{}';
     const result =  JSON.parse(globalLocalStorage);
+    console.log({mainData,mainState});
 
-    let route  = <Route/>;
+    useEffect(()=>{
+        if(token && profilo.nonce){
+            apiKeyPageAvailable();
+        }
+    },[token,profilo.nonce]);
+
+    const apiKeyPageAvailable = async() => {
+        await getPageApiKeyVisible(token,profilo.nonce).then(async(res)=>{
+            const newKeys = res?.data.map(el => el.apiKey).filter(el => el !== null);
+            setMainData((prev) => ({...prev, apiKeyPage:{ keys:newKeys,ip:[],visible:true}}));
+        }).catch((err)=>{
+            console.log({err,mainData});
+            if(err.response.status === 401){
+                setMainData((prev) => ({...prev, apiKeyPage:{...prev.apiKeyPage,visible:false}}));
+            }else if (err.response.status === 404){
+                setMainData((prev) => ({...prev, apiKeyPage:{...prev.apiKeyPage,visible:true}}));
+            }else{
+                setMainData((prev) => ({...prev, apiKeyPage:{...prev.apiKeyPage,visible:true}}));
+            }
+        });
+    };
+
+    let route:any  = <Route/>;
     let redirectRoute = "/azureLogin";
 
     if(isEnte){
-        route = EnteRoute();
+        route = EnteRoute({apiIsVisible:mainData.apiKeyPage.visible});
         redirectRoute = PathPf.DATI_FATTURAZIONE;
     }else if(isLoggedWithoutProfile){
         route = SelectProdottiRoute();
