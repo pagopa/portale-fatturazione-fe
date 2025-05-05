@@ -1,16 +1,13 @@
-import { Button, FilledInput, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, Skeleton, TextField, Typography } from "@mui/material";
+import { Button, FilledInput, FormControl, FormHelperText, IconButton, InputAdornment, Skeleton, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import AddIcon from '@mui/icons-material/Add';
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import InputMask from 'react-input-mask';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { GlobalContext } from "../store/context/globalContext";
-import { createApiKey, createIP, deleteIP, getPageApiKeyVisibleIP} from "../api/apiSelfcare/apiKeySE/api";
+import { createApiKey, getPageApiKeyVisibleIP} from "../api/apiSelfcare/apiKeySE/api";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
-import { getPageApiKeyVisible, manageError } from "../api/api";
-
-
+import { getPageApiKeyVisible } from "../api/api";
+import IPAddressInput from "../components/reusableComponents/textField/inputIpAddress";
 
 export interface BodyApiKey {
     apiKey: string|null,
@@ -18,12 +15,10 @@ export interface BodyApiKey {
     refresh: boolean|null
 }
 
-
-
 const ApiKeyEnte = () => {
 
     const globalContextObj = useContext(GlobalContext);
-    const { mainState,mainData,setMainData,dispatchMainState} = globalContextObj;
+    const { mainState,mainData,setMainData} = globalContextObj;
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 
@@ -33,7 +28,7 @@ const ApiKeyEnte = () => {
     const [showPassword2, setShowPassword2] = useState(false);
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
     const [loadingGetIPs,setLoadingGetIp] = useState(true);
-    const [disableDeleteAddButton, setDisableDeleteAddButton] = useState(false);
+    
 
     const [bodyApiKey,setBodyApiKey] = useState<BodyApiKey>({
         apiKey: null,
@@ -41,12 +36,12 @@ const ApiKeyEnte = () => {
         refresh: null
     });
 
-   
-    const [ip0,setIp0] = useState<string|null>();
-    const [ip1,setIp1] = useState<string|null>();
-    const [ipsToCompare ,setIpsToCompare] = useState<string[]>([]);
-    const [error0,setError0] = useState("");
-    const [error1,setError1] = useState("");
+
+    const [ipsToCompare ,setIpsToCompare] = useState<{
+        idEnte: string,
+        ipAddress: string,
+        dataCreazione: string
+    }[]>([]);
 
     useEffect(()=>{
         if(mainState.datiFatturazione === false && profilo.auth !== 'PAGOPA'){
@@ -59,49 +54,16 @@ const ApiKeyEnte = () => {
     const getIPs = async() =>{
         setLoadingGetIp(true);
         await getPageApiKeyVisibleIP(token,profilo.nonce).then(async(res)=>{
-            const newIps = res?.data.map(el => el.ipAddress);
-            if(newIps.length > 0){
-                setIp0(newIps[0]);
-            }
-            if(newIps.length > 1){
-                setIp1(newIps[1]);
-            }else{
-                setIp1(null);
-            }
-           
-            setIpsToCompare(newIps);
+            setIpsToCompare(res.data);
             setLoadingGetIp(false);
-        }).catch((err)=>{
-            setIp0(null);
-            setIp1(null);
+            console.log({res});
+        }).catch(()=>{
             setIpsToCompare([]);
             setLoadingGetIp(false);
             //manageError(err, dispatchMainState);
         });
     };
 
-    const createIPPage = async(ipAddress) =>{
-        setDisableDeleteAddButton(true);
-        await createIP(token,profilo.nonce,ipAddress).then(async(res)=>{
-            await getIPs();
-            setDisableDeleteAddButton(false);
-        }).catch((err)=>{
-            setDisableDeleteAddButton(false);
-            manageError(err, dispatchMainState);
-        });
-    };
-
-    const deleteSingleIp =  async(ipSelected:string) =>{
-        setDisableDeleteAddButton(true);
-        await deleteIP(token,profilo.nonce,ipSelected).then(async(res)=>{
-            await getIPs();
-            setDisableDeleteAddButton(false);
-        }).catch((err)=>{
-            setDisableDeleteAddButton(false);
-            manageError(err, dispatchMainState);
-        });
-    };
-    
 
     const generateModifyKey = async(body) => {
         setDisableInsertApiKey(true);
@@ -123,34 +85,6 @@ const ApiKeyEnte = () => {
     const handleClickShowPassword = () => setShowPassword((show) => !show);
     const handleClickShowPassword2 = () => setShowPassword2((show) => !show);
   
-  
-    const validateIP = (value) => {
-        const ipPattern = /^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$/;
-        return ipPattern.test(value);
-    };
-  
-    const handleChangeIp0 = (e) => {
-        const value = e.target.value;
-        setIp0(value);
-        if (value && !validateIP(value)) {
-            setError0('IP non valido');
-        }else {
-            setError0('');
-        }
-    };
-
-
-    const handleChangeIp1 = (e) => {
-        const value2 = e.target.value;
-        setIp1(value2);
-        if (value2 && !validateIP(value2)) {
-            setError1('Invalid IP address');
-        }else if(value2 === ip0){
-            setError1('Inserire un indirizzo IP diverso');
-        } else {
-            setError1('');
-        } 
-    };
 
     return(
         <div className="m-5 ">
@@ -209,7 +143,7 @@ const ApiKeyEnte = () => {
                             </FormControl>
                             {mainData.apiKeyPage.keys?.length > 0 &&
                                         <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', height: '100%',width: '20%' }}>
-                                            <Button disabled={disableInsertApiKey} onClick={()=> generateModifyKey({apiKey:mainData.apiKeyPage.keys[0], attiva: true,refresh: null})} variant="outlined">Rigenera</Button>
+                                            <Button disabled={disableInsertApiKey} onClick={()=> generateModifyKey({apiKey:mainData.apiKeyPage.keys[0], attiva: true,refresh: true})} variant="outlined">Rigenera</Button>
                                         </div>}
                         </div>}
                         {mainData.apiKeyPage.keys?.length > 1 &&
@@ -235,7 +169,7 @@ const ApiKeyEnte = () => {
                                         />
                                     </FormControl>
                                     <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', height: '100%',width: '20%' }}>
-                                        <Button disabled={disableInsertApiKey} onClick={()=> generateModifyKey({apiKey:mainData.apiKeyPage.keys[1], attiva: false,refresh: null})} variant="outlined">Rigenera</Button>
+                                        <Button disabled={disableInsertApiKey} onClick={()=> generateModifyKey({apiKey:mainData.apiKeyPage.keys[1], attiva: false,refresh: true})} variant="outlined">Rigenera</Button>
                                     </div>
                                 </div>}
                     </div>
@@ -251,7 +185,7 @@ const ApiKeyEnte = () => {
                         </div>
                         <div className="col-2">
                             {
-                                (!showInsertIp && !ip0) &&
+                                (!showInsertIp && ipsToCompare?.length === 0 ) &&
                             <div  style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', height: '100%' }}>
                                 <Button onClick={()=> setShowInsertIp((prev)=> !prev)} variant="outlined"><AddIcon fontSize="small" className="me-2"></AddIcon>Aggiungi IP</Button>
                             </div>
@@ -269,68 +203,16 @@ const ApiKeyEnte = () => {
                                         <Typography onClick={()=> setShowInsertIp((prev)=> !prev)} sx={{cursor:"pointer",color:"#0073E6"}} variant="caption-semibold">Aggiungi IP</Typography>
                                     </div>
                                 </>:
-                                <>
-                                    <div className=" bg-white col-11 p-3 d-flex justify-content-start">
-                                        <InputMask
-                                            sx={{ m: 1, width: '20%',height:"59px" }}
-                                            mask="99.99.99.999"
-                                       
-                                            value={ip0||""}
-                                            onChange={(e)=>handleChangeIp0(e)}
-                                            placeholder="Inserisci IP primario"
-                                        >
-                                            {(inputProps) => (
-                                                <TextField
-                                                    error={error0 !== ""}
-                                                    helperText={error0 !== "" && error0}
-                                                    InputProps={{
-                                                        readOnly: ipsToCompare[0],
-                                                    }}
-                                                    {...inputProps}
-                                                />
-                                            )}
-                                        </InputMask>
-                                    
-                                        <div  style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', height: '100%',width: '20%' }}>
-                                            {ipsToCompare?.length === 0 ? 
-                                                <Button disabled={error0 !== "" || !ip0 || disableDeleteAddButton} onClick={()=> createIPPage(ip0)} variant="outlined"><AddIcon fontSize="small"></AddIcon></Button>:
-                                                <Button disabled={disableDeleteAddButton} onClick={() =>deleteSingleIp(ipsToCompare[0])} variant="outlined"><DeleteIcon fontSize="small"></DeleteIcon></Button>
-                                        
-                                            }
-                                       
-                                        </div>
-                                   
-                                    </div>
-                                    {ipsToCompare?.length > 0 &&
-                                <div className=" bg-white col-11 p-3 d-flex justify-content-start">
-                                    <InputMask
-                                    
-                                        sx={{ m: 1, width: '20%',height:"59px" }}
-                                        mask="99.99.99.999"
-                                        value={ip1||""}
-                                        onChange={(e)=>handleChangeIp1(e)}
-                                        placeholder="Inserisci IP secondario"
-                                    >
-                                        {(inputProps) => (
-                                            <TextField
-                                                error={error1 !== ""}
-                                                helperText={error1 !== "" && error1}
-                                                InputProps={{
-                                                    readOnly: ipsToCompare[1],
-                                                }}
-                                                {...inputProps}
-                                            />
-                                        )}
-                                    </InputMask>
-                                    <div  style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', height: '100%',width: '20%' }}>
-                                        {ipsToCompare?.length === 1 ? 
-                                            <Button disabled={error1 !== ""||!ip1|| disableDeleteAddButton} onClick={()=> createIPPage(ip1)} variant="outlined"><AddIcon fontSize="small"></AddIcon></Button>:
-                                            <Button disabled={disableDeleteAddButton} onClick={() =>deleteSingleIp(ipsToCompare[1])} variant="outlined"><DeleteIcon fontSize="small"></DeleteIcon></Button>
-                                        }
-                                    </div>
+                                <div>
+                                 
+                                    {ipsToCompare.map(el => {
+                                        return(
+                                            <IPAddressInput getIPs={getIPs} singleIp={el.ipAddress} button={"del"} ipsToCompare={ipsToCompare} setLoading={setLoadingGetIp}></IPAddressInput>
+                                        );
+                                    })}
+                                    <IPAddressInput getIPs={getIPs} singleIp={""} button={"add"} ipsToCompare={ipsToCompare} setLoading={setLoadingGetIp}></IPAddressInput>
                                 </div>
-                                    }
-                                </>}
+                            }
                         </div>
                     </div>
                 </div>:
@@ -341,6 +223,7 @@ const ApiKeyEnte = () => {
                         </div>
                     </div>
                 </div>}
+           
             <ModalRedirect 
                 setOpen={setOpenModalRedirect}
                 open={openModalRedirect}

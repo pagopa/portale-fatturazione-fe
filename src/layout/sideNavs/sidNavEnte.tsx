@@ -18,6 +18,7 @@ import { PathPf } from '../../types/enum';
 import { getDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
 import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
 import { manageError } from '../../api/api';
+import VpnKeyIcon from '@mui/icons-material/VpnKey';
 
 const SideNavEnte: React.FC = () => {
 
@@ -194,7 +195,7 @@ const SideNavEnte: React.FC = () => {
                 {mainData.apiKeyPage.visible &&
                 <ListItemButton selected={selectedIndex === 5} onClick={() => handleListItemClickApiKey()}>
                     <ListItemIcon>
-                        <ManageAccountsIcon fontSize="inherit" />
+                        <VpnKeyIcon fontSize="inherit" />
                     </ListItemIcon>
                     <ListItemText primary="API key"/>
                 </ListItemButton>}
