@@ -193,7 +193,7 @@ const ApiKeyEnte = () => {
                         </div>
                     </div>
                     <div className="marginTop24">
-                        <div className="row ">
+                        <div className="row  ">
                             {!showInsertIp && ipsToCompare?.length === 0 ?
                                 <>
                                     <div className=" bg-white col-8 p-3 d-flex justify-content-center">
@@ -203,7 +203,7 @@ const ApiKeyEnte = () => {
                                         <Typography onClick={()=> setShowInsertIp((prev)=> !prev)} sx={{cursor:"pointer",color:"#0073E6"}} variant="caption-semibold">Aggiungi IP</Typography>
                                     </div>
                                 </>:
-                                <div>
+                                <>
                                  
                                     {ipsToCompare.map(el => {
                                         return(
@@ -211,7 +211,7 @@ const ApiKeyEnte = () => {
                                         );
                                     })}
                                     <IPAddressInput getIPs={getIPs} singleIp={""} button={"add"} ipsToCompare={ipsToCompare} setLoading={setLoadingGetIp}></IPAddressInput>
-                                </div>
+                                </>
                             }
                         </div>
                     </div>

@@ -56,7 +56,7 @@ const IPAddressInput = ({singleIp,getIPs,button,ipsToCompare,setLoading}) => {
             if (!validateIP(value)) {
                 setError('IP Adderess non valido');
             }else if(ipsToCompare.map(el => el.ipAddress).includes(value)){
-                setError('IP Adderess già inserito');
+                setError('IP Address già inserito');
             } else {
                 setError('');
             }
