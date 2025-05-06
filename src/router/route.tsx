@@ -10,7 +10,7 @@ import PagoPaRoute from "./routeProfiles/pagoPaRoute";
 import RecConRoute from "./routeProfiles/recapitistaConsolidatoreRoute";
 import { ThemeProvider} from '@mui/material';
 import {theme} from '@pagopa/mui-italia';
-import {Routes, Route, Navigate} from "react-router";
+import {Routes, Route, Navigate, useLocation} from "react-router";
 import BasicAlerts from "../components/reusableComponents/modals/alert";
 import Auth from "../page/auth";
 import AuthAzure from "../page/authAzure";
@@ -23,7 +23,6 @@ import { BrowserRouter } from 'react-router-dom';
 import useIsTabActive from '../reusableFunction/tabIsActiv';
 import { getPageApiKeyVisible, redirect } from '../api/api';
 
-
 const RouteProfile = () => {
     const globalContextObj = useContext(GlobalContext);
     const  { mainState,setMainData,mainData}  = globalContextObj;
@@ -34,7 +33,6 @@ const RouteProfile = () => {
     const isProdPnProfile = mainState.profilo?.prodotto === 'prod-pn' && mainState.prodotti?.length > 0 && mainState.authenticated;
     const isPagoPaProfile = mainState.profilo?.prodotto === 'prod-pagopa' && mainState.prodotti?.length > 0 && mainState.authenticated;
     const isRececapitistaOrConsolidatore = (mainState.profilo?.profilo === 'REC' || mainState.profilo?.profilo ==='CON') && mainState.authenticated;
- 
 
     const globalLocalStorage = localStorage.getItem('globalState') || '{}';
     const result =  JSON.parse(globalLocalStorage);
@@ -55,14 +53,13 @@ const RouteProfile = () => {
             }else if (err.response.status === 404){
                 setMainData((prev) => ({...prev, apiKeyPage:{...prev.apiKeyPage,visible:true}}));
             }else{
-                setMainData((prev) => ({...prev, apiKeyPage:{...prev.apiKeyPage,visible:true}}));
+                setMainData((prev) => ({...prev, apiKeyPage:{...prev.apiKeyPage,visible:false}}));
             }
         });
     };
 
     let route:any  = <Route/>;
     let redirectRoute = "/azureLogin";
-
     if(isEnte){
         route = EnteRoute({apiIsVisible:mainData.apiKeyPage.visible});
         redirectRoute = PathPf.DATI_FATTURAZIONE;
@@ -90,7 +87,7 @@ const RouteProfile = () => {
         }
     },[tabActive]);
 
-   
+  
     return (
         <BrowserRouter>
             <ThemeProvider theme={theme}>
@@ -109,6 +106,7 @@ const RouteProfile = () => {
             </ThemeProvider>
         </BrowserRouter>
     );
+
 };
 
 export default RouteProfile;

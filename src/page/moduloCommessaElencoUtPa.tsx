@@ -199,7 +199,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
                     </Box>
                 </div>
                 {(mainState.primoInserimetoCommessa && enti) &&
-                <Button variant="contained" onClick={()=>{
+                <Button  sx={{ marginTop: 'auto', marginBottom: 'auto', marginLeft: '30px' }} variant="contained" onClick={()=>{
                     handleListItemClickModuloCommessa();
                 }}>Inserisci modulo commessa</Button>
                 }

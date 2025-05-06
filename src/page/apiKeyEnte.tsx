@@ -57,7 +57,6 @@ const ApiKeyEnte = () => {
         await getPageApiKeyVisibleIP(token,profilo.nonce).then(async(res)=>{
             setIpsToCompare(res.data);
             setLoadingGetIp(false);
-            console.log({res});
         }).catch(()=>{
             setIpsToCompare([]);
             setLoadingGetIp(false);
@@ -223,9 +222,9 @@ const ApiKeyEnte = () => {
                             </>:
                             <>
                                  
-                                {ipsToCompare.map((el,i) => {
+                                {ipsToCompare.map((el) => {
                                     return(
-                                        <IPAddressInput  key={i} disable={loadingGetIPs}  getIPs={getIPs} singleIp={el.ipAddress} button={"del"} ipsToCompare={ipsToCompare} setLoading={setLoadingGetIp}></IPAddressInput>
+                                        <IPAddressInput  key={el.ipAddress} disable={loadingGetIPs}  getIPs={getIPs} singleIp={el.ipAddress} button={"del"} ipsToCompare={ipsToCompare} setLoading={setLoadingGetIp}></IPAddressInput>
                                     );
                                 })}
                               
