@@ -6,8 +6,8 @@ import { GlobalContext } from '../../../store/context/globalContext';
 import { createIP, deleteIP } from '../../../api/apiSelfcare/apiKeySE/api';
 import { manageError } from '../../../api/api';
 
-const IPAddressInput = ({singleIp,getIPs,button,ipsToCompare,setLoading}) => {
-
+const IPAddressInput = ({singleIp,getIPs,button,ipsToCompare,setLoading,disable}) => {
+  
     const globalContextObj = useContext(GlobalContext);
     const { mainState,dispatchMainState} = globalContextObj;
     const token =  mainState.profilo.jwt;
@@ -21,7 +21,7 @@ const IPAddressInput = ({singleIp,getIPs,button,ipsToCompare,setLoading}) => {
     const createIPApi = async(ipAddress) =>{
         setLoading(true);
         setDisableDeleteAddButton(true);
-        await createIP(token,profilo.nonce,ipAddress).then(async(res)=>{
+        await createIP(token,profilo.nonce,ipAddress).then(async()=>{
             await getIPs();
             setDisableDeleteAddButton(false);
         }).catch((err)=>{
@@ -34,7 +34,7 @@ const IPAddressInput = ({singleIp,getIPs,button,ipsToCompare,setLoading}) => {
     const deleteSingleIp =  async(ipSelected:string) =>{
         setLoading(true);
         setDisableDeleteAddButton(true);
-        await deleteIP(token,profilo.nonce,ipSelected).then(async(res)=>{
+        await deleteIP(token,profilo.nonce,ipSelected).then(async()=>{
             await getIPs();
             setDisableDeleteAddButton(false);
         }).catch((err)=>{
@@ -70,6 +70,7 @@ const IPAddressInput = ({singleIp,getIPs,button,ipsToCompare,setLoading}) => {
                 label="IP Address"
                 value={ipAddress}
                 onChange={handleChange}
+                disabled={disable}
                 error={!!error}
                 helperText={error}
                 placeholder="e.g., 192.168.1.1"
@@ -87,8 +88,8 @@ const IPAddressInput = ({singleIp,getIPs,button,ipsToCompare,setLoading}) => {
                 height: '58px',
                 width: '20%',
             }}>
-                {button === "add" && <Button disabled={error !== "" || ipAddress === ""}  onClick={()=> createIPApi(ipAddress)} variant="outlined"><AddIcon fontSize="small"></AddIcon></Button>}
-                {button === "del" &&<Button onClick={() =>deleteSingleIp(singleIp)} variant="outlined"><DeleteIcon fontSize="small"></DeleteIcon></Button>}
+                {button === "add" && <Button disabled={error !== "" || ipAddress === ""||disable }  onClick={()=> createIPApi(ipAddress)} variant="outlined"><AddIcon fontSize="small"></AddIcon></Button>}
+                {button === "del" &&<Button disabled={disable} onClick={() =>deleteSingleIp(singleIp)} variant="outlined"><DeleteIcon fontSize="small"></DeleteIcon></Button>}
             </div>
            
         </div>

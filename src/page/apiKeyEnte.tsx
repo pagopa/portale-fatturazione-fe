@@ -75,7 +75,6 @@ const ApiKeyEnte = () => {
                 const newKeys = res.data.map(el => el.apiKey);
                 setMainData((prev) => ({...prev, apiKeyPage:{...prev.apiKeyPage,keys:newKeys}}));
             }).catch(()=>{
-               
                 setDisableInsertApiKey(false);
             });
             managePresaInCarico(body.apiKey ?'REGEN_KEY_OK': "CREAT_KEY_OK",dispatchMainState);
@@ -195,54 +194,49 @@ const ApiKeyEnte = () => {
                     </div>
                 </div>
             </div>
-            {!loadingGetIPs ? 
-                <div className="mt-5 pb-5">
-                    <div className="row mt-5 ">
-                        <div className="col-9">
-                            <div style={{ display: 'flex', justifyContent: 'start', alignItems: 'center', height: '100%' }}>
-                                <Typography variant="h4">IP RANGE</Typography>
-                            </div>
+            <div className="mt-5 pb-5">
+                <div className="row mt-5 ">
+                    <div className="col-9">
+                        <div style={{ display: 'flex', justifyContent: 'start', alignItems: 'center', height: '100%' }}>
+                            <Typography variant="h4">IP RANGE</Typography>
                         </div>
-                        <div className="col-2">
-                            {
-                                (!showInsertIp && ipsToCompare?.length === 0 ) &&
+                    </div>
+                    <div className="col-2">
+                        {
+                            (!showInsertIp && ipsToCompare?.length === 0 ) &&
                             <div  style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', height: '100%' }}>
                                 <Button onClick={()=> setShowInsertIp((prev)=> !prev)} variant="outlined"><AddIcon fontSize="small" className="me-2"></AddIcon>Aggiungi IP</Button>
                             </div>
-                            }
-                        </div>
+                        }
                     </div>
-                    <div className="marginTop24">
-                        <div className="row  ">
-                            {!showInsertIp && ipsToCompare?.length === 0 ?
-                                <>
-                                    <div className=" bg-white col-8 p-3 d-flex justify-content-center">
-                                        <Typography variant="body1">Non è stato creato ancora nessun IP</Typography>
-                                    </div>
-                                    <div className=" bg-white col-3 p-3">
-                                        <Typography onClick={()=> setShowInsertIp((prev)=> !prev)} sx={{cursor:"pointer",color:"#0073E6"}} variant="caption-semibold">Aggiungi IP</Typography>
-                                    </div>
-                                </>:
-                                <>
+                </div>
+                <div className="marginTop24">
+                    <div className="row  ">
+                        {!showInsertIp && ipsToCompare?.length === 0 ?
+                            <>
+                                <div className=" bg-white col-8 p-3 d-flex justify-content-center">
+                                    <Typography variant="body1">Non è stato creato ancora nessun IP</Typography>
+                                </div>
+                                <div className=" bg-white col-3 p-3">
+                                    <Typography onClick={()=> setShowInsertIp((prev)=> !prev)} sx={{cursor:"pointer",color:"#0073E6"}} variant="caption-semibold">Aggiungi IP</Typography>
+                                </div>
+                            </>:
+                            <>
                                  
-                                    {ipsToCompare.map(el => {
-                                        return(
-                                            <IPAddressInput getIPs={getIPs} singleIp={el.ipAddress} button={"del"} ipsToCompare={ipsToCompare} setLoading={setLoadingGetIp}></IPAddressInput>
-                                        );
-                                    })}
-                                    <IPAddressInput getIPs={getIPs} singleIp={""} button={"add"} ipsToCompare={ipsToCompare} setLoading={setLoadingGetIp}></IPAddressInput>
-                                </>
-                            }
-                        </div>
+                                {ipsToCompare.map((el,i) => {
+                                    return(
+                                        <IPAddressInput  key={i} disable={loadingGetIPs}  getIPs={getIPs} singleIp={el.ipAddress} button={"del"} ipsToCompare={ipsToCompare} setLoading={setLoadingGetIp}></IPAddressInput>
+                                    );
+                                })}
+                              
+                                <IPAddressInput key={ipsToCompare?.length} disable={loadingGetIPs} getIPs={getIPs} singleIp={""} button={"add"} ipsToCompare={ipsToCompare} setLoading={setLoadingGetIp}></IPAddressInput>
+                            
+                               
+                            </>
+                        }
                     </div>
-                </div>:
-                <div className="mt-5 pb-5">
-                    <div className="row mt-5 ">
-                        <div className="col-11">
-                            <Skeleton variant="rectangular" height={"300px"} />
-                        </div>
-                    </div>
-                </div>}
+                </div>
+            </div>
            
             <ModalRedirect 
                 setOpen={setOpenModalRedirect}
