@@ -6,8 +6,9 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { GlobalContext } from "../store/context/globalContext";
 import { createApiKey, getPageApiKeyVisibleIP} from "../api/apiSelfcare/apiKeySE/api";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
-import { getPageApiKeyVisible } from "../api/api";
+import { getPageApiKeyVisible, managePresaInCarico } from "../api/api";
 import IPAddressInput from "../components/reusableComponents/textField/inputIpAddress";
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 export interface BodyApiKey {
     apiKey: string|null,
@@ -18,7 +19,7 @@ export interface BodyApiKey {
 const ApiKeyEnte = () => {
 
     const globalContextObj = useContext(GlobalContext);
-    const { mainState,mainData,setMainData} = globalContextObj;
+    const { mainState,mainData,setMainData,dispatchMainState} = globalContextObj;
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 
@@ -77,14 +78,31 @@ const ApiKeyEnte = () => {
                
                 setDisableInsertApiKey(false);
             });
-        }).catch(()=>{
+            managePresaInCarico(body.apiKey ?'REGEN_KEY_OK': "CREAT_KEY_OK",dispatchMainState);
+        }).catch(async()=>{
+            await getPageApiKeyVisible(token,profilo.nonce).then((res)=>{
+                const newKeys = res.data.map(el => el.apiKey);
+                setMainData((prev) => ({...prev, apiKeyPage:{...prev.apiKeyPage,keys:newKeys}}));
+            }).catch((err)=>{
+                console.log(err);
+            });
+            managePresaInCarico(body.apiKey ?'REGEN_KEY_KO': "CREAT_KEY_KO",dispatchMainState);
             setDisableInsertApiKey(false);
         });
     };
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
     const handleClickShowPassword2 = () => setShowPassword2((show) => !show);
-  
+
+    const copyKey = (textToCopy) => {
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            managePresaInCarico('SAVE_KEY_OK',dispatchMainState);
+        }).catch(() => {
+            managePresaInCarico('SAVE_KEY_KO',dispatchMainState);
+        });
+    };
+    
+    
 
     return(
         <div className="m-5 ">
@@ -142,7 +160,8 @@ const ApiKeyEnte = () => {
                                 
                             </FormControl>
                             {mainData.apiKeyPage.keys?.length > 0 &&
-                                        <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', height: '100%',width: '20%' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'end',width: '20%',gap:"15px",padding:"14px" }}>
+                                            <Button disabled={disableInsertApiKey} onClick={()=> copyKey(mainData.apiKeyPage.keys[0]||"")} variant="outlined"><ContentCopyIcon fontSize="small"></ContentCopyIcon></Button>
                                             <Button disabled={disableInsertApiKey} onClick={()=> generateModifyKey({apiKey:mainData.apiKeyPage.keys[0], attiva: true,refresh: true})} variant="outlined">Rigenera</Button>
                                         </div>}
                         </div>}
@@ -168,7 +187,8 @@ const ApiKeyEnte = () => {
                                             }
                                         />
                                     </FormControl>
-                                    <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', height: '100%',width: '20%' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'end', alignItems: 'end',width: '20%',gap:"15px",padding:"14px" }}>
+                                        <Button disabled={disableInsertApiKey} onClick={()=> copyKey(mainData.apiKeyPage.keys[1]||"")}  variant="outlined"><ContentCopyIcon fontSize="small"></ContentCopyIcon></Button>
                                         <Button disabled={disableInsertApiKey} onClick={()=> generateModifyKey({apiKey:mainData.apiKeyPage.keys[1], attiva: false,refresh: true})} variant="outlined">Rigenera</Button>
                                     </div>
                                 </div>}

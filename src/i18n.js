@@ -30,7 +30,15 @@ i18n.use(Backend)
                         'PRESA_IN_CARICO_DOCUMENTO':"Azione presa in carico. Vai ai messaggi per visualizzare lo stato di elaborazione",
                         'ERRORE_MANUALE':'Manuale momentaneamente non disponibile',
                         'ERROR_LIST_JSON_TO_SAP':"Dettaglio momentaneamente non disponibile",
-                        "404_RIGHE_ID":"Il report di dettaglio notifiche Regolare Esecuzione sarà disponibile a breve"
+                        "404_RIGHE_ID":"Il report di dettaglio notifiche Regolare Esecuzione sarà disponibile a breve",
+                        "SAVE_KEY_KO":"Operazione fallita",
+                        "SAVE_KEY_OK":"Copia eseguita",
+                        "REGEN_KEY_KO":"Rigenerazione fallita",
+                        "CREAT_KEY_KO":"Creazione fallita",
+                        "REGEN_KEY_OK":"Rigenerazione eseguita",
+                        "CREAT_KEY_OK":"Creazione avvenuta con successo",
+
+
                     }
                 }
             }

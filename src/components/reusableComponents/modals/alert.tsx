@@ -53,19 +53,21 @@ const BasicAlerts:React.FC = () => {
         colorAlert = 'error';
     }else if(mainState.apiError === 500 || errorAlert.error === 500){
         colorAlert = 'error';
-    }else if(mainState.apiError === 400 || errorAlert.error === 400){
+    }else if(mainState.apiError === 400 || errorAlert.error === 400 || mainState.apiError === "CREAT_KEY_KO" || mainState.apiError === "REGEN_KEY_KO"){
         colorAlert = 'error';
-    }else if(errorAlert.error === 404 || mainState.apiError === 404 || mainState.apiError === '404_DOWNLOAD' || mainState.apiError === 'PRESA'|| mainState.apiError === '404_RIGHE_ID'){
+    }else if(errorAlert.error === 404 || mainState.apiError === 404 || mainState.apiError === '404_DOWNLOAD' || mainState.apiError === 'PRESA'|| mainState.apiError === '404_RIGHE_ID'||mainState.apiError === "SAVE_KEY_OK"){
         colorAlert = "info";
     }else if(mainState.apiError === "Network Error"|| mainState.apiError === 'ERRORE_MANUALE'|| mainState.apiError === "ERROR_LIST_JSON_TO_SAP" ){
         colorAlert = 'warning';
     }else if(mainState.apiError === 410 || mainState.apiError === 409 || errorAlert.error === 410){
         colorAlert = 'warning';
-    }else if((mainState.apiError||'').slice(0,2) === 'NO'){
+    }else if((mainState.apiError||'').slice(0,2) === 'NO'||mainState.apiError === "SAVE_KEY_KO"){
         colorAlert = 'error';
     }else if(!mainState.apiError && !errorAlert.error){
         colorAlert = 'warning';
     }
+
+
     
     const [css, setCss] = useState('main_container_alert_component');
 
