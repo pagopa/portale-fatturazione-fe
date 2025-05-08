@@ -108,15 +108,16 @@ const ApiKeyEnte = () => {
             <div className="mt-5 pb-5">
                 <Typography>Genera API KEY per gestire l'autenticazione dei soggetti connessi al nodo PAGOPA </Typography>
                 <div className="row mt-5">
-                    <div className="col-8">
+                    <div className="col-8 p-0">
                         <div style={{ display: 'flex', justifyContent: 'start', alignItems: 'center', height: '100%' }}>
                             <Typography variant="h4">API KEY</Typography>
                         </div>
                     </div>
                     {
-                        mainData.apiKeyPage.keys?.length < 2 &&  <div className="col-3">
-                            <div  style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', height: '100%',width:"300px" }}>
-                                <Button disabled={disableInsertApiKey} onClick={()=>generateModifyKey(bodyApiKey)} variant="outlined"><AddIcon fontSize="small" className="me-2"></AddIcon>{mainData.apiKeyPage.keys?.length < 1 ?"Genera API KEY":"Genera API KEY secondaria"}</Button>
+                        mainData.apiKeyPage.keys?.length < 2 &&  
+                        <div className="col-3 p-0">
+                            <div  style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', height: '100%' }}>
+                                <Button sx={{width:"70%"}} disabled={disableInsertApiKey} onClick={()=>generateModifyKey(bodyApiKey)} variant="outlined"><AddIcon fontSize="small" className="me-2"></AddIcon>{mainData.apiKeyPage.keys?.length < 1 ?"Genera API KEY":"Genera API KEY secondaria"}</Button>
                             </div>
                         </div>
                     }
@@ -195,16 +196,16 @@ const ApiKeyEnte = () => {
             </div>
             <div className="mt-5 pb-5">
                 <div className="row mt-5 ">
-                    <div className="col-9">
+                    <div className="col-8 p-0">
                         <div style={{ display: 'flex', justifyContent: 'start', alignItems: 'center', height: '100%' }}>
                             <Typography variant="h4">IP RANGE</Typography>
                         </div>
                     </div>
-                    <div className="col-2">
+                    <div className="col-3 p-0">
                         {
                             (!showInsertIp && ipsToCompare?.length === 0 ) &&
-                            <div  style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', height: '100%' }}>
-                                <Button onClick={()=> setShowInsertIp((prev)=> !prev)} variant="outlined"><AddIcon fontSize="small" className="me-2"></AddIcon>Aggiungi IP</Button>
+                            <div  style={{ display: 'flex', justifyContent: 'end', alignItems: 'center', height: '100%'}}>
+                                <Button sx={{width:"70%"}} onClick={()=> setShowInsertIp((prev)=> !prev)} variant="outlined"><AddIcon fontSize="small" className="me-2"></AddIcon>Aggiungi IP</Button>
                             </div>
                         }
                     </div>

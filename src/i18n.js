@@ -33,8 +33,8 @@ i18n.use(Backend)
                         "404_RIGHE_ID":"Il report di dettaglio notifiche Regolare Esecuzione sarà disponibile a breve",
                         "SAVE_KEY_KO":"Operazione fallita",
                         "SAVE_KEY_OK":"Copia eseguita",
-                        "REGEN_KEY_KO":"Rigenerazione fallita",
-                        "CREAT_KEY_KO":"Creazione fallita",
+                        "REGEN_KEY_KO":"L'operazione non è andata a buon fine. Contattare l'assistenza",
+                        "CREAT_KEY_KO":"L'operazione non è andata a buon fine. Contattare l'assistenza",
                         "REGEN_KEY_OK":"Rigenerazione eseguita",
                         "CREAT_KEY_OK":"Creazione avvenuta con successo",
 
