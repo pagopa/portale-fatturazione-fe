@@ -233,10 +233,10 @@ const SideNavSend : React.FC = () => {
                     <ListItemText primary="Notifiche" />
                     {openContestazioni ? 
                         <IconButton onClick={()=> setOpenContestazioni(false)}  size="small">
-                            <ExpandLess  />
+                            <ExpandLess fontSize="inherit"  />
                         </IconButton>:
                         <IconButton onClick={()=> setOpenContestazioni(true)}  size="small">
-                            <ExpandMore />
+                            <ExpandMore fontSize="inherit"  />
                         </IconButton>}
                 </ListItemButton>
                 <Collapse in={openContestazioni} timeout="auto" unmountOnExit>
