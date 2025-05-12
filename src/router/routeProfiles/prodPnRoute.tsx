@@ -21,6 +21,7 @@ import ListaDocEmessi from "../../page/whiteList";
 import InvioFatture from "../../page/invioFatture";
 import InvioFattureDetails from "../../page/invioFattureDetails";
 import DettaglioStoricoContestazione from "../../page/prod_pn/dettaglioStoricoContestazione";
+import ProcessiOrchestartore from "../../page/processiOrchestratore";
 
 const ProdPnRoute = () => {
     const prodPnRoute =  <Route element={<LayoutAzure  sideNav={<SideNavSend />}></LayoutAzure >}>
@@ -43,8 +44,7 @@ const ProdPnRoute = () => {
         <Route path={PathPf.JSON_TO_SAP} element={<InvioFatture/>} />
         <Route path={PathPf.JSON_TO_SAP_DETAILS} element={<InvioFattureDetails/>} />
         <Route path={PathPf.STORICO_DETTAGLIO_CONTEST} element={<DettaglioStoricoContestazione/>} />
-        
-        
+        <Route path={PathPf.ORCHESTRATORE} element={<ProcessiOrchestartore/>} />
     </Route>;
     return prodPnRoute;
 };

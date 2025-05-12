@@ -2,6 +2,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import {DataProps}  from '../../types/typesAreaPersonaleUtenteEnte';
+import { it } from "date-fns/locale";
 
 export interface DatePickerProps {
     label: string;
@@ -49,7 +50,7 @@ const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate,mainState
  
     return (
         <div>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it}>
                 <DesktopDatePicker
                     label={dataLabel}
                     format={formatDate}

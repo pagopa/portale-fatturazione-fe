@@ -1,4 +1,4 @@
-import { Card, Checkbox, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip } from "@mui/material";
+import { Card, IconButton, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { GridElementListaPsp } from "../../../types/typeAngraficaPsp";
 import { Rel } from "../../../types/typeRel";
@@ -9,6 +9,10 @@ import RowWhiteList from "./gridCustomBase/rowWhiteList";
 import EnhancedTableCustom from "./gridCustomBase/enhancedTabalToolbarCustom";
 import { SetStateAction } from "react";
 import { Whitelist } from "../../../page/whiteList";
+import { DataGridOrchestratore } from "../../../page/processiOrchestratore";
+import RowOrchestratore from "./gridCustomBase/rowOrchestratore";
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 
 export interface GridCustomProps {
     elements:NotificheList[]|Rel[]|GridElementListaPsp[]|ContestazioneRowGrid[]|any[]
@@ -17,7 +21,7 @@ export interface GridCustomProps {
     page:number
     total:number
     rows:number
-    headerNames:string[]
+    headerNames:string[]|{label:string,align:string,width:number|string}[],
     nameParameterApi:string 
     apiGet?:(el:any)=>void 
     disabled:boolean
@@ -30,44 +34,33 @@ export interface GridCustomProps {
         stringIcon:string
         icon:React.ReactNode
         action:string
-    }[]
+    }[],
+    headerAction?:(val:any) =>void,
+    body?:any
 }
 
 
+const GridCustom : React.FC<GridCustomProps> = ({
+    elements,
+    changePage,
+    changeRow,
+    page,
+    total,
+    rows,
+    headerNames,
+    nameParameterApi,
+    apiGet,
+    disabled,
+    widthCustomSize,
+    setOpenModalDelete,
+    setOpenModalAdd,
+    buttons,
+    selected,
+    setSelected,
+    headerAction,
+    body
+}) =>{
 
-
-
-const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames, nameParameterApi, apiGet, disabled, widthCustomSize, setOpenModalDelete,setOpenModalAdd,buttons, selected, setSelected }) =>{
-
-    /*
-    const [stateHeaderCheckbox, setStateHeaderChekbox] = useState({checked:false,disabled:true});
-
-    useEffect(()=>{
-        if(elements.length > 0){
-            setStateHeaderChekbox({checked:false,disabled:false});
-        }else{
-            setStateHeaderChekbox({checked:false,disabled:true});
-        }
-    },[elements]);
-
-    useEffect(()=>{
-        if(selected?.length === 0){
-            setStateHeaderChekbox({checked:false,disabled:false});
-        }
-
-    },[selected]);
-   
-
-    const clickOnCheckBoxHeader = () => {
-        setStateHeaderChekbox(prev => ({checked:!prev.checked,disabled:prev.disabled}));
-        if(stateHeaderCheckbox.checked && setSelected){
-            setSelected([]);
-        }else if(setSelected){
-            setSelected(prev => ([...prev,...elements.filter(el => el.cancella).map(el => el.idWhite)]));
-        }
-        
-    };
-*/
     const handleClickOnGrid = (element) =>{
         if(apiGet && nameParameterApi === 'idContratto'){
             const newDetailRel = {
@@ -96,11 +89,9 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
     const checkIfChecked = (id:any) => {
         if(selected){
             return selected.includes(id);
-        }
-       
+        }  
     };
-   
-   
+    
     return (
         <div>
             {nameParameterApi === "idWhite" && <EnhancedTableCustom  setOpenModal={setOpenModalDelete} setOpenModalAdd={setOpenModalAdd} selected={selected||[]} buttons={buttons} ></EnhancedTableCustom>}
@@ -109,43 +100,44 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                     <Table >
                         <TableHead sx={{backgroundColor:'#f2f2f2'}}>
                             <TableRow>
-                                {headerNames.map((el)=>{
-                                  
-                                    return (
-                                        <TableCell key={Math.random()}>
-                                            {el} 
-                                        </TableCell>
-                                    );
-                                })
-                                   
-                                }
-                               
+                                {headerNames.map((el,i)=>{
+                                    if(nameParameterApi === 'idOrchestratore'){
+                                        return(
+                                           
+                                            <TableCell key={Math.random()} align={el.align} width={el.width}>{el.label}
+                                                {el.headerAction &&
+                                                <Tooltip title="Sort">
+                                                    <IconButton disabled={ total === 0 ? true : false} sx={{marginLeft:'10px'}}  onClick={()=> headerAction && headerAction((body?.ordinamento === 0) ? 1:0)}  size="small">
+                                                        {(body?.ordinamento === 0) ? <ArrowUpwardIcon></ArrowUpwardIcon>:<ArrowDownwardIcon></ArrowDownwardIcon>}
+                                                    </IconButton>
+                                                </Tooltip>}
+                                            </TableCell>
+                                        );
+                                    }else{
+                                        return <TableCell key={Math.random()}>{el}</TableCell>;
+                                    }
+                                    
+                                })}
                             </TableRow>
                         </TableHead>
                         {elements.length === 0 ?
                             <TableBody key={Math.random()} style={{height: '50px'}}>
                             </TableBody> :
                             <TableBody sx={{marginLeft:'20px'}}>
-                                {elements.map((element:Rel|NotificheList|GridElementListaPsp|ContestazioneRowGrid|Whitelist ) =>{
+                                {elements.map((element:Rel|NotificheList|GridElementListaPsp|Whitelist|DataGridOrchestratore|ContestazioneRowGrid ) =>{
                                     // tolgo da ogni oggetto la prima chiave valore  perchè il cliente non vuole vedere es. l'id ma serve per la chiamata get di dettaglio 
                                     let sliced = Object.fromEntries(
                                         Object.entries(element).slice(1)
                                     );
                                     if(nameParameterApi === 'idWhite'){
-                                        sliced = Object.fromEntries(
-                                            Object.entries(element).slice(1, -1)
-                                        );
+                                        sliced = Object.fromEntries(Object.entries(element).slice(1, -1));
                                     }
-                                   
                                     if(nameParameterApi === 'idContratto'){
-                                        return (
-                                            <RowContratto key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} ></RowContratto>
-                                        );
+                                        return <RowContratto key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} ></RowContratto>;
                                     }else if(nameParameterApi === 'idWhite'){
-                                        return (
-                                            <RowWhiteList key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} setSelected={setSelected} selected={selected||[]}  checkIfChecked={checkIfChecked} ></RowWhiteList>
-                                            
-                                        );
+                                        return <RowWhiteList key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} setSelected={setSelected} selected={selected||[]}  checkIfChecked={checkIfChecked} ></RowWhiteList>;
+                                    }else if(nameParameterApi === 'idOrchestratore'){
+                                        return <RowOrchestratore key={Math.random()} sliced={sliced} headerNames={headerNames}></RowOrchestratore>;
                                     }else{
                                         return (
                                             <TableRow key={Math.random()}>
@@ -169,9 +161,7 @@ const GridCustom : React.FC<GridCustomProps> = ({elements, changePage, changeRow
                                                         );
                                                     })
                                                 }
-                                                {apiGet && <TableCell align="center" onClick={()=>{
-                                                    handleClickOnGrid(element);            
-                                                } }>
+                                                {apiGet && <TableCell align="center" onClick={()=>{handleClickOnGrid(element);}}>
                                                     <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
                                                 </TableCell> }
                                             </TableRow>

@@ -236,7 +236,6 @@ const ModuloCommessaPdf : React.FC = () =>{
                 <div className='d-flex marginTop24 ms-5 '>
                     <ButtonNaked
                         color="primary"
-                        onFocusVisible={() => { console.log('onFocus'); }}
                         size="small"
                         startIcon={<ArrowBackIcon />}
                         onClick={() => onIndietroButton() }

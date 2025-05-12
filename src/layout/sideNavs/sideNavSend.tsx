@@ -25,6 +25,8 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import GavelIcon from '@mui/icons-material/Gavel';
+import ManageHistoryIcon from '@mui/icons-material/ManageHistory';
+import DvrIcon from '@mui/icons-material/Dvr';
 
 
 const SideNavSend : React.FC = () => {
@@ -121,6 +123,15 @@ const SideNavSend : React.FC = () => {
     };
 
 
+
+    const handleListItemClickOrchestratore = () => {
+        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.ORCHESTRATORE}}));
+        }else{
+            navigate(PathPf.ORCHESTRATORE);
+        }
+        
+    };
     
     const currentLocation = location.pathname;
 
@@ -162,6 +173,8 @@ const SideNavSend : React.FC = () => {
         }else if(currentLocation === PathPf.STORICO_CONTEST || currentLocation === PathPf.STORICO_DETTAGLIO_CONTEST|| currentLocation === PathPf.INSERIMENTO_CONTESTAZIONI){
             setOpenContestazioni(true);
             setSelectedIndex(10);
+        }else if(currentLocation === PathPf.ORCHESTRATORE){
+            setSelectedIndex(11);
         }
 
         if(open2 && (currentLocation !== PathPf.LISTA_DOC_EMESSI && currentLocation !== PathPf.FATTURAZIONE)){
@@ -191,17 +204,17 @@ const SideNavSend : React.FC = () => {
                     <ListItemText primary="Dati di fatturazione" />
                     {open ? 
                         <IconButton onClick={()=> setOpen(false)}  size="small">
-                            <ExpandLess  />
+                            <ExpandLess fontSize="inherit" />
                         </IconButton>  :
                         <IconButton onClick={()=> setOpen(true)}  size="small">
-                            <ExpandMore />
+                            <ExpandMore fontSize="inherit"/>
                         </IconButton> }
                 </ListItemButton>
                 <Collapse in={open} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                         <ListItemButton selected={selectedIndex === 8} sx={{ pl: 4 }} onClick={() =>handleListItemClickTiplogiaContratto()}>
                             <ListItemIcon>
-                                <FormatAlignCenterIcon />
+                                <FormatAlignCenterIcon fontSize="inherit" />
                             </ListItemIcon>
                             <ListItemText primary="Tipologia contratto" />
                         </ListItemButton>
@@ -255,17 +268,17 @@ const SideNavSend : React.FC = () => {
                     <ListItemText primary="Documenti emessi" />
                     {open2 ? 
                         <IconButton onClick={()=> setOpen2(false)}  size="small">
-                            <ExpandLess  />
+                            <ExpandLess fontSize="inherit" />
                         </IconButton>  :
                         <IconButton  onClick={()=> setOpen2(true)}  size="small">
-                            <ExpandMore />
+                            <ExpandMore fontSize="inherit"/>
                         </IconButton>}
                 </ListItemButton> 
                 <Collapse in={open2} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                         <ListItemButton selected={selectedIndex === 9} sx={{ pl: 4 }} onClick={() => handleListItemClickListDocEmessi()}>
                             <ListItemIcon>
-                                <FormatListBulletedIcon />
+                                <FormatListBulletedIcon fontSize="inherit" />
                             </ListItemIcon>
                             <ListItemText primary="White list" />
                         </ListItemButton>
@@ -276,6 +289,12 @@ const SideNavSend : React.FC = () => {
                         <ManageSearchIcon fontSize="inherit"></ManageSearchIcon>
                     </ListItemIcon>
                     <ListItemText primary="Documenti contabili" />
+                </ListItemButton>
+                <ListItemButton selected={selectedIndex === 11} onClick={() => handleListItemClickOrchestratore()}>
+                    <ListItemIcon>
+                        <DvrIcon fontSize="inherit" />
+                    </ListItemIcon>
+                    <ListItemText primary="Monitoring" />
                 </ListItemButton>
             </List>
             <Divider />

@@ -379,7 +379,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 <div className='d-flex'>
                     <ButtonNaked
                         color="primary"
-                        onFocusVisible={() => { console.log('onFocus'); }}
                         size="small"
                         startIcon={<ArrowBackIcon />}
                         onClick={() =>{

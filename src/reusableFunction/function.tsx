@@ -1,5 +1,7 @@
+import dayjs from "dayjs";
 import { DataGridCommessa } from "../types/typeModuloCommessaElenco";
 import { ArrayTipologieCommesse, DatiModuloCommessaPdf, ModuliCommessa } from "../types/typeModuloCommessaInserimento";
+import { objMesiWithZero } from "./reusableArrayObj";
 
 export const fixResponseForDataGrid = (arr:DataGridCommessa[]) =>{
       
@@ -101,5 +103,47 @@ export const findStatoContestazioni = (code:number) => {
             return "Notifiche contestate";
         default:
             "Caricamento file";
+            
+    }
+};
+export function transformObjectToArray(obj: Record<string, string>):{value: number, description: string}[]{
+    return Object.entries(obj).map(([key, value]) => ({
+        value: parseInt(key, 10), // Convert the key to an integer
+        description: value
+    }));
+}
+
+export  function transformDateTime(input: string): string {
+    if(input){
+        const [datePart, timePart] = input.split("T"); // Split the input into date and time
+        const [year, month, day] = datePart.split("-"); // Split the date into components
+        return `${day}-${month}-${year} ${timePart}`; // Rearrange and return the formatted string
+    }else{
+        return "";
+    }
+}
+
+export  function transformDateTimeWithNameMonth(input: string): string {
+    if(input){
+        const [datePart] = input.split("T"); // Split the input into date and time
+        const [year, month, day] = datePart.split("-"); // Split the date into components
+        return `${day}-${objMesiWithZero[month]}-${year}`; // Rearrange and return the formatted string
+    }else{
+        return "";
+    }
+}
+
+
+// function to check  start data is less then data end
+export function isDateInvalid(dateInput) {
+    const date = new Date(dateInput); // Create a Date object
+    return isNaN(date.getTime()); // Check if the date is invalid
+}
+
+export const formatDateToValidation = (date:any) => {
+    if(!isDateInvalid(date)){
+        return  dayjs(new Date(date)).format("YYYY-MM-DD").replace(/-/g,"");
+    }else{
+        return null;
     }
 };

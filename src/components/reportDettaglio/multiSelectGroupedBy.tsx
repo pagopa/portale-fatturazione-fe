@@ -60,12 +60,14 @@ const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({ 
             renderInput={(params) =>{
                
                 return <TextField 
+                    sx={{backgroundColor:"#F2F2F2"}}
                     {...params}
                     label="Contestazione" 
                     placeholder="Contestazione" />;
             } 
                 
             }
+            style={{height:'59px'}}
             renderOption={(props, option, { selected }) =>{
                 const newProps = {...props,...{key:option.id}};
                 return (

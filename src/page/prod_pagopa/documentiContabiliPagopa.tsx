@@ -371,6 +371,7 @@ const DocumentiContabili:React.FC = () =>{
                         )}
                         renderInput={(params) => {
                             return <TextField {...params}
+                                sx={{backgroundColor:"#F2F2F2"}}
                                 label="Trimestre" 
                                 placeholder="Trimestre" />;
                         }}

@@ -44,6 +44,7 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
             } }
             renderInput={(params) =>{
                 return <TextField 
+                    sx={{backgroundColor:"#F2F2F2"}}
                     onChange={(e)=> setTextValue(e.target.value)} 
                     {...params}
                     label="Rag Soc. Ente" 

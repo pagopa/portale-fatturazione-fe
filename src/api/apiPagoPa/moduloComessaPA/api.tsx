@@ -67,3 +67,13 @@ export const downloadDocumentoListaModuloCommessaPagoPa = async (token:string, n
     );
     return response;
 };
+
+export const anniMesiModuliCommessa = async(token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/modulocommessa/pagopa/periodo?nonce=${nonce}`,
+       
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+};

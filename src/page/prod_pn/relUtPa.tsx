@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, Tooltip, Typography } from "@mui/material";
 import { useNavigate } from "react-router";
 import DownloadIcon from '@mui/icons-material/Download';
 import { GlobalContext } from "../../store/context/globalContext";
@@ -535,7 +535,6 @@ const RelPage : React.FC = () =>{
                     return response.blob();
                 }
                 setShowLoading(false);
-                
                 throw '404';
             }).then(blob => {
                 let fileName = `REL /Firmate/${mesiWithZero[bodyRel.mese -1]}/${bodyRel.anno}.zip`;
@@ -544,13 +543,11 @@ const RelPage : React.FC = () =>{
                 }
                 saveAs(blob,fileName );
                 setShowLoading(false);
-            }).catch(err => {
+            }).catch(() => {
                 manageErrorDownload('404',dispatchMainState);
             
             });
     };
-
-
 
     const downloadReport = async () => {
         setShowLoading(true);
@@ -563,18 +560,14 @@ const RelPage : React.FC = () =>{
             const fileName = `Report regolare esecuzione non fatturate.xlsx`;
             saveAs(res,fileName );
             setShowLoading(false);
-        }).catch((err)=>{
+        }).catch(()=>{
             manageErrorDownload('404',dispatchMainState);
             setShowLoading(false);
         });
     };
 
-    
-
-
     const  hiddenAnnullaFiltri = bodyRel.tipologiaFattura === null && bodyRel.idEnti?.length === 0 && bodyRel.caricata === null; 
     return (
-       
         <div className="mx-5">
             <div className="d-flex marginTop24 ">
                 <div className="col-9">
@@ -582,11 +575,16 @@ const RelPage : React.FC = () =>{
                 </div>
                 <div className="col-3 ">
                     {!enti &&
+
                     <Box sx={{width:'80%', marginLeft:'20px', display:'flex', justifyContent:'end'}}  >
-                        <Button sx={{width:'250px'}} variant="contained"  onClick={()=> downloadReport()} >
-                            <ArrowCircleDownIcon sx={{marginRight:'10px'}}></ArrowCircleDownIcon>
-                    Report non fatturate
-                        </Button>
+                        <Tooltip  className="mx-2" title="Report regolare esecuzione non fatturate">
+                            <span>
+                                <Button  variant="outlined"  onClick={()=> downloadReport()} >
+                                    <ArrowCircleDownIcon></ArrowCircleDownIcon>
+                                </Button>
+                            </span>
+                        </Tooltip>
+                        
                     </Box>}
                 </div>
                

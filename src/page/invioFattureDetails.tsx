@@ -116,7 +116,11 @@ const InvioFattureDetails = () => {
     };
   
     if(loadingDetail){
-        return <SkeletonRelPdf/>;
+        return(
+            <div className="mt-5 mb-5 me-5">
+                <SkeletonRelPdf/>
+            </div> 
+        );
     }else{
         return(
             <>
