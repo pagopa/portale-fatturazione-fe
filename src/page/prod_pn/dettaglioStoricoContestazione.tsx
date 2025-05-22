@@ -112,12 +112,14 @@ const DettaglioStoricoContestazione = () => {
                                 <Table size="small" aria-label="purchases">
                                     <TableHead>
                                         <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
-                                            <TableCell align="center" sx={{ width:"300px"}} >Contestate Ente</TableCell>
-                                            <TableCell align="center" sx={{ width:"300px"}} >Risposte send</TableCell>
+                                            <TableCell align="center" sx={{ width:"300px"}}>Contestate Ente</TableCell>
+                                            <TableCell align="center" sx={{ width:"300px"}}>Risposte send</TableCell>
                                             <TableCell align="center" sx={{ width:"300px"}}>Risposte Recapitista</TableCell>
                                             <TableCell align="center" sx={{ width:"300px"}}>Risposte Consolidatore</TableCell>
+                                            <TableCell align="center" sx={{ width:"300px"}}>Risposte Ente</TableCell>
                                             <TableCell align="center" sx={{ width:"300px"}}>Accettate</TableCell>
                                             <TableCell align="center" sx={{ width:"300px"}}>Rifiutate</TableCell>
+                                            <TableCell align="center" sx={{ width:"300px"}}>Annulate</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
@@ -126,8 +128,10 @@ const DettaglioStoricoContestazione = () => {
                                             <TableCell align="center" sx={{ width:"300px"}} >{lastStepContestazioneObj?.rispostaSend}</TableCell>
                                             <TableCell align="center" sx={{ width:"300px"}}>{lastStepContestazioneObj?.rispostaRecapitista}</TableCell>
                                             <TableCell align="center" sx={{ width:"300px"}}>{lastStepContestazioneObj?.rispostaConsolidatore}</TableCell>
+                                            <TableCell align="center" sx={{ width:"300px"}}>xxx</TableCell>
                                             <TableCell align="center" sx={{ width:"300px"}}>{lastStepContestazioneObj?.accettata}</TableCell>
                                             <TableCell align="center" sx={{ width:"300px"}}>{lastStepContestazioneObj?.rifiutata}</TableCell>
+                                            <TableCell align="center" sx={{ width:"300px"}}>xxx</TableCell>
                                         </TableRow>
                                     </TableBody>
                                 </Table>

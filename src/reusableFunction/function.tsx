@@ -100,7 +100,7 @@ export const findStatoContestazioni = (code:number) => {
         case 10:
             return "Notifiche che non si possono rifiutare";
         case 11:
-            return "Notifiche contestate";
+            return "Processo completato";
         default:
             "Caricamento file";
             
