@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Button, TextField } from '@mui/material';
+import { Button, TextField, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { GlobalContext } from '../../../store/context/globalContext';
@@ -13,11 +13,15 @@ const IPAddressInput = ({singleIp,getIPs,button,ipsToCompare,setLoading,disable}
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 
-    const [ipAddress, setIpAddress] = useState(singleIp);
+    const [valueSinIp, valueCdr] = singleIp.split('/');
+
+    const [ipAddress, setIpAddress] = useState(valueSinIp||"");
+    const [cdr, setCdr] = useState(valueCdr||"");
     const [error, setError] = useState('');
+    const [errorCDR, setErrorCDR] = useState('');
     const [disableDeleteAddButton, setDisableDeleteAddButton] = useState(false);
 
-
+    console.log({ipAddress,cdr, tot:ipAddress+"/"+cdr,ipsToCompare},);
     const createIPApi = async(ipAddress) =>{
         setLoading(true);
         setDisableDeleteAddButton(true);
@@ -48,6 +52,7 @@ const IPAddressInput = ({singleIp,getIPs,button,ipsToCompare,setLoading,disable}
         const ipPattern = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
         return ipPattern.test(value);
     };
+   
 
     const handleChange = (e) => {
         const value = e.target.value;
@@ -55,8 +60,46 @@ const IPAddressInput = ({singleIp,getIPs,button,ipsToCompare,setLoading,disable}
             setIpAddress(value);
             if (!validateIP(value)) {
                 setError('IP Adderess non valido');
-            }else if(ipsToCompare.map(el => el.ipAddress).includes(value)){
+            }else if(ipsToCompare.map(el => el.ipAddress).includes(value+"/"+cdr)){
                 setError('IP Address già inserito');
+                setErrorCDR('IP Address già inserito');
+            } else {
+                setError('');
+            }
+        }
+
+        if (Number(cdr) >= 8 && Number(cdr) <= 32) {
+            if(ipsToCompare.map(el => el.ipAddress).includes(value+"/"+cdr)){
+                setErrorCDR('IP Address già inserito');
+            } else {
+                setErrorCDR('');
+            }
+        }
+        
+    };
+
+    const handleChangeCDR = (e) => {
+        const value = e.target.value;
+        setCdr(value);
+        if (Number(value) >= 8 && Number(value) <= 32) {
+            if(ipsToCompare.map(el => el.ipAddress).includes(ipAddress+"/"+value)){
+                console.log('dentro');
+                setErrorCDR('IP Address già inserito');
+                setError('IP Address già inserito');
+            } else {
+                setErrorCDR('');
+            }
+        }else{
+            setErrorCDR('CDR non valido');
+        }  
+
+        if (/^[\d.]*$/.test(ipAddress) && !/\.\./.test(ipAddress) && ipAddress.length <= 15) {
+            setIpAddress(ipAddress);
+            if (!validateIP(ipAddress)) {
+                setError('IP Adderess non valido');
+            }else if(ipsToCompare.map(el => el.ipAddress).includes(ipAddress+"/"+value)){
+                setError('IP Address già inserito');
+                setErrorCDR('IP Address già inserito');
             } else {
                 setError('');
             }
@@ -65,30 +108,51 @@ const IPAddressInput = ({singleIp,getIPs,button,ipsToCompare,setLoading,disable}
 
     return (
         <div className="bg-white col-11 p-3 d-flex justify-content-start">
-        
-            <TextField
-                label="IP Address"
-                value={ipAddress}
-                onChange={handleChange}
-                disabled={disable}
-                error={!!error}
-                helperText={error}
-                placeholder="e.g., 192.168.1.1"
-                inputProps={{
-                    readOnly: button === "del" ? true : false,
-                    inputMode: 'numeric',
-                    pattern: '^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$',
-                }}
-            />
+            <div className='d-flex'>
+                <TextField
+                    label="IP Address"
+                    value={ipAddress}
+                    onChange={handleChange}
+                    disabled={disable}
+                    error={!!error}
+                    helperText={error}
+                    placeholder="e.g., 192.168.1.1"
+                    inputProps={{
+                        readOnly: button === "del" ? true : false,
+                        inputMode: 'numeric',
+                        pattern: '^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$',
+                    }}
+                />
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '58px', width: '10%', }}>
+                    <Typography variant='h5'> / </Typography>
+                </div>
+                <TextField
+                    sx={{width:"25%"}}
+                    label="CDR"
+                    value={cdr}
+                    onChange={handleChangeCDR}
+                    disabled={disable}
+                    error={!!errorCDR}
+                    helperText={errorCDR}
+                    placeholder="8 - 32"
+                    inputProps={{
+                        readOnly: button === "del" ? true : false,
+                        inputMode: 'numeric',
+                        pattern: '^(8|9|[1-2][0-9]|3[0-2])$',
+                    }}
+                />
+                
+            </div>
+           
             <div style={{
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
                 gap: '10px', // Add spacing between buttons
                 height: '58px',
-                width: '20%',
+                width: '10%',
             }}>
-                {button === "add" && <Button disabled={error !== "" || ipAddress === ""||disable }  onClick={()=> createIPApi(ipAddress)} variant="outlined"><AddIcon fontSize="small"></AddIcon></Button>}
+                {button === "add" && <Button disabled={error !== "" || ipAddress === "" || cdr === ""||disable }  onClick={()=> createIPApi(ipAddress+"/"+cdr)} variant="outlined"><AddIcon fontSize="small"></AddIcon></Button>}
                 {button === "del" &&<Button disabled={disable} onClick={() =>deleteSingleIp(singleIp)} variant="outlined"><DeleteIcon fontSize="small"></DeleteIcon></Button>}
             </div>
            

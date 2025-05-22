@@ -214,10 +214,10 @@ const ApiKeyEnte = () => {
                     <div className="row  ">
                         {!showInsertIp && ipsToCompare?.length === 0 ?
                             <>
-                                <div className=" bg-white col-8 p-3 d-flex justify-content-center">
+                                <div className="bg-white col-8 p-3 d-flex justify-content-center">
                                     <Typography variant="body1">Non è stato creato ancora nessun IP</Typography>
                                 </div>
-                                <div className=" bg-white col-3 p-3">
+                                <div className="bg-white col-3 p-3">
                                     <Typography onClick={()=> setShowInsertIp((prev)=> !prev)} sx={{cursor:"pointer",color:"#0073E6"}} variant="caption-semibold">Aggiungi IP</Typography>
                                 </div>
                             </>:
