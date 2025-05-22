@@ -10,9 +10,9 @@ import { GlobalContext } from "../../store/context/globalContext";
 import { getContestazioneExel, getDettaglioContestazione } from "../../api/apiPagoPa/notifichePA/api";
 import { manageError, manageErrorDownload } from "../../api/api";
 import { mesiGrid} from "../../reusableFunction/reusableArrayObj";
-import { findStatoContestazioni } from "../../reusableFunction/function";
 import DownloadIcon from '@mui/icons-material/Download';
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
+import { getTipoContestazioni } from "../../api/apiPagoPa/storicoContestazioni/api";
 interface Contestazione {
     reportId: number;
     step:number;
@@ -34,6 +34,7 @@ interface Contestazione {
     storage:string;
     nomeDocumento:string;
     dataCompletamento:Date;
+    rispostaEnte:string
 }
 
 const DettaglioStoricoContestazione = () => {
@@ -49,12 +50,25 @@ const DettaglioStoricoContestazione = () => {
     const [arrayDetails,setArrayDetails] = useState<Contestazione[]>([]);
     const [lastStepContestazioneObj, setLastStepContestazioneObj] = useState<Contestazione|null>(null);
     const [showDownloading, setShowDownloading] = useState(false);
+    const [tipologieContestazioni , setTipologieContestazioni] = useState<string[]>([]);
 
     useEffect(()=>{
         if(singleContest?.reportId !== 0){
             getDettaglio();
         }
     },[singleContest?.reportId]);
+
+    useEffect(()=>{
+        getTipologieContestazioni();
+    },[]);
+
+    const getTipologieContestazioni = async() => {
+        await getTipoContestazioni(token,profilo.nonce).then((res)=>{
+            setTipologieContestazioni(res.data.map(el => el.descrizione));
+        }).catch((err)=>{
+            manageError(err,dispatchMainState);
+        });
+    };
 
     const getDettaglio = async() => {
         setLoadingDettaglio(true);
@@ -105,7 +119,7 @@ const DettaglioStoricoContestazione = () => {
                     <div className="container text-center">
                         <TextDettaglioPdf description='Categoria documento' value={singleContest.categoriaDocumento}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Data inserimento' value={new Date(singleContest.dataInserimento).toISOString().replace("T", " ").substring(0, 19)}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Stato' value={findStatoContestazioni(singleContest.stato)||''}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Stato' value={tipologieContestazioni[singleContest.stato]||''}></TextDettaglioPdf>
                         {lastStepContestazioneObj && 
                         <>
                             <Box sx={{ margin: 5 , backgroundColor:'#F8F8F8', padding:'10px'}}>
@@ -116,10 +130,6 @@ const DettaglioStoricoContestazione = () => {
                                             <TableCell align="center" sx={{ width:"300px"}}>Risposte send</TableCell>
                                             <TableCell align="center" sx={{ width:"300px"}}>Risposte Recapitista</TableCell>
                                             <TableCell align="center" sx={{ width:"300px"}}>Risposte Consolidatore</TableCell>
-                                            <TableCell align="center" sx={{ width:"300px"}}>Risposte Ente</TableCell>
-                                            <TableCell align="center" sx={{ width:"300px"}}>Accettate</TableCell>
-                                            <TableCell align="center" sx={{ width:"300px"}}>Rifiutate</TableCell>
-                                            <TableCell align="center" sx={{ width:"300px"}}>Annulate</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
@@ -128,10 +138,27 @@ const DettaglioStoricoContestazione = () => {
                                             <TableCell align="center" sx={{ width:"300px"}} >{lastStepContestazioneObj?.rispostaSend}</TableCell>
                                             <TableCell align="center" sx={{ width:"300px"}}>{lastStepContestazioneObj?.rispostaRecapitista}</TableCell>
                                             <TableCell align="center" sx={{ width:"300px"}}>{lastStepContestazioneObj?.rispostaConsolidatore}</TableCell>
-                                            <TableCell align="center" sx={{ width:"300px"}}>xxx</TableCell>
+                                        </TableRow>
+                                    </TableBody>
+                                </Table>
+                            </Box>
+
+                            <Box sx={{ margin:5, backgroundColor:'#F8F8F8', padding:'10px'}}>
+                                <Table size="small" aria-label="purchases">
+                                    <TableHead>
+                                        <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
+                                            <TableCell align="center" sx={{ width:"300px"}}>Risposte Ente</TableCell>
+                                            <TableCell align="center" sx={{ width:"300px"}}>Accettate</TableCell>
+                                            <TableCell align="center" sx={{ width:"300px"}}>Rifiutate</TableCell>
+                                            <TableCell align="center" sx={{ width:"300px"}}>Annulate</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
+                                        <TableRow key={lastStepContestazioneObj?.reportId}>
+                                            <TableCell align="center" sx={{ width:"300px"}}>{lastStepContestazioneObj?.rispostaEnte}</TableCell>
                                             <TableCell align="center" sx={{ width:"300px"}}>{lastStepContestazioneObj?.accettata}</TableCell>
                                             <TableCell align="center" sx={{ width:"300px"}}>{lastStepContestazioneObj?.rifiutata}</TableCell>
-                                            <TableCell align="center" sx={{ width:"300px"}}>xxx</TableCell>
+                                            <TableCell align="center" sx={{ width:"300px"}}>{lastStepContestazioneObj?.nonContestataAnnullata}</TableCell>
                                         </TableRow>
                                     </TableBody>
                                 </Table>

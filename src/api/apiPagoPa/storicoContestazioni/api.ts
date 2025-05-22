@@ -21,3 +21,13 @@ export const getListaStorico = async (token:string, nonce:string , body: BodySto
     );
     return response;
 };
+
+export const getTipoContestazioni = async ( token:string ,nonce:string ) => {
+    const response =  await axios.get(`${url}/api/notifiche/pagopa/contestazioni/steps?nonce=${nonce}`,  
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+};
+
