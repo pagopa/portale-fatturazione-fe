@@ -67,7 +67,6 @@ const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({ 
             } 
                 
             }
-            style={{height:'59px'}}
             renderOption={(props, option, { selected }) =>{
                 const newProps = {...props,...{key:option.id}};
                 return (
