@@ -222,7 +222,7 @@ const InserimentoContestazioni = () =>{
             setOpenModalConferma(false);
             setFile(null);   
         }
-        setUploading(false);
+        setUploading(false); /// prova a fermare la get dettaglio andando a gestire la logica con luploading
         setProgress(0);
         setOpenModalConferma(false);
         setFile(null);
@@ -230,6 +230,8 @@ const InserimentoContestazioni = () =>{
         setValueAutocomplete(null);
         setTextValueEnti('');
         setArrayRecapCon([]);
+        
+        //forse questo va eliminato
         setBody({
             anno:valueYears[0],
             mese:valueMesi[0].mese,
