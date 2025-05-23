@@ -26,7 +26,7 @@ import CollapsibleTable from "../../components/reusableComponents/grid/gridColla
 import ModalConfermaRipristina from "../../components/fatturazione/modalConfermaRipristina";
 import ModalResetFilter from "../../components/fatturazione/modalResetFilter";
 import { headersObjGrid } from "../../assets/configurations/config_GridFatturazione";
-;
+
 
 const Fatturazione : React.FC = () =>{
 
