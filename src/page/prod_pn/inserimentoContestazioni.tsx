@@ -1,6 +1,6 @@
 import { Autocomplete, Box,Button,FormControl, InputLabel, MenuItem, Select, Skeleton, styled, Table, TableBody, TableCell, TableHead, TableRow, TextField, Tooltip, Typography } from "@mui/material";
 import { PathPf } from "../../types/enum";
-import {  useContext, useEffect, useState } from "react";
+import {  useContext, useEffect, useRef, useState } from "react";
 import { getAnniContestazioni, getEntiContestazioni, getMesiContestazioni, recapContestazioniAzure, uploadContestazioniAzure } from "../../api/apiPagoPa/notifichePA/api";
 import { GlobalContext } from "../../store/context/globalContext";
 import { manageError, managePresaInCarico, manageStringMessage } from "../../api/api";
@@ -81,6 +81,7 @@ const InserimentoContestazioni = () =>{
     const [uploading, setUploading] = useState(false);
     const [progress, setProgress] = useState(0);
     const [loadindDetail,setLoadingDetail] = useState(false);
+    const uploadRef = useRef<boolean>(false);
 
     useEffect(()=>{
         getAnni();
@@ -120,7 +121,7 @@ const InserimentoContestazioni = () =>{
                 setBody(filters.body);
                 setTextValueEnti(filters.textValueEnti);
                 setValueAutocomplete(filters.valueAutocomplete);
-                if(filters.body.contractId !== '' && filters.body.idEnte !== ''){
+                if(filters.body.contractId !== '' && filters.body.idEnte !== '' && uploadRef.current === false){
                     recapContestazioni(filters.body);
                 }else{
                     isInitialRender.current = false;
@@ -134,10 +135,11 @@ const InserimentoContestazioni = () =>{
                     valueAutocomplete
                 });
                 // chiamata che avviene solo al cambio anno
-                if(body.idEnte !== '' && body.contractId !== ''){
+                if(body.idEnte !== '' && body.contractId !== '' && uploadRef.current === false){
                     recapContestazioni({...body, ...{anno:y,mese:res.data[0].mese}});
                 }
             } 
+            uploadRef.current = false;
         }).catch((err)=>{
             manageError(err,dispatchMainState);
         });
@@ -181,6 +183,7 @@ const InserimentoContestazioni = () =>{
     };
 
     const uploadFile = async () => {
+        uploadRef.current = true;
         const fileId = crypto.randomUUID();
         if (!file) return;
         const chunkSize:number = 5 * 1024 * 1024; // 4 MB
@@ -222,7 +225,7 @@ const InserimentoContestazioni = () =>{
             setOpenModalConferma(false);
             setFile(null);   
         }
-        setUploading(false); /// prova a fermare la get dettaglio andando a gestire la logica con luploading
+        /// prova a fermare la get dettaglio andando a gestire la logica con luploading
         setProgress(0);
         setOpenModalConferma(false);
         setFile(null);
@@ -231,14 +234,8 @@ const InserimentoContestazioni = () =>{
         setTextValueEnti('');
         setArrayRecapCon([]);
         
-        //forse questo va eliminato
-        setBody({
-            anno:valueYears[0],
-            mese:valueMesi[0].mese,
-            idEnte: "",
-            contractId: ""
-        });
         getAnni();
+        setUploading(false);
     };
 
     const handleChangeAnno = (e) => {
