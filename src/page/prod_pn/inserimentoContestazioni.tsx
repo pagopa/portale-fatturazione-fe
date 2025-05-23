@@ -127,13 +127,24 @@ const InserimentoContestazioni = () =>{
                     isInitialRender.current = false;
                 }
             }else if(res.data.length){
-                setBody((prev)=> ({...prev, ...{anno:y,mese:res.data[0].mese}}));
-                updateFilters({
-                    pathPage:PathPf.INSERIMENTO_CONTESTAZIONI,
-                    body:{...body, ...{anno:y,mese:res.data[0].mese}},
-                    textValueEnti,
-                    valueAutocomplete
-                });
+                if(uploadRef.current){
+                    setBody((prev)=> ({...prev, ...{anno:y,mese:res.data[0].mese,idEnte:"",contractId:""}}));
+                    updateFilters({
+                        pathPage:PathPf.INSERIMENTO_CONTESTAZIONI,
+                        body:{...body, ...{anno:y,mese:res.data[0].mese,idEnte:"",contractId:""}},
+                        textValueEnti,
+                        valueAutocomplete
+                    });
+                }else{
+                    setBody((prev)=> ({...prev, ...{anno:y,mese:res.data[0].mese}}));
+                    updateFilters({
+                        pathPage:PathPf.INSERIMENTO_CONTESTAZIONI,
+                        body:{...body, ...{anno:y,mese:res.data[0].mese}},
+                        textValueEnti,
+                        valueAutocomplete
+                    });
+                }
+                
                 // chiamata che avviene solo al cambio anno
                 if(body.idEnte !== '' && body.contractId !== '' && uploadRef.current === false){
                     recapContestazioni({...body, ...{anno:y,mese:res.data[0].mese}});
@@ -142,6 +153,7 @@ const InserimentoContestazioni = () =>{
             uploadRef.current = false;
         }).catch((err)=>{
             manageError(err,dispatchMainState);
+            uploadRef.current = false;
         });
     };
 
