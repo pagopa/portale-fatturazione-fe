@@ -128,7 +128,7 @@ const IPAddressInput = ({singleIp,getIPs,button,ipsToCompare,setLoading,disable}
                 </div>
                 <TextField
                     sx={{width:"25%"}}
-                    label="CDR"
+                    label="CIDR"
                     value={cdr}
                     onChange={handleChangeCDR}
                     disabled={disable}
