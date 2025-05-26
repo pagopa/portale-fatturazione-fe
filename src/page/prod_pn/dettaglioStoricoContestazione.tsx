@@ -50,7 +50,7 @@ const DettaglioStoricoContestazione = () => {
     const [arrayDetails,setArrayDetails] = useState<Contestazione[]>([]);
     const [lastStepContestazioneObj, setLastStepContestazioneObj] = useState<Contestazione|null>(null);
     const [showDownloading, setShowDownloading] = useState(false);
-    const [tipologieContestazioni , setTipologieContestazioni] = useState<string[]>([]);
+    const [tipologieContestazioni , setTipologieContestazioni] = useState<{step:number, descrizione:string}[]>([]);
 
     useEffect(()=>{
         if(singleContest?.reportId !== 0){
@@ -64,7 +64,7 @@ const DettaglioStoricoContestazione = () => {
 
     const getTipologieContestazioni = async() => {
         await getTipoContestazioni(token,profilo.nonce).then((res)=>{
-            setTipologieContestazioni(res.data.map(el => el.descrizione));
+            setTipologieContestazioni(res.data.map(el => el));
         }).catch((err)=>{
             manageError(err,dispatchMainState);
         });
@@ -119,7 +119,7 @@ const DettaglioStoricoContestazione = () => {
                     <div className="container text-center">
                         <TextDettaglioPdf description='Categoria documento' value={singleContest.categoriaDocumento}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Data inserimento' value={new Date(singleContest.dataInserimento).toISOString().replace("T", " ").substring(0, 19)}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Stato' value={tipologieContestazioni[singleContest.stato]||''}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Stato' value={tipologieContestazioni.find(obj => obj.step === singleContest.stato)?.descrizione||''}></TextDettaglioPdf>
                         {lastStepContestazioneObj && 
                         <>
                             <Box sx={{ margin: 5 , backgroundColor:'#F8F8F8', padding:'10px'}}>
