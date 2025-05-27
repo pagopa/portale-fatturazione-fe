@@ -74,7 +74,7 @@ const DettaglioStoricoContestazione = () => {
         setLoadingDettaglio(true);
         await getDettaglioContestazione(token,profilo.nonce,singleContest?.reportId).then((res)=>{
             const step11Obj = res.data.find((el) => {
-                return el.step === 12;
+                return el.step === 99;
             });
             setLastStepContestazioneObj(step11Obj||null);
             setArrayDetails(res.data);
