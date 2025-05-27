@@ -134,10 +134,10 @@ const DettaglioStoricoContestazione = () => {
                                     </TableHead>
                                     <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
                                         <TableRow key={lastStepContestazioneObj?.reportId}>
-                                            <TableCell align="center"  sx={{ width:"300px"}} >{lastStepContestazioneObj?.contestataEnte}</TableCell>
-                                            <TableCell align="center" sx={{ width:"300px"}} >{lastStepContestazioneObj?.rispostaSend}</TableCell>
-                                            <TableCell align="center" sx={{ width:"300px"}}>{lastStepContestazioneObj?.rispostaRecapitista}</TableCell>
-                                            <TableCell align="center" sx={{ width:"300px"}}>{lastStepContestazioneObj?.rispostaConsolidatore}</TableCell>
+                                            <TableCell align="center"  sx={{ width:"300px"}} >{lastStepContestazioneObj?.contestataEnte||0}</TableCell>
+                                            <TableCell align="center" sx={{ width:"300px"}} >{lastStepContestazioneObj?.rispostaSend||0}</TableCell>
+                                            <TableCell align="center" sx={{ width:"300px"}}>{lastStepContestazioneObj?.rispostaRecapitista||0}</TableCell>
+                                            <TableCell align="center" sx={{ width:"300px"}}>{lastStepContestazioneObj?.rispostaConsolidatore||0}</TableCell>
                                         </TableRow>
                                     </TableBody>
                                 </Table>
@@ -155,10 +155,10 @@ const DettaglioStoricoContestazione = () => {
                                     </TableHead>
                                     <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
                                         <TableRow key={lastStepContestazioneObj?.reportId}>
-                                            <TableCell align="center" sx={{ width:"300px"}}>{lastStepContestazioneObj?.rispostaEnte}</TableCell>
-                                            <TableCell align="center" sx={{ width:"300px"}}>{lastStepContestazioneObj?.accettata}</TableCell>
-                                            <TableCell align="center" sx={{ width:"300px"}}>{lastStepContestazioneObj?.rifiutata}</TableCell>
-                                            <TableCell align="center" sx={{ width:"300px"}}>{lastStepContestazioneObj?.nonContestataAnnullata}</TableCell>
+                                            <TableCell align="center" sx={{ width:"300px"}}>{lastStepContestazioneObj?.rispostaEnte||0}</TableCell>
+                                            <TableCell align="center" sx={{ width:"300px"}}>{lastStepContestazioneObj?.accettata||0}</TableCell>
+                                            <TableCell align="center" sx={{ width:"300px"}}>{lastStepContestazioneObj?.rifiutata||0}</TableCell>
+                                            <TableCell align="center" sx={{ width:"300px"}}>{lastStepContestazioneObj?.nonContestataAnnullata||0}</TableCell>
                                         </TableRow>
                                     </TableBody>
                                 </Table>
@@ -173,7 +173,7 @@ const DettaglioStoricoContestazione = () => {
                                         </TableHead>
                                         <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
                                             <TableRow>
-                                                <TableCell align="center"  sx={{ width:"300px"}} ><Typography variant="button">{lastStepContestazioneObj?.fatturabile}</Typography></TableCell>
+                                                <TableCell align="center"  sx={{ width:"300px"}} ><Typography variant="button">{lastStepContestazioneObj?.fatturabile||0}</Typography></TableCell>
                                             </TableRow>  
                                         </TableBody>
                                     </Table>
@@ -187,7 +187,7 @@ const DettaglioStoricoContestazione = () => {
                                         </TableHead>
                                         <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
                                             <TableRow>
-                                                <TableCell align="center" sx={{ width:"300px"}} ><Typography variant="button">{lastStepContestazioneObj?.nonFatturabile}</Typography></TableCell>
+                                                <TableCell align="center" sx={{ width:"300px"}} ><Typography variant="button">{lastStepContestazioneObj?.nonFatturabile||0}</Typography></TableCell>
                                             </TableRow>  
                                         </TableBody>
                                     </Table>

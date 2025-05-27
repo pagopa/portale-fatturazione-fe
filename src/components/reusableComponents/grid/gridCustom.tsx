@@ -13,6 +13,7 @@ import { DataGridOrchestratore } from "../../../page/processiOrchestratore";
 import RowOrchestratore from "./gridCustomBase/rowOrchestratore";
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import RowContestazioni from "./gridCustomBase/rowContestazioni";
 
 export interface GridCustomProps {
     elements:NotificheList[]|Rel[]|GridElementListaPsp[]|ContestazioneRowGrid[]|any[]
@@ -103,7 +104,6 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                 {headerNames.map((el,i)=>{
                                     if(nameParameterApi === 'idOrchestratore'){
                                         return(
-                                           
                                             <TableCell key={Math.random()} align={el.align} width={el.width}>{el.label}
                                                 {el.headerAction &&
                                                 <Tooltip title="Sort">
@@ -115,8 +115,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                         );
                                     }else{
                                         return <TableCell key={Math.random()}>{el}</TableCell>;
-                                    }
-                                    
+                                    }  
                                 })}
                             </TableRow>
                         </TableHead>
@@ -131,6 +130,8 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                     );
                                     if(nameParameterApi === 'idWhite'){
                                         sliced = Object.fromEntries(Object.entries(element).slice(1, -1));
+                                    }else if(nameParameterApi === "contestazionePage"){
+                                        sliced = Object.fromEntries(Object.entries(element).slice(1, -1));
                                     }
                                     if(nameParameterApi === 'idContratto'){
                                         return <RowContratto key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} ></RowContratto>;
@@ -138,6 +139,8 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                         return <RowWhiteList key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} setSelected={setSelected} selected={selected||[]}  checkIfChecked={checkIfChecked} ></RowWhiteList>;
                                     }else if(nameParameterApi === 'idOrchestratore'){
                                         return <RowOrchestratore key={Math.random()} sliced={sliced} headerNames={headerNames}></RowOrchestratore>;
+                                    }else if(nameParameterApi === "contestazionePage"){
+                                        return <RowContestazioni key={Math.random()} sliced={sliced}apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element}></RowContestazioni>;
                                     }else{
                                         return (
                                             <TableRow key={Math.random()}>

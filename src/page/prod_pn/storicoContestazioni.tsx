@@ -193,7 +193,8 @@ const Storico = () => {
                     mese:month[obj.mese-1],
                     anno:obj.anno,
                     stato:obj.descrizioneStato,
-                    categoriaDocumento:obj.categoriaDocumento       
+                    categoriaDocumento:obj.categoriaDocumento,
+                    idStato:obj.stato
                 };
             });
             setDataGrid(orderDataCustom);
