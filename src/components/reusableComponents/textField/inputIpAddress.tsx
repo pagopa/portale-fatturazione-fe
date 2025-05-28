@@ -21,7 +21,6 @@ const IPAddressInput = ({singleIp,getIPs,button,ipsToCompare,setLoading,disable}
     const [errorCDR, setErrorCDR] = useState('');
     const [disableDeleteAddButton, setDisableDeleteAddButton] = useState(false);
 
-    console.log({ipAddress,cdr, tot:ipAddress+"/"+cdr,ipsToCompare},);
     const createIPApi = async(ipAddress) =>{
         setLoading(true);
         setDisableDeleteAddButton(true);
@@ -63,7 +62,9 @@ const IPAddressInput = ({singleIp,getIPs,button,ipsToCompare,setLoading,disable}
             }else if(ipsToCompare.map(el => el.ipAddress).includes(value+"/"+cdr)){
                 setError('IP Address già inserito');
                 setErrorCDR('IP Address già inserito');
-            } else {
+            }else if(ipsToCompare.map(el => el.ipAddress).includes(value) && cdr === ""){
+                setError('IP Address già inserito');
+            }else {
                 setError('');
             }
         }
@@ -89,6 +90,9 @@ const IPAddressInput = ({singleIp,getIPs,button,ipsToCompare,setLoading,disable}
             } else {
                 setErrorCDR('');
             }
+        }else if(value === ""){
+            setErrorCDR('');
+        
         }else{
             setErrorCDR('CDR non valido');
         }  
@@ -100,7 +104,9 @@ const IPAddressInput = ({singleIp,getIPs,button,ipsToCompare,setLoading,disable}
             }else if(ipsToCompare.map(el => el.ipAddress).includes(ipAddress+"/"+value)){
                 setError('IP Address già inserito');
                 setErrorCDR('IP Address già inserito');
-            } else {
+            }else if(ipsToCompare.map(el => el.ipAddress).includes(ipAddress) && value === ""){
+                setError('IP Address già inserito');
+            }else {
                 setError('');
             }
         }
@@ -152,7 +158,7 @@ const IPAddressInput = ({singleIp,getIPs,button,ipsToCompare,setLoading,disable}
                 height: '58px',
                 width: '10%',
             }}>
-                {button === "add" && <Button disabled={error !== "" || ipAddress === "" || cdr === ""||disable }  onClick={()=> createIPApi(ipAddress+"/"+cdr)} variant="outlined"><AddIcon fontSize="small"></AddIcon></Button>}
+                {button === "add" && <Button disabled={error !== "" || ipAddress === ""|| errorCDR !== "" || disable }  onClick={()=> createIPApi(cdr !== "" ? ipAddress+"/"+cdr: ipAddress)} variant="outlined"><AddIcon fontSize="small"></AddIcon></Button>}
                 {button === "del" &&<Button disabled={disable} onClick={() =>deleteSingleIp(singleIp)} variant="outlined"><DeleteIcon fontSize="small"></DeleteIcon></Button>}
             </div>
            
