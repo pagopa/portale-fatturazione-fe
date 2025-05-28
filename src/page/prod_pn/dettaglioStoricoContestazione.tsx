@@ -4,7 +4,7 @@ import { PathPf } from "../../types/enum";
 import GavelIcon from '@mui/icons-material/Gavel';
 import SkeletonRelPdf from "../../components/rel/skeletonRelPdf";
 import { useContext, useEffect, useState } from "react";
-import { Box,IconButton,Table, TableBody, TableCell, TableHead, TableRow,Typography } from "@mui/material";
+import { Box,FormControl,IconButton,InputLabel,MenuItem,Select,Table, TableBody, TableCell, TableHead, TableRow,Typography } from "@mui/material";
 import TextDettaglioPdf from "../../components/commessaPdf/textDettaglioPdf";
 import { GlobalContext } from "../../store/context/globalContext";
 import { getContestazioneExel, getDettaglioContestazione } from "../../api/apiPagoPa/notifichePA/api";
@@ -12,7 +12,7 @@ import { manageError, manageErrorDownload } from "../../api/api";
 import { mesiGrid} from "../../reusableFunction/reusableArrayObj";
 import DownloadIcon from '@mui/icons-material/Download';
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
-import { getTipoContestazioni } from "../../api/apiPagoPa/storicoContestazioni/api";
+import { downloadReportContestazione, getTipoContestazioni } from "../../api/apiPagoPa/storicoContestazioni/api";
 interface Contestazione {
     reportId: number;
     step:number;
@@ -51,6 +51,7 @@ const DettaglioStoricoContestazione = () => {
     const [lastStepContestazioneObj, setLastStepContestazioneObj] = useState<Contestazione|null>(null);
     const [showDownloading, setShowDownloading] = useState(false);
     const [tipologieContestazioni , setTipologieContestazioni] = useState<{step:number, descrizione:string}[]>([]);
+    const [fileType, setFileType] = useState("");
 
     useEffect(()=>{
         if(singleContest?.reportId !== 0){
@@ -100,6 +101,41 @@ const DettaglioStoricoContestazione = () => {
             setShowDownloading(false);
             manageErrorDownload('404',dispatchMainState);
         });
+    };
+
+
+
+
+    const downloadMainReport = async() => {
+        setShowDownloading(true);
+        await downloadReportContestazione(token,profilo.nonce,Number(singleContest.reportId),fileType)
+            .then((res)=>{
+                
+                if(fileType === "JSON"){
+                    const link = document.createElement("a");
+                    const jsonData = JSON.stringify(res.data.Steps[0], null, 2);
+                    const blob = new Blob([jsonData], { type: "application/json" });
+                    const url = URL.createObjectURL(blob);
+                    link.href = url;
+                    link.download = `Report contestazione/${singleContest.ragioneSociale}/${mesiGrid[singleContest.mese]}/${singleContest.anno}.json`;
+                    link.click();
+                    URL.revokeObjectURL(url);
+                }else if(fileType === "CSV"){
+                    const blob = new Blob([res.data], { type: 'text/csv' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.setAttribute('hidden', '');
+                    a.setAttribute('href', url);
+                    a.setAttribute('download',`Report contestazione/${singleContest.ragioneSociale}/${mesiGrid[singleContest.mese]}/${singleContest.anno}.csv`);
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a); 
+                }
+                setShowDownloading(false);
+            }).catch((err)=>{
+                setShowDownloading(false);
+                manageErrorDownload('404',dispatchMainState);
+            });
     };
 
     if(loadingDettaglio){
@@ -235,6 +271,42 @@ const DettaglioStoricoContestazione = () => {
                                             })}
                                         </Table>
                                     </Box>
+                                </Box>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div className=" pb-3 ">
+                    <div className="container text-center">
+                        <div className="row">
+                            <div className="col-12" >
+                                <Box  sx={{ margin: 2 ,paddingRight:'30px',paddingLeft:"10px",paddingBottom:"10px"}}>
+                                    <div className="d-flex justify-content-end">
+                                        <Box sx={{width:'180px', marginRight:"20px"}} >
+                                            <FormControl
+                                                fullWidth
+                                                size="small"
+                                            >
+                                                <InputLabel>Download Report</InputLabel>
+                                                <Select
+                                                    label='Download Report'
+                                                    onChange={(e) => setFileType(e.target.value)}
+                                                    value={fileType||""}
+                                                >
+                                                    {["JSON","CSV"].map((el) =>{
+                                                        return(
+                                                            <MenuItem key={el} value={el}>
+                                                                {el}
+                                                            </MenuItem>
+                                                        );
+                                                    })}
+                                                </Select>
+                                            </FormControl>
+                                        </Box>
+                                        <IconButton disabled={fileType === ""} onClick={downloadMainReport} ><DownloadIcon color={fileType !== "" ? "primary" : "disabled"} /></IconButton>
+                                    </div>
+                                   
                                 </Box>
                             </div>
                         </div>
