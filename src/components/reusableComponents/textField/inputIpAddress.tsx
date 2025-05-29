@@ -9,7 +9,7 @@ import { manageError } from '../../../api/api';
 const IPAddressInput = ({singleIp,getIPs,button,ipsToCompare,setLoading,disable}) => {
   
     const globalContextObj = useContext(GlobalContext);
-    const { mainState,dispatchMainState} = globalContextObj;
+    const { mainState,dispatchMainState,setErrorAlert} = globalContextObj;
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 
@@ -30,7 +30,16 @@ const IPAddressInput = ({singleIp,getIPs,button,ipsToCompare,setLoading,disable}
         }).catch((err)=>{
             setLoading(false);
             setDisableDeleteAddButton(false);
-            manageError(err, dispatchMainState);
+            console.log(err.response.status,err.response.data.detail);
+            if(err.response.status === 400){
+                console.log(1);
+                setErrorAlert({error:err.response.status,message:err.response.data.detail});
+            }else{
+                console.log(2);
+                manageError(err, dispatchMainState);
+            }
+         
+         
         });
     };
     
