@@ -120,8 +120,8 @@ const IPAddressInput = ({singleIp,getIPs,button,ipsToCompare,setLoading,disable}
     };
 
     return (
-        <div className="bg-white col-11 p-3 d-flex justify-content-start">
-            <div className='d-flex'>
+        <div   className="bg-white col-11 p-3 d-flex justify-content-start">
+            <div className='d-flex ms-2'>
                 <TextField
                     label="IP Address"
                     value={ipAddress}

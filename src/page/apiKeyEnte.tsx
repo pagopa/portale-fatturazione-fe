@@ -222,16 +222,12 @@ const ApiKeyEnte = () => {
                                 </div>
                             </>:
                             <>
-                                 
                                 {ipsToCompare.map((el) => {
                                     return(
                                         <IPAddressInput  key={el.ipAddress} disable={loadingGetIPs}  getIPs={getIPs} singleIp={el.ipAddress} button={"del"} ipsToCompare={ipsToCompare} setLoading={setLoadingGetIp}></IPAddressInput>
                                     );
                                 })}
-                              
                                 <IPAddressInput key={ipsToCompare?.length} disable={loadingGetIPs} getIPs={getIPs} singleIp={""} button={"add"} ipsToCompare={ipsToCompare} setLoading={setLoadingGetIp}></IPAddressInput>
-                            
-                               
                             </>
                         }
                     </div>
