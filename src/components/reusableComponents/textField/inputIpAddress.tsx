@@ -30,7 +30,7 @@ const IPAddressInput = ({singleIp,getIPs,button,ipsToCompare,setLoading,disable}
         }).catch((err)=>{
             setLoading(false);
             setDisableDeleteAddButton(false);
-            console.log(err.response.status,err.response.data.detail);
+        
             if(err.response.status === 400){
                 console.log(1);
                 setErrorAlert({error:err.response.status,message:err.response.data.detail});
@@ -38,8 +38,6 @@ const IPAddressInput = ({singleIp,getIPs,button,ipsToCompare,setLoading,disable}
                 console.log(2);
                 manageError(err, dispatchMainState);
             }
-         
-         
         });
     };
     
