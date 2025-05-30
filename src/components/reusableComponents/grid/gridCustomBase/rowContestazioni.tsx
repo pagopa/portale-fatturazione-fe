@@ -26,7 +26,7 @@ const RowContestazioni = ({sliced,handleClickOnGrid,apiGet,element}) => {
                     );
                 })
             }
-            {apiGet &&  <TableCell align="center"><IconButton onClick={()=>{handleClickOnGrid(element);}} ><ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /></IconButton></TableCell> }
+            {apiGet &&  <TableCell align="center"><IconButton onClick={()=>{handleClickOnGrid(element);}} ><ArrowForwardIcon fontSize="small" sx={{ color: '#1976D2', cursor: 'pointer' }} /></IconButton></TableCell> }
         </TableRow>
     );
 };

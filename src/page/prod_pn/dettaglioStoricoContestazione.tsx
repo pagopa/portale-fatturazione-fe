@@ -276,7 +276,7 @@ const DettaglioStoricoContestazione = () => {
                         </div>
                     </div>
                 </div>
-                
+                {singleContest.stato === 99 && 
                 <div className=" pb-3 ">
                     <div className="container text-center">
                         <div className="row">
@@ -306,12 +306,12 @@ const DettaglioStoricoContestazione = () => {
                                         </Box>
                                         <IconButton disabled={fileType === ""} onClick={downloadMainReport} ><DownloadIcon color={fileType !== "" ? "primary" : "disabled"} /></IconButton>
                                     </div>
-                                   
                                 </Box>
                             </div>
                         </div>
                     </div>
                 </div>
+                }
             </div>
             <ModalLoading 
                 open={showDownloading} 
