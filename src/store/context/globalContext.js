@@ -42,7 +42,9 @@ export const GlobalContext = createContext({
     errorAlert:{error:0,message:''},
     setErrorAlert:(prev) => null,
     countMessages:0,
-    setCountMessages:(prev) => null
+    setCountMessages:(prev) => null,
+    mainData:{apiKeyPage:{visible:null,keys:[]}},
+    setMainData:(prev) => null
 });
 
 
@@ -55,16 +57,20 @@ function GlobalContextProvider({children}){
     const [countMessages, setCountMessages] = useState(0);
     //nuova logica errori da implemnetare sull'applicazione  22/11
     const [errorAlert, setErrorAlert] = useState({error:0,message:''});
-  
 
+    //nuovo stato dove spostare info che non vogliamo inserire nel MAIN STATE
+    const [mainData,setMainData] = useState({
+        apiKeyPage:{
+            visible:null,
+            keys:[]
+        }});
+  
     // eslint-disable-next-line no-undef
     useEffect(() => {
         // eslint-disable-next-line no-undef
         localStorage.setItem('globalState', JSON.stringify(mainState));
     }, [mainState]);
    
- 
-
     const value = {
         mainState,
         dispatchMainState,
@@ -77,7 +83,9 @@ function GlobalContextProvider({children}){
         errorAlert,
         setErrorAlert,
         countMessages,
-        setCountMessages
+        setCountMessages,
+        setMainData,
+        mainData
     };
 
 

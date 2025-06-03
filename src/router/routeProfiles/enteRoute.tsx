@@ -10,7 +10,12 @@ import RelPage from "../../page/prod_pn/relUtPa";
 import ReportDettaglio from "../../page/prod_pn/reportDettaglioUtPa";
 import SideNavEnte from "../../layout/sideNavs/sidNavEnte";
 
-const EnteRoute = () => {
+import ApiKeyEnte from "../../page/apiKeyEnte";
+import LoadingRoute from "./loadingRoute";
+
+
+
+const EnteRoute  : React.FC<{apiIsVisible:boolean|null}> = ({apiIsVisible}) => {
 
     const enteRoute =  <Route element={<LayoutEnte sideNav={<SideNavEnte/>}></LayoutEnte>}>
         <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte ></AreaPersonaleUtenteEnte>}/>                                     
@@ -20,6 +25,10 @@ const EnteRoute = () => {
         <Route path={PathPf.LISTA_REL} element={<RelPage  />} />
         <Route path={PathPf.PDF_REL} element={<RelPdfPage  />} />                           
         <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio/>} />
+        {apiIsVisible && <Route path={PathPf.API_KEY_ENTE} element={<ApiKeyEnte/>} />}
+        {/*La riga sottostante è stata aggiunta nel caso in cui l'utente è in apiKey page e tenta il reload dell'applicazione
+        Dato che Api key è una pagina visibile solo per alcuni utenti ad ogni reload viene chiamata un api di controllo "getPageApiKeyVisible" */}
+        {apiIsVisible === null && <Route path={PathPf.API_KEY_ENTE} element={<LoadingRoute/>} />}
     </Route>;
     return enteRoute; 
   

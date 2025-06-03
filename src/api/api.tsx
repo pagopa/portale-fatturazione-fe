@@ -127,10 +127,19 @@ export const getTipologiaProfilo = async (token:string, nonce:string) => {
 };
 
 export const getManuale = async () => {
-
     const response =  await fetch(`${url}/api/tipologia/manuale/download`);
     return response;
 };
+
+export const getPageApiKeyVisible = async (token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/apikey?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+};
+
 
 
 
