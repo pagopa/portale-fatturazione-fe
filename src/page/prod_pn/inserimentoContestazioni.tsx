@@ -51,7 +51,7 @@ interface RecapObjContestazioni{
 
 const InserimentoContestazioni = () =>{
     const globalContextObj = useContext(GlobalContext);
-    const {mainState,dispatchMainState} = globalContextObj;
+    const {mainState,dispatchMainState,setErrorAlert} = globalContextObj;
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 
@@ -226,7 +226,8 @@ const InserimentoContestazioni = () =>{
                         managePresaInCarico('PRESA_IN_CARICO_DOCUMENTO',dispatchMainState);
                     }
                 }).catch((err)=>{
-                    manageStringMessage('409_'+err.response.data.detail,dispatchMainState);
+                    //manageStringMessage('409_'+err.response.data.detail,dispatchMainState);
+                    setErrorAlert({error:409,message:"L'operazione non è andata a buon fine"});
                     throw new Error(err.response.data.details); 
                 });
                 start = end;

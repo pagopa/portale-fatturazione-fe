@@ -46,39 +46,22 @@ const BasicAlerts:React.FC = () => {
 
     let colorAlert:AlertColor = 'success'; 
 
-
-    if(mainState.apiError === 401 || mainState.apiError === 403|| errorAlert.error === 401 ){
-
-        colorAlert = 'error';
-    }else if(mainState.apiError === 419 || errorAlert.error === 419 ){
-
-        colorAlert = 'error';
-    }else if(mainState.apiError === 500 || errorAlert.error === 500){
-
-        colorAlert = 'error';
-    }else if(mainState.apiError === 400 || errorAlert.error === 400){
-
+    if(mainState.apiError === 400 || errorAlert.error === 400 || mainState.apiError === 500 || errorAlert.error === 500||mainState.apiError === 419 || errorAlert.error === 419||mainState.apiError === 401 || mainState.apiError === 403|| errorAlert.error === 401){
         colorAlert = 'error';
     }else if(mainState.apiError === 404 ||errorAlert.error === 404|| mainState.apiError === '404_DOWNLOAD' || mainState.apiError === 'PRESA_IN_CARICO_DOCUMENTO'|| mainState.apiError === '404_NO_CONTESTAZIONI'||mainState.apiError === 'PRESA'|| mainState.apiError === '404_RIGHE_ID'|| mainState.apiError === 'PRESA'||mainState.apiError === "SAVE_KEY_OK"||mainState.apiError === "NO_ENTE_FILTRI_CONTESTAZIONE"){
         colorAlert = "info";
     }else if(mainState.apiError === 400 || errorAlert.error === 400 || mainState.apiError === "CREAT_KEY_KO" || mainState.apiError === "REGEN_KEY_KO"||mainState.apiError === "SAVE_KEY_KO"){
         colorAlert = 'error';
-    }else if(mainState.apiError === 410 || errorAlert.error === 410){
+    }else if(mainState.apiError === 410 || errorAlert.error === 410|| errorAlert.error === 409||(mainState.apiError||'').slice(0,2) === 'NO'){
         colorAlert = 'error';
     }else if(mainState.apiError === "Network Error"|| mainState.apiError === 'ERRORE_MANUALE'|| mainState.apiError === "ERROR_LIST_JSON_TO_SAP" ){
         colorAlert = 'warning';
-    }else if(mainState.apiError === 410 || mainState.apiError === 409 || errorAlert.error === 410){
-        colorAlert = 'warning';
-    }else if((mainState.apiError||'').toString().slice(0,4) === "409_"||(mainState.apiError||'').slice(0,2) === 'NO'){
-        colorAlert = 'error';
     }else if(!mainState.apiError && !errorAlert.error){
         colorAlert = 'warning';
     }else if(mainState.apiError === "FORMAT_FILE_ERROR"){
         colorAlert = 'error';
     }
 
-
-    
     const [css, setCss] = useState('main_container_alert_component');
 
 
@@ -130,9 +113,9 @@ const BasicAlerts:React.FC = () => {
     //versione OK nel caso di merge
     //<Alert sx={{display:'flex', justifyContent:'center'}} severity={colorAlert}  variant="standard">{mainState.apiError !== null ? t(`errori.${mainState.apiError}`, {defaultValue:t(`errori.400`)}) : errorAlert.message ? errorAlert.message : t(`errori.400`)} 
 
-    const test = mainState.apiError ||'';
+    // const test = mainState.apiError ||'';
 
-    const checkIfShowMessageDirectly =  test.toString().slice(0,4) !== '409_';
+    //const checkIfShowMessageDirectly =  test.toString().slice(0,4) !== '409_';
 
     return createPortal(
         <div className={css}>
