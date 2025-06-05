@@ -3,9 +3,23 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 const RowContestazioni = ({sliced,handleClickOnGrid,apiGet,element}) => {
 
+    let bgColorRow = "#F0F8FF";
+    if(element.idStato === 1){
+        bgColorRow = "#F0FFF0";
+    }else if(element.idStato === 2){
+        bgColorRow ="#FFFAF0";
+    }else if(element.idStato === 3){
+        bgColorRow = "#FFF0F5";
+    }
+
     console.log({sliced,element});
     return (
-        <TableRow key={Math.random()}>
+        <TableRow key={Math.random()}
+            sx={{
+                backgroundColor:bgColorRow,
+                borderTop:"4px solid #F2F2F2",
+                borderBottom: "2px solid #F2F2F2"
+            }}>
             {
                 Object.values(sliced)?.map((value:any, i:number)=>{
                     const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;

@@ -186,7 +186,7 @@ const DettaglioStoricoContestazione = () => {
                                             <TableCell align="center" sx={{ width:"300px"}}>Risposte Ente</TableCell>
                                             <TableCell align="center" sx={{ width:"300px"}}>Accettate</TableCell>
                                             <TableCell align="center" sx={{ width:"300px"}}>Rifiutate</TableCell>
-                                            <TableCell align="center" sx={{ width:"300px"}}>Annulate</TableCell>
+                                            <TableCell align="center" sx={{ width:"300px"}}>Annullate</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>

@@ -189,7 +189,7 @@ const Storico = () => {
                 return {
                     reportId:obj.reportId,
                     ragioneSociale:obj.ragioneSociale,
-                    dataInserimento:new Date(obj.dataInserimento).toISOString().replace("T", " ").substring(0, 19),
+                    dataInserimento:obj.dataInserimento.replace("T", " ").substring(0, 19),
                     mese:month[obj.mese-1],
                     anno:obj.anno,
                     stato:obj.descrizioneStato,

@@ -5,12 +5,10 @@ import DangerousIcon from '@mui/icons-material/Dangerous';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 const RowOrchestratore = ({sliced,headerNames}) => {
-    let bgColorRow = "#F0F8FF";
-    if(sliced.esecuzione === 1){
+    let bgColorRow = "#F0F8FF"; 
+    if(sliced.esecuzione === 99){
         bgColorRow = "#F0FFF0";
-    }else if(sliced.esecuzione === 2){
-        bgColorRow ="#FFFAF0";
-    }else if(sliced.esecuzione === 3){
+    }else if(sliced.esecuzione === 1 || sliced.esecuzione === 100 || sliced.esecuzione === 101  ){
         bgColorRow = "#FFF0F5";
     }
 
