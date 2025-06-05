@@ -3,12 +3,10 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 const RowContestazioni = ({sliced,handleClickOnGrid,apiGet,element}) => {
 
-    let bgColorRow = "#F0F8FF";
-    if(element.idStato === 1){
+    let bgColorRow = "#F0F8FF"; 
+    if(element.esecuzione === 99){
         bgColorRow = "#F0FFF0";
-    }else if(element.idStato === 2){
-        bgColorRow ="#FFFAF0";
-    }else if(element.idStato === 3){
+    }else if(element.esecuzione === 1 || element.esecuzione === 100 || element.esecuzione === 101  ){
         bgColorRow = "#FFF0F5";
     }
 
