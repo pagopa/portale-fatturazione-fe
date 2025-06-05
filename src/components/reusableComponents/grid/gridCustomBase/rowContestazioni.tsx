@@ -1,4 +1,4 @@
-import { Button, IconButton, TableCell, TableRow, Tooltip } from "@mui/material";
+import { Button, IconButton, TableCell, TableRow, Tooltip, Typography } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 const RowContestazioni = ({sliced,handleClickOnGrid,apiGet,element}) => {
@@ -32,7 +32,8 @@ const RowContestazioni = ({sliced,handleClickOnGrid,apiGet,element}) => {
                                     }            
                                 }}
                             >
-                                {valueEl}
+                                <Typography style={{ fontSize: "1rem", fontWeight: 600 }} variant="caption-semibold"> {valueEl}</Typography> 
+                               
                             </TableCell>
                         </Tooltip>
                     );
