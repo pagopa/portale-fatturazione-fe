@@ -1,7 +1,7 @@
 import { Button, IconButton, TableCell, TableRow, Tooltip, Typography } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
-const RowContestazioni = ({sliced,handleClickOnGrid,apiGet,element}) => {
+const RowContestazioni = ({sliced,handleClickOnGrid,apiGet,element,headerNames}) => {
 
     let bgColorRow = "#F0F8FF"; 
     if(element.idStato === 99){
@@ -10,7 +10,7 @@ const RowContestazioni = ({sliced,handleClickOnGrid,apiGet,element}) => {
         bgColorRow = "#FFF0F5";
     }
 
-    console.log({sliced,element});
+    
     return (
         <TableRow key={Math.random()}
             sx={{
@@ -22,21 +22,28 @@ const RowContestazioni = ({sliced,handleClickOnGrid,apiGet,element}) => {
                 Object.values(sliced)?.map((value:any, i:number)=>{
                     const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
                     const valueEl = (i === 0 && value?.toString().length > 50) ? value?.toString().slice(0, 50) + '...' : value;
-                    return (
-                        <Tooltip key={Math.random()} title={value}>
-                            <TableCell
-                                sx={cssFirstColum} 
-                                onClick={()=>{
-                                    if(i === 0){
-                                        handleClickOnGrid(element);
-                                    }            
-                                }}
-                            >
-                                <Typography style={{ fontSize: "1rem", fontWeight: 600 }} variant="caption-semibold"> {valueEl}</Typography> 
-                               
-                            </TableCell>
-                        </Tooltip>
-                    );
+                    if(headerNames[i]?.renderCell){
+                        return  headerNames[i]?.renderCell(valueEl);
+                       
+                    }else{
+                        return (
+                            <Tooltip key={Math.random()} title={value}>
+                                <TableCell
+                                    sx={cssFirstColum} 
+                                    align={i !== 0 ? "center": "left"}
+                                    onClick={()=>{
+                                        if(i === 0){
+                                            handleClickOnGrid(element);
+                                        }            
+                                    }}
+                                >
+                                    {valueEl}
+                                   
+                                </TableCell>
+                            </Tooltip>
+                        );
+                    }
+                   
                 })
             }
             {apiGet &&  <TableCell align="center"><IconButton onClick={()=>{handleClickOnGrid(element);}} ><ArrowForwardIcon fontSize="small" sx={{ color: '#1976D2', cursor: 'pointer' }} /></IconButton></TableCell> }

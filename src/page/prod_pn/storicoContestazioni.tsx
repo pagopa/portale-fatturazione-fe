@@ -17,6 +17,7 @@ import { useNavigate } from "react-router";
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
+import { headersName } from "../../assets/configurations/config_GridStoricoContestazioni";
 
 export interface BodyStoricoContestazioni{
     anno:string,
@@ -282,7 +283,6 @@ const Storico = () => {
         handleModifyMainState({contestazioneSelected:singleEl});
     };  
 
-    const headerNames = ['Ragione Sociale','Data Inserimento',"Mese","Anno",'Stato','Categoria Doc.',''];
 
     return (
         <div className="mx-5" style={{minHeight:'600px'}}>
@@ -425,7 +425,7 @@ const Storico = () => {
                                 total={totalContestazioni}
                                 page={page}
                                 rows={rowsPerPage}
-                                headerNames={headerNames}
+                                headerNames={headersName}
                                 apiGet={handleClickOnDetail}
                                 disabled={getListaContestazioniRunning}
                                 widthCustomSize="1300px"></GridCustom>

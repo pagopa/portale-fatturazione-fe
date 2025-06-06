@@ -113,6 +113,10 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                                 </Tooltip>}
                                             </TableCell>
                                         );
+                                    }if(nameParameterApi === 'contestazionePage'){
+                                        return(
+                                            <TableCell key={Math.random()} align={el.align} width={el.width}>{el.label}</TableCell>
+                                        );
                                     }else{
                                         return <TableCell key={Math.random()}>{el}</TableCell>;
                                     }  
@@ -140,7 +144,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                     }else if(nameParameterApi === 'idOrchestratore'){
                                         return <RowOrchestratore key={Math.random()} sliced={sliced} headerNames={headerNames}></RowOrchestratore>;
                                     }else if(nameParameterApi === "contestazionePage"){
-                                        return <RowContestazioni key={Math.random()} sliced={sliced}apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element}></RowContestazioni>;
+                                        return <RowContestazioni key={Math.random()} sliced={sliced}apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} headerNames={headerNames}></RowContestazioni>;
                                     }else{
                                         return (
                                             <TableRow key={Math.random()}>
