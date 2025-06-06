@@ -14,7 +14,6 @@ const RowContestazioni = ({sliced,handleClickOnGrid,apiGet,element,headerNames})
     return (
         <TableRow key={Math.random()}
             sx={{
-                backgroundColor:bgColorRow,
                 borderTop:"4px solid #F2F2F2",
                 borderBottom: "2px solid #F2F2F2"
             }}>
@@ -23,7 +22,7 @@ const RowContestazioni = ({sliced,handleClickOnGrid,apiGet,element,headerNames})
                     const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
                     const valueEl = (i === 0 && value?.toString().length > 50) ? value?.toString().slice(0, 50) + '...' : value;
                     if(headerNames[i]?.renderCell){
-                        return  headerNames[i]?.renderCell(valueEl);
+                        return  headerNames[i]?.renderCell(valueEl,bgColorRow);
                        
                     }else{
                         return (
