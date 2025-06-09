@@ -276,7 +276,7 @@ const DettaglioStoricoContestazione = () => {
                         </div>
                     </div>
                 </div>
-                {singleContest.stato === 99 && 
+                {(singleContest.stato === 2 || singleContest.stato === 3) && 
                 <div className=" pb-3 ">
                     <div className="container text-center">
                         <div className="row">
