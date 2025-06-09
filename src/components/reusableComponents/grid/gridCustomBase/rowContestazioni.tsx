@@ -4,9 +4,9 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 const RowContestazioni = ({sliced,handleClickOnGrid,apiGet,element,headerNames}) => {
 
     let bgColorRow = "#F0F8FF"; 
-    if(element.idStato === 99){
+    if(element.idStato === 3){
         bgColorRow = "#F0FFF0";
-    }else if(element.idStato === 1 || element.idStato === 100 || element.idStato === 101  ){
+    }else if(element.idStato === 2){
         bgColorRow = "#FFF0F5";
     }
 

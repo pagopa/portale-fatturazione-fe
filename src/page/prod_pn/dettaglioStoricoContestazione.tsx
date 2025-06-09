@@ -155,7 +155,7 @@ const DettaglioStoricoContestazione = () => {
                     <div className="container text-center">
                         <TextDettaglioPdf description='Categoria documento' value={singleContest.categoriaDocumento}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Data inserimento' value={new Date(singleContest.dataInserimento).toISOString().replace("T", " ").substring(0, 19)}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Stato' value={tipologieContestazioni.find(obj => obj.step === singleContest.stato)?.descrizione||''}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Stato' value={singleContest.descrizioneStato.charAt(0).toUpperCase() + singleContest.descrizioneStato.slice(1)||''}></TextDettaglioPdf>
                         {lastStepContestazioneObj && 
                         <>
                             <Box sx={{ margin: 5 , backgroundColor:'#F8F8F8', padding:'10px'}}>
