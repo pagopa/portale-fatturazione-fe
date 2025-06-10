@@ -33,7 +33,7 @@ interface Contestazione {
     fatturabile:null;
     storage:string;
     nomeDocumento:string;
-    dataCompletamento:Date;
+    dataCompletamento:string;
     rispostaEnte:string
 }
 
@@ -260,7 +260,7 @@ const DettaglioStoricoContestazione = () => {
                                                 return ( 
                                                     <TableRow key={Math.random()} sx={{ borderBottom: '3px solid #ccc' }}  >
                                                         <TableCell  sx={{ borderBottomWidth: '3px' }}   align="center">{obj?.descrizioneStep ||"-"}</TableCell>
-                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center"  > {obj?.dataCompletamento ?new Date(obj.dataCompletamento).toISOString().replace("T", " ").substring(0, 19):"-"} </TableCell>
+                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center"  > {obj?.dataCompletamento ? obj.dataCompletamento?.replace("T", " ").substring(0, 19):"-"} </TableCell>
                                                         <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotificheDigitali ||"-"}</TableCell>
                                                         <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotificheAnalogiche890||"-"}</TableCell>
                                                         <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotificheAnalogicheAR||"-"}</TableCell>
