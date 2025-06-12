@@ -281,7 +281,6 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
     const noteRecapitista = contestazioneSelected.contestazione.noteRecapitista;
     const noteConsolidatore = contestazioneSelected.contestazione.noteConsolidatore;
     const noteEnte = contestazioneSelected.contestazione.noteEnte;
-    console.log({stato});
     // ente/selfacre puo rispondere?
     const noRisposta = contestazioneSelected.risposta;
     // ente/selfacre puo accettare rifiutare una contestazione?
