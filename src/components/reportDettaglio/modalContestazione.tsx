@@ -281,7 +281,7 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
     const noteRecapitista = contestazioneSelected.contestazione.noteRecapitista;
     const noteConsolidatore = contestazioneSelected.contestazione.noteConsolidatore;
     const noteEnte = contestazioneSelected.contestazione.noteEnte;
-
+    console.log({stato});
     // ente/selfacre puo rispondere?
     const noRisposta = contestazioneSelected.risposta;
     // ente/selfacre puo accettare rifiutare una contestazione?
@@ -527,14 +527,21 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                                         value={contestazioneSelected.contestazione.tipoContestazione|| ''}
                                         inputProps={{ readOnly: contestazioneSelected?.contestazione?.statoContestazione !== 1 }}
                                     >
-                                        {tipoContestazioni.map((el) => (
-                                            <MenuItem
-                                                key={el.id}
-                                                value={el.id}
-                                            >
-                                                {el.tipo}
-                                            </MenuItem>
-                                        ))}
+                                        {/*Righe aggiunte il 12/06/25 , Nascondere in inserimento Ritardo nella consegna */}
+                                        {tipoContestazioni.map((el) => {
+                                            if(el.id === 1 && el.tipo === 'Ritardo nella consegna' && stato === 1){
+                                                return null;
+                                            }else{
+                                                return (
+                                                    <MenuItem
+                                                        key={el.id}
+                                                        value={el.id}
+                                                    >
+                                                        {el.tipo||''}
+                                                    </MenuItem>
+                                                );
+                                            }
+                                        })}
                                     </Select>
                                 </FormControl>
                             </div>
