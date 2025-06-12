@@ -404,7 +404,7 @@ const ReportDettaglio : React.FC = () => {
         resetFilters();
     };     
     
-    const getlistaNotifiche = async (nPage:number, nRow:number, bodyParameter) => {
+    const getlistaNotifiche = async (nPage:number, nRow:number, bodyParameter = bodyGetLista) => {
         // elimino idEnti dal paylod della get notifiche lato selfcare
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const {idEnti, recapitisti, consolidatori, ...newBody} = bodyParameter;
@@ -466,7 +466,7 @@ const ReportDettaglio : React.FC = () => {
         isInitialRender.current = false;      
     };
     
-    const getlistaNotifichePagoPa = async (nPage:number, nRow:number, bodyParameter) => {
+    const getlistaNotifichePagoPa = async (nPage:number, nRow:number, bodyParameter = bodyGetLista) => {
         // disable button filtra e annulla filtri nell'attesa dei dati
         setGetNotificheWorking(true);
         setShowLoadingGrid(true);
