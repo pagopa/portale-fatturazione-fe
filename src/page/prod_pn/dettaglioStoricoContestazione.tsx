@@ -17,9 +17,12 @@ interface Contestazione {
     reportId: number;
     step:number;
     descrizioneStep:string;
-    totaleNotificheAnalogicheAR:null;
+    totaleNotificheAnalogicheARNazionaliAR:null;
     totaleNotificheAnalogiche890:null;
     totaleNotificheDigitali: null;
+    totaleNotificheAnalogicheARInternazionaliRIR:null;
+    totaleNotificheAnalogicheRSInternazionaliRIS:null;
+    totaleNotificheAnalogicheRSNazionaliRS:null;
     totaleNotifiche:null;
     link:string;
     nonContestataAnnullata:null;
@@ -252,6 +255,9 @@ const DettaglioStoricoContestazione = () => {
                                                     <TableCell align="center">Tot. Not. Digit.</TableCell>
                                                     <TableCell align="center">Tot. Not. Analog. 890</TableCell>
                                                     <TableCell align="center">Tot. Not. AR</TableCell>
+                                                    <TableCell align="center">Tot. Not. RIR </TableCell>
+                                                    <TableCell align="center">Tot. Not. RIS </TableCell>
+                                                    <TableCell align="center">Tot. Not. RS </TableCell>
                                                     <TableCell align="center">Tot. Not.</TableCell>
                                                     <TableCell align="center"></TableCell>
                                                 </TableRow>
@@ -263,7 +269,10 @@ const DettaglioStoricoContestazione = () => {
                                                         <TableCell sx={{ borderBottomWidth: '3px' }} align="center"  > {obj?.dataCompletamento ? obj.dataCompletamento?.replace("T", " ").substring(0, 19):"-"} </TableCell>
                                                         <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotificheDigitali ||"-"}</TableCell>
                                                         <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotificheAnalogiche890||"-"}</TableCell>
-                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotificheAnalogicheAR||"-"}</TableCell>
+                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotificheAnalogicheARNazionaliAR  ||"-"}</TableCell>
+                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotificheAnalogicheARInternazionaliRIR||"-"}</TableCell>
+                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotificheAnalogicheRSInternazionaliRIS||"-"}</TableCell>
+                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotificheAnalogicheRSNazionaliRS||"-"}</TableCell>
                                                         <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotifiche||"-"}</TableCell>
                                                         <TableCell  sx={{ borderBottomWidth: '3px' }} align="center"><IconButton onClick={() => downloadSigleDetail({idreport:obj.reportId,step:obj.step})} disabled={obj?.nomeDocumento ? false : true}><DownloadIcon color={obj?.nomeDocumento ? "primary" : "disabled"}></DownloadIcon></IconButton></TableCell>
                                                     </TableRow>
