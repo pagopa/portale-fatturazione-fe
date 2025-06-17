@@ -106,6 +106,7 @@ const InserimentoContestazioni = () =>{
             setValueYears(res.data);
             if(isInitialRender.current && Object.keys(filters).length > 0){
                 getMesi(filters.body.anno);
+                setEnteTitle(filters.valueAutocomplete.ragioneSociale);
             }else{
                 getMesi(res.data[0]);
             }

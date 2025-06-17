@@ -64,11 +64,14 @@ const ModalInvioContestazioni : React.FC<PropsModalContestazioni> =({setOpen, op
                                 <Typography id="modal-modal-title" variant="h6" component="h2">
         Attenzione!
                                 </Typography>
-                                <div className='d-flex justify-content-center text-center'>
-                                    <Typography variant="body1" sx={{ my:'auto',mr:1 }}>
+                                <div className='d-flex justify-content-center text-center mt-3'>
+                                    <Typography variant="body1" sx={{ m:"auto", }}>
                                         {`Stai inviando le Contestazioni `}
                                     </Typography>
-                                    <Typography sx={{ my:'auto',mr:1  }} variant="caption-semibold">{`${info.ente} ${month[Number(info.mese)-1]} ${info.anno} :`}</Typography>
+                                    <Typography sx={{ marginLeft:"10px",fontWeight:"bold" }} variant="body1">{`${info.ente} ${month[Number(info.mese)-1]} ${info.anno}`}</Typography>
+                                    
+                                </div>
+                                <div className='mt-2'>
                                     <Typography sx={{  my:'auto'}} variant="body1">Confermi l'operazione?</Typography>
                                 </div>
                             </div>
