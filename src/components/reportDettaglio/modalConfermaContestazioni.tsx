@@ -5,9 +5,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { Dispatch, SetStateAction } from 'react';
 import { month } from '../../reusableFunction/reusableArrayObj';
-import CircularWithValueLabel from '../reusableComponents/progress';
 import CircularProgressWithLabel from '../reusableComponents/progress';
-import { useEffect } from 'react';
 
 interface PropsModalContestazioni{
     open:boolean,
@@ -27,7 +25,8 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 800,
+    width: "auto",
+    maxWidth:"1000px",
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,

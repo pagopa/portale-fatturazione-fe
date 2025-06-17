@@ -267,13 +267,13 @@ const DettaglioStoricoContestazione = () => {
                                                     <TableRow key={Math.random()} sx={{ borderBottom: '3px solid #ccc' }}  >
                                                         <TableCell  sx={{ borderBottomWidth: '3px' }}   align="center">{obj?.descrizioneStep ||"-"}</TableCell>
                                                         <TableCell sx={{ borderBottomWidth: '3px' }} align="center"  > {obj?.dataCompletamento ? obj.dataCompletamento?.replace("T", " ").substring(0, 19):"-"} </TableCell>
-                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotificheDigitali ||"-"}</TableCell>
-                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotificheAnalogiche890||"-"}</TableCell>
-                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotificheAnalogicheARNazionaliAR  ||"-"}</TableCell>
-                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotificheAnalogicheARInternazionaliRIR||"-"}</TableCell>
-                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotificheAnalogicheRSInternazionaliRIS||"-"}</TableCell>
-                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotificheAnalogicheRSNazionaliRS||"-"}</TableCell>
-                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotifiche||"-"}</TableCell>
+                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotificheDigitali === null ? "-" : obj?.totaleNotificheDigitali}</TableCell>
+                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotificheAnalogiche890 === null ? "-" : obj?.totaleNotificheAnalogiche890}</TableCell>
+                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotificheAnalogicheARNazionaliAR  === null ? "-" : obj?.totaleNotificheAnalogicheARNazionaliAR}</TableCell>
+                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotificheAnalogicheARInternazionaliRIR === null ? "-" : obj?.totaleNotificheAnalogicheARInternazionaliRIR}</TableCell>
+                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotificheAnalogicheRSInternazionaliRIS === null ? "-" : obj?.totaleNotificheAnalogicheRSInternazionaliRIS}</TableCell>
+                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotificheAnalogicheRSNazionaliRS === null ? "-" : obj?.totaleNotificheAnalogicheRSNazionaliRS }</TableCell>
+                                                        <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotifiche === null ? "-" : obj?.totaleNotifiche}</TableCell>
                                                         <TableCell  sx={{ borderBottomWidth: '3px' }} align="center"><IconButton onClick={() => downloadSigleDetail({idreport:obj.reportId,step:obj.step})} disabled={obj?.nomeDocumento ? false : true}><DownloadIcon color={obj?.nomeDocumento ? "primary" : "disabled"}></DownloadIcon></IconButton></TableCell>
                                                     </TableRow>
                                                 );
