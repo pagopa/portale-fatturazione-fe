@@ -252,13 +252,13 @@ const DettaglioStoricoContestazione = () => {
                                                 <TableRow >
                                                     <TableCell align="center" >Processo</TableCell>
                                                     <TableCell align="center">Data Processo</TableCell>
-                                                    <TableCell align="center">Tot. Not. Digit.</TableCell>
-                                                    <TableCell align="center">Tot. Not. Analog. 890</TableCell>
-                                                    <TableCell align="center">Tot. Not. AR</TableCell>
-                                                    <TableCell align="center">Tot. Not. RIR </TableCell>
-                                                    <TableCell align="center">Tot. Not. RIS </TableCell>
-                                                    <TableCell align="center">Tot. Not. RS </TableCell>
-                                                    <TableCell align="center">Tot. Not.</TableCell>
+                                                    <TableCell align="center">Digit.</TableCell>
+                                                    <TableCell align="center">Analog. 890</TableCell>
+                                                    <TableCell align="center">AR</TableCell>
+                                                    <TableCell align="center">RIR </TableCell>
+                                                    <TableCell align="center">RIS </TableCell>
+                                                    <TableCell align="center">RS </TableCell>
+                                                    <TableCell align="center">Tot. Notifiche</TableCell>
                                                     <TableCell align="center"></TableCell>
                                                 </TableRow>
                                             </TableHead>
