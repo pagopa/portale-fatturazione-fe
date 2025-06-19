@@ -25,8 +25,6 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: "auto",
-    maxWidth:"1000px",
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
