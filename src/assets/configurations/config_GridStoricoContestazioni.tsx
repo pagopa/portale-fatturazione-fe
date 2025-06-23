@@ -1,7 +1,7 @@
 import { Chip, TableCell } from "@mui/material";
 
 export const headersName: {label:string,align:string,width:number|string,headerAction:boolean,renderCell?:(param:any,param2:string)=> JSX.Element }[]= [
-    { label: 'Ragione Sociale',align:'left',width:'200px', headerAction:false},
+    { label: 'Ragione Sociale',align:'left',width:'300px', headerAction:false},
     {label:'Data Inserimento',align:'center',width:'200px',headerAction:false},
     { label: 'Mese',align:'center',width:'150px',headerAction:false},
     { label: "Anno",align:'center',width:'150px',headerAction:false},

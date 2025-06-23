@@ -30,5 +30,7 @@ export enum PathPf {
     JSON_TO_SAP_DETAILS = "/inviofatturedettaglio/:id",
     STORICO_DETTAGLIO_CONTEST = "/dettagliocontestazione",
     ORCHESTRATORE = "/orchestratore",
-    API_KEY_ENTE = "/apikeys"
+    API_KEY_ENTE = "/apikeys",
+    STORICO_CONTEST_ENTE = "/storicoente",
+    INSERIMENTO_CONTESTAZIONI_ENTE = "/contestazioniente"
 }

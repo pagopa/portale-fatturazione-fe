@@ -6,7 +6,9 @@ import {
     ListItemText,
     ListItemIcon,
     Box,
-    Divider
+    Divider,
+    IconButton,
+    Collapse
 } from '@mui/material';
 import { useNavigate, useLocation } from "react-router-dom";
 import DnsIcon from '@mui/icons-material/Dns';
@@ -19,6 +21,9 @@ import { getDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/ap
 import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
 import { manageError } from '../../api/api';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
+import GavelIcon from '@mui/icons-material/Gavel';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 
 const SideNavEnte: React.FC = () => {
 
@@ -37,6 +42,7 @@ const SideNavEnte: React.FC = () => {
     };
 
     const [selectedIndex, setSelectedIndex] = useState<number | null>(0);
+    const [openContestazioni, setOpenContestazioni] = useState(false);
     
     const handleListItemClick = async() => {
         if(((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA))){
@@ -134,6 +140,14 @@ const SideNavEnte: React.FC = () => {
         }
     };
 
+    const handleListItemClickContestazioni = () =>{
+        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.STORICO_CONTEST_ENTE}}));
+        }else{
+            navigate(PathPf.STORICO_CONTEST_ENTE);
+        }
+    };
+
     const currentLocation = location.pathname;
 
     useEffect(()=>{
@@ -157,6 +171,8 @@ const SideNavEnte: React.FC = () => {
             setSelectedIndex(3);
         }else if(currentLocation ===  PathPf.API_KEY_ENTE){
             setSelectedIndex(5);
+        }else if(currentLocation === PathPf.STORICO_CONTEST || currentLocation === PathPf.STORICO_DETTAGLIO_CONTEST|| currentLocation === PathPf.INSERIMENTO_CONTESTAZIONI){
+            setSelectedIndex(6);
         }
     },[currentLocation]);
 
@@ -185,7 +201,24 @@ const SideNavEnte: React.FC = () => {
                         <MarkUnreadChatAltIcon fontSize="inherit" />
                     </ListItemIcon>
                     <ListItemText primary="Notifiche" />
+                    {openContestazioni ? 
+                        <IconButton onClick={()=> setOpenContestazioni(false)}  size="small">
+                            <ExpandLess fontSize="inherit"  />
+                        </IconButton>:
+                        <IconButton onClick={()=> setOpenContestazioni(true)}  size="small">
+                            <ExpandMore fontSize="inherit"  />
+                        </IconButton>}
                 </ListItemButton>
+                <Collapse in={openContestazioni} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                        <ListItemButton selected={selectedIndex === 6} sx={{ pl: 4 }} onClick={handleListItemClickContestazioni}>
+                            <ListItemIcon>
+                                <GavelIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Contestazioni" />
+                        </ListItemButton>
+                    </List>
+                </Collapse>
                 <ListItemButton selected={selectedIndex === 3} onClick={() => handleListItemClickRel()}>
                     <ListItemIcon>
                         <ManageAccountsIcon fontSize="inherit" />
