@@ -3,8 +3,6 @@ import { month } from "../../reusableFunction/reusableArrayObj";
 import { useContext, useEffect, useState } from "react";
 import { manageError } from "../../api/api";
 import { GlobalContext } from "../../store/context/globalContext";
-import { getListaStorico} from "../../api/apiPagoPa/storicoContestazioni/api";
-import { getAnniContestazioni,  getMesiContestazioni} from "../../api/apiPagoPa/notifichePA/api";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../../types/enum";
@@ -12,12 +10,13 @@ import { useNavigate } from "react-router";
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
-import { headersName } from "../../assets/configurations/config_GridStoricoContestazioni";
+
+import { getAnniContestazioniSE, getListaStoricoSE, getMesiContestazioniSE } from "../../api/apiSelfcare/storicoContestazioneSE/api";
+import { headersName } from "../../assets/configurations/conf_GridStoricoContestazioni_ente";
 
 export interface BodyStoricoContestazioni{
     anno:string,
     mese:string,
-    idEnti:string[],
     idTipologiaReports:number[]
 }
 
@@ -64,7 +63,7 @@ const StoricoEnte = () => {
         updateFilters,
         isInitialRender,
         resetFilters
-    } = useSavedFilters(PathPf.STORICO_CONTEST,{});
+    } = useSavedFilters(PathPf.STORICO_CONTEST_ENTE,{});
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -76,8 +75,7 @@ const StoricoEnte = () => {
     const [bodyGetLista,setBodyGetLista] = useState<BodyStoricoContestazioni>({
         anno:'',
         mese:'',
-        idEnti:[],
-        idTipologiaReports:[]
+        idTipologiaReports:[0]
     });
 
     const [valueYears, setValueYears] = useState<string[]>([]);
@@ -95,7 +93,7 @@ const StoricoEnte = () => {
     },[]);
 
     useEffect(()=>{
-        if(bodyGetLista.idEnti.length > 0 ||bodyGetLista.idTipologiaReports.length > 0 || bodyGetLista.mese !== ''){
+        if(bodyGetLista.idTipologiaReports.length > 0 || bodyGetLista.mese !== ''){
             setStatusAnnulla('show');
         }else{
             setStatusAnnulla('hidden');
@@ -112,7 +110,7 @@ const StoricoEnte = () => {
 
     const getAnni = async() => {
         setGetListaContestazioniRunning(true);
-        await getAnniContestazioni(token,profilo.nonce)
+        await getAnniContestazioniSE(token,profilo.nonce)
             .then((res)=>{
                 setValueYears(res.data);
                 if(isInitialRender.current && Object.keys(filters).length > 0){
@@ -132,7 +130,7 @@ const StoricoEnte = () => {
             });
     };
     const getMesi = async (anno) => {
-        await getMesiContestazioni(token, profilo.nonce,anno).then((res)=> {
+        await getMesiContestazioniSE(token, profilo.nonce,anno).then((res)=> {
             setArrayMesi(res.data);
         }).catch((err)=>{
             setArrayMesi([]);
@@ -143,7 +141,7 @@ const StoricoEnte = () => {
    
     const getListaContestazioni = async(body,pag, rowpag) => {
         setGetListaContestazioniRunning(true);
-        await getListaStorico(token,profilo.nonce,body,pag,rowpag).then((res)=>{
+        await getListaStoricoSE(token,profilo.nonce,body,pag,rowpag).then((res)=>{
             // ordino i dati in base all'header della grid
             setListaToMap(res.data.reports);
             const orderDataCustom = res.data.reports.map((obj)=>{
@@ -151,12 +149,10 @@ const StoricoEnte = () => {
                 // 'id serve per la chiamata get dettaglio dell'elemento selezionato nella grid
                 return {
                     reportId:obj.reportId,
-                    ragioneSociale:obj.ragioneSociale,
                     dataInserimento:obj.dataInserimento.replace("T", " ").substring(0, 19),
                     mese:month[obj.mese-1],
                     anno:obj.anno,
                     stato:obj.descrizioneStato,
-                    categoriaDocumento:obj.categoriaDocumento,
                     idStato:obj.stato
                 };
             });
@@ -175,13 +171,11 @@ const StoricoEnte = () => {
         setBodyGetLista({
             anno:valueYears[0],
             mese:'',
-            idEnti:[],
-            idTipologiaReports:[]
+            idTipologiaReports:[0]
         });
         getListaContestazioni({
             mese:'',
-            idEnti:[],
-            idTipologiaReports:[],
+            idTipologiaReports:[0],
             anno:valueYears[0]
         },1,10);
         resetFilters();
@@ -220,7 +214,7 @@ const StoricoEnte = () => {
         const realPage = page + 1;
         getListaContestazioni(bodyGetLista,realPage,parseInt(event.target.value, 10));  
         updateFilters({
-            pathPage:PathPf.STORICO_CONTEST,
+            pathPage:PathPf.STORICO_CONTEST_ENTE,
             body:bodyGetLista,
             page:0,
             rows:parseInt(event.target.value, 10)

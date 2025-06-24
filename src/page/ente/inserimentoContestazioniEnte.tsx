@@ -1,7 +1,6 @@
 import { Box,Button,FormControl, InputLabel, MenuItem, Select, Skeleton, styled, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
 import { PathPf } from "../../types/enum";
 import {  useContext, useEffect, useRef, useState } from "react";
-import { getAnniContestazioni, getMesiContestazioni, recapContestazioniAzure, uploadContestazioniAzure } from "../../api/apiPagoPa/notifichePA/api";
 import { GlobalContext } from "../../store/context/globalContext";
 import { manageError, managePresaInCarico, manageStringMessage } from "../../api/api";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -12,6 +11,7 @@ import GavelIcon from '@mui/icons-material/Gavel';
 import useSavedFiltersNested from "../../hooks/usaSaveFiltersLocalStorageNested";
 import DeleteIcon from '@mui/icons-material/Delete';
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
+import { getAnniContestazioniSE, getMesiContestazioniSE, recapContestazioniSE, uploadContestazioniSE } from "../../api/apiSelfcare/storicoContestazioneSE/api";
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -31,9 +31,7 @@ interface MeseContetazione{
 }
 export interface BodyContestazionePage{
     anno:string,
-    mese:string,
-    idEnte: string,
-    contractId: string
+    mese:string
 }
 
 interface RecapObjContestazioni{
@@ -56,13 +54,11 @@ const InserimentoContestazioniEnte = () =>{
         updateFilters,
         isInitialRender,
         resetFilters
-    } = useSavedFiltersNested(PathPf.INSERIMENTO_CONTESTAZIONI,{});
+    } = useSavedFiltersNested(PathPf.INSERIMENTO_CONTESTAZIONI_ENTE,{});
 
     const [body,setBody] = useState<BodyContestazionePage>({
         anno:'',
-        mese:'',
-        idEnte: "",
-        contractId: ""
+        mese:''
     });
     const [valueYears,setValueYears] = useState<string[]>([]);
     const [valueMesi,setValueMesi] = useState<MeseContetazione[]>([]);
@@ -79,14 +75,15 @@ const InserimentoContestazioniEnte = () =>{
         getAnni();
         if(isInitialRender.current && Object.keys(filters).length > 0 && filters.body.contractId === ""){
             manageStringMessage('NO_ENTE_FILTRI_CONTESTAZIONE',dispatchMainState);
-        }else if(body.contractId === ""  && body.idEnte === ""){
-            manageStringMessage('NO_ENTE_FILTRI_CONTESTAZIONE',dispatchMainState);
         }
+        /*else if(body.contractId === ""  && body.idEnte === ""){
+            manageStringMessage('NO_ENTE_FILTRI_CONTESTAZIONE',dispatchMainState);
+        }*/
     },[]);
 
 
     const getAnni = async() => {
-        await getAnniContestazioni(token,profilo.nonce).then((res)=>{
+        await getAnniContestazioniSE(token,profilo.nonce).then((res)=>{
             setValueYears(res.data);
             if(isInitialRender.current && Object.keys(filters).length > 0){
                 getMesi(filters.body.anno);
@@ -100,7 +97,7 @@ const InserimentoContestazioniEnte = () =>{
     };
 
     const getMesi = async(y) => {
-        await getMesiContestazioni(token,profilo.nonce,y).then((res)=>{
+        await getMesiContestazioniSE(token,profilo.nonce,y).then((res)=>{
             setValueMesi(res.data);
             if(isInitialRender.current && Object.keys(filters).length > 0){
                 setBody(filters.body);
@@ -113,19 +110,19 @@ const InserimentoContestazioniEnte = () =>{
                 if(uploadRef.current){
                     setBody((prev)=> ({...prev, ...{anno:y,mese:res.data[0].mese,idEnte:"",contractId:""}}));
                     updateFilters({
-                        pathPage:PathPf.INSERIMENTO_CONTESTAZIONI,
+                        pathPage:PathPf.INSERIMENTO_CONTESTAZIONI_ENTE,
                         body:{...body, ...{anno:y,mese:res.data[0].mese,idEnte:"",contractId:""}},
                     });
                 }else{
                     setBody((prev)=> ({...prev, ...{anno:y,mese:res.data[0].mese}}));
                     updateFilters({
-                        pathPage:PathPf.INSERIMENTO_CONTESTAZIONI,
+                        pathPage:PathPf.INSERIMENTO_CONTESTAZIONI_ENTE,
                         body:{...body, ...{anno:y,mese:res.data[0].mese}},
                     });
                 }
                 
                 // chiamata che avviene solo al cambio anno
-                if(body.idEnte !== '' && body.contractId !== '' && uploadRef.current === false){
+                if(uploadRef.current === false){
                     recapContestazioni({...body, ...{anno:y,mese:res.data[0].mese}});
                 }
             } 
@@ -138,7 +135,7 @@ const InserimentoContestazioniEnte = () =>{
 
     const recapContestazioni = async(body) => {
         setLoadingDetail(true);
-        await recapContestazioniAzure(token,profilo.nonce,body).then((res)=>{
+        await recapContestazioniSE(token,profilo.nonce,body).then((res)=>{
             setArrayRecapCon(res.data);
             setLoadingDetail(false);
             isInitialRender.current = false;
@@ -179,8 +176,6 @@ const InserimentoContestazioniEnte = () =>{
                 formData.append('fileId', fileId); // Include the unique file ID
                 formData.append('chunkIndex', Math.floor(start / chunkSize).toString());
                 formData.append('totalChunks', totalChunks.toString());
-                formData.append('idEnte', body.idEnte);
-                formData.append('contractId', body.contractId);
                 formData.append('mese', body.mese);
                 formData.append('anno', body.anno);
                 // Create a promise for each chunk upload
@@ -188,7 +183,7 @@ const InserimentoContestazioniEnte = () =>{
                 if(totalChunks === 1 ){
                     setProgress(50);
                 }
-                await uploadContestazioniAzure(token,profilo.nonce,formData).then((res)=>{
+                await uploadContestazioniSE(token,profilo.nonce,formData).then((res)=>{
                     setProgress((prevProgress) => (prevProgress >= 101 ? 0 : prevProgress + (100/totalChunks)));
                     if(res.data.item2 === true){
                         managePresaInCarico('PRESA_IN_CARICO_DOCUMENTO',dispatchMainState);
@@ -226,11 +221,12 @@ const InserimentoContestazioniEnte = () =>{
     const handleChangeMese = (e) => {
         setBody((prev)=> ({...prev, ...{mese:e.target.value}}));
         setFile(null);
-        if(body.contractId !== '' && body.idEnte !== ''){
-            recapContestazioni({...body,...{mese:e.target.value}});
-        }
+        
+        // if(body.contractId !== '' && body.idEnte !== ''){
+        recapContestazioni({...body,...{mese:e.target.value}});
+        // }
         updateFilters({
-            pathPage:PathPf.INSERIMENTO_CONTESTAZIONI,
+            pathPage:PathPf.INSERIMENTO_CONTESTAZIONI_ENTE,
             body:{...body, ...{mese:e.target.value}}
         });
     };
@@ -238,7 +234,7 @@ const InserimentoContestazioniEnte = () =>{
     return (
         <>
             <div>
-                <NavigatorHeader pageFrom={"Contestazioni/"} pageIn={"Contestazioni multiple"} backPath={PathPf.STORICO_CONTEST} icon={<GavelIcon  sx={{padding:"3px"}}  fontSize='small'></GavelIcon>}></NavigatorHeader>
+                <NavigatorHeader pageFrom={"Contestazioni/"} pageIn={"Contestazioni multiple"} backPath={PathPf.STORICO_CONTEST_ENTE} icon={<GavelIcon  sx={{padding:"3px"}}  fontSize='small'></GavelIcon>}></NavigatorHeader>
             </div>
             <div className="mx-5" style={{minHeight:'600px'}}>
                 <div className="marginTop24">
@@ -289,7 +285,7 @@ const InserimentoContestazioniEnte = () =>{
                         <div className="col-3 m-auto">
                             <Tooltip title={file ? (file?.name || ""):"Carica file"}>
                                 <Button
-                                    disabled={body.contractId === '' || arrayReacpCon.length === 0}
+                                    disabled={arrayReacpCon.length === 0}
                                     component="label"
                                     variant="contained"
                                     onClick={()=> file && setOpenModalConferma(true)}

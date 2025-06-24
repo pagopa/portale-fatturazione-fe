@@ -171,7 +171,7 @@ const SideNavEnte: React.FC = () => {
             setSelectedIndex(3);
         }else if(currentLocation ===  PathPf.API_KEY_ENTE){
             setSelectedIndex(5);
-        }else if(currentLocation === PathPf.STORICO_CONTEST || currentLocation === PathPf.STORICO_DETTAGLIO_CONTEST|| currentLocation === PathPf.INSERIMENTO_CONTESTAZIONI){
+        }else if(currentLocation === PathPf.STORICO_CONTEST_ENTE || currentLocation === PathPf.STORICO_DETTAGLIO_CONTEST|| currentLocation === PathPf.INSERIMENTO_CONTESTAZIONI_ENTE){
             setSelectedIndex(6);
         }
     },[currentLocation]);
