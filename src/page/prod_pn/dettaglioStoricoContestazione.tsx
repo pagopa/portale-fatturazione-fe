@@ -13,6 +13,7 @@ import { mesiGrid} from "../../reusableFunction/reusableArrayObj";
 import DownloadIcon from '@mui/icons-material/Download';
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { downloadReportContestazione, getTipoContestazioni } from "../../api/apiPagoPa/storicoContestazioni/api";
+import { downloadReportContestazioneSE, getContestazioneExelSE, getDettaglioContestazioneSE, getTipoContestazioniSE } from "../../api/apiSelfcare/storicoContestazioneSE/api";
 interface Contestazione {
     reportId: number;
     step:number;
@@ -58,7 +59,7 @@ const DettaglioStoricoContestazione = () => {
 
     useEffect(()=>{
         if(singleContest?.reportId !== 0){
-            getDettaglio();
+            getDettaglio(); 
         }
     },[singleContest?.reportId]);
 
@@ -67,43 +68,84 @@ const DettaglioStoricoContestazione = () => {
     },[]);
 
     const getTipologieContestazioni = async() => {
-        await getTipoContestazioni(token,profilo.nonce).then((res)=>{
-            setTipologieContestazioni(res.data.map(el => el));
-        }).catch((err)=>{
-            manageError(err,dispatchMainState);
-        });
+        if(profilo.auth === "SELFCARE"){
+            await getTipoContestazioniSE(token,profilo.nonce).then((res)=>{
+                setTipologieContestazioni(res.data.map(el => el));
+            }).catch((err)=>{
+                manageError(err,dispatchMainState);
+            });
+        }else{
+            await getTipoContestazioni(token,profilo.nonce).then((res)=>{
+                setTipologieContestazioni(res.data.map(el => el));
+            }).catch((err)=>{
+                manageError(err,dispatchMainState);
+            });
+        }
+       
     };
 
     const getDettaglio = async() => {
         setLoadingDettaglio(true);
-        await getDettaglioContestazione(token,profilo.nonce,singleContest?.reportId).then((res)=>{
-            const step11Obj = res.data.find((el) => {
-                return el.step === 99;
+        if(profilo.auth === "SELFCARE"){
+            await getDettaglioContestazioneSE(token,profilo.nonce,singleContest?.reportId).then((res)=>{
+                const step11Obj = res.data.find((el) => {
+                    return el.step === 99;
+                });
+                setLastStepContestazioneObj(step11Obj||null);
+                setArrayDetails(res.data);
+                setLoadingDettaglio(false);
+            }).catch((err) => {
+                manageError(err,dispatchMainState);
+                setLoadingDettaglio(false);
+                navigate(PathPf.STORICO_CONTEST_ENTE);
             });
-            setLastStepContestazioneObj(step11Obj||null);
-            setArrayDetails(res.data);
-            setLoadingDettaglio(false);
-        }).catch((err) => {
-            manageError(err,dispatchMainState);
-            setLoadingDettaglio(false);
-            navigate(PathPf.STORICO_CONTEST);
-        });
+        }else{
+            await getDettaglioContestazione(token,profilo.nonce,singleContest?.reportId).then((res)=>{
+                const step11Obj = res.data.find((el) => {
+                    return el.step === 99;
+                });
+                setLastStepContestazioneObj(step11Obj||null);
+                setArrayDetails(res.data);
+                setLoadingDettaglio(false);
+            }).catch((err) => {
+                manageError(err,dispatchMainState);
+                setLoadingDettaglio(false);
+                navigate(PathPf.STORICO_CONTEST);
+            });
+        }
+       
     };
 
     const downloadSigleDetail = async(body) => {
         setShowDownloading(true);
-        await getContestazioneExel(token,profilo.nonce,body).then((res)=>{
-            setShowDownloading(false);
-            const link = document.createElement("a");
-            link.href = res.data;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(res.data);
-        }).catch(() => {
-            setShowDownloading(false);
-            manageErrorDownload('404',dispatchMainState);
-        });
+        if(profilo.auth === "SELFCARE"){
+            await getContestazioneExelSE(token,profilo.nonce,body).then((res)=>{
+                setShowDownloading(false);
+                const link = document.createElement("a");
+                link.href = res.data;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(res.data);
+            }).catch(() => {
+                setShowDownloading(false);
+                manageErrorDownload('404',dispatchMainState);
+            });
+        }else{
+            await getContestazioneExel(token,profilo.nonce,body).then((res)=>{
+                setShowDownloading(false);
+                const link = document.createElement("a");
+                link.href = res.data;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(res.data);
+            }).catch(() => {
+                setShowDownloading(false);
+                manageErrorDownload('404',dispatchMainState);
+            });
+        }
+      
     };
 
 
@@ -111,34 +153,64 @@ const DettaglioStoricoContestazione = () => {
 
     const downloadMainReport = async() => {
         setShowDownloading(true);
-        await downloadReportContestazione(token,profilo.nonce,Number(singleContest.reportId),fileType)
-            .then((res)=>{
-                
-                if(fileType === "JSON"){
-                    const link = document.createElement("a");
-                    const jsonData = JSON.stringify(res.data.Steps[0], null, 2);
-                    const blob = new Blob([jsonData], { type: "application/json" });
-                    const url = URL.createObjectURL(blob);
-                    link.href = url;
-                    link.download = `Report contestazione/${singleContest.ragioneSociale}/${mesiGrid[singleContest.mese]}/${singleContest.anno}.json`;
-                    link.click();
-                    URL.revokeObjectURL(url);
-                }else if(fileType === "CSV"){
-                    const blob = new Blob([res.data], { type: 'text/csv' });
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.setAttribute('hidden', '');
-                    a.setAttribute('href', url);
-                    a.setAttribute('download',`Report contestazione/${singleContest.ragioneSociale}/${mesiGrid[singleContest.mese]}/${singleContest.anno}.csv`);
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a); 
-                }
-                setShowDownloading(false);
-            }).catch((err)=>{
-                setShowDownloading(false);
-                manageErrorDownload('404',dispatchMainState);
-            });
+        if(profilo.auth === "SELFCARE"){
+            await downloadReportContestazioneSE(token,profilo.nonce,Number(singleContest.reportId),fileType)
+                .then((res)=>{
+                    if(fileType === "JSON"){
+                        const link = document.createElement("a");
+                        const jsonData = JSON.stringify(res.data.Steps[0], null, 2);
+                        const blob = new Blob([jsonData], { type: "application/json" });
+                        const url = URL.createObjectURL(blob);
+                        link.href = url;
+                        link.download = `Report contestazione/${singleContest.ragioneSociale}/${mesiGrid[singleContest.mese]}/${singleContest.anno}.json`;
+                        link.click();
+                        URL.revokeObjectURL(url);
+                    }else if(fileType === "CSV"){
+                        const blob = new Blob([res.data], { type: 'text/csv' });
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.setAttribute('hidden', '');
+                        a.setAttribute('href', url);
+                        a.setAttribute('download',`Report contestazione/${singleContest.ragioneSociale}/${mesiGrid[singleContest.mese]}/${singleContest.anno}.csv`);
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a); 
+                    }
+                    setShowDownloading(false);
+                }).catch((err)=>{
+                    setShowDownloading(false);
+                    manageErrorDownload('404',dispatchMainState);
+                });
+        }else{
+            await downloadReportContestazione(token,profilo.nonce,Number(singleContest.reportId),fileType)
+                .then((res)=>{
+                    if(fileType === "JSON"){
+                        const link = document.createElement("a");
+                        const jsonData = JSON.stringify(res.data.Steps[0], null, 2);
+                        const blob = new Blob([jsonData], { type: "application/json" });
+                        const url = URL.createObjectURL(blob);
+                        link.href = url;
+                        link.download = `Report contestazione/${singleContest.ragioneSociale}/${mesiGrid[singleContest.mese]}/${singleContest.anno}.json`;
+                        link.click();
+                        URL.revokeObjectURL(url);
+                    }else if(fileType === "CSV"){
+                        const blob = new Blob([res.data], { type: 'text/csv' });
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.setAttribute('hidden', '');
+                        a.setAttribute('href', url);
+                        a.setAttribute('download',`Report contestazione/${singleContest.ragioneSociale}/${mesiGrid[singleContest.mese]}/${singleContest.anno}.csv`);
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a); 
+                    }
+                    setShowDownloading(false);
+                }).catch((err)=>{
+                    setShowDownloading(false);
+                    manageErrorDownload('404',dispatchMainState);
+                });
+        }
+        
     };
 
     if(loadingDettaglio){
@@ -148,7 +220,7 @@ const DettaglioStoricoContestazione = () => {
     return (
         <div>
             <div>
-                <NavigatorHeader pageFrom={"Contestazioni/"} pageIn={"Dettaglio"} backPath={PathPf.STORICO_CONTEST} icon={<GavelIcon  sx={{padding:"3px"}}  fontSize='small'></GavelIcon>}></NavigatorHeader>
+                <NavigatorHeader pageFrom={"Contestazioni/"} pageIn={"Dettaglio"} backPath={profilo.auth === "SELFCARE" ? PathPf.STORICO_CONTEST_ENTE :PathPf.STORICO_CONTEST} icon={<GavelIcon  sx={{padding:"3px"}}  fontSize='small'></GavelIcon>}></NavigatorHeader>
             </div>
             <div className="bg-white m-5">
                 <div className="d-flex justify-content-center pt-5">

@@ -14,7 +14,7 @@ import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { getAnniContestazioniSE, getListaStoricoSE, getMesiContestazioniSE, getTipoReportSE } from "../../api/apiSelfcare/storicoContestazioneSE/api";
 import { headersName } from "../../assets/configurations/conf_GridStoricoContestazioni_ente";
 
-export interface BodyStoricoContestazioni{
+export interface BodyStoricoContestazioniSE{
     anno:string,
     mese:string,
     idTipologiaReports:number[]
@@ -72,7 +72,7 @@ const StoricoEnte = () => {
         });
     };
 
-    const [bodyGetLista,setBodyGetLista] = useState<BodyStoricoContestazioni>({
+    const [bodyGetLista,setBodyGetLista] = useState<BodyStoricoContestazioniSE>({
         anno:'',
         mese:'',
         idTipologiaReports:[]
