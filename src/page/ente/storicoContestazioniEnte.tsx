@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, Tooltip, Typography } from "@mui/material";
+import { Autocomplete, Box, Button, Checkbox, FormControl, InputLabel, MenuItem, Select, TextField, Tooltip, Typography } from "@mui/material";
 import { month } from "../../reusableFunction/reusableArrayObj";
 import { useContext, useEffect, useState } from "react";
 import { manageError } from "../../api/api";
@@ -8,10 +8,10 @@ import ModalLoading from "../../components/reusableComponents/modals/modalLoadin
 import { PathPf } from "../../types/enum";
 import { useNavigate } from "react-router";
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
-
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
-
-import { getAnniContestazioniSE, getListaStoricoSE, getMesiContestazioniSE } from "../../api/apiSelfcare/storicoContestazioneSE/api";
+import { getAnniContestazioniSE, getListaStoricoSE, getMesiContestazioniSE, getTipoReportSE } from "../../api/apiSelfcare/storicoContestazioneSE/api";
 import { headersName } from "../../assets/configurations/conf_GridStoricoContestazioni_ente";
 
 export interface BodyStoricoContestazioni{
@@ -75,7 +75,7 @@ const StoricoEnte = () => {
     const [bodyGetLista,setBodyGetLista] = useState<BodyStoricoContestazioni>({
         anno:'',
         mese:'',
-        idTipologiaReports:[0]
+        idTipologiaReports:[]
     });
 
     const [valueYears, setValueYears] = useState<string[]>([]);
@@ -87,8 +87,11 @@ const StoricoEnte = () => {
     const [totalContestazioni, setTotalContestazioni]  = useState(0);
     const [getListaContestazioniRunning, setGetListaContestazioniRunning] = useState(false);
     const [arrayMesi,setArrayMesi] = useState<{descrizione:string,mese:string}[]>([]);
+    const [tipologieDoc, setTipologieDoc] = useState<TipologieDoc[]>([]);
+    const [tipologiaSelcted,setTipologiaSelected] = useState<TipologieDoc[]>([]);
 
     useEffect(()=>{
+        listaTipoReport(); 
         getAnni();
     },[]);
 
@@ -116,6 +119,7 @@ const StoricoEnte = () => {
                 if(isInitialRender.current && Object.keys(filters).length > 0){
                     setBodyGetLista(filters.body);
                     getListaContestazioni(filters.body,filters.page+1,filters.rows);
+                    setTipologiaSelected(filters.tipologiaSelcted);
                     getMesi(filters.body.anno);
                     setPage(filters.page);
                     setRowsPerPage(filters.rows);
@@ -136,6 +140,15 @@ const StoricoEnte = () => {
             setArrayMesi([]);
             manageError(err,dispatchMainState);  
         });
+    };
+
+    const listaTipoReport = async () =>{
+        await getTipoReportSE(token, profilo.nonce).then((res)=>{
+            setTipologieDoc(res.data);
+        }).catch(((err)=>{
+            setTipologieDoc([]);
+            manageError(err,dispatchMainState);
+        }));
     };
 
    
@@ -171,13 +184,14 @@ const StoricoEnte = () => {
         setBodyGetLista({
             anno:valueYears[0],
             mese:'',
-            idTipologiaReports:[0]
+            idTipologiaReports:[]
         });
         getListaContestazioni({
             mese:'',
-            idTipologiaReports:[0],
+            idTipologiaReports:[],
             anno:valueYears[0]
         },1,10);
+        setTipologiaSelected([]);
         resetFilters();
     };
 
@@ -185,6 +199,7 @@ const StoricoEnte = () => {
         updateFilters({
             pathPage:PathPf.STORICO_CONTEST,
             body:bodyGetLista,
+            tipologiaSelcted:tipologiaSelcted,
             page:0,
             rows:10,
         });
@@ -216,6 +231,7 @@ const StoricoEnte = () => {
         updateFilters({
             pathPage:PathPf.STORICO_CONTEST_ENTE,
             body:bodyGetLista,
+            tipologiaSelcted:tipologiaSelcted,
             page:0,
             rows:parseInt(event.target.value, 10)
         });
@@ -293,6 +309,39 @@ const StoricoEnte = () => {
                                     </Select>
                                 </FormControl>
                             </Box>
+                        </div>
+                        <div className="col-3 "> 
+                            <Autocomplete
+                                sx={{width:'80%',height:'59px'}}
+                                multiple
+                                onChange={(event, value) => {
+                                    setTipologiaSelected(value);
+                                    const allId = value.map(el => el.idTipologiaReport);
+                                    setBodyGetLista((prev) => ({...prev,...{idTipologiaReports:allId}}));
+                                    clearOnChangeFilter();
+                                }}
+                                limitTags={1}
+                                value={tipologiaSelcted}
+                                options={tipologieDoc}
+                                disableCloseOnSelect
+                                getOptionLabel={(option:TipologieDoc) => option.categoriaDocumento}
+                                renderOption={(props, option,{ selected }) =>(
+                                    <li {...props}>
+                                        <Checkbox
+                                            icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                                            checkedIcon={<CheckBoxIcon fontSize="small" />}
+                                            style={{ marginRight: 8 }}
+                                            checked={selected}
+                                        />
+                                        { option.categoriaDocumento}
+                                    </li>
+                                )}
+                                renderInput={(params) => {
+                                    return <TextField {...params}
+                                        label="Categoria Doc." 
+                                        placeholder="Categoria Doc." />;
+                                }}
+                            />
                         </div>
                     </div>
                     <div className="row mt-5">

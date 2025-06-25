@@ -75,3 +75,12 @@ export const uploadContestazioniSE = async (token:string, nonce:string , formDat
     );
     return response;
 };
+
+export const getTipoReportSE = async ( token:string ,nonce:string ) => {
+    const response =  await axios.get(`${url}/api/notifiche/enti/contestazioni/tiporeport?nonce=${nonce}`,  
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+};
