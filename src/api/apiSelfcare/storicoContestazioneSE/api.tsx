@@ -88,7 +88,7 @@ export const getTipoReportSE = async ( token:string ,nonce:string ) => {
 };
 
 export const getDettaglioContestazioneSE = async (token:string, nonce:string , idReport:number) => {
-    const response =  await axios.get(`${url}/api/notifiche/enti/contestazioni/reports/steps?idreport=${idReport}&nonce=${nonce}`,
+    const response =  await axios.get(`${url}/api/notifiche/enti/contestazioni/reports/steps?idReport=${idReport}&nonce=${nonce}`,
         { headers: {
             Authorization: 'Bearer ' + token
         }}
@@ -96,9 +96,9 @@ export const getDettaglioContestazioneSE = async (token:string, nonce:string , i
     return response;
 };
 
-export const downloadReportContestazioneSE = async (token:string, nonce:string , idreport:number , tipoReport:string) => {
+export const downloadReportContestazioneSE = async (token:string, nonce:string , idReport:number , tipoReport:string) => {
 
-    const response =  await axios.get(`${url}/api/notifiche/enti/contestazioni/reports?nonce=${nonce}&idreport=${idreport}&tipoReport=${tipoReport}`,
+    const response =  await axios.get(`${url}/api/notifiche/enti/contestazioni/reports?nonce=${nonce}&idReport=${idReport}&tipoReport=${tipoReport}`,
         { headers: {
             Authorization: 'Bearer ' + token
         }}
@@ -107,7 +107,7 @@ export const downloadReportContestazioneSE = async (token:string, nonce:string ,
     
 };
 
-export const getContestazioneExelSE = async ( token:string ,nonce:string , body:{ idreport:number,step:number|null}) => {
+export const getContestazioneExelSE = async ( token:string ,nonce:string , body:{ idReport:number,step:number|null}) => {
     const response =  await axios.post(`${url}/api/notifiche/enti/contestazioni/reports/document?nonce=${nonce}`,  
         body,
         { headers: {

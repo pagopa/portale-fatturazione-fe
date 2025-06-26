@@ -32,9 +32,9 @@ export const getTipoContestazioni = async ( token:string ,nonce:string ) => {
 };
 
 
-export const downloadReportContestazione = async (token:string, nonce:string , idreport:number , tipoReport:string) => {
+export const downloadReportContestazione = async (token:string, nonce:string , idReport:number , tipoReport:string) => {
 
-    const response =  await axios.get(`${url}/api/notifiche/pagopa/contestazioni/reports?nonce=${nonce}&idreport=${idreport}&tipoReport=${tipoReport}`,
+    const response =  await axios.get(`${url}/api/notifiche/pagopa/contestazioni/reports?nonce=${nonce}&idReport=${idReport}&tipoReport=${tipoReport}`,
         { headers: {
             Authorization: 'Bearer ' + token
         }}
