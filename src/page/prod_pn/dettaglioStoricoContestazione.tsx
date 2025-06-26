@@ -346,7 +346,7 @@ const DettaglioStoricoContestazione = () => {
                                                         <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotificheAnalogicheRSInternazionaliRIS === null ? "-" : obj?.totaleNotificheAnalogicheRSInternazionaliRIS}</TableCell>
                                                         <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotificheAnalogicheRSNazionaliRS === null ? "-" : obj?.totaleNotificheAnalogicheRSNazionaliRS }</TableCell>
                                                         <TableCell sx={{ borderBottomWidth: '3px' }} align="center">{obj?.totaleNotifiche === null ? "-" : obj?.totaleNotifiche}</TableCell>
-                                                        <TableCell  sx={{ borderBottomWidth: '3px' }} align="center"><IconButton onClick={() => downloadSigleDetail({idreport:obj.reportId,step:obj.step})} disabled={obj?.nomeDocumento ? false : true}><DownloadIcon color={obj?.nomeDocumento ? "primary" : "disabled"}></DownloadIcon></IconButton></TableCell>
+                                                        <TableCell  sx={{ borderBottomWidth: '3px' }} align="center"><IconButton onClick={() => downloadSigleDetail({idReport:obj.reportId,step:obj.step})} disabled={obj?.nomeDocumento ? false : true}><DownloadIcon color={obj?.nomeDocumento ? "primary" : "disabled"}></DownloadIcon></IconButton></TableCell>
                                                     </TableRow>
                                                 );
                                             })}

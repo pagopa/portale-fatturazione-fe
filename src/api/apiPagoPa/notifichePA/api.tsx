@@ -156,7 +156,7 @@ export const getMesiNotifiche = async (token:string, nonce:string , body:{anno:s
 
 
 export const getDettaglioContestazione = async (token:string, nonce:string , idReport:number) => {
-    const response =  await axios.get(`${url}/api/notifiche/pagopa/contestazioni/reports/steps?idreport=${idReport}&nonce=${nonce}`,
+    const response =  await axios.get(`${url}/api/notifiche/pagopa/contestazioni/reports/steps?idReport=${idReport}&nonce=${nonce}`,
         { headers: {
             Authorization: 'Bearer ' + token
         }}
@@ -164,7 +164,7 @@ export const getDettaglioContestazione = async (token:string, nonce:string , idR
     return response;
 };
 
-export const getContestazioneExel = async ( token:string ,nonce:string , body:{ idreport:number,step:number|null}) => {
+export const getContestazioneExel = async ( token:string ,nonce:string , body:{ idReport:number,step:number|null}) => {
     const response =  await axios.post(`${url}/api/notifiche/pagopa/contestazioni/reports/document?nonce=${nonce}`,  
         body,
         { headers: {
