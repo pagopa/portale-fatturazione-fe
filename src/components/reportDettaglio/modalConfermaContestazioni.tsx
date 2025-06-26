@@ -6,6 +6,8 @@ import Modal from '@mui/material/Modal';
 import { Dispatch, SetStateAction } from 'react';
 import { month } from '../../reusableFunction/reusableArrayObj';
 import CircularProgressWithLabel from '../reusableComponents/progress';
+import { width } from '@mui/system';
+import { GlobalContext } from '../../store/context/globalContext';
 
 interface PropsModalContestazioni{
     open:boolean,
@@ -25,6 +27,7 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
+    width: "auto",
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
@@ -33,6 +36,10 @@ const style = {
 
 const ModalInvioContestazioni : React.FC<PropsModalContestazioni> =({setOpen, open, onButtonComferma,info,progress,uploading}) => {
     
+    const globalContextObj = React.useContext(GlobalContext);
+    const {mainState} = globalContextObj;
+    const profilo =  mainState.profilo;
+
     const handleClose = (event:object, reason: string) =>{
         if(reason !== 'backdropClick'){
             setOpen(false);
@@ -63,8 +70,8 @@ const ModalInvioContestazioni : React.FC<PropsModalContestazioni> =({setOpen, op
         Attenzione!
                                 </Typography>
                                 <div className='d-flex justify-content-center text-center mt-3'>
-                                    <Typography variant="body1" sx={{ m:"auto", }}>
-                                        {`Stai inviando le Contestazioni `}
+                                    <Typography variant="body1">
+                                        {profilo.auth === "SELFCARE"? `Stai inviando le Contestazioni di` :  `Stai inviando le Contestazioni`}
                                     </Typography>
                                     <Typography sx={{ marginLeft:"10px",fontWeight:"bold" }} variant="body1">{`${info.ente} ${month[Number(info.mese)-1]} ${info.anno}`}</Typography>
                                     

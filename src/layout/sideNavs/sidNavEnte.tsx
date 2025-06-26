@@ -173,6 +173,11 @@ const SideNavEnte: React.FC = () => {
             setSelectedIndex(5);
         }else if(currentLocation === PathPf.STORICO_CONTEST_ENTE || currentLocation === PathPf.STORICO_DETTAGLIO_CONTEST|| currentLocation === PathPf.INSERIMENTO_CONTESTAZIONI_ENTE){
             setSelectedIndex(6);
+            setOpenContestazioni(true);
+        }
+
+        if(openContestazioni && (currentLocation !== PathPf.STORICO_CONTEST_ENTE && currentLocation !== PathPf.LISTA_NOTIFICHE && currentLocation !== PathPf.STORICO_DETTAGLIO_CONTEST && currentLocation !== PathPf.INSERIMENTO_CONTESTAZIONI_ENTE )){
+            setOpenContestazioni(false);
         }
     },[currentLocation]);
 

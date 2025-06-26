@@ -118,3 +118,24 @@ export const getContestazioneExelSE = async ( token:string ,nonce:string , body:
 
     return response;
 };
+
+export const getMesiContestazioniAzioniSE = async (token:string, nonce:string , anno:string) => {
+    const response =  await axios.post(`${url}/api/notifiche/enti/contestazioni/azione/mesi?nonce=${nonce}`,
+        {anno},
+        { headers: {
+            Authorization: 'Bearer ' + token,
+        },
+        }
+    );
+    return response;
+};
+
+export const getAnniContestazioniAzioniSE = async (token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/notifiche/enti/contestazioni/azione/anni?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};

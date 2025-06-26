@@ -11,7 +11,7 @@ import GavelIcon from '@mui/icons-material/Gavel';
 import useSavedFiltersNested from "../../hooks/usaSaveFiltersLocalStorageNested";
 import DeleteIcon from '@mui/icons-material/Delete';
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
-import { getAnniContestazioniSE, getMesiContestazioniSE, recapContestazioniSE, uploadContestazioniSE } from "../../api/apiSelfcare/storicoContestazioneSE/api";
+import { getAnniContestazioniAzioniSE, getMesiContestazioniAzioniSE, recapContestazioniSE, uploadContestazioniSE } from "../../api/apiSelfcare/storicoContestazioneSE/api";
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -83,7 +83,7 @@ const InserimentoContestazioniEnte = () =>{
 
 
     const getAnni = async() => {
-        await getAnniContestazioniSE(token,profilo.nonce).then((res)=>{
+        await getAnniContestazioniAzioniSE(token,profilo.nonce).then((res)=>{
             setValueYears(res.data);
             if(isInitialRender.current && Object.keys(filters).length > 0){
                 getMesi(filters.body.anno);
@@ -97,7 +97,7 @@ const InserimentoContestazioniEnte = () =>{
     };
 
     const getMesi = async(y) => {
-        await getMesiContestazioniSE(token,profilo.nonce,y).then((res)=>{
+        await getMesiContestazioniAzioniSE(token,profilo.nonce,y).then((res)=>{
             setValueMesi(res.data);
             if(isInitialRender.current && Object.keys(filters).length > 0){
                 setBody(filters.body);
