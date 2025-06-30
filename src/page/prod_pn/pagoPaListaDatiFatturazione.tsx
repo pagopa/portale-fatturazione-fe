@@ -1,23 +1,24 @@
 import {  Typography } from "@mui/material";
 import { Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
-import { getTipologiaProfilo, manageError, } from '../api/api';
-import { BodyGetListaDatiFatturazione, GridElementListaFatturazione, ResponseDownloadListaFatturazione } from "../types/typeListaDatiFatturazione";
+import { getTipologiaProfilo, manageError, } from '../../api/api';
+import { BodyGetListaDatiFatturazione, GridElementListaFatturazione, ResponseDownloadListaFatturazione } from "../../types/typeListaDatiFatturazione";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import {BodyListaDatiFatturazione, Params} from '../types/typesGeneral';
+import {BodyListaDatiFatturazione, Params} from '../../types/typesGeneral';
 import { DataGrid, GridRowParams,GridEventListener,MuiEvent, GridColDef } from '@mui/x-data-grid';
 import DownloadIcon from '@mui/icons-material/Download';
-import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
-import { downloadDocumentoListaDatiFatturazionePagoPa, listaDatiFatturazionePagopa } from "../api/apiPagoPa/datiDiFatturazionePA/api";
+import { getTipologiaProdotto } from "../../api/apiSelfcare/moduloCommessaSE/api";
+import { downloadDocumentoListaDatiFatturazionePagoPa, listaDatiFatturazionePagopa } from "../../api/apiPagoPa/datiDiFatturazionePA/api";
 import { saveAs } from "file-saver";
-import ModalLoading from "../components/reusableComponents/modals/modalLoading";
-import { PathPf } from "../types/enum";
-import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
-import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
-import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
-import { GlobalContext } from "../store/context/globalContext";
-import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
+import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
+import { PathPf } from "../../types/enum";
+import { deleteFilterToLocalStorage, getFiltersFromLocalStorage, getInfoPageFromLocalStorage,setFilterToLocalStorage, setInfoPageToLocalStorage, setInfoToProfiloLoacalStorage } from "../../reusableFunction/actionLocalStorage";
+import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
+import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
+import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
+import { GlobalContext } from "../../store/context/globalContext";
+import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 
 
 const PagoPaListaDatiFatturazione:React.FC = () =>{

@@ -6,7 +6,8 @@ import {
     ListItemText,
     ListItemIcon,
     Box,
-    Divider
+    Divider,
+    Collapse
 } from '@mui/material';
 import { useNavigate, useLocation } from "react-router-dom";
 import DnsIcon from '@mui/icons-material/Dns';
@@ -16,12 +17,15 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import AnnouncementIcon from '@mui/icons-material/Announcement';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
-import { GlobalContext } from '../store/context/globalContext';
+import YoutubeSearchedForIcon from '@mui/icons-material/YoutubeSearchedFor';
 import { manageError } from '../api/api';
 import { getDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
 import { getDatiModuloCommessa } from '../api/apiSelfcare/moduloCommessaSE/api';
 import { profiliEnti } from '../reusableFunction/actionLocalStorage';
 import { PathPf } from '../types/enum';
+import { GlobalContext } from '../store/context/globalContext';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 
 //VECCHIA LOGICA , UNA VOLTA TESTATO CANCELLARE IL COMPONENTE
 const SideNavComponent: React.FC = () => {
@@ -48,6 +52,7 @@ const SideNavComponent: React.FC = () => {
 
 
     const [selectedIndex, setSelectedIndex] = useState<number | null>(0);
+    const [open,setOpen] = useState(false);
     
     const handleListItemClick = async() => {
         
@@ -223,6 +228,21 @@ const SideNavComponent: React.FC = () => {
         
     };
 
+    const handleListItemClickStorico = () =>{
+        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.FATTURAZIONE}}));
+        }else{
+            localStorage.removeItem("filtersRel");
+            localStorage.removeItem("filtersListaDatiFatturazione");
+            localStorage.removeItem("pageRowListaDatiFatturazione");
+            localStorage.removeItem("filtersNotifiche");
+            localStorage.removeItem("filtersModuliCommessa");
+            localStorage.removeItem("pageRowListaModuliCommessa");
+            navigate(PathPf.STORICO_CONTEST);
+        }
+        
+    };
+
     /*
     const handleListItemClickCentroMessaggi = () =>{
         navigate("/centromessaggi");
@@ -262,6 +282,8 @@ const SideNavComponent: React.FC = () => {
             setSelectedIndex(null);
         }else if(currentLocation === "/accertamenti"){
             setSelectedIndex(7);
+        }else if(currentLocation === PathPf.STORICO_CONTEST){
+            setSelectedIndex(8);
         }
     },[currentLocation]);
 
@@ -298,13 +320,34 @@ const SideNavComponent: React.FC = () => {
                             <ListItemText primary="Modulo commessa" />
                         </ListItemButton></>
                         }
-                        <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClickNotifiche()}>
-                            <ListItemIcon>
-                           
-                                <MarkUnreadChatAltIcon fontSize="inherit" />
-                            </ListItemIcon>
-                            <ListItemText primary="Notifiche" />
-                        </ListItemButton>
+                       
+                        {profilo.auth === 'PAGOPA' ?
+                            <>
+                                <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClickNotifiche()}>
+                                    <ListItemIcon>
+                                        <MarkUnreadChatAltIcon fontSize="inherit" />
+                                    </ListItemIcon>
+                                    <ListItemText primary="Notifiche" />
+                                    {open ? <ExpandLess onClick={()=> setOpen(false)} /> : <ExpandMore onClick={()=> setOpen(true)} />}
+                                </ListItemButton>
+                                <Collapse in={open} timeout="auto" unmountOnExit>
+                                    <List component="div" disablePadding>
+                                        <ListItemButton selected={selectedIndex === 8} onClick={() => handleListItemClickStorico()}>
+                                            <ListItemIcon>
+                                                <YoutubeSearchedForIcon fontSize="inherit" />
+                                            </ListItemIcon>
+                                            <ListItemText primary="Contestazioni" />
+                                        </ListItemButton>
+                                    </List>
+                                </Collapse>
+                            </> :
+                            <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClickNotifiche()}>
+                                <ListItemIcon>
+                                    <MarkUnreadChatAltIcon fontSize="inherit" />
+                                </ListItemIcon>
+                                <ListItemText primary="Notifiche" />
+                            </ListItemButton>
+                        }
                         {!recOrConsIsLogged &&
                         <>
                             <ListItemButton selected={selectedIndex === 3} onClick={() => handleListItemClickRel()}>

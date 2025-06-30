@@ -1,33 +1,31 @@
 import React, { useState, useEffect, useContext} from 'react';
-import { manageError} from '../api/api';
+import { manageError, redirect } from '../../api/api';
 import { useNavigate} from 'react-router';
-import '../style/areaPersonaleUtenteEnte.css';
+import '../../style/areaPersonaleUtenteEnte.css';
 import { Button } from '@mui/material';
-import TabAreaPersonaleUtente from '../components/areaPersonale/tabAreaPersonaleUtente';
-import PageTitleNavigation from '../components/areaPersonale/pageTitleNavigation';
+import TabAreaPersonaleUtente from '../../components/areaPersonale/tabAreaPersonaleUtente';
+import PageTitleNavigation from '../../components/areaPersonale/pageTitleNavigation';
 import {
     DatiFatturazione,
     DatiFatturazionePostPagopa,
     StateEnableConferma,
     SuccesResponseGetDatiFatturazione
-} from '../types/typesAreaPersonaleUtenteEnte';
+} from '../../types/typesAreaPersonaleUtenteEnte';
 import {  getDatiFatturazione,
     modifyDatiFatturazione,
     insertDatiFatturazione, 
-    getSdi} from '../api/apiSelfcare/datiDiFatturazioneSE/api';
+    getSdi} from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
 import {  getDatiFatturazionePagoPa,
     modifyDatiFatturazionePagoPa,
-    insertDatiFatturazionePagoPa, 
-    getSdiPagoPa} from '../api/apiPagoPa/datiDiFatturazionePA/api';
-import BasicModal from '../components/reusableComponents/modals/modal';
-import ModalLoading from '../components/reusableComponents/modals/modalLoading';
-import {PathPf} from '../types/enum';
-import { profiliEnti, } from '../reusableFunction/actionLocalStorage';
-import SuspenseDatiFatturazione from '../components/areaPersonale/skeletonDatiFatturazione';
-import { GlobalContext } from '../store/context/globalContext';
-import ModalInfo from '../components/reusableComponents/modals/modalInfo';
-
-
+    insertDatiFatturazionePagoPa,
+    getSdiPagoPa, } from '../../api/apiPagoPa/datiDiFatturazionePA/api';
+import BasicModal from '../../components/reusableComponents/modals/modal';
+import ModalLoading from '../../components/reusableComponents/modals/modalLoading';
+import {PathPf} from '../../types/enum';
+import { profiliEnti, } from '../../reusableFunction/actionLocalStorage';
+import SuspenseDatiFatturazione from '../../components/areaPersonale/skeletonDatiFatturazione';
+import { GlobalContext } from '../../store/context/globalContext';
+import ModalInfo from '../../components/reusableComponents/modals/modalInfo';
         
         
         

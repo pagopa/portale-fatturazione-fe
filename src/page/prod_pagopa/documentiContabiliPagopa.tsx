@@ -343,6 +343,7 @@ const DocumentiContabili:React.FC = () =>{
                 </div>
                 <div className="col-3">
                     <Autocomplete
+                        sx={{width:'80%'}}
                         multiple
                         limitTags={1}
                         onChange={(event, value) => {
@@ -369,7 +370,6 @@ const DocumentiContabili:React.FC = () =>{
                                 {option.quarter}
                             </li>
                         )}
-                        style={{ width: '80%',height:'59px' }}
                         renderInput={(params) => {
                             return <TextField {...params}
                                 sx={{backgroundColor:"#F2F2F2"}}

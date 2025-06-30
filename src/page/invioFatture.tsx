@@ -31,7 +31,6 @@ export interface SelectedJsonSap {
 
 
 const InvioFatture = () => {
-
     const globalContextObj = useContext(GlobalContext);
     const {mainState,dispatchMainState} = globalContextObj;
     const token =  mainState.profilo.jwt;
@@ -61,7 +60,6 @@ const InvioFatture = () => {
             setSelected([]);
             setRowSelectionModel([]);
         }
-     
     },[tipologia]);
     
     const getLista = async (tipologia) =>{
@@ -98,8 +96,7 @@ const InvioFatture = () => {
             setSelected(filters.selectedInvio);
             setRowSelectionModel(filters.rowSelectionModelInvio);
             setInfoPage(filters.infoPageInvio);
-        }
-        
+        } 
     };
 
     const onButtonInvia = async() =>{
@@ -152,8 +149,6 @@ const InvioFatture = () => {
         setInfoPage(e);
     };
 
-
-    
     return(
         <>
             <div>

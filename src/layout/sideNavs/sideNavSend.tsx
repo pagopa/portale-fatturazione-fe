@@ -24,7 +24,7 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
-import ManageHistoryIcon from '@mui/icons-material/ManageHistory';
+import GavelIcon from '@mui/icons-material/Gavel';
 import DvrIcon from '@mui/icons-material/Dvr';
 
 
@@ -38,6 +38,8 @@ const SideNavSend : React.FC = () => {
     const [selectedIndex, setSelectedIndex] = useState<number | null>(0);
     const [open, setOpen] = useState(false);
     const [open2, setOpen2] = useState(false);
+    const [openContestazioni, setOpenContestazioni] = useState(false);
+    
     
     const handleListItemClick = async() => {
         if(((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)|| (mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA))){
@@ -111,6 +113,15 @@ const SideNavSend : React.FC = () => {
         }
     };
 
+    const handleListItemClickContestazioni = () =>{
+        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.STORICO_CONTEST}}));
+        }else{
+            navigate(PathPf.STORICO_CONTEST);
+        }
+    };
+
+
 
     const handleListItemClickOrchestratore = () => {
         if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
@@ -158,6 +169,9 @@ const SideNavSend : React.FC = () => {
             setSelectedIndex(5);
         }else if(currentLocation.toLowerCase().includes("/inviofatturedettaglio/")){
             setSelectedIndex(5);
+        }else if(currentLocation === PathPf.STORICO_CONTEST || currentLocation === PathPf.STORICO_DETTAGLIO_CONTEST|| currentLocation === PathPf.INSERIMENTO_CONTESTAZIONI){
+            setOpenContestazioni(true);
+            setSelectedIndex(10);
         }else if(currentLocation === PathPf.ORCHESTRATORE){
             setSelectedIndex(11);
         }
@@ -167,6 +181,9 @@ const SideNavSend : React.FC = () => {
         }
         if(open && (currentLocation !== PathPf.TIPOLOGIA_CONTRATTO && currentLocation !== PathPf.LISTA_DATI_FATTURAZIONE)){
             setOpen(false);
+        }
+        if(openContestazioni && (currentLocation !== PathPf.STORICO_CONTEST && currentLocation !== PathPf.LISTA_NOTIFICHE && currentLocation !== PathPf.STORICO_DETTAGLIO_CONTEST && currentLocation !== PathPf.INSERIMENTO_CONTESTAZIONI )){
+            setOpenContestazioni(false);
         }
 
     },[currentLocation]);
@@ -202,7 +219,7 @@ const SideNavSend : React.FC = () => {
                         </ListItemButton>
                     </List>
                 </Collapse>
-                <ListItemButton selected={selectedIndex === 1} onClick={() => handleListItemClickModuloCommessa()}>
+                <ListItemButton selected={selectedIndex === 1} onClick={handleListItemClickModuloCommessa}>
                     <ListItemIcon>
                         <ViewModuleIcon fontSize="inherit" />
                     </ListItemIcon>
@@ -213,7 +230,24 @@ const SideNavSend : React.FC = () => {
                         <MarkUnreadChatAltIcon fontSize="inherit" />
                     </ListItemIcon>
                     <ListItemText primary="Notifiche" />
+                    {openContestazioni ? 
+                        <IconButton onClick={()=> setOpenContestazioni(false)}  size="small">
+                            <ExpandLess fontSize="inherit"  />
+                        </IconButton>:
+                        <IconButton onClick={()=> setOpenContestazioni(true)}  size="small">
+                            <ExpandMore fontSize="inherit"  />
+                        </IconButton>}
                 </ListItemButton>
+                <Collapse in={openContestazioni} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                        <ListItemButton selected={selectedIndex === 10} sx={{ pl: 4 }} onClick={handleListItemClickContestazioni}>
+                            <ListItemIcon>
+                                <GavelIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Contestazioni" />
+                        </ListItemButton>
+                    </List>
+                </Collapse>
                 <ListItemButton selected={selectedIndex === 3} onClick={() => handleListItemClickRel()}>
                     <ListItemIcon>
                         <ManageAccountsIcon fontSize="inherit" />

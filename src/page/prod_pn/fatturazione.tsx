@@ -1,31 +1,32 @@
 import { Autocomplete, Box, Button, Checkbox, FormControl, InputLabel, MenuItem, Select, TextField, Tooltip, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
+import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
+import { BodyFatturazione, FatturazioneProps, FattureObj, HeaderCollapsible, TipologiaSap} from "../../types/typeFatturazione";
+import { manageError, manageErrorDownload, managePresaInCarico } from "../../api/api";
+import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
+import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
+import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
 import { useContext, useEffect, useRef, useState } from "react";
-import ModalLoading from "../components/reusableComponents/modals/modalLoading";
-import { BodyFatturazione, FattureObj, TipologiaSap} from "../types/typeFatturazione";
-import { downloadFatturePagopa, downloadFattureReportPagopa, fattureCancellazioneRipristinoPagoPa,fattureTipologiaSapPa, getAnniDocEmessiPagoPa, getFatturazionePagoPa, getMesiDocEmessiPagoPa, getTipologieFaPagoPa, getTipologieFaPagoPaWithData } from "../api/apiPagoPa/fatturazionePA/api";
-import { manageError, manageErrorDownload, managePresaInCarico } from "../api/api";
-import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
-import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
-import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
 import { saveAs } from "file-saver";
-import { month } from "../reusableFunction/reusableArrayObj";
-import MultiSelectFatturazione from "../components/fatturazione/multiSelect";
+import { month } from "../../reusableFunction/reusableArrayObj";
+import MultiSelectFatturazione from "../../components/fatturazione/multiSelect";
 import PreviewIcon from '@mui/icons-material/Preview';
-import ModalSap from "../components/fatturazione/modalSap";
+import ModalSap from "../../components/fatturazione/modalSap";
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
-import ModalConfermaRipristina from "../components/fatturazione/modalConfermaRipristina";
-import ModalResetFilter from "../components/fatturazione/modalResetFilter";
-import CollapsibleTable from "../components/reusableComponents/grid/gridCollapsible/gridCustomCollapsibleWithCheckbox";
-import { GlobalContext } from "../store/context/globalContext";
-import { getMessaggiCount } from "../api/apiPagoPa/centroMessaggi/api";
-import { PathPf } from "../types/enum";
-import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
 import IosShareIcon from '@mui/icons-material/IosShare';
 import { useNavigate } from "react-router";
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import { headersObjGrid } from "../assets/configurations/config_GridFatturazione";
+import { GlobalContext } from "../../store/context/globalContext";
+import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
+import { PathPf } from "../../types/enum";
+import { downloadFatturePagopa, downloadFattureReportPagopa, fattureCancellazioneRipristinoPagoPa, fattureTipologiaSapPa, getAnniDocEmessiPagoPa, getFatturazionePagoPa, getMesiDocEmessiPagoPa, getTipologieFaPagoPa, getTipologieFaPagoPaWithData } from "../../api/apiPagoPa/fatturazionePA/api";
+import { getMessaggiCount } from "../../api/apiPagoPa/centroMessaggi/api";
+import CollapsibleTable from "../../components/reusableComponents/grid/gridCollapsible/gridCustomCollapsibleWithCheckbox";
+import ModalConfermaRipristina from "../../components/fatturazione/modalConfermaRipristina";
+import ModalResetFilter from "../../components/fatturazione/modalResetFilter";
+import { headersObjGrid } from "../../assets/configurations/config_GridFatturazione";
+
 
 const Fatturazione : React.FC = () =>{
 

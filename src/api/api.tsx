@@ -62,7 +62,19 @@ export const manageErrorDownload = (res:string,dispatchMainState) =>{
 };
 
 export const managePresaInCarico = (res:string|number,dispatchMainState) =>{
+ 
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
+    handleModifyMainState({apiError:res});
+    
+};
 
+export const manageStringMessage = (res:string,dispatchMainState) =>{
+   
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
             type:'MODIFY_MAIN_STATE',

@@ -1,24 +1,25 @@
-import { BodyDownloadModuliCommessa, GridElementListaCommesse} from "../types/typeListaModuliCommessa";
-import { Params } from "../types/typesGeneral";
+import { BodyDownloadModuliCommessa, GridElementListaCommesse } from "../../types/typeListaModuliCommessa";
+import { Params } from "../../types/typesGeneral";
 import { Typography } from "@mui/material";
 import { Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
-import { manageError } from '../api/api';
+import { manageError } from '../../api/api';
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { DataGrid, GridRowParams,GridEventListener,MuiEvent, GridColDef} from '@mui/x-data-grid';
 import DownloadIcon from '@mui/icons-material/Download';
-import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
-import { anniMesiModuliCommessa, downloadDocumentoListaModuloCommessaPagoPa, listaModuloCommessaPagopa } from "../api/apiPagoPa/moduloComessaPA/api";
+import { getTipologiaProdotto } from "../../api/apiSelfcare/moduloCommessaSE/api";
+import { anniMesiModuliCommessa, downloadDocumentoListaModuloCommessaPagoPa, listaModuloCommessaPagopa } from "../../api/apiPagoPa/moduloComessaPA/api";
 import { saveAs } from "file-saver";
-import ModalLoading from "../components/reusableComponents/modals/modalLoading";
-import { PathPf } from "../types/enum";
-import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
-import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
-import { mesiGrid, mesiWithZero } from "../reusableFunction/reusableArrayObj";
-import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
-import { GlobalContext } from "../store/context/globalContext";
-import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
+import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
+import { PathPf } from "../../types/enum";
+import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
+import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
+import { currentMonth, getCurrentFinancialYear } from "../../reusableFunction/function";
+import { currentYear, mesi, mesiGrid, mesiWithZero } from "../../reusableFunction/reusableArrayObj";
+import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
+import { GlobalContext } from "../../store/context/globalContext";
+import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 
 
 const PagoPaListaModuliCommessa:React.FC = () =>{

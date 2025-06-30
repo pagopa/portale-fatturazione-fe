@@ -2,29 +2,28 @@ import {useState,useEffect, useContext} from 'react';
 import {Typography, Button} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked } from '@pagopa/mui-italia';
-import PrimoContainerInsCom from '../components/commessaInserimento/primoContainerInsCom';
-import SecondoContainerInsCom from '../components/commessaInserimento/secondoContainerInsCom';
-import TerzoContainerInsCom from '../components/commessaInserimento/terzoConteinerInsCom';
-import BasicModal from '../components/reusableComponents/modals/modal';
+import PrimoContainerInsCom from '../../components/commessaInserimento/primoContainerInsCom';
+import SecondoContainerInsCom from '../../components/commessaInserimento/secondoContainerInsCom';
+import TerzoContainerInsCom from '../../components/commessaInserimento/terzoConteinerInsCom';
+import BasicModal from '../../components/reusableComponents/modals/modal';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { useNavigate } from 'react-router';
-import {manageError} from '../api/api';
-import { redirect } from '../api/api';
-import ModalRedirect from '../components/commessaInserimento/madalRedirect';
-import { DatiCommessa, ResponseDettaglioModuloCommessa,ModuloCommessaInserimentoProps, TotaleNazionaleInternazionale, ResponsTotaliInsModuloCommessa} from '../types/typeModuloCommessaInserimento';
-import { ManageErrorResponse } from '../types/typesGeneral';
-import { getDettaglioModuloCommessa, insertDatiModuloCommessa } from '../api/apiSelfcare/moduloCommessaSE/api';
-import { getModuloCommessaPagoPa, modifyDatiModuloCommessaPagoPa } from '../api/apiPagoPa/moduloComessaPA/api';
-import { getDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
-import { getDatiFatturazionePagoPa } from '../api/apiPagoPa/datiDiFatturazionePA/api';
-import ModalLoading from '../components/reusableComponents/modals/modalLoading';
-import { PathPf } from '../types/enum';
-import { profiliEnti, } from '../reusableFunction/actionLocalStorage';
-import { calculateTot } from '../reusableFunction/function';
-import { month } from '../reusableFunction/reusableArrayObj';
-import ModalConfermaInserimento from '../components/commessaInserimento/modalConfermaInserimento';
-import SkeletonComIns from '../components/commessaInserimento/skeletonComIns';
-import { GlobalContext } from '../store/context/globalContext';
+import {manageError} from '../../api/api';
+import ModalRedirect from '../../components/commessaInserimento/madalRedirect';
+import { DatiCommessa, ResponseDettaglioModuloCommessa, TotaleNazionaleInternazionale, ResponsTotaliInsModuloCommessa} from '../../types/typeModuloCommessaInserimento';
+import { ManageErrorResponse } from '../../types/typesGeneral';
+import { getDettaglioModuloCommessa, insertDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
+import { getModuloCommessaPagoPa, modifyDatiModuloCommessaPagoPa } from '../../api/apiPagoPa/moduloComessaPA/api';
+import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
+import { getDatiFatturazionePagoPa } from '../../api/apiPagoPa/datiDiFatturazionePA/api';
+import ModalLoading from '../../components/reusableComponents/modals/modalLoading';
+import { PathPf } from '../../types/enum';
+import { profiliEnti, } from '../../reusableFunction/actionLocalStorage';
+import { calculateTot } from '../../reusableFunction/function';
+import { month } from '../../reusableFunction/reusableArrayObj';
+import ModalConfermaInserimento from '../../components/commessaInserimento/modalConfermaInserimento';
+import SkeletonComIns from '../../components/commessaInserimento/skeletonComIns';
+import { GlobalContext } from '../../store/context/globalContext';
 
 
 
@@ -167,12 +166,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             totaleInternazionale:calculateTot(datiCommessa.moduliCommessa,'numeroNotificheInternazionali'),
             totaleNotifiche:calculateTot(datiCommessa.moduliCommessa,'totaleNotifiche')});
     },[datiCommessa]);
-
-
-
-    
-
-
 
     const handleGetDettaglioModuloCommessa = async () =>{
         setLoadingData(true);
@@ -375,7 +368,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         return(
             <SkeletonComIns></SkeletonComIns>
         );
-
     }
 
     return (
@@ -383,7 +375,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             <BasicModal setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} dispatchMainState={dispatchMainState} handleGetDettaglioModuloCommessa={handleGetDettaglioModuloCommessa} handleGetDettaglioModuloCommessaPagoPa={handleGetDettaglioModuloCommessaPagoPa} mainState={mainState}></BasicModal>
             {/*Hide   modulo commessa sul click contina , save del modulo commessa cosi da mostrare dati fatturazione,
             il componente visualizzato è AreaPersonaleUtenteEnte  */}
-           
             <div className="marginTop24 ms-5 me-5">
                 <div className='d-flex'>
                     <ButtonNaked

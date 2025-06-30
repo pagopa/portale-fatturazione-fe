@@ -1,27 +1,28 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { ButtonNaked, SingleFileInput} from '@pagopa/mui-italia';
+import { ButtonNaked, SingleFileInput } from '@pagopa/mui-italia';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import { Rel, RelPagePdfProps} from "../types/typeRel";
 import { Button, Typography } from "@mui/material";
 import { useNavigate } from 'react-router';
-import {manageError, manageErrorDownload } from '../api/api';
+
 import { useContext, useEffect, useRef, useState} from 'react';
-import TextDettaglioPdf from '../components/commessaPdf/textDettaglioPdf';
-import { ResponseDownloadPdf } from '../types/typeModuloCommessaInserimento';
-import { getRelExel, getRelPdf, uploadPdfRel ,getRelPdfFirmato, getSingleRel, getLogRelDocumentoFirmato } from '../api/apiSelfcare/relSE/api';
-import { getLogPagoPaRelDocumentoFirmato, getRelExelPagoPa, getRelPdfFirmatoPagoPa, getRelPdfPagoPa, getSingleRelPagopa } from '../api/apiPagoPa/relPA/api';
+import TextDettaglioPdf from '../../components/commessaPdf/textDettaglioPdf';
+import { ResponseDownloadPdf } from '../../types/typeModuloCommessaInserimento';
+import { getRelExel, getRelPdf, uploadPdfRel ,getRelPdfFirmato, getSingleRel, getLogRelDocumentoFirmato } from '../../api/apiSelfcare/relSE/api';
+import { getLogPagoPaRelDocumentoFirmato, getRelExelPagoPa, getRelPdfFirmatoPagoPa, getRelPdfPagoPa, getSingleRelPagopa } from '../../api/apiPagoPa/relPA/api';
 import DownloadIcon from '@mui/icons-material/Download';
-import ModalUploadPdf from '../components/rel/modalUploadPdf';
+import ModalUploadPdf from '../../components/rel/modalUploadPdf';
 import { saveAs } from "file-saver";
 import generatePDF from 'react-to-pdf';
-import { redirect } from '../api/api';
-import ModalLoading from '../components/reusableComponents/modals/modalLoading';
-import { PathPf } from '../types/enum';
-import {profiliEnti } from '../reusableFunction/actionLocalStorage';
-import {mesiWithZero, month } from '../reusableFunction/reusableArrayObj';
-import { createDateFromString } from '../reusableFunction/function';
-import SkeletonRelPdf from '../components/rel/skeletonRelPdf';
-import { GlobalContext } from '../store/context/globalContext';
+import { manageError, manageErrorDownload, redirect } from '../../api/api';
+import ModalLoading from '../../components/reusableComponents/modals/modalLoading';
+import { PathPf } from '../../types/enum';
+import {profiliEnti } from '../../reusableFunction/actionLocalStorage';
+import {mesiWithZero, month } from '../../reusableFunction/reusableArrayObj';
+import { createDateFromString } from '../../reusableFunction/function';
+import SkeletonRelPdf from '../../components/rel/skeletonRelPdf';
+import { GlobalContext } from '../../store/context/globalContext';
+import { Rel } from '../../types/typeRel';
+import NavigatorHeader from '../../components/reusableComponents/navigatorHeader';
 
 const RelPdfPage : React.FC = () =>{
 
@@ -300,24 +301,8 @@ const RelPdfPage : React.FC = () =>{
         <div>
             <div style={{ position:'absolute',zIndex:-1, top:'-1000px'}}  id='file_download_rel' ref={targetRef}>
             </div>
-            <div className=' marginTop24  '>
-                <div className='ms-5'>
-                    <ButtonNaked
-                        color="primary"
-                        size="small"
-                        startIcon={<ArrowBackIcon />}
-                        onClick={() => navigate(PathPf.LISTA_REL)}
-                    >
-                    Indietro
-                    </ButtonNaked>
-                    <Typography sx={{marginLeft:'20px'}} variant="caption">
-                        <ManageAccountsIcon sx={{paddingBottom:'3px'}}  fontSize='small'></ManageAccountsIcon>
-                      Regolare Esecuzione /
-                    </Typography>
-                    <Typography sx={{fontWeight:'bold', marginLeft:'5px'}} variant="caption">
-                      Dettaglio
-                    </Typography>
-                </div>
+            <div>
+                <NavigatorHeader pageFrom={"Regolare Esecuzione/"} pageIn={"Dettaglio"} backPath={PathPf.LISTA_REL} icon={<ManageAccountsIcon  sx={{paddingBottom:"5px"}}  fontSize='small'></ManageAccountsIcon>}></NavigatorHeader>
             </div>
             <div className='d-flex justify-content-end mt-4 me-5'>
                 <Button disabled={disableButtonDettaglioNot}  onClick={()=> downloadRelExel()} >Scarica report di dettaglio notifiche Reg. Es. <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>

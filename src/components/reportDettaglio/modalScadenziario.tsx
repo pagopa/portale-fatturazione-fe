@@ -53,14 +53,10 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce,d
     const [datiScadenziario, setDatiScadenziario] = useState<Scadenziario[] | []>([]);
     
     const getScadenziario = async () => {
-
         getTipologieScadenziario(token, nonce )
             .then((res)=>{
-              
                 setDatiScadenziario(res.data);
-              
-            })
-            .catch(((err)=>{
+            }).catch(((err)=>{
                 manageError(err,dispatchMainState);
             }));
     };

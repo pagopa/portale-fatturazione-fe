@@ -1,27 +1,29 @@
-import { Typography } from "@mui/material";
-import React , { useState, useEffect, useContext, useRef} from 'react';
+import { IconButton, Tooltip, Typography } from "@mui/material";
+import React , { useState, useEffect, useContext} from 'react';
 import { TextField,Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { getTipologiaProfilo, manageError} from "../api/api";
-import {  NotificheList, FlagContestazione, Contestazione, ElementMultiSelect, ListaRecCon, OptionMultiselectChackbox  } from "../types/typeReportDettaglio";
-import { BodyListaNotifiche } from "../types/typesGeneral";
-import ModalContestazione from '../components/reportDettaglio/modalContestazione';
-import ModalInfo from "../components/reusableComponents/modals/modalInfo";
-import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
+import { getTipologiaProfilo, manageError} from "../../api/api";
+import {NotificheList, FlagContestazione, Contestazione, ElementMultiSelect, ListaRecCon, OptionMultiselectChackbox  } from "../../types/typeReportDettaglio";
+import { BodyListaNotifiche } from "../../types/typesGeneral";
+import ModalContestazione from '../../components/reportDettaglio/modalContestazione';
+import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
+import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
 import DownloadIcon from '@mui/icons-material/Download';
-import MultiSelectStatoContestazione from "../components/reportDettaglio/multiSelectGroupedBy";
-import ModalLoading from "../components/reusableComponents/modals/modalLoading";
-import ModalScadenziario from "../components/reportDettaglio/modalScadenziario";
-import { downloadNotifche, downloadNotifcheConsolidatore, downloadNotifcheInps, downloadNotifcheRecapitista, getContestazione, getContestazioneCosolidatore, getContestazioneRecapitista, listaEntiNotifichePage, listaEntiNotifichePageConsolidatore, listaNotifiche, listaNotificheConsolidatore, listaNotificheRecapitista } from "../api/apiSelfcare/notificheSE/api";
-import { downloadNotifchePagoPa, getAnniNotifiche, getContestazionePagoPa, getMesiNotifiche, getTipologiaEntiCompletiPagoPa, listaNotifichePagoPa } from "../api/apiPagoPa/notifichePA/api";
-import { getTipologiaProdotto } from "../api/apiSelfcare/moduloCommessaSE/api";
-import ModalRedirect from "../components/commessaInserimento/madalRedirect";
-import { profiliEnti} from "../reusableFunction/actionLocalStorage";
-import { mesiGrid, mesiWithZero, tipoNotifica } from "../reusableFunction/reusableArrayObj";
-import { GlobalContext } from "../store/context/globalContext";
-import { PathPf } from "../types/enum";
-import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
-import GridCustom from "../components/reusableComponents/grid/gridCustom";
+import { useNavigate } from "react-router";
+import { getAnniNotifiche, getMesiNotifiche, listaNotifichePagoPa, getTipologiaEntiCompletiPagoPa, getContestazionePagoPa, downloadNotifchePagoPa } from "../../api/apiPagoPa/notifichePA/api";
+import { getTipologiaProdotto } from "../../api/apiSelfcare/moduloCommessaSE/api";
+import { listaEntiNotifichePageConsolidatore, listaEntiNotifichePage, listaNotifiche, listaNotificheRecapitista, listaNotificheConsolidatore, getContestazione, getContestazioneRecapitista, getContestazioneCosolidatore, downloadNotifche, downloadNotifcheRecapitista, downloadNotifcheConsolidatore } from "../../api/apiSelfcare/notificheSE/api";
+import ModalRedirect from "../../components/commessaInserimento/madalRedirect";
+import ModalScadenziario from "../../components/reportDettaglio/modalScadenziario";
+import MultiSelectStatoContestazione from "../../components/reportDettaglio/multiSelectGroupedBy";
+import GridCustom from "../../components/reusableComponents/grid/gridCustom";
+import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
+import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
+import { profiliEnti } from "../../reusableFunction/actionLocalStorage";
+import { mesiGrid, mesiWithZero, tipoNotifica } from "../../reusableFunction/reusableArrayObj";
+import { GlobalContext } from "../../store/context/globalContext";
+import { PathPf } from "../../types/enum";
+import EventNoteIcon from '@mui/icons-material/EventNote';
 
 
 const ReportDettaglio : React.FC = () => {
@@ -36,6 +38,9 @@ const ReportDettaglio : React.FC = () => {
     const enti = profiliEnti(mainState);
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
+    const navigate = useNavigate();
+    const currentMonth = (new Date()).getMonth() + 1;
+
     
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [profili, setProfili] = useState([]);
@@ -742,24 +747,23 @@ const ReportDettaglio : React.FC = () => {
         }
     }; 
     
-    const backgroundColorButtonScadenzario = (profilo.auth === 'PAGOPA' || enti) ? "#0062C3" : 'red';
+    //const backgroundColorButtonScadenzario = (profilo.auth === 'PAGOPA' || enti) ? "#0062C3" : 'red';
     
     return (
-        <div className="mx-5">
-            {/*title container start */}
-            <div className="d-flex marginTop24 ">
+        <div className="mx-5 marginTop24">
+            <div className="row">
                 <div className="col-9">
                     <Typography variant="h4">Notifiche</Typography>
                 </div>
                 <div className="col-3 ">
                     <Box sx={{width:'80%', marginLeft:'20px', display:'flex', justifyContent:'end'}}  >
-                        <Button  style={{
-                            width:'160px',
-                            backgroundColor:backgroundColorButtonScadenzario
-                        }} variant="contained"  onClick={()=> setShowModalScadenziario(true)} >
-                            <VisibilityIcon sx={{marginRight:'10px'}}></VisibilityIcon>
-        Scadenzario
-                        </Button>
+                        <Tooltip  title="Scadenzario">
+                            <Button  
+                                variant="outlined"
+                                size="medium"  onClick={()=> setShowModalScadenziario(true)} >
+                                <EventNoteIcon></EventNoteIcon>
+                            </Button>
+                        </Tooltip>
                     </Box>
                 </div>
             </div>
@@ -802,9 +806,7 @@ const ReportDettaglio : React.FC = () => {
                                 fullWidth
                                 size="medium"
                             >
-                                <InputLabel>
-        Mese
-                                </InputLabel>
+                                <InputLabel> Mese</InputLabel>
                                 <Select
                                     label='Seleziona Mese'
                                     onChange={(e) =>{
@@ -1046,26 +1048,25 @@ const ReportDettaglio : React.FC = () => {
             </>
                     }
                 </div>
-                <div className="">
-                    <div className="d-flex justify-content-start mt-5">
-                        <div className=" d-flex align-items-center justify-content-center h-100">
-                            <div>
-                                <Button 
-                                    onClick={onButtonFiltra} 
+
+                <div className="row mt-5">
+                    <div className="col-9">
+                        <div className="d-flex justify-content-start">
+                            <Button 
+                                onClick={onButtonFiltra} 
+                                disabled={getNotificheWorking}
+                                variant="contained"> Filtra  
+                            </Button>                
+                            {statusAnnulla === 'hidden' ? null :
+                                <Button
+                                    onClick={onAnnullaFiltri}
                                     disabled={getNotificheWorking}
-                                    variant="contained"> Filtra  
-                                </Button>                
-                                {statusAnnulla === 'hidden' ? null :
-                                    <Button
-                                        onClick={onAnnullaFiltri}
-                                        disabled={getNotificheWorking}
-                                        sx={{marginLeft:'24px'}} >
-            Annulla filtri
-                                    </Button>
-                                }
-                            </div>               
-                        </div>
-                    </div>
+                                    sx={{marginLeft:'24px'}} >
+                                    Annulla filtri
+                                </Button>
+                            }
+                        </div>               
+                    </div>  
                 </div>
             </div>
             { notificheList.length > 0  &&

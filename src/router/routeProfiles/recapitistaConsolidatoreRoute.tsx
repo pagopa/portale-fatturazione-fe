@@ -1,7 +1,7 @@
 import { Route } from "react-router-dom";
-import ReportDettaglio from "../../page/reportDettaglioUtPa";
 import { PathPf } from "../../types/enum";
 import LayoutEnte from "../../layout/layOutLoggedInEnte";
+import ReportDettaglio from "../../page/prod_pn/reportDettaglioUtPa";
 import SideNavRecCon from "../../layout/sideNavs/sideNavConRec";
 
 const RecConRoute = () => {

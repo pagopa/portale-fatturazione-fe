@@ -48,7 +48,6 @@ const InvioFattureDetails = () => {
     const open = Boolean(anchorEl);
     const idPop = open ? 'simple-popover' : undefined;
 
-
     useEffect(()=>{
         const timer = setTimeout(() => {
             getDetailSingleRow();

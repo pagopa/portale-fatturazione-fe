@@ -18,12 +18,11 @@ const MultiselectWithKeyValue : React.FC <MultiselectWithKeyValueProps> = ({setB
 
     const customMargin = location.pathname === PathPf.FATTURAZIONE ? { width: '80%', height:'59px'} : { width: '80%'};
 
-   
 
     return (
         <Autocomplete
+            sx={{width:'80%'}}
             multiple
-            limitTags={1}
             disablePortal
             onChange={(event, value:AutocompleteMultiselect[]) => {
                 const arrayIds = value.map((obj:AutocompleteMultiselect) => obj[keyId]);
@@ -32,6 +31,7 @@ const MultiselectWithKeyValue : React.FC <MultiselectWithKeyValueProps> = ({setB
                 setValueAutocomplete(value);
             }}
             id={keyId}
+            limitTags={1}
             options={dataSelect}
             disableCloseOnSelect
             getOptionLabel={(option:AutocompleteMultiselect) =>{
@@ -53,7 +53,6 @@ const MultiselectWithKeyValue : React.FC <MultiselectWithKeyValueProps> = ({setB
                     </li>
                 );
             } }
-            style={customMargin}
             renderInput={(params) =>{
                 return <TextField 
                     sx={{backgroundColor:"#F2F2F2"}}

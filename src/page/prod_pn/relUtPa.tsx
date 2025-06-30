@@ -1,27 +1,27 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, Tooltip, Typography } from "@mui/material";
-import SelectTipologiaFattura from "../components/reusableComponents/select/selectTipologiaFattura";
-import { BodyRel, Rel } from "../types/typeRel";
-import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
-import { manageError, manageErrorDownload} from "../api/api";
 import { useNavigate } from "react-router";
 import DownloadIcon from '@mui/icons-material/Download';
-import { downloadListaRel, getAnniRelSend, getListaRel, getMesiRelSend, getTipologieFatture} from "../api/apiSelfcare/relSE/api";
-import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, downloadQuadraturaRelPagopa, downloadReportRelPagoPa, getAnniRel, getListaRelPagoPa, getMesiRel, getTipologieFatturePagoPa } from "../api/apiPagoPa/relPA/api";
-import SelectStatoPdf from "../components/rel/selectStatoPdf";
-import ModalLoading from "../components/reusableComponents/modals/modalLoading";
+import { GlobalContext } from "../../store/context/globalContext";
+import { profiliEnti,  } from "../../reusableFunction/actionLocalStorage";
+import { OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
+import { downloadListaRel, getAnniRelSend, getListaRel, getMesiRelSend, getTipologieFatture } from "../../api/apiSelfcare/relSE/api";
+import { mesiGrid, mesiWithZero } from "../../reusableFunction/reusableArrayObj";
+import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, downloadQuadraturaRelPagopa, downloadReportRelPagoPa, getAnniRel, getListaRelPagoPa, getMesiRel, getTipologieFatturePagoPa } from "../../api/apiPagoPa/relPA/api";
+import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
+import { PathPf } from "../../types/enum";
 import { saveAs } from "file-saver";
-import { PathPf } from "../types/enum";
-import {profiliEnti} from "../reusableFunction/actionLocalStorage";
-import { OptionMultiselectChackbox } from "../types/typeReportDettaglio";
-import { mesiGrid, mesiWithZero } from "../reusableFunction/reusableArrayObj";
-import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
-import ModalRedirect from "../components/commessaInserimento/madalRedirect";
-import { GlobalContext } from "../store/context/globalContext";
+import SelectStatoPdf from "../../components/rel/selectStatoPdf";
+import GridCustom from "../../components/reusableComponents/grid/gridCustom";
+import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
+import ModalRedirect from "../../components/commessaInserimento/madalRedirect";
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
-import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
-import GridCustom from "../components/reusableComponents/grid/gridCustom";
-import SendIcon from '@mui/icons-material/Send';
+import { manageError, manageErrorDownload } from "../../api/api";
+import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
+import SelectTipologiaFattura from "../../components/reusableComponents/select/selectTipologiaFattura";
+import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
+import { Rel, BodyRel } from "../../types/typeRel";
+
 
 const RelPage : React.FC = () =>{
 
@@ -731,8 +731,7 @@ const RelPage : React.FC = () =>{
                         headerNames={['Ragione Sociale','Tipologia Fattura', 'Reg. Es. PDF','ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale','']}
                         apiGet={setIdRel}
                         disabled={getListaRelRunning}
-                        widthCustomSize="2000px"
-                    ></GridCustom>
+                        widthCustomSize="2000px"></GridCustom>
                 </div>
             </div>
             <ModalLoading 
