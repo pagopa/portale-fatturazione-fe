@@ -9,8 +9,6 @@ import LinkIcon from '@mui/icons-material/Link';
 
 const RowBaseKpi = ({row}) => {
     const [open, setOpen] = useState(false);
-    const navigate = useNavigate();
-
     const disableIcon = row.link === '' || row.link === null;
    
 
@@ -57,7 +55,7 @@ const RowBaseKpi = ({row}) => {
                         handleOnDownloadLink(row.link, 'KPI');
                     }
                 }}>
-                    <Tooltip  title="Download csv">
+                    <Tooltip disableHoverListener={disableIcon} title="Download csv">
                         <span>
                             <IconButton  disabled={disableIcon}>
                                 <LinkIcon sx={disableIcon ?{color:'grey'} :{ color: '#1976D2'}}  /> 
