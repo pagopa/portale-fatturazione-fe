@@ -231,9 +231,9 @@ const DocumentiContabili:React.FC = () =>{
             let fileName = '';
             const stringQuarterSelected = filtersDownload.quarters.map(el => "Q" + el.slice(5)).join("_");
             if(filtersDownload.contractIds.length === 1){
-                fileName = `Financial report PF/${gridData[0].name}/${gridData[0].riferimentoData.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
+                fileName = `Financial report PF/${gridData[0].name}/${gridData[0].yearQuarter.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
             }else{
-                fileName = `Financial report PF/${gridData[0].riferimentoData.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
+                fileName = `Financial report PF/${gridData[0].yearQuarter.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
             }
             saveAs( res,fileName );
             setShowLoading(false);
