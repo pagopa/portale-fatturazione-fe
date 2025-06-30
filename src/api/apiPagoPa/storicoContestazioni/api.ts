@@ -43,5 +43,17 @@ export const downloadReportContestazione = async (token:string, nonce:string , i
     
 };
 
+export const getDettaglioContestazionePA = async (token:string, nonce:string , body:{idReport:number}) => {
+    const response =  await axios.post(`${url}/api/notifiche/pagopa/contestazioni/single/report?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },
+        }
+    );
+    return response;
+};
+
+
 
 

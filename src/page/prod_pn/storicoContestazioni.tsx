@@ -280,6 +280,9 @@ const Storico = () => {
     const handleClickOnDetail = (el) => {    
         navigate(PathPf.STORICO_DETTAGLIO_CONTEST);
         const singleEl = listaToMap.find(elem => elem.reportId === el.id);
+        //TODO: 30/06 possiamo passare solo l'id tramite uri perche abbiamo aggiunto il servizio di dettaglio nella pagina di dettaglio 
+        //salvare tutto l'obj dentro lo state globale è inutile 
+        // quando fari refactorig sistema
         handleModifyMainState({contestazioneSelected:singleEl});
     };  
 

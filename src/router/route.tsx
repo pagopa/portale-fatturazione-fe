@@ -44,6 +44,7 @@ const RouteProfile = () => {
     },[token,profilo.nonce]);
 
     const apiKeyPageAvailable = async() => {
+        //evita la chimata se lato AZURE
         await getPageApiKeyVisible(token,profilo.nonce).then(async(res)=>{
             const newKeys = res?.data.map(el => el.apiKey).filter(el => el !== null);
             setMainData((prev) => ({...prev, apiKeyPage:{ keys:newKeys,ip:[],visible:true}}));

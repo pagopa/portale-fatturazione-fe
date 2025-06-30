@@ -12,7 +12,7 @@ import { manageError, manageErrorDownload } from "../../api/api";
 import { mesiGrid} from "../../reusableFunction/reusableArrayObj";
 import DownloadIcon from '@mui/icons-material/Download';
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
-import { downloadReportContestazione, getTipoContestazioni } from "../../api/apiPagoPa/storicoContestazioni/api";
+import { downloadReportContestazione, getDettaglioContestazionePA, getTipoContestazioni } from "../../api/apiPagoPa/storicoContestazioni/api";
 import { downloadReportContestazioneSE, getContestazioneExelSE, getDettaglioContestazioneSE, getTipoContestazioniSE } from "../../api/apiSelfcare/storicoContestazioneSE/api";
 interface Contestazione {
     reportId: number;
@@ -49,6 +49,13 @@ const DettaglioStoricoContestazione = () => {
     const profilo =  mainState.profilo;
     const singleContest = mainState.contestazioneSelected;
     const navigate = useNavigate();
+
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
 
     const [loadingDettaglio,setLoadingDettaglio] = useState(false);
     const [arrayDetails,setArrayDetails] = useState<Contestazione[]>([]);
@@ -100,6 +107,12 @@ const DettaglioStoricoContestazione = () => {
                 navigate(PathPf.STORICO_CONTEST_ENTE);
             });
         }else{
+            await getDettaglioContestazionePA(token,profilo.nonce,{idReport:singleContest?.reportId}).then((res)=>{
+                console.log({res});
+                handleModifyMainState({contestazioneSelected:res.data.reportContestazione});
+            }).catch((err)=>{
+                manageError(err,dispatchMainState);
+            });
             await getDettaglioContestazione(token,profilo.nonce,singleContest?.reportId).then((res)=>{
                 const step11Obj = res.data.find((el) => {
                     return el.step === 99;
