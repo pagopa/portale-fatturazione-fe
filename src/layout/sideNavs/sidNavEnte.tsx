@@ -206,6 +206,46 @@ const SideNavEnte: React.FC = () => {
                         <MarkUnreadChatAltIcon fontSize="inherit" />
                     </ListItemIcon>
                     <ListItemText primary="Notifiche" />
+                </ListItemButton>
+                <ListItemButton selected={selectedIndex === 3} onClick={() => handleListItemClickRel()}>
+                    <ListItemIcon>
+                        <ManageAccountsIcon fontSize="inherit" />
+                    </ListItemIcon>
+                    <ListItemText primary="Regolare esecuzione" />
+                </ListItemButton>
+            </List>
+            <Divider />
+        </Box>
+    );
+};
+export default SideNavEnte;
+
+/*
+
+ <Box sx={{
+            height: '100%',
+            maxWidth: 360,
+            backgroundColor: 'background.paper',
+        }}
+        >
+            <List component="nav" aria-label="main piattaforma-notifiche sender">
+                <><ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick()}>
+                    <ListItemIcon>
+                        <DnsIcon fontSize="inherit"></DnsIcon>
+                    </ListItemIcon>
+                    <ListItemText primary="Dati di fatturazione" />
+                </ListItemButton>
+                <ListItemButton selected={selectedIndex === 1} onClick={() => handleListItemClickModuloCommessa()}>
+                    <ListItemIcon>
+                        <ViewModuleIcon fontSize="inherit" />
+                    </ListItemIcon>
+                    <ListItemText primary="Modulo commessa" />
+                </ListItemButton></>
+                <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClickNotifiche()}>
+                    <ListItemIcon>
+                        <MarkUnreadChatAltIcon fontSize="inherit" />
+                    </ListItemIcon>
+                    <ListItemText primary="Notifiche" />
                     {openContestazioni ? 
                         <IconButton onClick={()=> setOpenContestazioni(false)}  size="small">
                             <ExpandLess fontSize="inherit"  />
@@ -240,6 +280,4 @@ const SideNavEnte: React.FC = () => {
             </List>
             <Divider />
         </Box>
-    );
-};
-export default SideNavEnte;
+*/

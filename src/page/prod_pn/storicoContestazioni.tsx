@@ -431,7 +431,7 @@ const Storico = () => {
                                 headerNames={headersName}
                                 apiGet={handleClickOnDetail}
                                 disabled={getListaContestazioniRunning}
-                                widthCustomSize="1300px"></GridCustom>
+                                widthCustomSize="auto"></GridCustom>
                         </div>
                     </div>
                 </div>

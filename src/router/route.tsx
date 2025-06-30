@@ -38,10 +38,10 @@ const RouteProfile = () => {
     const result =  JSON.parse(globalLocalStorage);
 
     useEffect(()=>{
-        if(token && profilo.nonce){
+        if(token && profilo.nonce && isEnte){
             apiKeyPageAvailable();
         }
-    },[token,profilo.nonce]);
+    },[token,profilo.nonce,isEnte]);
 
     const apiKeyPageAvailable = async() => {
         //evita la chimata se lato AZURE
