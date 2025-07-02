@@ -252,7 +252,7 @@ const SideNavSend : React.FC = () => {
                     <ListItemIcon>
                         <ManageAccountsIcon fontSize="inherit" />
                     </ListItemIcon>
-                    <ListItemText primary="Regolare esecuzione" />
+                    <ListItemText primary="Regolare esecuzione / Documenti di cortesia" />
                 </ListItemButton>
                 <ListItemButton selected={selectedIndex === 4} onClick={() => handleListItemClickBando()}>
                     <ListItemIcon>

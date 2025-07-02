@@ -330,11 +330,11 @@ const RelPdfPage : React.FC = () =>{
                 </div>
             </div>
             <div className='d-flex justify-content-between m-5'>
-                {profilo.auth === 'PAGOPA' &&   
-                <div className="">
+                {(profilo.auth === 'PAGOPA' &&  !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) &&
+                <div>
                     <Button sx={{width:'274px'}} onClick={() => downloadPdfRel()}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
                 </div>}
-                {(profilo.auth === 'PAGOPA' && rel?.caricata >= 1 && rel.tipologiaFattura !== 'VAR. SEMESTRALE' && rel.tipologiaFattura !== 'VAR. ANNUALE') &&
+                {(profilo.auth === 'PAGOPA' && rel?.caricata >= 1 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) &&
                     <div>
                         <div>
                             <Button sx={{width:'300px'}} onClick={() => downloadPdfRelFirmato()}   variant="contained">Scarica PDF Firmato <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
@@ -349,7 +349,7 @@ const RelPdfPage : React.FC = () =>{
             </div>
             <div className="d-flex justify-content-between m-5">
                
-                {(enti && rel.totale > 0 && rel.tipologiaFattura !== 'VAR. SEMESTRALE' && rel.tipologiaFattura !== 'VAR. ANNUALE') &&
+                {(enti && rel.totale > 0 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) &&
                     <>
                         <div className="">
                             <Button sx={{width:'274px'}} onClick={() => downloadPdfRel()}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
@@ -361,7 +361,7 @@ const RelPdfPage : React.FC = () =>{
                 }
               
                
-                {(enti && rel?.caricata >= 1 && rel.tipologiaFattura !== 'VAR. SEMESTRALE' && rel.tipologiaFattura !== 'VAR. ANNUALE') &&
+                {(enti && rel?.caricata >= 1 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) &&
                 <div>
                     <div>
                         <Button sx={{width:'300px'}} onClick={() => downloadPdfRelFirmato()}   variant="contained">Scarica PDF Firmato <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>

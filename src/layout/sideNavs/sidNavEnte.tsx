@@ -211,7 +211,7 @@ const SideNavEnte: React.FC = () => {
                     <ListItemIcon>
                         <ManageAccountsIcon fontSize="inherit" />
                     </ListItemIcon>
-                    <ListItemText primary="Regolare esecuzione" />
+                    <ListItemText primary="Regolare esecuzione / Documenti di cortesia" />
                 </ListItemButton>
             </List>
             <Divider />
