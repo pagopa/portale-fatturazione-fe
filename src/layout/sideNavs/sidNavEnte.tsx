@@ -206,13 +206,37 @@ const SideNavEnte: React.FC = () => {
                         <MarkUnreadChatAltIcon fontSize="inherit" />
                     </ListItemIcon>
                     <ListItemText primary="Notifiche" />
+                    {openContestazioni ? 
+                        <IconButton onClick={()=> setOpenContestazioni(false)}  size="small">
+                            <ExpandLess fontSize="inherit"  />
+                        </IconButton>:
+                        <IconButton onClick={()=> setOpenContestazioni(true)}  size="small">
+                            <ExpandMore fontSize="inherit"  />
+                        </IconButton>}
                 </ListItemButton>
+                <Collapse in={openContestazioni} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                        <ListItemButton selected={selectedIndex === 6} sx={{ pl: 4 }} onClick={handleListItemClickContestazioni}>
+                            <ListItemIcon>
+                                <GavelIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Contestazioni" />
+                        </ListItemButton>
+                    </List>
+                </Collapse>
                 <ListItemButton selected={selectedIndex === 3} onClick={() => handleListItemClickRel()}>
                     <ListItemIcon>
                         <ManageAccountsIcon fontSize="inherit" />
                     </ListItemIcon>
-                    <ListItemText primary="Regolare esecuzione / Documenti di cortesia" />
+                    <ListItemText primary="Regolare esecuzione" />
                 </ListItemButton>
+                {mainData.apiKeyPage.visible &&
+                <ListItemButton selected={selectedIndex === 5} onClick={() => handleListItemClickApiKey()}>
+                    <ListItemIcon>
+                        <VpnKeyIcon fontSize="inherit" />
+                    </ListItemIcon>
+                    <ListItemText primary="API key"/>
+                </ListItemButton>}
             </List>
             <Divider />
         </Box>

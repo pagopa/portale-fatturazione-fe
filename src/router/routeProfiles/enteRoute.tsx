@@ -33,11 +33,11 @@ const EnteRoute  : React.FC<{apiIsVisible:boolean|null}> = ({apiIsVisible}) => {
         Dato che Api key è una pagina visibile solo per alcuni utenti ad ogni reload viene chiamata un api di controllo "getPageApiKeyVisible" */}
         {/*LOGICA NASCOSAT PER IL DEPLOY IN PROD  DI CONTESTAZIONI MASSIVE LATO ENTE
         {apiIsVisible && <Route path={PathPf.API_KEY_ENTE} element={<ApiKeyEnte/>} />}
-        {apiIsVisible === null && <Route path={PathPf.API_KEY_ENTE} element={<LoadingRoute/>} />}
-         <Route path={PathPf.STORICO_CONTEST_ENTE} element={<StoricoEnte />} />
+        {apiIsVisible === null && <Route path={PathPf.API_KEY_ENTE} element={<LoadingRoute/>} />} */}
+        <Route path={PathPf.STORICO_CONTEST_ENTE} element={<StoricoEnte />} />
         <Route path={PathPf.INSERIMENTO_CONTESTAZIONI_ENTE} element={<InserimentoContestazioniEnte />} />
         <Route path={PathPf.STORICO_DETTAGLIO_CONTEST} element={<DettaglioStoricoContestazione/>} />
-        */}
+       
         
     </Route>;
     return enteRoute; 
