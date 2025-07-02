@@ -571,7 +571,7 @@ const RelPage : React.FC = () =>{
         <div className="mx-5">
             <div className="d-flex marginTop24 ">
                 <div className="col-9">
-                    <Typography variant="h4">Regolare Esecuzione</Typography>
+                    <Typography variant="h4">Regolare esecuzione / Documenti di cortesia</Typography>
                 </div>
                 <div className="col-3 ">
                     {!enti &&
