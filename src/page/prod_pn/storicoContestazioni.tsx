@@ -128,24 +128,28 @@ const Storico = () => {
         setRowsPerPage(10);
         setTotalContestazioni(0);
     };
-
+    console.log(valueYears);
     const getAnni = async() => {
         setGetListaContestazioniRunning(true);
         await getAnniContestazioni(token,profilo.nonce)
             .then((res)=>{
-                setValueYears(res.data);
+                setValueYears(["Tutti",...res.data]);
+                
                 if(isInitialRender.current && Object.keys(filters).length > 0){
+                    const newBody = {...filters.body,anno:null};
                     setBodyGetLista(filters.body);
-                    getListaContestazioni(filters.body,filters.page+1,filters.rows);
-                    getMesi(filters.body.anno);
+                    getListaContestazioni(newBody,filters.page+1,filters.rows);
+                    if(newBody.anno !== null){
+                        getMesi(newBody.anno);
+                    }
                     setTipologiaSelected(filters.tipologiaSelcted);
                     setValueAutocomplete(filters.valueAutocomplete);
                     setPage(filters.page);
                     setRowsPerPage(filters.rows);
                 }else{
-                    setBodyGetLista((prev)=> ({...prev, ...{anno:res.data[0]}}));
-                    getListaContestazioni({...bodyGetLista,...{anno:res.data[0]}},page+1,rowsPerPage);
-                    getMesi(res.data[0]);
+                    setBodyGetLista((prev)=> ({...prev, ...{anno:"Tutti"}}));
+                    getListaContestazioni({...bodyGetLista,...{anno:"Tutti"}},page+1,rowsPerPage);
+                    //getMesi("Tutti");
                 }
             }).catch((err)=>{
                 setGetListaContestazioniRunning(false);
@@ -181,7 +185,13 @@ const Storico = () => {
 
     const getListaContestazioni = async(body,pag, rowpag) => {
         setGetListaContestazioniRunning(true);
-        await getListaStorico(token,profilo.nonce,body,pag,rowpag).then((res)=>{
+        let newBody = body;
+        if(bodyGetLista.anno === "Tutti"){
+            newBody = {...body,anno:null};
+            console.log({newBody},"222");
+        }
+        console.log({newBody});
+        await getListaStorico(token,profilo.nonce,newBody,pag,rowpag).then((res)=>{
             // ordino i dati in base all'header della grid
             setListaToMap(res.data.reports);
             const orderDataCustom = res.data.reports.map((obj)=>{
@@ -310,7 +320,12 @@ const Storico = () => {
                                         label='Anno'
                                         onChange={(e) =>{
                                             setBodyGetLista((prev)=> ({...prev, ...{anno:e.target.value,mese:''}}));
-                                            getMesi(e.target.value);
+                                            if(e.target.value !== "Tutti"){
+                                                getMesi(e.target.value);
+                                            }else{
+                                                setArrayMesi([]);
+                                            }
+                                           
                                             clearOnChangeFilter();
                                         }  }
                                         value={bodyGetLista.anno||''}
