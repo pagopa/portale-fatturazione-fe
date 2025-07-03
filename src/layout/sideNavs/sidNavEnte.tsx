@@ -228,7 +228,10 @@ const SideNavEnte: React.FC = () => {
                     <ListItemIcon>
                         <ManageAccountsIcon fontSize="inherit" />
                     </ListItemIcon>
-                    <ListItemText primary="Regolare esecuzione / Documenti di cortesia" />
+                    <Box className="ms-3" display="flex" flexDirection="column">
+                        <ListItemText primary="Regolare esecuzione /" />
+                        <ListItemText primary="Documenti di cortesia" />
+                    </Box>
                 </ListItemButton>
                 {mainData.apiKeyPage.visible &&
                 <ListItemButton selected={selectedIndex === 5} onClick={() => handleListItemClickApiKey()}>
