@@ -148,7 +148,7 @@ const Storico = () => {
                     setRowsPerPage(filters.rows);
                 }else{
                     setBodyGetLista((prev)=> ({...prev, ...{anno:"Tutti"}}));
-                    getListaContestazioni({...bodyGetLista,...{anno:"Tutti"}},page+1,rowsPerPage);
+                    getListaContestazioni({...bodyGetLista,...{anno:null}},page+1,rowsPerPage);
                     //getMesi("Tutti");
                 }
             }).catch((err)=>{
