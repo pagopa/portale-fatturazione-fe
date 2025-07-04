@@ -1,24 +1,26 @@
-import { useEffect } from "react";
 import {  Route } from "react-router-dom";
-import Accertamenti from "../../page/accertamenti";
-import AdesioneBando from "../../page/adesioneBando";
-import AreaPersonaleUtenteEnte from "../../page/areaPersonaleUtenteEnte";
-import Fatturazione from "../../page/fatturazione";
-import Messaggi from "../../page/messaggi";
-import ModuloCommessaInserimentoUtEn30 from "../../page/moduloCommessaInserimentoUtEn30";
-import ModuloCommessaPdf from "../../page/moduloCommessaPdf";
-import PagoPaListaDatiFatturazione from "../../page/pagoPaListaDatiFatturazione";
-import PagoPaListaModuliCommessa from "../../page/pagoPaListaModuliCommessa";
-import RelPdfPage from "../../page/relPdfUtPa";
-import RelPage from "../../page/relUtPa";
-import ReportDettaglio from "../../page/reportDettaglioUtPa";
 import { PathPf } from "../../types/enum";
 import LayoutAzure from "../../layout/layOutLoggedInAzure";
+import Messaggi from "../../page/messaggi";
+import Accertamenti from "../../page/prod_pn/accertamenti";
+import AdesioneBando from "../../page/prod_pn/adesioneBando";
+import AreaPersonaleUtenteEnte from "../../page/prod_pn/areaPersonaleUtenteEnte";
+import Fatturazione from "../../page/prod_pn/fatturazione";
+import ModuloCommessaInserimentoUtEn30 from "../../page/prod_pn/moduloCommessaInserimentoUtEn30";
+import ModuloCommessaPdf from "../../page/prod_pn/moduloCommessaPdf";
+import PagoPaListaDatiFatturazione from "../../page/prod_pn/pagoPaListaDatiFatturazione";
+import PagoPaListaModuliCommessa from "../../page/prod_pn/pagoPaListaModuliCommessa";
+import RelPdfPage from "../../page/prod_pn/relPdfUtPa";
+import RelPage from "../../page/prod_pn/relUtPa";
+import ReportDettaglio from "../../page/prod_pn/reportDettaglioUtPa";
+import InserimentoContestazioni from "../../page/prod_pn/inserimentoContestazioni";
+import Storico from "../../page/prod_pn/storicoContestazioni";
 import SideNavSend from "../../layout/sideNavs/sideNavSend";
 import PageTipologiaContratto from "../../page/tipologiaContratto";
 import ListaDocEmessi from "../../page/whiteList";
 import InvioFatture from "../../page/invioFatture";
 import InvioFattureDetails from "../../page/invioFattureDetails";
+import DettaglioStoricoContestazione from "../../page/prod_pn/dettaglioStoricoContestazione";
 import ProcessiOrchestartore from "../../page/processiOrchestratore";
 
 const ProdPnRoute = () => {
@@ -35,10 +37,13 @@ const ProdPnRoute = () => {
         <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio />} />
         <Route path={'/messaggi'} element={<Messaggi />} />
         <Route path={'/accertamenti'} element={<Accertamenti/>} />
+        <Route path={PathPf.INSERIMENTO_CONTESTAZIONI} element={<InserimentoContestazioni />} />
+        <Route path={PathPf.STORICO_CONTEST} element={<Storico />} />
         <Route path={PathPf.TIPOLOGIA_CONTRATTO} element={<PageTipologiaContratto/>} />
         <Route path={PathPf.LISTA_DOC_EMESSI} element={<ListaDocEmessi/>} />
         <Route path={PathPf.JSON_TO_SAP} element={<InvioFatture/>} />
         <Route path={PathPf.JSON_TO_SAP_DETAILS} element={<InvioFattureDetails/>} />
+        <Route path={PathPf.STORICO_DETTAGLIO_CONTEST} element={<DettaglioStoricoContestazione/>} />
         <Route path={PathPf.ORCHESTRATORE} element={<ProcessiOrchestartore/>} />
     </Route>;
     return prodPnRoute;

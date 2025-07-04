@@ -3,6 +3,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { GridElementListaPsp } from "../../../types/typeAngraficaPsp";
 import { Rel } from "../../../types/typeRel";
 import { NotificheList } from "../../../types/typeReportDettaglio";
+import { ContestazioneRowGrid } from "../../../page/prod_pn/storicoContestazioni";
 import RowContratto from "./gridCustomBase/rowTipologiaContratto";
 import RowWhiteList from "./gridCustomBase/rowWhiteList";
 import EnhancedTableCustom from "./gridCustomBase/enhancedTabalToolbarCustom";
@@ -14,75 +15,82 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import { DataGridAsyncDoc } from "../../../page/asyncDocumenti";
 import RowAsyncDoc from "./gridCustomBase/rowAsyncDoc";
+import RowContestazioni from "./gridCustomBase/rowContestazioni";
 interface GridCustomProps {
-    elements:NotificheList[]|Rel[]|GridElementListaPsp[]|any[],
+    elements:NotificheList[]|Rel[]|GridElementListaPsp[]|ContestazioneRowGrid[]|any[]
     changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
     changeRow:( event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
     page:number,
     total:number,
     rows:number,
     headerNames:string[]|{label:string,align:string,width:number|string}[],
-    nameParameterApi:string,  // elemnto/i che servono alla chiamata get di dettaglio , in questo caso bisogna passare questi pametro/o nel MainState ma non posso visulizzarli nella grid
-    apiGet?:(el:any)=>void, 
-    disabled:boolean,
-    widthCustomSize:string,
-    setOpenModalDelete?:React.Dispatch<SetStateAction<boolean>>,
-    setOpenModalAdd?:React.Dispatch<SetStateAction<boolean>>,
-    selected?:number[],
-    setSelected?:React.Dispatch<SetStateAction<number[]>>,
+    nameParameterApi:string 
+    apiGet?:(el:any)=>void 
+    disabled:boolean
+    widthCustomSize:string
+    setOpenModalDelete?:React.Dispatch<SetStateAction<boolean>>
+    setOpenModalAdd?:React.Dispatch<SetStateAction<boolean>>
+    selected?:number[]
+    setSelected?:React.Dispatch<SetStateAction<number[]>>
     buttons?:{
-        stringIcon:string,
-        icon:React.ReactNode,
+        stringIcon:string
+        icon:React.ReactNode
         action:string
     }[],
     headerAction?:(val:any) =>void,
     body?:any
 }
 
-const GridCustom : React.FC<GridCustomProps> = (
-    {elements,
-        changePage,
-        changeRow,
-        page,
-        total,
-        rows,
-        headerNames,
-        nameParameterApi,
-        apiGet,
-        disabled,
-        widthCustomSize,
-        setOpenModalDelete,
-        setOpenModalAdd,
-        buttons,
-        selected,
-        setSelected,
-        headerAction,
-        body
-    }) =>{
+
+const GridCustom : React.FC<GridCustomProps> = ({
+    elements,
+    changePage,
+    changeRow,
+    page,
+    total,
+    rows,
+    headerNames,
+    nameParameterApi,
+    apiGet,
+    disabled,
+    widthCustomSize,
+    setOpenModalDelete,
+    setOpenModalAdd,
+    buttons,
+    selected,
+    setSelected,
+    headerAction,
+    body
+}) =>{
 
     const handleClickOnGrid = (element) =>{
-        let newDetail = {};
+      
         if(apiGet && nameParameterApi === 'idContratto'){
-            newDetail = {
+            const  newDetail = {
                 name:element.ragioneSociale,
                 tipologiaContratto:element.tipoContratto,
                 idEnte:element.idEnte
             };
-          
+            apiGet(newDetail);
         }else if(apiGet && nameParameterApi ==='asyncDocEnte'){
-            newDetail = {
+            const  newDetail = {
                 idReport:element?.idReport,
             };
+            apiGet(newDetail);
+        }else if(apiGet && nameParameterApi === 'contestazionePage'){
+            const newDetail = {
+                id:element.reportId
+            };
+            apiGet(newDetail);
         }else if(apiGet){
-            newDetail = {
+            const newDetail = {
                 nomeEnteClickOn:element.ragioneSociale,
                 mese:element.mese,
                 anno:element.anno,
                 id:element[nameParameterApi]
             };
-            
+            apiGet(newDetail);
         }
-        apiGet && apiGet(newDetail);
     };
 
     const checkIfChecked = (id:any) => {
@@ -102,7 +110,6 @@ const GridCustom : React.FC<GridCustomProps> = (
                                 {headerNames.map((el,i)=>{
                                     if(nameParameterApi === 'idOrchestratore' || nameParameterApi === "asyncDocEnte"){
                                         return(
-                                           
                                             <TableCell key={Math.random()} align={el.align} width={el.width}>{el.label}
                                                 {el.headerAction &&
                                                 <Tooltip title="Sort">
@@ -115,10 +122,13 @@ const GridCustom : React.FC<GridCustomProps> = (
                                                 </Tooltip>}
                                             </TableCell>
                                         );
+                                    }if(nameParameterApi === 'contestazionePage'){
+                                        return(
+                                            <TableCell key={Math.random()} align={el.align} width={el.width}>{el.label}</TableCell>
+                                        );
                                     }else{
                                         return <TableCell key={Math.random()}>{el}</TableCell>;
-                                    }
-                                    
+                                    }  
                                 })}
                             </TableRow>
                         </TableHead>
@@ -126,12 +136,14 @@ const GridCustom : React.FC<GridCustomProps> = (
                             <TableBody key={Math.random()} style={{height: '50px'}}>
                             </TableBody> :
                             <TableBody sx={{marginLeft:'20px'}}>
-                                {elements.map((element:Rel|NotificheList|GridElementListaPsp|Whitelist|DataGridOrchestratore|DataGridAsyncDoc ) =>{
+                                {elements.map((element:Rel|NotificheList|GridElementListaPsp|Whitelist|DataGridOrchestratore|DataGridAsyncDoc|ContestazioneRowGrid ) =>{
                                     // tolgo da ogni oggetto la prima chiave valore  perchè il cliente non vuole vedere es. l'id ma serve per la chiamata get di dettaglio 
                                     let sliced = Object.fromEntries(
                                         Object.entries(element).slice(1)
                                     );
                                     if(nameParameterApi === 'idWhite'){
+                                        sliced = Object.fromEntries(Object.entries(element).slice(1, -1));
+                                    }else if(nameParameterApi === "contestazionePage"){
                                         sliced = Object.fromEntries(Object.entries(element).slice(1, -1));
                                     }
                                     if(nameParameterApi === 'idContratto'){
@@ -142,6 +154,8 @@ const GridCustom : React.FC<GridCustomProps> = (
                                         return <RowOrchestratore key={Math.random()} sliced={sliced} headerNames={headerNames}></RowOrchestratore>;
                                     }else if(nameParameterApi === 'asyncDocEnte'){
                                         return <RowAsyncDoc key={Math.random()} sliced={sliced} headerNames={headerNames} handleClickOnGrid={handleClickOnGrid} element={element}></RowAsyncDoc>;
+                                    }else if(nameParameterApi === "contestazionePage"){
+                                        return <RowContestazioni key={Math.random()} sliced={sliced}apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} headerNames={headerNames}></RowContestazioni>;
                                     }else{
                                         return (
                                             <TableRow key={Math.random()}>
@@ -165,7 +179,7 @@ const GridCustom : React.FC<GridCustomProps> = (
                                                         );
                                                     })
                                                 }
-                                                {apiGet && <TableCell onClick={()=>{handleClickOnGrid(element);}}>
+                                                {apiGet && <TableCell align="center" onClick={()=>{handleClickOnGrid(element);}}>
                                                     <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
                                                 </TableCell> }
                                             </TableRow>

@@ -10,6 +10,7 @@ import { manageError } from '../../api/api';
 import { month } from '../../reusableFunction/reusableArrayObj';
 import { useContext } from 'react';
 import { GlobalContext } from '../../store/context/globalContext';
+import CloseIcon from '@mui/icons-material/Close';
 
 const style = {
     position: 'absolute' as const,
@@ -68,14 +69,14 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,m
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    <div className='d-flex justify-content-between'>
-                        <div className='d-flex align-items-center'>
+                    <div className='d-flex justify-content-between ms-3 mt-auto mb-auto w-100' >
+                        <div className='d-flex justify-content-center align-items-center'>
                             <Typography id="modal-modal-title" variant="h6" >
                                 {open.who === 0 ? "Seleziona le fatture da inviare" : "Seleziona le fatture da rielaborare"}
                             </Typography>
                         </div>
-                        <div>
-                            <Button variant="contained"  onClick={()=> handleClose() }> X </Button>
+                        <div className='icon_close me-5'>
+                            <CloseIcon onClick={handleClose} id='close_icon' sx={{color:'#17324D'}}></CloseIcon>
                         </div>
                     </div>
                     <div className='d-flex  mt-5'>

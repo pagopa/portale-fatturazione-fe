@@ -6,7 +6,9 @@ import {
     ListItemText,
     ListItemIcon,
     Box,
-    Divider
+    Divider,
+    IconButton,
+    Collapse
 } from '@mui/material';
 import { useNavigate, useLocation } from "react-router-dom";
 import DnsIcon from '@mui/icons-material/Dns';
@@ -19,11 +21,15 @@ import { getDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/ap
 import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
 import { manageError } from '../../api/api';
 import DownloadIcon from '@mui/icons-material/Download';
+import VpnKeyIcon from '@mui/icons-material/VpnKey';
+import GavelIcon from '@mui/icons-material/Gavel';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 
 const SideNavEnte: React.FC = () => {
 
     const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState,setOpenBasicModal_DatFat_ModCom} = globalContextObj;
+    const {dispatchMainState,mainState,setOpenBasicModal_DatFat_ModCom,mainData} = globalContextObj;
     const navigate = useNavigate();
     const location = useLocation();
     const token =  mainState.profilo.jwt;
@@ -37,6 +43,7 @@ const SideNavEnte: React.FC = () => {
     };
 
     const [selectedIndex, setSelectedIndex] = useState<number | null>(0);
+    const [openContestazioni, setOpenContestazioni] = useState(false);
     
     const handleListItemClick = async() => {
         if(((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA))){
@@ -133,6 +140,21 @@ const SideNavEnte: React.FC = () => {
             navigate(PathPf.ASYNC_DOCUMENTI_ENTE);
         }
     };
+    const handleListItemClickApiKey = async () => {
+        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.API_KEY_ENTE}}));
+        }else{
+            navigate(PathPf.API_KEY_ENTE);
+        }
+    };
+
+    const handleListItemClickContestazioni = () =>{
+        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.STORICO_CONTEST_ENTE}}));
+        }else{
+            navigate(PathPf.STORICO_CONTEST_ENTE);
+        }
+    };
 
     const currentLocation = location.pathname;
 
@@ -155,9 +177,7 @@ const SideNavEnte: React.FC = () => {
             setSelectedIndex(3);
         }else if(currentLocation === PathPf.PDF_REL){
             setSelectedIndex(3);
-        }else if(currentLocation === PathPf.ADESIONE_BANDO){
-            setSelectedIndex(4);
-        }else if(currentLocation === PathPf.FATTURAZIONE){
+        }else if(currentLocation ===  PathPf.API_KEY_ENTE){
             setSelectedIndex(5);
         }else if(currentLocation === "/messaggi"){
             setSelectedIndex(null);
@@ -165,6 +185,13 @@ const SideNavEnte: React.FC = () => {
             setSelectedIndex(7);
         }else if(currentLocation === PathPf.ASYNC_DOCUMENTI_ENTE){
             setSelectedIndex(8);
+        }else if(currentLocation === PathPf.STORICO_CONTEST_ENTE || currentLocation === PathPf.STORICO_DETTAGLIO_CONTEST|| currentLocation === PathPf.INSERIMENTO_CONTESTAZIONI_ENTE){
+            setSelectedIndex(6);
+            setOpenContestazioni(true);
+        }
+
+        if(openContestazioni && (currentLocation !== PathPf.STORICO_CONTEST_ENTE && currentLocation !== PathPf.LISTA_NOTIFICHE && currentLocation !== PathPf.STORICO_DETTAGLIO_CONTEST && currentLocation !== PathPf.INSERIMENTO_CONTESTAZIONI_ENTE )){
+            setOpenContestazioni(false);
         }
     },[currentLocation]);
 
@@ -198,7 +225,10 @@ const SideNavEnte: React.FC = () => {
                     <ListItemIcon>
                         <ManageAccountsIcon fontSize="inherit" />
                     </ListItemIcon>
-                    <ListItemText primary="Regolare esecuzione" />
+                    <Box className="ms-3" display="flex" flexDirection="column">
+                        <ListItemText primary="Regolare esecuzione /" />
+                        <ListItemText primary="Documenti di cortesia" />
+                    </Box>
                 </ListItemButton>
                 <ListItemButton selected={selectedIndex === 8} onClick={handleListItemAsyncDoc}>
                     <ListItemIcon>
@@ -206,9 +236,78 @@ const SideNavEnte: React.FC = () => {
                     </ListItemIcon>
                     <ListItemText primary="Download documenti"/>
                 </ListItemButton>
+                {mainData.apiKeyPage.visible &&
+                <ListItemButton selected={selectedIndex === 5} onClick={() => handleListItemClickApiKey()}>
+                    <ListItemIcon>
+                        <VpnKeyIcon fontSize="inherit" />
+                    </ListItemIcon>
+                    <ListItemText primary="API key"/>
+                </ListItemButton>}
             </List>
             <Divider />
         </Box>
     );
 };
 export default SideNavEnte;
+
+/*
+
+ <Box sx={{
+            height: '100%',
+            maxWidth: 360,
+            backgroundColor: 'background.paper',
+        }}
+        >
+            <List component="nav" aria-label="main piattaforma-notifiche sender">
+                <><ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick()}>
+                    <ListItemIcon>
+                        <DnsIcon fontSize="inherit"></DnsIcon>
+                    </ListItemIcon>
+                    <ListItemText primary="Dati di fatturazione" />
+                </ListItemButton>
+                <ListItemButton selected={selectedIndex === 1} onClick={() => handleListItemClickModuloCommessa()}>
+                    <ListItemIcon>
+                        <ViewModuleIcon fontSize="inherit" />
+                    </ListItemIcon>
+                    <ListItemText primary="Modulo commessa" />
+                </ListItemButton></>
+                <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClickNotifiche()}>
+                    <ListItemIcon>
+                        <MarkUnreadChatAltIcon fontSize="inherit" />
+                    </ListItemIcon>
+                    <ListItemText primary="Notifiche" />
+                    {openContestazioni ? 
+                        <IconButton onClick={()=> setOpenContestazioni(false)}  size="small">
+                            <ExpandLess fontSize="inherit"  />
+                        </IconButton>:
+                        <IconButton onClick={()=> setOpenContestazioni(true)}  size="small">
+                            <ExpandMore fontSize="inherit"  />
+                        </IconButton>}
+                </ListItemButton>
+                <Collapse in={openContestazioni} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                        <ListItemButton selected={selectedIndex === 6} sx={{ pl: 4 }} onClick={handleListItemClickContestazioni}>
+                            <ListItemIcon>
+                                <GavelIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Contestazioni" />
+                        </ListItemButton>
+                    </List>
+                </Collapse>
+                <ListItemButton selected={selectedIndex === 3} onClick={() => handleListItemClickRel()}>
+                    <ListItemIcon>
+                        <ManageAccountsIcon fontSize="inherit" />
+                    </ListItemIcon>
+                   <ListItemText primary="Regolare esecuzione / Documenti di cortesia" />
+                </ListItemButton>
+                {mainData.apiKeyPage.visible &&
+                <ListItemButton selected={selectedIndex === 5} onClick={() => handleListItemClickApiKey()}>
+                    <ListItemIcon>
+                        <VpnKeyIcon fontSize="inherit" />
+                    </ListItemIcon>
+                    <ListItemText primary="API key"/>
+                </ListItemButton>}
+            </List>
+            <Divider />
+        </Box>
+*/

@@ -18,9 +18,6 @@ const style = {
 };
 
 const ModalConfermaInserimento : React.FC<ModalConfermaInsProps> =({setOpen, open, onButtonComfermaPopUp, mainState,sentence}) => {
-    
-
-
     const handleClose = (event:object, reason: string) =>{
         if(reason !== 'backdropClick'){
             setOpen(false);

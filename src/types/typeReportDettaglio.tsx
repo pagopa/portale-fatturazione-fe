@@ -5,6 +5,7 @@ import { BodyFatturazione } from "./typeFatturazione";
 import { BodyDownloadModuliCommessa } from "./typeListaModuliCommessa";
 import { BodyRel } from "./typeRel";
 import { BodyGetListaDatiFatturazione } from "./typeListaDatiFatturazione";
+import { BodyStoricoContestazioni } from "../page/prod_pn/storicoContestazioni";
 import { BodyContratto } from "../page/tipologiaContratto";
 import { BodyLista } from "../page/whiteList";
 import { BodyWhite } from "../api/apiPagoPa/whiteListPA/whiteList";
@@ -48,8 +49,8 @@ export interface ModalContestazioneProps{
     mainState:MainState,
     contestazioneSelected:Contestazione,
     setContestazioneSelected:Dispatch<SetStateAction<Contestazione>>,
-    funGetNotifiche:(page:number, row:number,body:BodyListaNotifiche)=> void,
-    funGetNotifichePagoPa:(page:number, row:number,body:BodyListaNotifiche)=> void,
+    funGetNotifiche:(page:number, row:number,body?:BodyListaNotifiche)=> void,
+    funGetNotifichePagoPa:(page:number, row:number,body?:BodyListaNotifiche)=> void,
     openModalLoading:Dispatch<SetStateAction<boolean>>,
     page:number,
     rows:number,
@@ -128,7 +129,7 @@ export interface ElementMultiSelect {
 }
 
 export interface MultiselectNotificheProps{
-    setBodyGetLista:Dispatch<SetStateAction<BodyListaNotifiche>>|Dispatch<SetStateAction<BodyFatturazione>>|Dispatch<SetStateAction<BodyGetListaDatiFatturazione>>|Dispatch<SetStateAction<BodyDownloadModuliCommessa>>|Dispatch<SetStateAction<BodyRel>>|Dispatch<SetStateAction<BodyContratto>>|Dispatch<SetStateAction<BodyWhite>>,  //{idEnti:[],prodotto:'',profilo:''}|BodyDownloadModuliCommessa|BodyRel
+    setBodyGetLista:Dispatch<SetStateAction<BodyListaNotifiche>>|Dispatch<SetStateAction<BodyFatturazione>>|Dispatch<SetStateAction<BodyGetListaDatiFatturazione>>|Dispatch<SetStateAction<BodyDownloadModuliCommessa>>|Dispatch<SetStateAction<BodyRel>>|Dispatch<SetStateAction<BodyContratto>>|Dispatch<SetStateAction<BodyWhite>>|Dispatch<SetStateAction<BodyStoricoContestazioni>>,  //{idEnti:[],prodotto:'',profilo:''}|BodyDownloadModuliCommessa|BodyRel
     dataSelect:ElementMultiSelect[] ,
     setTextValue:Dispatch<SetStateAction<string>>,
     valueAutocomplete:OptionMultiselectChackbox[],
@@ -150,6 +151,18 @@ export interface ModalBodyContestazioneModifyPagoPa{
 export interface ListaRecCon {
     idEnte: string,
     descrizione: string
+}
+
+export interface FormDataContestazioni{
+    idEnte:string,
+    contractId:string,
+    mese:string,
+    anno:string,
+    totalChunks:string,
+    chunkIndex:string,
+    fileId:string,
+    file:string
+
 }
 
 

@@ -1,21 +1,21 @@
 import { Button, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import { DataGrid, GridColDef, GridEventListener, GridRowParams, MuiEvent } from "@mui/x-data-grid";
-import { Params } from "../types/typesGeneral";
+import { Params } from "../../types/typesGeneral";
 import { saveAs } from "file-saver";
 import { useContext, useEffect, useState } from "react";
-import { downloadDocumentoAsseverazionePagoPa, exportDocumentoAsseverazionePagoPa, listaAsseverazionePagopa, uploadExelAsseverazionePagopa } from "../api/apiPagoPa/adesioneBandoPA/api";
-import { Asseverazione } from "../types/typeAdesioneBando";
-import { manageError } from "../api/api";
-import ModalLoading from "../components/reusableComponents/modals/modalLoading";
+import { downloadDocumentoAsseverazionePagoPa, exportDocumentoAsseverazionePagoPa, listaAsseverazionePagopa, uploadExelAsseverazionePagopa } from "../../api/apiPagoPa/adesioneBandoPA/api";
+import { Asseverazione } from "../../types/typeAdesioneBando";
+import { manageError } from "../../api/api";
+import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { SingleFileInput } from "@pagopa/mui-italia";
-import ModalUploadPdf from "../components/rel/modalUploadPdf";
-import { GlobalContext } from "../store/context/globalContext";
-import { PathPf } from "../types/enum";
-import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
+import ModalUploadPdf from "../../components/rel/modalUploadPdf";
+import { GlobalContext } from "../../store/context/globalContext";
+import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
+import { PathPf } from "../../types/enum";
 
 
-const AdesioneBando : React.FC = () => {
+const AdesioneBando = () => {
 
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState} = globalContextObj;

@@ -1,24 +1,24 @@
-import { manageError } from "../api/api";
+import { manageError } from "../../api/api";
 import {useContext, useEffect, useState} from 'react';
 import {Typography, Button} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked} from '@pagopa/mui-italia';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { useNavigate } from "react-router";
-import TextDettaglioPdf from '../components/commessaPdf/textDettaglioPdf';
-import { DataPdf } from "../types/typeModuloCommessaInserimento";
+import TextDettaglioPdf from '../../components/commessaPdf/textDettaglioPdf';
+import { DataPdf } from "../../types/typeModuloCommessaInserimento";
 import { usePDF } from 'react-to-pdf';
-import { DatiModuloCommessaPdf, ResponseDownloadPdf } from "../types/typeModuloCommessaInserimento";
-import { downloadModuloCommessaPdf, getModuloCommessaPdf } from "../api/apiSelfcare/moduloCommessaSE/api";
-import { downloadModuloCommessaPagoPaPdf, getModuloCommessaPagoPaPdf } from "../api/apiPagoPa/moduloComessaPA/api";
-import ModalLoading from "../components/reusableComponents/modals/modalLoading";
-import { PathPf } from "../types/enum";
-import { getTipoCommessa, profiliEnti} from "../reusableFunction/actionLocalStorage";
-import { mesiWithZero, month } from "../reusableFunction/reusableArrayObj";
-import { DatiCommessaPdf, ResponseGetPdfPagoPa } from "../types/typeListaModuliCommessa";
-import { createDateFromString, replaceDate } from "../reusableFunction/function";
-import SkeletonComPdf from "../components/commessaPdf/skeletonComPdf";
-import { GlobalContext } from "../store/context/globalContext";
+import { DatiModuloCommessaPdf, ResponseDownloadPdf } from "../../types/typeModuloCommessaInserimento";
+import { downloadModuloCommessaPdf, getModuloCommessaPdf } from "../../api/apiSelfcare/moduloCommessaSE/api";
+import { downloadModuloCommessaPagoPaPdf, getModuloCommessaPagoPaPdf } from "../../api/apiPagoPa/moduloComessaPA/api";
+import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
+import { PathPf } from "../../types/enum";
+import { getTipoCommessa, profiliEnti} from "../../reusableFunction/actionLocalStorage";
+import { mesiWithZero, month } from "../../reusableFunction/reusableArrayObj";
+import { DatiCommessaPdf, ResponseGetPdfPagoPa } from "../../types/typeListaModuliCommessa";
+import { createDateFromString, replaceDate } from "../../reusableFunction/function";
+import SkeletonComPdf from "../../components/commessaPdf/skeletonComPdf";
+import { GlobalContext } from "../../store/context/globalContext";
 
 const ModuloCommessaPdf : React.FC = () =>{
 

@@ -1,23 +1,21 @@
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import { Dispatch, useContext, useEffect, useState } from "react";
-import ModalLoading from "../components/reusableComponents/modals/modalLoading";
+import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
+import SelectUltimiDueAnni from "../../components/reusableComponents/select/selectUltimiDueAnni";
+import SelectMese from "../../components/reusableComponents/select/selectMese";
 import { DataGrid, GridColDef, GridEventListener, GridRowParams, MuiEvent } from "@mui/x-data-grid";
-import { Params } from "../types/typesGeneral";
-import { getAnniAccertamenti, getListaAccertamentiPagoPa, getListaAccertamentiPrenotazionePagoPa, getMatriceAccertamenti, getMatriceAccertamentiPagoPa, getMesiAccertamenti } from "../api/apiPagoPa/accertamentiPA/api";
-import { manageError, managePresaInCarico } from "../api/api";
-import { Accertamento, BodyAccertamenti } from "../types/typeAccertamenti";
-import { mesiGrid } from "../reusableFunction/reusableArrayObj";
-import ModalMatriceAccertamenti from "../components/accertamenti/modalMatrice";
+import { Params } from "../../types/typesGeneral";
+import { getAnniAccertamenti, getListaAccertamentiPagoPa, getListaAccertamentiPrenotazionePagoPa, getMatriceAccertamenti, getMatriceAccertamentiPagoPa, getMesiAccertamenti } from "../../api/apiPagoPa/accertamentiPA/api";
+import { manageError, managePresaInCarico } from "../../api/api";
+import { Accertamento, BodyAccertamenti } from "../../types/typeAccertamenti";
+import { mesiGrid } from "../../reusableFunction/reusableArrayObj";
+import ModalMatriceAccertamenti from "../../components/accertamenti/modalMatrice";
 import { saveAs } from "file-saver";
-import { ActionReducerType } from "../reducer/reducerMainState";
-import { GlobalContext } from "../store/context/globalContext";
-import { getMessaggiCount } from "../api/apiPagoPa/centroMessaggi/api";
-import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
+import { GlobalContext } from "../../store/context/globalContext";
+import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
+import { getMessaggiCount } from "../../api/apiPagoPa/centroMessaggi/api";
 
-interface AccertamentiProps {
-    dispatchMainState:Dispatch<ActionReducerType>
-}
 
 export interface MatriceArray {
     dataInizioValidita: string,

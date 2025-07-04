@@ -13,6 +13,9 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { month } from "../reusableFunction/reusableArrayObj";
 import { GlobalContext } from "../store/context/globalContext";
+import PreviewIcon from '@mui/icons-material/Preview';
+import { useNavigate } from "react-router";
+import { PathPf } from "../types/enum";
 
 export interface Messaggio {
     idMessaggio:number,
@@ -35,7 +38,8 @@ export interface Messaggio {
     rhash: string,
     contentType: string,
     contentLanguage: string,
-    idReport: number
+    idReport: number,
+    ragioneSociale?:string
 }
 
 interface FilterMessaggi{
@@ -52,8 +56,14 @@ const Messaggi : React.FC<any> = () => {
     const {mainState,setCountMessages,dispatchMainState} = globalContextObj;
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
+    const navigate = useNavigate();
 
-
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
   
     const [bodyCentroMessaggi, setBodyCentroMessaggi] = useState<FilterMessaggi>({
         anno:null,
@@ -100,8 +110,12 @@ const Messaggi : React.FC<any> = () => {
     };
 
     const downloadMessaggio = async (item, contentType) => {
-        
-        if(contentType === "text/csv" || contentType === "application/json"){
+        if(item.categoriaDocumento.toLowerCase().includes("contestazione")){
+            handleModifyMainState({contestazioneSelected:{reportId:item.idReport}});
+            readMessage(item.idMessaggio);
+            console.log({item,contentType});
+            navigate(PathPf.STORICO_DETTAGLIO_CONTEST);
+        }else if(contentType === "text/csv" || contentType === "application/json"){
             setShowDownloading(true);
             await downloadMessaggioPagoPaCsv(token,profilo.nonce, {idMessaggio:item.idMessaggio}).then((res)=>{
                 if(contentType === "application/json"){
@@ -353,7 +367,7 @@ const Messaggi : React.FC<any> = () => {
                                             </Typography>
                                             {item.stato && <Chip size="small" label={statoMessaggio} color={colorMessaggio} />}
                                             {item.tipologiaDocumento && <Typography color="text.primary" variant="caption-semibold" component="div">
-                                                {`${item.categoriaDocumento} : ${item.tipologiaDocumento}`}
+                                                {`${item.categoriaDocumento} : ${item.categoriaDocumento.toLowerCase().includes("contestazione") ? item?.ragioneSociale :item.tipologiaDocumento}`}
                                             </Typography>}
                                             {item.anno && <Typography color="text.primary" variant="caption-semibold" component="div">
                                                 {`${month[item.mese-1]}/${item.anno}  `}
@@ -364,8 +378,8 @@ const Messaggi : React.FC<any> = () => {
                                           
                                             </Typography>
                                            
-                                            {item.stato !== '3' && <ButtonNaked  onClick={()=> downloadMessaggio(item,item.contentType)} disabled={disableDownload} target="_blank" variant="naked" color="primary" weight="light" startIcon={<AttachFileIcon />}>
-                Download documento
+                                            {item.stato !== '3' && <ButtonNaked  onClick={()=> downloadMessaggio(item,item.contentType)} disabled={disableDownload} target="_blank" variant="naked" color="primary" weight="light" startIcon={item.categoriaDocumento.toLowerCase().includes("contestazione") ? <PreviewIcon/>:<AttachFileIcon />}>
+                                                {item.categoriaDocumento.toLowerCase().includes("contestazione") ? 'Visualizza documento' : 'Download documento'}
                                             </ButtonNaked>}
                                         </TimelineNotificationContent>
                                     </TimelineNotificationItem>

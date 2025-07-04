@@ -231,9 +231,9 @@ const DocumentiContabili:React.FC = () =>{
             let fileName = '';
             const stringQuarterSelected = filtersDownload.quarters.map(el => "Q" + el.slice(5)).join("_");
             if(filtersDownload.contractIds.length === 1){
-                fileName = `Financial report PF/${gridData[0].name}/${gridData[0].riferimentoData.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
+                fileName = `Financial report PF/${gridData[0].name}/${gridData[0].yearQuarter.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
             }else{
-                fileName = `Financial report PF/${gridData[0].riferimentoData.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
+                fileName = `Financial report PF/${gridData[0].yearQuarter.substring(0, 4)}/${stringQuarterSelected}.xlsx`;
             }
             saveAs( res,fileName );
             setShowLoading(false);
@@ -343,6 +343,7 @@ const DocumentiContabili:React.FC = () =>{
                 </div>
                 <div className="col-3">
                     <Autocomplete
+                        sx={{width:'80%'}}
                         multiple
                         limitTags={1}
                         onChange={(event, value) => {
@@ -369,7 +370,6 @@ const DocumentiContabili:React.FC = () =>{
                                 {option.quarter}
                             </li>
                         )}
-                        style={{ width: '80%',height:'59px' }}
                         renderInput={(params) => {
                             return <TextField {...params}
                                 sx={{backgroundColor:"#F2F2F2"}}

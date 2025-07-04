@@ -1,83 +1,124 @@
 .App {
-  /* text-align: center;*/
-  background-color: #f2f2f2;
- }
+ /* text-align: center;*/
+ background-color: #f2f2f2;
+}
+
+
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.marginTop24{
+  margin-top: 24px;
+}
+.marginBottom24{
+  margin-bottom: 24px;
+}
+
+.marginTopBottom24{
+  margin-top: 24px;
+  padding-bottom: 24px;
+}
+.container_buttons_modal{
+  margin-top: 20px;
+}
+
+.auth{
+  height: 100%;
+  width: 100%;
+  z-index: 2;
+  background-color: white;
+  position: absolute;
+
+}
+
+.mese_alidita{
+  text-decoration: none; 
+}
+.paddingLeft32{
+  padding-left: 32px;
+}
+
+#loader_download_contestazione .MuiFormControl-root .MuiBox-root{
+min-height: 48px;
+width: 200px;
+border:none;
+background-color:white;
+
+}
+
+#loader_download_contestazione .MuiFormControl-root .MuiBox-root p{
+  color: #0073E6;
+  font-weight: 600;
+}
+#loader_download_contestazione.MuiFormControl-root .MuiBox-root button button{
+  display: none;
+}
+
+#singleInput .MuiFormControl-root .MuiFormLabel-root{
+  margin-bottom: 0px;
+
+
+}
+
+#singleInput .MuiFormControl-root .MuiBox-root .MuiBox-root, #singleInput .MuiFormControl-root .MuiBox-root{
+height: 48px;
+}
+
+ #singleInput .MuiFormControl-root .MuiBox-root{
+  min-height: 48px;
+}
+
+#singleInput .MuiFormControl-root .MuiBox-root button button{
+  display: none;
+}
+
+
+/* css Alert component */
+@keyframes smooth-appear {
+  to{
+    top: 10px;
+    opacity:1;
+  }
+}
  
- 
- 
- .App-logo {
-   height: 40vmin;
-   pointer-events: none;
+ #loader_download_contestazione .MuiFormControl-root .MuiBox-root p{
+   color: #0073E6;
+   font-weight: 600;
  }
- 
- @media (prefers-reduced-motion: no-preference) {
-   .App-logo {
-     animation: App-logo-spin infinite 20s linear;
-   }
- }
- 
- .App-header {
-   background-color: #282c34;
-   min-height: 100vh;
-   display: flex;
-   flex-direction: column;
-   align-items: center;
-   justify-content: center;
-   font-size: calc(10px + 2vmin);
-   color: white;
- }
- 
- .App-link {
-   color: #61dafb;
- }
- 
- @keyframes App-logo-spin {
-   from {
-     transform: rotate(0deg);
-   }
-   to {
-     transform: rotate(360deg);
-   }
- }
- 
- .marginTop24{
-   margin-top: 24px;
- }
- .marginBottom24{
-   margin-bottom: 24px;
- }
- 
- .marginTopBottom24{
-   margin-top: 24px;
-   padding-bottom: 24px;
- }
- .container_buttons_modal{
-   margin-top: 20px;
- }
- 
- .auth{
-   height: 100%;
-   width: 100%;
-   z-index: 2;
-   background-color: white;
-   position: absolute;
- 
- }
- 
- .mese_alidita{
-   text-decoration: none; 
- }
- .paddingLeft32{
-   padding-left: 32px;
- }
- 
- #loader_download_contestazione .MuiFormControl-root .MuiBox-root{
- min-height: 48px;
- width: auto;
- border:none;
- background-color:white;
- 
- }
+
  #loader_on_gate_pages .MuiFormControl-root .MuiBox-root{
   min-height: 48px;
   width: auto;
@@ -86,10 +127,6 @@
 
   }
  
- #loader_download_contestazione .MuiFormControl-root .MuiBox-root p{
-   color: #0073E6;
-   font-weight: 600;
- }
 #loader_on_gate_pages .MuiFormControl-root .MuiBox-root p{
 
   font-weight: 600;

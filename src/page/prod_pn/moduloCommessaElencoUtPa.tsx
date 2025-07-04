@@ -1,18 +1,19 @@
 import React, {useState, useEffect, useContext} from 'react';
-import { manageError, redirect } from '../api/api';
+import { manageError, redirect } from '../../api/api';
 import { Button, Box, Typography, FormControl, InputLabel,Select, MenuItem,} from '@mui/material';
-import GridComponent from '../components/commessaElenco/grid';
+import GridComponent from '../../components/commessaElenco/grid';
 import { useNavigate } from 'react-router';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { DataGridCommessa , GetAnniResponse, ResponseGetListaCommesse} from '../types/typeModuloCommessaElenco';
-import { ManageErrorResponse } from '../types/typesGeneral';
-import { getAnni, getDatiModuloCommessa, getListaCommessaFiltered } from '../api/apiSelfcare/moduloCommessaSE/api';
-import ModalRedirect from '../components/commessaInserimento/madalRedirect';
-import { getDatiFatturazione } from '../api/apiSelfcare/datiDiFatturazioneSE/api';
-import { PathPf } from '../types/enum';
-import { profiliEnti } from '../reusableFunction/actionLocalStorage';
-import { fixResponseForDataGrid } from '../reusableFunction/function';
-import { GlobalContext } from '../store/context/globalContext';
+import { GlobalContext } from '../../store/context/globalContext';
+import { profiliEnti } from '../../reusableFunction/actionLocalStorage';
+import { DataGridCommessa, GetAnniResponse, ResponseGetListaCommesse } from '../../types/typeModuloCommessaElenco';
+import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
+import { getAnni, getListaCommessaFiltered, getDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
+import ModalRedirect from '../../components/commessaInserimento/madalRedirect';
+import { fixResponseForDataGrid } from '../../reusableFunction/function';
+import { PathPf } from '../../types/enum';
+import { ManageErrorResponse } from '../../types/typesGeneral';
+
 
 const ModuloCommessaElencoUtPa: React.FC = () => {
 
@@ -199,7 +200,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
                     </Box>
                 </div>
                 {(mainState.primoInserimetoCommessa && enti) &&
-                <Button variant="contained" onClick={()=>{
+                <Button  sx={{ marginTop: 'auto', marginBottom: 'auto', marginLeft: '30px' }} variant="contained" onClick={()=>{
                     handleListItemClickModuloCommessa();
                 }}>Inserisci modulo commessa</Button>
                 }

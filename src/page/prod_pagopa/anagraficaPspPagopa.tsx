@@ -461,19 +461,18 @@ const AnagraficaPsp:React.FC = () =>{
                 </Button>
                 }
             </div>
-            <div className="mt-1 mb-5" style={{ width: '100%'}}>
+            <div className="mt-1 mb-5">
                 <GridCustom
                     nameParameterApi='contractId'
                     elements={gridData}
                     changePage={handleChangePage}
-                    changeRow={handleChangeRowsPerPage} 
+                    changeRow={handleChangeRowsPerPage}
                     total={totalPsp}
                     page={page}
                     rows={rowsPerPage}
-                    headerNames={['Nome PSP','ID Contratto','Trimestre','Nome Fornitore','E-mail PEC','Codice SDI','Codice ABI','E-Mail Ref. Fattura','Data','']}
+                    headerNames={['Nome PSP', 'ID Contratto', 'Trimestre', 'Nome Fornitore', 'E-mail PEC', 'Codice SDI', 'Codice ABI', 'E-Mail Ref. Fattura', 'Data', '']}
                     disabled={getListaLoading}
-                    widthCustomSize="2000px"
-                ></GridCustom>
+                    widthCustomSize="2000px"></GridCustom>
             </div>
             <ModalLoading 
                 open={showLoading} 

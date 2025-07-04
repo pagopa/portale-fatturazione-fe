@@ -28,7 +28,9 @@ export const GlobalContext = createContext({
         prodotti:[],
         profilo:{},
         docContabileSelected:{key:''},
-
+        contestazioneSelected:{
+            reportId:0
+        }
     },
     dispatchMainState:({type,value}) => null,
     openBasicModal_DatFat_ModCom:{visible:false,clickOn:''},
@@ -43,7 +45,9 @@ export const GlobalContext = createContext({
     countMessages:0,
     setCountMessages:(prev) => null,
     statusQueryGetUri:[],
-    setStatusQueryGetUri:(prev) => null
+    setStatusQueryGetUri:(prev) => null,
+    mainData:{apiKeyPage:{visible:null,keys:[]}},
+    setMainData:(prev) => null
 });
 
 
@@ -60,6 +64,13 @@ function GlobalContextProvider({children}){
     const [statusQueryGetUri,setStatusQueryGetUri] = useState([]);
   
    
+
+    //nuovo stato dove spostare info che non vogliamo inserire nel MAIN STATE
+    const [mainData,setMainData] = useState({
+        apiKeyPage:{
+            visible:null,
+            keys:[]
+        }});
   
     // eslint-disable-next-line no-undef
     useEffect(() => {
@@ -88,8 +99,6 @@ function GlobalContextProvider({children}){
         localStorage.setItem('globalState', JSON.stringify(hashedState));
     }, [mainState]); */
    
- 
-
     const value = {
         mainState,
         dispatchMainState,
@@ -104,7 +113,9 @@ function GlobalContextProvider({children}){
         countMessages,
         setCountMessages,
         setStatusQueryGetUri,
-        statusQueryGetUri
+        statusQueryGetUri,
+        setMainData,
+        mainData
     };
 
 

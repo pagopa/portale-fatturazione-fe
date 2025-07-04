@@ -21,11 +21,17 @@ export enum PathPf {
     ANAGRAFICAPSP = "/anagraficapsp",
     DOCUMENTICONTABILI = "/documenticontabilipagopa",
     DETTAGLIO_DOC_CONTABILE = "/dettagliodoccontabile",
-    KPI = "/kpipagamenti",
+    INSERIMENTO_CONTESTAZIONI = "/contestazioni",
+    STORICO_CONTEST = "/storico",
+    KPI = '/kpipagamenti',
     TIPOLOGIA_CONTRATTO = "/tipologiacontratto",
     LISTA_DOC_EMESSI = "/listadocemessi",
     JSON_TO_SAP = "/inviofatture",
     JSON_TO_SAP_DETAILS = "/inviofatturedettaglio/:id",
     ORCHESTRATORE = "/orchestratore",
-    ASYNC_DOCUMENTI_ENTE = "/downloaddocumenti"
+    ASYNC_DOCUMENTI_ENTE = "/downloaddocumenti",
+    STORICO_DETTAGLIO_CONTEST = "/dettagliocontestazione",
+    API_KEY_ENTE = "/apikeys",
+    STORICO_CONTEST_ENTE = "/storicoente",
+    INSERIMENTO_CONTESTAZIONI_ENTE = "/contestazioniente"
 }
