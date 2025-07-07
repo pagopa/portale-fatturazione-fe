@@ -8,14 +8,15 @@ import RowContratto from "./gridCustomBase/rowTipologiaContratto";
 import RowWhiteList from "./gridCustomBase/rowWhiteList";
 import EnhancedTableCustom from "./gridCustomBase/enhancedTabalToolbarCustom";
 import { SetStateAction } from "react";
-import { Whitelist } from "../../../page/whiteList";
-import { DataGridOrchestratore } from "../../../page/processiOrchestratore";
 import RowOrchestratore from "./gridCustomBase/rowOrchestratore";
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import { DataGridAsyncDoc } from "../../../page/asyncDocumenti";
+import { DataGridAsyncDoc } from "../../../page/ente/asyncDocumenti";
 import RowAsyncDoc from "./gridCustomBase/rowAsyncDoc";
 import RowContestazioni from "./gridCustomBase/rowContestazioni";
+import { DataGridOrchestratore } from "../../../page/prod_pn/processiOrchestratore";
+import { Whitelist } from "../../../page/prod_pn/whiteList";
+import RowModComTrimestreEnte from "./gridCustomBase/rowModComTrimestreEnte";
 interface GridCustomProps {
     elements:NotificheList[]|Rel[]|GridElementListaPsp[]|ContestazioneRowGrid[]|any[]
     changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
@@ -82,6 +83,12 @@ const GridCustom : React.FC<GridCustomProps> = ({
                 id:element.reportId
             };
             apiGet(newDetail);
+            //modComTrimestrale
+        }else if(apiGet && nameParameterApi === 'modComTrimestrale'){
+            const newDetail = {
+                id:element.id
+            };
+            apiGet(newDetail);
         }else if(apiGet){
             const newDetail = {
                 nomeEnteClickOn:element.ragioneSociale,
@@ -98,7 +105,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
             return selected.includes(id);
         }  
     };
-    
+    console.log({elements});
     return (
         <div>
             {nameParameterApi === "idWhite" && <EnhancedTableCustom  setOpenModal={setOpenModalDelete} setOpenModalAdd={setOpenModalAdd} selected={selected||[]} buttons={buttons} ></EnhancedTableCustom>}
@@ -108,7 +115,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                         <TableHead sx={{backgroundColor:'#f2f2f2'}}>
                             <TableRow>
                                 {headerNames.map((el,i)=>{
-                                    if(nameParameterApi === 'idOrchestratore' || nameParameterApi === "asyncDocEnte"){
+                                    if(nameParameterApi === 'idOrchestratore' || nameParameterApi === "asyncDocEnte" || nameParameterApi === "modComTrimestrale"){
                                         return(
                                             <TableCell key={Math.random()} align={el.align} width={el.width}>{el.label}
                                                 {el.headerAction &&
@@ -135,8 +142,8 @@ const GridCustom : React.FC<GridCustomProps> = ({
                         {elements.length === 0 ?
                             <TableBody key={Math.random()} style={{height: '50px'}}>
                             </TableBody> :
-                            <TableBody sx={{marginLeft:'20px'}}>
-                                {elements.map((element:Rel|NotificheList|GridElementListaPsp|Whitelist|DataGridOrchestratore|DataGridAsyncDoc|ContestazioneRowGrid ) =>{
+                            <TableBody sx={{marginLeft:'20px'}}>  {/*da eliminare any nella riga sottostante */}
+                                {elements.map((element:Rel|NotificheList|GridElementListaPsp|Whitelist|DataGridOrchestratore|DataGridAsyncDoc|ContestazioneRowGrid|any ) =>{
                                     // tolgo da ogni oggetto la prima chiave valore  perchè il cliente non vuole vedere es. l'id ma serve per la chiamata get di dettaglio 
                                     let sliced = Object.fromEntries(
                                         Object.entries(element).slice(1)
@@ -145,7 +152,12 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                         sliced = Object.fromEntries(Object.entries(element).slice(1, -1));
                                     }else if(nameParameterApi === "contestazionePage"){
                                         sliced = Object.fromEntries(Object.entries(element).slice(1, -1));
+                                    }else if(nameParameterApi === "modComTrimestrale"){
+                                        sliced =  Object.fromEntries(Object.entries(element).slice(1, -1));
+        
                                     }
+
+
                                     if(nameParameterApi === 'idContratto'){
                                         return <RowContratto key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} ></RowContratto>;
                                     }else if(nameParameterApi === 'idWhite'){
@@ -156,16 +168,20 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                         return <RowAsyncDoc key={Math.random()} sliced={sliced} headerNames={headerNames} handleClickOnGrid={handleClickOnGrid} element={element}></RowAsyncDoc>;
                                     }else if(nameParameterApi === "contestazionePage"){
                                         return <RowContestazioni key={Math.random()} sliced={sliced}apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} headerNames={headerNames}></RowContestazioni>;
+                                    }else if(nameParameterApi === "modComTrimestrale" && sliced.tipo === 1){
+                                    
+                                        return <RowModComTrimestreEnte key={Math.random()} sliced={sliced} headerNames={headerNames} handleClickOnGrid={handleClickOnGrid} element={element}></RowModComTrimestreEnte>;
                                     }else{
                                         return (
                                             <TableRow key={Math.random()}>
                                                 {
-                                                    Object.values(sliced).map((value:string|number, i:number)=>{
+                                                    Object.values(sliced).map((value:string|number|any, i:number)=>{
                                                         const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
                                                         const valueEl = (i === 0 && value?.toString().length > 50) ? value?.toString().slice(0, 50) + '...' : value;
                                                         return (
                                                             <Tooltip key={Math.random()} title={value}>
                                                                 <TableCell
+                                                                    align={nameParameterApi === "modComTrimestrale"?"center":"left"}
                                                                     sx={cssFirstColum} 
                                                                     onClick={()=>{
                                                                         if(i === 0){

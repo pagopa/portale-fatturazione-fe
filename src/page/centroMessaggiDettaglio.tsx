@@ -12,7 +12,7 @@ import { useNavigate, useParams } from 'react-router';
 import { readMessaggioPagoPa } from '../api/apiPagoPa/centroMessaggi/api';
 import { ActionReducerType } from '../reducer/reducerMainState';
 
-
+//:TODO  pagina da eliminare se non verrà utilizzata
 interface DettaglioMessaggioProps{
     mainState:MainState,
     dispatchMainState:Dispatch<ActionReducerType>

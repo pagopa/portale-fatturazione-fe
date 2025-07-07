@@ -33,8 +33,6 @@ const RelPage : React.FC = () =>{
     const navigate = useNavigate();
     const enti = profiliEnti(mainState);
  
-
-
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
             type:'MODIFY_MAIN_STATE',
@@ -42,8 +40,6 @@ const RelPage : React.FC = () =>{
         });
     };
 
-  
-  
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [showLoading, setShowLoading] = useState(false);
@@ -81,8 +77,6 @@ const RelPage : React.FC = () =>{
         resetFilters,
         isInitialRender
     } = useSavedFilters(PathPf.LISTA_REL,{});
-
- 
 
     useEffect(()=>{
         getAnni();

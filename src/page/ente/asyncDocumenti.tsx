@@ -1,23 +1,23 @@
 import { useContext, useEffect, useState } from "react";
-import { GlobalContext } from "../store/context/globalContext";
-import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
-import { PathPf } from "../types/enum";
-import { manageError } from "../api/api";
+import { GlobalContext } from "../../store/context/globalContext";
+import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
+import { PathPf } from "../../types/enum";
+import { manageError } from "../../api/api";
 import { Typography, Button } from "@mui/material";
 import { Box } from "@mui/system";
-import GridCustom from "../components/reusableComponents/grid/gridCustom";
-import ModalLoading from "../components/reusableComponents/modals/modalLoading";
+import GridCustom from "../../components/reusableComponents/grid/gridCustom";
+import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { formatDateToValidation, isDateInvalid, transformDateTime, transformDateTimeWithNameMonth } from "../reusableFunction/function";
+import { formatDateToValidation, isDateInvalid, transformDateTime, transformDateTimeWithNameMonth } from "../../reusableFunction/function";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { getListaAsyncDoc } from "../api/apiSelfcare/asyncDoc/api";
+import { getListaAsyncDoc } from "../../api/apiSelfcare/asyncDoc/api";
 import { it } from "date-fns/locale";
-import { headerNameAsyncDoc } from "../assets/configurations/conf_GridAsyncDocEnte";
-import { mesiGrid } from "../reusableFunction/reusableArrayObj";
+import { headerNameAsyncDoc } from "../../assets/configurations/conf_GridAsyncDocEnte";
+import { mesiGrid } from "../../reusableFunction/reusableArrayObj";
 import dayjs from "dayjs";
-import { getMessaggiCountEnte, getNotificheDownloadFromAsync } from "../api/apiSelfcare/notificheSE/api";
-import ModalRedirect from "../components/commessaInserimento/madalRedirect";
-import { profiliEnti } from "../reusableFunction/actionLocalStorage";
+import { getMessaggiCountEnte, getNotificheDownloadFromAsync } from "../../api/apiSelfcare/notificheSE/api";
+import ModalRedirect from "../../components/commessaInserimento/madalRedirect";
+import { profiliEnti } from "../../reusableFunction/actionLocalStorage";
 export interface BodyAsyncDoc{
     init: string|null|Date,
     end: string|null|Date,

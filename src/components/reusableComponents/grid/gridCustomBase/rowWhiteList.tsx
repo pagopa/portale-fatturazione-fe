@@ -1,5 +1,4 @@
 import { Checkbox, TableCell, TableRow, Tooltip } from "@mui/material";
-import { Whitelist } from "../../../../page/whiteList";
 
 interface RowWhite {
     sliced:any,

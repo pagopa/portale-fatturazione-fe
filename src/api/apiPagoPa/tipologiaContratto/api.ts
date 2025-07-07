@@ -1,6 +1,7 @@
 import axios from "axios";
-import { BodyContratto } from "../../../page/tipologiaContratto";
+
 import { url } from "../../api";
+import { BodyContratto } from "../../../page/prod_pn/tipologiaContratto";
 
 export const getListaTipologiaFatturazionePagoPa = async (token:string, nonce:string , page:number, pageSize:number, body: BodyContratto) => {
     const response =  await axios.post(`${url}/api/fatture/contratti/tipologia?page=${page}&pageSize=${pageSize}&nonce=${nonce}`,

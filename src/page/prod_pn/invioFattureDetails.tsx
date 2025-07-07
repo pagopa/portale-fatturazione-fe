@@ -1,19 +1,21 @@
-import NavigatorHeader from "../components/reusableComponents/navigatorHeader";
-import IosShareIcon from '@mui/icons-material/IosShare';
-import { PathPf } from "../types/enum";
+
 import { TableHead, TableRow, TableCell, Typography, Table,  Tooltip, IconButton, TextField, Popover} from "@mui/material";
 import { Box} from "@mui/system";
-import { mesiGrid, month } from "../reusableFunction/reusableArrayObj";
-import SkeletonRelPdf from "../components/rel/skeletonRelPdf";
 import { useContext, useEffect, useState } from "react";
-import { sendListaJsonFatturePagoPa } from "../api/apiPagoPa/fatturazionePA/api";
-import { GlobalContext } from "../store/context/globalContext";
-import { managePresaInCarico } from "../api/api";
 import { useNavigate, useParams } from "react-router";
 import FilterListIcon from '@mui/icons-material/FilterList';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import SkeletonGridLoading from "../components/reusableComponents/skeletonGridLoading";
+import { GlobalContext } from "../../store/context/globalContext";
+import { managePresaInCarico } from "../../api/api";
+import { sendListaJsonFatturePagoPa } from "../../api/apiPagoPa/fatturazionePA/api";
+import SkeletonRelPdf from "../../components/rel/skeletonRelPdf";
+import NavigatorHeader from "../../components/reusableComponents/navigatorHeader";
+import SkeletonGridLoading from "../../components/reusableComponents/skeletonGridLoading";
+import { mesiGrid, month } from "../../reusableFunction/reusableArrayObj";
+import { PathPf } from "../../types/enum";
+import IosShareIcon from '@mui/icons-material/IosShare';
+
 
 interface DetailsSingleRow 
 {

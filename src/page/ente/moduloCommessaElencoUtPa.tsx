@@ -13,6 +13,8 @@ import ModalRedirect from '../../components/commessaInserimento/madalRedirect';
 import { fixResponseForDataGrid } from '../../reusableFunction/function';
 import { PathPf } from '../../types/enum';
 import { ManageErrorResponse } from '../../types/typesGeneral';
+import GridCustom from '../../components/reusableComponents/grid/gridCustom';
+import { headerNameModComTrimestraleENTE } from '../../assets/configurations/conf_GridModComEnte';
 
 
 const ModuloCommessaElencoUtPa: React.FC = () => {
@@ -37,6 +39,9 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
     const [anni, setAnni] = useState<string[]>([]);
     const [gridData, setGridData] = useState<DataGridCommessa[]>([]);
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [totDoc,setTotDoc] = useState(0);
   
     useEffect(()=>{
     
@@ -136,6 +141,34 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
             });
         }
     };
+
+    //_________________________________NUOVA LOGICA
+
+    const handleChangePage = (
+        event: React.MouseEvent<HTMLButtonElement> | null,
+        newPage: number,
+    ) => {
+        //listaDoc(bodyGetLista,newPage, rowsPerPage);
+        setPage(newPage);
+    };
+                    
+    const handleChangeRowsPerPage = (
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    ) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+        //listaDoc(bodyGetLista,page,parseInt(event.target.value, 10));  
+    };
+
+    const headerAction = () => {
+        console.log("action");
+    };
+
+    const handleClickOnDetail = () => {
+        console.log("click on detail");
+    };
+    //_________________________________________________________
+    console.log({gridData});
     return (
 
         <div className="mx-5">
@@ -209,7 +242,140 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
                 <Typography variant="caption-semibold">N.B. il Modulo Commessa per le previsioni dei consumi deve essere inserito dal giorno 1 al giorno 15 di ogni mese</Typography>
             </div>
             <div className='mb-5'>
+              
+                <GridCustom
+                    nameParameterApi='modComTrimestrale'
+                    elements={[
+                        {
+                            "id": 0,
+                            "minghia":"",
+                            "meseValidita": "Giugno",
+                            "annoValidita": 2025,
+                            "stato": "Aperta/Caricato",
+                            "dataModifica": "04/06/2025",
+                            "prodotto": "prod-pn",
+                            "totale": "17,00 €",
+                            "totaleDigitale": "17,00 €",
+                            "totaleAnalogico": "0,00 €",
+                            "tipo":0
+                        },
+                        {
+                            "id": 1,
+                            "mighia":"",
+                            "quarter":"Q1",
+                            "annoValidita": 2025,
+                            "stato":0,
+                            "dataModifica": "04/06/2025",
+                            "prodotto": "prod-pn",
+                            "totale": "17,00 €",
+                            "totaleDigitale": "17,00 €",
+                            "totaleAnalogico": "0,00 €",
+                            "tipo":1,
+                            "moduli":[
+                                {
+                                    "id": 0,
+                                    "meseValidita": 7,
+                                    "annoValidita": 2025,
+                                    "stato": "Aperta/Caricato",
+                                    "dataModifica": "04/06/2025",
+                                    "prodotto": "prod-pn",
+                                    "totale": "17,00 €",
+                                    "totaleDigitale": "17,00 €",
+                                    "totaleAnalogico": "0,00 €",
+                                    "tipo":0
+                                },
+                                {
+                                    "id": 1,
+                                    "meseValidita": 8,
+                                    "annoValidita": 2025,
+                                    "stato": "Aperta/Caricato",
+                                    "dataModifica": "04/06/2025",
+                                    "prodotto": "prod-pn",
+                                    "totale": "17,00 €",
+                                    "totaleDigitale": "17,00 €",
+                                    "totaleAnalogico": "0,00 €",
+                                    "tipo":0
+                                },
+                                {
+                                    "id": 3,
+                                    "meseValidita": 9,
+                                    "annoValidita": 2025,
+                                    "stato": "Aperta/Caricato",
+                                    "dataModifica": "04/06/2025",
+                                    "prodotto": "prod-pn",
+                                    "totale": "17,00 €",
+                                    "totaleDigitale": "17,00 €",
+                                    "totaleAnalogico": "0,00 €",
+                                    "tipo":0
+                                }
+                            ]
+                        },
+                        {
+                            "id": 2,
+                            "mighia":"",
+                            "quarter":"Q2",
+                            "annoValidita": 2025,
+                            "stato":0,
+                            "dataModifica": "04/06/2025",
+                            "prodotto": "prod-pn",
+                            "totale": "17,00 €",
+                            "totaleDigitale": "17,00 €",
+                            "totaleAnalogico": "0,00 €",
+                            "tipo":1,
+                            "moduli":[
+                                {
+                                    "id": 0,
+                                    "meseValidita": 10,
+                                    "annoValidita": 2025,
+                                    "stato": "Aperta/Caricato",
+                                    "dataModifica": "04/06/2025",
+                                    "prodotto": "prod-pn",
+                                    "totale": "17,00 €",
+                                    "totaleDigitale": "17,00 €",
+                                    "totaleAnalogico": "0,00 €",
+                                    "tipo":0
+                                },
+                                {
+                                    "id": 1,
+                                    "meseValidita": 11,
+                                    "annoValidita": 2025,
+                                    "stato": "Aperta/Caricato",
+                                    "dataModifica": "04/06/2025",
+                                    "prodotto": "prod-pn",
+                                    "totale": "17,00 €",
+                                    "totaleDigitale": "17,00 €",
+                                    "totaleAnalogico": "0,00 €",
+                                    "tipo":0
+                                },
+                                {
+                                    "id": 3,
+                                    "meseValidita": 12,
+                                    "annoValidita": 2025,
+                                    "stato": "Aperta/Caricato",
+                                    "dataModifica": "04/06/2025",
+                                    "prodotto": "prod-pn",
+                                    "totale": "17,00 €",
+                                    "totaleDigitale": "17,00 €",
+                                    "totaleAnalogico": "0,00 €",
+                                    "tipo":0
+                                }
+                            ]
+                        }
+                    ]}
+                    changePage={handleChangePage}
+                    changeRow={handleChangeRowsPerPage} 
+                    total={totDoc}
+                    page={page}
+                    rows={rowsPerPage}
+                    headerNames={headerNameModComTrimestraleENTE}
+                    apiGet={handleClickOnDetail}
+                    disabled={false}
+                    headerAction={headerAction}
+                    body={valueSelect}
+                    widthCustomSize="auto"></GridCustom>
+                {/* DA ELIMINARE
                 <GridComponent data={gridData} dispatchMainState={dispatchMainState} mainState={mainState} />
+               */}
             </div>
             <ModalRedirect 
                 setOpen={setOpenModalRedirect}

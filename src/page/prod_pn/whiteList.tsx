@@ -1,25 +1,26 @@
 import { Autocomplete, Box, Button, Checkbox, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
-import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
-import GridCustom from "../components/reusableComponents/grid/gridCustom";
-import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { useContext, useEffect, useState } from "react";
-import { GlobalContext } from "../store/context/globalContext";
-import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
-import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
-import { PathPf } from "../types/enum";
-import { manageError, managePresaInCarico } from "../api/api";
-import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import { BodyWhite, deleteWhiteListPagoPa, downloadWhiteListPagopa, getAnniWhite, getMesiWhite, getTipologiaFatturaWhite, getWhiteListPagoPa } from "../api/apiPagoPa/whiteListPA/whiteList";
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { month } from "../reusableFunction/reusableArrayObj";
-import ModalConfermaInserimento from "../components/commessaInserimento/modalConfermaInserimento";
-import ModalAggiungi from "../components/whiteList/modalAggiungi";
 import { saveAs } from "file-saver";
-import { headerNames } from "../assets/configurations/config_GridWhiteList";
+import { manageError, managePresaInCarico } from "../../api/api";
+import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
+import { headerNames } from "../../assets/configurations/config_GridWhiteList";
+import ModalConfermaInserimento from "../../components/commessaInserimento/modalConfermaInserimento";
+import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
+import GridCustom from "../../components/reusableComponents/grid/gridCustom";
+import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
+import ModalAggiungi from "../../components/whiteList/modalAggiungi";
+import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
+import { month } from "../../reusableFunction/reusableArrayObj";
+import { GlobalContext } from "../../store/context/globalContext";
+import { PathPf } from "../../types/enum";
+import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
+import { BodyWhite, getAnniWhite, getMesiWhite, getTipologiaFatturaWhite, getWhiteListPagoPa, deleteWhiteListPagoPa, downloadWhiteListPagopa } from "../../api/apiPagoPa/whiteListPA/whiteList";
+
 
 
 export interface BodyLista {

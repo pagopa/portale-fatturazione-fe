@@ -6,10 +6,8 @@ import { BodyDownloadModuliCommessa } from "./typeListaModuliCommessa";
 import { BodyRel } from "./typeRel";
 import { BodyGetListaDatiFatturazione } from "./typeListaDatiFatturazione";
 import { BodyStoricoContestazioni } from "../page/prod_pn/storicoContestazioni";
-import { BodyContratto } from "../page/tipologiaContratto";
-import { BodyLista } from "../page/whiteList";
 import { BodyWhite } from "../api/apiPagoPa/whiteListPA/whiteList";
-
+import { BodyContratto } from "../page/prod_pn/tipologiaContratto";
 
 export interface ReportDettaglioProps {
     mainState:MainState,

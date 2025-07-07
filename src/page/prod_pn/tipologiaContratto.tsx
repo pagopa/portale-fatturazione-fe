@@ -1,19 +1,21 @@
 import { Typography } from "@mui/material";
 import { Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
-import {manageError, manageErrorDownload, managePresaInCarico } from '../api/api';
 import { useContext, useEffect, useState } from "react";
 import DownloadIcon from '@mui/icons-material/Download';
-import ModalLoading from "../components/reusableComponents/modals/modalLoading";
-import { PathPf } from "../types/enum";
-import MultiselectCheckbox from "../components/reportDettaglio/multiSelectCheckbox";
-import { ElementMultiSelect, OptionMultiselectChackbox } from "../types/typeReportDettaglio";
-import { listaEntiNotifichePage } from "../api/apiSelfcare/notificheSE/api";
-import { GlobalContext } from "../store/context/globalContext";
-import useSavedFilters from "../hooks/useSaveFiltersLocalStorage";
-import ModalConfermaInserimento from "../components/commessaInserimento/modalConfermaInserimento";
-import { downloadTipologiePagopa, getListaTipologiaFatturazionePagoPa, modifyContrattoPagoPa } from "../api/apiPagoPa/tipologiaContratto/api";
 import { saveAs } from "file-saver";
-import GridCustom from "../components/reusableComponents/grid/gridCustom";
+import { GlobalContext } from "../../store/context/globalContext";
+import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
+import { manageError, manageErrorDownload, managePresaInCarico } from "../../api/api";
+import { getListaTipologiaFatturazionePagoPa, downloadTipologiePagopa, modifyContrattoPagoPa } from "../../api/apiPagoPa/tipologiaContratto/api";
+import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
+import ModalConfermaInserimento from "../../components/commessaInserimento/modalConfermaInserimento";
+import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
+import GridCustom from "../../components/reusableComponents/grid/gridCustom";
+import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
+import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
+import { PathPf } from "../../types/enum";
+
+
 export interface BodyContratto {
     idEnti:{idEnte:string}[],
     tipologiaContratto:number|null

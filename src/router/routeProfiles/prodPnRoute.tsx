@@ -16,12 +16,13 @@ import ReportDettaglio from "../../page/prod_pn/reportDettaglioUtPa";
 import InserimentoContestazioni from "../../page/prod_pn/inserimentoContestazioni";
 import Storico from "../../page/prod_pn/storicoContestazioni";
 import SideNavSend from "../../layout/sideNavs/sideNavSend";
-import PageTipologiaContratto from "../../page/tipologiaContratto";
-import ListaDocEmessi from "../../page/whiteList";
-import InvioFatture from "../../page/invioFatture";
-import InvioFattureDetails from "../../page/invioFattureDetails";
 import DettaglioStoricoContestazione from "../../page/prod_pn/dettaglioStoricoContestazione";
-import ProcessiOrchestartore from "../../page/processiOrchestratore";
+import InvioFatture from "../../page/prod_pn/invioFatture";
+import InvioFattureDetails from "../../page/prod_pn/invioFattureDetails";
+import ProcessiOrchestartore from "../../page/prod_pn/processiOrchestratore";
+import PageTipologiaContratto from "../../page/prod_pn/tipologiaContratto";
+import ListaDocEmessi from "../../page/prod_pn/whiteList";
+
 
 const ProdPnRoute = () => {
     const prodPnRoute =  <Route element={<LayoutAzure  sideNav={<SideNavSend />}></LayoutAzure >}>

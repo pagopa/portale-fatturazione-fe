@@ -1,6 +1,7 @@
 import { Button, Toolbar, Tooltip, Typography } from "@mui/material";
 import { SetStateAction } from "react";
-import { SelectedJsonSap } from "../../../../page/invioFatture";
+import { SelectedJsonSap } from "../../../../page/prod_pn/invioFatture";
+
 
 interface EnhancedTable {
     setOpenModal?:React.Dispatch<SetStateAction<boolean>>,

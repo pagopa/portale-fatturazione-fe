@@ -1,6 +1,7 @@
 import axios from "axios";
 import { url } from "../../api";
-import { BodyOrchestratore } from "../../../page/processiOrchestratore";
+import { BodyOrchestratore } from "../../../page/prod_pn/processiOrchestratore";
+
 
 export const getListaActionMonitoring = async (token:string, nonce:string , body:BodyOrchestratore,page:number,pageSize:number) => {
     const response =  await axios.post(`${url}/api/orchestratore?page=${page}&pageSize=${pageSize}&nonce=${nonce}`,
