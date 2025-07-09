@@ -28,14 +28,10 @@ export const headerNameModComTrimestraleENTE: HeaderGridCustom[] = [
         > {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
         </IconButton>
     },
-    { label: 'Trimestre/Mese',align:'center',width:'160px', headerAction:true},
-    { label: 'Anno',align:'center',width:'100px',headerAction:false},
-    { label: 'Stato',align:'center',width:'100px',headerAction:false},
-    { label: 'Data inserimento',align:'center',width:'100px',headerAction:false},
-    { label: 'Prodotto',align:'center',width:'100px',headerAction:false},
-    { label: 'Tot. Not.',align:'center',width:'80px',headerAction:false},
-    { label: 'Tot. Digit.',align:'center',width:'150px',headerAction:false},
-    { label: 'Tot. Analog.',align:'center',width:'100px',headerAction:false, headerTooltip:(title,label,color) => <Chip label={label} color={color} /> },
+    { label: 'Trimestre',align:'center',width:'160px', headerAction:false},
+    { label: 'Anno',align:'center',width:'160px', headerAction:false},
+    { label: 'Stato',align:'center',width:'100px',headerAction:false, headerTooltip:(title,label,color) => <Chip label={label} color={color} /> },
+    { label: 'Tot. Notifiche',align:'center',width:'100px',headerAction:false},
     { label: '',align:'center',width:'60',headerAction:false,
         gridAction:(fun,color,disabled,obj) =>
             <IconButton

@@ -1,7 +1,7 @@
 import { Box, Collapse, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useState } from "react";
-import { mesiGrid, statiContestazione, tipoNotificaArray } from "../../../../reusableFunction/reusableArrayObj";
+
 import DefaultRow from "./rowDefault";
 
 
@@ -114,16 +114,15 @@ const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element}) 
                             <Table size="small" aria-label="purchases">
                                 <TableHead>
                                     <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
-                                        <TableCell align="center" >Mese</TableCell>
-                                        <TableCell align="center"  >Anno</TableCell>
+                                        <TableCell align="center" >Mese/Anno</TableCell>
                                         <TableCell align="center" >Stato</TableCell>
-                                        <TableCell align="center" >Data modifica</TableCell>
-                                        <TableCell align="center" >Prodotto</TableCell>
-                                        <TableCell align="center" >Totale</TableCell>
+                                        <TableCell align="center" >Data Inserimento</TableCell>
+                                        <TableCell align="center" >Data chiusura</TableCell>
                                         <TableCell align="center" >Tot. Digit.</TableCell>
-                                        <TableCell align="center" >Tot. Analog.</TableCell>
-                                      
-                                     
+                                        <TableCell align="center" >Tot. AR.</TableCell>
+                                        <TableCell align="center" >Tot. AR. Int.</TableCell>
+                                        <TableCell align="center" >Tot. 890.</TableCell>
+                                        <TableCell align="center" >Tot. Not.</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
