@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { DataGridCommessa } from "../types/typeModuloCommessaElenco";
 import { ArrayTipologieCommesse, DatiModuloCommessaPdf, ModuliCommessa } from "../types/typeModuloCommessaInserimento";
-import { objMesiWithZero } from "./reusableArrayObj";
+import { month, objMesiWithZero } from "./reusableArrayObj";
 
 export const fixResponseForDataGrid = (arr:any[]):any =>{
       
@@ -13,32 +13,59 @@ export const fixResponseForDataGrid = (arr:any[]):any =>{
         };
     } );
 
-
-    const sortedData = res.sort((a, b) => {
-        const [yearA, qA] = a.quarter.split('-Q').map(Number);
-        const [yearB, qB] = b.quarter.split('-Q').map(Number);
-
-        if (yearA !== yearB) {
-            return yearA - yearB;
+    console.log(res);
+    // Group by quarter
+    const grouped = res.reduce((acc, moduli) => {
+        const { quarter } = moduli;
+        if (!acc[quarter]) {
+            acc[quarter] = [];
         }
-        return qA - qB;
+        acc[quarter].push(moduli);
+        return acc;
+    }, {});
+    console.log({grouped});
+    // Convert to desired array structure and sort by quarter
+    const arrayQuarters = Object.entries(grouped)
+        .map(([quarter, moduli]) => ({ quarter, moduli }))
+        .sort((a, b) => {
+            const [yearA, qA] = a.quarter.split('-Q').map(Number);
+            const [yearB, qB] = b.quarter.split('-Q').map(Number);
+            return yearA !== yearB ? yearA - yearB : qA - qB;
+        });
+
+
+
+    console.log({arrayQuarters});
+    const result = arrayQuarters.map((el:any)=> {
+        return {
+            id:Math.random(),
+            anno:el.quarter.slice(0,4),
+            quarter:el.quarter.slice(5,7),
+            stato:el.moduli.filter(el => el.source === "obbligatorio"|| el.source === "facoltativo").length > 0 ? "Da completare" : "Completo",
+            totaleNotifiche:el.moduli.reduce((acc, item) => acc + item.totaleNotifiche, 0),
+            arrow:"",
+            moduli:el.moduli.map(mod => {
+                return {
+                    id:mod.meseValidita+"/"+mod.annoValidita,
+                    meseAnno:month[mod.meseValidita-1]+"/"+mod.annoValidita,
+                    stato:mod.stato||"--",
+                    dataInserimento:mod.dataInserimento.split('T')[0],
+                    dataChiusura:mod.dataChiusura.split('T')[0],
+                    totaleDig:mod.totaleDigitaleNaz > 0 ?mod.totaleDigitaleNaz+' €':"--",
+                    totaleAR:mod.totaleAnalogicoARNaz > 0 ?mod.totaleAnalogicoARNaz+' €':"--",
+                    totaleARInt:mod.totaleAnalogicoARInternaz > 0 ? mod.totaleAnalogicoARInternaz+' €': "--",    
+                    totaleAnalogico890Naz:mod.totaleAnalogico890Naz > 0 ? mod.totaleAnalogico890Naz+' €': "--",
+                    totaleNotifiche:mod.totaleNotifiche,
+                    source:mod.source,
+                    modifica:mod.modifica,
+                    arrow:""
+                };
+            })
+        };
     });
 
-    console.log(sortedData);
-    return sortedData;
+    return result;
 };
-
-
-
-
-function getQuarter(month) {
-    if (month >= 1 && month <= 3) return 'Q1';
-    if (month >= 4 && month <= 6) return 'Q2';
-    if (month >= 7 && month <= 9) return 'Q3';
-    return 'Q4';
-}
-
-
 
 
 export  const calculateTot = (arr:ModuliCommessa[], string:string) =>{

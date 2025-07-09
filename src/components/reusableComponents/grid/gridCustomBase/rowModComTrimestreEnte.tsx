@@ -1,30 +1,26 @@
 import { Box, Collapse, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import DefaultRow from "./rowDefault";
+import is from "date-fns/esm/locale/is/index.js";
 
 
 const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element}) => {
-    
+    console.log({EL:element});
     const [open, setOpen] = useState(false);
-    console.log("dentro1",{sliced,element});
 
-    let bgColorRow = "";
-    if(sliced.letto){
-        bgColorRow = "#F0FFF0";
-    }
+    const isOpenOnStart = element.moduli.filter(el => el.source === "obbligatorio").length > 0;
 
-    let chipBgColor = "info";
+    useEffect(()=>{
+        isOpenOnStart && setOpen(true);
+    },[isOpenOnStart]);
+
+
+    let chipBgColor = "#A2ADB8";
     
-    if(sliced.stato === "Presa in carico"){
-        chipBgColor = "info";
-    }else if(sliced.stato === "Elaborato"){
-        chipBgColor = "success";
-    }else if(sliced.stato === "Elaborato no data"){
-        chipBgColor ="warning";
-    }else if(sliced.stato === "Errore"){
-        chipBgColor = "error";
+    if(sliced.stato === "Completo"){
+        chipBgColor = "#6CC66A";
     }
 
 
@@ -41,38 +37,18 @@ const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element}) 
         <>
             <TableRow sx={{
                 borderTop:"4px solid #F2F2F2",
-                borderBottom: "2px solid #F2F2F2",
-                backgroundColor:bgColorRow
+                borderBottom: "2px solid #F2F2F2"
             }} 
             key={element.id}>
                 { Object.values(sliced).map((value:any, i:number)=>{
-                    const indexLetto =  Object.entries(sliced).findIndex(([key]) => key === 'letto');
-                    let titleTooltip = value;
-                    let customValue = value;
-                    if(i === indexLetto){
-                        let color = "green";
-                        titleTooltip = "Letto";
-                        if(!value){
-                            titleTooltip = "Non letto";
-                            color = "#d9d9d9";
-                        }
-                        customValue = <CheckCircleOutlineIcon sx={{color:color}}/>;
-                    }
                     
-                    if(value === "--" || typeof(value) === "boolean"){
+                    
+                    if(headerNames[i]?.headerTooltip){
                         return (
                             <TableCell
                                 key={i}
                                 align={headerNames[i]?.align}>
-                                {customValue} 
-                            </TableCell>
-                        );
-                    }else if(headerNames[i]?.headerTooltip){
-                        return (
-                            <TableCell
-                                key={i}
-                                align={headerNames[i]?.align}>
-                                {headerNames[i]?.headerTooltip(titleTooltip,customValue,chipBgColor)}              
+                                {headerNames[i]?.headerTooltip("",sliced.stato,chipBgColor)}              
                             </TableCell>
                         );
                     }else if(headerNames[i]?.gridOpenDetail){
@@ -93,12 +69,12 @@ const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element}) 
                         );
                     }else{
                         return (
-                            <Tooltip key={Math.random()} title={titleTooltip}  placement="right">
-                                <TableCell
-                                    align={headerNames[i]?.align}>
-                                    <Typography style={{ fontSize: "1rem", fontWeight: 600 }} variant="caption-semibold">{customValue}</Typography>   
-                                </TableCell>
-                            </Tooltip>
+                            
+                            <TableCell
+                                align={headerNames[i]?.align}>
+                                <Typography style={{ fontSize: "1rem", fontWeight: 600 }} variant="caption-semibold">{value}</Typography>   
+                            </TableCell>
+                        
                         );
                     }
                 })
@@ -109,7 +85,7 @@ const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element}) 
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box sx={{ margin: 2 , backgroundColor:'#F8F8F8', padding:'10px'}}>
                             <Typography sx={{marginLeft:"6px"}} variant="h6" gutterBottom component="div">
-          Moduli commessa Trimestre X
+                                {`Moduli commessa ${element.anno}/${element.quarter}`}
                             </Typography>
                             <Table size="small" aria-label="purchases">
                                 <TableHead>

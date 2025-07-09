@@ -5,13 +5,14 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, nameParameterApi}) => {
 
     console.log("DENTRO ELLELELE",{sliced,element});
-    const elToMap = Object.fromEntries(Object.entries(element).slice(1, -1));
+    const elToMap = Object.fromEntries(Object.entries(sliced).slice(1, -3));
     return (
         <TableRow 
             sx={{
-                backgroundColor:"#ffffff",
+                backgroundColor:element.source === "obbligatorio" ?"#f7e7bc":"#ffffff",
                 borderTop:"4px solid #F2F2F2",
-                borderBottom: "2px solid #F2F2F2"
+                borderBottom: "2px solid #F2F2F2",
+                height:"80px"
             }} key={element.id}>
             {
                 Object.values(elToMap).map((value:string|number|any, i:number)=>{

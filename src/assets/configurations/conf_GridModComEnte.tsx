@@ -3,6 +3,7 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 
 //ESEMPIO DA SEGUIRE
@@ -28,14 +29,17 @@ export const headerNameModComTrimestraleENTE: HeaderGridCustom[] = [
         > {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
         </IconButton>
     },
-    { label: 'Trimestre',align:'center',width:'160px', headerAction:false},
     { label: 'Anno',align:'center',width:'160px', headerAction:false},
-    { label: 'Stato',align:'center',width:'100px',headerAction:false, headerTooltip:(title,label,color) => <Chip label={label} color={color} /> },
+    { label: 'Trimestre',align:'center',width:'160px', headerAction:false},
+    { label: 'Stato',align:'center',width:'100px',headerAction:false, headerTooltip:(title,label,color) =>  
+        <Tooltip
+            placement="bottom"
+            title={label}
+        ><CheckCircleIcon sx={{ color: color }}/></Tooltip> },
     { label: 'Tot. Notifiche',align:'center',width:'100px',headerAction:false},
     { label: '',align:'center',width:'60',headerAction:false,
         gridAction:(fun,color,disabled,obj) =>
             <IconButton
-                aria-label="Scarica"
                 size="medium"
                 onClick={() => fun(obj)}
                 disabled={disabled}
