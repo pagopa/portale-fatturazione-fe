@@ -3,17 +3,43 @@ import { DataGridCommessa } from "../types/typeModuloCommessaElenco";
 import { ArrayTipologieCommesse, DatiModuloCommessaPdf, ModuliCommessa } from "../types/typeModuloCommessaInserimento";
 import { objMesiWithZero } from "./reusableArrayObj";
 
-export const fixResponseForDataGrid = (arr:DataGridCommessa[]) =>{
+export const fixResponseForDataGrid = (arr:any[]):any =>{
       
-    const result = arr.map( (singlObj:DataGridCommessa) =>{
+    const res = arr.map( (singlObj:any) =>{
         
         return {
             id : Math.random(),
             ...singlObj
         };
     } );
-    return result;
+
+
+    const sortedData = res.sort((a, b) => {
+        const [yearA, qA] = a.quarter.split('-Q').map(Number);
+        const [yearB, qB] = b.quarter.split('-Q').map(Number);
+
+        if (yearA !== yearB) {
+            return yearA - yearB;
+        }
+        return qA - qB;
+    });
+
+    console.log(sortedData);
+    return sortedData;
 };
+
+
+
+
+function getQuarter(month) {
+    if (month >= 1 && month <= 3) return 'Q1';
+    if (month >= 4 && month <= 6) return 'Q2';
+    if (month >= 7 && month <= 9) return 'Q3';
+    return 'Q4';
+}
+
+
+
 
 export  const calculateTot = (arr:ModuliCommessa[], string:string) =>{
     return arr.reduce((a,b) =>{

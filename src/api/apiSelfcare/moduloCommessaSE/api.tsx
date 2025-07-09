@@ -140,3 +140,22 @@ export const getTipologiaProdotto = async (token:string, nonce:string) => {
 
     return response;
 };
+
+export const getListaCommessaFilteredV2 = async (token:string, nonce:string, valueSelect:string) =>{
+    if(valueSelect){
+        const response = await axios.get(
+            `${url}/api/v2/modulocommessa/lista/${valueSelect}?nonce=${nonce}`,
+            { headers: {
+                Authorization: 'Bearer ' + token
+            }});
+        return response;
+    }else{
+        const response = await axios.get(
+            `${url}/api/v2/modulocommessa/lista?nonce=${nonce}`,
+            { headers: {
+                Authorization: 'Bearer ' + token
+            }});
+        return response;
+    }
+   
+};

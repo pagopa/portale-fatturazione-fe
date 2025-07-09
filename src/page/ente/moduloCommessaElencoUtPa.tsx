@@ -8,7 +8,7 @@ import { GlobalContext } from '../../store/context/globalContext';
 import { profiliEnti } from '../../reusableFunction/actionLocalStorage';
 import { DataGridCommessa, GetAnniResponse, ResponseGetListaCommesse } from '../../types/typeModuloCommessaElenco';
 import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
-import { getAnni, getListaCommessaFiltered, getDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
+import { getAnni, getListaCommessaFiltered, getDatiModuloCommessa, getListaCommessaFilteredV2 } from '../../api/apiSelfcare/moduloCommessaSE/api';
 import ModalRedirect from '../../components/commessaInserimento/madalRedirect';
 import { fixResponseForDataGrid } from '../../reusableFunction/function';
 import { PathPf } from '../../types/enum';
@@ -72,10 +72,17 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
         });
     };
 
+
+
+
     // servizio che popola la grid con la lista commesse
     const getListaCommessaGrid = async (valueAnno) =>{
-        await getListaCommessaFiltered(token , profilo.nonce,valueAnno).then((res:ResponseGetListaCommesse)=>{
+        await getListaCommessaFilteredV2(token , profilo.nonce,valueAnno).then((res:ResponseGetListaCommesse)=>{
             const finalData = fixResponseForDataGrid(res.data);
+
+           
+
+            console.log({finalData});
             setGridData(finalData);
         }).catch((err:ManageErrorResponse)=>{
             setGridData([]);
@@ -245,106 +252,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
               
                 <GridCustom
                     nameParameterApi='modComTrimestrale'
-                    elements={[
-                        {
-                            "id": 1,
-                            "quarter":"Q3",
-                            "anno":2025,
-                            "stato":0,
-                            "totale": "17",
-                            "arrow": "",
-                            "moduli":[
-                                {
-                                    "id": 0,
-                                    "data": "Luglio/2025",
-                                    "stato": "Aperta/Caricato",
-                                    "dataModifica": "04/06/2025",
-                                    "dataChiusura": "04/06/2025",
-                                    "totaleX": "17,00 €",
-                                    "totaleDigitale": "17,00 €",
-                                    "totaleAnalogico": "0,00 €",
-                                    "totaleAR": "0,00 €",
-                                    "totale":"100",
-                                    "tipo":0
-                                },
-                                {
-                                    "id": 1,
-                                    "data": "Agosto/2025",
-                                    "stato": "Aperta/Caricato",
-                                    "dataModifica": "04/06/2025",
-                                    "dataChiusura": "04/06/2025",
-                                    "totaleX": "17,00 €",
-                                    "totaleDigitale": "17,00 €",
-                                    "totaleAnalogico": "0,00 €",
-                                    "totaleAR": "0,00 €",
-                                    "totale":"100",
-                                    "tipo":0
-                                },
-                                {
-                                    "id": 3,
-                                    "data": "Settembre/2025",
-                                    "stato": "Aperta/Caricato",
-                                    "dataModifica": "04/06/2025",
-                                    "dataChiusura": "04/06/2025",
-                                    "totaleX": "17,00 €",
-                                    "totaleDigitale": "17,00 €",
-                                    "totaleAnalogico": "0,00 €",
-                                    "totaleAR": "0,00 €",
-                                    "totale":"100",
-                                    "tipo":0
-                                }
-                            ]
-                        },
-                        {
-                            "id": 2,
-                            "quarter":"Q4",
-                            "anno":2025,
-                            "stato":0,
-                            "totale": "17",
-                            "arrow": "",
-                            "moduli":[
-                                {
-                                    "id": 0,
-                                    "data": "Ottobre/2025",
-                                    "stato": "Aperta/Caricato",
-                                    "dataModifica": "04/06/2025",
-                                    "dataChiusura": "04/06/2025",
-                                    "totaleX": "17,00 €",
-                                    "totaleDigitale": "17,00 €",
-                                    "totaleAnalogico": "0,00 €",
-                                    "totaleAR": "0,00 €",
-                                    "totale":"100",
-                                    "tipo":0
-                                },
-                                {
-                                    "id": 1,
-                                    "data": "Novembre/2025",
-                                    "stato": "Aperta/Caricato",
-                                    "dataModifica": "04/06/2025",
-                                    "dataChiusura": "04/06/2025",
-                                    "totaleX": "17,00 €",
-                                    "totaleDigitale": "17,00 €",
-                                    "totaleAnalogico": "0,00 €",
-                                    "totaleAR": "0,00 €",
-                                    "totale":"100",
-                                    "tipo":0
-                                },
-                                {
-                                    "id": 3,
-                                    "data": "Dicembre/2025",
-                                    "stato": "Aperta/Caricato",
-                                    "dataModifica": "04/06/2025",
-                                    "dataChiusura": "04/06/2025",
-                                    "totaleX": "17,00 €",
-                                    "totaleDigitale": "17,00 €",
-                                    "totaleAnalogico": "0,00 €",
-                                    "totaleAR": "0,00 €",
-                                    "totale":"100",
-                                    "tipo":0
-                                }
-                            ]
-                        }
-                    ]}
+                    elements={gridData}
                     changePage={handleChangePage}
                     changeRow={handleChangeRowsPerPage} 
                     total={totDoc}
@@ -368,3 +276,28 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
     );
 };
 export default  ModuloCommessaElencoUtPa;
+
+
+/*
+[
+                        {
+                            "id": 1,
+                            "quarter":"Q3",
+                            "anno":2025,
+                            "stato":0,
+                            "totale": "17",
+                            "arrow": "",
+                            "moduli":[
+                                {
+                                    "id": 0,
+                                    "data": "Luglio/2025",
+                                    "stato": "Aperta/Caricato",
+                                    "dataModifica": "04/06/2025",
+                                    "dataChiusura": "04/06/2025",
+                                    "totaleX": "17,00 €",
+                                    "totaleDigitale": "17,00 €",
+                                    "totaleAnalogico": "0,00 €",
+                                    "totaleAR": "0,00 €",
+                                    "totale":"100",
+                                    "tipo":0
+                                },*/
