@@ -22,13 +22,14 @@ import InvioFattureDetails from "../../page/prod_pn/invioFattureDetails";
 import ProcessiOrchestartore from "../../page/prod_pn/processiOrchestratore";
 import PageTipologiaContratto from "../../page/prod_pn/tipologiaContratto";
 import ListaDocEmessi from "../../page/prod_pn/whiteList";
+import ModuloCommessaInserimentoPn from "../../page/prod_pn/moduloCommessaInserimentoPn";
 
 
 const ProdPnRoute = () => {
     const prodPnRoute =  <Route element={<LayoutAzure  sideNav={<SideNavSend />}></LayoutAzure >}>
         <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte />} />
         <Route path={PathPf.LISTA_MODULICOMMESSA} element={<PagoPaListaModuliCommessa/>}/>
-        <Route path={PathPf.MODULOCOMMESSA} element={<ModuloCommessaInserimentoUtEn30/>} />
+        <Route path={PathPf.MODULOCOMMESSA} element={<ModuloCommessaInserimentoPn/>} />
         <Route path={PathPf.PDF_COMMESSA} element={<ModuloCommessaPdf/>} />
         <Route path={PathPf.LISTA_DATI_FATTURAZIONE} element={<PagoPaListaDatiFatturazione/>} />
         <Route path={PathPf.LISTA_REL} element={<RelPage />} />
