@@ -4,11 +4,17 @@ import { useEffect, useState } from "react";
 
 import DefaultRow from "./rowDefault";
 import is from "date-fns/esm/locale/is/index.js";
+import { useNavigate } from "react-router";
+import ModalRedirect from "../../../commessaInserimento/madalRedirect";
+import ModalInfo from "../../modals/modalInfo";
 
 
-const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element}) => {
-    console.log({EL:element});
+const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element, mandatoryEl}) => {
+    console.log({EL:element,mandatoryEl});
+    const navigate = useNavigate();
     const [open, setOpen] = useState(false);
+    const [openModalModObbligatori,setOpenModalModObbligatori] = useState({open:false,sentence:''});
+    
 
     const isOpenOnStart = element.moduli.filter(el => el.source === "obbligatorio").length > 0;
 
@@ -24,8 +30,14 @@ const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element}) 
     }
 
 
-    const handleClickOnSingleEl = () =>{
-        console.log("click");
+    const handleClickOnSingleEl = (el) =>{
+        console.log('ellelelllll',el);
+        if(mandatoryEl && el.source !== "obbligatorio" && el.source !== "archiviato" ){
+            setOpenModalModObbligatori({open:true,sentence:'Per inserire i moduli commessa futuri bisogna prima inserire i moduli commessa OBBLIGATORI'});
+        }else{
+            navigate("/modulocommessa");
+        }
+       
     };
 
 
@@ -95,6 +107,7 @@ const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element}) 
                                         <TableCell align="center" >Data Inserimento</TableCell>
                                         <TableCell align="center" >Data chiusura</TableCell>
                                         <TableCell align="center" >Tot. Digit.</TableCell>
+                                        <TableCell align="center" >Tot. Digit. Int.</TableCell>
                                         <TableCell align="center" >Tot. AR.</TableCell>
                                         <TableCell align="center" >Tot. AR. Int.</TableCell>
                                         <TableCell align="center" >Tot. 890.</TableCell>
@@ -114,6 +127,9 @@ const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element}) 
                     </Collapse>
                 </TableCell>
             </TableRow>
+            <ModalInfo 
+                setOpen={setOpenModalModObbligatori}
+                open={openModalModObbligatori}></ModalInfo>
         </>
     );
 };

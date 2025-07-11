@@ -42,6 +42,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totDoc,setTotDoc] = useState(0);
+   
   
     useEffect(()=>{
     
@@ -249,7 +250,6 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
                 <Typography variant="caption-semibold">N.B. il Modulo Commessa per le previsioni dei consumi deve essere inserito dal giorno 1 al giorno 15 di ogni mese</Typography>
             </div>
             <div className='mb-5'>
-              
                 <GridCustom
                     nameParameterApi='modComTrimestrale'
                     elements={gridData}
@@ -264,9 +264,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
                     headerAction={headerAction}
                     body={valueSelect}
                     widthCustomSize="auto"></GridCustom>
-                {/* DA ELIMINARE
-                <GridComponent data={gridData} dispatchMainState={dispatchMainState} mainState={mainState} />
-               */}
+                
             </div>
             <ModalRedirect 
                 setOpen={setOpenModalRedirect}

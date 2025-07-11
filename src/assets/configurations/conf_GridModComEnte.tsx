@@ -36,7 +36,7 @@ export const headerNameModComTrimestraleENTE: HeaderGridCustom[] = [
             placement="bottom"
             title={label}
         ><CheckCircleIcon sx={{ color: color }}/></Tooltip> },
-    { label: 'Tot. Notifiche',align:'center',width:'100px',headerAction:false},
+    // { label: 'Tot. Notifiche',align:'center',width:'100px',headerAction:false},
     { label: '',align:'center',width:'60',headerAction:false,
         gridAction:(fun,color,disabled,obj) =>
             <IconButton

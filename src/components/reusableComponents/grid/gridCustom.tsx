@@ -18,7 +18,7 @@ import { DataGridOrchestratore } from "../../../page/prod_pn/processiOrchestrato
 import { Whitelist } from "../../../page/prod_pn/whiteList";
 import RowModComTrimestreEnte from "./gridCustomBase/rowModComTrimestreEnte";
 interface GridCustomProps {
-    elements:NotificheList[]|Rel[]|GridElementListaPsp[]|ContestazioneRowGrid[]|any[]
+    elements:NotificheList[]|Rel[]|GridElementListaPsp[]|ContestazioneRowGrid[]|any
     changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
     changeRow:( event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
     page:number,
@@ -84,11 +84,6 @@ const GridCustom : React.FC<GridCustomProps> = ({
             };
             apiGet(newDetail);
             //modComTrimestrale
-        }else if(apiGet && nameParameterApi === 'modComTrimestrale'){
-            const newDetail = {
-                id:element.id
-            };
-            apiGet(newDetail);
         }else if(apiGet){
             const newDetail = {
                 nomeEnteClickOn:element.ragioneSociale,
@@ -100,12 +95,25 @@ const GridCustom : React.FC<GridCustomProps> = ({
         }
     };
 
+    /*else if(apiGet && nameParameterApi === 'modComTrimestrale'){
+            const newDetail = {
+                id:element.id
+            };
+            apiGet(newDetail);
+        } */
+
     const checkIfChecked = (id:any) => {
         if(selected){
             return selected.includes(id);
         }  
     };
-    console.log({elements});
+
+    let mandatoryEl = false;
+    if(nameParameterApi === "modComTrimestrale" && elements?.map(el => el.moduli?.map(el => el.source === "obbligatorio" ? true:false)).flat().includes(true)){
+        
+        mandatoryEl = true;
+    }
+   
     return (
         <div>
             {nameParameterApi === "idWhite" && <EnhancedTableCustom  setOpenModal={setOpenModalDelete} setOpenModalAdd={setOpenModalAdd} selected={selected||[]} buttons={buttons} ></EnhancedTableCustom>}
@@ -168,7 +176,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                     }else if(nameParameterApi === "contestazionePage"){
                                         return <RowContestazioni key={Math.random()} sliced={sliced}apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} headerNames={headerNames}></RowContestazioni>;
                                     }else if(nameParameterApi === "modComTrimestrale"){
-                                        return <RowModComTrimestreEnte key={element.id} sliced={sliced} headerNames={headerNames} handleClickOnGrid={handleClickOnGrid} element={element}></RowModComTrimestreEnte>;
+                                        return <RowModComTrimestreEnte key={element.id} sliced={sliced} headerNames={headerNames} handleClickOnGrid={handleClickOnGrid} element={element} mandatoryEl={mandatoryEl}></RowModComTrimestreEnte>;
                                     }else{
                                         return (
                                             <TableRow key={Math.random()}>
