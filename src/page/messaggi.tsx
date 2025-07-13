@@ -113,7 +113,6 @@ const Messaggi : React.FC<any> = () => {
         if(item.categoriaDocumento.toLowerCase().includes("contestazione")){
             handleModifyMainState({contestazioneSelected:{reportId:item.idReport}});
             readMessage(item.idMessaggio);
-            console.log({item,contentType});
             navigate(PathPf.STORICO_DETTAGLIO_CONTEST);
         }else if(contentType === "text/csv" || contentType === "application/json"){
             setShowDownloading(true);

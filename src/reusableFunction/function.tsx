@@ -12,8 +12,7 @@ export const fixResponseForDataGrid = (arr:any[]):any =>{
             ...singlObj
         };
     } );
-
-    console.log(res);
+    
     // Group by quarter
     const grouped = res.reduce((acc, moduli) => {
         const { quarter } = moduli;
@@ -23,7 +22,7 @@ export const fixResponseForDataGrid = (arr:any[]):any =>{
         acc[quarter].push(moduli);
         return acc;
     }, {});
-    console.log({grouped});
+ 
     // Convert to desired array structure and sort by quarter
     const arrayQuarters = Object.entries(grouped)
         .map(([quarter, moduli]) => ({ quarter, moduli }))
@@ -32,40 +31,40 @@ export const fixResponseForDataGrid = (arr:any[]):any =>{
             const [yearB, qB] = b.quarter.split('-Q').map(Number);
             return yearA !== yearB ? yearA - yearB : qA - qB;
         });
-
-
-
-    console.log({arrayQuarters});
-    const result = arrayQuarters.map((el:any)=> {
-        return {
-            id:Math.random(),
-            anno:el.quarter.slice(0,4),
-            quarter:el.quarter.slice(5,7),
-            stato:el.moduli.filter(el => el.source === "obbligatorio"|| el.source === "facoltativo").length > 0 ? "Da completare" : "Completo",
-            //totaleNotifiche:el.moduli.reduce((acc, item) => acc + item.totaleNotifiche, 0),
-            arrow:"",
-            moduli:el.moduli.map(mod => {
-                return {
-                    id:mod.meseValidita+"/"+mod.annoValidita,
-                    meseAnno:month[mod.meseValidita-1]+"/"+mod.annoValidita,
-                    stato:mod.stato||"--",
-                    dataInserimento:mod.dataInserimento.split('T')[0],
-                    dataChiusura:mod.dataChiusura.split('T')[0],
-                    totaleDig:mod.totaleDigitaleNaz > 0 ?mod.totaleDigitaleNaz:"--",
-                    totaleNotificheDigitaleInternaz:mod.totaleNotificheDigitaleInternaz > 0 ? mod.totaleNotificheDigitaleInternaz: "--",
-                    totaleAR:mod.totaleNotificheAnalogicoARInternaz > 0 ?mod.totaleNotificheAnalogicoARInternaz :"--",
-                    totaleARInt:mod.totaleNotificheAnalogicoARInternaz > 0 ? mod.totaleNotificheAnalogicoARInternaz: "--",    
-                    totaleAnalogico890Naz:mod.totaleNotificheAnalogico890Naz > 0 ? mod.totaleNotificheAnalogico890Naz: "--",
-                    totaleNotifiche:mod.totaleNotifiche,
-                    source:mod.source,
-                    modifica:mod.modifica,
-                    arrow:""
-                };
-            })
-        };
-    });
-
-    return result;
+    try{
+        const result = arrayQuarters.map((el:any)=> {
+            return {
+                id:el.quarter,
+                anno:el.quarter.slice(0,4),
+                quarter:el.quarter.slice(5,7),
+                stato:el.moduli.filter(el => el.source === "obbligatorio"|| el.source === "facoltativo").length > 0 ? "Da completare" : "Completo",
+                //totaleNotifiche:el.moduli.reduce((acc, item) => acc + item.totaleNotifiche, 0),
+                arrow:"",
+                moduli:el.moduli.map(mod => {
+                    return {
+                        id:mod.meseValidita+"/"+mod.annoValidita,
+                        meseAnno:month[mod.meseValidita-1]+"/"+mod.annoValidita,
+                        stato:mod.stato||"--",
+                        dataInserimento:mod.dataInserimento?.split('T')[0]|| "--",
+                        dataChiusura:mod.dataChiusura?.split('T')[0]|| "--",
+                        totaleDig:mod.totaleDigitaleNaz !== null ?mod.totaleDigitaleNaz:"--",
+                        totaleNotificheDigitaleInternaz:mod.totaleNotificheDigitaleInternaz !== null ? mod.totaleNotificheDigitaleInternaz: "--",
+                        totaleAR:mod.totaleNotificheAnalogicoARInternaz !== null ?mod.totaleNotificheAnalogicoARInternaz :"--",
+                        totaleARInt:mod.totaleNotificheAnalogicoARInternaz !== null ? mod.totaleNotificheAnalogicoARInternaz: "--",    
+                        totaleAnalogico890Naz:mod.totaleNotificheAnalogico890Naz !== null ? mod.totaleNotificheAnalogico890Naz: "--",
+                        totale:mod.totaleNotifiche !== null ? mod.totaleNotifiche : "--",
+                        source:mod.source,
+                        modifica:mod.modifica,
+                        arrow:""
+                    };
+                })
+            };
+        });
+        return result;
+    }catch(err){
+        console.log({mledetto:err});
+    }
+    
 };
 
 

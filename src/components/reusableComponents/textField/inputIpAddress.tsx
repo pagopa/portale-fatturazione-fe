@@ -32,10 +32,8 @@ const IPAddressInput = ({singleIp,getIPs,button,ipsToCompare,setLoading,disable}
             setDisableDeleteAddButton(false);
         
             if(err.response.status === 400){
-                console.log(1);
                 setErrorAlert({error:err.response.status,message:err.response.data.detail});
             }else{
-                console.log(2);
                 manageError(err, dispatchMainState);
             }
         });
@@ -91,7 +89,6 @@ const IPAddressInput = ({singleIp,getIPs,button,ipsToCompare,setLoading,disable}
         setCdr(value);
         if (Number(value) >= 8 && Number(value) <= 32) {
             if(ipsToCompare.map(el => el.ipAddress).includes(ipAddress+"/"+value)){
-                console.log('dentro');
                 setErrorCDR('IP Address già inserito');
                 setError('IP Address già inserito');
             } else {

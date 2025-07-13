@@ -20,7 +20,7 @@ const style = {
     borderRadius:'20px'
 };
 
-const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, getDatiFat, getDatiFatPagoPa, handleGetDettaglioModuloCommessa, handleGetDettaglioModuloCommessaPagoPa, mainState}) => {
+const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, getDatiFat, getDatiFatPagoPa, handleGetDettaglioModuloCommessa, mainState}) => {
     
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
@@ -93,12 +93,12 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
         }
         if(location.pathname === PathPf.MODULOCOMMESSA){
             if(profilo.auth === 'PAGOPA' && open.clickOn === 'INDIETRO_BUTTON'){
-                handleGetDettaglioModuloCommessaPagoPa();
+                handleGetDettaglioModuloCommessa();
                 setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
                 handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
 
             }else if(profilo.auth === 'PAGOPA' && open.clickOn !== 'INDIETRO_BUTTON'){
-                handleGetDettaglioModuloCommessaPagoPa();
+                handleGetDettaglioModuloCommessa();
                 navigate(open.clickOn);
                 setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
                 handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
@@ -124,8 +124,6 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
                 navigate(open.clickOn);
                 setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
                 handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
-                
-
             }
         }
        

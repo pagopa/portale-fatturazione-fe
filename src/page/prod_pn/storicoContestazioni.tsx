@@ -128,7 +128,7 @@ const Storico = () => {
         setRowsPerPage(10);
         setTotalContestazioni(0);
     };
-    console.log(valueYears);
+   
     const getAnni = async() => {
         setGetListaContestazioniRunning(true);
         await getAnniContestazioni(token,profilo.nonce)
@@ -188,7 +188,7 @@ const Storico = () => {
         let newBody = body;
         if(bodyGetLista.anno === "Tutti"){
             newBody = {...body,anno:null};
-            console.log({newBody},"222");
+    
         }
         console.log({newBody});
         await getListaStorico(token,profilo.nonce,newBody,pag,rowpag).then((res)=>{

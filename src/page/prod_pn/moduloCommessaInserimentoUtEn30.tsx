@@ -11,7 +11,7 @@ import { manageError } from '../../api/api';
 import { getDatiFatturazionePagoPa } from '../../api/apiPagoPa/datiDiFatturazionePA/api';
 import { getModuloCommessaPagoPa, modifyDatiModuloCommessaPagoPa } from '../../api/apiPagoPa/moduloComessaPA/api';
 import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
-import { getDettaglioModuloCommessa, insertDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
+import { getCommessaObbligatoriListaV2, getDettaglioModuloCommessa, insertDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
 import ModalRedirect from '../../components/commessaInserimento/madalRedirect';
 import ModalConfermaInserimento from '../../components/commessaInserimento/modalConfermaInserimento';
 import PrimoContainerInsCom from '../../components/commessaInserimento/primoContainerInsCom';
@@ -70,17 +70,13 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
     };
 }
 
-
-
 const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
-    console.log(99999);
+  
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState,openBasicModal_DatFat_ModCom,setOpenBasicModal_DatFat_ModCom} = globalContextObj;
-
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
-    const enti = profiliEnti(mainState);
     
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -130,9 +126,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             totaleValoreCategoriaSpedizione: 0
         }
     ]);
-
+  
     useEffect(()=>{
-      
         if(mainState.inserisciModificaCommessa === 'INSERT'){
             setTotaliModuloCommessa([
                 {
@@ -168,45 +163,22 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             });
         }
     },[mainState.inserisciModificaCommessa]);
-    /*
+
+
     useEffect(()=>{
-        //DA RIVEDERE DOPO AVERE DECISO LA LOGICA CON MAURO
-     
-        if(mainState.userClickOn === 'GRID'){
-            // SELFCARE
-            if(enti){
-                handleGetDettaglioModuloCommessa();
-                getDatiFat();
-                //PAGOPA
-            }else if(profilo.auth === 'PAGOPA'){
-                handleGetDettaglioModuloCommessaPagoPa();
-                getDatiFatPagoPa();
-            }
-        }
-        if(mainState.mese === '' || mainState.anno === ''){
-            navigate(PathPf.DATI_FATTURAZIONE);
-        }
-    },[]);
-*/
-    useEffect(()=>{
-        /*
-        if(token === undefined){   
-            window.location.href = redirect;
-        }
-        /* se l'utente PagoPA modifa l'url e cerca di accedere al path '/8' senza aver prima selezionato
-         una row della grid lista MODULI COMMESSA viene fatto il redirect automatico a  '/pagopalistamodulocommessa'
-        if(profilo.auth === 'PAGOPA' && !profilo.idEnte){
-            window.location.href = PathPf.LISTA_MODULICOMMESSA;
-        }
-        /* se l'utente selcare  modifica l'url andando ad inserire '/8' viene eseguito il redirect a datifatturazione
-        if(enti && !mainState.mese && !mainState.anno && mainState.inserisciModificaCommessa !== 'INSERT'){
-            window.location.href = PathPf.DATI_FATTURAZIONE;
-        }*/
-        if(mainState.datiFatturazione === false && profilo.auth !== 'PAGOPA'){
+        if(mainState.datiFatturazione === false){
             setOpenModalRedirect(true);
         }
+    },[mainState.datiFatturazione]);
+
+    useEffect(()=>{
+        handleGetDettaglioModuloCommessa();
     },[]);
 
+ 
+
+
+  
     useEffect(()=>{
         setTotale({
             totaleNazionale:calculateTot(datiCommessa.moduliCommessa,'numeroNotificheNazionali'),
@@ -215,11 +187,19 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     },[datiCommessa]);
 
 
+    const handleGetDettaglioModuloCommessa = async () =>{
+        //setLoadingData(true);
+        await getCommessaObbligatoriListaV2(token, profilo.nonce).then((response)=>{
+            console.log({dettaglioOBBligatorio:response});
+            // setLoadingData(false);
+        }).catch((err:ManageErrorResponse)=>{
+            manageError(err,dispatchMainState);
+            // setLoadingData(false);
+        });
+    };
 
     
-
-
-
+    /* da eliminare
     const handleGetDettaglioModuloCommessa = async () =>{
         setLoadingData(true);
         await getDettaglioModuloCommessa(token,mainState.anno,mainState.mese, profilo.nonce)
@@ -239,31 +219,14 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 setLoadingData(false);
             });
     };
+*/
 
-    const handleGetDettaglioModuloCommessaPagoPa = async () => {
-        setLoadingData(true);
-        await getModuloCommessaPagoPa(token, profilo.nonce,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto, Number(mainState.mese), Number(mainState.anno))
-            .then((response:ResponseDettaglioModuloCommessa)=>{
-                const res = response.data;
-                setDatiCommessa({moduliCommessa:res.moduliCommessa});
-                setTotaliModuloCommessa(res.totale);
-                const objAboutTotale = res.totaleModuloCommessaNotifica;
-                setTotale({totaleNazionale:objAboutTotale.totaleNumeroNotificheNazionali
-                    , totaleInternazionale:objAboutTotale.totaleNumeroNotificheInternazionali
-                    , totaleNotifiche:objAboutTotale.totaleNumeroNotificheDaProcessare});
-                setDataModifica(res.dataModifica);
-                setButtonMofica(res.modifica);
-                setLoadingData(false);
-            }).catch((err:ManageErrorResponse)=>{
-                manageError(err,dispatchMainState);
-                setLoadingData(false);
-            });
-    };
     // Lato self care
     // chiamata per capire se i dati fatturazione sono stati inseriti
     // SI.... riesco ad inserire modulo commessa
     //No.... redirect dati fatturazione
     // tutto gestito sul button 'continua' in base al parametro datiFatturazione del main state
+    //***********************************SECONDO ME LO POSSIAMO TOGLIERO O FARE UN CHECK VEDIAMO IN SEGUITO ***********************
     const getDatiFat = async () =>{
         await getDatiFatturazione(token,profilo.nonce).then(( ) =>{ 
             handleModifyMainState({
@@ -281,26 +244,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         });
     };
 
-    // Lato Pagopa
-    // chiamata per capire se i dati fatturazione sono stati inseriti
-    // SI.... riesco ad inserire modulo commessa
-    //No.... redirect dati fatturazione
-    // tutto gestito sul button 'continua' in base al parametro datiFatturazione del main state
-    const getDatiFatPagoPa = async () =>{
-        await getDatiFatturazionePagoPa(token,profilo.nonce, profilo.idEnte, profilo.prodotto ).then(() =>{   
-            handleModifyMainState({
-                datiFatturazione:true,
-                statusPageInserimentoCommessa:'immutable'});
-        }).catch(err =>{
-            if(err?.response?.status === 404){
-                handleModifyMainState({
-                    datiFatturazione:false,
-                    statusPageInserimentoCommessa:'immutable'
-                });
-            }
-        });
-    };
-  
     // funzione utilizzata con la response sul click modifica/insert modulo commessa , sia utente selcare che pagopa
     const toDoOnPostModifyCommessa = (res:ResponseDettaglioModuloCommessa) =>{
         if(mainState.inserisciModificaCommessa === 'MODIFY'){
@@ -339,33 +282,9 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             });
     };
 
-    const hendleModifyDatiModuloCommessaPagoPa = async() =>{
-        // probabilmente questo verra modificato con l'agginta del flag fatturabile
-        const datiCommessaPlusIdTpcProIdE = {
-            ...datiCommessa,
-            ...{
-                prodotto:profilo.prodotto,
-                idTipoContratto:profilo.idTipoContratto,
-                idEnte:profilo.idEnte,
-                fatturabile:true }};
-        await modifyDatiModuloCommessaPagoPa(datiCommessaPlusIdTpcProIdE, token, profilo.nonce)
-            .then((res)=>{
-                setOpenModalLoading(false);
-                setButtonMofica(true);
-                toDoOnPostModifyCommessa(res);
-            }).catch(err => {
-                setOpenModalLoading(false);
-                manageError(err,dispatchMainState); 
-            });
-    };
-
     const onButtonComfermaPopUp = () =>{
         setOpenModalLoading(true);
-        if(profilo.auth === 'PAGOPA'){
-            hendleModifyDatiModuloCommessaPagoPa();
-        }else{
-            hendlePostModuloCommessa();
-        }
+        hendlePostModuloCommessa();
     };
 
     const OnButtonSalva = () =>{
@@ -388,17 +307,16 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     };
 
     const onIndietroButton = () =>{
-        if(mainState.statusPageInserimentoCommessa === 'immutable' && profilo.auth !== 'PAGOPA'){
+        if(mainState.statusPageInserimentoCommessa === 'immutable'){
             navigate(PathPf.LISTA_COMMESSE);
-        }else if(mainState.statusPageInserimentoCommessa === 'immutable' && profilo.auth === 'PAGOPA'){
-            navigate(PathPf.LISTA_MODULICOMMESSA);
-        }else if(mainState.statusPageInserimentoCommessa === 'mutable' && profilo.auth === 'PAGOPA'){
+            // inserito con nuova logica modulo commessa trimestrale 
+            localStorage.setItem('redirectToInsert',JSON.stringify(false));
+            //
+        }else if(mainState.inserisciModificaCommessa === 'INSERT'){
             setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:'INDIETRO_BUTTON'}}));
-        }else if(mainState.inserisciModificaCommessa === 'INSERT'&& enti){
+        }else if(mainState.inserisciModificaCommessa === 'MODIFY' && mainState.statusPageInserimentoCommessa === 'mutable' ){
             setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:'INDIETRO_BUTTON'}}));
-        }else if(mainState.inserisciModificaCommessa === 'MODIFY' && mainState.statusPageInserimentoCommessa === 'mutable'&& enti ){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:'INDIETRO_BUTTON'}}));
-        } 
+        }
     };
     const cssPathModuloComm = mainState.statusPageInserimentoCommessa === 'immutable' ? 'bold' : 'normal';
     const cssPathAggModComm = mainState.statusPageInserimentoCommessa === 'mutable' ? 'bold' : 'normal';
@@ -443,7 +361,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
 
     return (
         <>
-            <BasicModal setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} dispatchMainState={dispatchMainState} handleGetDettaglioModuloCommessa={handleGetDettaglioModuloCommessa} handleGetDettaglioModuloCommessaPagoPa={handleGetDettaglioModuloCommessaPagoPa} mainState={mainState}></BasicModal>
+            <BasicModal setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} dispatchMainState={dispatchMainState} handleGetDettaglioModuloCommessa={handleGetDettaglioModuloCommessa}  mainState={mainState}></BasicModal>
             {/*Hide   modulo commessa sul click contina , save del modulo commessa cosi da mostrare dati fatturazione,
             il componente visualizzato è AreaPersonaleUtenteEnte  */}
            

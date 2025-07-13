@@ -7,10 +7,13 @@ import is from "date-fns/esm/locale/is/index.js";
 import { useNavigate } from "react-router";
 import ModalRedirect from "../../../commessaInserimento/madalRedirect";
 import ModalInfo from "../../modals/modalInfo";
+import { PathPf } from "../../../../types/enum";
+import GridCustom from "../gridCustom";
+import { subHeaderNameModComTrimestraleENTE } from "../../../../assets/configurations/config_SubGridModComEnte";
 
 
 const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element, mandatoryEl}) => {
-    console.log({EL:element,mandatoryEl});
+  
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const [openModalModObbligatori,setOpenModalModObbligatori] = useState({open:false,sentence:''});
@@ -31,11 +34,11 @@ const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element, m
 
 
     const handleClickOnSingleEl = (el) =>{
-        console.log('ellelelllll',el);
+    
         if(mandatoryEl && el.source !== "obbligatorio" && el.source !== "archiviato" ){
             setOpenModalModObbligatori({open:true,sentence:'Per inserire i moduli commessa futuri bisogna prima inserire i moduli commessa OBBLIGATORI'});
         }else{
-            navigate("/modulocommessa");
+            navigate(PathPf.MODULOCOMMESSA);
         }
        
     };
@@ -99,30 +102,27 @@ const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element, m
                             <Typography sx={{marginLeft:"6px"}} variant="h6" gutterBottom component="div">
                                 {`Moduli commessa ${element.anno}/${element.quarter}`}
                             </Typography>
+                            
                             <Table size="small" aria-label="purchases">
                                 <TableHead>
                                     <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
-                                        <TableCell align="center" >Mese/Anno</TableCell>
-                                        <TableCell align="center" >Stato</TableCell>
-                                        <TableCell align="center" >Data Inserimento</TableCell>
-                                        <TableCell align="center" >Data chiusura</TableCell>
-                                        <TableCell align="center" >Tot. Digit.</TableCell>
-                                        <TableCell align="center" >Tot. Digit. Int.</TableCell>
-                                        <TableCell align="center" >Tot. AR.</TableCell>
-                                        <TableCell align="center" >Tot. AR. Int.</TableCell>
-                                        <TableCell align="center" >Tot. 890.</TableCell>
-                                        <TableCell align="center" >Tot. Not.</TableCell>
+                                        {subHeaderNameModComTrimestraleENTE.map((el,i)=>{
+                                            return <TableCell align={el.align} key={i}>{el.label}</TableCell>;
+                                        }  
+                                        )}
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {element.moduli.map(el => {
                                         return(
                                         
-                                            <DefaultRow handleClickOnGrid={handleClickOnSingleEl} element={el} sliced={el} apiGet={goToDetails} nameParameterApi={"test"} ></DefaultRow>
+                                            <DefaultRow handleClickOnGrid={handleClickOnSingleEl} element={el} sliced={el} apiGet={goToDetails} nameParameterApi={"test"} headerNames={subHeaderNameModComTrimestraleENTE}></DefaultRow>
                                         );
                                     })}
                                 </TableBody>
                             </Table>
+                        
+                           
                         </Box>
                     </Collapse>
                 </TableCell>

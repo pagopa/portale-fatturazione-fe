@@ -1,4 +1,4 @@
-import {  Route} from "react-router-dom";
+import {  Route } from "react-router-dom";
 import { PathPf } from "../../types/enum";
 import LayoutEnte from "../../layout/layOutLoggedInEnte";
 import AreaPersonaleUtenteEnte from "../../page/prod_pn/areaPersonaleUtenteEnte";
@@ -19,6 +19,7 @@ import DettaglioStoricoContestazione from "../../page/prod_pn/dettaglioStoricoCo
 
 
 const EnteRoute  : React.FC<{apiIsVisible:boolean|null}> = ({apiIsVisible}) => {
+
 
     const enteRoute =  <Route element={<LayoutEnte sideNav={<SideNavEnte/>}></LayoutEnte>}>
         <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte ></AreaPersonaleUtenteEnte>}/>                                     

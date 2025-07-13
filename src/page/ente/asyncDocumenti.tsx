@@ -186,8 +186,6 @@ const AsyncDocumenti = () => {
             await getMessaggiCountEnte(token,profilo.nonce).then((res)=>{
                 const numMessaggi = res.data;
                 setCountMessages(numMessaggi);
-            }).catch((err)=>{
-                console.log(err);
             });
     
             await listaDoc(bodyGetLista,page,rowsPerPage); 

@@ -52,7 +52,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
     const [years,setYears] = useState<number[]>([]);
     const [monthsCommessa,setMonthsCommessa] = useState<{[key:number]:number[]}>({});
     const [yearMonths, setYearMonths] = useState<number[]>([]);
-    console.log({years,monthsCommessa,yearMonths});
+   
 
     const { 
         filters,

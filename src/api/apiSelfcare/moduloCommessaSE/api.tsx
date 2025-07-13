@@ -157,5 +157,22 @@ export const getListaCommessaFilteredV2 = async (token:string, nonce:string, val
             }});
         return response;
     }
-   
+};
+
+export const getCommessaObbligatoriVerificaV2 = async (token:string, nonce:string) =>{
+    const response = await axios.get(
+        `${url}/api/v2/modulocommessa/obbligatori/verifica?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }});
+    return response;
+};
+
+export const getCommessaObbligatoriListaV2 = async (token:string, nonce:string) =>{
+    const response = await axios.get(
+        `${url}/api/v2/modulocommessa/obbligatori/lista?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }});
+    return response;
 };

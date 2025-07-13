@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useRef } from 'react';
 import { useState, useEffect } from 'react';
 import {
     List,
@@ -35,6 +35,8 @@ const SideNavEnte: React.FC = () => {
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 
+
+
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
             type:'MODIFY_MAIN_STATE',
@@ -45,11 +47,15 @@ const SideNavEnte: React.FC = () => {
     const [selectedIndex, setSelectedIndex] = useState<number | null>(0);
     const [openContestazioni, setOpenContestazioni] = useState(false);
     
-    const handleListItemClick = async() => {
+    const handleListItemClick = async(pathToGo) => {
+        console.log(PathPf.LISTA_COMMESSE);
+        if(pathToGo === PathPf.LISTA_COMMESSE){
+            localStorage.setItem('redirectToInsert',JSON.stringify(true));
+        }
         if(((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA))){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.DATI_FATTURAZIONE}}));
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:pathToGo}}));
         }else{
-            navigate(PathPf.DATI_FATTURAZIONE);
+            navigate(pathToGo);
         } 
     };
 
@@ -73,88 +79,6 @@ const SideNavEnte: React.FC = () => {
 
     };
 
-    const handleListItemClickModuloCommessa = async () => {
-        if(mainState.inserisciModificaCommessa === 'INSERT'&& location.pathname === PathPf.MODULOCOMMESSA){
-            console.log('il nulla');
-        }else if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)|| (mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.LISTA_COMMESSE}}));
-        }else{
-            //cliccando sulla side nav Modulo commessa e sono un ente qualsiasi
-            await getDatiFat();
-            await getDatiModuloCommessa(token, profilo.nonce).then((res)=>{
-                if(res.data.modifica === true && res.data.moduliCommessa.length === 0 ){
-                    handleModifyMainState({
-                        inserisciModificaCommessa:'INSERT',
-                        statusPageInserimentoCommessa:'mutable',
-                        userClickOn:undefined,
-                        primoInserimetoCommessa:true,
-                        mese:res.data.mese,
-                        anno:res.data.anno,
-                    });
-                    navigate(PathPf.MODULOCOMMESSA);
-                }else if(res.data.modifica === true && res.data.moduliCommessa.length > 0 ){
-                    handleModifyMainState({
-                        inserisciModificaCommessa:'MODIFY',
-                        statusPageInserimentoCommessa:'immutable',
-                        primoInserimetoCommessa:false});
-                    navigate(PathPf.LISTA_COMMESSE);
-                }else if(res.data.modifica === false && res.data.moduliCommessa.length === 0){
-                    handleModifyMainState({
-                        inserisciModificaCommessa:'NO_ACTION',
-                        statusPageInserimentoCommessa:'immutable',
-                        primoInserimetoCommessa:false});
-                    navigate(PathPf.LISTA_COMMESSE);
-                }else if(res.data.modifica === false && res.data.moduliCommessa.length > 0){
-                    handleModifyMainState({
-                        inserisciModificaCommessa:'NO_ACTION',
-                        statusPageInserimentoCommessa:'immutable',
-                        primoInserimetoCommessa:false}); 
-                    navigate(PathPf.LISTA_COMMESSE);
-                }
-            }).catch((err) =>{
-                manageError(err,dispatchMainState);
-            });
-        }
-    };
-
-    const handleListItemClickNotifiche = () => {
-        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.LISTA_NOTIFICHE}}));
-        }else{
-            navigate(PathPf.LISTA_NOTIFICHE);
-        }
-    };
-
-    const handleListItemClickRel = async () => {
-        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.LISTA_REL}}));
-        }else{
-            navigate(PathPf.LISTA_REL);
-        }
-    };
-
-    const handleListItemAsyncDoc = async () => {
-        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.ASYNC_DOCUMENTI_ENTE}}));
-        }else{
-            navigate(PathPf.ASYNC_DOCUMENTI_ENTE);
-        }
-    };
-    const handleListItemClickApiKey = async () => {
-        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.API_KEY_ENTE}}));
-        }else{
-            navigate(PathPf.API_KEY_ENTE);
-        }
-    };
-
-    const handleListItemClickContestazioni = () =>{
-        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.STORICO_CONTEST_ENTE}}));
-        }else{
-            navigate(PathPf.STORICO_CONTEST_ENTE);
-        }
-    };
 
     const currentLocation = location.pathname;
 
@@ -203,25 +127,25 @@ const SideNavEnte: React.FC = () => {
         }}
         >
             <List component="nav" aria-label="main piattaforma-notifiche sender">
-                <><ListItemButton selected={selectedIndex === 0} onClick={handleListItemClick}>
+                <><ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick(PathPf.DATI_FATTURAZIONE)}>
                     <ListItemIcon>
                         <DnsIcon fontSize="inherit"></DnsIcon>
                     </ListItemIcon>
                     <ListItemText primary="Dati di fatturazione" />
                 </ListItemButton>
-                <ListItemButton selected={selectedIndex === 1} onClick={handleListItemClickModuloCommessa}>
+                <ListItemButton selected={selectedIndex === 1} onClick={() =>handleListItemClick(PathPf.LISTA_COMMESSE)}>
                     <ListItemIcon>
                         <ViewModuleIcon fontSize="inherit" />
                     </ListItemIcon>
                     <ListItemText primary="Modulo commessa" />
                 </ListItemButton></>
-                <ListItemButton selected={selectedIndex === 2} onClick={handleListItemClickNotifiche}>
+                <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClick(PathPf.LISTA_NOTIFICHE)}>
                     <ListItemIcon>
                         <MarkUnreadChatAltIcon fontSize="inherit" />
                     </ListItemIcon>
                     <ListItemText primary="Notifiche" />
                 </ListItemButton>
-                <ListItemButton selected={selectedIndex === 3} onClick={handleListItemClickRel}>
+                <ListItemButton selected={selectedIndex === 3} onClick={()=>handleListItemClick(PathPf.LISTA_REL)}>
                     <ListItemIcon>
                         <ManageAccountsIcon fontSize="inherit" />
                     </ListItemIcon>
@@ -230,14 +154,14 @@ const SideNavEnte: React.FC = () => {
                         <ListItemText primary="Documenti di cortesia" />
                     </Box>
                 </ListItemButton>
-                <ListItemButton selected={selectedIndex === 8} onClick={handleListItemAsyncDoc}>
+                <ListItemButton selected={selectedIndex === 8} onClick={() => handleListItemClick(PathPf.ASYNC_DOCUMENTI_ENTE)}>
                     <ListItemIcon>
                         <DownloadIcon fontSize="inherit"/>
                     </ListItemIcon>
                     <ListItemText primary="Download documenti"/>
                 </ListItemButton>
                 {mainData.apiKeyPage.visible &&
-                <ListItemButton selected={selectedIndex === 5} onClick={() => handleListItemClickApiKey()}>
+                <ListItemButton selected={selectedIndex === 5} onClick={() => handleListItemClick(PathPf.API_KEY_ENTE)}>
                     <ListItemIcon>
                         <VpnKeyIcon fontSize="inherit" />
                     </ListItemIcon>
@@ -286,7 +210,7 @@ export default SideNavEnte;
                 </ListItemButton>
                 <Collapse in={openContestazioni} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
-                        <ListItemButton selected={selectedIndex === 6} sx={{ pl: 4 }} onClick={handleListItemClickContestazioni}>
+                        <ListItemButton selected={selectedIndex === 6} sx={{ pl: 4 }} onClick={() =>handleListItemClick(PathPf.STORICO_CONTEST_ENTE)}>
                             <ListItemIcon>
                                 <GavelIcon />
                             </ListItemIcon>

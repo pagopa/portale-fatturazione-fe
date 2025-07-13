@@ -108,7 +108,7 @@ const DettaglioStoricoContestazione = () => {
             });
         }else{
             await getDettaglioContestazionePA(token,profilo.nonce,{idReport:singleContest?.reportId}).then((res)=>{
-                console.log({res});
+            
                 handleModifyMainState({contestazioneSelected:res.data.reportContestazione});
             }).catch((err)=>{
                 manageError(err,dispatchMainState);

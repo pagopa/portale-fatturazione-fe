@@ -372,7 +372,7 @@ const ModuloCommessaInserimentoPn : React.FC = () => {
 
     return (
         <>
-            <BasicModal setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} dispatchMainState={dispatchMainState} handleGetDettaglioModuloCommessa={handleGetDettaglioModuloCommessa} handleGetDettaglioModuloCommessaPagoPa={handleGetDettaglioModuloCommessaPagoPa} mainState={mainState}></BasicModal>
+            <BasicModal setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} dispatchMainState={dispatchMainState} handleGetDettaglioModuloCommessa={handleGetDettaglioModuloCommessa}  mainState={mainState}></BasicModal>
             {/*Hide   modulo commessa sul click contina , save del modulo commessa cosi da mostrare dati fatturazione,
             il componente visualizzato è AreaPersonaleUtenteEnte  */}
             <div className="marginTop24 ms-5 me-5">
