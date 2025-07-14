@@ -20,14 +20,12 @@ import { headerNameModComTrimestraleENTE } from '../../assets/configurations/con
 const ModuloCommessaElencoUtPa: React.FC = () => {
 
     const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState, mainState , openBasicModal_DatFat_ModCom} = globalContextObj;
+    const {dispatchMainState, mainState}  = globalContextObj;
 
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
-    const location = useLocation();
   
-
     const [valueSelect, setValueSelect] = useState('');
     
     const handleModifyMainState = (valueObj) => {
@@ -49,14 +47,14 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
     useEffect(()=>{
         if(mainState.datiFatturazione === false || mainState.datiFatturazioneNotCompleted){
             setOpenModalRedirect(true);
+            setLoadingMandatory(false);
+            console.log(888);
         }else{
             getAnniSelect();
             getListaCommessaGrid('');
             verificaObbligatoriToInsert();
         }
     },[mainState.datiFatturazione,mainState.datiFatturazioneNotCompleted]);
-
-
 
 
     const verificaObbligatoriToInsert = async() => {

@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import { Grid , Typography} from '@mui/material';
 import LabelComponent from './label';
 import { PrimoContainerInsComProps } from '../../types/typeModuloCommessaInserimento';
-import { getProfilo, getStatusApp } from '../../reusableFunction/actionLocalStorage';
 import { month } from '../../reusableFunction/reusableArrayObj';
 import { GlobalContext } from '../../store/context/globalContext';
 
@@ -10,7 +9,6 @@ const PrimoContainerInsCom : React.FC<PrimoContainerInsComProps> = () => {
     const globalContextObj = useContext(GlobalContext);
     const {mainState} = globalContextObj;
    
-    const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     
  

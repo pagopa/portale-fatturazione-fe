@@ -1,14 +1,12 @@
 import React, { useEffect, useState} from 'react';
 import { Grid, Typography } from '@mui/material';
-import RowInserimentoCommessa from './rowInserimentoCommessa';
-import { ResponseCategorieSpedizione, SecondoContainerProps   } from '../../types/typeModuloCommessaInserimento';
+import { ResponseCategorieSpedizione  } from '../../types/typeModuloCommessaInserimento';
 import { manageError } from '../../api/api';
 import { ManageErrorResponse } from '../../types/typesGeneral';
 import { getCategoriaSpedizione } from '../../api/apiSelfcare/moduloCommessaSE/api';
-
 import { getIdByTipo } from '../../reusableFunction/function';
-
-const SecondoContainerInsCom = ({totale, mainState,dispatchMainState, setDatiCommessa,datiCommessa}) => {
+import RowInserimentoCommessaTrimestrale from './rowInserimentoCommessaTrimestrale';
+const SecondoContainerTrimestrale = ({totale, mainState,dispatchMainState, setDatiCommessa,datiCommessa,meseAnno,modifica}) => {
 
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
@@ -39,38 +37,43 @@ const SecondoContainerInsCom = ({totale, mainState,dispatchMainState, setDatiCom
         <div className="m-3 pl-5 ">
             <hr></hr>
             {/* prima row start */}
-            <RowInserimentoCommessa
+            <RowInserimentoCommessaTrimestrale
+                
                 sentence="Numero complessivo delle notifiche da processare in via digitale nel mese di"
                 textBoxHidden={false}
                 idTipoSpedizione={arrTipoSpedizione.idSpedizioneDigitale}
                 rowNumber={3}
-                mainState={mainState}
                 setDatiCommessa={setDatiCommessa}
                 datiCommessa={datiCommessa}
-            />
+                meseAnno={meseAnno}
+                modifica={modifica} />
             {/* prima row end */}
             <hr></hr>
             {/* seconda row start */}
-            <RowInserimentoCommessa
+            <RowInserimentoCommessaTrimestrale
+              
                 sentence="Numero complessivo delle notifiche da processare in via analogica tramite Raccomandata A/R nel mese di"
                 textBoxHidden={false}
                 idTipoSpedizione={arrTipoSpedizione.idSpedizioneAnalogAR}
                 rowNumber={1}
-                mainState={mainState}
                 setDatiCommessa={setDatiCommessa}
                 datiCommessa={datiCommessa}
+                meseAnno={meseAnno}
+                modifica={modifica}
             />
             {/* seconda row end */}
             {/* terza row start */}
             <hr></hr>
-            <RowInserimentoCommessa
+            <RowInserimentoCommessaTrimestrale
+              
                 sentence="Numero complessivo delle notifiche da processare in via analogica del tipo notifica ex L. 890/1982 nel mese di"
                 textBoxHidden
                 idTipoSpedizione={arrTipoSpedizione.idSpedizioneAnalog890}
                 rowNumber={2}
-                mainState={mainState}
                 setDatiCommessa={setDatiCommessa}
                 datiCommessa={datiCommessa}
+                meseAnno={meseAnno}
+                modifica={modifica}
             />
             <hr></hr>
             {/* terza row end */}
@@ -133,4 +136,4 @@ const SecondoContainerInsCom = ({totale, mainState,dispatchMainState, setDatiCom
         </div>
     );
 };
-export default  SecondoContainerInsCom;
+export default  SecondoContainerTrimestrale;
