@@ -25,7 +25,8 @@ export interface DataGridCommessa{
     totale: string,
     dataModifica: string,
     totaleDigitale: string,
-    totaleAnalogico: string
+    totaleAnalogico: string,
+    moduli?:any[]
     
 }
 

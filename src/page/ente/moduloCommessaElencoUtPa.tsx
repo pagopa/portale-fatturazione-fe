@@ -15,6 +15,7 @@ import { PathPf } from '../../types/enum';
 import { ManageErrorResponse } from '../../types/typesGeneral';
 import GridCustom from '../../components/reusableComponents/grid/gridCustom';
 import { headerNameModComTrimestraleENTE } from '../../assets/configurations/conf_GridModComEnte';
+import ModalInfo from '../../components/reusableComponents/modals/modalInfo';
 
 
 const ModuloCommessaElencoUtPa: React.FC = () => {
@@ -43,6 +44,10 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
     const [totDoc,setTotDoc] = useState(0);
     const [loadingMandatory, setLoadingMandatory] = useState(true);
     const [showButtonInsertModulo,setShowButtonInsertModulo] = useState(false);
+    const [openModalModObbligatori,setOpenModalModObbligatori] = useState({open:false,sentence:''});
+
+
+
 
     useEffect(()=>{
         if(mainState.datiFatturazione === false || mainState.datiFatturazioneNotCompleted){
@@ -53,6 +58,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
             getAnniSelect();
             getListaCommessaGrid('');
             verificaObbligatoriToInsert();
+            handleModifyMainState({infoTrimestreComSelected:{}});
         }
     },[mainState.datiFatturazione,mainState.datiFatturazioneNotCompleted]);
 
@@ -129,9 +135,46 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
     const headerAction = () => {
         console.log("action");
     };
+    console.log({gridData});
+    const handleClickOnDetail = (el) => {
+        const isMandatory = gridData?.map(el => el?.moduli?.map(el => el.source === "obbligatorio" && el.stato === "--" ? true:false)).flat().includes(true);
+        const quarterSelected = gridData.find(dataEl => dataEl.id === el.quarter); 
+        const quarterSelectedIndex = gridData.findIndex(dataEl => dataEl.id === el.quarter);
+        const moduloSelectedIndex =  quarterSelected?.moduli?.findIndex(elMod => elMod.id === el.id);
+        const result:any[] = [];
 
-    const handleClickOnDetail = () => {
-        console.log("click on detail");
+        for (const item of quarterSelected?.moduli||[]) {
+            if (item.source === "obbligatorio" && item.stato === "--") break;
+            result.push(item);
+        }
+
+     
+       
+        if( isMandatory && el.source === "facoltativo" ){
+            setOpenModalModObbligatori({open:true,sentence:'Per inserire i moduli commessa futuri bisogna prima inserire i moduli commessa OBBLIGATORI'});
+        }else if(isMandatory && el.source === "archiviato"){
+            handleModifyMainState({infoTrimestreComSelected:{
+                meseCommessaSelected:el.id.length === 6 ? el.id.slice(0,1):el.id.slice(0,2),
+                annoCommessaSelectd:el.id.length === 6 ?el.id.slice(2,6):el.id.slice(3,7),
+                moduli:result,
+                quarterSelectedIndex,
+                moduloSelectedIndex
+            }});
+            navigate(PathPf.MODULOCOMMESSA);
+        }else if(!isMandatory){
+            handleModifyMainState({infoTrimestreComSelected:{
+                meseCommessaSelected:el.id.length === 6 ? el.id.slice(0,1):el.id.slice(0,2),
+                annoCommessaSelectd:el.id.length === 6 ?el.id.slice(2,6):el.id.slice(3,7),
+                moduli:result,
+                quarterSelectedIndex,
+                moduloSelectedIndex
+            }});
+            navigate(PathPf.MODULOCOMMESSA);
+        }else if(isMandatory && el.source === "obbligatorio"){
+            navigate(PathPf.MODULOCOMMESSA);
+        }
+      
+        
     };
     //_________________________________________________________
     return (
@@ -237,6 +280,9 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
                         setOpen={setOpenModalRedirect}
                         open={openModalRedirect}
                         sentence={`Per poter inserire il modulo commessa è obbligatorio fornire  i seguenti dati di fatturazione:`}></ModalRedirect>
+                    <ModalInfo 
+                        setOpen={setOpenModalModObbligatori}
+                        open={openModalModObbligatori}></ModalInfo>
                 </div>
             }
         </>

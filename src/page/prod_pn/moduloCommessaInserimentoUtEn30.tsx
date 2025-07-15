@@ -1,15 +1,14 @@
 import {useState,useEffect, useContext} from 'react';
-import {Typography, Button, Stepper, Step, StepButton, StepLabel, Grid, Paper, TextField, Tooltip, IconButton, FormControl, InputLabel, Select, OutlinedInput, Box, Chip, MenuItem, Theme, useTheme, SelectChangeEvent} from '@mui/material';
+import {Typography, Button, Stepper, Step, StepButton, Tooltip, IconButton,  Theme, useTheme, SelectChangeEvent, Box, Skeleton, StepLabel} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { useNavigate } from 'react-router';
-import InfoIcon from '@mui/icons-material/Info';
-import AddIcon from '@mui/icons-material/Add';
+import EditNoteIcon from '@mui/icons-material/EditNote';
 import { GlobalContext } from '../../store/context/globalContext';
 import { manageError } from '../../api/api';
 import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
-import { getCommessaObbligatoriListaV2, getDettaglioModuloCommessa, insertDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
+import { getCommessaObbligatoriListaV2, getCommessaObbligatoriVerificaV2, getDettaglioModuloCommessa, insertDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
 import ModalRedirect from '../../components/commessaInserimento/madalRedirect';
 import ModalConfermaInserimento from '../../components/commessaInserimento/modalConfermaInserimento';
 import SkeletonComIns from '../../components/commessaInserimento/skeletonComIns';
@@ -23,6 +22,9 @@ import { DatiCommessa, ResponseDettaglioModuloCommessa, ResponsTotaliInsModuloCo
 import PrimoContainerInsComTrimestrale from '../../components/commessaInserimentoTrimestrale/primoContainerTrimestrale';
 import SecondoContainerTrimestrale from '../../components/commessaInserimentoTrimestrale/secondoContainerTrimestrale';
 import TerzoContainerTrimestrale from '../../components/commessaInserimentoTrimestrale/terzoContainerTrimestrale';
+import SaveIcon from '@mui/icons-material/Save';
+import ModalAlert from '../../components/reusableComponents/modals/modalAlert';
+
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -117,7 +119,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     const [loadingData, setLoadingData] = useState(true);
     const [totale, setTotale] = useState<TotaleNazionaleInternazionale>({totaleNazionale:0, totaleInternazionale:0, totaleNotifiche:0});
     const [dataMod, setDataModifica] = useState('');
-    const [buttonModifica, setButtonMofica] = useState(false);
+   
     const [openModalLoading, setOpenModalLoading] = useState(false);
     const [openModalConfermaIns, setOpenModalConfermaIns] = useState(false);
     //new logic__________________
@@ -125,8 +127,15 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     const [dataModuli, setDataModuli] = useState<ModuloCommessaType[]>([]);
     const [dataModuloToVisualize,setDataModuloToVisualize] = useState<ModuloCommessaType>();
     const [stepCompleted,setStepCompleted] = useState<{[k: number]: boolean}>({});
-    const [stepActive, setActiveStep] = useState<number>(0);
+    //const [stepActive, setActiveStep] = useState<number>(0);
     const [steps, setSteps] = useState<string[]>([]);
+    const [modificaCommessa,setModificaCommessa] = useState(false);
+    const [isNewCommessa, setIsNewCommessa] = useState(false);
+    const [openModalAlert,setOpenModalAlert] = useState(false);
+    const [isObbligatorioLayout, setIsObbligatorioLayout] = useState(false);
+    const [infoCommessa,setInfoCommessa] = useState({anno:"",mese:"",idTipoContratto:0,isEditable:false});
+    const [activeStep, setActiveStep] = useState(0);
+    const [skipped, setSkipped] = useState(new Set<number>());
   
 
 
@@ -213,59 +222,115 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         handleGetDettaglioModuloCommessa();
     },[]);
 
- 
+    /* da verificare con l'inserimento modifica
     useEffect(()=>{
         setTotale({
             totaleNazionale:calculateTot(datiCommessa.moduliCommessa,'numeroNotificheNazionali'),
             totaleInternazionale:calculateTot(datiCommessa.moduliCommessa,'numeroNotificheInternazionali'),
             totaleNotifiche:calculateTot(datiCommessa.moduliCommessa,'totaleNotifiche')});
     },[datiCommessa]);
-
+*/
 
     const handleGetDettaglioModuloCommessa = async () =>{
-        //setLoadingData(true);
-        await getCommessaObbligatoriListaV2(token, profilo.nonce).then((response)=>{
-            console.log({dettaglioOBBligatorio:response});
-            setDataModuli(response.data);
-            setDataObbligatori(response.data.map(el => el.stato === null).flat().includes(true));
+        setLoadingData(true);
+        await getCommessaObbligatoriVerificaV2(token, profilo.nonce).then(async(res)=>{
+            //RIMETTERE  setIsObbligatorioLayout(res.data);
+            
+            if(res.data && Object.keys(mainState.infoTrimestreComSelected).length === 0){
+                setIsObbligatorioLayout(res.data);
+                //setLoadingData(true);
+                await getCommessaObbligatoriListaV2(token, profilo.nonce).then((response)=>{
+                    console.log({dettaglioOBBligatorio:response});
+                    setDataModuli(response.data);
+                    setDataObbligatori(response.data.map(el => el.stato === null).flat().includes(true));
 
-            const stepsResult = response.data.map(el => month[el.meseValidita-1]);
-            setSteps(stepsResult);
+                    const stepsResult = response.data.map(el => month[el.meseValidita-1]);
+                    setSteps(stepsResult);
 
-            const completedResult = response.data.map((el,i) => ({[i+1]:el.stato !== null?true:false}));
-            setStepCompleted(Object.assign({}, ...completedResult));
+                    const completedResult = response.data.map((el,i) => ({[i+1]:el.stato !== null?true:false}));
+                    setStepCompleted(Object.assign({}, ...completedResult));
 
-            const activeStepResult = response.data.findIndex(item => item.stato === null);
-            setActiveStep(activeStepResult);
+                    const activeStepResult = response.data.findIndex(item => item.stato === null);
+                    setActiveStep(activeStepResult);
 
-            //sistemare quando mauro ci darà l'api , probabilmente da eliminare questo state
-            setDataModuloToVisualize(response.data[activeStepResult]);
+                    //sistemare quando mauro ci darà l'api , probabilmente da eliminare questo state
+                    setDataModuloToVisualize(response.data[activeStepResult]);
 
-            handleGetDettaglioModuloCommessaVecchio(response.data[activeStepResult].annoValidita,response.data[activeStepResult].meseValidita);
-            //setLoadingData(false);
-        }).catch((err:ManageErrorResponse)=>{
-            manageError(err,dispatchMainState);
-            setLoadingData(false);
+                    handleGetDettaglioModuloCommessaVecchio(response.data[activeStepResult].annoValidita,response.data[activeStepResult].meseValidita);
+                    //setLoadingData(false);
+                }).catch((err:ManageErrorResponse)=>{
+                    manageError(err,dispatchMainState);
+                    setLoadingData(false);
+                });
+            }else{
+                handleGetDettaglioModuloCommessaVecchio(mainState?.infoTrimestreComSelected?.annoCommessaSelectd,mainState?.infoTrimestreComSelected?.meseCommessaSelected);
+                const completedResult = mainState?.infoTrimestreComSelected?.moduli?.map((el,i) => ({[i+1]:el?.stato !== "--"?true:false}));
+                console.log({completedResult});
+                setStepCompleted(Object.assign({}, ...completedResult));
+                setActiveStep(Number(mainState.infoTrimestreComSelected.moduloSelectedIndex));
+                const stepsResult = mainState.infoTrimestreComSelected.moduli.map(el => el.meseAnno.split('/')[0]||"");
+                setSteps(stepsResult);
+                
+            }
         });
+
+       
     };
 
-    console.log({steps, stepActive,stepCompleted});
+    console.log({steps, activeStep,stepCompleted});
   
     const handleGetDettaglioModuloCommessaVecchio = async (year,month) =>{
-        //setLoadingData(true);
+        setLoadingData(true);
         await getDettaglioModuloCommessa(token,year,month, profilo.nonce)
             .then((response:ResponseDettaglioModuloCommessa)=>{
                 console.log(response.data);
-                
                 const res = response.data;
+                setInfoCommessa({anno:res.anno.toString(),mese:res.mese.toString(),idTipoContratto:res.idTipoContratto,isEditable:res.modifica});
+                if(res.totale.length > 0){
+                    setDatiCommessa({moduliCommessa:res.moduliCommessa});
+                    const objAboutTotale = res.totaleModuloCommessaNotifica;
+                    setTotale({totaleNazionale:objAboutTotale.totaleNumeroNotificheNazionali
+                        , totaleInternazionale:objAboutTotale.totaleNumeroNotificheInternazionali
+                        , totaleNotifiche:objAboutTotale.totaleNumeroNotificheDaProcessare});
+                   
+                }else{
+                    setDatiCommessa({
+                        moduliCommessa: [
+                            {
+                                numeroNotificheNazionali: 0,
+                                numeroNotificheInternazionali: 0,
+                                totaleNotifiche:0,
+                                idTipoSpedizione: 1
+                            },
+                            {
+                                numeroNotificheNazionali: 0,
+                                numeroNotificheInternazionali: 0,
+                                totaleNotifiche:0,
+                                idTipoSpedizione: 2
+                            },
+                            {
+                                numeroNotificheNazionali: 0,
+                                numeroNotificheInternazionali: 0,
+                                totaleNotifiche:0,
+                                idTipoSpedizione: 3
+                            }
+                        ]
+                    });
+                    setTotaliModuloCommessa([
+                        {
+                            idCategoriaSpedizione: 1,
+                            totaleValoreCategoriaSpedizione: 0
+                        },
+                        {
+                            idCategoriaSpedizione: 2,
+                            totaleValoreCategoriaSpedizione: 0
+                        }
+                    ]);
+                    setTotale({totaleNazionale:0, totaleInternazionale:0, totaleNotifiche:0});
+                }
+                
                 setDataModifica(res.dataModifica);
-                setDatiCommessa({moduliCommessa:res.moduliCommessa});
-                setTotaliModuloCommessa(res.totale);
-                const objAboutTotale = res.totaleModuloCommessaNotifica;
-                setTotale({totaleNazionale:objAboutTotale.totaleNumeroNotificheNazionali
-                    , totaleInternazionale:objAboutTotale.totaleNumeroNotificheInternazionali
-                    , totaleNotifiche:objAboutTotale.totaleNumeroNotificheDaProcessare});
-                setButtonMofica(res.modifica);
+                setIsNewCommessa(!res.modifica && res.totale.length === 0);
                 setLoadingData(false);
             }).catch((err:ManageErrorResponse)=>{
                 manageError(err,dispatchMainState);
@@ -273,7 +338,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             });
     };
 
-
+    console.log({isNewCommessa});
     // Lato self care
     // chiamata per capire se i dati fatturazione sono stati inseriti
     // SI.... riesco ad inserire modulo commessa
@@ -326,7 +391,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         await insertDatiModuloCommessa(datiCommessa, token, profilo.nonce)
             .then(res =>{
                 setOpenModalLoading(false);
-                setButtonMofica(true);
+                // setButtonMofica(true);
                 toDoOnPostModifyCommessa(res);
             } )
             .catch(err => {
@@ -346,7 +411,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
 
     const hendleOnButtonModificaModuloCommessa = () => {
         handleModifyMainState({statusPageInserimentoCommessa:'mutable'});
-        setButtonMofica(false);
+        //setButtonMofica(false);
         setTotaliModuloCommessa([
             {
                 idCategoriaSpedizione: 0,
@@ -377,115 +442,197 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         /*da inserire in seguito
         const completedResult = response.data.map((el,i) => ({[i+1]:el.stato !== null?true:false}));
         setStepCompleted(Object.assign({}, ...completedResult));*/
-
-     
-        if(stepActive > 0){
+        if(activeStep > 0){
             // const completedResult = response.data.map((el,i) => ({[i+1]:el.stato !== null?true:false}));
         //setStepCompleted({1:false,2:false});
         //sistemare quando mauro ci darà l'api , probabilmente da eliminare questo state
-            setDataModuloToVisualize(dataModuli[stepActive-1]);
-
-            handleGetDettaglioModuloCommessaVecchio(dataModuli[stepActive-1].annoValidita,dataModuli[stepActive-1].meseValidita);
+            if(isObbligatorioLayout){
+                setDataModuloToVisualize(dataModuli[activeStep-1]);
+                handleGetDettaglioModuloCommessaVecchio(dataModuli[activeStep-1].annoValidita,dataModuli[activeStep-1].meseValidita);
+            }else{
+                setDataModuloToVisualize(mainState.infoTrimestreComSelected.moduli[activeStep-1]);
+                handleGetDettaglioModuloCommessaVecchio(mainState.infoTrimestreComSelected?.moduli[activeStep-1]?.id.split('/')[1],mainState?.infoTrimestreComSelected?.moduli[activeStep-1]?.id.split('/')[0]);
+            }
+          
             //setLoadingData(false);
-            console.log('cristo,',stepActive);
-            setActiveStep((prev)=>prev -1);
-        }
-        
-
-       
+            handleBack();
+        }  
     };
 
-    const onSaveAvantiButton = () =>{
+    const onAvantiButton = () =>{
 
         /*da inserire in seguito
         const completedResult = response.data.map((el,i) => ({[i+1]:el.stato !== null?true:false}));
         setStepCompleted(Object.assign({}, ...completedResult));*/
 
      
-        if(stepActive < steps.length-1){
+        if(activeStep < steps.length-1){
             // const completedResult = response.data.map((el,i) => ({[i+1]:el.stato !== null?true:false}));
         //setStepCompleted({1:false,2:false});
         //sistemare quando mauro ci darà l'api , probabilmente da eliminare questo state
-            setDataModuloToVisualize(dataModuli[stepActive+1]);
+            if(isObbligatorioLayout){
+                setDataModuloToVisualize(dataModuli[activeStep+1]);
 
-            handleGetDettaglioModuloCommessaVecchio(dataModuli[stepActive+1].annoValidita,dataModuli[stepActive+1].meseValidita);
-            //setLoadingData(false);
-            console.log('cristo,',stepActive);
-            setActiveStep((prev)=>prev +1);
+                handleGetDettaglioModuloCommessaVecchio(dataModuli[activeStep+1].annoValidita,dataModuli[activeStep+1].meseValidita);
+                //setLoadingData(false);
+                console.log('cristo,',activeStep);
+              
+                setModificaCommessa(false);
+            }else{
+                //setDataModuloToVisualize(dataModuli[stepActive+1]);
+
+                handleGetDettaglioModuloCommessaVecchio(mainState.infoTrimestreComSelected.moduli[activeStep+1].id.split('/')[1],mainState.infoTrimestreComSelected.moduli[activeStep+1].id.split('/')[0]);
+                //setLoadingData(false);
+                console.log('cristo,',activeStep);
+               
+                setModificaCommessa(false);
+            }
+            handleNext();
+           
         }
     };
 
  
    
-  
+    //_______________________
 
-    const theme = useTheme();
-    const [personName, setPersonName] = useState<string[]>([]);
-
-    const handleChange = (event: SelectChangeEvent<typeof personName>) => {
-        const {
-            target: { value },
-        } = event;
-        setPersonName(
-            // On autofill we get a stringified value.
-            typeof value === 'string' ? value.split(',') : value,
-        );
+    
+    //DA UTILIZZARE CON GLI INSERIMENTI
+    const isStepOptional = (step: number) => {
+        return step === 10;
     };
-    if(loadingData){
-        return(
-            <SkeletonComIns></SkeletonComIns>
-        );
 
-    }else{
-        return (
-            <>
-                <BasicModal setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} dispatchMainState={dispatchMainState} handleGetDettaglioModuloCommessa={handleGetDettaglioModuloCommessa}  mainState={mainState}></BasicModal>
-                {/*Hide   modulo commessa sul click contina , save del modulo commessa cosi da mostrare dati fatturazione,
+    const isStepSkipped = (step: number) => {
+        return skipped.has(step);
+    };
+
+    const handleNext = () => {
+        let newSkipped = skipped;
+        if (isStepSkipped(activeStep)) {
+            newSkipped = new Set(newSkipped.values());
+            newSkipped.delete(activeStep);
+        }
+
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        setSkipped(newSkipped);
+    };
+
+    const handleBack = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    };
+
+    const handleSkip = () => {
+        if (!isStepOptional(activeStep)) {
+            // You probably want to guard against something like this,
+            // it should never occur unless someone's actively trying to break something.
+            throw new Error("You can't skip a step that isn't optional.");
+        }
+
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        setSkipped((prevSkipped) => {
+            const newSkipped = new Set(prevSkipped.values());
+            newSkipped.add(activeStep);
+            return newSkipped;
+        });
+    };
+
+    const handleReset = () => {
+        setActiveStep(0);
+    };
+
+    //_____________________________
+  
+    return (
+        <>
+            <BasicModal setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} dispatchMainState={dispatchMainState} handleGetDettaglioModuloCommessa={handleGetDettaglioModuloCommessa}  mainState={mainState}></BasicModal>
+            {/*Hide   modulo commessa sul click contina , save del modulo commessa cosi da mostrare dati fatturazione,
             il componente visualizzato è AreaPersonaleUtenteEnte  */}
            
-                <div className="marginTop24 ms-5 me-5">
-                    <div className='d-flex'>
-                        <ButtonNaked
-                            color="primary"
-                            size="small"
-                            startIcon={<ArrowBackIcon />}
-                            onClick={() =>{
-                                onIndietroButtonHeader();
-                            }}
-                        >
+            <div className="marginTop24 ms-5 me-5">
+                <div className='d-flex'>
+                    <ButtonNaked
+                        color="primary"
+                        size="small"
+                        startIcon={<ArrowBackIcon />}
+                        onClick={() =>{
+                            onIndietroButtonHeader();
+                        }}
+                    >
                         Indietro
-                        </ButtonNaked>
-                        <Typography sx={{ fontWeight:"bold", marginLeft:'20px'}} variant="caption">
-                            <ViewModuleIcon sx={{paddingBottom:'3px'}}  fontSize='small'></ViewModuleIcon>
+                    </ButtonNaked>
+                    <Typography sx={{ fontWeight:"bold", marginLeft:'20px'}} variant="caption">
+                        <ViewModuleIcon sx={{paddingBottom:'3px'}}  fontSize='small'></ViewModuleIcon>
                          Modulo commessa 
-                        </Typography>
-                        {
-                            dataObbligatori ? 
-                                <Typography  variant="caption">/ Inserimento moduli commessa OBBLIGATORI</Typography> :
-                                <Typography  variant="caption">/ Inserimento/modifica modulo commessa</Typography>
-                        }
-                    </div>
-                    <div className='mt-5 mb-5'>
-                        <Stepper activeStep={stepActive}>
-                            {steps.map((label, index) => (
-                                <Step key={label} completed={stepCompleted[index-1]}>
-                                    <StepButton color="inherit" onClick={()=>console.log('???')}>
-                                        {label}
-                                    </StepButton>
+                    </Typography>
+                    {
+                        dataObbligatori ? 
+                            <Typography  variant="caption">/ Inserimento moduli commessa OBBLIGATORI</Typography> :
+                            <Typography  variant="caption">/ Inserimento/modifica modulo commessa</Typography>
+                    }
+                </div>
+                <div className='mt-5 mb-5'>
+                    <Stepper activeStep={activeStep}>
+                        {steps.map((label, index) => {
+                            const stepProps: { completed?: boolean } = {};
+                            const labelProps: {
+                                optional?: React.ReactNode;
+                            } = {};
+                            if (isStepOptional(index)) {
+                                labelProps.optional = (
+                                    <Typography variant="caption">Optional</Typography>
+                                );
+                            }
+                            if (isStepSkipped(index)) {
+                                stepProps.completed = false;
+                            }
+                            return (
+                                <Step key={label} {...stepProps}>
+                                    <StepLabel {...labelProps}>{label}</StepLabel>
                                 </Step>
-                            ))}
-                        </Stepper>
+                            );
+                        })}
+                    </Stepper>
+                </div>
+                {loadingData ?  <Box
+                    sx={{
+                        padding:"24px",
+                        height: '100vh'
+                    }}
+                >
+                    <Skeleton variant="rectangular" height="100%" />
+                </Box>: <>
+                    {!isObbligatorioLayout &&
+                    <div  className='d-flex justify-content-end'>
+                        <Tooltip  title={modificaCommessa ? "Salva": isNewCommessa ? "Salva" :!infoCommessa.isEditable ? null:'Modifica'}>
+                            <span>
+                                <IconButton
+                                    size='large'
+                                    disabled={!modificaCommessa||!infoCommessa.isEditable}
+                                    onClick={() =>{
+                                        if(!modificaCommessa && !isNewCommessa){
+                                            setModificaCommessa(true);
+                                        }else{
+                                            console.log('000');
+                                            
+                                        }
+                                    } }> 
+                                    {!modificaCommessa && !isNewCommessa ?<EditNoteIcon sx={{fontSize:"60px"}}/> :<SaveIcon sx={{fontSize:"60px"}}/>}
+                                </IconButton>
+                            </span>
+                        </Tooltip>
                     </div>
+                    }
                     <div>
                         <div className="bg-white mt-3 pt-3">
-                            <PrimoContainerInsComTrimestrale meseAnno={`${dataModuloToVisualize?.meseValidita && month[dataModuloToVisualize.meseValidita -1]}/${dataModuloToVisualize?.annoValidita}`} tipoContratto={dataModuloToVisualize?.idTipoContratto === 1 ? "PAL":"PAC"} />
+                            <PrimoContainerInsComTrimestrale meseAnno={`${month[Number(infoCommessa.mese)-1]}/${infoCommessa.anno}`} tipoContratto={infoCommessa.idTipoContratto === 1 ? "PAL":"PAC"} />
                             {/* CAMBIARE LA PROP BUTTON MODIFICA*/}
-                            <SecondoContainerTrimestrale totale={totale} mainState={mainState} dispatchMainState={dispatchMainState} setDatiCommessa={setDatiCommessa} datiCommessa={datiCommessa} meseAnno={` ${dataModuloToVisualize?.meseValidita && month[dataModuloToVisualize.meseValidita -1]}/${dataModuloToVisualize?.annoValidita}`} modifica={!buttonModifica && datiCommessa?.moduliCommessa.length === 0 ? false : !buttonModifica} />
+                            <SecondoContainerTrimestrale totale={totale} mainState={mainState} dispatchMainState={dispatchMainState} setDatiCommessa={setDatiCommessa} datiCommessa={datiCommessa} meseAnno={` ${month[Number(infoCommessa.mese)-1]}/${infoCommessa.anno}`} modifica={!modificaCommessa && !isNewCommessa && !isObbligatorioLayout} />
                         </div>
                         <div className='bg-white'>
-                            <TerzoContainerTrimestrale valueTotali={totaliModuloCommessa} dataModifica={dataMod} meseAnno={`${dataModuloToVisualize?.meseValidita && month[dataModuloToVisualize.meseValidita -1]}/${dataModuloToVisualize?.annoValidita}`}/>
+                            <TerzoContainerTrimestrale valueTotali={totaliModuloCommessa} dataModifica={dataMod} meseAnno={`${infoCommessa.anno}/${infoCommessa.mese}`}/>
                         </div>
                         {/*NEW CODE ______________________________*/}
+                        {/*
                         <div style={{paddingRight:"28px"}} className="bg-white mt-3 pt-3">
                             <Grid   container spacing={2}>
                                 <Grid item  md={6}>
@@ -555,7 +702,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                 </Grid>
                             </Grid>
                         </div>
-                        {/*selectregioni da inserire  */}
+                     
                         <div style={{paddingRight:"28px"}} className="bg-white my-3 py-3">
                             <Grid   container spacing={2}>
                             
@@ -678,32 +825,42 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                             </Box>
                             <hr></hr>
                         </div>
-                    </div>     
-                </div> 
-                <div className="d-flex justify-content-between m-5 ">
+                        */}
+                    </div>   
+                </> }  
+            </div> 
+          
+            <div className="d-flex justify-content-between m-5 ">
+                <div>
                     <Button
                         variant="outlined"
+                        disabled={activeStep === 0}
                         type="button"
                         onClick={()=>onIndietroButtonCommessa()}
                     >Indietro
                     </Button>
-                    <Button onClick={()=>onSaveAvantiButton()} variant="outlined">{dataModuli.length-1 === stepActive ? "Salva": "Avanti"}</Button>
-                </div> 
-                <ModalRedirect 
-                    setOpen={setOpenModalRedirect}
-                    open={openModalRedirect}
-                    sentence={`Per poter inserire il modulo commessa è obbligatorio fornire  i seguenti dati di fatturazione:`}></ModalRedirect>
-                <ModalConfermaInserimento
-                    setOpen={setOpenModalConfermaIns}
-                    open={openModalConfermaIns}
-                    onButtonComfermaPopUp={onButtonComfermaPopUp}
-                    mainState={mainState}
-                    sentence={`Stai ${mainState.inserisciModificaCommessa === 'MODIFY' ? 'modificando': 'registrando'} il Modulo Commessa di OTTOBRE, GENNAIO ${mainState.anno}: confermi l'operazione?`}
-                ></ModalConfermaInserimento>
-                <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}></ModalLoading>
-            </>
-        );
-    }
+                </div>
+                <div>
+                    <Button onClick={()=> modificaCommessa ? setOpenModalAlert(true) : onAvantiButton()} variant="outlined">{dataModuli.length-1 === activeStep && !isObbligatorioLayout ? "Lista Moduli commesse": dataModuli.length-1 === activeStep && isObbligatorioLayout  ?"Salva":"Avanti"}</Button>
+                </div>
+                    
+            </div> 
+            <ModalRedirect 
+                setOpen={setOpenModalRedirect}
+                open={openModalRedirect}
+                sentence={`Per poter inserire il modulo commessa è obbligatorio fornire  i seguenti dati di fatturazione:`}></ModalRedirect>
+            <ModalConfermaInserimento
+                setOpen={setOpenModalConfermaIns}
+                open={openModalConfermaIns}
+                onButtonComfermaPopUp={onButtonComfermaPopUp}
+                mainState={mainState}
+                sentence={`Stai ${mainState.inserisciModificaCommessa === 'MODIFY' ? 'modificando': 'registrando'} il Modulo Commessa di OTTOBRE, GENNAIO ${mainState.anno}: confermi l'operazione?`}
+            ></ModalConfermaInserimento>
+            <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}></ModalLoading>
+            <ModalAlert open={openModalAlert} setOpen={setOpenModalAlert} handleAction={onAvantiButton}></ModalAlert>
+        </>
+    );
 };
+
 
 export default ModuloCommessaInserimentoUtEn30;

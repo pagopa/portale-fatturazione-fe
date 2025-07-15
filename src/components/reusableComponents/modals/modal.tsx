@@ -19,6 +19,7 @@ const style = {
     p: 4,
     borderRadius:'20px'
 };
+//:TODO cancellare tutta la logica inutile o sostituire con ModalAlert
 
 const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, getDatiFat, getDatiFatPagoPa, handleGetDettaglioModuloCommessa, mainState}) => {
     

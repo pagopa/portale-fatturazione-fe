@@ -12,11 +12,11 @@ import GridCustom from "../gridCustom";
 import { subHeaderNameModComTrimestraleENTE } from "../../../../assets/configurations/config_SubGridModComEnte";
 
 
-const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element, mandatoryEl}) => {
+const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element}) => {
   
-    const navigate = useNavigate();
+    
     const [open, setOpen] = useState(false);
-    const [openModalModObbligatori,setOpenModalModObbligatori] = useState({open:false,sentence:''});
+    
     
 
     const isOpenOnStart = element.moduli.filter(el => el.source === "obbligatorio").length > 0;
@@ -31,18 +31,6 @@ const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element, m
     if(sliced.stato === "Completo"){
         chipBgColor = "#6CC66A";
     }
-
-
-    const handleClickOnSingleEl = (el) =>{
-    
-        if(mandatoryEl && el.source !== "obbligatorio" && el.source !== "archiviato" ){
-            setOpenModalModObbligatori({open:true,sentence:'Per inserire i moduli commessa futuri bisogna prima inserire i moduli commessa OBBLIGATORI'});
-        }else{
-            navigate(PathPf.MODULOCOMMESSA);
-        }
-       
-    };
-
 
     const goToDetails = () =>{
         console.log("go to details");
@@ -116,7 +104,7 @@ const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element, m
                                     {element.moduli.map(el => {
                                         return(
                                         
-                                            <DefaultRow handleClickOnGrid={handleClickOnSingleEl} element={el} sliced={el} apiGet={goToDetails} nameParameterApi={"test"} headerNames={subHeaderNameModComTrimestraleENTE}></DefaultRow>
+                                            <DefaultRow handleClickOnGrid={handleClickOnGrid} element={el} sliced={el} apiGet={goToDetails} nameParameterApi={"test"} headerNames={subHeaderNameModComTrimestraleENTE}></DefaultRow>
                                         );
                                     })}
                                 </TableBody>
@@ -127,9 +115,6 @@ const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element, m
                     </Collapse>
                 </TableCell>
             </TableRow>
-            <ModalInfo 
-                setOpen={setOpenModalModObbligatori}
-                open={openModalModObbligatori}></ModalInfo>
         </>
     );
 };

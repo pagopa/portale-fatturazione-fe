@@ -4,7 +4,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, nameParameterApi, headerNames}) => {
 
-    const elToMap = Object.fromEntries(Object.entries(sliced).slice(1, -3));
+    const elToMap = Object.fromEntries(Object.entries(sliced).slice(1, -4));
    
     let statusColor = "#ffffff";
     if(element.source === "obbligatorio" && element.totale === null){

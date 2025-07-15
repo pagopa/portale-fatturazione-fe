@@ -84,6 +84,8 @@ const GridCustom : React.FC<GridCustomProps> = ({
             };
             apiGet(newDetail);
             //modComTrimestrale
+        }else if(apiGet && nameParameterApi === 'modComTrimestrale'){
+            apiGet(element);
         }else if(apiGet){
             const newDetail = {
                 nomeEnteClickOn:element.ragioneSociale,
@@ -108,11 +110,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
         }  
     };
 
-    let mandatoryEl = false;
-    if(nameParameterApi === "modComTrimestrale" && elements?.map(el => el.moduli?.map(el => el.source === "obbligatorio" ? true:false)).flat().includes(true)){
-        
-        mandatoryEl = true;
-    }
+   
    
     return (
         <div>
@@ -176,7 +174,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                     }else if(nameParameterApi === "contestazionePage"){
                                         return <RowContestazioni key={Math.random()} sliced={sliced}apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} headerNames={headerNames}></RowContestazioni>;
                                     }else if(nameParameterApi === "modComTrimestrale"){
-                                        return <RowModComTrimestreEnte key={element.id} sliced={sliced} headerNames={headerNames} handleClickOnGrid={handleClickOnGrid} element={element} mandatoryEl={mandatoryEl}></RowModComTrimestreEnte>;
+                                        return <RowModComTrimestreEnte key={element.id} sliced={sliced} headerNames={headerNames} handleClickOnGrid={handleClickOnGrid} element={element}></RowModComTrimestreEnte>;
                                     }else{
                                         return (
                                             <TableRow key={Math.random()}>

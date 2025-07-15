@@ -55,6 +55,7 @@ export const fixResponseForDataGrid = (arr:any[]):any =>{
                         totale:mod.totaleNotifiche !== null ? mod.totaleNotifiche : "--",
                         source:mod.source,
                         modifica:mod.modifica,
+                        quarter:el.quarter,
                         arrow:""
                     };
                 })

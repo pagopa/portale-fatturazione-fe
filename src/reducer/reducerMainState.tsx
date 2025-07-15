@@ -27,7 +27,8 @@ const initialState =  {
     messaggioSelected:null,
     prodotti:[],
     profilo:{},
-    docContabileSelected:{key:''}
+    docContabileSelected:{key:''},
+    infoTrimestreComSelected:{}
 };
 
 

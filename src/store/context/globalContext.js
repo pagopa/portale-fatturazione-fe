@@ -2,8 +2,18 @@
 import { createContext, useEffect, useReducer,useState } from "react";
 import {  loadState, reducerMainState } from "../../reducer/reducerMainState";
 
-
-
+//:TODO
+// una volta terminato lo ssviluppo trimestrale sia ente che azure si possono eliminare
+/*
+mese:'',
+anno:'',
+nomeEnteClickOn:'',
+ userClickOn:undefined, // se l'utente clicca su un elemento di lista commesse setto GRID
+        inserisciModificaCommessa:undefined, // INSERT MODIFY  se il sevizio get commessa mi restituisce true []
+        primoInserimetoCommessa:true,// la commessa mese corrente è stata inserita?
+        statusPageDatiFatturazione:'immutable',
+        statusPageInserimentoCommessa:'immutable',
+ */
 export const GlobalContext = createContext({
     mainState:{
         mese:'',
@@ -30,7 +40,8 @@ export const GlobalContext = createContext({
         docContabileSelected:{key:''},
         contestazioneSelected:{
             reportId:0
-        }
+        },
+        infoTrimestreComSelected:{}
     },
     dispatchMainState:({type,value}) => null,
     openBasicModal_DatFat_ModCom:{visible:false,clickOn:''},
