@@ -16,16 +16,16 @@ const RowAsyncDoc = ({sliced,headerNames,handleClickOnGrid,element}) => {
         bgColorRow = "#F0FFF0";
     }
 
-    let chipBgColor = "info";
+    let chipBgColor = "#E3E7EB";
     
     if(sliced.stato === "Presa in carico"){
-        chipBgColor = "info";
+        chipBgColor = "#86E1FD";
     }else if(sliced.stato === "Elaborato"){
-        chipBgColor = "success";
+        chipBgColor = "#B5E2B4";
     }else if(sliced.stato === "Elaborato no data"){
-        chipBgColor ="warning";
+        chipBgColor ="#FFE5A3";
     }else if(sliced.stato === "Errore"){
-        chipBgColor = "error";
+        chipBgColor = "#FB9EAC";
     }
 
     return (
