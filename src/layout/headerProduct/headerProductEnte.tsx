@@ -92,12 +92,12 @@ const HeaderProductEnte : React.FC = () => {
     const getValidationNotifiche = async(queryString) => {
         const result = await getVerificaNotificheEnte(token,profilo.nonce,{idEnte: profilo.idEnte,statusQueryGetUri:queryString}).then((res)=>{
             if(res.data.runtimeStatus === "Completed"){
-                enqueueSnackbar(`È possibile eseguire il download del file NOTIFICHE ${mesiGrid[res?.data?.input?.Mese]}/${res?.data?.input?.Anno}`, {variant:"success",anchorOrigin:{ horizontal: "center", vertical: "bottom" }});
+                enqueueSnackbar(`È possibile eseguire il download del file NOTIFICHE ${mesiGrid[res?.data?.input?.mese]}/${res?.data?.input?.anno}`, {variant:"success",anchorOrigin:{ horizontal: "center", vertical: "bottom" }});
                 return queryString;
             }else if(res.data.runtimeStatus === "Running"){
                 return;
             }else{
-                enqueueSnackbar(`La creazione del file delle notifiche di ${mesiGrid[res?.data?.input?.Mese]}/${res?.data?.input?.Anno} non è andata a buon fine. Si prega di riprovare`, {variant:"info",anchorOrigin:{ horizontal: "center", vertical: "bottom" }});
+                enqueueSnackbar(`La creazione del file delle notifiche di ${mesiGrid[res?.data?.input?.mese]}/${res?.data?.input?.anno} non è andata a buon fine. Si prega di riprovare`, {variant:"info",anchorOrigin:{ horizontal: "center", vertical: "bottom" }});
                 return queryString;
             }
         }).catch(()=>{
