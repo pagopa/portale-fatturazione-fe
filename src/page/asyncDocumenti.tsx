@@ -200,6 +200,7 @@ const AsyncDocumenti = () => {
     };
 
     const headerAction = (newParam) => {
+        console.log({newParam});
         listaDoc({ ...bodyGetLista,...{ordinamento:newParam}},page, rowsPerPage);
         setBodyGetLista({ ...bodyGetLista,...{ordinamento:newParam}});
         updateFilters({

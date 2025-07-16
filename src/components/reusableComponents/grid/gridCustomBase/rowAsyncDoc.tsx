@@ -5,12 +5,23 @@ import { mesiGrid, statiContestazione, tipoNotificaArray } from "../../../../reu
 
 
 const RowAsyncDoc = ({sliced,headerNames,handleClickOnGrid,element}) => {
+
+    function keysToLowerCase(obj: any): any {
+        if (Array.isArray(obj)) {
+            return obj.map(keysToLowerCase);
+        } else if (obj !== null && typeof obj === 'object') {
+            return Object.fromEntries(
+                Object.entries(obj).map(([key, value]) => [key.toLowerCase(), keysToLowerCase(value)])
+            );
+        }
+        return obj;
+    }
     
     const [open, setOpen] = useState(false);
     const {DETTAGLIO,...rest} = sliced;
-    const dettaglioParsed = JSON.parse(DETTAGLIO);
-    const stringsStatiContest = dettaglioParsed?.StatoContestazione?.map(el => statiContestazione[el]).join(' , ');
-
+    const dettaglioParsed = keysToLowerCase(JSON.parse(DETTAGLIO));
+    const stringsStatiContest = dettaglioParsed?.statoContestazione?.map(el => statiContestazione[el]).join(' , ');
+    console.log({sliced,dettaglioParsed});
     let bgColorRow = "";
     if(sliced.letto){
         bgColorRow = "#F0FFF0";
@@ -115,11 +126,11 @@ const RowAsyncDoc = ({sliced,headerNames,handleClickOnGrid,element}) => {
                                 </TableHead>
                                 <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
                                     <TableRow>
-                                        <TableCell align="center">{dettaglioParsed.Anno}</TableCell>
-                                        <TableCell align="center">{mesiGrid[dettaglioParsed.Mese-1]||''}</TableCell>
-                                        <TableCell align="center">{tipoNotificaArray[dettaglioParsed?.TipoNotifica-1]||'--'}</TableCell>
-                                        <TableCell align="center">{dettaglioParsed.Cap||'--'}</TableCell>
-                                        <TableCell align="center">{dettaglioParsed.Iun||'--'}</TableCell>
+                                        <TableCell align="center">{dettaglioParsed.anno}</TableCell>
+                                        <TableCell align="center">{mesiGrid[dettaglioParsed.mese-1]||''}</TableCell>
+                                        <TableCell align="center">{tipoNotificaArray[dettaglioParsed?.tipoNotifica-1]||'--'}</TableCell>
+                                        <TableCell align="center">{dettaglioParsed.cap||'--'}</TableCell>
+                                        <TableCell align="center">{dettaglioParsed.iun||'--'}</TableCell>
                                         <TableCell align="center">{stringsStatiContest ||'--'}</TableCell>
                                     </TableRow>
                                 </TableBody>
