@@ -140,7 +140,7 @@ export const downloadNotifche = async (token:string, nonce:string , body: BodyLi
     return response;
 };
 
-export const downloadNotifcheInps = async (token:string, nonce:string , body: BodyListaNotificheSelfcare) => {
+export const downloadNotifcheInpsV1 = async (token:string, nonce:string , body: BodyListaNotificheSelfcare) => {
     const response =  await axios.post(`${url}/api/notifiche/ente/documento/ricerca?nonce=${nonce}`,
         body,
         { headers: {
@@ -220,6 +220,17 @@ export const getVerificaNotificheEnte = async (token:string, nonce:string , body
         { headers: {
             Authorization: 'Bearer ' + token,
         },
+        }
+    );
+    return response;
+};
+
+export const downloadNotifcheInps = async (token:string, nonce:string , body: BodyListaNotificheSelfcare) => {
+    const response =  await axios.post(`${url}/api/v2/notifiche/ente/documento/ricerca?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token,
+        }
         }
     );
     return response;
