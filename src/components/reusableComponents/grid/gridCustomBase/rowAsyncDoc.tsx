@@ -127,7 +127,7 @@ const RowAsyncDoc = ({sliced,headerNames,handleClickOnGrid,element}) => {
                                 <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
                                     <TableRow>
                                         <TableCell align="center">{dettaglioParsed.anno}</TableCell>
-                                        <TableCell align="center">{mesiGrid[dettaglioParsed.mese-1]||''}</TableCell>
+                                        <TableCell align="center">{mesiGrid[dettaglioParsed.mese]||''}</TableCell>
                                         <TableCell align="center">{tipoNotificaArray[dettaglioParsed?.tipoNotifica-1]||'--'}</TableCell>
                                         <TableCell align="center">{dettaglioParsed.cap||'--'}</TableCell>
                                         <TableCell align="center">{dettaglioParsed.iun||'--'}</TableCell>
