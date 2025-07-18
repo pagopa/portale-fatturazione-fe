@@ -49,11 +49,13 @@ const SideNavEnte: React.FC = () => {
     
     const handleListItemClick = async(pathToGo) => {
         console.log(PathPf.LISTA_COMMESSE);
-        if(pathToGo === PathPf.LISTA_COMMESSE){
+        if(pathToGo === PathPf.LISTA_COMMESSE && location.pathname !== PathPf.MODULOCOMMESSA ){
             localStorage.setItem('redirectToInsert',JSON.stringify(true));
         }
         if(((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA))){
             setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:pathToGo}}));
+        }else if(location.pathname === PathPf.MODULOCOMMESSA && pathToGo === PathPf.LISTA_COMMESSE){
+            return;
         }else{
             navigate(pathToGo);
         } 

@@ -1,7 +1,7 @@
 import {useState,useEffect, useContext} from 'react';
-import {Typography, Button, Stepper, Step, StepButton, Tooltip, IconButton,  Theme, useTheme, SelectChangeEvent, Box, Skeleton, StepLabel} from '@mui/material';
+import {Typography, Button, Stepper, Step, StepButton, Tooltip, IconButton,  Theme, useTheme, SelectChangeEvent, Box, Skeleton, StepLabel, Grid, Chip, FormControl, InputLabel, MenuItem, OutlinedInput, Select, TextField} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { ButtonNaked } from '@pagopa/mui-italia';
+import { ButtonNaked, theme } from '@pagopa/mui-italia';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { useNavigate } from 'react-router';
 import EditNoteIcon from '@mui/icons-material/EditNote';
@@ -24,6 +24,8 @@ import SecondoContainerTrimestrale from '../../components/commessaInserimentoTri
 import TerzoContainerTrimestrale from '../../components/commessaInserimentoTrimestrale/terzoContainerTrimestrale';
 import SaveIcon from '@mui/icons-material/Save';
 import ModalAlert from '../../components/reusableComponents/modals/modalAlert';
+import InfoIcon from '@mui/icons-material/Info';
+import AddIcon from '@mui/icons-material/Add';
 
 
 const ITEM_HEIGHT = 48;
@@ -118,7 +120,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
    
     const [loadingData, setLoadingData] = useState(true);
     const [totale, setTotale] = useState<TotaleNazionaleInternazionale>({totaleNazionale:0, totaleInternazionale:0, totaleNotifiche:0});
-    const [dataMod, setDataModifica] = useState('');
+    const [dataMod, setDataModifica] = useState<string|null>('');// cambiare a boolean|null
    
     const [openModalLoading, setOpenModalLoading] = useState(false);
     const [openModalConfermaIns, setOpenModalConfermaIns] = useState(false);
@@ -136,6 +138,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     const [infoCommessa,setInfoCommessa] = useState({anno:"",mese:"",idTipoContratto:0,isEditable:false});
     const [activeStep, setActiveStep] = useState(0);
     const [skipped, setSkipped] = useState(new Set<number>());
+    const [regioniIsVisible, setRegioniIsVisible] = useState(false);
+    const [valoriRegioni,setValoriRegioni] = useState([]);
   
 
 
@@ -220,44 +224,53 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
 
     useEffect(()=>{
         handleGetDettaglioModuloCommessa();
+        localStorage.setItem('redirectToInsert',JSON.stringify(false));
     },[]);
 
-    /* da verificare con l'inserimento modifica
+   
     useEffect(()=>{
         setTotale({
             totaleNazionale:calculateTot(datiCommessa.moduliCommessa,'numeroNotificheNazionali'),
             totaleInternazionale:calculateTot(datiCommessa.moduliCommessa,'numeroNotificheInternazionali'),
             totaleNotifiche:calculateTot(datiCommessa.moduliCommessa,'totaleNotifiche')});
     },[datiCommessa]);
-*/
+
 
     const handleGetDettaglioModuloCommessa = async () =>{
         setLoadingData(true);
         await getCommessaObbligatoriVerificaV2(token, profilo.nonce).then(async(res)=>{
             //RIMETTERE  setIsObbligatorioLayout(res.data);
+            console.log({EE:res.data});
             
-            if(res.data && Object.keys(mainState.infoTrimestreComSelected).length === 0){
+            if(res.data && Object.keys(mainState.infoTrimestreComSelected)?.length === 0){
                 setIsObbligatorioLayout(res.data);
                 //setLoadingData(true);
+                console.log("dentro");
                 await getCommessaObbligatoriListaV2(token, profilo.nonce).then((response)=>{
                     console.log({dettaglioOBBligatorio:response});
-                    setDataModuli(response.data);
-                    setDataObbligatori(response.data.map(el => el.stato === null).flat().includes(true));
+                    
+                    const obbligatori = response.data.obbligatori;
+                    console.log({dio:obbligatori});
+                    setDataModuli(obbligatori);
+                    setDataObbligatori(obbligatori.map(el => el.stato === null).flat().includes(true));
 
-                    const stepsResult = response.data.map(el => month[el.meseValidita-1]);
+                    const stepsResult = obbligatori.map(el => month[el.meseValidita-1]);
                     setSteps(stepsResult);
 
-                    const completedResult = response.data.map((el,i) => ({[i+1]:el.stato !== null?true:false}));
+                    const completedResult = obbligatori.map((el,i) => ({[i+1]:el.stato !== null?true:false}));
                     setStepCompleted(Object.assign({}, ...completedResult));
 
-                    const activeStepResult = response.data.findIndex(item => item.stato === null);
+                    const activeStepResult = obbligatori.findIndex(item => item.stato === null);
                     setActiveStep(activeStepResult);
 
                     //sistemare quando mauro ci darà l'api , probabilmente da eliminare questo state
-                    setDataModuloToVisualize(response.data[activeStepResult]);
+                    setDataModuloToVisualize(obbligatori[activeStepResult]);
+                    setDataModifica(null);
+                    setRegioniIsVisible(response.data.macrocategoriaVendita === 1);
+                    setValoriRegioni(obbligatori[0].valoriRegione);
 
-                    handleGetDettaglioModuloCommessaVecchio(response.data[activeStepResult].annoValidita,response.data[activeStepResult].meseValidita);
-                    //setLoadingData(false);
+                    //handleGetDettaglioModuloCommessaVecchio(obbligatori[activeStepResult].annoValidita,obbligatori[activeStepResult].meseValidita);
+                    setLoadingData(false);
                 }).catch((err:ManageErrorResponse)=>{
                     manageError(err,dispatchMainState);
                     setLoadingData(false);
@@ -277,7 +290,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
        
     };
 
-    console.log({steps, activeStep,stepCompleted});
+    console.log({steps, activeStep,stepCompleted, dataModuli});
   
     const handleGetDettaglioModuloCommessaVecchio = async (year,month) =>{
         setLoadingData(true);
@@ -428,7 +441,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         if(mainState.statusPageInserimentoCommessa === 'immutable'){
             navigate(PathPf.LISTA_COMMESSE);
             // inserito con nuova logica modulo commessa trimestrale 
-            localStorage.setItem('redirectToInsert',JSON.stringify(false));
+           
             //
             //da cambiare
         }else if(mainState.inserisciModificaCommessa === 'INSERT'){
@@ -448,7 +461,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         //sistemare quando mauro ci darà l'api , probabilmente da eliminare questo state
             if(isObbligatorioLayout){
                 setDataModuloToVisualize(dataModuli[activeStep-1]);
-                handleGetDettaglioModuloCommessaVecchio(dataModuli[activeStep-1].annoValidita,dataModuli[activeStep-1].meseValidita);
+                // handleGetDettaglioModuloCommessaVecchio(dataModuli[activeStep-1].annoValidita,dataModuli[activeStep-1].meseValidita);
             }else{
                 setDataModuloToVisualize(mainState.infoTrimestreComSelected.moduli[activeStep-1]);
                 handleGetDettaglioModuloCommessaVecchio(mainState.infoTrimestreComSelected?.moduli[activeStep-1]?.id.split('/')[1],mainState?.infoTrimestreComSelected?.moduli[activeStep-1]?.id.split('/')[0]);
@@ -473,9 +486,42 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             if(isObbligatorioLayout){
                 setDataModuloToVisualize(dataModuli[activeStep+1]);
 
-                handleGetDettaglioModuloCommessaVecchio(dataModuli[activeStep+1].annoValidita,dataModuli[activeStep+1].meseValidita);
+                //handleGetDettaglioModuloCommessaVecchio(dataModuli[activeStep+1].annoValidita,dataModuli[activeStep+1].meseValidita);
                 //setLoadingData(false);
                 console.log('cristo,',activeStep);
+                setDatiCommessa({
+                    moduliCommessa: [
+                        {
+                            numeroNotificheNazionali: 0,
+                            numeroNotificheInternazionali: 0,
+                            totaleNotifiche:0,
+                            idTipoSpedizione: 1
+                        },
+                        {
+                            numeroNotificheNazionali: 0,
+                            numeroNotificheInternazionali: 0,
+                            totaleNotifiche:0,
+                            idTipoSpedizione: 2
+                        },
+                        {
+                            numeroNotificheNazionali: 0,
+                            numeroNotificheInternazionali: 0,
+                            totaleNotifiche:0,
+                            idTipoSpedizione: 3
+                        }
+                    ]
+                });
+                setTotaliModuloCommessa([
+                    {
+                        idCategoriaSpedizione: 1,
+                        totaleValoreCategoriaSpedizione: 0
+                    },
+                    {
+                        idCategoriaSpedizione: 2,
+                        totaleValoreCategoriaSpedizione: 0
+                    }
+                ]);
+                setTotale({totaleNazionale:0, totaleInternazionale:0, totaleNotifiche:0});
               
                 setModificaCommessa(false);
             }else{
@@ -541,7 +587,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     };
 
     //_____________________________
-  
+    console.log({valoriRegioni});
     return (
         <>
             <BasicModal setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} dispatchMainState={dispatchMainState} handleGetDettaglioModuloCommessa={handleGetDettaglioModuloCommessa}  mainState={mainState}></BasicModal>
@@ -624,208 +670,212 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                     }
                     <div>
                         <div className="bg-white mt-3 pt-3">
-                            <PrimoContainerInsComTrimestrale meseAnno={`${month[Number(infoCommessa.mese)-1]}/${infoCommessa.anno}`} tipoContratto={infoCommessa.idTipoContratto === 1 ? "PAL":"PAC"} />
+                            <PrimoContainerInsComTrimestrale meseAnno={`${month[Number(isObbligatorioLayout ? dataModuli[activeStep].meseValidita : infoCommessa.mese)-1]}/${isObbligatorioLayout ? dataModuli[activeStep].annoValidita :infoCommessa.anno}`} tipoContratto={isObbligatorioLayout ? dataModuli[activeStep].idTipoContratto === 1 ?  "PAL":"PAC": infoCommessa.idTipoContratto === 1 ? "PAL":"PAC"} />
                             {/* CAMBIARE LA PROP BUTTON MODIFICA*/}
                             <SecondoContainerTrimestrale totale={totale} mainState={mainState} dispatchMainState={dispatchMainState} setDatiCommessa={setDatiCommessa} datiCommessa={datiCommessa} meseAnno={` ${month[Number(infoCommessa.mese)-1]}/${infoCommessa.anno}`} modifica={!modificaCommessa && !isNewCommessa && !isObbligatorioLayout} />
                         </div>
+                        {!(isObbligatorioLayout  && dataModuli.length > 0 && activeStep === 1) &&
                         <div className='bg-white'>
                             <TerzoContainerTrimestrale valueTotali={totaliModuloCommessa} dataModifica={dataMod} meseAnno={`${infoCommessa.anno}/${infoCommessa.mese}`}/>
                         </div>
+                        }
                         {/*NEW CODE ______________________________*/}
-                        {/*
-                        <div style={{paddingRight:"28px"}} className="bg-white mt-3 pt-3">
-                            <Grid   container spacing={2}>
-                                <Grid item  md={6}>
+                        {regioniIsVisible &&
+                        <>
+                            <div style={{paddingRight:"28px"}} className="bg-white mt-3 pt-3">
+                                <Grid   container spacing={2}>
+                                    <Grid item  md={6}>
+                                    </Grid>
+                                    <Grid item  md={2}>
+                                        <Typography sx={{fontWeight:'bold', textAlign:'center'}}>AR</Typography>
+                                    </Grid>
+                                    <Grid item md={2}>
+                                        <Typography sx={{fontWeight:'bold', textAlign:'center'}}>890</Typography>
+                                    </Grid>
+                                    <hr></hr>
+                                    <Grid container  justifyContent="center"
+                                        alignItems="center" style={{ height: '80px' }} item  md={6}>
+                                        <Typography sx={{fontWeight:'bold', textAlign:'right'}}>Totale Notifiche</Typography>
+                                    </Grid>
+                                    <Grid container
+                                        justifyContent="center"
+                                        alignItems="center"
+                                        style={{ height: '80px' }} item  md={2}>
+                                        <TextField
+                                            sx={{ backgroundColor: '#ffffff', width: '100px'}}
+                                            disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
+                                            size="small"
+                                            value={100}
+                                            InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                                        />
+                                    </Grid>
+                                    <Grid container
+                                        justifyContent="center"
+                                        alignItems="center"
+                                        style={{ height: '80px' }} item md={2}>
+                                        <TextField
+                                            sx={{ backgroundColor: '#ffffff', width: '100px'}}
+                                            disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
+                                            size="small"
+                                            value={100}
+                                            InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                                        />
+                                    </Grid>
+                                    <Grid container  justifyContent="center"
+                                        alignItems="center" style={{ height: '80px' }} item  md={6}>
+                                        <Typography sx={{fontWeight:'bold', textAlign:'center'}}>Percentuale copertura</Typography>
+                                    </Grid>
+                                    <Grid container
+                                        justifyContent="center"
+                                        alignItems="center"
+                                        style={{ height: '80px' }} item  md={2}>
+                                        <TextField
+                                            sx={{ backgroundColor: '#ffffff', width: '100px'}}
+                                            disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
+                                            size="small"
+                                            value={100}
+                                            InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                                        />
+                                    </Grid>
+                                    <Grid container
+                                        justifyContent="center"
+                                        alignItems="center"
+                                        style={{ height: '80px' }} item md={2}>
+                                        <TextField
+                                            sx={{ backgroundColor: '#ffffff', width: '100px'}}
+                                            disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
+                                            size="small"
+                                            value={100}
+                                            InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                                        />
+                                    </Grid>
                                 </Grid>
-                                <Grid item  md={2}>
-                                    <Typography sx={{fontWeight:'bold', textAlign:'center'}}>AR</Typography>
+                            </div>
+                     
+                            <div style={{paddingRight:"28px"}} className="bg-white my-3 py-3">
+                                <Grid   container spacing={2}>
+                            
+                                    <Grid item  md={6}>
+                                        <FormControl sx={{ m: 1, width: "100%" }}>
+                                            <InputLabel>Inserisci regioni</InputLabel>
+                                            <Select
+                                    
+                                                multiple
+                                                value={[]}
+                                                onChange={()=> console.log('change')}
+                                                input={<OutlinedInput label="Inserisci regioni" />}
+                                                renderValue={(selected) => (
+                                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                                        {selected.map((value) => (
+                                                            <Chip key={value} label={value} />
+                                                        ))}
+                                                    </Box>
+                                                )}
+                                                MenuProps={MenuProps}
+                                            >
+                                                {valoriRegioni.map((el:{regione:string}) => (
+                                                    <MenuItem
+                                                        key={el.regione}
+                                                        value={el.regione}
+                                                        style={getStyles(el.regione, names, theme)}
+                                                    >
+                                                        {el.regione}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item  md={6}>
+                                        <IconButton
+                                            aria-label="Edit"
+                                            color="primary"
+                                            size="large"
+                                        ><AddIcon/>
+                                        </IconButton>
+                                    </Grid>
                                 </Grid>
-                                <Grid item md={2}>
-                                    <Typography sx={{fontWeight:'bold', textAlign:'center'}}>890</Typography>
+                            </div>
+                            <div className="bg-white mt-3 pt-3">
+                                <Grid sx={{paddingRight:"28px"}}  container spacing={2}>
+                                    <Grid container  justifyContent="center"
+                                        alignItems="center" style={{ height: '80px' }} item  md={6}>
+                                        <Typography variant='h4' sx={{fontWeight:'bold', textAlign:'center'}}>Regione {valoriRegioni.map((el:{regione:string}) =>el.regione)}</Typography>
+                                        <Tooltip title="Regione di appartenenza">
+                                            <IconButton>
+                                                <InfoIcon fontSize='medium' />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Grid>
+                                    <Grid container
+                                        justifyContent="center"
+                                        alignItems="center"
+                                        style={{ height: '80px' }} item  md={2}>
+                                        <TextField
+                                            sx={{ backgroundColor: '#ffffff', width: '100px'}}
+                                            disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
+                                            size="small"
+                                            value={100}
+                                            InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                                        />
+                                    </Grid>
+                                    <Grid container
+                                        justifyContent="center"
+                                        alignItems="center"
+                                        style={{ height: '80px' }} item md={2}>
+                                        <TextField
+                                            sx={{ backgroundColor: '#ffffff', width: '100px'}}
+                                            disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
+                                            size="small"
+                                            value={100}
+                                            InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                                        />
+                                    </Grid>
                                 </Grid>
                                 <hr></hr>
-                                <Grid container  justifyContent="center"
-                                    alignItems="center" style={{ height: '80px' }} item  md={6}>
-                                    <Typography sx={{fontWeight:'bold', textAlign:'right'}}>Totale Notifiche</Typography>
-                                </Grid>
-                                <Grid container
-                                    justifyContent="center"
-                                    alignItems="center"
-                                    style={{ height: '80px' }} item  md={2}>
-                                    <TextField
-                                        sx={{ backgroundColor: '#ffffff', width: '100px'}}
-                                        disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
-                                        size="small"
-                                        value={100}
-                                        InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
-                                    />
-                                </Grid>
-                                <Grid container
-                                    justifyContent="center"
-                                    alignItems="center"
-                                    style={{ height: '80px' }} item md={2}>
-                                    <TextField
-                                        sx={{ backgroundColor: '#ffffff', width: '100px'}}
-                                        disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
-                                        size="small"
-                                        value={100}
-                                        InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
-                                    />
-                                </Grid>
-                                <Grid container  justifyContent="center"
-                                    alignItems="center" style={{ height: '80px' }} item  md={6}>
-                                    <Typography sx={{fontWeight:'bold', textAlign:'center'}}>Percentuale copertura</Typography>
-                                </Grid>
-                                <Grid container
-                                    justifyContent="center"
-                                    alignItems="center"
-                                    style={{ height: '80px' }} item  md={2}>
-                                    <TextField
-                                        sx={{ backgroundColor: '#ffffff', width: '100px'}}
-                                        disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
-                                        size="small"
-                                        value={100}
-                                        InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
-                                    />
-                                </Grid>
-                                <Grid container
-                                    justifyContent="center"
-                                    alignItems="center"
-                                    style={{ height: '80px' }} item md={2}>
-                                    <TextField
-                                        sx={{ backgroundColor: '#ffffff', width: '100px'}}
-                                        disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
-                                        size="small"
-                                        value={100}
-                                        InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
-                                    />
-                                </Grid>
-                            </Grid>
-                        </div>
-                     
-                        <div style={{paddingRight:"28px"}} className="bg-white my-3 py-3">
-                            <Grid   container spacing={2}>
-                            
-                                <Grid item  md={6}>
-                                    <FormControl sx={{ m: 1, width: "100%" }}>
-                                        <InputLabel>Inserisci regioni</InputLabel>
-                                        <Select
-                                    
-                                            multiple
-                                            value={personName}
-                                            onChange={handleChange}
-                                            input={<OutlinedInput label="Inserisci regioni" />}
-                                            renderValue={(selected) => (
-                                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                                    {selected.map((value) => (
-                                                        <Chip key={value} label={value} />
-                                                    ))}
-                                                </Box>
-                                            )}
-                                            MenuProps={MenuProps}
-                                        >
-                                            {names.map((name) => (
-                                                <MenuItem
-                                                    key={name}
-                                                    value={name}
-                                                    style={getStyles(name, personName, theme)}
-                                                >
-                                                    {name}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
-                                <Grid item  md={6}>
-                                    <IconButton
-                                        aria-label="Edit"
-                                        color="primary"
-                                        size="large"
-                                    ><AddIcon/>
-                                    </IconButton>
-                                </Grid>
-                            </Grid>
-                        </div>
-                        <div className="bg-white mt-3 pt-3">
-                            <Grid sx={{paddingRight:"28px"}}  container spacing={2}>
-                                <Grid container  justifyContent="center"
-                                    alignItems="center" style={{ height: '80px' }} item  md={6}>
-                                    <Typography variant='h4' sx={{fontWeight:'bold', textAlign:'center'}}>Regione LOMBARDIA</Typography>
-                                    <Tooltip title="Regione di appartenenza">
-                                        <IconButton>
-                                            <InfoIcon fontSize='medium' />
-                                        </IconButton>
-                                    </Tooltip>
-                                </Grid>
-                                <Grid container
-                                    justifyContent="center"
-                                    alignItems="center"
-                                    style={{ height: '80px' }} item  md={2}>
-                                    <TextField
-                                        sx={{ backgroundColor: '#ffffff', width: '100px'}}
-                                        disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
-                                        size="small"
-                                        value={100}
-                                        InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
-                                    />
-                                </Grid>
-                                <Grid container
-                                    justifyContent="center"
-                                    alignItems="center"
-                                    style={{ height: '80px' }} item md={2}>
-                                    <TextField
-                                        sx={{ backgroundColor: '#ffffff', width: '100px'}}
-                                        disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
-                                        size="small"
-                                        value={100}
-                                        InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
-                                    />
-                                </Grid>
-                            </Grid>
-                            <hr></hr>
-                            <Box  sx={{ margin: 2 , backgroundColor:'#F8F8F8', padding:'10px'}}>
-                                <Box style={{overflowY: "auto",maxHeight: "200px", margin:2, backgroundColor:'#F8F8F8'}}>
-                                    {["Piemonte","Calabria","Sardegna","Campania"].map((el) => {
-                                        return (
-                                            <>
-                                                <Grid container spacing={2}>
-                                                    <Grid container  justifyContent="center"
-                                                        alignItems="center" style={{ height: '80px' }} item  md={6}>
-                                                        <Typography variant='h4' sx={{fontWeight:'bold', textAlign:'center'}}>{el}</Typography>
+                                <Box  sx={{ margin: 2 , backgroundColor:'#F8F8F8', padding:'10px'}}>
+                                    <Box style={{overflowY: "auto",maxHeight: "200px", margin:2, backgroundColor:'#F8F8F8'}}>
+                                        {[].map((el) => {
+                                            return (
+                                                <>
+                                                    <Grid container spacing={2}>
+                                                        <Grid container  justifyContent="center"
+                                                            alignItems="center" style={{ height: '80px' }} item  md={6}>
+                                                            <Typography variant='h4' sx={{fontWeight:'bold', textAlign:'center'}}>{el}</Typography>
+                                                        </Grid>
+                                                        <Grid container
+                                                            justifyContent="center"
+                                                            alignItems="center"
+                                                            style={{ height: '80px' }} item  md={2}>
+                                                            <TextField
+                                                                sx={{ backgroundColor: '#ffffff', width: '100px'}}
+                                                                disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
+                                                                size="small"
+                                                                value={0}
+                                                                InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                                                            />
+                                                        </Grid>
+                                                        <Grid container
+                                                            justifyContent="center"
+                                                            alignItems="center"
+                                                            style={{ height: '80px' }} item md={2}>
+                                                            <TextField
+                                                                sx={{ backgroundColor: '#ffffff', width: '100px'}}
+                                                                disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
+                                                                size="small"
+                                                                value={0}
+                                                                InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                                                            />
+                                                        </Grid>
                                                     </Grid>
-                                                    <Grid container
-                                                        justifyContent="center"
-                                                        alignItems="center"
-                                                        style={{ height: '80px' }} item  md={2}>
-                                                        <TextField
-                                                            sx={{ backgroundColor: '#ffffff', width: '100px'}}
-                                                            disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
-                                                            size="small"
-                                                            value={100}
-                                                            InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
-                                                        />
-                                                    </Grid>
-                                                    <Grid container
-                                                        justifyContent="center"
-                                                        alignItems="center"
-                                                        style={{ height: '80px' }} item md={2}>
-                                                        <TextField
-                                                            sx={{ backgroundColor: '#ffffff', width: '100px'}}
-                                                            disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
-                                                            size="small"
-                                                            value={100}
-                                                            InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
-                                                        />
-                                                    </Grid>
-                                                </Grid>
-                                                <hr></hr>
-                                            </>
-                                        );})}
+                                                    <hr></hr>
+                                                </>
+                                            );})}
+                                    </Box>
                                 </Box>
-                            </Box>
-                            <hr></hr>
-                        </div>
-                        */}
+                                <hr></hr>
+                            </div>
+                        </>
+                        }
                     </div>   
                 </> }  
             </div> 
@@ -841,7 +891,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                     </Button>
                 </div>
                 <div>
-                    <Button onClick={()=> modificaCommessa ? setOpenModalAlert(true) : onAvantiButton()} variant="outlined">{dataModuli.length-1 === activeStep && !isObbligatorioLayout ? "Lista Moduli commesse": dataModuli.length-1 === activeStep && isObbligatorioLayout  ?"Salva":"Avanti"}</Button>
+                    <Button onClick={()=> modificaCommessa ? setOpenModalAlert(true) : onAvantiButton()} variant="outlined">{dataModuli?.length-1 === activeStep && !isObbligatorioLayout ? "Lista Moduli commesse": dataModuli?.length-1 === activeStep && isObbligatorioLayout  ?"Salva":"Avanti"}</Button>
                 </div>
                     
             </div> 
