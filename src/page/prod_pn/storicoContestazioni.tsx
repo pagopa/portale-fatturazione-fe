@@ -190,7 +190,7 @@ const Storico = () => {
             newBody = {...body,anno:null};
     
         }
-        console.log({newBody});
+       
         await getListaStorico(token,profilo.nonce,newBody,pag,rowpag).then((res)=>{
             // ordino i dati in base all'header della grid
             setListaToMap(res.data.reports);

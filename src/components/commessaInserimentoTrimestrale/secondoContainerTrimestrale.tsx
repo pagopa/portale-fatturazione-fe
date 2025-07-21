@@ -1,79 +1,56 @@
-import React, { useEffect, useState} from 'react';
 import { Grid, Typography } from '@mui/material';
-import { ResponseCategorieSpedizione  } from '../../types/typeModuloCommessaInserimento';
-import { manageError } from '../../api/api';
-import { ManageErrorResponse } from '../../types/typesGeneral';
-import { getCategoriaSpedizione } from '../../api/apiSelfcare/moduloCommessaSE/api';
-import { getIdByTipo } from '../../reusableFunction/function';
 import RowInserimentoCommessaTrimestrale from './rowInserimentoCommessaTrimestrale';
-const SecondoContainerTrimestrale = ({totale, mainState,dispatchMainState, setDatiCommessa,datiCommessa,meseAnno,modifica}) => {
+const SecondoContainerTrimestrale = ({ onChangeModuloValue,dataModulo,meseAnno,modifica}) => {
+    const totaleNazionale = (dataModulo?.totaleDigitaleNaz||0) + (dataModulo?.totaleAnalogicoARNaz||0)+(dataModulo?.totaleAnalogico890Naz||0);
+    const totaleInternazionale = (dataModulo?.totaleDigitaleInternaz||0)+(dataModulo?.totaleAnalogicoARInternaz||0);
+    const totaleNotifiche = (dataModulo?.totaleDigitaleNaz||0) + (dataModulo?.totaleAnalogicoARNaz||0)+(dataModulo?.totaleAnalogico890Naz||0)+(dataModulo?.totaleDigitaleInternaz||0)+(dataModulo?.totaleAnalogicoARInternaz||0);
 
-    const token =  mainState.profilo.jwt;
-    const profilo =  mainState.profilo;
-
-    const [arrTipoSpedizione , setArrTipoSpedizione] = useState({
-        idSpedizioneDigitale : 0,
-        idSpedizioneAnalog890 : 0,
-        idSpedizioneAnalogAR : 0,
-    });
- 
-    const getCategoria = async () =>{
-        await getCategoriaSpedizione(token , profilo.nonce).then((res:ResponseCategorieSpedizione ) => {
-            setArrTipoSpedizione({
-                idSpedizioneDigitale :getIdByTipo('Digitale',res.data),
-                idSpedizioneAnalog890 :  getIdByTipo('Analog. L. 890/82',res.data),
-                idSpedizioneAnalogAR : getIdByTipo('Analog. A/R',res.data),
-            });
-        }).catch((err:ManageErrorResponse) =>{
-            manageError(err,dispatchMainState);
-        });
-    };
-   
-    useEffect(()=>{
-        getCategoria();
-    },[]);
+    const totaleDigit = (dataModulo?.totaleDigitaleNaz||0)+(dataModulo?.totaleDigitaleInternaz||0);
+    const totaleAR = (dataModulo?.totaleAnalogicoARNaz||0)+(dataModulo?.totaleAnalogicoARInternaz||0);
+    const totale890 = (dataModulo?.totaleAnalogico890Naz||0);
+    console.log({totaleNazionale,totaleInternazionale,totaleNotifiche});
   
     return (
         <div className="m-3 pl-5 ">
             <hr></hr>
             {/* prima row start */}
             <RowInserimentoCommessaTrimestrale
-                
+              
                 sentence="Numero complessivo delle notifiche da processare in via digitale nel mese di"
                 textBoxHidden={false}
-                idTipoSpedizione={arrTipoSpedizione.idSpedizioneDigitale}
-                rowNumber={3}
-                setDatiCommessa={setDatiCommessa}
-                datiCommessa={datiCommessa}
+                setValue={onChangeModuloValue}
+                values={[dataModulo?.totaleDigitaleNaz,dataModulo?.totaleDigitaleInternaz]}
+                keys={["totaleDigitaleNaz","totaleDigitaleInternaz"]}
                 meseAnno={meseAnno}
-                modifica={modifica} />
+                modifica={modifica}
+                totale={totaleDigit} />
             {/* prima row end */}
             <hr></hr>
             {/* seconda row start */}
             <RowInserimentoCommessaTrimestrale
-              
+         
                 sentence="Numero complessivo delle notifiche da processare in via analogica tramite Raccomandata A/R nel mese di"
                 textBoxHidden={false}
-                idTipoSpedizione={arrTipoSpedizione.idSpedizioneAnalogAR}
-                rowNumber={1}
-                setDatiCommessa={setDatiCommessa}
-                datiCommessa={datiCommessa}
+                setValue={onChangeModuloValue}
+                values={[dataModulo?.totaleAnalogicoARNaz,dataModulo?.totaleAnalogicoARInternaz]}
+                keys={["totaleAnalogicoARNaz","totaleAnalogicoARInternaz"]}
                 meseAnno={meseAnno}
                 modifica={modifica}
+                totale={totaleAR}
             />
             {/* seconda row end */}
             {/* terza row start */}
             <hr></hr>
             <RowInserimentoCommessaTrimestrale
-              
+             
                 sentence="Numero complessivo delle notifiche da processare in via analogica del tipo notifica ex L. 890/1982 nel mese di"
-                textBoxHidden
-                idTipoSpedizione={arrTipoSpedizione.idSpedizioneAnalog890}
-                rowNumber={2}
-                setDatiCommessa={setDatiCommessa}
-                datiCommessa={datiCommessa}
+                textBoxHidden={false}
+                setValue={onChangeModuloValue}
+                values={[dataModulo?.totaleAnalogico890Naz,""]}
+                keys={["totaleAnalogico890Naz"]}
                 meseAnno={meseAnno}
                 modifica={modifica}
+                totale={totale890}
             />
             <hr></hr>
             {/* terza row end */}
@@ -103,7 +80,7 @@ const SecondoContainerTrimestrale = ({totale, mainState,dispatchMainState, setDa
                         variant="caption-semibold"
                         sx={{fontSize:'18px'}}
                     >
-                        {totale.totaleNazionale}
+                        { totaleNazionale}
                     </Typography>
                 </Grid>
                 <Grid
@@ -115,7 +92,7 @@ const SecondoContainerTrimestrale = ({totale, mainState,dispatchMainState, setDa
                         variant="caption-semibold"
                         sx={{fontSize:'18px'}}
                     >
-                        {totale.totaleInternazionale}
+                        {totaleInternazionale}
                     </Typography>
                 </Grid>
                 <Grid
@@ -127,7 +104,7 @@ const SecondoContainerTrimestrale = ({totale, mainState,dispatchMainState, setDa
                         variant="caption-semibold"
                         sx={{fontSize:'18px'}}
                     >
-                        {totale.totaleNotifiche}
+                        {totaleNotifiche}
                     </Typography>
                 </Grid>
 

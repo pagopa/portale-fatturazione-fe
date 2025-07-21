@@ -176,3 +176,12 @@ export const getCommessaObbligatoriListaV2 = async (token:string, nonce:string) 
         }});
     return response;
 };
+
+export const getRegioniModuloCommessa = async (token:string, nonce:string) =>{
+    const response = await axios.get(
+        `${url}/api/v2/modulocommessa/regioni?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }});
+    return response;
+};

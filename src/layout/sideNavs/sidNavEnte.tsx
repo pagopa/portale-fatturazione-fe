@@ -48,7 +48,6 @@ const SideNavEnte: React.FC = () => {
     const [openContestazioni, setOpenContestazioni] = useState(false);
     
     const handleListItemClick = async(pathToGo) => {
-        console.log(PathPf.LISTA_COMMESSE);
         if(pathToGo === PathPf.LISTA_COMMESSE && location.pathname !== PathPf.MODULOCOMMESSA ){
             localStorage.setItem('redirectToInsert',JSON.stringify(true));
         }

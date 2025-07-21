@@ -19,7 +19,6 @@ const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, nameParameterApi
         statusColor = "#F2F2F2";
     }
 
-    console.log(element);
     return (
         <TableRow 
             sx={{

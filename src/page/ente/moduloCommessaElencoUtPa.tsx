@@ -53,7 +53,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
         if(mainState.datiFatturazione === false || mainState.datiFatturazioneNotCompleted){
             setOpenModalRedirect(true);
             setLoadingMandatory(false);
-            console.log(888);
+        
         }else{
             getAnniSelect();
             getListaCommessaGrid('');
@@ -67,7 +67,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
         await getCommessaObbligatoriVerificaV2(token, profilo.nonce).then((res)=>{
             const redirect =  localStorage.getItem('redirectToInsert')||"";
             const redirectToInsert =  JSON.parse(redirect);
-            console.log({redirectToInsert});
+        
             if(res.data && redirectToInsert){
                 navigate(PathPf.MODULOCOMMESSA);
             }else{
@@ -135,7 +135,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
     const headerAction = () => {
         console.log("action");
     };
-    console.log({gridData});
+
     const handleClickOnDetail = (el) => {
         const isMandatory = gridData?.map(el => el?.moduli?.map(el => el.source === "obbligatorio" && el.stato === "--" ? true:false)).flat().includes(true);
         const quarterSelected = gridData.find(dataEl => dataEl.id === el.quarter); 
