@@ -76,11 +76,11 @@ const RowBaseKpi = ({row}) => {
                                     <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
                                         {/*<TableCell sx={{ marginLeft:"16px"}} >Nome PSP</TableCell> */} 
                                         <TableCell sx={{ marginLeft:"16px"}} >ID PSP</TableCell>
-                                        <TableCell sx={{ marginLeft:"16px"}}>Totale transazioni</TableCell>
+                                        <TableCell align="center" sx={{ marginLeft:"16px"}}>Totale transazioni</TableCell>
                                         <TableCell align="center" sx={{ marginLeft:"16px"}}>Totale</TableCell>
-                                        <TableCell sx={{ marginLeft:"16px"}}>KPI ok</TableCell>
-                                        <TableCell sx={{ marginLeft:"16px"}}>Percentuale sconto</TableCell>
-                                        <TableCell sx={{ marginLeft:"16px"}}>Sconto</TableCell>
+                                        <TableCell align="center" sx={{ marginLeft:"16px"}}>KPI ok</TableCell>
+                                        <TableCell align="center" sx={{ marginLeft:"16px"}}>Percentuale sconto</TableCell>
+                                        <TableCell align="center" sx={{ marginLeft:"16px"}}>Sconto</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
@@ -88,11 +88,11 @@ const RowBaseKpi = ({row}) => {
                                         <TableRow key={Math.random()}>
                                             {/*<TableCell>{obj.pspName}</TableCell>*/}
                                             <TableCell>{obj.pspId}</TableCell>
-                                            <TableCell>{obj.trxTotal}</TableCell>
+                                            <TableCell align="center">{obj.trxTotal}</TableCell>
                                             <TableCell align="right" component="th" scope="row">{obj.valueTotal.toLocaleString("de-DE", {style: "currency", currency: "EUR",maximumFractionDigits: 14 })}</TableCell>
-                                            <TableCell>{obj.kpiOk}</TableCell>
-                                            <TableCell>{obj.percSconto}%</TableCell>
-                                            <TableCell>{obj.valueDiscount.toLocaleString("de-DE", {style: "currency", currency: "EUR",maximumFractionDigits: 14 })}</TableCell>  
+                                            <TableCell  align="center">{obj.kpiOk}</TableCell>
+                                            <TableCell align="center">{obj.percSconto}%</TableCell>
+                                            <TableCell align="right">{obj.valueDiscount.toLocaleString("de-DE", {style: "currency", currency: "EUR",maximumFractionDigits: 14 })}</TableCell>  
                                         </TableRow>
                                     ))}
                                 </TableBody>

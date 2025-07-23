@@ -1,6 +1,7 @@
 import { Grid, Typography } from '@mui/material';
 import RowInserimentoCommessaTrimestrale from './rowInserimentoCommessaTrimestrale';
 const SecondoContainerTrimestrale = ({ onChangeModuloValue,dataModulo,meseAnno,modifica}) => {
+    console.log({pippo:dataModulo});
     const totaleNazionale = (dataModulo?.totaleDigitaleNaz||0) + (dataModulo?.totaleAnalogicoARNaz||0)+(dataModulo?.totaleAnalogico890Naz||0);
     const totaleInternazionale = (dataModulo?.totaleDigitaleInternaz||0)+(dataModulo?.totaleAnalogicoARInternaz||0);
     const totaleNotifiche = (dataModulo?.totaleDigitaleNaz||0) + (dataModulo?.totaleAnalogicoARNaz||0)+(dataModulo?.totaleAnalogico890Naz||0)+(dataModulo?.totaleDigitaleInternaz||0)+(dataModulo?.totaleAnalogicoARInternaz||0);

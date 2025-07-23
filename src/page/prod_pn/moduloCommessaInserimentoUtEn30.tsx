@@ -8,7 +8,7 @@ import EditNoteIcon from '@mui/icons-material/EditNote';
 import { GlobalContext } from '../../store/context/globalContext';
 import { manageError } from '../../api/api';
 import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
-import { getCommessaObbligatoriListaV2, getCommessaObbligatoriVerificaV2, getDettaglioModuloCommessa, getRegioniModuloCommessa, insertDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
+import { getCommessaObbligatoriListaV2, getCommessaObbligatoriVerificaV2, getDettaglioModuloCommessa, getDettaglioModuloCommessaV2, getRegioniModuloCommessa, insertDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
 import ModalRedirect from '../../components/commessaInserimento/madalRedirect';
 import ModalConfermaInserimento from '../../components/commessaInserimento/modalConfermaInserimento';
 import BasicModal from '../../components/reusableComponents/modals/modal';
@@ -90,6 +90,8 @@ interface Regioni {
     provincia: string,
     isRegione: 1
 }
+
+
 
 const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
   
@@ -232,13 +234,13 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
   
     const handleGetDettaglioModuloCommessaVecchio = async (year,month) =>{
         setLoadingData(true);
-        await getDettaglioModuloCommessa(token,year,month, profilo.nonce)
-            .then((response:ResponseDettaglioModuloCommessa)=>{
+        await getDettaglioModuloCommessaV2(token,year,month, profilo.nonce)
+            .then((response:{data:ModuloCommessaType})=>{
 
                 const res = response.data;
-                setInfoCommessa({anno:res.anno.toString(),mese:res.mese.toString(),idTipoContratto:res.idTipoContratto,isEditable:res.modifica});
+                setInfoCommessa({anno:res.annoValidita.toString(),mese:res.meseValidita.toString(),idTipoContratto:res.idTipoContratto,isEditable:res.modifica});
                 console.log({ZORRO:res});
-                const objectCommessaFixed = {
+                /*const objectCommessaFixed = {
                     "modifica": res.modifica,
                     "annoValidita": res.anno,
                     "meseValidita": res.mese,
@@ -269,13 +271,18 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                     "quarter": "2025-Q3",
                     "valoriRegione": []
                 };
-
-                setDataModuli([objectCommessaFixed]);
+*/
+                setDataModuli([res]);
                 setDataObbligatori(false);
-                setRegioniIsVisible(false);
-                setDataModifica(res.dataModifica);
-                setIsNewCommessa(!res.modifica && res.totale.length === 0);
+            
+                setDataModifica(res.dataInserimento);
+                setIsNewCommessa(res.modifica && res.totale !== null);
+                
                 setLoadingData(false);
+
+                const variableRegioniIsVisible = (!res.modifica && (res.valoriRegione.length > 0 && res.valoriRegione[0]["890"] !== null || res.valoriRegione[0].ar !== null)) ||
+                                                res.modifica && res.valoriRegione.length > 0; 
+                setRegioniIsVisible(variableRegioniIsVisible);
               
             }).catch((err:ManageErrorResponse)=>{
                 manageError(err,dispatchMainState);
@@ -476,6 +483,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
 
     const onAddRegioniButton =  () => {
         const activeCommessa = dataModuli[activeStep];
+        const activeCommessaIndex = dataModuli.findIndex(el => el.meseValidita === activeCommessa.meseValidita);
         const regioniToAdd =  arrayRegioniSelected.map(singleId => {
 
             return  arrayRegioni.filter( el => el.istatRegione === singleId);
@@ -494,15 +502,18 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         }else{
             getRegioni(arrayRegioniSelected);
         }
+        setDataModuli([
+            ...restOfCommesse.slice(0,activeCommessaIndex),
+            updatedCommessa,
+            ...restOfCommesse.slice(activeCommessaIndex)]);
        
-        setDataModuli([...restOfCommesse,updatedCommessa]);
      
     };
 
 
     const onDeleteSingleRegione = (id) => {
         const activeCommessa = dataModuli[activeStep];
-
+        const activeCommessaIndex = dataModuli.findIndex(el => el.meseValidita === activeCommessa.meseValidita);
         const newRegioni = activeCommessa.valoriRegione.filter(el => el.istatRegione !== id);
         const restOfCommesse = dataModuli.filter(el => el.meseValidita !== activeCommessa.meseValidita);
         const updatedCommessa = {
@@ -514,21 +525,27 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         const regioneAlreadySelected = updatedCommessa.valoriRegione.map(el => el.istatRegione);
         getRegioni(regioneAlreadySelected );
 
-        setDataModuli([...restOfCommesse,updatedCommessa]);
+        setDataModuli([
+            ...restOfCommesse.slice(0,activeCommessaIndex),
+            updatedCommessa,
+            ...restOfCommesse.slice(activeCommessaIndex)]);
     };
 
     const onChangeModuloValue = (e,valueKey) => {
        
         const activeCommessa = dataModuli[activeStep];
         const restOfCommesse = dataModuli.filter(el => el.meseValidita !== activeCommessa.meseValidita);
+        const activeCommessaIndex = dataModuli.findIndex(el => el.meseValidita === activeCommessa.meseValidita);
 
         const updatedCommessa = {
             ...activeCommessa,
             [valueKey]: Number(e.target.value),
         };
 
-   
-        setDataModuli([...restOfCommesse,updatedCommessa]);
+        setDataModuli([
+            ...restOfCommesse.slice(0,activeCommessaIndex),
+            updatedCommessa,
+            ...restOfCommesse.slice(activeCommessaIndex)]);
     };
 
 
@@ -542,6 +559,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         const regioneAlreadyExistBoolean = regioniActiveCommessa.find(el => el.istatRegione === istatRegione);
         const regioneAlreadyExist = regioniActiveCommessa.filter(el => el.istatRegione === istatRegione)[0];
         const originalIndex = regioniActiveCommessa.findIndex(el => el.istatRegione === istatRegione);
+        const activeCommessaIndex = dataModuli.findIndex(el => el.meseValidita === activeCommessa.meseValidita);
         let regioneToAdd; 
      
         if(regioneAlreadyExistBoolean){
@@ -571,7 +589,12 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             ...activeCommessa,
             valoriRegione:valoriRegioneOrderedWithSameIndex,
         };
-        setDataModuli([...restOfCommesse,updatedCommessa]);
+        setDataModuli([
+            ...restOfCommesse.slice(0,activeCommessaIndex),
+            updatedCommessa,
+            ...restOfCommesse.slice(activeCommessaIndex)
+        ]);
+        
     
         //gestione errore regioni count
         errorOnOver([...restOfRegioni,regioneToAdd],updatedCommessa);
@@ -604,12 +627,21 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
    
     const copertura890 = (Math.round((dataModuli[activeStep]?.valoriRegione.reduce((acc, el) => acc + (el[890]||0), 0)/(dataModuli[activeStep]?.totaleAnalogico890Naz||0))  * 100)); 
     
+    let labelButtonAvantiListaModuliSave = "Avanti";
 
+    if(dataModuli?.length-1 === activeStep && isObbligatorioLayout){
+        labelButtonAvantiListaModuliSave = "Sava";
+    }else if(!isObbligatorioLayout && activeStep === 2 ){
+        labelButtonAvantiListaModuliSave = "Lista moduli commessa";
+    }
 
-
+    dataModuli?.length-1 === activeStep && !isObbligatorioLayout ?
+        "Lista Moduli commesse": dataModuli?.length-1 === activeStep && isObbligatorioLayout  ?"Salva":"Avanti";
   
 
     //_____________________________
+
+
 
     console.log({activeStep,dataModuli,mm:dataModuli[activeStep]});
    
@@ -704,33 +736,73 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                             {/* CAMBIARE LA PROP BUTTON MODIFICA*/}
                             <SecondoContainerTrimestrale  onChangeModuloValue={onChangeModuloValue }  dataModulo={dataModuli[isObbligatorioLayout ? activeStep: 0]} meseAnno={` ${month[Number(isObbligatorioLayout ? dataModuli[activeStep].meseValidita : infoCommessa.mese)-1]}/${isObbligatorioLayout ? dataModuli[activeStep].annoValidita :infoCommessa.anno}`}  modifica={!modificaCommessa && !isNewCommessa && !isObbligatorioLayout} />
                         </div>
-                        {/*!(isObbligatorioLayout  && dataModuli.length > 0 && activeStep === 1) &&
+                        {(!isObbligatorioLayout && dataModuli[0].source === "archiviato") &&
                         <div className='bg-white'>
-                            <TerzoContainerTrimestrale valueTotali={totaliModuloCommessa} dataModifica={dataMod} meseAnno={` ${month[Number(isObbligatorioLayout ? dataModuli[activeStep].meseValidita : infoCommessa.mese)-1]}/${isObbligatorioLayout ? dataModuli[activeStep].annoValidita :infoCommessa.anno}`}/>
+                            <TerzoContainerTrimestrale dataModulo={dataModuli[0]} dataModifica={dataMod} meseAnno={` ${month[Number(isObbligatorioLayout ? dataModuli[activeStep].meseValidita : infoCommessa.mese)-1]}/${isObbligatorioLayout ? dataModuli[activeStep].annoValidita :infoCommessa.anno}`}/>
                         </div>
-                        */}
+                        }
                         {/*NEW CODE ______________________________*/}
                         {regioniIsVisible &&
                         <>
-                            <div style={{paddingRight:"28px"}} className="bg-white mt-3 pt-3">
-                                <Grid   container spacing={2}>
-                                    <Grid item  md={6}>
-                                    </Grid>
-                                    <Grid item  md={2}>
+                            <div className="bg-white mt-3 pt-3 ">
+                                <Grid 
+                                    container
+                                    columns={12}>
+                                    <Grid
+                                        sx={{
+                                            textAlign: 'left',
+                                            borderColor: '#ffffff',
+                                            borderStyle: 'solid',
+                                        }}
+                                        item
+                                        xs={6}
+                                    ></Grid>
+                                    <Grid
+                                        sx={{
+                                            textAlign: 'left',
+                                            borderColor: '#ffffff',
+                                            borderStyle: 'solid',
+                                        }}
+                                        item
+                                        xs={2}
+                                    >
                                         <Typography sx={{fontWeight:'bold', textAlign:'center'}}>AR Nazionali </Typography>
                                     </Grid>
-                                    <Grid item md={2}>
+                                    <Grid
+                                        sx={{
+                                            textAlign: 'left',
+                                            borderColor: '#ffffff',
+                                            borderStyle: 'solid',
+                                        }}
+                                        item
+                                        xs={2}
+                                    >
                                         <Typography sx={{fontWeight:'bold', textAlign:'center'}}>890 Nazionali</Typography>
                                     </Grid>
-                                    <hr></hr>
-                                    <Grid container  justifyContent="center"
-                                        alignItems="center" style={{ height: '80px' }} item  md={6}>
+
+                                </Grid>
+
+                                <hr></hr>
+
+                                <Grid
+                                    sx={{ marginTop: '20px' }}
+                                    container
+                                    columns={12}>
+                                    <Grid
+                                        justifyContent="center"
+                                        alignItems="center"  item  md={6}
+                                    >
                                         <Typography sx={{fontWeight:'bold', textAlign:'right'}}>Totale Notifiche</Typography>
                                     </Grid>
-                                    <Grid container
-                                        justifyContent="center"
-                                        alignItems="center"
-                                        style={{ height: '80px' }} item  md={2}>
+                                    <Grid
+                                        sx={{
+                                            textAlign: 'center',
+                                            borderColor: '#ffffff',
+                                            borderStyle: 'solid',
+                                        }}
+                                        item
+                                        xs={2}
+                                    >
                                         <TextField
                                             sx={{ backgroundColor: '#ffffff', width: '100px'}}
                                             disabled={true}
@@ -740,10 +812,15 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                                         />
                                     </Grid>
-                                    <Grid container
-                                        justifyContent="center"
-                                        alignItems="center"
-                                        style={{ height: '80px' }} item md={2}>
+                                    <Grid
+                                        sx={{
+                                            textAlign: 'center',
+                                            borderColor: '#ffffff',
+                                            borderStyle: 'solid',
+                                        }}
+                                        item
+                                        xs={2}
+                                    >
                                         <TextField
                                             sx={{ backgroundColor: '#ffffff', width: '100px'}}
                                             disabled={true}
@@ -753,14 +830,30 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                                         />
                                     </Grid>
-                                    <Grid container  justifyContent="center"
-                                        alignItems="center" style={{ height: '80px' }} item  md={6}>
-                                        <Typography sx={{fontWeight:'bold', textAlign:'center'}}>Percentuale copertura</Typography>
-                                    </Grid>
-                                    <Grid container
+
+                                </Grid>
+
+                                <hr></hr>
+
+                                <Grid
+                                    sx={{ marginTop: '20px' }}
+                                    container
+                                    columns={12}>
+                                    <Grid
                                         justifyContent="center"
-                                        alignItems="center"
-                                        style={{ height: '80px' }} item  md={2}>
+                                        alignItems="center"  item  md={6}
+                                    >
+                                        <Typography sx={{fontWeight:'bold', textAlign:'right'}}>Percentuale copertura</Typography>
+                                    </Grid>
+                                    <Grid
+                                        sx={{
+                                            textAlign: 'center',
+                                            borderColor: '#ffffff',
+                                            borderStyle: 'solid',
+                                        }}
+                                        item
+                                        xs={2}
+                                    >
                                         <TextField
                                             sx={{ backgroundColor: '#ffffff', width: '100px'}}
                                             disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
@@ -769,10 +862,15 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                                         />
                                     </Grid>
-                                    <Grid container
-                                        justifyContent="center"
-                                        alignItems="center"
-                                        style={{ height: '80px' }} item md={2}>
+                                    <Grid
+                                        sx={{
+                                            textAlign: 'center',
+                                            borderColor: '#ffffff',
+                                            borderStyle: 'solid',
+                                        }}
+                                        item
+                                        xs={2}
+                                    >
                                         <TextField
                                             sx={{ backgroundColor: '#ffffff', width: '100px'}}
                                             disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
@@ -781,7 +879,9 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                                         />
                                     </Grid>
+
                                 </Grid>
+                                <hr></hr>
                             </div>
                      
                             <div style={{paddingRight:"28px"}} className="bg-white my-3 py-3">
@@ -945,7 +1045,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                     </Button>
                 </div>
                 <div>
-                    <Button onClick={()=> modificaCommessa ? setOpenModalAlert(true) : onAvantiButton()} variant="outlined">{dataModuli?.length-1 === activeStep && !isObbligatorioLayout ? "Lista Moduli commesse": dataModuli?.length-1 === activeStep && isObbligatorioLayout  ?"Salva":"Avanti"}</Button>
+                    <Button onClick={()=> modificaCommessa ? setOpenModalAlert(true) : onAvantiButton()} variant="outlined">{labelButtonAvantiListaModuliSave}</Button>
                 </div>
                     
             </div> 

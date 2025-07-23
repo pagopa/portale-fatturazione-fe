@@ -185,3 +185,14 @@ export const getRegioniModuloCommessa = async (token:string, nonce:string) =>{
         }});
     return response;
 };
+
+export const getDettaglioModuloCommessaV2 = async (token:string, anno:string, mese:string,nonce:string) => {
+    const response =  await axios.get(`${url}/api/v2/modulocommessa/dettaglio/${anno}/${mese}?nonce=${nonce}`,
+       
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};

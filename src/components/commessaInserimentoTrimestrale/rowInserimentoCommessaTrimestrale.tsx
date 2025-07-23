@@ -11,7 +11,7 @@ interface RowInsComTrimestraleProps {
     totale:number
 }
 
-const RowInserimentoCommessaTrimestrale : React.FC<RowInsComTrimestraleProps> = ({ sentence, textBoxHidden, setValue,values,meseAnno, modifica,keys, totale}) => {
+const RowInserimentoCommessaTrimestrale : React.FC<RowInsComTrimestraleProps> = ({ sentence, setValue,values,meseAnno, modifica,keys, totale}) => {
     return (
         <Grid
             sx={{ marginTop: '20px' }}
@@ -27,7 +27,7 @@ const RowInserimentoCommessaTrimestrale : React.FC<RowInsComTrimestraleProps> = 
                 item
                 xs={6}
             >
-                <Typography>{sentence}{meseAnno}</Typography>
+                <Typography>{sentence}<span style={{fontWeight:'bold'}}>{meseAnno}</span></Typography>
             </Grid>
             <Grid
                 sx={{ textAlign: 'center' }}
@@ -39,7 +39,7 @@ const RowInserimentoCommessaTrimestrale : React.FC<RowInsComTrimestraleProps> = 
                     sx={{ backgroundColor: '#ffffff', width: '100px'}}
                     disabled={modifica}//da modificare
                     size="small"
-                    value={values[0]||""}
+                    value={values[0]||0}
                     InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                     onChange={(e)=>setValue(e,keys[0])}
                 />
@@ -55,7 +55,7 @@ const RowInserimentoCommessaTrimestrale : React.FC<RowInsComTrimestraleProps> = 
                             sx={{ backgroundColor: '#ffffff', width: '100px' }}
                             disabled={modifica}
                             size="small"
-                            value={values[1]||""}
+                            value={values[1]||0}
                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                             onChange={(e)=>setValue(e,keys[1])}
                         />

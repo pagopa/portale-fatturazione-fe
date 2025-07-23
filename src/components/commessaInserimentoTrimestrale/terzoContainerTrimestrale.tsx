@@ -7,7 +7,7 @@ import { month } from '../../reusableFunction/reusableArrayObj';
 import { createDateFromString } from '../../reusableFunction/function';
 import { GlobalContext } from '../../store/context/globalContext';
 
-const TerzoContainerTrimestrale  = ({valueTotali, dataModifica, meseAnno}) => {
+const TerzoContainerTrimestrale  = ({dataModulo, dataModifica, meseAnno}) => {
 
     const globalContextObj = useContext(GlobalContext);
     const {mainState} = globalContextObj;
@@ -59,11 +59,10 @@ const TerzoContainerTrimestrale  = ({valueTotali, dataModifica, meseAnno}) => {
     const labelDigitale = labelCategorie.filter((obj) => obj.idCategoriaSpedizione === 2);
     const labelAnalogica = labelCategorie.filter((obj) => obj.idCategoriaSpedizione === 1);
 
-    const valueDigitale = valueTotali.filter((obj) => obj.idCategoriaSpedizione === 2);
-    const valueAnalogico = valueTotali.filter((obj) => obj.idCategoriaSpedizione === 1);
+ 
 
-    const sum = (valueTotali[0]?.totaleValoreCategoriaSpedizione || 0) + (valueTotali[1]?.totaleValoreCategoriaSpedizione || 0);
-    const sumFixed2Decimal = sum.toLocaleString("de-DE", { style: "currency", currency: "EUR" });
+    const sum = (dataModulo.totaleNotificheAnalogico || 0) + (dataModulo?.totaleNotificheDigitale || 0);
+    const sumFixed2Decimal = sum?.toLocaleString("de-DE", { style: "currency", currency: "EUR" });
 
     return (
         <div className=" m-3 pl-5 pt-3">
@@ -80,7 +79,7 @@ const TerzoContainerTrimestrale  = ({valueTotali, dataModifica, meseAnno}) => {
                     xs={6}
                 >
                     <Typography>
-                        {labelDigitale[0].descrizione} {meseAnno}
+                        {labelDigitale[0].descrizione} <span style={{fontWeight:'bold'}}>{meseAnno}</span>
                     </Typography>
                 </Grid>
                 <Grid
@@ -92,7 +91,7 @@ const TerzoContainerTrimestrale  = ({valueTotali, dataModifica, meseAnno}) => {
                         variant="caption-semibold"
                         sx={{fontSize:'18px'}}
                     >
-                        {valueDigitale[0]?.totaleValoreCategoriaSpedizione.toLocaleString("de-DE", { style: "currency", currency: "EUR" })|| '0 €'} 
+                        {dataModulo?.totaleNotificheDigitale.toLocaleString("de-DE", { style: "currency", currency: "EUR" })|| '0 €'} 
                     </Typography>
                 </Grid>
             </Grid>
@@ -109,7 +108,7 @@ const TerzoContainerTrimestrale  = ({valueTotali, dataModifica, meseAnno}) => {
                     xs={6}
                 >
                     <Typography>
-                        {labelAnalogica[0].descrizione} {meseAnno}
+                        {labelAnalogica[0].descrizione} <span style={{fontWeight:'bold'}}>{meseAnno}</span>
                     </Typography>
                 </Grid>
                 <Grid
@@ -118,17 +117,20 @@ const TerzoContainerTrimestrale  = ({valueTotali, dataModifica, meseAnno}) => {
                     xs={6}
                 >
                     <Typography
-                        variant="caption-semibold"
+                        
                         sx={{fontSize:'18px', textAlign:'center'}}
                     >
-                        {valueAnalogico[0]?.totaleValoreCategoriaSpedizione.toLocaleString("de-DE", { style: "currency", currency: "EUR" })|| '0 €'}
+                        {dataModulo?.totaleNotificheAnalogico?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })|| '0 €'}
                     </Typography>
                 </Grid>
             </Grid>
             {/* seconda row end */}
             <hr></hr>
             <Grid
-                sx={{ marginTop: '25px', paddingBottom: '16px'}}
+                sx={{
+                    marginTop: '3%',
+                    paddingBottom: '3%'
+                }}
                 container
                 columns={12}
             >
@@ -150,7 +152,7 @@ const TerzoContainerTrimestrale  = ({valueTotali, dataModifica, meseAnno}) => {
                     </Typography>
                 </Grid>
             </Grid>
-            <hr className="mx-3 mt-5" />
+            <hr />
             {
                 dataModifica && 
                     <div className="d-flex justify-content-around marginTopBottom24">
