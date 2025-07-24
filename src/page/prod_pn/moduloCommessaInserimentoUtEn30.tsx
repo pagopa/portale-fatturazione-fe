@@ -188,7 +188,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 setIsObbligatorioLayout(res.data);
                 //setLoadingData(true);
                 await getCommessaObbligatoriListaV2(token, profilo.nonce).then((response)=>{
-                    const obbligatori = response.data.obbligatori;
+                    const obbligatori = response.data.lista;
          
                     setDataModuli(obbligatori);
                     setDataObbligatori(obbligatori.map(el => el.stato === null).flat().includes(true));
@@ -235,43 +235,12 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     const handleGetDettaglioModuloCommessaVecchio = async (year,month) =>{
         setLoadingData(true);
         await getDettaglioModuloCommessaV2(token,year,month, profilo.nonce)
-            .then((response:{data:ModuloCommessaType})=>{
+            .then((response:{data:any})=>{
 
-                const res = response.data;
+                const res = response.data?.lista[0];
                 setInfoCommessa({anno:res.annoValidita.toString(),mese:res.meseValidita.toString(),idTipoContratto:res.idTipoContratto,isEditable:res.modifica});
                 console.log({ZORRO:res});
-                /*const objectCommessaFixed = {
-                    "modifica": res.modifica,
-                    "annoValidita": res.anno,
-                    "meseValidita": res.mese,
-                    "idEnte": "pippi",
-                    "idTipoContratto": res.idTipoContratto,
-                    "stato":mainState.infoTrimestreComSelected.moduli[mainState.infoTrimestreComSelected.moduloSelectedIndex].stato,
-                    "prodotto": "prodPn",
-                    "totale": null,
-                    "dataInserimento": res.dataModifica,
-                    "dataChiusura":"",
-
-                    "totaleDigitaleNaz":res.moduliCommessa.find(el => el.idTipoSpedizione === 3)?.numeroNotificheNazionali||0,
-                    "totaleDigitaleInternaz": res.moduliCommessa.find(el => el.idTipoSpedizione === 3)?.numeroNotificheInternazionali||0,
-                    "totaleAnalogicoARNaz": res.moduliCommessa.find(el => el.idTipoSpedizione === 1)?.numeroNotificheNazionali||0,
-                    "totaleAnalogicoARInternaz":res.moduliCommessa.find(el => el.idTipoSpedizione === 1)?.numeroNotificheInternazionali||0,
-                    "totaleAnalogico890Naz": res.moduliCommessa.find(el => el.idTipoSpedizione === 2)?.numeroNotificheNazionali||0,
-
-                    "totaleNotificheDigitaleNaz": res.moduliCommessa.find(el => el.idTipoSpedizione === 3)?.totaleNotifiche||0,
-                    "totaleNotificheDigitaleInternaz": res.totaleModuloCommessaNotifica?.totaleNumeroNotificheNazionali||0,
-                    "totaleNotificheAnalogicoARNaz": res.totaleModuloCommessaNotifica?.totaleNumeroNotificheInternazionali||0,
-                    "totaleNotificheAnalogicoARInternaz": res.totaleModuloCommessaNotifica?.totaleNumeroNotificheDaProcessare||0,
-                    "totaleNotificheAnalogico890Naz": res.moduliCommessa.find(el => el.idTipoSpedizione === 2)?.totaleNotifiche||0,
-                    "totaleNotificheDigitale": res.moduliCommessa.find(el => el.idTipoSpedizione === 3)?.totaleNotifiche||0,
-                    "totaleNotificheAnalogico": res.moduliCommessa.find(el => el.idTipoSpedizione === 1)?.totaleNotifiche||0,
-
-                    "totaleNotifiche": 0,
-                    "source": mainState.infoTrimestreComSelected.moduli[mainState.infoTrimestreComSelected.moduloSelectedIndex].source,
-                    "quarter": "2025-Q3",
-                    "valoriRegione": []
-                };
-*/
+           
                 setDataModuli([res]);
                 setDataObbligatori(false);
             
@@ -675,7 +644,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 </div>
                
                 <div className='mt-5 mb-5'>
-                    {dataModuli.length > 1 || !isObbligatorioLayout && 
+                    {steps.length > 1  && 
                     <Stepper activeStep={activeStep}>
                         {steps.map((label, index) => {
                             const stepProps: { completed?: boolean } = {};
