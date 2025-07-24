@@ -28,6 +28,8 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { el } from 'date-fns/locale';
 import RowInserimentoCommessaTrimestrale from '../../components/commessaInserimentoTrimestrale/rowInserimentoCommessaTrimestrale';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+
 
 
 const ITEM_HEIGHT = 48;
@@ -521,14 +523,16 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
 
 
     const handleChangeTotale_Ar_890_regione = (e, tipoNotifiche,istatRegione ) => {
-        const activeCommessa = dataModuli[activeStep];
-        const regioniActiveCommessa = dataModuli[activeStep].valoriRegione;
-        const restOfCommesse = dataModuli.filter(el => el.meseValidita !== activeCommessa.meseValidita);
-        const restOfRegioni = regioniActiveCommessa.filter(el => el.istatRegione !== istatRegione);
-        const regioneAlreadyExistBoolean = regioniActiveCommessa.find(el => el.istatRegione === istatRegione);
-        const regioneAlreadyExist = regioniActiveCommessa.filter(el => el.istatRegione === istatRegione)[0];
-        const originalIndex = regioniActiveCommessa.findIndex(el => el.istatRegione === istatRegione);
-        const activeCommessaIndex = dataModuli.findIndex(el => el.meseValidita === activeCommessa.meseValidita);
+        
+        
+        const activeCommessa = dataModuli.length > 1 ? dataModuli[activeStep] : dataModuli[0];
+        const regioniActiveCommessa = activeCommessa?.valoriRegione;
+        const restOfCommesse = dataModuli?.filter(el => el.meseValidita !== activeCommessa?.meseValidita);
+        const restOfRegioni = regioniActiveCommessa?.filter(el => el.istatRegione !== istatRegione) || [];
+        const regioneAlreadyExistBoolean = regioniActiveCommessa?.find(el => el.istatRegione === istatRegione);
+        const regioneAlreadyExist = regioniActiveCommessa?.filter(el => el.istatRegione === istatRegione)[0];
+        const originalIndex = regioniActiveCommessa?.findIndex(el => el.istatRegione === istatRegione);
+        const activeCommessaIndex = dataModuli?.findIndex(el => el.meseValidita === activeCommessa?.meseValidita);
         let regioneToAdd; 
      
         if(regioneAlreadyExistBoolean){
@@ -547,6 +551,9 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 "ar":tipoNotifiche === "totaleAnalogicoARNaz" ?  Number(e.target.value) :null
             };
         }*/
+      
+        console.log({restOfRegioni,regioneToAdd,regioneAlreadyExistBoolean});
+        
         const valoriRegioneOrderedWithSameIndex = [
             ...restOfRegioni.slice(0, originalIndex),
             regioneToAdd,
@@ -563,15 +570,15 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             updatedCommessa,
             ...restOfCommesse.slice(activeCommessaIndex)
         ]);
-        
-    
         //gestione errore regioni count
         errorOnOver([...restOfRegioni,regioneToAdd],updatedCommessa);
+     
     };
 
     
 
     const errorOnOver = (newRegioni, newCommessa) => {
+        console.log({newRegioni});
         const totAr = (newCommessa.totaleAnalogicoARNaz||0);
         const tot890 = (newCommessa.totaleAnalogico890Naz||0);
 
@@ -591,18 +598,27 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         }
     };
 
-   
-    const coperturaAr =  (Math.round((dataModuli[activeStep]?.valoriRegione.reduce((acc, el) => acc + (el.ar||0), 0)/(dataModuli[activeStep]?.totaleAnalogicoARNaz||0))*100)); 
-   
-    const copertura890 = (Math.round((dataModuli[activeStep]?.valoriRegione.reduce((acc, el) => acc + (el[890]||0), 0)/(dataModuli[activeStep]?.totaleAnalogico890Naz||0))  * 100)); 
-    
-    let labelButtonAvantiListaModuliSave = "Avanti";
 
-    if(dataModuli?.length-1 === activeStep && isObbligatorioLayout){
+    const onHandleSalvaModificaButton =  () => {
+        console.log('mimmo');
+    };
+
+    const activeCommessa = dataModuli.length > 1 ? dataModuli[activeStep] : dataModuli[0];
+
+   
+    const coperturaAr =  (Math.round((activeCommessa?.valoriRegione.reduce((acc, el) => acc + (el.ar||0), 0)/(activeCommessa?.totaleAnalogicoARNaz||0))*100)); 
+   
+    const copertura890 = (Math.round((activeCommessa?.valoriRegione.reduce((acc, el) => acc + (el[890]||0), 0)/(activeCommessa?.totaleAnalogico890Naz||0))  * 100)); 
+    
+    let labelButtonAvantiListaModuliSave = "Modifica";
+
+    if((activeStep+1) === steps.length){
         labelButtonAvantiListaModuliSave = "Sava";
-    }else if(!isObbligatorioLayout && activeStep === 2 ){
-        labelButtonAvantiListaModuliSave = "Lista moduli commessa";
     }
+    /*else if(!isObbligatorioLayout && activeStep === steps.length ){
+        labelButtonAvantiListaModuliSave = "Lista moduli commessa";
+    }*/
+
 
     dataModuli?.length-1 === activeStep && !isObbligatorioLayout ?
         "Lista Moduli commesse": dataModuli?.length-1 === activeStep && isObbligatorioLayout  ?"Salva":"Avanti";
@@ -677,27 +693,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 >
                     <Skeleton variant="rectangular" height="100%" />
                 </Box>: <>
-                    {!isObbligatorioLayout &&
-                    <div  className='d-flex justify-content-end'>
-                        <Tooltip  title={modificaCommessa ? "Salva": isNewCommessa ? "Salva" :!infoCommessa.isEditable ? null:'Modifica'}>
-                            <span>
-                                <IconButton
-                                    size='large'
-                                    disabled={!modificaCommessa||!infoCommessa.isEditable}
-                                    onClick={() =>{
-                                        if(!modificaCommessa && !isNewCommessa){
-                                            setModificaCommessa(true);
-                                        }else{
-                                            console.log('000');
-                                            
-                                        }
-                                    } }> 
-                                    {!modificaCommessa && !isNewCommessa ?<EditNoteIcon sx={{fontSize:"60px"}}/> :<SaveIcon sx={{fontSize:"60px"}}/>}
-                                </IconButton>
-                            </span>
-                        </Tooltip>
-                    </div>
-                    }
                     <div>
                         {/*probabilmente possiamo eliminare il main state dai componenti qui sotto  */}
                         <div className="bg-white mt-3 pt-3">
@@ -777,7 +772,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                             disabled={true}
                                             size="small"
                                           
-                                            value={dataModuli[activeStep]?.totaleAnalogicoARNaz||""}
+                                            value={dataModuli.length > 1 ? (dataModuli[activeStep]?.totaleNotificheAnalogicoARNaz||0):(dataModuli[0]?.totaleNotificheAnalogicoARNaz||0)}
                                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                                         />
                                     </Grid>
@@ -795,7 +790,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                             disabled={true}
                                             size="small"
                                         
-                                            value={dataModuli[activeStep]?.totaleAnalogico890Naz||""}
+                                            value={dataModuli.length > 1 ?  (dataModuli[activeStep]?.totaleNotificheAnalogico890Naz||0) : (dataModuli[0]?.totaleNotificheAnalogico890Naz||0)}
                                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                                         />
                                     </Grid>
@@ -903,7 +898,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                 <Grid   container spacing={2}>
                                     <Grid container  justifyContent="center"
                                         alignItems="center" style={{ height: '80px' }} item  md={6}>
-                                        <Typography variant='h4' sx={{fontWeight:'bold', textAlign:'center'}}>Regione {dataModuli[activeStep].valoriRegione[0]?.regione}</Typography>
+                                        <Typography variant='h4' sx={{fontWeight:'bold', textAlign:'center'}}>Regione {dataModuli[activeStep]?.valoriRegione[0]?.regione}</Typography>
                                         <Tooltip title="Regione di appartenenza">
                                             <IconButton>
                                                 <InfoIcon fontSize='medium' />
@@ -917,9 +912,9 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                         <TextField
                                             sx={{ backgroundColor: '#ffffff', width: '100px'}}
                                             error={errorArRegioni}
-                                            onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogicoARNaz",dataModuli[activeStep].valoriRegione[0]?.istatRegione)}
+                                            onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogicoARNaz",dataModuli.length > 1 ? dataModuli[activeStep]?.valoriRegione[0]?.istatRegione:dataModuli[0]?.valoriRegione[0]?.istatRegione)}
                                             size="small"
-                                            value={dataModuli[activeStep].valoriRegione[0]?.ar}
+                                            value={dataModuli.length > 1 ? (dataModuli[activeStep]?.valoriRegione[0]?.ar||0) : (dataModuli[0]?.valoriRegione[0]?.ar||0) }
                                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                                         />
                                     </Grid>
@@ -930,9 +925,9 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                         <TextField
                                             sx={{ backgroundColor: '#ffffff', width: '100px'}}
                                             error={error890Regioni}
-                                            onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogico890Naz",dataModuli[activeStep].valoriRegione[0]?.istatRegione)}
+                                            onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogico890Naz",dataModuli.length > 1 ? dataModuli[activeStep]?.valoriRegione[0]?.istatRegione :  dataModuli[0]?.valoriRegione[0]?.istatRegione)}
                                             size="small"
-                                            value={dataModuli[activeStep].valoriRegione[0]["890"]}
+                                            value={dataModuli.length > 1 ? (dataModuli[activeStep]?.valoriRegione[0]["890"]||0):(dataModuli[0]?.valoriRegione[0]["890"]||0) }
                                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                                         />
                                     </Grid>
@@ -1004,17 +999,32 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             </div> 
           
             <div className="d-flex justify-content-between m-5 ">
-                <div>
-                    <Button
-                        variant="outlined"
-                        disabled={activeStep === 0}
-                        type="button"
-                        onClick={()=>onIndietroButtonCommessa()}
-                    >Indietro
-                    </Button>
+                <div >
+                    <Tooltip  title={modificaCommessa ? "Salva": isNewCommessa ? "Salva" :!infoCommessa.isEditable ? null:'Modifica'}>
+                        <span>
+                            <IconButton
+                                size='large'
+                                disabled={activeStep === 0}
+                                onClick={onIndietroButtonCommessa}> 
+                                <ArrowBackIcon sx={{fontSize:"60px"}}/>
+                            </IconButton>
+                        </span>
+                    </Tooltip>
                 </div>
                 <div>
-                    <Button onClick={()=> modificaCommessa ? setOpenModalAlert(true) : onAvantiButton()} variant="outlined">{labelButtonAvantiListaModuliSave}</Button>
+                    {activeCommessa.source === "archiviato"? null:<Button onClick={onHandleSalvaModificaButton} variant="outlined">{labelButtonAvantiListaModuliSave}</Button>} 
+                </div>
+                <div >
+                    <Tooltip  title={modificaCommessa ? "Salva": isNewCommessa ? "Salva" :!infoCommessa.isEditable ? null:'Modifica'}>
+                        <span>
+                            <IconButton
+                                size='large'
+                                disabled={(activeStep+1) === steps.length}
+                                onClick={onAvantiButton}> 
+                                <ArrowForwardIcon sx={{fontSize:"60px"}}/>
+                            </IconButton>
+                        </span>
+                    </Tooltip>
                 </div>
                     
             </div> 

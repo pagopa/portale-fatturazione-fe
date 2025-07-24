@@ -2,13 +2,13 @@ import { Grid, Typography } from '@mui/material';
 import RowInserimentoCommessaTrimestrale from './rowInserimentoCommessaTrimestrale';
 const SecondoContainerTrimestrale = ({ onChangeModuloValue,dataModulo,meseAnno,modifica}) => {
     console.log({pippo:dataModulo});
-    const totaleNazionale = (dataModulo?.totaleDigitaleNaz||0) + (dataModulo?.totaleAnalogicoARNaz||0)+(dataModulo?.totaleAnalogico890Naz||0);
-    const totaleInternazionale = (dataModulo?.totaleDigitaleInternaz||0)+(dataModulo?.totaleAnalogicoARInternaz||0);
-    const totaleNotifiche = (dataModulo?.totaleDigitaleNaz||0) + (dataModulo?.totaleAnalogicoARNaz||0)+(dataModulo?.totaleAnalogico890Naz||0)+(dataModulo?.totaleDigitaleInternaz||0)+(dataModulo?.totaleAnalogicoARInternaz||0);
+    const totaleNazionale = (dataModulo?.totaleNotificheDigitaleNaz||0) + (dataModulo?.totaleNotificheAnalogicoARNaz||0)+(dataModulo?.totaleNotificheAnalogico890Naz||0);
+    const totaleInternazionale = (dataModulo?.totaleNotificheDigitaleInternaz||0)+(dataModulo?.totaleNotificheAnalogicoARInternaz||0);
+    const totaleNotifiche = (dataModulo?.totaleNotificheDigitaleNaz||0) + (dataModulo?.totaleNotificheAnalogicoARNaz||0)+(dataModulo?.totaleNotificheAnalogico890Naz||0)+(dataModulo?.totaleNotificheDigitaleInternaz||0)+(dataModulo?.totaleNotificheAnalogicoARInternaz||0);
 
-    const totaleDigit = (dataModulo?.totaleDigitaleNaz||0)+(dataModulo?.totaleDigitaleInternaz||0);
-    const totaleAR = (dataModulo?.totaleAnalogicoARNaz||0)+(dataModulo?.totaleAnalogicoARInternaz||0);
-    const totale890 = (dataModulo?.totaleAnalogico890Naz||0);
+    const totaleDigit = (dataModulo?.totaleNotificheDigitaleNaz||0)+(dataModulo?.totaleNotificheDigitaleInternaz||0);
+    const totaleAR = (dataModulo?.totaleNotificheAnalogicoARNaz||0)+(dataModulo?.totaleNotificheAnalogicoARInternaz||0);
+    const totale890 = (dataModulo?.totaleNotificheAnalogico890Naz||0);
     console.log({totaleNazionale,totaleInternazionale,totaleNotifiche});
   
     return (
@@ -20,8 +20,8 @@ const SecondoContainerTrimestrale = ({ onChangeModuloValue,dataModulo,meseAnno,m
                 sentence="Numero complessivo delle notifiche da processare in via digitale nel mese di"
                 textBoxHidden={false}
                 setValue={onChangeModuloValue}
-                values={[dataModulo?.totaleDigitaleNaz,dataModulo?.totaleDigitaleInternaz]}
-                keys={["totaleDigitaleNaz","totaleDigitaleInternaz"]}
+                values={[dataModulo?.totaleNotificheDigitaleNaz,dataModulo?.totaleNotificheDigitaleInternaz]}
+                keys={["totaleNotificheDigitaleNaz","totaleNotificheDigitaleInternaz"]}
                 meseAnno={meseAnno}
                 modifica={modifica}
                 totale={totaleDigit} />
@@ -33,8 +33,8 @@ const SecondoContainerTrimestrale = ({ onChangeModuloValue,dataModulo,meseAnno,m
                 sentence="Numero complessivo delle notifiche da processare in via analogica tramite Raccomandata A/R nel mese di"
                 textBoxHidden={false}
                 setValue={onChangeModuloValue}
-                values={[dataModulo?.totaleAnalogicoARNaz,dataModulo?.totaleAnalogicoARInternaz]}
-                keys={["totaleAnalogicoARNaz","totaleAnalogicoARInternaz"]}
+                values={[dataModulo?.totaleNotificheAnalogicoARNaz,dataModulo?.totaleNotificheAnalogicoARInternaz]}
+                keys={["totaleNotificheAnalogicoARNaz","totaleNotificheAnalogicoARInternaz"]}
                 meseAnno={meseAnno}
                 modifica={modifica}
                 totale={totaleAR}
@@ -47,8 +47,8 @@ const SecondoContainerTrimestrale = ({ onChangeModuloValue,dataModulo,meseAnno,m
                 sentence="Numero complessivo delle notifiche da processare in via analogica del tipo notifica ex L. 890/1982 nel mese di"
                 textBoxHidden={false}
                 setValue={onChangeModuloValue}
-                values={[dataModulo?.totaleAnalogico890Naz,""]}
-                keys={["totaleAnalogico890Naz"]}
+                values={[dataModulo?.totaleNotificheAnalogico890Naz,""]}
+                keys={["totaleNotificheAnalogico890Naz"]}
                 meseAnno={meseAnno}
                 modifica={modifica}
                 totale={totale890}
