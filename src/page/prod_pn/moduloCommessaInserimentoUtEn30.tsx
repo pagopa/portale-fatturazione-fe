@@ -696,13 +696,13 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                     <div>
                         {/*probabilmente possiamo eliminare il main state dai componenti qui sotto  */}
                         <div className="bg-white mt-3 pt-3">
-                            <PrimoContainerInsComTrimestrale meseAnno={`${month[Number(isObbligatorioLayout ? dataModuli[activeStep].meseValidita : infoCommessa.mese)-1]}/${isObbligatorioLayout ? dataModuli[activeStep].annoValidita :infoCommessa.anno}`} tipoContratto={isObbligatorioLayout ? dataModuli[activeStep].idTipoContratto === 1 ?  "PAL":"PAC": infoCommessa.idTipoContratto === 1 ? "PAL":"PAC"} />
+                            <PrimoContainerInsComTrimestrale meseAnno={`${month[Number(activeCommessa?.meseValidita)-1]}/${activeCommessa?.annoValidita}`} tipoContratto={activeCommessa?.idTipoContratto === 1 ?  "PAL":"PAC"} />
                             {/* CAMBIARE LA PROP BUTTON MODIFICA*/}
-                            <SecondoContainerTrimestrale  onChangeModuloValue={onChangeModuloValue }  dataModulo={dataModuli[isObbligatorioLayout ? activeStep: 0]} meseAnno={` ${month[Number(isObbligatorioLayout ? dataModuli[activeStep].meseValidita : infoCommessa.mese)-1]}/${isObbligatorioLayout ? dataModuli[activeStep].annoValidita :infoCommessa.anno}`}  modifica={!modificaCommessa && !isNewCommessa && !isObbligatorioLayout} />
+                            <SecondoContainerTrimestrale  onChangeModuloValue={onChangeModuloValue }  dataModulo={activeCommessa} meseAnno={` ${month[Number( activeCommessa?.meseValidita )-1]}/${activeCommessa?.annoValidita}`}  modifica={!modificaCommessa && !isNewCommessa && !isObbligatorioLayout} />
                         </div>
-                        {(!isObbligatorioLayout && dataModuli[0].source === "archiviato") &&
+                        {(activeCommessa?.source === "archiviato") &&
                         <div className='bg-white'>
-                            <TerzoContainerTrimestrale dataModulo={dataModuli[0]} dataModifica={dataMod} meseAnno={` ${month[Number(isObbligatorioLayout ? dataModuli[activeStep].meseValidita : infoCommessa.mese)-1]}/${isObbligatorioLayout ? dataModuli[activeStep].annoValidita :infoCommessa.anno}`}/>
+                            <TerzoContainerTrimestrale dataModulo={activeCommessa} dataModifica={dataMod} meseAnno={` ${month[Number(activeCommessa?.meseValidita)-1]}/${activeCommessa?.annoValidita}`}/>
                         </div>
                         }
                         {/*NEW CODE ______________________________*/}
@@ -1012,7 +1012,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                     </Tooltip>
                 </div>
                 <div>
-                    {activeCommessa.source === "archiviato"? null:<Button onClick={onHandleSalvaModificaButton} variant="outlined">{labelButtonAvantiListaModuliSave}</Button>} 
+                    {activeCommessa?.source === "archiviato"? null:<Button onClick={onHandleSalvaModificaButton} variant="outlined">{labelButtonAvantiListaModuliSave}</Button>} 
                 </div>
                 <div >
                     <Tooltip  title={modificaCommessa ? "Salva": isNewCommessa ? "Salva" :!infoCommessa.isEditable ? null:'Modifica'}>
