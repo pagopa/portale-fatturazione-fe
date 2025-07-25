@@ -49,7 +49,8 @@ const RouteProfile = () => {
             const newKeys = res?.data.map(el => el.apiKey).filter(el => el !== null);
             setMainData((prev) => ({...prev, apiKeyPage:{ keys:newKeys,ip:[],visible:true}}));
         }).catch((err)=>{
-            if(err.response.status === 401){
+            console.log({err});
+            if(err?.response?.status === 401){
                 setMainData((prev) => ({...prev, apiKeyPage:{...prev.apiKeyPage,visible:false}}));
             }else if (err.response.status === 404){
                 setMainData((prev) => ({...prev, apiKeyPage:{...prev.apiKeyPage,visible:true}}));

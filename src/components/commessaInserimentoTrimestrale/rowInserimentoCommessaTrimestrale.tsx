@@ -37,7 +37,7 @@ const RowInserimentoCommessaTrimestrale : React.FC<RowInsComTrimestraleProps> = 
                 {/*text sotto territorio nazionale*/}
                 <TextField
                     sx={{ backgroundColor: '#ffffff', width: '100px'}}
-                    disabled={modifica}//da modificare
+                    disabled={!modifica}//da modificare
                     size="small"
                     value={values[0]||0}
                     InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
@@ -53,7 +53,7 @@ const RowInserimentoCommessaTrimestrale : React.FC<RowInsComTrimestraleProps> = 
                     : (
                         <TextField
                             sx={{ backgroundColor: '#ffffff', width: '100px' }}
-                            disabled={modifica}
+                            disabled={!modifica}
                             size="small"
                             value={values[1]||0}
                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}

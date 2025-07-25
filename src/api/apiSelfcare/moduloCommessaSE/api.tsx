@@ -1,6 +1,7 @@
 import axios from "axios";
 import { url } from "../../api";
 import { DatiCommessa } from "../../../types/typeModuloCommessaInserimento";
+import { PostModuloCommessa } from "../../../page/prod_pn/moduloCommessaInserimentoUtEn30";
 
 export const getDatiConfigurazioneCommessa = async (token:string, idTipoContratto:number, prodotto:string, nonce:string) =>{
 
@@ -194,5 +195,15 @@ export const getDettaglioModuloCommessaV2 = async (token:string, anno:string, me
         },}
     );
 
+    return response;
+};
+
+export const insertDatiModuloCommessaV2 = async (datiCommessa : PostModuloCommessa[], token:string, nonce:string) => {
+    const response =  await axios.post(`${url}/api/v2/modulocommessa?nonce=${nonce}`,
+        datiCommessa,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
     return response;
 };

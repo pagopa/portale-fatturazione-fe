@@ -1,35 +1,30 @@
-import {useState,useEffect, useContext} from 'react';
+import {useState,useEffect, useContext, useRef} from 'react';
 import {Typography, Button, Stepper, Step, Tooltip, IconButton,  Theme, Box, Skeleton, StepLabel, Grid, Chip, FormControl, InputLabel, MenuItem, OutlinedInput, Select, TextField} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked, theme } from '@pagopa/mui-italia';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { useNavigate } from 'react-router';
-import EditNoteIcon from '@mui/icons-material/EditNote';
 import { GlobalContext } from '../../store/context/globalContext';
 import { manageError } from '../../api/api';
 import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
-import { getCommessaObbligatoriListaV2, getCommessaObbligatoriVerificaV2, getDettaglioModuloCommessa, getDettaglioModuloCommessaV2, getRegioniModuloCommessa, insertDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
+import { getCommessaObbligatoriListaV2, getCommessaObbligatoriVerificaV2,  getDettaglioModuloCommessaV2, getRegioniModuloCommessa, insertDatiModuloCommessa, insertDatiModuloCommessaV2 } from '../../api/apiSelfcare/moduloCommessaSE/api';
 import ModalRedirect from '../../components/commessaInserimento/madalRedirect';
 import ModalConfermaInserimento from '../../components/commessaInserimento/modalConfermaInserimento';
 import BasicModal from '../../components/reusableComponents/modals/modal';
 import ModalLoading from '../../components/reusableComponents/modals/modalLoading';
-import { calculateTot } from '../../reusableFunction/function';
 import { month } from '../../reusableFunction/reusableArrayObj';
 import { PathPf } from '../../types/enum';
 import { ManageErrorResponse } from '../../types/typesGeneral';
-import { DatiCommessa, ResponseDettaglioModuloCommessa, ResponsTotaliInsModuloCommessa, TotaleNazionaleInternazionale } from '../../types/typeModuloCommessaInserimento';
+import { ResponseDettaglioModuloCommessa,TotaleNazionaleInternazionale } from '../../types/typeModuloCommessaInserimento';
 import PrimoContainerInsComTrimestrale from '../../components/commessaInserimentoTrimestrale/primoContainerTrimestrale';
 import SecondoContainerTrimestrale from '../../components/commessaInserimentoTrimestrale/secondoContainerTrimestrale';
 import TerzoContainerTrimestrale from '../../components/commessaInserimentoTrimestrale/terzoContainerTrimestrale';
-import SaveIcon from '@mui/icons-material/Save';
 import ModalAlert from '../../components/reusableComponents/modals/modalAlert';
 import InfoIcon from '@mui/icons-material/Info';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { el } from 'date-fns/locale';
-import RowInserimentoCommessaTrimestrale from '../../components/commessaInserimentoTrimestrale/rowInserimentoCommessaTrimestrale';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-
+import is from 'date-fns/esm/locale/is/index.js';
 
 
 const ITEM_HEIGHT = 48;
@@ -51,8 +46,6 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
             : theme.typography.fontWeightRegular,
     };
 }
-
-
 
 export interface ModuloCommessaType {
     modifica: boolean
@@ -93,6 +86,19 @@ interface Regioni {
     isRegione: 1
 }
 
+export interface PostModuloCommessa {
+    anno: number
+    mese: number
+    moduliCommessa: NotificheModuliCommessaPost[]
+    valoriRegioni: Regioni[]
+}
+
+export interface NotificheModuliCommessaPost {
+    numeroNotificheNazionali: number
+    numeroNotificheInternazionali: number
+    idTipoSpedizione: number,
+    totaleNotifiche: number
+}
 
 
 const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
@@ -113,8 +119,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
    
     const [loadingData, setLoadingData] = useState(true);
-    const [totale, setTotale] = useState<TotaleNazionaleInternazionale>({totaleNazionale:0, totaleInternazionale:0, totaleNotifiche:0});
-    const [dataMod, setDataModifica] = useState<string|null>('');// cambiare a boolean|null
+  
+    const [isEditAllow, setisEditAllow] = useState<boolean>(false);// cambiare a boolean|null
    
     const [openModalLoading, setOpenModalLoading] = useState(false);
     const [openModalConfermaIns, setOpenModalConfermaIns] = useState(false);
@@ -129,7 +135,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     const [isNewCommessa, setIsNewCommessa] = useState(false);
     const [openModalAlert,setOpenModalAlert] = useState(false);
     const [isObbligatorioLayout, setIsObbligatorioLayout] = useState(false);
-    const [infoCommessa,setInfoCommessa] = useState({anno:"",mese:"",idTipoContratto:0,isEditable:false});
     const [activeStep, setActiveStep] = useState(0);
     const [skipped, setSkipped] = useState(new Set<number>());
     const [regioniIsVisible, setRegioniIsVisible] = useState(false);
@@ -139,6 +144,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     const [errorArRegioni, setErrorArRegioni] = useState(false);
     const [error890Regioni, setError890Regioni] = useState(false);
     //const [arrayRegioniFromApiModCommessa , setArrayRegioniFromApiModCommessa] = useState<Regioni[]>([]);
+    const [dataModuliToSave, setDataModuliToSave] = useState<PostModuloCommessa[]>([]);
+    const clickOnIndietroAvanti = useRef<string>();
   
 
 
@@ -206,8 +213,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
 
                     //sistemare quando mauro ci darà l'api , probabilmente da eliminare questo state
                     setDataModuloToVisualize(obbligatori[activeStepResult]);
-                    setDataModifica(null);
-                    setRegioniIsVisible(response.data.macrocategoriaVendita === 1);
+                    setisEditAllow(true);
+                    setRegioniIsVisible(response.data.macrocategoriaVendita === 1 || response.data.macrocategoriaVendita === 2);
 
                     //handleGetDettaglioModuloCommessaVecchio(obbligatori[activeStepResult].annoValidita,obbligatori[activeStepResult].meseValidita);
                     // passo al servizio regioni le regioni già presenti , la prima da eliminare dalla lista e le altre da valutare come inserite
@@ -219,8 +226,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                     setLoadingData(false);
                 });
             }else{
-
-                
                 handleGetDettaglioModuloCommessaVecchio(mainState?.infoTrimestreComSelected?.annoCommessaSelectd,mainState?.infoTrimestreComSelected?.meseCommessaSelected);
                 const completedResult = mainState?.infoTrimestreComSelected?.moduli?.map((el,i) => ({[i+1]:el?.stato !== "--"?true:false}));
          
@@ -232,21 +237,18 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         });
     };
 
- 
-  
     const handleGetDettaglioModuloCommessaVecchio = async (year,month) =>{
         setLoadingData(true);
         await getDettaglioModuloCommessaV2(token,year,month, profilo.nonce)
             .then((response:{data:any})=>{
 
                 const res = response.data?.lista[0];
-                setInfoCommessa({anno:res.annoValidita.toString(),mese:res.meseValidita.toString(),idTipoContratto:res.idTipoContratto,isEditable:res.modifica});
+        
                 console.log({ZORRO:res});
            
                 setDataModuli([res]);
                 setDataObbligatori(false);
             
-                setDataModifica(res.dataInserimento);
                 setIsNewCommessa(res.modifica && res.totale !== null);
                 
                 setLoadingData(false);
@@ -254,7 +256,11 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 const variableRegioniIsVisible = (!res.modifica && (res.valoriRegione.length > 0 && res.valoriRegione[0]["890"] !== null || res.valoriRegione[0].ar !== null)) ||
                                                 res.modifica && res.valoriRegione.length > 0; 
                 setRegioniIsVisible(variableRegioniIsVisible);
-              
+
+                const regioniToHideDelete = res.valoriRegione.map(el => el.istatRegione);
+                getRegioni(regioniToHideDelete); 
+                
+
             }).catch((err:ManageErrorResponse)=>{
                 manageError(err,dispatchMainState);
                 setLoadingData(false);
@@ -285,44 +291,49 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         });
     };
 
-    // funzione utilizzata con la response sul click modifica/insert modulo commessa , sia utente selcare che pagopa
-    const toDoOnPostModifyCommessa = (res:ResponseDettaglioModuloCommessa) =>{
-        if(mainState.inserisciModificaCommessa === 'MODIFY'){
-            handleModifyMainState({
-                statusPageInserimentoCommessa:'immutable',
-                statusPageDatiFatturazione:'immutable',
-            });
-            setDataModifica(res.data.dataModifica);
-            // aggiunta in seguito
-            //setTotaliModuloCommessa(res.data.totale);
-        }else{
-            //setTotaliModuloCommessa(res.data.totale);
-            setDataModifica(res.data.dataModifica);
-            handleModifyMainState({
-                statusPageInserimentoCommessa:'immutable',
-                inserisciModificaCommessa:'MODIFY',
-                mese:res.data.mese,
-                anno:res.data.anno,
-                primoInserimetoCommessa: false
-            });
-        
-            navigate(PathPf.DATI_FATTURAZIONE);
-        }  
-    };
-    /*
-    const hendlePostModuloCommessa = async () =>{
-        await insertDatiModuloCommessa(datiCommessa, token, profilo.nonce)
-            .then(res =>{
+
+    const hendleInsertModifyModuloCommessa = async () =>{
+        setOpenModalLoading(true);
+       
+        const objectToSend:any[] = dataModuli.map((el:ModuloCommessaType) => {
+            return {
+                anno:el.annoValidita,
+                mese:el.meseValidita,
+                "moduliCommessa": [
+                    {
+                        "numeroNotificheNazionali": el.totaleNotificheAnalogicoARNaz||0,
+                        "numeroNotificheInternazionali": el.totaleNotificheAnalogicoARInternaz||0,
+                        "idTipoSpedizione": 1,
+                        "totaleNotifiche": el.totaleNotificheAnalogico||0
+                    },
+                    {
+                        "numeroNotificheNazionali": el.totaleNotificheAnalogico890Naz||0,
+                        "numeroNotificheInternazionali": 0,
+                        "idTipoSpedizione": 2,
+                        "totaleNotifiche": el.totaleNotificheAnalogico890Naz||0
+                    },
+                    {
+                        "numeroNotificheNazionali": el?.totaleNotificheDigitale||0,
+                        "numeroNotificheInternazionali":el.totaleNotificheDigitaleInternaz||0,
+                        "idTipoSpedizione": 3,
+                        "totaleNotifiche": el.totaleNotificheDigitale||0
+                    }
+                ],
+                "valoriRegione": el.valoriRegione
+            };});
+        await insertDatiModuloCommessaV2(objectToSend, token, profilo.nonce)
+            .then(()=>{
                 setOpenModalLoading(false);
-                // setButtonMofica(true);
-                toDoOnPostModifyCommessa(res);
+                setisEditAllow(false);
             } )
             .catch(err => {
+                setisEditAllow(false);
                 setOpenModalLoading(false);
                 manageError(err,dispatchMainState); 
             });
     };
-*/
+
+
     const onButtonComfermaPopUp = () =>{
         setOpenModalLoading(true);
         // hendlePostModuloCommessa();
@@ -332,29 +343,9 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         setOpenModalConfermaIns(true);
     };
 
-    /*
-    const hendleOnButtonModificaModuloCommessa = () => {
-        handleModifyMainState({statusPageInserimentoCommessa:'mutable'});
-        //setButtonMofica(false);
-        setTotaliModuloCommessa([
-            {
-                idCategoriaSpedizione: 0,
-                totaleValoreCategoriaSpedizione: 0
-            },
-            {
-                idCategoriaSpedizione: 0,
-                totaleValoreCategoriaSpedizione: 0
-            }
-        ]);
-    };*/
-
     const onIndietroButtonHeader = () =>{
         if(mainState.statusPageInserimentoCommessa === 'immutable'){
             navigate(PathPf.LISTA_COMMESSE);
-            // inserito con nuova logica modulo commessa trimestrale 
-           
-            //
-            //da cambiare
         }else if(mainState.inserisciModificaCommessa === 'INSERT'){
             setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:'INDIETRO_BUTTON'}}));
         }else if(mainState.inserisciModificaCommessa === 'MODIFY' && mainState.statusPageInserimentoCommessa === 'mutable' ){
@@ -362,52 +353,49 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         }
     };
 
-    const onIndietroButtonCommessa = () =>{
-        /*da inserire in seguito
-        const completedResult = response.data.map((el,i) => ({[i+1]:el.stato !== null?true:false}));
-        setStepCompleted(Object.assign({}, ...completedResult));*/
+    const onIndietroButton = () =>{
+        clickOnIndietroAvanti.current = "INDIETRO";
         if(activeStep > 0){
-            // const completedResult = response.data.map((el,i) => ({[i+1]:el.stato !== null?true:false}));
-        //setStepCompleted({1:false,2:false});
-        //sistemare quando mauro ci darà l'api , probabilmente da eliminare questo state
-            if(isObbligatorioLayout){
-                setDataModuloToVisualize(dataModuli[activeStep-1]);
-                // handleGetDettaglioModuloCommessaVecchio(dataModuli[activeStep-1].annoValidita,dataModuli[activeStep-1].meseValidita);
+            if(isEditAllow){
+                setOpenModalAlert(true);
             }else{
-                setDataModuloToVisualize(mainState.infoTrimestreComSelected.moduli[activeStep-1]);
-                handleGetDettaglioModuloCommessaVecchio(mainState.infoTrimestreComSelected?.moduli[activeStep-1]?.id.split('/')[1],mainState?.infoTrimestreComSelected?.moduli[activeStep-1]?.id.split('/')[0]);
+                indietroFunction();
             }
-          
-            //setLoadingData(false);
-            handleBack();
         }  
     };
 
+    const indietroFunction = () => {
+        if(isObbligatorioLayout){
+            setDataModuloToVisualize(dataModuli[activeStep-1]);
+        }else{
+            setDataModuloToVisualize(mainState.infoTrimestreComSelected.moduli[activeStep-1]);
+            handleGetDettaglioModuloCommessaVecchio(mainState.infoTrimestreComSelected?.moduli[activeStep-1]?.id.split('/')[1],mainState?.infoTrimestreComSelected?.moduli[activeStep-1]?.id.split('/')[0]);
+        }
+        handleBack();
+        setisEditAllow(false);
+    };
+
     const onAvantiButton = () =>{
-        /*da inserire in seguito
-        const completedResult = response.data.map((el,i) => ({[i+1]:el.stato !== null?true:false}));
-        setStepCompleted(Object.assign({}, ...completedResult));*/
-        if(activeStep < steps.length-1){
-            // const completedResult = response.data.map((el,i) => ({[i+1]:el.stato !== null?true:false}));
-        //setStepCompleted({1:false,2:false});
-        //sistemare quando mauro ci darà l'api , probabilmente da eliminare questo state
-            if(isObbligatorioLayout){
-                setDataModuloToVisualize(dataModuli[activeStep+1]);
-                //handleGetDettaglioModuloCommessaVecchio(dataModuli[activeStep+1].annoValidita,dataModuli[activeStep+1].meseValidita);
-                //setLoadingData(false);
-               
-                setModificaCommessa(false);
-            }else{
-                //setDataModuloToVisualize(dataModuli[stepActive+1])
-                handleGetDettaglioModuloCommessaVecchio(mainState.infoTrimestreComSelected.moduli[activeStep+1].id.split('/')[1],mainState.infoTrimestreComSelected.moduli[activeStep+1].id.split('/')[0]);
-                //setLoadingData(false);
-                setDataModuloToVisualize(dataModuli[activeStep]);
-                setModificaCommessa(false);
-            }
-            handleNext();
+        clickOnIndietroAvanti.current = "AVANTI";
+        if(isEditAllow){
+            setOpenModalAlert(true);
+        }else{
+            avantiFunction();
         }
     };
 
+    const avantiFunction = () => {
+        if(activeStep < steps.length-1){
+            if(isObbligatorioLayout){
+                setDataModuloToVisualize(dataModuli[activeStep+1]);
+            }else{
+                handleGetDettaglioModuloCommessaVecchio(mainState.infoTrimestreComSelected.moduli[activeStep+1].id.split('/')[1],mainState.infoTrimestreComSelected.moduli[activeStep+1].id.split('/')[0]);
+            }
+            handleNext();
+            setisEditAllow(false);
+        }
+    };
+  
     //DA UTILIZZARE CON GLI INSERIMENTI
     const isStepOptional = (step: number) => {
         return step === 10;
@@ -451,7 +439,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         setActiveStep(0);
     };
 
-
     const onAddRegioniButton =  () => {
         const activeCommessa = dataModuli[activeStep];
         const activeCommessaIndex = dataModuli.findIndex(el => el.meseValidita === activeCommessa.meseValidita);
@@ -465,8 +452,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             valoriRegione:[...activeCommessa.valoriRegione,...regioniToAdd.flat()],
         };
 
-        
-
         const regioneAlreadySelected = updatedCommessa.valoriRegione.map(el => el.istatRegione);
         if(regioneAlreadySelected.length > 0){
             getRegioni([...arrayRegioniSelected,...regioneAlreadySelected]);
@@ -477,10 +462,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             ...restOfCommesse.slice(0,activeCommessaIndex),
             updatedCommessa,
             ...restOfCommesse.slice(activeCommessaIndex)]);
-       
-     
     };
-
 
     const onDeleteSingleRegione = (id) => {
         const activeCommessa = dataModuli[activeStep];
@@ -504,9 +486,10 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
 
     const onChangeModuloValue = (e,valueKey) => {
        
-        const activeCommessa = dataModuli[activeStep];
-        const restOfCommesse = dataModuli.filter(el => el.meseValidita !== activeCommessa.meseValidita);
-        const activeCommessaIndex = dataModuli.findIndex(el => el.meseValidita === activeCommessa.meseValidita);
+        const activeCommessa = dataModuli.length > 1 ? dataModuli[activeStep] : dataModuli[0];
+        const restOfCommesse = dataModuli.filter(el => el.meseValidita !== activeCommessa?.meseValidita);
+        const activeCommessaIndex = dataModuli.findIndex(el => el.meseValidita === activeCommessa?.meseValidita);
+        const regioniActiveCommessa = activeCommessa?.valoriRegione;
 
         const updatedCommessa = {
             ...activeCommessa,
@@ -517,14 +500,11 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             ...restOfCommesse.slice(0,activeCommessaIndex),
             updatedCommessa,
             ...restOfCommesse.slice(activeCommessaIndex)]);
+        console.log({www:regioniActiveCommessa});
+        errorOnOver(regioniActiveCommessa,updatedCommessa);
     };
 
-
-
-
     const handleChangeTotale_Ar_890_regione = (e, tipoNotifiche,istatRegione ) => {
-        
-        
         const activeCommessa = dataModuli.length > 1 ? dataModuli[activeStep] : dataModuli[0];
         const regioniActiveCommessa = activeCommessa?.valoriRegione;
         const restOfCommesse = dataModuli?.filter(el => el.meseValidita !== activeCommessa?.meseValidita);
@@ -543,24 +523,13 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 "ar":tipoNotifiche === "totaleAnalogicoARNaz"  ? Number(e.target.value||0) :Number(regioneAlreadyExist?.ar||0)
             };
         }
-        /*else{
-            regioneToAdd = {
-                "890": tipoNotifiche === "totaleAnalogico890Naz" ?  Number(e.target.value) :null,
-                "regione": regioneAlreadyExist?.regione,
-                "istatRegione":regioneAlreadyExist?.istatRegione,
-                "ar":tipoNotifiche === "totaleAnalogicoARNaz" ?  Number(e.target.value) :null
-            };
-        }*/
-      
-        console.log({restOfRegioni,regioneToAdd,regioneAlreadyExistBoolean});
-        
+       
         const valoriRegioneOrderedWithSameIndex = [
             ...restOfRegioni.slice(0, originalIndex),
             regioneToAdd,
             ...restOfRegioni.slice(originalIndex)
         ];
-      
-    
+
         const updatedCommessa = {
             ...activeCommessa,
             valoriRegione:valoriRegioneOrderedWithSameIndex,
@@ -572,19 +541,17 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         ]);
         //gestione errore regioni count
         errorOnOver([...restOfRegioni,regioneToAdd],updatedCommessa);
-     
     };
 
-    
 
     const errorOnOver = (newRegioni, newCommessa) => {
-        console.log({newRegioni});
-        const totAr = (newCommessa.totaleAnalogicoARNaz||0);
-        const tot890 = (newCommessa.totaleAnalogico890Naz||0);
+       
+        const totAr = (newCommessa?.totaleNotificheAnalogicoARNaz||0);
+        const tot890 = (newCommessa?.totaleNotificheAnalogico890Naz||0);
 
         const totArOnNewRegioni = newRegioni.reduce((acc, el) => acc + (el.ar||0), 0);
         const tot890OnNewRegioni = newRegioni.reduce((acc,el)=>  acc + (el[890]||0), 0);
-
+        console.log({newRegioni,newCommessa,totAr,tot890,totArOnNewRegioni,tot890OnNewRegioni });
         if(totArOnNewRegioni > totAr){
             !errorArRegioni && setErrorArRegioni(true);
         }else{
@@ -598,38 +565,26 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         }
     };
 
-
     const onHandleSalvaModificaButton =  () => {
         console.log('mimmo');
+        if(!isEditAllow){
+            setisEditAllow(true);
+        }else{
+            hendleInsertModifyModuloCommessa();
+        }
     };
 
     const activeCommessa = dataModuli.length > 1 ? dataModuli[activeStep] : dataModuli[0];
-
-   
-    const coperturaAr =  (Math.round((activeCommessa?.valoriRegione.reduce((acc, el) => acc + (el.ar||0), 0)/(activeCommessa?.totaleAnalogicoARNaz||0))*100)); 
-   
-    const copertura890 = (Math.round((activeCommessa?.valoriRegione.reduce((acc, el) => acc + (el[890]||0), 0)/(activeCommessa?.totaleAnalogico890Naz||0))  * 100)); 
+    const coperturaAr =  (Math.round((activeCommessa?.valoriRegione.reduce((acc, el) => acc + (el.ar||0), 0)/(activeCommessa?.totaleNotificheAnalogicoARNaz||0))*100)); 
+    const copertura890 = (Math.round((activeCommessa?.valoriRegione.reduce((acc, el) => acc + (el[890]||0), 0)/(activeCommessa?.totaleNotificheAnalogico890Naz||0))* 100)); 
     
     let labelButtonAvantiListaModuliSave = "Modifica";
-
-    if((activeStep+1) === steps.length){
-        labelButtonAvantiListaModuliSave = "Sava";
+    if(isEditAllow){
+        labelButtonAvantiListaModuliSave = "Salva";
+    }else if(activeCommessa?.stato === null){
+        labelButtonAvantiListaModuliSave = "Inserisci nuovo modulo commessa";
     }
-    /*else if(!isObbligatorioLayout && activeStep === steps.length ){
-        labelButtonAvantiListaModuliSave = "Lista moduli commessa";
-    }*/
-
-
-    dataModuli?.length-1 === activeStep && !isObbligatorioLayout ?
-        "Lista Moduli commesse": dataModuli?.length-1 === activeStep && isObbligatorioLayout  ?"Salva":"Avanti";
   
-
-    //_____________________________
-
-
-
-    console.log({activeStep,dataModuli,mm:dataModuli[activeStep]});
-   
     return (
         <>
             <BasicModal setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} dispatchMainState={dispatchMainState} handleGetDettaglioModuloCommessa={handleGetDettaglioModuloCommessa}  mainState={mainState}></BasicModal>
@@ -698,11 +653,11 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                         <div className="bg-white mt-3 pt-3">
                             <PrimoContainerInsComTrimestrale meseAnno={`${month[Number(activeCommessa?.meseValidita)-1]}/${activeCommessa?.annoValidita}`} tipoContratto={activeCommessa?.idTipoContratto === 1 ?  "PAL":"PAC"} />
                             {/* CAMBIARE LA PROP BUTTON MODIFICA*/}
-                            <SecondoContainerTrimestrale  onChangeModuloValue={onChangeModuloValue }  dataModulo={activeCommessa} meseAnno={` ${month[Number( activeCommessa?.meseValidita )-1]}/${activeCommessa?.annoValidita}`}  modifica={!modificaCommessa && !isNewCommessa && !isObbligatorioLayout} />
+                            <SecondoContainerTrimestrale  onChangeModuloValue={onChangeModuloValue }  dataModulo={activeCommessa} meseAnno={` ${month[Number( activeCommessa?.meseValidita )-1]}/${activeCommessa?.annoValidita}`}  modifica={isEditAllow} />
                         </div>
                         {(activeCommessa?.source === "archiviato") &&
                         <div className='bg-white'>
-                            <TerzoContainerTrimestrale dataModulo={activeCommessa} dataModifica={dataMod} meseAnno={` ${month[Number(activeCommessa?.meseValidita)-1]}/${activeCommessa?.annoValidita}`}/>
+                            <TerzoContainerTrimestrale dataModulo={activeCommessa} dataModifica={activeCommessa?.dataInserimento} meseAnno={` ${month[Number(activeCommessa?.meseValidita)-1]}/${activeCommessa?.annoValidita}`}/>
                         </div>
                         }
                         {/*NEW CODE ______________________________*/}
@@ -854,6 +809,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                         <FormControl sx={{ m: 1, width: "100%" }}>
                                             <InputLabel>Inserisci regioni</InputLabel>
                                             <Select
+                                                disabled={!isEditAllow}
                                                 multiple
                                                 value={arrayRegioniSelected}
                                                 onChange={(e:any)=> setArrayRegioniSelected(e.target.value)}
@@ -884,6 +840,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                     </Grid>
                                     <Grid item  md={6}>
                                         <IconButton
+
+                                            disabled={!isEditAllow}
                                             onClick={() => onAddRegioniButton()}
                                             aria-label="Edit"
                                             color="primary"
@@ -898,7 +856,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                 <Grid   container spacing={2}>
                                     <Grid container  justifyContent="center"
                                         alignItems="center" style={{ height: '80px' }} item  md={6}>
-                                        <Typography variant='h4' sx={{fontWeight:'bold', textAlign:'center'}}>Regione {dataModuli[activeStep]?.valoriRegione[0]?.regione}</Typography>
+                                        <Typography variant='h4' sx={{fontWeight:'bold', textAlign:'center'}}>Regione {activeCommessa?.valoriRegione[0]?.regione}</Typography>
                                         <Tooltip title="Regione di appartenenza">
                                             <IconButton>
                                                 <InfoIcon fontSize='medium' />
@@ -912,9 +870,10 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                         <TextField
                                             sx={{ backgroundColor: '#ffffff', width: '100px'}}
                                             error={errorArRegioni}
-                                            onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogicoARNaz",dataModuli.length > 1 ? dataModuli[activeStep]?.valoriRegione[0]?.istatRegione:dataModuli[0]?.valoriRegione[0]?.istatRegione)}
+                                            disabled={!isEditAllow}
+                                            onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogicoARNaz",dataModuli.length > 1 ? activeCommessa?.valoriRegione[0]?.istatRegione:activeCommessa?.valoriRegione[0]?.istatRegione)}
                                             size="small"
-                                            value={dataModuli.length > 1 ? (dataModuli[activeStep]?.valoriRegione[0]?.ar||0) : (dataModuli[0]?.valoriRegione[0]?.ar||0) }
+                                            value={dataModuli.length > 1 ? (activeCommessa?.valoriRegione[0]?.ar||0) : (activeCommessa?.valoriRegione[0]?.ar||0) }
                                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                                         />
                                     </Grid>
@@ -925,9 +884,10 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                         <TextField
                                             sx={{ backgroundColor: '#ffffff', width: '100px'}}
                                             error={error890Regioni}
-                                            onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogico890Naz",dataModuli.length > 1 ? dataModuli[activeStep]?.valoriRegione[0]?.istatRegione :  dataModuli[0]?.valoriRegione[0]?.istatRegione)}
+                                            disabled={!isEditAllow}
+                                            onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogico890Naz",dataModuli.length > 1 ? activeCommessa?.valoriRegione[0]?.istatRegione :  activeCommessa?.valoriRegione[0]?.istatRegione)}
                                             size="small"
-                                            value={dataModuli.length > 1 ? (dataModuli[activeStep]?.valoriRegione[0]["890"]||0):(dataModuli[0]?.valoriRegione[0]["890"]||0) }
+                                            value={dataModuli.length > 1 ? (activeCommessa?.valoriRegione[0]["890"]||0):(activeCommessa?.valoriRegione[0]["890"]||0) }
                                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                                         />
                                     </Grid>
@@ -936,7 +896,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                 <hr></hr>
                                 <Box   sx={{ backgroundColor:'#F8F8F8'}}>
                                     <Box style={{overflowY: "auto",maxHeight: "200px", backgroundColor:'#F8F8F8'}}>
-                                        {  dataModuli[activeStep]?.valoriRegione.slice(1).length > 0 ? dataModuli[activeStep]?.valoriRegione.slice(1).map((element:Regioni) => {
+                                        {  activeCommessa?.valoriRegione.slice(1).length > 0 ? activeCommessa?.valoriRegione.slice(1).map((element:Regioni) => {
                                             return (
                                                 <div key={element.istatRegione}>
                                                     <Grid container spacing={2}>
@@ -952,6 +912,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                                             <TextField
                                                                 sx={{ backgroundColor: '#ffffff', width: '100px'}}
                                                                 error={errorArRegioni}
+                                                                disabled={!isEditAllow}
                                                                 onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogicoARNaz",element.istatRegione)}
                                                                 size="small"
                                                                 value={element.ar}
@@ -965,12 +926,14 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                                             <TextField
                                                                 sx={{ backgroundColor: '#ffffff', width: '100px'}}
                                                                 error={error890Regioni}
+                                                                disabled={!isEditAllow}
                                                                 onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogico890Naz",element.istatRegione)}
                                                                 size="small"
                                                                 value={element[890]}
                                                                 InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                                                             />
                                                         </Grid>
+                                                        {isEditAllow &&
                                                         <Grid container
                                                             justifyContent="center"
                                                             alignItems="center"
@@ -983,7 +946,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                                             ><DeleteIcon/>
                                                             </IconButton>
                                                         </Grid>
-                                                        
+                                                        }
                                                     </Grid>
                                                     <hr></hr>
                                                 </div>
@@ -1000,22 +963,22 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
           
             <div className="d-flex justify-content-between m-5 ">
                 <div >
-                    <Tooltip  title={modificaCommessa ? "Salva": isNewCommessa ? "Salva" :!infoCommessa.isEditable ? null:'Modifica'}>
+                    <Tooltip title={activeStep !== 0 && "Indietro"}>
                         <span>
                             <IconButton
                                 size='large'
                                 disabled={activeStep === 0}
-                                onClick={onIndietroButtonCommessa}> 
+                                onClick={onIndietroButton}> 
                                 <ArrowBackIcon sx={{fontSize:"60px"}}/>
                             </IconButton>
                         </span>
                     </Tooltip>
                 </div>
                 <div>
-                    {activeCommessa?.source === "archiviato"? null:<Button onClick={onHandleSalvaModificaButton} variant="outlined">{labelButtonAvantiListaModuliSave}</Button>} 
+                    {activeCommessa?.source === "archiviato"? null:<Button disabled={error890Regioni|| errorArRegioni} onClick={onHandleSalvaModificaButton} variant="outlined">{labelButtonAvantiListaModuliSave}</Button>} 
                 </div>
                 <div >
-                    <Tooltip  title={modificaCommessa ? "Salva": isNewCommessa ? "Salva" :!infoCommessa.isEditable ? null:'Modifica'}>
+                    <Tooltip title={(activeStep+1) !== steps.length && "Avanti"}>
                         <span>
                             <IconButton
                                 size='large'
@@ -1040,7 +1003,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 sentence={`Stai ${mainState.inserisciModificaCommessa === 'MODIFY' ? 'modificando': 'registrando'} il Modulo Commessa di OTTOBRE, GENNAIO ${mainState.anno}: confermi l'operazione?`}
             ></ModalConfermaInserimento>
             <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}></ModalLoading>
-            <ModalAlert open={openModalAlert} setOpen={setOpenModalAlert} handleAction={onAvantiButton}></ModalAlert>
+            <ModalAlert open={openModalAlert} setOpen={setOpenModalAlert} handleAction={clickOnIndietroAvanti.current === "AVANTI" ?avantiFunction:indietroFunction}></ModalAlert>
         </>
     );
 };
