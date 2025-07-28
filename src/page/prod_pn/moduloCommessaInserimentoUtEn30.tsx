@@ -127,11 +127,11 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     //new logic__________________
     const [dataObbligatori, setDataObbligatori] = useState(false);
     const [dataModuli, setDataModuli] = useState<ModuloCommessaType[]>([]);
-    const [dataModuloToVisualize,setDataModuloToVisualize] = useState<ModuloCommessaType>();
+    //const [dataModuloToVisualize,setDataModuloToVisualize] = useState<ModuloCommessaType>();
     const [stepCompleted,setStepCompleted] = useState<{[k: number]: boolean}>({});
     //const [stepActive, setActiveStep] = useState<number>(0);
     const [steps, setSteps] = useState<string[]>([]);
-    const [modificaCommessa,setModificaCommessa] = useState(false);
+   
     const [isNewCommessa, setIsNewCommessa] = useState(false);
     const [openModalAlert,setOpenModalAlert] = useState(false);
     const [isObbligatorioLayout, setIsObbligatorioLayout] = useState(false);
@@ -143,8 +143,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
 
     const [errorArRegioni, setErrorArRegioni] = useState(false);
     const [error890Regioni, setError890Regioni] = useState(false);
-    //const [arrayRegioniFromApiModCommessa , setArrayRegioniFromApiModCommessa] = useState<Regioni[]>([]);
-    const [dataModuliToSave, setDataModuliToSave] = useState<PostModuloCommessa[]>([]);
+  
     const clickOnIndietroAvanti = useRef<string>();
   
 
@@ -211,8 +210,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                     const activeStepResult = obbligatori.findIndex(item => item.stato === null);
                     setActiveStep(activeStepResult);
 
-                    //sistemare quando mauro ci darà l'api , probabilmente da eliminare questo state
-                    setDataModuloToVisualize(obbligatori[activeStepResult]);
                     setisEditAllow(true);
                     setRegioniIsVisible(response.data.macrocategoriaVendita === 1 || response.data.macrocategoriaVendita === 2);
 
@@ -266,7 +263,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 setLoadingData(false);
             });
     };
-    console.log({dataModuli});
+    console.log({dataModuli, isEditAllow});
 
     // Lato self care
     // chiamata per capire se i dati fatturazione sono stati inseriti
@@ -313,7 +310,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                         "totaleNotifiche": el.totaleNotificheAnalogico890Naz||0
                     },
                     {
-                        "numeroNotificheNazionali": el?.totaleNotificheDigitale||0,
+                        "numeroNotificheNazionali": el?.totaleNotificheDigitaleNaz||0,
                         "numeroNotificheInternazionali":el.totaleNotificheDigitaleInternaz||0,
                         "idTipoSpedizione": 3,
                         "totaleNotifiche": el.totaleNotificheDigitale||0
@@ -325,6 +322,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             .then(()=>{
                 setOpenModalLoading(false);
                 setisEditAllow(false);
+                navigate(PathPf.LISTA_COMMESSE);
             } )
             .catch(err => {
                 setisEditAllow(false);
@@ -336,7 +334,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
 
     const onButtonComfermaPopUp = () =>{
         setOpenModalLoading(true);
-        // hendlePostModuloCommessa();
     };
 
     const OnButtonSalva = () =>{
@@ -344,19 +341,18 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     };
 
     const onIndietroButtonHeader = () =>{
-        if(mainState.statusPageInserimentoCommessa === 'immutable'){
+        clickOnIndietroAvanti.current = "LISTA_MODULI";
+        if(isEditAllow){
+            setOpenModalAlert(true);
+        }else{
             navigate(PathPf.LISTA_COMMESSE);
-        }else if(mainState.inserisciModificaCommessa === 'INSERT'){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:'INDIETRO_BUTTON'}}));
-        }else if(mainState.inserisciModificaCommessa === 'MODIFY' && mainState.statusPageInserimentoCommessa === 'mutable' ){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:'INDIETRO_BUTTON'}}));
         }
     };
 
     const onIndietroButton = () =>{
         clickOnIndietroAvanti.current = "INDIETRO";
         if(activeStep > 0){
-            if(isEditAllow){
+            if(isEditAllow && !isObbligatorioLayout){
                 setOpenModalAlert(true);
             }else{
                 indietroFunction();
@@ -365,19 +361,18 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     };
 
     const indietroFunction = () => {
-        if(isObbligatorioLayout){
-            setDataModuloToVisualize(dataModuli[activeStep-1]);
-        }else{
-            setDataModuloToVisualize(mainState.infoTrimestreComSelected.moduli[activeStep-1]);
+        if(!isObbligatorioLayout){
             handleGetDettaglioModuloCommessaVecchio(mainState.infoTrimestreComSelected?.moduli[activeStep-1]?.id.split('/')[1],mainState?.infoTrimestreComSelected?.moduli[activeStep-1]?.id.split('/')[0]);
+            setisEditAllow(false);
+        }else{ 
+            setisEditAllow(true);
         }
-        handleBack();
-        setisEditAllow(false);
+        handleBack();   
     };
 
     const onAvantiButton = () =>{
         clickOnIndietroAvanti.current = "AVANTI";
-        if(isEditAllow){
+        if(isEditAllow && !isObbligatorioLayout){
             setOpenModalAlert(true);
         }else{
             avantiFunction();
@@ -386,19 +381,23 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
 
     const avantiFunction = () => {
         if(activeStep < steps.length-1){
-            if(isObbligatorioLayout){
-                setDataModuloToVisualize(dataModuli[activeStep+1]);
-            }else{
+            if(!isObbligatorioLayout){
                 handleGetDettaglioModuloCommessaVecchio(mainState.infoTrimestreComSelected.moduli[activeStep+1].id.split('/')[1],mainState.infoTrimestreComSelected.moduli[activeStep+1].id.split('/')[0]);
+                setisEditAllow(false);
+            }else{
+                setisEditAllow(true);
             }
-            handleNext();
-            setisEditAllow(false);
+            handleNext();     
         }
     };
   
     //DA UTILIZZARE CON GLI INSERIMENTI
     const isStepOptional = (step: number) => {
-        return step === 10;
+        const indexes = mainState.infoTrimestreComSelected.moduli.reduce((acc, obj, index) => {
+            if (obj.source === "facoltativo") acc.push(index);
+            return acc;
+        }, []);
+        return indexes.includes(step);
     };
 
     const isStepSkipped = (step: number) => {
@@ -579,7 +578,9 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     const copertura890 = (Math.round((activeCommessa?.valoriRegione.reduce((acc, el) => acc + (el[890]||0), 0)/(activeCommessa?.totaleNotificheAnalogico890Naz||0))* 100)); 
     
     let labelButtonAvantiListaModuliSave = "Modifica";
-    if(isEditAllow){
+    if(isEditAllow && (isObbligatorioLayout && (activeStep+1 < steps.length))){
+        labelButtonAvantiListaModuliSave = "Prosegui per salvare";
+    }else if(isEditAllow){
         labelButtonAvantiListaModuliSave = "Salva";
     }else if(activeCommessa?.stato === null){
         labelButtonAvantiListaModuliSave = "Inserisci nuovo modulo commessa";
@@ -624,7 +625,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                             } = {};
                             if (isStepOptional(index)) {
                                 labelProps.optional = (
-                                    <Typography variant="caption">Optional</Typography>
+                                    <Typography variant="caption">Facoltativo</Typography>
                                 );
                             }
                             if (isStepSkipped(index)) {
@@ -974,9 +975,11 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                         </span>
                     </Tooltip>
                 </div>
+                {dataModuli.length > 0 && 
                 <div>
-                    {activeCommessa?.source === "archiviato"? null:<Button disabled={error890Regioni|| errorArRegioni} onClick={onHandleSalvaModificaButton} variant="outlined">{labelButtonAvantiListaModuliSave}</Button>} 
+                    {activeCommessa?.source === "archiviato"? null:<Button disabled={error890Regioni|| errorArRegioni|| (isObbligatorioLayout && (activeStep+1 < steps.length))} onClick={onHandleSalvaModificaButton} variant="outlined">{labelButtonAvantiListaModuliSave}</Button>} 
                 </div>
+                }
                 <div >
                     <Tooltip title={(activeStep+1) !== steps.length && "Avanti"}>
                         <span>
@@ -1003,7 +1006,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 sentence={`Stai ${mainState.inserisciModificaCommessa === 'MODIFY' ? 'modificando': 'registrando'} il Modulo Commessa di OTTOBRE, GENNAIO ${mainState.anno}: confermi l'operazione?`}
             ></ModalConfermaInserimento>
             <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}></ModalLoading>
-            <ModalAlert open={openModalAlert} setOpen={setOpenModalAlert} handleAction={clickOnIndietroAvanti.current === "AVANTI" ?avantiFunction:indietroFunction}></ModalAlert>
+            <ModalAlert open={openModalAlert} setOpen={setOpenModalAlert} handleAction={clickOnIndietroAvanti.current === "LISTA_MODULI" ? () => navigate(PathPf.LISTA_COMMESSE):clickOnIndietroAvanti.current === "AVANTI" ?avantiFunction:indietroFunction}></ModalAlert>
         </>
     );
 };
