@@ -322,7 +322,10 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             .then(()=>{
                 setOpenModalLoading(false);
                 setisEditAllow(false);
-                navigate(PathPf.LISTA_COMMESSE);
+                if(isObbligatorioLayout){
+                    navigate(PathPf.LISTA_COMMESSE);
+                }
+                
             } )
             .catch(err => {
                 setisEditAllow(false);
