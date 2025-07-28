@@ -323,7 +323,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 setOpenModalLoading(false);
                 setisEditAllow(false);
                 if(isObbligatorioLayout){
-                    navigate(PathPf.LISTA_COMMESSE);
+                    navigate(PathPf.DATI_FATTURAZIONE);
                 }
                 
             } )
@@ -396,11 +396,11 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
   
     //DA UTILIZZARE CON GLI INSERIMENTI
     const isStepOptional = (step: number) => {
-        const indexes = mainState.infoTrimestreComSelected.moduli.reduce((acc, obj, index) => {
-            if (obj.source === "facoltativo") acc.push(index);
+        const indexes = mainState.infoTrimestreComSelected?.moduli?.reduce((acc, obj, index) => {
+            if (obj?.source === "facoltativo") acc?.push(index);
             return acc;
         }, []);
-        return indexes.includes(step);
+        return indexes?.includes(step);
     };
 
     const isStepSkipped = (step: number) => {
@@ -577,8 +577,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     };
 
     const activeCommessa = dataModuli.length > 1 ? dataModuli[activeStep] : dataModuli[0];
-    const coperturaAr =  (Math.round((activeCommessa?.valoriRegione.reduce((acc, el) => acc + (el.ar||0), 0)/(activeCommessa?.totaleNotificheAnalogicoARNaz||0))*100)); 
-    const copertura890 = (Math.round((activeCommessa?.valoriRegione.reduce((acc, el) => acc + (el[890]||0), 0)/(activeCommessa?.totaleNotificheAnalogico890Naz||0))* 100)); 
+    const coperturaAr = ((activeCommessa?.totaleNotificheAnalogicoARNaz||0) > 0) ? (Math.round((activeCommessa?.valoriRegione.reduce((acc, el) => acc + (el.ar||0), 0)/(activeCommessa?.totaleNotificheAnalogicoARNaz||0))*100)):0; 
+    const copertura890 = ((activeCommessa?.totaleNotificheAnalogico890Naz||0) > 0) ?  (Math.round((activeCommessa?.valoriRegione.reduce((acc, el) => acc + (el[890]||0), 0)/(activeCommessa?.totaleNotificheAnalogico890Naz||0))* 100)):0; 
     
     let labelButtonAvantiListaModuliSave = "Modifica";
     if(isEditAllow && (isObbligatorioLayout && (activeStep+1 < steps.length))){
