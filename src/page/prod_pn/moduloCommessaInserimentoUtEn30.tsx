@@ -1008,7 +1008,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                                         xs={2}
                                                     >
                                                         <TextField
-                                                            sx={{ backgroundColor: '#F8F8F8', width: '100px'}}
+                                                            sx={{ backgroundColor: '#FFFFFF', width: '100px'}}
                                                             error={errorArRegioni}
                                                             disabled={!isEditAllow}
                                                             onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogicoARNaz",element.istatRegione)}
@@ -1027,7 +1027,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                                         xs={2}
                                                     >
                                                         <TextField
-                                                            sx={{ backgroundColor: '#F8F8F8', width: '100px'}}
+                                                            sx={{ backgroundColor: '#FFFFFF', width: '100px'}}
                                                             error={error890Regioni}
                                                             disabled={!isEditAllow}
                                                             onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogico890Naz",element.istatRegione)}
