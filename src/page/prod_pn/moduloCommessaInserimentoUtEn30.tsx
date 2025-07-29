@@ -138,7 +138,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     const [isObbligatorioLayout, setIsObbligatorioLayout] = useState(false);
     const [activeStep, setActiveStep] = useState(0);
     const [skipped, setSkipped] = useState(new Set<number>());
-    const [regioniIsVisible, setRegioniIsVisible] = useState(false);//forse da eiminare
+    //const [regioniIsVisible, setRegioniIsVisible] = useState(false);//forse da eiminare
     const [regioniInsertIsVisible, setRegioniInsertIsVisible] = useState(false);
     const [arrayRegioni, setArrayRegioni] = useState<Regioni[]>([]);
     const [arrayRegioniSelected, setArrayRegioniSelected] = useState<any[]>([]);
@@ -214,7 +214,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                     setActiveStep(activeStepResult);
 
                     setisEditAllow(true);
-                    setRegioniIsVisible(true);
+                    // setRegioniIsVisible(true);
                     setProfiloViewRegione(response.data.macrocategoriaVendita);
                     setRegioniInsertIsVisible(response.data.macrocategoriaVendita === 3 || response.data.macrocategoriaVendita === 4);
 
@@ -257,7 +257,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
 
                 const variableRegioniIsVisible = (!res.modifica && (res.valoriRegione.length > 0 && res.valoriRegione[0]["890"] !== null || res.valoriRegione[0].ar !== null)) ||
                                                 res.modifica && res.valoriRegione.length > 0; 
-                setRegioniIsVisible(variableRegioniIsVisible);
+                //setRegioniIsVisible(variableRegioniIsVisible);
                 setRegioniInsertIsVisible(response.data.macrocategoriaVendita === 3 || response.data.macrocategoriaVendita === 4);
                 const regioniToHideDelete = res.valoriRegione.map(el => el.istatRegione);
                 getRegioni(regioniToHideDelete); 
@@ -388,9 +388,9 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 handleNext();
             }else{
                 setisEditAllow(true);
-                if((coperturaAr < 100 || copertura890 < 100) && (profiloViewRegione === 1  || profiloViewRegione === 2)){
+                if((coperturaAr < 100 || copertura890 < 100) && (profiloViewRegione === 3  || profiloViewRegione === 4)){
                     setOpenModalInfo({open:true, sentence:'La percentuale di copertura delle  notifiche deve raggiungere il 100%'});
-                }else if((coperturaAr < 100 || copertura890 < 100) && (profiloViewRegione === 3  || profiloViewRegione === 4)){
+                }else if((coperturaAr < 100 || copertura890 < 100) && (profiloViewRegione === 1  || profiloViewRegione === 2)){
                     setOpenModalInfo({open:true, sentence:'La percentale di copertura non raggiunge il 100%. In questo caso la coperturà verrà completata in base alla percentuale di residenza sulle varie Regioni.',buttonIsVisible:true,labelButton:"Prosegui",actionButton:handleNext});
                 }else{
                     handleNext();
@@ -449,13 +449,14 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     };
 
     const onAddRegioniButton =  () => {
-        const activeCommessa = dataModuli[activeStep];
-        const activeCommessaIndex = dataModuli.findIndex(el => el.meseValidita === activeCommessa.meseValidita);
+        const activeCommessa = dataModuli.length > 1 ? dataModuli[activeStep] : dataModuli[0];
+        console.log({FFF:activeCommessa,activeStep});
+        const activeCommessaIndex = dataModuli?.findIndex(el => el?.meseValidita === activeCommessa?.meseValidita);
         const regioniToAdd =  arrayRegioniSelected.map(singleId => {
 
             return  arrayRegioni.filter( el => el.istatRegione === singleId);
         });
-        const restOfCommesse = dataModuli.filter(el => el.meseValidita !== activeCommessa.meseValidita);
+        const restOfCommesse = dataModuli.filter(el => el?.meseValidita !== activeCommessa?.meseValidita);
         const updatedCommessa = {
             ...activeCommessa,
             valoriRegione:[...activeCommessa.valoriRegione,...regioniToAdd.flat()],
@@ -474,7 +475,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     };
 
     const onDeleteSingleRegione = (id) => {
-        const activeCommessa = dataModuli[activeStep];
+        const activeCommessa = dataModuli.length > 1 ? dataModuli[activeStep] : dataModuli[0];
         const activeCommessaIndex = dataModuli.findIndex(el => el.meseValidita === activeCommessa.meseValidita);
         const newRegioni = activeCommessa.valoriRegione.filter(el => el.istatRegione !== id);
         const restOfCommesse = dataModuli.filter(el => el.meseValidita !== activeCommessa.meseValidita);
@@ -579,9 +580,9 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         if(!isEditAllow){
             setisEditAllow(true);
         }else{
-            if((coperturaAr < 100 || copertura890 < 100) && (profiloViewRegione === 1  || profiloViewRegione === 2)){
+            if((coperturaAr < 100 || copertura890 < 100) && (profiloViewRegione === 3  || profiloViewRegione === 4)){
                 setOpenModalInfo({open:true, sentence:'La percentuale di copertura delle  notifiche deve raggiungere il 100%'});
-            }else if((coperturaAr < 100 || copertura890 < 100) && (profiloViewRegione === 3  || profiloViewRegione === 4)){
+            }else if((coperturaAr < 100 || copertura890 < 100) && (profiloViewRegione === 1  || profiloViewRegione === 2)){
                 setOpenModalInfo({open:true, sentence:'La percentale di copertura non raggiunge il 100%. In questo caso la coperturà verrà completata in base alla percentuale di residenza sulle varie Regioni.',buttonIsVisible:true,labelButton:"Prosegui",actionButton:hendleInsertModifyModuloCommessa});
             }
             
@@ -679,7 +680,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                         </div>
                         }
                         {/*NEW CODE ______________________________*/}
-                        {regioniIsVisible &&
+                 
                         <>
                             <div className="bg-white mt-3 pt-3 ">
                                 <Grid 
@@ -820,7 +821,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                 </Grid>
                                 <hr></hr>
                             </div>
-                            {regioniInsertIsVisible &&
+                          
                             <div  className="bg-white mt-3 pt-3 ">
                                 <Grid   container spacing={2}>
                                     <Grid item  md={6}>
@@ -869,7 +870,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                     </Grid>
                                 </Grid>
                             </div>
-                            }
+                        
                         
                             {/*creare un componente unico per le regioni_________________________________________________________________ */}
                             <div  className="bg-white mt-3 pt-3">
@@ -1060,7 +1061,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                 <hr></hr>
                             </div>
                         </>
-                        }
+                     
                     </div>   
                 </> }  
             </div> 
