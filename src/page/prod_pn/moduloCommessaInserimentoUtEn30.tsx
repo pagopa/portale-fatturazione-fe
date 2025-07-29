@@ -25,6 +25,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import is from 'date-fns/esm/locale/is/index.js';
+import ModalInfo from '../../components/reusableComponents/modals/modalInfo';
 
 
 const ITEM_HEIGHT = 48;
@@ -123,7 +124,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     const [isEditAllow, setisEditAllow] = useState<boolean>(false);// cambiare a boolean|null
    
     const [openModalLoading, setOpenModalLoading] = useState(false);
-    const [openModalConfermaIns, setOpenModalConfermaIns] = useState(false);
+    const [openModalInfo, setOpenModalInfo] = useState<{open:boolean,sentence:string,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void}>({open:false, sentence:''});
     //new logic__________________
     const [dataObbligatori, setDataObbligatori] = useState(false);
     const [dataModuli, setDataModuli] = useState<ModuloCommessaType[]>([]);
@@ -137,9 +138,11 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     const [isObbligatorioLayout, setIsObbligatorioLayout] = useState(false);
     const [activeStep, setActiveStep] = useState(0);
     const [skipped, setSkipped] = useState(new Set<number>());
-    const [regioniIsVisible, setRegioniIsVisible] = useState(false);
+    const [regioniIsVisible, setRegioniIsVisible] = useState(false);//forse da eiminare
+    const [regioniInsertIsVisible, setRegioniInsertIsVisible] = useState(false);
     const [arrayRegioni, setArrayRegioni] = useState<Regioni[]>([]);
     const [arrayRegioniSelected, setArrayRegioniSelected] = useState<any[]>([]);
+    const [profiloViewRegione, setProfiloViewRegione] = useState<number>(0);
 
     const [errorArRegioni, setErrorArRegioni] = useState(false);
     const [error890Regioni, setError890Regioni] = useState(false);
@@ -211,7 +214,9 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                     setActiveStep(activeStepResult);
 
                     setisEditAllow(true);
-                    setRegioniIsVisible(response.data.macrocategoriaVendita === 1 || response.data.macrocategoriaVendita === 2);
+                    setRegioniIsVisible(true);
+                    setProfiloViewRegione(response.data.macrocategoriaVendita);
+                    setRegioniInsertIsVisible(response.data.macrocategoriaVendita === 3 || response.data.macrocategoriaVendita === 4);
 
                     //handleGetDettaglioModuloCommessaVecchio(obbligatori[activeStepResult].annoValidita,obbligatori[activeStepResult].meseValidita);
                     // passo al servizio regioni le regioni già presenti , la prima da eliminare dalla lista e le altre da valutare come inserite
@@ -241,7 +246,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
 
                 const res = response.data?.lista[0];
         
-                console.log({ZORRO:res});
+                console.log({ZORRO:res,response});
            
                 setDataModuli([res]);
                 setDataObbligatori(false);
@@ -253,9 +258,10 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 const variableRegioniIsVisible = (!res.modifica && (res.valoriRegione.length > 0 && res.valoriRegione[0]["890"] !== null || res.valoriRegione[0].ar !== null)) ||
                                                 res.modifica && res.valoriRegione.length > 0; 
                 setRegioniIsVisible(variableRegioniIsVisible);
-
+                setRegioniInsertIsVisible(response.data.macrocategoriaVendita === 3 || response.data.macrocategoriaVendita === 4);
                 const regioniToHideDelete = res.valoriRegione.map(el => el.istatRegione);
                 getRegioni(regioniToHideDelete); 
+                setProfiloViewRegione(response.data.macrocategoriaVendita);
                 
 
             }).catch((err:ManageErrorResponse)=>{
@@ -335,14 +341,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     };
 
 
-    const onButtonComfermaPopUp = () =>{
-        setOpenModalLoading(true);
-    };
-
-    const OnButtonSalva = () =>{
-        setOpenModalConfermaIns(true);
-    };
-
     const onIndietroButtonHeader = () =>{
         clickOnIndietroAvanti.current = "LISTA_MODULI";
         if(isEditAllow){
@@ -387,10 +385,19 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             if(!isObbligatorioLayout){
                 handleGetDettaglioModuloCommessaVecchio(mainState.infoTrimestreComSelected.moduli[activeStep+1].id.split('/')[1],mainState.infoTrimestreComSelected.moduli[activeStep+1].id.split('/')[0]);
                 setisEditAllow(false);
+                handleNext();
             }else{
                 setisEditAllow(true);
+                if((coperturaAr < 100 || copertura890 < 100) && (profiloViewRegione === 1  || profiloViewRegione === 2)){
+                    setOpenModalInfo({open:true, sentence:'La percentuale di copertura delle  notifiche deve raggiungere il 100%'});
+                }else if((coperturaAr < 100 || copertura890 < 100) && (profiloViewRegione === 3  || profiloViewRegione === 4)){
+                    setOpenModalInfo({open:true, sentence:'La percentale di copertura non raggiunge il 100%. In questo caso la coperturà verrà completata in base alla percentuale di residenza sulle varie Regioni.',buttonIsVisible:true,labelButton:"Prosegui",actionButton:handleNext});
+                }else{
+                    handleNext();
+                }
+               
             }
-            handleNext();     
+           
         }
     };
   
@@ -572,7 +579,12 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         if(!isEditAllow){
             setisEditAllow(true);
         }else{
-            hendleInsertModifyModuloCommessa();
+            if((coperturaAr < 100 || copertura890 < 100) && (profiloViewRegione === 1  || profiloViewRegione === 2)){
+                setOpenModalInfo({open:true, sentence:'La percentuale di copertura delle  notifiche deve raggiungere il 100%'});
+            }else if((coperturaAr < 100 || copertura890 < 100) && (profiloViewRegione === 3  || profiloViewRegione === 4)){
+                setOpenModalInfo({open:true, sentence:'La percentale di copertura non raggiunge il 100%. In questo caso la coperturà verrà completata in base alla percentuale di residenza sulle varie Regioni.',buttonIsVisible:true,labelButton:"Prosegui",actionButton:hendleInsertModifyModuloCommessa});
+            }
+            
         }
     };
 
@@ -588,7 +600,9 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     }else if(activeCommessa?.stato === null){
         labelButtonAvantiListaModuliSave = "Inserisci nuovo modulo commessa";
     }
-  
+
+
+
     return (
         <>
             <BasicModal setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} dispatchMainState={dispatchMainState} handleGetDettaglioModuloCommessa={handleGetDettaglioModuloCommessa}  mainState={mainState}></BasicModal>
@@ -806,8 +820,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                 </Grid>
                                 <hr></hr>
                             </div>
-                     
-                            <div style={{paddingRight:"28px"}} className="bg-white my-3 py-3">
+                            {regioniInsertIsVisible &&
+                            <div  className="bg-white mt-3 pt-3 ">
                                 <Grid   container spacing={2}>
                                     <Grid item  md={6}>
                                         <FormControl sx={{ m: 1, width: "100%" }}>
@@ -855,11 +869,63 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                     </Grid>
                                 </Grid>
                             </div>
+                            }
+                        
                             {/*creare un componente unico per le regioni_________________________________________________________________ */}
-                            <div  style={{paddingRight:"28px"}}  className="bg-white mt-3 pt-3 pe-4">
-                                <Grid   container spacing={2}>
-                                    <Grid container  justifyContent="center"
-                                        alignItems="center" style={{ height: '80px' }} item  md={6}>
+                            <div  className="bg-white mt-3 pt-3">
+                                <Grid 
+                                    container
+                                    columns={12}>
+                                    <Grid
+                                        sx={{
+                                            textAlign: 'left',
+                                            borderColor: '#ffffff',
+                                            borderStyle: 'solid',
+                                        }}
+                                        item
+                                        xs={6}
+                                    ></Grid>
+                                    <Grid
+                                        sx={{
+                                            textAlign: 'left',
+                                            borderColor: '#ffffff',
+                                            borderStyle: 'solid',
+                                        }}
+                                        item
+                                        xs={2}
+                                    >
+                                        <Typography sx={{fontWeight:'bold', textAlign:'center'}}>AR Nazionali </Typography>
+                                    </Grid>
+                                    <Grid
+                                        sx={{
+                                            textAlign: 'left',
+                                            borderColor: '#ffffff',
+                                            borderStyle: 'solid',
+                                        }}
+                                        item
+                                        xs={2}
+                                    >
+                                        <Typography sx={{fontWeight:'bold', textAlign:'center'}}>890 Nazionali</Typography>
+                                    </Grid>
+
+                                </Grid>
+                                <hr></hr>
+
+                                {/*________________________________________________________ */}
+                                <Grid 
+                                    container
+                                    columns={12}>
+                                    <Grid
+                                        sx={{
+                                            display:"flex",
+                                            justifyContent:"right",
+                                            textAlign: 'right',
+                                            borderColor: '#ffffff',
+                                            borderStyle: 'solid',
+                                        }}
+                                        item
+                                        xs={6}
+                                    >
                                         <Typography variant='h4' sx={{fontWeight:'bold', textAlign:'center'}}>Regione {activeCommessa?.valoriRegione[0]?.regione}</Typography>
                                         <Tooltip title="Regione di appartenenza">
                                             <IconButton>
@@ -867,10 +933,15 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                             </IconButton>
                                         </Tooltip>
                                     </Grid>
-                                    <Grid container
-                                        justifyContent="center"
-                                        alignItems="center"
-                                        style={{ height: '80px' }} item  md={2}>
+                                    <Grid
+                                        sx={{
+                                            textAlign: 'center',
+                                            borderColor: '#ffffff',
+                                            borderStyle: 'solid',
+                                        }}
+                                        item
+                                        xs={2}
+                                    >
                                         <TextField
                                             sx={{ backgroundColor: '#ffffff', width: '100px'}}
                                             error={errorArRegioni}
@@ -881,10 +952,15 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                                         />
                                     </Grid>
-                                    <Grid container
-                                        justifyContent="center"
-                                        alignItems="center"
-                                        style={{ height: '80px' }} item md={2}>
+                                    <Grid
+                                        sx={{
+                                            textAlign: 'center',
+                                            borderColor: '#ffffff',
+                                            borderStyle: 'solid',
+                                        }}
+                                        item
+                                        xs={2}
+                                    >
                                         <TextField
                                             sx={{ backgroundColor: '#ffffff', width: '100px'}}
                                             error={error890Regioni}
@@ -895,49 +971,71 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                                         />
                                     </Grid>
-                                    
+
                                 </Grid>
+
+                                {/*___________________________________________________________________*/}
                                 <hr></hr>
-                                <Box   sx={{ backgroundColor:'#F8F8F8'}}>
-                                    <Box style={{overflowY: "auto",maxHeight: "200px", backgroundColor:'#F8F8F8'}}>
-                                        {  activeCommessa?.valoriRegione.slice(1).length > 0 ? activeCommessa?.valoriRegione.slice(1).map((element:Regioni) => {
-                                            return (
-                                                <div key={element.istatRegione}>
-                                                    <Grid container spacing={2}>
-                                                        <Grid container  justifyContent="center"
-                                                            alignItems="center" style={{ height: '80px' }} item  md={6}>
-                                                            <Typography variant='h4' sx={{fontWeight:'bold', textAlign:'center'}}>
-                                                                {element.regione}</Typography>
-                                                        </Grid>
-                                                        <Grid container
-                                                            justifyContent="center"
-                                                            alignItems="center"
-                                                            style={{ height: '80px' }} item  md={2}>
-                                                            <TextField
-                                                                sx={{ backgroundColor: '#ffffff', width: '100px'}}
-                                                                error={errorArRegioni}
-                                                                disabled={!isEditAllow}
-                                                                onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogicoARNaz",element.istatRegione)}
-                                                                size="small"
-                                                                value={element.ar}
-                                                                InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
-                                                            />
-                                                        </Grid>
-                                                        <Grid container
-                                                            justifyContent="center"
-                                                            alignItems="center"
-                                                            style={{ height: '80px' }} item md={2}>
-                                                            <TextField
-                                                                sx={{ backgroundColor: '#ffffff', width: '100px'}}
-                                                                error={error890Regioni}
-                                                                disabled={!isEditAllow}
-                                                                onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogico890Naz",element.istatRegione)}
-                                                                size="small"
-                                                                value={element[890]}
-                                                                InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
-                                                            />
-                                                        </Grid>
-                                                        {isEditAllow &&
+                             
+                                <div style={{overflowY: "auto", backgroundColor:'#F8F8F8'}}>
+                                    {  activeCommessa?.valoriRegione.slice(1).length > 0 ? activeCommessa?.valoriRegione.slice(1).map((element:Regioni) => {
+                                        return (
+                                            <>
+                                                <Grid 
+                                                    key={element.istatRegione}
+                                                    container
+                                                    columns={12}>
+                                                    <Grid
+                                                        sx={{
+                                                            display: "flex",
+                                                            justifyContent: "right", 
+                                                            alignItems: "center",     
+                                                        }}
+                                                        item
+                                                        xs={6}
+                                                    >
+                                                        <Typography variant='h4' sx={{fontWeight:'bold', textAlign:'center'}}>
+                                                            {element.regione}</Typography>
+                                                    </Grid>
+                                                    <Grid
+                                                        sx={{
+                                                            display: "flex",
+                                                            justifyContent: "center", 
+                                                            alignItems: "center",     
+                                                        }}
+                                                        item
+                                                        xs={2}
+                                                    >
+                                                        <TextField
+                                                            sx={{ backgroundColor: '#F8F8F8', width: '100px'}}
+                                                            error={errorArRegioni}
+                                                            disabled={!isEditAllow}
+                                                            onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogicoARNaz",element.istatRegione)}
+                                                            size="small"
+                                                            value={element.ar}
+                                                            InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                                                        />
+                                                    </Grid>
+                                                    <Grid
+                                                        sx={{
+                                                            display: "flex",
+                                                            justifyContent: "center", 
+                                                            alignItems: "center",     
+                                                        }}
+                                                        item
+                                                        xs={2}
+                                                    >
+                                                        <TextField
+                                                            sx={{ backgroundColor: '#F8F8F8', width: '100px'}}
+                                                            error={error890Regioni}
+                                                            disabled={!isEditAllow}
+                                                            onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogico890Naz",element.istatRegione)}
+                                                            size="small"
+                                                            value={element[890]}
+                                                            InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                                                        />
+                                                    </Grid>
+                                                    {isEditAllow &&
                                                         <Grid container
                                                             justifyContent="center"
                                                             alignItems="center"
@@ -950,13 +1048,15 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                                             ><DeleteIcon/>
                                                             </IconButton>
                                                         </Grid>
-                                                        }
-                                                    </Grid>
-                                                    <hr></hr>
-                                                </div>
-                                            );}):null}
-                                    </Box>
-                                </Box>
+                                                    }
+
+                                                </Grid>
+                                                 
+                                                <hr></hr>
+                                            </>
+                                        );}):null}
+                                </div>
+                               
                                 <hr></hr>
                             </div>
                         </>
@@ -980,7 +1080,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 </div>
                 {dataModuli.length > 0 && 
                 <div>
-                    {activeCommessa?.source === "archiviato"? null:<Button disabled={error890Regioni|| errorArRegioni|| (isObbligatorioLayout && (activeStep+1 < steps.length))} onClick={onHandleSalvaModificaButton} variant="outlined">{labelButtonAvantiListaModuliSave}</Button>} 
+                    {activeCommessa?.source === "archiviato"? null:<Button disabled={error890Regioni|| errorArRegioni|| (isObbligatorioLayout && (activeStep+1 < steps.length))} onClick={onHandleSalvaModificaButton} variant={labelButtonAvantiListaModuliSave === "Prosegui per salvare"? "text":"outlined"}>{labelButtonAvantiListaModuliSave}</Button>} 
                 </div>
                 }
                 <div >
@@ -1001,13 +1101,9 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 setOpen={setOpenModalRedirect}
                 open={openModalRedirect}
                 sentence={`Per poter inserire il modulo commessa è obbligatorio fornire  i seguenti dati di fatturazione:`}></ModalRedirect>
-            <ModalConfermaInserimento
-                setOpen={setOpenModalConfermaIns}
-                open={openModalConfermaIns}
-                onButtonComfermaPopUp={onButtonComfermaPopUp}
-                mainState={mainState}
-                sentence={`Stai ${mainState.inserisciModificaCommessa === 'MODIFY' ? 'modificando': 'registrando'} il Modulo Commessa di OTTOBRE, GENNAIO ${mainState.anno}: confermi l'operazione?`}
-            ></ModalConfermaInserimento>
+            <ModalInfo 
+                setOpen={setOpenModalInfo}
+                open={openModalInfo}></ModalInfo>
             <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}></ModalLoading>
             <ModalAlert open={openModalAlert} setOpen={setOpenModalAlert} handleAction={clickOnIndietroAvanti.current === "LISTA_MODULI" ? () => navigate(PathPf.LISTA_COMMESSE):clickOnIndietroAvanti.current === "AVANTI" ?avantiFunction:indietroFunction}></ModalAlert>
         </>

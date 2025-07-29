@@ -4,6 +4,8 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { Dispatch, SetStateAction } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
+import { Button } from '@mui/material';
+
 
 
 const style = {
@@ -19,8 +21,8 @@ const style = {
 };
 
 export interface ModalInfoProps {
-    setOpen:Dispatch<SetStateAction<{open:boolean,sentence:string}>>,
-    open:{open:boolean,sentence:string}
+    setOpen:Dispatch<SetStateAction<{open:boolean,sentence:string,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void}>>,
+    open:{open:boolean,sentence:string,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void},
 }
 
 const ModalInfo : React.FC<ModalInfoProps> = ({setOpen, open}) => {
@@ -51,6 +53,14 @@ const ModalInfo : React.FC<ModalInfoProps> = ({setOpen, open}) => {
                         {open.sentence}
                     </Typography>
                 </div> 
+                {open?.buttonIsVisible &&
+                    <div className='d-flex justify-content-center text-center mt-5'>
+                        <Button variant="contained" onClick={() =>{
+                            handleClose();
+                            open?.actionButton && open?.actionButton();}}>Prosegui</Button>
+                    </div>
+                }
+               
             </Box>
         </Modal>
     );

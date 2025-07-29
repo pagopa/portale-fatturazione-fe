@@ -10,13 +10,13 @@ const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, nameParameterApi
     if(element.source === "obbligatorio" && element.totale === null){
         statusColor = "#FB9EAC";
     }else if(element.source === "obbligatorio" && element.totale !== null){
-        statusColor = "#f7e7bc";
+        statusColor = "#5BB0D5";
     }else if(element.source === "archiviato"){
         statusColor = "#B5E2B4";
     }else if(element.source === "facoltativo" && element.stato === "Aperta/Caricato"){
         statusColor = "#f7e7bc";
     }else if(element.source === "facoltativo"){
-        statusColor = "#F2F2F2";
+        statusColor = "#A2ADB8";
     }
 
     return (
