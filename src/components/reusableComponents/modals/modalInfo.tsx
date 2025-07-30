@@ -8,24 +8,14 @@ import { Button } from '@mui/material';
 
 
 
-const style = {
-    position: 'absolute' as const,
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    boxShadow: 24,
-    p: 4,
-    borderRadius:'20px'
-};
 
 export interface ModalInfoProps {
     setOpen:Dispatch<SetStateAction<{open:boolean,sentence:string,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void}>>,
     open:{open:boolean,sentence:string,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void},
+    width?:number
 }
 
-const ModalInfo : React.FC<ModalInfoProps> = ({setOpen, open}) => {
+const ModalInfo : React.FC<ModalInfoProps> = ({setOpen, open,width}) => {
    
     const handleClose = () => setOpen({open:false, sentence:''});
 
@@ -36,7 +26,17 @@ const ModalInfo : React.FC<ModalInfoProps> = ({setOpen, open}) => {
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
         >
-            <Box sx={style}>
+            <Box sx={ {
+                position: 'absolute' as const,
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: width ? width : 400,
+                bgcolor: 'background.paper',
+                boxShadow: 24,
+                p: 4,
+                borderRadius:'20px'
+            }}>
                 <div className="d-flex align-items-center justify-content-end">
                     <div className='icon_close'>
                         <CloseIcon onClick={handleClose} id='close_icon' sx={{color:'#17324D'}}></CloseIcon>
@@ -54,10 +54,11 @@ const ModalInfo : React.FC<ModalInfoProps> = ({setOpen, open}) => {
                     </Typography>
                 </div> 
                 {open?.buttonIsVisible &&
-                    <div className='d-flex justify-content-center text-center mt-5'>
+                    <div className='d-flex justify-content-evenly text-center mt-5'>
                         <Button variant="contained" onClick={() =>{
                             handleClose();
                             open?.actionButton && open?.actionButton();}}>Prosegui</Button>
+                        <Button variant="outlined" onClick={handleClose}>Annulla</Button>
                     </div>
                 }
                
