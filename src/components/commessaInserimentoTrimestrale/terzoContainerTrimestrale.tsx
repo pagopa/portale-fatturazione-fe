@@ -91,7 +91,7 @@ const TerzoContainerTrimestrale  = ({dataModulo, dataModifica, meseAnno}) => {
                         variant="caption-semibold"
                         sx={{fontSize:'18px'}}
                     >
-                        {dataModulo?.totaleNotificheDigitale.toLocaleString("de-DE", { style: "currency", currency: "EUR" })|| '0 €'} 
+                        {dataModulo?.totaleNotificheDigitale?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })|| '0 €'} 
                     </Typography>
                 </Grid>
             </Grid>
