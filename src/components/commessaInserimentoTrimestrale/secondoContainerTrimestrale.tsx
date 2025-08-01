@@ -1,6 +1,6 @@
 import { Grid, Typography } from '@mui/material';
 import RowInserimentoCommessaTrimestrale from './rowInserimentoCommessaTrimestrale';
-const SecondoContainerTrimestrale = ({ onChangeModuloValue,dataModulo,meseAnno,modifica}) => {
+const SecondoContainerTrimestrale = ({ onChangeModuloValue,dataModulo,meseAnno,modifica,errorAnyValueIsEqualNull}) => {
     console.log({pippo:dataModulo});
     const totaleNazionale = (dataModulo?.totaleNotificheDigitaleNaz||0) + (dataModulo?.totaleNotificheAnalogicoARNaz||0)+(dataModulo?.totaleNotificheAnalogico890Naz||0);
     const totaleInternazionale = (dataModulo?.totaleNotificheDigitaleInternaz||0)+(dataModulo?.totaleNotificheAnalogicoARInternaz||0);
@@ -16,7 +16,7 @@ const SecondoContainerTrimestrale = ({ onChangeModuloValue,dataModulo,meseAnno,m
             <hr></hr>
             {/* prima row start */}
             <RowInserimentoCommessaTrimestrale
-              
+                errorAnyValueIsEqualNull={errorAnyValueIsEqualNull}
                 sentence="Numero complessivo delle notifiche da processare in via digitale nel mese di"
                 textBoxHidden={false}
                 setValue={onChangeModuloValue}
@@ -29,7 +29,7 @@ const SecondoContainerTrimestrale = ({ onChangeModuloValue,dataModulo,meseAnno,m
             <hr></hr>
             {/* seconda row start */}
             <RowInserimentoCommessaTrimestrale
-         
+                errorAnyValueIsEqualNull={errorAnyValueIsEqualNull}
                 sentence="Numero complessivo delle notifiche da processare in via analogica tramite Raccomandata A/R nel mese di"
                 textBoxHidden={false}
                 setValue={onChangeModuloValue}
@@ -43,7 +43,7 @@ const SecondoContainerTrimestrale = ({ onChangeModuloValue,dataModulo,meseAnno,m
             {/* terza row start */}
             <hr></hr>
             <RowInserimentoCommessaTrimestrale
-             
+                errorAnyValueIsEqualNull={errorAnyValueIsEqualNull}
                 sentence="Numero complessivo delle notifiche da processare in via analogica del tipo notifica ex L. 890/1982 nel mese di"
                 textBoxHidden={false}
                 setValue={onChangeModuloValue}

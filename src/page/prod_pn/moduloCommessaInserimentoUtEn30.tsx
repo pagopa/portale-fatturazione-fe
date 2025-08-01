@@ -146,6 +146,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
 
     const [errorArRegioni, setErrorArRegioni] = useState(false);
     const [error890Regioni, setError890Regioni] = useState(false);
+    const [errorAnyValueIsEqualNull, setErrorAnyValueIsEqualNull] = useState(false);
   
     const clickOnIndietroAvanti = useRef<string>();
   
@@ -173,7 +174,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                     if(acc?.some(el => el?.istatRegione ===  istatRegioneUsed)){
                         return acc;
                     }else{
-                        acc = [...acc,{regione:regione.regione,istatRegione:regione.istatRegione,890:0,ar:0}];
+                        acc = [...acc,{regione:regione.regione,istatRegione:regione.istatRegione,890:null,ar:null}];
                     }        
                     return acc;
                 }, []);
@@ -381,25 +382,31 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     };
     console.log('000000',activeStep , steps.length-1);
     const avantiFunction = () => {
-        
-        if(activeStep < steps.length-1){
-            if(!isObbligatorioLayout){
-                handleGetDettaglioModuloCommessaVecchio(mainState.infoTrimestreComSelected.moduli[activeStep+1].id.split('/')[1],mainState.infoTrimestreComSelected.moduli[activeStep+1].id.split('/')[0]);
-                setisEditAllow(false);
-                handleNext();
-            }else{
-                const isLastCommessa = activeStep === steps.length-1;
-                setisEditAllow(true);
-    
-                if(((coperturaAr||0) < 100 || (copertura890||0) < 100) && (profiloViewRegione === 3  || profiloViewRegione === 4)){
-                    setOpenModalInfo({open:true, sentence:'La percentale di copertura non raggiunge il 100%. Le notifiche restanti  saranno integrate sulle regioni Italiane in base allla percentuale di residenza fornite tramite dati ISTAT.',buttonIsVisible:true,labelButton:"Prosegui",actionButton:handleNext});
-                }else if(((coperturaAr||0) < 100 || (copertura890||0) < 100) && (profiloViewRegione === 1  || profiloViewRegione === 2)){
-                    setOpenModalInfo({open:true, sentence:'La percentale di copertura non raggiunge il 100%. Le notifiche restanti  saranno integrate sulla regione di appartenenza.',buttonIsVisible:true,labelButton:"Prosegui",actionButton:handleNext});
-                }else{
+        if(isAnyValueOfModuloEqualNull() && activeCommessa.source !== "archiviato"){
+            setErrorAnyValueIsEqualNull(true);
+        }else{
+            if(activeStep < steps.length-1){
+                if(!isObbligatorioLayout){
+                
+                    handleGetDettaglioModuloCommessaVecchio(mainState.infoTrimestreComSelected.moduli[activeStep+1].id.split('/')[1],mainState.infoTrimestreComSelected.moduli[activeStep+1].id.split('/')[0]);
+                    setisEditAllow(false);
                     handleNext();
-                }  
+                }else{
+                    const isLastCommessa = activeStep === steps.length-1;
+                    setisEditAllow(true);
+    
+                    if(((coperturaAr||0) < 100 || (copertura890||0) < 100) && (profiloViewRegione === 3  || profiloViewRegione === 4)){
+                        setOpenModalInfo({open:true, sentence:`La percentale di copertura NON raggiunge il 100%. Le notifiche restanti  saranno integrate sulle regioni Italiane in base allla percentuale di residenza fornite tramite dati ISTAT.`,buttonIsVisible:true,labelButton:"Prosegui",actionButton:handleNext});
+                    }else if(((coperturaAr||0) < 100 || (copertura890||0) < 100) && (profiloViewRegione === 1  || profiloViewRegione === 2)){
+                        setOpenModalInfo({open:true, sentence:`La percentale di copertura NON raggiunge il 100%. Le notifiche restanti  saranno integrate sulla regione di appartenenza.`,buttonIsVisible:true,labelButton:"Prosegui",actionButton:handleNext});
+                    }else{
+                        handleNext();
+                    }  
+                }
             }
+            setErrorAnyValueIsEqualNull(false);
         }
+      
     };
   
     //DA UTILIZZARE CON GLI INSERIMENTI
@@ -505,9 +512,9 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
 
         const updatedCommessa = {
             ...activeCommessa,
-            [valueKey]: Number(e.target.value),
+            [valueKey]:e.target.value === "" ? null : Number(e.target.value),
         };
-
+        console.log({CIAO:e.target.value});
         setDataModuli([
             ...restOfCommesse.slice(0,activeCommessaIndex),
             updatedCommessa,
@@ -526,13 +533,13 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         const originalIndex = regioniActiveCommessa?.findIndex(el => el.istatRegione === istatRegione);
         const activeCommessaIndex = dataModuli?.findIndex(el => el.meseValidita === activeCommessa?.meseValidita);
         let regioneToAdd; 
-     
+        console.log({cicco:Number(e.target.value)});
         if(regioneAlreadyExistBoolean){
             regioneToAdd = {
-                "890": tipoNotifiche === "totaleAnalogico890Naz"  ?  Number(e.target.value||0) : Number(regioneAlreadyExist["890"]||0),
+                "890": tipoNotifiche === "totaleAnalogico890Naz"  ?  (e.target.value !== "" ? Number(e.target.value):null) : (regioneAlreadyExist["890"] !== null ?Number(regioneAlreadyExist["890"]):null),
                 "regione": regioneAlreadyExist?.regione,
                 "istatRegione":regioneAlreadyExist?.istatRegione,
-                "ar":tipoNotifiche === "totaleAnalogicoARNaz"  ? Number(e.target.value||0) :Number(regioneAlreadyExist?.ar||0)
+                "ar":tipoNotifiche === "totaleAnalogicoARNaz"  ? (e.target.value !== "" ?Number(e.target.value):null) :(regioneAlreadyExist?.ar !== null? Number(regioneAlreadyExist?.ar):null)
             };
         }
        
@@ -577,23 +584,43 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         }
     };
 
+    
+
     const onHandleSalvaModificaButton =  () => {
         console.log('mimmo');
-        if(!isEditAllow){
-            setisEditAllow(true);
+        if(isAnyValueOfModuloEqualNull() && isEditAllow){
+            setErrorAnyValueIsEqualNull(true);
         }else{
-            if(((coperturaAr||0) < 100 || (copertura890||0) < 100) && (profiloViewRegione === 3  || profiloViewRegione === 4)){
-                setOpenModalInfo({open:true, sentence:'La percentale di copertura non raggiunge il 100%. Le notifiche restanti  saranno integrate sulle regioni Italiane in base allla percentuale di residenza fornite tramite dati ISTAT.',buttonIsVisible:true,labelButton:"Prosegui",actionButton:hendleInsertModifyModuloCommessa});
-            }else if(((coperturaAr||0) < 100 || (copertura890||0) < 100) && (profiloViewRegione === 1  || profiloViewRegione === 2)){
-                setOpenModalInfo({open:true, sentence:'La percentale di copertura non raggiunge il 100%. Le notifiche restanti  saranno integrate sulla regione di appartenenza.',buttonIsVisible:true,labelButton:"Prosegui",actionButton:hendleInsertModifyModuloCommessa});
+            if(!isEditAllow){
+                setisEditAllow(true);
+            }else{
+                if(((coperturaAr||0) < 100 || (copertura890||0) < 100) && (profiloViewRegione === 3  || profiloViewRegione === 4)){
+                    setOpenModalInfo({open:true, sentence:`La percentale di copertura NON raggiunge il 100%. Le notifiche restanti  saranno integrate sulle regioni Italiane in base allla percentuale di residenza fornite tramite dati ISTAT.`,buttonIsVisible:true,labelButton:"Prosegui",actionButton:hendleInsertModifyModuloCommessa});
+                }else if(((coperturaAr||0) < 100 || (copertura890||0) < 100) && (profiloViewRegione === 1  || profiloViewRegione === 2)){
+                    setOpenModalInfo({open:true, sentence:`La percentale di copertura NON raggiunge il 100%. Le notifiche restanti  saranno integrate sulla regione di appartenenza.`,buttonIsVisible:true,labelButton:"Prosegui",actionButton:hendleInsertModifyModuloCommessa});
+                }else{
+                    hendleInsertModifyModuloCommessa();
+                }
+                setErrorAnyValueIsEqualNull(false);
             }
-            
-        }
+        } 
     };
 
     const activeCommessa = dataModuli.length > 1 ? dataModuli[activeStep] : dataModuli[0];
-    const coperturaAr = ((activeCommessa?.totaleNotificheAnalogicoARNaz||0) > 0) ? (Math.round((activeCommessa?.valoriRegione.reduce((acc, el) => acc + (el.ar||0), 0)/(activeCommessa?.totaleNotificheAnalogicoARNaz||0))*100)): errorArRegioni ? null : 100; 
-    const copertura890 = ((activeCommessa?.totaleNotificheAnalogico890Naz||0) > 0) ?  (Math.round((activeCommessa?.valoriRegione.reduce((acc, el) => acc + (el[890]||0), 0)/(activeCommessa?.totaleNotificheAnalogico890Naz||0))* 100)): error890Regioni ? null : 100;  
+    const coperturaAr = activeCommessa?.totaleNotificheAnalogicoARNaz === 0 ? 100 : ((activeCommessa?.totaleNotificheAnalogicoARNaz||0) > 0) ? (Math.round((activeCommessa?.valoriRegione.reduce((acc, el) => acc + (el.ar||0), 0)/(activeCommessa?.totaleNotificheAnalogicoARNaz||0))*100)): errorArRegioni ? null : ""; 
+    const copertura890 = activeCommessa?.totaleNotificheAnalogico890Naz === 0 ? 100 : ((activeCommessa?.totaleNotificheAnalogico890Naz||0) > 0) ?  (Math.round((activeCommessa?.valoriRegione.reduce((acc, el) => acc + (el[890]||0), 0)/(activeCommessa?.totaleNotificheAnalogico890Naz||0))* 100)): error890Regioni ? null : "";  
+
+   
+    
+    const isAnyValueOfModuloEqualNull =  () => {
+        return activeCommessa.totaleNotificheAnalogico890Naz === null
+     || activeCommessa.totaleNotificheAnalogicoARInternaz === null 
+     || activeCommessa.totaleNotificheAnalogicoARNaz === null 
+     || activeCommessa.totaleNotificheDigitaleInternaz === null 
+     || activeCommessa.totaleNotificheDigitaleNaz === null
+     || activeCommessa.valoriRegione.map(el => el[890]).includes(null)
+     || activeCommessa.valoriRegione.map(el => el.ar).includes(null);
+    };
     
     let labelButtonAvantiListaModuliSave = "Modifica";
     if(isEditAllow && (isObbligatorioLayout && (activeStep+1 < steps.length))){
@@ -604,7 +631,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         labelButtonAvantiListaModuliSave = "Inserisci nuovo modulo commessa";
     }
 
-
+    console.log({arrayRegioniSelected,arrayRegioni});
 
     return (
         <>
@@ -674,9 +701,14 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                         <div className="bg-white mt-3 pt-3">
                             <PrimoContainerInsComTrimestrale meseAnno={`${month[Number(activeCommessa?.meseValidita)-1]}/${activeCommessa?.annoValidita}`} tipoContratto={activeCommessa?.idTipoContratto === 1 ?  "PAL":"PAC"} />
                             {/* CAMBIARE LA PROP BUTTON MODIFICA*/}
-                            <SecondoContainerTrimestrale  onChangeModuloValue={onChangeModuloValue }  dataModulo={activeCommessa} meseAnno={` ${month[Number( activeCommessa?.meseValidita )-1]}/${activeCommessa?.annoValidita}`}  modifica={isEditAllow} />
+                            <SecondoContainerTrimestrale 
+                                onChangeModuloValue={onChangeModuloValue }
+                                dataModulo={activeCommessa}
+                                meseAnno={` ${month[Number( activeCommessa?.meseValidita )-1]}/${activeCommessa?.annoValidita}`}
+                                modifica={isEditAllow}
+                                errorAnyValueIsEqualNull={errorAnyValueIsEqualNull} />
                         </div>
-                        {(activeCommessa?.source === "archiviato") &&
+                        {(activeCommessa?.source === "archiviato" && activeCommessa.stato !== null) &&
                         <div className='bg-white'>
                             <TerzoContainerTrimestrale dataModulo={activeCommessa} dataModifica={activeCommessa?.dataInserimento} meseAnno={` ${month[Number(activeCommessa?.meseValidita)-1]}/${activeCommessa?.annoValidita}`}/>
                         </div>
@@ -798,7 +830,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                             sx={{ backgroundColor: '#ffffff', width: '100px'}}
                                             disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
                                             size="small"
-                                            value={(coperturaAr||0) + "%"}
+                                            error={(coperturaAr||0) > 100}
+                                            value={coperturaAr ? coperturaAr + "%" : 0+ "%"}
                                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                                         />
                                     </Grid>
@@ -815,7 +848,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                             sx={{ backgroundColor: '#ffffff', width: '100px'}}
                                             disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
                                             size="small"
-                                            value={(copertura890||0) + "%"}
+                                            error={(copertura890||0) > 100}
+                                            value={copertura890 ? copertura890 + "%" : 0+ "%"}
                                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                                         />
                                     </Grid>
@@ -947,11 +981,11 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                     >
                                         <TextField
                                             sx={{ backgroundColor: '#ffffff', width: '100px'}}
-                                            error={errorArRegioni}
+                                            error={errorArRegioni|| (errorAnyValueIsEqualNull && activeCommessa?.valoriRegione[0]?.ar === null)}
                                             disabled={!isEditAllow}
-                                            onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogicoARNaz",dataModuli.length > 1 ? activeCommessa?.valoriRegione[0]?.istatRegione:activeCommessa?.valoriRegione[0]?.istatRegione)}
+                                            onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogicoARNaz", activeCommessa?.valoriRegione[0]?.istatRegione)}
                                             size="small"
-                                            value={dataModuli.length > 1 ? (activeCommessa?.valoriRegione[0]?.ar||0) : (activeCommessa?.valoriRegione[0]?.ar||0) }
+                                            value={activeCommessa?.valoriRegione[0]?.ar === 0 ? 0 : (activeCommessa?.valoriRegione[0]?.ar||"")}
                                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                                         />
                                     </Grid>
@@ -966,11 +1000,11 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                     >
                                         <TextField
                                             sx={{ backgroundColor: '#ffffff', width: '100px'}}
-                                            error={error890Regioni}
+                                            error={error890Regioni || (errorAnyValueIsEqualNull && activeCommessa?.valoriRegione[0]["890"] === null)}
                                             disabled={!isEditAllow}
-                                            onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogico890Naz",dataModuli.length > 1 ? activeCommessa?.valoriRegione[0]?.istatRegione :  activeCommessa?.valoriRegione[0]?.istatRegione)}
+                                            onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogico890Naz", activeCommessa?.valoriRegione[0]?.istatRegione)}
                                             size="small"
-                                            value={dataModuli.length > 1 ? (activeCommessa?.valoriRegione[0]["890"]||0):(activeCommessa?.valoriRegione[0]["890"]||0) }
+                                            value={activeCommessa?.valoriRegione[0]["890"] === 0 ? 0 : (activeCommessa?.valoriRegione[0]["890"]||"")}
                                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                                         />
                                     </Grid>
@@ -1011,11 +1045,11 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                                     >
                                                         <TextField
                                                             sx={{ backgroundColor: '#FFFFFF', width: '100px'}}
-                                                            error={errorArRegioni}
+                                                            error={errorArRegioni || (errorAnyValueIsEqualNull && element.ar === null)}
                                                             disabled={!isEditAllow}
                                                             onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogicoARNaz",element.istatRegione)}
                                                             size="small"
-                                                            value={element.ar}
+                                                            value={element.ar === 0 ? 0 : (element.ar||"")}
                                                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                                                         />
                                                     </Grid>
@@ -1030,11 +1064,12 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                                     >
                                                         <TextField
                                                             sx={{ backgroundColor: '#FFFFFF', width: '100px'}}
-                                                            error={error890Regioni}
+                                                            error={error890Regioni || (errorAnyValueIsEqualNull && element[890] === null)}
                                                             disabled={!isEditAllow}
                                                             onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogico890Naz",element.istatRegione)}
                                                             size="small"
-                                                            value={element[890]}
+
+                                                            value={element[890] === 0 ? 0 : (element[890]||"")}
                                                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                                                         />
                                                     </Grid>
@@ -1107,9 +1142,13 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             <ModalInfo 
                 setOpen={setOpenModalInfo}
                 open={openModalInfo}
-                width={800}></ModalInfo>
+                width={600}></ModalInfo>
             <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}></ModalLoading>
-            <ModalAlert open={openModalAlert} setOpen={setOpenModalAlert} handleAction={clickOnIndietroAvanti.current === "LISTA_MODULI" ? () => navigate(PathPf.LISTA_COMMESSE):clickOnIndietroAvanti.current === "AVANTI" ?avantiFunction:indietroFunction}></ModalAlert>
+            <ModalAlert
+                open={openModalAlert}
+                setOpen={setOpenModalAlert} 
+                handleAction={clickOnIndietroAvanti.current === "LISTA_MODULI" ? () => navigate(PathPf.LISTA_COMMESSE):clickOnIndietroAvanti.current === "AVANTI" ?avantiFunction:indietroFunction}
+            ></ModalAlert>
         </>
     );
 };

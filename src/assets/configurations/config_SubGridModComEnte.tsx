@@ -1,4 +1,4 @@
-import { IconButton, Tooltip } from "@mui/material";
+import { Chip, IconButton, Tooltip } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
@@ -9,6 +9,7 @@ export interface HeaderGridCustom {
     width:number|string,
     headerAction:boolean,
     headerTooltip?: (title: any, label: any, color: any) => JSX.Element,
+    headerChip?: (title: any, label: any, color: any) => JSX.Element,
     gridAction?:(fun:(id) => void,color:string,disabled:boolean,obj:any) => JSX.Element,
     gridOpenDetail?:(disabled:boolean,open?:boolean,setOpen?:(val)=>void) => JSX.Element,
 }
@@ -22,6 +23,7 @@ export const subHeaderNameModComTrimestraleENTE: HeaderGridCustom[] = [
             placement="bottom"
             title={label}
         ><CheckCircleIcon sx={{ color: color }}/></Tooltip> },
+    { label: 'Inserimento',align:'center',width:'100px',headerAction:false, headerChip:(title,label,color) => <Chip label={label} sx={{backgroundColor:color}} /> },
     { label: 'Data inserimento',align:'center',width:'160px', headerAction:false},
     { label: 'Data chiusura',align:'center',width:'160px', headerAction:false},
     { label: 'Tot. Digit.',align:'center',width:'160px', headerAction:false},

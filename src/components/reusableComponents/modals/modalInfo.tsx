@@ -55,10 +55,11 @@ const ModalInfo : React.FC<ModalInfoProps> = ({setOpen, open,width}) => {
                 </div> 
                 {open?.buttonIsVisible &&
                     <div className='d-flex justify-content-evenly text-center mt-5'>
+                        <Button variant="outlined" onClick={handleClose}>Annulla</Button>
                         <Button variant="contained" onClick={() =>{
                             handleClose();
                             open?.actionButton && open?.actionButton();}}>Prosegui</Button>
-                        <Button variant="outlined" onClick={handleClose}>Annulla</Button>
+                       
                     </div>
                 }
                

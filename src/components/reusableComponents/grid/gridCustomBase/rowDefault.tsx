@@ -5,19 +5,18 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, nameParameterApi, headerNames}) => {
 
     const elToMap = Object.fromEntries(Object.entries(sliced).slice(1, -4));
-   
+    //:TODO spostare i colori nel file di configurazione
     let statusColor = "#ffffff";
-    if(element.source === "obbligatorio" && element.totale === null){
-        statusColor = "#FB9EAC";
-    }else if(element.source === "obbligatorio" && element.totale !== null){
+    if(element.source === "obbligatorio"){
         statusColor = "#5BB0D5";
     }else if(element.source === "archiviato"){
-        statusColor = "#B5E2B4";
-    }else if(element.source === "facoltativo" && element.stato === "Aperta/Caricato"){
-        statusColor = "#f7e7bc";
+        statusColor =  "#A2ADB8";
     }else if(element.source === "facoltativo"){
-        statusColor = "#A2ADB8";
+        statusColor = "#f7e7bc";
     }
+    
+    
+
 
     return (
         <TableRow 
@@ -37,6 +36,14 @@ const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, nameParameterApi
                                 key={i}
                                 align={headerNames[i]?.align}>
                                 {headerNames[i]?.headerTooltip("",sliced.stato !== "--"?sliced.stato:sliced.source,statusColor)}              
+                            </TableCell>
+                        );
+                    }else if(headerNames[i]?.headerChip){
+                        return (
+                            <TableCell
+                                key={i}
+                                align={headerNames[i]?.align}>
+                                {headerNames[i]?.headerChip("",sliced.inserimento.inserimento,sliced.inserimento.color)}              
                             </TableCell>
                         );
                     }else{

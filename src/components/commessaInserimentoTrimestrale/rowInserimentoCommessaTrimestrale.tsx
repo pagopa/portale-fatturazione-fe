@@ -8,10 +8,11 @@ interface RowInsComTrimestraleProps {
     values:string|number[]
     meseAnno:string,
     modifica:boolean,
-    totale:number
+    totale:number,
+    errorAnyValueIsEqualNull:boolean
 }
 
-const RowInserimentoCommessaTrimestrale : React.FC<RowInsComTrimestraleProps> = ({ sentence, setValue,values,meseAnno, modifica,keys, totale}) => {
+const RowInserimentoCommessaTrimestrale : React.FC<RowInsComTrimestraleProps> = ({ sentence, setValue,values,meseAnno, modifica,keys, totale,errorAnyValueIsEqualNull}) => {
     return (
         <Grid
             sx={{ marginTop: '20px' }}
@@ -39,7 +40,8 @@ const RowInserimentoCommessaTrimestrale : React.FC<RowInsComTrimestraleProps> = 
                     sx={{ backgroundColor: '#ffffff', width: '100px'}}
                     disabled={!modifica}//da modificare
                     size="small"
-                    value={values[0]||0}
+                    error={errorAnyValueIsEqualNull && values[0] === null }
+                    value={values[0] === 0 ? 0 : (values[0]||"")}
                     InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                     onChange={(e)=>setValue(e,keys[0])}
                 />
@@ -55,7 +57,8 @@ const RowInserimentoCommessaTrimestrale : React.FC<RowInsComTrimestraleProps> = 
                             sx={{ backgroundColor: '#ffffff', width: '100px' }}
                             disabled={!modifica}
                             size="small"
-                            value={values[1]||0}
+                            value={values[1] === 0 ? 0 : (values[1]||"")}
+                            error={errorAnyValueIsEqualNull && values[1] === null }
                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                             onChange={(e)=>setValue(e,keys[1])}
                         />

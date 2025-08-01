@@ -41,10 +41,23 @@ export const fixResponseForDataGrid = (arr:any[]):any =>{
                 //totaleNotifiche:el.moduli.reduce((acc, item) => acc + item.totaleNotifiche, 0),
                 arrow:"",
                 moduli:el.moduli.map(mod => {
+
+                    
+
+
+                    let inserimentoInfo = {inserimento:"--",color:"#ffffff"};
+
+                    if(mod.stato === null ){
+                        inserimentoInfo = {inserimento:"Non inserito",color:"#FB9EAC"};
+                    }else{
+                        inserimentoInfo = {inserimento:"Inserito",color:"#B5E2B4"};
+                    }
+
                     return {
                         id:mod.meseValidita+"/"+mod.annoValidita,
                         meseAnno:month[mod.meseValidita-1]+"/"+mod.annoValidita,
-                        stato:mod.stato||"--",
+                        stato:mod.source.charAt(0).toUpperCase() + mod.source.slice(1)||"--",
+                        inserimento:inserimentoInfo,
                         dataInserimento:mod.dataInserimento?.split('T')[0]|| "--",
                         dataChiusura:mod.dataChiusura?.split('T')[0]|| "--",
                         totaleDig:mod.totaleDigitaleNaz !== null ?mod.totaleDigitaleNaz:"--",
