@@ -1,14 +1,12 @@
 import React, {useState, useEffect, useContext} from 'react';
-import { manageError, redirect } from '../../api/api';
-import { Button, Box, Typography, FormControl, InputLabel,Select, MenuItem, Skeleton, Container,} from '@mui/material';
-import GridComponent from '../../components/commessaElenco/grid';
-import { useLocation, useNavigate } from 'react-router';
+import { manageError } from '../../api/api';
+import { Button, Box, Typography, FormControl, InputLabel,Select, MenuItem, Skeleton} from '@mui/material';
+import { useNavigate } from 'react-router';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { GlobalContext } from '../../store/context/globalContext';
-import { profiliEnti } from '../../reusableFunction/actionLocalStorage';
 import { DataGridCommessa, GetAnniResponse, ResponseGetListaCommesse } from '../../types/typeModuloCommessaElenco';
 import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
-import { getAnni, getListaCommessaFiltered, getDatiModuloCommessa, getListaCommessaFilteredV2, getCommessaObbligatoriVerificaV2 } from '../../api/apiSelfcare/moduloCommessaSE/api';
+import { getAnni, getListaCommessaFilteredV2, getCommessaObbligatoriVerificaV2 } from '../../api/apiSelfcare/moduloCommessaSE/api';
 import ModalRedirect from '../../components/commessaInserimento/madalRedirect';
 import { fixResponseForDataGrid } from '../../reusableFunction/function';
 import { PathPf } from '../../types/enum';
@@ -16,6 +14,7 @@ import { ManageErrorResponse } from '../../types/typesGeneral';
 import GridCustom from '../../components/reusableComponents/grid/gridCustom';
 import { headerNameModComTrimestraleENTE } from '../../assets/configurations/conf_GridModComEnte';
 import ModalInfo from '../../components/reusableComponents/modals/modalInfo';
+import useSavedFilters from '../../hooks/useSaveFiltersLocalStorage';
 
 
 const ModuloCommessaElencoUtPa: React.FC = () => {
@@ -46,19 +45,20 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
     const [showButtonInsertModulo,setShowButtonInsertModulo] = useState(false);
     const [openModalModObbligatori,setOpenModalModObbligatori] = useState({open:false,sentence:''});
 
-
+    const { 
+        filters,
+        updateFilters,
+        resetFilters,
+        isInitialRender
+    } = useSavedFilters(PathPf.LISTA_COMMESSE,{});
 
 
     useEffect(()=>{
         if(mainState.datiFatturazione === false || mainState.datiFatturazioneNotCompleted){
             setOpenModalRedirect(true);
             setLoadingMandatory(false);
-        
         }else{
-            getAnniSelect();
-            getListaCommessaGrid('');
             verificaObbligatoriToInsert();
-            handleModifyMainState({infoTrimestreComSelected:{}});
         }
     },[mainState.datiFatturazione,mainState.datiFatturazioneNotCompleted]);
 
@@ -72,6 +72,16 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
                 navigate(PathPf.MODULOCOMMESSA);
             }else{
                 localStorage.setItem('redirectToInsert',JSON.stringify(false));
+                getAnniSelect();
+                if(isInitialRender.current && Object.keys(filters).length > 0){
+                    getListaCommessaGrid(filters.valueSelect);
+                    setValueSelect(filters.valueSelect);
+                    console.log("DENTRO");
+                }else{
+                    console.log("FUORI");
+                    getListaCommessaGrid('');
+                }
+                handleModifyMainState({infoTrimestreComSelected:{}});
                 setLoadingMandatory(false);
             }
             setShowButtonInsertModulo(res.data);
@@ -148,8 +158,6 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
             result.push(item);
         }
 
-     
-       
         if( isMandatory && el.source === "facoltativo" ){
             setOpenModalModObbligatori({open:true,sentence:'Per inserire i moduli commessa futuri bisogna prima inserire i moduli commessa OBBLIGATORI'});
         }else if(isMandatory && el.source === "archiviato"){
@@ -229,14 +237,21 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
                                     variant="contained"
                                     disabled={valueSelect === ''}
                                     sx={{ marginTop: 'auto', marginBottom: 'auto', marginLeft: '30px' }}
-                                    onClick={()=>getListaCommessaGrid(valueSelect)}
+                                    onClick={()=>{
+                                        getListaCommessaGrid(valueSelect);
+                                        updateFilters({valueSelect,pathPage:PathPf.LISTA_COMMESSE,});
+                                    }}
                                 >
             Filtra 
                                 </Button>
                                 {valueSelect !== '' &&
                             <Typography
                                 variant="caption-semibold"
-                                onClick={()=>{setValueSelect(''); getListaCommessaGrid('');}}
+                                onClick={()=>{
+                                    setValueSelect('');
+                                    getListaCommessaGrid('');
+                                    resetFilters();
+                                }}
                                 sx={{
                                     marginTop: 'auto',
                                     marginBottom: 'auto',

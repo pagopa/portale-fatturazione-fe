@@ -1,9 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Grid, Typography, InputLabel } from '@mui/material';
+import { Grid, Typography, InputLabel, Box, Skeleton } from '@mui/material';
 import {  CategorieTotali} from '../../types/typeModuloCommessaInserimento';
 import { useNavigate } from 'react-router';
 import { getDatiConfigurazioneCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
-import { month } from '../../reusableFunction/reusableArrayObj';
 import { createDateFromString } from '../../reusableFunction/function';
 import { GlobalContext } from '../../store/context/globalContext';
 
@@ -16,7 +15,7 @@ const TerzoContainerTrimestrale  = ({dataModulo, dataModifica, meseAnno}) => {
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 
-  
+    const [configurazioneLoading, setConfigurazioneLoading] = useState(false);
     const [labelCategorie, setLabelCategorie] = useState<CategorieTotali[]>([
         {
             idCategoriaSpedizione: 1,
@@ -43,11 +42,14 @@ const TerzoContainerTrimestrale  = ({dataModulo, dataModifica, meseAnno}) => {
     };
 
     const getConfigurazione = async() =>{
+        setConfigurazioneLoading(true);
         getDatiConfigurazioneCommessa(token, profilo.idTipoContratto, profilo.prodotto, profilo.nonce)
             .then((res)=>{
                 const newCategorie = replaceDate(res.data.categorie,'[data]', '');
+                setConfigurazioneLoading(false);
                 setLabelCategorie(newCategorie);
             }).catch((err)=>{
+                setConfigurazioneLoading(false);
                 if(err?.response?.status === 401){
                     navigate('/error');
                 }else if(err?.response?.status === 419){
@@ -61,8 +63,18 @@ const TerzoContainerTrimestrale  = ({dataModulo, dataModifica, meseAnno}) => {
 
  
 
-    const sum = (dataModulo.totaleNotificheAnalogico || 0) + (dataModulo?.totaleNotificheDigitale || 0);
+    const sum = (dataModulo[0]?.totale || 0) + (dataModulo[1]?.totale || 0);
     const sumFixed2Decimal = sum?.toLocaleString("de-DE", { style: "currency", currency: "EUR" });
+    if(configurazioneLoading){
+        return <Box
+            sx={{
+                padding:"24px",
+                height: '350px'
+            }}
+        >
+            <Skeleton variant="rectangular" height="100%" />
+        </Box>;
+    }
 
     return (
         <div className=" m-3 pl-5 pt-3">
@@ -79,7 +91,7 @@ const TerzoContainerTrimestrale  = ({dataModulo, dataModifica, meseAnno}) => {
                     xs={6}
                 >
                     <Typography>
-                        {labelDigitale[0].descrizione} <span style={{fontWeight:'bold'}}>{meseAnno}</span>
+                        {labelDigitale[0]?.descrizione} <span style={{fontWeight:'bold'}}>{meseAnno}</span>
                     </Typography>
                 </Grid>
                 <Grid
@@ -91,7 +103,7 @@ const TerzoContainerTrimestrale  = ({dataModulo, dataModifica, meseAnno}) => {
                         variant="caption-semibold"
                         sx={{fontSize:'18px'}}
                     >
-                        {dataModulo?.totaleNotificheDigitale?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })|| '0 €'} 
+                        {dataModulo[1]?.totale?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })|| '0 €'} 
                     </Typography>
                 </Grid>
             </Grid>
@@ -108,7 +120,7 @@ const TerzoContainerTrimestrale  = ({dataModulo, dataModifica, meseAnno}) => {
                     xs={6}
                 >
                     <Typography>
-                        {labelAnalogica[0].descrizione} <span style={{fontWeight:'bold'}}>{meseAnno}</span>
+                        {labelAnalogica[0]?.descrizione} <span style={{fontWeight:'bold'}}>{meseAnno}</span>
                     </Typography>
                 </Grid>
                 <Grid
@@ -117,10 +129,9 @@ const TerzoContainerTrimestrale  = ({dataModulo, dataModifica, meseAnno}) => {
                     xs={6}
                 >
                     <Typography
-                        
                         sx={{fontSize:'18px', textAlign:'center'}}
                     >
-                        {dataModulo?.totaleNotificheAnalogico?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })|| '0 €'}
+                        {dataModulo[0]?.totale?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })|| '0 €'} 
                     </Typography>
                 </Grid>
             </Grid>

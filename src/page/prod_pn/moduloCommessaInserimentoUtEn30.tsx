@@ -101,6 +101,19 @@ export interface NotificheModuliCommessaPost {
     totaleNotifiche: number
 }
 
+export interface  TotaleCommessa {
+    "idEnte": string,
+    "idTipoContratto": number,
+    "idCategoriaSpedizione": number,
+    "stato": string,
+    "prodotto": string,
+    "annoValidita":number,
+    "meseValidita": number,
+    "totaleCategoria": number,
+    "percentualeCategoria": number,
+    "totale": number
+}
+
 
 const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
   
@@ -128,9 +141,10 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     //new logic__________________
     const [dataObbligatori, setDataObbligatori] = useState(false);
     const [dataModuli, setDataModuli] = useState<ModuloCommessaType[]>([]);
-    //const [dataModuloToVisualize,setDataModuloToVisualize] = useState<ModuloCommessaType>();
+    const [dataTotali, setDataTotali] = useState<TotaleCommessa[]>([]);
+
     const [stepCompleted,setStepCompleted] = useState<{[k: number]: boolean}>({});
-    //const [stepActive, setActiveStep] = useState<number>(0);
+ 
     const [steps, setSteps] = useState<string[]>([]);
    
     const [isNewCommessa, setIsNewCommessa] = useState(false);
@@ -138,7 +152,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     const [isObbligatorioLayout, setIsObbligatorioLayout] = useState(false);
     const [activeStep, setActiveStep] = useState(0);
     const [skipped, setSkipped] = useState(new Set<number>());
-    //const [regioniIsVisible, setRegioniIsVisible] = useState(false);//forse da eiminare
+
     const [regioniInsertIsVisible, setRegioniInsertIsVisible] = useState(false);
     const [arrayRegioni, setArrayRegioni] = useState<Regioni[]>([]);
     const [arrayRegioniSelected, setArrayRegioniSelected] = useState<any[]>([]);
@@ -247,9 +261,10 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
 
                 const res = response.data?.lista[0];
         
-                console.log({ZORRO:res,response});
-           
+          
                 setDataModuli([res]);
+                setDataTotali(response.data.totali);
+         
                 setDataObbligatori(false);
             
                 setIsNewCommessa(res.modifica && res.totale !== null);
@@ -258,7 +273,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
 
                 const variableRegioniIsVisible = (!res.modifica && (res.valoriRegione.length > 0 && res.valoriRegione[0]["890"] !== null || res.valoriRegione[0].ar !== null)) ||
                                                 res.modifica && res.valoriRegione.length > 0; 
-                //setRegioniIsVisible(variableRegioniIsVisible);
+              
                 setRegioniInsertIsVisible(response.data.macrocategoriaVendita === 3 || response.data.macrocategoriaVendita === 4);
                 const regioniToHideDelete = res.valoriRegione.map(el => el.istatRegione);
                 getRegioni(regioniToHideDelete); 
@@ -270,8 +285,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 setLoadingData(false);
             });
     };
-    console.log({dataModuli, isEditAllow});
-
+  
     // Lato self care
     // chiamata per capire se i dati fatturazione sono stati inseriti
     // SI.... riesco ad inserire modulo commessa
@@ -298,7 +312,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
 
     const hendleInsertModifyModuloCommessa = async () =>{
         setOpenModalLoading(true);
-       
         const objectToSend:any[] = dataModuli.map((el:ModuloCommessaType) => {
             return {
                 anno:el.annoValidita,
@@ -332,9 +345,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 if(isObbligatorioLayout){
                     navigate(PathPf.DATI_FATTURAZIONE);
                 }
-                
-            } )
-            .catch(err => {
+            }).catch(err => {
                 setisEditAllow(false);
                 setOpenModalLoading(false);
                 manageError(err,dispatchMainState); 
@@ -369,7 +380,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         }else{ 
             setisEditAllow(true);
         }
-        handleBack();   
+        handleBack();  
+        setErrorAnyValueIsEqualNull(false); 
     };
 
     const onAvantiButton = () =>{
@@ -380,9 +392,9 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             avantiFunction();
         }
     };
-    console.log('000000',activeStep , steps.length-1);
+
     const avantiFunction = () => {
-        if(isAnyValueOfModuloEqualNull() && activeCommessa.source !== "archiviato"){
+        if(isAnyValueOfModuloEqualNull() && activeCommessa.source !== "archiviato"  && !openModalAlert && isEditAllow){
             setErrorAnyValueIsEqualNull(true);
         }else{
             if(activeStep < steps.length-1){
@@ -392,9 +404,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                     setisEditAllow(false);
                     handleNext();
                 }else{
-                    const isLastCommessa = activeStep === steps.length-1;
                     setisEditAllow(true);
-    
                     if(((coperturaAr||0) < 100 || (copertura890||0) < 100) && (profiloViewRegione === 3  || profiloViewRegione === 4)){
                         setOpenModalInfo({open:true, sentence:`La percentale di copertura NON raggiunge il 100%. Le notifiche restanti  saranno integrate sulle regioni Italiane in base allla percentuale di residenza fornite tramite dati ISTAT.`,buttonIsVisible:true,labelButton:"Prosegui",actionButton:handleNext});
                     }else if(((coperturaAr||0) < 100 || (copertura890||0) < 100) && (profiloViewRegione === 1  || profiloViewRegione === 2)){
@@ -406,17 +416,31 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             }
             setErrorAnyValueIsEqualNull(false);
         }
-      
     };
   
     //DA UTILIZZARE CON GLI INSERIMENTI
-    const isStepOptional = (step: number) => {
+    const isStepFacoltativo = (step: number) => {
         const indexes = mainState.infoTrimestreComSelected?.moduli?.reduce((acc, obj, index) => {
             if (obj?.source === "facoltativo") acc?.push(index);
             return acc;
         }, []);
         return indexes?.includes(step);
     };
+    const isStepArchiviato = (step: number) => {
+        const indexes = mainState.infoTrimestreComSelected?.moduli?.reduce((acc, obj, index) => {
+            if (obj?.source === "archiviato") acc?.push(index);
+            return acc;
+        }, []);
+        return indexes?.includes(step);
+    };
+    const isStepObbligatorio = (step: number) => {
+        const indexes = mainState.infoTrimestreComSelected?.moduli?.reduce((acc, obj, index) => {
+            if (obj?.source === "obbligatorio") acc?.push(index);
+            return acc;
+        }, []);
+        return indexes?.includes(step);
+    };
+  
 
     const isStepSkipped = (step: number) => {
         return skipped.has(step);
@@ -438,7 +462,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     };
 
     const handleSkip = () => {
-        if (!isStepOptional(activeStep)) {
+        if (!isStepFacoltativo(activeStep)) {
             // You probably want to guard against something like this,
             // it should never occur unless someone's actively trying to break something.
             throw new Error("You can't skip a step that isn't optional.");
@@ -514,12 +538,12 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             ...activeCommessa,
             [valueKey]:e.target.value === "" ? null : Number(e.target.value),
         };
-        console.log({CIAO:e.target.value});
+     
         setDataModuli([
             ...restOfCommesse.slice(0,activeCommessaIndex),
             updatedCommessa,
             ...restOfCommesse.slice(activeCommessaIndex)]);
-        console.log({www:regioniActiveCommessa});
+ 
         errorOnOver(regioniActiveCommessa,updatedCommessa);
     };
 
@@ -670,11 +694,22 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                             const labelProps: {
                                 optional?: React.ReactNode;
                             } = {};
-                            if (isStepOptional(index)) {
+                            if (isStepFacoltativo(index)) {
                                 labelProps.optional = (
                                     <Typography variant="caption">Facoltativo</Typography>
                                 );
                             }
+                            if (isStepArchiviato(index)) {
+                                labelProps.optional = (
+                                    <Typography variant="caption">Archiviato</Typography>
+                                );
+                            }
+                            if (isStepObbligatorio(index)) {
+                                labelProps.optional = (
+                                    <Typography variant="caption">Obbligatorio</Typography>
+                                );
+                            }
+
                             if (isStepSkipped(index)) {
                                 stepProps.completed = false;
                             }
@@ -710,7 +745,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                         </div>
                         {(activeCommessa?.source === "archiviato" && activeCommessa.stato !== null) &&
                         <div className='bg-white'>
-                            <TerzoContainerTrimestrale dataModulo={activeCommessa} dataModifica={activeCommessa?.dataInserimento} meseAnno={` ${month[Number(activeCommessa?.meseValidita)-1]}/${activeCommessa?.annoValidita}`}/>
+                            <TerzoContainerTrimestrale dataModulo={dataTotali} dataModifica={activeCommessa?.dataInserimento} meseAnno={` ${month[Number(activeCommessa?.meseValidita)-1]}/${activeCommessa?.annoValidita}`}/>
                         </div>
                         }
                         {/*NEW CODE ______________________________*/}

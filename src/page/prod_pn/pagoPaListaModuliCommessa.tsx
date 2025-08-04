@@ -15,8 +15,7 @@ import ModalLoading from "../../components/reusableComponents/modals/modalLoadin
 import { PathPf } from "../../types/enum";
 import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
-import { currentMonth, getCurrentFinancialYear } from "../../reusableFunction/function";
-import { currentYear, mesi, mesiGrid, mesiWithZero } from "../../reusableFunction/reusableArrayObj";
+import { mesiGrid, mesiWithZero } from "../../reusableFunction/reusableArrayObj";
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
 import { GlobalContext } from "../../store/context/globalContext";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
