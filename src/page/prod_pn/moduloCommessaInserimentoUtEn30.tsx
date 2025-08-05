@@ -5,7 +5,7 @@ import { ButtonNaked, theme } from '@pagopa/mui-italia';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { useNavigate } from 'react-router';
 import { GlobalContext } from '../../store/context/globalContext';
-import { manageError } from '../../api/api';
+import { manageError, managePresaInCarico } from '../../api/api';
 import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
 import { getCommessaObbligatoriListaV2, getCommessaObbligatoriVerificaV2,  getDettaglioModuloCommessaV2, getRegioniModuloCommessa, insertDatiModuloCommessa, insertDatiModuloCommessaV2 } from '../../api/apiSelfcare/moduloCommessaSE/api';
 import ModalRedirect from '../../components/commessaInserimento/madalRedirect';
@@ -229,6 +229,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                     setActiveStep(activeStepResult);
 
                     setisEditAllow(true);
+                    handleModifyMainState({statusPageInserimentoCommessa:'mutable'});
+                    setOpenBasicModal_DatFat_ModCom("mutable");
                     // setRegioniIsVisible(true);
                     setProfiloViewRegione(response.data.macrocategoriaVendita);
                     setRegioniInsertIsVisible(response.data.macrocategoriaVendita === 3 || response.data.macrocategoriaVendita === 4);
@@ -239,7 +241,11 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                     getRegioni(regioniToHideDelete); 
                     setLoadingData(false);
                 }).catch((err:ManageErrorResponse)=>{
-                    manageError(err,dispatchMainState);
+                    console.log("ERRORE");
+                    //manageError(err,dispatchMainState);
+                    //TODO:Inserire un messaggio di errore
+                    managePresaInCarico('NO_INSERIMENTO_COMMESSA',dispatchMainState); 
+                    navigate(PathPf.LISTA_COMMESSE);
                     setLoadingData(false);
                 });
             }else{
@@ -286,28 +292,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             });
     };
   
-    // Lato self care
-    // chiamata per capire se i dati fatturazione sono stati inseriti
-    // SI.... riesco ad inserire modulo commessa
-    //No.... redirect dati fatturazione
-    // tutto gestito sul button 'continua' in base al parametro datiFatturazione del main state
-    //***********************************SECONDO ME LO POSSIAMO TOGLIERO O FARE UN CHECK VEDIAMO IN SEGUITO ***********************
-    const getDatiFat = async () =>{
-        await getDatiFatturazione(token,profilo.nonce).then(( ) =>{ 
-            handleModifyMainState({
-                datiFatturazione:true,
-                statusPageInserimentoCommessa:'immutable'
-            });
-        }).catch(err =>{
-            if(err.response.status === 404){
-                handleModifyMainState({
-                    datiFatturazione:false,
-                    statusPageInserimentoCommessa:'immutable'});
-            }else{
-                manageError(err,dispatchMainState);
-            }
-        });
-    };
 
 
     const hendleInsertModifyModuloCommessa = async () =>{
@@ -338,18 +322,33 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 ],
                 "valoriRegione": el.valoriRegione
             };});
-        await insertDatiModuloCommessaV2(objectToSend, token, profilo.nonce)
-            .then(()=>{
-                setOpenModalLoading(false);
-                setisEditAllow(false);
-                if(isObbligatorioLayout){
-                    navigate(PathPf.DATI_FATTURAZIONE);
-                }
-            }).catch(err => {
-                setisEditAllow(false);
-                setOpenModalLoading(false);
-                manageError(err,dispatchMainState); 
-            });
+        await getDatiFatturazione(token,profilo.nonce).then(async( ) =>{ 
+            await insertDatiModuloCommessaV2(objectToSend, token, profilo.nonce)
+                .then(()=>{
+                    setOpenModalLoading(false);
+                    setisEditAllow(false);
+                    handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
+                  
+                    if(isObbligatorioLayout){
+                        navigate(PathPf.DATI_FATTURAZIONE);
+                    }
+                }).catch(err => {
+                    setisEditAllow(false);
+                    handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
+                    
+                    setOpenModalLoading(false);
+                    manageError(err,dispatchMainState); 
+                });
+        }).catch(err =>{
+            setOpenModalLoading(false);
+            if(err.response.status === 404){
+                handleModifyMainState({datiFatturazione:false});
+                navigate(PathPf.DATI_FATTURAZIONE);
+            }else{
+                manageError(err,dispatchMainState);
+            }
+        });
+       
     };
 
 
@@ -377,8 +376,12 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         if(!isObbligatorioLayout){
             handleGetDettaglioModuloCommessaVecchio(mainState.infoTrimestreComSelected?.moduli[activeStep-1]?.id.split('/')[1],mainState?.infoTrimestreComSelected?.moduli[activeStep-1]?.id.split('/')[0]);
             setisEditAllow(false);
+            handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
+          
         }else{ 
             setisEditAllow(true);
+            handleModifyMainState({statusPageInserimentoCommessa:'mutable'});
+           
         }
         handleBack();  
         setErrorAnyValueIsEqualNull(false); 
@@ -402,9 +405,13 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 
                     handleGetDettaglioModuloCommessaVecchio(mainState.infoTrimestreComSelected.moduli[activeStep+1].id.split('/')[1],mainState.infoTrimestreComSelected.moduli[activeStep+1].id.split('/')[0]);
                     setisEditAllow(false);
+                    handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
+                 
                     handleNext();
                 }else{
                     setisEditAllow(true);
+                    handleModifyMainState({statusPageInserimentoCommessa:'mutable'});
+                   
                     if(((coperturaAr||0) < 100 || (copertura890||0) < 100) && (profiloViewRegione === 3  || profiloViewRegione === 4)){
                         setOpenModalInfo({open:true, sentence:`La percentale di copertura NON raggiunge il 100%. Le notifiche restanti  saranno integrate sulle regioni Italiane in base allla percentuale di residenza fornite tramite dati ISTAT.`,buttonIsVisible:true,labelButton:"Prosegui",actionButton:handleNext});
                     }else if(((coperturaAr||0) < 100 || (copertura890||0) < 100) && (profiloViewRegione === 1  || profiloViewRegione === 2)){
@@ -617,6 +624,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         }else{
             if(!isEditAllow){
                 setisEditAllow(true);
+                handleModifyMainState({statusPageInserimentoCommessa:'mutable'});
+                setOpenBasicModal_DatFat_ModCom("mutable");
             }else{
                 if(((coperturaAr||0) < 100 || (copertura890||0) < 100) && (profiloViewRegione === 3  || profiloViewRegione === 4)){
                     setOpenModalInfo({open:true, sentence:`La percentale di copertura NON raggiunge il 100%. Le notifiche restanti  saranno integrate sulle regioni Italiane in base allla percentuale di residenza fornite tramite dati ISTAT.`,buttonIsVisible:true,labelButton:"Prosegui",actionButton:hendleInsertModifyModuloCommessa});
@@ -682,7 +691,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                     {
                         dataObbligatori ? 
                             <Typography  variant="caption">/ Inserimento moduli commessa OBBLIGATORI</Typography> :
-                            <Typography  variant="caption">/ Inserimento/modifica modulo commessa</Typography>
+                            <Typography  variant="caption">/ Dettaglio-Inserimento modulo commessa</Typography>
                     }
                 </div>
                
@@ -1140,6 +1149,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
           
             <div className="d-flex justify-content-between m-5 ">
                 <div >
+                    {steps.length > 1 && 
                     <Tooltip title={activeStep !== 0 && "Indietro"}>
                         <span>
                             <IconButton
@@ -1150,13 +1160,18 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                             </IconButton>
                         </span>
                     </Tooltip>
+                    }
                 </div>
                 {dataModuli.length > 0 && 
                 <div>
+                  
                     {activeCommessa?.source === "archiviato"? null:<Button disabled={error890Regioni|| errorArRegioni|| (isObbligatorioLayout && (activeStep+1 < steps.length))} onClick={onHandleSalvaModificaButton} variant={labelButtonAvantiListaModuliSave === "Prosegui per salvare"? "text":"outlined"}>{labelButtonAvantiListaModuliSave}</Button>} 
+
                 </div>
                 }
+               
                 <div >
+                    {steps.length > 1 && 
                     <Tooltip title={(activeStep+1) !== steps.length && "Avanti"}>
                         <span>
                             <IconButton
@@ -1167,6 +1182,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                             </IconButton>
                         </span>
                     </Tooltip>
+                    }
                 </div>
                     
             </div> 

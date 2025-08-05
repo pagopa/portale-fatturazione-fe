@@ -67,7 +67,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
         await getCommessaObbligatoriVerificaV2(token, profilo.nonce).then((res)=>{
             const redirect =  localStorage.getItem('redirectToInsert')||"";
             const redirectToInsert =  JSON.parse(redirect);
-        
+            console.log({GINO:res});
             if(res.data && redirectToInsert){
                 navigate(PathPf.MODULOCOMMESSA);
             }else{
@@ -86,6 +86,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
             }
             setShowButtonInsertModulo(res.data);
         }).catch((err)=>{
+
             manageError(err,dispatchMainState);
         });
     };
@@ -108,6 +109,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
             manageError(err,dispatchMainState);
         });
     };
+    console.log({gridData});
 
     const getDatiFat = async () =>{
         await getDatiFatturazione(token,profilo.nonce).then(( ) =>{      
@@ -147,17 +149,31 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
     };
 
     const handleClickOnDetail = (el) => {
-        const isMandatory = gridData?.map(el => el?.moduli?.map(el => el.source === "obbligatorio" && el.stato === "--" ? true:false)).flat().includes(true);
+        const isMandatory = gridData?.map(el => el?.moduli?.map(el => (el.source === "obbligatorio" && el.stato === "Obbligatorio" && el.inserimento.inserimento === "Non inserito") ? true:false)).flat().includes(true);
         const quarterSelected = gridData.find(dataEl => dataEl.id === el.quarter); 
         const quarterSelectedIndex = gridData.findIndex(dataEl => dataEl.id === el.quarter);
         const moduloSelectedIndex =  quarterSelected?.moduli?.findIndex(elMod => elMod.id === el.id);
         const result:any[] = [];
-
-        for (const item of quarterSelected?.moduli||[]) {
-            if (item.source === "obbligatorio" && item.stato === "--") break;
-            result.push(item);
+        console.log({el,isMandatory});
+        try{
+            for (const item of quarterSelected?.moduli||[]) {
+                if (isMandatory){
+                    console.log("dentro 1");
+                    if(item.source === "archiviato"){
+                        console.log("dentro");
+                        result.push(item);
+                    }else{
+                        result;
+                    }
+                }else{
+                    result.push(item);
+                }
+            }
+        }catch(err){
+            console.log(err);
         }
-
+       
+        console.log({result},"00000");
         if( isMandatory && el.source === "facoltativo" ){
             setOpenModalModObbligatori({open:true,sentence:'Per inserire i moduli commessa futuri bisogna prima inserire i moduli commessa OBBLIGATORI'});
         }else if(isMandatory && el.source === "archiviato"){

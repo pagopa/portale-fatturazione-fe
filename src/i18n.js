@@ -43,6 +43,7 @@ i18n.use(Backend)
                         "CREAT_KEY_KO":"L'operazione non è andata a buon fine. Contattare l'assistenza",
                         "REGEN_KEY_OK":"Rigenerazione eseguita",
                         "CREAT_KEY_OK":"Creazione avvenuta con successo",
+                        'NO_INSERIMENTO_COMMESSA':"Al momento non è possibile inserire il modulo commessa. Contattare l'assistenza",
 
 
                     }
