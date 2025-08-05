@@ -260,7 +260,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         });
     };
 
-    const handleGetDettaglioModuloCommessaVecchio = async (year,month) =>{
+    const handleGetDettaglioModuloCommessaVecchio = async (year,month,isCallAfterSaveData = false) =>{
         setLoadingData(true);
         await getDettaglioModuloCommessaV2(token,year,month, profilo.nonce)
             .then((response:{data:any})=>{
@@ -284,6 +284,19 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 const regioniToHideDelete = res.valoriRegione.map(el => el.istatRegione);
                 getRegioni(regioniToHideDelete); 
                 setProfiloViewRegione(response.data.macrocategoriaVendita);
+                if(res?.source === "archiviato"){
+                    console.log(111);
+                    setisEditAllow(false);
+                }else if(res?.stato === null && res?.source !== "archiviato" && !isCallAfterSaveData){
+                    setisEditAllow(true);
+                    console.log(222);
+                }else if(res?.stato !== null && res?.source !== "archiviato" && !isCallAfterSaveData){
+                    setisEditAllow(false);
+                    console.log(888);
+                }else if(res?.source !== "archiviato" && isCallAfterSaveData){
+                    setisEditAllow(false);
+                    console.log(333);
+                }
                 
 
             }).catch((err:ManageErrorResponse)=>{
@@ -324,16 +337,20 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             };});
         await getDatiFatturazione(token,profilo.nonce).then(async( ) =>{ 
             await insertDatiModuloCommessaV2(objectToSend, token, profilo.nonce)
-                .then(()=>{
+                .then(async()=>{
                     setOpenModalLoading(false);
-                    setisEditAllow(false);
+                    //setisEditAllow(false);
                     handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
-                  
+                    //per il refresh dei dati
+                   
                     if(isObbligatorioLayout){
                         navigate(PathPf.DATI_FATTURAZIONE);
+                    }else{
+                        await handleGetDettaglioModuloCommessaVecchio(activeCommessa.annoValidita,activeCommessa.meseValidita,true);
+                      
                     }
                 }).catch(err => {
-                    setisEditAllow(false);
+                    //setisEditAllow(false);
                     handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
                     
                     setOpenModalLoading(false);
@@ -375,11 +392,11 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     const indietroFunction = () => {
         if(!isObbligatorioLayout){
             handleGetDettaglioModuloCommessaVecchio(mainState.infoTrimestreComSelected?.moduli[activeStep-1]?.id.split('/')[1],mainState?.infoTrimestreComSelected?.moduli[activeStep-1]?.id.split('/')[0]);
-            setisEditAllow(false);
+            //setisEditAllow(false);
             handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
           
         }else{ 
-            setisEditAllow(true);
+            //setisEditAllow(true);
             handleModifyMainState({statusPageInserimentoCommessa:'mutable'});
            
         }
@@ -404,12 +421,12 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 if(!isObbligatorioLayout){
                 
                     handleGetDettaglioModuloCommessaVecchio(mainState.infoTrimestreComSelected.moduli[activeStep+1].id.split('/')[1],mainState.infoTrimestreComSelected.moduli[activeStep+1].id.split('/')[0]);
-                    setisEditAllow(false);
+                    //setisEditAllow(false);
                     handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
                  
                     handleNext();
                 }else{
-                    setisEditAllow(true);
+                    //setisEditAllow(true);
                     handleModifyMainState({statusPageInserimentoCommessa:'mutable'});
                    
                     if(((coperturaAr||0) < 100 || (copertura890||0) < 100) && (profiloViewRegione === 3  || profiloViewRegione === 4)){
@@ -658,11 +675,12 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     let labelButtonAvantiListaModuliSave = "Modifica";
     if(isEditAllow && (isObbligatorioLayout && (activeStep+1 < steps.length))){
         labelButtonAvantiListaModuliSave = "Prosegui per salvare";
-    }else if(isEditAllow){
+    }else if(isEditAllow || activeCommessa?.stato === null){
         labelButtonAvantiListaModuliSave = "Salva";
-    }else if(activeCommessa?.stato === null){
-        labelButtonAvantiListaModuliSave = "Inserisci nuovo modulo commessa";
     }
+    /*else if(activeCommessa?.stato === null){
+        labelButtonAvantiListaModuliSave = "Inserisci nuovo modulo commessa";
+    }*/
 
     console.log({arrayRegioniSelected,arrayRegioni});
 
@@ -719,9 +737,10 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                 );
                             }
 
-                            if (isStepSkipped(index)) {
+                            stepProps.completed = index === activeStep ? false : false;
+                            /*if (isStepSkipped(index)) {
                                 stepProps.completed = false;
-                            }
+                            }*/
                             return (
                                 <Step key={label} {...stepProps}>
                                     <StepLabel {...labelProps}>{label}</StepLabel>
@@ -1164,9 +1183,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 </div>
                 {dataModuli.length > 0 && 
                 <div>
-                  
-                    {activeCommessa?.source === "archiviato"? null:<Button disabled={error890Regioni|| errorArRegioni|| (isObbligatorioLayout && (activeStep+1 < steps.length))} onClick={onHandleSalvaModificaButton} variant={labelButtonAvantiListaModuliSave === "Prosegui per salvare"? "text":"outlined"}>{labelButtonAvantiListaModuliSave}</Button>} 
-
+                    {(activeCommessa?.source === "archiviato"|| loadingData )? null:<Button disabled={error890Regioni|| errorArRegioni|| (isObbligatorioLayout && (activeStep+1 < steps.length))} onClick={onHandleSalvaModificaButton} variant={labelButtonAvantiListaModuliSave === "Prosegui per salvare"? "text":"outlined"}>{labelButtonAvantiListaModuliSave}</Button>} 
                 </div>
                 }
                
