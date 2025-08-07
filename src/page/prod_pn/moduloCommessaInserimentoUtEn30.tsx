@@ -342,7 +342,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                     //setisEditAllow(false);
                     handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
                     //per il refresh dei dati
-                   
+                    managePresaInCarico("SAVE_COMMESSA_OK",dispatchMainState);
                     if(isObbligatorioLayout){
                         navigate(PathPf.DATI_FATTURAZIONE);
                     }else{
@@ -352,7 +352,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 }).catch(err => {
                     //setisEditAllow(false);
                     handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
-                    managePresaInCarico("SAVE_COMMESSA_OK",dispatchMainState);
+                    
                     setOpenModalLoading(false);
                     manageError(err,dispatchMainState); 
                 });
