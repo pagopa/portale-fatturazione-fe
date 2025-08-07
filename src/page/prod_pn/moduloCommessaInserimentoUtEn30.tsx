@@ -352,7 +352,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 }).catch(err => {
                     //setisEditAllow(false);
                     handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
-                    
+                    managePresaInCarico("SAVE_COMMESSA_OK",dispatchMainState);
                     setOpenModalLoading(false);
                     manageError(err,dispatchMainState); 
                 });
@@ -422,13 +422,10 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 
                     handleGetDettaglioModuloCommessaVecchio(mainState.infoTrimestreComSelected.moduli[activeStep+1].id.split('/')[1],mainState.infoTrimestreComSelected.moduli[activeStep+1].id.split('/')[0]);
                     //setisEditAllow(false);
-                    handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
-                 
                     handleNext();
+                    handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
                 }else{
                     //setisEditAllow(true);
-                    handleModifyMainState({statusPageInserimentoCommessa:'mutable'});
-                   
                     if(((coperturaAr||0) < 100 || (copertura890||0) < 100) && (profiloViewRegione === 3  || profiloViewRegione === 4)){
                         setOpenModalInfo({open:true, sentence:`La percentale di copertura NON raggiunge il 100%. Le notifiche restanti  saranno integrate sulle regioni Italiane in base allla percentuale di residenza fornite tramite dati ISTAT.`,buttonIsVisible:true,labelButton:"Prosegui",actionButton:handleNext});
                     }else if(((coperturaAr||0) < 100 || (copertura890||0) < 100) && (profiloViewRegione === 1  || profiloViewRegione === 2)){
@@ -436,6 +433,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                     }else{
                         handleNext();
                     }  
+                    handleModifyMainState({statusPageInserimentoCommessa:'mutable'});
                 }
             }
             setErrorAnyValueIsEqualNull(false);

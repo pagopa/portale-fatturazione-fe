@@ -44,6 +44,7 @@ i18n.use(Backend)
                         "REGEN_KEY_OK":"Rigenerazione eseguita",
                         "CREAT_KEY_OK":"Creazione avvenuta con successo",
                         'NO_INSERIMENTO_COMMESSA':"Al momento non è possibile inserire il modulo commessa. Contattare l'assistenza",
+                        'SAVE_COMMESSA_OK':"Modulo commessa inserito",
 
 
                     }
