@@ -13,7 +13,7 @@ import { saveAs } from "file-saver";
 import { GlobalContext } from "../../store/context/globalContext";
 import { manageError } from "../../api/api";
 import { getListaActionMonitoring, downloadOrchestratore, getStatiMonitoring, getTipologieMonitoring, getFasiMonitoring } from "../../api/apiPagoPa/orchestratore/api";
-import { headersName } from "../../assets/configurations/config_GridStoricoContestazioni";
+
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
@@ -21,6 +21,7 @@ import { transformDateTimeWithNameMonth, transformDateTime, transformObjectToArr
 import { mesiGrid } from "../../reusableFunction/reusableArrayObj";
 import { PathPf } from "../../types/enum";
 import { ElementMultiSelect } from "../../types/typeReportDettaglio";
+import { headersName } from "../../assets/configurations/config_GridOrchestratore";
 
 export interface DataGridOrchestratore {
     idOrchestratore:string,
