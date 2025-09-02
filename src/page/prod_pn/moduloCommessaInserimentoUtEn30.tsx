@@ -1193,9 +1193,17 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 </div>
                 {dataModuli.length > 0 && (activeCommessa?.source === "archiviato"|| loadingData )? null:<div><Button disabled={error890Regioni|| errorArRegioni|| (isObbligatorioLayout && (activeStep+1 < steps.length))} onClick={onHandleSalvaModificaButton} variant={labelButtonAvantiListaModuliSave === "Prosegui per salvare"? "text":"outlined"}>{labelButtonAvantiListaModuliSave}</Button></div>} 
                 
-                {activeCommessa?.source === "archiviato" &&
+                {activeCommessa?.source === "archiviato" && activeCommessa.dataInserimento !== null &&
                  <div>
-                     <Button onClick={()=>navigate(PathPf.PDF_COMMESSA)} variant="contained">Vedi anteprima</Button>
+                     <Button onClick={()=>{
+                         handleModifyMainState({infoTrimestreComSelected:{
+                             ...mainState.infoTrimestreComSelected,
+                             annoCommessaSelectd:activeCommessa.annoValidita.toString(),
+                             meseCommessaSelected:activeCommessa.meseValidita.toString(),
+                             moduloSelectedIndex:activeStep}
+                         });
+                         navigate(PathPf.PDF_COMMESSA+`/${activeCommessa.annoValidita}/${activeCommessa.meseValidita}`);}
+                     } variant="contained">Vedi anteprima</Button>
                  </div> 
                 }
                 <div >

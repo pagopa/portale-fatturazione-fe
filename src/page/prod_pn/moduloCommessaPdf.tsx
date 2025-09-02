@@ -19,9 +19,11 @@ import { DatiCommessaPdf, ResponseGetPdfPagoPa } from "../../types/typeListaModu
 import { createDateFromString, replaceDate } from "../../reusableFunction/function";
 import SkeletonComPdf from "../../components/commessaPdf/skeletonComPdf";
 import { GlobalContext } from "../../store/context/globalContext";
+import {useParams} from "react-router-dom";
 
 const ModuloCommessaPdf : React.FC = () =>{
 
+    const {annoPdf, mesePdf} = useParams();
     const globalContextObj = useContext(GlobalContext);
     const {mainState,dispatchMainState} = globalContextObj;
 
@@ -144,7 +146,7 @@ const ModuloCommessaPdf : React.FC = () =>{
 
     const getPdf = async() =>{
         setShowLoadingDettaglio(true);
-        getModuloCommessaPdf(token, mainState.infoTrimestreComSelected.annoCommessaSelectd,mainState.infoTrimestreComSelected.meseCommessaSelected, profilo.nonce).then((res:ResponseGetPdfPagoPa)=>{
+        getModuloCommessaPdf(token, annoPdf||"",mesePdf||"", profilo.nonce).then((res:ResponseGetPdfPagoPa)=>{
             toDoOnGetPdfSelfcarePagopa(res);
             setShowLoadingDettaglio(false);
         }).catch((err)=>{
@@ -178,7 +180,7 @@ const ModuloCommessaPdf : React.FC = () =>{
  
     const downloadPdf = async()=>{
         setShowLoading(true);
-        downloadModuloCommessaPdf(token, mainState.infoTrimestreComSelected.annoCommessaSelectd,mainState.infoTrimestreComSelected.meseCommessaSelected, tipoCommessa, profilo.nonce).then((res: ResponseDownloadPdf)=>{
+        downloadModuloCommessaPdf(token, annoPdf||"",mesePdf||"", tipoCommessa, profilo.nonce).then((res: ResponseDownloadPdf)=>{
             toDoOnDownloadPdf(res);
         }).catch((err)=>{
             manageError(err,dispatchMainState);
