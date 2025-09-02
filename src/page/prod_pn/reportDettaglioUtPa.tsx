@@ -767,7 +767,7 @@ const ReportDettaglio : React.FC = () => {
                 </div>
                 <div className="col-3 ">
                     <Box sx={{width:'80%', marginLeft:'20px', display:'flex', justifyContent:'end'}}  >
-                        <Tooltip  title="Scadenzario">
+                        <Tooltip  title="Scadenzario contestazioni">
                             <Button  
                                 variant="outlined"
                                 size="medium"  onClick={()=> setShowModalScadenziario(true)} >

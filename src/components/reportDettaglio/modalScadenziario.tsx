@@ -82,7 +82,7 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce,d
                     <div className='d-flex justify-content-between ms-3 mt-auto mb-auto w-100' >
                         <div className='d-flex justify-content-center align-items-center'>
                             <Typography  id="modal-modal-title" variant="h6" component="h2">
-                                Scadenzario
+                                Scadenzario contestazioni
                             </Typography>
                         </div>
                         
@@ -99,8 +99,10 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce,d
                                         <TableRow>
                                             <TableCell>Mese</TableCell>
                                             <TableCell align="left">Anno </TableCell>
-                                            <TableCell align="left">Data inizio inserimento contestazione</TableCell>
-                                            <TableCell align="left">Data fine inserimento contestazione</TableCell>
+                                            <TableCell align="left">Data inizio inserimento</TableCell>
+                                            <TableCell align="left">Data fine inserimento</TableCell>
+                                            <TableCell align="left">Data chiusura</TableCell>
+                                            <TableCell align="left">Tempo di risposta</TableCell>
                                             {(profilo.profilo === 'CON' || profilo.profilo === 'REC') &&
                                         <>
                                             <TableCell align="left">Data inizio contestazione {profilo.profilo === 'REC'?"Recapitista":"Consolidatore"}</TableCell>
@@ -122,6 +124,8 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce,d
                                                 <TableCell align="left">{row.annoContestazione}</TableCell>
                                                 <TableCell align="left">{row.dataInizio}</TableCell>
                                                 <TableCell align="left">{row.dataFine}</TableCell>
+                                                <TableCell align="left">{row.chiusuraContestazioni}</TableCell>
+                                                <TableCell align="left">{row.tempoRisposta}</TableCell>
                                                 {(profilo.profilo === 'CON' || profilo.profilo === 'REC') &&
                                             <>
                                                 <TableCell align="left">{row.dataRecapitistaInizio}</TableCell>
