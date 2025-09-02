@@ -5,20 +5,22 @@ import Modal from '@mui/material/Modal';
 import { Dispatch, SetStateAction } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import { Button } from '@mui/material';
+import { ReactNode } from "react";
 
 
 
 
 export interface ModalInfoProps {
-    setOpen:Dispatch<SetStateAction<{open:boolean,sentence:string,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void}>>,
-    open:{open:boolean,sentence:string,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void},
-    width?:number
+    setOpen:Dispatch<SetStateAction<{open:boolean,sentence:string,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void,icon?:ReactNode|null}>>,
+    open:{open:boolean,sentence:string,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void,icon?:ReactNode|null},
+    width?:number,
+    
 }
 
 const ModalInfo : React.FC<ModalInfoProps> = ({setOpen, open,width}) => {
    
     const handleClose = () => setOpen({open:false, sentence:''});
-
+    console.log({open});
     return (
         <Modal
             open={open.open}
@@ -43,7 +45,7 @@ const ModalInfo : React.FC<ModalInfoProps> = ({setOpen, open,width}) => {
                     </div>
                 </div>
                 <div className='d-flex justify-content-center'>
-                    
+                    {open.icon  && <div  style={{ marginRight: 8 }}>{open.icon}</div>}
                     <Typography id="modal-modal-title" variant="h6" component="h2">
         Attenzione!
                     </Typography>    

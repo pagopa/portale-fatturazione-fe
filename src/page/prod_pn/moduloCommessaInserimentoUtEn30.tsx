@@ -1,4 +1,4 @@
-import {useState,useEffect, useContext, useRef} from 'react';
+import {useState,useEffect, useContext, useRef, ReactNode} from 'react';
 import {Typography, Button, Stepper, Step, Tooltip, IconButton,  Theme, Box, Skeleton, StepLabel, Grid, Chip, FormControl, InputLabel, MenuItem, OutlinedInput, Select, TextField} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked, theme } from '@pagopa/mui-italia';
@@ -26,6 +26,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import is from 'date-fns/esm/locale/is/index.js';
 import ModalInfo from '../../components/reusableComponents/modals/modalInfo';
+import ErrorIcon from '@mui/icons-material/Error';
+
 
 
 const ITEM_HEIGHT = 48;
@@ -137,7 +139,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     const [isEditAllow, setisEditAllow] = useState<boolean>(false);// cambiare a boolean|null
    
     const [openModalLoading, setOpenModalLoading] = useState(false);
-    const [openModalInfo, setOpenModalInfo] = useState<{open:boolean,sentence:string,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void}>({open:false, sentence:''});
+    const [openModalInfo, setOpenModalInfo] = useState<{open:boolean,sentence:string,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void,icon?:ReactNode|null }>({open:false, sentence:''});
     //new logic__________________
     const [dataObbligatori, setDataObbligatori] = useState(false);
     const [dataModuli, setDataModuli] = useState<ModuloCommessaType[]>([]);
@@ -427,9 +429,9 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 }else{
                     //setisEditAllow(true);
                     if(((coperturaAr||0) < 100 || (copertura890||0) < 100) && (profiloViewRegione === 3  || profiloViewRegione === 4)){
-                        setOpenModalInfo({open:true, sentence:`La percentale di copertura NON raggiunge il 100%. Le notifiche restanti  saranno integrate sulle regioni Italiane in base allla percentuale di residenza fornite tramite dati ISTAT.`,buttonIsVisible:true,labelButton:"Prosegui",actionButton:handleNext});
+                        setOpenModalInfo({open:true, sentence:`La percentale di copertura NON raggiunge il 100%. Tramite dati ISTAT le notifiche restanti saranno integrate sulle regione italiane in base alla percentuale della Popolazione Residente.`,buttonIsVisible:true,labelButton:"Prosegui",actionButton:handleNext});
                     }else if(((coperturaAr||0) < 100 || (copertura890||0) < 100) && (profiloViewRegione === 1  || profiloViewRegione === 2)){
-                        setOpenModalInfo({open:true, sentence:`La percentale di copertura NON raggiunge il 100%. Le notifiche restanti  saranno integrate sulla regione di appartenenza.`,buttonIsVisible:true,labelButton:"Prosegui",actionButton:handleNext});
+                        setOpenModalInfo({open:true, sentence:`La percentale di copertura NON raggiunge il 100%. Le notifiche restanti saranno integrate sulla regione di appartenenza.`,buttonIsVisible:true,labelButton:"Prosegui",actionButton:handleNext});
                     }else{
                         handleNext();
                     }  
@@ -636,6 +638,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         console.log('mimmo');
         if(isAnyValueOfModuloEqualNull() && isEditAllow){
             setErrorAnyValueIsEqualNull(true);
+            setOpenModalInfo({open:true, sentence:`Errore: alcuni campi contengono valori non corretti.`,buttonIsVisible:false,icon:<ErrorIcon/>});
         }else{
             if(!isEditAllow){
                 setisEditAllow(true);
@@ -774,154 +777,14 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                             <TerzoContainerTrimestrale dataModulo={dataTotali} dataModifica={activeCommessa?.dataInserimento} meseAnno={` ${month[Number(activeCommessa?.meseValidita)-1]}/${activeCommessa?.annoValidita}`}/>
                         </div>
                         }
-                        {/*NEW CODE ______________________________*/}
-                 
                         <>
-                            <div className="bg-white mt-3 pt-3 ">
-                                <Grid 
-                                    container
-                                    columns={12}>
-                                    <Grid
-                                        sx={{
-                                            textAlign: 'left',
-                                            borderColor: '#ffffff',
-                                            borderStyle: 'solid',
-                                        }}
-                                        item
-                                        xs={6}
-                                    ></Grid>
-                                    <Grid
-                                        sx={{
-                                            textAlign: 'left',
-                                            borderColor: '#ffffff',
-                                            borderStyle: 'solid',
-                                        }}
-                                        item
-                                        xs={2}
-                                    >
-                                        <Typography sx={{fontWeight:'bold', textAlign:'center'}}>AR Nazionali </Typography>
-                                    </Grid>
-                                    <Grid
-                                        sx={{
-                                            textAlign: 'left',
-                                            borderColor: '#ffffff',
-                                            borderStyle: 'solid',
-                                        }}
-                                        item
-                                        xs={2}
-                                    >
-                                        <Typography sx={{fontWeight:'bold', textAlign:'center'}}>890 Nazionali</Typography>
-                                    </Grid>
-
-                                </Grid>
-
-                                <hr></hr>
-
-                                <Grid
-                                    sx={{ marginTop: '20px' }}
-                                    container
-                                    columns={12}>
-                                    <Grid
-                                        justifyContent="center"
-                                        alignItems="center"  item  md={6}
-                                    >
-                                        <Typography sx={{fontWeight:'bold', textAlign:'right'}}>Totale Notifiche</Typography>
-                                    </Grid>
-                                    <Grid
-                                        sx={{
-                                            textAlign: 'center',
-                                            borderColor: '#ffffff',
-                                            borderStyle: 'solid',
-                                        }}
-                                        item
-                                        xs={2}
-                                    >
-                                        <TextField
-                                            sx={{ backgroundColor: '#ffffff', width: '100px'}}
-                                            disabled={true}
-                                            size="small"
-                                          
-                                            value={dataModuli.length > 1 ? (dataModuli[activeStep]?.totaleNotificheAnalogicoARNaz||0):(dataModuli[0]?.totaleNotificheAnalogicoARNaz||0)}
-                                            InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
-                                        />
-                                    </Grid>
-                                    <Grid
-                                        sx={{
-                                            textAlign: 'center',
-                                            borderColor: '#ffffff',
-                                            borderStyle: 'solid',
-                                        }}
-                                        item
-                                        xs={2}
-                                    >
-                                        <TextField
-                                            sx={{ backgroundColor: '#ffffff', width: '100px'}}
-                                            disabled={true}
-                                            size="small"
-                                        
-                                            value={dataModuli.length > 1 ?  (dataModuli[activeStep]?.totaleNotificheAnalogico890Naz||0) : (dataModuli[0]?.totaleNotificheAnalogico890Naz||0)}
-                                            InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
-                                        />
-                                    </Grid>
-
-                                </Grid>
-
-                                <hr></hr>
-
-                                <Grid
-                                    sx={{ marginTop: '20px' }}
-                                    container
-                                    columns={12}>
-                                    <Grid
-                                        justifyContent="center"
-                                        alignItems="center"  item  md={6}
-                                    >
-                                        <Typography sx={{fontWeight:'bold', textAlign:'right'}}>Percentuale copertura</Typography>
-                                    </Grid>
-                                    <Grid
-                                        sx={{
-                                            textAlign: 'center',
-                                            borderColor: '#ffffff',
-                                            borderStyle: 'solid',
-                                        }}
-                                        item
-                                        xs={2}
-                                    >
-                                        <TextField
-                                            sx={{ backgroundColor: '#ffffff', width: '100px'}}
-                                            disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
-                                            size="small"
-                                            error={(coperturaAr||0) > 100}
-                                            value={coperturaAr ? coperturaAr + "%" : 0+ "%"}
-                                            InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
-                                        />
-                                    </Grid>
-                                    <Grid
-                                        sx={{
-                                            textAlign: 'center',
-                                            borderColor: '#ffffff',
-                                            borderStyle: 'solid',
-                                        }}
-                                        item
-                                        xs={2}
-                                    >
-                                        <TextField
-                                            sx={{ backgroundColor: '#ffffff', width: '100px'}}
-                                            disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
-                                            size="small"
-                                            error={(copertura890||0) > 100}
-                                            value={copertura890 ? copertura890 + "%" : 0+ "%"}
-                                            InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
-                                        />
-                                    </Grid>
-
-                                </Grid>
-                                <hr></hr>
-                            </div>
                             {activeCommessa.source !== "archiviato" &&
                             <div  className="bg-white mt-3 pt-3 ">
                                 <Grid   container spacing={2}>
-                                    <Grid item  md={6}>
+                                    <Grid  container 
+                                        alignItems="center" 
+                                        justifyContent="center" 
+                                        item  md={6}>
                                         <FormControl sx={{ m: 1, width: "100%" }}>
                                             <InputLabel>Inserisci regioni</InputLabel>
                                             <Select
@@ -954,16 +817,24 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                             </Select>
                                         </FormControl>
                                     </Grid>
-                                    <Grid item  md={6}>
-                                        <IconButton
-
-                                            disabled={!isEditAllow}
-                                            onClick={() => onAddRegioniButton()}
-                                            aria-label="Edit"
-                                            color="primary"
-                                            size="large"
-                                        ><AddIcon/>
-                                        </IconButton>
+                                    <Grid  container 
+                                        alignItems="center" 
+                                        justifyContent="left"
+                                        item
+                                        md={6}>
+                                        <Tooltip title="Aggiungi regioni">
+                                            <span>
+                                                <Button
+                                                    disabled={!isEditAllow || arrayRegioniSelected.length === 0}
+                                                    onClick={() => onAddRegioniButton()}
+                                                    aria-label="Edit"
+                                                    color="primary"
+                                                    size="large"
+                                                    variant="contained"
+                                                >Aggiungi regioni
+                                                </Button>
+                                            </span>
+                                        </Tooltip>
                                     </Grid>
                                 </Grid>
                             </div>
@@ -1158,6 +1029,147 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                
                                 <hr></hr>
                             </div>
+                            <div className="bg-white mt-3 pt-3 ">
+                                <Grid 
+                                    container
+                                    columns={12}>
+                                    <Grid
+                                        sx={{
+                                            textAlign: 'left',
+                                            borderColor: '#ffffff',
+                                            borderStyle: 'solid',
+                                        }}
+                                        item
+                                        xs={6}
+                                    ></Grid>
+                                    <Grid
+                                        sx={{
+                                            textAlign: 'left',
+                                            borderColor: '#ffffff',
+                                            borderStyle: 'solid',
+                                        }}
+                                        item
+                                        xs={2}
+                                    >
+                                        <Typography sx={{fontWeight:'bold', textAlign:'center'}}>AR Nazionali </Typography>
+                                    </Grid>
+                                    <Grid
+                                        sx={{
+                                            textAlign: 'left',
+                                            borderColor: '#ffffff',
+                                            borderStyle: 'solid',
+                                        }}
+                                        item
+                                        xs={2}
+                                    >
+                                        <Typography sx={{fontWeight:'bold', textAlign:'center'}}>890 Nazionali</Typography>
+                                    </Grid>
+
+                                </Grid>
+
+                                <hr></hr>
+
+                                <Grid
+                                    sx={{ marginTop: '20px' }}
+                                    container
+                                    columns={12}>
+                                    <Grid
+                                        justifyContent="center"
+                                        alignItems="center"  item  md={6}
+                                    >
+                                        <Typography sx={{fontWeight:'bold', textAlign:'right'}}>Totale Notifiche</Typography>
+                                    </Grid>
+                                    <Grid
+                                        sx={{
+                                            textAlign: 'center',
+                                            borderColor: '#ffffff',
+                                            borderStyle: 'solid',
+                                        }}
+                                        item
+                                        xs={2}
+                                    >
+                                        <TextField
+                                            sx={{ backgroundColor: '#ffffff', width: '100px'}}
+                                            disabled={true}
+                                            size="small"
+                                          
+                                            value={dataModuli.length > 1 ? (dataModuli[activeStep]?.totaleNotificheAnalogicoARNaz||0):(dataModuli[0]?.totaleNotificheAnalogicoARNaz||0)}
+                                            InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        sx={{
+                                            textAlign: 'center',
+                                            borderColor: '#ffffff',
+                                            borderStyle: 'solid',
+                                        }}
+                                        item
+                                        xs={2}
+                                    >
+                                        <TextField
+                                            sx={{ backgroundColor: '#ffffff', width: '100px'}}
+                                            disabled={true}
+                                            size="small"
+                                        
+                                            value={dataModuli.length > 1 ?  (dataModuli[activeStep]?.totaleNotificheAnalogico890Naz||0) : (dataModuli[0]?.totaleNotificheAnalogico890Naz||0)}
+                                            InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                                        />
+                                    </Grid>
+
+                                </Grid>
+
+                                <hr></hr>
+
+                                <Grid
+                                    sx={{ marginTop: '20px' }}
+                                    container
+                                    columns={12}>
+                                    <Grid
+                                        justifyContent="center"
+                                        alignItems="center"  item  md={6}
+                                    >
+                                        <Typography sx={{fontWeight:'bold', textAlign:'right'}}>Percentuale copertura</Typography>
+                                    </Grid>
+                                    <Grid
+                                        sx={{
+                                            textAlign: 'center',
+                                            borderColor: '#ffffff',
+                                            borderStyle: 'solid',
+                                        }}
+                                        item
+                                        xs={2}
+                                    >
+                                        <TextField
+                                            sx={{ backgroundColor: '#ffffff', width: '100px'}}
+                                            disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
+                                            size="small"
+                                            error={(coperturaAr||0) > 100}
+                                            value={coperturaAr ? coperturaAr + "%" : 0+ "%"}
+                                            InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        sx={{
+                                            textAlign: 'center',
+                                            borderColor: '#ffffff',
+                                            borderStyle: 'solid',
+                                        }}
+                                        item
+                                        xs={2}
+                                    >
+                                        <TextField
+                                            sx={{ backgroundColor: '#ffffff', width: '100px'}}
+                                            disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
+                                            size="small"
+                                            error={(copertura890||0) > 100}
+                                            value={copertura890 ? copertura890 + "%" : 0+ "%"}
+                                            InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                                        />
+                                    </Grid>
+
+                                </Grid>
+                                <hr></hr>
+                            </div>
                         </>
                      
                     </div>   
@@ -1179,12 +1191,13 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                     </Tooltip>
                     }
                 </div>
-                {dataModuli.length > 0 && 
-                <div>
-                    {(activeCommessa?.source === "archiviato"|| loadingData )? null:<Button disabled={error890Regioni|| errorArRegioni|| (isObbligatorioLayout && (activeStep+1 < steps.length))} onClick={onHandleSalvaModificaButton} variant={labelButtonAvantiListaModuliSave === "Prosegui per salvare"? "text":"outlined"}>{labelButtonAvantiListaModuliSave}</Button>} 
-                </div>
+                {dataModuli.length > 0 && (activeCommessa?.source === "archiviato"|| loadingData )? null:<div><Button disabled={error890Regioni|| errorArRegioni|| (isObbligatorioLayout && (activeStep+1 < steps.length))} onClick={onHandleSalvaModificaButton} variant={labelButtonAvantiListaModuliSave === "Prosegui per salvare"? "text":"outlined"}>{labelButtonAvantiListaModuliSave}</Button></div>} 
+                
+                {activeCommessa?.source === "archiviato" &&
+                 <div>
+                     <Button onClick={()=>navigate(PathPf.PDF_COMMESSA)} variant="contained">Vedi anteprima</Button>
+                 </div> 
                 }
-               
                 <div >
                     {steps.length > 1 && 
                     <Tooltip title={(activeStep+1) !== steps.length && "Avanti"}>
