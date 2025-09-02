@@ -27,6 +27,8 @@ const RowOrchestratore = ({sliced,headerNames}) => {
                     const indexDataEs =  Object.entries(sliced).findIndex(([key]) => key === 'dataEsecuzione');
                     const indexDataCon =  Object.entries(sliced).findIndex(([key]) => key === 'dataFineContestazioni');
                     const indexDataFat =  Object.entries(sliced).findIndex(([key]) => key === 'dataFatturazione');
+                    const indexChiusCon =  Object.entries(sliced).findIndex(([key]) => key === 'chiusuraContestazioni');
+                    const indexTempRis =  Object.entries(sliced).findIndex(([key]) => key === 'tempoRisposta');
                     let color = '';
                     let titleTooltip = value;
                     let customValue = value;
@@ -48,7 +50,7 @@ const RowOrchestratore = ({sliced,headerNames}) => {
                             customValue = <DangerousIcon sx={{color:color}}/>;
                         }
                     }
-                    if(i === indexDataEs || i === indexDataCon || i === indexDataFat ){
+                    if(i === indexDataEs || i === indexDataCon || i === indexDataFat || i === indexChiusCon || i === indexTempRis){
                         customValue = value.split(" ")[0];  
                     }
                     return(

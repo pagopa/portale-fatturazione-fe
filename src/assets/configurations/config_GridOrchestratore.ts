@@ -4,6 +4,8 @@ export const headersName: {label:string,align:string,width:number|string,headerA
     { label: 'Mese',align:'center',width:'100px',headerAction:false},
     { label: 'Tipologia',align:'center',width:'150px',headerAction:false},
     { label: 'Fase',align:'center',width:'150px',headerAction:false},
+    { label: 'Tempo di risposta',align:'center',width:'130px',headerAction:false},
+    { label: 'Chiusura contestazioni',align:'center',width:'130px',headerAction:false},
     { label: 'Fine Contes.',align:'center',width:'130px',headerAction:false},
     { label: 'Fatturazione',align:'center',width:'130px',headerAction:false},
     { label: 'Counter',align:'center',width:'80px',headerAction:false},
