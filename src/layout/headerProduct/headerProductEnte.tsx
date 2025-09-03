@@ -122,6 +122,7 @@ const HeaderProductEnte : React.FC = () => {
                     ></HeaderProduct>
                 </div>
             </div>
+            {  (profilo.profilo !== 'CON' && profilo.profilo !== 'REC') &&
             <div className="d-flex justify-content-center m-auto">
                 <Badge
                     badgeContent={countMessages}
@@ -134,6 +135,7 @@ const HeaderProductEnte : React.FC = () => {
                     </IconButton>
                 </Badge>
             </div>
+            }
         </div>
     );
 };
