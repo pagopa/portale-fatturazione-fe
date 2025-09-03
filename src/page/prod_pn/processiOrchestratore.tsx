@@ -33,9 +33,7 @@ export interface DataGridOrchestratore {
     dataFineContestazioni: string,
     dataFatturazione: string,
     esecuzione: string,
-    count: number,
-    chiusuraContestazioni:string,
-    tempoRisposta:string
+    count: number
 }
 
 export interface BodyOrchestratore{
@@ -139,8 +137,6 @@ const ProcessiOrchestartore:React.FC = () =>{
                     mese:mesiGrid[el.mese],
                     tipologia:el.tipologia,
                     fase:el.fase,
-                    tempoRisposta:transformDateTimeWithNameMonth(el.tempoRisposta)||"--",
-                    chiusuraContestazioni:transformDateTimeWithNameMonth(el.chiusuraContestazioni)||"--",
                     dataFineContestazioni:transformDateTime(el.dataFineContestazioni)||"--",
                     dataFatturazione:transformDateTime(el.dataFatturazione)||"--",
                     counter:el.count||'--',
