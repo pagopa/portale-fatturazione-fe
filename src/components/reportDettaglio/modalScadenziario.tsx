@@ -106,7 +106,7 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce,d
                                         <TableCell sx={{fontWeight: "bold",whiteSpace: "nowrap",borderRight: "10px solid #e0e0e0",borderLeft: "10px solid #e0e0e0"}} colSpan={6} align="center">
                                                 Ente Aderente
                                         </TableCell>
-                                        <TableCell sx={{fontWeight: "bold",whiteSpace: "nowrap", borderRight: "10px solid e0e0e0"}} colSpan={2} align="center">
+                                        <TableCell sx={{fontWeight: "bold",whiteSpace: "nowrap", borderRight: "10px solid #e0e0e0"}} colSpan={2} align="center">
                                                 Supporto postalizzazione
                                         </TableCell>
                                         {(profilo.profilo === 'CON' || profilo.profilo === 'REC') &&
@@ -121,7 +121,7 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce,d
                                         <TableCell sx={{ whiteSpace: "nowrap"}} colSpan={2} align="center">Inizio inserimento</TableCell>
                                         <TableCell sx={{ whiteSpace: "nowrap"}} colSpan={2} align="center">Fine inserimento</TableCell>
                                         <TableCell sx={{ whiteSpace: "nowrap",borderRight: "10px solid #e0e0e0"}} colSpan={2} align="center">Tempo di risposta</TableCell>
-                                        <TableCell sx={{whiteSpace: "nowrap"}} colSpan={2} align="center">Tempo di risposta</TableCell>
+                                        <TableCell sx={{whiteSpace: "nowrap",borderRight: "10px solid #e0e0e0"}} colSpan={2} align="center">Tempo di risposta</TableCell>
                                         {(profilo.profilo === 'CON' || profilo.profilo === 'REC') &&
                                             <>
                                                 <TableCell  sx={{whiteSpace: "nowrap"}} colSpan={1} align="center">Inizo risposta </TableCell>
@@ -147,7 +147,7 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce,d
                                             <TableCell colSpan={2} sx={{ borderRight: "10px solid #e0e0e0",whiteSpace: "nowrap",boxSizing: "border-box"}}  align="center">{row.tempoRisposta}</TableCell>
                                             {(profilo.profilo === 'CON' || profilo.profilo === 'REC') &&
                                                 <>
-                                                    <TableCell sx={{ borderRight: "10px solid #e0e0e0",boxSizing: "border-box",whiteSpace: "nowrap"}} align="center">{row.dataRecapitistaInizio}</TableCell>
+                                                    <TableCell sx={{ whiteSpace: "nowrap"}} align="center">{row.dataRecapitistaInizio}</TableCell>
                                                     <TableCell sx={{ borderRight: "10px solid #e0e0e0",boxSizing: "border-box",whiteSpace: "nowrap"}} align="center">{row.dataRecapitistaFine}</TableCell>
                                                 </>
                                             }
