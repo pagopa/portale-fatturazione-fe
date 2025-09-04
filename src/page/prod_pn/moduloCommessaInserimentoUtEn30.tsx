@@ -86,7 +86,8 @@ interface Regioni {
     regione: string,
     istatProvincia: string,
     provincia: string,
-    isRegione: 1
+    isRegione: 1,
+    calcolato?:number
 }
 
 export interface PostModuloCommessa {
@@ -940,7 +941,18 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                                         />
                                     </Grid>
-
+                                    {!isEditAllow &&
+                                    <Grid
+                                        sx={{
+                                            textAlign: 'center',
+                                            borderColor: '#ffffff',
+                                            borderStyle: 'solid',
+                                        }}
+                                        item
+                                        xs={2}
+                                    >
+                                        <Chip sx={{backgroundColor:activeCommessa?.valoriRegione[0]?.calcolato? undefined :"#B5E2B4"}} label={activeCommessa?.valoriRegione[0]?.calcolato ? "Calcolato":"Inserito"} />
+                                    </Grid>}
                                 </Grid>
 
                                 {/*___________________________________________________________________*/}
@@ -1005,7 +1017,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                                                         />
                                                     </Grid>
-                                                    {isEditAllow &&
+                                                    {isEditAllow ?
                                                         <Grid container
                                                             justifyContent="center"
                                                             alignItems="center"
@@ -1017,7 +1029,13 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                                                 size="large"
                                                             ><DeleteIcon/>
                                                             </IconButton>
+                                                        </Grid> : <Grid container
+                                                            justifyContent="center"
+                                                            alignItems="center"
+                                                            style={{ height: '80px' }} item md={2}>
+                                                            <Chip sx={{backgroundColor:element?.calcolato ? undefined :"#B5E2B4"}} label={element?.calcolato ? "Calcolato":"Inserito"} />
                                                         </Grid>
+
                                                     }
 
                                                 </Grid>
