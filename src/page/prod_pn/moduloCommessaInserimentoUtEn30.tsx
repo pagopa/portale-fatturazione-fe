@@ -1194,7 +1194,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 </> }  
             </div> 
           
-            <div className="d-flex justify-content-between m-5 ">
+            <div className="d-flex justify-content-between mt-5 ms-5 me-5 ">
                 <div >
                     {steps.length > 1 && 
                     <Tooltip title={activeStep !== 0 && "Indietro"}>
@@ -1211,19 +1211,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 </div>
                 {dataModuli.length > 0 && (activeCommessa?.source === "archiviato"|| loadingData )? null:<div><Button disabled={error890Regioni|| errorArRegioni|| (isObbligatorioLayout && (activeStep+1 < steps.length))} onClick={onHandleSalvaModificaButton} variant={labelButtonAvantiListaModuliSave === "Prosegui per salvare"? "text":"outlined"}>{labelButtonAvantiListaModuliSave}</Button></div>} 
                 
-                {activeCommessa?.source === "archiviato" && activeCommessa.dataInserimento !== null &&
-                 <div>
-                     <Button onClick={()=>{
-                         handleModifyMainState({infoTrimestreComSelected:{
-                             ...mainState.infoTrimestreComSelected,
-                             annoCommessaSelectd:activeCommessa.annoValidita.toString(),
-                             meseCommessaSelected:activeCommessa.meseValidita.toString(),
-                             moduloSelectedIndex:activeStep}
-                         });
-                         navigate(PathPf.PDF_COMMESSA+`/${activeCommessa.annoValidita}/${activeCommessa.meseValidita}`);}
-                     } variant="contained">Vedi anteprima</Button>
-                 </div> 
-                }
+               
                 <div >
                     {steps.length > 1 && 
                     <Tooltip title={(activeStep+1) !== steps.length && "Avanti"}>
@@ -1240,6 +1228,21 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 </div>
                     
             </div> 
+            <div className="d-flex justify-content-center mb-5 ">
+                { (activeCommessa?.dataInserimento !== null && !isEditAllow && !loadingData) &&
+                 <div>
+                     <Button onClick={()=>{
+                         handleModifyMainState({infoTrimestreComSelected:{
+                             ...mainState.infoTrimestreComSelected,
+                             annoCommessaSelectd:activeCommessa.annoValidita.toString(),
+                             meseCommessaSelected:activeCommessa.meseValidita.toString(),
+                             moduloSelectedIndex:activeStep}
+                         });
+                         navigate(PathPf.PDF_COMMESSA+`/${activeCommessa.annoValidita}/${activeCommessa.meseValidita}`);}
+                     } variant="contained">Vedi anteprima</Button>
+                 </div> 
+                }
+            </div>
             <ModalRedirect 
                 setOpen={setOpenModalRedirect}
                 open={openModalRedirect}
