@@ -552,6 +552,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             ...restOfCommesse.slice(activeCommessaIndex)]);
     };
 
+    console.log({dataModuli});
     const onChangeModuloValue = (e,valueKey) => {
        
         const activeCommessa = dataModuli.length > 1 ? dataModuli[activeStep] : dataModuli[0];
@@ -661,7 +662,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     const activeCommessa = dataModuli.length > 1 ? dataModuli[activeStep] : dataModuli[0];
     const coperturaAr = activeCommessa?.totaleNotificheAnalogicoARNaz === 0 ? 100 : ((activeCommessa?.totaleNotificheAnalogicoARNaz||0) > 0) ? (Math.round((activeCommessa?.valoriRegione.reduce((acc, el) => acc + (el.ar||0), 0)/(activeCommessa?.totaleNotificheAnalogicoARNaz||0))*100)): errorArRegioni ? null : ""; 
     const copertura890 = activeCommessa?.totaleNotificheAnalogico890Naz === 0 ? 100 : ((activeCommessa?.totaleNotificheAnalogico890Naz||0) > 0) ?  (Math.round((activeCommessa?.valoriRegione.reduce((acc, el) => acc + (el[890]||0), 0)/(activeCommessa?.totaleNotificheAnalogico890Naz||0))* 100)): error890Regioni ? null : "";  
-
+    console.log({activeCommessa,activeStep});
    
     
     const isAnyValueOfModuloEqualNull =  () => {
@@ -773,13 +774,13 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                 modifica={isEditAllow}
                                 errorAnyValueIsEqualNull={errorAnyValueIsEqualNull} />
                         </div>
-                        {(activeCommessa?.source === "archiviato" && activeCommessa.stato !== null) &&
+                        {(activeCommessa?.source === "archiviato" && activeCommessa?.stato !== null) &&
                         <div className='bg-white'>
                             <TerzoContainerTrimestrale dataModulo={dataTotali} dataModifica={activeCommessa?.dataInserimento} meseAnno={` ${month[Number(activeCommessa?.meseValidita)-1]}/${activeCommessa?.annoValidita}`}/>
                         </div>
                         }
                         <>
-                            {activeCommessa.source !== "archiviato" &&
+                            {activeCommessa?.source !== "archiviato" &&
                             <div  className="bg-white mt-3 pt-3 ">
                                 <Grid   container spacing={2}>
                                     <Grid  container 
