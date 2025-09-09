@@ -408,12 +408,18 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     };
 
     const onAvantiButton = () =>{
-        clickOnIndietroAvanti.current = "AVANTI";
-        if(isEditAllow && !isObbligatorioLayout){
-            setOpenModalAlert(true);
+        if(isAnyValueOfModuloEqualNull() && isEditAllow && isObbligatorioLayout){
+            setErrorAnyValueIsEqualNull(true);
+            setOpenModalInfo({open:true, sentence:`Errore: alcuni campi contengono valori non corretti.`,buttonIsVisible:false,icon:<ErrorIcon/>});
         }else{
-            avantiFunction();
+            clickOnIndietroAvanti.current = "AVANTI";
+            if(isEditAllow && !isObbligatorioLayout){
+                setOpenModalAlert(true);
+            }else{
+                avantiFunction();
+            }
         }
+       
     };
 
     const avantiFunction = () => {
