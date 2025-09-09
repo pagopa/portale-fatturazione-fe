@@ -20,6 +20,7 @@ import { createDateFromString, replaceDate } from "../../reusableFunction/functi
 import SkeletonComPdf from "../../components/commessaPdf/skeletonComPdf";
 import { GlobalContext } from "../../store/context/globalContext";
 import {useParams} from "react-router-dom";
+import NavigatorHeader from "../../components/reusableComponents/navigatorHeader";
 
 const ModuloCommessaPdf : React.FC = () =>{
 
@@ -218,14 +219,19 @@ const ModuloCommessaPdf : React.FC = () =>{
     const string = `${mese}/${anno}`;
     const arrWithlabelDateMonth = replaceDate(dataPdf.datiModuloCommessa,'[data]',string );
 
+    /*
     const onIndietroButton = () =>{
      
         //setInfoToStatusApplicationLoacalStorage(statusApp,{userClickOn:'GRID'});
         handleModifyMainState({userClickOn:'GRID'});
         navigate(PathPf.MODULOCOMMESSA); 
-    };
+    };*/
 
-    const { toPDF, targetRef } = usePDF({filename: `Modulo Commessa /${dataPdf.descrizione} /${mesiWithZero[Number(mainState.mese) -1]}/ ${mainState.anno}.pdf`});
+    const meseOnPdfName = profilo.auth === 'PAGOPA' ? mesiWithZero[Number(mainState?.mese) - 1] : mesiWithZero[Number(mesePdf||1)-1]; 
+    const annoOnPdfName = profilo.auth === 'PAGOPA' ? mainState.anno : annoPdf;
+ 
+
+    const { toPDF, targetRef } = usePDF({filename: `Modulo Commessa /${dataPdf.descrizione}/${meseOnPdfName}/${annoOnPdfName}.pdf`});
 
     if(showLoadingDettaglio){
         return(
@@ -234,21 +240,9 @@ const ModuloCommessaPdf : React.FC = () =>{
     }
     return (
         <>
-            <div className="">
-                <div className='d-flex marginTop24 ms-5 '>
-                    <ButtonNaked
-                        color="primary"
-                        size="small"
-                        startIcon={<ArrowBackIcon />}
-                        onClick={() => onIndietroButton() }
-                    >
-                    Indietro
-                    </ButtonNaked>
-                    <Typography sx={{ fontWeight:'bold', marginLeft:'20px'}} variant="caption">
-                        <ViewModuleIcon sx={{paddingBottom:'3px'}}  fontSize='small'></ViewModuleIcon>
-                      Modulo commessa 
-                    </Typography>
-                    <Typography  variant="caption">/ {month[Number(mainState.mese) - 1]}</Typography>
+            <div>
+                <div>
+                    <NavigatorHeader pageFrom={"Modulo commessa/"} pageIn={"Anteprima"} backPath={PathPf.MODULOCOMMESSA} icon={<ViewModuleIcon sx={{paddingBottom:"4px"}}  fontSize='small'></ViewModuleIcon>}></NavigatorHeader>
                 </div>
                 <div className="bg-white m-5 p-5">
                     <div className=" ">
