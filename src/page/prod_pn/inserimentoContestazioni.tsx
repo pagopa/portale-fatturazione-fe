@@ -228,7 +228,6 @@ const InserimentoContestazioni = () =>{
                     }
                 }).catch((err)=>{
                     setErrorAlert({error:409,message:err?.response?.data?.detail|| "L'operazione non è andata a buon fine"});
-                    console.log(888,{err});
                     throw new Error(err.response.data.details); 
                 });
                 start = end;

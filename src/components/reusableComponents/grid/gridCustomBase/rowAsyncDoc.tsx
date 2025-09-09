@@ -21,7 +21,7 @@ const RowAsyncDoc = ({sliced,headerNames,handleClickOnGrid,element}) => {
     const {DETTAGLIO,...rest} = sliced;
     const dettaglioParsed = keysToLowerCase(JSON.parse(DETTAGLIO));
     const stringsStatiContest = dettaglioParsed?.statoContestazione?.map(el => statiContestazione[el]).join(' , ');
-    console.log({sliced,dettaglioParsed});
+  
     let bgColorRow = "";
     if(sliced.letto){
         bgColorRow = "#F0FFF0";

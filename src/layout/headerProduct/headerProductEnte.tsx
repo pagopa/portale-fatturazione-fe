@@ -91,7 +91,6 @@ const HeaderProductEnte : React.FC = () => {
 
     const getValidationNotifiche = async(queryString) => {
         const result = await getVerificaNotificheEnte(token,profilo.nonce,{idEnte: profilo.idEnte,statusQueryGetUri:queryString}).then((res)=>{
-            console.log({RES:res},);
             if(res.data.runtimeStatus === "Completed"){
                 enqueueSnackbar(`È possibile eseguire il download del file NOTIFICHE ${mesiGrid[res?.data?.input?.mese]}/${res?.data?.input?.anno}`, {variant:"success",anchorOrigin:{ horizontal: "center", vertical: "bottom" }});
                 return queryString;

@@ -6,11 +6,9 @@ function useSavedFiltersNested(key, defaultFilters = {}) {
         // Retrieve saved filters from local storage on initial load
         const savedFilters = localStorage.getItem('filtersNested_1')||'{}';
         const parsedFilters = JSON.parse(savedFilters);
-        console.log(parsedFilters, key);
         if(parsedFilters?.pathPage === key){
             return parsedFilters;
         }else{
-            console.log(parsedFilters?.pathPage, key);
             localStorage.removeItem('filtersNested_1');
             return defaultFilters;
         }
