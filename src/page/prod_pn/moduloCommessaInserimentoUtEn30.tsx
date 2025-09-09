@@ -662,7 +662,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     const activeCommessa = dataModuli.length > 1 ? dataModuli[activeStep] : dataModuli[0];
     const coperturaAr = activeCommessa?.totaleNotificheAnalogicoARNaz === 0 ? 100 : ((activeCommessa?.totaleNotificheAnalogicoARNaz||0) > 0) ? (Math.round((activeCommessa?.valoriRegione.reduce((acc, el) => acc + (el.ar||0), 0)/(activeCommessa?.totaleNotificheAnalogicoARNaz||0))*100)): errorArRegioni ? null : ""; 
     const copertura890 = activeCommessa?.totaleNotificheAnalogico890Naz === 0 ? 100 : ((activeCommessa?.totaleNotificheAnalogico890Naz||0) > 0) ?  (Math.round((activeCommessa?.valoriRegione.reduce((acc, el) => acc + (el[890]||0), 0)/(activeCommessa?.totaleNotificheAnalogico890Naz||0))* 100)): error890Regioni ? null : "";  
-    console.log({activeCommessa,activeStep});
+    console.log({activeCommessa,activeStep,dataModuli});
    
     
     const isAnyValueOfModuloEqualNull =  () => {
@@ -1210,8 +1210,25 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                     </Tooltip>
                     }
                 </div>
-                {dataModuli.length > 0 && (activeCommessa?.source === "archiviato"|| loadingData )? null:<div><Button disabled={error890Regioni|| errorArRegioni|| (isObbligatorioLayout && (activeStep+1 < steps.length))} onClick={onHandleSalvaModificaButton} variant={labelButtonAvantiListaModuliSave === "Prosegui per salvare"? "text":"outlined"}>{labelButtonAvantiListaModuliSave}</Button></div>} 
-                
+                {dataModuli.length > 0 && (activeCommessa?.source === "archiviato"|| loadingData )? null:
+                    <div className="d-flex justify-content-center align-items-center">
+                        <Button  disabled={error890Regioni|| errorArRegioni|| (isObbligatorioLayout && (activeStep+1 < steps.length))} onClick={onHandleSalvaModificaButton} variant={labelButtonAvantiListaModuliSave === "Prosegui per salvare"? "text":"outlined"}>{labelButtonAvantiListaModuliSave}
+                        </Button>
+                    </div>} 
+                { (activeCommessa?.dataInserimento !== null && !isEditAllow && !loadingData) && 
+                <div  className="d-flex justify-content-center align-items-center">
+                   
+                    <Button onClick={()=>{
+                        handleModifyMainState({infoTrimestreComSelected:{
+                            ...mainState.infoTrimestreComSelected,
+                            annoCommessaSelectd:activeCommessa.annoValidita.toString(),
+                            meseCommessaSelected:activeCommessa.meseValidita.toString(),
+                            moduloSelectedIndex:activeStep}
+                        });
+                        navigate(PathPf.PDF_COMMESSA+`/${activeCommessa.annoValidita}/${activeCommessa.meseValidita}`);}
+                    } variant="contained">Vedi anteprima</Button>   
+                </div> 
+                }
                
                 <div >
                     {steps.length > 1 && 
@@ -1229,21 +1246,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 </div>
                     
             </div> 
-            <div className="d-flex justify-content-center mb-5 ">
-                { (activeCommessa?.dataInserimento !== null && !isEditAllow && !loadingData) &&
-                 <div>
-                     <Button onClick={()=>{
-                         handleModifyMainState({infoTrimestreComSelected:{
-                             ...mainState.infoTrimestreComSelected,
-                             annoCommessaSelectd:activeCommessa.annoValidita.toString(),
-                             meseCommessaSelected:activeCommessa.meseValidita.toString(),
-                             moduloSelectedIndex:activeStep}
-                         });
-                         navigate(PathPf.PDF_COMMESSA+`/${activeCommessa.annoValidita}/${activeCommessa.meseValidita}`);}
-                     } variant="contained">Vedi anteprima</Button>
-                 </div> 
-                }
-            </div>
             <ModalRedirect 
                 setOpen={setOpenModalRedirect}
                 open={openModalRedirect}
