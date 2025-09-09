@@ -327,6 +327,7 @@ const InserimentoContestazioni = () =>{
                                 <Autocomplete
                                     options={valueEnti}
                                     loading={loadingEnti}
+                                    isOptionEqualToValue={(option, value) => option.idEnte === value.idEnte}
                                     getOptionLabel={(option: EntiContestazionePage) => option.ragioneSociale}
                                     value={valueAutocomplete}
                                     onChange={(event, value) => {
