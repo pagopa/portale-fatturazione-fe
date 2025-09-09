@@ -74,33 +74,69 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce,d
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
-               
             >
-                
                 <Box sx={style}>
-                  
                     <div className='d-flex justify-content-between ms-3 mt-auto mb-auto w-100' >
                         <div className='d-flex justify-content-center align-items-center'>
                             <Typography  id="modal-modal-title" variant="h6" component="h2">
                                 Scadenzario
                             </Typography>
                         </div>
-                        
                         <div className='icon_close me-5'>
                             <CloseIcon onClick={handleClose} id='close_icon' sx={{color:'#17324D'}}></CloseIcon>
                         </div>
-                       
                     </div>
-                    <div className='mt-3'>
-                        <TableContainer component={Paper}>
-                            <Table aria-label="simple table">
-                                <div style={{overflowY: "auto",maxHeight: "75vh"}}>
-                                    <TableHead sx={{ position:'sticky',top: '0',zIndex:'10', backgroundColor:'#FFFFFF'}}>
-                                        <TableRow>
-                                            <TableCell>Mese</TableCell>
-                                            <TableCell align="left">Anno </TableCell>
-                                            <TableCell align="left">Data inizio inserimento contestazione</TableCell>
-                                            <TableCell align="left">Data fine inserimento contestazione</TableCell>
+        
+                    <div className='mt-5'>
+                        <TableContainer  sx={{overflowY: "auto",maxHeight: "75vh"}} component={Paper}>
+                            <Table>
+                                <TableHead sx={{ position:'sticky',top: '0',zIndex:'10', backgroundColor:'#f2f2f2',borderLeft: "10px solid #e0e0e0",borderRight: "10px solid #e0e0e0"}}>
+                                    <TableRow sx={{ position: "sticky", top: 0, zIndex: 20, backgroundColor: "grey.200",borderColor: "divider"}}>
+                                        <TableCell colSpan={2} align="center" sx={{ fontWeight: "bold"}}>
+                                                
+                                        </TableCell>
+                                        <TableCell sx={{fontWeight: "bold",whiteSpace: "nowrap",borderRight: "10px solid #e0e0e0",borderLeft: "10px solid #e0e0e0"}} colSpan={6} align="center">
+                                                Ente Aderente
+                                        </TableCell>
+                                        <TableCell sx={{fontWeight: "bold",whiteSpace: "nowrap", borderRight: "10px solid #e0e0e0"}} colSpan={2} align="center">
+                                                Supporto postalizzazione
+                                        </TableCell>
+                                        {(profilo.profilo === 'CON' || profilo.profilo === 'REC') &&
+                                            <TableCell colSpan={2} align="center" sx={{ fontWeight: "bold",whiteSpace: "nowrap"}}>
+                                                Consolidatore/Recapitista
+                                            </TableCell>
+                                        }
+                                    </TableRow>
+                                    <TableRow sx={{ position: "sticky", top: 48, zIndex: 19, backgroundColor: "grey.100",borderColor: "divider"  }}>
+                                        <TableCell   align="center" colSpan={1}>Mese</TableCell>
+                                        <TableCell  sx={{borderRight: "10px solid #e0e0e0"}} align="center" colSpan={1} >Anno </TableCell>
+                                        <TableCell sx={{ whiteSpace: "nowrap"}} colSpan={2} align="center">Inizio inserimento</TableCell>
+                                        <TableCell sx={{ whiteSpace: "nowrap"}} colSpan={2} align="center">Fine inserimento</TableCell>
+                                        <TableCell sx={{ whiteSpace: "nowrap",borderRight: "10px solid #e0e0e0"}} colSpan={2} align="center">Verifica</TableCell>
+                                        <TableCell sx={{whiteSpace: "nowrap",borderRight: "10px solid #e0e0e0"}} colSpan={2} align="center">Esito</TableCell>
+                                        {(profilo.profilo === 'CON' || profilo.profilo === 'REC') &&
+                                            <>
+                                                <TableCell  sx={{whiteSpace: "nowrap"}} colSpan={1} align="center">Inizo risposta </TableCell>
+                                                <TableCell sx={{whiteSpace: "nowrap"}} colSpan={1} align="center">Fine risposta</TableCell>
+                                            </>
+                                        }
+                                    </TableRow>
+                                </TableHead>
+                                
+                                <TableBody>
+                                    {datiScadenziario.map((row) => (
+                                        <TableRow
+                                            key={row.meseContestazione}
+                                            sx={{ borderLeft: "10px solid #e0e0e0",borderRight: "10px solid #e0e0e0",backgroundColor:"#fcfcfc",borderBottom: "2px solid #e0e0e0"}}
+                                        >
+                                            <TableCell  align="center" scope="row">
+                                                {row.meseContestazione}
+                                            </TableCell>
+                                            <TableCell  sx={{ borderRight: "10px solid #e0e0e0",boxSizing: "border-box",whiteSpace: "nowrap"}} align="center">{row.annoContestazione}</TableCell>
+                                            <TableCell colSpan={2} sx={{whiteSpace: "nowrap"}} align="center">{row.dataInizio}</TableCell>
+                                            <TableCell colSpan={2} sx={{whiteSpace: "nowrap"}} align="center">{row.dataFine}</TableCell>
+                                            <TableCell colSpan={2} sx={{ borderRight: "10px solid #e0e0e0",whiteSpace: "nowrap",boxSizing: "border-box"}}  align="center">{row.chiusuraContestazioni}</TableCell>
+                                            <TableCell colSpan={2} sx={{ borderRight: "10px solid #e0e0e0",whiteSpace: "nowrap",boxSizing: "border-box"}}  align="center">{row.tempoRisposta}</TableCell>
                                             {(profilo.profilo === 'CON' || profilo.profilo === 'REC') &&
                                         <>
                                             <TableCell align="left">Data inizio contestazione {profilo.profilo === 'REC'?"Recapitista":"Consolidatore"}</TableCell>
@@ -108,29 +144,8 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce,d
                                         </>
                                             }
                                         </TableRow>
-                                    </TableHead>
-                                
-                                    <TableBody>
-                                        {datiScadenziario.map((row) => (
-                                            <TableRow
-                                                key={row.meseContestazione}
-                                                sx={{ '&:last-child td, &:last-child th': { border: 0 }}}
-                                            >
-                                                <TableCell align="left" scope="row">
-                                                    {row.meseContestazione}
-                                                </TableCell>
-                                                <TableCell align="left">{row.annoContestazione}</TableCell>
-                                                <TableCell align="left">{row.dataInizio}</TableCell>
-                                                <TableCell align="left">{row.dataFine}</TableCell>
-                                                {(profilo.profilo === 'CON' || profilo.profilo === 'REC') &&
-                                            <>
-                                                <TableCell align="left">{row.dataRecapitistaInizio}</TableCell>
-                                                <TableCell align="left">{row.dataRecapitistaFine}</TableCell>
-                                            </>}
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </div> 
+                                    ))}
+                                </TableBody> 
                             </Table>
                         </TableContainer>
                     </div> 
