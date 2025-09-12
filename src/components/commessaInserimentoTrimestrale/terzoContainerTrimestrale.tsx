@@ -65,6 +65,7 @@ const TerzoContainerTrimestrale  = ({dataModulo, dataModifica, meseAnno}) => {
 
     const sum = (dataModulo[0]?.totale || 0) + (dataModulo[1]?.totale || 0);
     const sumFixed2Decimal = sum?.toLocaleString("de-DE", { style: "currency", currency: "EUR" });
+    
     if(configurazioneLoading){
         return <Box
             sx={{

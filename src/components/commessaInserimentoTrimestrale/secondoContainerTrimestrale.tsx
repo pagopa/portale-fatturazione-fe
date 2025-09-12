@@ -1,7 +1,6 @@
 import { Grid, Typography } from '@mui/material';
 import RowInserimentoCommessaTrimestrale from './rowInserimentoCommessaTrimestrale';
 const SecondoContainerTrimestrale = ({ onChangeModuloValue,dataModulo,meseAnno,modifica,errorAnyValueIsEqualNull}) => {
-    console.log({pippo:dataModulo});
     const totaleNazionale = (dataModulo?.totaleNotificheDigitaleNaz||0) + (dataModulo?.totaleNotificheAnalogicoARNaz||0)+(dataModulo?.totaleNotificheAnalogico890Naz||0);
     const totaleInternazionale = (dataModulo?.totaleNotificheDigitaleInternaz||0)+(dataModulo?.totaleNotificheAnalogicoARInternaz||0);
     const totaleNotifiche = (dataModulo?.totaleNotificheDigitaleNaz||0) + (dataModulo?.totaleNotificheAnalogicoARNaz||0)+(dataModulo?.totaleNotificheAnalogico890Naz||0)+(dataModulo?.totaleNotificheDigitaleInternaz||0)+(dataModulo?.totaleNotificheAnalogicoARInternaz||0);
@@ -9,7 +8,6 @@ const SecondoContainerTrimestrale = ({ onChangeModuloValue,dataModulo,meseAnno,m
     const totaleDigit = (dataModulo?.totaleNotificheDigitaleNaz||0)+(dataModulo?.totaleNotificheDigitaleInternaz||0);
     const totaleAR = (dataModulo?.totaleNotificheAnalogicoARNaz||0)+(dataModulo?.totaleNotificheAnalogicoARInternaz||0);
     const totale890 = (dataModulo?.totaleNotificheAnalogico890Naz||0);
-    console.log({totaleNazionale,totaleInternazionale,totaleNotifiche});
   
     return (
         <div className="m-3 pl-5 ">

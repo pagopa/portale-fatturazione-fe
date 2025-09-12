@@ -3,7 +3,7 @@ import { PathPf } from "../../types/enum";
 import LayoutEnte from "../../layout/layOutLoggedInEnte";
 import AreaPersonaleUtenteEnte from "../../page/prod_pn/areaPersonaleUtenteEnte";
 import ModuloCommessaElencoUtPa from "../../page/ente/moduloCommessaElencoUtPa";
-import ModuloCommessaInserimentoUtEn30 from "../../page/prod_pn/moduloCommessaInserimentoUtEn30";
+import ModuloCommessaInserimentoUtEn30 from "../../page/ente/moduloCommessaInserimentoUtEn30";
 import ModuloCommessaPdf from "../../page/prod_pn/moduloCommessaPdf";
 import RelPdfPage from "../../page/prod_pn/relPdfUtPa";
 import RelPage from "../../page/prod_pn/relUtPa";

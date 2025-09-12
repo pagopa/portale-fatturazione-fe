@@ -6,7 +6,7 @@ import Accertamenti from "../../page/prod_pn/accertamenti";
 import AdesioneBando from "../../page/prod_pn/adesioneBando";
 import AreaPersonaleUtenteEnte from "../../page/prod_pn/areaPersonaleUtenteEnte";
 import Fatturazione from "../../page/prod_pn/fatturazione";
-import ModuloCommessaInserimentoUtEn30 from "../../page/prod_pn/moduloCommessaInserimentoUtEn30";
+import ModuloCommessaInserimentoUtEn30 from "../../page/ente/moduloCommessaInserimentoUtEn30";
 import ModuloCommessaPdf from "../../page/prod_pn/moduloCommessaPdf";
 import PagoPaListaDatiFatturazione from "../../page/prod_pn/pagoPaListaDatiFatturazione";
 import PagoPaListaModuliCommessa from "../../page/prod_pn/pagoPaListaModuliCommessa";

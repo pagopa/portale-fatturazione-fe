@@ -1,7 +1,7 @@
 import axios from "axios";
 import { url } from "../../api";
 import { DatiCommessa } from "../../../types/typeModuloCommessaInserimento";
-import { PostModuloCommessa } from "../../../page/prod_pn/moduloCommessaInserimentoUtEn30";
+import { PostModuloCommessa } from "../../../page/ente/moduloCommessaInserimentoUtEn30";
 
 export const getDatiConfigurazioneCommessa = async (token:string, idTipoContratto:number, prodotto:string, nonce:string) =>{
 
