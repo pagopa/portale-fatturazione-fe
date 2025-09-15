@@ -1,14 +1,6 @@
-import { Box, Collapse, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import { Box, Collapse, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-
 import DefaultRow from "./rowDefault";
-import is from "date-fns/esm/locale/is/index.js";
-import { useNavigate } from "react-router";
-import ModalRedirect from "../../../commessaInserimento/madalRedirect";
-import ModalInfo from "../../modals/modalInfo";
-import { PathPf } from "../../../../types/enum";
-import GridCustom from "../gridCustom";
 import { subHeaderNameModComTrimestraleENTE } from "../../../../assets/configurations/config_SubGridModComEnte";
 
 

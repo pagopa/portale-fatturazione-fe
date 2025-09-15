@@ -1,5 +1,4 @@
-import { Chip, IconButton, Tooltip } from "@mui/material";
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import { IconButton, Tooltip } from "@mui/material";
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';

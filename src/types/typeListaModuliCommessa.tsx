@@ -17,30 +17,47 @@ export interface BodyDownloadModuliCommessa{
 }
 
 export interface GridElementListaCommesse {
-    key: string,
-    idEnte: string,
-    ragioneSociale: string,
-    codiceFiscale: string,
-    prodotto: string,
-    tipoSpedizioneDigitale: string,
-    numeroNotificheNazionaliDigitale:number,
-    numeroNotificheInternazionaliDigitale: number,
-    tipoSpedizioneAnalogicoAR: string,
-    numeroNotificheNazionaliAnalogicoAR: number,
-    numeroNotificheInternazionaliAnalogicoAR: number,
-    tipoSpedizioneAnalogico890: string,
-    numeroNotificheNazionaliAnalogico890:number,
-    numeroNotificheInternazionaliAnalogico890:number,
-    totaleCategoriaAnalogico: number,
-    totaleCategoriaDigitale: number,
-    anno: number,
-    mese:number,
-    totaleAnalogicoLordo: number,
-    totaleDigitaleLordo: number,
-    totaleLordo: number,
-    idTipoContratto:number,
+    modifica: boolean
+    annoValidita: number
+    meseValidita: number
+    idEnte: string
+    idTipoContratto: number,
+    ragioneSociale:string,
     stato: string
+    prodotto: string
+    totale: number
+    dataInserimento: string
+    dataChiusura: string
+    dataChiusuraLegale: string
+    totaleDigitaleNaz: number
+    totaleDigitaleInternaz: number
+    totaleAnalogicoARNaz: number
+    totaleAnalogicoARInternaz: number
+    totaleAnalogico890Naz: number
+    totaleNotificheDigitaleNaz: number
+    totaleNotificheDigitaleInternaz: number
+    totaleNotificheAnalogicoARNaz: number
+    totaleNotificheAnalogicoARInternaz: number
+    totaleNotificheAnalogico890Naz: number
+    totaleNotificheDigitale: number
+    totaleNotificheAnalogico: number
+    totaleNotifiche: number
+    source: string
+    quarter: string
+    valoriRegione: ValoriRegione[]
 }
+
+export interface ValoriRegione {
+    "890": number
+    provincia: any
+    regione: string
+    istatProvincia: any
+    istatRegione: string
+    ar: number
+    isRegione: number
+    calcolato: number
+}
+
 
 export interface DatiCommessaPdf {
     totaleNotifiche?: number,

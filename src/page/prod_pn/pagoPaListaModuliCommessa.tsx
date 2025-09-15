@@ -5,8 +5,7 @@ import { Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/mater
 import { manageError } from '../../api/api';
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { DataGrid, GridRowParams,GridEventListener,MuiEvent, GridColDef} from '@mui/x-data-grid';
+import { DataGrid, GridRowParams,GridEventListener,MuiEvent} from '@mui/x-data-grid';
 import DownloadIcon from '@mui/icons-material/Download';
 import { getTipologiaProdotto } from "../../api/apiSelfcare/moduloCommessaSE/api";
 import { anniMesiModuliCommessa, downloadDocumentoListaModuloCommessaPagoPa, listaModuloCommessaPagopa } from "../../api/apiPagoPa/moduloComessaPA/api";
@@ -19,6 +18,7 @@ import { mesiGrid, mesiWithZero } from "../../reusableFunction/reusableArrayObj"
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
 import { GlobalContext } from "../../store/context/globalContext";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
+import { headerNameListaModuliCommessaSEND } from "../../assets/configurations/conf_GridListaModuliCommessaSend";
 
 
 const PagoPaListaModuliCommessa:React.FC = () =>{
@@ -82,12 +82,11 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
         return () => clearTimeout(timer);
     },[textValue]);
 
+
     const getAnniMesi = async() => {
         await anniMesiModuliCommessa(token, profilo.nonce).then(async(res)=>{
             const allAnni = res.data.map((item: { anno: number }) => item.anno);
             const anni:number[] = Array.from(new Set(allAnni));
-
-            // Group months by year
             const mesi = res.data.reduce((acc, { anno, mese }) => {
                 if (!acc[anno]) {
                     acc[anno] = [];
@@ -107,16 +106,14 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                 const firstYear = anni[0];
                 setYearMonths(mesi[firstYear]);
                 await getProdotti(firstYear,mesi[firstYear][0]);
-            }
-            
-           
+            }   
         }).catch((err)=>{
             manageError(err,dispatchMainState);
         });
     };
 
     const getProdotti = async(y,m) => {
-        await getTipologiaProdotto(token, profilo.nonce )
+        await getTipologiaProdotto(token, profilo.nonce)
             .then((res)=>{
                 setProdotti(res.data);
                 if(isInitialRender.current && Object.keys(filters).length > 0){
@@ -141,6 +138,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
     const getListaCommesse = async(body) =>{
         await listaModuloCommessaPagopa(body ,token, profilo.nonce)
             .then((res)=>{
+               
                 setGridData(res.data);
                 isInitialRender.current = false;
             }).catch((err)=>{
@@ -199,7 +197,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
     ) => {
         event.preventDefault();
         // l'evento verrà eseguito solo se l'utente farà il clik sul  mese e action
-        if(columsSelectedGrid  === 'regioneSociale' ||columsSelectedGrid  === 'action' ){
+        if(columsSelectedGrid  === 'regioneSociale' || columsSelectedGrid  === 'action' ){
             const oldProfilo = mainState.profilo;
             handleModifyMainState({profilo:{...oldProfilo,...{
                 idTipoContratto: params.row.idTipoContratto,
@@ -252,7 +250,6 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
 
     const onButtonAnnulla = () =>{
         const firstYear = years[0];
-          
         setInfoPageListaCom({ page: 0, pageSize: 10 });
         getListaCommesseOnAnnulla();
         setBodyGetLista({idEnti:[],prodotto:'', anno:firstYear, mese:monthsCommessa[firstYear][0]});
@@ -262,21 +259,6 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
         resetFilters();
     };
 
-    const columns: GridColDef[] = [
-        { field: 'regioneSociale', headerName: 'Ragione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:{row:GridElementListaCommesse}) => <a className="mese_alidita text-primary fw-bolder" href="/8">{param.row.ragioneSociale}</a>},
-        { field: 'mese', headerName: 'Mese', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:{row:GridElementListaCommesse}) => <div className="MuiDataGrid-cellContent" title={mesiGrid[param.row.mese]} role="presentation">{mesiGrid[param.row.mese]}</div>},
-        { field: 'prodotto', headerName: 'Prodotto', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'numeroNotificheNazionaliDigitale', headerName: 'Num. Not. Naz.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'tipoSpedizioneAnalogicoAR', headerName: 'Tipo spediz. Analog.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'numeroNotificheInternazionaliDigitale', headerName: 'Num. Not. Int.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'numeroNotificheNazionaliAnalogicoAR', headerName: 'Num. Not. Naz. AR', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'numeroNotificheInternazionaliAnalogicoAR', headerName: 'Num. Not. Int. AR', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'numeroNotificheNazionaliAnalogico890', headerName: 'Num. Not. Naz. 890', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'numeroNotificheInternazionaliAnalogico890', headerName: 'Num. Not. Naz. AR 890', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'totaleAnalogicoLordo', headerName: 'Tot. Spedizioni A.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',  valueFormatter: ({ value }) => value.toLocaleString("de-DE", { style: "currency", currency: "EUR" })},
-        { field: 'totaleDigitaleLordo', headerName: 'Tot. Spedizioni D', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left', valueFormatter: ({ value }) => value.toLocaleString("de-DE", { style: "currency", currency: "EUR" }) },
-        {field: 'action', headerName: '',sortable: false, width:70,headerAlign: 'left',disableColumnMenu :true, renderCell: (() => (<ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> ) ),}
-    ];
 
     return (
         <div className="mx-5">
@@ -301,14 +283,13 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                                         clearOnChangeFilter();
                                         setYearMonths(monthsCommessa[Number(e.target.value)]);
                                         setBodyGetLista((prev)=> ({...prev, ...{anno:Number(e.target.value),mese:monthsCommessa[Number(e.target.value)][0]}}));
-                                        
                                     }  }
-                                    value={bodyGetLista.anno}
+                                    value={bodyGetLista.anno||""}
                                 >
                                     {years.map((el) => (
                                         <MenuItem
                                             key={Math.random()}
-                                            value={el}
+                                            value={el||""}
                                         >
                                             {el}
                                         </MenuItem>
@@ -317,7 +298,6 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                             </FormControl>
                         </Box>
                     </div>
-                
                     <div className="col-3">
                         <Box sx={{ width: '80%' }}>
                             <FormControl
@@ -335,7 +315,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                                         setBodyGetLista((prev)=> ({...prev, ...{mese:Number(e.target.value)}}));
                                         clearOnChangeFilter();
                                     }}
-                                    value={bodyGetLista.mese}
+                                    value={bodyGetLista.mese||""}
                                 >
                                     {yearMonths?.map((el) => (
                                         <MenuItem
@@ -366,12 +346,12 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                                         clearOnChangeFilter();
                                         setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}));
                                     }}
-                                    value={bodyGetLista.prodotto}
+                                    value={bodyGetLista.prodotto||""}
                                 >
                                     {prodotti.map((el) => (
                                         <MenuItem
                                             key={Math.random()}
-                                            value={el.nome}
+                                            value={el.nome||""}
                                         >
                                             {el.nome}
                                         </MenuItem>
@@ -427,8 +407,8 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                     }
                 }}
                 rows={gridData} 
-                columns={columns}
-                getRowId={(row) => row?.key}
+                columns={headerNameListaModuliCommessaSEND}
+                getRowId={(row) => `${row.idEnte}_${row.meseValidita}_${row.annoValidita}`}
                 onRowClick={handleEvent}
                 onCellClick={handleOnCellClick}
                 onPaginationModelChange={(e)=> onChangePageOrRowGrid(e)}

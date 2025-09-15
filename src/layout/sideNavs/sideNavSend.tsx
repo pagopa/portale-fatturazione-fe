@@ -41,95 +41,12 @@ const SideNavSend : React.FC = () => {
     const [openContestazioni, setOpenContestazioni] = useState(false);
     
     
-    const handleListItemClick = async() => {
-        if(((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)|| (mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA))){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.LISTA_DATI_FATTURAZIONE}}));
-        }else{  
-            navigate(PathPf.LISTA_DATI_FATTURAZIONE); 
-        }
-    };
-
-    const handleListItemClickModuloCommessa = async () => {
-        if(((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)|| (mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA))){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.LISTA_MODULICOMMESSA}}));
-        }else if((mainState.statusPageDatiFatturazione === 'immutable'|| (mainState.statusPageInserimentoCommessa === 'immutable' && location.pathname === PathPf.MODULOCOMMESSA))){
-            navigate(PathPf.LISTA_MODULICOMMESSA);
-        }
-    };
-
-    const handleListItemClickNotifiche = () => {
-        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.LISTA_NOTIFICHE}}));
+    const handleListItemClick = async(pathToGo) => {
+        if(((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA))){
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:pathToGo}}));
         }else{
-            navigate(PathPf.LISTA_NOTIFICHE);
-        }
-    };
-
-    const handleListItemClickRel = async () => {
-        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.LISTA_REL}}));
-        }else{
-            navigate(PathPf.LISTA_REL);
-        }
-    };
-
-    const handleListItemClickBando = async () => {
-        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.ADESIONE_BANDO}}));
-        }else{
-            navigate(PathPf.ADESIONE_BANDO);
-        }
-    }; 
-
-    const handleListItemClickFatturazione = () =>{
-        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.FATTURAZIONE}}));
-        }else{
-            navigate(PathPf.FATTURAZIONE);
-        }
-    };
-
-    const handleListItemClickAccertamenti = () =>{
-        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:"/accertamenti"}}));
-        }else{
-            navigate("/accertamenti");
-        }
-    };
-
-    const handleListItemClickTiplogiaContratto = () =>{
-        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.TIPOLOGIA_CONTRATTO}}));
-        }else{
-            navigate(PathPf.TIPOLOGIA_CONTRATTO);
-        }
-    };
-
-    const handleListItemClickListDocEmessi = () =>{
-        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.LISTA_DOC_EMESSI}}));
-        }else{
-            navigate(PathPf.LISTA_DOC_EMESSI);
-        }
-    };
-
-    const handleListItemClickContestazioni = () =>{
-        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.STORICO_CONTEST}}));
-        }else{
-            navigate(PathPf.STORICO_CONTEST);
-        }
-    };
-
-
-
-    const handleListItemClickOrchestratore = () => {
-        if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.ORCHESTRATORE}}));
-        }else{
-            navigate(PathPf.ORCHESTRATORE);
-        }
-        
+            navigate(pathToGo);
+        } 
     };
     
     const currentLocation = location.pathname;
@@ -196,7 +113,7 @@ const SideNavSend : React.FC = () => {
         }}
         >
             <List component="nav" aria-label="main piattaforma-notifiche sender">
-                <ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick()}>
+                <ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick(PathPf.LISTA_DATI_FATTURAZIONE)}>
                     <ListItemIcon>
                         <DnsIcon fontSize="inherit"></DnsIcon>
                     </ListItemIcon>
@@ -211,7 +128,7 @@ const SideNavSend : React.FC = () => {
                 </ListItemButton>
                 <Collapse in={open} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
-                        <ListItemButton selected={selectedIndex === 8} sx={{ pl: 4 }} onClick={() =>handleListItemClickTiplogiaContratto()}>
+                        <ListItemButton selected={selectedIndex === 8} sx={{ pl: 4 }} onClick={() =>handleListItemClick(PathPf.TIPOLOGIA_CONTRATTO)}>
                             <ListItemIcon>
                                 <FormatAlignCenterIcon fontSize="inherit" />
                             </ListItemIcon>
@@ -219,13 +136,13 @@ const SideNavSend : React.FC = () => {
                         </ListItemButton>
                     </List>
                 </Collapse>
-                <ListItemButton selected={selectedIndex === 1} onClick={handleListItemClickModuloCommessa}>
+                <ListItemButton selected={selectedIndex === 1} onClick={() => handleListItemClick(PathPf.LISTA_MODULICOMMESSA)}>
                     <ListItemIcon>
                         <ViewModuleIcon fontSize="inherit" />
                     </ListItemIcon>
                     <ListItemText primary="Modulo commessa" />
                 </ListItemButton>
-                <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClickNotifiche()}>
+                <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClick(PathPf.LISTA_NOTIFICHE)}>
                     <ListItemIcon>
                         <MarkUnreadChatAltIcon fontSize="inherit" />
                     </ListItemIcon>
@@ -240,7 +157,7 @@ const SideNavSend : React.FC = () => {
                 </ListItemButton>
                 <Collapse in={openContestazioni} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
-                        <ListItemButton selected={selectedIndex === 10} sx={{ pl: 4 }} onClick={handleListItemClickContestazioni}>
+                        <ListItemButton selected={selectedIndex === 10} sx={{ pl: 4 }} onClick={() => handleListItemClick(PathPf.STORICO_CONTEST)}>
                             <ListItemIcon>
                                 <GavelIcon />
                             </ListItemIcon>
@@ -248,7 +165,7 @@ const SideNavSend : React.FC = () => {
                         </ListItemButton>
                     </List>
                 </Collapse>
-                <ListItemButton selected={selectedIndex === 3} onClick={() => handleListItemClickRel()}>
+                <ListItemButton selected={selectedIndex === 3} onClick={() => handleListItemClick(PathPf.LISTA_REL)}>
                     <ListItemIcon>
                         <ManageAccountsIcon fontSize="inherit" />
                     </ListItemIcon>
@@ -257,13 +174,13 @@ const SideNavSend : React.FC = () => {
                         <ListItemText primary="Documenti di cortesia" />
                     </Box>
                 </ListItemButton>
-                <ListItemButton selected={selectedIndex === 4} onClick={() => handleListItemClickBando()}>
+                <ListItemButton selected={selectedIndex === 4} onClick={() => handleListItemClick(PathPf.ADESIONE_BANDO)}>
                     <ListItemIcon>
                         <AnnouncementIcon fontSize="inherit" />
                     </ListItemIcon>
                     <ListItemText primary="Adesione al bando" />
                 </ListItemButton>
-                <ListItemButton selected={selectedIndex === 5} onClick={() => handleListItemClickFatturazione()}>
+                <ListItemButton selected={selectedIndex === 5} onClick={() => handleListItemClick(PathPf.FATTURAZIONE)}>
                     <ListItemIcon>
                         <ReceiptIcon fontSize="inherit" />
                     </ListItemIcon>
@@ -278,7 +195,7 @@ const SideNavSend : React.FC = () => {
                 </ListItemButton> 
                 <Collapse in={open2} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
-                        <ListItemButton selected={selectedIndex === 9} sx={{ pl: 4 }} onClick={() => handleListItemClickListDocEmessi()}>
+                        <ListItemButton selected={selectedIndex === 9} sx={{ pl: 4 }} onClick={() => handleListItemClick(PathPf.LISTA_DOC_EMESSI)}>
                             <ListItemIcon>
                                 <FormatListBulletedIcon fontSize="inherit" />
                             </ListItemIcon>
@@ -286,13 +203,13 @@ const SideNavSend : React.FC = () => {
                         </ListItemButton>
                     </List>
                 </Collapse> 
-                <ListItemButton selected={selectedIndex === 7} onClick={() => handleListItemClickAccertamenti()}>
+                <ListItemButton selected={selectedIndex === 7} onClick={() => handleListItemClick("/accertamenti")}>
                     <ListItemIcon>
                         <ManageSearchIcon fontSize="inherit"></ManageSearchIcon>
                     </ListItemIcon>
                     <ListItemText primary="Documenti contabili" />
                 </ListItemButton>
-                <ListItemButton selected={selectedIndex === 11} onClick={() => handleListItemClickOrchestratore()}>
+                <ListItemButton selected={selectedIndex === 11} onClick={() => handleListItemClick(PathPf.ORCHESTRATORE)}>
                     <ListItemIcon>
                         <DvrIcon fontSize="inherit" />
                     </ListItemIcon>
