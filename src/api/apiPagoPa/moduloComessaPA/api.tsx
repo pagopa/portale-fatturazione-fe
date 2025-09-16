@@ -4,7 +4,7 @@ import { url } from "../../api";
 import { DatiCommessa } from "../../../types/typeModuloCommessaInserimento";
 
 export const listaModuloCommessaPagopa = async (body : BodyListaModuloCommessa, token:string, nonce:string) => {
-    const response =  await axios.post(`${url}/api/modulocommessa/pagopa/ricerca?nonce=${nonce}`,
+    const response =  await axios.post(`${url}/api/v2/modulocommessa/pagopa/ricerca?nonce=${nonce}`,
         body,
         { headers: {
             Authorization: 'Bearer ' + token
