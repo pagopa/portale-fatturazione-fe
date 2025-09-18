@@ -105,3 +105,18 @@ export const getRegioniModuloCommessaPA = async (token:string, nonce:string) =>{
         }});
     return response;
 };
+
+export const downloadPostalizzazioneReport = async (token:string, nonce:string , body: BodyDownloadListaCommesse) => {
+    const response =  await fetch(`${url}/api/v2/modulocommessa/pagopa/report/ricerca?nonce=${nonce}`,
+        {
+            headers: {
+                Authorization: 'Bearer '+token,
+                'Content-type':'application/json'
+            },
+            method: 'POST',
+            body:JSON.stringify(body),
+        });
+    return response;
+};
+
+

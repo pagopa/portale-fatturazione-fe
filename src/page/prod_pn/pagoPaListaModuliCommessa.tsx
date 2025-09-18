@@ -8,7 +8,7 @@ import { useNavigate } from "react-router";
 import { DataGrid, GridRowParams,GridEventListener,MuiEvent} from '@mui/x-data-grid';
 import DownloadIcon from '@mui/icons-material/Download';
 import { getTipologiaProdotto } from "../../api/apiSelfcare/moduloCommessaSE/api";
-import { anniMesiModuliCommessa, downloadDocumentoListaModuloCommessaPagoPa, listaModuloCommessaPagopa } from "../../api/apiPagoPa/moduloComessaPA/api";
+import { anniMesiModuliCommessa, downloadDocumentoListaModuloCommessaPagoPa, downloadPostalizzazioneReport, listaModuloCommessaPagopa } from "../../api/apiPagoPa/moduloComessaPA/api";
 import { saveAs } from "file-saver";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../../types/enum";
@@ -185,6 +185,19 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                 setShowLoading(false);
                 manageError(err,dispatchMainState);
             });
+    };
+
+
+    const downloadPostalizzazione = async () => {
+        setShowLoading(true);
+        await  downloadPostalizzazioneReport(token,profilo.nonce, bodyDownload).then(response => response.blob()).then((res)=>{
+            saveAs( res,`Report postalizzazione/${mesiWithZero[Number(bodyDownload.mese) -1]}/${bodyDownload.anno}.xlsx` );
+            setShowLoading(false);
+         
+        }).catch((err)=>{
+            manageError(err,globalContextObj.dispatchMainState);
+            setShowLoading(false);
+        }); 
     };
 
     let columsSelectedGrid = '';
@@ -392,10 +405,17 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
             {/* grid */}
             <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
                 {gridData.length > 0 &&
-                <Button onClick={downloadExelListaCommessa} >
+                <div>
+                    <Button onClick={downloadExelListaCommessa} >
             Download Risultati
-                    <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
-                </Button>
+                        <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
+                    </Button>
+                    <Button onClick={downloadPostalizzazione} >
+            Report postalizzazione
+                        <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
+                    </Button>
+                </div>
+               
                 }
             </div>
             <div className="mt-1 mb-5" style={{ width: '100%'}}>
