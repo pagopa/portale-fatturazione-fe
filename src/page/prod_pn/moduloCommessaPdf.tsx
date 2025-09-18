@@ -10,7 +10,7 @@ import { DataPdf } from "../../types/typeModuloCommessaInserimento";
 import { usePDF } from 'react-to-pdf';
 import { DatiModuloCommessaPdf, ResponseDownloadPdf } from "../../types/typeModuloCommessaInserimento";
 import { downloadModuloCommessaPdf, getModuloCommessaPdf } from "../../api/apiSelfcare/moduloCommessaSE/api";
-import { downloadModuloCommessaPagoPaPdf, getModuloCommessaPagoPaPdf } from "../../api/apiPagoPa/moduloComessaPA/api";
+import { downloadModuloCommessaPagoPaPdf, getModuloCommessaPagoPaPdf, getModuloCommessaPagoPaPdfV2 } from "../../api/apiPagoPa/moduloComessaPA/api";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../../types/enum";
 import { getTipoCommessa, profiliEnti} from "../../reusableFunction/actionLocalStorage";
@@ -159,7 +159,7 @@ const ModuloCommessaPdf : React.FC = () =>{
 
     const getPagoPdf = async() =>{
         setShowLoadingDettaglio(true);
-        getModuloCommessaPagoPaPdf(token, profilo.nonce,mainState.mese,mainState.anno,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto)
+        getModuloCommessaPagoPaPdfV2(token, profilo.nonce,mesePdf||"",annoPdf||"",mainState.infoTrimestreComSelected.idEnte, mainState.infoTrimestreComSelected.prodotto)   // mainState.infoTrimestreComSelected.idTipoContratto
             .then((res)=>{
                 toDoOnGetPdfSelfcarePagopa(res);
                 setShowLoadingDettaglio(false);
@@ -184,15 +184,17 @@ const ModuloCommessaPdf : React.FC = () =>{
         downloadModuloCommessaPdf(token, annoPdf||"",mesePdf||"", tipoCommessa, profilo.nonce).then((res: ResponseDownloadPdf)=>{
             toDoOnDownloadPdf(res);
         }).catch((err)=>{
+            setShowLoading(false);
             manageError(err,dispatchMainState);
         });   
     };
 
     const downlodPagoPaPdf = async()=>{
         setShowLoading(true);
-        downloadModuloCommessaPagoPaPdf(token,  profilo.nonce,mainState.mese,mainState.anno,profilo.idEnte, profilo.prodotto, profilo.idTipoContratto,tipoCommessa).then((res:ResponseDownloadPdf)=>{
+        downloadModuloCommessaPagoPaPdf(token,  profilo.nonce,mesePdf||"",annoPdf||"",mainState.infoTrimestreComSelected.idEnte, mainState.infoTrimestreComSelected.prodotto, mainState.infoTrimestreComSelected.idTipoContratto,"html").then((res:ResponseDownloadPdf)=>{
             toDoOnDownloadPdf(res);
         }).catch((err)=>{
+            setShowLoading(false);
             manageError(err,dispatchMainState);
         }); 
     };
@@ -219,13 +221,7 @@ const ModuloCommessaPdf : React.FC = () =>{
     const string = `${mese}/${anno}`;
     const arrWithlabelDateMonth = replaceDate(dataPdf.datiModuloCommessa,'[data]',string );
 
-    /*
-    const onIndietroButton = () =>{
-     
-        //setInfoToStatusApplicationLoacalStorage(statusApp,{userClickOn:'GRID'});
-        handleModifyMainState({userClickOn:'GRID'});
-        navigate(PathPf.MODULOCOMMESSA); 
-    };*/
+
 
     const meseOnPdfName = profilo.auth === 'PAGOPA' ? mesiWithZero[Number(mainState?.mese) - 1] : mesiWithZero[Number(mesePdf||1)-1]; 
     const annoOnPdfName = profilo.auth === 'PAGOPA' ? mainState.anno : annoPdf;
@@ -239,110 +235,107 @@ const ModuloCommessaPdf : React.FC = () =>{
         );
     }
     return (
-        <>
+        <div>
             <div>
+                <NavigatorHeader pageFrom={"Modulo commessa/"} pageIn={"Anteprima"} backPath={PathPf.MODULOCOMMESSA} icon={<ViewModuleIcon sx={{paddingBottom:"4px"}}  fontSize='small'></ViewModuleIcon>}></NavigatorHeader>
+            </div>
+            <div className="bg-white m-5 p-5">
                 <div>
-                    <NavigatorHeader pageFrom={"Modulo commessa/"} pageIn={"Anteprima"} backPath={PathPf.MODULOCOMMESSA} icon={<ViewModuleIcon sx={{paddingBottom:"4px"}}  fontSize='small'></ViewModuleIcon>}></NavigatorHeader>
-                </div>
-                <div className="bg-white m-5 p-5">
-                    <div className=" ">
-                        {/* nascondo il pdf */}
-                        <div style={{ position:'absolute',zIndex:-1}}  id='file_download' ref={targetRef}>
-                        </div>
-                        <div className="container text-center">
-                            <TextDettaglioPdf description={'Soggetto aderente'} value={dataPdf.descrizione}></TextDettaglioPdf>
-                            <TextDettaglioPdf description={'Sede Legale completa'} value={dataPdf.indirizzoCompleto}></TextDettaglioPdf>
-                            <TextDettaglioPdf description={'Partita IVA/Codice Fiscale'} value={dataPdf.partitaIva}></TextDettaglioPdf>
-                            <TextDettaglioPdf description={'Cup'} value={dataPdf.cup}></TextDettaglioPdf>
-                            <TextDettaglioPdf description={'Cig'} value={dataPdf.cig}></TextDettaglioPdf>
-                            <TextDettaglioPdf description={'Soggetto Split Payment'} value={dataPdf.splitPayment}></TextDettaglioPdf>
-                            <TextDettaglioPdf description={'PEC'} value={dataPdf.pec}></TextDettaglioPdf>
-                            <TextDettaglioPdf description={'Email riferimento contatti'} value={dataPdf?.contatti[0]?.email}></TextDettaglioPdf>
-                            <TextDettaglioPdf description={'Data di compilazione'} value={createDateFromString(dataPdf.dataModifica)|| ''}></TextDettaglioPdf>
-                        </div>
+                    <div className="container text-center">
+                        <TextDettaglioPdf description={'Soggetto aderente'} value={dataPdf.descrizione}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Sede Legale completa'} value={dataPdf.indirizzoCompleto}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Partita IVA/Codice Fiscale'} value={dataPdf.partitaIva}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Cup'} value={dataPdf.cup}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Cig'} value={dataPdf.cig}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Soggetto Split Payment'} value={dataPdf.splitPayment}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'PEC'} value={dataPdf.pec}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Email riferimento contatti'} value={dataPdf?.contatti[0]?.email}></TextDettaglioPdf>
+                        <TextDettaglioPdf description={'Data di compilazione'} value={createDateFromString(dataPdf.dataModifica)|| ''}></TextDettaglioPdf>
                     </div>
-                    <div className="mt-5">
-                        <div className="container text-center">
-                            <div className="row">
-                                <div className="col-7">
-                                </div>
-                                <div className="col-5">
-                                    <div className="row">
-                                        <div className="col">
-                                            <Typography  variant="overline">Territorio nazionale</Typography>
-                                        </div>
-                                        <div className="col">
-                                            <Typography  variant="overline">Territorio diverso da  nazionale</Typography>
-                                        </div>
-                                        <div className="col">
-                                            <Typography  variant="overline">Totale notifiche da processare</Typography>
-                                        </div>
+                </div>
+                <div className="mt-5">
+                    <div className="container text-center">
+                        <div className="row">
+                            <div className="col-7">
+                            </div>
+                            <div className="col-5">
+                                <div className="row">
+                                    <div className="col">
+                                        <Typography  variant="overline">Territorio nazionale</Typography>
+                                    </div>
+                                    <div className="col">
+                                        <Typography  variant="overline">Territorio diverso da  nazionale</Typography>
+                                    </div>
+                                    <div className="col">
+                                        <Typography  variant="overline">Totale notifiche da processare</Typography>
                                     </div>
                                 </div>
                             </div>
-                            {arrWithlabelDateMonth.map((singleObj:DatiModuloCommessaPdf)=>{
-                                if(singleObj.tipo !== ''){
+                        </div>
+                        {arrWithlabelDateMonth.map((singleObj:DatiModuloCommessaPdf)=>{
+                            if(singleObj.tipo !== ''){
 
                                 
-                                    return (
-                                        <div key={Math.random()} className="row mt-3">
-                                            <div className="col-7">
-                                                <Typography sx={{display:'flex',textAlign:'left'}} variant="caption">{singleObj.tipo}</Typography>
-                                            </div>
-                                            <div className="col-5">
-                                                <div className="row">
-                                                    <div className="col">
-                                                        <Typography  variant="caption">{singleObj.numeroNotificheNazionali}</Typography>
-                                                    </div>
-                                                    <div className="col">
-                                                        <Typography  variant="caption">{singleObj.numeroNotificheInternazionali}</Typography>
-                                                    </div>
-                                                    <div className="col">
-                                                        <Typography  variant="caption">{singleObj.totaleNotifiche}</Typography>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    );
-                                }
-                            })}
-                            <hr></hr>
-                            {dataPdf.datiModuloCommessaCosti.map((singleObj)=>{
                                 return (
                                     <div key={Math.random()} className="row mt-3">
                                         <div className="col-7">
-                                            <Typography sx={{display:'flex',textAlign:'left'}} variant="caption">{singleObj.descrizione}</Typography>
+                                            <Typography sx={{display:'flex',textAlign:'left'}} variant="caption">{singleObj.tipo}</Typography>
                                         </div>
                                         <div className="col-5">
                                             <div className="row">
                                                 <div className="col">
+                                                    <Typography  variant="caption">{singleObj.numeroNotificheNazionali}</Typography>
                                                 </div>
                                                 <div className="col">
+                                                    <Typography  variant="caption">{singleObj.numeroNotificheInternazionali}</Typography>
                                                 </div>
-                                                <div className="row">
-                                                    <div className="d-flex flex-row-reverse">
-                                                        <Typography  variant="caption">{singleObj.Totale}</Typography>
-                                                    </div>
+                                                <div className="col">
+                                                    <Typography  variant="caption">{singleObj.totaleNotifiche}</Typography>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 );
-                            })}
+                            }
+                        })}
+                        <hr></hr>
+                        {dataPdf.datiModuloCommessaCosti.map((singleObj)=>{
+                            return (
+                                <div key={Math.random()} className="row mt-3">
+                                    <div className="col-7">
+                                        <Typography sx={{display:'flex',textAlign:'left'}} variant="caption">{singleObj.descrizione}</Typography>
+                                    </div>
+                                    <div className="col-5">
+                                        <div className="row">
+                                            <div className="col">
+                                            </div>
+                                            <div className="col">
+                                            </div>
+                                            <div className="row">
+                                                <div className="d-flex flex-row-reverse">
+                                                    <Typography  variant="caption">{singleObj.Totale}</Typography>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
                     
-                        </div>
                     </div>
                 </div>
-                <div className="d-flex justify-content-center mb-5">
-                    <Button onClick={()=> onButtonScarica()}  variant="contained">Scarica</Button>
-                </div>
-                <ModalLoading 
-                    open={showLoading} 
-                    setOpen={setShowLoading}
-                    sentence={'Downloading...'} >
-                </ModalLoading>
             </div>
-        </>
+            <div className="d-flex justify-content-center mb-5">
+                <Button onClick={()=> onButtonScarica()}  variant="contained">Scarica</Button>
+            </div>
+            <div style={{ position:'absolute',zIndex:-1}}  id='file_download' ref={targetRef}>
+            </div>
+            <ModalLoading 
+                open={showLoading} 
+                setOpen={setShowLoading}
+                sentence={'Downloading...'} >
+            </ModalLoading>
+        </div>
     );
 };
 export default ModuloCommessaPdf;

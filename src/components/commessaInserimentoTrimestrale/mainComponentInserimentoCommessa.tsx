@@ -124,7 +124,7 @@ const MainInserimentoModuloCommessa = ({
                                     value={activeCommessa?.valoriRegione[0]["890"] === 0 ? 0 : (activeCommessa?.valoriRegione[0]["890"]||"")}
                                     InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                                 />,
-                                !isEditAllow ? <Chip sx={{backgroundColor:activeCommessa?.valoriRegione[0]?.calcolato? undefined :"#B5E2B4"}} label={activeCommessa?.valoriRegione[0]?.calcolato ? "Calcolato":"Inserito"} />:null
+                                !isEditAllow ? <Chip variant="outlined" sx={{backgroundColor:activeCommessa?.valoriRegione[0]?.calcolato? undefined :"#B5E2B4"}} label={activeCommessa?.valoriRegione[0]?.calcolato ? "Calcolato":"Inserito"} />:null
                                 ]}
                                   
                                 styles={[{
@@ -188,7 +188,7 @@ const MainInserimentoModuloCommessa = ({
                                                         size="large"
                                                     ><DeleteIcon/>
                                                     </IconButton>
-                                                    :  <Chip sx={{backgroundColor:element?.calcolato ? undefined :"#B5E2B4"}} label={element?.calcolato ? "Calcolato":"Inserito"} />
+                                                    :  <Chip variant="outlined" sx={{backgroundColor:element?.calcolato ? undefined :"#B5E2B4"}} label={element?.calcolato ? "Calcolato":"Inserito"} />
                                                      
                                                 ]} 
                                                 styles={[{

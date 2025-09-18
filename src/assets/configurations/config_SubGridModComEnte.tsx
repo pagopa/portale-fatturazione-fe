@@ -18,12 +18,13 @@ export interface HeaderGridCustom {
 
 export const subHeaderNameModComTrimestraleENTE: HeaderGridCustom[] = [
     { label: 'Mese/Anno',align:'center',width:'160px', headerAction:false},
-    { label: 'Stato',align:'center',width:'100px',headerAction:false, headerTooltip:(title,label,color) =>  
-        <Tooltip
+    { label: 'Stato',align:'center',width:'100px',headerAction:false, headerTooltip:(title,label,color) =>  {
+        console.log({color});
+        return ( <Tooltip
             placement="bottom"
             title={label}
-        ><CheckCircleIcon sx={{ color: color }}/></Tooltip> },
-    { label: 'Inserimento',align:'center',width:'100px',headerAction:false, headerChip:(title,label,color) => <Chip label={label} sx={{backgroundColor:color}} /> },
+        ><CheckCircleIcon sx={{ color: color }}/></Tooltip> );}},
+    { label: 'Inserimento',align:'center',width:'100px',headerAction:false, headerChip:(title,label,color) => <Chip variant="outlined" label={label} sx={{backgroundColor:color}} /> },
     { label: 'Data inserimento',align:'center',width:'160px', headerAction:false},
     { label: 'Data chiusura',align:'center',width:'160px', headerAction:false},
     { label: 'Tot. Digit.',align:'center',width:'160px', headerAction:false},

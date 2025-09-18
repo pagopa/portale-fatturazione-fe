@@ -182,7 +182,10 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
                 annoCommessaSelectd:el.id.length === 6 ?el.id.slice(2,6):el.id.slice(3,7),
                 moduli:result,
                 quarterSelectedIndex,
-                moduloSelectedIndex
+                moduloSelectedIndex,
+                idTipoContratto: profilo.idTipoContratto,
+                prodotto:profilo.prodotto,
+                idEnte:profilo.idEnte,
             }});
             navigate(PathPf.MODULOCOMMESSA);
         }else if(!isMandatory){
@@ -191,7 +194,10 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
                 annoCommessaSelectd:el.id.length === 6 ?el.id.slice(2,6):el.id.slice(3,7),
                 moduli:result,
                 quarterSelectedIndex,
-                moduloSelectedIndex
+                moduloSelectedIndex,
+                idTipoContratto: profilo.idTipoContratto,
+                prodotto:profilo.prodotto,
+                idEnte:profilo.idEnte,
             }});
             navigate(PathPf.MODULOCOMMESSA);
         }else if(isMandatory && el.source === "obbligatorio"){

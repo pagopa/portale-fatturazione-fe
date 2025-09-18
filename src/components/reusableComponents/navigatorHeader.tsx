@@ -19,7 +19,7 @@ const NavigatorHeader:React.FC<NavigationHeaderProps> = ({pageFrom,pageIn, backP
     const navigate = useNavigate();
 
     return (
-        <div className=' marginTop24  '>
+        <div className='marginTop24'>
             <div className='ms-5'>
                 <ButtonNaked
                     color="primary"

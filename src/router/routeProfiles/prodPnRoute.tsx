@@ -30,7 +30,7 @@ const ProdPnRoute = () => {
         <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte />} />
         <Route path={PathPf.LISTA_MODULICOMMESSA} element={<PagoPaListaModuliCommessa/>}/>
         <Route path={PathPf.MODULOCOMMESSA} element={<ModuloCommessaInserimentoPn/>} />
-        <Route path={PathPf.PDF_COMMESSA} element={<ModuloCommessaPdf/>} />
+        <Route path={PathPf.PDF_COMMESSA+"/:annoPdf?/:mesePdf?"} element={<ModuloCommessaPdf/>} />
         <Route path={PathPf.LISTA_DATI_FATTURAZIONE} element={<PagoPaListaDatiFatturazione/>} />
         <Route path={PathPf.LISTA_REL} element={<RelPage />} />
         <Route path={PathPf.PDF_REL} element={<RelPdfPage/>} />

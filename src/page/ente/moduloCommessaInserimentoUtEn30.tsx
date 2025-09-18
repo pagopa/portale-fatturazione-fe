@@ -1,23 +1,18 @@
-import {useState,useEffect, useContext, useRef, ReactNode} from 'react';
+import {useEffect, useContext} from 'react';
 import {Typography, Button, Tooltip, IconButton } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { useNavigate } from 'react-router';
 import { GlobalContext } from '../../store/context/globalContext';
-import { manageError, managePresaInCarico } from '../../api/api';
-import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
-import { getCommessaObbligatoriListaV2, getCommessaObbligatoriVerificaV2,  getDettaglioModuloCommessaV2, getRegioniModuloCommessa, insertDatiModuloCommessaV2 } from '../../api/apiSelfcare/moduloCommessaSE/api';
+import {  getRegioniModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
 import ModalRedirect from '../../components/commessaInserimento/madalRedirect';
 import BasicModal from '../../components/reusableComponents/modals/modal';
 import ModalLoading from '../../components/reusableComponents/modals/modalLoading';
-import { month } from '../../reusableFunction/reusableArrayObj';
 import { PathPf } from '../../types/enum';
-import { ManageErrorResponse } from '../../types/typesGeneral';
 import ModalAlert from '../../components/reusableComponents/modals/modalAlert';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ModalInfo from '../../components/reusableComponents/modals/modalInfo';
-import ErrorIcon from '@mui/icons-material/Error';
 import StepperCommessa from '../../components/commessaInserimentoTrimestrale/stepperModCommessa';
 import MainInserimentoModuloCommessa from '../../components/commessaInserimentoTrimestrale/mainComponentInserimentoCommessa';
 import useSaveModifyModuloCommessa from '../../hooks/useSaveModifyModuloCommessa';
@@ -110,7 +105,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     const {
         onIndietroButtonHeader,
         setOpenModalRedirect,
-        handleGetDettaglioModuloCommessa,
+        getDettaglioEnte,
         activeCommessa,
         isObbligatorioLayout,
         isEditAllow,
@@ -165,7 +160,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     },[mainState.datiFatturazione]);
 
     useEffect(()=>{
-        handleGetDettaglioModuloCommessa();
+        getDettaglioEnte();
         localStorage.setItem('redirectToInsert',JSON.stringify(false));
     },[]);
 
@@ -212,7 +207,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
 
     return (
         <>
-            <BasicModal setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} dispatchMainState={dispatchMainState} handleGetDettaglioModuloCommessa={handleGetDettaglioModuloCommessa}  mainState={mainState}></BasicModal>
+            <BasicModal setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} dispatchMainState={dispatchMainState} handleGetDettaglioModuloCommessa={getDettaglioEnte}  mainState={mainState}></BasicModal>
             {/*Hide   modulo commessa sul click contina , save del modulo commessa cosi da mostrare dati fatturazione,
             il componente visualizzato è AreaPersonaleUtenteEnte  */}
             <div className="marginTop24 ms-5 me-5">

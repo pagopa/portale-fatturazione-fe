@@ -31,7 +31,7 @@ export const headerNameAsyncDoc: HeaderGridCustom[] = [
     { label: 'Mese',align:'center',width:'100px',headerAction:false},
     { label: 'Tot. Not.',align:'center',width:'80px',headerAction:false},
     { label: 'Data Esecuzione',align:'center',width:'150px',headerAction:false},
-    { label: 'Stato',align:'center',width:'100px',headerAction:false, headerTooltip:(title,label,color) => <Chip label={label} sx={{backgroundColor:color}} /> },
+    { label: 'Stato',align:'center',width:'100px',headerAction:false, headerTooltip:(title,label,color) => <Chip variant="outlined" label={label} sx={{backgroundColor:color}} /> },
     { label: 'Letto',align:'center',width:'30px',headerAction:false},
     { label: '',align:'center',width:'60',headerAction:false,
         gridAction:(fun,color,disabled,obj) =>

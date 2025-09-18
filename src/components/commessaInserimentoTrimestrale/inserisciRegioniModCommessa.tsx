@@ -45,7 +45,7 @@ const InputRegioni = ({isEditAllow,selected,setValue,array, action}) => {
                                                                 
                                     const nameRegione  = array?.find(el => el.istatRegione === value)?.regione;
                                                       
-                                    return <Chip key={value} label={nameRegione} />;
+                                    return <Chip variant="outlined" key={value} label={nameRegione} />;
                                 })}
                             </Box>
                         )}

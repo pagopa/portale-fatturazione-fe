@@ -364,7 +364,7 @@ const Messaggi : React.FC<any> = () => {
                                             <Typography variant="caption" color="text.secondary" component="div">
                                                 {getTime(item.dataInserimento)}
                                             </Typography>
-                                            {item.stato && <Chip size="small" label={statoMessaggio} color={colorMessaggio} />}
+                                            {item.stato && <Chip variant="outlined" size="small" label={statoMessaggio} color={colorMessaggio} />}
                                             {item.tipologiaDocumento && <Typography color="text.primary" variant="caption-semibold" component="div">
                                                 {`${item.categoriaDocumento} : ${item.categoriaDocumento.toLowerCase().includes("contestazione") ? item?.ragioneSociale :item.tipologiaDocumento}`}
                                             </Typography>}

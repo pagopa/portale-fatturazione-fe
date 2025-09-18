@@ -7,6 +7,7 @@ import { getCommessaObbligatoriListaV2, getCommessaObbligatoriVerificaV2, getDet
 import { month } from "../reusableFunction/reusableArrayObj";
 import { getDatiFatturazione } from "../api/apiSelfcare/datiDiFatturazioneSE/api";
 import ErrorIcon from '@mui/icons-material/Error';
+import { getModuloCommessaPagoPaV2 } from "../api/apiPagoPa/moduloComessaPA/api";
 
 
 function useSaveModifyModuloCommessa({
@@ -137,6 +138,38 @@ function useSaveModifyModuloCommessa({
                 //setRegioniInsertIsVisible(response.data.macrocategoriaVendita === 3 || response.data.macrocategoriaVendita === 4);
                 const regioniToHideDelete = res.valoriRegione.map(el => el.istatRegione);
                 getRegioni(regioniToHideDelete); 
+                setProfiloViewRegione(response.data.macrocategoriaVendita);
+                if(res?.source === "archiviato"){
+                    setisEditAllow(false);
+                }else if(res?.stato === null && res?.source !== "archiviato" && !isCallAfterSaveData){
+                    setisEditAllow(true);
+                }else if(res?.stato !== null && res?.source !== "archiviato" && !isCallAfterSaveData){
+                    setisEditAllow(false);
+                }else if(res?.source !== "archiviato" && isCallAfterSaveData){
+                    setisEditAllow(false);
+                }
+            }).catch((err:ManageErrorResponse)=>{
+                manageError(err,dispatchMainState);
+                setLoadingData(false);
+            });
+    };
+
+  
+
+    const handleGetDettaglioModuloCommessaSendV2 = async (isCallAfterSaveData = false) => {
+        setLoadingData(true);
+        await getModuloCommessaPagoPaV2(token, profilo.nonce,mainState.infoTrimestreComSelected.idEnte, mainState.infoTrimestreComSelected.prodotto, mainState.infoTrimestreComSelected.idTipoContratto, mainState.infoTrimestreComSelected.meseCommessaSelected, mainState.infoTrimestreComSelected.annoCommessaSelectd)
+            .then((response:any)=>{
+              
+                const res = response.data?.lista[0];
+                setDataModuli([res]);
+                setDataTotali(response.data.totali);
+                setDataObbligatori(false);
+                //setIsNewCommessa(res.modifica && res.totale !== null);
+                setLoadingData(false);
+            
+                const regioniToHideDelete = res.valoriRegione.map(el => el.istatRegione);
+                getRegioni(regioniToHideDelete); // sostituire con il servizio v2 pagopa
                 setProfiloViewRegione(response.data.macrocategoriaVendita);
                 if(res?.source === "archiviato"){
                     setisEditAllow(false);
@@ -475,7 +508,8 @@ function useSaveModifyModuloCommessa({
     return{
         onIndietroButtonHeader,
         setOpenModalRedirect,
-        handleGetDettaglioModuloCommessa,
+        getDettaglioEnte:handleGetDettaglioModuloCommessa,
+        getDettaglioSend:handleGetDettaglioModuloCommessaSendV2,
         activeCommessa,
         isObbligatorioLayout,
         isEditAllow,

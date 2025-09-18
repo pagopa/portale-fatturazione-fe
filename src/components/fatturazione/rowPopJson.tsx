@@ -104,7 +104,7 @@ const RowJsonSap = ({row,setSelected,selected,apiDetail,lista}) => {
                         placement="bottom"
                         title={tooltipObj.title}
                     >
-                        <Chip label={tooltipObj.label} color={tooltipObj.color} />
+                        <Chip variant="outlined" label={tooltipObj.label} color={tooltipObj.color} />
                     </Tooltip>
                 </TableCell>
                 <TableCell align='center'>{row.numeroFatture}</TableCell>

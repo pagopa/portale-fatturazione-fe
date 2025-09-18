@@ -14,8 +14,17 @@ export const listaModuloCommessaPagopa = async (body : BodyListaModuloCommessa, 
     return response;
 };
 
-export const getModuloCommessaPagoPa = async (token:string, nonce:string , idente:string, prodotto:string, idtipocontratto:number , mese:number, anno:number) => {
-    const response =  await axios.get(`${url}/api/modulocommessa/pagopa/dettaglio/${anno}/${mese}?idEnte=${idente}&prodotto=${prodotto}&idTipoContratto=${idtipocontratto}&nonce=${nonce}`,
+export const getModuloCommessaPagoPa = async (token:string, nonce:string , idente:string, prodotto:string, idTipoContratto:number , mese:number, anno:number) => {
+    const response =  await axios.get(`${url}/api/modulocommessa/pagopa/dettaglio/${anno}/${mese}?idEnte=${idente}&prodotto=${prodotto}&idTipoContratto=${idTipoContratto}&nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+}; 
+
+export const getModuloCommessaPagoPaV2 = async (token:string, nonce:string , idente:string, prodotto:string, idTipoContratto:number , mese:number, anno:number) => {
+    const response =  await axios.get(`${url}/api/v2/modulocommessa/pagopa/dettaglio/${anno}/${mese}?idEnte=${idente}&prodotto=${prodotto}&idTipoContratto=${idTipoContratto}&nonce=${nonce}`,
         { headers: {
             Authorization: 'Bearer ' + token
         },}
@@ -37,6 +46,16 @@ export const modifyDatiModuloCommessaPagoPa = async (body:DatiCommessa, token:st
 
 export const getModuloCommessaPagoPaPdf = async ( token:string ,nonce:string ,mese:string, anno:string,idEnte:string, prodotto:string, idTipoContratto:number ) => {
     const response =  await axios.get(`${url}/api/modulocommessa/pagopa/documento/${anno}/${mese}?idEnte=${idEnte}&prodotto=${prodotto}&idTipoContratto=${idTipoContratto}&nonce=${nonce}`,  
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
+export const getModuloCommessaPagoPaPdfV2 = async ( token:string ,nonce:string ,mese:string, anno:string,idEnte:string, prodotto:string) => {
+    const response =  await axios.get(`${url}/api/v2/modulocommessa/pagopa/documento/${anno}/${mese}?idEnte=${idEnte}&prodotto=${prodotto}&nonce=${nonce}`,  //&idTipoContratto=${idTipoContratto}
         { headers: {
             Authorization: 'Bearer ' + token
         },}
@@ -75,5 +94,14 @@ export const anniMesiModuliCommessa = async(token:string, nonce:string) => {
             Authorization: 'Bearer ' + token
         },}
     );
+    return response;
+};
+
+export const getRegioniModuloCommessaPA = async (token:string, nonce:string) =>{
+    const response = await axios.get(
+        `${url}/api/v2/modulocommessa/pagopa/regioni?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }});
     return response;
 };

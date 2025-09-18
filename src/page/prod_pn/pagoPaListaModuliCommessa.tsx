@@ -182,6 +182,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                 saveAs("data:text/plain;base64," + res.data.documento,fileName);
                 setShowLoading(false);
             }).catch((err)=>{
+                setShowLoading(false);
                 manageError(err,dispatchMainState);
             });
     };
@@ -195,21 +196,19 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
         params:GridRowParams,
         event: MuiEvent<React.MouseEvent<HTMLElement>>,
     ) => {
+        console.log({params,event});
         event.preventDefault();
         // l'evento verrà eseguito solo se l'utente farà il clik sul  mese e action
         if(columsSelectedGrid  === 'regioneSociale' || columsSelectedGrid  === 'action' ){
-            const oldProfilo = mainState.profilo;
-            handleModifyMainState({profilo:{...oldProfilo,...{
+            handleModifyMainState({infoTrimestreComSelected:{
+                meseCommessaSelected:params.row.meseValidita,
+                annoCommessaSelectd:params.row.annoValidita,
                 idTipoContratto: params.row.idTipoContratto,
                 prodotto:params.row.prodotto,
                 idEnte:params.row.idEnte,
-               
-            }},
-            mese:params.row.mese,
-            anno:params.row.anno,
-            userClickOn:'GRID',
-            inserisciModificaCommessa:"MODIFY",
-            nomeEnteClickOn:params.row.ragioneSociale});
+                nomeEnteClickOn:params.row.ragioneSociale
+
+            }});
             navigate(PathPf.MODULOCOMMESSA);
         }
     };
@@ -404,8 +403,13 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                     height:'400px',
                     '& .MuiDataGrid-virtualScroller': {
                         backgroundColor: 'white',
+                    },
+                    "& .MuiDataGrid-row": {
+                        borderTop: "4px solid #F2F2F2",
+                        borderBottom: "2px solid #F2F2F2",
                     }
                 }}
+                rowHeight={80}
                 rows={gridData} 
                 columns={headerNameListaModuliCommessaSEND}
                 getRowId={(row) => `${row.idEnte}_${row.meseValidita}_${row.annoValidita}`}

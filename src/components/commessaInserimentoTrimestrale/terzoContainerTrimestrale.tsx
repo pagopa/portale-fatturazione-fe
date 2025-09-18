@@ -10,7 +10,7 @@ const TerzoContainerTrimestrale  = ({dataModulo, dataModifica, meseAnno}) => {
 
     const globalContextObj = useContext(GlobalContext);
     const {mainState} = globalContextObj;
-    
+  
     const navigate = useNavigate();
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
@@ -43,7 +43,7 @@ const TerzoContainerTrimestrale  = ({dataModulo, dataModifica, meseAnno}) => {
 
     const getConfigurazione = async() =>{
         setConfigurazioneLoading(true);
-        getDatiConfigurazioneCommessa(token, profilo.idTipoContratto, profilo.prodotto, profilo.nonce)
+        getDatiConfigurazioneCommessa(token, mainState.infoTrimestreComSelected.idTipoContratto, mainState.infoTrimestreComSelected.prodotto, profilo.nonce)
             .then((res)=>{
                 const newCategorie = replaceDate(res.data.categorie,'[data]', '');
                 setConfigurazioneLoading(false);
@@ -61,7 +61,7 @@ const TerzoContainerTrimestrale  = ({dataModulo, dataModifica, meseAnno}) => {
     const labelDigitale = labelCategorie.filter((obj) => obj.idCategoriaSpedizione === 2);
     const labelAnalogica = labelCategorie.filter((obj) => obj.idCategoriaSpedizione === 1);
 
- 
+    console.log({TERZOcONTAINER:dataModulo});
 
     const sum = (dataModulo[0]?.totale || 0) + (dataModulo[1]?.totale || 0);
     const sumFixed2Decimal = sum?.toLocaleString("de-DE", { style: "currency", currency: "EUR" });

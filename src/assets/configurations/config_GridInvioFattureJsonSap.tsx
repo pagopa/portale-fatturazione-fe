@@ -10,7 +10,7 @@ export const configGridJsonSap = (statoFattura)  => {
         { field: 'statoInvio', headerName: 'Stato', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align:"center",renderCell: (param:any) =>
             <TableCell align='center'>
                 <span>
-                    <Chip label={statoFattura(param.row).label} color={statoFattura(param.row).color} />
+                    <Chip variant="outlined" label={statoFattura(param.row).label} color={statoFattura(param.row).color} />
                 </span>
             </TableCell> },
         { field: 'numeroFatture', headerName: 'Numero', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center" },
