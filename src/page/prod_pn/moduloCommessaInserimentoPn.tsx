@@ -1,5 +1,5 @@
 import {useEffect, useContext, useState} from 'react';
-import { Button} from '@mui/material';
+import { Button, Typography} from '@mui/material';
 import BasicModal from '../../components/reusableComponents/modals/modal';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { useNavigate } from 'react-router';
@@ -114,7 +114,9 @@ const ModuloCommessaInserimentoPn : React.FC = () => {
                 <NavigatorHeader pageFrom={"Modulo commessa/"} pageIn={"Modifica modulo commessa"} backPath={PathPf.LISTA_MODULICOMMESSA} icon={<ViewModuleIcon sx={{padding:"3px"}}  fontSize='small'></ViewModuleIcon>}></NavigatorHeader>
             </div>
             <div className="marginTop24 ms-5 me-5">
-                
+                <div className="marginTop24">
+                    <Typography variant="h4">{"Modulo commessa " + `${mainState.infoTrimestreComSelected.nomeEnteClickOn}`}</Typography>
+                </div>
                 <div className='mt-5 mb-5'>
                     <MainInserimentoModuloCommessa 
                         activeCommessa={activeCommessa}
@@ -140,7 +142,7 @@ const ModuloCommessaInserimentoPn : React.FC = () => {
                 </div>
             </div> 
             { (activeCommessa?.dataInserimento !== null && !isEditAllow && !loadingData) && 
-                <div  className="d-flex justify-content-center align-items-center">
+                <div  className="d-flex justify-content-center align-items-center mb-5">
                     <Button onClick={()=>{
                         navigate(PathPf.PDF_COMMESSA+`/${activeCommessa.annoValidita}/${activeCommessa.meseValidita}`);}
                     } variant="contained">Vedi anteprima</Button>   
