@@ -86,8 +86,8 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
             }
             setShowButtonInsertModulo(res.data);
         }).catch((err)=>{
-
-            manageError(err,dispatchMainState);
+            setLoadingMandatory(false);
+            manageError(err,dispatchMainState);//:TODO forse da eliminare
         });
     };
 

@@ -169,7 +169,7 @@ const AsyncDocumenti = () => {
     ) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
-        listaDoc(bodyGetLista,page,parseInt(event.target.value, 10));  
+        listaDoc(bodyGetLista,0,parseInt(event.target.value, 10));  
     };
 
     const handleClickOnDetail = async(obj) =>{
