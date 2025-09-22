@@ -1,4 +1,4 @@
-import { Box, Chip, IconButton, Skeleton, TextField, Tooltip, Typography } from "@mui/material";
+import { Box, Chip, Grid, IconButton, Skeleton, TextField, Tooltip, Typography } from "@mui/material";
 import ColumnGrid from "../reusableComponents/columGrid";
 import InputRegioni from "./inserisciRegioniModCommessa";
 import PrimoContainerInsComTrimestrale from "./primoContainerTrimestrale";
@@ -78,7 +78,7 @@ const MainInserimentoModuloCommessa = ({
                         <div  className="bg-white mt-3 pt-3">
                             <ColumnGrid 
                                 elements={[
-                                    null,<Typography sx={{fontWeight:'bold', textAlign:'center'}}>AR Nazionali </Typography>,<Typography sx={{fontWeight:'bold', textAlign:'center'}}>890 Nazionali</Typography>
+                                    <Typography sx={{fontWeight:'bold', textAlign:'center'}}>Regioni </Typography>,<Typography sx={{fontWeight:'bold', textAlign:'center'}}>AR Nazionali </Typography>,<Typography sx={{fontWeight:'bold', textAlign:'center'}}>890 Nazionali</Typography>
                                 ]} styles={[
                                     {
                                         textAlign: 'left',
@@ -98,35 +98,40 @@ const MainInserimentoModuloCommessa = ({
                                 columns={[6,2,2]}
                             ></ColumnGrid>
                             <hr></hr>
-                             
+                            {/*
                             <ColumnGrid 
-                                elements={[<>
-                                    <Typography variant='h4' sx={{fontWeight:'bold', textAlign:'center'}}>Regione {activeCommessa?.valoriRegione[0]?.regione}</Typography>
-                                    <Tooltip title="Regione di appartenenza">
-                                        <IconButton>
-                                            <InfoIcon fontSize='medium' />
-                                        </IconButton>
-                                    </Tooltip>
-                                </>,
-                                <TextField
-                                    sx={{ backgroundColor: '#ffffff', width: '100px'}}
-                                    error={errorArRegioni|| (errorAnyValueIsEqualNull && activeCommessa?.valoriRegione[0]?.ar === null)}
-                                    disabled={!isEditAllow}
-                                    onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogicoARNaz", activeCommessa?.valoriRegione[0]?.istatRegione)}
-                                    size="small"
-                                    value={activeCommessa?.valoriRegione[0]?.ar === 0 ? 0 : (activeCommessa?.valoriRegione[0]?.ar||"")}
-                                    InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
-                                />,
-                                <TextField
-                                    sx={{ backgroundColor: '#ffffff', width: '100px'}}
-                                    error={error890Regioni || (errorAnyValueIsEqualNull && activeCommessa?.valoriRegione[0]["890"] === null)}
-                                    disabled={!isEditAllow}
-                                    onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogico890Naz", activeCommessa?.valoriRegione[0]?.istatRegione)}
-                                    size="small"
-                                    value={activeCommessa?.valoriRegione[0]["890"] === 0 ? 0 : (activeCommessa?.valoriRegione[0]["890"]||"")}
-                                    InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
-                                />,
-                                !isEditAllow ? <Chip variant="outlined" sx={{backgroundColor:activeCommessa?.valoriRegione[0]?.calcolato? undefined :"#B5E2B4"}} label={activeCommessa?.valoriRegione[0]?.calcolato ? "Attribuito dal sistema":"Inserita manualmente dall’aderente"} />:null
+                                elements={[
+                                    <Grid container alignItems="center">
+                                        <Grid sx={{display:"flex",justifyContent:"right"}} item xs={10}>
+                                            <Typography variant='h4' sx={{fontWeight:'bold', textAlign:'center'}}>{activeCommessa?.valoriRegione[0]?.regione}</Typography>
+                                        </Grid>
+                                        <Grid item xs={2} sx={{ textAlign: "right" }}>
+                                            <Tooltip title="Regione di appartenenza">
+                                                <IconButton>
+                                                    <InfoIcon fontSize='medium' />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Grid>
+                                    </Grid>,
+                                    <TextField
+                                        sx={{ backgroundColor: '#ffffff', width: '100px'}}
+                                        error={errorArRegioni|| (errorAnyValueIsEqualNull && activeCommessa?.valoriRegione[0]?.ar === null)}
+                                        disabled={!isEditAllow}
+                                        onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogicoARNaz", activeCommessa?.valoriRegione[0]?.istatRegione)}
+                                        size="small"
+                                        value={activeCommessa?.valoriRegione[0]?.ar === 0 ? 0 : (activeCommessa?.valoriRegione[0]?.ar||"")}
+                                        InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                                    />,
+                                    <TextField
+                                        sx={{ backgroundColor: '#ffffff', width: '100px'}}
+                                        error={error890Regioni || (errorAnyValueIsEqualNull && activeCommessa?.valoriRegione[0]["890"] === null)}
+                                        disabled={!isEditAllow}
+                                        onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogico890Naz", activeCommessa?.valoriRegione[0]?.istatRegione)}
+                                        size="small"
+                                        value={activeCommessa?.valoriRegione[0]["890"] === 0 ? 0 : (activeCommessa?.valoriRegione[0]["890"]||"")}
+                                        InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                                    />,
+                                    !isEditAllow ? <Chip variant="outlined" sx={{backgroundColor:activeCommessa?.valoriRegione[0]?.calcolato? undefined :"#B5E2B4"}} label={activeCommessa?.valoriRegione[0]?.calcolato ? "Attribuito dal sistema":"Inserita manualmente dall’aderente"} />:null
                                 ]}
                                   
                                 styles={[{
@@ -156,15 +161,31 @@ const MainInserimentoModuloCommessa = ({
                             ></ColumnGrid>
 
                             <hr></hr>
-                             
-                            <div style={{overflowY: "auto", backgroundColor:'#F8F8F8'}}>
-                                {  activeCommessa?.valoriRegione.slice(1).length > 0 ? activeCommessa?.valoriRegione.slice(1).map((element:Regioni) => {
+                              */}
+                            <>
+                                {activeCommessa?.valoriRegione.length > 0 ? activeCommessa?.valoriRegione.sort((a, b) => {
+                                    if (a.obbligatorio === 1 && b.obbligatorio !== 1) return -1;
+                                    if (a.obbligatorio !== 1 && b.obbligatorio === 1) return 1;
+                                    return 0;
+                                }).map((element:Regioni) => {
                                     return (
-                                        <>
+                                        <div style={{backgroundColor:element.obbligatorio === 1 ? "#ffffff":'#F8F8F8'}}>
                                             <ColumnGrid 
                                                 key={element.istatRegione}
-                                                elements={[ <Typography variant='h4' sx={{fontWeight:'bold', textAlign:'center'}}>
-                                                    {element.regione}</Typography>,
+                                                elements={[ <Grid container alignItems="center">
+                                                    <Grid sx={{display:"flex",justifyContent:"right"}} item xs={10}>
+                                                        <Typography variant='h4' sx={{fontWeight:'bold', textAlign:'center'}}>{element.regione}</Typography>
+                                                    </Grid>
+                                                    <Grid item xs={2} sx={{ textAlign: "right" }}>
+                                                        {element?.obbligatorio === 1 &&
+                                                        <Tooltip title="Regione di appartenenza">
+                                                            <IconButton>
+                                                                <InfoIcon fontSize='medium' />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                        }
+                                                    </Grid>
+                                                </Grid> ,
                                                 <TextField
                                                     sx={{ backgroundColor: '#FFFFFF', width: '100px'}}
                                                     error={errorArRegioni || (errorAnyValueIsEqualNull && element.ar === null)}
@@ -212,9 +233,9 @@ const MainInserimentoModuloCommessa = ({
                                                 }]} 
                                                 columns={[6,2,2,2]}></ColumnGrid>  
                                             <hr></hr>
-                                        </>
+                                        </div>
                                     );}):null}
-                            </div>
+                            </>
                             <hr></hr>
                         </div>
                         <div className="bg-white mt-3 pt-3 ">
@@ -283,7 +304,7 @@ const MainInserimentoModuloCommessa = ({
                                         disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
                                         size="small"
                                         error={(coperturaAr||0) > 100}
-                                        value={coperturaArInseritaManualmente ? coperturaArInseritaManualmente + "%" : 0+ "%"}
+                                        value={ activeCommessa?.source === "archiviato" ? (coperturaArInseritaManualmente ? coperturaArInseritaManualmente + "%" : 0+ "%"):coperturaAr ? coperturaAr + "%" : 0+ "%"}
                                         InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                                     />,
                                     <TextField
@@ -291,7 +312,7 @@ const MainInserimentoModuloCommessa = ({
                                         disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
                                         size="small"
                                         error={(copertura890||0) > 100}
-                                        value={copertura890InseritaManualmente ? copertura890InseritaManualmente + "%" : 0+ "%"}
+                                        value={activeCommessa?.source === "archiviato" ? (copertura890InseritaManualmente ? copertura890InseritaManualmente + "%" : 0+ "%"): copertura890 ? copertura890 + "%" : 0+ "%"}
                                         InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                                     />
                                 ]}

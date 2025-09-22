@@ -55,7 +55,8 @@ export interface Regioni {
     istatProvincia: string,
     provincia: string,
     isRegione: 1,
-    calcolato?:number
+    calcolato?:number,
+    obbligatorio:number
 }
 
 export interface PostModuloCommessa {
