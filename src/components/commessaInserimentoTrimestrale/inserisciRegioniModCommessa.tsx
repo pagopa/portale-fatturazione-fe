@@ -32,13 +32,13 @@ const InputRegioni = ({isEditAllow,selected,setValue,array, action}) => {
                 justifyContent="center" 
                 item  md={6}>
                 <FormControl sx={{ m: 1, width: "100%" }}>
-                    <InputLabel>Inserisci regioni</InputLabel>
+                    <InputLabel>Inserisci regione</InputLabel>
                     <Select
                         disabled={!isEditAllow}
                         multiple
                         value={selected}
                         onChange={(e:any)=> setValue(e.target.value)}
-                        input={<OutlinedInput label="Inserisci regioni" />}
+                        input={<OutlinedInput label="Inserisci regione" />}
                         renderValue={(selected) => (
                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                 {selected.map((value) => {
@@ -68,7 +68,7 @@ const InputRegioni = ({isEditAllow,selected,setValue,array, action}) => {
                 justifyContent="left"
                 item
                 md={6}>
-                <Tooltip title="Aggiungi regioni">
+                <Tooltip title="Aggiungi regione">
                     <span>
                         <Button
                             disabled={!isEditAllow || selected.length === 0}
@@ -77,7 +77,7 @@ const InputRegioni = ({isEditAllow,selected,setValue,array, action}) => {
                             color="primary"
                             size="large"
                             variant="contained"
-                        >Aggiungi regioni
+                        >Aggiungi regione
                         </Button>
                     </span>
                 </Tooltip>

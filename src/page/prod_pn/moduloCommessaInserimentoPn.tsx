@@ -79,7 +79,9 @@ const ModuloCommessaInserimentoPn : React.FC = () => {
         setOpenModalAlert,
         clickOnIndietroAvanti,
         avantiFunction,
-        indietroFunction
+        indietroFunction,
+        coperturaArInseritaManualmente,
+        copertura890InseritaManualmente
     } = useSaveModifyModuloCommessa({
         token,
         profilo,
@@ -138,6 +140,8 @@ const ModuloCommessaInserimentoPn : React.FC = () => {
                         coperturaAr={coperturaAr}
                         copertura890={copertura890}
                         loadingData={loadingData}
+                        coperturaArInseritaManualmente={coperturaArInseritaManualmente}
+                        copertura890InseritaManualmente={copertura890InseritaManualmente}
                     ></MainInserimentoModuloCommessa>
                 </div>
             </div> 

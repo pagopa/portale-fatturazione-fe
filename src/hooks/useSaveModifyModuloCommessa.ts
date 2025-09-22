@@ -1,4 +1,4 @@
-import { ReactNode, useRef, useState } from "react";
+import { ReactNode, useRef, useState, ElementType } from "react";
 import { ModuloCommessaType, Regioni, TotaleCommessa } from "../page/ente/moduloCommessaInserimentoUtEn30";
 import { manageError, managePresaInCarico } from "../api/api";
 import { ManageErrorResponse } from "../types/typesGeneral";
@@ -8,6 +8,7 @@ import { month } from "../reusableFunction/reusableArrayObj";
 import { getDatiFatturazione } from "../api/apiSelfcare/datiDiFatturazioneSE/api";
 import ErrorIcon from '@mui/icons-material/Error';
 import { getModuloCommessaPagoPaV2 } from "../api/apiPagoPa/moduloComessaPA/api";
+
 
 
 function useSaveModifyModuloCommessa({
@@ -25,7 +26,7 @@ function useSaveModifyModuloCommessa({
     const [loadingData, setLoadingData] = useState(true);
     const [isEditAllow, setisEditAllow] = useState<boolean>(false);
     const [openModalLoading, setOpenModalLoading] = useState(false);
-    const [openModalInfo, setOpenModalInfo] = useState<{open:boolean,sentence:string,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void,icon?:any }>({open:false, sentence:''});
+    const [openModalInfo, setOpenModalInfo] = useState<{open:boolean,sentence:string,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void,icon?:React.ElementType }>({open:false, sentence:''});
     const [dataObbligatori, setDataObbligatori] = useState(false);
     const [dataModuli, setDataModuli] = useState<ModuloCommessaType[]>([]);
     const [dataTotali, setDataTotali] = useState<TotaleCommessa[]>([]);
@@ -467,25 +468,31 @@ function useSaveModifyModuloCommessa({
     
 
     const onHandleSalvaModificaButton =  () => {
-        if(isAnyValueOfModuloEqualNull() && isEditAllow){
-            setErrorAnyValueIsEqualNull(true);
-            setOpenModalInfo({open:true, sentence:`Errore: alcuni campi contengono valori non corretti.`,buttonIsVisible:false,icon:ErrorIcon});
-        }else{
-            if(!isEditAllow){
-                setisEditAllow(true);
-                handleModifyMainState({statusPageInserimentoCommessa:'mutable'});
-                setOpenBasicModal_DatFat_ModCom("mutable");
+        console.log(11111);
+        try{
+            if(isAnyValueOfModuloEqualNull() && isEditAllow){
+                setErrorAnyValueIsEqualNull(true);
+                setOpenModalInfo({open:true, sentence:`Errore: alcuni campi contengono valori non corretti.`,buttonIsVisible:false,icon:ErrorIcon});
             }else{
-                if(((coperturaAr||0) < 100 || (copertura890||0) < 100) && (profiloViewRegione === 3  || profiloViewRegione === 4)){
-                    setOpenModalInfo({open:true, sentence:`La percentale di copertura NON raggiunge il 100%. Le notifiche restanti  saranno integrate sulle regioni Italiane in base allla percentuale di residenza fornite tramite dati ISTAT.`,buttonIsVisible:true,labelButton:"Prosegui",actionButton:hendleInsertModifyModuloCommessa});
-                }else if(((coperturaAr||0) < 100 || (copertura890||0) < 100) && (profiloViewRegione === 1  || profiloViewRegione === 2)){
-                    setOpenModalInfo({open:true, sentence:`La percentale di copertura NON raggiunge il 100%. Le notifiche restanti  saranno integrate sulla regione di appartenenza.`,buttonIsVisible:true,labelButton:"Prosegui",actionButton:hendleInsertModifyModuloCommessa});
+                if(!isEditAllow){
+                    setisEditAllow(true);
+                    handleModifyMainState({statusPageInserimentoCommessa:'mutable'});
+                    setOpenBasicModal_DatFat_ModCom("mutable");
                 }else{
-                    hendleInsertModifyModuloCommessa();
+                    if(((coperturaAr||0) < 100 || (copertura890||0) < 100) && (profiloViewRegione === 3  || profiloViewRegione === 4)){
+                        setOpenModalInfo({open:true, sentence:`La percentale di copertura NON raggiunge il 100%. Le notifiche restanti  saranno integrate sulle regioni Italiane in base allla percentuale di residenza fornite tramite dati ISTAT.`,buttonIsVisible:true,labelButton:"Prosegui",actionButton:hendleInsertModifyModuloCommessa});
+                    }else if(((coperturaAr||0) < 100 || (copertura890||0) < 100) && (profiloViewRegione === 1  || profiloViewRegione === 2)){
+                        setOpenModalInfo({open:true, sentence:`La percentale di copertura NON raggiunge il 100%. Le notifiche restanti  saranno integrate sulla regione di appartenenza.`,buttonIsVisible:true,labelButton:"Prosegui",actionButton:hendleInsertModifyModuloCommessa});
+                    }else{
+                        hendleInsertModifyModuloCommessa();
+                    }
+                    setErrorAnyValueIsEqualNull(false);
                 }
-                setErrorAnyValueIsEqualNull(false);
-            }
-        } 
+            } 
+        }catch(err){
+            console.log({maledetto:err});
+        }
+        
     };
 
     const isAnyValueOfModuloEqualNull =  () => {
@@ -501,6 +508,9 @@ function useSaveModifyModuloCommessa({
     const activeCommessa = dataModuli.length > 1 ? dataModuli[activeStep] : dataModuli[0];
     const coperturaAr = activeCommessa?.totaleNotificheAnalogicoARNaz === 0 ? 100 : ((activeCommessa?.totaleNotificheAnalogicoARNaz||0) > 0) ? (Math.round((activeCommessa?.valoriRegione.reduce((acc, el) => acc + (el.ar||0), 0)/(activeCommessa?.totaleNotificheAnalogicoARNaz||0))*100)): errorArRegioni ? null : ""; 
     const copertura890 = activeCommessa?.totaleNotificheAnalogico890Naz === 0 ? 100 : ((activeCommessa?.totaleNotificheAnalogico890Naz||0) > 0) ?  (Math.round((activeCommessa?.valoriRegione.reduce((acc, el) => acc + (el[890]||0), 0)/(activeCommessa?.totaleNotificheAnalogico890Naz||0))* 100)): error890Regioni ? null : "";  
+
+    const coperturaArInseritaManualmente = activeCommessa?.totaleNotificheAnalogicoARNaz === 0 ? 100 : ((activeCommessa?.totaleNotificheAnalogicoARNaz||0) > 0) ? (Math.round((activeCommessa?.valoriRegione.filter(el => el.calcolato === 0).reduce((acc, el) => acc + (el.ar||0), 0)/(activeCommessa?.totaleNotificheAnalogicoARNaz||0))*100)): errorArRegioni ? null : ""; 
+    const copertura890InseritaManualmente = activeCommessa?.totaleNotificheAnalogico890Naz === 0 ? 100 : ((activeCommessa?.totaleNotificheAnalogico890Naz||0) > 0) ?  (Math.round((activeCommessa?.valoriRegione.filter(el => el.calcolato === 0).reduce((acc, el) => acc + (el[890]||0), 0)/(activeCommessa?.totaleNotificheAnalogico890Naz||0))* 100)): error890Regioni ? null : "";  
 
         
 
@@ -543,7 +553,9 @@ function useSaveModifyModuloCommessa({
         setOpenModalAlert,
         clickOnIndietroAvanti,
         avantiFunction,
-        indietroFunction
+        indietroFunction,
+        coperturaArInseritaManualmente,
+        copertura890InseritaManualmente
     };
 
 }

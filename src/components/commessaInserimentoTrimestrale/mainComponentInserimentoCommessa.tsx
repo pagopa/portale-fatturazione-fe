@@ -28,7 +28,9 @@ const MainInserimentoModuloCommessa = ({
     mainState,
     coperturaAr,
     copertura890,
-    loadingData
+    loadingData,
+    coperturaArInseritaManualmente,
+    copertura890InseritaManualmente
     
 }) => {
 
@@ -124,7 +126,7 @@ const MainInserimentoModuloCommessa = ({
                                     value={activeCommessa?.valoriRegione[0]["890"] === 0 ? 0 : (activeCommessa?.valoriRegione[0]["890"]||"")}
                                     InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                                 />,
-                                !isEditAllow ? <Chip variant="outlined" sx={{backgroundColor:activeCommessa?.valoriRegione[0]?.calcolato? undefined :"#B5E2B4"}} label={activeCommessa?.valoriRegione[0]?.calcolato ? "Calcolato":"Inserito"} />:null
+                                !isEditAllow ? <Chip variant="outlined" sx={{backgroundColor:activeCommessa?.valoriRegione[0]?.calcolato? undefined :"#B5E2B4"}} label={activeCommessa?.valoriRegione[0]?.calcolato ? "Attribuito dal sistema":"Inserita manualmente dall’aderente"} />:null
                                 ]}
                                   
                                 styles={[{
@@ -188,7 +190,7 @@ const MainInserimentoModuloCommessa = ({
                                                         size="large"
                                                     ><DeleteIcon/>
                                                     </IconButton>
-                                                    :  <Chip variant="outlined" sx={{backgroundColor:element?.calcolato ? undefined :"#B5E2B4"}} label={element?.calcolato ? "Calcolato":"Inserito"} />
+                                                    :  <Chip variant="outlined" sx={{backgroundColor:element?.calcolato ? undefined :"#B5E2B4"}} label={element?.calcolato ? "Attribuito dal sistema":"Inserita manualmente dall’aderente"} />
                                                      
                                                 ]} 
                                                 styles={[{
@@ -275,13 +277,13 @@ const MainInserimentoModuloCommessa = ({
                             <hr></hr>
                             <ColumnGrid 
                                 elements={[
-                                    <Typography sx={{fontWeight:'bold', textAlign:'right'}}>Percentuale copertura</Typography>,
+                                    <Typography sx={{fontWeight:'bold', textAlign:'right'}}>Percentuale copertura inserita dell’aderente</Typography>,
                                     <TextField
                                         sx={{ backgroundColor: '#ffffff', width: '100px'}}
                                         disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
                                         size="small"
                                         error={(coperturaAr||0) > 100}
-                                        value={coperturaAr ? coperturaAr + "%" : 0+ "%"}
+                                        value={coperturaArInseritaManualmente ? coperturaArInseritaManualmente + "%" : 0+ "%"}
                                         InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                                     />,
                                     <TextField
@@ -289,7 +291,7 @@ const MainInserimentoModuloCommessa = ({
                                         disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
                                         size="small"
                                         error={(copertura890||0) > 100}
-                                        value={copertura890 ? copertura890 + "%" : 0+ "%"}
+                                        value={copertura890InseritaManualmente ? copertura890InseritaManualmente + "%" : 0+ "%"}
                                         InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                                     />
                                 ]}
@@ -309,7 +311,47 @@ const MainInserimentoModuloCommessa = ({
                                 ]} 
                                 columns={[6,2,2]}
                             ></ColumnGrid>
+                            {activeCommessa?.source === "archiviato" &&
+                             <>
+                                 <hr></hr>
+                                 <ColumnGrid 
+                                     elements={[
+                                         <Typography sx={{fontWeight:'bold', textAlign:'right'}}>Percentuale copertura attribuita dal sistema</Typography>,
+                                         <TextField
+                                             sx={{ backgroundColor: '#ffffff', width: '100px'}}
+                                             disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
+                                             size="small"
+                                             value={100 - (coperturaArInseritaManualmente||0) + "%"}
+                                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                                         />,
+                                         <TextField
+                                             sx={{ backgroundColor: '#ffffff', width: '100px'}}
+                                             disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
+                                             size="small"
+                                             value={100 - (copertura890InseritaManualmente||0) + "%"}
+                                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                                         />
+                                     ]}
+                                     styles={[{
+                                         justifyContent:"center",
+                                         alignItems:"center"
+                                     },{
+                                         textAlign: 'center',
+                                         borderColor: '#ffffff',
+                                         borderStyle: 'solid',
+                                     },
+                                     {
+                                         textAlign: 'center',
+                                         borderColor: '#ffffff',
+                                         borderStyle: 'solid',
+                                     }
+                                     ]} 
+                                     columns={[6,2,2]}
+                                 ></ColumnGrid>
+                             </>
+                            }
                             <hr></hr>
+                            
                         </div>
                     </>
                 </div>   

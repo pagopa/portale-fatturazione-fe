@@ -1,13 +1,15 @@
 import { Grid } from "@mui/material";
 
-const ColumnGrid = ({elements,styles ,columns}) => {
+const ColumnGrid = ({elements,styles ,columns,key=Math.random().toString()}) => {
     return (
         <Grid 
+            key={key}
             container
             columns={12}>
             {elements.map((el,i)=>{
                 return (
                     <Grid
+                        key={Math.random()}
                         sx={styles[i]}
                         item
                         xs={columns[i]}

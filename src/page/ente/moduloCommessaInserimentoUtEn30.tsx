@@ -139,7 +139,9 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         setOpenModalAlert,
         clickOnIndietroAvanti,
         avantiFunction,
-        indietroFunction
+        indietroFunction,
+        coperturaArInseritaManualmente,
+        copertura890InseritaManualmente
     } = useSaveModifyModuloCommessa({
         token,
         profilo,
@@ -258,19 +260,24 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                     coperturaAr={coperturaAr}
                     copertura890={copertura890}
                     loadingData={loadingData}
+                    coperturaArInseritaManualmente={coperturaArInseritaManualmente}
+                    copertura890InseritaManualmente={copertura890InseritaManualmente}
                 ></MainInserimentoModuloCommessa>
             </div> 
-            <div className="d-flex justify-content-between mt-5 ms-5 me-5 ">
+            {!loadingData &&
+            <div className="d-flex justify-content-between m-5 ">
                 <div >
                     {steps.length > 1 && 
                     <Tooltip title={activeStep !== 0 && "Indietro"}>
                         <span>
-                            <IconButton
+                      
+                            <Button
+                                sx={{color:"#5c6f81"}}
                                 size='large'
                                 disabled={activeStep === 0}
-                                onClick={onIndietroButton}> 
-                                <ArrowBackIcon sx={{fontSize:"60px"}}/>
-                            </IconButton>
+                                onClick={onIndietroButton}><ArrowBackIcon  sx={{fontSize:"60px",marginRight:"20px",color:activeStep === 0 ?"inherit" :"#5c6f81"}}/> Indiero
+                                
+                            </Button>
                         </span>
                     </Tooltip>
                     }
@@ -295,19 +302,22 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 }
                 <div >
                     {steps.length > 1 && 
-                    <Tooltip title={(activeStep+1) !== steps.length && "Avanti"}>
+                    <Tooltip  title={(activeStep+1) !== steps.length && "Avanti"}>
                         <span>
-                            <IconButton
+                            <Button
+                                sx={{color:"#5c6f81"}}
                                 size='large'
                                 disabled={(activeStep+1) === steps.length || error890Regioni || errorArRegioni}
                                 onClick={onAvantiButton}> 
-                                <ArrowForwardIcon sx={{fontSize:"60px"}}/>
-                            </IconButton>
+                                Avanti
+                                <ArrowForwardIcon sx={{fontSize:"60px", color:(activeStep+1) === steps.length || error890Regioni || errorArRegioni ?"inherit" :"#5c6f81",marginLeft:"20px"}}/>
+                            </Button>
                         </span>
                     </Tooltip>
                     }
                 </div>   
             </div> 
+            }
             <ModalRedirect 
                 setOpen={setOpenModalRedirect}
                 open={openModalRedirect}
