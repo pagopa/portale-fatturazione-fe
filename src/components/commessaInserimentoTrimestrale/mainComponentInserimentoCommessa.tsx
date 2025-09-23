@@ -240,43 +240,46 @@ const MainInserimentoModuloCommessa = ({
                                 columns={[6,2,2]}
                             ></ColumnGrid>
                             <hr></hr>
-                            <ColumnGrid 
-                                elements={[
-                                    <Typography sx={{fontWeight:'bold', textAlign:'right'}}>Percentuale copertura inserita dell’aderente</Typography>,
-                                    <TextField
-                                        sx={{ backgroundColor: '#ffffff', width: '100px'}}
-                                        disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
-                                        size="small"
-                                        error={(coperturaAr||0) > 100}
-                                        value={ activeCommessa?.source === "archiviato" ? (coperturaArInseritaManualmente ? coperturaArInseritaManualmente + "%" : 0+ "%"):coperturaAr ? coperturaAr + "%" : 0+ "%"}
-                                        InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
-                                    />,
-                                    <TextField
-                                        sx={{ backgroundColor: '#ffffff', width: '100px'}}
-                                        disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
-                                        size="small"
-                                        error={(copertura890||0) > 100}
-                                        value={activeCommessa?.source === "archiviato" ? (copertura890InseritaManualmente ? copertura890InseritaManualmente + "%" : 0+ "%"): copertura890 ? copertura890 + "%" : 0+ "%"}
-                                        InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
-                                    />
-                                ]}
-                                styles={[{
-                                    justifyContent:"center",
-                                    alignItems:"center"
-                                },{
-                                    textAlign: 'center',
-                                    borderColor: '#ffffff',
-                                    borderStyle: 'solid',
-                                },
-                                {
-                                    textAlign: 'center',
-                                    borderColor: '#ffffff',
-                                    borderStyle: 'solid',
-                                }
-                                ]} 
-                                columns={[6,2,2]}
-                            ></ColumnGrid>
-                            {activeCommessa?.source === "archiviato" &&
+                            {(activeCommessa.source === "archiviato" && activeCommessa.valoriRegione.length === 0) ? null : 
+                                <>
+                                    <ColumnGrid 
+                                        elements={[
+                                            <Typography sx={{fontWeight:'bold', textAlign:'right'}}>Percentuale copertura inserita dell’aderente</Typography>,
+                                            <TextField
+                                                sx={{ backgroundColor: '#ffffff', width: '100px'}}
+                                                disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
+                                                size="small"
+                                                error={(coperturaAr||0) > 100}
+                                                value={ activeCommessa?.source === "archiviato" ? (coperturaArInseritaManualmente ? coperturaArInseritaManualmente + "%" : 0+ "%"):coperturaAr ? coperturaAr + "%" : 0+ "%"}
+                                                InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                                            />,
+                                            <TextField
+                                                sx={{ backgroundColor: '#ffffff', width: '100px'}}
+                                                disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
+                                                size="small"
+                                                error={(copertura890||0) > 100}
+                                                value={activeCommessa?.source === "archiviato" ? (copertura890InseritaManualmente ? copertura890InseritaManualmente + "%" : 0+ "%"): copertura890 ? copertura890 + "%" : 0+ "%"}
+                                                InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
+                                            />
+                                        ]}
+                                        styles={[{
+                                            justifyContent:"center",
+                                            alignItems:"center"
+                                        },{
+                                            textAlign: 'center',
+                                            borderColor: '#ffffff',
+                                            borderStyle: 'solid',
+                                        },
+                                        {
+                                            textAlign: 'center',
+                                            borderColor: '#ffffff',
+                                            borderStyle: 'solid',
+                                        }
+                                        ]} 
+                                        columns={[6,2,2]}
+                                    ></ColumnGrid>
+                           
+                                    {activeCommessa?.source === "archiviato" &&
                              <>
                                  <hr></hr>
                                  <ColumnGrid 
@@ -314,7 +317,8 @@ const MainInserimentoModuloCommessa = ({
                                      columns={[6,2,2]}
                                  ></ColumnGrid>
                              </>
-                            }
+                                    }
+                                </> }
                             <hr></hr>
                             
                         </div>
