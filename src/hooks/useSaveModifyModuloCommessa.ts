@@ -77,8 +77,14 @@ function useSaveModifyModuloCommessa({
             if(res.data && Object.keys(mainState.infoTrimestreComSelected)?.length === 0){
                 setIsObbligatorioLayout(res.data);
                 await getCommessaObbligatoriListaV2(token, profilo.nonce).then((response)=>{
-                    const obbligatori = response.data.lista;
-                     
+                    let obbligatori = response.data.lista;
+                    obbligatori = obbligatori.map(el => {
+                        if(!el.valoriRegione){
+                            el.valoriRegione = [];
+                        }
+                        return el;
+                    });
+                    console.log({obbligatori},"ciao");
                     setDataModuli(obbligatori);
                     setDataObbligatori(obbligatori.map(el => el.stato === null).flat().includes(true));
             
@@ -127,6 +133,14 @@ function useSaveModifyModuloCommessa({
             .then((response:{data:any})=>{
             
                 const res = response.data?.lista[0];
+                console.log(99999);
+            
+                if(!res.valoriRegione){
+                    res.valoriRegione = [];
+                }
+                  
+            
+                console.log({res},"mimmo");
                 setDataModuli([res]);
                 setDataTotali(response.data.totali);
                 setDataObbligatori(false);
@@ -504,7 +518,7 @@ function useSaveModifyModuloCommessa({
      || activeCommessa.valoriRegione.map(el => el[890]).includes(null)
      || activeCommessa.valoriRegione.map(el => el.ar).includes(null);
     };
-
+    console.log({dataModuli});
     const activeCommessa = dataModuli.length > 1 ? dataModuli[activeStep] : dataModuli[0];
     const coperturaAr = activeCommessa?.totaleNotificheAnalogicoARNaz === 0 ? 100 : ((activeCommessa?.totaleNotificheAnalogicoARNaz||0) > 0) ? (Math.round((activeCommessa?.valoriRegione.reduce((acc, el) => acc + (el.ar||0), 0)/(activeCommessa?.totaleNotificheAnalogicoARNaz||0))*100)): errorArRegioni ? null : ""; 
     const copertura890 = activeCommessa?.totaleNotificheAnalogico890Naz === 0 ? 100 : ((activeCommessa?.totaleNotificheAnalogico890Naz||0) > 0) ?  (Math.round((activeCommessa?.valoriRegione.reduce((acc, el) => acc + (el[890]||0), 0)/(activeCommessa?.totaleNotificheAnalogico890Naz||0))* 100)): error890Regioni ? null : "";  

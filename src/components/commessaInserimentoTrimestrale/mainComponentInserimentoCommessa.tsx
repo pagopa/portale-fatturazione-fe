@@ -33,6 +33,7 @@ const MainInserimentoModuloCommessa = ({
     copertura890InseritaManualmente
     
 }) => {
+    console.log({activeCommessa});
 
     if(loadingData){
         return (
@@ -75,95 +76,38 @@ const MainInserimentoModuloCommessa = ({
                                 ></InputRegioni> 
                             </div>
                         }
+                        
                         <div  className="bg-white mt-3 pt-3">
-                            <ColumnGrid 
-                                elements={[
-                                    <Typography sx={{fontWeight:'bold', textAlign:'center'}}>Regioni </Typography>,<Typography sx={{fontWeight:'bold', textAlign:'center'}}>AR Nazionali </Typography>,<Typography sx={{fontWeight:'bold', textAlign:'center'}}>890 Nazionali</Typography>
-                                ]} styles={[
-                                    {
-                                        textAlign: 'left',
-                                        borderColor: '#ffffff',
-                                        borderStyle: 'solid',
-                                    },{
-                                        textAlign: 'left',
-                                        borderColor: '#ffffff',
-                                        borderStyle: 'solid',
-                                    },
-                                    {
-                                        textAlign: 'left',
-                                        borderColor: '#ffffff',
-                                        borderStyle: 'solid',
-                                    }
-                                ]} 
-                                columns={[6,2,2]}
-                            ></ColumnGrid>
-                            <hr></hr>
-                            {/*
-                            <ColumnGrid 
-                                elements={[
-                                    <Grid container alignItems="center">
-                                        <Grid sx={{display:"flex",justifyContent:"right"}} item xs={10}>
-                                            <Typography variant='h4' sx={{fontWeight:'bold', textAlign:'center'}}>{activeCommessa?.valoriRegione[0]?.regione}</Typography>
-                                        </Grid>
-                                        <Grid item xs={2} sx={{ textAlign: "right" }}>
-                                            <Tooltip title="Regione di appartenenza">
-                                                <IconButton>
-                                                    <InfoIcon fontSize='medium' />
-                                                </IconButton>
-                                            </Tooltip>
-                                        </Grid>
-                                    </Grid>,
-                                    <TextField
-                                        sx={{ backgroundColor: '#ffffff', width: '100px'}}
-                                        error={errorArRegioni|| (errorAnyValueIsEqualNull && activeCommessa?.valoriRegione[0]?.ar === null)}
-                                        disabled={!isEditAllow}
-                                        onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogicoARNaz", activeCommessa?.valoriRegione[0]?.istatRegione)}
-                                        size="small"
-                                        value={activeCommessa?.valoriRegione[0]?.ar === 0 ? 0 : (activeCommessa?.valoriRegione[0]?.ar||"")}
-                                        InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
-                                    />,
-                                    <TextField
-                                        sx={{ backgroundColor: '#ffffff', width: '100px'}}
-                                        error={error890Regioni || (errorAnyValueIsEqualNull && activeCommessa?.valoriRegione[0]["890"] === null)}
-                                        disabled={!isEditAllow}
-                                        onChange={(e)=>handleChangeTotale_Ar_890_regione(e,"totaleAnalogico890Naz", activeCommessa?.valoriRegione[0]?.istatRegione)}
-                                        size="small"
-                                        value={activeCommessa?.valoriRegione[0]["890"] === 0 ? 0 : (activeCommessa?.valoriRegione[0]["890"]||"")}
-                                        InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
-                                    />,
-                                    !isEditAllow ? <Chip variant="outlined" sx={{backgroundColor:activeCommessa?.valoriRegione[0]?.calcolato? undefined :"#B5E2B4"}} label={activeCommessa?.valoriRegione[0]?.calcolato ? "Attribuito dal sistema":"Inserita manualmente dall’aderente"} />:null
-                                ]}
-                                  
-                                styles={[{
-                                    display:"flex",
-                                    justifyContent:"right",
-                                    textAlign: 'right',
-                                    borderColor: '#ffffff',
-                                    borderStyle: 'solid',
-                                },
-                                {
-                                    textAlign: 'center',
-                                    borderColor: '#ffffff',
-                                    borderStyle: 'solid',
-                                },
-                                {
-                                    textAlign: 'center',
-                                    borderColor: '#ffffff',
-                                    borderStyle: 'solid',
-                                },
-                                {
-                                    textAlign: 'center',
-                                    borderColor: '#ffffff',
-                                    borderStyle: 'solid',
-                                }
-                                ]}
-                                columns={[6,2,2,2]}
-                            ></ColumnGrid>
-
-                            <hr></hr>
-                              */}
+                            {activeCommessa?.valoriRegione?.length > 0 &&
+                             <>
+                                 <ColumnGrid 
+                                     elements={[
+                                         <Typography sx={{fontWeight:'bold', textAlign:'center'}}>Regioni </Typography>,<Typography sx={{fontWeight:'bold', textAlign:'center'}}>AR Nazionali </Typography>,<Typography sx={{fontWeight:'bold', textAlign:'center'}}>890 Nazionali</Typography>
+                                     ]} styles={[
+                                         {
+                                             textAlign: 'left',
+                                             borderColor: '#ffffff',
+                                             borderStyle: 'solid',
+                                         },{
+                                             textAlign: 'left',
+                                             borderColor: '#ffffff',
+                                             borderStyle: 'solid',
+                                         },
+                                         {
+                                             textAlign: 'left',
+                                             borderColor: '#ffffff',
+                                             borderStyle: 'solid',
+                                         }
+                                     ]} 
+                                     columns={[6,2,2]}
+                                 ></ColumnGrid>
+                           
+                           
+                                 <hr></hr>
+                             </>
+                            }
                             <>
-                                {activeCommessa?.valoriRegione.length > 0 ? activeCommessa?.valoriRegione.sort((a, b) => {
+                                {activeCommessa?.valoriRegione?.length > 0 ? activeCommessa?.valoriRegione?.sort((a, b) => {
                                     if (a.obbligatorio === 1 && b.obbligatorio !== 1) return -1;
                                     if (a.obbligatorio !== 1 && b.obbligatorio === 1) return 1;
                                     return 0;
