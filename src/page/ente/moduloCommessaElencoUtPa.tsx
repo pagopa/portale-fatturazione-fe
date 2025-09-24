@@ -8,13 +8,14 @@ import { DataGridCommessa, GetAnniResponse, ResponseGetListaCommesse } from '../
 import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
 import { getAnni, getListaCommessaFilteredV2, getCommessaObbligatoriVerificaV2 } from '../../api/apiSelfcare/moduloCommessaSE/api';
 import ModalRedirect from '../../components/commessaInserimento/madalRedirect';
-import { fixResponseForDataGrid } from '../../reusableFunction/function';
+import { fixResponseForDataGrid, fixResponseForDataGridRollBack } from '../../reusableFunction/function';
 import { PathPf } from '../../types/enum';
 import { ManageErrorResponse } from '../../types/typesGeneral';
 import GridCustom from '../../components/reusableComponents/grid/gridCustom';
 import { headerNameModComTrimestraleENTE } from '../../assets/configurations/conf_GridModComEnte';
 import ModalInfo from '../../components/reusableComponents/modals/modalInfo';
 import useSavedFilters from '../../hooks/useSaveFiltersLocalStorage';
+import { subHeaderNameModComTrimestraleENTE } from '../../assets/configurations/config_SubGridModComEnte';
 
 
 const ModuloCommessaElencoUtPa: React.FC = () => {
@@ -67,7 +68,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
         await getCommessaObbligatoriVerificaV2(token, profilo.nonce).then((res)=>{
             const redirect =  localStorage.getItem('redirectToInsert')||"";
             const redirectToInsert =  JSON.parse(redirect);
-            console.log({GINO:res});
+        
             if(res.data && redirectToInsert){
                 navigate(PathPf.MODULOCOMMESSA);
             }else{
@@ -76,9 +77,9 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
                 if(isInitialRender.current && Object.keys(filters).length > 0){
                     getListaCommessaGrid(filters.valueSelect);
                     setValueSelect(filters.valueSelect);
-                    console.log("DENTRO");
+                  
                 }else{
-                    console.log("FUORI");
+                 
                     getListaCommessaGrid('');
                 }
                 handleModifyMainState({infoTrimestreComSelected:{}});
@@ -102,14 +103,16 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
     // servizio che popola la grid con la lista commesse
     const getListaCommessaGrid = async (valueAnno) =>{
         await getListaCommessaFilteredV2(token , profilo.nonce,valueAnno).then((res:ResponseGetListaCommesse)=>{
-            const finalData = fixResponseForDataGrid(res.data);
+            //const finalData = fixResponseForDataGrid(res.data);
+            const finalData = fixResponseForDataGridRollBack(res.data);
+            console.log({finalData});
             setGridData(finalData);
         }).catch((err:ManageErrorResponse)=>{
             setGridData([]);
             manageError(err,dispatchMainState);
         });
     };
-    console.log({gridData});
+   
 
     const getDatiFat = async () =>{
         await getDatiFatturazione(token,profilo.nonce).then(( ) =>{      
@@ -154,11 +157,11 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
         const quarterSelectedIndex = gridData.findIndex(dataEl => dataEl.id === el.quarter);
         const moduloSelectedIndex =  quarterSelected?.moduli?.findIndex(elMod => elMod.id === el.id);
         const result:any[] = [];
-        console.log({el,isMandatory});
+    
         try{
             for (const item of quarterSelected?.moduli||[]) {
                 if (isMandatory){
-                    console.log("dentro 1");
+                 
                     if(item.source === "archiviato"){
                         console.log("dentro");
                         result.push(item);
@@ -173,7 +176,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
             console.log(err);
         }
        
-        console.log({result},"00000");
+     
         if( isMandatory && el.source === "facoltativo" ){
             setOpenModalModObbligatori({open:true,sentence:'Per inserire i moduli commessa futuri bisogna prima inserire i moduli commessa OBBLIGATORI'});
         }else if(isMandatory && el.source === "archiviato"){
@@ -305,7 +308,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
                             total={totDoc}
                             page={page}
                             rows={rowsPerPage}
-                            headerNames={headerNameModComTrimestraleENTE}
+                            headerNames={subHeaderNameModComTrimestraleENTE}
                             apiGet={handleClickOnDetail}
                             disabled={false}
                             headerAction={headerAction}

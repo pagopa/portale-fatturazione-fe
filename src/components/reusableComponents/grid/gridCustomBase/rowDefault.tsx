@@ -4,7 +4,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, nameParameterApi, headerNames}) => {
 
-    const elToMap = Object.fromEntries(Object.entries(sliced).slice(1, -4));
+    // const elToMap = Object.fromEntries(Object.entries(sliced).slice(1, -4));
     //:TODO spostare i colori nel file di configurazione
     let statusColor = "#ffffff";
     if(element.source === "obbligatorio"){
@@ -14,10 +14,7 @@ const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, nameParameterApi
     }else if(element.source === "facoltativo"){
         statusColor = "#f7e7bc";
     }
-    
-    console.log({element,sliced});
-
-
+    console.log({element,headerNames});
     return (
         <TableRow 
             sx={{
@@ -27,10 +24,12 @@ const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, nameParameterApi
                 height:"80px"
             }} key={element.id}>
             {
-                Object.values(elToMap).map((value:string|number|any, i:number)=>{
+                Object.values(sliced).map((value:string|number|any, i:number)=>{
                     const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
                     const valueEl = (i === 0 && value?.toString().length > 50) ? value?.toString().slice(0, 50) + '...' : value;
+                    console.log({value,zorro:headerNames,i});
                     if(headerNames[i]?.headerTooltip){
+                        console.log({H1:headerNames[i]});
                         return (
                             <TableCell
                                 key={i}
@@ -39,6 +38,7 @@ const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, nameParameterApi
                             </TableCell>
                         );
                     }else if(headerNames[i]?.headerChip){
+                        console.log({H2:headerNames[i]});
                         return (
                             <TableCell
                                 key={i}
@@ -47,6 +47,7 @@ const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, nameParameterApi
                             </TableCell>
                         );
                     }else{
+                        console.log({H3:headerNames[i]});
                         return (
                             <TableCell
                                 align={"center"}

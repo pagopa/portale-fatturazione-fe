@@ -17,6 +17,9 @@ import RowContestazioni from "./gridCustomBase/rowContestazioni";
 import { DataGridOrchestratore } from "../../../page/prod_pn/processiOrchestratore";
 import { Whitelist } from "../../../page/prod_pn/whiteList";
 import RowModComTrimestreEnte from "./gridCustomBase/rowModComTrimestreEnte";
+import { setMilliseconds } from "date-fns";
+import { subHeaderNameModComTrimestraleENTE } from "../../../assets/configurations/config_SubGridModComEnte";
+import DefaultRow from "./gridCustomBase/rowDefault";
 interface GridCustomProps {
     elements:NotificheList[]|Rel[]|GridElementListaPsp[]|ContestazioneRowGrid[]|any
     changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
@@ -121,7 +124,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                         <TableHead sx={{backgroundColor:'#f2f2f2'}}>
                             <TableRow>
                                 {headerNames.map((el,i)=>{
-                                    if(nameParameterApi === 'idOrchestratore' || nameParameterApi === "asyncDocEnte" || nameParameterApi === "modComTrimestrale"){
+                                    if(nameParameterApi === 'idOrchestratore' || nameParameterApi === "asyncDocEnte" ){ //|| nameParameterApi === "modComTrimestrale"
                                         return(
                                             <TableCell key={Math.random()} align={el.align} width={el.width}>{el.label}
                                                 {el.headerAction &&
@@ -135,7 +138,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                                 </Tooltip>}
                                             </TableCell>
                                         );
-                                    }if(nameParameterApi === 'contestazionePage'){
+                                    }if(nameParameterApi === 'contestazionePage'|| nameParameterApi === "modComTrimestrale"){
                                         return(
                                             <TableCell key={Math.random()} align={el.align} width={el.width}>{el.label}</TableCell>
                                         );
@@ -159,7 +162,8 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                     }else if(nameParameterApi === "contestazionePage"){
                                         sliced = Object.fromEntries(Object.entries(element).slice(1, -1));
                                     }else if(nameParameterApi === "modComTrimestrale"){
-                                        sliced = Object.fromEntries(Object.entries(element).slice(0, -1));
+                                        //sliced = Object.fromEntries(Object.entries(element).slice(0, -1));
+                                        sliced = Object.fromEntries(Object.entries(element).slice(1, -4));
                                     }
 
 
@@ -174,7 +178,8 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                     }else if(nameParameterApi === "contestazionePage"){
                                         return <RowContestazioni key={Math.random()} sliced={sliced}apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} headerNames={headerNames}></RowContestazioni>;
                                     }else if(nameParameterApi === "modComTrimestrale"){
-                                        return <RowModComTrimestreEnte key={element.id} sliced={sliced} headerNames={headerNames} handleClickOnGrid={handleClickOnGrid} element={element}></RowModComTrimestreEnte>;
+                                        return  <DefaultRow handleClickOnGrid={handleClickOnGrid} element={element} sliced={sliced} apiGet={()=> console.log("go to details")} nameParameterApi={"test"} headerNames={headerNames}></DefaultRow>;
+                                        //return <RowModComTrimestreEnte key={element.id} sliced={sliced} headerNames={headerNames} handleClickOnGrid={handleClickOnGrid} element={element}></RowModComTrimestreEnte>;
                                     }else{
                                         return (
                                             <TableRow key={Math.random()}>

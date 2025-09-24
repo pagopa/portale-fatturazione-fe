@@ -214,3 +214,52 @@ export const formatDateToValidation = (date:any) => {
         return null;
     }
 };
+
+
+
+export const fixResponseForDataGridRollBack = (arr:any[]):any =>{
+   
+    console.log({arr});
+    // Convert to desired array structure and sort by quarter
+ 
+    try{
+        return arr.map((el:any)=> {
+         
+
+
+            let inserimentoInfo = {inserimento:"--",color:"#ffffff"};
+
+            if(el.stato === null ){
+                inserimentoInfo = {inserimento:"Non inserito",color:"#FB9EAC"};
+            }else{
+                inserimentoInfo = {inserimento:"Inserito",color:"#B5E2B4"};
+            }
+
+            return {
+                id:`${el.annoValidita}_${el.meseValidita}`,
+                meseAnno:month[el.meseValidita-1]+"/"+el.annoValidita,
+                stato:el.source.charAt(0).toUpperCase() + el.source.slice(1)||"--",
+                inserimento:inserimentoInfo,
+                dataInserimento:el.dataInserimento?.split('T')[0]|| "--",
+                dataChiusura:el.dataChiusura?.split('T')[0]|| "--",
+                totaleDig:el.totaleDigitaleNaz !== null ?el.totaleDigitaleNaz:"--",
+                totaleNotificheDigitaleInternaz:el.totaleNotificheDigitaleInternaz !== null ? el.totaleNotificheDigitaleInternaz: "--",
+                totaleAR:el.totaleNotificheAnalogicoARInternaz !== null ?el.totaleNotificheAnalogicoARInternaz :"--",
+                totaleARInt:el.totaleNotificheAnalogicoARInternaz !== null ? el.totaleNotificheAnalogicoARInternaz: "--",    
+                totaleAnalogico890Naz:el.totaleNotificheAnalogico890Naz !== null ? el.totaleNotificheAnalogico890Naz: "--",
+                totale:el.totaleNotifiche !== null ? el.totaleNotifiche : "--",
+                source:el.source,
+                modifica:el.modifica,
+                quarter:el.quarter,
+                arrow:""
+            };
+        });
+           
+       
+    
+    }catch(err){
+        console.log({mledetto:err});
+    }
+  
+    return [];
+};

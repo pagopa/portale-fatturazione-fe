@@ -209,7 +209,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
         params:GridRowParams,
         event: MuiEvent<React.MouseEvent<HTMLElement>>,
     ) => {
-        console.log({params,event});
+    
         event.preventDefault();
         // l'evento verrà eseguito solo se l'utente farà il clik sul  mese e action
         if(columsSelectedGrid  === 'regioneSociale' || columsSelectedGrid  === 'action' ){

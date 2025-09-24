@@ -33,8 +33,7 @@ const MainInserimentoModuloCommessa = ({
     copertura890InseritaManualmente
     
 }) => {
-    console.log({activeCommessa});
-
+  
     if(loadingData){
         return (
             <Box

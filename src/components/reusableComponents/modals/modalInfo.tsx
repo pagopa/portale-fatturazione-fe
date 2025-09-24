@@ -20,7 +20,7 @@ export interface ModalInfoProps {
 const ModalInfo : React.FC<ModalInfoProps> = ({setOpen, open,width}) => {
    
     const handleClose = () => setOpen({open:false, sentence:''});
-    console.log({open});
+ 
     return (
         <Modal
             open={open.open}

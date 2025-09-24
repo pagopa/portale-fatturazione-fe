@@ -19,7 +19,6 @@ export interface HeaderGridCustom {
 export const subHeaderNameModComTrimestraleENTE: HeaderGridCustom[] = [
     { label: 'Mese/Anno',align:'center',width:'160px', headerAction:false},
     { label: 'Stato',align:'center',width:'100px',headerAction:false, headerTooltip:(title,label,color) =>  {
-        console.log({color});
         return ( <Tooltip
             placement="bottom"
             title={label}

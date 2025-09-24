@@ -195,10 +195,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         setActiveStep(0);
     };
     */
-
-
-   
-  
     
     let labelButtonAvantiListaModuliSave = "Modifica";
     if(isEditAllow && (isObbligatorioLayout && (activeStep+1 < steps.length))){
