@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router';
 import ModalRedirect from '../../components/commessaInserimento/madalRedirect';
 import ModalLoading from '../../components/reusableComponents/modals/modalLoading';
 import { PathPf } from '../../types/enum';
-import { profiliEnti, } from '../../reusableFunction/actionLocalStorage';
+import { profiliEnti } from '../../reusableFunction/actionLocalStorage';
 import { month } from '../../reusableFunction/reusableArrayObj';
 import ModalConfermaInserimento from '../../components/commessaInserimento/modalConfermaInserimento';
 import SkeletonComIns from '../../components/commessaInserimento/skeletonComIns';

@@ -14,7 +14,7 @@ const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, nameParameterApi
     }else if(element.source === "facoltativo"){
         statusColor = "#f7e7bc";
     }
-    console.log({element,headerNames});
+ 
     return (
         <TableRow 
             sx={{
@@ -27,9 +27,9 @@ const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, nameParameterApi
                 Object.values(sliced).map((value:string|number|any, i:number)=>{
                     const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
                     const valueEl = (i === 0 && value?.toString().length > 50) ? value?.toString().slice(0, 50) + '...' : value;
-                    console.log({value,zorro:headerNames,i});
+                   
                     if(headerNames[i]?.headerTooltip){
-                        console.log({H1:headerNames[i]});
+                      
                         return (
                             <TableCell
                                 key={i}
@@ -38,7 +38,7 @@ const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, nameParameterApi
                             </TableCell>
                         );
                     }else if(headerNames[i]?.headerChip){
-                        console.log({H2:headerNames[i]});
+                      
                         return (
                             <TableCell
                                 key={i}
@@ -47,7 +47,7 @@ const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, nameParameterApi
                             </TableCell>
                         );
                     }else{
-                        console.log({H3:headerNames[i]});
+                     
                         return (
                             <TableCell
                                 align={"center"}

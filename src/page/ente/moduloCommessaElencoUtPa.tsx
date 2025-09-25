@@ -180,7 +180,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
         if( isMandatory && el.source === "facoltativo" ){
             setOpenModalModObbligatori({open:true,sentence:'Per inserire i moduli commessa futuri bisogna prima inserire i moduli commessa OBBLIGATORI'});
         }else if(isMandatory && el.source === "archiviato"){
-            handleModifyMainState({infoTrimestreComSelected:{
+            /*  handleModifyMainState({infoTrimestreComSelected:{
                 meseCommessaSelected:el.id.length === 6 ? el.id.slice(0,1):el.id.slice(0,2),
                 annoCommessaSelectd:el.id.length === 6 ?el.id.slice(2,6):el.id.slice(3,7),
                 moduli:result,
@@ -189,15 +189,35 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
                 idTipoContratto: profilo.idTipoContratto,
                 prodotto:profilo.prodotto,
                 idEnte:profilo.idEnte,
+            }});*/
+            handleModifyMainState({infoTrimestreComSelected:{
+                meseCommessaSelected:el.id.length === 6 ? el.id.slice(0,1):el.id.slice(0,2),
+                annoCommessaSelectd:el.id.length === 6 ?el.id.slice(2,6):el.id.slice(3,7),
+                moduli:[el],
+                quarterSelectedIndex:0,
+                moduloSelectedIndex:0,
+                idTipoContratto: profilo.idTipoContratto,
+                prodotto:profilo.prodotto,
+                idEnte:profilo.idEnte,
             }});
             navigate(PathPf.MODULOCOMMESSA);
         }else if(!isMandatory){
-            handleModifyMainState({infoTrimestreComSelected:{
+            /*handleModifyMainState({infoTrimestreComSelected:{
                 meseCommessaSelected:el.id.length === 6 ? el.id.slice(0,1):el.id.slice(0,2),
                 annoCommessaSelectd:el.id.length === 6 ?el.id.slice(2,6):el.id.slice(3,7),
                 moduli:result,
                 quarterSelectedIndex,
                 moduloSelectedIndex,
+                idTipoContratto: profilo.idTipoContratto,
+                prodotto:profilo.prodotto,
+                idEnte:profilo.idEnte,
+            }});*/
+            handleModifyMainState({infoTrimestreComSelected:{
+                meseCommessaSelected:el.id.length === 6 ? el.id.slice(0,1):el.id.slice(0,2),
+                annoCommessaSelectd:el.id.length === 6 ?el.id.slice(2,6):el.id.slice(3,7),
+                moduli:[el],
+                quarterSelectedIndex:0,
+                moduloSelectedIndex:0,
                 idTipoContratto: profilo.idTipoContratto,
                 prodotto:profilo.prodotto,
                 idEnte:profilo.idEnte,
@@ -313,7 +333,8 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
                             disabled={false}
                             headerAction={headerAction}
                             body={valueSelect}
-                            widthCustomSize="auto"></GridCustom>
+                            widthCustomSize="auto"
+                            paginationVisibile={false}></GridCustom>
                 
                     </div>
                     <ModalRedirect 

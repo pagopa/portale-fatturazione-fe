@@ -236,7 +236,7 @@ export const fixResponseForDataGridRollBack = (arr:any[]):any =>{
             }
 
             return {
-                id:`${el.annoValidita}_${el.meseValidita}`,
+                id:el.meseValidita+"/"+el.annoValidita,
                 meseAnno:month[el.meseValidita-1]+"/"+el.annoValidita,
                 stato:el.source.charAt(0).toUpperCase() + el.source.slice(1)||"--",
                 inserimento:inserimentoInfo,

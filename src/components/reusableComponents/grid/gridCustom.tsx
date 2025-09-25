@@ -42,7 +42,8 @@ interface GridCustomProps {
         action:string
     }[],
     headerAction?:(val:any) =>void,
-    body?:any
+    body?:any,
+    paginationVisibile?:boolean
 }
 
 
@@ -64,7 +65,8 @@ const GridCustom : React.FC<GridCustomProps> = ({
     selected,
     setSelected,
     headerAction,
-    body
+    body,
+    paginationVisibile
 }) =>{
 
     const handleClickOnGrid = (element) =>{
@@ -215,6 +217,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                     </Table>      
                 </Card>
             </div>
+            {paginationVisibile !== false &&
             <div className="pt-3">                           
                 <TablePagination
                     sx={{'.MuiTablePagination-selectLabel': {
@@ -230,6 +233,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                     onRowsPerPageChange={changeRow}
                 ></TablePagination>
             </div>
+            }
         </div>
         
     );
