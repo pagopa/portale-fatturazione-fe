@@ -2,6 +2,7 @@ import axios from "axios";
 import { BodyDownloadListaCommesse, BodyListaModuloCommessa } from "../../../types/typesGeneral";
 import { url } from "../../api";
 import { DatiCommessa } from "../../../types/typeModuloCommessaInserimento";
+import { PostModuloCommessa } from "../../../page/ente/moduloCommessaInserimentoUtEn30";
 
 export const listaModuloCommessaPagopa = async (body : BodyListaModuloCommessa, token:string, nonce:string) => {
     const response =  await axios.post(`${url}/api/v2/modulocommessa/pagopa/ricerca?nonce=${nonce}`,
@@ -120,3 +121,13 @@ export const downloadPostalizzazioneReport = async (token:string, nonce:string ,
 };
 
 
+export const modifyDatiModuloCommessaPagoPaV2 = async (body:PostModuloCommessa[],idEnte:string,idTipoContratto:number, token:string, nonce:string) => {
+    const response =  await axios.post(`${url}/api/v2/pagopa/modulocommessa?idEnte=${idEnte}&idTipoContratto=${idTipoContratto}&nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};

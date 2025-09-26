@@ -15,6 +15,8 @@ import MainInserimentoModuloCommessa from '../../components/commessaInserimentoT
 import NavigatorHeader from '../../components/reusableComponents/navigatorHeader';
 import useSaveModifyModuloCommessa from '../../hooks/useSaveModifyModuloCommessa';
 import { getRegioniModuloCommessaPA } from '../../api/apiPagoPa/moduloComessaPA/api';
+import ModalAlert from '../../components/reusableComponents/modals/modalAlert';
+import ModalInfo from '../../components/reusableComponents/modals/modalInfo';
 
 
 
@@ -90,7 +92,8 @@ const ModuloCommessaInserimentoPn : React.FC = () => {
         navigate,
         mainState,
         handleModifyMainState,
-        setOpenBasicModal_DatFat_ModCom
+        setOpenBasicModal_DatFat_ModCom,
+        whoInvokeHook:"SEND"
     });
    
 
@@ -99,6 +102,12 @@ const ModuloCommessaInserimentoPn : React.FC = () => {
         getDettaglioSend();
      
     },[]);
+
+    let labelButtonAvantiListaModuliSave = "Modifica";
+   
+    if(isEditAllow || activeCommessa?.stato === null){
+        labelButtonAvantiListaModuliSave = "Salva";
+    }
 
 
     if(loadingData){
@@ -117,7 +126,7 @@ const ModuloCommessaInserimentoPn : React.FC = () => {
             </div>
             <div className="marginTop24 ms-5 me-5">
                 <div className="marginTop24">
-                    <Typography variant="h4">{"Modulo commessa " + `${mainState.infoTrimestreComSelected.nomeEnteClickOn}`}</Typography>
+                    <Typography variant="h4">{`${month[activeCommessa.meseValidita-1]} / ${mainState.infoTrimestreComSelected.nomeEnteClickOn}`}</Typography>
                 </div>
                 <div className='mt-5 mb-5'>
                     <MainInserimentoModuloCommessa 
@@ -145,17 +154,36 @@ const ModuloCommessaInserimentoPn : React.FC = () => {
                     ></MainInserimentoModuloCommessa>
                 </div>
             </div> 
-            { (activeCommessa?.dataInserimento !== null && !isEditAllow && !loadingData) && 
-                <div  className="d-flex justify-content-center align-items-center mb-5">
-                    <Button onClick={()=>{
-                        navigate(PathPf.PDF_COMMESSA+`/${activeCommessa.annoValidita}/${activeCommessa.meseValidita}`);}
-                    } variant="contained">Vedi anteprima</Button>   
-                </div> 
+            {!loadingData &&
+                        <div className="d-flex justify-content-between m-5 ">
+                            <div>
+
+                            </div>
+                            {(dataModuli.length > 0 && (activeCommessa?.source === "archiviato"|| loadingData ) && activeCommessa.modifica) ? null:
+                                <div className="d-flex justify-content-center align-items-center">
+                                    <Button  disabled={error890Regioni|| errorArRegioni} onClick={onHandleSalvaModificaButton} variant={"outlined"}>{labelButtonAvantiListaModuliSave}
+                                    </Button>
+                                </div>} 
+                            { (activeCommessa?.dataInserimento !== null && !isEditAllow && !loadingData) && 
+                            <div  className="d-flex justify-content-center align-items-center">
+                                <Button onClick={()=>{
+                                    navigate(PathPf.PDF_COMMESSA+`/${activeCommessa.annoValidita}/${activeCommessa.meseValidita}`);}
+                                } variant="contained">Vedi anteprima</Button>   
+                            </div> 
+                            }
+                            <div>
+                                
+                            </div>
+                        </div> 
             }
             <ModalRedirect 
                 setOpen={setOpenModalRedirect}
                 open={openModalRedirect}
                 sentence={`Per poter inserire il modulo commessa è obbligatorio fornire  i seguenti dati di fatturazione:`}></ModalRedirect>
+            <ModalInfo 
+                setOpen={setOpenModalInfo}
+                open={openModalInfo}
+                width={600}></ModalInfo>
             <ModalConfermaInserimento
                 setOpen={setOpenModalConfermaIns}
                 open={openModalConfermaIns}

@@ -151,9 +151,9 @@ const GridCustom : React.FC<GridCustomProps> = ({
                             </TableRow>
                         </TableHead>
                         {elements.length === 0 ?
-                            <TableBody key={Math.random()} style={{height: '50px'}}>
+                            <TableBody key={0} style={{height: '50px'}}>
                             </TableBody> :
-                            <TableBody sx={{marginLeft:'20px'}}>  {/*da eliminare any nella riga sottostante */}
+                            <TableBody key={1} sx={{marginLeft:'20px'}}>  {/*da eliminare any nella riga sottostante */}
                                 {elements.map((element:Rel|NotificheList|GridElementListaPsp|Whitelist|DataGridOrchestratore|DataGridAsyncDoc|ContestazioneRowGrid|any ) =>{
                                     // tolgo da ogni oggetto la prima chiave valore  perchè il cliente non vuole vedere es. l'id ma serve per la chiamata get di dettaglio 
                                     let sliced = Object.fromEntries(

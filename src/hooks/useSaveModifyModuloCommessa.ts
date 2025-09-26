@@ -7,7 +7,7 @@ import { getCommessaObbligatoriListaV2, getCommessaObbligatoriVerificaV2, getDet
 import { month } from "../reusableFunction/reusableArrayObj";
 import { getDatiFatturazione } from "../api/apiSelfcare/datiDiFatturazioneSE/api";
 import ErrorIcon from '@mui/icons-material/Error';
-import { getModuloCommessaPagoPaV2 } from "../api/apiPagoPa/moduloComessaPA/api";
+import { getModuloCommessaPagoPaV2, modifyDatiModuloCommessaPagoPaV2 } from "../api/apiPagoPa/moduloComessaPA/api";
 
 
 
@@ -19,7 +19,8 @@ function useSaveModifyModuloCommessa({
     navigate,
     mainState,
     handleModifyMainState,
-    setOpenBasicModal_DatFat_ModCom
+    setOpenBasicModal_DatFat_ModCom,
+    whoInvokeHook
 }) {
 
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
@@ -231,33 +232,43 @@ function useSaveModifyModuloCommessa({
                 ],
                 "valoriRegione": el.valoriRegione
             };});
-                
-        await getDatiFatturazione(token,profilo.nonce).then(async( ) =>{ 
-            await insertDatiModuloCommessaV2(objectToSend, token, profilo.nonce)
+        if(whoInvokeHook === "ENTE"){
+            await getDatiFatturazione(token,profilo.nonce).then(async( ) =>{ 
+                await insertDatiModuloCommessaV2(objectToSend, token, profilo.nonce)
+                    .then(async()=>{
+                        setOpenModalLoading(false);
+                        handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
+                        managePresaInCarico("SAVE_COMMESSA_OK",dispatchMainState);
+                        if(isObbligatorioLayout){
+                            navigate(PathPf.DATI_FATTURAZIONE);
+                        }else{
+                            await handleGetDettaglioModuloCommessaVecchio(activeCommessa.annoValidita,activeCommessa.meseValidita,true);
+                        }
+                    }).catch(err => {
+                        handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
+                        setOpenModalLoading(false);
+                        manageError(err,dispatchMainState); 
+                    });
+            }).catch(err =>{
+                setOpenModalLoading(false);
+                if(err.response.status === 404){
+                    handleModifyMainState({datiFatturazione:false});
+                    navigate(PathPf.DATI_FATTURAZIONE);
+                }else{
+                    manageError(err,dispatchMainState);
+                }
+            });
+        }else if(whoInvokeHook === "SEND"){
+            await modifyDatiModuloCommessaPagoPaV2(objectToSend,activeCommessa.idEnte,activeCommessa.idTipoContratto, token, profilo.nonce)
                 .then(async()=>{
                     setOpenModalLoading(false);
-                    handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
                     managePresaInCarico("SAVE_COMMESSA_OK",dispatchMainState);
-                    if(isObbligatorioLayout){
-                        navigate(PathPf.DATI_FATTURAZIONE);
-                    }else{
-                        await handleGetDettaglioModuloCommessaVecchio(activeCommessa.annoValidita,activeCommessa.meseValidita,true);
-                    }
+                    await handleGetDettaglioModuloCommessaSendV2(true);
                 }).catch(err => {
-                    handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
                     setOpenModalLoading(false);
                     manageError(err,dispatchMainState); 
                 });
-        }).catch(err =>{
-            setOpenModalLoading(false);
-            if(err.response.status === 404){
-                handleModifyMainState({datiFatturazione:false});
-                navigate(PathPf.DATI_FATTURAZIONE);
-            }else{
-                manageError(err,dispatchMainState);
-            }
-        });
-                       
+        }               
     };
               
             
@@ -482,23 +493,32 @@ function useSaveModifyModuloCommessa({
     
 
     const onHandleSalvaModificaButton =  () => {
-      
+        console.log("ciao");
         try{
+            console.log("ciao2");
             if(isAnyValueOfModuloEqualNull() && isEditAllow){
+                console.log("ciao3");
                 setErrorAnyValueIsEqualNull(true);
                 setOpenModalInfo({open:true, sentence:`Errore: alcuni campi contengono valori non corretti.`,buttonIsVisible:false,icon:ErrorIcon});
             }else{
+                console.log("ciao4");
                 if(!isEditAllow){
+                    console.log("ciao5");
                     setisEditAllow(true);
                     handleModifyMainState({statusPageInserimentoCommessa:'mutable'});
                     setOpenBasicModal_DatFat_ModCom("mutable");
                 }else{
+                    console.log("ciao6");
                     if(((coperturaAr||0) < 100 || (copertura890||0) < 100) && (profiloViewRegione === 3  || profiloViewRegione === 4)){
+                        console.log("ciao7");
                         setOpenModalInfo({open:true, sentence:`La percentale di copertura NON raggiunge il 100%. Le notifiche restanti  saranno integrate sulle regioni Italiane in base allla percentuale di residenza fornite tramite dati ISTAT.`,buttonIsVisible:true,labelButton:"Prosegui",actionButton:hendleInsertModifyModuloCommessa});
                     }else if(((coperturaAr||0) < 100 || (copertura890||0) < 100) && (profiloViewRegione === 1  || profiloViewRegione === 2)){
+                        console.log("ciao8");
                         setOpenModalInfo({open:true, sentence:`La percentale di copertura NON raggiunge il 100%. Le notifiche restanti  saranno integrate sulla regione di appartenenza.`,buttonIsVisible:true,labelButton:"Prosegui",actionButton:hendleInsertModifyModuloCommessa});
                     }else{
+                        console.log("ciao9");
                         hendleInsertModifyModuloCommessa();
+                        console.log("ciao10");
                     }
                     setErrorAnyValueIsEqualNull(false);
                 }

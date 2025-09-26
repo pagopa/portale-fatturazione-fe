@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {HeaderProduct, PartyEntity} from '@pagopa/mui-italia';
 import { arrayProducts } from '../../assets/dataLayout';
 import { GlobalContext } from '../../store/context/globalContext';
@@ -9,12 +9,13 @@ import { getMessaggiCountEnte, getVerificaNotificheEnte } from '../../api/apiSel
 import DownloadIcon from '@mui/icons-material/Download';
 import {  useSnackbar } from 'notistack';
 import { mesiGrid } from '../../reusableFunction/reusableArrayObj';
+import { manageError } from '../../api/api';
 
 
 
 const HeaderProductEnte : React.FC = () => {
     const globalContextObj = useContext(GlobalContext);
-    const {mainState,setCountMessages, countMessages,statusQueryGetUri,setStatusQueryGetUri } = globalContextObj;
+    const {mainState,setCountMessages, countMessages,statusQueryGetUri,setStatusQueryGetUri,dispatchMainState } = globalContextObj;
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
     const profilo =  mainState.profilo;
@@ -85,7 +86,7 @@ const HeaderProductEnte : React.FC = () => {
             const numMessaggi = res.data;
             setCountMessages(numMessaggi);
         }).catch((err)=>{
-            console.log(err);
+            manageError(err,dispatchMainState);
         });
     };
 
