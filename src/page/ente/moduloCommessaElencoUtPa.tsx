@@ -152,7 +152,8 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
     };
 
     const handleClickOnDetail = (el) => {
-        const isMandatory = gridData?.map(el => el?.moduli?.map(el => (el.source === "obbligatorio" && el.stato === "Obbligatorio" && el.inserimento.inserimento === "Non inserito") ? true:false)).flat().includes(true);
+        //const isMandatory = gridData?.map(el => el?.moduli?.map(el => (el.source === "obbligatorio" && el.stato === "Obbligatorio" && el.inserimento.inserimento === "Non inserito") ? true:false)).flat().includes(true);
+        const isMandatory = gridData?.map(el => el?.moduli?.map(el => (el.source === "obbligatorio" && el.stato === null) ? true:false)).flat().includes(true);
         const quarterSelected = gridData.find(dataEl => dataEl.id === el.quarter); 
         const quarterSelectedIndex = gridData.findIndex(dataEl => dataEl.id === el.quarter);
         const moduloSelectedIndex =  quarterSelected?.moduli?.findIndex(elMod => elMod.id === el.id);
