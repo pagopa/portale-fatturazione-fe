@@ -159,7 +159,7 @@ const ModuloCommessaInserimentoPn : React.FC = () => {
                             <div>
 
                             </div>
-                            {(dataModuli.length > 0 && (activeCommessa?.source === "archiviato"|| loadingData ) && activeCommessa.modifica) ? null:
+                            {((dataModuli.length > 0 && (activeCommessa?.source === "archiviato")) || !activeCommessa.modifica) ? null:
                                 <div className="d-flex justify-content-center align-items-center">
                                     <Button  disabled={error890Regioni|| errorArRegioni} onClick={onHandleSalvaModificaButton} variant={"outlined"}>{labelButtonAvantiListaModuliSave}
                                     </Button>
