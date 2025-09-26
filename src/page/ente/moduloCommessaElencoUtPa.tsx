@@ -45,6 +45,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
     const [loadingMandatory, setLoadingMandatory] = useState(true);
     const [showButtonInsertModulo,setShowButtonInsertModulo] = useState(false);
     const [openModalModObbligatori,setOpenModalModObbligatori] = useState({open:false,sentence:''});
+    const [isMandatory, setIsMandatory] = useState(null);
 
     const { 
         filters,
@@ -68,7 +69,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
         await getCommessaObbligatoriVerificaV2(token, profilo.nonce).then((res)=>{
             const redirect =  localStorage.getItem('redirectToInsert')||"";
             const redirectToInsert =  JSON.parse(redirect);
-        
+            setIsMandatory(res.data);
             if(res.data && redirectToInsert){
                 navigate(PathPf.MODULOCOMMESSA);
             }else{
@@ -152,13 +153,19 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
     };
 
     const handleClickOnDetail = (el) => {
-        //const isMandatory = gridData?.map(el => el?.moduli?.map(el => (el.source === "obbligatorio" && el.stato === "Obbligatorio" && el.inserimento.inserimento === "Non inserito") ? true:false)).flat().includes(true);
-        const isMandatory = gridData?.map(el => el?.moduli?.map(el => (el.source === "obbligatorio" && el.stato === null) ? true:false)).flat().includes(true);
+        
+        /*const isMandatory = gridData?.map(el => el?.moduli?.map(el => (el.source === "obbligatorio" && el.stato === "Obbligatorio" && el.inserimento.inserimento === "Non inserito") ? true:false)).flat().includes(true);
+        const isMandatory = gridData?.map((el => {
+            if(el.source === "obbligatorio" && el.stato === "Obbligatorio"){
+                return true;
+            }else{
+                return false;
+            }
+        })).includes(true);
         const quarterSelected = gridData.find(dataEl => dataEl.id === el.quarter); 
         const quarterSelectedIndex = gridData.findIndex(dataEl => dataEl.id === el.quarter);
         const moduloSelectedIndex =  quarterSelected?.moduli?.findIndex(elMod => elMod.id === el.id);
         const result:any[] = [];
-    
         try{
             for (const item of quarterSelected?.moduli||[]) {
                 if (isMandatory){
@@ -176,7 +183,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
         }catch(err){
             console.log(err);
         }
-       
+       */
      
         if( isMandatory && el.source === "facoltativo" ){
             setOpenModalModObbligatori({open:true,sentence:'Per inserire i moduli commessa futuri bisogna prima inserire i moduli commessa OBBLIGATORI'});

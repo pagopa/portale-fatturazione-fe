@@ -429,44 +429,43 @@ function useSaveModifyModuloCommessa({
         errorOnOver(regioniActiveCommessa,updatedCommessa);
     };
 
-    const handleChangeTotale_Ar_890_regione = (e, tipoNotifiche,istatRegione ) => {
-        const activeCommessa = dataModuli.length > 1 ? dataModuli[activeStep] : dataModuli[0];
-        const regioniActiveCommessa = activeCommessa?.valoriRegione;
-        const restOfCommesse = dataModuli?.filter(el => el.meseValidita !== activeCommessa?.meseValidita);
-        const restOfRegioni = regioniActiveCommessa?.filter(el => el.istatRegione !== istatRegione) || [];
-        const regioneAlreadyExistBoolean = regioniActiveCommessa?.find(el => el.istatRegione === istatRegione);
-        const regioneAlreadyExist = regioniActiveCommessa?.filter(el => el.istatRegione === istatRegione)[0];
-        const originalIndex = regioniActiveCommessa?.findIndex(el => el.istatRegione === istatRegione);
-        const activeCommessaIndex = dataModuli?.findIndex(el => el.meseValidita === activeCommessa?.meseValidita);
-        let regioneToAdd; 
-    
-        if(regioneAlreadyExistBoolean){
-            regioneToAdd = {
-                "890": tipoNotifiche === "totaleAnalogico890Naz"  ?  (e.target.value !== "" ? Number(e.target.value):null) : (regioneAlreadyExist["890"] !== null ?Number(regioneAlreadyExist["890"]):null),
-                "regione": regioneAlreadyExist?.regione,
-                "istatRegione":regioneAlreadyExist?.istatRegione,
-                "ar":tipoNotifiche === "totaleAnalogicoARNaz"  ? (e.target.value !== "" ?Number(e.target.value):null) :(regioneAlreadyExist?.ar !== null? Number(regioneAlreadyExist?.ar):null)
-            };
-        }
-       
-        const valoriRegioneOrderedWithSameIndex = [
-            ...restOfRegioni.slice(0, originalIndex),
-            regioneToAdd,
-            ...restOfRegioni.slice(originalIndex)
-        ];
+    const handleChangeTotale_Ar_890_regione = (e, tipoNotifiche, element) => {
+        const value = e.target.value !== "" ? Number(e.target.value) : null;
 
-        const updatedCommessa = {
-            ...activeCommessa,
-            valoriRegione:valoriRegioneOrderedWithSameIndex,
-        };
-        setDataModuli([
-            ...restOfCommesse.slice(0,activeCommessaIndex),
-            updatedCommessa,
-            ...restOfCommesse.slice(activeCommessaIndex)
-        ]);
-        //gestione errore regioni count
-        errorOnOver([...restOfRegioni,regioneToAdd],updatedCommessa);
+        setDataModuli(prev => {
+            const activeCommessaIndex =
+      prev.length > 1
+          ? prev.findIndex(el => el.meseValidita === prev[activeStep].meseValidita)
+          : 0;
+
+            const activeCommessa = prev[activeCommessaIndex];
+
+            // only update the specific regione
+            const updatedRegioni = activeCommessa.valoriRegione.map(r =>
+                r.istatRegione === element.istatRegione
+                    ? {
+                        ...r,
+                        ar: tipoNotifiche === "totaleAnalogicoARNaz" ? value : r.ar,
+                        890: tipoNotifiche === "totaleAnalogico890Naz" ? value : r[890],
+                    }
+                    : r
+            );
+
+            const updatedCommessa = {
+                ...activeCommessa,
+                valoriRegione: updatedRegioni,
+            };
+
+            const newData = [...prev];
+            newData[activeCommessaIndex] = updatedCommessa;
+
+            // still call your validation
+            errorOnOver(updatedRegioni, updatedCommessa);
+
+            return newData;
+        });
     };
+
 
 
     const errorOnOver = (newRegioni, newCommessa) => {
