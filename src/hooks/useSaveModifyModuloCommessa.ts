@@ -410,7 +410,7 @@ function useSaveModifyModuloCommessa({
 
 
     const onChangeModuloValue = (e,valueKey) => {
-       
+    
         const activeCommessa = dataModuli.length > 1 ? dataModuli[activeStep] : dataModuli[0];
         const restOfCommesse = dataModuli.filter(el => el.meseValidita !== activeCommessa?.meseValidita);
         const activeCommessaIndex = dataModuli.findIndex(el => el.meseValidita === activeCommessa?.meseValidita);
@@ -425,31 +425,52 @@ function useSaveModifyModuloCommessa({
             ...restOfCommesse.slice(0,activeCommessaIndex),
             updatedCommessa,
             ...restOfCommesse.slice(activeCommessaIndex)]);
+        
+        if(e.target.value === "0"){
+            const tipoNotifica = valueKey === "totaleNotificheAnalogicoARNaz" ? "totaleAnalogicoARNaz" : "totaleAnalogico890Naz";
+            handleChangeTotale_Ar_890_regione(e,tipoNotifica,null,true);
+        }else{
+            errorOnOver(regioniActiveCommessa,updatedCommessa);
+        }
  
-        errorOnOver(regioniActiveCommessa,updatedCommessa);
+        
     };
 
-    const handleChangeTotale_Ar_890_regione = (e, tipoNotifiche, element) => {
+    const handleChangeTotale_Ar_890_regione = (e, tipoNotifiche, element,isCallonChangeModuloValue=false) => {
+        console.log({e, tipoNotifiche, element});
         const value = e.target.value !== "" ? Number(e.target.value) : null;
 
         setDataModuli(prev => {
-            const activeCommessaIndex =
-      prev.length > 1
-          ? prev.findIndex(el => el.meseValidita === prev[activeStep].meseValidita)
-          : 0;
+            const activeCommessaIndex = prev.length > 1 ? prev.findIndex(el => el.meseValidita === prev[activeStep].meseValidita): 0;
 
             const activeCommessa = prev[activeCommessaIndex];
 
-            // only update the specific regione
-            const updatedRegioni = activeCommessa.valoriRegione.map(r =>
-                r.istatRegione === element.istatRegione
-                    ? {
-                        ...r,
+            let updatedRegioni;
+
+           
+            if(isCallonChangeModuloValue){
+                updatedRegioni = activeCommessa.valoriRegione.map(r =>{
+                    return{ ...r,
                         ar: tipoNotifiche === "totaleAnalogicoARNaz" ? value : r.ar,
-                        890: tipoNotifiche === "totaleAnalogico890Naz" ? value : r[890],
-                    }
-                    : r
-            );
+                        890: tipoNotifiche === "totaleAnalogico890Naz" ? value : r[890]
+                    };
+                }   
+                );
+
+            }else{
+            // only update the specific regione
+                updatedRegioni = activeCommessa.valoriRegione.map(r =>
+                    r.istatRegione === element.istatRegione
+                        ? {
+                            ...r,
+                            ar: tipoNotifiche === "totaleAnalogicoARNaz" ? value : r.ar,
+                            890: tipoNotifiche === "totaleAnalogico890Naz" ? value : r[890],
+                        }
+                        : r
+                );
+            }
+
+           
 
             const updatedCommessa = {
                 ...activeCommessa,

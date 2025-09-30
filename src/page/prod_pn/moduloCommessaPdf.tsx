@@ -1,5 +1,5 @@
 import { manageError } from "../../api/api";
-import {useContext, useEffect, useState} from 'react';
+import {useContext, useEffect, useRef, useState} from 'react';
 import {Typography, Button} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked} from '@pagopa/mui-italia';
@@ -10,7 +10,7 @@ import { DataPdf } from "../../types/typeModuloCommessaInserimento";
 import { usePDF } from 'react-to-pdf';
 import { DatiModuloCommessaPdf, ResponseDownloadPdf } from "../../types/typeModuloCommessaInserimento";
 import { downloadModuloCommessaPdf, getModuloCommessaPdf } from "../../api/apiSelfcare/moduloCommessaSE/api";
-import { downloadModuloCommessaPagoPaPdf, getModuloCommessaPagoPaPdf, getModuloCommessaPagoPaPdfV2 } from "../../api/apiPagoPa/moduloComessaPA/api";
+import { downloadModuloCommessaPagoPaPdf, getModuloCommessaPagoPaPdfV2 } from "../../api/apiPagoPa/moduloComessaPA/api";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../../types/enum";
 import { getTipoCommessa, profiliEnti} from "../../reusableFunction/actionLocalStorage";
@@ -34,13 +34,6 @@ const ModuloCommessaPdf : React.FC = () =>{
     const tipoCommessa =  getTipoCommessa();
     const navigate = useNavigate();
     const enti = profiliEnti(mainState);
-
-    const handleModifyMainState = (valueObj) => {
-        dispatchMainState({
-            type:'MODIFY_MAIN_STATE',
-            value:valueObj
-        });
-    };
 
     const [showLoading, setShowLoading] = useState(false);
     const [showLoadingDettaglio, setShowLoadingDettaglio] = useState(false);
