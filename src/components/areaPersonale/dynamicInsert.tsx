@@ -32,11 +32,11 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
         }  
     };
  
-    const hendleOnMouseOut = (e: React.SyntheticEvent<EventTarget>) =>{
+    const hendleOnMouseOut = (e: React.ChangeEvent<HTMLInputElement>) =>{
         e.persist();
-        const emailAlreadyExist = arrElement.map(obj => Object.values(obj)).flat().every(el => el !== element);
-        _YupEmail.validate(element).then(( )=>{
-            if(arrElement.length === 0 && element === ''){
+        const emailAlreadyExist = arrElement.map(obj => Object.values(obj)).flat().every(el => el !== e.target.value);
+        _YupEmail.validate(e.target.value).then(( )=>{
+            if(arrElement.length === 0 && e.target.value === ''){
                 setValidation(true);
             }else if(!emailAlreadyExist){
                 setValidation(true);
@@ -97,18 +97,20 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
                     sx={{width:'65%'}}
                     type='text'
                     value={element||''}
-                    onChange={(e)=>handleElement(e)}
+                    onChange={(e:React.ChangeEvent<HTMLInputElement>)=>{
+                        handleElement(e);
+                        hendleOnMouseOut(e);
+                    }}
                     disabled={dynamicInsertDisable}
-                    onBlur={(e) => hendleOnMouseOut(e)}
                     error={validation}  
                 />
                 <div className='d-flex align-items-center'>
                     <Button
                         variant="contained"
-                        sx={{ marginLeft: '20px'}}
+                        sx={(!dynamicInsertDisable && !validation && element.length > 0) ? {marginLeft: '20px', border: "3px solid #6CC66A"} :{ marginLeft: '20px'}}
                         size="small"
                         onClick={(e) => handleSubmit(e)}
-                        disabled={validation || dynamicInsertDisable}    
+                        disabled={validation || dynamicInsertDisable|| element.length === 0}    
                     >
                         <AddIcon fontSize="small" sx={{ color: 'ffffff' }} />
           Aggiungi Email

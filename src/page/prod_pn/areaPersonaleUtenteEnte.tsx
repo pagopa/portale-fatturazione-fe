@@ -59,6 +59,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
     };
   
     const [openModalLoading, setOpenModalLoading] = useState(false);
+    const [openModalVerifica, setOpenModalVerifica] = useState(false);
     
     const [loadingData, setLoadingData] = useState(false);
     const [datiFatturazione, setDatiFatturazione] = useState<DatiFatturazione>({
@@ -91,7 +92,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
         "Codice Commessa/Convenzione":false,
         "Codice univoco o SDI":false
     });
-
+    console.log({statusBottonConferma});
             
     useEffect(()=>{
         if(enti){
@@ -364,20 +365,21 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                 || datiFatturazione.codiceSDI === '' || datiFatturazione.codiceSDI === null
     );
 
-    
+    console.log({statusBottonConferma,ifAnyTextAreaIsEmpty});
     if(loadingData){
         return(
             <SuspenseDatiFatturazione></SuspenseDatiFatturazione>
         );
                 
     }
+    console.log({RRRR:!enableDisableConferma || ifAnyTextAreaIsEmpty});
     return (
                 
         <div >
             <PageTitleNavigation  setOpen={setOpenBasicModal_DatFat_ModCom}  /> 
             {/* tab 1 e 2 start */}
             <div className='mt-5'>
-                <TabAreaPersonaleUtente mainState={mainState} datiFatturazione={datiFatturazione} setDatiFatturazione={setDatiFatturazione} setStatusButtonConferma={setStatusButtonConferma} />
+                <TabAreaPersonaleUtente mainState={mainState} datiFatturazione={datiFatturazione} setDatiFatturazione={setDatiFatturazione} setStatusButtonConferma={setStatusButtonConferma} setOpenModalVerifica={setOpenModalVerifica} />
             </div>
             <div>
                 {mainState.statusPageDatiFatturazione === 'immutable' ? null : (
@@ -405,6 +407,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
             <ModalInfo setOpen={setOpenModalInfo} open={openModalInfo}></ModalInfo>
             <BasicModal setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} dispatchMainState={dispatchMainState} getDatiFat={getDatiFat} getDatiFatPagoPa={getDatiFatPagoPa} mainState={mainState}></BasicModal>
             <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}></ModalLoading>
+            <ModalLoading open={openModalVerifica} setOpen={setOpenModalVerifica} sentence={'Loading...'} sentence2={'Verifica del codice SDI in corso'}></ModalLoading>
             {/*   <BasicAlerts typeAlert={'error'} setVisible={setAlertVisible}  visible={alertVisible}></BasicAlerts>*/}
         </div>
     );

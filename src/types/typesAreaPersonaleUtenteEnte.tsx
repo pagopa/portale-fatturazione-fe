@@ -99,7 +99,8 @@ export interface TextFieldProps {
     mainState:MainState,
     setDatiFatturazione:any,
     setStatusButtonConferma:any,
-    datiFatturazione:DatiFatturazione
+    datiFatturazione:DatiFatturazione,
+    setOpenModalVerifica?:(val:boolean) => void
 
 }
 

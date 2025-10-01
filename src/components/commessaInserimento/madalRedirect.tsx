@@ -62,9 +62,12 @@ const ModalRedirect : React.FC<ModalProps> =({setOpen, open, sentence}) => {
                                             <li><Typography id="modal-modal-title" variant="subtitle2" >Id Documento</Typography></li>
                                         </> :
                                         <>
+                                            <li><Typography id="modal-modal-title" variant="subtitle2" >Selezionare una delle voci "Dati ordine di acquisto" o "Dati contratto"</Typography></li>
                                             <li><Typography id="modal-modal-title" variant="subtitle2" >Split Payment</Typography></li>
                                             <li><Typography id="modal-modal-title" variant="subtitle2" >Indirizzo mail PEC</Typography></li>
+                                            <li><Typography id="modal-modal-title" variant="subtitle2" >Codice SDI</Typography></li>
                                             <li><Typography id="modal-modal-title" variant="subtitle2" >Indirizzo mail di riferimento</Typography></li>
+                                            <li><Typography id="modal-modal-title" variant="subtitle2" >Accettazione del disclaimer sul codice degli appalti</Typography></li>    
                                         </>
                                     }
                                     

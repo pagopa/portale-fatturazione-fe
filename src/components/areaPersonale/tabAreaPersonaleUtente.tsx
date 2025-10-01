@@ -1,24 +1,14 @@
 import '../../style/areaPersonaleUtenteEnte.css';
-import { Box, InputLabel, Typography, Checkbox, FormControlLabel } from '@mui/material';
+import { Box, InputLabel, Typography, Checkbox, FormControlLabel, FormControl } from '@mui/material';
 import { red } from '@mui/material/colors';
 import RadioComponent from './radio';
 import DataComponent from './data';
 import DynamicInsert from './dynamicInsert';
 import TextFieldComponent from './textField';
 import { createDateFromString } from '../../reusableFunction/function';
-import { MainState } from '../../types/typesGeneral';
-import { DatiFatturazione, StateEnableConferma } from '../../types/typesAreaPersonaleUtenteEnte';
-import { Dispatch, SetStateAction } from 'react';
-
-interface TabAreaProps{
-    mainState:MainState,
-    datiFatturazione:DatiFatturazione,
-    setDatiFatturazione:Dispatch<SetStateAction<DatiFatturazione>>
-    setStatusButtonConferma:Dispatch<SetStateAction<StateEnableConferma>>
-}
 
 
-const TabAreaPersonaleUtente = ({mainState,datiFatturazione,setDatiFatturazione,setStatusButtonConferma}) => {
+const TabAreaPersonaleUtente = ({mainState,datiFatturazione,setDatiFatturazione,setStatusButtonConferma,setOpenModalVerifica}) => {
     const valueOptionRadioTipoOrdine = [
         {descrizione:'Dati ordine d\'acquisto', id:"1"},
         {descrizione:'Dati contratto', id:"2"}
@@ -35,18 +25,39 @@ const TabAreaPersonaleUtente = ({mainState,datiFatturazione,setDatiFatturazione,
 
         <div className="ms-5 me-5 mb-5  bg-white rounded">
             <div className="ms-4  me-4 pt-4 marginTop24">
-                <div>
+                <FormControl
+                    required
+                    component={Box}
+                    sx={{
+                        border:(!mainState.datiFatturazione && datiFatturazione.tipoCommessa === "") ?  "2px solid #FE6666" : "1px solid #ccc",
+                        borderRadius: 2,
+                        p: 2,
+                        mb: 2,
+
+                    }}
+                >
+                    <Box
+                        component="span"
+                        sx={{
+                            color: (!mainState.datiFatturazione && datiFatturazione.tipoCommessa === "") ? "#FE6666":"grey",
+                            position: "absolute",
+                            top: -3,
+                            right: 8,
+                            fontSize: "18px",
+                            fontWeight: "bold"
+                        }}
+                    >
+    *
+                    </Box>
                     <RadioComponent
                         options={valueOptionRadioTipoOrdine}
                         valueRadio={datiFatturazione.tipoCommessa}
                         keyObject='tipoCommessa'
                         mainState={mainState} 
                         setDatiFatturazione={setDatiFatturazione}
-                        datiFatturazione={datiFatturazione}
-                        
+                        datiFatturazione={datiFatturazione}  
                     />
-                </div>
-
+                </FormControl>
                 {/* first box cap cig split radio  start */}
                 <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 2fr)', marginTop: '30px' }}>
                     {/* CUP start */}
@@ -181,6 +192,7 @@ const TabAreaPersonaleUtente = ({mainState,datiFatturazione,setDatiFatturazione,
                             setDatiFatturazione={setDatiFatturazione}
                             setStatusButtonConferma={setStatusButtonConferma}
                             datiFatturazione={datiFatturazione}
+                            setOpenModalVerifica={setOpenModalVerifica}
                         />
                     </Box>
                 </Box>
@@ -201,10 +213,10 @@ const TabAreaPersonaleUtente = ({mainState,datiFatturazione,setDatiFatturazione,
                 
                     labelPlacement="start"
                     control={<Checkbox 
-                        sx={{color: red[800]}}
+                        sx={{color: "#FE6666"}}
                         checked={datiFatturazione.notaLegale || false}
                         onChange={()=> setDatiFatturazione((prev)=>({...prev,...{notaLegale:!datiFatturazione.notaLegale}}))}/>}
-                    disabled={mainState.statusPageDatiFatturazione === 'immutable'}
+                    disabled={mainState.statusPageDatiFatturazione === 'immutable' || datiFatturazione.tipoCommessa === ""}
                     label="Gli accordi di adesione a SEND sono esclusi dall'applicazione del Codice dei Contratti Pubblici ai
                  sensi dell'art. 56, comma 1, lett a) del D.lgs. 36/2023 pertanto non sono sottoposti alla disciplina della
                   tracciabilità dei flussi finanziari di cui alla L. 136/2010, come indicato dall'ANAC nelle relative Linee Guida.

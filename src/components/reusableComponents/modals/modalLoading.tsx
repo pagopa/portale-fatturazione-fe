@@ -15,7 +15,7 @@ const style = {
     p: 4,
     borderRadius:'20px'
 };
-const ModalLoading : React.FC<ModalProps> = ({setOpen, open, sentence}) => {
+const ModalLoading : React.FC<ModalProps> = ({setOpen, open, sentence, sentence2=null}) => {
     const handleClose = (event:object, reason: string) =>{
         if(reason !== 'backdropClick'){
             setOpen(false);
@@ -32,7 +32,7 @@ const ModalLoading : React.FC<ModalProps> = ({setOpen, open, sentence}) => {
                 <Box sx={style}>
                     <div className='d-flex justify-content-center'>
                         <Typography id="modal-modal-title" variant="h6" component="h2">
-             Operazione in corso  
+                            {sentence2 ? sentence2 :"Operazione in corso"  }
                         </Typography>
                     </div>
                     <div className='d-flex justify-content-center mt-3'>

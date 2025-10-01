@@ -1,4 +1,4 @@
-import React, {useState,useEffect, useContext} from 'react';
+import React, {useState, useContext, useRef, useEffect} from 'react';
 import {TextField,} from '@mui/material';
 import {DatiFatturazione, TextFieldProps, StateEnableConferma}  from '../../types/typesAreaPersonaleUtenteEnte';
 import { _YupPec} from '../../validations/email/index';
@@ -31,32 +31,27 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
         setDatiFatturazione,
         setStatusButtonConferma,
         datiFatturazione,
+        setOpenModalVerifica
     } = props;
     
     const [errorValidation, setErrorValidation] = useState(false);
 
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
-    
-    // ogni qual volta csul click indietro richaimo i dati di fatturazione e setto tutti gli errori a false
-    /* useEffect(()=>{
-    if((keyObject === 'cup' && datiFatturazione.cup === '' &&  datiFatturazione.idDocumento !== '') || (keyObject === 'idDocumento' && datiFatturazione.idDocumento === '' &&  datiFatturazione.cup !== '')){
-    return; 
-    }else{
-    setErrorValidation(false);
-    }
-    
-    },[mainState]);
-    */
-    
+
+
     useEffect(()=>{
-        /*if(keyObject === 'cup' && datiFatturazione.idDocumento !== '' && datiFatturazione.cup === ''){
-        setErrorValidation(true);
-        setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
-        }else if(keyObject === 'cup' && datiFatturazione.idDocumento === '' && datiFatturazione.cup === ''){
-        setErrorValidation(false);
-        setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
-        }*/
+        
+        if(datiFatturazione.codiceSDI !== null && keyObject === "codiceSDI"){
+            validationSDI(dataValidation.max, dataValidation.validation, datiFatturazione.codiceSDI, true);
+        }
+
+    },[]);
+    
+
+    /*commentato il 01/10/25 spostata la logica sull'onchange
+    useEffect(()=>{
+        
         if(keyObject === 'idDocumento' && datiFatturazione.idDocumento === '' && datiFatturazione.cup !== ''){
             setErrorValidation(true);
             setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
@@ -66,53 +61,57 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
         }
         
     },[datiFatturazione.cup]);
-
+*/
     //logica aggiunta pe lo SDI 19/11 start
 
-    const sdiIsValid = async() =>{
+    const sdiIsValid = async(isFirstRender=false) =>{
         if(profilo.auth === 'PAGOPA'){
             await getValidationCodiceSdi(token,profilo.nonce,{idEnte:profilo.idEnte,codiceSDI:datiFatturazione.codiceSDI})
                 .then((res)=>{
+             
+                    setOpenModalVerifica && setOpenModalVerifica(false);
+                   
                     setErrorValidation(false);
                     setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
 
                 }).catch((err)=>{
-                    setOpenModalInfo({open:true,sentence:err.response.data.detail});
+                   
+                    if(!isFirstRender){
+                        setOpenModalVerifica && setOpenModalVerifica(false);
+                        setOpenModalInfo({open:true,sentence:err.response.data.detail});
+                    }
+                   
                     setErrorValidation(true);
                     setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
                 });
         }else{
             await getValidationCodiceSdiEnte(token,profilo.nonce,{codiceSDI:datiFatturazione.codiceSDI})
                 .then((res)=>{
+                    setOpenModalVerifica && setOpenModalVerifica(false);
                     setErrorValidation(false);
                     setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
 
                 }).catch((err)=>{
-                    setOpenModalInfo({open:true,sentence:err.response.data.detail});
+                    if(!isFirstRender){
+                        setOpenModalVerifica && setOpenModalVerifica(false);
+                        setOpenModalInfo({open:true,sentence:err.response.data.detail});
+                    }
+                    
                     setErrorValidation(true);
                     setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
                 });
         }
-       
     } ;
-    /*
-    useEffect(()=>{
-        if(keyObject === 'codiceSDI'){
-            const timer = setTimeout(() => {
-                if((datiFatturazione.codiceSDI||'').length >= 3){ 
-                    sdiIsValid ();
-                }
-            }, 500);
-            return () => clearTimeout(timer);
-        }
-        
-    },[datiFatturazione.codiceSDI]);
-*/
+
+    /*commentato il 01/10/25 spostata la logica sull'onchange
+ 
     useEffect(()=>{
         if(keyObject === 'codiceSDI' && mainState.statusPageDatiFatturazione === 'mutable' && mainState.datiFatturazione){
             validationSDI(dataValidation.max,dataValidation.validation ,value);
         }
     },[mainState.statusPageDatiFatturazione]);
+
+    */
     //logica aggiunta pe lo SDI 19/11 end
     
     
@@ -123,30 +122,47 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
             excludeEmptyString: true
         }).validate(input)
             .then(()=>{
-            
-                setErrorValidation(false);
-                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
-            })
-            .catch(() =>{
-                setErrorValidation(true);
-                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
+                console.log({CUP_FUN:input,keyObject,input},true);
+                if(keyObject === 'cup' && datiFatturazione.idDocumento === '' && input !== ''){
+                    setErrorValidation(false);
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"ID Documento":true,[label]:false}}) );
+                }else{
+                    setErrorValidation(false);
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+                }
+                
+            }).catch(() =>{
+                console.log({CUP_FUN:input,keyObject,input},false);
+                if(keyObject === 'cup' && datiFatturazione.idDocumento === '' && input !== ''){
+                    setErrorValidation(true);
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"ID Documento":true,[label]:true}}) );
+                }else{
+                    setErrorValidation(true);
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
+                }
+                
             } );
     }; 
 
-    const validationSDI = (max: number, validation:string, input:string|number)=>{
+    const validationSDI = (max: number, validation:string, input:string|number,isFirstRender)=>{
         YupString.max(max, validation).matches(/^[A-Z0-9]*$/,  {
             message: "Non è possibile inserire caratteri speciali"
         }).required().validate(input)
             .then(()=>{
-                sdiIsValid(); 
-            })
-            .catch(() =>{
+                console.log("EEEEEEEEEE");
+                sdiIsValid(isFirstRender); 
+            }).catch(() =>{
                 setErrorValidation(true);
+                if(!isFirstRender){
+                    setOpenModalVerifica && setOpenModalVerifica(false);
+                }
+                console.log("UUUUUUUU");
                 setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
             } );
     }; 
     
     const validationTextAreaEmail = (element:string)=>{
+        console.log({element});
         _YupPec.validate(element)
             .then(()=>{
                 setErrorValidation(false);
@@ -162,14 +178,11 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
         YupString.max(max, validation).matches(/^[a-zA-Z0-9/._\-\s]*$/,  {
             message: "Non è possibile inserire caratteri speciali"
         }).validate(input).then(()=>{
-            if(datiFatturazione.cup !== '' && datiFatturazione.idDocumento === ''){
-                setErrorValidation(true);
-                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
-            }else{
-                setErrorValidation(false);
-                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
-            }
+            console.log("zorro");
+            setErrorValidation(false);
+            setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
         }).catch(() =>{
+            console.log("zorro 2");
             setErrorValidation(true);
             setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
         } );
@@ -187,21 +200,31 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
         } );
     };
     
-    const hendleOnMouseOut = (e: React.SyntheticEvent<EventTarget>) =>{
+    // a fine refactoring cambiare nome alla funzione
+    const hendleOnMouseOut = (e: React.ChangeEvent<HTMLInputElement>) =>{
         e.persist();
         if(keyObject === 'pec'){
-            validationTextAreaEmail(value);
+            console.log(1);
+            validationTextAreaEmail(e.target.value);
         }else if(keyObject ==='idDocumento'){
-            validationIdDocumento(dataValidation.max,dataValidation.validation ,value);
-        }else if(keyObject === 'codiceSDI'){
-            validationSDI(dataValidation.max,dataValidation.validation ,value);
+           
+            console.log(4);
+            validationIdDocumento(dataValidation.max,dataValidation.validation ,e.target.value);
+          
+           
         }else if(keyObject === 'codCommessa'){
-            validationCodCommessa(dataValidation.max,dataValidation.validation ,value);
-        }else{
-            validationTextArea(dataValidation.max,dataValidation.validation ,value);
+            console.log(6);
+            validationCodCommessa(dataValidation.max,dataValidation.validation ,e.target.value);
+        }else if(keyObject === 'cup'){
+            validationTextArea(dataValidation.max,dataValidation.validation ,e.target.value);
+        }
+        
+
+        if(keyObject ==='idDocumento' && datiFatturazione.idDocumento === '' && datiFatturazione.cup !== ''){
+            console.log();
+            setErrorValidation(true);
         }
 
-        
     };
     
     let makeTextInputDisable = true;
@@ -212,7 +235,9 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
     }else if(mainState.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa !== ''){
         makeTextInputDisable = false;
     }
-    
+    console.log({errorValidation,datiFatturazione});
+
+    const debounceRef = useRef<NodeJS.Timeout | null>(null);
     return (
         <TextField
             required={required}
@@ -223,18 +248,39 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
             disabled={makeTextInputDisable}
             value={value}
             autoComplete='off'
-            error={errorValidation}
-            onChange={(e)=>{setDatiFatturazione((prevState: DatiFatturazione) =>{
+            error={(keyObject === "idDocumento" &&  datiFatturazione.idDocumento === '' && datiFatturazione.cup !== '') ? true : errorValidation}
+            onChange={(e:React.ChangeEvent<HTMLInputElement>)=>{
+                console.log({onchange:e.target.value});
+
                 let val = e.target.value;
-                if(keyObject === 'codiceSDI'){
-                    val = val.toLocaleUpperCase();
+                if(keyObject === "codiceSDI"){
+                    val = val.toUpperCase();
                 }
-                const newValue = {[keyObject]:val};
-                const newState = {...prevState, ...newValue};
-                return newState;
-            } );}}
-            onBlur={(e)=> hendleOnMouseOut(e)}
-            onFocus={()=> setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) )}
+                console.log(val);
+                // Reset debounce timer
+                if (debounceRef.current) {
+                    clearTimeout(debounceRef.current);
+                }
+
+                // Start new timer for 2 seconds
+                if (keyObject === "codiceSDI" && mainState.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa !== "") {
+                    console.log("cciciicicicic");
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"Codice univoco o SDI":true}}) );
+                    debounceRef.current = setTimeout(() => {
+                        console.log("debounce");
+                        setOpenModalVerifica &&  setOpenModalVerifica(true);
+                        
+                        validationSDI(dataValidation.max, dataValidation.validation, val,false);
+                    }, 1500);
+                }
+                //setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
+                hendleOnMouseOut(e);
+                setDatiFatturazione((prevState: DatiFatturazione) =>{
+                   
+                    const newValue = {[keyObject]:val};
+                    const newState = {...prevState, ...newValue};
+                    return newState;
+                } );}}
         />
    
        
