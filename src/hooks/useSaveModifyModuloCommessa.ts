@@ -79,7 +79,7 @@ function useSaveModifyModuloCommessa({
                 setIsObbligatorioLayout(res.data);
                 await getCommessaObbligatoriListaV2(token, profilo.nonce).then((response)=>{
                     let obbligatori = response.data.lista;
-                    obbligatori = obbligatori.map(el => {
+                    obbligatori = obbligatori?.map(el => {
                         if(!el.valoriRegione){
                             el.valoriRegione = [];
                         }
@@ -306,7 +306,12 @@ function useSaveModifyModuloCommessa({
     const onAvantiButton = () =>{
         if(isAnyValueOfModuloEqualNull() && isEditAllow && isObbligatorioLayout){
             setErrorAnyValueIsEqualNull(true);
-            setOpenModalInfo({open:true, sentence:`Errore: alcuni campi contengono valori non corretti.`,buttonIsVisible:false,icon:ErrorIcon});
+            setOpenModalInfo({
+                open:true, 
+                sentence:`Attenzione!, tutti i campi del modulo commessa vanno valorizzati, 0 è un valore ammesso.
+                         (esempio: se non si intende inviare notifiche AR sul territorio internazionale inserire 0)`,
+                buttonIsVisible:false,icon:ErrorIcon
+            });
         }else{
             clickOnIndietroAvanti.current = "AVANTI";
             if(isEditAllow && !isObbligatorioLayout){
@@ -519,7 +524,12 @@ function useSaveModifyModuloCommessa({
             if(isAnyValueOfModuloEqualNull() && isEditAllow){
                 console.log("ciao3");
                 setErrorAnyValueIsEqualNull(true);
-                setOpenModalInfo({open:true, sentence:`Errore: alcuni campi contengono valori non corretti.`,buttonIsVisible:false,icon:ErrorIcon});
+                setOpenModalInfo({
+                    open:true, 
+                    sentence:`Attenzione!, tutti i campi del modulo commessa vanno valorizzati, 0 è un valore ammesso.
+                            (esempio: se non si intende inviare notifiche AR sul territorio internazionale inserire 0)`,
+                    buttonIsVisible:false,icon:ErrorIcon
+                });
             }else{
                 console.log("ciao4");
                 if(!isEditAllow){
