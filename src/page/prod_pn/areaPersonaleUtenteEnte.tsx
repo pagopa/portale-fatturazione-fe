@@ -249,8 +249,6 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                 }).catch(err => {
                     setOpenModalLoading(false);
                     setErrorAlert({error:err.response.status,message:err.response.data.detail});
-                    //handleModifyMainState({apiError:err.response.data.detail});
-                    //manageError(err,dispatchMainState);
                 });
             }else{
                 // 1 - ed è un utente SELFCARE
@@ -265,13 +263,13 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                                 anno:new Date().getFullYear(),
                                 datiFatturazioneNotCompleted:false
                             });
-                            navigate(PathPf.MODULOCOMMESSA);
+                            //navigate(PathPf.MODULOCOMMESSA);
                         }else{
                             handleModifyMainState({
                                 statusPageDatiFatturazione:'immutable',
                                 datiFatturazioneNotCompleted:false
                             });
-                            navigate(PathPf.LISTA_COMMESSE);
+                            // navigate(PathPf.LISTA_COMMESSE);
                         }
                     }).catch(err => {
                         setOpenModalLoading(false);
@@ -308,12 +306,10 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                 }).catch(err =>{
                     setOpenModalLoading(false);
                     setErrorAlert({error:err.response.status,message:err.response.data.detail});
-                    //manageError(err,dispatchMainState);
                 });
                 
             }else{
-                // 2 - ED è UN UTENTE SELFCARE
-                        
+                // 2 - ED è UN UTENTE SELFCARE   
                 await insertDatiFatturazione(body, token,profilo.nonce).then(() =>{
                     setOpenModalLoading(false);
                     if(mainState.inserisciModificaCommessa === 'INSERT'){
@@ -324,21 +320,19 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                             mese:new Date().getMonth()+2,
                             anno:new Date().getFullYear(),
                             datiFatturazioneNotCompleted:false
-                        });
-                                
-                        navigate(PathPf.MODULOCOMMESSA);
+                        });         
+                        // navigate(PathPf.MODULOCOMMESSA);
                     }else{
                         handleModifyMainState({
                             statusPageDatiFatturazione:'immutable',
                             datiFatturazione:true,
                             datiFatturazioneNotCompleted:false
                         });
-                        navigate(PathPf.LISTA_COMMESSE);
+                        // navigate(PathPf.LISTA_COMMESSE);
                     }  
                 }).catch(err =>{
                     setOpenModalLoading(false);
                     setErrorAlert({error:err.response.status,message:err.response.data.detail});
-                    //manageError(err,dispatchMainState);
                 }); 
                         
             } 
@@ -365,7 +359,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                 || datiFatturazione.codiceSDI === '' || datiFatturazione.codiceSDI === null
     );
 
-    console.log({statusBottonConferma,ifAnyTextAreaIsEmpty});
+
     if(loadingData){
         return(
             <SuspenseDatiFatturazione></SuspenseDatiFatturazione>

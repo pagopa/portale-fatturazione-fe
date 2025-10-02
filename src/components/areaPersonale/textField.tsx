@@ -235,7 +235,18 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
     }else if(mainState.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa !== ''){
         makeTextInputDisable = false;
     }
-    console.log({errorValidation,datiFatturazione});
+
+    let maxChar = 0;
+
+    if(keyObject === 'cup'){
+        maxChar = 15;
+    }else if(keyObject ==='idDocumento'){
+        maxChar = 20;
+    }else if(keyObject === 'codCommessa'){
+        maxChar = 100;
+    }else if(keyObject === "codiceSDI"){
+        maxChar = 7;
+    }
 
     const debounceRef = useRef<NodeJS.Timeout | null>(null);
     return (
@@ -248,6 +259,7 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
             disabled={makeTextInputDisable}
             value={value}
             autoComplete='off'
+            inputProps={{ maxLength: maxChar }} 
             error={(keyObject === "idDocumento" &&  datiFatturazione.idDocumento === '' && datiFatturazione.cup !== '') ? true : errorValidation}
             onChange={(e:React.ChangeEvent<HTMLInputElement>)=>{
                 console.log({onchange:e.target.value});
