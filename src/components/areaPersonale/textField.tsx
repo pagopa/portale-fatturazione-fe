@@ -64,9 +64,9 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
 */
     //logica aggiunta pe lo SDI 19/11 start
 
-    const sdiIsValid = async(isFirstRender=false) =>{
+    const sdiIsValid = async(newSdi,isFirstRender=false) =>{
         if(profilo.auth === 'PAGOPA'){
-            await getValidationCodiceSdi(token,profilo.nonce,{idEnte:profilo.idEnte,codiceSDI:datiFatturazione.codiceSDI})
+            await getValidationCodiceSdi(token,profilo.nonce,{idEnte:profilo.idEnte,codiceSDI:isFirstRender?datiFatturazione.codiceSDI:newSdi})
                 .then((res)=>{
              
                     setOpenModalVerifica && setOpenModalVerifica(false);
@@ -85,7 +85,7 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
                     setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
                 });
         }else{
-            await getValidationCodiceSdiEnte(token,profilo.nonce,{codiceSDI:datiFatturazione.codiceSDI})
+            await getValidationCodiceSdiEnte(token,profilo.nonce,{codiceSDI:isFirstRender?datiFatturazione.codiceSDI:newSdi})
                 .then((res)=>{
                     setOpenModalVerifica && setOpenModalVerifica(false);
                     setErrorValidation(false);
@@ -150,7 +150,7 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
         }).required().validate(input)
             .then(()=>{
                 console.log("EEEEEEEEEE");
-                sdiIsValid(isFirstRender); 
+                sdiIsValid(input,isFirstRender); 
             }).catch(() =>{
                 setErrorValidation(true);
                 if(!isFirstRender){
