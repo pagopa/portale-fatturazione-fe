@@ -246,6 +246,8 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
         maxChar = 100;
     }else if(keyObject === "codiceSDI"){
         maxChar = 7;
+    }else if(keyObject === "pec"){
+        maxChar = 100;
     }
 
     const debounceRef = useRef<NodeJS.Timeout | null>(null);
