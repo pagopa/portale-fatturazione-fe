@@ -308,8 +308,7 @@ function useSaveModifyModuloCommessa({
             setErrorAnyValueIsEqualNull(true);
             setOpenModalInfo({
                 open:true, 
-                sentence:`Attenzione!, tutti i campi del modulo commessa vanno valorizzati, 0 è un valore ammesso.
-                         (esempio: se non si intende inviare notifiche AR sul territorio internazionale inserire 0)`,
+                sentence:`Tutti i campi del modulo commessa vanno valorizzati, 0 è un valore ammesso.`,
                 buttonIsVisible:false,icon:ErrorIcon
             });
         }else{
@@ -526,8 +525,7 @@ function useSaveModifyModuloCommessa({
                 setErrorAnyValueIsEqualNull(true);
                 setOpenModalInfo({
                     open:true, 
-                    sentence:`Attenzione!, tutti i campi del modulo commessa vanno valorizzati, 0 è un valore ammesso.
-                            (esempio: se non si intende inviare notifiche AR sul territorio internazionale inserire 0)`,
+                    sentence:`Tutti i campi del modulo commessa vanno valorizzati, 0 è un valore ammesso.`,
                     buttonIsVisible:false,icon:ErrorIcon
                 });
             }else{
