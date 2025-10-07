@@ -120,7 +120,8 @@ export interface DataProps {
     formatDate: string,
     mainState:MainState,
     setDatiFatturazione:any,
-    datiFatturazione:DatiFatturazione
+    datiFatturazione:DatiFatturazione,
+    setStatusButtonConferma:(prev:any) => void
 }
 
 export interface Email {
@@ -143,7 +144,8 @@ export interface StateEnableConferma {
     'PEC':boolean,
     'ID Documento':boolean,
     "Codice Commessa/Convenzione":boolean,
-    'Codice univoco o SDI':boolean
+    'Codice univoco o SDI':boolean,
+    "dataDocumento":boolean,
 }
 
 

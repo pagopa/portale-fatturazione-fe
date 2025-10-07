@@ -11,13 +11,25 @@ import { _YupEmail} from '../../validations/email/index';
 
 const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
 
-    const {status, arrElement, setData,datiFatturazione, mainState} = props;
+    const {status, arrElement, setData,datiFatturazione,mainState} = props;
     const [element, setElement] = useState('');
     const [validation, setValidation] = useState(false);
-
+    //FORSE DA ELIMINARE
+    /*
     useEffect(()=>{
         setValidation(false);
     },[mainState]);
+*/
+
+    useEffect(()=>{
+        if(mainState.datiFatturazione){
+            hendleOnMouseOut();
+        }else{
+            setValidation(true);
+        }
+       
+    },[]);
+
 
     const handleSubmit = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
@@ -32,11 +44,11 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
         }  
     };
  
-    const hendleOnMouseOut = (e: React.ChangeEvent<HTMLInputElement>) =>{
-        e.persist();
-        const emailAlreadyExist = arrElement.map(obj => Object.values(obj)).flat().every(el => el !== e.target.value);
-        _YupEmail.validate(e.target.value).then(( )=>{
-            if(arrElement.length === 0 && e.target.value === ''){
+    const hendleOnMouseOut = (e?: React.ChangeEvent<HTMLInputElement>) =>{
+        e?.persist();
+        const emailAlreadyExist = arrElement.map(obj => Object.values(obj)).flat().every(el => el !== e?.target.value);
+        _YupEmail.validate(e?.target.value|| "").then(( )=>{
+            if(arrElement.length === 0 && (e?.target.value||"") === ''){
                 setValidation(true);
             }else if(!emailAlreadyExist){
                 setValidation(true);
@@ -102,7 +114,10 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
                         hendleOnMouseOut(e);
                     }}
                     disabled={dynamicInsertDisable}
-                    error={validation}  
+                    error={
+                        (validation && status === "mutable" && datiFatturazione.tipoCommessa !== "") ||
+                        (status === "mutable" && datiFatturazione.tipoCommessa !== "" && arrElement.length === 0 && element === "")
+                    }  
                 />
                 <div className='d-flex align-items-center'>
                     <Button

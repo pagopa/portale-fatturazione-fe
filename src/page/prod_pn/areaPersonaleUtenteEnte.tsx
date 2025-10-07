@@ -82,6 +82,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
         contractCodiceSDI:null
 
     });
+
             
     // state creato per il tasto conferma , abilitato nel caso in cui tutti values sono true
     const [statusBottonConferma, setStatusButtonConferma] = useState<StateEnableConferma>({
@@ -90,9 +91,9 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
         'PEC':false,
         'ID Documento':false,
         "Codice Commessa/Convenzione":false,
-        "Codice univoco o SDI":false
+        "Codice univoco o SDI":false,
+        "dataDocumento":false,
     });
-    console.log({statusBottonConferma});
             
     useEffect(()=>{
         if(enti){

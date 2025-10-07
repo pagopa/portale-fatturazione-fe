@@ -1,6 +1,5 @@
 import '../../style/areaPersonaleUtenteEnte.css';
 import { Box, InputLabel, Typography, Checkbox, FormControlLabel, FormControl } from '@mui/material';
-import { red } from '@mui/material/colors';
 import RadioComponent from './radio';
 import DataComponent from './data';
 import DynamicInsert from './dynamicInsert';
@@ -145,6 +144,7 @@ const TabAreaPersonaleUtente = ({mainState,datiFatturazione,setDatiFatturazione,
                                     mainState={mainState}
                                     datiFatturazione={datiFatturazione}
                                     setDatiFatturazione={setDatiFatturazione}
+                                    setStatusButtonConferma={setStatusButtonConferma}
                                 />
                             </div>
                             {/* data notifica end */}

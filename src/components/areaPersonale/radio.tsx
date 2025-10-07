@@ -13,7 +13,6 @@ const  RadioComponent: React.FC<RadioComponentProps> = (props) => {
     let makeSplitRadioDisable = true;
     if(label ==='Split Payment'){
         if(mainState.statusPageDatiFatturazione === 'immutable'){
-            console.log("w1");
             makeSplitRadioDisable = true;
         }else if(mainState.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa === ''){
             makeSplitRadioDisable = true;
@@ -32,7 +31,7 @@ const  RadioComponent: React.FC<RadioComponentProps> = (props) => {
            
         }
     }
-    console.log({label,DD:datiFatturazione.tipoCommessa,makeSplitRadioDisable,MAIN:mainState.statusPageDatiFatturazione});
+
     return (
         <FormControl>
             <FormLabel id="demo-row-radio-buttons-group-label">{label}</FormLabel>
