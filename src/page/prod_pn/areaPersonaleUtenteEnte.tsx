@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext} from 'react';
-import { manageError, redirect } from '../../api/api';
+import { manageError, managePresaInCarico, redirect } from '../../api/api';
 import { useNavigate} from 'react-router';
 import '../../style/areaPersonaleUtenteEnte.css';
 import { Button } from '@mui/material';
@@ -247,6 +247,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                         statusPageDatiFatturazione:'immutable',
                     });
                     getDatiFatPagoPa();
+                    managePresaInCarico("SAVE_DATIFATTURAZIONE_OK",dispatchMainState);
                 }).catch(err => {
                     setOpenModalLoading(false);
                     setErrorAlert({error:err.response.status,message:err.response.data.detail});
@@ -273,6 +274,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                             // navigate(PathPf.LISTA_COMMESSE);
                         }
                         getDatiFat();
+                        managePresaInCarico("SAVE_DATIFATTURAZIONE_OK",dispatchMainState);
                     }).catch(err => {
                         setOpenModalLoading(false);
                         setErrorAlert({error:err.response.status,message:err.response.data.detail});
@@ -305,6 +307,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                         datiFatturazione:true
                     });
                     getDatiFatPagoPa();
+                    managePresaInCarico("SAVE_DATIFATTURAZIONE_OK",dispatchMainState);
                 }).catch(err =>{
                     setOpenModalLoading(false);
                     setErrorAlert({error:err.response.status,message:err.response.data.detail});
@@ -331,6 +334,8 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                             datiFatturazioneNotCompleted:false
                         });
                         // navigate(PathPf.LISTA_COMMESSE);
+                        getDatiFat();
+                        managePresaInCarico("SAVE_DATIFATTURAZIONE_OK",dispatchMainState);
                     }  
                 }).catch(err =>{
                     setOpenModalLoading(false);

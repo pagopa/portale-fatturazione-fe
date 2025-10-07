@@ -45,6 +45,8 @@ i18n.use(Backend)
                         "CREAT_KEY_OK":"Creazione avvenuta con successo",
                         'NO_INSERIMENTO_COMMESSA':"Al momento non è possibile inserire il modulo commessa. Contattare l'assistenza",
                         'SAVE_COMMESSA_OK':"Modulo commessa inserito",
+                        'SAVE_DATIFATTURAZIONE_OK':"Dati di fatturazione inseriti ",
+
 
 
                     }
