@@ -272,6 +272,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                             });
                             // navigate(PathPf.LISTA_COMMESSE);
                         }
+                        getDatiFat();
                     }).catch(err => {
                         setOpenModalLoading(false);
                         setErrorAlert({error:err.response.status,message:err.response.data.detail});
@@ -367,7 +368,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
         );
                 
     }
-    console.log({RRRR:!enableDisableConferma || ifAnyTextAreaIsEmpty});
+
     return (
                 
         <div >

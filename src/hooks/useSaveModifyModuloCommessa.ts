@@ -441,7 +441,6 @@ function useSaveModifyModuloCommessa({
     };
 
     const handleChangeTotale_Ar_890_regione = (e, tipoNotifiche, element,isCallonChangeModuloValue=false) => {
-        console.log({e, tipoNotifiche, element});
         const value = e.target.value !== "" ? Number(e.target.value) : null;
 
         setDataModuli(prev => {
@@ -517,11 +516,9 @@ function useSaveModifyModuloCommessa({
     
 
     const onHandleSalvaModificaButton =  () => {
-        console.log("ciao");
         try{
-            console.log("ciao2");
             if(isAnyValueOfModuloEqualNull() && isEditAllow){
-                console.log("ciao3");
+           
                 setErrorAnyValueIsEqualNull(true);
                 setOpenModalInfo({
                     open:true, 
@@ -529,30 +526,28 @@ function useSaveModifyModuloCommessa({
                     buttonIsVisible:false,icon:ErrorIcon
                 });
             }else{
-                console.log("ciao4");
+           
                 if(!isEditAllow){
-                    console.log("ciao5");
+                 
                     setisEditAllow(true);
                     handleModifyMainState({statusPageInserimentoCommessa:'mutable'});
                     setOpenBasicModal_DatFat_ModCom("mutable");
                 }else{
-                    console.log("ciao6");
+                
                     if(((coperturaAr||0) < 100 || (copertura890||0) < 100) && (profiloViewRegione === 3  || profiloViewRegione === 4)){
-                        console.log("ciao7");
+                    
                         setOpenModalInfo({open:true, sentence:`La percentale di copertura NON raggiunge il 100%. Le notifiche restanti  saranno integrate sulle regioni Italiane in base allla percentuale di residenza fornite tramite dati ISTAT.`,buttonIsVisible:true,labelButton:"Prosegui",actionButton:hendleInsertModifyModuloCommessa});
                     }else if(((coperturaAr||0) < 100 || (copertura890||0) < 100) && (profiloViewRegione === 1  || profiloViewRegione === 2)){
-                        console.log("ciao8");
+                     
                         setOpenModalInfo({open:true, sentence:`La percentale di copertura NON raggiunge il 100%. Le notifiche restanti  saranno integrate sulla regione di appartenenza.`,buttonIsVisible:true,labelButton:"Prosegui",actionButton:hendleInsertModifyModuloCommessa});
                     }else{
-                        console.log("ciao9");
                         hendleInsertModifyModuloCommessa();
-                        console.log("ciao10");
                     }
                     setErrorAnyValueIsEqualNull(false);
                 }
             } 
         }catch(err){
-            console.log({maledetto:err});
+            console.log(err);
         }
         
     };

@@ -523,7 +523,6 @@ const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open,
                                     >
                                         {/*Righe aggiunte il 12/06/25 , Nascondere in inserimento Ritardo nella consegna */}
                                         {tipoContestazioni.map((el) => {
-                                            console.log({el});
                                             if(
                                                 el.id === 1 && el.tipo === 'Ritardo nella consegna' && stato === 1 ||
                                                 el.id === 9 && el.tipo === 'Mancato rispetto degli SLA (mera segnalazione)' && stato === 1 ||

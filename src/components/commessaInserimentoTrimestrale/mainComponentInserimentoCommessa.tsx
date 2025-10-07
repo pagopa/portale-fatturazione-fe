@@ -36,7 +36,6 @@ const MainInserimentoModuloCommessa = ({
     
 }) => {
 
-    console.log({REGIONI:activeCommessa?.valoriRegione});
 
     const sortedRegioni = useMemo(() => {
         if (!activeCommessa?.valoriRegione) return [];
@@ -301,7 +300,6 @@ const RegioneRow = React.memo(({
     onDeleteSingleRegione:(el:string)=>void
 }) => {
 
-    console.log("RENDER");
     return (
         <div
             key={element.istatRegione}

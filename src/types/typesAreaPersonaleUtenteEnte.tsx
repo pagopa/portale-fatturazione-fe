@@ -121,7 +121,7 @@ export interface DataProps {
     mainState:MainState,
     setDatiFatturazione:any,
     datiFatturazione:DatiFatturazione,
-    setStatusButtonConferma:(prev:any) => void
+    setStatusButtonConferma:any
 }
 
 export interface Email {

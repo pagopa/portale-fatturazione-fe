@@ -106,7 +106,6 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
         await getListaCommessaFilteredV2(token , profilo.nonce,valueAnno).then((res:ResponseGetListaCommesse)=>{
             //const finalData = fixResponseForDataGrid(res.data);
             const finalData = fixResponseForDataGridRollBack(res.data);
-            console.log({finalData});
             setGridData(finalData);
         }).catch((err:ManageErrorResponse)=>{
             setGridData([]);

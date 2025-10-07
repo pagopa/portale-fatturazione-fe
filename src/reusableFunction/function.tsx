@@ -76,7 +76,7 @@ export const fixResponseForDataGrid = (arr:any[]):any =>{
         });
         return result;
     }catch(err){
-        console.log({mledetto:err});
+        console.log(err);
     }
     
 };
@@ -218,9 +218,6 @@ export const formatDateToValidation = (date:any) => {
 
 
 export const fixResponseForDataGridRollBack = (arr:any[]):any =>{
-   
-    console.log({arr});
-    // Convert to desired array structure and sort by quarter
  
     try{
         return arr.map((el:any)=> {
@@ -258,7 +255,7 @@ export const fixResponseForDataGridRollBack = (arr:any[]):any =>{
        
     
     }catch(err){
-        console.log({mledetto:err});
+        console.log({err});
     }
   
     return [];

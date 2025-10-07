@@ -39,38 +39,42 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
     const profilo =  mainState.profilo;
 
 
+
+   
+
     useEffect(()=>{
         //datiFatturazione.codiceSDI !== null &&
         if(mainState.statusPageDatiFatturazione === "mutable"){
             if(keyObject === "codiceSDI"){
                 validationSDI(dataValidation.max, dataValidation.validation, (datiFatturazione.codiceSDI||""), true);
             }else{
-                console.log(2);
                 hendleOnMouseOut();
+                /*
                 if(((keyObject === "cup" && datiFatturazione.cup !== "")  || (keyObject === "codCommessa"&& datiFatturazione.codCommessa !== "")) && datiFatturazione.idDocumento === ""){
                     setDatiFatturazione((prevState: DatiFatturazione) =>{
                         const newValue = {idDocumento:"--"};
                         const newState = {...prevState, ...newValue};
                         return newState;
                     } );
-                }
+                }*/
             }
             
         }
     },[mainState.statusPageDatiFatturazione]);
     
-
-    /*commentato il 01/10/25 spostata la logica sull'onchange
     useEffect(()=>{
         
-        if(keyObject === 'idDocumento' && datiFatturazione.idDocumento === '' && datiFatturazione.cup !== ''){
+        if(keyObject === 'idDocumento' && datiFatturazione.idDocumento === '' && (datiFatturazione.cup !== '' || datiFatturazione.codCommessa !== "" && mainState.statusPageDatiFatturazione === "mutable" && datiFatturazione.tipoCommessa !== "") ){
             setErrorValidation(true);
             setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
-        }else if(keyObject === 'idDocumento' && datiFatturazione.idDocumento === '' && datiFatturazione.cup === ''){
+        }else if(keyObject === 'idDocumento' && datiFatturazione.idDocumento === '' && datiFatturazione.cup === '' && datiFatturazione.codCommessa === ""&& mainState.statusPageDatiFatturazione === "mutable" && datiFatturazione.tipoCommessa !== ""){
             setErrorValidation(false);
             setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
         }
-    },[datiFatturazione.cup]);
+    },[datiFatturazione.cup,datiFatturazione.codCommessa]);
+
+    /*commentato il 01/10/25 spostata la logica sull'onchange
+   
 */
     //logica aggiunta pe lo SDI 19/11 start
 
@@ -143,7 +147,6 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
             message: "Non è possibile inserire caratteri speciali"
         }).required().validate(input)
             .then(()=>{
-                console.log("EEEEEEEEEE");
                 sdiIsValid(input,isFirstRender); 
             }).catch(() =>{
                 setErrorValidation(true);
@@ -151,12 +154,10 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
                     setOpenModalVerifica && setOpenModalVerifica(false);
                 }
                 setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
-                console.log({SDI:"KO"});
             } );
     }; 
     
     const validationTextAreaEmail = (element:string)=>{
-        console.log({element, keyObject});
         _YupPec.validate(element)
             .then(()=>{
                 setErrorValidation(false);
@@ -172,8 +173,14 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
         YupString.max(max, validation).matches(/^[a-zA-Z0-9/._\-\s]*$/,  {
             message: "Non è possibile inserire caratteri speciali"
         }).validate(input).then(()=>{
-            setErrorValidation(false);
-            setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+            if( ((datiFatturazione.cup !== ""  || datiFatturazione.codCommessa !== "") && input === "")){
+                setErrorValidation(true);
+                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
+            }else{
+                setErrorValidation(false);
+                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+            }
+            
         }).catch(() =>{
             setErrorValidation(true);
             setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
@@ -195,16 +202,29 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
     // a fine refactoring cambiare nome alla funzione
     const hendleOnMouseOut = (e?: React.ChangeEvent<HTMLInputElement>) =>{
         e?.persist();
-        if(keyObject === 'pec'){
-            validationTextAreaEmail((e?.target.value||datiFatturazione.pec));
-        }else if(keyObject ==='idDocumento'){
-            console.log({E:e?.target.value,D:datiFatturazione.idDocumento});
-            validationIdDocumento(dataValidation.max,dataValidation.validation ,(e?.target.value||datiFatturazione.idDocumento));
-        }else if(keyObject === 'codCommessa'){
-            validationCodCommessa(dataValidation.max,dataValidation.validation ,(e?.target.value||datiFatturazione.codCommessa));
-        }else if(keyObject === 'cup'){
-            validationTextArea(dataValidation.max,dataValidation.validation ,(e?.target.value||datiFatturazione.cup));
+        if(e === undefined){
+            if(keyObject === 'pec'){
+                validationTextAreaEmail(datiFatturazione.pec);
+            }else if(keyObject ==='idDocumento'){
+              
+                validationIdDocumento(dataValidation.max,dataValidation.validation ,datiFatturazione.idDocumento);
+            }else if(keyObject === 'codCommessa'){
+                validationCodCommessa(dataValidation.max,dataValidation.validation ,datiFatturazione.codCommessa);
+            }else if(keyObject === 'cup'){
+                validationTextArea(dataValidation.max,dataValidation.validation ,datiFatturazione.cup);
+            }
+        }else{
+            if(keyObject === 'pec'){
+                validationTextAreaEmail(e?.target.value);
+            }else if(keyObject ==='idDocumento'){
+                validationIdDocumento(dataValidation.max,dataValidation.validation ,e?.target.value);
+            }else if(keyObject === 'codCommessa'){
+                validationCodCommessa(dataValidation.max,dataValidation.validation ,e?.target.value);
+            }else if(keyObject === 'cup'){
+                validationTextArea(dataValidation.max,dataValidation.validation ,e?.target.value);
+            }
         }
+       
         /*  secondo me da eliminare
         if(keyObject ==='idDocumento' && datiFatturazione.idDocumento === '' && datiFatturazione.cup !== ''){
             setErrorValidation(true);
@@ -234,7 +254,7 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
     }else if(keyObject === "pec"){
         maxChar = 100;
     }
-    console.log({errorValidation,keyObject});
+  
     return (
         <TextField
             required={required}
@@ -248,8 +268,6 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
             inputProps={{ maxLength: maxChar }} 
             error={errorValidation && datiFatturazione.tipoCommessa !== ""}
             onChange={(e:React.ChangeEvent<HTMLInputElement>)=>{
-                console.log({onchange:e.target.value});
-
                 let val = e.target.value;
                 if(keyObject === "codiceSDI"){
                     val = val.toUpperCase();
@@ -268,9 +286,9 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
                 }
        
                 hendleOnMouseOut(e);
-                if(((keyObject === "cup" && e.target.value !== "")  || (keyObject === "codCommessa"&& e.target.value !== "")) && datiFatturazione.idDocumento === ""){
+                /* if(((keyObject === "cup" && e.target.value !== "")  || (keyObject === "codCommessa"&& e.target.value !== "")) && datiFatturazione.idDocumento === ""){
                     setDatiFatturazione((prevState: DatiFatturazione) =>{
-                        const newValue = {[keyObject]:val,idDocumento:"--"};
+                        const newValue = {[keyObject]:val};
                         const newState = {...prevState, ...newValue};
                         return newState;
                     } );
@@ -279,17 +297,17 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
                      (keyObject === "codCommessa" && e.target.value === "" && datiFatturazione.cup === "")) &&
                       datiFatturazione.idDocumento === "--"){
                     setDatiFatturazione((prevState: DatiFatturazione) =>{
-                        const newValue = {[keyObject]:val,idDocumento:""};
-                        const newState = {...prevState, ...newValue};
-                        return newState;
-                    } );
-                }else{
-                    setDatiFatturazione((prevState: DatiFatturazione) =>{
                         const newValue = {[keyObject]:val};
                         const newState = {...prevState, ...newValue};
                         return newState;
                     } );
-                }
+                }else{}*/
+                setDatiFatturazione((prevState: DatiFatturazione) =>{
+                    const newValue = {[keyObject]:val};
+                    const newState = {...prevState, ...newValue};
+                    return newState;
+                } );
+                
             }}
         />
    

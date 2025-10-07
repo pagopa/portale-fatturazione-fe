@@ -24,20 +24,20 @@ const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate,mainState
 
     const [error,setError] = useState(false);
 
- 
     const onChangeHandler = (e) => {
-        
+    
         try {
             if (e) {
                 const year = e.getFullYear();
-                console.log({year});
+            
                 if (year < 2023 || year > 2100) {
                     setError(true);
                     return;
                 }else{
                     const data: string = new Date(e).toISOString();
+                 
                     setDatiFatturazione({...datiFatturazione,...{dataDocumento:data}});
-                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{dataDocumento:false}}) );
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, dataDocumento:false}) );
                     setError(false);
                 }
             }
