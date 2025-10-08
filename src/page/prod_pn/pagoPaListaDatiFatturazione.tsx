@@ -120,7 +120,14 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
         setGetListaLoading(true);
         await listaDatiFatturazionePagopa(body ,token,profilo.nonce)
             .then((res)=>{
-                setGridData(res.data);
+                console.log('ciao');
+                const editedData = res.data.map((el)=>{
+                    return Object.fromEntries(
+                        Object.entries(el).map(([key, value]) => [key, (value === null || value === "") ? "--" : value])
+                    );
+                });
+                console.log({editedData});
+                setGridData(editedData);
                 setGetListaLoading(false);
                 isInitialRender.current = false;
             })
@@ -230,10 +237,10 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
         { field: 'cup', headerName: 'CUP', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'splitPayment', headerName: 'Split payment', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
         { field: 'idDocumento', headerName: 'ID Documento', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'dataDocumento', headerName: 'Data Documento', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',valueFormatter: (value:any) =>  value.value !== null ? new Date(value.value).toLocaleString().split(',')[0] : ''},
+        { field: 'dataDocumento', headerName: 'Data Documento', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',valueFormatter: (value:any) =>  ( value.value !== null &&  value.value !== "--") ? new Date(value.value).toLocaleString().split(',')[0] : '--'},
         { field: 'codCommessa', headerName: 'Cod. Commessa', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'dataCreazione', headerName: 'Data Primo Acc.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',valueFormatter: (value:{value:string}) =>  value.value !== null ? new Date(value.value).toLocaleString().split(',')[0] : ''},
-        { field: 'dataModifica', headerName: 'Data Ultimo Acc.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',valueFormatter: (value:{value:string}) =>  value.value !== null ? new Date(value.value).toLocaleString().split(',')[0] : '' },
+        { field: 'dataCreazione', headerName: 'Data Primo Acc.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',valueFormatter: (value:{value:string}) => ( value.value !== null &&  value.value !== "--") ? new Date(value.value).toLocaleString().split(',')[0] : '--'},
+        { field: 'dataModifica', headerName: 'Data Ultimo Acc.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',valueFormatter: (value:{value:string}) =>  ( value.value !== null &&  value.value !== "--") ? new Date(value.value).toLocaleString().split(',')[0] : '--' },
         {field: 'action', headerName: '',sortable: false,width:70,headerAlign: 'left',disableColumnMenu :true,renderCell: (() => ( <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }}/>)),}
     ];
 
@@ -352,20 +359,26 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                 }
             </div>
             <div className="mt-1 mb-5" style={{ width: '100%'}}>
-                <DataGrid sx={{
-                    height:'400px',
-                    '& .MuiDataGrid-virtualScroller': {
-                        backgroundColor: 'white',
-                    }
-                }}
-                pageSizeOptions={[10, 25, 50,100]}
-                onPaginationModelChange={(e)=> onChangePageOrRowGrid(e)}
-                paginationModel={infoPageListaDatiFat}
-                rows={gridData} 
-                columns={columns}
-                getRowId={(row) => row.key}
-                onRowClick={handleEvent}
-                onCellClick={handleOnCellClick}
+                <DataGrid 
+                    sx={{
+                        height:'400px',
+                        '& .MuiDataGrid-virtualScroller': {
+                            backgroundColor: 'white',
+                        },
+                        "& .MuiDataGrid-row": {
+                            borderTop: "4px solid #F2F2F2",
+                            borderBottom: "2px solid #F2F2F2",
+                        }
+                    }}
+                    rowHeight={80}
+                    pageSizeOptions={[10, 25, 50,100]}
+                    onPaginationModelChange={(e)=> onChangePageOrRowGrid(e)}
+                    paginationModel={infoPageListaDatiFat}
+                    rows={gridData} 
+                    columns={columns}
+                    getRowId={(row) => row.key}
+                    onRowClick={handleEvent}
+                    onCellClick={handleOnCellClick}
                 />
             </div>
             <ModalLoading 
