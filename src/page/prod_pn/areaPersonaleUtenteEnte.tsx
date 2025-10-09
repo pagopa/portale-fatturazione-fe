@@ -257,28 +257,17 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                 await modifyDatiFatturazione(datiFatturazione, token,profilo.nonce)
                     .then(() =>{
                         setOpenModalLoading(false);
-                        if(mainState.inserisciModificaCommessa === 'INSERT'){
-                            handleModifyMainState({
-                                statusPageDatiFatturazione:'immutable',
-                                statusPageInserimentoCommessa:'mutable',
-                                mese:new Date().getMonth()+2,
-                                anno:new Date().getFullYear(),
-                                datiFatturazioneNotCompleted:false
-                            });
-                            //navigate(PathPf.MODULOCOMMESSA);
-                        }else{
-                            handleModifyMainState({
-                                statusPageDatiFatturazione:'immutable',
-                                datiFatturazioneNotCompleted:false
-                            });
-                            // navigate(PathPf.LISTA_COMMESSE);
-                        }
+                       
+                        handleModifyMainState({
+                            statusPageDatiFatturazione:'immutable',
+                            datiFatturazioneNotCompleted:false
+                        });
+                       
                         getDatiFat();
                         managePresaInCarico("SAVE_DATIFATTURAZIONE_OK",dispatchMainState);
                     }).catch(err => {
                         setOpenModalLoading(false);
                         setErrorAlert({error:err.response.status,message:err.response.data.detail});
-                        //manageError(err,dispatchMainState);
                     });
             }
         }else{
@@ -317,26 +306,15 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                 // 2 - ED è UN UTENTE SELFCARE   
                 await insertDatiFatturazione(body, token,profilo.nonce).then(() =>{
                     setOpenModalLoading(false);
-                    if(mainState.inserisciModificaCommessa === 'INSERT'){
-                        handleModifyMainState({
-                            statusPageDatiFatturazione:'immutable',
-                            datiFatturazione:true,
-                            statusPageInserimentoCommessa:'mutable',
-                            mese:new Date().getMonth()+2,
-                            anno:new Date().getFullYear(),
-                            datiFatturazioneNotCompleted:false
-                        });         
-                        // navigate(PathPf.MODULOCOMMESSA);
-                    }else{
-                        handleModifyMainState({
-                            statusPageDatiFatturazione:'immutable',
-                            datiFatturazione:true,
-                            datiFatturazioneNotCompleted:false
-                        });
-                        // navigate(PathPf.LISTA_COMMESSE);
-                        getDatiFat();
-                        managePresaInCarico("SAVE_DATIFATTURAZIONE_OK",dispatchMainState);
-                    }  
+                   
+                    handleModifyMainState({
+                        statusPageDatiFatturazione:'immutable',
+                        datiFatturazione:true,
+                        datiFatturazioneNotCompleted:false
+                    });
+                    getDatiFat();
+                    managePresaInCarico("SAVE_DATIFATTURAZIONE_OK",dispatchMainState);
+                     
                 }).catch(err =>{
                     setOpenModalLoading(false);
                     setErrorAlert({error:err.response.status,message:err.response.data.detail});
