@@ -174,7 +174,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                                             <Tooltip key={Math.random()} title={value === "--"?null:value}>
                                                                 <TableCell
                                                                     sx={cssFirstColum} 
-                                                                    align={i !== 0 ? "center":"right"}
+                                                                    align={i !== 0 ? "center":"left"}
                                                                     onClick={()=>{
                                                                         if(i === 0){
                                                                             handleClickOnGrid(element);
