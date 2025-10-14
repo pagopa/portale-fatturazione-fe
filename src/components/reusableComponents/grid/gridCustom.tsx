@@ -127,7 +127,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                             <TableCell key={Math.random()} align={el.align} width={el.width}>{el.label}</TableCell>
                                         );
                                     }else{
-                                        return <TableCell key={Math.random()}>{el}</TableCell>;
+                                        return <TableCell align="center" key={Math.random()}>{el}</TableCell>;
                                     }  
                                 })}
                             </TableRow>
@@ -158,15 +158,23 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                         return <RowContestazioni key={Math.random()} sliced={sliced}apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} headerNames={headerNames}></RowContestazioni>;
                                     }else{
                                         return (
-                                            <TableRow key={Math.random()}>
+                                            <TableRow sx={{
+                                                height: '80px',
+                                                borderTop: '4px solid #F2F2F2',
+                                                borderBottom: '2px solid #F2F2F2',
+                                                '&:hover': {
+                                                    backgroundColor: '#EDEFF1',
+                                                },
+                                            }}  key={Math.random()}>
                                                 {
                                                     Object.values(sliced).map((value:string|number, i:number)=>{
                                                         const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
                                                         const valueEl = (i === 0 && value?.toString().length > 50) ? value?.toString().slice(0, 50) + '...' : value;
                                                         return (
-                                                            <Tooltip key={Math.random()} title={value}>
+                                                            <Tooltip key={Math.random()} title={value === "--"?null:value}>
                                                                 <TableCell
                                                                     sx={cssFirstColum} 
+                                                                    align={i !== 0 ? "center":"right"}
                                                                     onClick={()=>{
                                                                         if(i === 0){
                                                                             handleClickOnGrid(element);

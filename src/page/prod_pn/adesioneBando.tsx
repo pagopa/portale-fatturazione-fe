@@ -173,9 +173,13 @@ const AdesioneBando = () => {
             </div>
             <div className="mt-1 mb-5" style={{ width: '100%'}}>
                 <DataGrid sx={{
-                    height:'500px',
+                    height:'400px',
                     '& .MuiDataGrid-virtualScroller': {
                         backgroundColor: 'white',
+                    },
+                    "& .MuiDataGrid-row": {
+                        borderTop: "4px solid #F2F2F2",
+                        borderBottom: "2px solid #F2F2F2",
                     }
                 }}
                 onPaginationModelChange={(e)=>{

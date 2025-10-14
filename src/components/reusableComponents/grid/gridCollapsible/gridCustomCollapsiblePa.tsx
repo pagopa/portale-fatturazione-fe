@@ -61,7 +61,7 @@ const CollapsibleTablePa = ({headerNames,page,setPage,rowsPerPage,setRowsPerPage
             <div style={{overflowX:'auto'}}>
                 <Card sx={{width: 'auto'}}  >
                     <TableContainer component={Paper}>
-                        <Table aria-label="collapsible table">
+                        <Table >
                             <TableHead sx={{backgroundColor:'#f2f2f2'}}>
                                 <TableRow>
                                     <TableCell padding="checkbox">

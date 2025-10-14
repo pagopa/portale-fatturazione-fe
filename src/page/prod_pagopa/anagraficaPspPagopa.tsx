@@ -156,11 +156,11 @@ const AnagraficaPsp:React.FC = () =>{
                         documentName:obj.name,
                         contractId2:obj.contractId,
                         yearQuarter:obj.yearQuarter,
-                        providerNames:obj.providerNames,
-                        pecMail:obj.pecMail,
-                        sdiCode:obj.sdiCode,
-                        abi:obj.abi,
-                        referenteFatturaMail:obj.referenteFatturaMail,
+                        providerNames:obj.providerNames||"--",
+                        pecMail:obj.pecMail||"--",
+                        sdiCode:obj.sdiCode||"--",
+                        abi:obj.abi||"--",
+                        referenteFatturaMail:obj.referenteFatturaMail||"--",
                         signedDate:new Date(obj.signedDate).toISOString().split('T')[0],
                     };
                 });

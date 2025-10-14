@@ -109,7 +109,7 @@ const PageTipologiaContratto :React.FC = () =>{
                 const result = {
                     idEnte:el.idEnte,
                     ragioneSociale:el.ragioneSociale,
-                    dataInserimento:el.dataInserimento ? new Date(el.dataInserimento).toLocaleString().split(',')[0] :'',
+                    dataInserimento:el.dataInserimento ? new Date(el.dataInserimento).toLocaleString().split(',')[0] :'--',
                     tipoContratto:el.tipoContratto
                 };
                 return result;

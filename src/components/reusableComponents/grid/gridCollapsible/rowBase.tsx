@@ -21,7 +21,15 @@ const RowBase = ({row,handleModifyMainState}) => {
     return(
         
         <TableBody sx={{minHeight:"100px"}}>
-            <TableRow  sx={{ '& > *': { borderBottom: 'unset' } }}>
+            <TableRow  sx={{
+                height: '80px',
+                borderTop: '4px solid #F2F2F2',
+                borderBottom: '2px solid #F2F2F2',
+                '&:hover': {
+                    backgroundColor: '#EDEFF1',
+                },
+                '& > *': { borderBottom: 'unset' }
+            }}>
                 <TableCell>
                    
                     <IconButton

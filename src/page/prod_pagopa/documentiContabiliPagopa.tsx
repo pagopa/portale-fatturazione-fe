@@ -297,8 +297,7 @@ const DocumentiContabili:React.FC = () =>{
         {name:"Numero",align:"center",id:5},
         {name:"Trimestre",align:"center",id:4},
         {name:"Data",align:"center",id:6},
-        {name:"Arrow",align:"center",id:7},
-        {name:"Arrow",align:"center",id:8}];
+        {name:"Arrow",align:"center",id:7}];
       
     return(
         <div className="mx-5">

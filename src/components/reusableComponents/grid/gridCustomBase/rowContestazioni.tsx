@@ -14,8 +14,12 @@ const RowContestazioni = ({sliced,handleClickOnGrid,apiGet,element,headerNames})
     return (
         <TableRow key={Math.random()}
             sx={{
-                borderTop:"4px solid #F2F2F2",
-                borderBottom: "2px solid #F2F2F2"
+                height: '80px',
+                borderTop: '4px solid #F2F2F2',
+                borderBottom: '2px solid #F2F2F2',
+                '&:hover': {
+                    backgroundColor: '#EDEFF1',
+                },
             }}>
             {
                 Object.values(sliced)?.map((value:any, i:number)=>{
