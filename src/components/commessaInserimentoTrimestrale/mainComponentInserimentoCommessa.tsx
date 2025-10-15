@@ -119,16 +119,88 @@ const MainInserimentoModuloCommessa = ({
                             }
                             <div>
                                 {sortedRegioni.map((element) => (
-                                    <RegioneRow
+                                    <div
                                         key={element.istatRegione}
-                                        element={element}
-                                        isEditAllow={isEditAllow}
-                                        errorAnyValueIsEqualNull={errorAnyValueIsEqualNull}
-                                        errorArRegioni={errorArRegioni}
-                                        handleChangeTotale_Ar_890_regione={handleChangeTotale_Ar_890_regione}
-                                        error890Regioni={error890Regioni}
-                                        onDeleteSingleRegione={onDeleteSingleRegione}
-                                    />
+                                        style={{
+                                            backgroundColor: element.obbligatorio === 1 ? "#ffffff" : "#F8F8F8",
+                                        }}
+                                    >
+                                        <Grid 
+                                            container
+                                            columns={12}>
+                                            <Grid
+                                                sx={{ display: "flex", justifyContent: "right", alignItems: "center" }}
+                                                item
+                                                xs={6}
+                                            >  <Grid container alignItems="center" key="header">
+                                                    <Grid sx={{ display: "flex", justifyContent: "right" }} item xs={10}>
+                                                        <Typography variant="h4" sx={{ fontWeight: "bold", textAlign: "center" }}>
+                                                            {element.regione}
+                                                        </Typography>
+                                                    </Grid>
+                                                    <Grid item xs={2} sx={{ textAlign: "right" }}>
+                                                        {element?.obbligatorio === 1 && (
+                                                            <Tooltip title="Regione di appartenenza">
+                                                                <IconButton>
+                                                                    <InfoIcon fontSize="medium" />
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                        )}
+                                                    </Grid>
+                                                </Grid></Grid>
+                                            <Grid
+                                                sx={ { display: "flex", justifyContent: "center", alignItems: "center" }}
+                                                item
+                                                xs={2}
+                                            >  <TextField
+                                                    key="ar"
+                                                    sx={{ backgroundColor: "#FFFFFF", width: "100px" }}
+                                                    error={errorArRegioni || (errorAnyValueIsEqualNull && element.ar === null)}
+                                                    disabled={!isEditAllow}
+                                                    onChange={(e) => handleChangeTotale_Ar_890_regione(e, "totaleAnalogicoARNaz", element)}
+                                                    size="small"
+                                                    value={element.ar === 0 ? 0 : element.ar || ""}
+                                                    InputProps={{ inputProps: { min: 0, style: { textAlign: "center" } } }}
+                                                /></Grid>
+                                            <Grid
+                                                sx={ { display: "flex", justifyContent: "center", alignItems: "center" }}
+                                                item
+                                                xs={2}
+                                            > <TextField
+                                                    key="890"
+                                                    sx={{ backgroundColor: "#FFFFFF", width: "100px" }}
+                                                    error={error890Regioni || (errorAnyValueIsEqualNull && element[890] === null)}
+                                                    disabled={!isEditAllow}
+                                                    onChange={(e) => handleChangeTotale_Ar_890_regione(e, "totaleAnalogico890Naz", element)}
+                                                    size="small"
+                                                    value={element[890] === 0 ? 0 : element[890] || ""}
+                                                    InputProps={{ inputProps: { min: 0, style: { textAlign: "center" } } }}
+                                                /></Grid>
+                                            <Grid
+                                                sx={ { display: "flex", justifyContent: "center", alignItems: "center" }}
+                                                item
+                                                xs={2}
+                                            > { isEditAllow ? (
+                                                    <IconButton
+                                                        key="delete"
+                                                        onClick={() => onDeleteSingleRegione(element.istatRegione)}
+                                                        aria-label="Delete"
+                                                        sx={{ color: "#FE6666" }}
+                                                        size="large"
+                                                    >
+                                                        <DeleteIcon />
+                                                    </IconButton>
+                                                ) : (
+                                                    <Chip
+                                                        key="chip"
+                                                        variant="outlined"
+                                                        sx={{ backgroundColor: element?.calcolato ? undefined : "#B5E2B4" }}
+                                                        label={element?.calcolato ? "Attribuito dal sistema" : "Inserita manualmente dall’aderente"}
+                                                    />
+                                                )}</Grid>
+                                        </Grid>
+                                        <hr />
+                                    </div>
                                 ))}
                             </div>
                             <hr></hr>

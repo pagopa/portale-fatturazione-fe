@@ -133,8 +133,9 @@ function useSaveModifyModuloCommessa({
         setLoadingData(true);
         await getDettaglioModuloCommessaV2(token,year,month, profilo.nonce)
             .then((response:{data:any})=>{
-            
+               
                 const res = response.data?.lista[0];
+                console.log({res});
                 if(!res.valoriRegione){
                     res.valoriRegione = [];
                 }
@@ -177,6 +178,7 @@ function useSaveModifyModuloCommessa({
             .then((response:any)=>{
               
                 const res = response.data?.lista[0];
+                console.log({res});
                 setDataModuli([res]);
                 setDataTotali(response.data.totali);
                 setDataObbligatori(false);
