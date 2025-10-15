@@ -250,6 +250,7 @@ function useSaveModifyModuloCommessa({
                         setOpenModalLoading(false);
                         if(err.response.status === 500){
                             setErrorAlert({error:err.response.status,message:err.response.data.detail});
+                            navigate(PathPf.LISTA_COMMESSE);
                         }else{
                             manageError(err,dispatchMainState);         
                         }
@@ -273,6 +274,7 @@ function useSaveModifyModuloCommessa({
                     setOpenModalLoading(false);
                     if(err.response.status === 500){
                         setErrorAlert({error:err.response.status,message:err.response.data.detail});
+                        navigate(PathPf.LISTA_MODULICOMMESSA);
                     }else{
                         manageError(err,dispatchMainState);         
                     }
