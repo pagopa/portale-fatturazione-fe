@@ -23,7 +23,7 @@ import ModalInfo from '../../components/reusableComponents/modals/modalInfo';
 const ModuloCommessaInserimentoPn : React.FC = () => {
 
     const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState,openBasicModal_DatFat_ModCom,setOpenBasicModal_DatFat_ModCom} = globalContextObj;
+    const {dispatchMainState,mainState,openBasicModal_DatFat_ModCom,setOpenBasicModal_DatFat_ModCom,setErrorAlert} = globalContextObj;
 
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
@@ -45,15 +45,11 @@ const ModuloCommessaInserimentoPn : React.FC = () => {
 
     
     const {
-        onIndietroButtonHeader,
         setOpenModalRedirect,
         getDettaglioSend,
         activeCommessa,
-        isObbligatorioLayout,
         isEditAllow,
         activeStep,
-        steps,
-        dataObbligatori,
         onChangeModuloValue,
         errorAnyValueIsEqualNull,
         dataTotali,
@@ -69,19 +65,12 @@ const ModuloCommessaInserimentoPn : React.FC = () => {
         dataModuli,
         copertura890,
         loadingData,
-        onIndietroButton,
         onHandleSalvaModificaButton,
-        onAvantiButton,
         openModalRedirect,
         setOpenModalInfo,
         openModalInfo,
         openModalLoading,
         setOpenModalLoading,
-        openModalAlert,
-        setOpenModalAlert,
-        clickOnIndietroAvanti,
-        avantiFunction,
-        indietroFunction,
         coperturaArInseritaManualmente,
         copertura890InseritaManualmente
     } = useSaveModifyModuloCommessa({
@@ -93,14 +82,12 @@ const ModuloCommessaInserimentoPn : React.FC = () => {
         mainState,
         handleModifyMainState,
         setOpenBasicModal_DatFat_ModCom,
-        whoInvokeHook:"SEND"
+        whoInvokeHook:"SEND",
+        setErrorAlert
     });
    
-
-
     useEffect(()=>{
         getDettaglioSend();
-     
     },[]);
 
     let labelButtonAvantiListaModuliSave = "Modifica";

@@ -90,7 +90,7 @@ export interface  TotaleCommessa {
 const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
   
     const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState,openBasicModal_DatFat_ModCom,setOpenBasicModal_DatFat_ModCom} = globalContextObj;
+    const {dispatchMainState,mainState,openBasicModal_DatFat_ModCom,setOpenBasicModal_DatFat_ModCom,setErrorAlert} = globalContextObj;
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
@@ -152,7 +152,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         mainState,
         handleModifyMainState,
         setOpenBasicModal_DatFat_ModCom,
-        whoInvokeHook:"ENTE"
+        whoInvokeHook:"ENTE",
+        setErrorAlert
     });
    
   

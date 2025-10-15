@@ -20,7 +20,8 @@ function useSaveModifyModuloCommessa({
     mainState,
     handleModifyMainState,
     setOpenBasicModal_DatFat_ModCom,
-    whoInvokeHook
+    whoInvokeHook,
+    setErrorAlert
 }) {
 
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
@@ -247,7 +248,11 @@ function useSaveModifyModuloCommessa({
                     }).catch(err => {
                         handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
                         setOpenModalLoading(false);
-                        manageError(err,dispatchMainState); 
+                        if(err.response.status === 500){
+                            setErrorAlert({error:err.response.status,message:err.response.data.detail});
+                        }else{
+                            manageError(err,dispatchMainState);         
+                        }
                     });
             }).catch(err =>{
                 setOpenModalLoading(false);
@@ -266,7 +271,11 @@ function useSaveModifyModuloCommessa({
                     await handleGetDettaglioModuloCommessaSendV2(true);
                 }).catch(err => {
                     setOpenModalLoading(false);
-                    manageError(err,dispatchMainState); 
+                    if(err.response.status === 500){
+                        setErrorAlert({error:err.response.status,message:err.response.data.detail});
+                    }else{
+                        manageError(err,dispatchMainState);         
+                    }
                 });
         }               
     };
