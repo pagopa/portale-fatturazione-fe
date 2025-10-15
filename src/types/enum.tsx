@@ -33,5 +33,6 @@ export enum PathPf {
     STORICO_DETTAGLIO_CONTEST = "/dettagliocontestazione",
     API_KEY_ENTE = "/apikeys",
     STORICO_CONTEST_ENTE = "/storicoente",
-    INSERIMENTO_CONTESTAZIONI_ENTE = "/contestazioniente"
+    INSERIMENTO_CONTESTAZIONI_ENTE = "/contestazioniente",
+    EMAIL_PSP = "/emailpsp"
 }
