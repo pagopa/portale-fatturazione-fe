@@ -122,7 +122,7 @@ const MainInserimentoModuloCommessa = ({
                                     <div
                                         key={element.istatRegione}
                                         style={{
-                                            backgroundColor: element.obbligatorio === 1 ? "#ffffff" : "#F8F8F8",
+                                            backgroundColor: element.obbligatorio === 1  ? "#ffffff" : "#F8F8F8",
                                         }}
                                     >
                                         <Grid 
@@ -194,8 +194,8 @@ const MainInserimentoModuloCommessa = ({
                                                     <Chip
                                                         key="chip"
                                                         variant="outlined"
-                                                        sx={{ backgroundColor: element?.calcolato ? undefined : "#B5E2B4" }}
-                                                        label={element?.calcolato ? "Attribuito dal sistema" : "Inserita manualmente dall’aderente"}
+                                                        sx={{ backgroundColor: element.obbligatorio === 1 && element[890] === null && element.ar === null ? undefined : element?.calcolato ? undefined : "#B5E2B4" }}
+                                                        label={element.obbligatorio === 1 && element[890] === null && element.ar === null ? "Regione di appartenenza" : element?.calcolato ? "Attribuito dal sistema" : "Inserita manualmente dall’aderente"}
                                                     />
                                                 )}</Grid>
                                         </Grid>
