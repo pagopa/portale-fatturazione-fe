@@ -13,7 +13,7 @@ export const headerNameListaModuliCommessaSEND: GridColDef[] = [
         if(param.row.source === "obbligatorio"){
             statusColor = "#5BB0D5";
         }else if(param.row.source === "archiviato"){
-            statusColor =  "#A2ADB8";
+            statusColor =  "#fafafa";
         }else if(param.row.source === "facoltativo"){
             statusColor = "#f7e7bc";
         }
