@@ -1,11 +1,17 @@
-import { Autocomplete, Box, Button, Checkbox, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
+import { Autocomplete, Box, Button, Checkbox, FormControl, InputLabel, MenuItem, Select, TextField, Tooltip, Typography } from "@mui/material";
 import { AutocompleteMultiselect, OptionMultiselectCheckboxPsp, OptionMultiselectCheckboxQarter } from "../../types/typeAngraficaPsp";
 import MultiselectWithKeyValue from "../../components/anagraficaPsp/multiselectKeyValue";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { PathPf } from "../../types/enum";
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import { useState } from "react";
+import DataObjectIcon from '@mui/icons-material/DataObject';
+import EmailIcon from '@mui/icons-material/Email';
+import { useContext, useEffect, useState } from "react";
+import { getQuartersDocContabiliPa, getYearsDocContabiliPa } from "../../api/apiPagoPa/documentiContabiliPA/api";
+import { GlobalContext } from "../../store/context/globalContext";
+import { manageError } from "../../api/api";
+import { getListaNamePsp } from "../../api/apiPagoPa/anagraficaPspPA/api";
 
 export interface RequestBodyMailPsp{
     contractIds: string[],
@@ -14,6 +20,11 @@ export interface RequestBodyMailPsp{
 }
 
 const EmailPsp = () => {
+
+    const globalContextObj = useContext(GlobalContext);
+    const {dispatchMainState,mainState} = globalContextObj;
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
 
     const { 
         filters,
@@ -30,12 +41,82 @@ const EmailPsp = () => {
         quarters: [],
         year: ''
     });
+    const [filtersDownload, setFiltersDownload] = useState<RequestBodyMailPsp>({
+        contractIds: [],
+        quarters: [],
+        year: ''
+    });
     const [yearOnSelect,setYearOnSelect] = useState<string[]>([]);
     const [valueQuarters, setValueQuarters] = useState<OptionMultiselectCheckboxQarter[]>([]);
     const [dataSelect, setDataSelect] = useState<OptionMultiselectCheckboxPsp[]>([]);
     const [dataSelectQuarter, setDataSelectQuarter] = useState<OptionMultiselectCheckboxQarter[]>([]);
     const [valueAutocomplete, setValueAutocomplete] = useState<AutocompleteMultiselect[]>([]);
     const [textValue, setTextValue] = useState<string>('');
+
+    useEffect(()=>{
+        getYears();
+    }, []);
+
+    const getYears = async () =>{
+        await getYearsDocContabiliPa(token, profilo.nonce)
+            .then((res)=>{
+                setYearOnSelect(res.data);
+                if(res.data.length > 0){
+                    if(isInitialRender.current && Object.keys(filters).length > 0){
+                        setBodyGetLista(filters.body);
+                        setFiltersDownload(filters.body);
+                        setValueAutocomplete(filters.valueAutocomplete);
+                        setTextValue(filters.textValue);
+                        // getListaKpiGrid(filters.body);
+                        setValueQuarters(filters.valueQuarters);
+                        //setPage(filters.page);
+                        //setRowsPerPage(filters.rows);
+                        getQuarters(filters.body.year);
+    
+                            
+                    }else{
+                        setBodyGetLista((prev) => ({...prev,...{year:res.data[0]}}));
+                        setFiltersDownload((prev) => ({...prev,...{year:res.data[0]}}));
+                        //getListaKpiGrid({...bodyGetLista,...{year:res.data[0]}});
+                        getQuarters(res.data[0]);
+                          
+                    }
+                }
+            }).catch(((err)=>{
+                manageError(err,dispatchMainState); 
+            }));
+    };
+
+    const getQuarters = async (y) =>{
+        await getQuartersDocContabiliPa(token, profilo.nonce,{year:y})
+            .then((res)=>{
+                setDataSelectQuarter(res.data);
+                isInitialRender.current = false;
+            }).catch(((err)=>{
+                isInitialRender.current = false;
+                setValueQuarters([]);
+                setDataSelectQuarter([]);
+                manageError(err,dispatchMainState); 
+            }));
+    };
+
+    const listaNamePspOnSelect = async () =>{
+        await getListaNamePsp(token, profilo.nonce, {name:textValue} )
+            .then((res)=>{
+                setDataSelect(res.data);
+            }).catch(((err)=>{
+                manageError(err,dispatchMainState); 
+            }));
+    };
+
+    useEffect(()=>{
+        const timer = setTimeout(() => {
+            if(textValue.length >= 3){ 
+                listaNamePspOnSelect();
+            }
+        }, 800);
+        return () => clearTimeout(timer);
+    },[textValue]);
 
     
     const clearOnChangeFilter = () => {
@@ -136,6 +217,35 @@ const EmailPsp = () => {
                         valueId={'name'}
                         label={"Nome PSP"} 
                         keyArrayName={"contractIds"}/>
+                </div>
+            </div>
+            <div className="row mt-5">
+                <div  className="col-6 mt-5">
+                    <div className="d-flex">
+                        <Button 
+                            sx={{ marginTop: 'auto', marginBottom: 'auto'}} variant="contained"> 
+                                            Filtra
+                        </Button>
+                    
+                        <Button sx={{marginLeft:'24px'}} >
+                               Annulla filtri
+                        </Button>
+                        
+                    </div>
+                </div>
+                <div className="col-6 mt-5">
+                    <div className="d-flex flex-row-reverse">
+                        <Tooltip  className="mx-2" title="Invia Json PSP">
+                            <span>
+                                <Button variant="outlined"><DataObjectIcon></DataObjectIcon></Button>
+                            </span>
+                        </Tooltip>
+                        <Tooltip  className="mx-2" title="Invia financial report PSP">
+                            <span>
+                                <Button variant="outlined">  <EmailIcon></EmailIcon></Button>
+                            </span>
+                        </Tooltip>
+                    </div>
                 </div>
             </div>
         </div>
