@@ -47,6 +47,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
     const [bodyDownload, setBodyDownload] = useState<BodyDownloadModuliCommessa>({idEnti:[],prodotto:'', anno:0, mese:0});
     const [showLoading,setShowLoading] = useState(false);
+    const [showLoadingLista,setShowLoadingLista] = useState(false);
 
     const [years,setYears] = useState<number[]>([]);
     const [monthsCommessa,setMonthsCommessa] = useState<{[key:number]:number[]}>({});
@@ -136,27 +137,33 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
     };
 
     const getListaCommesse = async(body) =>{
+        setShowLoadingLista(true);
         await listaModuloCommessaPagopa(body ,token, profilo.nonce)
             .then((res)=>{
                
                 setGridData(res.data);
                 isInitialRender.current = false;
+                setShowLoadingLista(false);
             }).catch((err)=>{
                 setGridData([]);
                 manageError(err,dispatchMainState);
                 isInitialRender.current = false;
+                setShowLoadingLista(false);
             }); 
     };
 
     const getListaCommesseOnAnnulla = async() =>{
+        setShowLoadingLista(true);
         const firstYear = years[0];
         
         await listaModuloCommessaPagopa({descrizione:'',prodotto:'', anno:firstYear, mese:monthsCommessa[firstYear][0]||0} ,token, profilo.nonce)
             .then((res)=>{
                 setBodyGetLista({idEnti:[],prodotto:'', anno:firstYear, mese:monthsCommessa[firstYear][0]||0});
                 setGridData(res.data);
+                setShowLoadingLista(false);
             }).catch((err)=>{
                 manageError(err,dispatchMainState);
+                setShowLoadingLista(false);
             }); 
     };
 
@@ -444,6 +451,11 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                 open={showLoading} 
                 setOpen={setShowLoading}
                 sentence={'Downloading...'} >
+            </ModalLoading>
+            <ModalLoading 
+                open={showLoadingLista} 
+                setOpen={setShowLoadingLista}
+                sentence={'Loading...'} >
             </ModalLoading>
         </div>
     );
