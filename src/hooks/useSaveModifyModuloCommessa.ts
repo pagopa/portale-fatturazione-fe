@@ -423,6 +423,8 @@ function useSaveModifyModuloCommessa({
             ...restOfCommesse.slice(0,activeCommessaIndex),
             updatedCommessa,
             ...restOfCommesse.slice(activeCommessaIndex)]);
+
+        errorOnOver(newRegioni, updatedCommessa);
     };
 
 
@@ -486,8 +488,6 @@ function useSaveModifyModuloCommessa({
                 );
             }
 
-           
-
             const updatedCommessa = {
                 ...activeCommessa,
                 valoriRegione: updatedRegioni,
@@ -495,21 +495,16 @@ function useSaveModifyModuloCommessa({
 
             const newData = [...prev];
             newData[activeCommessaIndex] = updatedCommessa;
-
             // still call your validation
             errorOnOver(updatedRegioni, updatedCommessa);
-
             return newData;
         });
     };
 
 
-
     const errorOnOver = (newRegioni, newCommessa) => {
-       
         const totAr = (newCommessa?.totaleNotificheAnalogicoARNaz||0);
         const tot890 = (newCommessa?.totaleNotificheAnalogico890Naz||0);
-
         const totArOnNewRegioni = newRegioni.reduce((acc, el) => acc + (el.ar||0), 0);
         const tot890OnNewRegioni = newRegioni.reduce((acc,el)=>  acc + (el[890]||0), 0);
 
