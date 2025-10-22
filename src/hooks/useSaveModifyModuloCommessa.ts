@@ -571,8 +571,8 @@ function useSaveModifyModuloCommessa({
      || activeCommessa.totaleNotificheAnalogicoARNaz === null 
      || activeCommessa.totaleNotificheDigitaleInternaz === null 
      || activeCommessa.totaleNotificheDigitaleNaz === null
-     || activeCommessa.valoriRegione.map(el => el[890]).includes(null)
-     || activeCommessa.valoriRegione.map(el => el.ar).includes(null);
+     || activeCommessa.valoriRegione.filter(el => el.obbligatorio !== 1).map(el => el[890]).includes(null)
+     || activeCommessa.valoriRegione.filter(el => el.obbligatorio !== 1).map(el => el.ar).includes(null);
     };
   
     const activeCommessa = dataModuli.length > 1 ? dataModuli[activeStep] : dataModuli[0];
