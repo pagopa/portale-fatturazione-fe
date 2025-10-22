@@ -257,7 +257,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
                 });
             }else{
                 // 1 - ed è un utente SELFCARE
-                await modifyDatiFatturazione(datiFatturazione, token,profilo.nonce)
+                await modifyDatiFatturazione({...datiFatturazione, ...{dataDocumento:datiFatturazione.dataDocumento ? toLocalISOString(new Date(datiFatturazione.dataDocumento)):null}}, token,profilo.nonce)
                     .then(() =>{
                         setOpenModalLoading(false);
                        
