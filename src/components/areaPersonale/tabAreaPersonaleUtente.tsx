@@ -121,7 +121,7 @@ const TabAreaPersonaleUtente = ({mainState,datiFatturazione,setDatiFatturazione,
                             {/* Id documento start */}
                             <div>
                                 <TextFieldComponent
-                                    required={datiFatturazione.cup !== ''}
+                                    required={datiFatturazione.cup !== "" || datiFatturazione.codCommessa !== ""}
                                     helperText="max 20 caratteri alfanumerici e . / _ -"
                                     label="ID Documento"
                                     placeholder="Inserisci ID"
