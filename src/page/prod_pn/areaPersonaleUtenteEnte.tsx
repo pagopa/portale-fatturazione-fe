@@ -72,7 +72,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
         contatti:[],
         dataCreazione:'',
         dataModifica:'',
-        dataDocumento:new Date().toISOString(),
+        dataDocumento:null,
         pec:'',
         notaLegale:false,
         prodotto:'',
@@ -341,7 +341,8 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
         datiFatturazione.notaLegale === false 
                 || datiFatturazione.pec === ''
                 || datiFatturazione.contatti.length === 0
-                || datiFatturazione.codiceSDI === '' || datiFatturazione.codiceSDI === null
+                || datiFatturazione.codiceSDI === ''
+                || datiFatturazione.codiceSDI === null
     );
 
 

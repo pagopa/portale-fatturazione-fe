@@ -19,13 +19,13 @@ export const headerNameListaModuliCommessaSEND: GridColDef[] = [
         }
         return <Chip variant="outlined" label={param.row.source.charAt(0).toUpperCase() + param.row.source.slice(1)} sx={{backgroundColor:statusColor}} />;
     })},
-    { field: 'dataInserimento', headerName: 'Data inserimento', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align:"center", valueFormatter: ({ value }) => value?.split('T')[0]||""},
+    { field: 'dataInserimento', headerName: 'Data inserimento', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align:"center", valueFormatter: ({ value }) => value?.split('T')[0]||"--"},
     { field: 'dataChiusura', headerName: 'Data chiusura', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align:"center", valueFormatter: ({ value }) =>(value?.split('T')[0]|| "--")},
-    { field: 'totaleDigitaleNaz', headerName: 'Tot. Dig. Naz.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align:"center", valueFormatter: ({ value }) =>(value)},
-    { field: 'totaleNotificheDigitaleInternaz', headerName: 'Tot. Dig. Int.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align:"center", valueFormatter: ({ value }) =>(value)},
-    { field: 'totaleNotificheAnalogicoARInternaz', headerName: 'Tot. Analog. AR. Int.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align:"center",valueFormatter: ({ value }) =>(value)},
-    { field: 'totaleNotificheAnalogico890Naz', headerName: 'Tot. Analog. 890 Naz.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align:"center",valueFormatter: ({ value }) =>(value)},
-    { field: 'totaleNotifiche', headerName: 'Tot. Not.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align:"center",valueFormatter: ({ value }) =>(value)},
+    { field: 'totaleNotificheDigitaleNaz', headerName: 'Tot. Dig. Naz.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align:"center", valueFormatter: ({ value }) =>(value||"--")},
+    { field: 'totaleNotificheDigitaleInternaz', headerName: 'Tot. Dig. Int.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align:"center", valueFormatter: ({ value }) =>(value||"--")},
+    { field: 'totaleNotificheAnalogicoARInternaz', headerName: 'Tot. Analog. AR. Int.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align:"center",valueFormatter: ({ value }) =>(value||"--")},
+    { field: 'totaleNotificheAnalogico890Naz', headerName: 'Tot. Analog. 890 Naz.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align:"center",valueFormatter: ({ value }) =>(value||"--")},
+    { field: 'totaleNotifiche', headerName: 'Tot. Not.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align:"center",valueFormatter: ({ value }) =>(value||"--")},
     { field: 'action', headerName: '',sortable: false, width:70,headerAlign: 'center',align:"center",disableColumnMenu :true, renderCell: (() => (<ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> ) ),}
 ];
 

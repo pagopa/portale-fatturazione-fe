@@ -226,7 +226,7 @@ export const fixResponseForDataGridRollBack = (arr:any[]):any =>{
 
             let inserimentoInfo = {inserimento:"--",color:"#ffffff"};
 
-            if(el.stato === null ){
+            if(el.totale === null ){
                 inserimentoInfo = {inserimento:"Non inserito",color:"#FB9EAC"};
             }else{
                 inserimentoInfo = {inserimento:"Inserito",color:"#B5E2B4"};

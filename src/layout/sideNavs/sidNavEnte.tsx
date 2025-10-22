@@ -80,6 +80,10 @@ const SideNavEnte: React.FC = () => {
 
     };
 
+    useEffect(()=>{
+        getDatiFat();
+    },[]);
+
 
     const currentLocation = location.pathname;
 

@@ -16,6 +16,7 @@ import { headerNameModComTrimestraleENTE } from '../../assets/configurations/con
 import ModalInfo from '../../components/reusableComponents/modals/modalInfo';
 import useSavedFilters from '../../hooks/useSaveFiltersLocalStorage';
 import { subHeaderNameModComTrimestraleENTE } from '../../assets/configurations/config_SubGridModComEnte';
+import ModalLoading from '../../components/reusableComponents/modals/modalLoading';
 
 
 const ModuloCommessaElencoUtPa: React.FC = () => {
@@ -46,6 +47,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
     const [showButtonInsertModulo,setShowButtonInsertModulo] = useState(false);
     const [openModalModObbligatori,setOpenModalModObbligatori] = useState({open:false,sentence:''});
     const [isMandatory, setIsMandatory] = useState(null);
+    const [showLoadingLista,setShowLoadingLista] = useState(false);
 
     const { 
         filters,
@@ -103,13 +105,16 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
 
     // servizio che popola la grid con la lista commesse
     const getListaCommessaGrid = async (valueAnno) =>{
+        setShowLoadingLista(true);
         await getListaCommessaFilteredV2(token , profilo.nonce,valueAnno).then((res:ResponseGetListaCommesse)=>{
             //const finalData = fixResponseForDataGrid(res.data);
             const finalData = fixResponseForDataGridRollBack(res.data);
             setGridData(finalData);
+            setShowLoadingLista(false);
         }).catch((err:ManageErrorResponse)=>{
             setGridData([]);
             manageError(err,dispatchMainState);
+            setShowLoadingLista(false);
         });
     };
    
@@ -351,6 +356,11 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
                     <ModalInfo 
                         setOpen={setOpenModalModObbligatori}
                         open={openModalModObbligatori}></ModalInfo>
+                    <ModalLoading 
+                        open={showLoadingLista} 
+                        setOpen={setShowLoadingLista}
+                        sentence={'Loading...'} >
+                    </ModalLoading>
                 </div>
             }
         </>
