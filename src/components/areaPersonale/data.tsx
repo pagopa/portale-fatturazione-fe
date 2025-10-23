@@ -44,7 +44,7 @@ const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate,mainState
                 if (e) {
                     const year = e.getFullYear();
              
-                    if (year < 2023 || year > 2100 || (datiFatturazione.idDocumento && e === null) ) {
+                    if (year < 2000 || year > 2125 || (datiFatturazione.idDocumento && e === null) ) {
                         setError(true);
                         setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, dataDocumento:true}) );
                         console.log(3);
