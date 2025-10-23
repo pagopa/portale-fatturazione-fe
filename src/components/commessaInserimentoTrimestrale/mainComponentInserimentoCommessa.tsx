@@ -45,7 +45,7 @@ const MainInserimentoModuloCommessa = ({
             return 0;
         });
     }, [activeCommessa?.valoriRegione]);
-  
+    console.log({sortedRegioni});
     if(loadingData){
         return (
             <Box
@@ -155,7 +155,7 @@ const MainInserimentoModuloCommessa = ({
                                             >  <TextField
                                                     key="ar"
                                                     sx={{ backgroundColor: "#FFFFFF", width: "100px" }}
-                                                    error={((element.obbligatorio === 1 && element.ar !== null) || element.obbligatorio !== 1) &&  errorArRegioni || (errorAnyValueIsEqualNull && element.ar === null)}
+                                                    error={((element.obbligatorio === 1 && element.ar !== null) || element.obbligatorio !== 1) && ( errorArRegioni || (errorAnyValueIsEqualNull && element.ar === null))}
                                                     disabled={!isEditAllow}
                                                     onChange={(e) => handleChangeTotale_Ar_890_regione(e, "totaleAnalogicoARNaz", element)}
                                                     size="small"
@@ -169,7 +169,7 @@ const MainInserimentoModuloCommessa = ({
                                             > <TextField
                                                     key="890"
                                                     sx={{ backgroundColor: "#FFFFFF", width: "100px" }}
-                                                    error={((element.obbligatorio === 1 && element[890]  !== null) || element.obbligatorio !== 1) && error890Regioni || (errorAnyValueIsEqualNull && element[890] === null)}
+                                                    error={((element.obbligatorio === 1 && element[890]  !== null) || element.obbligatorio !== 1) && (error890Regioni || (errorAnyValueIsEqualNull && element[890] === null))}
                                                     disabled={!isEditAllow}
                                                     onChange={(e) => handleChangeTotale_Ar_890_regione(e, "totaleAnalogico890Naz", element)}
                                                     size="small"
