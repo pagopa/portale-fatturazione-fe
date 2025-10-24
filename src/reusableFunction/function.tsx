@@ -226,7 +226,7 @@ export const fixResponseForDataGridRollBack = (arr:any[]):any =>{
 
             let inserimentoInfo = {inserimento:"--",color:"#ffffff"};
 
-            if(el.totale === null ){
+            if(el.totaleNotifiche === null ){
                 inserimentoInfo = {inserimento:"Non inserito",color:"#FB9EAC"};
             }else{
                 inserimentoInfo = {inserimento:"Inserito",color:"#B5E2B4"};
@@ -239,7 +239,7 @@ export const fixResponseForDataGridRollBack = (arr:any[]):any =>{
                 inserimento:inserimentoInfo,
                 dataInserimento:el.dataInserimento?.split('T')[0]|| "--",
                 dataChiusura:el.dataChiusura?.split('T')[0]|| "--",
-                totaleDig:el.totaleDigitaleNaz !== null ?el.totaleDigitaleNaz:"--",
+                totaleDig:el.totaleNotificheDigitaleNaz !== null ?el.totaleNotificheDigitaleNaz:"--",
                 totaleNotificheDigitaleInternaz:el.totaleNotificheDigitaleInternaz !== null ? el.totaleNotificheDigitaleInternaz: "--",
                 totaleAR:el.totaleNotificheAnalogicoARInternaz !== null ?el.totaleNotificheAnalogicoARInternaz :"--",
                 totaleARInt:el.totaleNotificheAnalogicoARInternaz !== null ? el.totaleNotificheAnalogicoARInternaz: "--",    
