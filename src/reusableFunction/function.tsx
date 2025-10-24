@@ -241,7 +241,7 @@ export const fixResponseForDataGridRollBack = (arr:any[]):any =>{
                 dataChiusura:el.dataChiusura?.split('T')[0]|| "--",
                 totaleDig:el.totaleNotificheDigitaleNaz !== null ?el.totaleNotificheDigitaleNaz:"--",
                 totaleNotificheDigitaleInternaz:el.totaleNotificheDigitaleInternaz !== null ? el.totaleNotificheDigitaleInternaz: "--",
-                totaleAR:el.totaleNotificheAnalogicoARInternaz !== null ?el.totaleNotificheAnalogicoARInternaz :"--",
+                totaleAR:el.totaleNotificheAnalogicoARNaz!== null ?el.totaleNotificheAnalogicoARNaz :"--",
                 totaleARInt:el.totaleNotificheAnalogicoARInternaz !== null ? el.totaleNotificheAnalogicoARInternaz: "--",    
                 totaleAnalogico890Naz:el.totaleNotificheAnalogico890Naz !== null ? el.totaleNotificheAnalogico890Naz: "--",
                 totale:el.totaleNotifiche !== null ? el.totaleNotifiche : "--",
