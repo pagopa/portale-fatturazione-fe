@@ -129,6 +129,7 @@ const Storico = () => {
         setTotalContestazioni(0);
     };
    
+
     const getAnni = async() => {
         setGetListaContestazioniRunning(true);
         await getAnniContestazioni(token,profilo.nonce)
@@ -188,9 +189,7 @@ const Storico = () => {
         let newBody = body;
         if(bodyGetLista.anno === "Tutti"){
             newBody = {...body,anno:null};
-    
         }
-       
         await getListaStorico(token,profilo.nonce,newBody,pag,rowpag).then((res)=>{
             // ordino i dati in base all'header della grid
             setListaToMap(res.data.reports);

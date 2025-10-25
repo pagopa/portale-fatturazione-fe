@@ -227,8 +227,7 @@ const InserimentoContestazioni = () =>{
                         managePresaInCarico('PRESA_IN_CARICO_DOCUMENTO',dispatchMainState);
                     }
                 }).catch((err)=>{
-                    //manageStringMessage('409_'+err.response.data.detail,dispatchMainState);
-                    setErrorAlert({error:409,message:"L'operazione non è andata a buon fine"});
+                    setErrorAlert({error:409,message:err?.response?.data?.detail|| "L'operazione non è andata a buon fine"});
                     throw new Error(err.response.data.details); 
                 });
                 start = end;
@@ -328,6 +327,7 @@ const InserimentoContestazioni = () =>{
                                 <Autocomplete
                                     options={valueEnti}
                                     loading={loadingEnti}
+                                    isOptionEqualToValue={(option, value) => option.idEnte === value.idEnte}
                                     getOptionLabel={(option: EntiContestazionePage) => option.ragioneSociale}
                                     value={valueAutocomplete}
                                     onChange={(event, value) => {

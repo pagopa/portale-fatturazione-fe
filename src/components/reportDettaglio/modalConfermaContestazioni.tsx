@@ -70,10 +70,10 @@ const ModalInvioContestazioni : React.FC<PropsModalContestazioni> =({setOpen, op
         Attenzione!
                                 </Typography>
                                 <div className='d-flex justify-content-center text-center mt-3'>
-                                    <Typography variant="body1">
+                                    <Typography variant="body1" className='text-nowrap'>
                                         {profilo.auth === "SELFCARE"? `Stai inviando le Contestazioni di` :  `Stai inviando le Contestazioni`}
                                     </Typography>
-                                    <Typography sx={{ marginLeft:"10px",fontWeight:"bold" }} variant="body1">{`${info.ente} ${month[Number(info.mese)-1]} ${info.anno}`}</Typography>
+                                    <Typography className='text-nowrap' sx={{ marginLeft:"10px",fontWeight:"bold" }} variant="body1">{`${info.ente} ${month[Number(info.mese)-1]} ${info.anno}`}</Typography>
                                     
                                 </div>
                                 <div className='mt-2'>

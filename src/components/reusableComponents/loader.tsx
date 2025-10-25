@@ -14,7 +14,7 @@ const Loader : React.FC<LoderProp> = ({sentence}) => {
         setFile(null);
     };
     
-    return  <SingleFileInput  value={file} onFileSelected={handleSelect} onFileRemoved={handleRemove} loadingLabel={sentence} loading={true} dropzoneLabel='' dropzoneButton="" />;
+    return  <SingleFileInput  value={file} onFileSelected={handleSelect} onFileRemoved={handleRemove} loadingLabel={sentence} loading={true} dropzoneLabel={''} dropzoneButton="" />;
 
 };
 

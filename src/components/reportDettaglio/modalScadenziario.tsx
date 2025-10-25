@@ -77,22 +77,17 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce,d
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
-               
             >
-                
                 <Box sx={style}>
-                  
                     <div className='d-flex justify-content-between ms-3 mt-auto mb-auto w-100' >
                         <div className='d-flex justify-content-center align-items-center'>
                             <Typography  id="modal-modal-title" variant="h6" component="h2">
                                 Scadenzario contestazioni
                             </Typography>
                         </div>
-                        
                         <div className='icon_close me-5'>
                             <CloseIcon onClick={handleClose} id='close_icon' sx={{color:'#17324D'}}></CloseIcon>
                         </div>
-                       
                     </div>
         
                     <div className='mt-5'>
@@ -120,12 +115,12 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce,d
                                         <TableCell  sx={{borderRight: "10px solid #e0e0e0"}} align="center" colSpan={1} >Anno </TableCell>
                                         <TableCell sx={{ whiteSpace: "nowrap"}} colSpan={2} align="center">Inizio inserimento</TableCell>
                                         <TableCell sx={{ whiteSpace: "nowrap"}} colSpan={2} align="center">Fine inserimento</TableCell>
-                                        <TableCell sx={{ whiteSpace: "nowrap",borderRight: "10px solid #e0e0e0"}} colSpan={2} align="center">Tempo di risposta</TableCell>
-                                        <TableCell sx={{whiteSpace: "nowrap",borderRight: "10px solid #e0e0e0"}} colSpan={2} align="center">Tempo di risposta</TableCell>
+                                        <TableCell sx={{ whiteSpace: "nowrap",borderRight: "10px solid #e0e0e0"}} colSpan={2} align="center">Verifica</TableCell>
+                                        <TableCell sx={{whiteSpace: "nowrap",borderRight: "10px solid #e0e0e0"}} colSpan={2} align="center">Esito</TableCell>
                                         {(profilo.profilo === 'CON' || profilo.profilo === 'REC') &&
                                             <>
                                                 <TableCell  sx={{whiteSpace: "nowrap"}} colSpan={1} align="center">Inizo risposta </TableCell>
-                                                <TableCell sx={{whiteSpace: "nowrap"}} colSpan={1} align="center">Tempo di risposta</TableCell>
+                                                <TableCell sx={{whiteSpace: "nowrap"}} colSpan={1} align="center">Fine risposta</TableCell>
                                             </>
                                         }
                                     </TableRow>
@@ -153,8 +148,7 @@ const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce,d
                                             }
                                         </TableRow>
                                     ))}
-                                </TableBody>
-                              
+                                </TableBody> 
                             </Table>
                         </TableContainer>
                     </div> 
