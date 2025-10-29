@@ -108,8 +108,13 @@ function useSaveModifyModuloCommessa({
             
                     //handleGetDettaglioModuloCommessaVecchio(obbligatori[activeStepResult].annoValidita,obbligatori[activeStepResult].meseValidita);
                     // passo al servizio regioni le regioni già presenti , la prima da eliminare dalla lista e le altre da valutare come inserite
-                    const regioniToHideDelete = dataModuli[activeStepResult]?.valoriRegione.map(el => el.istatRegione);
-                    getRegioni(regioniToHideDelete); 
+                    if(obbligatori.length > 0){
+                        const regioniToHideDelete = obbligatori[activeStepResult]?.valoriRegione.map(el => el.istatRegione);
+                        getRegioni(regioniToHideDelete); 
+                    }else{
+                        getRegioni([]); 
+                    }
+                    
                     setLoadingData(false);
                 }).catch(()=>{
                 
