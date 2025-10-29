@@ -451,8 +451,15 @@ function useSaveModifyModuloCommessa({
             ...restOfCommesse.slice(activeCommessaIndex)]);
         
         if(e.target.value === "0"){
-            const tipoNotifica = valueKey === "totaleNotificheAnalogicoARNaz" ? "totaleAnalogicoARNaz" : "totaleAnalogico890Naz";
-            handleChangeTotale_Ar_890_regione(e,tipoNotifica,null,true);
+            let tipoNotifica = "";
+            if(valueKey === "totaleNotificheAnalogicoARNaz"){
+                tipoNotifica = "totaleAnalogicoARNaz";
+                handleChangeTotale_Ar_890_regione(e,tipoNotifica,null,true);
+            }else if(valueKey === "totaleNotificheAnalogico890Naz"){
+                tipoNotifica = "totaleAnalogico890Naz";
+                handleChangeTotale_Ar_890_regione(e,tipoNotifica,null,true);
+            }
+            
         }else{
             errorOnOver(regioniActiveCommessa,updatedCommessa);
         }
