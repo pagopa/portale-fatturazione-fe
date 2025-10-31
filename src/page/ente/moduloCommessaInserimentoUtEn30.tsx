@@ -286,7 +286,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                         <Button  disabled={error890Regioni|| errorArRegioni|| (isObbligatorioLayout && (activeStep+1 < steps.length))} onClick={onHandleSalvaModificaButton} variant={labelButtonAvantiListaModuliSave === "Prosegui per salvare"? "text":"outlined"}>{labelButtonAvantiListaModuliSave}
                         </Button>
                     </div>} 
-                { (activeCommessa?.dataInserimento !== null && !isEditAllow && !loadingData) && 
+                { (activeCommessa?.totaleNotifiche !== null && !isEditAllow && !loadingData) && 
                 <div  className="d-flex justify-content-center align-items-center">
                     <Button onClick={()=>{
                         handleModifyMainState({infoTrimestreComSelected:{

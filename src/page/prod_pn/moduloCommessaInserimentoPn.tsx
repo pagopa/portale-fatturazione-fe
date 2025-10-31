@@ -151,7 +151,7 @@ const ModuloCommessaInserimentoPn : React.FC = () => {
                                     <Button  disabled={error890Regioni|| errorArRegioni} onClick={onHandleSalvaModificaButton} variant={"outlined"}>{labelButtonAvantiListaModuliSave}
                                     </Button>
                                 </div>} 
-                            { (activeCommessa?.dataInserimento !== null && !isEditAllow && !loadingData) && 
+                            { (activeCommessa?.totaleNotifiche !== null && !isEditAllow && !loadingData) && 
                             <div  className="d-flex justify-content-center align-items-center">
                                 <Button onClick={()=>{
                                     navigate(PathPf.PDF_COMMESSA+`/${activeCommessa.annoValidita}/${activeCommessa.meseValidita}`);}
