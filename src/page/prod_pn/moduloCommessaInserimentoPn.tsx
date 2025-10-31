@@ -40,7 +40,7 @@ const ModuloCommessaInserimentoPn : React.FC = () => {
     const [openModalConfermaIns,setOpenModalConfermaIns] = useState(false);
 
     const onButtonComfermaPopUp = () => {
-        console.log(999);
+        console.log("log");
     };
 
     

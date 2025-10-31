@@ -31,12 +31,10 @@ const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate,mainState
                 setDatiFatturazione({...datiFatturazione,...{dataDocumento:null}});
                 setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, dataDocumento:true}) );
                 setError(true);
-                console.log(1);
             }else{
                 setDatiFatturazione({...datiFatturazione,...{dataDocumento:null}});
                 setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, dataDocumento:false}) );
                 setError(false);
-                console.log(2);
             }
             
         }else{
@@ -47,46 +45,40 @@ const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate,mainState
                     if (year < 2000 || year > 2125 || (datiFatturazione.idDocumento && e === null) ) {
                         setError(true);
                         setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, dataDocumento:true}) );
-                        console.log(3);
                  
                         return;
                     }else{
                         const data: Date = new Date(e);
-                        console.log({data});
                         setDatiFatturazione({...datiFatturazione,...{dataDocumento:data}});
                         setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, dataDocumento:false}) );
                         setError(false);
-                        console.log(4);
                     }
                 }else if(e === null && datiFatturazione.idDocumento !== null && datiFatturazione.idDocumento !== ""){
                     setDatiFatturazione({...datiFatturazione,...{dataDocumento:null}});
                     setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, dataDocumento:true}) );
                     setError(true);
-                    console.log(5);
+                  
                 }else if(e === null && datiFatturazione.idDocumento === null || datiFatturazione.idDocumento === ""){
                     setDatiFatturazione({...datiFatturazione,...{dataDocumento:null}});
                     setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, dataDocumento:false}) );
                     setError(false);
-                    console.log(6);
+                  
                 }
            
             } catch (error) { 
                 setDatiFatturazione({...datiFatturazione,...{dataDocumento:''}});
                 setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{dataDocumento:true}}) );
                 setError(true);
-                console.log(7);
+              
             }
         }
        
     };
-    console.log({datiFatturazione});
 
     useEffect(()=>{
         if(datiFatturazione.dataDocumento !== null && datiFatturazione.dataDocumento !== '' && datiFatturazione.dataDocumento !== null ){
             onChangeHandler(new Date(datiFatturazione.dataDocumento));
-            console.log("dentro");
         }else{
-            console.log("dentro 2");
             onChangeHandler(datiFatturazione.dataDocumento);
         } 
     },[datiFatturazione.idDocumento]);
@@ -97,7 +89,7 @@ const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate,mainState
     }else if(datiFatturazione.dataDocumento){
         valueDate = new Date(datiFatturazione.dataDocumento);
     }
-    console.log({valueDate});
+   
     let dataInputDisable  = true;
 
     if(mainState.statusPageDatiFatturazione === 'immutable'){
@@ -116,7 +108,6 @@ const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate,mainState
                     format={formatDate}
                     value={valueDate}
                     onChange={(e:Date | null)  => {
-                        console.log({zorro:e});
                         onChangeHandler(e);}}
                     disabled={dataInputDisable}
                     slotProps={{

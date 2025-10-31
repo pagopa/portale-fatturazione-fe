@@ -126,7 +126,6 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                         Object.entries(el).map(([key, value]) => [key, (value === null || value === "") ? "--" : value])
                     );
                 });
-                console.log({editedData});
                 setGridData(editedData);
                 setGetListaLoading(false);
                 isInitialRender.current = false;

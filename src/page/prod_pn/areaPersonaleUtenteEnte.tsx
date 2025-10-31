@@ -240,15 +240,13 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
         if(mainState.datiFatturazione === true){
             // 1 - ed è un utente PAGOPA
             if(profilo.auth === 'PAGOPA'){
-                console.log({UP:datiFatturazione});
                 const newDatiFatturazione:DatiFatturazionePostPagopa = {...datiFatturazione, ...{idEnte:profilo.idEnte,prodotto:profilo.prodotto,dataDocumento:datiFatturazione.dataDocumento ? toLocalISOString(new Date(datiFatturazione.dataDocumento)):null}};
-                console.log({DOWN:newDatiFatturazione});
                 await modifyDatiFatturazionePagoPa(token,profilo.nonce, newDatiFatturazione ).then(() =>{
                     setOpenModalLoading(false);
                     handleModifyMainState({
                         statusPageDatiFatturazione:'immutable',
                     });
-                    console.log("DONE");
+               
                     getDatiFatPagoPa();
                     managePresaInCarico("SAVE_DATIFATTURAZIONE_OK",dispatchMainState);
                 }).catch(err => {
@@ -292,7 +290,6 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
             const {idEnte,prodotto,...body} = bodyPagoPa;
             // 2 - ed è un utente PAGOPA
             if(profilo.auth === 'PAGOPA'){
-                console.log({bodyPagoPa});
                 await insertDatiFatturazionePagoPa( token,profilo.nonce, bodyPagoPa).then(()  =>{
                     setOpenModalLoading(false);
                     handleModifyMainState({
