@@ -281,9 +281,9 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                     </Tooltip>
                     }
                 </div>
-                {((dataModuli.length > 0 && (activeCommessa?.source === "archiviato")) || !activeCommessa.modifica) ? null:
+                {((dataModuli?.length > 0 && (activeCommessa?.source === "archiviato")) || !activeCommessa?.modifica) ? null:
                     <div className="d-flex justify-content-center align-items-center">
-                        <Button  disabled={error890Regioni|| errorArRegioni|| (isObbligatorioLayout && (activeStep+1 < steps.length))} onClick={onHandleSalvaModificaButton} variant={labelButtonAvantiListaModuliSave === "Prosegui per salvare"? "text":"outlined"}>{labelButtonAvantiListaModuliSave}
+                        <Button  disabled={error890Regioni|| errorArRegioni|| (isObbligatorioLayout && (activeStep+1 < steps?.length))} onClick={onHandleSalvaModificaButton} variant={labelButtonAvantiListaModuliSave === "Prosegui per salvare"? "text":"outlined"}>{labelButtonAvantiListaModuliSave}
                         </Button>
                     </div>} 
                 { (activeCommessa?.totaleNotifiche !== null && !isEditAllow && !loadingData) && 

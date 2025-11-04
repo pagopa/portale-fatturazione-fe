@@ -66,72 +66,74 @@ function useSaveModifyModuloCommessa({
             }catch(err){
                 console.log({err});
             }
+            setLoadingData(false);
         }).catch((err)=>{
             manageError(err,dispatchMainState);
         });
     };
 
 
-    const handleGetDettaglioModuloCommessa = async () =>{
-        setLoadingData(true);
-        await getCommessaObbligatoriVerificaV2(token, profilo.nonce).then(async(res)=>{
-                       
-            if(res.data && Object.keys(mainState.infoTrimestreComSelected)?.length === 0){
+    const handleGetDettaglioModuloCommessa = async () => {
+        try {
+            setLoadingData(true);
+
+            const res = await getCommessaObbligatoriVerificaV2(token, profilo.nonce);
+
+            if (res.data && Object.keys(mainState.infoTrimestreComSelected)?.length === 0) {
                 setIsObbligatorioLayout(res.data);
-                await getCommessaObbligatoriListaV2(token, profilo.nonce).then((response)=>{
-                    let obbligatori = response.data.lista;
-                    obbligatori = obbligatori?.map(el => {
-                        if(!el.valoriRegione){
-                            el.valoriRegione = [];
-                        }
-                        return el;
-                    });
-               
+
+                try {
+                    const response = await getCommessaObbligatoriListaV2(token, profilo.nonce);
+                    let obbligatori = response.data.lista || [];
+
+                    obbligatori = obbligatori.map(el => ({
+                        ...el,
+                        valoriRegione: el.valoriRegione || [],
+                    }));
+
                     setDataModuli(obbligatori);
-                    setDataObbligatori(obbligatori.map(el => el.stato === null).flat().includes(true));
-            
-                    const stepsResult = obbligatori.map(el => month[el.meseValidita-1]);
+                    setDataObbligatori(obbligatori.some(el => el.stato === null));
+
+                    const stepsResult = obbligatori.map(el => month[el.meseValidita - 1]);
                     setSteps(stepsResult);
-            
-                    //const completedResult = obbligatori.map((el,i) => ({[i+1]:el.stato !== null?true:false}));
-                    //setStepCompleted(Object.assign({}, ...completedResult));
-            
+
                     const activeStepResult = obbligatori.findIndex(item => item.stato === null);
                     setActiveStep(activeStepResult);
-            
+
                     setisEditAllow(true);
-                    handleModifyMainState({statusPageInserimentoCommessa:'mutable'});
-                    setOpenBasicModal_DatFat_ModCom("mutable");
-                             
+                    handleModifyMainState({ statusPageInserimentoCommessa: 'mutable' });
+                    setOpenBasicModal_DatFat_ModCom('mutable');
                     setProfiloViewRegione(response.data.macrocategoriaVendita);
-                    // setRegioniInsertIsVisible(response.data.macrocategoriaVendita === 3 || response.data.macrocategoriaVendita === 4);
-            
-                    //handleGetDettaglioModuloCommessaVecchio(obbligatori[activeStepResult].annoValidita,obbligatori[activeStepResult].meseValidita);
-                    // passo al servizio regioni le regioni già presenti , la prima da eliminare dalla lista e le altre da valutare come inserite
-                    if(obbligatori.length > 0){
-                        const regioniToHideDelete = obbligatori[activeStepResult]?.valoriRegione.map(el => el.istatRegione);
-                        getRegioni(regioniToHideDelete); 
-                    }else{
-                        getRegioni([]); 
-                    }
-                    
-                    setLoadingData(false);
-                }).catch(()=>{
-                
-                    managePresaInCarico('NO_INSERIMENTO_COMMESSA',dispatchMainState); 
+
+                    const regioniToHideDelete = obbligatori[activeStepResult]?.valoriRegione.map(el => el.istatRegione) || [];
+                    getRegioni(regioniToHideDelete);
+                } catch (error) {
+                    // Handle secondary API failure
+                    managePresaInCarico('NO_INSERIMENTO_COMMESSA', dispatchMainState);
                     navigate(PathPf.LISTA_COMMESSE);
-                    setLoadingData(false);
-                });
-            }else{
-                handleGetDettaglioModuloCommessaVecchio(mainState?.infoTrimestreComSelected?.annoCommessaSelectd,mainState?.infoTrimestreComSelected?.meseCommessaSelected);
-                //const completedResult = mainState?.infoTrimestreComSelected?.moduli?.map((el,i) => ({[i+1]:el?.stato !== "--"?true:false}));
-                     
-                //setStepCompleted(Object.assign({}, ...completedResult));
+                }
+
+            } else {
+                // Already have data
+                handleGetDettaglioModuloCommessaVecchio(
+                    mainState?.infoTrimestreComSelected?.annoCommessaSelectd,
+                    mainState?.infoTrimestreComSelected?.meseCommessaSelected
+                );
+
                 setActiveStep(Number(mainState.infoTrimestreComSelected.moduloSelectedIndex));
-                const stepsResult = mainState.infoTrimestreComSelected.moduli.map(el => el.meseAnno.split('/')[0]||"");
-                setSteps(stepsResult);  
+                const stepsResult = mainState.infoTrimestreComSelected.moduli.map(
+                    el => el.meseAnno.split('/')[0] || ''
+                );
+                setSteps(stepsResult);
             }
-        });
+        } catch (error) {
+            console.error('Errore in handleGetDettaglioModuloCommessa:', error);
+            managePresaInCarico('NO_INSERIMENTO_COMMESSA',dispatchMainState); 
+            navigate(PathPf.LISTA_COMMESSE);
+            // handle main error if needed
+        } finally {
+            //setLoadingData(false); 
+        }
     };
             
     const handleGetDettaglioModuloCommessaVecchio = async (year,month,isCallAfterSaveData = false) =>{
