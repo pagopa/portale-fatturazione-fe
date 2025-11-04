@@ -1,7 +1,7 @@
 import { Autocomplete, Box, Button, Checkbox, FormControl, InputLabel, MenuItem, Select, TextField, Tooltip, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
-import { BodyFatturazione, FatturazioneProps, FattureObj, HeaderCollapsible, TipologiaSap} from "../../types/typeFatturazione";
+import { BodyFatturazione, FattureObj, TipologiaSap} from "../../types/typeFatturazione";
 import { manageError, manageErrorDownload, managePresaInCarico } from "../../api/api";
 import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
@@ -20,7 +20,7 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import { GlobalContext } from "../../store/context/globalContext";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { PathPf } from "../../types/enum";
-import { downloadFatturePagopa, downloadFattureReportPagopa, fattureCancellazioneRipristinoPagoPa, fattureTipologiaSapPa, getAnniDocEmessiPagoPa, getFatturazionePagoPa, getMesiDocEmessiPagoPa, getTipologieFaPagoPa, getTipologieFaPagoPaWithData } from "../../api/apiPagoPa/fatturazionePA/api";
+import { downloadFatturePagopa, downloadFattureReportPagopa, fattureCancellazioneRipristinoPagoPa, fattureTipologiaSapPa, getAnniDocEmessiPagoPa, getFatturazionePagoPa, getMesiDocEmessiPagoPa, getTipologieContratto, getTipologieFaPagoPa, getTipologieFaPagoPaWithData } from "../../api/apiPagoPa/fatturazionePA/api";
 import { getMessaggiCount } from "../../api/apiPagoPa/centroMessaggi/api";
 import CollapsibleTable from "../../components/reusableComponents/grid/gridCollapsible/gridCustomCollapsibleWithCheckbox";
 import ModalConfermaRipristina from "../../components/fatturazione/modalConfermaRipristina";
@@ -61,13 +61,15 @@ const Fatturazione : React.FC = () =>{
     const [fattureSelected, setFattureSelected] = useState<number[]>([]);
     const [dateTipologie, setDateTipologie] = useState<string[]>([]);
     const [valueMulitselectDateTipologie, setValueMultiselectDateTipologie] = useState<string[]>([]);
+    const [arrayContratti, setArrayContratto] = useState<{id:number,descrizione:string}[]>([]);
     
     const [bodyFatturazione, setBodyFatturazione] = useState<BodyFatturazione>({
         anno:0,
         mese:0,
         tipologiaFattura:[],
         idEnti:[],
-        cancellata:false
+        cancellata:false,
+        idTipoContratto:null
     });
 
     const [bodyFatturazioneDownload, setBodyFatturazioneDownload] = useState<BodyFatturazione>({
@@ -75,7 +77,8 @@ const Fatturazione : React.FC = () =>{
         mese:0,
         tipologiaFattura:[],
         idEnti:[],
-        cancellata:false
+        cancellata:false,
+        idTipoContratto:null
     });
 
     const { 
@@ -87,12 +90,11 @@ const Fatturazione : React.FC = () =>{
 
     useEffect(()=>{
         getAnni();
+        getContratti(); 
     },[]);
 
-  
-
     useEffect(()=>{
-        if(bodyFatturazione.idEnti.length !== 0 || bodyFatturazione.tipologiaFattura.length !== 0 || bodyFatturazione.cancellata === true ){
+        if(bodyFatturazione.idEnti.length !== 0 || bodyFatturazione.tipologiaFattura.length !== 0 || bodyFatturazione.cancellata === true || bodyFatturazione.idTipoContratto !== null ){
             setStatusAnnulla('show');
         }else{
             setStatusAnnulla('hidden');
@@ -144,6 +146,15 @@ const Fatturazione : React.FC = () =>{
         });
     };
 
+    const getContratti = async() => {
+        await getTipologieContratto(token, profilo.nonce).then((res)=>{
+            setArrayContratto(res.data);
+        }).catch((err)=>{
+            setArrayContratto([]);
+            manageError(err,dispatchMainState);
+        });
+    };
+   
     const getMesi = async(year) =>{
         await getMesiDocEmessiPagoPa(token, profilo.nonce,{anno:year}).then((res)=>{    
             setArrayMonths(res.data);
@@ -157,9 +168,9 @@ const Fatturazione : React.FC = () =>{
                 setFattureSelected(filters.fattureSelected);
                 getlistaFatturazione(filters.body);
             }else{
-                setBodyFatturazione({anno:Number(year),mese:res.data[0].mese, tipologiaFattura:[],cancellata:false,idEnti:[]});
+                setBodyFatturazione({anno:Number(year),mese:res.data[0].mese, tipologiaFattura:[],cancellata:false,idEnti:[],idTipoContratto:null});
                 if(callLista.current){
-                    getlistaFatturazione({...bodyFatturazione,...{anno:Number(year),mese:res.data[0].mese, tipologiaFattura:[],cancellata:false,idEnti:[]}});
+                    getlistaFatturazione({...bodyFatturazione,...{anno:Number(year),mese:res.data[0].mese, tipologiaFattura:[],cancellata:false,idEnti:[],idTipoContratto:null}});
                 }
                
             }
@@ -238,7 +249,7 @@ const Fatturazione : React.FC = () =>{
         await getMessaggiCount(token,profilo.nonce).then((res)=>{
             const numMessaggi = res.data;
             setCountMessages(numMessaggi);
-        }).catch((err)=>{
+        }).catch(()=>{
             return;
         });
     };
@@ -366,14 +377,16 @@ const Fatturazione : React.FC = () =>{
             mese:0,
             tipologiaFattura:[],
             idEnti:[],
-            cancellata:false
+            cancellata:false,
+            idTipoContratto:null
         });
         setBodyFatturazioneDownload({
             anno:arrayYears[0],
             mese:0,
             tipologiaFattura:[],
             idEnti:[],
-            cancellata:false
+            cancellata:false,
+            idTipoContratto:null
         });
         setDataSelect([]);
         setValueMultiselectTipologie([]);
@@ -522,6 +535,25 @@ const Fatturazione : React.FC = () =>{
                                     placeholder="Data fattura" />;
                             }}     
                         />
+                    </div>
+                    <div  className="col-3">
+                        <FormControl sx={{width:'80%',marginLeft:'20px'}}>
+                            <InputLabel>Tipologia Contratto</InputLabel>
+                            <Select value={bodyFatturazione.idTipoContratto||""}
+                                label="Tipologia Contratto"
+                                onChange={(e)=>{
+                                    const value = Number(e.target.value);
+                                    console.log({value});
+                                    setBodyFatturazione((prev)=>({...prev,...{idTipoContratto:value}}));
+                                    clearOnChangeFilter();
+                                }}
+                            >
+                                {arrayContratti?.map(el => {
+                                    return  <MenuItem value={el.id}>{el.descrizione}</MenuItem>;
+                                })}
+
+                            </Select>
+                        </FormControl>
                     </div>
                 </div>
                 <div className="row mt-5">

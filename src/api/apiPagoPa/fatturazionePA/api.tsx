@@ -164,6 +164,16 @@ export const getTipologieFaPagoPaWithData = async (token:string, nonce:string, b
     return response;
 };
 
+export const getTipologieContratto = async (token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/fatture/tipologiacontratto?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+};
+
+
 
 
 
