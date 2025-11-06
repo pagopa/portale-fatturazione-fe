@@ -1,4 +1,4 @@
-import {  Typography } from "@mui/material";
+import {  Tooltip, Typography } from "@mui/material";
 import { Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
 import { getTipologiaProfilo, manageError, } from '../../api/api';
 import { BodyGetListaDatiFatturazione, GridElementListaFatturazione, ResponseDownloadListaFatturazione } from "../../types/typeListaDatiFatturazione";
@@ -13,7 +13,6 @@ import { downloadDocumentoListaDatiFatturazionePagoPa, listaDatiFatturazionePago
 import { saveAs } from "file-saver";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../../types/enum";
-import { deleteFilterToLocalStorage, getFiltersFromLocalStorage, getInfoPageFromLocalStorage,setFilterToLocalStorage, setInfoPageToLocalStorage, setInfoToProfiloLoacalStorage } from "../../reusableFunction/actionLocalStorage";
 import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
@@ -232,7 +231,7 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
     };
       
     const columns: GridColDef[] = [
-        { field: 'ragioneSociale', headerName: 'Ragione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.ragioneSociale}</a>},
+        { field: 'ragioneSociale', headerName: 'Ragione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <Tooltip key={param.row.id} title={param.row.ragioneSociale.length > 20 ? param.row.ragioneSociale : null }><a className="mese_alidita text-primary fw-bolder" href="/">{param.row.ragioneSociale}</a></Tooltip>},
         { field: 'cup', headerName: 'CUP', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align: 'center' },
         { field: 'splitPayment', headerName: 'Split payment', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align: 'center' },
         { field: 'idDocumento', headerName: 'ID Documento', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align: 'center' },

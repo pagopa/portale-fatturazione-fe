@@ -43,7 +43,7 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
     }else if(row.inviata === 3){
         tooltipObj = {label:'Cancellata',title:'La fattura è stata cancellata',color:'info'};
     }
- 
+    console.log({row});
     return(
         
         <TableBody sx={{minHeight:"100px"}}>
@@ -72,7 +72,9 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
                         {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
                 </TableCell>
-                <TableCell sx={{color:'#0D6EFD',fontWeight: 'bold'}} >{row.ragionesociale?.toString().length > 50 ? row.ragionesociale?.toString().slice(0, 40) + '...' : row.ragionesociale}</TableCell>
+                <Tooltip  title={row?.ragionesociale?.length > 50 ? row?.ragionesociale : null }>
+                    <TableCell  sx={{color:'#0D6EFD',fontWeight: 'bold'}} >{row.ragionesociale?.toString().length > 50 ? row.ragionesociale?.toString().slice(0, 40) + '...' : row.ragionesociale}</TableCell>
+                </Tooltip>
                 <TableCell align='center'>{row.dataFattura !== null ? new Date(row.dataFattura).toLocaleString().split(',')[0] : ''}</TableCell>
                 <TableCell align='center'>
                     <Tooltip

@@ -2,11 +2,11 @@ import { GridColDef } from "@mui/x-data-grid";
 import { GridElementListaCommesse} from "../../types/typeListaModuliCommessa";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { mesiGrid } from "../../reusableFunction/reusableArrayObj";
-import { Chip } from "@mui/material";
+import { Chip, Tooltip } from "@mui/material";
 
 
 export const headerNameListaModuliCommessaSEND: GridColDef[] = [
-    { field: 'regioneSociale', headerName: 'Ragione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'center', align:"left",  renderCell: (param:{row:GridElementListaCommesse}) => <a className="mese_alidita text-primary fw-bolder" href="/8">{param.row.ragioneSociale}</a>},
+    { field: 'regioneSociale', headerName: 'Ragione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'center', align:"left", renderCell: (param:any) => <Tooltip key={param.row.idEnte} title={param.row.ragioneSociale.length > 20 ? param.row.ragioneSociale : null }><a className="mese_alidita text-primary fw-bolder" href="/">{param.row.ragioneSociale}</a></Tooltip>},
     { field: 'meseValidita', headerName: 'Mese',sortable: false, width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center",  renderCell: (param:{row:GridElementListaCommesse}) => <div className="MuiDataGrid-cellContent" title={mesiGrid[param.row.meseValidita]} role="presentation">{mesiGrid[param.row.meseValidita]}</div>},
     { field: 'stato', headerName: 'Stato',sortable: false, width:150,headerAlign: 'center',align:"center",disableColumnMenu :true, renderCell: ((param:{row:GridElementListaCommesse}) =>{
         let statusColor = "#ffffff";
