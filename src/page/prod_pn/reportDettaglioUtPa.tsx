@@ -365,15 +365,15 @@ const ReportDettaglio : React.FC = () => {
             idNotifica:notifica.idNotifica,
             contestazione:notifica.contestazione,
             onere:newOnere,
-            recipientId:notifica.recipientId,
+            recipientId:notifica.recipientId||"--",
             anno:notifica.anno,
             mese:mesiGrid[Number(notifica.mese)],
             ragioneSociale:notifica.ragioneSociale,
-            tipoNotifica:notifica.tipoNotifica,
-            iun:notifica.iun,
+            tipoNotifica:notifica.tipoNotifica||"--",
+            iun:notifica.iun||"--",
             dataInvio:new Date(notifica.dataInvio).toISOString().split('T')[0],
-            statoEstero:notifica.statoEstero,
-            cap:notifica.cap,
+            statoEstero:notifica.statoEstero||"--",
+            cap:notifica.cap||"--",
             costEuroInCentesimi:(Number(notifica.costEuroInCentesimi) / 100).toLocaleString("de-DE", { style: "currency", currency: "EUR" })
         };
         if(profilo.profilo === 'REC' || profilo.profilo === 'CON'){

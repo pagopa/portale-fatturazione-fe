@@ -7,6 +7,7 @@ import DocumentiContabili from "../../page/prod_pagopa/documentiContabiliPagopa"
 import { PathPf } from "../../types/enum";
 import LayoutAzure from "../../layout/layOutLoggedInAzure";
 import KpiPagamenti from "../../page/prod_pagopa/kpiPagamenti";
+import EmailPsp from "../../page/prod_pagopa/emailpsp";
 
 const PagoPaRoute = () => {
     
@@ -16,6 +17,7 @@ const PagoPaRoute = () => {
         <Route path={PathPf.DOCUMENTICONTABILI} element={<DocumentiContabili ></DocumentiContabili>}/>
         <Route path={PathPf.DETTAGLIO_DOC_CONTABILE} element={<DettaglioDocContabile></DettaglioDocContabile>}/> 
         <Route path={PathPf.KPI} element={<KpiPagamenti></KpiPagamenti>}/>
+        <Route path={PathPf.EMAIL_PSP} element={<EmailPsp></EmailPsp>}/>
     </Route>;
     return prodPagopaRoute;
 };
