@@ -119,10 +119,16 @@ const SideNavSend : React.FC = () => {
                     </ListItemIcon>
                     <ListItemText primary="Dati di fatturazione" />
                     {open ? 
-                        <IconButton onClick={()=> setOpen(false)}  size="small">
+                        <IconButton onClick={(e)=>{
+                            e.stopPropagation();
+                            setOpen(false);
+                        } }  size="small">
                             <ExpandLess fontSize="inherit" />
                         </IconButton>  :
-                        <IconButton onClick={()=> setOpen(true)}  size="small">
+                        <IconButton  onClick={(e)=>{
+                            e.stopPropagation();
+                            setOpen(true);
+                        } }  size="small">
                             <ExpandMore fontSize="inherit"/>
                         </IconButton> }
                 </ListItemButton>
@@ -148,10 +154,16 @@ const SideNavSend : React.FC = () => {
                     </ListItemIcon>
                     <ListItemText primary="Notifiche" />
                     {openContestazioni ? 
-                        <IconButton onClick={()=> setOpenContestazioni(false)}  size="small">
+                        <IconButton onClick={(e)=> {
+                            e.stopPropagation();
+                            setOpenContestazioni(false);
+                        }}  size="small">
                             <ExpandLess fontSize="inherit"  />
                         </IconButton>:
-                        <IconButton onClick={()=> setOpenContestazioni(true)}  size="small">
+                        <IconButton onClick={(e)=>{
+                            e.stopPropagation();
+                            setOpenContestazioni(true);
+                        } }  size="small">
                             <ExpandMore fontSize="inherit"  />
                         </IconButton>}
                 </ListItemButton>
@@ -186,10 +198,16 @@ const SideNavSend : React.FC = () => {
                     </ListItemIcon>
                     <ListItemText primary="Documenti emessi" />
                     {open2 ? 
-                        <IconButton onClick={()=> setOpen2(false)}  size="small">
+                        <IconButton onClick={(e)=>{
+                            e.stopPropagation();
+                            setOpen2(false);
+                        } }  size="small">
                             <ExpandLess fontSize="inherit" />
                         </IconButton>  :
-                        <IconButton  onClick={()=> setOpen2(true)}  size="small">
+                        <IconButton  onClick={(e)=>{
+                            e.stopPropagation();
+                            setOpen2(true);
+                        } }  size="small">
                             <ExpandMore fontSize="inherit"/>
                         </IconButton>}
                 </ListItemButton> 

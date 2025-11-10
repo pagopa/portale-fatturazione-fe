@@ -58,15 +58,19 @@ const SideNavPagopa = () => {
                     </ListItemIcon>
                     <ListItemText primary="KPI Pagamenti" />
                 </ListItemButton>
-                <ListItemButton selected={selectedIndex === 3} onClick={() => handleListItemClick(PathPf.EMAIL_PSP)}>
-                    <ListItemIcon>
-                        <AttachEmailIcon fontSize="inherit"></AttachEmailIcon>
-                    </ListItemIcon>
-                    <ListItemText primary="Invio email PSP" />
-                </ListItemButton>
             </List>
             <Divider />
         </Box>
     );
 };
 export default SideNavPagopa;
+
+
+/*
+  <ListItemButton selected={selectedIndex === 3} onClick={() => handleListItemClick(PathPf.EMAIL_PSP)}>
+                    <ListItemIcon>
+                        <AttachEmailIcon fontSize="inherit"></AttachEmailIcon>
+                    </ListItemIcon>
+                    <ListItemText primary="Invio email PSP" />
+                </ListItemButton>
+ */

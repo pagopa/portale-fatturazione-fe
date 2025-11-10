@@ -17,9 +17,13 @@ const PagoPaRoute = () => {
         <Route path={PathPf.DOCUMENTICONTABILI} element={<DocumentiContabili ></DocumentiContabili>}/>
         <Route path={PathPf.DETTAGLIO_DOC_CONTABILE} element={<DettaglioDocContabile></DettaglioDocContabile>}/> 
         <Route path={PathPf.KPI} element={<KpiPagamenti></KpiPagamenti>}/>
-        <Route path={PathPf.EMAIL_PSP} element={<EmailPsp></EmailPsp>}/>
+       
     </Route>;
     return prodPagopaRoute;
 };
 
 export default PagoPaRoute;
+
+{/*
+     <Route path={PathPf.EMAIL_PSP} element={<EmailPsp></EmailPsp>}/>
+     */}

@@ -214,7 +214,7 @@ const PageTipologiaContratto :React.FC = () =>{
         setOpenModalConfermaIns(true);
     };
 
-    const headerNames = [ 'Ragione Sociale' , 'Data aggiornamento' , ''];
+    const headerNames = [ 'Ragione Sociale' , 'Data aggiornamento' , 'Tipologia contatto'];
 
     const onButtonComfermaPopUp = async() => {
         const typToSet = elementSelected.tipologiaContratto === 1 ? 2 : 1;

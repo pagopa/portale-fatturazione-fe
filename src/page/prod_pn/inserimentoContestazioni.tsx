@@ -102,6 +102,7 @@ const InserimentoContestazioni = () =>{
     },[textValueEnti]);
 
     const getAnni = async() => {
+        setLoadingDetail(true);
         await getAnniContestazioni(token,profilo.nonce).then((res)=>{
             setValueYears(res.data);
             if(isInitialRender.current && Object.keys(filters).length > 0){
@@ -111,6 +112,7 @@ const InserimentoContestazioni = () =>{
                 getMesi(res.data[0]);
             }
         }).catch((err)=>{
+            setLoadingDetail(false);
             manageError(err,dispatchMainState);
         });
     };
@@ -152,9 +154,11 @@ const InserimentoContestazioni = () =>{
                 }
             } 
             uploadRef.current = false;
+            setLoadingDetail(false);
         }).catch((err)=>{
             manageError(err,dispatchMainState);
             uploadRef.current = false;
+            setLoadingDetail(false);
         });
     };
 

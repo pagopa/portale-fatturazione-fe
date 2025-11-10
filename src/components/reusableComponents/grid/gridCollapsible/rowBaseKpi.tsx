@@ -49,8 +49,8 @@ const RowBaseKpi = ({row}) => {
                         {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
                 </TableCell>
-                <Tooltip title={row.name}>
-                    <TableCell sx={{color:'#0D6EFD',fontWeight: 'bold',cursor:'pointer',width:'300px'}}>{ row.name?.length > 30 ? row.name.slice(0, 30) + '...' : row.name}</TableCell>
+                <Tooltip title={row.name?.length > 20 ? row.name :null}>
+                    <TableCell sx={{color:'#0D6EFD',fontWeight: 'bold',cursor:'pointer',width:'250px'}}>{ row.name?.length > 20 ? row.name.slice(0, 20) + '...' : row.name}</TableCell>
                 </Tooltip>
                 <TableCell align='center'>{row.yearQuarter}</TableCell>
                 <TableCell align='center' >{row.recipientId}</TableCell>
@@ -97,10 +97,10 @@ const RowBaseKpi = ({row}) => {
                                         <TableRow key={Math.random()}>
                                             {/*<TableCell>{obj.pspName}</TableCell>*/}
                                             <TableCell>{obj.pspId}</TableCell>
-                                            <TableCell align="center">{obj.trxTotal}</TableCell>
+                                            <TableCell align="center">{obj.trxTotal === null ? "--":obj.trxTotal}</TableCell>
                                             <TableCell align="right" component="th" scope="row">{obj.valueTotal.toLocaleString("de-DE", {style: "currency", currency: "EUR",maximumFractionDigits: 14 })}</TableCell>
-                                            <TableCell  align="center">{obj.kpiOk}</TableCell>
-                                            <TableCell align="center">{obj.percSconto}%</TableCell>
+                                            <TableCell  align="center">{obj.kpiOk  === null ? "--":obj.kpiOk}</TableCell>
+                                            <TableCell align="center">{obj.percSconto  === null ? "--":obj.percSconto}%</TableCell>
                                             <TableCell align="right">{obj.valueDiscount.toLocaleString("de-DE", {style: "currency", currency: "EUR",maximumFractionDigits: 14 })}</TableCell>  
                                         </TableRow>
                                     ))}

@@ -1,5 +1,5 @@
 import { Switch, TableCell, TableRow, Tooltip, Typography } from "@mui/material";
-import { width } from "@mui/system";
+import { Box, width } from "@mui/system";
 import { useEffect, useState } from "react";
 
 
@@ -28,11 +28,15 @@ const RowContratto = ({sliced, apiGet, handleClickOnGrid, element}) => {
                 
                     if(i === indexContractType){
                         return(
-                            apiGet &&  <TableCell key={Math.random()} align="center" sx={{display:'flex'}}> <Typography>PAC</Typography><Switch onChange={() =>{
-                                //setContractType((prev)=> !prev);
-                                setTipologia((prev)=> prev === 1 ? 2 : 1);
-                                handleClickOnGrid(element);
-                            } } checked={tipologia === 1 ? true : false }/><Typography>PAL</Typography></TableCell>
+                            apiGet &&  <TableCell key={Math.random()} align="center"> <Box 
+                                sx={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",  
+                                    gap: 1}}><Typography>PAC</Typography><Switch onChange={() =>{
+                                    setTipologia((prev)=> prev === 1 ? 2 : 1);
+                                    handleClickOnGrid(element);
+                                } } checked={tipologia === 1 ? true : false }/><Typography>PAL</Typography></Box></TableCell>
                         );
                     }else{
                         return (

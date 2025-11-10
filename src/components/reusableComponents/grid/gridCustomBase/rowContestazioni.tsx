@@ -24,13 +24,13 @@ const RowContestazioni = ({sliced,handleClickOnGrid,apiGet,element,headerNames})
             {
                 Object.values(sliced)?.map((value:any, i:number)=>{
                     const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
-                    const valueEl = (i === 0 && value?.toString().length > 50) ? value?.toString().slice(0, 50) + '...' : value;
+                    const valueEl = (i === 0 && value?.toString().length > 20) ? value?.toString().slice(0, 20) + '...' : value;
                     if(headerNames[i]?.renderCell){
                         return  headerNames[i]?.renderCell(valueEl,bgColorRow);
                        
                     }else{
                         return (
-                            <Tooltip key={Math.random()} title={value}>
+                            <Tooltip key={Math.random()} title={(value?.length > 20 && i === 0) ? value: null}>
                                 <TableCell
                                     sx={cssFirstColum} 
                                     align={i !== 0 ? "center": "left"}

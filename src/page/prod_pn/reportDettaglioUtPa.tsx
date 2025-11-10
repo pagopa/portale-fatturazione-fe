@@ -300,7 +300,7 @@ const ReportDettaglio : React.FC = () => {
     // Modifico l'oggetto notifica per fare il binding dei dati nel componente GRIDCUSTOM
     let headerNames: string[] = [];
     const notificheListWithOnere = notificheList.map((notifica:NotificheList) =>{
-        let newOnere = '';
+        let newOnere = '--';
         if( notifica.onere === 'PA_SEND' ){
             newOnere = 'SEND';
         }else if( notifica.onere === 'PA_REC' ){

@@ -16,9 +16,6 @@ import RowAsyncDoc from "./gridCustomBase/rowAsyncDoc";
 import RowContestazioni from "./gridCustomBase/rowContestazioni";
 import { DataGridOrchestratore } from "../../../page/prod_pn/processiOrchestratore";
 import { Whitelist } from "../../../page/prod_pn/whiteList";
-import RowModComTrimestreEnte from "./gridCustomBase/rowModComTrimestreEnte";
-import { setMilliseconds } from "date-fns";
-import { subHeaderNameModComTrimestraleENTE } from "../../../assets/configurations/config_SubGridModComEnte";
 import DefaultRow from "./gridCustomBase/rowDefault";
 interface GridCustomProps {
     elements:NotificheList[]|Rel[]|GridElementListaPsp[]|ContestazioneRowGrid[]|any
@@ -195,20 +192,19 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                                 {
                                                     Object.values(sliced).map((value:string|number|any, i:number)=>{
                                                         const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
-                                                        const valueEl = (i === 0 && value?.toString().length > 50) ? value?.toString().slice(0, 50) + '...' : value;
+                                                        const valueEl = (i === 0 && value?.toString().length > 30) ? value?.toString().slice(0, 30) + '...' : value;
                                                         return (
-                                                            <Tooltip key={Math.random()} title={value === "--"?null:value}>
+                                                            <Tooltip key={Math.random()} title={(value === "--" || nameParameterApi === "idNotifica"||valueEl.length < 30||((nameParameterApi=== "idTestata"&& i === 0 && valueEl.length < 30) ||nameParameterApi=== "idTestata"&& i !== 0 )) ?null:value}>
                                                                 <TableCell
-                                                                    align={nameParameterApi === "modComTrimestrale"?"center":"left"}
+                                                                    align={(nameParameterApi === "modComTrimestrale"||i !== 0)?"center":"left"}
                                                                     sx={cssFirstColum} 
-                                                                    align={i !== 0 ? "center":"left"}
                                                                     onClick={()=>{
                                                                         if(i === 0){
                                                                             handleClickOnGrid(element);
                                                                         }            
                                                                     }}
                                                                 >
-                                                                    {valueEl}
+                                                                    {valueEl === null ? "--":valueEl}
                                                                 </TableCell>
                                                             </Tooltip>
                                                         );

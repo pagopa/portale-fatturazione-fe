@@ -4,7 +4,7 @@ import { ActionReducerType } from "../reducer/reducerMainState";
 
 export interface Asseverazione {
     idEnte: string|null,
-    ragioneSociale: string|null,
+    ragioneSociale: string,
     prodotto: string|null,
     idTipoContratto: number,
     tipoContratto: string|null,
@@ -15,7 +15,8 @@ export interface Asseverazione {
     tipoAsseverazione: string|null,
     tipoCalcoloAsseverazione: string|null,
     timestamp: string|null,
-    idUtente: string|null
+    idUtente: string|null,
+    descrizione:string|null
 }
 export interface AdesioneBandoProps{
     mainState:MainState,

@@ -76,13 +76,9 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,se
                 monthFilterIsEqualMonthDownload={monthFilterIsEqualMonthDownload}></EnhancedTableToolbar>}
             
             <div style={{overflowX:'auto'}}>
-                
                 <Card sx={{width: '2000px'}}  >
-                    
                     <TableContainer component={Paper}>
-                        
                         <Table aria-label="collapsible table">
-                           
                             <TableHead sx={{backgroundColor:'#f2f2f2'}}>
                                 <TableRow>
                                     <TableCell padding="checkbox">

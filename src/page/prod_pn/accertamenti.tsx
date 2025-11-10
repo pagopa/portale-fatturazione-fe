@@ -216,11 +216,11 @@ const Accertamenti : React.FC = () =>{
     };
     
     const columns: GridColDef[] = [
-        { field: 'descrizione', headerName: 'Tipologia Accertamento', width: 400 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:{row:Accertamento}) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.descrizione}</a>},
-        { field: 'prodotto', headerName: 'Prodotto', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'anno', headerName: 'Anno', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'mese', headerName: 'Mese', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' ,renderCell: (param:{row:Accertamento}) => <div className="MuiDataGrid-cellContent" title={mesiGrid[param.row.mese]} role="presentation">{mesiGrid[param.row.mese]}</div> },
-        { field: 'contentType', headerName: 'Tipo File', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left',renderCell: (param:{row:Accertamento}) => {
+        { field: 'descrizione', headerName: 'Tipologia Accertamento', width: 400 , headerClassName: 'super-app-theme--header', headerAlign: 'left',align:"left",  renderCell: (param:{row:Accertamento}) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.descrizione}</a>},
+        { field: 'prodotto', headerName: 'Prodotto', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center", valueGetter: (params) => (params.value === null || params.value === "")  ? "--": params.value },
+        { field: 'anno', headerName: 'Anno', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center", valueGetter: (params) => (params.value === null || params.value === "")  ? "--": params.value },
+        { field: 'mese', headerName: 'Mese', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center' ,align:"center",renderCell: (param:{row:Accertamento}) => <div className="MuiDataGrid-cellContent" title={mesiGrid[param.row.mese]} role="presentation">{mesiGrid[param.row.mese]}</div> },
+        { field: 'contentType', headerName: 'Tipo File', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center",renderCell: (param:{row:Accertamento}) => {
             if(param.row.contentType === "text/csv"){
                 return <div className="MuiDataGrid-cellContent" title="CSV" role="presentation">CSV</div>;
             }else if(param.row.contentType === "application/zip"){
@@ -228,8 +228,8 @@ const Accertamenti : React.FC = () =>{
             }else if(param.row.contentType === "application/vnd.ms-excel"){
                 return  <div className="MuiDataGrid-cellContent" title="Excel" role="presentation">EXCEL</div>;
             }
-        } },
-        {field: 'action', headerName: '',sortable: false,width:70,headerAlign: 'left',disableColumnMenu :true,renderCell: ((param:{id:any,row:Accertamento}) => ( <DownloadIcon sx={{marginLeft:'10px',color: '#1976D2', cursor: 'pointer'}} onClick={()=> downloadAccertamento(param.id)}></DownloadIcon>)),}
+        }, valueGetter: (params) => (params.value === null || params.value === "")  ? "--": params.value },
+        {field: 'action', headerName: '',sortable: false,width:70,headerAlign: 'center',align:"center",disableColumnMenu :true,renderCell: ((param:{id:any,row:Accertamento}) => ( <DownloadIcon sx={{marginLeft:'10px',color: '#1976D2', cursor: 'pointer'}} onClick={()=> downloadAccertamento(param.id)}></DownloadIcon>)),}
     ];
     
 
@@ -334,8 +334,13 @@ const Accertamenti : React.FC = () =>{
                     height:'400px',
                     '& .MuiDataGrid-virtualScroller': {
                         backgroundColor: 'white',
+                    },
+                    "& .MuiDataGrid-row": {
+                        borderTop: "4px solid #F2F2F2",
+                        borderBottom: "2px solid #F2F2F2",
                     }
                 }}
+                rowHeight={60}
                 onPaginationModelChange={(e)=> onChangePageOrRowGrid(e)}
                 paginationModel={infoPageAccertamenti}
                 rows={gridData} 

@@ -1,4 +1,4 @@
-import { Button, Typography } from "@mui/material";
+import { Button, Tooltip, Typography } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import { DataGrid, GridColDef, GridEventListener, GridRowParams, MuiEvent } from "@mui/x-data-grid";
 import { Params } from "../../types/typesGeneral";
@@ -130,14 +130,14 @@ const AdesioneBando = () => {
     };
 
     const columns: GridColDef[] = [
-        { field: 'ragioneSociale', headerName: 'Ragione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:{row:Asseverazione}) => <a className="mese_alidita text-primary fw-bolder" >{param.row.ragioneSociale}</a>},
-        { field: 'prodotto', headerName: 'Prodotto', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'tipoContratto', headerName: 'Tipo Contratto', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'dataAnagrafica', headerName: 'Data Ultima Modifica Anagrafica', width: 200, headerClassName: 'super-app-theme--header', headerAlign: 'left',valueFormatter: (value:{value:string}) =>  value.value !== null ? new Date(value.value).toLocaleString().split(',')[0] : ''},
-        { field: 'calcoloAsseverazione', headerName: 'Calcolo Asseverazione', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'dataAsseverazione', headerName: 'Data Adesione al Bando', width: 200, headerClassName: 'super-app-theme--header', headerAlign: 'left', valueFormatter: (value:{value:string}) =>  value.value !== null ? new Date(value.value).toLocaleString().split(',')[0] : ''},
-        { field: 'descrizione', headerName: 'Descrizione Bando', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' },
-        { field: 'asseverazione', headerName: 'Adesione al Bando', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'left' }
+        { field: 'ragioneSociale', headerName: 'Ragione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:{row:Asseverazione}) => <Tooltip title={param.row?.ragioneSociale?.length > 20 ? param.row?.ragioneSociale : null }><a className="mese_alidita text-primary fw-bolder" href="/">{param.row?.ragioneSociale?.toString().length > 20 ? param.row?.ragioneSociale?.toString().slice(0, 20) + '...' : param.row?.ragioneSociale}</a></Tooltip>},
+        { field: 'prodotto', headerName: 'Prodotto', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center", valueGetter: (params) => (params.value === null || params.value === "")  ? "--": params.value },
+        { field: 'tipoContratto', headerName: 'Tipo Contratto', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center",valueGetter: (params) => (params.value === null || params.value === "")  ? "--": params.value },
+        { field: 'dataAnagrafica', headerName: 'Data Ultima Modifica Anagrafica', width: 200, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center",valueFormatter: (value:{value:string}) =>  value.value !== null ? new Date(value.value).toLocaleString().split(',')[0] : '--'},
+        { field: 'calcoloAsseverazione', headerName: 'Calcolo Asseverazione', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center", valueGetter: (params) => (params.value === null || params.value === "")  ? "--": params.value },
+        { field: 'dataAsseverazione', headerName: 'Data Adesione al Bando', width: 200, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center", valueFormatter: (value:{value:string}) =>  value.value !== null ? new Date(value.value).toLocaleString().split(',')[0] : '--'},
+        { field: 'descrizione', headerName: 'Descrizione Bando', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center",  valueGetter: (params) => (params.value === null ||params.value === "")  ? "--": params.value},
+        { field: 'asseverazione', headerName: 'Adesione al Bando', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center" }
     ];
 
     return (
@@ -189,6 +189,7 @@ const AdesioneBando = () => {
                         rows:e.pageSize,
                     });
                     setInfoPageBando(e);}}
+                rowHeight={60}
                 paginationModel={infoPageBando}
                 rows={gridData} 
                 columns={columns}

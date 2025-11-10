@@ -42,13 +42,13 @@ const RowBase = ({row,handleModifyMainState}) => {
                     </IconButton>
                    
                 </TableCell>
-                <Tooltip title={row.name}>
-                    <TableCell sx={{color:'#0D6EFD',fontWeight: 'bold',cursor:'pointer',width:'450px'}} onClick={()=> handleOnDetail(row)}  >{ row.name?.length > 50 ? row.name.slice(0, 50) + '...' : row.name}</TableCell>
+                <Tooltip title={row.name?.length > 20 ? row.name : null}>
+                    <TableCell sx={{color:'#0D6EFD',fontWeight: 'bold',cursor:'pointer',width:'200px'}} onClick={()=> handleOnDetail(row)}  >{ row.name?.length > 20 ? row.name.slice(0, 20) + '...' : row.name}</TableCell>
                 </Tooltip>
-                <TableCell align='center'>{row.contractId}</TableCell>
-                <TableCell align='center' >{row.numero}</TableCell>
-                <TableCell align='center' >{row.yearQuarter}</TableCell>
-                <TableCell align='center'>{new Date(row.data).toLocaleString().split(',')[0]}</TableCell>
+                <TableCell align='center'>{row.contractId||"--"}</TableCell>
+                <TableCell align='center' >{row.numero||"--"}</TableCell>
+                <TableCell align='center' >{row.yearQuarter||"--"}</TableCell>
+                <TableCell align='center'>{new Date(row.data).toLocaleString().split(',')[0]||"--"}</TableCell>
                 <TableCell align='center' onClick={()=> handleOnDetail(row)}>
                     <Tooltip title="Dettaglio">
                         <IconButton>
@@ -79,13 +79,13 @@ const RowBase = ({row,handleModifyMainState}) => {
                                 <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
                                     {row?.posizioni?.map((obj) => (
                                         <TableRow key={obj.progressivoRiga}>
-                                            <TableCell>{obj.codiceArticolo}</TableCell>
-                                            <TableCell>{obj.category}</TableCell>
-                                            <TableCell>{obj.quantita}</TableCell>
+                                            <TableCell>{obj.codiceArticolo === null ?"--":obj.codiceArticolo}</TableCell>
+                                            <TableCell>{obj.category === null ?"--":obj.category}</TableCell>
+                                            <TableCell>{obj.quantita === null ?"--":obj.quantita}</TableCell>
                                             <TableCell align="right" component="th" scope="row">{obj.importo.toLocaleString("de-DE", {style: "currency", currency: "EUR",maximumFractionDigits: 14 })}</TableCell>
-                                            <TableCell>{obj.codIva}</TableCell>
-                                            <TableCell>{obj.condizioni}</TableCell>
-                                            <TableCell>{obj.causale}</TableCell>  
+                                            <TableCell>{obj.codIva === null ?"--":obj.codIva}</TableCell>
+                                            <TableCell>{obj.condizioni === null ?"--":obj.condizioni}</TableCell>
+                                            <TableCell>{obj.causale === null ?"--":obj.causale}</TableCell>  
                                         </TableRow>
                                     ))}
                                 </TableBody>
