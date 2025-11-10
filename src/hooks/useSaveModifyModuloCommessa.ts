@@ -214,81 +214,117 @@ function useSaveModifyModuloCommessa({
 
 
 
-    const hendleInsertModifyModuloCommessa = async () =>{
-        setOpenModalLoading(true);
-        const objectToSend:any[] = dataModuli.map((el:ModuloCommessaType) => {
-            return {
-                anno:el.annoValidita,
-                mese:el.meseValidita,
-                "moduliCommessa": [
+    const hendleInsertModifyModuloCommessa = async () => {
+        try {
+            setOpenModalLoading(true);
+
+            const objectToSend: any[] = dataModuli.map((el: ModuloCommessaType) => ({
+                anno: el.annoValidita,
+                mese: el.meseValidita,
+                moduliCommessa: [
                     {
-                        "numeroNotificheNazionali": el.totaleNotificheAnalogicoARNaz||0,
-                        "numeroNotificheInternazionali": el.totaleNotificheAnalogicoARInternaz||0,
-                        "idTipoSpedizione": 1,
-                        "totaleNotifiche": el.totaleNotificheAnalogico||0
+                        numeroNotificheNazionali: el.totaleNotificheAnalogicoARNaz || 0,
+                        numeroNotificheInternazionali: el.totaleNotificheAnalogicoARInternaz || 0,
+                        idTipoSpedizione: 1,
+                        totaleNotifiche: el.totaleNotificheAnalogico || 0,
                     },
                     {
-                        "numeroNotificheNazionali": el.totaleNotificheAnalogico890Naz||0,
-                        "numeroNotificheInternazionali": 0,
-                        "idTipoSpedizione": 2,
-                        "totaleNotifiche": el.totaleNotificheAnalogico890Naz||0
+                        numeroNotificheNazionali: el.totaleNotificheAnalogico890Naz || 0,
+                        numeroNotificheInternazionali: 0,
+                        idTipoSpedizione: 2,
+                        totaleNotifiche: el.totaleNotificheAnalogico890Naz || 0,
                     },
                     {
-                        "numeroNotificheNazionali": el?.totaleNotificheDigitaleNaz||0,
-                        "numeroNotificheInternazionali":el.totaleNotificheDigitaleInternaz||0,
-                        "idTipoSpedizione": 3,
-                        "totaleNotifiche": el.totaleNotificheDigitale||0
-                    }
+                        numeroNotificheNazionali: el.totaleNotificheDigitaleNaz || 0,
+                        numeroNotificheInternazionali: el.totaleNotificheDigitaleInternaz || 0,
+                        idTipoSpedizione: 3,
+                        totaleNotifiche: el.totaleNotificheDigitale || 0,
+                    },
                 ],
-                "valoriRegione": el.valoriRegione
-            };});
-        if(whoInvokeHook === "ENTE"){
-            await getDatiFatturazione(token,profilo.nonce).then(async( ) =>{ 
-                await insertDatiModuloCommessaV2(objectToSend, token, profilo.nonce)
-                    .then(async()=>{
+                valoriRegione: el.valoriRegione,
+            }));
+
+            if (whoInvokeHook === "ENTE") {
+                try {
+                    await getDatiFatturazione(token, profilo.nonce);
+
+                    try {
+                        await insertDatiModuloCommessaV2(objectToSend, token, profilo.nonce);
+
                         setOpenModalLoading(false);
-                        handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
-                        managePresaInCarico("SAVE_COMMESSA_OK",dispatchMainState);
-                        if(isObbligatorioLayout){
+                        handleModifyMainState({ statusPageInserimentoCommessa: "immutable" });
+                        managePresaInCarico("SAVE_COMMESSA_OK", dispatchMainState);
+
+                        if (isObbligatorioLayout) {
                             navigate(PathPf.DATI_FATTURAZIONE);
-                        }else{
-                            await handleGetDettaglioModuloCommessaVecchio(activeCommessa.annoValidita,activeCommessa.meseValidita,true);
+                        } else {
+                            await handleGetDettaglioModuloCommessaVecchio(
+                                activeCommessa.annoValidita,
+                                activeCommessa.meseValidita,
+                                true
+                            );
                         }
-                    }).catch(err => {
-                        handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
+                    } catch (err: any) {
                         setOpenModalLoading(false);
-                        if(err.response.status === 500){
-                            setErrorAlert({error:err.response.status,message:err.response.data.detail});
-                            navigate(PathPf.LISTA_COMMESSE);
-                        }else{
-                            manageError(err,dispatchMainState);         
+                        handleModifyMainState({ statusPageInserimentoCommessa: "immutable" });
+
+                        if (err?.response?.status === 500) {
+                            setErrorAlert({
+                                error: err.response.status,
+                                message: err.response.data.detail,
+                            });
+                        } else {
+                            manageError(err, dispatchMainState);
                         }
-                    });
-            }).catch(err =>{
-                setOpenModalLoading(false);
-                if(err.response.status === 404){
-                    handleModifyMainState({datiFatturazione:false});
-                    navigate(PathPf.DATI_FATTURAZIONE);
-                }else{
-                    manageError(err,dispatchMainState);
-                }
-            });
-        }else if(whoInvokeHook === "SEND"){
-            await modifyDatiModuloCommessaPagoPaV2(objectToSend,activeCommessa.idEnte,activeCommessa.idTipoContratto, token, profilo.nonce)
-                .then(async()=>{
-                    setOpenModalLoading(false);
-                    managePresaInCarico("SAVE_COMMESSA_OK",dispatchMainState);
-                    await handleGetDettaglioModuloCommessaSendV2(true);
-                }).catch(err => {
-                    setOpenModalLoading(false);
-                    if(err.response.status === 500){
-                        setErrorAlert({error:err.response.status,message:err.response.data.detail});
-                        navigate(PathPf.LISTA_MODULICOMMESSA);
-                    }else{
-                        manageError(err,dispatchMainState);         
+                        navigate(PathPf.LISTA_COMMESSE);
                     }
-                });
-        }               
+                } catch (err: any) {
+                    setOpenModalLoading(false);
+                    if (err?.response?.status === 404) {
+                        handleModifyMainState({ datiFatturazione: false });
+                        navigate(PathPf.DATI_FATTURAZIONE);
+                    } else {
+                        manageError(err, dispatchMainState);
+                        navigate(PathPf.LISTA_COMMESSE);
+                    }
+                }
+            }else if (whoInvokeHook === "SEND") {
+                try {
+                    await modifyDatiModuloCommessaPagoPaV2(
+                        objectToSend,
+                        activeCommessa.idEnte,
+                        activeCommessa.idTipoContratto,
+                        token,
+                        profilo.nonce
+                    );
+
+                    setOpenModalLoading(false);
+                    managePresaInCarico("SAVE_COMMESSA_OK", dispatchMainState);
+                    await handleGetDettaglioModuloCommessaSendV2(true);
+                } catch (err: any) {
+                    setOpenModalLoading(false);
+                    if (err?.response?.status === 500) {
+                        setErrorAlert({
+                            error: err.response.status,
+                            message: err.response.data.detail,
+                        });
+                        
+                    } else {
+                        manageError(err, dispatchMainState);
+                    }
+                    navigate(PathPf.LISTA_MODULICOMMESSA);
+                }
+            }
+        } catch (err:any) {
+            console.error("Unexpected error in hendleInsertModifyModuloCommessa:", err);
+            setOpenModalLoading(false);
+            if(whoInvokeHook === "SEND"){
+                navigate(PathPf.LISTA_MODULICOMMESSA);
+            }else{
+                navigate(PathPf.LISTA_COMMESSE);
+            }
+            managePresaInCarico('NO_INSERIMENTO_COMMESSA',dispatchMainState); 
+        }
     };
               
             
