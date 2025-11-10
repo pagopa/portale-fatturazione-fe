@@ -45,7 +45,7 @@ const MainInserimentoModuloCommessa = ({
             return 0;
         });
     }, [activeCommessa?.valoriRegione]);
-    console.log({sortedRegioni});
+
     if(loadingData){
         return (
             <Box
@@ -263,7 +263,7 @@ const MainInserimentoModuloCommessa = ({
                                 columns={[6,2,2]}
                             ></ColumnGrid>
                             <hr></hr>
-                            {(activeCommessa.source === "archiviato" && activeCommessa.valoriRegione.length === 0) ? null : 
+                            {(activeCommessa?.source === "archiviato" && activeCommessa?.valoriRegione?.length === 0) ? null : 
                                 <>
                                     <ColumnGrid 
                                         elements={[
