@@ -61,7 +61,7 @@ const Fatturazione : React.FC = () =>{
     const [fattureSelected, setFattureSelected] = useState<number[]>([]);
     const [dateTipologie, setDateTipologie] = useState<string[]>([]);
     const [valueMulitselectDateTipologie, setValueMultiselectDateTipologie] = useState<string[]>([]);
-    const [arrayContratti, setArrayContratto] = useState<{id:number,descrizione:string}[]>([]);
+    const [arrayContratti, setArrayContratto] = useState<{id:number,descrizione:string}[]>([{id:0,descrizione:"Tutti"}]);
     
     const [bodyFatturazione, setBodyFatturazione] = useState<BodyFatturazione>({
         anno:0,
@@ -148,10 +148,9 @@ const Fatturazione : React.FC = () =>{
 
     const getContratti = async() => {
         await getTipologieContratto(token, profilo.nonce).then((res)=>{
-            setArrayContratto(res.data);
+            setArrayContratto(prev => [...prev, ...res.data]);
         }).catch((err)=>{
-            setArrayContratto([]);
-            manageError(err,dispatchMainState);
+            setArrayContratto([{id:0,descrizione:"Tutti"}]);
         });
     };
    
@@ -539,11 +538,10 @@ const Fatturazione : React.FC = () =>{
                     <div  className="col-3">
                         <FormControl sx={{width:'80%',marginLeft:'20px'}}>
                             <InputLabel>Tipologia Contratto</InputLabel>
-                            <Select value={bodyFatturazione.idTipoContratto||""}
+                            <Select value={bodyFatturazione.idTipoContratto !== null ? bodyFatturazione.idTipoContratto : 0}
                                 label="Tipologia Contratto"
                                 onChange={(e)=>{
-                                    const value = Number(e.target.value);
-                                    console.log({value});
+                                    const value = Number(e.target.value) === 0 ? null : Number(e.target.value);
                                     setBodyFatturazione((prev)=>({...prev,...{idTipoContratto:value}}));
                                     clearOnChangeFilter();
                                 }}
@@ -551,7 +549,6 @@ const Fatturazione : React.FC = () =>{
                                 {arrayContratti?.map(el => {
                                     return  <MenuItem value={el.id}>{el.descrizione}</MenuItem>;
                                 })}
-
                             </Select>
                         </FormControl>
                     </div>

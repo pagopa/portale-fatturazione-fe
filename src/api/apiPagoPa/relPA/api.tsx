@@ -142,6 +142,15 @@ export const getMesiRel = async (token:string, nonce:string , body:{anno:string}
     return response;
 };
 
+export const getTipologieContrattoRel = async (token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/rel/pagopa/tipologiacontratto?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+};
+
 
 
 

@@ -21,7 +21,8 @@ export interface BodyRel{
     tipologiaFattura:string|null,
     idEnti:string[] | [],
     idContratto: string | null,
-    caricata: number|null
+    caricata: number|null,
+    idTipoContratto:number|null
 } 
 
 export interface BodyRelSelfcare{

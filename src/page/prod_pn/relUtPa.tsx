@@ -7,7 +7,7 @@ import { profiliEnti,  } from "../../reusableFunction/actionLocalStorage";
 import { OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
 import { downloadListaRel, getAnniRelSend, getListaRel, getMesiRelSend, getTipologieFatture } from "../../api/apiSelfcare/relSE/api";
 import { mesiGrid, mesiWithZero } from "../../reusableFunction/reusableArrayObj";
-import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, downloadQuadraturaRelPagopa, downloadReportRelPagoPa, getAnniRel, getListaRelPagoPa, getMesiRel, getTipologieFatturePagoPa } from "../../api/apiPagoPa/relPA/api";
+import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, downloadQuadraturaRelPagopa, downloadReportRelPagoPa, getAnniRel, getListaRelPagoPa, getMesiRel, getTipologieContrattoRel, getTipologieFatturePagoPa } from "../../api/apiPagoPa/relPA/api";
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
 import { PathPf } from "../../types/enum";
 import { saveAs } from "file-saver";
@@ -55,13 +55,15 @@ const RelPage : React.FC = () =>{
     const [tipologiaFatture, setTipologiaFatture] = useState<string[]>([]);
     const [valuetipologiaFattura, setValueTipologiaFattura] = useState<string>('');
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
+    const [arrayContratti, setArrayContratto] = useState<{id:number,descrizione:string}[]>([{id:0,descrizione:"Tutti"}]);
     const [bodyDownload, setBodyDownload] = useState<BodyRel>({
         anno:0,
         mese:0,
         tipologiaFattura:null,
         idEnti:[],
         idContratto:null,
-        caricata:null
+        caricata:null,
+        idTipoContratto:null
     });
     const [bodyRel, setBodyRel] = useState<BodyRel>({
         anno:0,
@@ -69,7 +71,8 @@ const RelPage : React.FC = () =>{
         tipologiaFattura:null,
         idEnti:[],
         idContratto:null,
-        caricata:null
+        caricata:null,
+        idTipoContratto:null
     });
     const { 
         filters,
@@ -113,6 +116,7 @@ const RelPage : React.FC = () =>{
         
         if(enti && mainState.datiFatturazione === true){
             setGetListaRelRunning(true);
+            await getContratti();
             await getAnniRelSend(token, profilo.nonce).then((res)=>{
                 const arrayNumber = res.data.map(el => Number(el.toString()));
                 setArrayYears(arrayNumber);
@@ -130,6 +134,7 @@ const RelPage : React.FC = () =>{
             });
         }else if(profilo.auth === 'PAGOPA'){
             setGetListaRelRunning(true);
+            await getContratti();
             await getAnniRel(token, profilo.nonce).then((res)=>{
                 const arrayNumber = res.data.map(el => Number(el.toString()));
                 setArrayYears(arrayNumber);
@@ -212,6 +217,15 @@ const RelPage : React.FC = () =>{
             });
         }
        
+    };
+
+    const getContratti = async() => {
+        await getTipologieContrattoRel(token, profilo.nonce).then((res)=>{
+            setArrayContratto(prev => [...prev, ...res.data]);
+        }).catch((err)=>{
+            setArrayContratto([]);
+
+        });
     };
 
 
@@ -344,7 +358,8 @@ const RelPage : React.FC = () =>{
             tipologiaFattura:null,
             idEnti:[],
             idContratto:null,
-            caricata:null
+            caricata:null,
+            idTipoContratto:null
         });
         setBodyDownload({
             anno:arrayYears[0],
@@ -352,7 +367,8 @@ const RelPage : React.FC = () =>{
             tipologiaFattura:null,
             idEnti:[],
             idContratto:null,
-            caricata:null
+            caricata:null,
+            idTipoContratto:null
         });
         setValueTipologiaFattura('');
         setData([]);
@@ -645,11 +661,28 @@ const RelPage : React.FC = () =>{
                     <div  className="col-3">
                         <SelectTipologiaFattura value={valuetipologiaFattura} setBody={setBodyRel} setValue={setValueTipologiaFattura} types={tipologiaFatture} clearOnChangeFilter={clearOnChangeFilter}></SelectTipologiaFattura>
                     </div>
-                    <div className="col-3">
-                        <SelectStatoPdf values={bodyRel} setValue={setBodyRel} clearOnChangeFilter={clearOnChangeFilter}></SelectStatoPdf>
+                    <div  className="col-3">
+                        <FormControl sx={{width:'80%',marginLeft:'20px'}}>
+                            <InputLabel>Tipologia Contratto</InputLabel>
+                            <Select value={bodyRel.idTipoContratto !== null ? bodyRel.idTipoContratto : 0}
+                                label="Tipologia Contratto"
+                                onChange={(e)=>{
+                                    const value = Number(e.target.value) === 0 ? null : Number(e.target.value);
+                                  
+                                    setBodyRel((prev)=>({...prev,...{idTipoContratto:value}}));
+                                    clearOnChangeFilter();
+                                }}
+                            >
+                                {arrayContratti?.map(el => {
+                                    return  <MenuItem value={el.id}>{el.descrizione}</MenuItem>;
+                                })}
+                    
+                            </Select>
+                        </FormControl>
                     </div>
                 </div>
                 <div className="row mt-5">
+                    
                     { profilo.auth === 'PAGOPA' &&
                         <div  className="col-3">
                             <MultiselectCheckbox 
@@ -662,6 +695,9 @@ const RelPage : React.FC = () =>{
                             ></MultiselectCheckbox>
                         </div>
                     }
+                    <div className="col-3">
+                        <SelectStatoPdf values={bodyRel} setValue={setBodyRel} clearOnChangeFilter={clearOnChangeFilter}></SelectStatoPdf>
+                    </div>
                 </div>
                 <div className="row mt-5">
                     <div className="col-1">
