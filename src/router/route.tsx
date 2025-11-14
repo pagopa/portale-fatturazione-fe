@@ -22,6 +22,7 @@ import LayoutLoggedOut from '../layout/layoutLoggedOut';
 import { BrowserRouter } from 'react-router-dom';
 import useIsTabActive from '../reusableFunction/tabIsActiv';
 import { getPageApiKeyVisible, redirect } from '../api/api';
+import TestListaModuli from '../page/prod_pn/testListaModuli';
 
 const RouteProfile = () => {
     const globalContextObj = useContext(GlobalContext);
@@ -102,6 +103,8 @@ const RouteProfile = () => {
                         <Route path="/azureLogin" element={<LayoutLoggedOut page={<AzureLogin/>}></LayoutLoggedOut>}></Route>
                         <Route path="/error"  element={<ErrorPage/>} />
                         <Route path="*" element={<Navigate  to={redirectRoute} replace />} />
+                        {/*da portare in lista commessa*/}
+                        <Route path={"/test"} element={<TestListaModuli/>}/>
                         {route}
                     </Routes>
                 </div>
