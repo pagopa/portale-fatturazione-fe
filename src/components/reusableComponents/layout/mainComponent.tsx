@@ -1,7 +1,7 @@
 import * as React from "react";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import { Grid, Typography } from "@mui/material";
+import { Grid, Typography, Button } from "@mui/material";
 
 const MainBox = styled(Box)({
     marginLeft: "1.25rem",  
@@ -35,12 +35,63 @@ export  function ResponsiveGridContainer({ children, sx={}, ...rest }) {
                 lg: 5,
                 xl: 6
             }}
-            {...rest}       // spread other props first
+            {...rest}   
             sx={{
-                ...sx          // merge the passed sx, optional
+                ...sx         
             }}
         >
             {children}
         </Grid>
     );
 }
+
+
+export const FilterButtons = ({ onButtonFiltra, onButtonAnnulla, statusAnnulla }) => {
+    return (
+        <Grid 
+            container 
+            spacing={2} 
+            justifyContent="center" 
+            alignItems="center"
+        >
+            <Grid 
+                item 
+                xs={12}  
+                sm={6}   
+                md={4}  
+                lg={3} 
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+            >
+                <Button 
+                    onClick={onButtonFiltra}
+                    variant="contained"
+                    fullWidth
+                >
+          Filtra
+                </Button>
+            </Grid>
+            {statusAnnulla !== "hidden" && (
+                <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={4}
+                    lg={3}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                >
+                    <Button 
+                        onClick={onButtonAnnulla} 
+                        variant="text"
+                        fullWidth
+                    >
+            Annulla filtri
+                    </Button>
+                </Grid>
+            )}
+        </Grid>
+    );
+};

@@ -99,6 +99,7 @@ const TestListaModuli  = () => {
                         setError={setErrorContrattoInizioFine}
                     ></MainFilter>
                 </ResponsiveGridContainer>
+                <FiltersButtons></FiltersButtons>
             </Box>
         </MainBoxStyled>
     );
