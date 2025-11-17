@@ -37,8 +37,9 @@ export type MainFilterProps<T> = {
     valuesSelected?: T[];
     setValuSelected?:Dispatch<SetStateAction<T[]>>
 
-    valueAutocomplete?:T[],
-    setValueAutocomplete?:Dispatch<SetStateAction<T[]>>,
+    valueAutocomplete:OptionMultiselectChackbox[],
+    setValueAutocomplete:Dispatch<SetStateAction<OptionMultiselectChackbox[]>>,
+    
     setSecondState?: Dispatch<SetStateAction<T[]>>;
     setTextValue?: Dispatch<SetStateAction<string>>;
     hidden?: boolean;
@@ -190,7 +191,7 @@ const MainFilter = <T,>({
                 return;
             }
         case "multi_checkbox":
-            if(dataSelect && setValuSelected){
+            if(dataSelect && setValuSelected && valuesSelected){
                 return (
                     <MainBoxContainer>
                         <MultiSelect<T>
@@ -199,16 +200,20 @@ const MainFilter = <T,>({
                             value={valuesSelected}
                             onChange={(val) => {
                                 clearOnChangeFilter();
-                                setValueAutocomplete?.(val);
+                              
+                                setValueSelected(val);
+                                const allId = value.map(el => el.idTipologiaReport);
+                                setBody((prev) => ({...prev,...{idTipologiaReports:allId}}));
+                                clearOnChangeFilter();
                             }}
                             getLabel={(item) => (item as any)[keyOption]}
                             getId={(item) => (item as any)[keyInput]}
                         />
                     </MainBoxContainer>
                 );
+            }else{
+                return;
             }
-            
-               
         default:
             return (
                 <h1>ciao</h1>
