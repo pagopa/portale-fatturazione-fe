@@ -4,28 +4,47 @@ import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { it } from "date-fns/locale";
 import { formatDateToValidation, isDateInvalid } from "../../reusableFunction/function";
-import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
 import MultiselectCheckbox from "../reportDettaglio/multiSelectCheckbox";
+import MultiSelectStatoContestazione from "../reportDettaglio/multiSelectGroupedBy";
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import { OptionType } from "dayjs";
+import { FlagContestazione, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
+import { BodyListaNotifiche } from "../../types/typesGeneral";
+import { BodyFatturazione } from "../../types/typeFatturazione";
+import { BodyStoricoContestazioni, TipologieDoc } from "../../page/prod_pn/storicoContestazioni";
+import { BodyWhite } from "../../api/apiPagoPa/whiteListPA/whiteList";
+import { BodyGetListaDatiFatturazione } from "../../types/typeListaDatiFatturazione";
+import { BodyDownloadModuliCommessa } from "../../types/typeListaModuliCommessa";
+import { BodyRel } from "../../types/typeRel";
+import { BodyContratto } from "../../page/prod_pn/tipologiaContratto";
+import { MultiSelect } from "./select/customMultiSelect";
 
-type MainFilterProps =  {
-    filterName: string,
-    clearOnChangeFilter:() => void,
-    setBody:Dispatch<SetStateAction<any>>,
-    body:any,
-    arrayValues?:any[],
-    inputLabel?:string,
-    keyInput:string,
-    keyCompare:string,
-    error?:boolean,
-    setError?:Dispatch<SetStateAction<boolean>>,
-    dataSelect?:ElementMultiSelect[],
-    setTextValue?:Dispatch<SetStateAction<string>>,
-    valueAutocomplete?:OptionMultiselectChackbox[],
-    setValueAutocomplete?:Dispatch<SetStateAction<OptionMultiselectChackbox[]>>
+export type MainFilterProps<T> = {
+    filterName: string;
+    clearOnChangeFilter: () => void;
+    setBody:any
+    body: any;
+    arrayValues?: any[];
+    inputLabel: string;
+    keyInput: string;     // field used as value
+    keyOption?:string;   // field used as label
+    keyCompare?: string;  // optional compare field
+    error?: boolean;
+    setError?: Dispatch<SetStateAction<boolean>>;
 
-}
+    dataSelect?:T[];
+    valuesSelected?: T[];
+    setValuSelected?:Dispatch<SetStateAction<T[]>>
 
-const MainFilter  = ({
+    valueAutocomplete?:T[],
+    setValueAutocomplete?:Dispatch<SetStateAction<T[]>>,
+    setSecondState?: Dispatch<SetStateAction<T[]>>;
+    setTextValue?: Dispatch<SetStateAction<string>>;
+    hidden?: boolean;
+};
+
+const MainFilter = <T,>({
     filterName,
     inputLabel,
     clearOnChangeFilter,
@@ -39,12 +58,17 @@ const MainFilter  = ({
     dataSelect,
     setTextValue,
     valueAutocomplete,
-    setValueAutocomplete
-}:MainFilterProps) => {
+    setValueAutocomplete,
+    setSecondState,
+    valuesSelected,
+    setValuSelected,
+    hidden,
+    keyOption = "",
+}: MainFilterProps<T>) => {
 
     switch (filterName) {
         case "select_key_value":  //case "select_prodotto":case "select_profilo":case "select_anno":case "select_mese":consolidatore recapitista
-            return (  <Grid item xs={12} sm={6} md={3}>
+            return ( !hidden && <MainBoxContainer>
                 <FormControl sx={{width:"80%"}}>
                     <InputLabel>
                         {inputLabel}
@@ -67,9 +91,40 @@ const MainFilter  = ({
                         ))}
                     </Select>
                 </FormControl>
-            </Grid>);
-        case "input_text":  //"input_iun":case "input_cup":case "input_recipient_id":
-            return ( <Grid item xs={12} sm={6} md={3}> 
+            </MainBoxContainer>);
+        case "select_value":
+            return ( !hidden && <MainBoxContainer>
+                <FormControl sx={{width:"80%"}}>
+                    <InputLabel>
+                        {inputLabel}
+                    </InputLabel>
+                    <Select
+                        label=  {inputLabel}
+                        onChange={(e) => {
+                            clearOnChangeFilter();
+                            setBody((prev)=> ({...prev, ...{[keyInput]:e.target.value}}));
+                        }}
+                        value={body[keyInput]||""}
+                    >
+                        {arrayValues?.map((el) => (
+                            <MenuItem
+                                key={Math.random()}
+                                value={el||''}
+                            >
+                                {el}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>;
+            </MainBoxContainer>);
+        case "select_grouped_by":
+            return(
+                !hidden && <MainBoxContainer> 
+                    <h1>to do</h1>
+                </MainBoxContainer>
+            );    
+        case "input_text": 
+            return (!hidden && <MainBoxContainer> 
                 <TextField
                     sx={{width:"80%"}}
                     label={inputLabel}
@@ -85,9 +140,9 @@ const MainFilter  = ({
                             }
                         });}
                     }            
-                /> </Grid>);
+                /> </MainBoxContainer>);
         case "date_from_to": 
-            return ( <Grid item xs={12} sm={6} md={3}> 
+            return ( !hidden && <MainBoxContainer> 
                 <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it}>
                     <DesktopDatePicker
                         sx={{width:"80%"}}
@@ -96,11 +151,11 @@ const MainFilter  = ({
                         onChange={(e:any | null)  =>{
                             if(e !== null && !isDateInvalid(e)){
                                 setBody(prev => ({...prev,...{[keyInput]:e}}));
-                                if(body[keyCompare] !== null && ((formatDateToValidation(e)||0) < (formatDateToValidation(body[keyCompare])||0))){
+                                if(keyCompare && body[keyCompare] !== null && ((formatDateToValidation(e)||0) < (formatDateToValidation(body[keyCompare])||0))){
                                     setError && setError(true);
-                                }else if(body[keyCompare] === null && e !== null){
+                                }else if(keyCompare && body[keyCompare] === null && e !== null){
                                     setError && setError(true);
-                                }else{
+                                }else if(keyCompare){
                                     setError && setError(false);
                                 }
                             }else{
@@ -116,11 +171,11 @@ const MainFilter  = ({
                             },
                         }}
                     />
-                </LocalizationProvider></Grid>);
+                </LocalizationProvider></MainBoxContainer>);
         case "rag_sociale":
-            if(dataSelect && setTextValue && valueAutocomplete && setValueAutocomplete){
+            if(dataSelect && setTextValue && valueAutocomplete && setValueAutocomplete && !hidden){
                 return (
-                    <Grid item xs={12} sm={6} md={3}>
+                    <MainBoxContainer>
                         <MultiselectCheckbox 
                             setBodyGetLista={setBody}
                             dataSelect={dataSelect}
@@ -129,11 +184,31 @@ const MainFilter  = ({
                             setValueAutocomplete={setValueAutocomplete}
                             clearOnChangeFilter={clearOnChangeFilter}
                         ></MultiselectCheckbox>
-                    </Grid>
+                    </MainBoxContainer>
                 );
             }else{
                 return;
             }
+        case "multi_checkbox":
+            if(dataSelect && setValuSelected){
+                return (
+                    <MainBoxContainer>
+                        <MultiSelect<T>
+                            label={inputLabel}
+                            options={dataSelect}
+                            value={valuesSelected}
+                            onChange={(val) => {
+                                clearOnChangeFilter();
+                                setValueAutocomplete?.(val);
+                            }}
+                            getLabel={(item) => (item as any)[keyOption]}
+                            getId={(item) => (item as any)[keyInput]}
+                        />
+                    </MainBoxContainer>
+                );
+            }
+            
+               
         default:
             return (
                 <h1>ciao</h1>
@@ -142,3 +217,16 @@ const MainFilter  = ({
 };
 
 export default MainFilter;
+
+
+export const MainBoxContainer = ({children}) => {
+    return (
+        <Grid item xs={12} sm={6} md={3}
+            sx={{
+                display: "flex",
+                justifyContent: { xs: "center", sm: "center",md: "flex-start" } 
+            }}>
+            {children}
+        </Grid>
+    );
+};

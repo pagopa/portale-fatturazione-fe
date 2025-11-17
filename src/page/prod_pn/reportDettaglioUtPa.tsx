@@ -1,21 +1,14 @@
-import { IconButton, Tooltip, Typography } from "@mui/material";
 import React , { useState, useEffect, useContext} from 'react';
-import { TextField,Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import { getTipologiaProfilo, manageError, managePresaInCarico} from "../../api/api";
 import {NotificheList, FlagContestazione, Contestazione, ElementMultiSelect, ListaRecCon, OptionMultiselectChackbox  } from "../../types/typeReportDettaglio";
 import { BodyListaNotifiche } from "../../types/typesGeneral";
 import ModalContestazione from '../../components/reportDettaglio/modalContestazione';
 import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
-import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
-import DownloadIcon from '@mui/icons-material/Download';
-import { useNavigate } from "react-router";
 import { getAnniNotifiche, getMesiNotifiche, listaNotifichePagoPa, getTipologiaEntiCompletiPagoPa, getContestazionePagoPa, downloadNotifchePagoPa } from "../../api/apiPagoPa/notifichePA/api";
 import { getTipologiaProdotto } from "../../api/apiSelfcare/moduloCommessaSE/api";
-import { listaEntiNotifichePageConsolidatore, listaEntiNotifichePage, listaNotifiche, listaNotificheRecapitista, listaNotificheConsolidatore, getContestazione, getContestazioneRecapitista, getContestazioneCosolidatore, downloadNotifche, downloadNotifcheRecapitista, downloadNotifcheConsolidatore, getMessaggiCountEnte } from "../../api/apiSelfcare/notificheSE/api";
+import { listaEntiNotifichePageConsolidatore, listaEntiNotifichePage, listaNotifiche, listaNotificheRecapitista, listaNotificheConsolidatore, getContestazione, getContestazioneRecapitista, getContestazioneCosolidatore, downloadNotifche, downloadNotifcheRecapitista, downloadNotifcheConsolidatore, getMessaggiCountEnte, flagContestazione } from "../../api/apiSelfcare/notificheSE/api";
 import ModalRedirect from "../../components/commessaInserimento/madalRedirect";
 import ModalScadenziario from "../../components/reportDettaglio/modalScadenziario";
-import MultiSelectStatoContestazione from "../../components/reportDettaglio/multiSelectGroupedBy";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
@@ -23,7 +16,9 @@ import { profiliEnti } from "../../reusableFunction/actionLocalStorage";
 import { mesiGrid, mesiWithZero, tipoNotifica } from "../../reusableFunction/reusableArrayObj";
 import { GlobalContext } from "../../store/context/globalContext";
 import { PathPf } from "../../types/enum";
-import EventNoteIcon from '@mui/icons-material/EventNote';
+import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
+import MainFilter from "../../components/reusableComponents/mainFilter";
+import { OptionType } from 'dayjs';
 
 
 const ReportDettaglio : React.FC = () => {
@@ -41,10 +36,7 @@ const ReportDettaglio : React.FC = () => {
     const enti = profiliEnti(mainState);
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
-    const navigate = useNavigate();
-    const currentMonth = (new Date()).getMonth() + 1;
-
-    
+   
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [profili, setProfili] = useState([]);
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
@@ -94,6 +86,7 @@ const ReportDettaglio : React.FC = () => {
     const [showLoadingGrid, setShowLoadingGrid] = useState(false);
     const [showModalScadenziario, setShowModalScadenziario ] = useState(false);   
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
+    const [fgContestazione, setFgContestazione] = useState<FlagContestazione[]>([]);
     const [bodyGetLista, setBodyGetLista] = useState<BodyListaNotifiche>({
         profilo:'',
         prodotto:'',
@@ -178,6 +171,7 @@ const ReportDettaglio : React.FC = () => {
         setGetNotificheWorking(true);
         getProdotti();
         getProfili();
+        getFlagContestazione();
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const {idEnti, recapitisti, consolidatori, ...body} = newBody;
         await getAnniNotifiche(token, profilo.nonce).then(async(resAnno)=> {
@@ -266,6 +260,14 @@ const ReportDettaglio : React.FC = () => {
         }, 800);
         return () => clearTimeout(timer);
     },[textValue]);
+
+    const getFlagContestazione =  async() => {
+        await flagContestazione(token, profilo.nonce ).then((res)=>{
+            setFgContestazione(res.data);                
+        }).catch(((err)=>{
+            manageError(err,dispatchMainState);
+        }));
+    };
     
     const getMesi = async (anno) => {
         await getMesiNotifiche(token, profilo.nonce,{anno}).then((res)=> {
@@ -757,340 +759,137 @@ const ReportDettaglio : React.FC = () => {
         }
     }; 
     
-    //const backgroundColorButtonScadenzario = (profilo.auth === 'PAGOPA' || enti) ? "#0062C3" : 'red';
     
     return (
-        <div className="mx-5 marginTop24">
-            <div className="row">
-                <div className="col-9">
-                    <Typography variant="h4">Notifiche</Typography>
-                </div>
-                <div className="col-3 ">
-                    <Box sx={{width:'80%', marginLeft:'20px', display:'flex', justifyContent:'end'}}  >
-                        <Tooltip  title="Scadenzario contestazioni">
-                            <Button  
-                                variant="outlined"
-                                size="medium"  onClick={()=> setShowModalScadenziario(true)} >
-                                <EventNoteIcon></EventNoteIcon>
-                            </Button>
-                        </Tooltip>
-                    </Box>
-                </div>
-            </div>
-            {/*title container end */}
-            <div className="mt-5 mb-5 ">
-                <div className="row">
-                    <div className="col-3">
-                        <Box sx={{width:'80%'}} >
-                            <FormControl
-                                fullWidth
-                                size="medium"
-                            >
-                                <InputLabel>
-        Anno
-                                </InputLabel>
-                                <Select
-                                    label='Seleziona Prodotto'
-                                    onChange={(e) => {
-                                        isInitialRender.current = false;
-                                        const value = Number(e.target.value);
-                                        setBodyGetLista((prev)=> ({...prev, ...{anno:value}}));  
-                                        clearOnChangeFilter();
-                                    }}
-                                    value={bodyGetLista.anno||''}
-                                >
-                                    {arrayAnni.map((el) => (
-                                        <MenuItem
-                                            key={Math.random()}
-                                            value={el}>
-                                            {el}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </div>
-                    <div className="col-3">
-                        <Box sx={{width:'80%', marginLeft:'20px'}}  >
-                            <FormControl
-                                fullWidth
-                                size="medium"
-                            >
-                                <InputLabel> Mese</InputLabel>
-                                <Select
-                                    label='Seleziona Mese'
-                                    onChange={(e) =>{
-                                        const value = Number(e.target.value);
-                                        setBodyGetLista((prev)=> ({...prev, ...{mese:value}}));
-                                        clearOnChangeFilter();
-                                    }}
-                                    value={bodyGetLista.mese||''}
-                                >
-                                    {arrayMesi.map((el) =>{
-                                        return(
-                                            <MenuItem
-                                                key={el.mese}
-                                                value={el.mese}
-                                            >
-                                                {el?.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase()}
-                                            </MenuItem>
-                                        );
-                                    })}
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </div>
-                    <div className="col-3  ">
-                        <Box sx={{width:'80%', marginLeft:'20px'}} >
-                            <FormControl
-                                fullWidth
-                                size="medium"
-                            >
-                                <InputLabel>
-        Seleziona Prodotto
-                                </InputLabel>
-                                <Select
-                                    label='Seleziona Prodotto'
-                                    onChange={(e) =>{
-                                        clearOnChangeFilter();
-                                        setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}));
-                                    }}
-                                    value={bodyGetLista.prodotto}
-                                >
-                                    {prodotti.map((el) => (
-                                        <MenuItem
-                                            key={Math.random()}
-                                            value={el.nome}
-                                        >
-                                            {el.nome}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </div>
-                    <div className="col-3 ">
-                        <Box sx={{width:'80%',marginLeft:'20px'}} >
-                            <TextField
-                                fullWidth
-                                label='IUN'
-                                placeholder='IUN'
-                                value={bodyGetLista.iun || ''}
-                                onChange={(e) =>{
-                                    clearOnChangeFilter();
-                                    setBodyGetLista((prev)=>{             
-                                        if(e.target.value === ''){
-                                            return {...prev, ...{iun:null}};
-                                        }else{
-                                            return {...prev, ...{iun:e.target.value}};
-                                        }
-                                    });}
-                                }            
-                            />
-                        </Box>
-                    </div>
-                </div>                                         
-                <div className="row mt-5" >           
-                    <div className="col-3">
-                        <Box sx={{width:'80%'}} >
-                            <FormControl
-                                fullWidth
-                                size="medium"
-                            >
-                                <InputLabel>
-        Tipo Notifica     
-                                </InputLabel>
-                                <Select
-                                    id="sea"
-                                    label='Tipo Notifica'
-                                    labelId="search-by-label"
-                                    onChange={(e) =>{
-                                        const value = Number(e.target.value);
-                                        setBodyGetLista((prev)=> ({...prev, ...{tipoNotifica:value}}));
-                                        clearOnChangeFilter();
-                                    }}
-                                    value={bodyGetLista.tipoNotifica || ''}        
-                                >
-                                    {tipoNotifica.map((el) => (     
-                                        <MenuItem
-                                            key={Math.random()}
-                                            value={Object.values(el)[0].toString()}
-                                        >
-                                            {Object.keys(el)[0].toString()}
-                                        </MenuItem>      
-                                    ))}       
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </div>
-                    <div className=" col-3 ">
-                        <Box sx={{width:'80%', marginLeft:'20px'}}>
-                            <MultiSelectStatoContestazione 
-                                mainState={mainState}
-                                dispatchMainState={dispatchMainState}
-                                setBodyGetLista={setBodyGetLista}
-                                valueFgContestazione={valueFgContestazione}
-                                setValueFgContestazione={setValueFgContestazione}
-                                clearOnChangeFilter={clearOnChangeFilter}></MultiSelectStatoContestazione>
-                        </Box>
-                    </div>
-                    <div className="col-3 ">
-                        <Box sx={{width:'80%', marginLeft:'20px'}} >
-                            <TextField
-                                fullWidth
-                                label='CAP'
-                                placeholder='CAP'
-                                value={bodyGetLista.cap || ''}
-                                onChange={(e) =>{
-                                    clearOnChangeFilter();
-                                    setBodyGetLista((prev)=>{               
-                                        if(e.target.value === ''){
-                                            return {...prev, ...{cap:null}};
-                                        }else{
-                                            return {...prev, ...{cap:e.target.value}};
-                                        }
-                                    });
-                                }}
-                            />
-                        </Box>
-                    </div>
-                    <div className="col-3 ">
-                        <Box sx={{width:'80%',  marginLeft:'20px'}} >
-                            <TextField
-                                fullWidth
-                                label='Recipient ID'
-                                placeholder='Recipient ID'
-                                value={bodyGetLista.recipientId || ''}
-                                onChange={(e) =>{
-                                    clearOnChangeFilter();
-                                    setBodyGetLista((prev)=>{                
-                                        if(e.target.value === ''){
-                                            return {...prev, ...{recipientId:null}};
-                                        }else{
-                                            return {...prev, ...{recipientId:e.target.value}};
-                                        }
-                                    });
-                                }}                     
-                            />
-                        </Box>
-                    </div>                         
-                </div>
-                <div className="row mt-5" >
-                    {profilo.auth === 'PAGOPA' &&
-            <div  className="col-3">
-                <MultiselectCheckbox 
-                    setBodyGetLista={setBodyGetLista}
+      
+        <MainBoxStyled title={"Notifiche"} actionButton={[{
+            onButtonClick: () => setShowModalScadenziario(true),
+            variant: "outlined",
+            icon:{name:"event_note", sx:{} },
+            withText:false
+        }]}>
+            <ResponsiveGridContainer >
+                <MainFilter 
+                    filterName={"select_value"}
+                    inputLabel={"Anno"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyInput={"anno"}
+                    arrayValues={arrayAnni}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"select_key_value"}
+                    inputLabel={"Mese"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyInput={"mese"}
+                    arrayValues={arrayMesi}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"select_key_value"}
+                    inputLabel={"Seleziona prodotto"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyInput={"prodotto"}
+                    arrayValues={prodotti}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"select_value"}
+                    inputLabel={"IUN"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyInput={"iun"}
+                ></MainFilter>
+            </ResponsiveGridContainer>
+            <ResponsiveGridContainer >
+                <MainFilter 
+                    filterName={"select_value"}
+                    inputLabel={"Tipo notifica"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyInput={"tipoNotifica"}
+                    arrayValues={tipoNotifica}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"select_grouped_by"}
+                    inputLabel={"Contestazione"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    setSecondState={setValueFgContestazione}
+                    body={bodyGetLista}
+                    keyInput={"statoContestazione"}
+                    arrayValues={fgContestazione} 
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"select_value"}
+                    inputLabel={"CAP"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyInput={"cap"}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"select_value"}
+                    inputLabel={"recipientId"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyInput={"recipientId"}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"rag_sociale"}
+                    inputLabel={"Rag. Soc. Ente"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyInput={"idEnti"}
+                    keyCompare={""}
                     dataSelect={dataSelect}
                     setTextValue={setTextValue}
                     valueAutocomplete={valueAutocomplete}
                     setValueAutocomplete={setValueAutocomplete}
+                    hidden={profilo.auth !== 'PAGOPA'}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"select_key_value"}
+                    inputLabel={"Consolidatore"}
                     clearOnChangeFilter={clearOnChangeFilter}
-                ></MultiselectCheckbox>
-            </div>
-                    }
-                    {profilo.auth === 'PAGOPA' && 
-            <>
-                <div className="col-3">
-                    <Box sx={{width:'80%', marginLeft:'20px'}} >
-                        <FormControl
-                            fullWidth
-                            size="medium"
-                        >
-                            <InputLabel>
-            Consolidatore     
-                            </InputLabel>
-                            <Select
-                                id="sea"
-                                label='Consolidatore'
-                                labelId="search-by-label"
-                                onChange={(e) =>{
-                                    clearOnChangeFilter();
-                                    const value = e.target.value;
-                                    setBodyGetLista((prev)=> ({...prev, ...{consolidatori:[value]}}));
-                                }}
-                                value={bodyGetLista.consolidatori[0] || ''}        
-                            >
-                                {listaConsolidatori.map((el) => (     
-                                    <MenuItem
-                                        key={el.idEnte}
-                                        value={el.idEnte}
-                                    >
-                                        {el.descrizione}
-                                    </MenuItem>      
-                                ))}       
-                            </Select>
-                        </FormControl>
-                    </Box>
-                </div>
-                <div className="col-3">
-                    <Box sx={{width:'80%', marginLeft:'20px'}} >
-                        <FormControl
-                            fullWidth
-                            size="medium"
-                        >
-                            <InputLabel
-                                id="selectRecapitista"
-                            >
-            Recapitista     
-                            </InputLabel>
-                            <Select
-                                label='Recapitista'
-                                labelId="search-by-label"
-                                onChange={(e) =>{
-                                    clearOnChangeFilter();
-                                    const value = e.target.value;
-                                    setBodyGetLista((prev)=> ({...prev, ...{recapitisti:[value]}}));
-                                }}
-                                value={bodyGetLista.recapitisti[0] || ''}        
-                            >
-                                {listaRecapitista.map((el) => (     
-                                    <MenuItem
-                                        key={el.idEnte}
-                                        value={el.idEnte}
-                                    >
-                                        {el.descrizione}
-                                    </MenuItem>      
-                                ))}       
-                            </Select>
-                        </FormControl>
-                    </Box>
-                </div>
-            </>
-                    }
-                </div>
-
-                <div className="row mt-5">
-                    <div className="col-9">
-                        <div className="d-flex justify-content-start">
-                            <Button 
-                                onClick={onButtonFiltra} 
-                                disabled={getNotificheWorking}
-                                variant="contained"> Filtra  
-                            </Button>                
-                            {statusAnnulla === 'hidden' ? null :
-                                <Button
-                                    onClick={onAnnullaFiltri}
-                                    disabled={getNotificheWorking}
-                                    sx={{marginLeft:'24px'}} >
-                                    Annulla filtri
-                                </Button>
-                            }
-                        </div>               
-                    </div>  
-                </div>
-            </div>
-            { notificheList.length > 0  &&
-            <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
-                <div>
-                    <Button
-                        disabled={getNotificheWorking|| mainState.apiError !== null}
-                        onClick={downloadNotificheOnDownloadButton}  >
-            Download Risultati 
-                        <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
-                    </Button>
-                </div>           
-            </div>
-            }            
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyInput={"consolidatori"}
+                    arrayValues={listaConsolidatori}
+                    hidden={profilo.auth !== 'PAGOPA'}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"select_key_value"}
+                    inputLabel={"Recapitista"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyInput={"recapitisti"}
+                    arrayValues={listaRecapitista}
+                    hidden={profilo.auth !== 'PAGOPA'}
+                ></MainFilter>
+            </ResponsiveGridContainer>
+            <FilterActionButtons 
+                onButtonFiltra={onButtonFiltra} 
+                onButtonAnnulla={onAnnullaFiltri} 
+                statusAnnulla={statusAnnulla} 
+            ></FilterActionButtons>
+            <ActionTopGrid
+                actionButtonRight={[{
+                    onButtonClick: () => downloadNotificheOnDownloadButton,
+                    variant: "outlined",
+                    label: "Download risultati",
+                    icon:{name:"download" },
+                    disabled:(notificheList.length === 0 || getNotificheWorking|| mainState.apiError !== null)
+                }]}
+            />      
             <div className="mb-5">
                 <GridCustom
                     nameParameterApi='idNotifica'
@@ -1143,7 +942,7 @@ const ReportDettaglio : React.FC = () => {
                 setOpen={setShowModalScadenziario}
                 nonce={profilo.nonce}
                 dispatchMainState={dispatchMainState}></ModalScadenziario>                                    
-        </div>
+        </MainBoxStyled>
     );
 };                                        
 export default ReportDettaglio;

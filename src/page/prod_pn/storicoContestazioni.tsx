@@ -18,6 +18,8 @@ import NoteAddIcon from '@mui/icons-material/NoteAdd';
 
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { headersName } from "../../assets/configurations/config_GridStoricoContestazioni";
+import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
+import MainFilter from "../../components/reusableComponents/mainFilter";
 
 export interface BodyStoricoContestazioni{
     anno:string,
@@ -298,6 +300,72 @@ const Storico = () => {
 
     return (
         <div className="mx-5" style={{minHeight:'600px'}}>
+
+
+            <MainBoxStyled title={"Contestazioni"}>
+                <ResponsiveGridContainer >
+                    <MainFilter 
+                        filterName={"select_value"}
+                        inputLabel={"Anno"}
+                        clearOnChangeFilter={clearOnChangeFilter}
+                        setBody={setBodyGetLista}
+                        body={bodyGetLista}
+                        keyInput={"anno"}
+                        arrayValues={valueYears}
+                    ></MainFilter>
+                    <MainFilter 
+                        filterName={"select_key_value"}
+                        inputLabel={"Mese"}
+                        clearOnChangeFilter={clearOnChangeFilter}
+                        setBody={setBodyGetLista}
+                        body={bodyGetLista}
+                        keyInput={"mese"}
+                        arrayValues={arrayMesi}
+                    ></MainFilter>
+                    <MainFilter 
+                        filterName={"rag_sociale"}
+                        inputLabel={"Rag. Soc. Ente"}
+                        clearOnChangeFilter={clearOnChangeFilter}
+                        setBody={setBodyGetLista}
+                        body={bodyGetLista}
+                        keyInput={"idEnti"}
+                        keyCompare={""}
+                        dataSelect={dataSelect}
+                        setTextValue={setTextValue}
+                        valueAutocomplete={valueAutocomplete}
+                        setValueAutocomplete={setValueAutocomplete}
+                        hidden={profilo.auth !== 'PAGOPA'}
+                    ></MainFilter>
+                    
+                </ResponsiveGridContainer>
+                <FilterActionButtons 
+                    onButtonFiltra={handleFiltra} 
+                    onButtonAnnulla={handleAnnullaButton} 
+                    statusAnnulla={statusAnnulla} 
+                    actionButton={[{
+                        onButtonClick: () => console.log("ciao"),
+                        variant: "contained",
+                        label: "Download test",
+                        icon:{name:"download"}
+                    }]}></FilterActionButtons>
+                <ActionTopGrid
+                    actionButtonRight={[{
+                        onButtonClick: () => console.log("ciao"),
+                        variant: "outlined",
+                        label: "Download test",
+                        icon:{name:"download"}
+                    }]}
+                    actionButtonLeft={[{
+                        onButtonClick: () => console.log("ciao"),
+                        variant: "outlined",
+                        label: "Download test",
+                        icon:{name:"download"}
+                    }]}
+                />
+            </MainBoxStyled>
+
+
+
             <div className="marginTop24">
                 <div className="row ">
                     <div className="col-9">

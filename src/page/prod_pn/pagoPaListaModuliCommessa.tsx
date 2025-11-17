@@ -1,24 +1,23 @@
 import { BodyDownloadModuliCommessa, GridElementListaCommesse } from "../../types/typeListaModuliCommessa";
 import { Params } from "../../types/typesGeneral";
-import { Typography } from "@mui/material";
-import { Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
+import { FormControl, InputLabel,Select, MenuItem} from '@mui/material';
 import { manageError } from '../../api/api';
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { DataGrid, GridRowParams,GridEventListener,MuiEvent} from '@mui/x-data-grid';
-import DownloadIcon from '@mui/icons-material/Download';
 import { getTipologiaProdotto } from "../../api/apiSelfcare/moduloCommessaSE/api";
 import { anniMesiModuliCommessa, downloadDocumentoListaModuloCommessaPagoPa, downloadPostalizzazioneReport, listaModuloCommessaPagopa } from "../../api/apiPagoPa/moduloComessaPA/api";
 import { saveAs } from "file-saver";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../../types/enum";
-import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
 import { mesiGrid, mesiWithZero } from "../../reusableFunction/reusableArrayObj";
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
 import { GlobalContext } from "../../store/context/globalContext";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { headerNameListaModuliCommessaSEND } from "../../assets/configurations/conf_GridListaModuliCommessaSend";
+import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
+import MainFilter, { MainBoxContainer } from "../../components/reusableComponents/mainFilter";
 
 
 const PagoPaListaModuliCommessa:React.FC = () =>{
@@ -246,7 +245,6 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
         setInfoPageListaCom(e);
     };
 
-
     const clearOnChangeFilter = () => {
         setGridData([]);
         setInfoPageListaCom({ page: 0, pageSize: 10 });  
@@ -280,151 +278,100 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
 
 
     return (
-        <div className="mx-5">
-            <div className="marginTop24 ">
-                <Typography variant="h4">Lista Modulo Commessa</Typography>
-            </div>
-            <div className="mb-5 mt-5 marginTop24" >
-                <div className="row">
-                    <div className="col-3">
-                        <Box sx={{ width: '80%' }}>
-                            <FormControl
-                                fullWidth
-                                size="medium"
-                            >
-                                <InputLabel>
+        <MainBoxStyled title={"Lista Dati Fatturazione"}>
+            <ResponsiveGridContainer >
+                <MainBoxContainer>
+                    <FormControl>
+                        <InputLabel>
                                 Anno
-                                </InputLabel>
-                                <Select
-                                    id="sea"
-                                    label='Seleziona Prodotto'
-                                    onChange={(e) =>{
-                                        clearOnChangeFilter();
-                                        setYearMonths(monthsCommessa[Number(e.target.value)]);
-                                        setBodyGetLista((prev)=> ({...prev, ...{anno:Number(e.target.value),mese:monthsCommessa[Number(e.target.value)][0]}}));
-                                    }  }
-                                    value={bodyGetLista.anno||""}
+                        </InputLabel>
+                        <Select
+                            label='Anno'
+                            onChange={(e) =>{
+                                clearOnChangeFilter();
+                                setYearMonths(monthsCommessa[Number(e.target.value)]);
+                                setBodyGetLista((prev)=> ({...prev, ...{anno:Number(e.target.value),mese:monthsCommessa[Number(e.target.value)][0]}}));
+                            }  }
+                            value={bodyGetLista.anno||""}
+                        >
+                            {years.map((el) => (
+                                <MenuItem
+                                    key={Math.random()}
+                                    value={el||""}
                                 >
-                                    {years.map((el) => (
-                                        <MenuItem
-                                            key={Math.random()}
-                                            value={el||""}
-                                        >
-                                            {el}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </div>
-                    <div className="col-3">
-                        <Box sx={{ width: '80%' }}>
-                            <FormControl
-                                fullWidth
-                                size="medium"
-                            >
-                                <InputLabel>
+                                    {el}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </MainBoxContainer>
+                <MainBoxContainer>
+                    <FormControl>
+                        <InputLabel>
                                 Mese
-                                </InputLabel>
-                                <Select
-                                    id="sea"
-                                    label='Seleziona Prodotto'
-                                    labelId="search-by-label"
-                                    onChange={(e) =>{
-                                        setBodyGetLista((prev)=> ({...prev, ...{mese:Number(e.target.value)}}));
-                                        clearOnChangeFilter();
-                                    }}
-                                    value={bodyGetLista.mese||""}
+                        </InputLabel>
+                        <Select
+                            label='Mese'
+                            onChange={(e) =>{
+                                setBodyGetLista((prev)=> ({...prev, ...{mese:Number(e.target.value)}}));
+                                clearOnChangeFilter();
+                            }}
+                            value={bodyGetLista.mese||""}
+                        >
+                            {yearMonths?.map((el) => (
+                                <MenuItem
+                                    key={Math.random()}
+                                    value={el||""}
                                 >
-                                    {yearMonths?.map((el) => (
-                                        <MenuItem
-                                            key={Math.random()}
-                                            value={el||""}
-                                        >
-                                            {mesiGrid[el]||""}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </div>
-                    <div className="col-3 ">
-                        <Box sx={{ width: '80%' }}>
-                            <FormControl
-                                fullWidth
-                                size="medium"
-                            >
-                                <InputLabel>
-                                Seleziona Prodotto
-                                </InputLabel>
-                                <Select
-                                    id="sea"
-                                    label='Seleziona Prodotto'
-                                    labelId="search-by-label"
-                                    onChange={(e) =>{
-                                        clearOnChangeFilter();
-                                        setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}));
-                                    }}
-                                    value={bodyGetLista.prodotto||""}
-                                >
-                                    {prodotti.map((el) => (
-                                        <MenuItem
-                                            key={Math.random()}
-                                            value={el.nome||""}
-                                        >
-                                            {el.nome}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </div>
-                    <div  className="col-3">
-                        <MultiselectCheckbox 
-                            setBodyGetLista={setBodyGetLista}
-                            dataSelect={dataSelect}
-                            setTextValue={setTextValue}
-                            valueAutocomplete={valueAutocomplete}
-                            setValueAutocomplete={setValueAutocomplete}
-                            clearOnChangeFilter={clearOnChangeFilter}
-                        ></MultiselectCheckbox>
-                    </div>
-                </div>
-            </div>
-            <div className="d-flex" >
-                <div className=" d-flex justify-content-center align-items-center">
-                    <div>
-                        <Button 
-                            onClick={onButtonFiltra} 
-                            sx={{ marginTop: 'auto', marginBottom: 'auto'}}
-                            variant="contained"> Filtra
-                        </Button>
-                        {statusAnnulla === 'hidden' ? null :
-                            <Button
-                                onClick={onButtonAnnulla}
-                                sx={{marginLeft:'24px'}} >
-                    Annulla filtri
-                            </Button>
-                        }
-                    </div>
-                </div>
-            </div>
-            {/* grid */}
-            <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
-                {gridData.length > 0 &&
-                <div>
-                    <Button onClick={downloadExelListaCommessa} >
-            Download Risultati
-                        <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
-                    </Button>
-                    <Button onClick={downloadPostalizzazione} >
-            Report postalizzazione
-                        <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
-                    </Button>
-                </div>
-               
-                }
-            </div>
+                                    {mesiGrid[el]||""}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </MainBoxContainer>
+                <MainFilter 
+                    filterName={"select_key_value"}
+                    inputLabel={"Seleziona prodotto"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyInput={"prodotto"}
+                    arrayValues={prodotti}
+                ></MainFilter>
+                <MainFilter 
+                    inputLabel={"Rag. Soc. Ente"}
+                    filterName={"rag_sociale"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyInput={"idEnti"}
+                    keyCompare={""}
+                    dataSelect={dataSelect}
+                    setTextValue={setTextValue}
+                    valueAutocomplete={valueAutocomplete}
+                    setValueAutocomplete={setValueAutocomplete}
+                ></MainFilter>
+            </ResponsiveGridContainer>
+            <FilterActionButtons 
+                onButtonFiltra={onButtonFiltra} 
+                onButtonAnnulla={onButtonAnnulla} 
+                statusAnnulla={statusAnnulla} 
+            ></FilterActionButtons>
+            <ActionTopGrid
+                actionButtonRight={[{
+                    onButtonClick:downloadExelListaCommessa,
+                    variant: "outlined",
+                    label: "Download risultati",
+                    icon:{name:"download"},
+                    disabled:(gridData.length < 0)
+                },{
+                    onButtonClick:downloadPostalizzazione,
+                    variant: "outlined",
+                    label: "Report postalizzazione",
+                    icon:{name:"download"},
+                    disabled:(gridData.length < 0)
+                }]}/>
+          
             <div className="mt-1 mb-5" style={{ width: '100%'}}>
                 <DataGrid sx={{
                     height:'400px',
@@ -457,7 +404,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                 setOpen={setShowLoadingLista}
                 sentence={'Loading...'} >
             </ModalLoading>
-        </div>
+        </MainBoxStyled>
     );
 };
 export default PagoPaListaModuliCommessa;
