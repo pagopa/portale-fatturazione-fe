@@ -204,7 +204,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                                                         }            
                                                                     }}
                                                                 >
-                                                                    {valueEl === null ? "--":valueEl}
+                                                                    {(valueEl === null||valueEl === "") ? "--":valueEl}
                                                                 </TableCell>
                                                             </Tooltip>
                                                         );

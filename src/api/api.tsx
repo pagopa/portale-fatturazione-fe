@@ -101,6 +101,9 @@ export const pagopaLogin2 = async (tokenObject:TokenObject) => {
 
 export const selfcareLogin = async (selfcareToken:string|null) =>{
     const result = await axios.get(`${url}/api/auth/selfcare/login?selfcareToken=${selfcareToken}`,
+        { headers: {
+            Accept: 'application/json'
+        }} 
   
     );
     return result;
@@ -109,7 +112,9 @@ export const selfcareLogin = async (selfcareToken:string|null) =>{
 export const getAuthProfilo = async (tokenFromSelfcarePagoPa:string) => {
 
     const result = await axios.get(`${url}/api/auth/profilo`,
-        { headers: {
+        {  headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
             Authorization: 'Bearer ' + tokenFromSelfcarePagoPa
         }} 
   

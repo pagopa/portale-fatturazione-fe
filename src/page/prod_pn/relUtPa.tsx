@@ -280,6 +280,7 @@ const RelPage : React.FC = () =>{
                         idTestata:obj.idTestata,
                         ragioneSociale:obj.ragioneSociale,
                         tipologiaFattura:obj.tipologiaFattura,
+                        tipologiaContratto:obj.tipologiaContratto,
                         firmata:obj.firmata,
                         idContratto:obj.idContratto,
                         anno:obj.anno,
@@ -575,6 +576,12 @@ const RelPage : React.FC = () =>{
         });
     };
 
+
+    const headerGridKeys = ['Ragione Sociale','Tipologia Fattura',"Tipologia contratto", 'Reg. Es. PDF','ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale',''];
+    if(profilo.auth !== "PAGOPA"){
+        const headerGridKeys = ['Ragione Sociale','Tipologia Fattura', 'Reg. Es. PDF','ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale',''];
+    }
+
     const  hiddenAnnullaFiltri = bodyRel.tipologiaFattura === null && bodyRel.idEnti?.length === 0 && bodyRel.caricata === null; 
     return (
         <div className="mx-5">
@@ -755,7 +762,7 @@ const RelPage : React.FC = () =>{
                         total={totalNotifiche}
                         page={page}
                         rows={rowsPerPage}
-                        headerNames={['Ragione Sociale','Tipologia Fattura', 'Reg. Es. PDF','ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale','']}
+                        headerNames={headerGridKeys}
                         apiGet={setIdRel}
                         disabled={getListaRelRunning}
                         widthCustomSize="2000px"></GridCustom>
