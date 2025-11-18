@@ -577,7 +577,7 @@ const RelPage : React.FC = () =>{
     };
 
 
-    let headerGridKeys = ['Ragione Sociale','Tipologia Fattura',"Tipologia contratto", 'Reg. Es. PDF','ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale',''];
+    let headerGridKeys = ['Ragione Sociale','Tipologia Fattura',"Tipologia Contratto", 'Reg. Es. PDF','ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale',''];
     if(profilo.auth !== "PAGOPA"){
         headerGridKeys = ['Ragione Sociale','Tipologia Fattura', 'Reg. Es. PDF','ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale',''];
     }
