@@ -194,7 +194,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                                         const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
                                                         const valueEl = (i === 0 && value?.toString().length > 30) ? value?.toString().slice(0, 30) + '...' : value;
                                                         return (
-                                                            <Tooltip key={Math.random()} title={(value === "--" || nameParameterApi === "idNotifica"||valueEl.length < 30||((nameParameterApi=== "idTestata"&& i === 0 && valueEl.length < 30) ||nameParameterApi=== "idTestata"&& i !== 0 )) ?null:value}>
+                                                            <Tooltip key={Math.random()} title={(value === "--" || nameParameterApi === "idNotifica"||valueEl?.length < 30||((nameParameterApi=== "idTestata"&& i === 0 && valueEl?.length < 30) ||nameParameterApi=== "idTestata"&& i !== 0 )) ?null:value}>
                                                                 <TableCell
                                                                     align={(nameParameterApi === "modComTrimestrale"||i !== 0)?"center":"left"}
                                                                     sx={cssFirstColum} 

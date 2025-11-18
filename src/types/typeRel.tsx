@@ -55,7 +55,7 @@ export interface Rel {
     totaleDigitaleIva:number,
     totaleIva:number,
     firmata:string|null,
-    tipologiaContratto:string|null
+    tipologiaContratto?:string|null
 }
 
 export interface BodyRelLog {
