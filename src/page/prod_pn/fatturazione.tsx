@@ -110,13 +110,6 @@ const Fatturazione : React.FC = () =>{
         return () => clearTimeout(timer);
     },[textValue]);
 
-   
-    useEffect(()=>{
-        if(!isInitialRender.current && bodyFatturazione.anno !== 0 && bodyFatturazione.mese !== 0){
-            getTipologieFatturazione(bodyFatturazione.anno,bodyFatturazione.mese,bodyFatturazione.cancellata);
-            setValueMultiselectTipologie([]);
-        }
-    },[bodyFatturazione.mese,bodyFatturazione.anno,bodyFatturazione.cancellata]);
 
     useEffect(()=>{
         if(bodyFatturazione.anno !== 0 && bodyFatturazione.mese !== 0 && !isInitialRender.current){
@@ -160,7 +153,6 @@ const Fatturazione : React.FC = () =>{
             if(isInitialRender.current && Object.keys(filters).length > 0){
                 setBodyFatturazione(filters.body);
                 setBodyFatturazioneDownload(filters.body);
-                setTipologie(filters.tipologie);
                 setValueAutocomplete(filters.valueAutocomplete);
                 setTextValue(filters.textValue);
                 setValueMultiselectTipologie(filters.valueMulitselectTipologie);
@@ -168,6 +160,8 @@ const Fatturazione : React.FC = () =>{
                 getlistaFatturazione(filters.body);
             }else{
                 setBodyFatturazione({anno:Number(year),mese:res.data[0].mese, tipologiaFattura:[],cancellata:false,idEnti:[],idTipoContratto:null});
+                getTipologieFatturazione(Number(year),Number(res.data[0]?.mese),false);
+                setValueMultiselectTipologie([]);
                 if(callLista.current){
                     getlistaFatturazione({...bodyFatturazione,...{anno:Number(year),mese:res.data[0].mese, tipologiaFattura:[],cancellata:false,idEnti:[],idTipoContratto:null}});
                 }
@@ -356,7 +350,6 @@ const Fatturazione : React.FC = () =>{
             body:bodyFatturazione,
             textValue:textValue,
             valueAutocomplete,
-            tipologie:tipologie,
             fattureSelected:fattureSelected,
             valueMulitselectTipologie:valueMulitselectTipologie,
             valueMulitselectDateTipologie:valueMulitselectDateTipologie,
@@ -399,7 +392,6 @@ const Fatturazione : React.FC = () =>{
             body:bodyFatturazione,
             textValue:textValue,
             valueAutocomplete,
-            tipologie:tipologie,
             fattureSelected:fattureSelected,
             valueMulitselectTipologie:valueMulitselectTipologie,
             valueMulitselectDateTipologie:valueMulitselectDateTipologie,
@@ -453,6 +445,8 @@ const Fatturazione : React.FC = () =>{
                                         const value = Number(e.target.value);
                                         setBodyFatturazione((prev)=> ({...prev, ...{mese:value}}));
                                         clearOnChangeFilter();
+                                        getTipologieFatturazione(bodyFatturazione.anno,value,bodyFatturazione.cancellata);
+                                        setValueMultiselectTipologie([]);
                                     }}         
                                     value={bodyFatturazione.mese||''}
                                 >
@@ -473,6 +467,8 @@ const Fatturazione : React.FC = () =>{
                                 onChange={(e)=>{
                                     const value = e.target.value === 0 ? false : true;
                                     setBodyFatturazione((prev)=>({...prev,...{cancellata:value}}));
+                                    getTipologieFatturazione(bodyFatturazione.anno,bodyFatturazione.mese,value);
+                                    setValueMultiselectTipologie([]);
                                     clearOnChangeFilter();
                                 }}
                             >
@@ -618,7 +614,6 @@ const Fatturazione : React.FC = () =>{
                     textValue:textValue,
                     valueAutocomplete:valueAutocomplete,
                     valueMulitselectTipologie:valueMulitselectTipologie,
-                    tipologie:tipologie,
                     fattureSelected:fattureSelected}}
                 infoPageLocalStorage={{page:filters.page,rows:filters.rows}}
                 firstRender={isInitialRender.current}
