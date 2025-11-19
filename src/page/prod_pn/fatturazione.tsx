@@ -199,7 +199,7 @@ const Fatturazione : React.FC = () =>{
                 setDateTipologie([]);
             }));
     };
-
+    console.log({bodyFatturazione});
     const getlistaFatturazione = async (body) => {
         setShowLoadingGrid(true);
         setDisableButtonSap(true);
@@ -443,7 +443,7 @@ const Fatturazione : React.FC = () =>{
                                     label='Seleziona Prodotto'
                                     onChange={(e) =>{
                                         const value = Number(e.target.value);
-                                        setBodyFatturazione((prev)=> ({...prev, ...{mese:value}}));
+                                        setBodyFatturazione((prev)=> ({...prev, ...{mese:value,tipologiaFattura:[]}}));
                                         clearOnChangeFilter();
                                         getTipologieFatturazione(bodyFatturazione.anno,value,bodyFatturazione.cancellata);
                                         setValueMultiselectTipologie([]);
@@ -466,7 +466,7 @@ const Fatturazione : React.FC = () =>{
                                 label="Stato"
                                 onChange={(e)=>{
                                     const value = e.target.value === 0 ? false : true;
-                                    setBodyFatturazione((prev)=>({...prev,...{cancellata:value}}));
+                                    setBodyFatturazione((prev)=>({...prev,...{cancellata:value,tipologiaFattura:[]}}));
                                     getTipologieFatturazione(bodyFatturazione.anno,bodyFatturazione.mese,value);
                                     setValueMultiselectTipologie([]);
                                     clearOnChangeFilter();
