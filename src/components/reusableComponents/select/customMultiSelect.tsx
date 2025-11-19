@@ -9,7 +9,10 @@ export interface MultiSelectProps<T> {
     onChange: (value: T[]) => void;
     getLabel: (item: T) => string;
     getId: (item: T) => any;
+    placeholder?: string;
     groupBy?: (item: T) => string;
+    setTextValue?: (value: string) => void;
+    textValue?:string
 }
 
 export function MultiSelect<T>({
@@ -19,35 +22,47 @@ export function MultiSelect<T>({
     onChange,
     getLabel,
     getId,
-    groupBy
+    placeholder = "Search...",
+    groupBy,
+    setTextValue,
+    textValue
 }: MultiSelectProps<T>) {
+
 
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
     return (
         <Autocomplete
+            style={{ width: '80%'}}
             multiple
+            limitTags={1}
             disableCloseOnSelect
             options={options}
             value={value}
+            groupBy={groupBy}
             getOptionLabel={getLabel}
             isOptionEqualToValue={(o, v) => getId(o) === getId(v)}
-            onChange={(e, val) => onChange(val as T[])}
-            groupBy={groupBy}
+            onChange={(e, val) => onChange(val)}
+            onInputChange={(e, val) => setTextValue && setTextValue(val)}
             renderOption={(props, option, { selected }) => (
                 <li {...props} key={getId(option)}>
                     <Checkbox
                         icon={icon}
                         checkedIcon={checkedIcon}
+                        sx={{ mr: 1 }}
                         checked={selected}
-                        style={{ marginRight: 8 }}
                     />
                     {getLabel(option)}
                 </li>
             )}
             renderInput={(params) => (
-                <TextField {...params} label={label} placeholder={label} />
+                <TextField
+                    {...params}
+                    label={label}
+                    placeholder={placeholder}
+                    value={textValue||""}
+                />
             )}
         />
     );

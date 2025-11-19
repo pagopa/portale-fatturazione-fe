@@ -1,24 +1,12 @@
-import { Autocomplete, Checkbox, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { FormControl, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { it } from "date-fns/locale";
 import { formatDateToValidation, isDateInvalid } from "../../reusableFunction/function";
-import MultiselectCheckbox from "../reportDettaglio/multiSelectCheckbox";
-import MultiSelectStatoContestazione from "../reportDettaglio/multiSelectGroupedBy";
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import { OptionType } from "dayjs";
-import { FlagContestazione, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
-import { BodyListaNotifiche } from "../../types/typesGeneral";
-import { BodyFatturazione } from "../../types/typeFatturazione";
-import { BodyStoricoContestazioni, TipologieDoc } from "../../page/prod_pn/storicoContestazioni";
-import { BodyWhite } from "../../api/apiPagoPa/whiteListPA/whiteList";
-import { BodyGetListaDatiFatturazione } from "../../types/typeListaDatiFatturazione";
-import { BodyDownloadModuliCommessa } from "../../types/typeListaModuliCommessa";
-import { BodyRel } from "../../types/typeRel";
-import { BodyContratto } from "../../page/prod_pn/tipologiaContratto";
 import { MultiSelect } from "./select/customMultiSelect";
+import { mesiGrid } from "../../reusableFunction/reusableArrayObj";
+
 
 export type MainFilterProps<T> = {
     filterName: string;
@@ -34,15 +22,19 @@ export type MainFilterProps<T> = {
     setError?: Dispatch<SetStateAction<boolean>>;
 
     dataSelect?:T[];
-    valuesSelected?: T[];
-    setValuSelected?:Dispatch<SetStateAction<T[]>>
+    //valuesSelected?: T[];
+    //setValuSelected?:Dispatch<SetStateAction<T[]>>
 
-    valueAutocomplete:OptionMultiselectChackbox[],
-    setValueAutocomplete:Dispatch<SetStateAction<OptionMultiselectChackbox[]>>,
+    valueAutocomplete?: T[];
+    setValueAutocomplete?: Dispatch<SetStateAction<T[]>>;
     
     setSecondState?: Dispatch<SetStateAction<T[]>>;
     setTextValue?: Dispatch<SetStateAction<string>>;
+    textValue?:string;
     hidden?: boolean;
+    keyBody?:string;
+
+    extraCodeOnChange?:(e:React.ChangeEvent<HTMLInputElement>) => void
 };
 
 const MainFilter = <T,>({
@@ -57,19 +49,21 @@ const MainFilter = <T,>({
     error,
     setError,
     dataSelect,
-    setTextValue,
+    // valuesSelected,
+    //setValuSelected,
+    hidden,
+    keyOption,
     valueAutocomplete,
     setValueAutocomplete,
-    setSecondState,
-    valuesSelected,
-    setValuSelected,
-    hidden,
-    keyOption = "",
+    setTextValue,
+    textValue,
+    keyBody,
+    extraCodeOnChange
 }: MainFilterProps<T>) => {
 
     switch (filterName) {
         case "select_key_value":  //case "select_prodotto":case "select_profilo":case "select_anno":case "select_mese":consolidatore recapitista
-            return ( !hidden && <MainBoxContainer>
+            return ( !hidden && keyBody && <MainBoxContainer>
                 <FormControl sx={{width:"80%"}}>
                     <InputLabel>
                         {inputLabel}
@@ -78,32 +72,71 @@ const MainFilter = <T,>({
                         label={inputLabel}
                         onChange={(e) =>{
                             clearOnChangeFilter();
-                            setBody((prev)=> ({...prev, ...{[keyInput]:e.target.value}}));
+                            if(extraCodeOnChange){
+                                extraCodeOnChange(e.target.value);
+                            }else{
+                                setBody((prev)=> ({...prev, ...{[keyBody]:e.target.value}}));
+                            }
                         }}
-                        value={body[keyInput]}
+                        value={body[keyBody]||""}
                     >
                         {arrayValues?.map((el) => (
                             <MenuItem
                                 key={Math.random()}
                                 value={el[keyInput]||''}
                             >
-                                {el[keyInput]}
+                                {el[keyInput]||""}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            </MainBoxContainer>);
+        case "select_key_value_description":  //case "select_prodotto":case "select_profilo":case "select_anno":case "select_mese":consolidatore recapitista
+            return ( !hidden && keyBody && keyOption && <MainBoxContainer>
+                <FormControl sx={{width:"80%"}}>
+                    <InputLabel>
+                        {inputLabel}
+                    </InputLabel>
+                    <Select
+                        label={inputLabel}
+                        onChange={(e) =>{
+                            clearOnChangeFilter();
+                            if(extraCodeOnChange){
+                                extraCodeOnChange(e.target.value);
+                            }else{
+                                setBody((prev)=> ({...prev, ...{[keyBody]:e.target.value}}));
+                            }
+                        }}
+                        value={body[keyBody]||""}
+                    >
+                        {arrayValues?.map((el) => (
+                            <MenuItem
+                                key={Math.random()}
+                                value={el[keyInput]||''}
+                            >
+                                {el[keyOption]||""}
                             </MenuItem>
                         ))}
                     </Select>
                 </FormControl>
             </MainBoxContainer>);
         case "select_value":
-            return ( !hidden && <MainBoxContainer>
+            return ( !hidden &&  keyBody && <MainBoxContainer>
                 <FormControl sx={{width:"80%"}}>
                     <InputLabel>
                         {inputLabel}
                     </InputLabel>
                     <Select
-                        label=  {inputLabel}
+                        label={inputLabel}
                         onChange={(e) => {
+                    
                             clearOnChangeFilter();
-                            setBody((prev)=> ({...prev, ...{[keyInput]:e.target.value}}));
+                            if(extraCodeOnChange){
+                                extraCodeOnChange(e.target.value);
+                            }else{
+                                setBody((prev)=> ({...prev, ...{[keyBody]:e.target.value}}));
+                            }
+                            
                         }}
                         value={body[keyInput]||""}
                     >
@@ -112,11 +145,11 @@ const MainFilter = <T,>({
                                 key={Math.random()}
                                 value={el||''}
                             >
-                                {el}
+                                {inputLabel === "Mese" ? mesiGrid[el] : el||""}
                             </MenuItem>
                         ))}
                     </Select>
-                </FormControl>;
+                </FormControl>
             </MainBoxContainer>);
         case "select_grouped_by":
             return(
@@ -173,40 +206,25 @@ const MainFilter = <T,>({
                         }}
                     />
                 </LocalizationProvider></MainBoxContainer>);
-        case "rag_sociale":
-            if(dataSelect && setTextValue && valueAutocomplete && setValueAutocomplete && !hidden){
-                return (
-                    <MainBoxContainer>
-                        <MultiselectCheckbox 
-                            setBodyGetLista={setBody}
-                            dataSelect={dataSelect}
-                            setTextValue={setTextValue}
-                            valueAutocomplete={valueAutocomplete}
-                            setValueAutocomplete={setValueAutocomplete}
-                            clearOnChangeFilter={clearOnChangeFilter}
-                        ></MultiselectCheckbox>
-                    </MainBoxContainer>
-                );
-            }else{
-                return;
-            }
         case "multi_checkbox":
-            if(dataSelect && setValuSelected && valuesSelected){
+            if(dataSelect && valueAutocomplete && keyBody ){
                 return (
                     <MainBoxContainer>
                         <MultiSelect<T>
                             label={inputLabel}
                             options={dataSelect}
-                            value={valuesSelected}
+                            value={valueAutocomplete}
+                            setTextValue={setTextValue}
+                            textValue={textValue}
                             onChange={(val) => {
                                 clearOnChangeFilter();
-                              
-                                setValueSelected(val);
-                                const allId = value.map(el => el.idTipologiaReport);
-                                setBody((prev) => ({...prev,...{idTipologiaReports:allId}}));
+                                console.log({val});
+                                setValueAutocomplete && setValueAutocomplete(val);
+                                const allId = val.map(el => el[keyInput]);
+                                setBody((prev) => ({...prev,...{[keyBody]:allId}}));
                                 clearOnChangeFilter();
                             }}
-                            getLabel={(item) => (item as any)[keyOption]}
+                            getLabel={(item) => (item as any)[keyOption||0]}
                             getId={(item) => (item as any)[keyInput]}
                         />
                     </MainBoxContainer>

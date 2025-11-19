@@ -16,6 +16,7 @@ import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { configListaFatturazione } from "../../assets/configurations/cong_GridListaDatiFatturazione";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
+import { text } from 'node:stream/consumers';
 
 
 const PagoPaListaDatiFatturazione:React.FC = () =>{
@@ -45,6 +46,7 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
     const [textValue, setTextValue] = useState('');
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
     const [showLoading,setShowLoading] = useState(false);
+    console.log({valueAutocomplete,textValue});
     const { 
         filters,
         updateFilters,
@@ -222,7 +224,8 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
-                    keyInput={"prodotto"}
+                    keyInput={"nome"}
+                    keyBody={"prodotto"}
                     arrayValues={prodotti}
                 ></MainFilter>
                 <MainFilter 
@@ -232,20 +235,24 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
                     keyInput={"profilo"}
+                    keyBody={"profilo"}
                     arrayValues={profili}
                 ></MainFilter>
                 <MainFilter 
-                    filterName={"rag_sociale"}
+                    filterName={"multi_checkbox"}
                     inputLabel={"Rag. Soc. Ente"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
-                    keyInput={"idEnti"}
                     keyCompare={""}
                     dataSelect={dataSelect}
                     setTextValue={setTextValue}
+                    textValue={textValue}
                     valueAutocomplete={valueAutocomplete}
                     setValueAutocomplete={setValueAutocomplete}
+                    keyInput={"idEnte"}
+                    keyOption='descrizione'
+                    keyBody={"idEnti"}
                 ></MainFilter>
             </ResponsiveGridContainer>
             <FilterActionButtons 

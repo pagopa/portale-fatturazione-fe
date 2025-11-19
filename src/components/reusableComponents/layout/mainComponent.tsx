@@ -209,6 +209,7 @@ export const ActionTopGrid = ({actionButtonRight,actionButtonLeft}:{
                         alignItems: { xs: "stretch", sm: "center" },
                         gap: 2,
                         width: "100%",
+                        margin:1
                     }}
                 >
                     {/* Left Buttons */}
@@ -220,7 +221,7 @@ export const ActionTopGrid = ({actionButtonRight,actionButtonLeft}:{
                             flexWrap: "wrap",
                         }}
                     >
-                        {actionButtonRight?.map((action, index) => (
+                        {actionButtonLeft?.map((action, index) => (
                             <CustomButton
                                 key={index}
                                 variant={action.variant}
@@ -243,7 +244,7 @@ export const ActionTopGrid = ({actionButtonRight,actionButtonLeft}:{
                             mt: { xs: 2, sm: 0 }, // margin when stacked
                         }}
                     >
-                        {actionButtonLeft?.map((action, index) => (
+                        { actionButtonRight?.map((action, index) => (
                             <CustomButton
                                 key={index}
                                 variant={action.variant}

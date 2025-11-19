@@ -1,69 +1,59 @@
-import { Autocomplete, Checkbox, TextField } from "@mui/material";
+import Checkbox from '@mui/material/Checkbox';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import { Dispatch, SetStateAction } from "react";
+import { MultiselectNotificheProps, OptionMultiselectChackbox } from '../../types/typeReportDettaglio';
+import { useLocation } from 'react-router';
+import { PathPf } from '../../types/enum';
 
-interface MultiselectNotificheProps<T> {
-    setBodyGetLista: Dispatch<SetStateAction<T>>;
-    dataSelect: T[];
-    setTextValue: Dispatch<SetStateAction<string>>;
-    valueAutocomplete: T[];
-    setValueAutocomplete: Dispatch<SetStateAction<T[]>>;
-    clearOnChangeFilter: () => void;
-    getId: (item: T) => any;
-    getLabel: (item: T) => string;
-}
 
-export function MultiselectCheckbox<T>({
-    setBodyGetLista,
-    dataSelect,
-    setTextValue,
-    valueAutocomplete,
-    setValueAutocomplete,
-    clearOnChangeFilter,
-    getId,
-    getLabel
-}: MultiselectNotificheProps<T>) {
+
+const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetLista, dataSelect,setTextValue,valueAutocomplete, setValueAutocomplete,clearOnChangeFilter}) => {
 
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
+
     return (
         <Autocomplete
-            sx={{ width: '80%' }}
-            limitTags={1}
             multiple
-            disableCloseOnSelect
-            options={dataSelect}
-            value={valueAutocomplete}
-            getOptionLabel={getLabel}
-            isOptionEqualToValue={(o, v) => getId(o) === getId(v)}
+            limitTags={1}
             onChange={(event, value) => {
-                const ids = value.map(getId);
-                setBodyGetLista(prev => ({ ...prev, idEnti: ids }));
+                const arrayIdEnte = value.map(obj=> obj.idEnte);
+                setBodyGetLista((prev:any) => ({...prev,...{idEnti:arrayIdEnte}}));
                 setValueAutocomplete(value);
                 clearOnChangeFilter();
             }}
-            renderOption={(props, option, { selected }) => (
-                <li {...props} key={getId(option)}>
-                    <Checkbox
-                        icon={icon}
-                        checkedIcon={checkedIcon}
-                        checked={selected}
-                        sx={{ mr: 1 }}
-                    />
-                    {getLabel(option)}
-                </li>
-            )}
-            renderInput={(params) => (
-                <TextField
+            id="checkboxes-tags-demo"
+            options={dataSelect}
+            disableCloseOnSelect
+            getOptionLabel={(option:OptionMultiselectChackbox) => (option.descrizione)}
+            value={valueAutocomplete}
+            isOptionEqualToValue={(option, value) => option.idEnte === value.idEnte}
+            renderOption={(props, option, { selected }) =>{
+                const newProps = {...props,...{key:option.idEnte}};
+                return (
+                    <li {...newProps}   >
+                        <Checkbox
+                            icon={icon}
+                            checkedIcon={checkedIcon}
+                            style={{ marginRight: 8 }}
+                            checked={selected}
+                        />
+                        {option.descrizione||''}
+                    </li>
+                );
+            } }
+            style={{ width: '80%'}}
+            renderInput={(params) =>{
+                return <TextField 
+                    onChange={(e)=> setTextValue(e.target.value)} 
                     {...params}
-                    sx={{ backgroundColor: "#F2F2F2" }}
-                    label="Rag Soc. Ente"
-                    placeholder="Min 3 caratteri"
-                    onChange={(e) => setTextValue(e.target.value)}
-                />
-            )}
+                    label="Rag Soc. Ente" 
+                    placeholder="Min 3 caratteri" />;
+            }}
         />
     );
-}
+};
+export default MultiselectCheckbox;

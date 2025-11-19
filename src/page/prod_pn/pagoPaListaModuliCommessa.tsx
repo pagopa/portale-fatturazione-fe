@@ -52,7 +52,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
     const [monthsCommessa,setMonthsCommessa] = useState<{[key:number]:number[]}>({});
     const [yearMonths, setYearMonths] = useState<number[]>([]);
    
-
+    console.log({monthsCommessa,yearMonths,bodyGetLista});
     const { 
         filters,
         updateFilters,
@@ -278,78 +278,57 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
 
 
     return (
-        <MainBoxStyled title={"Lista Dati Fatturazione"}>
+        <MainBoxStyled title={"Lista Modulo Commessa"}>
             <ResponsiveGridContainer >
-                <MainBoxContainer>
-                    <FormControl>
-                        <InputLabel>
-                                Anno
-                        </InputLabel>
-                        <Select
-                            label='Anno'
-                            onChange={(e) =>{
-                                clearOnChangeFilter();
-                                setYearMonths(monthsCommessa[Number(e.target.value)]);
-                                setBodyGetLista((prev)=> ({...prev, ...{anno:Number(e.target.value),mese:monthsCommessa[Number(e.target.value)][0]}}));
-                            }  }
-                            value={bodyGetLista.anno||""}
-                        >
-                            {years.map((el) => (
-                                <MenuItem
-                                    key={Math.random()}
-                                    value={el||""}
-                                >
-                                    {el}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                </MainBoxContainer>
-                <MainBoxContainer>
-                    <FormControl>
-                        <InputLabel>
-                                Mese
-                        </InputLabel>
-                        <Select
-                            label='Mese'
-                            onChange={(e) =>{
-                                setBodyGetLista((prev)=> ({...prev, ...{mese:Number(e.target.value)}}));
-                                clearOnChangeFilter();
-                            }}
-                            value={bodyGetLista.mese||""}
-                        >
-                            {yearMonths?.map((el) => (
-                                <MenuItem
-                                    key={Math.random()}
-                                    value={el||""}
-                                >
-                                    {mesiGrid[el]||""}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                </MainBoxContainer>
+                <MainFilter 
+                    filterName={"select_value"}
+                    inputLabel={"Anno"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyInput={"anno"}
+                    keyBody={"anno"}
+                    arrayValues={years}
+                    extraCodeOnChange={(e)=>{
+                        setYearMonths(monthsCommessa[Number(e)]);
+                        setBodyGetLista((prev)=> ({...prev, ...{anno:Number(e),mese:monthsCommessa[Number(e)][0]}}));
+                    }}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"select_value"}
+                    inputLabel={"Mese"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyInput={"mese"}
+                    keyBody={"mese"}
+                    arrayValues={yearMonths}
+                ></MainFilter>
                 <MainFilter 
                     filterName={"select_key_value"}
                     inputLabel={"Seleziona prodotto"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
-                    keyInput={"prodotto"}
+                    keyInput={"nome"}
+                    keyBody={"prodotto"}
                     arrayValues={prodotti}
                 ></MainFilter>
                 <MainFilter 
+                    filterName={"multi_checkbox"}
                     inputLabel={"Rag. Soc. Ente"}
-                    filterName={"rag_sociale"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
-                    keyInput={"idEnti"}
                     keyCompare={""}
                     dataSelect={dataSelect}
                     setTextValue={setTextValue}
+                    textValue={textValue}
                     valueAutocomplete={valueAutocomplete}
                     setValueAutocomplete={setValueAutocomplete}
+                    keyInput={"idEnte"}
+                    keyOption='descrizione'
+                    keyBody={"idEnti"}
                 ></MainFilter>
             </ResponsiveGridContainer>
             <FilterActionButtons 

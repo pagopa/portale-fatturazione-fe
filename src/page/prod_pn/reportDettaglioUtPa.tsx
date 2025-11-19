@@ -776,16 +776,30 @@ const ReportDettaglio : React.FC = () => {
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
                     keyInput={"anno"}
+                    keyBody={"anno"}
                     arrayValues={arrayAnni}
+                    extraCodeOnChange={(e)=>{
+                        isInitialRender.current = false;
+                        const value = Number(e);
+                        setBodyGetLista((prev)=> ({...prev, ...{anno:value}}));  
+                        clearOnChangeFilter();
+                    }}
                 ></MainFilter>
                 <MainFilter 
-                    filterName={"select_key_value"}
+                    filterName={"select_key_value_description"}
                     inputLabel={"Mese"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
                     keyInput={"mese"}
+                    keyOption={"descrizione"}
+                    keyBody={"mese"}
                     arrayValues={arrayMesi}
+                    extraCodeOnChange={(e)=>{
+                        const value = Number(e);
+                        setBodyGetLista((prev)=> ({...prev, ...{mese:value}}));
+                    }}
+                     
                 ></MainFilter>
                 <MainFilter 
                     filterName={"select_key_value"}
@@ -793,7 +807,8 @@ const ReportDettaglio : React.FC = () => {
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
-                    keyInput={"prodotto"}
+                    keyInput={"nome"}
+                    keyBody={"prodotto"}
                     arrayValues={prodotti}
                 ></MainFilter>
                 <MainFilter 
@@ -803,9 +818,18 @@ const ReportDettaglio : React.FC = () => {
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
                     keyInput={"iun"}
+                    keyBody={"iun"}
                 ></MainFilter>
-            </ResponsiveGridContainer>
-            <ResponsiveGridContainer >
+                <MainFilter 
+                    filterName={"select_value"}
+                    inputLabel={"Seleziona profilo"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyInput={"profilo"}
+                    keyBody={"profilo"}
+                    arrayValues={profili}
+                ></MainFilter>
                 <MainFilter 
                     filterName={"select_value"}
                     inputLabel={"Tipo notifica"}

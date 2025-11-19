@@ -10,7 +10,7 @@ import { manageError, managePresaInCarico } from "../../api/api";
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
 import { headerNames } from "../../assets/configurations/config_GridWhiteList";
 import ModalConfermaInserimento from "../../components/commessaInserimento/modalConfermaInserimento";
-import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
+
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import ModalAggiungi from "../../components/whiteList/modalAggiungi";
@@ -20,6 +20,7 @@ import { GlobalContext } from "../../store/context/globalContext";
 import { PathPf } from "../../types/enum";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
 import { BodyWhite, getAnniWhite, getMesiWhite, getTipologiaFatturaWhite, getWhiteListPagoPa, deleteWhiteListPagoPa, downloadWhiteListPagopa } from "../../api/apiPagoPa/whiteListPA/whiteList";
+import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
 
 
 

@@ -1,5 +1,5 @@
 import {MainBoxStyled, ResponsiveGridContainer,FilterActionButtons, ActionTopGrid } from "../../components/reusableComponents/layout/mainComponent";
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 
@@ -11,7 +11,7 @@ const TestListaModuli  = () => {
     const [errorDataInizioFine,setErrorDataInizioFine] = useState(false);
     const [errorContrattoInizioFine,setErrorContrattoInizioFine] = useState(false);
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
-    const [textValue, setTextValue] = useState('');
+    const [valueSelected, setValueSelected] = useState('');
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
    
@@ -47,7 +47,6 @@ const TestListaModuli  = () => {
                     keyInput={"init"}
                     keyCompare={"end"}
                     error={errorDataInizioFine}
-                    setError={setErrorDataInizioFine}
                 ></MainFilter>
                 <MainFilter 
                     filterName={"date_from_to"}
@@ -70,14 +69,13 @@ const TestListaModuli  = () => {
                     keyCompare={""}
                 ></MainFilter>
                 <MainFilter 
-                    filterName={"rag_sociale"}
+                    filterName={"multi_checkbox"}
                     inputLabel={"Rag. Soc. Ente"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBody}
                     body={body}
                     keyInput={"idEnti"}
                     dataSelect={dataSelect}
-                    setTextValue={setTextValue}
                     valueAutocomplete={valueAutocomplete}
                     setValueAutocomplete={setValueAutocomplete}
                 ></MainFilter>
