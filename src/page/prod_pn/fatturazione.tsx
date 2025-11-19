@@ -199,7 +199,7 @@ const Fatturazione : React.FC = () =>{
                 setDateTipologie([]);
             }));
     };
-    console.log({bodyFatturazione});
+
     const getlistaFatturazione = async (body) => {
         setShowLoadingGrid(true);
         setDisableButtonSap(true);
