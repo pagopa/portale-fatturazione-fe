@@ -371,13 +371,13 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                     variant: "outlined",
                     label: "Download risultati",
                     icon:{name:"download"},
-                    disabled:(gridData.length < 0)
+                    disabled:(gridData.length === 0)
                 },{
                     onButtonClick:downloadPostalizzazione,
                     variant: "outlined",
                     label: "Report postalizzazione",
                     icon:{name:"download"},
-                    disabled:(gridData.length < 0)
+                    disabled:(gridData.length === 0)
                 }]}/>
           
             <div className="mt-1 mb-5" style={{ width: '100%'}}>

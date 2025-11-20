@@ -269,7 +269,7 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                     variant: "outlined",
                     label: "Download risultati",
                     icon:{name:"download"},
-                    disabled:(gridData.length < 0 || getListaLoading)
+                    disabled:(gridData.length === 0 || getListaLoading)
                 }]}/>
            
             <div className="mt-1 mb-5" style={{ width: '100%'}}>
