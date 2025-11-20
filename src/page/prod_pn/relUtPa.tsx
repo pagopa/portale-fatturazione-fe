@@ -116,7 +116,6 @@ const RelPage : React.FC = () =>{
         
         if(enti && mainState.datiFatturazione === true){
             setGetListaRelRunning(true);
-            await getContratti();
             await getAnniRelSend(token, profilo.nonce).then((res)=>{
                 const arrayNumber = res.data.map(el => Number(el.toString()));
                 setArrayYears(arrayNumber);
@@ -234,7 +233,7 @@ const RelPage : React.FC = () =>{
         if(enti && mainState.datiFatturazione === true){
             setGetListaRelRunning(true);
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const {idEnti, ...newBody} = bodyRel;
+            const {idEnti,idTipoContratto, ...newBody} = bodyRel;
             await  getListaRel(token,profilo.nonce,nPage, nRows, newBody)
                 .then((res)=>{
                     // ordino i dati in base all'header della grid
@@ -281,6 +280,7 @@ const RelPage : React.FC = () =>{
                         idTestata:obj.idTestata,
                         ragioneSociale:obj.ragioneSociale,
                         tipologiaFattura:obj.tipologiaFattura,
+                        tipologiaContratto:obj?.tipologiaContratto,
                         firmata:obj.firmata,
                         idContratto:obj.idContratto,
                         anno:obj.anno,
@@ -496,7 +496,7 @@ const RelPage : React.FC = () =>{
         setShowLoading(true);
         if(enti){
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const {idEnti, ...newBody} = bodyDownload;
+            const {idEnti,idTipoContratto, ...newBody} = bodyDownload;
             await downloadListaRel(token,profilo.nonce,newBody).then((res)=>{
                 saveAs("data:text/plain;base64," + res.data.documento,`Regolari esecuzioni/${data[0]?.ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]}/${bodyDownload.anno}.xlsx` );
                 setShowLoading(false);
@@ -576,7 +576,13 @@ const RelPage : React.FC = () =>{
         });
     };
 
-    const  hiddenAnnullaFiltri = bodyRel.tipologiaFattura === null && bodyRel.idEnti?.length === 0 && bodyRel.caricata === null; 
+
+    let headerGridKeys = ['Ragione Sociale','Tipologia Fattura',"Tipo Contratto", 'Reg. Es. PDF','ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale',''];
+    if(profilo.auth !== "PAGOPA"){
+        headerGridKeys = ['Ragione Sociale','Tipologia Fattura', 'Reg. Es. PDF','ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale',''];
+    }
+
+    const  hiddenAnnullaFiltri = bodyRel.tipologiaFattura === null && bodyRel.idEnti?.length === 0 && bodyRel.caricata === null && bodyRel.idTipoContratto === null; 
     return (
         <div className="mx-5">
             <div className="d-flex marginTop24 ">
@@ -661,29 +667,15 @@ const RelPage : React.FC = () =>{
                     <div  className="col-3">
                         <SelectTipologiaFattura value={valuetipologiaFattura} setBody={setBodyRel} setValue={setValueTipologiaFattura} types={tipologiaFatture} clearOnChangeFilter={clearOnChangeFilter}></SelectTipologiaFattura>
                     </div>
-                    <div  className="col-3">
-                        <FormControl sx={{width:'80%',marginLeft:'20px'}}>
-                            <InputLabel>Tipologia Contratto</InputLabel>
-                            <Select value={bodyRel.idTipoContratto !== null ? bodyRel.idTipoContratto : 0}
-                                label="Tipologia Contratto"
-                                onChange={(e)=>{
-                                    const value = Number(e.target.value) === 0 ? null : Number(e.target.value);
-                                  
-                                    setBodyRel((prev)=>({...prev,...{idTipoContratto:value}}));
-                                    clearOnChangeFilter();
-                                }}
-                            >
-                                {arrayContratti?.map(el => {
-                                    return  <MenuItem value={el.id}>{el.descrizione}</MenuItem>;
-                                })}
-                    
-                            </Select>
-                        </FormControl>
+                    <div className="col-3">
+                        <SelectStatoPdf values={bodyRel} setValue={setBodyRel} clearOnChangeFilter={clearOnChangeFilter}></SelectStatoPdf>
                     </div>
+                   
                 </div>
                 <div className="row mt-5">
                     
                     { profilo.auth === 'PAGOPA' &&
+                    <>
                         <div  className="col-3">
                             <MultiselectCheckbox 
                                 setBodyGetLista={setBodyRel}
@@ -694,10 +686,27 @@ const RelPage : React.FC = () =>{
                                 clearOnChangeFilter={clearOnChangeFilter}
                             ></MultiselectCheckbox>
                         </div>
+                        <div  className="col-3">
+                            <FormControl sx={{width:'80%',marginLeft:'20px'}}>
+                                <InputLabel>Tipologia Contratto</InputLabel>
+                                <Select value={bodyRel.idTipoContratto !== null ? bodyRel.idTipoContratto : 0}
+                                    label="Tipologia Contratto"
+                                    onChange={(e)=>{
+                                        const value = Number(e.target.value) === 0 ? null : Number(e.target.value);
+                                  
+                                        setBodyRel((prev)=>({...prev,...{idTipoContratto:value}}));
+                                        clearOnChangeFilter();
+                                    }}
+                                >
+                                    {arrayContratti?.map(el => {
+                                        return  <MenuItem value={el.id}>{el.descrizione}</MenuItem>;
+                                    })}
+                    
+                                </Select>
+                            </FormControl>
+                        </div>
+                    </>
                     }
-                    <div className="col-3">
-                        <SelectStatoPdf values={bodyRel} setValue={setBodyRel} clearOnChangeFilter={clearOnChangeFilter}></SelectStatoPdf>
-                    </div>
                 </div>
                 <div className="row mt-5">
                     <div className="col-1">
@@ -753,7 +762,7 @@ const RelPage : React.FC = () =>{
                         total={totalNotifiche}
                         page={page}
                         rows={rowsPerPage}
-                        headerNames={['Ragione Sociale','Tipologia Fattura', 'Reg. Es. PDF','ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale','']}
+                        headerNames={headerGridKeys}
                         apiGet={setIdRel}
                         disabled={getListaRelRunning}
                         widthCustomSize="2000px"></GridCustom>
