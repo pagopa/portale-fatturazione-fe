@@ -224,7 +224,8 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
-                    keyInput={"nome"}
+                    keyDescription={"nome"}
+                    keyValue={"nome"}
                     keyBody={"prodotto"}
                     arrayValues={prodotti}
                 ></MainFilter>
@@ -234,7 +235,8 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
-                    keyInput={"profilo"}
+                    keyDescription={"profilo"}
+                    keyValue={"profilo"}
                     keyBody={"profilo"}
                     arrayValues={profili}
                 ></MainFilter>
@@ -250,7 +252,8 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                     textValue={textValue}
                     valueAutocomplete={valueAutocomplete}
                     setValueAutocomplete={setValueAutocomplete}
-                    keyInput={"idEnte"}
+                    keyDescription={"descrizione"}
+                    keyValue={"idEnte"}
                     keyOption='descrizione'
                     keyBody={"idEnti"}
                 ></MainFilter>

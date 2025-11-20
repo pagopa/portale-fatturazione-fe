@@ -15,7 +15,10 @@ export type MainFilterProps<T> = {
     body: any;
     arrayValues?: any[];
     inputLabel: string;
-    keyInput: string;     // field used as value
+    keyDescription: string;     // field used as value
+    keyValue:number|string;
+    defaultValue?:string|number|null // valore da settare se si ha un valore null da inserire nel body
+
     keyOption?:string;   // field used as label
     keyCompare?: string;  // optional compare field
     error?: boolean;
@@ -44,7 +47,8 @@ const MainFilter = <T,>({
     setBody,
     body,
     arrayValues,
-    keyInput,
+    keyDescription,//descrizione della valore nella select es. descrizione
+    keyValue,//valore reale della select tipo index es. id
     keyCompare,
     error,
     setError,
@@ -57,12 +61,13 @@ const MainFilter = <T,>({
     setValueAutocomplete,
     setTextValue,
     textValue,
-    keyBody,
-    extraCodeOnChange
+    keyBody,// chiave da inserire nel body
+    extraCodeOnChange,
+    defaultValue="" //valore inserito quando si ha una chiave uguale a null
 }: MainFilterProps<T>) => {
 
     switch (filterName) {
-        case "select_key_value":  //case "select_prodotto":case "select_profilo":case "select_anno":case "select_mese":consolidatore recapitista
+        case "select_key_value": 
             return ( !hidden && keyBody && <MainBoxContainer>
                 <FormControl sx={{width:"80%"}}>
                     <InputLabel>
@@ -78,14 +83,14 @@ const MainFilter = <T,>({
                                 setBody((prev)=> ({...prev, ...{[keyBody]:e.target.value}}));
                             }
                         }}
-                        value={body[keyBody]||""}
+                        value={body[keyBody]||defaultValue}
                     >
                         {arrayValues?.map((el) => (
                             <MenuItem
                                 key={Math.random()}
-                                value={el[keyInput]||''}
+                                value={el[keyValue]||''}
                             >
-                                {el[keyInput]||""}
+                                {el[keyDescription]||""}
                             </MenuItem>
                         ))}
                     </Select>
@@ -112,7 +117,7 @@ const MainFilter = <T,>({
                         {arrayValues?.map((el) => (
                             <MenuItem
                                 key={Math.random()}
-                                value={el[keyInput]||''}
+                                value={el[keyDescription]||''}
                             >
                                 {el[keyOption]||""}
                             </MenuItem>
@@ -138,7 +143,7 @@ const MainFilter = <T,>({
                             }
                             
                         }}
-                        value={body[keyInput]||""}
+                        value={body[keyDescription]||""}
                     >
                         {arrayValues?.map((el) => (
                             <MenuItem
@@ -163,14 +168,14 @@ const MainFilter = <T,>({
                     sx={{width:"80%"}}
                     label={inputLabel}
                     placeholder={inputLabel}
-                    value={body[keyInput] || ''}
+                    value={body[keyDescription] || ''}
                     onChange={(e) =>{
                         clearOnChangeFilter();
                         setBody((prev)=>{             
                             if(e.target.value === ''){
-                                return {...prev, ...{[keyInput]:null}};
+                                return {...prev, ...{[keyDescription]:null}};
                             }else{
-                                return {...prev, ...{[keyInput]:e.target.value}};
+                                return {...prev, ...{[keyDescription]:e.target.value}};
                             }
                         });}
                     }            
@@ -181,10 +186,10 @@ const MainFilter = <T,>({
                     <DesktopDatePicker
                         sx={{width:"80%"}}
                         label={inputLabel}
-                        value={(body[keyInput] === ''||body[keyInput] === null) ? null : new Date(body[keyInput])}
+                        value={(body[keyDescription] === ''||body[keyDescription] === null) ? null : new Date(body[keyDescription])}
                         onChange={(e:any | null)  =>{
                             if(e !== null && !isDateInvalid(e)){
-                                setBody(prev => ({...prev,...{[keyInput]:e}}));
+                                setBody(prev => ({...prev,...{[keyDescription]:e}}));
                                 if(keyCompare && body[keyCompare] !== null && ((formatDateToValidation(e)||0) < (formatDateToValidation(body[keyCompare])||0))){
                                     setError && setError(true);
                                 }else if(keyCompare && body[keyCompare] === null && e !== null){
@@ -193,7 +198,7 @@ const MainFilter = <T,>({
                                     setError && setError(false);
                                 }
                             }else{
-                                setBody(prev => ({...prev,...{[keyInput]:null}}));
+                                setBody(prev => ({...prev,...{[keyDescription]:null}}));
                                 setError && setError(false);
                             }
                             clearOnChangeFilter();
@@ -207,7 +212,7 @@ const MainFilter = <T,>({
                     />
                 </LocalizationProvider></MainBoxContainer>);
         case "multi_checkbox":
-            if(dataSelect && valueAutocomplete && keyBody ){
+            if(dataSelect && valueAutocomplete && keyBody && keyDescription && keyValue ){
                 return (
                     <MainBoxContainer>
                         <MultiSelect<T>
@@ -220,12 +225,11 @@ const MainFilter = <T,>({
                                 clearOnChangeFilter();
                                 console.log({val});
                                 setValueAutocomplete && setValueAutocomplete(val);
-                                const allId = val.map(el => el[keyInput]);
+                                const allId = val.map(el => el[keyValue]);
                                 setBody((prev) => ({...prev,...{[keyBody]:allId}}));
-                                clearOnChangeFilter();
                             }}
-                            getLabel={(item) => (item as any)[keyOption||0]}
-                            getId={(item) => (item as any)[keyInput]}
+                            getLabel={(item) => (item as any)[keyDescription||0]}
+                            getId={(item) => (item as any)[keyValue]}
                         />
                     </MainBoxContainer>
                 );

@@ -267,7 +267,7 @@ interface CustomButtonProps extends ButtonProps {
 }
 
 const CustomButton = styled(Button)<CustomButtonProps>(({ theme, withText=true }) => ({
-    minWidth: withText ? "185px" : undefined,
+    minWidth: withText ? "130px" : undefined,
     padding: theme.spacing(1, 3),
     textTransform: "none",
     fontWeight: 500,

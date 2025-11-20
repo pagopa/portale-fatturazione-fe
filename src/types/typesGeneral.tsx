@@ -69,7 +69,7 @@ export type BodyListaDatiFatturazione = {
 export type BodyListaModuloCommessa = {
     anno: number | string,
     mese: number | string,
-    prodotto: string,
+    idTipoContratto: number|null,
     descrizione: string
 }
 
@@ -127,7 +127,7 @@ export  type Params = {
 
 export interface BodyDownloadListaCommesse{
     idEnti: string[],
-    prodotto: string,
+    idTipoContratto:number|null,
     anno:string|number,
     mese:string| number
 }

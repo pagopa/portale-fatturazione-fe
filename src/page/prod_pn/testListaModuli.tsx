@@ -44,7 +44,8 @@ const TestListaModuli  = () => {
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBody}
                     body={body}
-                    keyInput={"init"}
+                    keyValue={"init"}
+                    keyDescription=""
                     keyCompare={"end"}
                     error={errorDataInizioFine}
                 ></MainFilter>
@@ -54,7 +55,8 @@ const TestListaModuli  = () => {
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBody}
                     body={body}
-                    keyInput={"end"}
+                    keyValue={"end"}
+                    keyDescription=""
                     keyCompare={"init"}
                     error={errorDataInizioFine}
                     setError={setErrorDataInizioFine}
@@ -65,7 +67,8 @@ const TestListaModuli  = () => {
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBody}
                     body={body}
-                    keyInput={"tipocontratto"}
+                    keyValue={"tipocontratto"}
+                    keyDescription=""
                     keyCompare={""}
                 ></MainFilter>
                 <MainFilter 
@@ -74,7 +77,8 @@ const TestListaModuli  = () => {
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBody}
                     body={body}
-                    keyInput={"idEnti"}
+                    keyValue={"idEnti"}
+                    keyDescription=""
                     dataSelect={dataSelect}
                     valueAutocomplete={valueAutocomplete}
                     setValueAutocomplete={setValueAutocomplete}
@@ -85,7 +89,8 @@ const TestListaModuli  = () => {
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBody}
                     body={body}
-                    keyInput={"initContratto"}
+                    keyValue={"initContratto"}
+                    keyDescription=""
                     keyCompare={"endContratto"}
                     error={errorContrattoInizioFine}
                     setError={setErrorContrattoInizioFine}
@@ -96,7 +101,8 @@ const TestListaModuli  = () => {
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBody}
                     body={body}
-                    keyInput={"endContratto"}
+                    keyValue={"endContratto"}
+                    keyDescription=""
                     keyCompare={"initContratto"}
                     error={errorContrattoInizioFine}
                     setError={setErrorContrattoInizioFine}
