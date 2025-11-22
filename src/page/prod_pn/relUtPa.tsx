@@ -1,7 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, Tooltip, Typography } from "@mui/material";
 import { useNavigate } from "react-router";
-import DownloadIcon from '@mui/icons-material/Download';
 import { GlobalContext } from "../../store/context/globalContext";
 import { profiliEnti,  } from "../../reusableFunction/actionLocalStorage";
 import { OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
@@ -11,16 +9,14 @@ import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, downloadQuadratur
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
 import { PathPf } from "../../types/enum";
 import { saveAs } from "file-saver";
-import SelectStatoPdf from "../../components/rel/selectStatoPdf";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import ModalRedirect from "../../components/commessaInserimento/madalRedirect";
-import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
 import { manageError, manageErrorDownload } from "../../api/api";
-import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
-import SelectTipologiaFattura from "../../components/reusableComponents/select/selectTipologiaFattura";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { Rel, BodyRel } from "../../types/typeRel";
+import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
+import MainFilter from "../../components/reusableComponents/mainFilter";
 
 
 const RelPage : React.FC = () =>{
@@ -55,7 +51,7 @@ const RelPage : React.FC = () =>{
     const [tipologiaFatture, setTipologiaFatture] = useState<string[]>([]);
     const [valuetipologiaFattura, setValueTipologiaFattura] = useState<string>('');
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
-    const [arrayContratti, setArrayContratto] = useState<{id:number,descrizione:string}[]>([{id:0,descrizione:"Tutti"}]);
+    const [arrayContratti, setArrayContratto] = useState<{id:number,descrizione:string}[]>([{id:3,descrizione:"Tutti"}]);
     const [bodyDownload, setBodyDownload] = useState<BodyRel>({
         anno:0,
         mese:0,
@@ -85,18 +81,6 @@ const RelPage : React.FC = () =>{
         getAnni();
     },[]);
 
-    useEffect(()=>{
-        if(!isInitialRender.current){
-            getListTipologiaFatturaOnChangeMonthYear(bodyRel.mese,bodyRel.anno);
-        }
-    },[bodyRel.mese]);
-
-    useEffect(()=>{
-        if(!isInitialRender.current){
-            getMesi(bodyRel.anno?.toString());
-        }
-    },[bodyRel.anno]);
- 
     useEffect(()=>{
         const timer = setTimeout(() => {
             if(textValue.length >= 3){
@@ -159,7 +143,11 @@ const RelPage : React.FC = () =>{
         if(enti && mainState.datiFatturazione === true){
             setGetListaRelRunning(true);
             await getMesiRelSend(token, profilo.nonce,{anno:year}).then((res)=>{
-                setArrayMonths(res.data);
+                const mesiCamelCase = res.data.map(el => {
+                    el.descrizione = el?.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase();
+                    return el;
+                });
+                setArrayMonths(mesiCamelCase);
                 if(isInitialRender.current && Object.keys(filters).length > 0){
                     getListTipologiaFattura(filters.body.anno,filters.body.mese);
                     setTextValue(filters.textValue);
@@ -170,13 +158,13 @@ const RelPage : React.FC = () =>{
                     setBodyDownload(filters.body);
                     getlista(filters.body,filters.page + 1, filters.rows);
                 }else if(isInitialRender.current){
-                    setBodyRel((prev)=> ({...prev,...{mese:res.data[0].mese}}));
-                    setBodyDownload((prev)=> ({...prev,...{mese:res.data[0].mese}}));
-                    getListTipologiaFattura(year, res.data[0].mese);
-                    getlista({...bodyRel,...{anno:year,mese:res.data[0].mese}},1,rowsPerPage);
+                    setBodyRel((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
+                    setBodyDownload((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
+                    getListTipologiaFattura(year, mesiCamelCase[0].mese);
+                    getlista({...bodyRel,...{anno:year,mese:mesiCamelCase[0].mese}},1,rowsPerPage);
                 }else{
-                    setBodyRel((prev)=> ({...prev,...{mese:res.data[0].mese}}));
-                    setBodyDownload((prev)=> ({...prev,...{mese:res.data[0].mese}}));
+                    setBodyRel((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
+                    setBodyDownload((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
                 }
             }).catch((err)=>{
                 setArrayMonths([]);
@@ -188,7 +176,12 @@ const RelPage : React.FC = () =>{
         }else if(profilo.auth === 'PAGOPA'){
             setGetListaRelRunning(true);
             await getMesiRel(token, profilo.nonce,{anno:year}).then((res)=>{
-                setArrayMonths(res.data);
+                const mesiCamelCase = res.data.map(el => {
+                    el.descrizione = el?.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase();
+                    return el;
+                });
+                
+                setArrayMonths(mesiCamelCase);
                 if(isInitialRender.current && Object.keys(filters).length > 0){
                     setTextValue(filters.textValue);
                     setValueAutocomplete(filters.valueAutocomplete);
@@ -199,13 +192,13 @@ const RelPage : React.FC = () =>{
                     getListTipologiaFattura(filters.body.anno,filters.body.mese);
                     setBodyRel(filters.body);
                 }else if(isInitialRender.current){
-                    setBodyRel((prev)=> ({...prev,...{mese:res.data[0].mese}}));
-                    setBodyDownload((prev)=> ({...prev,...{mese:res.data[0].mese}}));
-                    getListTipologiaFattura(year, res.data[0].mese);
-                    getlista({...bodyRel,...{anno:year,mese:res.data[0].mese}},1,rowsPerPage);
+                    setBodyRel((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
+                    setBodyDownload((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
+                    getListTipologiaFattura(year, mesiCamelCase[0].mese);
+                    getlista({...bodyRel,...{anno:year,mese:mesiCamelCase[0].mese}},1,rowsPerPage);
                 }else{
-                    setBodyRel((prev)=> ({...prev,...{mese:res.data[0].mese}}));
-                    setBodyDownload((prev)=> ({...prev,...{mese:res.data[0].mese}}));
+                    setBodyRel((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
+                    setBodyDownload((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
                 }
             }).catch((err)=>{
                 setArrayMonths([]);
@@ -576,6 +569,12 @@ const RelPage : React.FC = () =>{
         });
     };
 
+    const statoPdf = [
+        'Non Caricata',
+        'Firmata',
+        'Invalidata'
+    ];
+
 
     let headerGridKeys = ['Ragione Sociale','Tipologia Fattura',"Tipo Contratto", 'Reg. Es. PDF','ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale',''];
     if(profilo.auth !== "PAGOPA"){
@@ -584,190 +583,149 @@ const RelPage : React.FC = () =>{
 
     const  hiddenAnnullaFiltri = bodyRel.tipologiaFattura === null && bodyRel.idEnti?.length === 0 && bodyRel.caricata === null && bodyRel.idTipoContratto === null; 
     return (
-        <div className="mx-5">
-            <div className="d-flex marginTop24 ">
-                <div className="col-9">
-                    <Typography variant="h4">Regolare esecuzione / Documenti di cortesia</Typography>
-                </div>
-                <div className="col-3 ">
-                    {!enti &&
-                    <Box sx={{width:'80%', marginLeft:'20px', display:'flex', justifyContent:'end'}}  >
-                        <Tooltip title="Report regolare esecuzione non fatturate">
-                            <span>
-                                <Button  variant="outlined"  onClick={()=> downloadReport()} >
-                                    <ArrowCircleDownIcon></ArrowCircleDownIcon>
-                                </Button>
-                            </span>
-                        </Tooltip>
-                    </Box>}
-                </div>
-            </div>
-            <div className="mt-5">
-                <div className="row">
-                    <div className="col-3">
-                        <Box sx={{width:'80%'}} >
-                            <FormControl
-                                fullWidth
-                                size="medium"
-                            >
-                                <InputLabel>
-                            Anno   
-                                </InputLabel>
-                                <Select
-                                    label='Seleziona Anno'
-                                    onChange={(e) => {
-                                        clearOnChangeFilter();  
-                                        const value = Number(e.target.value);
-                                        setBodyRel((prev)=> ({...prev, ...{anno:value}}));
-                                    }}
-                                    value={bodyRel.anno||''}     
-                                >
-                                    {arrayYears.map((el) => (
-                                        <MenuItem
-                                            key={Math.random()}
-                                            value={el}
-                                        >
-                                            {el}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </div>
-                    <div  className="col-3">
-                        <Box sx={{width:'80%', marginLeft:'20px'}}  >
-                            <FormControl
-                                fullWidth
-                                size="medium"
-                            >
-                                <InputLabel>
-                                Mese   
-                                </InputLabel>
-                                <Select
-                                    label='Mese'
-                                    onChange={(e) =>{
-                                        const value = Number(e.target.value);
-                                        setBodyRel((prev)=> ({...prev, ...{mese:value}}));
-                                        clearOnChangeFilter();
-                                    }}         
-                                    value={bodyRel.mese||''}             
-                                >
-                                    {arrayMonths.map((el) => (
-                                        <MenuItem
-                                            key={Math.random()}
-                                            value={el.mese}
-                                        >
-                                            {el?.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase()}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </div>
-                    <div  className="col-3">
-                        <SelectTipologiaFattura value={valuetipologiaFattura} setBody={setBodyRel} setValue={setValueTipologiaFattura} types={tipologiaFatture} clearOnChangeFilter={clearOnChangeFilter}></SelectTipologiaFattura>
-                    </div>
-                    <div className="col-3">
-                        <SelectStatoPdf values={bodyRel} setValue={setBodyRel} clearOnChangeFilter={clearOnChangeFilter}></SelectStatoPdf>
-                    </div>
-                   
-                </div>
-                <div className="row mt-5">
-                    
-                    { profilo.auth === 'PAGOPA' &&
-                    <>
-                        <div  className="col-3">
-                            <MultiselectCheckbox 
-                                setBodyGetLista={setBodyRel}
-                                dataSelect={dataSelect}
-                                setTextValue={setTextValue}
-                                valueAutocomplete={valueAutocomplete}
-                                setValueAutocomplete={setValueAutocomplete}
-                                clearOnChangeFilter={clearOnChangeFilter}
-                            ></MultiselectCheckbox>
-                        </div>
-                        <div  className="col-3">
-                            <FormControl sx={{width:'80%',marginLeft:'20px'}}>
-                                <InputLabel>Tipologia Contratto</InputLabel>
-                                <Select value={bodyRel.idTipoContratto !== null ? bodyRel.idTipoContratto : 0}
-                                    label="Tipologia Contratto"
-                                    onChange={(e)=>{
-                                        const value = Number(e.target.value) === 0 ? null : Number(e.target.value);
-                                  
-                                        setBodyRel((prev)=>({...prev,...{idTipoContratto:value}}));
-                                        clearOnChangeFilter();
-                                    }}
-                                >
-                                    {arrayContratti?.map(el => {
-                                        return  <MenuItem value={el.id}>{el.descrizione}</MenuItem>;
-                                    })}
-                    
-                                </Select>
-                            </FormControl>
-                        </div>
-                    </>
-                    }
-                </div>
-                <div className="row mt-5">
-                    <div className="col-1">
-                        <Button
-                            onClick={onButtonFiltra}
-                            variant="contained"
-                            disabled={getListaRelRunning}>Filtra</Button>
-                    </div>
-                    {!hiddenAnnullaFiltri && 
-                    <div className="col-2">
-                        <Button onClick={onButtonAnnulla} 
-                            disabled={getListaRelRunning}
-                        >Annulla Filtri</Button>
-                    </div>
-                    }
-                </div>
-                <div className="mt-5 mb-5">
-                    { data.length > 0  &&
-            <div className="marginTop24 d-flex d-flex justify-content-between">
-                <div className="d-flex justify-content-start">
-                    {profilo.auth === 'PAGOPA'&&
-                   
-                   <Button onClick={downloadQuadratura} >
-                     Quadratura notifiche Rel 
-                       <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
-                   </Button>  }
-                </div>
-                <div className="d-flex justify-content-end">
-                    {profilo.auth === 'PAGOPA'&&
-                   
-                        <Button
-                            disabled={getListaRelRunning  || !disableDownloadListaPdf}
-                            onClick={downloadListaPdfPagopa}>
-                                  Download documenti firmati 
-                            <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
-                        </Button>
-                   
-                    }
-                    <Button
-                        disabled={getListaRelRunning}
-                        onClick={downloadListaRelExel}  >
-                                  Download risultati 
-                        <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
-                    </Button>
-                </div>            
-            </div>
-                    }    
-                    <GridCustom
-                        nameParameterApi='idTestata'
-                        elements={data}
-                        changePage={handleChangePage}
-                        changeRow={handleChangeRowsPerPage} 
-                        total={totalNotifiche}
-                        page={page}
-                        rows={rowsPerPage}
-                        headerNames={headerGridKeys}
-                        apiGet={setIdRel}
-                        disabled={getListaRelRunning}
-                        widthCustomSize="2000px"></GridCustom>
-                </div>
-            </div>
+        <MainBoxStyled title={"Regolare esecuzione / Documenti di cortesia"} actionButton={!enti ? [{
+            onButtonClick: downloadReport,
+            variant: "outlined",
+            icon:{name:"circle_arrow_icon", sx:{} },
+            withText:false,
+            tooltipMessage:"Report regolare esecuzione non fatturate"
+        }]:[]}>
+            <ResponsiveGridContainer >
+                <MainFilter 
+                    filterName={"select_value"}
+                    inputLabel={"Anno"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyRel}
+                    body={bodyRel}
+                    keyDescription={"anno"}
+                    keyValue={"anno"}
+                    keyBody={"anno"}
+                    arrayValues={arrayYears}
+                    extraCodeOnChange={(e)=>{
+                        const value = Number(e);
+                        setBodyRel((prev)=> ({...prev, ...{anno:value}}));
+                        getMesi(value.toString());
+                    }}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"select_key_value"}
+                    inputLabel={"Mese"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyRel}
+                    body={bodyRel}
+                    keyValue={"mese"}
+                    keyDescription='descrizione'
+                    keyBody={"mese"}
+                    arrayValues={arrayMonths}
+                    extraCodeOnChange={(e)=>{
+                        const value = Number(e);
+                        setBodyRel((prev)=> ({...prev, ...{mese:value}})); 
+                        getListTipologiaFatturaOnChangeMonthYear(value,bodyRel.anno);            
+                    }}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"select_value"}
+                    inputLabel={"Tipologia Fattura"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyRel}
+                    body={bodyRel}
+                    keyDescription={"tipologiaFattura"}
+                    keyValue={"tipologiaFattura"}
+                    keyBody={"tipologiaFattura"}
+                    arrayValues={tipologiaFatture}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"select_value"}
+                    inputLabel={"Stato PDF Reg. Es."}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyRel}
+                    body={bodyRel}
+                    keyDescription={"caricata"}
+                    keyValue={"caricata"}
+                    keyBody={"caricata"}
+                    arrayValues={statoPdf}
+                    extraCodeOnChange={(e)=>{
+                        const value = Number(e);
+                        setBodyRel((prev)=> ({...prev, ...{caricata:value}}));             
+                    }}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"multi_checkbox"}
+                    inputLabel={"Rag. Soc. Ente"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyRel}
+                    body={bodyRel}
+                    dataSelect={dataSelect}
+                    setTextValue={setTextValue}
+                    textValue={textValue}
+                    valueAutocomplete={valueAutocomplete}
+                    setValueAutocomplete={setValueAutocomplete}
+                    keyDescription={"descrizione"}
+                    keyValue={"idEnte"}
+                    keyBody={"idEnti"}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"select_key_value"}
+                    inputLabel={"Tipologia contratto"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyRel}
+                    body={bodyRel}
+                    keyDescription={"descrizione"}
+                    keyBody={"idTipoContratto"}
+                    keyValue={"id"}
+                    arrayValues={arrayContratti}
+                    defaultValue={"3"}
+                    extraCodeOnChange={(e)=>{
+                        const val = (Number(e) === 3) ? null : Number(e);
+                        setBodyRel((prev)=>({...prev,...{idTipoContratto:val}}));
+                    }}
+                ></MainFilter>
+            </ResponsiveGridContainer>
+            <FilterActionButtons 
+                onButtonFiltra={onButtonFiltra} 
+                onButtonAnnulla={onButtonAnnulla} 
+                statusAnnulla={hiddenAnnullaFiltri ? "hidden":"show"} 
+            ></FilterActionButtons>
+            <ActionTopGrid
+                actionButtonRight={profilo.auth === 'PAGOPA'?[{
+                    onButtonClick:downloadListaPdfPagopa,
+                    variant: "outlined",
+                    label: "Download documenti firmati",
+                    icon:{name:"download"},
+                    disabled:(data.length === 0 || getListaRelRunning  || !disableDownloadListaPdf)
+                },{
+                    onButtonClick:downloadListaRelExel,
+                    variant: "outlined",
+                    label: "Download risultati",
+                    icon:{name:"download"},
+                    disabled:(data.length === 0||getListaRelRunning)
+                }]: [{
+                    onButtonClick:downloadListaRelExel,
+                    variant: "outlined",
+                    label: "Download risultati",
+                    icon:{name:"download"},
+                    disabled:(data.length === 0||getListaRelRunning)
+                }]}
+                actionButtonLeft={profilo.auth === 'PAGOPA'?[{
+                    onButtonClick:downloadQuadratura,
+                    variant: "outlined",
+                    label: "Quadratura notifiche Rel",
+                    icon:{name:"download"},
+                    disabled:(data.length === 0||getListaRelRunning)
+                }]:[]}/>
+           
+            <GridCustom
+                nameParameterApi='idTestata'
+                elements={data}
+                changePage={handleChangePage}
+                changeRow={handleChangeRowsPerPage} 
+                total={totalNotifiche}
+                page={page}
+                rows={rowsPerPage}
+                headerNames={headerGridKeys}
+                apiGet={setIdRel}
+                disabled={getListaRelRunning}
+                widthCustomSize="2000px"></GridCustom>
             <ModalLoading 
                 open={showLoading} 
                 setOpen={setShowLoading} 
@@ -783,7 +741,8 @@ const RelPage : React.FC = () =>{
                 setOpen={setGetListaRelRunning} 
                 sentence={'Loading...'}>
             </ModalLoading>
-        </div>
+        </MainBoxStyled>
+        
     );
 };
 

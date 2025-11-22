@@ -22,6 +22,8 @@ import { mesiGrid } from "../../reusableFunction/reusableArrayObj";
 import { PathPf } from "../../types/enum";
 import { ElementMultiSelect } from "../../types/typeReportDettaglio";
 import { headersName } from "../../assets/configurations/config_GridOrchestratore";
+import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
+import MainFilter from "../../components/reusableComponents/mainFilter";
 
 export interface DataGridOrchestratore {
     idOrchestratore:string,
@@ -317,228 +319,110 @@ const ProcessiOrchestartore:React.FC = () =>{
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
     return(
-        <div className="mx-5">
-            <div className="marginTop24 ">
-                <Typography variant="h4">Monitoring</Typography>
-            </div>
-            <div className="row mb-5 mt-5" >
-                <div className="col-2">
-                    <Box >
-                        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it} >
-                            <DesktopDatePicker
-                                label={"Data inizio"}
-                                format="dd/MM/yyyy"
-                                value={(bodyGetLista.init === ''||bodyGetLista.init === null) ? null : new Date(bodyGetLista.init)}
-                                onChange={(e:any | null)  => {
-                                    if(e !== null && !isDateInvalid(e)){
-                                        setBodyGetLista(prev => ({...prev,...{init:e}}));
-                                        if(bodyGetLista.end !== null && ((formatDateToValidation(e)||0) > (formatDateToValidation(bodyGetLista.end)||0))){
-                                            setError(true);
-                                        }else{
-                                            setError(false);
-                                        }
-                                    }else{
-                                        setBodyGetLista(prev => ({...prev,...{init:null}}));
-                                        if(bodyGetLista.end !== null){
-                                            setError(true);
-                                        }else{
-                                            setError(false);
-                                        }
-                                    }
-                                    clearOnChangeFilter();
-                                    formatDateToValidation(e);
-                                }}
-                                slotProps={{
-                                    textField: {
-                                        error:error,
-                                    },
-                                }}
-                            />
-                        </LocalizationProvider>
-                    </Box>
-                </div>
-                <div className="col-2">
-                    <Box >
-                        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it}>
-                            <DesktopDatePicker
-                                label={"Data fine"}
-                                value={(bodyGetLista.end === ''||bodyGetLista.end === null) ? null : new Date(bodyGetLista.end)}
-                                onChange={(e:any | null)  =>{
-                                    if(e !== null && !isDateInvalid(e)){
-                                        setBodyGetLista(prev => ({...prev,...{end:e}}));
-                                        if(bodyGetLista.init !== null && ((formatDateToValidation(e)||0) < (formatDateToValidation(bodyGetLista.init)||0))){
-                                            setError(true);
-                                        }else if(bodyGetLista.init === null && e !== null){
-                                            setError(true);
-                                        }else{
-                                            setError(false);
-                                        }
-                                    }else{
-                                        setBodyGetLista(prev => ({...prev,...{end:null}}));
-                                        setError(false);
-                                    }
-                                    clearOnChangeFilter();
-                                }}
-                                format="dd/MM/yyyy"
-                                slotProps={{
-                                    textField: {
-                                        error:error,
-                                    },
-                                }}
-                            />
-                        </LocalizationProvider>
-                    </Box>
-                </div>
-                <div className="col-2">
-                    <Autocomplete
-                        multiple
-                        limitTags={1}
-                        onChange={(event, value) => {
-                            const arrayId = value.map(el => el.value);
-                            setBodyGetLista((prev) => ({...prev,...{stati:arrayId}}));
-                            setValueStati(value);
-                            clearOnChangeFilter();
-                        }}
-                        id="checkboxes-quarters"
-                        options={arrayStati}
-                        value={valueStati}
-                        disableCloseOnSelect
-                        isOptionEqualToValue={(option, value) => option.value === value.value}
-                        getOptionLabel={(option:{value: number, description: string}) => {
-                            return option.description;}}
-                        renderOption={(props, option,{ selected }) =>(
-                            <li  {...props}>
-                                <Checkbox
-                                    icon={icon}
-                                    checkedIcon={checkedIcon}
-                                    style={{ marginRight: 8 }}
-                                    checked={selected}
-                                />
-                                <Typography sx={{ fontSize: "0.875rem"}}>{option.description}</Typography>
-                            </li>
-                        )}
-                        style={{ height:'59px'}}
-                        renderInput={(params) => {
-                            return <TextField sx={{backgroundColor:"#F2F2F2"}} {...params}
-                                label="Stato" 
-                                placeholder="Stato" />;
-                        }}
-                    />
-                </div>
-                <div className="col-2">
-                    <Autocomplete
-                        multiple
-                        limitTags={1}
-                        onChange={(event, value) => {
-                            const arrayDesc = value.map(el => el.description);
-                            setBodyGetLista((prev) => ({...prev,...{tipologie:arrayDesc}}));
-                            setValueTipologie(value);
-                            clearOnChangeFilter();
-                        }}
-                        options={arrayTipologie}
-                        value={valueTipologie}
-                        disableCloseOnSelect
-                        isOptionEqualToValue={(option, value) => option.value === value.value}
-                        getOptionLabel={(option:{value: number, description: string}) => {
-                            return option.description;}}
-                        renderOption={(props, option,{ selected }) =>(
-                            <li {...props}>
-                                <Checkbox
-                                    icon={icon}
-                                    checkedIcon={checkedIcon}
-                                    style={{ marginRight: 8 }}
-                                    checked={selected}
-                                />
-                                <Typography sx={{ fontSize: "0.875rem"}}>{option.description}</Typography>
-                            </li>
-                        )}
-                        style={{ height:'59px'}}
-                        renderInput={(params) => {
-                            return <TextField sx={{backgroundColor:"#F2F2F2"}} {...params}
-                                label="Tipologia" 
-                                placeholder="Tipologia" />;
-                        }}
-                    />
-                </div>
-                <div className="col-2">
-                    <Autocomplete
-                        multiple
-                        limitTags={1}
-                        onChange={(event, value) => {
-                            const arrayDesc = value.map(el => el.description);
-                            setBodyGetLista((prev) => ({...prev,...{fasi:arrayDesc}}));
-                            setValueFasi(value);
-                            clearOnChangeFilter();
-                        }}
-                        options={arrayFasi}
-                        value={valueFasi}
-                        disableCloseOnSelect
-                        isOptionEqualToValue={(option, value) => option.value === value.value}
-                        getOptionLabel={(option:{value: number, description: string}) => {
-                            return option.description;}}
-                        renderOption={(props, option,{ selected }) =>(
-                            <li {...props}>
-                                <Checkbox
-                                    icon={icon}
-                                    checkedIcon={checkedIcon}
-                                    style={{ marginRight: 8 }}
-                                    checked={selected}
-                                />
-                                <Typography sx={{ fontSize: "0.875rem"}}>{option.description}</Typography>
-                            </li>
-                        )}
-                        style={{ height:'59px'}}
-                        renderInput={(params) => {
-                            return <TextField sx={{backgroundColor:"#F2F2F2"}} {...params}
-                                label="Fase" 
-                                placeholder="Fase" />;
-                        }}
-                    />
-                </div>
-                <div className="col-2 d-flex align-items-center justify-content-center">
-                    <Box style={{ width: '50%' }}>
-                        <Button 
-                            onClick={onButtonFiltra} 
-                            disabled={error}
-                            variant="contained"> Filtra
-                        </Button>
-                    </Box>
-                    <Box style={{ width: '50%' }}>
-                        <Tooltip title="Lista completa">
-                            <Button variant="outlined"
-                                disabled={disableListaCompletaButton}
-                                onClick={onButtonAnnulla} >
-                                <ListIcon></ListIcon>
-                            </Button>
-                        </Tooltip>
-                    </Box>
-                </div>
-            </div>
-            <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
-                {
-                    gridData.length > 0 &&
-                    <Button onClick={downloadListaOrchestratore} disabled={getListaLoading}>
-                    Download Risultati
-                        <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
-                    </Button>
-                }
-            </div>
-            <div className="mt-1 mb-5" style={{ width: '100%'}}>
-                <GridCustom
-                    nameParameterApi='idOrchestratore'
-                    elements={gridData}
-                    changePage={handleChangePage}
-                    changeRow={handleChangeRowsPerPage} 
-                    total={totalData}
-                    page={page}
-                    rows={rowsPerPage}
-                    headerNames={headersName}
-                    disabled={getListaLoading}
-                    widthCustomSize="auto"
+        <MainBoxStyled title={"Monitoring"}>
+            <ResponsiveGridContainer >
+                <MainFilter 
+                    filterName={"date_from_to"}
+                    inputLabel={"Data inizio"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
                     body={bodyGetLista}
-                    headerAction={headerAction}
-                ></GridCustom>
-            </div>
+                    keyValue={"init"}
+                    keyDescription=""
+                    keyCompare={"end"}
+                    error={error}
+                    keyBody="init"
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"date_from_to"}
+                    inputLabel={"Data fine"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyValue={"end"}
+                    keyDescription=""
+                    keyCompare={"init"}
+                    error={error}
+                    keyBody="end"
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"select_key_value"}
+                    inputLabel={"Stato"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyDescription={"description"}
+                    keyBody={"stati"}
+                    keyValue={"value"}
+                    arrayValues={valueStati}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"multi_checkbox"}
+                    inputLabel={"Tipologia"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    dataSelect={valueTipologie}
+                    keyDescription={"tipologiaFattura"}
+                    keyValue={"tipologiaFattura"}
+                    keyBody={"tipologiaFattura"}
+                    extraCodeOnChangeArray={(e)=>{
+                        const arrayDesc = e.map(el => el.description);
+                        setBodyGetLista((prev) => ({...prev,...{tipologie:arrayDesc}}));
+                        setValueTipologie(e);
+                    }}          
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"multi_checkbox"}
+                    inputLabel={"Fase"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    dataSelect={arrayFasi}
+                    keyDescription={"dataFattura"}
+                    keyValue={"tipologiaFattura"}
+                    keyBody={"fasi"}
+                    extraCodeOnChangeArray={(e)=>{
+                        const arrayDesc = e.map((el) => el.description);
+                        setBodyGetLista((prev) => ({...prev,...{fasi:arrayDesc}}));
+                        setValueFasi(e);
+                    }}
+                ></MainFilter>
+            </ResponsiveGridContainer>
+            <FilterActionButtons 
+                onButtonFiltra={onButtonFiltra} 
+                onButtonAnnulla={onButtonAnnulla} 
+                statusAnnulla={disableListaCompletaButton? "hidden":"show"} 
+                annullaButtonOptional={{
+                    onButtonClick:onButtonAnnulla,
+                    variant: "outlined",
+                    icon:{name:"list"},
+                    disabled:disableListaCompletaButton
+                }}
+            ></FilterActionButtons>
+            <ActionTopGrid
+                actionButtonRight={[{
+                    onButtonClick:downloadListaOrchestratore,
+                    variant: "outlined",
+                    label: "Download Risultati",
+                    icon:{name:"download"},
+                    disabled:(gridData.length === 0||getListaLoading)
+                }]}/>
+            <GridCustom
+                nameParameterApi='idOrchestratore'
+                elements={gridData}
+                changePage={handleChangePage}
+                changeRow={handleChangeRowsPerPage} 
+                total={totalData}
+                page={page}
+                rows={rowsPerPage}
+                headerNames={headersName}
+                disabled={getListaLoading}
+                widthCustomSize="auto"
+                body={bodyGetLista}
+                headerAction={headerAction}
+            ></GridCustom>
+             
             <ModalLoading 
                 open={getListaLoading} 
                 setOpen={setGetListaLoading}
@@ -549,7 +433,8 @@ const ProcessiOrchestartore:React.FC = () =>{
                 setOpen={setShowLoading}
                 sentence={'Downloading...'} >
             </ModalLoading>
-        </div>
+        </MainBoxStyled>
+     
     );
 }; 
 export default ProcessiOrchestartore;

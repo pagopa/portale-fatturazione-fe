@@ -1,4 +1,4 @@
-import { IconButton, Tooltip, Typography } from "@mui/material";
+/*import { IconButton, Tooltip, Typography } from "@mui/material";
 import React , { useState, useEffect, useContext} from 'react';
 import { TextField,Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -777,7 +777,7 @@ const ReportDettaglio : React.FC = () => {
                     </Box>
                 </div>
             </div>
-            {/*title container end */}
+    
             <div className="mt-5 mb-5 ">
                 <div className="row">
                     <div className="col-3">
@@ -1105,7 +1105,7 @@ const ReportDettaglio : React.FC = () => {
                     disabled={getNotificheWorking}
                     widthCustomSize="2000px"></GridCustom>
             </div>             
-            {/* MODAL */}                                 
+                               
             <ModalContestazione open={open} 
                 setOpen={setOpen} 
                 mainState={mainState}
@@ -1147,10 +1147,10 @@ const ReportDettaglio : React.FC = () => {
     );
 };                                        
 export default ReportDettaglio;
+*/
 
 
-
-/*import React , { useState, useEffect, useContext} from 'react';
+import React , { useState, useEffect, useContext} from 'react';
 import { getTipologiaProfilo, manageError, managePresaInCarico} from "../../api/api";
 import {NotificheList, FlagContestazione, Contestazione, ElementMultiSelect, ListaRecCon, OptionMultiselectChackbox  } from "../../types/typeReportDettaglio";
 import { BodyListaNotifiche } from "../../types/typesGeneral";
@@ -1171,6 +1171,7 @@ import { PathPf } from "../../types/enum";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { OptionType } from 'dayjs';
+import { isManageErrorResponse } from '../../reusableFunction/function';
 
 
 const ReportDettaglio : React.FC = () => {
@@ -1313,67 +1314,104 @@ const ReportDettaglio : React.FC = () => {
         }
     }, []);
     
-    useEffect(()=>{
-        if((bodyGetLista.anno !== 0) && (!isInitialRender.current)){
-            getMesi(bodyGetLista.anno.toString());
-        }
-    },[bodyGetLista.anno]);
     
-    const funInitialRender = async(newBody, dataFromLocalStorage) => {
-        setGetNotificheWorking(true);
-        getProdotti();
-        getProfili();
-        getFlagContestazione();
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const {idEnti, recapitisti, consolidatori, ...body} = newBody;
-        await getAnniNotifiche(token, profilo.nonce).then(async(resAnno)=> {
-            const allYearToNumber = resAnno.data.map( el => Number(el));
-            let annoToSet = resAnno.data[0];
-            if(dataFromLocalStorage){
-                annoToSet = filters.body.anno;
-            }
+    const funInitialRender = async (newBody, dataFromLocalStorage) => {
+        try {
+            setGetNotificheWorking(true);
+
+            // Fire these in parallel (not awaiting each)
+            getProdotti();
+            getProfili();
+            getFlagContestazione();
+
+            // Remove unused keys
+            const { idEnti, recapitisti, consolidatori, ...body } = newBody;
+
+            // ---------------------------
+            // 1️⃣  GET YEARS
+            // ---------------------------
+            const resAnno = await getAnniNotifiche(token, profilo.nonce);
+            const allYearToNumber = resAnno.data.map(Number);
             setArrayAnni(allYearToNumber);
-            if(resAnno.data.length > 0){
-                await getMesiNotifiche(token, profilo.nonce,{anno:annoToSet?.toString()}).then(async(resMese)=> {
-                    setArrayMesi(resMese.data);
-                    let meseToSet = resMese.data[0].mese;
-                    if(dataFromLocalStorage){
-                        meseToSet = filters.body.mese;
-                    }
-                    let page = 1;
-                    let row = 10;
-                    
-                    setBodyGetLista({...newBody,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
-                    setBodyDownload({...newBody,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
-                    if(dataFromLocalStorage){
-                        setTextValue(filters.textAutocomplete);
-                        setValueAutocomplete(filters.valueAutocomplete);
-                        setValueFgContestazione(filters.valueFgContestazione);
-                        setPage(filters.page);
-                        setRowsPerPage(filters.rows);
-                        
-                        meseToSet = filters.body.mese;
-                        page = filters.page + 1;
-                        row = filters.rows;
-                    }
-                    
-                    if(profilo.auth === 'SELFCARE' && mainState.datiFatturazione === true){
-                        await getlistaNotifiche( page, row,{...body,...{mese:Number(meseToSet),anno:Number(annoToSet)}}); 
-                    }else if((profilo.auth === 'SELFCARE') && (profilo.profilo === 'CON' || profilo.profilo === 'REC')){
-                        await getlistaNotifiche( page, row,{...body,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
-                    }else if(profilo.auth === 'PAGOPA'){
-                        await getlistaNotifichePagoPa( page, row,{...newBody,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
-                        await getRecapitistConsolidatori();
-                    }
-                }).catch((err)=>{
-                    manageError(err,dispatchMainState);
-                    setGetNotificheWorking(false);
-                });
+
+            if (resAnno.data.length === 0) {
+                setGetNotificheWorking(false);
+                return;
             }
-        }).catch((err)=>{
+
+            const annoToSet = dataFromLocalStorage ? filters.body.anno : resAnno.data[0];
+
+            // ---------------------------
+            // 2️⃣  GET MONTHS
+            // ---------------------------
+            const resMese = await getMesiNotifiche(token, profilo.nonce, {
+                anno: annoToSet.toString(),
+            });
+
+            const camelCaseMonth = resMese.data.map(el => ({
+                ...el,
+                descrizione:
+                el.descrizione.charAt(0).toUpperCase() +
+                el.descrizione.slice(1).toLowerCase(),
+            }));
+
+            setArrayMesi(camelCaseMonth);
+
+            const meseToSet = dataFromLocalStorage
+                ? filters.body.mese
+                : camelCaseMonth[0].mese;
+
+            const page = dataFromLocalStorage ? filters.page + 1 : 1;
+            const row = dataFromLocalStorage ? filters.rows : 10;
+
+            // ---------------------------
+            // 3️⃣  SET FILTER BODIES
+            // ---------------------------
+            const newBodyWithDates = {
+                ...newBody,
+                mese: Number(meseToSet),
+                anno: Number(annoToSet),
+            };
+
+            setBodyGetLista(newBodyWithDates);
+            setBodyDownload(newBodyWithDates);
+
+            // Restore filters only if needed
+            if (dataFromLocalStorage) {
+                setTextValue(filters.textAutocomplete);
+                setValueAutocomplete(filters.valueAutocomplete);
+                setValueFgContestazione(filters.valueFgContestazione);
+                setPage(filters.page);
+                setRowsPerPage(filters.rows);
+            }
+
+            // ---------------------------
+            // 4️⃣  CALL LIST API BASED ON PROFILE
+            // ---------------------------
+            if (profilo.auth === "SELFCARE" && mainState.datiFatturazione) {
+                await getlistaNotifiche(page, row, {
+                    ...body,
+                    mese: Number(meseToSet),
+                    anno: Number(annoToSet),
+                });
+            } else if (
+                profilo.auth === "SELFCARE" &&
+            (profilo.profilo === "CON" || profilo.profilo === "REC")
+            ) {
+                await getlistaNotifiche(page, row, {
+                    ...body,
+                    mese: Number(meseToSet),
+                    anno: Number(annoToSet),
+                });
+            } else if (profilo.auth === "PAGOPA") {
+                await getlistaNotifichePagoPa(page, row, newBodyWithDates);
+                await getRecapitistConsolidatori();
+            }
+        } catch (err) {
+            console.log("Error NOTIFICHE");
+        } finally {
             setGetNotificheWorking(false);
-            manageError(err,dispatchMainState);
-        });
+        }
     };
     
     useEffect(()=>{
@@ -1423,9 +1461,15 @@ const ReportDettaglio : React.FC = () => {
     
     const getMesi = async (anno) => {
         await getMesiNotifiche(token, profilo.nonce,{anno}).then((res)=> {
-            setArrayMesi(res.data);
-            if(res.data.length > 0){
-                setBodyGetLista((prev)=> ({...prev, ...{mese:Number(res.data[0].mese)}}));
+
+            const camelCaseMonth = res.data.map((el) =>{
+                el.descrizione = el?.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase();
+                return el;
+            });
+            console.log({camelCaseMonth});
+            setArrayMesi(camelCaseMonth);
+            if(camelCaseMonth.length > 0){
+                setBodyGetLista((prev)=> ({...prev, ...{mese:Number(camelCaseMonth[0].mese)}}));
             }  
             setGetNotificheWorking(false);
         }).catch((err)=>{
@@ -1918,7 +1962,8 @@ const ReportDettaglio : React.FC = () => {
             onButtonClick: () => setShowModalScadenziario(true),
             variant: "outlined",
             icon:{name:"event_note", sx:{} },
-            withText:false
+            withText:false,
+            tooltipMessage:"Scadenzario contestazioni"
         }]}>
             <ResponsiveGridContainer >
                 <MainFilter 
@@ -1935,25 +1980,24 @@ const ReportDettaglio : React.FC = () => {
                         isInitialRender.current = false;
                         const value = Number(e);
                         setBodyGetLista((prev)=> ({...prev, ...{anno:value}}));  
-                        clearOnChangeFilter();
+                        getMesi(e.toString());
                     }}
                 ></MainFilter>
                 <MainFilter 
-                    filterName={"select_key_value_description"}
+                    filterName={"select_key_value"}
                     inputLabel={"Mese"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
                     keyValue={"mese"}
                     keyDescription='descrizione'
-                    keyOption={"descrizione"}
                     keyBody={"mese"}
                     arrayValues={arrayMesi}
                     extraCodeOnChange={(e)=>{
                         const value = Number(e);
                         setBodyGetLista((prev)=> ({...prev, ...{mese:value}}));
+                      
                     }}
-                     
                 ></MainFilter>
                 <MainFilter 
                     filterName={"select_key_value"}
@@ -1967,79 +2011,109 @@ const ReportDettaglio : React.FC = () => {
                     arrayValues={prodotti}
                 ></MainFilter>
                 <MainFilter 
-                    filterName={"select_value"}
+                    filterName={"input_text"}
                     inputLabel={"IUN"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
-                    keyValue={"iun"}
                     keyDescription='iun'
                     keyBody={"iun"}
+                    keyValue={"iun"} //ad input text non viene utilizzata
+                    extraCodeOnChange={(e)=>{
+                        setBodyGetLista((prev)=>{             
+                            if(e === ''){
+                                return {...prev, ...{iun:null}};
+                            }else{
+                                return {...prev, ...{iun:e}};
+                            }
+                        });
+                    }}
                 ></MainFilter>
                 <MainFilter 
-                    filterName={"select_value"}
-                    inputLabel={"Seleziona profilo"}
-                    clearOnChangeFilter={clearOnChangeFilter}
-                    setBody={setBodyGetLista}
-                    body={bodyGetLista}
-                    keyValue={"profilo"}
-                    keyDescription='profilo'
-                    keyBody={"profilo"}
-                    arrayValues={profili}
-                ></MainFilter>
-                <MainFilter 
-                    filterName={"select_value"}
+                    filterName={"select_key_value"}
                     inputLabel={"Tipo notifica"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
-                    keyValue={"tipoNotifica"}
-                    keyDescription='tipoNotifica'
+                    keyValue={"id"}
+                    keyDescription='name'
+                    keyBody={"tipoNotifica"}
                     arrayValues={tipoNotifica}
                 ></MainFilter>
                 <MainFilter 
-                    filterName={"select_grouped_by"}
+                    filterName={"multi_checkbox"}
                     inputLabel={"Contestazione"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
-                    setSecondState={setValueFgContestazione}
+                    keyCompare={""}
+                    dataSelect={fgContestazione}
                     body={bodyGetLista}
-                    keyValue={"statoContestazione"}
-                    keyDescription={"statoContestazione"}
-                    arrayValues={fgContestazione} 
+                    setTextValue={setTextValue}
+                    textValue={textValue}
+                    valueAutocomplete={valueFgContestazione}
+                    setValueAutocomplete={setValueFgContestazione}
+                    keyDescription={"flag"}
+                    arrayValues={fgContestazione}
+                    keyValue={"id"}
+                    keyOption='flag'
+                    groupByKey={"descrizione"}
+                    keyBody={"statoContestazione"}
                 ></MainFilter>
                 <MainFilter 
-                    filterName={"select_value"}
+                    filterName={"input_text"}
                     inputLabel={"CAP"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
                     keyValue={"cap"}
                     keyDescription={"cap"}
+                    keyBody={"cap"}
+                    extraCodeOnChange={(e)=>{
+                        setBodyGetLista((prev)=>{             
+                            if(e === ''){
+                                return {...prev, ...{cap:null}};
+                            }else{
+                                return {...prev, ...{cap:e}};
+                            }
+                        });
+                    }}
+                    defaultValue={""}
                 ></MainFilter>
                 <MainFilter 
-                    filterName={"select_value"}
-                    inputLabel={"recipientId"}
+                    filterName={"input_text"}
+                    inputLabel={"Recipient ID"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
                     keyValue={"recipientId"}
                     keyDescription={"recipientId"}
+                    keyBody={"recipientId"}
+                    extraCodeOnChange={(e)=>{
+                        setBodyGetLista((prev)=>{             
+                            if(e === ''){
+                                return {...prev, ...{recipientId:null}};
+                            }else{
+                                return {...prev, ...{recipientId:e}};
+                            }
+                        });
+                    }}
                 ></MainFilter>
                 <MainFilter 
-                    filterName={"rag_sociale"}
+                    filterName={"multi_checkbox"}
                     inputLabel={"Rag. Soc. Ente"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
-                    keyValue={"idEnti"}
-                    keyDescription={"idEnti"}
                     keyCompare={""}
                     dataSelect={dataSelect}
                     setTextValue={setTextValue}
+                    textValue={textValue}
                     valueAutocomplete={valueAutocomplete}
                     setValueAutocomplete={setValueAutocomplete}
-                    hidden={profilo.auth !== 'PAGOPA'}
+                    keyDescription={"descrizione"}
+                    keyValue={"idEnte"}
+                    keyOption='descrizione'
+                    keyBody={"idEnti"}
                 ></MainFilter>
                 <MainFilter 
                     filterName={"select_key_value"}
@@ -2047,9 +2121,10 @@ const ReportDettaglio : React.FC = () => {
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
-                    keyValue={"consolidatori"}
-                    keyDescription={"consolidatori"}
+                    keyValue={"idEnte"}
+                    keyDescription={"descrizione"}
                     arrayValues={listaConsolidatori}
+                    keyBody={"consolidatori"}
                     hidden={profilo.auth !== 'PAGOPA'}
                 ></MainFilter>
                 <MainFilter 
@@ -2058,9 +2133,10 @@ const ReportDettaglio : React.FC = () => {
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
-                    keyValue={"recapitisti"}
-                    keyDescription={"recapitisti"}
+                    keyValue={"idEnte"}
+                    keyDescription={"descrizione"}
                     arrayValues={listaRecapitista}
+                    keyBody={"recapitisti"}
                     hidden={profilo.auth !== 'PAGOPA'}
                 ></MainFilter>
             </ResponsiveGridContainer>
@@ -2133,6 +2209,6 @@ const ReportDettaglio : React.FC = () => {
         </MainBoxStyled>
     );
 };                                        
-export default ReportDettaglio;*/
+export default ReportDettaglio;
 
 

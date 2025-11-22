@@ -39,7 +39,7 @@ export function MultiSelect<T>({
             limitTags={1}
             disableCloseOnSelect
             options={options}
-            value={value}
+            value={value||""}
             groupBy={groupBy}
             getOptionLabel={getLabel}
             isOptionEqualToValue={(o, v) => getId(o) === getId(v)}

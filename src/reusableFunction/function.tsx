@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import { DataGridCommessa } from "../types/typeModuloCommessaElenco";
 import { ArrayTipologieCommesse, DatiModuloCommessaPdf, ModuliCommessa } from "../types/typeModuloCommessaInserimento";
 import { month, objMesiWithZero } from "./reusableArrayObj";
+import { ManageErrorResponse } from "../types/typesGeneral";
 
 export const fixResponseForDataGrid = (arr:any[]):any =>{
       
@@ -272,4 +273,10 @@ export function toLocalISOString(date: Date) {
     ":" + pad(date.getSeconds()) +
     ".000Z"
     );
+}
+
+
+
+export function isManageErrorResponse(err: any): err is ManageErrorResponse {
+    return err && typeof err === "object" && "statusCode" in err;
 }

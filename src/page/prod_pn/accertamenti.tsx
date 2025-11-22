@@ -1,20 +1,19 @@
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
-import DownloadIcon from '@mui/icons-material/Download';
-import { Dispatch, useContext, useEffect, useState } from "react";
+
+import { useContext, useEffect, useState } from "react";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
-import SelectUltimiDueAnni from "../../components/reusableComponents/select/selectUltimiDueAnni";
-import SelectMese from "../../components/reusableComponents/select/selectMese";
-import { DataGrid, GridColDef, GridEventListener, GridRowParams, MuiEvent } from "@mui/x-data-grid";
+import { DataGrid, GridEventListener, GridRowParams, MuiEvent } from "@mui/x-data-grid";
 import { Params } from "../../types/typesGeneral";
 import { getAnniAccertamenti, getListaAccertamentiPagoPa, getListaAccertamentiPrenotazionePagoPa, getMatriceAccertamenti, getMatriceAccertamentiPagoPa, getMesiAccertamenti } from "../../api/apiPagoPa/accertamentiPA/api";
 import { manageError, managePresaInCarico } from "../../api/api";
 import { Accertamento, BodyAccertamenti } from "../../types/typeAccertamenti";
-import { mesiGrid } from "../../reusableFunction/reusableArrayObj";
 import ModalMatriceAccertamenti from "../../components/accertamenti/modalMatrice";
 import { saveAs } from "file-saver";
 import { GlobalContext } from "../../store/context/globalContext";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { getMessaggiCount } from "../../api/apiPagoPa/centroMessaggi/api";
+import { headerColumsDocContabili } from "../../assets/configurations/conf_GridDocContabili";
+import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
+import MainFilter from "../../components/reusableComponents/mainFilter";
 
 
 export interface MatriceArray {
@@ -58,11 +57,6 @@ const Accertamenti : React.FC = () =>{
         getListaMatrice(); 
     },[]);
 
-    useEffect(()=>{
-        if(!isInitialRender.current){
-            getMesi(bodyAccertamenti.anno?.toString());
-        }
-    },[bodyAccertamenti.anno]);
 
     const getAnni = async() => {
         setShowLoadingGrid(true);
@@ -86,11 +80,16 @@ const Accertamenti : React.FC = () =>{
 
     const getMesi = async(year) =>{
         await getMesiAccertamenti(token, profilo.nonce,{anno:year}).then((res)=>{
-                   
-            setArrayMonths(res.data);
+            const mesiCamelCase = res.data.map(el => {
+                el.descrizione = el?.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase();
+                return el;
+            });
+            setArrayMonths(mesiCamelCase);
             if(isInitialRender.current && Object.keys(filters).length > 0){
                 setBodyAccertamenti(filters.body);
                 getListaAccertamenti(filters.body.anno, filters.body.mese);
+            }else{
+                setBodyAccertamenti((prev)=> ({...prev, ...{anno:year,mese:null}}));
             }
         }).catch((err)=>{
             setArrayMonths([]);
@@ -215,163 +214,93 @@ const Accertamenti : React.FC = () =>{
         
     };
     
-    const columns: GridColDef[] = [
-        { field: 'descrizione', headerName: 'Tipologia Accertamento', width: 400 , headerClassName: 'super-app-theme--header', headerAlign: 'left',align:"left",  renderCell: (param:{row:Accertamento}) => <a className="mese_alidita text-primary fw-bolder" href="/">{param.row.descrizione}</a>},
-        { field: 'prodotto', headerName: 'Prodotto', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center", valueGetter: (params) => (params.value === null || params.value === "")  ? "--": params.value },
-        { field: 'anno', headerName: 'Anno', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center", valueGetter: (params) => (params.value === null || params.value === "")  ? "--": params.value },
-        { field: 'mese', headerName: 'Mese', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center' ,align:"center",renderCell: (param:{row:Accertamento}) => <div className="MuiDataGrid-cellContent" title={mesiGrid[param.row.mese]} role="presentation">{mesiGrid[param.row.mese]}</div> },
-        { field: 'contentType', headerName: 'Tipo File', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center",renderCell: (param:{row:Accertamento}) => {
-            if(param.row.contentType === "text/csv"){
-                return <div className="MuiDataGrid-cellContent" title="CSV" role="presentation">CSV</div>;
-            }else if(param.row.contentType === "application/zip"){
-                return <div className="MuiDataGrid-cellContent" title="Zip" role="presentation">ZIP</div>;
-            }else if(param.row.contentType === "application/vnd.ms-excel"){
-                return  <div className="MuiDataGrid-cellContent" title="Excel" role="presentation">EXCEL</div>;
-            }
-        }, valueGetter: (params) => (params.value === null || params.value === "")  ? "--": params.value },
-        {field: 'action', headerName: '',sortable: false,width:70,headerAlign: 'center',align:"center",disableColumnMenu :true,renderCell: ((param:{id:any,row:Accertamento}) => ( <DownloadIcon sx={{marginLeft:'10px',color: '#1976D2', cursor: 'pointer'}} onClick={()=> downloadAccertamento(param.id)}></DownloadIcon>)),}
-    ];
-    
+  
+    console.log({bodyAccertamenti});
 
     return (
-        <div className="mx-5 mb-5">
-            <div className="marginTop24 ">
-                <Typography variant="h4">Documenti contabili</Typography>
-            </div>
-            <div className="mt-5">
-                <div className="row">
-                    <div className="col-3">
-                        <Box sx={{width:'80%'}} >
-                            <FormControl
-                                fullWidth
-                                size="medium"
-                            >
-                                <InputLabel>
-                            Anno   
-                                </InputLabel>
-                                <Select
-                                    label='Seleziona Anno'
-                                    onChange={(e) => {
-                                        clearOnChangeFilter();  
-                                        const value = Number(e.target.value);
-                                        setBodyAccertamenti((prev)=> ({...prev, ...{anno:value}}));
-                                    }}
-                                    value={bodyAccertamenti.anno||''}     
-                                >
-                                    {arrayYears.map((el) => (
-                                
-                                        <MenuItem
-                                            key={Math.random()}
-                                            value={el}
-                                        >
-                                            {el}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </div>
-                    <div  className="col-3">
-                        <Box sx={{width:'80%', marginLeft:'20px'}}  >
-                            <FormControl
-                                fullWidth
-                                size="medium"
-                            >
-                                <InputLabel>
-                                Mese   
-                                </InputLabel>
-                                <Select
-                                    label='Mese'
-                                    onChange={(e) =>{
-                                        const value = Number(e.target.value);
-                                        setBodyAccertamenti((prev)=> ({...prev, ...{mese:value}}));
-                                        clearOnChangeFilter();
-                                    }}         
-                                    value={bodyAccertamenti.mese||''}             
-                                >
-                                    {arrayMonths.map((el) => (
-                                    
-                                        <MenuItem
-                                            key={Math.random()}
-                                            value={el.mese}
-                                        >
-                                            {el?.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase()}
-                                        </MenuItem>
-                                    
-                                    ))}
-                                    
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </div>
-                </div>
-                <div className=" mt-5">
-                    <div className="row">
-                        <div className="col-1">
-                            <Button 
-                                onClick={onButtonFiltra} 
-                                sx={{ marginTop: 'auto', marginBottom: 'auto'}}
-                                variant="contained"> Filtra
-                            </Button>
-                        </div>
-                        <div className="col-2">
-                            {bodyAccertamenti.mese === null ? null :
-                                <Button
-                                    onClick={onButtonAnnulla}
-                                    sx={{marginLeft:'24px'}} >
-                Annulla filtri
-                                </Button>
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className="mt-5 mb-5" style={{ width: '100%'}}>
-                <div className="d-flex justify-content-end">
-                    <Button onClick={()=> setShowPopUpMatrice(true)} variant="outlined">Matrice fornitori</Button>
-                </div>
-                <DataGrid sx={{
-                    height:'400px',
-                    '& .MuiDataGrid-virtualScroller': {
-                        backgroundColor: 'white',
-                    },
-                    "& .MuiDataGrid-row": {
-                        borderTop: "4px solid #F2F2F2",
-                        borderBottom: "2px solid #F2F2F2",
-                    }
-                }}
-                rowHeight={60}
-                onPaginationModelChange={(e)=> onChangePageOrRowGrid(e)}
-                paginationModel={infoPageAccertamenti}
-                rows={gridData} 
-                columns={columns}
-                getRowId={(row) => row.idReport}
-                onRowClick={handleEvent}
-                onCellClick={handleOnCellClick}
-                pageSizeOptions={[10, 25, 50,100]}
-                />
-            </div>
-            <div>
-                <ModalLoading 
-                    open={showLoadingGrid} 
-                    setOpen={setShowLoadingGrid}
-                    sentence={'Loading...'} >
-                </ModalLoading>
-                <ModalLoading 
-                    open={showDownloading} 
-                    setOpen={setShowDownloading}
-                    sentence={'Downloading...'} >
-                </ModalLoading>
-                <ModalMatriceAccertamenti 
-                    open={showPopUpMatrice} 
-                    setOpen={setShowPopUpMatrice}
-                    data={dataMatrice}
-                    setValue={setValueSelectMatrice}
-                    value={valueSelectMatrice}
-                    downloadDocMatrice={downloadDocMatrice}
-                ></ModalMatriceAccertamenti>
-            </div> 
-        </div>
+        <MainBoxStyled title={"Documenti contabili"}>
+            <ResponsiveGridContainer >
+                <MainFilter 
+                    filterName={"select_value"}
+                    inputLabel={"Anno"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyAccertamenti}
+                    body={bodyAccertamenti}
+                    keyDescription={"anno"}
+                    keyValue={"anno"}
+                    keyBody={"anno"}
+                    arrayValues={arrayYears}
+                    extraCodeOnChange={(e)=>{
+                        const value = Number(e);
+                        getMesi(value.toString());
+                    }}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"select_key_value"}
+                    inputLabel={"Mese"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyAccertamenti}
+                    body={bodyAccertamenti}
+                    keyValue={"mese"}
+                    keyDescription='descrizione'
+                    keyBody={"mese"}
+                    arrayValues={arrayMonths}
+                    extraCodeOnChange={(e)=>{
+                        const value = Number(e);
+                        setBodyAccertamenti((prev)=> ({...prev, ...{mese:value}}));
+                    }}
+                ></MainFilter>
+            </ResponsiveGridContainer>
+            <FilterActionButtons 
+                onButtonFiltra={onButtonFiltra} 
+                onButtonAnnulla={onButtonAnnulla} 
+                statusAnnulla={bodyAccertamenti.mese === null  ? "hidden":"show"} 
+            ></FilterActionButtons>
+            <ActionTopGrid
+                actionButtonRight={[{
+                    onButtonClick:() => setShowPopUpMatrice(true),
+                    variant: "outlined",
+                    label: "Matrice fornitori",
+                }]}/>
+            <DataGrid sx={{
+                height:'400px',
+                '& .MuiDataGrid-virtualScroller': {
+                    backgroundColor: 'white',
+                },
+                "& .MuiDataGrid-row": {
+                    borderTop: "4px solid #F2F2F2",
+                    borderBottom: "2px solid #F2F2F2",
+                }
+            }}
+            rowHeight={60}
+            onPaginationModelChange={(e)=> onChangePageOrRowGrid(e)}
+            paginationModel={infoPageAccertamenti}
+            rows={gridData} 
+            columns={headerColumsDocContabili(downloadAccertamento)}
+            getRowId={(row) => row.idReport}
+            onRowClick={handleEvent}
+            onCellClick={handleOnCellClick}
+            pageSizeOptions={[10, 25, 50,100]}
+            />
+            <ModalLoading 
+                open={showLoadingGrid} 
+                setOpen={setShowLoadingGrid}
+                sentence={'Loading...'} >
+            </ModalLoading>
+            <ModalLoading 
+                open={showDownloading} 
+                setOpen={setShowDownloading}
+                sentence={'Downloading...'} >
+            </ModalLoading>
+            <ModalMatriceAccertamenti 
+                open={showPopUpMatrice} 
+                setOpen={setShowPopUpMatrice}
+                data={dataMatrice}
+                setValue={setValueSelectMatrice}
+                value={valueSelectMatrice}
+                downloadDocMatrice={downloadDocMatrice}
+            ></ModalMatriceAccertamenti>
+        </MainBoxStyled> 
     );
 };
         

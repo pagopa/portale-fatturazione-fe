@@ -1,7 +1,7 @@
 import { BodyDownloadModuliCommessa, GridElementListaCommesse } from "../../types/typeListaModuliCommessa";
 import { ManageErrorResponse, Params } from "../../types/typesGeneral";
 import { manageError } from '../../api/api';
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { DataGrid, GridRowParams,GridEventListener,MuiEvent} from '@mui/x-data-grid';
 import { anniMesiModuliCommessa, downloadDocumentoListaModuloCommessaPagoPa, downloadPostalizzazioneReport, getContrattoModuliCommessaPA, listaModuloCommessaPagopa } from "../../api/apiPagoPa/moduloComessaPA/api";
@@ -47,6 +47,8 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
     const [years,setYears] = useState<number[]>([]);
     const [monthsCommessa,setMonthsCommessa] = useState<{[key:number]:number[]}>({});
     const [yearMonths, setYearMonths] = useState<number[]>([]);
+
+    const defaultYearMonth = useRef<{year:number,month:number}>({year:0,month:0});
    
     const { 
         filters,
@@ -117,7 +119,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                 mese_X_plus_one = mesi[yearSelected][0];
                 await getContratti(yearSelected, mese_X_plus_one);
             }
-           
+            defaultYearMonth.current= {year:yearSelected,month:mese_X_plus_one};
         } catch (err) {
             if (err && typeof err === "object") {
                 manageError(err as ManageErrorResponse, dispatchMainState);
@@ -172,11 +174,9 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
 
     const getListaCommesseOnAnnulla = async() =>{
         setShowLoadingLista(true);
-        const firstYear = years[0];
         
-        await listaModuloCommessaPagopa({descrizione:'',idTipoContratto:null, anno:firstYear, mese:monthsCommessa[firstYear][0]||0} ,token, profilo.nonce)
+        await listaModuloCommessaPagopa({descrizione:'',idTipoContratto:null, anno:defaultYearMonth.current.year, mese:defaultYearMonth.current.month} ,token, profilo.nonce)
             .then((res)=>{
-                setBodyGetLista({idEnti:[],idTipoContratto:null, anno:firstYear, mese:monthsCommessa[firstYear][0]||0});
                 setGridData(res.data);
                 setShowLoadingLista(false);
             }).catch((err)=>{
@@ -285,11 +285,11 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
     };
 
     const onButtonAnnulla = () =>{
-        const firstYear = years[0];
+        console.log(defaultYearMonth);
         setInfoPageListaCom({ page: 0, pageSize: 10 });
         getListaCommesseOnAnnulla();
-        setBodyGetLista({idEnti:[],idTipoContratto:null, anno:firstYear, mese:monthsCommessa[firstYear][0]});
-        setBodyDownload({idEnti:[],idTipoContratto:null, anno:firstYear, mese:monthsCommessa[firstYear][0]});
+        setBodyGetLista({idEnti:[],idTipoContratto:null, anno:defaultYearMonth.current.year, mese:defaultYearMonth.current.month});
+        setBodyDownload({idEnti:[],idTipoContratto:null, anno:defaultYearMonth.current.year, mese:defaultYearMonth.current.month});
         setDataSelect([]);
         setValueAutocomplete([]);
         resetFilters();

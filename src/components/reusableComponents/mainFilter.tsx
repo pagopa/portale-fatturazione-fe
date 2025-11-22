@@ -1,4 +1,4 @@
-import { FormControl, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { Autocomplete, Checkbox, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -6,6 +6,8 @@ import { it } from "date-fns/locale";
 import { formatDateToValidation, isDateInvalid } from "../../reusableFunction/function";
 import { MultiSelect } from "./select/customMultiSelect";
 import { mesiGrid } from "../../reusableFunction/reusableArrayObj";
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
 
 
 export type MainFilterProps<T> = {
@@ -35,9 +37,13 @@ export type MainFilterProps<T> = {
     setTextValue?: Dispatch<SetStateAction<string>>;
     textValue?:string;
     hidden?: boolean;
-    keyBody?:string;
+    keyBody:string;
 
-    extraCodeOnChange?:(e:React.ChangeEvent<HTMLInputElement>) => void
+    extraCodeOnChange?:(e:string) => void,
+    extraCodeOnChangeArray?:(e:T[]) => void,
+
+
+    groupByKey?:string
 };
 
 const MainFilter = <T,>({
@@ -63,10 +69,48 @@ const MainFilter = <T,>({
     textValue,
     keyBody,// chiave da inserire nel body
     extraCodeOnChange,
-    defaultValue="" //valore inserito quando si ha una chiave uguale a null
+    extraCodeOnChangeArray,
+    defaultValue="",
+    groupByKey="" //valore inserito quando si ha una chiave uguale a null
 }: MainFilterProps<T>) => {
 
+
+    const getId = (opt: T): string | number => {
+        if (typeof opt === "string" || typeof opt === "number") return opt;
+        return (opt as any)[keyValue];
+    };
+
+    // Returns label for both object or string
+    const getLabel = (opt: T): string => {
+        if (typeof opt === "string" || typeof opt === "number") return String(opt);
+        return (opt as any)[keyDescription];
+    };
+
+    // Group by if needed
+    const getGroup = (opt: T): string | undefined => {
+        if (!groupByKey) return undefined;
+
+        if (typeof opt === "string" || typeof opt === "number") {
+            return undefined; // no grouping for strings
+        }
+        return (opt as any)[groupByKey];
+    };
+
+    const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+    const checkedIcon = <CheckBoxIcon fontSize="small" />;
+
+    let valueOnBodydifferentFromRealValue = body[keyBody];
+
+    if (inputLabel === "Stato" && keyBody === "cancellata") {
+        if (body[keyBody] === false) {
+            valueOnBodydifferentFromRealValue = 1;
+        } else if (body[keyBody] === true) {
+            valueOnBodydifferentFromRealValue = 2;
+        }
+    }
+
     switch (filterName) {
+        
         case "select_key_value": 
             return ( !hidden && keyBody && <MainBoxContainer>
                 <FormControl sx={{width:"80%"}}>
@@ -83,7 +127,7 @@ const MainFilter = <T,>({
                                 setBody((prev)=> ({...prev, ...{[keyBody]:e.target.value}}));
                             }
                         }}
-                        value={body[keyBody]||defaultValue}
+                        value={(valueOnBodydifferentFromRealValue||"")||defaultValue}
                     >
                         {arrayValues?.map((el) => (
                             <MenuItem
@@ -112,7 +156,7 @@ const MainFilter = <T,>({
                                 setBody((prev)=> ({...prev, ...{[keyBody]:e.target.value}}));
                             }
                         }}
-                        value={body[keyBody]||""}
+                        value={body[keyBody]||defaultValue}
                     >
                         {arrayValues?.map((el) => (
                             <MenuItem
@@ -126,7 +170,8 @@ const MainFilter = <T,>({
                 </FormControl>
             </MainBoxContainer>);
         case "select_value":
-            return ( !hidden &&  keyBody && <MainBoxContainer>
+            return ( !hidden &&  keyBody && 
+            <MainBoxContainer>
                 <FormControl sx={{width:"80%"}}>
                     <InputLabel>
                         {inputLabel}
@@ -134,7 +179,6 @@ const MainFilter = <T,>({
                     <Select
                         label={inputLabel}
                         onChange={(e) => {
-                    
                             clearOnChangeFilter();
                             if(extraCodeOnChange){
                                 extraCodeOnChange(e.target.value);
@@ -143,7 +187,7 @@ const MainFilter = <T,>({
                             }
                             
                         }}
-                        value={body[keyDescription]||""}
+                        value={body[keyDescription]||defaultValue}
                     >
                         {arrayValues?.map((el) => (
                             <MenuItem
@@ -156,14 +200,9 @@ const MainFilter = <T,>({
                     </Select>
                 </FormControl>
             </MainBoxContainer>);
-        case "select_grouped_by":
-            return(
-                !hidden && <MainBoxContainer> 
-                    <h1>to do</h1>
-                </MainBoxContainer>
-            );    
         case "input_text": 
-            return (!hidden && <MainBoxContainer> 
+            return (!hidden && 
+            <MainBoxContainer> 
                 <TextField
                     sx={{width:"80%"}}
                     label={inputLabel}
@@ -171,13 +210,17 @@ const MainFilter = <T,>({
                     value={body[keyDescription] || ''}
                     onChange={(e) =>{
                         clearOnChangeFilter();
-                        setBody((prev)=>{             
-                            if(e.target.value === ''){
-                                return {...prev, ...{[keyDescription]:null}};
-                            }else{
-                                return {...prev, ...{[keyDescription]:e.target.value}};
-                            }
-                        });}
+                        if(extraCodeOnChange){
+                            extraCodeOnChange(e.target.value);
+                        }else{
+                            setBody((prev)=>{             
+                                if(e.target.value === ''){
+                                    return {...prev, ...{[keyDescription]:null}};
+                                }else{
+                                    return {...prev, ...{[keyDescription]:e.target.value}};
+                                }
+                            });}
+                    }
                     }            
                 /> </MainBoxContainer>);
         case "date_from_to": 
@@ -215,21 +258,46 @@ const MainFilter = <T,>({
             if(dataSelect && valueAutocomplete && keyBody && keyDescription && keyValue ){
                 return (
                     <MainBoxContainer>
-                        <MultiSelect<T>
-                            label={inputLabel}
+                        <Autocomplete
+                            style={{ width: '80%'}}
+                            multiple
+                            limitTags={1}
+                            disableCloseOnSelect
                             options={dataSelect}
                             value={valueAutocomplete}
-                            setTextValue={setTextValue}
-                            textValue={textValue}
-                            onChange={(val) => {
+                            groupBy={(opt) => getGroup(opt) ?? ""}
+                            getOptionLabel={(opt) => getLabel(opt)}
+                            isOptionEqualToValue={(o, v) => getId(o) === getId(v)}
+                            onChange={(e, val) =>{
                                 clearOnChangeFilter();
-                                console.log({val});
-                                setValueAutocomplete && setValueAutocomplete(val);
-                                const allId = val.map(el => el[keyValue]);
-                                setBody((prev) => ({...prev,...{[keyBody]:allId}}));
+                                if(extraCodeOnChangeArray){
+                                    extraCodeOnChangeArray(val);
+                                }else{
+                                    setValueAutocomplete && setValueAutocomplete(val);
+                                    const allId = val.map(el => el[keyValue]);
+                                    setBody((prev) => ({...prev,...{[keyBody]:allId}}));
+                                }
                             }}
-                            getLabel={(item) => (item as any)[keyDescription||0]}
-                            getId={(item) => (item as any)[keyValue]}
+                            onInputChange={(e, val) => setTextValue && setTextValue(val)}
+                            renderOption={(props, option, { selected }) => (
+                                <li {...props} key={getId(option)}>
+                                    <Checkbox
+                                        icon={icon}
+                                        checkedIcon={checkedIcon}
+                                        sx={{ mr: 1 }}
+                                        checked={selected}
+                                    />
+                                    {getLabel(option)}
+                                </li>
+                            )}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label={inputLabel}
+                                    placeholder={inputLabel}
+                                    value={textValue||""}
+                                />
+                            )}
                         />
                     </MainBoxContainer>
                 );

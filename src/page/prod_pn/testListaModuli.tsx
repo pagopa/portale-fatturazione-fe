@@ -48,6 +48,7 @@ const TestListaModuli  = () => {
                     keyDescription=""
                     keyCompare={"end"}
                     error={errorDataInizioFine}
+                    keyBody=""
                 ></MainFilter>
                 <MainFilter 
                     filterName={"date_from_to"}
@@ -60,6 +61,7 @@ const TestListaModuli  = () => {
                     keyCompare={"init"}
                     error={errorDataInizioFine}
                     setError={setErrorDataInizioFine}
+                    keyBody=""
                 ></MainFilter>
                 <MainFilter 
                     filterName={"select_key_value"}
@@ -70,6 +72,7 @@ const TestListaModuli  = () => {
                     keyValue={"tipocontratto"}
                     keyDescription=""
                     keyCompare={""}
+                    keyBody=""
                 ></MainFilter>
                 <MainFilter 
                     filterName={"multi_checkbox"}
@@ -82,6 +85,7 @@ const TestListaModuli  = () => {
                     dataSelect={dataSelect}
                     valueAutocomplete={valueAutocomplete}
                     setValueAutocomplete={setValueAutocomplete}
+                    keyBody=""
                 ></MainFilter>
                 <MainFilter 
                     filterName={"date_from_to"}
@@ -94,8 +98,10 @@ const TestListaModuli  = () => {
                     keyCompare={"endContratto"}
                     error={errorContrattoInizioFine}
                     setError={setErrorContrattoInizioFine}
+                    keyBody=""
                 ></MainFilter>
                 <MainFilter 
+                    keyBody=""
                     filterName={"date_from_to"}
                     inputLabel={"Data fine adesione"}
                     clearOnChangeFilter={clearOnChangeFilter}

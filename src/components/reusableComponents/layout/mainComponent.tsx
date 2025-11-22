@@ -1,9 +1,14 @@
 import * as React from "react";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import { Grid, Typography, Button, ButtonProps } from "@mui/material";
+import { Grid, Typography, Button, ButtonProps, Tooltip } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import EventNoteIcon from '@mui/icons-material/EventNote';
+import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
+import IosShareIcon from '@mui/icons-material/IosShare';
+import PreviewIcon from '@mui/icons-material/Preview';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import ListIcon from '@mui/icons-material/List';
 
 
 const MainBox = styled(Box)({
@@ -27,54 +32,55 @@ export  const MainBoxStyled = ({
         variant:"text" | "outlined" | "contained",
         label?:string,
         icon?:{name:string, sx:any},
-        withText?:boolean
+        withText?:boolean,
+        tooltipMessage?:string
     }[]
 }) =>  {
     return <MainBox>
-        <Box
-            sx={{
-                mt: "1.5rem",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                flexDirection: {
-                    xs: "column",
-                    sm: "column",
-                    md:"row"   
-                },
-                gap: 1
-            }}
+        <Grid
+            container
+            spacing={2}
+            sx={{ mt: "1.5rem", alignItems: "center" }}
         >
-            <Typography
-                variant="h4"
+            {/* Typography — 9 columns */}
+            <Grid item xs={12} md={9}>
+                <Typography
+                    variant="h4"
+                    sx={{ textAlign: { xs: "center", md: "left" } }}
+                >
+                    {title}
+                </Typography>
+            </Grid>
+
+            {/* Buttons — 3 columns */}
+            <Grid 
+                item 
+                xs={12} 
+                md={3}
                 sx={{
-                    textAlign: { xs: "center", sm: "left" } 
+                    display: "flex",
+                    justifyContent: { xs: "center", md: "flex-end" },
+                    flexDirection: { xs: "column", sm: "row" },
+                    gap: 1
                 }}
             >
-                {title}
-            </Typography>
-            {actionButton && (
-                <Box
-                    sx={{
-                        display: "flex",
-                        flexDirection: { xs: "column", sm: "row" }, 
-                        gap: 1,
-                        mt: { xs: 1, sm: 0 }
-                    }}
-                >
-                    {actionButton.map((action, index) => (
+                {actionButton?.map((action, index) => (
+                    <Tooltip  title={action?.tooltipMessage ? action?.tooltipMessage:null}>
                         <CustomButton
+                            sx={{marginRight:"20%"}}
                             key={index}
                             variant={action.variant}
                             onClick={action.onButtonClick}
                             withText={action.withText}
                         >
-                            {action.icon && RenderIcon(action.icon.name, false)} {action.label && action.label}
+                            {action.icon && RenderIcon(action.icon.name, false)} 
+                            {action.label}
                         </CustomButton>
-                    ))}
-                </Box>
-            )}
-        </Box>
+                    </Tooltip>
+                    
+                ))}
+            </Grid>
+        </Grid>
 
         {children}
     </MainBox>;
@@ -108,19 +114,33 @@ export const FilterActionButtons = ({
     onButtonFiltra,
     onButtonAnnulla,
     statusAnnulla,
-    actionButton
+    actionButton,
+    annullaButtonOptional
 }:{
     onButtonFiltra:()=> void,
     onButtonAnnulla:() => void,
     statusAnnulla:string,
+    annullaButtonOptional?:{
+        onButtonClick:()=> void,
+        variant:"text" | "outlined" | "contained",
+        label?:string|null,
+        icon?:{name:string},
+        disabled?:boolean,
+        tooltipMessage?:string,
+        withText?:boolean
+    },
     actionButton?:{
         onButtonClick:()=> void,
         variant:"text" | "outlined" | "contained",
         label?:string|null,
         icon?:{name:string},
-        disabled?:boolean
+        disabled?:boolean,
+        tooltipMessage?:string,
+        withText?:boolean
     }[]
 }) =>  {
+
+    // console.log({actionButton});
     return (
         <ResponsiveGridContainer>
             <Grid item xs={12}>
@@ -146,10 +166,18 @@ export const FilterActionButtons = ({
                         <CustomButton onClick={onButtonFiltra} variant="contained">
           Filtra
                         </CustomButton>
-                        {statusAnnulla !== "hidden" && (
+                        {statusAnnulla !== "hidden" && !annullaButtonOptional && (
                             <CustomButton onClick={onButtonAnnulla} variant="text">
             Annulla filtri
                             </CustomButton>
+                        )}
+                        {statusAnnulla !== "hidden" && annullaButtonOptional && (
+                            <Tooltip title={annullaButtonOptional?.tooltipMessage ? annullaButtonOptional?.tooltipMessage : null}>
+                                <CustomButton onClick={onButtonAnnulla} variant={annullaButtonOptional?.variant}>
+                                    {annullaButtonOptional?.label}{annullaButtonOptional.icon && RenderIcon(annullaButtonOptional.icon.name, false)} 
+                                </CustomButton>
+                            </Tooltip>
+                            
                         )}
                     </Box>
 
@@ -164,15 +192,18 @@ export const FilterActionButtons = ({
                         }}
                     >
                         {actionButton?.map((action, index) => (
-                            <CustomButton
-                                key={index}
-                                variant={action.variant}
-                                onClick={action.onButtonClick}
-                                startIcon={action.icon && RenderIcon(action.icon.name)}
-                                disabled={action.disabled}
-                            >
-                                {action.label}
-                            </CustomButton>
+
+                            <Tooltip  title={action?.tooltipMessage ? action?.tooltipMessage:null}>
+                                <CustomButton
+                                    key={index}
+                                    variant="contained"
+                                    onClick={action.onButtonClick}
+                                    withText={action.withText}
+                                >
+                                    {action.icon && RenderIcon(action.icon.name, false)} 
+                                    {action.label}
+                                </CustomButton>
+                            </Tooltip>
                         ))}
                     </Box>
                 </Box>
@@ -198,25 +229,26 @@ export const ActionTopGrid = ({actionButtonRight,actionButtonLeft}:{
         disabled?:boolean
     }[]
 }) => {
+    console.log({actionButtonRight});
     return (
         <ResponsiveGridContainer>
             <Grid item xs={12}>
                 <Box
                     sx={{
                         display: "flex",
-                        flexDirection: { xs: "column", sm: "column",md:"row" },
-                        justifyContent: "space-between",
-                        alignItems: { xs: "stretch", sm: "center" },
+                        flexDirection: { xs: "column", md: "row" }, // stack on mobile, row on desktop
+                        justifyContent: "space-between", // push left/right apart
+                        alignItems: { xs: "stretch", md: "center" },
                         gap: 2,
                         width: "100%",
-                        margin:1
+                        margin: 1,
                     }}
                 >
                     {/* Left Buttons */}
                     <Box
                         sx={{
                             display: "flex",
-                            flexDirection: { xs: "column", sm: "column",md:"row" }, 
+                            flexDirection: { xs: "column", md: "row" },
                             gap: 1,
                             flexWrap: "wrap",
                         }}
@@ -224,10 +256,10 @@ export const ActionTopGrid = ({actionButtonRight,actionButtonLeft}:{
                         {actionButtonLeft?.map((action, index) => (
                             <CustomButton
                                 key={index}
-                                variant={action.variant}
                                 onClick={action.onButtonClick}
                                 startIcon={action.icon && RenderIcon(action.icon.name)}
                                 disabled={action.disabled}
+                                variant={action.variant}
                             >
                                 {action.label}
                             </CustomButton>
@@ -238,13 +270,14 @@ export const ActionTopGrid = ({actionButtonRight,actionButtonLeft}:{
                     <Box
                         sx={{
                             display: "flex",
-                            flexDirection: { xs: "column", sm: "column",md:"row" },
+                            flexDirection: { xs: "column", md: "row" },
                             gap: 1,
                             flexWrap: "wrap",
-                            mt: { xs: 2, sm: 0 }, // margin when stacked
+                            mt: { xs: 2, md: 0 }, // add spacing when stacked
+                            justifyContent: "flex-end", // align right in the row
                         }}
                     >
-                        { actionButtonRight?.map((action, index) => (
+                        {actionButtonRight?.map((action, index) => (
                             <CustomButton
                                 key={index}
                                 variant={action.variant}
@@ -267,10 +300,13 @@ interface CustomButtonProps extends ButtonProps {
 }
 
 const CustomButton = styled(Button)<CustomButtonProps>(({ theme, withText=true }) => ({
-    minWidth: withText ? "130px" : undefined,
-    padding: theme.spacing(1, 3),
+    //minWidth: withText ? "130px" : undefined,
+    //padding: withText? theme.spacing(1, 3):undefined,
+    //fontWeight: 500,
     textTransform: "none",
-    fontWeight: 500,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
 }));
 
 
@@ -282,5 +318,15 @@ const RenderIcon = (iconName,sx = true) => {
             }}></DownloadIcon>;
         case "event_note":
             return <EventNoteIcon/>;
+        case "circle_arrow_icon":
+            return  <ArrowCircleDownIcon></ArrowCircleDownIcon>;
+        case "iso_share":
+            return <IosShareIcon></IosShareIcon>;
+        case "preview":
+            return <PreviewIcon></PreviewIcon>;
+        case "restart":
+            return <RestartAltIcon></RestartAltIcon>;
+        case "list":
+            return <ListIcon></ListIcon>;
     }
 };
