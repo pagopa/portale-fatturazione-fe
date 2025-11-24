@@ -52,17 +52,17 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
 
   
     useEffect(()=>{
-        
-        if(keyObject === 'idDocumento' && datiFatturazione.idDocumento === '' && datiFatturazione.cup !== '' && mainState.statusPageDatiFatturazione === "mutable" && datiFatturazione.tipoCommessa !== "" ){
+
+        if(keyObject === 'cup' && datiFatturazione.cup === '' && datiFatturazione.idDocumento !== '' && mainState.statusPageDatiFatturazione === "mutable" && datiFatturazione.tipoCommessa !== ""){
             setErrorValidation(true);
             setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
-        }else if(keyObject === 'idDocumento' && datiFatturazione.idDocumento === '' && datiFatturazione.cup === ''&& mainState.statusPageDatiFatturazione === "mutable" && datiFatturazione.tipoCommessa !== ""){
+        }else if(keyObject === 'cup' && datiFatturazione.cup === '' && datiFatturazione.idDocumento === '' && mainState.statusPageDatiFatturazione === "mutable" && datiFatturazione.tipoCommessa !== ""){
             setErrorValidation(false);
             setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
-        }else if(keyObject === 'cup' && datiFatturazione.idDocumento !== '' && datiFatturazione.cup === '' && mainState.statusPageDatiFatturazione === "mutable" && datiFatturazione.tipoCommessa !== "" ){
+        }else  if(keyObject === 'idDocumento' && datiFatturazione.idDocumento === '' && datiFatturazione.cup !== '' && mainState.statusPageDatiFatturazione === "mutable" && datiFatturazione.tipoCommessa !== ""){
             setErrorValidation(true);
             setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
-        }else if(keyObject === 'cup' && datiFatturazione.idDocumento === '' && datiFatturazione.cup === ''&& mainState.statusPageDatiFatturazione === "mutable" && datiFatturazione.tipoCommessa !== ""){
+        }else if(keyObject === 'idDocumento' && datiFatturazione.idDocumento === '' && datiFatturazione.cup === '' && mainState.statusPageDatiFatturazione === "mutable" && datiFatturazione.tipoCommessa !== ""){
             setErrorValidation(false);
             setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
         }
@@ -112,32 +112,32 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
             .then(()=>{
                 if(keyObject === 'cup' && datiFatturazione.idDocumento === '' && input !== ''){
                     setErrorValidation(false);
-                    //setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"ID Documento":true,[label]:false}}) );
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"ID Documento":true,[label]:false}}) );
                 }else if(keyObject === 'cup' && datiFatturazione.idDocumento !== '' && input === ''){
                     setErrorValidation(true);
-                    //setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"ID Documento":false,[label]:true}}) );
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"ID Documento":false,[label]:true}}) );
                 }else if(keyObject === 'cup' && datiFatturazione.idDocumento === '' && input === ''){
                     setErrorValidation(false);
-                    //setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"ID Documento":false,[label]:false}}) );
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"ID Documento":false,[label]:false}}) );
                 }else{
                     //forse da eliminare
                     setErrorValidation(false);
-                    // setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
                 }
             }).catch(() =>{
                 if(keyObject === 'cup' && datiFatturazione.idDocumento === '' && input !== ''){
                     setErrorValidation(true);
-                    // setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"ID Documento":true,[label]:true}}) );
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"ID Documento":true,[label]:true}}) );
                 }else if(keyObject === 'cup' && datiFatturazione.idDocumento !== '' && input !== ''){
                     setErrorValidation(true);
-                    //setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"ID Documento":false,[label]:true}}) );
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"ID Documento":false,[label]:true}}) );
                 }else if(keyObject === 'cup' && datiFatturazione.idDocumento === '' && input === ''){
                     //probabilmente if da eliminare
                     setErrorValidation(true);
-                    //setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"ID Documento":false,[label]:true}}) );
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"ID Documento":false,[label]:true}}) );
                 }else{
                     setErrorValidation(true);
-                    // setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
                 }
               
             } );
@@ -151,32 +151,32 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
             .then(()=>{
                 if(keyObject === 'idDocumento' && datiFatturazione.cup === '' && input !== ''){
                     setErrorValidation(false);
-                    // setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"CUP":true,[label]:false}}) );
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"CUP":true,[label]:false}}) );
                 }else if(keyObject === 'idDocumento' && datiFatturazione.cup !== '' && input === ''){
                     setErrorValidation(true);
-                    //setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"CUP":false,[label]:true}}) );
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"CUP":false,[label]:true}}) );
                 }else if(keyObject === 'idDocumento' && datiFatturazione.cup === '' && input === ''){
                     setErrorValidation(false);
-                    // setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"CUP":false,[label]:false}}) );
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"CUP":false,[label]:false}}) );
                 }else{
                     setErrorValidation(false);
-                    // setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
                 }
                 
             }).catch(() =>{
                 if(keyObject === 'idDocumento' && datiFatturazione.cup === '' && input !== ''){
                     setErrorValidation(true);
-                    // setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"CUP":true,[label]:true}}) );
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"CUP":true,[label]:true}}) );
                 }else if(keyObject === 'idDocumento' && datiFatturazione.cup !== '' && input !== ''){
                     setErrorValidation(true);
-                    //   setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"CUP":false,[label]:true}}) );
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"CUP":false,[label]:true}}) );
                 }else if(keyObject === 'idDocumento' && datiFatturazione.cup === '' && input === ''){
                     //probabilmente if da eliminare
                     setErrorValidation(true);
-                    //setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"CUP":false,[label]:true}}) );
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"CUP":false,[label]:true}}) );
                 }else{
                     setErrorValidation(true);
-                    //setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
+                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
                 }
              
             } );
@@ -224,6 +224,7 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
     
     // a fine refactoring cambiare nome alla funzione
     const hendleOnMouseOut = (e?: React.ChangeEvent<HTMLInputElement>) =>{
+        console.log("call HANDLE MOUSE");
         e?.persist();
         if(e === undefined){
             if(keyObject === 'pec'){
