@@ -38,40 +38,35 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 
-
-
-   
-
     useEffect(()=>{
-        //datiFatturazione.codiceSDI !== null &&
         if(mainState.statusPageDatiFatturazione === "mutable"){
             if(keyObject === "codiceSDI"){
                 validationSDI(dataValidation.max, dataValidation.validation, (datiFatturazione.codiceSDI||""), true);
             }else{
                 hendleOnMouseOut();
-                /*
-                if(((keyObject === "cup" && datiFatturazione.cup !== "")  || (keyObject === "codCommessa"&& datiFatturazione.codCommessa !== "")) && datiFatturazione.idDocumento === ""){
-                    setDatiFatturazione((prevState: DatiFatturazione) =>{
-                        const newValue = {idDocumento:"--"};
-                        const newState = {...prevState, ...newValue};
-                        return newState;
-                    } );
-                }*/
-            }
-            
+            }  
         }
     },[mainState.statusPageDatiFatturazione]);
-    
+
+  
+
+  
     useEffect(()=>{
         
-        if(keyObject === 'idDocumento' && datiFatturazione.idDocumento === '' && (datiFatturazione.cup !== '' || datiFatturazione.codCommessa !== "" && mainState.statusPageDatiFatturazione === "mutable" && datiFatturazione.tipoCommessa !== "") ){
+        if(keyObject === 'idDocumento' && datiFatturazione.idDocumento === '' && datiFatturazione.cup !== '' && mainState.statusPageDatiFatturazione === "mutable" && datiFatturazione.tipoCommessa !== "" ){
             setErrorValidation(true);
             setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
-        }else if(keyObject === 'idDocumento' && datiFatturazione.idDocumento === '' && datiFatturazione.cup === '' && datiFatturazione.codCommessa === ""&& mainState.statusPageDatiFatturazione === "mutable" && datiFatturazione.tipoCommessa !== ""){
+        }else if(keyObject === 'idDocumento' && datiFatturazione.idDocumento === '' && datiFatturazione.cup === ''&& mainState.statusPageDatiFatturazione === "mutable" && datiFatturazione.tipoCommessa !== ""){
+            setErrorValidation(false);
+            setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+        }else if(keyObject === 'cup' && datiFatturazione.idDocumento !== '' && datiFatturazione.cup === '' && mainState.statusPageDatiFatturazione === "mutable" && datiFatturazione.tipoCommessa !== "" ){
+            setErrorValidation(true);
+            setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
+        }else if(keyObject === 'cup' && datiFatturazione.idDocumento === '' && datiFatturazione.cup === ''&& mainState.statusPageDatiFatturazione === "mutable" && datiFatturazione.tipoCommessa !== ""){
             setErrorValidation(false);
             setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
         }
-    },[datiFatturazione.cup,datiFatturazione.codCommessa]);
+    },[datiFatturazione.cup,datiFatturazione.idDocumento]);
 
     /*commentato il 01/10/25 spostata la logica sull'onchange
    
@@ -81,12 +76,10 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
     const sdiIsValid = async(newSdi,isFirstRender=false) =>{
         if(profilo.auth === 'PAGOPA'){
             await getValidationCodiceSdi(token,profilo.nonce,{idEnte:profilo.idEnte,codiceSDI:isFirstRender?datiFatturazione.codiceSDI:newSdi})
-                .then((res)=>{
-             
+                .then(()=>{
                     setOpenModalVerifica && setOpenModalVerifica(false);
                     setErrorValidation(false);
                     setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
-
                 }).catch((err)=>{
                     if(!isFirstRender){
                         setOpenModalVerifica && setOpenModalVerifica(false);
@@ -97,11 +90,10 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
                 });
         }else{
             await getValidationCodiceSdiEnte(token,profilo.nonce,{codiceSDI:isFirstRender?datiFatturazione.codiceSDI:newSdi})
-                .then((res)=>{
+                .then(()=>{
                     setOpenModalVerifica && setOpenModalVerifica(false);
                     setErrorValidation(false);
                     setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
-
                 }).catch((err)=>{
                     if(!isFirstRender){
                         setOpenModalVerifica && setOpenModalVerifica(false);
@@ -113,34 +105,82 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
         }
     };
     const validationTextArea = (max: number, validation:string, input:string|number)=>{
-        
         YupString.max(max, validation).matches(/^[a-zA-Z0-9]*$/,  {
             message: "Non è possibile inserire caratteri speciali",
             excludeEmptyString: true
         }).validate(input)
             .then(()=>{
-                /*if(keyObject === 'cup' && datiFatturazione.idDocumento === '' && input !== ''){
+                if(keyObject === 'cup' && datiFatturazione.idDocumento === '' && input !== ''){
                     setErrorValidation(false);
-                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"ID Documento":true,[label]:false}}) );
+                    //setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"ID Documento":true,[label]:false}}) );
+                }else if(keyObject === 'cup' && datiFatturazione.idDocumento !== '' && input === ''){
+                    setErrorValidation(true);
+                    //setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"ID Documento":false,[label]:true}}) );
+                }else if(keyObject === 'cup' && datiFatturazione.idDocumento === '' && input === ''){
+                    setErrorValidation(false);
+                    //setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"ID Documento":false,[label]:false}}) );
                 }else{
+                    //forse da eliminare
                     setErrorValidation(false);
-                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
-                }*/
-                setErrorValidation(false);
-                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+                    // setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+                }
             }).catch(() =>{
-                /*if(keyObject === 'cup' && datiFatturazione.idDocumento === '' && input !== ''){
+                if(keyObject === 'cup' && datiFatturazione.idDocumento === '' && input !== ''){
                     setErrorValidation(true);
-                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"ID Documento":true,[label]:true}}) );
+                    // setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"ID Documento":true,[label]:true}}) );
+                }else if(keyObject === 'cup' && datiFatturazione.idDocumento !== '' && input !== ''){
+                    setErrorValidation(true);
+                    //setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"ID Documento":false,[label]:true}}) );
+                }else if(keyObject === 'cup' && datiFatturazione.idDocumento === '' && input === ''){
+                    //probabilmente if da eliminare
+                    setErrorValidation(true);
+                    //setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"ID Documento":false,[label]:true}}) );
                 }else{
                     setErrorValidation(true);
-                    setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
-                }*/
-                setErrorValidation(true);
-                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
-                
+                    // setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
+                }
+              
             } );
     }; 
+
+
+    const validationIdDocumento = (max: number, validation:string, input:string|number) => {
+        YupString.max(max, validation).matches(/^[a-zA-Z0-9/._\-\s]*$/,  {
+            message: "Non è possibile inserire caratteri speciali"
+        }).validate(input)
+            .then(()=>{
+                if(keyObject === 'idDocumento' && datiFatturazione.cup === '' && input !== ''){
+                    setErrorValidation(false);
+                    // setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"CUP":true,[label]:false}}) );
+                }else if(keyObject === 'idDocumento' && datiFatturazione.cup !== '' && input === ''){
+                    setErrorValidation(true);
+                    //setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"CUP":false,[label]:true}}) );
+                }else if(keyObject === 'idDocumento' && datiFatturazione.cup === '' && input === ''){
+                    setErrorValidation(false);
+                    // setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"CUP":false,[label]:false}}) );
+                }else{
+                    setErrorValidation(false);
+                    // setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
+                }
+                
+            }).catch(() =>{
+                if(keyObject === 'idDocumento' && datiFatturazione.cup === '' && input !== ''){
+                    setErrorValidation(true);
+                    // setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"CUP":true,[label]:true}}) );
+                }else if(keyObject === 'idDocumento' && datiFatturazione.cup !== '' && input !== ''){
+                    setErrorValidation(true);
+                    //   setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"CUP":false,[label]:true}}) );
+                }else if(keyObject === 'idDocumento' && datiFatturazione.cup === '' && input === ''){
+                    //probabilmente if da eliminare
+                    setErrorValidation(true);
+                    //setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{"CUP":false,[label]:true}}) );
+                }else{
+                    setErrorValidation(true);
+                    //setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
+                }
+             
+            } );
+    };
 
     const validationSDI = (max: number, validation:string, input:string|number,isFirstRender)=>{
         YupString.max(max, validation).matches(/^[A-Z0-9]*$/,  {
@@ -169,24 +209,7 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
             } );
     }; 
     
-    const validationIdDocumento = (max: number, validation:string, input:string|number) => {
-        YupString.max(max, validation).matches(/^[a-zA-Z0-9/._\-\s]*$/,  {
-            message: "Non è possibile inserire caratteri speciali"
-        }).validate(input).then(()=>{
-            if( ((datiFatturazione.cup !== ""  || datiFatturazione.codCommessa !== "") && input === "")){
-                setErrorValidation(true);
-                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
-            }else{
-                setErrorValidation(false);
-                setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
-            }
-            
-        }).catch(() =>{
-            setErrorValidation(true);
-            setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
-        } );
-    };
-
+  
     const validationCodCommessa = (max: number, validation:string, input:string|number) => {
         YupString.max(max, validation).matches(/^[a-zA-Z0-9/._\-\s]*$/,  {
             message: "Non è possibile inserire caratteri speciali"
@@ -286,22 +309,7 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
                 }
        
                 hendleOnMouseOut(e);
-                /* if(((keyObject === "cup" && e.target.value !== "")  || (keyObject === "codCommessa"&& e.target.value !== "")) && datiFatturazione.idDocumento === ""){
-                    setDatiFatturazione((prevState: DatiFatturazione) =>{
-                        const newValue = {[keyObject]:val};
-                        const newState = {...prevState, ...newValue};
-                        return newState;
-                    } );
-                }else if(
-                    ((keyObject === "cup" && e.target.value === "" && datiFatturazione.codCommessa === "")  ||
-                     (keyObject === "codCommessa" && e.target.value === "" && datiFatturazione.cup === "")) &&
-                      datiFatturazione.idDocumento === "--"){
-                    setDatiFatturazione((prevState: DatiFatturazione) =>{
-                        const newValue = {[keyObject]:val};
-                        const newState = {...prevState, ...newValue};
-                        return newState;
-                    } );
-                }else{}*/
+              
                 setDatiFatturazione((prevState: DatiFatturazione) =>{
                     const newValue = {[keyObject]:val};
                     const newState = {...prevState, ...newValue};
