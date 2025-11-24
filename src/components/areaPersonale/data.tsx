@@ -27,11 +27,14 @@ const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate,mainState
     const onChangeHandler = (e) => {
       
         if(e?.toString() === "Invalid Date"){
-            if(datiFatturazione.idDocumento !== null && datiFatturazione.idDocumento !== ""){
+            console.log("11");
+            if((datiFatturazione.idDocumento !== null && datiFatturazione.idDocumento !== "") || (datiFatturazione.cup !== null && datiFatturazione.cup !== "") ){
                 setDatiFatturazione({...datiFatturazione,...{dataDocumento:null}});
                 setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, dataDocumento:true}) );
                 setError(true);
+                console.log("12");
             }else{
+                console.log("13");
                 setDatiFatturazione({...datiFatturazione,...{dataDocumento:null}});
                 setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, dataDocumento:false}) );
                 setError(false);
@@ -41,27 +44,29 @@ const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate,mainState
             try {
                 if (e) {
                     const year = e.getFullYear();
-             
-                    if (year < 2000 || year > 2125 || (datiFatturazione.idDocumento && e === null) ) {
+                    console.log("14");
+                    if (year < 2000 || year > 2125 || ((datiFatturazione.idDocumento  || datiFatturazione.cup)  && e === null) ) {
                         setError(true);
                         setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, dataDocumento:true}) );
                  
                         return;
                     }else{
+                        console.log("15");
                         const data: Date = new Date(e);
                         setDatiFatturazione({...datiFatturazione,...{dataDocumento:data}});
                         setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, dataDocumento:false}) );
                         setError(false);
                     }
-                }else if(e === null && datiFatturazione.idDocumento !== null && datiFatturazione.idDocumento !== ""){
+                }else if(e === null && ((datiFatturazione.idDocumento !== null && datiFatturazione.idDocumento !== "") ||(datiFatturazione.cup !== null && datiFatturazione.cup !== ""))){
                     setDatiFatturazione({...datiFatturazione,...{dataDocumento:null}});
                     setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, dataDocumento:true}) );
                     setError(true);
-                  
-                }else if(e === null && datiFatturazione.idDocumento === null || datiFatturazione.idDocumento === ""){
+                    console.log("16");
+                }else if(e === null && (datiFatturazione.idDocumento === null || datiFatturazione.idDocumento === "" || datiFatturazione.cup === null || datiFatturazione.cup === "")){
                     setDatiFatturazione({...datiFatturazione,...{dataDocumento:null}});
                     setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, dataDocumento:false}) );
                     setError(false);
+                    console.log("17");
                   
                 }
            
@@ -76,12 +81,15 @@ const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate,mainState
     };
 
     useEffect(()=>{
-        if(datiFatturazione.dataDocumento !== null && datiFatturazione.dataDocumento !== '' && datiFatturazione.dataDocumento !== null ){
+        if(datiFatturazione.dataDocumento !== null && datiFatturazione.dataDocumento !== '' ){
+            console.log(1);
             onChangeHandler(new Date(datiFatturazione.dataDocumento));
         }else{
+            console.log(2,datiFatturazione.dataDocumento);
             onChangeHandler(datiFatturazione.dataDocumento);
         } 
-    },[datiFatturazione.idDocumento]);
+        console.log(3);
+    },[datiFatturazione.idDocumento, datiFatturazione.cup]);
 
     let valueDate:Date|null = null;
     if(datiFatturazione.dataDocumento === ""){
