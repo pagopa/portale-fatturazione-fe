@@ -19,8 +19,7 @@ const RowOrchestratore = ({sliced,headerNames}) => {
             backgroundColor:bgColorRow,
             borderTop:"4px solid #F2F2F2",
             borderBottom: "2px solid #F2F2F2"
-        }} 
-        key={Math.random()}>
+        }} >
             {
                 Object.values(sliced).map((value:any, i:number)=>{
                     const indexEsec =  Object.entries(sliced).findIndex(([key]) => key === 'esecuzione');
@@ -55,7 +54,7 @@ const RowOrchestratore = ({sliced,headerNames}) => {
                     return(
                         <>
                             {customValue !== "--" ?
-                                <Tooltip title={titleTooltip}  placement="right">
+                                <Tooltip key={Math.random()} title={titleTooltip}  placement="right">
                                     <TableCell
                                         align={headerNames[i]?.align}>
                                         <Typography style={{ fontSize: "1rem", fontWeight: 600 }} variant="caption-semibold">{customValue}</Typography> 
@@ -63,6 +62,7 @@ const RowOrchestratore = ({sliced,headerNames}) => {
                                     </TableCell>
                                 </Tooltip>: 
                                 <TableCell
+                                    key={Math.random()}
                                     align={headerNames[i]?.align}>
                                     {customValue} 
                                 </TableCell>

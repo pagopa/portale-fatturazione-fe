@@ -1,4 +1,4 @@
-import { Autocomplete, Checkbox, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { Autocomplete, Checkbox, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -20,6 +20,7 @@ export type MainFilterProps<T> = {
     keyDescription: string;     // field used as value
     keyValue:number|string;
     defaultValue?:string|number|null // valore da settare se si ha un valore null da inserire nel body
+    fontSize?:string|null,
 
     keyOption?:string;   // field used as label
     keyCompare?: string;  // optional compare field
@@ -71,7 +72,8 @@ const MainFilter = <T,>({
     extraCodeOnChange,
     extraCodeOnChangeArray,
     defaultValue="",
-    groupByKey="" //valore inserito quando si ha una chiave uguale a null
+    groupByKey="", //valore inserito quando si ha una chiave uguale a null
+    fontSize
 }: MainFilterProps<T>) => {
 
 
@@ -127,7 +129,7 @@ const MainFilter = <T,>({
                                 setBody((prev)=> ({...prev, ...{[keyBody]:e.target.value}}));
                             }
                         }}
-                        value={(valueOnBodydifferentFromRealValue||"")||defaultValue}
+                        value={(valueOnBodydifferentFromRealValue)||defaultValue}
                     >
                         {arrayValues?.map((el) => (
                             <MenuItem
@@ -224,16 +226,19 @@ const MainFilter = <T,>({
                     }            
                 /> </MainBoxContainer>);
         case "date_from_to": 
-            return ( !hidden && <MainBoxContainer> 
+            console.log({keyDescription,keyValue});
+            return ( !hidden && keyCompare && <MainBoxContainer> 
                 <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it}>
                     <DesktopDatePicker
                         sx={{width:"80%"}}
                         label={inputLabel}
-                        value={(body[keyDescription] === ''||body[keyDescription] === null) ? null : new Date(body[keyDescription])}
+                        value={(body[keyValue] === ''||body[keyValue] === null) ? null : new Date(body[keyValue])}
                         onChange={(e:any | null)  =>{
                             if(e !== null && !isDateInvalid(e)){
-                                setBody(prev => ({...prev,...{[keyDescription]:e}}));
-                                if(keyCompare && body[keyCompare] !== null && ((formatDateToValidation(e)||0) < (formatDateToValidation(body[keyCompare])||0))){
+                                setBody(prev => ({...prev,...{[keyValue]:e}}));
+                                if(keyValue === "init" && keyCompare && body[keyCompare] !== null && ((formatDateToValidation(e)||0) > (formatDateToValidation(body[keyCompare])||0))){
+                                    setError && setError(true);
+                                }else if(keyValue === "end" && keyCompare && body[keyCompare] !== null && ((formatDateToValidation(e)||0) < (formatDateToValidation(body[keyCompare])||0))){
                                     setError && setError(true);
                                 }else if(keyCompare && body[keyCompare] === null && e !== null){
                                     setError && setError(true);
@@ -241,7 +246,7 @@ const MainFilter = <T,>({
                                     setError && setError(false);
                                 }
                             }else{
-                                setBody(prev => ({...prev,...{[keyDescription]:null}}));
+                                setBody(prev => ({...prev,...{[keyValue]:null}}));
                                 setError && setError(false);
                             }
                             clearOnChangeFilter();
@@ -287,8 +292,10 @@ const MainFilter = <T,>({
                                         sx={{ mr: 1 }}
                                         checked={selected}
                                     />
-                                    {getLabel(option)}
+                                    <Typography sx={{ fontSize: fontSize ? "0.875rem":undefined}}>{getLabel(option)}</Typography>
+                                    
                                 </li>
+                               
                             )}
                             renderInput={(params) => (
                                 <TextField

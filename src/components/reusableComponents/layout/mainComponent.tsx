@@ -196,7 +196,7 @@ export const FilterActionButtons = ({
                             <Tooltip  title={action?.tooltipMessage ? action?.tooltipMessage:null}>
                                 <CustomButton
                                     key={index}
-                                    variant="contained"
+                                    variant={action.variant}
                                     onClick={action.onButtonClick}
                                     withText={action.withText}
                                 >

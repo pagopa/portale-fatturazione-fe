@@ -331,6 +331,7 @@ const ProcessiOrchestartore:React.FC = () =>{
                     keyDescription=""
                     keyCompare={"end"}
                     error={error}
+                    setError={setError}
                     keyBody="init"
                 ></MainFilter>
                 <MainFilter 
@@ -343,50 +344,60 @@ const ProcessiOrchestartore:React.FC = () =>{
                     keyDescription=""
                     keyCompare={"init"}
                     error={error}
+                    setError={setError}
                     keyBody="end"
                 ></MainFilter>
                 <MainFilter 
-                    filterName={"select_key_value"}
+                    filterName={"multi_checkbox"}
                     inputLabel={"Stato"}
                     clearOnChangeFilter={clearOnChangeFilter}
+                    valueAutocomplete={valueStati}
+                    setValueAutocomplete={setValueStati}
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
+                    dataSelect={arrayStati}
                     keyDescription={"description"}
                     keyBody={"stati"}
                     keyValue={"value"}
-                    arrayValues={valueStati}
+                    fontSize="0.875rem"
                 ></MainFilter>
                 <MainFilter 
                     filterName={"multi_checkbox"}
                     inputLabel={"Tipologia"}
                     clearOnChangeFilter={clearOnChangeFilter}
+                    valueAutocomplete={valueTipologie}
+                    setValueAutocomplete={setValueTipologie}
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
-                    dataSelect={valueTipologie}
-                    keyDescription={"tipologiaFattura"}
-                    keyValue={"tipologiaFattura"}
-                    keyBody={"tipologiaFattura"}
+                    dataSelect={arrayTipologie}
+                    keyDescription={"description"}
+                    keyValue={"value"}
+                    keyBody={"tipologie"}
                     extraCodeOnChangeArray={(e)=>{
                         const arrayDesc = e.map(el => el.description);
                         setBodyGetLista((prev) => ({...prev,...{tipologie:arrayDesc}}));
                         setValueTipologie(e);
-                    }}          
+                    }}     
+                    fontSize="0.875rem"     
                 ></MainFilter>
                 <MainFilter 
                     filterName={"multi_checkbox"}
                     inputLabel={"Fase"}
                     clearOnChangeFilter={clearOnChangeFilter}
+                    valueAutocomplete={valueFasi}
+                    setValueAutocomplete={setValueFasi}
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
                     dataSelect={arrayFasi}
-                    keyDescription={"dataFattura"}
-                    keyValue={"tipologiaFattura"}
+                    keyDescription={"description"}
+                    keyValue={"value"}
                     keyBody={"fasi"}
                     extraCodeOnChangeArray={(e)=>{
                         const arrayDesc = e.map((el) => el.description);
                         setBodyGetLista((prev) => ({...prev,...{fasi:arrayDesc}}));
                         setValueFasi(e);
                     }}
+                    fontSize="0.875rem" 
                 ></MainFilter>
             </ResponsiveGridContainer>
             <FilterActionButtons 

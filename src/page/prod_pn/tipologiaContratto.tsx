@@ -14,6 +14,8 @@ import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { PathPf } from "../../types/enum";
+import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
+import MainFilter from "../../components/reusableComponents/mainFilter";
 
 
 export interface BodyContratto {
@@ -43,7 +45,7 @@ const PageTipologiaContratto :React.FC = () =>{
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 
-    const [contratti, setContratti] = useState([{id:0,descrizione:"Tutte"},{id:2,descrizione:"PAC"},{id:1,descrizione:"PAL"}]);
+    const [contratti, setContratti] = useState([{id:3,descrizione:"Tutte"},{id:2,descrizione:"PAC"},{id:1,descrizione:"PAL"}]);
     const [gridData, setGridData] = useState<Contratti[]>([]);
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
     const [getListaLoading, setGetListaLoading] = useState(false);
@@ -229,82 +231,66 @@ const PageTipologiaContratto :React.FC = () =>{
     };
 
     return(
-        <div className="mx-5">
-            <div className="marginTop24 ">
-                <Typography variant="h4">Tipologia contratto</Typography>
-            </div>
-            <div className="row mb-5 mt-5" >
-                <div  className="col-3">
-                    <MultiselectCheckbox 
-                        setBodyGetLista={setBodyGetLista}
-                        dataSelect={dataSelect}
-                        setTextValue={setTextValue}
-                        valueAutocomplete={valueAutocomplete}
-                        setValueAutocomplete={setValueAutocomplete}
-                        clearOnChangeFilter={clearOnChangeFilter}
-                    ></MultiselectCheckbox>
-                </div>
-                <div className="col-3">
-                    <Box  style={{ width: '80%' }}>
-                        <FormControl fullWidth size="medium">
-                            <InputLabel>
-                                Tipologia contratto
-                            </InputLabel>
-                            <Select
-                                label="Tipologia contratto"
-                                onChange={(e) =>{
-                                    clearOnChangeFilter();
-                                    if(e.target.value === 0){
-                                        setBodyGetLista((prev)=> ({...prev, ...{tipologiaContratto:null}}));
-                                    }else{
-                                        setBodyGetLista((prev)=> ({...prev, ...{tipologiaContratto:Number(e.target.value)}}));
-                                    }
-                                }}
-                                value={bodyGetLista.tipologiaContratto === null ? 0 : bodyGetLista.tipologiaContratto}
-                            >
-                                {contratti.map((el) => (
-                                    <MenuItem key={el.id} value={el.id}>
-                                        {el.descrizione}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Box>
-                </div>
-            </div>
-            <div className="d-flex">
-                <div className=" d-flex justify-content-center align-items-center">
-                    <div>
-                        <Button 
-                            onClick={onButtonFiltra} sx={{ marginTop: 'auto', marginBottom: 'auto'}}variant="contained"> Filtra
-                        </Button>
-                        {statusAnnulla === 'hidden'? null :
-                            <Button 
-                                onClick={onButtonAnnulla} sx={{marginLeft:'24px'}} >Annulla filtri
-                            </Button>}
-                    </div>
-                </div>
-            </div>
-            <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
-                <Button disabled={getListaLoading} onClick={onDownload}>
-                     Download Risultati
-                    <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
-                </Button>
-            </div>
-            <div className="mt-1 mb-5" style={{ width: '100%'}}>
-                <GridCustom
-                    nameParameterApi='idContratto'
-                    elements={gridData}
-                    changePage={handleChangePage}
-                    changeRow={handleChangeRowsPerPage} 
-                    total={totalContratti}
-                    page={page}
-                    rows={rowsPerPage}
-                    headerNames={headerNames}
-                    apiGet={changeContractType}
-                    disabled={false}
-                    widthCustomSize="auto"></GridCustom>
-            </div>
+        <MainBoxStyled title={"Tipologia contratto"}>
+            <ResponsiveGridContainer >
+                <MainFilter 
+                    filterName={"select_key_value"}
+                    inputLabel={"Tipologia contratto"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyDescription={"descrizione"}
+                    keyBody={"idTipoContratto"}
+                    keyValue={"id"}
+                    arrayValues={contratti}
+                    defaultValue={"3"}
+                    extraCodeOnChange={(e)=>{
+                        const val = (Number(e) === 3) ? null : Number(e);
+                        setBodyGetLista((prev)=>({...prev,...{idTipoContratto:val}}));
+                    }}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"multi_checkbox"}
+                    inputLabel={"Rag. Soc. Ente"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    dataSelect={dataSelect}
+                    setTextValue={setTextValue}
+                    textValue={textValue}
+                    valueAutocomplete={valueAutocomplete}
+                    setValueAutocomplete={setValueAutocomplete}
+                    keyDescription={"descrizione"}
+                    keyValue={"idEnte"}
+                    keyBody={"idEnti"}
+                ></MainFilter>
+            </ResponsiveGridContainer>
+            <FilterActionButtons 
+                onButtonFiltra={onButtonFiltra} 
+                onButtonAnnulla={onButtonAnnulla} 
+                statusAnnulla={statusAnnulla} 
+            ></FilterActionButtons>
+            <ActionTopGrid
+                actionButtonRight={[{
+                    onButtonClick:onDownload,
+                    variant: "outlined",
+                    label: "Download risultati",
+                    icon:{name:"download"},
+                    disabled:(gridData.length === 0)
+                }]}/>
+ 
+            <GridCustom
+                nameParameterApi='idContratto'
+                elements={gridData}
+                changePage={handleChangePage}
+                changeRow={handleChangeRowsPerPage} 
+                total={totalContratti}
+                page={page}
+                rows={rowsPerPage}
+                headerNames={headerNames}
+                apiGet={changeContractType}
+                disabled={false}
+                widthCustomSize="auto"></GridCustom>
             <ModalLoading 
                 open={getListaLoading} 
                 setOpen={setGetListaLoading}
@@ -322,7 +308,7 @@ const PageTipologiaContratto :React.FC = () =>{
                 mainState={mainState}
                 sentence={sentence}
             ></ModalConfermaInserimento>
-        </div>
+        </MainBoxStyled>
     );
 }; 
 export default PageTipologiaContratto;
