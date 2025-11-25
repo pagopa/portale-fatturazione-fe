@@ -663,6 +663,7 @@ const RelPage : React.FC = () =>{
                     keyDescription={"descrizione"}
                     keyValue={"idEnte"}
                     keyBody={"idEnti"}
+                    hidden={profilo.auth !== 'PAGOPA'}
                 ></MainFilter>
                 <MainFilter 
                     filterName={"select_key_value"}
@@ -679,6 +680,7 @@ const RelPage : React.FC = () =>{
                         const val = (Number(e) === 3) ? null : Number(e);
                         setBodyRel((prev)=>({...prev,...{idTipoContratto:val}}));
                     }}
+                    hidden={profilo.auth !== 'PAGOPA'}
                 ></MainFilter>
             </ResponsiveGridContainer>
             <FilterActionButtons 

@@ -235,19 +235,28 @@ const MainFilter = <T,>({
                         value={(body[keyValue] === ''||body[keyValue] === null) ? null : new Date(body[keyValue])}
                         onChange={(e:any | null)  =>{
                             if(e !== null && !isDateInvalid(e)){
+                                console.log(1);
                                 setBody(prev => ({...prev,...{[keyValue]:e}}));
                                 if(keyValue === "init" && keyCompare && body[keyCompare] !== null && ((formatDateToValidation(e)||0) > (formatDateToValidation(body[keyCompare])||0))){
                                     setError && setError(true);
+                                    console.log(1);
                                 }else if(keyValue === "end" && keyCompare && body[keyCompare] !== null && ((formatDateToValidation(e)||0) < (formatDateToValidation(body[keyCompare])||0))){
                                     setError && setError(true);
-                                }else if(keyCompare && body[keyCompare] === null && e !== null){
+                                    console.log(2);
+                                }else if(keyValue === "init" && body[keyCompare] === null && e !== null){
+                                    setError && setError(false);
+                                    console.log(5);
+                                }else if(keyValue === "end" && body[keyCompare] === null && e !== null){
                                     setError && setError(true);
+                                    console.log(3);
                                 }else if(keyCompare){
                                     setError && setError(false);
+                                    console.log(4);
                                 }
                             }else{
                                 setBody(prev => ({...prev,...{[keyValue]:null}}));
                                 setError && setError(false);
+                                console.log(5);
                             }
                             clearOnChangeFilter();
                         }}
@@ -260,7 +269,7 @@ const MainFilter = <T,>({
                     />
                 </LocalizationProvider></MainBoxContainer>);
         case "multi_checkbox":
-            if(dataSelect && valueAutocomplete && keyBody && keyDescription && keyValue ){
+            if(!hidden && dataSelect && valueAutocomplete && keyBody && keyDescription && keyValue ){
                 return (
                     <MainBoxContainer>
                         <Autocomplete

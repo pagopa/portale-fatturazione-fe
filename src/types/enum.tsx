@@ -34,5 +34,6 @@ export enum PathPf {
     API_KEY_ENTE = "/apikeys",
     STORICO_CONTEST_ENTE = "/storicoente",
     INSERIMENTO_CONTESTAZIONI_ENTE = "/contestazioniente",
-    EMAIL_PSP = "/emailpsp"
+    EMAIL_PSP = "/emailpsp",
+    LISTA_MODULICOMMESSA_PREVISONALE="/listacommessaprevisionale"
 }

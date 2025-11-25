@@ -62,7 +62,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
     const [openModalLoading, setOpenModalLoading] = useState(false);
     const [openModalVerifica, setOpenModalVerifica] = useState(false);
     
-    const [loadingData, setLoadingData] = useState(false);
+    const [loadingData, setLoadingData] = useState(true);
     const [datiFatturazione, setDatiFatturazione] = useState<DatiFatturazione>({
         tipoCommessa:'',
         idEnte:'',

@@ -23,6 +23,7 @@ import ProcessiOrchestartore from "../../page/prod_pn/processiOrchestratore";
 import PageTipologiaContratto from "../../page/prod_pn/tipologiaContratto";
 import ListaDocEmessi from "../../page/prod_pn/whiteList";
 import ModuloCommessaInserimentoPn from "../../page/prod_pn/moduloCommessaInserimentoPn";
+import ListaCommessaPrevisionale from "../../page/prod_pn/listaModuloComPrevisonale";
 
 
 const ProdPnRoute = () => {
@@ -47,6 +48,7 @@ const ProdPnRoute = () => {
         <Route path={PathPf.JSON_TO_SAP_DETAILS} element={<InvioFattureDetails/>} />
         <Route path={PathPf.STORICO_DETTAGLIO_CONTEST} element={<DettaglioStoricoContestazione/>} />
         <Route path={PathPf.ORCHESTRATORE} element={<ProcessiOrchestartore/>} />
+        <Route path={PathPf.LISTA_MODULICOMMESSA_PREVISONALE} element={<ListaCommessaPrevisionale/>} />
     </Route>;
     return prodPnRoute;
 };

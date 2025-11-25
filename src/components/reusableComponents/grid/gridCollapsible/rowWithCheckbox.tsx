@@ -35,15 +35,17 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
 
     const isSelected = (id: number) => selected.indexOf(id) !== -1;
 
+
+
     let tooltipObj:any= {label:'Non Inviata',title:'La fattura non è stata inviata'};
     if(row.inviata === 1){
-        tooltipObj = {label:'Inviata',title:'La fattura è stata inviata',color:'success'};
+        tooltipObj = {label:'Inviata',title:'La fattura è stata inviata',color:'#B5E2B4'};
     }else if(row.inviata === 2){
-        tooltipObj = {label:'Elaborazione',title:'La fattura è in elaborazione',color:'warning'};
+        tooltipObj = {label:'Elaborazione',title:'La fattura è in elaborazione',color:'#FFE5A3'};
     }else if(row.inviata === 3){
-        tooltipObj = {label:'Cancellata',title:'La fattura è stata cancellata',color:'info'};
+        tooltipObj = {label:'Cancellata',title:'La fattura è stata cancellata',color:'#86E1FD'};
     }
-
+    console.log({tooltipObj});
     return(
         
         <TableBody sx={{minHeight:"100px"}}>
@@ -89,7 +91,7 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
                         placement="bottom"
                         title={tooltipObj.title}
                     >
-                        <Chip variant="outlined" label={tooltipObj.label} color={tooltipObj.color} />
+                        <Chip variant="outlined" label={tooltipObj.label} sx={{backgroundColor:tooltipObj.color}} />
                     </Tooltip>
                 </TableCell>
                 <TableCell align='center'>{row.tipologiaFattura||"--"}</TableCell>

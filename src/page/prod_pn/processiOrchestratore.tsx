@@ -316,8 +316,6 @@ const ProcessiOrchestartore:React.FC = () =>{
         });
     };
  
-    const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-    const checkedIcon = <CheckBoxIcon fontSize="small" />;
     return(
         <MainBoxStyled title={"Monitoring"}>
             <ResponsiveGridContainer >
@@ -433,7 +431,6 @@ const ProcessiOrchestartore:React.FC = () =>{
                 body={bodyGetLista}
                 headerAction={headerAction}
             ></GridCustom>
-             
             <ModalLoading 
                 open={getListaLoading} 
                 setOpen={setGetListaLoading}

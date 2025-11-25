@@ -2114,6 +2114,7 @@ const ReportDettaglio : React.FC = () => {
                     keyValue={"idEnte"}
                     keyOption='descrizione'
                     keyBody={"idEnti"}
+                    hidden={profilo.auth !== 'PAGOPA'}
                 ></MainFilter>
                 <MainFilter 
                     filterName={"select_key_value"}
