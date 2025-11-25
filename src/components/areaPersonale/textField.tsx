@@ -53,20 +53,20 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
   
     useEffect(()=>{
 
-        if(keyObject === 'cup' && datiFatturazione.cup === '' && datiFatturazione.idDocumento !== '' && mainState.statusPageDatiFatturazione === "mutable" && datiFatturazione.tipoCommessa !== ""){
+        if(keyObject === 'cup' && datiFatturazione.cup === '' && (datiFatturazione.idDocumento !== '' ||  (datiFatturazione.dataDocumento !== null && datiFatturazione.dataDocumento !== "") ) && mainState.statusPageDatiFatturazione === "mutable" && datiFatturazione.tipoCommessa !== ""){
             setErrorValidation(true);
             setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
-        }else if(keyObject === 'cup' && datiFatturazione.cup === '' && datiFatturazione.idDocumento === '' && mainState.statusPageDatiFatturazione === "mutable" && datiFatturazione.tipoCommessa !== ""){
+        }else if(keyObject === 'cup' && datiFatturazione.cup === '' && (datiFatturazione.idDocumento === '' ||  (datiFatturazione.dataDocumento === null || datiFatturazione.dataDocumento === "")) && mainState.statusPageDatiFatturazione === "mutable" && datiFatturazione.tipoCommessa !== ""){
             setErrorValidation(false);
             setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
-        }else  if(keyObject === 'idDocumento' && datiFatturazione.idDocumento === '' && datiFatturazione.cup !== '' && mainState.statusPageDatiFatturazione === "mutable" && datiFatturazione.tipoCommessa !== ""){
+        }else  if(keyObject === 'idDocumento' && datiFatturazione.idDocumento === '' && (datiFatturazione.cup !== '' ||  (datiFatturazione.dataDocumento !== null && datiFatturazione.dataDocumento !== "")) && mainState.statusPageDatiFatturazione === "mutable" && datiFatturazione.tipoCommessa !== ""){
             setErrorValidation(true);
             setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:true}}) );
-        }else if(keyObject === 'idDocumento' && datiFatturazione.idDocumento === '' && datiFatturazione.cup === '' && mainState.statusPageDatiFatturazione === "mutable" && datiFatturazione.tipoCommessa !== ""){
+        }else if(keyObject === 'idDocumento' && datiFatturazione.idDocumento === '' && (datiFatturazione.cup === '' ||  (datiFatturazione.dataDocumento === null || datiFatturazione.dataDocumento === ""))  && mainState.statusPageDatiFatturazione === "mutable" && datiFatturazione.tipoCommessa !== ""){
             setErrorValidation(false);
             setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, ...{[label]:false}}) );
         }
-    },[datiFatturazione.cup,datiFatturazione.idDocumento]);
+    },[datiFatturazione.cup,datiFatturazione.idDocumento,datiFatturazione.dataDocumento]);
 
     /*commentato il 01/10/25 spostata la logica sull'onchange
    

@@ -120,7 +120,7 @@ const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate,mainState
                     disabled={dataInputDisable}
                     slotProps={{
                         textField: {
-                            required: datiFatturazione.idDocumento !== null && datiFatturazione.idDocumento !== "",
+                            required: (datiFatturazione.idDocumento !== null && datiFatturazione.idDocumento !== "")|| (datiFatturazione.cup !== null  &&  datiFatturazione.cup !== ""),
                             error:  (error||((datiFatturazione.idDocumento !== "" && datiFatturazione.idDocumento !== null) && datiFatturazione.dataDocumento === null ) )&& mainState.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa !== "",
                             inputProps: {
                                 placeholder: 'dd/MM/yyyy',
