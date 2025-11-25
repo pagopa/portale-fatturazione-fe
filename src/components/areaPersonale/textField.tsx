@@ -224,7 +224,6 @@ const TextFieldComponent : React.FC<TextFieldProps> = props => {
     
     // a fine refactoring cambiare nome alla funzione
     const hendleOnMouseOut = (e?: React.ChangeEvent<HTMLInputElement>) =>{
-        console.log("call HANDLE MOUSE");
         e?.persist();
         if(e === undefined){
             if(keyObject === 'pec'){

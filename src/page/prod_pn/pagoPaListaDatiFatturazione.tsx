@@ -119,7 +119,6 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
         setGetListaLoading(true);
         await listaDatiFatturazionePagopa(body ,token,profilo.nonce)
             .then((res)=>{
-                console.log('ciao');
                 const editedData = res.data.map((el)=>{
                     return Object.fromEntries(
                         Object.entries(el).map(([key, value]) => [key, (value === null || value === "") ? "--" : value])
