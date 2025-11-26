@@ -330,38 +330,7 @@ const ListaCommessaPrevisionale:React.FC = () =>{
                     error={errorData}
                     setError={setErrorData}
                     keyBody="end"
-                ></MainFilter>
-                <MainFilter 
-                    filterName={"select_key_value"}
-                    inputLabel={"Tipologia contratto"}
-                    clearOnChangeFilter={clearOnChangeFilter}
-                    setBody={setBodyGetLista}
-                    body={bodyGetLista}
-                    keyDescription={"descrizione"}
-                    keyBody={"idTipoContratto"}
-                    keyValue={"id"}
-                    arrayValues={arrayContratto}
-                    defaultValue={"3"}
-                    extraCodeOnChange={(e)=>{
-                        const val = (Number(e) === 3) ? null : Number(e);
-                        setBodyGetLista((prev)=>({...prev,...{idTipoContratto:val}}));
-                    }}
-                ></MainFilter>
-                <MainFilter 
-                    filterName={"multi_checkbox"}
-                    inputLabel={"Rag. Soc. Ente"}
-                    clearOnChangeFilter={clearOnChangeFilter}
-                    setBody={setBodyGetLista}
-                    body={bodyGetLista}
-                    dataSelect={dataSelect}
-                    setTextValue={setTextValue}
-                    textValue={textValue}
-                    valueAutocomplete={valueAutocomplete}
-                    setValueAutocomplete={setValueAutocomplete}
-                    keyDescription={"descrizione"}
-                    keyValue={"idEnte"}
-                    keyBody={"idEnti"}
-                ></MainFilter>
+                ></MainFilter>    
                 <MainFilter 
                     filterName={"date_from_to"}
                     inputLabel={"Data contratto da"}
@@ -387,6 +356,37 @@ const ListaCommessaPrevisionale:React.FC = () =>{
                     error={errorContratto}
                     setError={setErrorContratto}
                     keyBody="end"
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"multi_checkbox"}
+                    inputLabel={"Rag. Soc. Ente"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    dataSelect={dataSelect}
+                    setTextValue={setTextValue}
+                    textValue={textValue}
+                    valueAutocomplete={valueAutocomplete}
+                    setValueAutocomplete={setValueAutocomplete}
+                    keyDescription={"descrizione"}
+                    keyValue={"idEnte"}
+                    keyBody={"idEnti"}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"select_key_value"}
+                    inputLabel={"Tipologia contratto"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyDescription={"descrizione"}
+                    keyBody={"idTipoContratto"}
+                    keyValue={"id"}
+                    arrayValues={arrayContratto}
+                    defaultValue={"3"}
+                    extraCodeOnChange={(e)=>{
+                        const val = (Number(e) === 3) ? null : Number(e);
+                        setBodyGetLista((prev)=>({...prev,...{idTipoContratto:val}}));
+                    }}
                 ></MainFilter>
             </ResponsiveGridContainer>
             <FilterActionButtons 

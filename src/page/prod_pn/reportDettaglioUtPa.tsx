@@ -1168,7 +1168,7 @@ import { profiliEnti } from "../../reusableFunction/actionLocalStorage";
 import { mesiGrid, mesiWithZero, tipoNotifica } from "../../reusableFunction/reusableArrayObj";
 import { GlobalContext } from "../../store/context/globalContext";
 import { PathPf } from "../../types/enum";
-import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
+import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { OptionType } from 'dayjs';
 import { isManageErrorResponse } from '../../reusableFunction/function';
@@ -2047,6 +2047,7 @@ const ReportDettaglio : React.FC = () => {
                     keyOption='flag'
                     groupByKey={"descrizione"}
                     keyBody={"statoContestazione"}
+                    iconMaterial={RenderIcon("invoice",true)}
                 ></MainFilter>
                 <MainFilter 
                     filterName={"input_text"}

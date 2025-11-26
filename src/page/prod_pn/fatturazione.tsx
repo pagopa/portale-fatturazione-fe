@@ -538,7 +538,15 @@ const Fatturazione : React.FC = () =>{
                 onButtonFiltra={onButtonFiltra} 
                 onButtonAnnulla={onButtonAnnulla} 
                 statusAnnulla={statusAnnulla} 
-                actionButton={[{
+                actionButton={[  {
+                    onButtonClick: () => onButtonSap(1),
+                    variant: "outlined",
+                    icon:{name:"restart" },
+                    disabled:disableButtonReset,
+                    tooltipMessage:"Reset",
+                    withText:false,
+                    colorAction:"error"
+                },{
                     onButtonClick: () => navigate(PathPf.JSON_TO_SAP),
                     variant: "outlined",
                     icon:{name:"iso_share" },
@@ -552,15 +560,8 @@ const Fatturazione : React.FC = () =>{
                     disabled:disableButtonSap,
                     tooltipMessage:"Invia a SAP",
                     withText:false
-                },
-                {
-                    onButtonClick: () => onButtonSap(1),
-                    variant: "outlined",
-                    icon:{name:"restart" },
-                    disabled:disableButtonReset,
-                    tooltipMessage:"Reset",
-                    withText:false
-                }]}
+                }
+                ]}
             ></FilterActionButtons>
             <ActionTopGrid
                 actionButtonRight={[{

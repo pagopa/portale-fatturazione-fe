@@ -142,7 +142,8 @@ export const FilterActionButtons = ({
         icon?:{name:string},
         disabled?:boolean,
         tooltipMessage?:string,
-        withText?:boolean
+        withText?:boolean,
+        colorAction?:"inherit" | "secondary" | "primary" | "success" | "error" | "info" | "warning"
     }[]
 }) =>  {
 
@@ -205,6 +206,7 @@ export const FilterActionButtons = ({
                                     variant={action.variant}
                                     onClick={action.onButtonClick}
                                     withText={action.withText}
+                                    color={action.colorAction ? "error":undefined}
                                 >
                                     {action.icon && RenderIcon(action.icon.name, false)} 
                                     {action.label}
@@ -290,6 +292,7 @@ export const ActionTopGrid = ({actionButtonRight,actionButtonLeft}:{
                                 onClick={action.onButtonClick}
                                 startIcon={action.icon && RenderIcon(action.icon.name)}
                                 disabled={action.disabled}
+                                
                             >
                                 {action.label}
                             </CustomButton>
@@ -303,12 +306,13 @@ export const ActionTopGrid = ({actionButtonRight,actionButtonLeft}:{
 
 interface CustomButtonProps extends ButtonProps {
     withText?: boolean;
+    colorAction?:"inherit" | "secondary" | "primary" | "success" | "error" | "info" | "warning"
 }
 
-const CustomButton = styled(Button)<CustomButtonProps>(({ theme, withText=true }) => ({
-    //minWidth: withText ? "130px" : undefined,
-    //padding: withText? theme.spacing(1, 3):undefined,
-    //fontWeight: 500,
+const CustomButton = styled(Button)<CustomButtonProps>(({ theme, withText=true,colorAction }) => ({
+    minWidth: withText ? "130px" : undefined,
+    padding: withText? theme.spacing(1, 3):undefined,
+    fontWeight: 500,
     textTransform: "none",
     display: "flex",
     alignItems: "center",

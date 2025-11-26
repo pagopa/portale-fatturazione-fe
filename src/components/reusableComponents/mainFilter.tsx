@@ -120,7 +120,7 @@ const MainFilter = <T,>({
         
         case "select_key_value": 
             return ( !hidden && keyBody && <MainBoxContainer>
-                <FormControl sx={{width:"80%"}}>
+                <FormControl fullWidth>
                     <InputLabel>
                         {inputLabel}
                     </InputLabel>
@@ -149,7 +149,7 @@ const MainFilter = <T,>({
             </MainBoxContainer>);
         case "select_key_value_description":  //case "select_prodotto":case "select_profilo":case "select_anno":case "select_mese":consolidatore recapitista
             return ( !hidden && keyBody && keyOption && <MainBoxContainer>
-                <FormControl sx={{width:"80%"}}>
+                <FormControl fullWidth >
                     <InputLabel>
                         {inputLabel}
                     </InputLabel>
@@ -182,7 +182,7 @@ const MainFilter = <T,>({
             console.log(arrayValues,body,keyDescription);
             return ( !hidden &&  keyBody && arrayValues &&
             <MainBoxContainer>
-                <FormControl sx={{width:"80%"}}>
+                <FormControl fullWidth >
                     <InputLabel>
                         {inputLabel}
                     </InputLabel>
@@ -215,7 +215,7 @@ const MainFilter = <T,>({
             console.log(arrayValues,body,keyDescription);
             return ( !hidden &&  keyBody && arrayValues &&
             <MainBoxContainer>
-                <FormControl sx={{width:"80%"}}>
+                <FormControl  fullWidth >
                     <InputLabel>
                         {inputLabel}
                     </InputLabel>
@@ -248,7 +248,7 @@ const MainFilter = <T,>({
             return (!hidden && 
             <MainBoxContainer> 
                 <TextField
-                    sx={{width:"80%"}}
+                   
                     label={inputLabel}
                     placeholder={inputLabel}
                     value={body[keyDescription] || ''}
@@ -272,7 +272,7 @@ const MainFilter = <T,>({
             return ( !hidden && keyCompare && <MainBoxContainer> 
                 <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it}>
                     <DesktopDatePicker
-                        sx={{width:"80%"}}
+                        
                         label={inputLabel}
                         value={(body[keyValue] === ''||body[keyValue] === null) ? null : new Date(body[keyValue])}
                         onChange={(e:any | null)  =>{
@@ -306,6 +306,7 @@ const MainFilter = <T,>({
                         slotProps={{
                             textField: {
                                 error:error,
+                                fullWidth: true,
                             },
                         }}
                     />
@@ -315,8 +316,9 @@ const MainFilter = <T,>({
                 return (
                     <MainBoxContainer>
                         <Autocomplete
+                            fullWidth
                             sx={{
-                                width:"80%",
+                             
                                 height:"59px",
                                 "& .MuiAutocomplete-inputRoot.Mui-focused": {
                                     zIndex: 2,
@@ -412,7 +414,7 @@ export default MainFilter;
 
 export const MainBoxContainer = ({children}) => {
     return (
-        <Grid item xs={12} sm={6} md={3}
+        <Grid item xs={12} sm={6} md={4} lg={2.3}
             sx={{
                 display: "flex",
                 justifyContent: { xs: "center", sm: "center",md: "flex-start" },
