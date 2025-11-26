@@ -26,7 +26,7 @@ import CollapsibleTable from "../../components/reusableComponents/grid/gridColla
 import ModalConfermaRipristina from "../../components/fatturazione/modalConfermaRipristina";
 import ModalResetFilter from "../../components/fatturazione/modalResetFilter";
 import { headersObjGrid } from "../../assets/configurations/config_GridFatturazione";
-import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
+import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter, { MainBoxContainer } from "../../components/reusableComponents/mainFilter";
 
 
@@ -143,9 +143,9 @@ const Fatturazione : React.FC = () =>{
 
     const getContratti = async() => {
         await getTipologieContratto(token, profilo.nonce).then((res)=>{
-            setArrayContratto(prev => [...prev, ...res.data]);
-        }).catch((err)=>{
-            setArrayContratto([{id:0,descrizione:"Tutti"}]);
+            setArrayContratto([{id:3,descrizione:"Tutti"}, ...res.data]);
+        }).catch(()=>{
+            setArrayContratto([]);
         });
     };
    
@@ -412,7 +412,7 @@ const Fatturazione : React.FC = () =>{
         <MainBoxStyled title={"Documenti emessi"}>
             <ResponsiveGridContainer >
                 <MainFilter 
-                    filterName={"select_value"}
+                    filterName={"select_value_string"}
                     inputLabel={"Anno"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyFatturazione}
@@ -480,6 +480,7 @@ const Fatturazione : React.FC = () =>{
                         setValueMultiselectTipologie(e);
                         setBodyFatturazione((prev) => ({...prev,...{tipologiaFattura:e}}));
                     }}
+                    iconMaterial={RenderIcon("invoice",true)}
                     
                 ></MainFilter>
                 <MainFilter 
@@ -513,6 +514,7 @@ const Fatturazione : React.FC = () =>{
                         console.log(e);
                         setValueMultiselectDateTipologie(e);
                     }}
+                    iconMaterial={RenderIcon("date",true)}
                 ></MainFilter>
                 <MainFilter 
                     filterName={"select_key_value"}
@@ -529,6 +531,7 @@ const Fatturazione : React.FC = () =>{
                         const val = (Number(e) === 3) ? null : Number(e);
                         setBodyFatturazione((prev)=>({...prev,...{idTipoContratto:val}}));
                     }}
+                    iconMaterial={RenderIcon("contract")}
                 ></MainFilter>
             </ResponsiveGridContainer>
             <FilterActionButtons 

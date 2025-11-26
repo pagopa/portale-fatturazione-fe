@@ -8,7 +8,7 @@ import { GlobalContext } from '../../store/context/globalContext';
 import { PathPf } from '../../types/enum';
 import useSavedFilters from '../../hooks/useSaveFiltersLocalStorage';
 import GridCustom from '../../components/reusableComponents/grid/gridCustom';
-import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from '../../components/reusableComponents/layout/mainComponent';
+import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from '../../components/reusableComponents/layout/mainComponent';
 import MainFilter from '../../components/reusableComponents/mainFilter';
 
 
@@ -327,6 +327,7 @@ const AnagraficaPsp:React.FC = () =>{
                         setBodyGetLista((prev) => ({...prev,...{quarters:arrayId}}));
                         setValueQuarters(value);
                     }}
+                    iconMaterial={RenderIcon("date",true)}
                 ></MainFilter>
                 <MainFilter 
                     filterName={"multi_checkbox"}

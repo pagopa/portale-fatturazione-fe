@@ -70,7 +70,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
         return () => clearTimeout(timer);
     },[textValue]);
 
-
+    console.log({bodyGetLista});
     const getAnniMesi = async () => {
         try {
             const res = await anniMesiModuliCommessa(token, profilo.nonce);
@@ -119,6 +119,8 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                 mese_X_plus_one = mesi[yearSelected][0];
                 await getContratti(yearSelected, mese_X_plus_one);
             }
+            setBodyGetLista({...bodyGetLista,anno:yearSelected,mese:mese_X_plus_one});
+            setBodyDownload({...bodyGetLista,anno:yearSelected,mese:mese_X_plus_one});
             defaultYearMonth.current= {year:yearSelected,month:mese_X_plus_one};
         } catch (err) {
             if (err && typeof err === "object") {
@@ -144,8 +146,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                 setBodyDownload(filters.body);
                 setInfoPageListaCom({page:filters.page,pageSize:filters.rows});
             }else{
-                setBodyGetLista({...bodyGetLista,anno:y,mese:m});
-                setBodyDownload({...bodyGetLista,anno:y,mese:m});
+                
                 getListaCommesse({...bodyGetLista,anno:y,mese:m});
                 isInitialRender.current = false;
             }
@@ -297,13 +298,13 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
 
 
     const statusAnnulla = (bodyGetLista.idTipoContratto !== null || bodyGetLista.idEnti.length > 0)? "show":"hidden";
-
+    console.log({yearMonths});
 
     return (
         <MainBoxStyled title={"Lista Modulo Commessa"}>
             <ResponsiveGridContainer >
                 <MainFilter 
-                    filterName={"select_value"}
+                    filterName={"select_value_string"}
                     inputLabel={"Anno"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
@@ -318,7 +319,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                     }}
                 ></MainFilter>
                 <MainFilter 
-                    filterName={"select_value"}
+                    filterName={"select_value_string"}
                     inputLabel={"Mese"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}

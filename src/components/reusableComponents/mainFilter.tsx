@@ -1,4 +1,4 @@
-import { Autocomplete, Checkbox, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
+import { Autocomplete, Checkbox, Chip, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Tooltip, Typography } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -8,6 +8,9 @@ import { MultiSelect } from "./select/customMultiSelect";
 import { mesiGrid } from "../../reusableFunction/reusableArrayObj";
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import Paper from "@mui/material/Paper";
+import GavelIcon from '@mui/icons-material/Gavel';
 
 
 export type MainFilterProps<T> = {
@@ -44,7 +47,8 @@ export type MainFilterProps<T> = {
     extraCodeOnChangeArray?:(e:T[]) => void,
 
 
-    groupByKey?:string
+    groupByKey?:string,
+    iconMaterial?:React.ReactNode
 };
 
 const MainFilter = <T,>({
@@ -73,7 +77,8 @@ const MainFilter = <T,>({
     extraCodeOnChangeArray,
     defaultValue="",
     groupByKey="", //valore inserito quando si ha una chiave uguale a null
-    fontSize
+    fontSize,
+    iconMaterial
 }: MainFilterProps<T>) => {
 
 
@@ -172,7 +177,10 @@ const MainFilter = <T,>({
                 </FormControl>
             </MainBoxContainer>);
         case "select_value":
-            return ( !hidden &&  keyBody && 
+
+
+            console.log(arrayValues,body,keyDescription);
+            return ( !hidden &&  keyBody && arrayValues &&
             <MainBoxContainer>
                 <FormControl sx={{width:"80%"}}>
                     <InputLabel>
@@ -181,6 +189,40 @@ const MainFilter = <T,>({
                     <Select
                         label={inputLabel}
                         onChange={(e) => {
+                         
+                            clearOnChangeFilter();
+                            if(extraCodeOnChange){
+                                extraCodeOnChange(e.target.value);
+                            }else{
+                                setBody((prev)=> ({...prev, ...{[keyBody]:e.target.value}}));
+                            }
+                            
+                        }}
+                        value={arrayValues[body[keyDescription]]||defaultValue}
+                    >
+                        {arrayValues?.map((el) => (
+                            <MenuItem
+                                key={Math.random()}
+                                value={el||''}
+                            >
+                                {inputLabel === "Mese" ? mesiGrid[el] : el||""}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            </MainBoxContainer>);
+        case "select_value_string":
+            console.log(arrayValues,body,keyDescription);
+            return ( !hidden &&  keyBody && arrayValues &&
+            <MainBoxContainer>
+                <FormControl sx={{width:"80%"}}>
+                    <InputLabel>
+                        {inputLabel}
+                    </InputLabel>
+                    <Select
+                        label={inputLabel}
+                        onChange={(e) => {
+                         
                             clearOnChangeFilter();
                             if(extraCodeOnChange){
                                 extraCodeOnChange(e.target.value);
@@ -273,7 +315,22 @@ const MainFilter = <T,>({
                 return (
                     <MainBoxContainer>
                         <Autocomplete
-                            style={{ width: '80%'}}
+                            sx={{
+                                width:"80%",
+                                height:"59px",
+                                "& .MuiAutocomplete-inputRoot.Mui-focused": {
+                                    zIndex: 2,
+                                    backgroundColor: "#F3F4F6",
+                                    
+                                    
+                                },
+                                "& .MuiInputLabel-root.Mui-focused": {
+                                    zIndex: 3,     
+                                    position: "absolute",
+                                    height:"59px",
+                                },
+                              
+                            }}
                             multiple
                             limitTags={1}
                             disableCloseOnSelect
@@ -293,6 +350,28 @@ const MainFilter = <T,>({
                                 }
                             }}
                             onInputChange={(e, val) => setTextValue && setTextValue(val)}
+                            renderTags={(value, getTagProps) =>
+                                value.map((option, index) => {
+                                    const props = getTagProps({ index });
+
+                                    return (
+                                        <Tooltip
+                                            title={getLabel(option)}
+                                            key={getId(option)}
+                                            placement="top"
+                                        >
+                                            <Chip
+                                                {...props}
+                                                label={
+                                                    iconMaterial ? iconMaterial :<AccountBalanceIcon
+                                                        fontSize="small"
+                                                    />
+                                                }
+                                            />
+                                        </Tooltip>
+                                    );
+                                })
+                            }
                             renderOption={(props, option, { selected }) => (
                                 <li {...props} key={getId(option)}>
                                     <Checkbox
@@ -314,6 +393,7 @@ const MainFilter = <T,>({
                                     value={textValue||""}
                                 />
                             )}
+                            
                         />
                     </MainBoxContainer>
                 );
@@ -335,7 +415,8 @@ export const MainBoxContainer = ({children}) => {
         <Grid item xs={12} sm={6} md={3}
             sx={{
                 display: "flex",
-                justifyContent: { xs: "center", sm: "center",md: "flex-start" } 
+                justifyContent: { xs: "center", sm: "center",md: "flex-start" },
+                marginTop:"1rem"
             }}>
             {children}
         </Grid>

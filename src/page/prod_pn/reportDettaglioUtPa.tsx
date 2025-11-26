@@ -1967,7 +1967,7 @@ const ReportDettaglio : React.FC = () => {
         }]}>
             <ResponsiveGridContainer >
                 <MainFilter 
-                    filterName={"select_value"}
+                    filterName={"select_value_string"}
                     inputLabel={"Anno"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
@@ -1998,17 +1998,6 @@ const ReportDettaglio : React.FC = () => {
                         setBodyGetLista((prev)=> ({...prev, ...{mese:value}}));
                       
                     }}
-                ></MainFilter>
-                <MainFilter 
-                    filterName={"select_key_value"}
-                    inputLabel={"Seleziona prodotto"}
-                    clearOnChangeFilter={clearOnChangeFilter}
-                    setBody={setBodyGetLista}
-                    body={bodyGetLista}
-                    keyValue={"nome"}
-                    keyDescription='nome'
-                    keyBody={"prodotto"}
-                    arrayValues={prodotti}
                 ></MainFilter>
                 <MainFilter 
                     filterName={"input_text"}

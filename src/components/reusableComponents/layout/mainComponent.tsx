@@ -9,6 +9,12 @@ import IosShareIcon from '@mui/icons-material/IosShare';
 import PreviewIcon from '@mui/icons-material/Preview';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import ListIcon from '@mui/icons-material/List';
+import DescriptionIcon from '@mui/icons-material/Description';
+import GavelIcon from '@mui/icons-material/Gavel';
+import DateRangeIcon from '@mui/icons-material/DateRange';
+import AutorenewIcon from '@mui/icons-material/Autorenew';
+import InboxIcon from '@mui/icons-material/Inbox';
+import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 
 
 const MainBox = styled(Box)({
@@ -40,7 +46,7 @@ export  const MainBoxStyled = ({
         <Grid
             container
             spacing={2}
-            sx={{ mt: "1.5rem", alignItems: "center" }}
+            sx={{ alignItems: "center" }}
         >
             {/* Typography — 9 columns */}
             <Grid item xs={12} md={9}>
@@ -88,7 +94,7 @@ export  const MainBoxStyled = ({
 
 export  function ResponsiveGridContainer({ children, sx={}, ...rest }) {
     return (
-        <Box sx={{ mt: { xs: "1rem",sm: "1.5rem",md:"2.5rem" } }}>
+        <Box sx={{ mt: { xs: "1rem",sm: "1.5rem",md:"2.5rem" },pb: { xs: "1rem",sm: "1.5rem",md:"1rem" } }}>
             <Grid
                 container
                 spacing={{
@@ -241,7 +247,7 @@ export const ActionTopGrid = ({actionButtonRight,actionButtonLeft}:{
                         alignItems: { xs: "stretch", md: "center" },
                         gap: 2,
                         width: "100%",
-                        margin: 1,
+                    
                     }}
                 >
                     {/* Left Buttons */}
@@ -310,7 +316,7 @@ const CustomButton = styled(Button)<CustomButtonProps>(({ theme, withText=true }
 }));
 
 
-const RenderIcon = (iconName,sx = true) => {
+export const RenderIcon = (iconName,sx = true) => {
     switch (iconName) {
         case "download":
             return <DownloadIcon sx={{
@@ -328,5 +334,18 @@ const RenderIcon = (iconName,sx = true) => {
             return <RestartAltIcon></RestartAltIcon>;
         case "list":
             return <ListIcon></ListIcon>;
+        case "invoice":
+            return <DescriptionIcon></DescriptionIcon>;
+        case "contract":
+            return <GavelIcon></GavelIcon>;
+        case "date":
+            return <DateRangeIcon fontSize={sx ? "small":"medium"}></DateRangeIcon>;
+        case "status":
+            return <AutorenewIcon fontSize={sx ? "small":"medium"}></AutorenewIcon>;
+        case "typology":
+            return <InboxIcon fontSize={sx ? "small":"medium"} ></InboxIcon>;  
+        case "fase":
+            return <HourglassBottomIcon fontSize={sx ? "small":"medium"} ></HourglassBottomIcon>;
+
     }
 };

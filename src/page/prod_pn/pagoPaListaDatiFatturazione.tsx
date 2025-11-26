@@ -219,18 +219,7 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
         <MainBoxStyled title={"Lista Dati Fatturazione"}>
             <ResponsiveGridContainer >
                 <MainFilter 
-                    filterName={"select_key_value"}
-                    inputLabel={"Seleziona prodotto"}
-                    clearOnChangeFilter={clearOnChangeFilter}
-                    setBody={setBodyGetLista}
-                    body={bodyGetLista}
-                    keyDescription={"nome"}
-                    keyValue={"nome"}
-                    keyBody={"prodotto"}
-                    arrayValues={prodotti}
-                ></MainFilter>
-                <MainFilter 
-                    filterName={"select_value"}
+                    filterName={"select_value_string"}
                     inputLabel={"Seleziona profilo"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}

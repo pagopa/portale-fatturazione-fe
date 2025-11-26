@@ -22,7 +22,7 @@ import { mesiGrid } from "../../reusableFunction/reusableArrayObj";
 import { PathPf } from "../../types/enum";
 import { ElementMultiSelect } from "../../types/typeReportDettaglio";
 import { headersName } from "../../assets/configurations/config_GridOrchestratore";
-import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
+import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 
 export interface DataGridOrchestratore {
@@ -358,6 +358,7 @@ const ProcessiOrchestartore:React.FC = () =>{
                     keyBody={"stati"}
                     keyValue={"value"}
                     fontSize="0.875rem"
+                    iconMaterial={RenderIcon("status",true)}
                 ></MainFilter>
                 <MainFilter 
                     filterName={"multi_checkbox"}
@@ -376,7 +377,8 @@ const ProcessiOrchestartore:React.FC = () =>{
                         setBodyGetLista((prev) => ({...prev,...{tipologie:arrayDesc}}));
                         setValueTipologie(e);
                     }}     
-                    fontSize="0.875rem"     
+                    fontSize="0.875rem"  
+                    iconMaterial={RenderIcon("typology",true)}   
                 ></MainFilter>
                 <MainFilter 
                     filterName={"multi_checkbox"}
@@ -396,6 +398,7 @@ const ProcessiOrchestartore:React.FC = () =>{
                         setValueFasi(e);
                     }}
                     fontSize="0.875rem" 
+                    iconMaterial={RenderIcon("fase",true)}
                 ></MainFilter>
             </ResponsiveGridContainer>
             <FilterActionButtons 

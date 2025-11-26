@@ -221,7 +221,7 @@ const Accertamenti : React.FC = () =>{
         <MainBoxStyled title={"Documenti contabili"}>
             <ResponsiveGridContainer >
                 <MainFilter 
-                    filterName={"select_value"}
+                    filterName={"select_value_string"}
                     inputLabel={"Anno"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyAccertamenti}

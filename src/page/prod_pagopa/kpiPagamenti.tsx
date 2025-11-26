@@ -14,7 +14,7 @@ import RowBaseKpi from "../../components/reusableComponents/grid/gridCollapsible
 import { saveAs } from "file-saver";
 import { PathPf } from "../../types/enum";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
-import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
+import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 
 const KpiPagamenti:React.FC = () =>{
@@ -262,7 +262,7 @@ const KpiPagamenti:React.FC = () =>{
         {name:"Totale sconto",align:"center",id:6},
         {name:"Lista KPI",align:"center",id:7},
         {name:"Arrow",align:"center",id:8}];
-      
+    console.log({bodyGetLista});
     return(
         <MainBoxStyled title={"KPI Pagamenti"} actionButton={[{
             onButtonClick: () => setShowPopUpMatrice(true),
@@ -272,13 +272,13 @@ const KpiPagamenti:React.FC = () =>{
         }]}>
             <ResponsiveGridContainer >
                 <MainFilter 
-                    filterName={"select_value"}
+                    filterName={"select_value_string"}
                     inputLabel={"Anno"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
-                    keyDescription={"anno"}
-                    keyValue={"anno"}
+                    keyDescription={"year"}
+                    keyValue={"year"}
                     keyBody={"year"}
                     arrayValues={yearOnSelect}
                 ></MainFilter>
@@ -301,6 +301,7 @@ const KpiPagamenti:React.FC = () =>{
                         setBodyGetLista((prev) => ({...prev,...{quarters:arrayId}}));
                         setValueQuarters(value);
                     }}
+                    iconMaterial={RenderIcon("date",true)}
                 ></MainFilter>
                 <MainFilter 
                     filterName={"multi_checkbox"}

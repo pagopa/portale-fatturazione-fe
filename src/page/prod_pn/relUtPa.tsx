@@ -165,6 +165,7 @@ const RelPage : React.FC = () =>{
                 }else{
                     setBodyRel((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
                     setBodyDownload((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
+                    setGetListaRelRunning(false);
                 }
             }).catch((err)=>{
                 setArrayMonths([]);
@@ -199,6 +200,7 @@ const RelPage : React.FC = () =>{
                 }else{
                     setBodyRel((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
                     setBodyDownload((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
+                    setGetListaRelRunning(false);
                 }
             }).catch((err)=>{
                 setArrayMonths([]);
@@ -592,7 +594,7 @@ const RelPage : React.FC = () =>{
         }]:[]}>
             <ResponsiveGridContainer >
                 <MainFilter 
-                    filterName={"select_value"}
+                    filterName={"select_value_string"}
                     inputLabel={"Anno"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyRel}
@@ -624,7 +626,7 @@ const RelPage : React.FC = () =>{
                     }}
                 ></MainFilter>
                 <MainFilter 
-                    filterName={"select_value"}
+                    filterName={"select_value_string"}
                     inputLabel={"Tipologia Fattura"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyRel}
@@ -633,6 +635,9 @@ const RelPage : React.FC = () =>{
                     keyValue={"tipologiaFattura"}
                     keyBody={"tipologiaFattura"}
                     arrayValues={tipologiaFatture}
+                    extraCodeOnChange={(e)=>{
+                        setBodyRel((prev)=> ({...prev, ...{tipologiaFattura:e}}));
+                    }}
                 ></MainFilter>
                 <MainFilter 
                     filterName={"select_value"}
@@ -645,8 +650,8 @@ const RelPage : React.FC = () =>{
                     keyBody={"caricata"}
                     arrayValues={statoPdf}
                     extraCodeOnChange={(e)=>{
-                        const value = Number(e);
-                        setBodyRel((prev)=> ({...prev, ...{caricata:value}}));             
+                        const index = statoPdf.findIndex((option) => option === e);
+                        setBodyRel((prev)=> ({...prev, ...{caricata:index}}));
                     }}
                 ></MainFilter>
                 <MainFilter 

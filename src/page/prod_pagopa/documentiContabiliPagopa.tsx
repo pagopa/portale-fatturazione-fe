@@ -18,7 +18,7 @@ import { GlobalContext } from "../../store/context/globalContext";
 import RowBase from "../../components/reusableComponents/grid/gridCollapsible/rowBase";
 import { PathPf } from "../../types/enum";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
-import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
+import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 
 
@@ -32,10 +32,6 @@ const DocumentiContabili:React.FC = () =>{
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 
-    const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-    const checkedIcon = <CheckBoxIcon fontSize="small" />;
-
-    
     const [gridData, setGridData] = useState<DocContabili[]>([]);
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
     const [filtersDownload, setFiltersDownload] = useState<RequestBodyListaDocContabiliPagopa>({
@@ -305,13 +301,13 @@ const DocumentiContabili:React.FC = () =>{
         <MainBoxStyled title={"Documenti contabili"}>
             <ResponsiveGridContainer >
                 <MainFilter 
-                    filterName={"select_value"}
+                    filterName={"select_value_string"}
                     inputLabel={"Anno"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
-                    keyDescription={"anno"}
-                    keyValue={"anno"}
+                    keyDescription={"year"}
+                    keyValue={"year"}
                     keyBody={"year"}
                     arrayValues={yearOnSelect}
                 ></MainFilter>
@@ -334,6 +330,7 @@ const DocumentiContabili:React.FC = () =>{
                         setBodyGetLista((prev) => ({...prev,...{quarters:arrayId}}));
                         setValueQuarters(value);
                     }}
+                    iconMaterial={RenderIcon("date",true)}
                 ></MainFilter>
                 <MainFilter 
                     filterName={"multi_checkbox"}
