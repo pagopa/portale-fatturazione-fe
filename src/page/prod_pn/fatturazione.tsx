@@ -546,13 +546,7 @@ const Fatturazione : React.FC = () =>{
                     tooltipMessage:"Reset",
                     withText:false,
                     colorAction:"error"
-                },{
-                    onButtonClick: () => navigate(PathPf.JSON_TO_SAP),
-                    variant: "outlined",
-                    icon:{name:"iso_share" },
-                    tooltipMessage:"Invia fatture REL firmate",
-                    withText:false
-                },
+                }, 
                 {
                     onButtonClick: () => onButtonSap(0),
                     variant: "outlined",
@@ -560,7 +554,14 @@ const Fatturazione : React.FC = () =>{
                     disabled:disableButtonSap,
                     tooltipMessage:"Invia a SAP",
                     withText:false
-                }
+                },{
+                    onButtonClick: () => navigate(PathPf.JSON_TO_SAP),
+                    variant: "outlined",
+                    icon:{name:"iso_share" },
+                    tooltipMessage:"Invia fatture REL firmate",
+                    withText:false
+                },
+              
                 ]}
             ></FilterActionButtons>
             <ActionTopGrid
