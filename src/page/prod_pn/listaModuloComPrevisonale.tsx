@@ -1,22 +1,48 @@
-import { BodyDownloadModuliCommessa, GridElementListaCommesse } from "../../types/typeListaModuliCommessa";
-import { ManageErrorResponse, Params } from "../../types/typesGeneral";
+import { GridElementListaCommesse } from "../../types/typeListaModuliCommessa";
+import {  Params } from "../../types/typesGeneral";
 import { manageError } from '../../api/api';
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { DataGrid, GridRowParams,GridEventListener,MuiEvent} from '@mui/x-data-grid';
-import { anniMesiModuliCommessa, downloadDocumentoListaModuloCommessaPagoPa, downloadPostalizzazioneReport, getContrattoModuliCommessaPA, listaModuloCommessaPagopa } from "../../api/apiPagoPa/moduloComessaPA/api";
+import { getContrattoModuliCommessaPA } from "../../api/apiPagoPa/moduloComessaPA/api";
 import { saveAs } from "file-saver";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../../types/enum";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
-import { mesiWithZero } from "../../reusableFunction/reusableArrayObj";
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
 import { GlobalContext } from "../../store/context/globalContext";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
-import { headerNameListaModuliCommessaSEND } from "../../assets/configurations/conf_GridListaModuliCommessaSend";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
-import { currentMonth } from "../../reusableFunction/function";
+import { downloadDocumentoListaPrevisionaleaPagoPa, listaModuloCommessaPrevisonalePagopa } from "../../api/apiPagoPa/moduloPrevisionale/api";
+import dayjs from "dayjs";
+import GridCustom from "../../components/reusableComponents/grid/gridCustom";
+import { headersGridPrevisionale } from "../../assets/configurations/conf_GridModComPrevisionale";
+import { mesiGrid } from "../../reusableFunction/reusableArrayObj";
+import { transformDateTime } from "../../reusableFunction/function";
+
+
+export interface BodyPrevisionale {
+    dataInizioModulo: string|null|Date
+    dataFineModulo: string|null|Date
+    idEnti: string[]
+    idTipoContratto: number|null
+    dataInizioContratto: string|null
+    dataFineContratto: string|null
+    page: number
+    size: number
+}
+
+export interface ItemGrid {
+    id:number,
+    ragioneSociale:string,
+    anno:number,
+    mese:number,
+    stato:string,
+    dataContratto:string,
+    dataInserimento:string,
+    dataChiusura:string,
+}
+
 
 
 const ListaCommessaPrevisionale:React.FC = () =>{
@@ -24,44 +50,48 @@ const ListaCommessaPrevisionale:React.FC = () =>{
     const {dispatchMainState,mainState} = globalContextObj;
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
-    const navigate = useNavigate();
 
+    const now = new Date();
+    const defaultDataInizioModulo = new Date(now.getFullYear(), now.getMonth(), 1);
 
-    const handleModifyMainState = (valueObj) => {
-        dispatchMainState({
-            type:'MODIFY_MAIN_STATE',
-            value:valueObj
-        });
-    };
+    const future = new Date(now.getFullYear(), now.getMonth() + 4, 1);
+    const defaultDataFineModulo = new Date(future.getFullYear(), future.getMonth() + 1, 0);
+  
+    console.log({defaultDataInizioModulo,defaultDataFineModulo,D:dayjs(defaultDataInizioModulo).format("YYYY-MM-DD")});
 
-    const [gridData, setGridData] = useState<GridElementListaCommesse[]>([]);
-    const [bodyGetLista, setBodyGetLista] = useState<BodyDownloadModuliCommessa>({idEnti:[],idTipoContratto:null, anno:0, mese:0});
-    const [infoPageListaCom , setInfoPageListaCom] = useState({ page: 0, pageSize: 10 });
+    const [gridData, setGridData] = useState<ItemGrid[]>([]);
+    const [count, setCount] = useState(0);
+    const [bodyGetLista, setBodyGetLista] = useState<BodyPrevisionale>({
+        dataInizioModulo: defaultDataInizioModulo,
+        dataFineModulo: defaultDataFineModulo,
+        idEnti: [],
+        idTipoContratto: null,
+        dataInizioContratto: null,
+        dataFineContratto: null,
+        page: 0,
+        size: 10
+    });
+
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
     const [textValue, setTextValue] = useState('');
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
-    const [bodyDownload, setBodyDownload] = useState<BodyDownloadModuliCommessa>({idEnti:[],idTipoContratto:null, anno:0, mese:0});
     const [showLoading,setShowLoading] = useState(false);
     const [showLoadingLista,setShowLoadingLista] = useState(false);
     const [arrayContratto,setArrayContratto]= useState<{id:number,descrizione:string}[]>([{id:3,descrizione:"Tutti"}]);
-    const [years,setYears] = useState<number[]>([]);
-    const [monthsCommessa,setMonthsCommessa] = useState<{[key:number]:number[]}>({});
-    const [yearMonths, setYearMonths] = useState<number[]>([]);
 
     const [errorData, setErrorData] = useState(false);
     const [errorContratto, setErrorContratto] = useState(false);
 
-    const defaultYearMonth = useRef<{year:number,month:number}>({year:0,month:0});
    
     const { 
         filters,
         updateFilters,
         resetFilters,
         isInitialRender
-    } = useSavedFilters(PathPf.LISTA_MODULICOMMESSA,{});
+    } = useSavedFilters(PathPf.LISTA_MODULICOMMESSA_PREVISONALE,{});
 
     useEffect(()=>{
-        getAnniMesi();
+        getContratti();
     }, []);
 
     useEffect(()=>{
@@ -74,82 +104,21 @@ const ListaCommessaPrevisionale:React.FC = () =>{
     },[textValue]);
 
 
-    const getAnniMesi = async () => {
-        try {
-            const res = await anniMesiModuliCommessa(token, profilo.nonce);
-
-            const allAnni = res.data.map((item: { anno: number }) => item.anno);
-            const anni: number[] = Array.from(new Set(allAnni));
-
-            const mesi = res.data.reduce((acc, { anno, mese }) => {
-                if (!acc[anno]) acc[anno] = [];
-                acc[anno].push(mese);
-                return acc;
-            }, {} as Record<number, number[]>);
-
-            setMonthsCommessa(mesi);
-            setYears(anni);
-            console.log({anni,mesi});
-            let yearSelected;
-
-            if (isInitialRender.current && Object.keys(filters).length > 0) {
-                yearSelected = filters.body.anno;
-                console.log(1);
-            } else {
-                const currentYear = new Date().getFullYear();
-                const currentMonth = new Date().getMonth() + 1;
-                console.log(2);
-                if(anni.includes(currentYear) && currentMonth !== 12){
-                    yearSelected = currentYear;
-                    console.log(3);
-                }else if(anni.includes(currentYear) && anni.includes(currentYear+1) && currentMonth === 12){
-                    yearSelected = currentYear+1;
-                    console.log(4);
-                }
-                
-            }
-
-            setYearMonths(mesi[yearSelected]);
-            let mese_X_plus_one;
-            if(((new Date().getMonth() + 1) === 12) && mesi[yearSelected].includes(1)){
-                console.log(5,mese_X_plus_one);
-                mese_X_plus_one = 1;
-                await getContratti(yearSelected, mese_X_plus_one);
-            }else if(((new Date().getMonth() + 1) !== 12)&& mesi[yearSelected].includes(new Date().getMonth() + 2)){
-                mese_X_plus_one = new Date().getMonth() + 2;
-                await getContratti(yearSelected, mese_X_plus_one);
-            }else{
-                mese_X_plus_one = mesi[yearSelected][0];
-                await getContratti(yearSelected, mese_X_plus_one);
-            }
-            defaultYearMonth.current= {year:yearSelected,month:mese_X_plus_one};
-        } catch (err) {
-            if (err && typeof err === "object") {
-                manageError(err as ManageErrorResponse, dispatchMainState);
-            } else {
-                // fallback for unexpected errors
-                manageError({ message: String(err) } as ManageErrorResponse, dispatchMainState);
-            }
-        }
-    };
 
   
-    const getContratti = async(y,m) => {
-        console.log({y,m});
+    const getContratti = async() => {
+  
         await getContrattoModuliCommessaPA(token, profilo.nonce).then((res)=>{
-            setArrayContratto(prev => [...prev, ...res.data]);
+            setArrayContratto([{id:3,descrizione:"Tutti"}, ...res.data]);
 
             if(isInitialRender.current && Object.keys(filters).length > 0){
                 setBodyGetLista(filters.body);
                 setTextValue(filters.textValue);
                 setValueAutocomplete(filters.valueAutocomplete);
                 getListaCommesse(filters.body);
-                setBodyDownload(filters.body);
-                setInfoPageListaCom({page:filters.page,pageSize:filters.rows});
             }else{
-                setBodyGetLista({...bodyGetLista,anno:y,mese:m});
-                setBodyDownload({...bodyGetLista,anno:y,mese:m});
-                getListaCommesse({...bodyGetLista,anno:y,mese:m});
+              
+                getListaCommesse(bodyGetLista);
                 isInitialRender.current = false;
             }
         }).catch((err)=>{
@@ -160,11 +129,42 @@ const ListaCommessaPrevisionale:React.FC = () =>{
     };
 
     const getListaCommesse = async(body) =>{
+        const bodyFormattedDate = {
+            ...body,
+            dataInizioModulo:body.dataInizioModulo !== null ? dayjs(body.dataInizioModulo).format("YYYY-MM-DD"):null,
+            dataFineModulo: body.dataFineModulo !== null ?dayjs(body.dataFineModulo).format("YYYY-MM-DD"):null,
+            dataInizioContratto:body.dataInizioContratto !== null ?dayjs(body.dataInizioContratto).format("YYYY-MM-DD"):null,
+            dataFineContratto:body.dataFineContratto !== null ?dayjs(body.dataFineContratto).format("YYYY-MM-DD"):null,
+            page:body.page+1
+        };
+
         setShowLoadingLista(true);
-        await listaModuloCommessaPagopa(body ,token, profilo.nonce)
+        await listaModuloCommessaPrevisonalePagopa(bodyFormattedDate ,token, profilo.nonce)
             .then((res)=>{
-               
-                setGridData(res.data);
+                console.log({res});
+                setCount(res.data.count);
+                const finalData = res.data.moduliCommessa.map(el => {
+                    console.log({el});
+                    return {
+                        id:el.ragioneSociale+el.annoValidita+el.meseValidita,
+                        ragioneSociale:el.ragioneSociale,
+                        mese:mesiGrid[el.meseValidita],
+                        stato:el.source||"--",
+                        tipologiaContratto:el.tipologiaContratto||"--",
+                        dataContratto:dayjs(el.dataContratto).format("YYYY-MM-DD"),
+                        dataInserimento:dayjs(el.dataInserimento).format("YYYY-MM-DD"),
+                        dataChiusura:dayjs(el.dataChiusura).format("YYYY-MM-DD"),
+                        totaleNotificheDigitaleNaz:el.totaleNotificheDigitaleNaz !== null && el.totaleNotificheDigitaleNaz !== "" ? el.totaleNotificheDigitaleNaz :"--",
+                        totaleNotificheDigitaleInternaz:el.totaleNotificheDigitaleInternaz !== null && el.totaleNotificheDigitaleInternaz !== "" ? el.totaleNotificheDigitaleInternaz:"--",
+                        totaleNotificheAnalogicoARNaz:el.totaleNotificheAnalogicoARNaz !== null && el.totaleNotificheAnalogicoARNaz !== "" ? el.totaleNotificheAnalogicoARNaz:"--",
+                        totaleNotificheAnalogicoARInternaz:el.totaleNotificheAnalogicoARInternaz !== null && el.totaleNotificheAnalogicoARInternaz !== "" ? el.totaleNotificheAnalogicoARInternaz:"--",
+                        totaleNotificheAnalogico890Naz:(el.totaleNotificheAnalogico890Naz !== null && el.totaleNotificheAnalogico890Naz !== "") ? el.totaleNotificheAnalogico890Naz:"--",
+                        totaleNotifiche:el.totaleNotifiche !== null && el.totaleNotifiche !== "" ? el.totaleNotifiche:"--",
+                    };
+                });
+
+                console.log({finalData});
+                setGridData(finalData);
                 isInitialRender.current = false;
                 setShowLoadingLista(false);
             }).catch((err)=>{
@@ -175,18 +175,7 @@ const ListaCommessaPrevisionale:React.FC = () =>{
             }); 
     };
 
-    const getListaCommesseOnAnnulla = async() =>{
-        setShowLoadingLista(true);
-        
-        await listaModuloCommessaPagopa({descrizione:'',idTipoContratto:null, anno:defaultYearMonth.current.year, mese:defaultYearMonth.current.month} ,token, profilo.nonce)
-            .then((res)=>{
-                setGridData(res.data);
-                setShowLoadingLista(false);
-            }).catch((err)=>{
-                manageError(err,dispatchMainState);
-                setShowLoadingLista(false);
-            }); 
-    };
+    console.log({GRID:gridData});
 
     const listaEntiNotifichePageOnSelect = async () =>{
         if(profilo.auth === 'PAGOPA'){
@@ -200,99 +189,100 @@ const ListaCommessaPrevisionale:React.FC = () =>{
     };
 
     const downloadExelListaCommessa = async () =>{
+        const bodyFormattedDate = {
+            ...bodyGetLista,
+            dataInizioModulo:bodyGetLista.dataInizioModulo !== null ? dayjs(bodyGetLista.dataInizioModulo).format("YYYY-MM-DD"):null,
+            dataFineModulo: bodyGetLista.dataFineModulo !== null ?dayjs(bodyGetLista.dataFineModulo).format("YYYY-MM-DD"):null,
+            dataInizioContratto:bodyGetLista.dataInizioContratto !== null ?dayjs(bodyGetLista.dataInizioContratto).format("YYYY-MM-DD"):null,
+            dataFineContratto:bodyGetLista.dataFineContratto !== null ?dayjs(bodyGetLista.dataFineContratto).format("YYYY-MM-DD"):null,
+            page:bodyGetLista.page+1
+        };
         setShowLoading(true);
-        await downloadDocumentoListaModuloCommessaPagoPa(token, profilo.nonce,bodyDownload)
-            .then((res)=>{
-                let fileName = `Moduli Commessa/${mesiWithZero[Number(bodyDownload.mese) -1]}/${bodyDownload.anno}.xlsx`;
-                if(gridData.length === 1){
-                    fileName = `Modulo Commessa/${gridData[0]?.ragioneSociale} /${mesiWithZero[Number(bodyDownload.mese) -1]}/${bodyDownload.anno}.xlsx`;
-                }
-                saveAs("data:text/plain;base64," + res.data.documento,fileName);
+        await downloadDocumentoListaPrevisionaleaPagoPa(token, profilo.nonce,bodyFormattedDate).then((response) =>{
+            if(response.status !== 200){
                 setShowLoading(false);
-            }).catch((err)=>{
-                setShowLoading(false);
-                manageError(err,dispatchMainState);
-            });
+                manageError({response:{request:{status:Number(response.status)}},message:''},dispatchMainState);
+            }else{
+                return response.blob();
+            }
+        }).then((res)=>{
+            let fileName = `Moduli Commessa Previsonale.xlsx`;
+            if(gridData.length === 1 || bodyGetLista.idEnti.length === 1){
+                fileName = `Modulo Commessa/${gridData[0]?.ragioneSociale}.xlsx`;
+            }
+            saveAs(res,fileName);
+            setShowLoading(false);
+        }).catch((err)=>{
+            setShowLoading(false);
+            manageError(err,dispatchMainState);
+        });
     };
 
 
-    const downloadPostalizzazione = async () => {
-        setShowLoading(true);
-        await  downloadPostalizzazioneReport(token,profilo.nonce, bodyDownload).then(response => response.blob()).then((res)=>{
-            saveAs( res,`Report postalizzazione/${mesiWithZero[Number(bodyDownload.mese) -1]}/${bodyDownload.anno}.xlsx` );
-            setShowLoading(false);
-         
-        }).catch((err)=>{
-            manageError(err,globalContextObj.dispatchMainState);
-            setShowLoading(false);
+    const handleChangePage = (
+        event: React.MouseEvent<HTMLButtonElement> | null,
+        newPage: number,
+    ) => {
+
+        setBodyGetLista((prev)=> {
+            const newBody = {...prev,page:newPage};
+            console.log({newBody});
+            getListaCommesse(newBody);
+            updateFilters(
+                {
+                    body:newBody,
+                    pathPage:PathPf.LISTA_MODULICOMMESSA_PREVISONALE,
+                });
+            return newBody;
         }); 
     };
-
-    let columsSelectedGrid = '';
-    const handleOnCellClick = (params:Params) =>{
-        columsSelectedGrid  = params.field;
-    };
-
-    const handleEvent: GridEventListener<'rowClick'> = (
-        params:GridRowParams,
-        event: MuiEvent<React.MouseEvent<HTMLElement>>,
+    const handleChangeRowsPerPage = (
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
-    
-        event.preventDefault();
-        // l'evento verrà eseguito solo se l'utente farà il clik sul  mese e action
-        if(columsSelectedGrid  === 'regioneSociale' || columsSelectedGrid  === 'action' ){
-            handleModifyMainState({infoTrimestreComSelected:{
-                meseCommessaSelected:params.row.meseValidita,
-                annoCommessaSelectd:params.row.annoValidita,
-                idTipoContratto: params.row.idTipoContratto,
-                prodotto:params.row.prodotto,
-                idEnte:params.row.idEnte,
-                nomeEnteClickOn:params.row.ragioneSociale
-
-            }});
-            navigate(PathPf.MODULOCOMMESSA);
-        }
-    };
-
-    const onChangePageOrRowGrid = (e) => {
-        updateFilters(
-            {
-                body:bodyDownload,
-                pathPage:PathPf.LISTA_MODULICOMMESSA,
-                textValue,
-                valueAutocomplete,
-                page:e.page,
-                rows:e.pageSize
-            });
-        setInfoPageListaCom(e);
+        setBodyGetLista((prev)=> {
+            const newBody = {...prev,page:0,size:parseInt(event.target.value, 10)};
+            getListaCommesse(newBody);
+            updateFilters(
+                {
+                    body:newBody,
+                    pathPage:PathPf.LISTA_MODULICOMMESSA_PREVISONALE,
+                });
+            return newBody;
+        }); 
     };
 
     const clearOnChangeFilter = () => {
         setGridData([]);
-        setInfoPageListaCom({ page: 0, pageSize: 10 });  
     };
 
     const onButtonFiltra = () => {
-        setInfoPageListaCom({ page: 0, pageSize: 10 });
-        getListaCommesse(bodyGetLista);
-        setBodyDownload(bodyGetLista);
+        const bodyToSet = {...bodyGetLista, page: 0,
+            size: 10};
+        getListaCommesse(bodyToSet);
         updateFilters(
             {
-                body:bodyGetLista,
-                pathPage:PathPf.LISTA_MODULICOMMESSA,
+                body:bodyToSet,
+                pathPage:PathPf.LISTA_MODULICOMMESSA_PREVISONALE,
                 textValue,
                 valueAutocomplete,
-                page:0,
-                rows:10
             });
     };
 
     const onButtonAnnulla = () =>{
-        console.log(defaultYearMonth);
-        setInfoPageListaCom({ page: 0, pageSize: 10 });
-        getListaCommesseOnAnnulla();
-        setBodyGetLista({idEnti:[],idTipoContratto:null, anno:defaultYearMonth.current.year, mese:defaultYearMonth.current.month});
-        setBodyDownload({idEnti:[],idTipoContratto:null, anno:defaultYearMonth.current.year, mese:defaultYearMonth.current.month});
+        const defaultBody = {
+            dataInizioModulo: defaultDataInizioModulo,
+            dataFineModulo: defaultDataFineModulo,
+            idEnti: [],
+            idTipoContratto: null,
+            dataInizioContratto: null,
+            dataFineContratto: null,
+            page: 0,
+            size: 10
+        };
+
+        setBodyGetLista(defaultBody);
+        getListaCommesse(defaultBody);
+  
         setDataSelect([]);
         setValueAutocomplete([]);
         resetFilters();
@@ -311,12 +301,12 @@ const ListaCommessaPrevisionale:React.FC = () =>{
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
-                    keyValue={"init"}
-                    keyDescription=""
-                    keyCompare={"end"}
+                    keyValue={"dataInizioModulo"}
+                    keyDescription="start"
+                    keyCompare={"dataFineModulo"}
                     error={errorData}
                     setError={setErrorData}
-                    keyBody="init"
+                    keyBody="dataInizioModulo"
                 ></MainFilter>
                 <MainFilter 
                     filterName={"date_from_to"}
@@ -324,12 +314,12 @@ const ListaCommessaPrevisionale:React.FC = () =>{
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
-                    keyValue={"end"}
-                    keyDescription=""
-                    keyCompare={"init"}
+                    keyValue={"dataFineModulo"}
+                    keyDescription="end"
+                    keyCompare={"dataInizioModulo"}
                     error={errorData}
                     setError={setErrorData}
-                    keyBody="end"
+                    keyBody="dataFineModulo"
                 ></MainFilter>    
                 <MainFilter 
                     filterName={"date_from_to"}
@@ -337,12 +327,12 @@ const ListaCommessaPrevisionale:React.FC = () =>{
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
-                    keyValue={"init"}
-                    keyDescription=""
-                    keyCompare={"end"}
+                    keyValue={"dataInizioContratto"}
+                    keyDescription="start"
+                    keyCompare={"dataFineContratto"}
                     error={errorContratto}
                     setError={setErrorContratto}
-                    keyBody="init"
+                    keyBody="dataInizioContratto"
                 ></MainFilter>
                 <MainFilter 
                     filterName={"date_from_to"}
@@ -350,12 +340,12 @@ const ListaCommessaPrevisionale:React.FC = () =>{
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
-                    keyValue={"end"}
-                    keyDescription=""
-                    keyCompare={"init"}
+                    keyValue={"dataFineContratto"}
+                    keyDescription="end"
+                    keyCompare={"dataInizioContratto"}
                     error={errorContratto}
                     setError={setErrorContratto}
-                    keyBody="end"
+                    keyBody="dataFineContratto"
                 ></MainFilter>
                 <MainFilter 
                     filterName={"multi_checkbox"}
@@ -393,6 +383,7 @@ const ListaCommessaPrevisionale:React.FC = () =>{
                 onButtonFiltra={onButtonFiltra} 
                 onButtonAnnulla={onButtonAnnulla} 
                 statusAnnulla={statusAnnulla} 
+                disabled={errorContratto || errorData}
             ></FilterActionButtons>
             <ActionTopGrid
                 actionButtonRight={[{
@@ -402,29 +393,20 @@ const ListaCommessaPrevisionale:React.FC = () =>{
                     icon:{name:"download"},
                     disabled:(gridData.length === 0)
                 }]}/>
+            <GridCustom
+                nameParameterApi='idPrevisonale'
+                elements={gridData}
+                changePage={handleChangePage}
+                changeRow={handleChangeRowsPerPage} 
+                total={count}
+                page={bodyGetLista.page}
+                rows={bodyGetLista.size}
+                headerNames={headersGridPrevisionale}
+                disabled={showLoadingLista}
+                widthCustomSize="2000px"
+                body={bodyGetLista}
+            ></GridCustom>
           
-            <div className="mt-1 mb-5" style={{ width: '100%'}}>
-                <DataGrid sx={{
-                    height:'400px',
-                    '& .MuiDataGrid-virtualScroller': {
-                        backgroundColor: 'white',
-                    },
-                    "& .MuiDataGrid-row": {
-                        borderTop: "4px solid #F2F2F2",
-                        borderBottom: "2px solid #F2F2F2",
-                    }
-                }}
-                rowHeight={80}
-                rows={gridData} 
-                columns={headerNameListaModuliCommessaSEND}
-                getRowId={(row) => `${row.idEnte}_${row.meseValidita}_${row.annoValidita}`}
-                onRowClick={handleEvent}
-                onCellClick={handleOnCellClick}
-                onPaginationModelChange={(e)=> onChangePageOrRowGrid(e)}
-                paginationModel={infoPageListaCom}
-                pageSizeOptions={[10, 25, 50,100]}
-                />
-            </div>
             <ModalLoading 
                 open={showLoading} 
                 setOpen={setShowLoading}

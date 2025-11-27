@@ -326,7 +326,7 @@ const ProcessiOrchestartore:React.FC = () =>{
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
                     keyValue={"init"}
-                    keyDescription=""
+                    keyDescription="start"
                     keyCompare={"end"}
                     error={error}
                     setError={setError}
@@ -339,7 +339,7 @@ const ProcessiOrchestartore:React.FC = () =>{
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
                     keyValue={"end"}
-                    keyDescription=""
+                    keyDescription="end"
                     keyCompare={"init"}
                     error={error}
                     setError={setError}

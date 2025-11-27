@@ -174,7 +174,7 @@ const SideNavSend : React.FC = () => {
                             <ListItemIcon>
                                 <ViewModuleIcon fontSize="inherit" />
                             </ListItemIcon>
-                            <ListItemText primary="Modulo commessa" />
+                            <ListItemText primary="Modulo commessa fatturabile" />
                         </ListItemButton>
                     </List>
                 </Collapse>

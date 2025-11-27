@@ -268,37 +268,40 @@ const MainFilter = <T,>({
                     }            
                 /> </MainBoxContainer>);
         case "date_from_to": 
-            console.log({keyDescription,keyValue});
+            
             return ( !hidden && keyCompare && <MainBoxContainer> 
                 <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it}>
                     <DesktopDatePicker
-                        
                         label={inputLabel}
                         value={(body[keyValue] === ''||body[keyValue] === null) ? null : new Date(body[keyValue])}
                         onChange={(e:any | null)  =>{
                             if(e !== null && !isDateInvalid(e)){
-                                console.log(1);
+                                console.log({keyDescription,keyValue},"ZORRO",body[keyValue],{format:formatDateToValidation(e)});
+                                console.log(6,{e});
                                 setBody(prev => ({...prev,...{[keyValue]:e}}));
-                                if(keyValue === "init" && keyCompare && body[keyCompare] !== null && ((formatDateToValidation(e)||0) > (formatDateToValidation(body[keyCompare])||0))){
+                                if(keyDescription === "start" && keyCompare && body[keyCompare] !== null && ((formatDateToValidation(e)||0) > (formatDateToValidation(body[keyCompare])||0))){
                                     setError && setError(true);
-                                    console.log(1);
-                                }else if(keyValue === "end" && keyCompare && body[keyCompare] !== null && ((formatDateToValidation(e)||0) < (formatDateToValidation(body[keyCompare])||0))){
+                                    console.log(1,{e});
+                                }else if(keyDescription === "end" && keyCompare && body[keyCompare] !== null && ((formatDateToValidation(e)||0) < (formatDateToValidation(body[keyCompare])||0))){
                                     setError && setError(true);
-                                    console.log(2);
-                                }else if(keyValue === "init" && body[keyCompare] === null && e !== null){
-                                    setError && setError(false);
-                                    console.log(5);
-                                }else if(keyValue === "end" && body[keyCompare] === null && e !== null){
+                                    console.log(2,{e});
+                                }else if( body[keyCompare] === null && e !== null){
                                     setError && setError(true);
-                                    console.log(3);
+                                    console.log(3,{e});
                                 }else if(keyCompare){
                                     setError && setError(false);
-                                    console.log(4);
+                                    console.log(4,{e});
                                 }
                             }else{
                                 setBody(prev => ({...prev,...{[keyValue]:null}}));
-                                setError && setError(false);
-                                console.log(5);
+                                if((body[keyCompare] !== null  && (e === null || e instanceof Date && isNaN(e.getTime())))){
+                                    setError && setError(true);
+                                    console.log(8);
+                                }else{
+                                    setError && setError(false);
+                                    console.log(7,{e},e === "Invalid Date",isNaN(e.getTime()));
+                                }
+                               
                             }
                             clearOnChangeFilter();
                         }}

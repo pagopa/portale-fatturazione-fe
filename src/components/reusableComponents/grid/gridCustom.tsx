@@ -17,6 +17,7 @@ import RowContestazioni from "./gridCustomBase/rowContestazioni";
 import { DataGridOrchestratore } from "../../../page/prod_pn/processiOrchestratore";
 import { Whitelist } from "../../../page/prod_pn/whiteList";
 import DefaultRow from "./gridCustomBase/rowDefault";
+import RowModCommessaPrevisionale from "./gridCustomBase/rowModCommessaPrevisonale";
 interface GridCustomProps {
     elements:NotificheList[]|Rel[]|GridElementListaPsp[]|ContestazioneRowGrid[]|any
     changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
@@ -113,7 +114,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
     };
 
    
-   
+
     return (
         <div>
             {nameParameterApi === "idWhite" && <EnhancedTableCustom  setOpenModal={setOpenModalDelete} setOpenModalAdd={setOpenModalAdd} selected={selected||[]} buttons={buttons} ></EnhancedTableCustom>}
@@ -123,7 +124,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                         <TableHead sx={{backgroundColor:'#f2f2f2'}}>
                             <TableRow>
                                 {headerNames.map((el,i)=>{
-                                    if(nameParameterApi === 'idOrchestratore' || nameParameterApi === "asyncDocEnte" ){ //|| nameParameterApi === "modComTrimestrale"
+                                    if(nameParameterApi === 'idOrchestratore' || nameParameterApi === "asyncDocEnte"|| nameParameterApi === "idPrevisonale" ){ //|| nameParameterApi === "modComTrimestrale"
                                         return(
                                             <TableCell key={Math.random()} align={el.align} width={el.width}>{el.label}
                                                 {el.headerAction &&
@@ -179,7 +180,10 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                     }else if(nameParameterApi === "modComTrimestrale"){
                                         return  <DefaultRow handleClickOnGrid={handleClickOnGrid} element={element} sliced={sliced} apiGet={()=> console.log("go to details")} nameParameterApi={"test"} headerNames={headerNames}></DefaultRow>;
                                         //return <RowModComTrimestreEnte key={element.id} sliced={sliced} headerNames={headerNames} handleClickOnGrid={handleClickOnGrid} element={element}></RowModComTrimestreEnte>;
+                                    }else if(nameParameterApi === "idPrevisonale"){
+                                        return <RowModCommessaPrevisionale key={element.id} sliced={sliced} headerNames={headerNames}></RowModCommessaPrevisionale>;
                                     }else{
+                                        console.log({XX:"dentro"});
                                         return (
                                             <TableRow sx={{
                                                 height: '80px',
@@ -194,7 +198,15 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                                         const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
                                                         const valueEl = (i === 0 && value?.toString().length > 30) ? value?.toString().slice(0, 30) + '...' : value;
                                                         return (
-                                                            <Tooltip key={Math.random()} title={(value === "--" || nameParameterApi === "idNotifica"||valueEl?.length < 30||((nameParameterApi=== "idTestata"&& i === 0 && valueEl?.length < 30) ||nameParameterApi=== "idTestata"&& i !== 0 )) ?null:value}>
+                                                            <Tooltip key={Math.random()} 
+                                                                title={
+                                                                    (value === "--" 
+                                                                || nameParameterApi === "idNotifica"
+                                                                || valueEl?.length < 30
+                                                                ||((nameParameterApi=== "idTestata"&& i === 0 && valueEl?.length < 30) 
+                                                                ||nameParameterApi=== "idTestata"&& i !== 0 ))
+                                                                        ?null
+                                                                        :value}>
                                                                 <TableCell
                                                                     align={(nameParameterApi === "modComTrimestrale"||i !== 0)?"center":"left"}
                                                                     sx={cssFirstColum} 

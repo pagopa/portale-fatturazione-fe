@@ -301,7 +301,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
     console.log({yearMonths});
 
     return (
-        <MainBoxStyled title={"Lista Modulo Commessa"}>
+        <MainBoxStyled title={"Lista Modulo Commessa Fatturabile"}>
             <ResponsiveGridContainer >
                 <MainFilter 
                     filterName={"select_value_string"}

@@ -46,7 +46,7 @@ export  const MainBoxStyled = ({
         <Grid
             container
             spacing={2}
-            sx={{ alignItems: "center" }}
+            sx={{ alignItems: "center",mt:1 }}
         >
             {/* Typography — 9 columns */}
             <Grid item xs={12} md={9}>
@@ -120,12 +120,14 @@ export const FilterActionButtons = ({
     onButtonFiltra,
     onButtonAnnulla,
     statusAnnulla,
+    disabled,
     actionButton,
     annullaButtonOptional
 }:{
     onButtonFiltra:()=> void,
     onButtonAnnulla:() => void,
     statusAnnulla:string,
+    disabled?:boolean
     annullaButtonOptional?:{
         onButtonClick:()=> void,
         variant:"text" | "outlined" | "contained",
@@ -170,11 +172,11 @@ export const FilterActionButtons = ({
                             flexWrap: "wrap",
                         }}
                     >
-                        <CustomButton onClick={onButtonFiltra} variant="contained">
+                        <CustomButton onClick={onButtonFiltra} variant="contained" disabled={disabled}>
           Filtra
                         </CustomButton>
                         {statusAnnulla !== "hidden" && !annullaButtonOptional && (
-                            <CustomButton onClick={onButtonAnnulla} variant="text">
+                            <CustomButton onClick={onButtonAnnulla} variant="text" disabled={disabled}>
             Annulla filtri
                             </CustomButton>
                         )}
@@ -207,6 +209,7 @@ export const FilterActionButtons = ({
                                     onClick={action.onButtonClick}
                                     withText={action.withText}
                                     color={action.colorAction ? "error":undefined}
+                                    disabled={action.disabled}
                                 >
                                     {action.icon && RenderIcon(action.icon.name, false)} 
                                     {action.label}
