@@ -71,7 +71,7 @@ export  const MainBoxStyled = ({
                 }}
             >
                 {actionButton?.map((action, index) => (
-                    <Tooltip  title={action?.tooltipMessage ? action?.tooltipMessage:null}>
+                    <Tooltip key={index}  title={action?.tooltipMessage ? action?.tooltipMessage:null}>
                         <CustomButton
                             sx={{marginRight:"20%"}}
                             key={index}
@@ -149,7 +149,7 @@ export const FilterActionButtons = ({
     }[]
 }) =>  {
 
-    // console.log({actionButton});
+  
     return (
         <ResponsiveGridContainer>
             <Grid item xs={12}>
@@ -240,7 +240,7 @@ export const ActionTopGrid = ({actionButtonRight,actionButtonLeft}:{
         disabled?:boolean
     }[]
 }) => {
-    console.log({actionButtonRight});
+
     return (
         <ResponsiveGridContainer>
             <Grid item xs={12}>
@@ -270,7 +270,7 @@ export const ActionTopGrid = ({actionButtonRight,actionButtonLeft}:{
                                 onClick={action.onButtonClick}
                                 startIcon={action.icon && RenderIcon(action.icon.name)}
                                 disabled={action.disabled}
-                                variant={action.variant}
+                                variant={"text"}
                             >
                                 {action.label}
                             </CustomButton>
@@ -291,7 +291,7 @@ export const ActionTopGrid = ({actionButtonRight,actionButtonLeft}:{
                         {actionButtonRight?.map((action, index) => (
                             <CustomButton
                                 key={index}
-                                variant={action.variant}
+                                variant={"text"}
                                 onClick={action.onButtonClick}
                                 startIcon={action.icon && RenderIcon(action.icon.name)}
                                 disabled={action.disabled}

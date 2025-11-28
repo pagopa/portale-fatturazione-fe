@@ -133,8 +133,8 @@ export interface BodyDownloadListaCommesse{
 }
 
 export interface BodyListaNotifiche{
-    anno: number,
-    mese: number,
+    anno: number|null,
+    mese: number|null,
     prodotto: string,
     cap: string|null ,
     profilo: string,
@@ -148,8 +148,8 @@ export interface BodyListaNotifiche{
 }
 
 export interface BodyListaNotificheSelfcare{
-    anno: number,
-    mese: number,
+    anno: number|null,
+    mese: number|null,
     prodotto: string,
     cap: string|null ,
     profilo: string,

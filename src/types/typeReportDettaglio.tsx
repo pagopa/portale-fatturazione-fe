@@ -95,8 +95,8 @@ export interface Contestazione {
         dataInserimentoConsolidatore: string,
         dataModificaConsolidatore: string,
         dataChiusura: string,
-        anno: number,
-        mese: number
+        anno: number|null,
+        mese: number|null
     }
 
   

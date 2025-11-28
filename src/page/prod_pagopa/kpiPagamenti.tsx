@@ -262,7 +262,7 @@ const KpiPagamenti:React.FC = () =>{
         {name:"Totale sconto",align:"center",id:6},
         {name:"Lista KPI",align:"center",id:7},
         {name:"Arrow",align:"center",id:8}];
-    console.log({bodyGetLista});
+   
     return(
         <MainBoxStyled title={"KPI Pagamenti"} actionButton={[{
             onButtonClick: () => setShowPopUpMatrice(true),

@@ -70,7 +70,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
         return () => clearTimeout(timer);
     },[textValue]);
 
-    console.log({bodyGetLista});
+
     const getAnniMesi = async () => {
         try {
             const res = await anniMesiModuliCommessa(token, profilo.nonce);
@@ -86,22 +86,22 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
 
             setMonthsCommessa(mesi);
             setYears(anni);
-            console.log({anni,mesi});
+        
             let yearSelected;
 
             if (isInitialRender.current && Object.keys(filters).length > 0) {
                 yearSelected = filters.body.anno;
-                console.log(1);
+            
             } else {
                 const currentYear = new Date().getFullYear();
                 const currentMonth = new Date().getMonth() + 1;
-                console.log(2);
+          
                 if(anni.includes(currentYear) && currentMonth !== 12){
                     yearSelected = currentYear;
-                    console.log(3);
+              
                 }else if(anni.includes(currentYear) && anni.includes(currentYear+1) && currentMonth === 12){
                     yearSelected = currentYear+1;
-                    console.log(4);
+               
                 }
                 
             }
@@ -109,7 +109,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
             setYearMonths(mesi[yearSelected]);
             let mese_X_plus_one;
             if(((new Date().getMonth() + 1) === 12) && mesi[yearSelected].includes(1)){
-                console.log(5,mese_X_plus_one);
+               
                 mese_X_plus_one = 1;
                 await getContratti(yearSelected, mese_X_plus_one);
             }else if(((new Date().getMonth() + 1) !== 12)&& mesi[yearSelected].includes(new Date().getMonth() + 2)){
@@ -245,7 +245,8 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                 idTipoContratto: params.row.idTipoContratto,
                 prodotto:params.row.prodotto,
                 idEnte:params.row.idEnte,
-                nomeEnteClickOn:params.row.ragioneSociale
+                nomeEnteClickOn:params.row.ragioneSociale,
+                from:PathPf.LISTA_MODULICOMMESSA
 
             }});
             navigate(PathPf.MODULOCOMMESSA);

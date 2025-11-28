@@ -64,7 +64,7 @@ const Fatturazione : React.FC = () =>{
     const [dateTipologie, setDateTipologie] = useState<string[]>([]);
     const [valueMulitselectDateTipologie, setValueMultiselectDateTipologie] = useState<string[]>([]);
     const [arrayContratti, setArrayContratto] = useState<{id:number,descrizione:string}[]>([{id:3,descrizione:"Tutti"}]);
-    console.log({disableButtonSap});
+   
     const [bodyFatturazione, setBodyFatturazione] = useState<BodyFatturazione>({
         anno:0,
         mese:0,
@@ -198,7 +198,7 @@ const Fatturazione : React.FC = () =>{
                     return el.tipologiaFattura+"-"+el.dataFattura?.split("T")[0];
                 });
                 setDateTipologie(result);
-                console.log({result});
+            
                 if(isInitialRender.current && Object.keys(filters).length > 0){
                     setValueMultiselectDateTipologie(filters.valueMulitselectDateTipologie);
                 }
@@ -407,7 +407,7 @@ const Fatturazione : React.FC = () =>{
         });
     };
 
-    console.log({bodyFatturazione});
+
     return (
         <MainBoxStyled title={"Documenti emessi"}>
             <ResponsiveGridContainer >
@@ -457,7 +457,7 @@ const Fatturazione : React.FC = () =>{
                     keyBody={"cancellata"}
                     arrayValues={[{id:1,descrizione:"Fatturate"},{id:2,descrizione:"Non fatturate"}]}
                     extraCodeOnChange={(e)=>{
-                        console.log({e});
+                      
                         const value = Number(e) === 1 ? false : true;
                         setBodyFatturazione((prev)=>({...prev,...{cancellata:value,tipologiaFattura:[]}}));
                         getTipologieFatturazione(bodyFatturazione.anno,bodyFatturazione.mese,value);
@@ -511,7 +511,7 @@ const Fatturazione : React.FC = () =>{
                     keyValue={"tipologiaFattura"}
                     keyBody={"dataFattura"}
                     extraCodeOnChangeArray={(e)=>{
-                        console.log(e);
+                      
                         setValueMultiselectDateTipologie(e);
                     }}
                     iconMaterial={RenderIcon("date",true)}

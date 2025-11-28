@@ -57,7 +57,14 @@ const SideNavSend : React.FC = () => {
         if(currentLocation === PathPf.DATI_FATTURAZIONE){
             setSelectedIndex(0);
         }else if(currentLocation === PathPf.MODULOCOMMESSA){
-            setSelectedIndex(1);
+            if( mainState.infoTrimestreComSelected?.from === PathPf.LISTA_MODULICOMMESSA_PREVISONALE){
+                console.log("22222222");
+                setSelectedIndex(12);
+            }else{
+                console.log("33333333",mainState.infoTrimestreComSelected);
+                setSelectedIndex(1);
+            }
+            
         }else if(currentLocation === PathPf.LISTA_DATI_FATTURAZIONE){
             setSelectedIndex(0);
         }else if(currentLocation === PathPf.LISTA_MODULICOMMESSA){
@@ -93,7 +100,7 @@ const SideNavSend : React.FC = () => {
             setSelectedIndex(10);
         }else if(currentLocation === PathPf.ORCHESTRATORE){
             setSelectedIndex(11);
-        }else if(currentLocation === PathPf.LISTA_MODULICOMMESSA_PREVISONALE){
+        }else if(currentLocation === PathPf.LISTA_MODULICOMMESSA_PREVISONALE ){
             setSelectedIndex(12);
         }
 
@@ -106,7 +113,7 @@ const SideNavSend : React.FC = () => {
         if(openContestazioni && (currentLocation !== PathPf.STORICO_CONTEST && currentLocation !== PathPf.LISTA_NOTIFICHE && currentLocation !== PathPf.STORICO_DETTAGLIO_CONTEST && currentLocation !== PathPf.INSERIMENTO_CONTESTAZIONI )){
             setOpenContestazioni(false);
         }
-        if(openModPrevisonale && (currentLocation !== PathPf.LISTA_MODULICOMMESSA_PREVISONALE && currentLocation !== PathPf.LISTA_MODULICOMMESSA )){
+        if(openModPrevisonale && (currentLocation !== PathPf.LISTA_MODULICOMMESSA_PREVISONALE && currentLocation !== PathPf.LISTA_MODULICOMMESSA && currentLocation !== PathPf.MODULOCOMMESSA )){
             setOpenModPrevisonale(false);
         }
 

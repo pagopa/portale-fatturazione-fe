@@ -45,7 +45,7 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
     }else if(row.inviata === 3){
         tooltipObj = {label:'Cancellata',title:'La fattura è stata cancellata',color:'#86E1FD'};
     }
-    console.log({tooltipObj});
+ 
     return(
         
         <TableBody sx={{minHeight:"100px"}}>

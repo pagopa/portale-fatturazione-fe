@@ -213,9 +213,6 @@ const Accertamenti : React.FC = () =>{
         // l'evento verrà eseguito solo se l'utente farà il clik sul 
         
     };
-    
-  
-    console.log({bodyAccertamenti});
 
     return (
         <MainBoxStyled title={"Documenti contabili"}>

@@ -46,7 +46,7 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
     const [textValue, setTextValue] = useState('');
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
     const [showLoading,setShowLoading] = useState(false);
-    console.log({valueAutocomplete,textValue});
+
     const { 
         filters,
         updateFilters,

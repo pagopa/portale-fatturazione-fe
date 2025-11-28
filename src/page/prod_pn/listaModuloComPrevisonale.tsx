@@ -19,6 +19,7 @@ import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import { headersGridPrevisionale } from "../../assets/configurations/conf_GridModComPrevisionale";
 import { mesiGrid } from "../../reusableFunction/reusableArrayObj";
 import { transformDateTime } from "../../reusableFunction/function";
+import { GridEventListener, GridRowParams, MuiEvent } from "@mui/x-data-grid";
 
 
 export interface BodyPrevisionale {
@@ -32,7 +33,7 @@ export interface BodyPrevisionale {
     size: number
 }
 
-export interface ItemGrid {
+export interface ItemGridPrevisonale {
     id:number,
     ragioneSociale:string,
     anno:number,
@@ -50,6 +51,14 @@ const ListaCommessaPrevisionale:React.FC = () =>{
     const {dispatchMainState,mainState} = globalContextObj;
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
+    const navigate = useNavigate();
+
+    const handleModifyMainState = (valueObj) => {
+        dispatchMainState({
+            type:'MODIFY_MAIN_STATE',
+            value:valueObj
+        });
+    };
 
     const now = new Date();
     const defaultDataInizioModulo = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -57,9 +66,9 @@ const ListaCommessaPrevisionale:React.FC = () =>{
     const future = new Date(now.getFullYear(), now.getMonth() + 4, 1);
     const defaultDataFineModulo = new Date(future.getFullYear(), future.getMonth() + 1, 0);
   
-    console.log({defaultDataInizioModulo,defaultDataFineModulo,D:dayjs(defaultDataInizioModulo).format("YYYY-MM-DD")});
+ 
 
-    const [gridData, setGridData] = useState<ItemGrid[]>([]);
+    const [gridData, setGridData] = useState<ItemGridPrevisonale[]>([]);
     const [count, setCount] = useState(0);
     const [bodyGetLista, setBodyGetLista] = useState<BodyPrevisionale>({
         dataInizioModulo: defaultDataInizioModulo,
@@ -141,12 +150,17 @@ const ListaCommessaPrevisionale:React.FC = () =>{
         setShowLoadingLista(true);
         await listaModuloCommessaPrevisonalePagopa(bodyFormattedDate ,token, profilo.nonce)
             .then((res)=>{
-                console.log({res});
+           
                 setCount(res.data.count);
                 const finalData = res.data.moduliCommessa.map(el => {
-                    console.log({el});
+              
                     return {
                         id:el.ragioneSociale+el.annoValidita+el.meseValidita,
+                        idTipoContratto: el.idTipoContratto,
+                        annoValidita:el.annoValidita,
+                        meseValidita:el.meseValidita,
+                        prodotto:el.prodotto,
+                        idEnte:el.idEnte,
                         ragioneSociale:el.ragioneSociale,
                         mese:mesiGrid[el.meseValidita],
                         stato:el.source||"--",
@@ -160,22 +174,25 @@ const ListaCommessaPrevisionale:React.FC = () =>{
                         totaleNotificheAnalogicoARInternaz:el.totaleNotificheAnalogicoARInternaz !== null && el.totaleNotificheAnalogicoARInternaz !== "" ? el.totaleNotificheAnalogicoARInternaz:"--",
                         totaleNotificheAnalogico890Naz:(el.totaleNotificheAnalogico890Naz !== null && el.totaleNotificheAnalogico890Naz !== "") ? el.totaleNotificheAnalogico890Naz:"--",
                         totaleNotifiche:el.totaleNotifiche !== null && el.totaleNotifiche !== "" ? el.totaleNotifiche:"--",
+                        action:""
                     };
                 });
 
-                console.log({finalData});
+             
                 setGridData(finalData);
                 isInitialRender.current = false;
                 setShowLoadingLista(false);
             }).catch((err)=>{
                 setGridData([]);
+                setCount(0);
+                setBodyGetLista((prev)=> ({...prev,page:0}));
                 manageError(err,dispatchMainState);
                 isInitialRender.current = false;
                 setShowLoadingLista(false);
             }); 
     };
 
-    console.log({GRID:gridData});
+
 
     const listaEntiNotifichePageOnSelect = async () =>{
         if(profilo.auth === 'PAGOPA'){
@@ -206,9 +223,9 @@ const ListaCommessaPrevisionale:React.FC = () =>{
                 return response.blob();
             }
         }).then((res)=>{
-            let fileName = `Moduli Commessa Previsonale.xlsx`;
+            let fileName = `Moduli Commessa Previsonale/dal/${bodyGetLista.dataInizioModulo}/al/${bodyGetLista.dataFineModulo}.xlsx`;
             if(gridData.length === 1 || bodyGetLista.idEnti.length === 1){
-                fileName = `Modulo Commessa/${gridData[0]?.ragioneSociale}.xlsx`;
+                fileName = `Modulo Commessa/${gridData[0]?.ragioneSociale}/dal/${bodyGetLista.dataInizioModulo}/al/${bodyGetLista.dataFineModulo}.xlsx`;
             }
             saveAs(res,fileName);
             setShowLoading(false);
@@ -226,7 +243,7 @@ const ListaCommessaPrevisionale:React.FC = () =>{
 
         setBodyGetLista((prev)=> {
             const newBody = {...prev,page:newPage};
-            console.log({newBody});
+
             getListaCommesse(newBody);
             updateFilters(
                 {
@@ -253,6 +270,7 @@ const ListaCommessaPrevisionale:React.FC = () =>{
 
     const clearOnChangeFilter = () => {
         setGridData([]);
+        setCount(0);
     };
 
     const onButtonFiltra = () => {
@@ -282,14 +300,35 @@ const ListaCommessaPrevisionale:React.FC = () =>{
 
         setBodyGetLista(defaultBody);
         getListaCommesse(defaultBody);
-  
         setDataSelect([]);
         setValueAutocomplete([]);
         resetFilters();
     };
 
+    const handleEvent = (el) => {
+        handleModifyMainState({infoTrimestreComSelected:{
+            meseCommessaSelected:el.meseValidita,
+            annoCommessaSelectd:el.annoValidita,
+            idTipoContratto: el.idTipoContratto,
+            prodotto:el.prodotto,
+            idEnte:el.idEnte,
+            nomeEnteClickOn:el.ragioneSociale,
+            from:PathPf.LISTA_MODULICOMMESSA_PREVISONALE
+        }});
 
-    const statusAnnulla = (bodyGetLista.idTipoContratto !== null || bodyGetLista.idEnti.length > 0)? "show":"hidden";
+        navigate(PathPf.MODULOCOMMESSA);
+        
+    };
+
+
+    const statusAnnulla = (
+        bodyGetLista.idTipoContratto !== null ||
+         bodyGetLista.idEnti.length > 0||
+        bodyGetLista.dataInizioModulo !== defaultDataInizioModulo||
+        bodyGetLista.dataFineModulo !== defaultDataFineModulo || 
+        bodyGetLista.dataInizioContratto !== null ||
+        bodyGetLista.dataFineModulo !== null
+    )? "show":"hidden";
 
 
     return (
@@ -401,7 +440,7 @@ const ListaCommessaPrevisionale:React.FC = () =>{
                 total={count}
                 page={bodyGetLista.page}
                 rows={bodyGetLista.size}
-                headerNames={headersGridPrevisionale}
+                headerNames={headersGridPrevisionale(handleEvent)}
                 disabled={showLoadingLista}
                 widthCustomSize="2000px"
                 body={bodyGetLista}

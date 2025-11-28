@@ -134,14 +134,14 @@ const MainFilter = <T,>({
                                 setBody((prev)=> ({...prev, ...{[keyBody]:e.target.value}}));
                             }
                         }}
-                        value={(valueOnBodydifferentFromRealValue)||defaultValue}
+                        value={(valueOnBodydifferentFromRealValue)??defaultValue}
                     >
                         {arrayValues?.map((el) => (
                             <MenuItem
                                 key={Math.random()}
-                                value={el[keyValue]||''}
+                                value={el[keyValue]}
                             >
-                                {el[keyDescription]||""}
+                                {el[keyDescription]??""}
                             </MenuItem>
                         ))}
                     </Select>
@@ -163,23 +163,20 @@ const MainFilter = <T,>({
                                 setBody((prev)=> ({...prev, ...{[keyBody]:e.target.value}}));
                             }
                         }}
-                        value={body[keyBody]||defaultValue}
+                        value={body[keyBody] ?? defaultValue}
                     >
                         {arrayValues?.map((el) => (
                             <MenuItem
                                 key={Math.random()}
-                                value={el[keyDescription]||''}
+                                value={el[keyDescription]}
                             >
-                                {el[keyOption]||""}
+                                {el[keyOption]}
                             </MenuItem>
                         ))}
                     </Select>
                 </FormControl>
             </MainBoxContainer>);
         case "select_value":
-
-
-            console.log(arrayValues,body,keyDescription);
             return ( !hidden &&  keyBody && arrayValues &&
             <MainBoxContainer>
                 <FormControl fullWidth >
@@ -198,21 +195,20 @@ const MainFilter = <T,>({
                             }
                             
                         }}
-                        value={arrayValues[body[keyDescription]]||defaultValue}
+                        value={arrayValues[body[keyDescription]] ?? ""}
                     >
                         {arrayValues?.map((el) => (
                             <MenuItem
                                 key={Math.random()}
-                                value={el||''}
+                                value={el}
                             >
-                                {inputLabel === "Mese" ? mesiGrid[el] : el||""}
+                                {inputLabel === "Mese" ? mesiGrid[el] : el}
                             </MenuItem>
                         ))}
                     </Select>
                 </FormControl>
             </MainBoxContainer>);
         case "select_value_string":
-            console.log(arrayValues,body,keyDescription);
             return ( !hidden &&  keyBody && arrayValues &&
             <MainBoxContainer>
                 <FormControl  fullWidth >
@@ -231,14 +227,14 @@ const MainFilter = <T,>({
                             }
                             
                         }}
-                        value={body[keyDescription]||defaultValue}
+                        value={body[keyDescription] ?? defaultValue}
                     >
                         {arrayValues?.map((el) => (
                             <MenuItem
                                 key={Math.random()}
-                                value={el||''}
+                                value={el}
                             >
-                                {inputLabel === "Mese" ? mesiGrid[el] : el||""}
+                                {inputLabel === "Mese" ? mesiGrid[el] : el}
                             </MenuItem>
                         ))}
                     </Select>
@@ -251,7 +247,7 @@ const MainFilter = <T,>({
                    
                     label={inputLabel}
                     placeholder={inputLabel}
-                    value={body[keyDescription] || ''}
+                    value={body[keyDescription] ?? ""}
                     onChange={(e) =>{
                         clearOnChangeFilter();
                         if(extraCodeOnChange){
@@ -273,33 +269,31 @@ const MainFilter = <T,>({
                 <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it}>
                     <DesktopDatePicker
                         label={inputLabel}
-                        value={(body[keyValue] === ''||body[keyValue] === null) ? null : new Date(body[keyValue])}
+                        value={(body[keyValue] === ""||body[keyValue] === null) ? null : new Date(body[keyValue])}
                         onChange={(e:any | null)  =>{
                             if(e !== null && !isDateInvalid(e)){
-                                console.log({keyDescription,keyValue},"ZORRO",body[keyValue],{format:formatDateToValidation(e)});
-                                console.log(6,{e});
                                 setBody(prev => ({...prev,...{[keyValue]:e}}));
                                 if(keyDescription === "start" && keyCompare && body[keyCompare] !== null && ((formatDateToValidation(e)||0) > (formatDateToValidation(body[keyCompare])||0))){
                                     setError && setError(true);
-                                    console.log(1,{e});
+                                
                                 }else if(keyDescription === "end" && keyCompare && body[keyCompare] !== null && ((formatDateToValidation(e)||0) < (formatDateToValidation(body[keyCompare])||0))){
                                     setError && setError(true);
-                                    console.log(2,{e});
+                               
                                 }else if( body[keyCompare] === null && e !== null){
                                     setError && setError(true);
-                                    console.log(3,{e});
+                              
                                 }else if(keyCompare){
                                     setError && setError(false);
-                                    console.log(4,{e});
+                                
                                 }
                             }else{
                                 setBody(prev => ({...prev,...{[keyValue]:null}}));
                                 if((body[keyCompare] !== null  && (e === null || e instanceof Date && isNaN(e.getTime())))){
                                     setError && setError(true);
-                                    console.log(8);
+                                
                                 }else{
                                     setError && setError(false);
-                                    console.log(7,{e},e === "Invalid Date",isNaN(e.getTime()));
+                                    
                                 }
                                
                             }

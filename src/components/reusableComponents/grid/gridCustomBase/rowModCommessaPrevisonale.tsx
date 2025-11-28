@@ -1,7 +1,7 @@
-import { Chip, TableCell, TableRow, Tooltip, Typography } from "@mui/material";
+import { Chip, TableCell, TableRow, Tooltip } from "@mui/material";
 
 
-const RowModCommessaPrevisionale = ({sliced,headerNames}) => {
+const RowModCommessaPrevisionale = ({sliced,headerNames,element}) => {
     let statusColor = "#ffffff";
     if(sliced.source === "obbligatorio"){
         statusColor = "#5BB0D5";
@@ -10,7 +10,6 @@ const RowModCommessaPrevisionale = ({sliced,headerNames}) => {
     }else if(sliced.source === "facoltativo"){
         statusColor = "#f7e7bc";
     }
-
 
 
     return (
@@ -34,16 +33,25 @@ const RowModCommessaPrevisionale = ({sliced,headerNames}) => {
                                 <Chip variant="outlined" label={ value?.charAt(0)?.toUpperCase() + value?.slice(1)?.toLowerCase()} sx={{backgroundColor:statusColor}} />
                             </TableCell>
                         );
+                    }else if(headerNames[i]?.gridAction){
+                        return (
+                            <TableCell
+                                key={i}
+                                align={headerNames[i]?.align}>
+                                {headerNames[i]?.gridAction("primary",false,element)}                
+                            </TableCell>
+                        );
                     }else{
                         return(
                             <>
                                 {value !== "--" ?
                                     <Tooltip key={Math.random()} title={i === 0 && value?.length >= 20 ? value : undefined}  placement="right">
                                         <TableCell
+                                            onClick={()=> headerNames[i]?.rowAction && headerNames[i]?.rowAction(element)}
                                             sx={cssFirstColum}
                                             align={headerNames[i]?.align}>
                                             {valueEl}
-                                        
+                                            
                                         </TableCell>
                                     </Tooltip>: 
                                     <TableCell

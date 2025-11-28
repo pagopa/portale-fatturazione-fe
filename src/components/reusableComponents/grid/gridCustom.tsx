@@ -162,8 +162,9 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                     }else if(nameParameterApi === "contestazionePage"){
                                         sliced = Object.fromEntries(Object.entries(element).slice(1, -1));
                                     }else if(nameParameterApi === "modComTrimestrale"){
-                                        //sliced = Object.fromEntries(Object.entries(element).slice(0, -1));
                                         sliced = Object.fromEntries(Object.entries(element).slice(1, -4));
+                                    }else if( nameParameterApi === "idPrevisonale"){
+                                        sliced = Object.fromEntries(Object.entries(element).slice(6));
                                     }
 
 
@@ -181,9 +182,9 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                         return  <DefaultRow handleClickOnGrid={handleClickOnGrid} element={element} sliced={sliced} apiGet={()=> console.log("go to details")} nameParameterApi={"test"} headerNames={headerNames}></DefaultRow>;
                                         //return <RowModComTrimestreEnte key={element.id} sliced={sliced} headerNames={headerNames} handleClickOnGrid={handleClickOnGrid} element={element}></RowModComTrimestreEnte>;
                                     }else if(nameParameterApi === "idPrevisonale"){
-                                        return <RowModCommessaPrevisionale key={element.id} sliced={sliced} headerNames={headerNames}></RowModCommessaPrevisionale>;
+                                        return <RowModCommessaPrevisionale key={element.id} sliced={sliced} element={element} headerNames={headerNames}></RowModCommessaPrevisionale>;
                                     }else{
-                                        console.log({XX:"dentro"});
+                                     
                                         return (
                                             <TableRow sx={{
                                                 height: '80px',
