@@ -264,7 +264,6 @@ const MainFilter = <T,>({
                     }            
                 /> </MainBoxContainer>);
         case "date_from_to": 
-            
             return ( !hidden && keyCompare && <MainBoxContainer> 
                 <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it}>
                     <DesktopDatePicker

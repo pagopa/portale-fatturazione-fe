@@ -223,9 +223,9 @@ const ListaCommessaPrevisionale:React.FC = () =>{
                 return response.blob();
             }
         }).then((res)=>{
-            let fileName = `Moduli Commessa Previsonale/dal/${bodyGetLista.dataInizioModulo}/al/${bodyGetLista.dataFineModulo}.xlsx`;
+            let fileName = `Moduli Commessa Previsonale/dal/${dayjs(bodyGetLista.dataInizioModulo).format("YYYY-MM-DD")}/al/${dayjs(bodyGetLista.dataFineModulo).format("YYYY-MM-DD")}.xlsx`;
             if(gridData.length === 1 || bodyGetLista.idEnti.length === 1){
-                fileName = `Modulo Commessa/${gridData[0]?.ragioneSociale}/dal/${bodyGetLista.dataInizioModulo}/al/${bodyGetLista.dataFineModulo}.xlsx`;
+                fileName = `Modulo Commessa/${gridData[0]?.ragioneSociale}/dal/${dayjs(bodyGetLista.dataInizioContratto).format("YYYY-MM-DD")}/al/${dayjs(bodyGetLista.dataFineContratto).format("YYYY-MM-DD")}.xlsx`;
             }
             saveAs(res,fileName);
             setShowLoading(false);
@@ -274,8 +274,7 @@ const ListaCommessaPrevisionale:React.FC = () =>{
     };
 
     const onButtonFiltra = () => {
-        const bodyToSet = {...bodyGetLista, page: 0,
-            size: 10};
+        const bodyToSet = {...bodyGetLista, page: 0};
         getListaCommesse(bodyToSet);
         updateFilters(
             {
