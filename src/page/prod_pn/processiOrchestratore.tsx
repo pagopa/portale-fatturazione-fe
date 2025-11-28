@@ -404,12 +404,13 @@ const ProcessiOrchestartore:React.FC = () =>{
             <FilterActionButtons 
                 onButtonFiltra={onButtonFiltra} 
                 onButtonAnnulla={onButtonAnnulla} 
-                statusAnnulla={disableListaCompletaButton? "hidden":"show"} 
+                statusAnnulla={(disableListaCompletaButton)? "hidden":"show"} 
+                disabled={error}
                 annullaButtonOptional={{
                     onButtonClick:onButtonAnnulla,
                     variant: "outlined",
                     icon:{name:"list"},
-                    disabled:disableListaCompletaButton
+                    disabled:(disableListaCompletaButton||error)
                 }}
             ></FilterActionButtons>
             <ActionTopGrid

@@ -274,24 +274,30 @@ const MainFilter = <T,>({
                                 setBody(prev => ({...prev,...{[keyValue]:e}}));
                                 if(keyDescription === "start" && keyCompare && body[keyCompare] !== null && ((formatDateToValidation(e)||0) > (formatDateToValidation(body[keyCompare])||0))){
                                     setError && setError(true);
+                                    console.log(1);
                                 
                                 }else if(keyDescription === "end" && keyCompare && body[keyCompare] !== null && ((formatDateToValidation(e)||0) < (formatDateToValidation(body[keyCompare])||0))){
                                     setError && setError(true);
+                                    console.log(2);
                                
-                                }else if( body[keyCompare] === null && e !== null){
+                                }else if(keyDescription === "end" &&  body[keyCompare] === null && e !== null){
                                     setError && setError(true);
+                                    console.log(3);
                               
                                 }else if(keyCompare){
                                     setError && setError(false);
+                                    console.log(4);
                                 
                                 }
                             }else{
                                 setBody(prev => ({...prev,...{[keyValue]:null}}));
-                                if((body[keyCompare] !== null  && (e === null || e instanceof Date && isNaN(e.getTime())))){
+                                if((keyDescription === "start" && body[keyCompare] !== null  && (e === null || e instanceof Date && isNaN(e.getTime())))){
                                     setError && setError(true);
+                                    console.log(5);
                                 
                                 }else{
                                     setError && setError(false);
+                                    console.log(6);
                                     
                                 }
                                
