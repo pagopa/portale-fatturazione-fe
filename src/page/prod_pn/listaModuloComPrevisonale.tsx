@@ -223,9 +223,11 @@ const ListaCommessaPrevisionale:React.FC = () =>{
                 return response.blob();
             }
         }).then((res)=>{
-            let fileName = `Moduli Commessa Previsonale/dal/${dayjs(bodyGetLista.dataInizioModulo).format("YYYY-MM-DD")}/al/${dayjs(bodyGetLista.dataFineModulo).format("YYYY-MM-DD")}.xlsx`;
+            const formatInit = dayjs(bodyGetLista.dataInizioModulo).format("YYYY-MM-DD");
+            const formatEnd = dayjs(bodyGetLista.dataFineModulo).format("YYYY-MM-DD");
+            let fileName = `Moduli Commessa Previsonale/dal/${formatInit}/al/${formatEnd}.xlsx`;
             if(gridData.length === 1 || bodyGetLista.idEnti.length === 1){
-                fileName = `Modulo Commessa/${gridData[0]?.ragioneSociale}/dal/${dayjs(bodyGetLista.dataInizioContratto).format("YYYY-MM-DD")}/al/${dayjs(bodyGetLista.dataFineContratto).format("YYYY-MM-DD")}.xlsx`;
+                fileName = `Modulo Commessa Previsionale/${gridData[0]?.ragioneSociale}/dal/${formatInit}/al/${formatEnd}.xlsx`;
             }
             saveAs(res,fileName);
             setShowLoading(false);
@@ -235,7 +237,7 @@ const ListaCommessaPrevisionale:React.FC = () =>{
         });
     };
 
-
+    console.log({name:`Moduli Commessa Previsonale/dal/${dayjs(bodyGetLista.dataInizioModulo).format("YYYY-MM-DD")}/al/${dayjs(bodyGetLista.dataFineModulo).format("YYYY-MM-DD")}.xlsx`});
     const handleChangePage = (
         event: React.MouseEvent<HTMLButtonElement> | null,
         newPage: number,
