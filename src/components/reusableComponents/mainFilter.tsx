@@ -208,6 +208,38 @@ const MainFilter = <T,>({
                     </Select>
                 </FormControl>
             </MainBoxContainer>);
+        case "select_value_nobody":
+            return ( !hidden &&  keyBody && arrayValues &&
+            <MainBoxContainer>
+                <FormControl fullWidth >
+                    <InputLabel>
+                        {inputLabel}
+                    </InputLabel>
+                    <Select
+                        label={inputLabel}
+                        onChange={(e) => {
+                         
+                            clearOnChangeFilter();
+                            if(extraCodeOnChange){
+                                extraCodeOnChange(e.target.value);
+                            }else{
+                                setBody((prev)=> ({...prev, ...{[keyBody]:e.target.value}}));
+                            }
+                            
+                        }}
+                        value={body ?? ""}
+                    >
+                        {arrayValues?.map((el) => (
+                            <MenuItem
+                                key={Math.random()}
+                                value={el}
+                            >
+                                {inputLabel === "Mese" ? mesiGrid[el] : el}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            </MainBoxContainer>);
         case "select_value_string":
             return ( !hidden &&  keyBody && arrayValues &&
             <MainBoxContainer>

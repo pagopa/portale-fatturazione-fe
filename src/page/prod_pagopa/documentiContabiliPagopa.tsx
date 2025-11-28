@@ -386,13 +386,13 @@ const DocumentiContabili:React.FC = () =>{
             ></FilterActionButtons>
             <ActionTopGrid
                 actionButtonRight={[{
-                    onButtonClick: () => onDownloadButton,
+                    onButtonClick: () => onDownloadButton(),
                     variant: "outlined",
                     label: "Download risultati",
                     icon:{name:"download" },
                     disabled:( gridData.length === 0 || getListaLoading )
                 },{
-                    onButtonClick: () => onDownloadReportButton,
+                    onButtonClick: () => onDownloadReportButton(),
                     variant: "outlined",
                     label: "Download Financial Report",
                     icon:{name:"download" },

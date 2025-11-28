@@ -288,13 +288,13 @@ const AnagraficaPsp:React.FC = () =>{
             rows:parseInt(event.target.value, 10)
         });
     };
-
+    console.log({year});
     return(
   
         <MainBoxStyled title={"Anagrafica PSP"}>
             <ResponsiveGridContainer >
                 <MainFilter 
-                    filterName={"select_value"}
+                    filterName={"select_value_nobody"}
                     inputLabel={"Anno"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setYear}
@@ -383,7 +383,7 @@ const AnagraficaPsp:React.FC = () =>{
             ></FilterActionButtons>
             <ActionTopGrid
                 actionButtonRight={[{
-                    onButtonClick: () => onDownloadButton,
+                    onButtonClick: () => onDownloadButton(),
                     variant: "outlined",
                     label: "Download risultati",
                     icon:{name:"download" },

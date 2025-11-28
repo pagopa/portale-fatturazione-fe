@@ -975,7 +975,7 @@ const ReportDettaglio : React.FC = () => {
             ></FilterActionButtons>
             <ActionTopGrid
                 actionButtonRight={[{
-                    onButtonClick: () => downloadNotificheOnDownloadButton,
+                    onButtonClick: () => downloadNotificheOnDownloadButton(),
                     variant: "outlined",
                     label: "Download risultati",
                     icon:{name:"download" },

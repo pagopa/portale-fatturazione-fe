@@ -357,7 +357,7 @@ const KpiPagamenti:React.FC = () =>{
             ></FilterActionButtons>
             <ActionTopGrid
                 actionButtonRight={[{
-                    onButtonClick: () => onDownloadButton,
+                    onButtonClick: () => onDownloadButton(),
                     variant: "outlined",
                     label: "Download risultati",
                     icon:{name:"download" },
