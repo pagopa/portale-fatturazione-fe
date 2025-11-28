@@ -14,7 +14,8 @@ interface HeaderPrevisionale {
 
 export const headersGridPrevisionale = (fun): HeaderPrevisionale[] => {
     return [
-        { label: 'Ragione Sociale',align:'center',width:'160px',headerAction:false, rowAction:(el) => fun(el)},
+        { label: 'Ragione Sociale',align:'center',width:'200px',headerAction:false, rowAction:(el) => fun(el)},
+        { label: 'Anno',align:'center',width:'100px',headerAction:false},
         { label: 'Mese',align:'center',width:'100px',headerAction:false},
         { label: 'Stato',align:'center',width:'100px',headerAction:false,chip:true},
         { label: 'Tipo Contratto',align:'center',width:'150px',headerAction:false},

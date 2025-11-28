@@ -164,7 +164,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                     }else if(nameParameterApi === "modComTrimestrale"){
                                         sliced = Object.fromEntries(Object.entries(element).slice(1, -4));
                                     }else if( nameParameterApi === "idPrevisonale"){
-                                        sliced = Object.fromEntries(Object.entries(element).slice(6));
+                                        sliced = Object.fromEntries(Object.entries(element).slice(5));
                                     }
 
 

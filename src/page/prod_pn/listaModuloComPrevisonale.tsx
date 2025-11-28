@@ -157,11 +157,11 @@ const ListaCommessaPrevisionale:React.FC = () =>{
                     return {
                         id:el.ragioneSociale+el.annoValidita+el.meseValidita,
                         idTipoContratto: el.idTipoContratto,
-                        annoValidita:el.annoValidita,
                         meseValidita:el.meseValidita,
                         prodotto:el.prodotto,
                         idEnte:el.idEnte,
                         ragioneSociale:el.ragioneSociale,
+                        annoValidita:el.annoValidita,
                         mese:mesiGrid[el.meseValidita],
                         stato:el.source||"--",
                         tipologiaContratto:el.tipologiaContratto||"--",
