@@ -136,7 +136,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
     const getContratti = async(y,m) => {
         console.log({y,m});
         await getContrattoModuliCommessaPA(token, profilo.nonce).then((res)=>{
-            setArrayContratto(prev => [...prev, ...res.data]);
+            setArrayContratto([{id:3,descrizione:"Tutti"}, ...res.data]);
 
             if(isInitialRender.current && Object.keys(filters).length > 0){
                 setBodyGetLista(filters.body);
@@ -151,7 +151,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                 isInitialRender.current = false;
             }
         }).catch((err)=>{
-            setArrayContratto([]);
+            setArrayContratto([{id:3,descrizione:"Tutti"}]);
             isInitialRender.current = false;
             manageError(err,dispatchMainState);
         });
@@ -176,7 +176,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
     const getListaCommesseOnAnnulla = async() =>{
         setShowLoadingLista(true);
         
-        await listaModuloCommessaPagopa({descrizione:'',idTipoContratto:null, anno:defaultYearMonth.current.year, mese:defaultYearMonth.current.month} ,token, profilo.nonce)
+        await listaModuloCommessaPagopa({idEnti:[],idTipoContratto:null, anno:defaultYearMonth.current.year, mese:defaultYearMonth.current.month} ,token, profilo.nonce)
             .then((res)=>{
                 setGridData(res.data);
                 setShowLoadingLista(false);

@@ -165,6 +165,7 @@ const RelPage : React.FC = () =>{
                 }else{
                     setBodyRel((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
                     setBodyDownload((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
+                    getListTipologiaFattura(year, mesiCamelCase[0].mese);
                     setGetListaRelRunning(false);
                 }
             }).catch((err)=>{
@@ -199,6 +200,7 @@ const RelPage : React.FC = () =>{
                     getlista({...bodyRel,...{anno:year,mese:mesiCamelCase[0].mese}},1,rowsPerPage);
                 }else{
                     setBodyRel((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
+                    getListTipologiaFattura(year, mesiCamelCase[0].mese);
                     setBodyDownload((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
                     setGetListaRelRunning(false);
                 }

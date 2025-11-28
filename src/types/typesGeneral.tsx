@@ -70,7 +70,8 @@ export type BodyListaModuloCommessa = {
     anno: number | string,
     mese: number | string,
     idTipoContratto: number|null,
-    descrizione: string
+    descrizione?: string,
+    idEnti:string[],
 }
 
 export interface MainState{
