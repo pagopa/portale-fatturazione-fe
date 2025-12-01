@@ -36,7 +36,7 @@ const ModuloCommessaPdf : React.FC = () =>{
     const enti = profiliEnti(mainState);
 
     const [showLoading, setShowLoading] = useState(false);
-    const [showLoadingDettaglio, setShowLoadingDettaglio] = useState(false);
+    const [showLoadingDettaglio, setShowLoadingDettaglio] = useState(true);
     const [dataPdf, setDataPdf] = useState<DataPdf>({
         cup: "",
         cig: "",
@@ -215,14 +215,8 @@ const ModuloCommessaPdf : React.FC = () =>{
     const string = `${mese}/${anno}`;
     const arrWithlabelDateMonth = replaceDate(dataPdf.datiModuloCommessa,'[data]',string );
 
-
-
-    const meseOnPdfName = profilo.auth === 'PAGOPA' ? mesiWithZero[Number(mainState?.mese) - 1] : mesiWithZero[Number(mesePdf||1)-1]; 
-    const annoOnPdfName = profilo.auth === 'PAGOPA' ? mainState.anno : annoPdf;
- 
-
-    const { toPDF, targetRef } = usePDF({filename: `Modulo Commessa /${dataPdf.descrizione}/${meseOnPdfName}/${annoOnPdfName}.pdf`});
-
+    const { toPDF, targetRef } = usePDF({filename: `Modulo Commessa /${dataPdf.descrizione}/${mesePdf}/${annoPdf}.pdf`});
+    console.log(annoPdf, mesePdf);
     if(showLoadingDettaglio){
         return(
             <SkeletonComPdf></SkeletonComPdf>

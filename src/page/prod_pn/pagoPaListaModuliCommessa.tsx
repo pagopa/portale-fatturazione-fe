@@ -91,21 +91,23 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
 
             if (isInitialRender.current && Object.keys(filters).length > 0) {
                 yearSelected = filters.body.anno;
-            
-            } else {
+                console.log(1);
+            }else {
                 const currentYear = new Date().getFullYear();
                 const currentMonth = new Date().getMonth() + 1;
-          
+                console.log(2, {anni,currentYear,currentMonth});
                 if(anni.includes(currentYear) && currentMonth !== 12){
                     yearSelected = currentYear;
-              
+                    console.log(3);
                 }else if(anni.includes(currentYear) && anni.includes(currentYear+1) && currentMonth === 12){
                     yearSelected = currentYear+1;
-               
+                    console.log(4);
+                }else{
+                    yearSelected = currentYear;
                 }
                 
             }
-
+            console.log({selected:yearMonths});
             setYearMonths(mesi[yearSelected]);
             let mese_X_plus_one;
             if(((new Date().getMonth() + 1) === 12) && mesi[yearSelected].includes(1)){
@@ -329,6 +331,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                     keyBody={"mese"}
                     keyValue={"mese"}
                     arrayValues={yearMonths}
+                    defaultValue={""}
                 ></MainFilter>
                 <MainFilter 
                     filterName={"select_key_value"}

@@ -218,8 +218,13 @@ const InvioFatture = () => {
                                             height:'400px',
                                             '& .MuiDataGrid-virtualScroller': {
                                                 backgroundColor: 'white',
+                                            },
+                                            "& .MuiDataGrid-row": {
+                                                borderTop: "4px solid #F2F2F2",
+                                                borderBottom: "2px solid #F2F2F2",
                                             }
                                         }}
+                                        rowHeight={60}
                                         getRowId={(row) => row.id}
                                         rows={listaFatture}
                                         columns={configGridJsonSap(statoFattura)}

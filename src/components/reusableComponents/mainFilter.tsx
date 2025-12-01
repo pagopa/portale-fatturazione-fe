@@ -241,7 +241,7 @@ const MainFilter = <T,>({
                 </FormControl>
             </MainBoxContainer>);
         case "select_value_string":
-            return ( !hidden &&  keyBody && arrayValues &&
+            return ( !hidden &&  keyBody &&
             <MainBoxContainer>
                 <FormControl  fullWidth >
                     <InputLabel>
@@ -250,14 +250,12 @@ const MainFilter = <T,>({
                     <Select
                         label={inputLabel}
                         onChange={(e) => {
-                         
                             clearOnChangeFilter();
                             if(extraCodeOnChange){
                                 extraCodeOnChange(e.target.value);
                             }else{
                                 setBody((prev)=> ({...prev, ...{[keyBody]:e.target.value}}));
-                            }
-                            
+                            } 
                         }}
                         value={body[keyDescription] ?? defaultValue}
                     >
