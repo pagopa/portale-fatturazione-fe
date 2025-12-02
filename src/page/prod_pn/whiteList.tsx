@@ -21,7 +21,7 @@ import { PathPf } from "../../types/enum";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
 import { BodyWhite, getAnniWhite, getMesiWhite, getTipologiaFatturaWhite, getWhiteListPagoPa, deleteWhiteListPagoPa, downloadWhiteListPagopa } from "../../api/apiPagoPa/whiteListPA/whiteList";
 import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
-import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
+import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 
 
@@ -426,7 +426,7 @@ const ListaDocEmessi = () => {
         <MainBoxStyled title={"White list"}>
             <ResponsiveGridContainer >
                 <MainFilter 
-                    filterName={"select_value"}
+                    filterName={"select_value_string"}
                     inputLabel={"Anno"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
@@ -458,6 +458,7 @@ const ListaDocEmessi = () => {
                         setValueSelectMonths(value);
                         setBodyGetLista((prev) => ({...prev,...{mesi:valueArray}}));
                     }}
+                    iconMaterial={RenderIcon("date",true)}
                 ></MainFilter>
                 <MainFilter 
                     filterName={"select_value"}
