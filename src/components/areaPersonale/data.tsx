@@ -27,7 +27,7 @@ const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate,mainState
     const onChangeHandler = (e) => {
       
         if(e?.toString() === "Invalid Date"){
-            if(datiFatturazione.idDocumento !== null && datiFatturazione.idDocumento !== ""){
+            if((datiFatturazione.idDocumento !== null && datiFatturazione.idDocumento !== "") || (datiFatturazione.cup !== null && datiFatturazione.cup !== "") ){
                 setDatiFatturazione({...datiFatturazione,...{dataDocumento:null}});
                 setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, dataDocumento:true}) );
                 setError(true);
@@ -41,8 +41,7 @@ const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate,mainState
             try {
                 if (e) {
                     const year = e.getFullYear();
-             
-                    if (year < 2000 || year > 2125 || (datiFatturazione.idDocumento && e === null) ) {
+                    if (year < 2000 || year > 2125 || ((datiFatturazione.idDocumento  || datiFatturazione.cup)  && e === null) ) {
                         setError(true);
                         setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, dataDocumento:true}) );
                  
@@ -53,12 +52,11 @@ const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate,mainState
                         setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, dataDocumento:false}) );
                         setError(false);
                     }
-                }else if(e === null && datiFatturazione.idDocumento !== null && datiFatturazione.idDocumento !== ""){
+                }else if(e === null && ((datiFatturazione.idDocumento !== null && datiFatturazione.idDocumento !== "") ||(datiFatturazione.cup !== null && datiFatturazione.cup !== ""))){
                     setDatiFatturazione({...datiFatturazione,...{dataDocumento:null}});
                     setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, dataDocumento:true}) );
                     setError(true);
-                  
-                }else if(e === null && datiFatturazione.idDocumento === null || datiFatturazione.idDocumento === ""){
+                }else if(e === null && (datiFatturazione.idDocumento === null || datiFatturazione.idDocumento === "" || datiFatturazione.cup === null || datiFatturazione.cup === "")){
                     setDatiFatturazione({...datiFatturazione,...{dataDocumento:null}});
                     setStatusButtonConferma((prev:StateEnableConferma) =>({...prev, dataDocumento:false}) );
                     setError(false);
@@ -76,12 +74,12 @@ const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate,mainState
     };
 
     useEffect(()=>{
-        if(datiFatturazione.dataDocumento !== null && datiFatturazione.dataDocumento !== '' && datiFatturazione.dataDocumento !== null ){
+        if(datiFatturazione.dataDocumento !== null && datiFatturazione.dataDocumento !== '' ){
             onChangeHandler(new Date(datiFatturazione.dataDocumento));
         }else{
             onChangeHandler(datiFatturazione.dataDocumento);
         } 
-    },[datiFatturazione.idDocumento]);
+    },[datiFatturazione.idDocumento, datiFatturazione.cup]);
 
     let valueDate:Date|null = null;
     if(datiFatturazione.dataDocumento === ""){
@@ -112,7 +110,7 @@ const DataComponent : React.FC<DataProps> = ({ dataLabel ,  formatDate,mainState
                     disabled={dataInputDisable}
                     slotProps={{
                         textField: {
-                            required: datiFatturazione.idDocumento !== null && datiFatturazione.idDocumento !== "",
+                            required: (datiFatturazione.idDocumento !== null && datiFatturazione.idDocumento !== "")|| (datiFatturazione.cup !== null  &&  datiFatturazione.cup !== ""),
                             error:  (error||((datiFatturazione.idDocumento !== "" && datiFatturazione.idDocumento !== null) && datiFatturazione.dataDocumento === null ) )&& mainState.statusPageDatiFatturazione === 'mutable' && datiFatturazione.tipoCommessa !== "",
                             inputProps: {
                                 placeholder: 'dd/MM/yyyy',

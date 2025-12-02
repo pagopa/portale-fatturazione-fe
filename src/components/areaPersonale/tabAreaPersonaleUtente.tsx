@@ -32,7 +32,6 @@ const TabAreaPersonaleUtente = ({mainState,datiFatturazione,setDatiFatturazione,
                         borderRadius: 2,
                         p: 2,
                         mb: 2,
-
                     }}
                 >
                     <Box
@@ -46,7 +45,6 @@ const TabAreaPersonaleUtente = ({mainState,datiFatturazione,setDatiFatturazione,
                             fontWeight: "bold"
                         }}
                     >
-    *
                     </Box>
                     <RadioComponent
                         options={valueOptionRadioTipoOrdine}
@@ -63,7 +61,7 @@ const TabAreaPersonaleUtente = ({mainState,datiFatturazione,setDatiFatturazione,
                     <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 2fr)' }}>
                         <div>
                             <TextFieldComponent
-                                required={false}
+                                required={datiFatturazione.idDocumento !== ""}
                                 helperText="max 15 caratteri alfanumerici"
                                 label="CUP"
                                 placeholder="Inserisci il CUP"
@@ -121,7 +119,7 @@ const TabAreaPersonaleUtente = ({mainState,datiFatturazione,setDatiFatturazione,
                             {/* Id documento start */}
                             <div>
                                 <TextFieldComponent
-                                    required={datiFatturazione.cup !== "" || datiFatturazione.codCommessa !== ""}
+                                    required={datiFatturazione.cup !== ""}
                                     helperText="max 20 caratteri alfanumerici e . / _ -"
                                     label="ID Documento"
                                     placeholder="Inserisci ID"
@@ -174,9 +172,7 @@ const TabAreaPersonaleUtente = ({mainState,datiFatturazione,setDatiFatturazione,
                 {/* terzo box   start */}
                 <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 2fr)', marginTop: '30px' }}>
                     <Box sx={{ display: 'grid' }}>
-               
                         <DynamicInsert status={mainState?.statusPageDatiFatturazione} arrElement={datiFatturazione.contatti} setData={setDatiFatturazione} mainState={mainState} datiFatturazione={datiFatturazione}/>
-                
                     </Box>
                     <Box sx={{ display: 'grid'}}>
                         <TextFieldComponent
