@@ -234,7 +234,7 @@ const AsyncDocumenti = () => {
             <FilterActionButtons 
                 onButtonFiltra={handleFiltra} 
                 onButtonAnnulla={handleAnnullaButton} 
-                statusAnnulla={disableListaCompletaButton? "hidden":"show"} 
+                statusAnnulla={!disableListaCompletaButton? "hidden":"show"} 
             ></FilterActionButtons>
             <GridCustom
                 nameParameterApi='asyncDocEnte'

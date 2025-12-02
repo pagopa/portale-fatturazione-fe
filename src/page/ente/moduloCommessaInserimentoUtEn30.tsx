@@ -1,5 +1,5 @@
 import {useEffect, useContext} from 'react';
-import {Typography, Button, Tooltip, IconButton } from '@mui/material';
+import {Typography, Button, Tooltip, Skeleton } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
@@ -212,33 +212,41 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             {/*Hide   modulo commessa sul click contina , save del modulo commessa cosi da mostrare dati fatturazione,
             il componente visualizzato è AreaPersonaleUtenteEnte  */}
             <div className="marginTop24 ms-5 me-5">
-                <div className='d-flex'>
-                    <ButtonNaked
-                        color="primary"
-                        size="small"
-                        startIcon={<ArrowBackIcon />}
-                        onClick={() =>{
-                            onIndietroButtonHeader();
-                        }}
-                    >
+                {loadingData ?  
+                   
+                    <Skeleton sx={{margin:"24px"}} variant="rectangular" height="30px" />
+                    :
+                    <>
+                        <div className='d-flex'>
+                            <ButtonNaked
+                                color="primary"
+                                size="small"
+                                startIcon={<ArrowBackIcon />}
+                                onClick={() =>{
+                                    onIndietroButtonHeader();
+                                }}
+                            >
                         Indietro
-                    </ButtonNaked>
-                    <Typography sx={{ fontWeight:"bold", marginLeft:'20px'}} variant="caption">
-                        <ViewModuleIcon sx={{paddingBottom:'3px'}}  fontSize='small'></ViewModuleIcon>
+                            </ButtonNaked>
+                            <Typography sx={{ fontWeight:"bold", marginLeft:'20px'}} variant="caption">
+                                <ViewModuleIcon sx={{paddingBottom:'3px'}}  fontSize='small'></ViewModuleIcon>
                          Modulo commessa 
-                    </Typography>
-                    {
-                        dataObbligatori ? 
-                            <Typography  variant="caption">/ Inserimento moduli commessa OBBLIGATORI</Typography> :
-                            <Typography  variant="caption">/ Dettaglio-Inserimento modulo commessa</Typography>
-                    }
-                </div>
+                            </Typography>
+                            {
+                                dataObbligatori ? 
+                                    <Typography  variant="caption">/ Inserimento moduli commessa OBBLIGATORI</Typography> :
+                                    <Typography  variant="caption">/ Dettaglio-Inserimento modulo commessa</Typography>
+                            }
+                        </div>
                
-                <div className='mt-5 mb-5'>
-                    {steps.length > 1  && 
-                    <StepperCommessa mainState={mainState} activeStep={activeStep} steps={steps}></StepperCommessa>
-                    }
-                </div>
+               
+                        <div className='mt-5 mb-5'>
+                            {steps.length > 1  && 
+                    <           StepperCommessa mainState={mainState} activeStep={activeStep} steps={steps}></StepperCommessa>
+                            }
+                        </div>
+                    </>
+                }
                 <MainInserimentoModuloCommessa 
                     activeCommessa={activeCommessa}
                     onChangeModuloValue={onChangeModuloValue}

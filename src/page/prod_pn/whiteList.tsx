@@ -1,8 +1,4 @@
-import { Autocomplete, Box, Button, Checkbox, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
-import DownloadIcon from '@mui/icons-material/Download';
 import { useContext, useEffect, useState } from "react";
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { saveAs } from "file-saver";
@@ -10,7 +6,6 @@ import { manageError, managePresaInCarico } from "../../api/api";
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
 import { headerNames } from "../../assets/configurations/config_GridWhiteList";
 import ModalConfermaInserimento from "../../components/commessaInserimento/modalConfermaInserimento";
-
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import ModalAggiungi from "../../components/whiteList/modalAggiungi";
@@ -20,7 +15,6 @@ import { GlobalContext } from "../../store/context/globalContext";
 import { PathPf } from "../../types/enum";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
 import { BodyWhite, getAnniWhite, getMesiWhite, getTipologiaFatturaWhite, getWhiteListPagoPa, deleteWhiteListPagoPa, downloadWhiteListPagopa } from "../../api/apiPagoPa/whiteListPA/whiteList";
-import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 
@@ -47,8 +41,7 @@ export interface Whitelist {
     cancella?:boolean;
 }
 
-const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-const checkedIcon = <CheckBoxIcon fontSize="small" />;
+
 
 const ListaDocEmessi = () => {
     const globalContextObj = useContext(GlobalContext);
@@ -71,7 +64,7 @@ const ListaDocEmessi = () => {
     const [arrayYears,setArrayYears] = useState<number[]>([]);
     const [arrayMonths,setArrayMonths] = useState<{descrizione:string,mese:number}[]>([]);
     const [contratti, setContratti] = useState([{id:3,descrizione:"Tutte"},{id:2,descrizione:"PAC"},{id:1,descrizione:"PAL"}]);
-    const [valuetipologiaFattura, setValueTipologiaFattura] = useState<string>('');
+
     const [tipologiaFatture, setTipologiaFatture] = useState<string[]>([]);
     const [openModalAction, setOpenModalAction] = useState(false);
     const [openModalAdd, setOpenModalAdd] = useState(false);
@@ -234,15 +227,10 @@ const ListaDocEmessi = () => {
     const getListTipologiaFattura = async() => {
         await getTipologiaFatturaWhite(token, profilo.nonce).then((res)=>{
             setTipologiaFatture([...["Tutte"],...res.data]);
-            if(isInitialRender.current && Object.keys(filters).length > 0){
-                setValueTipologiaFattura(filters.valuetipologiaFattura);
-            }else{
-                setBodyGetLista((prev)=> ({...prev, ...{tipologiaFattura:null}}));
-                setValueTipologiaFattura("Tutte");
-            }
+          
         }).catch(((err)=>{
             setTipologiaFatture([]);
-            setValueTipologiaFattura("");
+
             manageError(err,dispatchMainState);
         }));   
     };
@@ -304,7 +292,6 @@ const ListaDocEmessi = () => {
                 textValue,
                 valueAutocomplete,
                 valueSelectMonths,
-                valuetipologiaFattura,
                 page:0,
                 rows:10,
                 selected:selected
@@ -332,7 +319,6 @@ const ListaDocEmessi = () => {
         });
         setValueAutocomplete([]);
         setValueSelectMonths([]);
-        setValueTipologiaFattura("Tutte");
         setTextValue('');
         resetFilters();
     };
@@ -377,7 +363,6 @@ const ListaDocEmessi = () => {
             textValue,
             valueAutocomplete,
             valueSelectMonths,
-            valuetipologiaFattura,
             page:newPage,
             rows:rowsPerPage,
             selected:selected
@@ -395,7 +380,6 @@ const ListaDocEmessi = () => {
             textValue,
             valueAutocomplete,
             valueSelectMonths,
-            valuetipologiaFattura,
             page:0,
             rows:parseInt(event.target.value, 10),
             selected:selected
@@ -461,7 +445,7 @@ const ListaDocEmessi = () => {
                     iconMaterial={RenderIcon("date",true)}
                 ></MainFilter>
                 <MainFilter 
-                    filterName={"select_value"}
+                    filterName={"select_value_string"}
                     inputLabel={"Tipologia Fattura"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
@@ -472,7 +456,6 @@ const ListaDocEmessi = () => {
                     arrayValues={tipologiaFatture}
                     extraCodeOnChange={(e)=>{
                         if(e){
-                            setValueTipologiaFattura(e);
                             if(e === "Tutte"){
                                 setBodyGetLista((prev)=>({...prev,...{tipologiaFattura:null}}));
                             }else{
@@ -480,6 +463,7 @@ const ListaDocEmessi = () => {
                             }
                         }
                     }}
+                    defaultValue={"Tutte"}
                 ></MainFilter>
                 <MainFilter 
                     filterName={"select_key_value"}
