@@ -8,7 +8,8 @@ export interface BodyFatturazione{
     tipologiaFattura:string[],
     idEnti:string[],
     cancellata:boolean,
-    idTipoContratto:null|number
+    idTipoContratto:null|number,
+    inviata:null|number
 }
 
 export interface FatturazioneProps{

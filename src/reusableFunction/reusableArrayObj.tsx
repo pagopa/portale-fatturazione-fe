@@ -87,3 +87,23 @@ export  const mesiDescNome = [
 export const statiContestazione = ["Non Contestata","Annullata","Contestata Ente","Risposta Send", "Risposta Recapitista",
     "Risposta Consolidatore","Risposta Ente","Accettata","Rifiutata/Chiusa"
 ];
+
+
+export const statoInvio = [
+    {
+        "id": 3,
+        "description": "Tutte"
+    },
+    {
+        "id": 4,
+        "description": "Non inviata"
+    },
+    {
+        "id": 1,
+        "description": "Inviata"
+    },
+    {
+        "id": 2,
+        "description": "In elaborazione"
+    }
+];
