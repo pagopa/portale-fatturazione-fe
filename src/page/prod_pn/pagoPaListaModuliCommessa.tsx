@@ -88,42 +88,50 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
             setYears(anni);
         
             let yearSelected;
+            const currentYear = new Date().getFullYear();
+            const currentMonth = new Date().getMonth() + 1;
+
+       
+            if(anni.includes(currentYear) && currentMonth !== 12){
+                yearSelected = currentYear;
+            }else if(anni.includes(currentYear) && anni.includes(currentYear+1) && currentMonth === 12){
+                yearSelected = currentYear+1;
+            }else{
+                yearSelected = currentYear;
+            }
 
             if (isInitialRender.current && Object.keys(filters).length > 0) {
-                yearSelected = filters.body.anno;
-                console.log(1);
+                setYearMonths(mesi[filters.body.anno]);
             }else {
-                const currentYear = new Date().getFullYear();
-                const currentMonth = new Date().getMonth() + 1;
-                console.log(2, {anni,currentYear,currentMonth});
-                if(anni.includes(currentYear) && currentMonth !== 12){
-                    yearSelected = currentYear;
-                    console.log(3);
-                }else if(anni.includes(currentYear) && anni.includes(currentYear+1) && currentMonth === 12){
-                    yearSelected = currentYear+1;
-                    console.log(4);
-                }else{
-                    yearSelected = currentYear;
-                }
-                
+                setYearMonths(mesi[yearSelected]);
             }
-            console.log({selected:yearMonths});
-            setYearMonths(mesi[yearSelected]);
+     
+
             let mese_X_plus_one;
-            if(((new Date().getMonth() + 1) === 12) && mesi[yearSelected].includes(1)){
-               
+            if(((new Date().getMonth() + 1) === 12) && mesi[yearSelected].includes(1) && anni.includes(currentYear+1) ){
                 mese_X_plus_one = 1;
-                await getContratti(yearSelected, mese_X_plus_one);
+                defaultYearMonth.current= {year:yearSelected,month:mese_X_plus_one}; 
             }else if(((new Date().getMonth() + 1) !== 12)&& mesi[yearSelected].includes(new Date().getMonth() + 2)){
                 mese_X_plus_one = new Date().getMonth() + 2;
-                await getContratti(yearSelected, mese_X_plus_one);
+                defaultYearMonth.current= {year:yearSelected,month:mese_X_plus_one};
             }else{
-                mese_X_plus_one = mesi[yearSelected][0];
+                mese_X_plus_one = mesi[yearSelected].at(0);
+                defaultYearMonth.current= {year:yearSelected,month:mese_X_plus_one};
+            }
+            
+            
+            if (isInitialRender.current && Object.keys(filters).length > 0) {
+                console.log(55);
+                await getContratti(filters.body.anno, filters.body.mese);
+            }else{
+                console.log(5);
                 await getContratti(yearSelected, mese_X_plus_one);
             }
-            setBodyGetLista({...bodyGetLista,anno:yearSelected,mese:mese_X_plus_one});
-            setBodyDownload({...bodyGetLista,anno:yearSelected,mese:mese_X_plus_one});
-            defaultYearMonth.current= {year:yearSelected,month:mese_X_plus_one};
+            
+          
+            
+        
+            
         } catch (err) {
             if (err && typeof err === "object") {
                 manageError(err as ManageErrorResponse, dispatchMainState);
@@ -138,8 +146,9 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
     const getContratti = async(y,m) => {
         console.log({y,m});
         await getContrattoModuliCommessaPA(token, profilo.nonce).then((res)=>{
+          
             setArrayContratto([{id:3,descrizione:"Tutti"}, ...res.data]);
-
+            console.log({isUnit:isInitialRender.current, OB:Object.keys(filters).length,FI:filters.body});
             if(isInitialRender.current && Object.keys(filters).length > 0){
                 setBodyGetLista(filters.body);
                 setTextValue(filters.textValue);
@@ -148,7 +157,8 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                 setBodyDownload(filters.body);
                 setInfoPageListaCom({page:filters.page,pageSize:filters.rows});
             }else{
-                
+                setBodyGetLista({...bodyGetLista,anno:y,mese:m});
+                setBodyDownload({...bodyGetLista,anno:y,mese:m});
                 getListaCommesse({...bodyGetLista,anno:y,mese:m});
                 isInitialRender.current = false;
             }

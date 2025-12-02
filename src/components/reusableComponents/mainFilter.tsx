@@ -109,9 +109,12 @@ const MainFilter = <T,>({
     let valueOnBodydifferentFromRealValue = body[keyBody];
 
     if (inputLabel === "Stato" && keyBody === "cancellata") {
+        console.log("zorro",1);
         if (body[keyBody] === false) {
+            console.log("zorro",2);
             valueOnBodydifferentFromRealValue = 1;
         } else if (body[keyBody] === true) {
+            console.log("zorro",3);
             valueOnBodydifferentFromRealValue = 2;
         }
     }
