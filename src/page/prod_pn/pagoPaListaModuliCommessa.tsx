@@ -397,7 +397,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
           
             <div className="mt-1 mb-5" style={{ width: '100%'}}>
                 <DataGrid sx={{
-                    height:'400px',
+                    height:gridData.length < 5 ?"400px" :"auto",
                     '& .MuiDataGrid-virtualScroller': {
                         backgroundColor: 'white',
                     },

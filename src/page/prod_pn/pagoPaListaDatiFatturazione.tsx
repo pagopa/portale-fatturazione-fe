@@ -264,14 +264,17 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
             <div className="mt-1 mb-5" style={{ width: '100%'}}>
                 <DataGrid 
                     sx={{
-                        height:'400px',
+                        height:gridData.length < 5 ?"400px" :"auto",
                         '& .MuiDataGrid-virtualScroller': {
                             backgroundColor: 'white',
                         },
                         "& .MuiDataGrid-row": {
                             borderTop: "4px solid #F2F2F2",
                             borderBottom: "2px solid #F2F2F2",
-                        }
+                        },
+                        "& .MuiDataGrid-overlay": {
+                            backgroundColor: "white",
+                        },
                     }}
                     rowHeight={80}
                     pageSizeOptions={[10, 25, 50,100]}
