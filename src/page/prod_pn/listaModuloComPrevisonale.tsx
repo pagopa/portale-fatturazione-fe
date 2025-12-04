@@ -225,8 +225,17 @@ const ListaCommessaPrevisionale:React.FC = () =>{
         }).then((res)=>{
             const formatInit = dayjs(bodyGetLista.dataInizioModulo).format("YYYY-MM-DD");
             const formatEnd = dayjs(bodyGetLista.dataFineModulo).format("YYYY-MM-DD");
-            let fileName = `Moduli Commessa Previsonale/dal/${formatInit}/al/${formatEnd}.xlsx`;
-            if(gridData.length === 1 || bodyGetLista.idEnti.length === 1){
+   
+            let fileName = `Moduli Commessa Previsonale.xlsx`;
+            if(bodyGetLista.dataInizioModulo && !bodyGetLista.dataFineModulo && gridData.length > 1){
+                fileName = `Moduli Commessa Previsonale/dal/${formatInit}.xlsx`;
+            }else if(bodyGetLista.dataInizioModulo && bodyGetLista.dataFineModulo  && gridData.length > 1){
+                fileName = `Moduli Commessa Previsonale/dal/${formatInit}/al/${formatEnd}.xlsx`;
+            }else if((gridData.length === 1 || bodyGetLista.idEnti.length === 1) && !bodyGetLista.dataInizioModulo && !bodyGetLista.dataFineModulo){
+                fileName = `Modulo Commessa Previsionale/${gridData[0]?.ragioneSociale}.xlsx`;
+            }else if((gridData.length === 1 || bodyGetLista.idEnti.length === 1) && bodyGetLista.dataInizioModulo&& !bodyGetLista.dataFineModulo){
+                fileName = `Modulo Commessa Previsionale/${gridData[0]?.ragioneSociale}/dal/${formatInit}.xlsx`;
+            }else if((gridData.length === 1 || bodyGetLista.idEnti.length === 1) && bodyGetLista.dataInizioModulo && bodyGetLista.dataFineModulo ){
                 fileName = `Modulo Commessa Previsionale/${gridData[0]?.ragioneSociale}/dal/${formatInit}/al/${formatEnd}.xlsx`;
             }
             saveAs(res,fileName);
