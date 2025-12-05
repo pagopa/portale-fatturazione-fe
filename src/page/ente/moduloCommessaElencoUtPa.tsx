@@ -314,11 +314,13 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
                         }
                     </div>
                     <div className='mb-5'>
+                        {!showLoadingLista && 
                         <Typography variant="caption-semibold">
-                            {gridData.length === 0 && !showLoadingLista ? "N.B. Gentile Aderente, non sono presenti moduli commessa inseriti. L'inserimento è possibile solo dal 1° al 15 di ogni mese. La finestra di inserimento è attualmente chiusa. Ritorna dal 1° del prossimo mese per compilare i moduli obbligatori":
+                            {gridData.length === 0 ? "N.B. Gentile Aderente, non sono presenti moduli commessa inseriti. L'inserimento è possibile solo dal 1° al 15 di ogni mese. La finestra di inserimento è attualmente chiusa. Ritorna dal 1° del prossimo mese per compilare i moduli obbligatori":
                                 "N.B. il Modulo Commessa per le previsioni dei consumi deve essere inserito dal giorno 1 al giorno 15 di ogni mese"
                             }
                         </Typography>
+                        }
                     </div>
                     <div className='mb-5'>
                         <GridCustom
