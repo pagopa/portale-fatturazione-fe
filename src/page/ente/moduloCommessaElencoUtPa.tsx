@@ -297,7 +297,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
                                     Filtra
                                 </CustomButton>
                                 {valueSelect !== '' &&
-                                <CustomButton onClick={()=>{
+                                <CustomButton sx={{marginLeft:"40px"}} onClick={()=>{
                                     setValueSelect('');
                                     getListaCommessaGrid('');
                                     resetFilters();
