@@ -312,7 +312,7 @@ interface CustomButtonProps extends ButtonProps {
     colorAction?:"inherit" | "secondary" | "primary" | "success" | "error" | "info" | "warning"
 }
 
-const CustomButton = styled(Button)<CustomButtonProps>(({ theme, withText=true,colorAction }) => ({
+export const CustomButton = styled(Button)<CustomButtonProps>(({ theme, withText=true,colorAction }) => ({
     minWidth: withText ? "130px" : undefined,
     padding: withText? theme.spacing(1, 3):undefined,
     fontWeight: 500,

@@ -8,15 +8,16 @@ import { DataGridCommessa, GetAnniResponse, ResponseGetListaCommesse } from '../
 import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
 import { getAnni, getListaCommessaFilteredV2, getCommessaObbligatoriVerificaV2 } from '../../api/apiSelfcare/moduloCommessaSE/api';
 import ModalRedirect from '../../components/commessaInserimento/madalRedirect';
-import { fixResponseForDataGrid, fixResponseForDataGridRollBack } from '../../reusableFunction/function';
+import {  fixResponseForDataGridRollBack } from '../../reusableFunction/function';
 import { PathPf } from '../../types/enum';
 import { ManageErrorResponse } from '../../types/typesGeneral';
 import GridCustom from '../../components/reusableComponents/grid/gridCustom';
-import { headerNameModComTrimestraleENTE } from '../../assets/configurations/conf_GridModComEnte';
 import ModalInfo from '../../components/reusableComponents/modals/modalInfo';
 import useSavedFilters from '../../hooks/useSaveFiltersLocalStorage';
 import { subHeaderNameModComTrimestraleENTE } from '../../assets/configurations/config_SubGridModComEnte';
 import ModalLoading from '../../components/reusableComponents/modals/modalLoading';
+
+import { CustomButton } from '../../components/reusableComponents/layout/mainComponent';
 
 
 const ModuloCommessaElencoUtPa: React.FC = () => {
@@ -265,15 +266,11 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
                                     fullWidth
                                     size="medium"
                                 >
-                                    <InputLabel
-                                        id="Filtra per anno"
-                                    >
+                                    <InputLabel>
                             Filtra per anno
                                     </InputLabel>
                                     <Select
-                                        id="sea"
-                                        label="Anno"
-                                        labelId="search-by-label"
+                                        label="Filtra per anno"
                                         onChange={(e) =>{setValueSelect(e.target.value);}  }
                                         value={valueSelect}
                                         IconComponent={ArrowDropDownIcon}
@@ -289,47 +286,39 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
                                     </Select>
                                 </FormControl>
                             </Box>
-                            <Box sx={{ display: 'flex' }}>
-                                <Button
-                                    variant="contained"
-                                    disabled={valueSelect === ''}
-                                    sx={{ marginTop: 'auto', marginBottom: 'auto', marginLeft: '30px' }}
-                                    onClick={()=>{
-                                        getListaCommessaGrid(valueSelect);
-                                        updateFilters({valueSelect,pathPage:PathPf.LISTA_COMMESSE,});
-                                    }}
-                                >
-            Filtra 
-                                </Button>
+                            <Box sx={{display: 'flex',
+                                justifyContent: 'center',   
+                                alignItems: 'center',
+                                marginLeft:"40px" }}>
+                                <CustomButton onClick={()=>{
+                                    getListaCommessaGrid(valueSelect);
+                                    updateFilters({valueSelect,pathPage:PathPf.LISTA_COMMESSE,});
+                                }} variant="contained" disabled={valueSelect === ''}>
+                                    Filtra
+                                </CustomButton>
                                 {valueSelect !== '' &&
-                            <Typography
-                                variant="caption-semibold"
-                                onClick={()=>{
+                                <CustomButton onClick={()=>{
                                     setValueSelect('');
                                     getListaCommessaGrid('');
                                     resetFilters();
-                                }}
-                                sx={{
-                                    marginTop: 'auto',
-                                    marginBottom: 'auto',
-                                    marginLeft: '30px',
-                                    cursor: 'pointer',
-                                    color: '#0062C3',
-                                }}
-                            >
-            Annulla filtri
-                            </Typography>
+                                }} variant="text" disabled={valueSelect === ''}>
+                                    Annulla filtri
+                                </CustomButton>
                                 }
                             </Box>
                         </div>
                         {showButtonInsertModulo &&
-                <Button  sx={{ marginTop: 'auto', marginBottom: 'auto', marginLeft: '30px' }} variant="contained" onClick={()=>{
-                    handleListItemClickModuloCommessa();
-                }}>Inserisci modulo commessa</Button>
+                            <Button  sx={{ marginTop: 'auto', marginBottom: 'auto', marginLeft: '30px' }} variant="contained" onClick={()=>{
+                                handleListItemClickModuloCommessa();
+                            }}>Inserisci modulo commessa</Button>
                         }
                     </div>
                     <div className='mb-5'>
-                        <Typography variant="caption-semibold">N.B. il Modulo Commessa per le previsioni dei consumi deve essere inserito dal giorno 1 al giorno 15 di ogni mese</Typography>
+                        <Typography variant="caption-semibold">
+                            {gridData.length === 0 && !showLoadingLista ? "N.B. Gentile Aderente, non sono presenti moduli commessa inseriti. L'inserimento è possibile solo dal 1° al 15 di ogni mese. La finestra di inserimento è attualmente chiusa. Ritorna dal 1° del prossimo mese per compilare i moduli obbligatori":
+                                "N.B. il Modulo Commessa per le previsioni dei consumi deve essere inserito dal giorno 1 al giorno 15 di ogni mese"
+                            }
+                        </Typography>
                     </div>
                     <div className='mb-5'>
                         <GridCustom
