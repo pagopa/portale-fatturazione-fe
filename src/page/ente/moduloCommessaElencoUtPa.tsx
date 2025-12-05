@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect, useContext, useRef} from 'react';
 import { manageError } from '../../api/api';
 import { Button, Box, Typography, FormControl, InputLabel,Select, MenuItem, Skeleton} from '@mui/material';
 import { useNavigate } from 'react-router';
@@ -37,6 +37,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
             value:valueObj
         });
     };
+    const sentenseRef = useRef<boolean|null>(null);
 
     const [anni, setAnni] = useState<string[]>([]);
     const [gridData, setGridData] = useState<DataGridCommessa[]>([]);
@@ -112,10 +113,18 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
             const finalData = fixResponseForDataGridRollBack(res.data);
             setGridData(finalData);
             setShowLoadingLista(false);
+            if(sentenseRef.current === null){
+                sentenseRef.current = true;
+            }
+            
         }).catch((err:ManageErrorResponse)=>{
             setGridData([]);
             manageError(err,dispatchMainState);
             setShowLoadingLista(false);
+            if(sentenseRef.current === null){
+                sentenseRef.current = false;
+            }
+            
         });
     };
    
@@ -314,13 +323,16 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
                         }
                     </div>
                     <div className='mb-5'>
-                        {!showLoadingLista && 
-                        <Typography variant="caption-semibold">
-                            {gridData.length === 0 ? "N.B. Gentile Aderente, non sono presenti moduli commessa inseriti. L'inserimento è possibile solo dal 1° al 15 di ogni mese. La finestra di inserimento è attualmente chiusa. Ritorna dal 1° del prossimo mese per compilare i moduli obbligatori":
-                                "N.B. il Modulo Commessa per le previsioni dei consumi deve essere inserito dal giorno 1 al giorno 15 di ogni mese"
-                            }
-                        </Typography>
-                        }
+                        {sentenseRef.current === null ? (
+                            <Skeleton variant="text" width="100%" height={30} />
+                        ) : (
+                            <Typography variant="caption-semibold">
+                                {sentenseRef.current === false
+                                    ? "N.B. Gentile Aderente, non sono presenti moduli commessa inseriti. L'inserimento è possibile solo dal 1° al 15 di ogni mese. La finestra di inserimento è attualmente chiusa. Ritorna dal 1° del prossimo mese per compilare i moduli obbligatori"
+                                    : "N.B. il Modulo Commessa per le previsioni dei consumi deve essere inserito dal giorno 1 al giorno 15 di ogni mese"
+                                }
+                            </Typography>
+                        )}
                     </div>
                     <div className='mb-5'>
                         <GridCustom
