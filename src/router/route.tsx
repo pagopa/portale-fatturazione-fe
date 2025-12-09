@@ -136,6 +136,8 @@ const RouteProfile = () => {
                         <Route path="/azureLogin" element={<LayoutLoggedOut page={<AzureLogin/>}></LayoutLoggedOut>}></Route>
                         <Route path="/error"  element={<ErrorPage/>} />
                         <Route path="*" element={<Navigate  to={redirectRoute} replace />} />
+                       
+                        <Route path={"/test"} element={<TestListaModuli/>}/>
                         {route}
                     </Routes>
                      */
