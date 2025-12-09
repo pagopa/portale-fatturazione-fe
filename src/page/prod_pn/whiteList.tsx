@@ -1,8 +1,4 @@
-import { Autocomplete, Box, Button, Checkbox, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
-import DownloadIcon from '@mui/icons-material/Download';
 import { useContext, useEffect, useState } from "react";
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { saveAs } from "file-saver";
@@ -10,7 +6,6 @@ import { manageError, managePresaInCarico } from "../../api/api";
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
 import { headerNames } from "../../assets/configurations/config_GridWhiteList";
 import ModalConfermaInserimento from "../../components/commessaInserimento/modalConfermaInserimento";
-import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import ModalAggiungi from "../../components/whiteList/modalAggiungi";
@@ -20,6 +15,8 @@ import { GlobalContext } from "../../store/context/globalContext";
 import { PathPf } from "../../types/enum";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
 import { BodyWhite, getAnniWhite, getMesiWhite, getTipologiaFatturaWhite, getWhiteListPagoPa, deleteWhiteListPagoPa, downloadWhiteListPagopa } from "../../api/apiPagoPa/whiteListPA/whiteList";
+import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
+import MainFilter from "../../components/reusableComponents/mainFilter";
 
 
 
@@ -44,8 +41,7 @@ export interface Whitelist {
     cancella?:boolean;
 }
 
-const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-const checkedIcon = <CheckBoxIcon fontSize="small" />;
+
 
 const ListaDocEmessi = () => {
     const globalContextObj = useContext(GlobalContext);
@@ -67,8 +63,8 @@ const ListaDocEmessi = () => {
     const [totalElements, setTotalElements]  = useState(0);
     const [arrayYears,setArrayYears] = useState<number[]>([]);
     const [arrayMonths,setArrayMonths] = useState<{descrizione:string,mese:number}[]>([]);
-    const [contratti, setContratti] = useState([{id:0,descrizione:"Tutte"},{id:2,descrizione:"PAC"},{id:1,descrizione:"PAL"}]);
-    const [valuetipologiaFattura, setValueTipologiaFattura] = useState<string>('');
+    const [contratti, setContratti] = useState([{id:3,descrizione:"Tutte"},{id:2,descrizione:"PAC"},{id:1,descrizione:"PAL"}]);
+
     const [tipologiaFatture, setTipologiaFatture] = useState<string[]>([]);
     const [openModalAction, setOpenModalAction] = useState(false);
     const [openModalAdd, setOpenModalAdd] = useState(false);
@@ -93,11 +89,6 @@ const ListaDocEmessi = () => {
         getAnni();
     },[]);
 
-    useEffect(()=>{
-        if((bodyGetLista.anno || 0) > 0 && !isInitialRender.current){
-            getMesi(bodyGetLista.anno);
-        }
-    },[bodyGetLista.anno]);
 
     useEffect(()=>{
         if(!isInitialRender.current){
@@ -236,15 +227,10 @@ const ListaDocEmessi = () => {
     const getListTipologiaFattura = async() => {
         await getTipologiaFatturaWhite(token, profilo.nonce).then((res)=>{
             setTipologiaFatture([...["Tutte"],...res.data]);
-            if(isInitialRender.current && Object.keys(filters).length > 0){
-                setValueTipologiaFattura(filters.valuetipologiaFattura);
-            }else{
-                setBodyGetLista((prev)=> ({...prev, ...{tipologiaFattura:null}}));
-                setValueTipologiaFattura("Tutte");
-            }
+          
         }).catch(((err)=>{
             setTipologiaFatture([]);
-            setValueTipologiaFattura("");
+
             manageError(err,dispatchMainState);
         }));   
     };
@@ -306,7 +292,6 @@ const ListaDocEmessi = () => {
                 textValue,
                 valueAutocomplete,
                 valueSelectMonths,
-                valuetipologiaFattura,
                 page:0,
                 rows:10,
                 selected:selected
@@ -334,7 +319,6 @@ const ListaDocEmessi = () => {
         });
         setValueAutocomplete([]);
         setValueSelectMonths([]);
-        setValueTipologiaFattura("Tutte");
         setTextValue('');
         resetFilters();
     };
@@ -379,7 +363,6 @@ const ListaDocEmessi = () => {
             textValue,
             valueAutocomplete,
             valueSelectMonths,
-            valuetipologiaFattura,
             page:newPage,
             rows:rowsPerPage,
             selected:selected
@@ -397,7 +380,6 @@ const ListaDocEmessi = () => {
             textValue,
             valueAutocomplete,
             valueSelectMonths,
-            valuetipologiaFattura,
             page:0,
             rows:parseInt(event.target.value, 10),
             selected:selected
@@ -425,211 +407,125 @@ const ListaDocEmessi = () => {
    
 
     return (
-        <div className="mx-5">
-            {/*title container start */}
-            <div className="marginTop24 ">
-                <Typography variant="h4">White list </Typography>
-            </div>
-            {/*title container end */}
-            <div className="row mb-5 mt-5" >
-                <div className="col-3">
-                    <Box sx={{width:'80%'}} >
-                        <FormControl
-                            fullWidth
-                            size="medium"
-                        >
-                            <InputLabel>
-                            Anno   
-                            </InputLabel>
-                            <Select
-                                label='Seleziona Anno'
-                                onChange={(e) => {
-                                    clearOnChangeFilter();  
-                                    const value = Number(e.target.value);
-                                    setBodyGetLista((prev)=> ({...prev, ...{anno:value}}));
-                                }}
-                                value={bodyGetLista.anno||''}     
-                            >
-                                {arrayYears.map((el) => (
-                                    <MenuItem
-                                        key={Math.random()}
-                                        value={el}
-                                    >
-                                        {el}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Box>
-                </div>
-                <div  className="col-3">
-                    <Autocomplete
-                        limitTags={1}
-                        sx={{width:'80%'}}
-                        multiple
-                        onChange={(event, value) => {
-                            const valueArray = value.map((el) => Number(el.mese));
-                            setValueSelectMonths(value);
-                            setBodyGetLista((prev) => ({...prev,...{mesi:valueArray}}));
-                            clearOnChangeFilter();
-                        }}
-                        isOptionEqualToValue={(option, value) => option.descrizione === value.descrizione}
-                        options={arrayMonths}
-                        value={valueSelectMonths}
-                        disableCloseOnSelect
-                        getOptionLabel={(option) => option.descrizione}
-                        renderOption={(props, option,{ selected }) =>(
-                            <li {...props}>
-                                <Checkbox
-                                    icon={icon}
-                                    checkedIcon={checkedIcon}
-                                    style={{ marginRight: 8 }}
-                                    checked={selected}
-                                />
-                                {option.descrizione}
-                            </li>
-                        )}
-                        style={{ width: '80%',height:'59px' }}
-                        renderInput={(params) => {
-                            return <TextField {...params}
-                                sx={{backgroundColor:"#F2F2F2"}}
-                                label="Mesi" 
-                                placeholder="Mesi" />;
-                        }}     
-                    />
-                </div>
-                <div className="col-3">
-                    <Box  style={{ width: '80%' }}>
-                        <FormControl
-                            fullWidth
-                            size="medium"
-                        >
-                            <InputLabel
-                            >
-                                Tipologia Fattura  
-                            </InputLabel>
-                            <Select
-                                label='Seleziona Prodotto'
-                                onChange={(e) =>{
-                                    if(e.target.value){
-                                        setValueTipologiaFattura(e.target.value);
-                                        if(e.target.value === "Tutte"){
-                                            setBodyGetLista((prev)=>({...prev,...{tipologiaFattura:null}}));
-                                        }else{
-                                            setBodyGetLista((prev)=>({...prev,...{tipologiaFattura:e.target.value}}));
-                                        }
-                                    }
-                                    clearOnChangeFilter();
-                                }}     
-                                value={valuetipologiaFattura}       
-                            >
-                                {tipologiaFatture.map((el) => (            
-                                    <MenuItem
-                                        key={Math.random()}
-                                        value={el}
-                                    >
-                                        {el}
-                                    </MenuItem>              
-                                ))}
-                                    
-                            </Select>
-                        </FormControl>
-                    </Box>
-                </div>
-                <div className="col-3">
-                    <Box  style={{ width: '80%' }}>
-                        <FormControl
-                            fullWidth
-                            size="medium"
-                        >
-                            <InputLabel>
-                                Tipologia contratto
-                            </InputLabel>
-                            <Select
-                                label="Tipologia contratto"
-                                onChange={(e) =>{
-                                    clearOnChangeFilter();
-                                    if(e.target.value === 0){
-                                        setBodyGetLista((prev)=> ({...prev, ...{tipologiaContratto:null}}));
-                                    }else{
-                                        setBodyGetLista((prev)=> ({...prev, ...{tipologiaContratto:Number(e.target.value)}}));
-                                    }
-                                }}
-                                value={bodyGetLista.tipologiaContratto === null ? 0 : bodyGetLista.tipologiaContratto}
-                            >
-                                {contratti.map((el) => (
-                                    <MenuItem
-                                        key={el.id}
-                                        value={el.id}
-                                    >
-                                        {el.descrizione}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Box>
-                </div>
-            </div>
-            <div className="row mb-5 mt-5" >
-                <div  className="col-3">
-                    <MultiselectCheckbox 
-                        setBodyGetLista={setBodyGetLista}
-                        dataSelect={dataSelect}
-                        setTextValue={setTextValue}
-                        valueAutocomplete={valueAutocomplete}
-                        setValueAutocomplete={setValueAutocomplete}
-                        clearOnChangeFilter={clearOnChangeFilter}
-                    ></MultiselectCheckbox>
-                </div>
-            </div>
-            <div className="d-flex">
-                <div className=" d-flex justify-content-center align-items-center">
-                    <div>
-                        <Button 
-                            onClick={onButtonFiltra} 
-                            disabled={bodyGetLista.anno === null}
-                            sx={{ marginTop: 'auto', marginBottom: 'auto'}}
-                            variant="contained"> Filtra
-                        </Button>
-                        {statusAnnulla === 'hidden'? null :
-                            <Button
-                                onClick={onButtonAnnulla}
-                                sx={{marginLeft:'24px'}} >
-                        Annulla filtri
-                            </Button>}
-                    </div>
-                </div>
-            </div>
-            {/* grid */}
-            <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
-                {gridData.length > 0 &&
-                <Button 
-                    disabled={getListaLoading}
-                    onClick={onDownload}
-                >
-                Download Risultati
-                    <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
-                </Button>}
-            </div>
-            <div className="mt-1 mb-5" style={{ width: '100%'}}>
-                <GridCustom
-                    nameParameterApi='idWhite'
-                    elements={gridData}
-                    changePage={handleChangePage}
-                    changeRow={handleChangeRowsPerPage} 
-                    total={totalElements}
-                    page={page}
-                    rows={rowsPerPage}
-                    headerNames={headerNames}
-                    disabled={false}
-                    widthCustomSize="auto"
-                    setOpenModalDelete={setOpenModalAction}
-                    setOpenModalAdd={setOpenModalAdd}
-                    buttons={buttonsTopHeader}
-                    selected={selected}
-                    setSelected={setSelected}></GridCustom>
-            </div>
-          
+        <MainBoxStyled title={"White list"}>
+            <ResponsiveGridContainer >
+                <MainFilter 
+                    filterName={"select_value_string"}
+                    inputLabel={"Anno"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyDescription={"anno"}
+                    keyValue={"anno"}
+                    keyBody={"anno"}
+                    arrayValues={arrayYears}
+                    extraCodeOnChange={(e)=>{
+                        const value = Number(e);
+                        setBodyGetLista((prev)=> ({...prev, ...{anno:value}}));
+                        getMesi(value);
+                    }}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"multi_checkbox"}
+                    inputLabel={"Mese"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    dataSelect={arrayMonths}
+                    valueAutocomplete={valueSelectMonths}
+                    setValueAutocomplete={setValueSelectMonths}
+                    keyDescription={"descrizione"}
+                    keyBody={"mesi"}
+                    keyValue={"mese"}
+                    extraCodeOnChangeArray={(value)=>{
+                        const valueArray = value.map((el) => Number(el.mese));
+                        setValueSelectMonths(value);
+                        setBodyGetLista((prev) => ({...prev,...{mesi:valueArray}}));
+                    }}
+                    iconMaterial={RenderIcon("date",true)}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"select_value_string"}
+                    inputLabel={"Tipologia Fattura"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyDescription={"tipologiaFattura"}
+                    keyValue={"tipologiaFattura"}
+                    keyBody={"tipologiaFattura"}
+                    arrayValues={tipologiaFatture}
+                    extraCodeOnChange={(e)=>{
+                        if(e){
+                            if(e === "Tutte"){
+                                setBodyGetLista((prev)=>({...prev,...{tipologiaFattura:null}}));
+                            }else{
+                                setBodyGetLista((prev)=>({...prev,...{tipologiaFattura:e}}));
+                            }
+                        }
+                    }}
+                    defaultValue={"Tutte"}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"select_key_value"}
+                    inputLabel={"Tipologia contratto"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyDescription={"descrizione"}
+                    keyBody={"idTipoContratto"}
+                    keyValue={"id"}
+                    arrayValues={contratti}
+                    defaultValue={"3"}
+                    extraCodeOnChange={(e)=>{
+                        const val = (Number(e) === 3) ? null : Number(e);
+                        setBodyGetLista((prev)=>({...prev,...{idTipoContratto:val}}));
+                    }}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"multi_checkbox"}
+                    inputLabel={"Rag. Soc. Ente"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    dataSelect={dataSelect}
+                    setTextValue={setTextValue}
+                    textValue={textValue}
+                    valueAutocomplete={valueAutocomplete}
+                    setValueAutocomplete={setValueAutocomplete}
+                    keyDescription={"descrizione"}
+                    keyValue={"idEnte"}
+                    keyBody={"idEnti"}
+                ></MainFilter>
+            </ResponsiveGridContainer>
+            <FilterActionButtons 
+                onButtonFiltra={onButtonFiltra} 
+                onButtonAnnulla={onButtonAnnulla} 
+                statusAnnulla={statusAnnulla} 
+            ></FilterActionButtons>
+            <ActionTopGrid
+                actionButtonRight={[{
+                    onButtonClick:onDownload,
+                    variant: "outlined",
+                    label: "Download risultati",
+                    icon:{name:"download"},
+                    disabled:(gridData.length === 0||getListaLoading)
+                }]}/>
+            <GridCustom
+                nameParameterApi='idWhite'
+                elements={gridData}
+                changePage={handleChangePage}
+                changeRow={handleChangeRowsPerPage} 
+                total={totalElements}
+                page={page}
+                rows={rowsPerPage}
+                headerNames={headerNames}
+                disabled={false}
+                widthCustomSize="auto"
+                setOpenModalDelete={setOpenModalAction}
+                setOpenModalAdd={setOpenModalAdd}
+                buttons={buttonsTopHeader}
+                selected={selected}
+                setSelected={setSelected}></GridCustom>
             <ModalAggiungi 
                 getLista={onButtonAggiungi}
                 open={openModalAdd}
@@ -651,7 +547,8 @@ const ListaDocEmessi = () => {
                 mainState={mainState}
                 sentence={"Sei sicuro di voler procedere"}
             ></ModalConfermaInserimento>
-        </div>
+        </MainBoxStyled>
+      
     );
 };
 export default ListaDocEmessi;

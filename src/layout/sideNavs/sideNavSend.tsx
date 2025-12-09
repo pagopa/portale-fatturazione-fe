@@ -26,6 +26,7 @@ import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import GavelIcon from '@mui/icons-material/Gavel';
 import DvrIcon from '@mui/icons-material/Dvr';
+import BatchPredictionIcon from '@mui/icons-material/BatchPrediction';
 
 
 const SideNavSend : React.FC = () => {
@@ -39,6 +40,7 @@ const SideNavSend : React.FC = () => {
     const [open, setOpen] = useState(false);
     const [open2, setOpen2] = useState(false);
     const [openContestazioni, setOpenContestazioni] = useState(false);
+    const [openModPrevisonale, setOpenModPrevisonale] = useState(false);
     
     
     const handleListItemClick = async(pathToGo) => {
@@ -58,6 +60,13 @@ const SideNavSend : React.FC = () => {
         }else if(currentLocation === PathPf.MODULOCOMMESSA){
             setSelectedIndex(1);
         }else if(currentLocation === "/send/"+PathPf.LISTA_DATI_FATTURAZIONE){
+            if( mainState.infoTrimestreComSelected?.from === PathPf.LISTA_MODULICOMMESSA_PREVISONALE){
+                setSelectedIndex(12);
+            }else{
+                setSelectedIndex(1);
+            }
+            
+        }else if(currentLocation === PathPf.LISTA_DATI_FATTURAZIONE){
             setSelectedIndex(0);
         }else if(currentLocation === "/send/"+PathPf.LISTA_MODULICOMMESSA){
             setSelectedIndex(1);
@@ -92,6 +101,8 @@ const SideNavSend : React.FC = () => {
             setSelectedIndex(10);
         }else if(currentLocation === PathPf.ORCHESTRATORE){
             setSelectedIndex(11);
+        }else if(currentLocation === PathPf.LISTA_MODULICOMMESSA_PREVISONALE ){
+            setSelectedIndex(12);
         }
 
         if(open2 && (currentLocation !== PathPf.LISTA_DOC_EMESSI && currentLocation !== PathPf.FATTURAZIONE)){
@@ -102,6 +113,9 @@ const SideNavSend : React.FC = () => {
         }
         if(openContestazioni && (currentLocation !== PathPf.STORICO_CONTEST && currentLocation !== PathPf.LISTA_NOTIFICHE && currentLocation !== PathPf.STORICO_DETTAGLIO_CONTEST && currentLocation !== PathPf.INSERIMENTO_CONTESTAZIONI )){
             setOpenContestazioni(false);
+        }
+        if(openModPrevisonale && (currentLocation !== PathPf.LISTA_MODULICOMMESSA_PREVISONALE && currentLocation !== PathPf.LISTA_MODULICOMMESSA && currentLocation !== PathPf.MODULOCOMMESSA )){
+            setOpenModPrevisonale(false);
         }
 
     },[currentLocation]);
@@ -143,12 +157,35 @@ const SideNavSend : React.FC = () => {
                         </ListItemButton>
                     </List>
                 </Collapse>
-                <ListItemButton selected={selectedIndex === 1} onClick={() => handleListItemClick(PathPf.LISTA_MODULICOMMESSA)}>
+                <ListItemButton selected={selectedIndex === 12} onClick={() => handleListItemClick(PathPf.LISTA_MODULICOMMESSA_PREVISONALE)}>
                     <ListItemIcon>
-                        <ViewModuleIcon fontSize="inherit" />
+                        <BatchPredictionIcon fontSize="inherit" />
                     </ListItemIcon>
-                    <ListItemText primary="Modulo commessa" />
+                    <ListItemText primary="Modulo commessa previsionale" />
+                    {openModPrevisonale ? 
+                        <IconButton onClick={(e)=> {
+                            e.stopPropagation();
+                            setOpenModPrevisonale(false);
+                        }}  size="small">
+                            <ExpandLess fontSize="inherit"  />
+                        </IconButton>:
+                        <IconButton onClick={(e)=>{
+                            e.stopPropagation();
+                            setOpenModPrevisonale(true);
+                        } }  size="small">
+                            <ExpandMore fontSize="inherit"  />
+                        </IconButton>}
                 </ListItemButton>
+                <Collapse in={openModPrevisonale} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                        <ListItemButton selected={selectedIndex === 1} sx={{ pl: 4 }} onClick={() => handleListItemClick(PathPf.LISTA_MODULICOMMESSA)}>
+                            <ListItemIcon>
+                                <ViewModuleIcon fontSize="inherit" />
+                            </ListItemIcon>
+                            <ListItemText primary="Modulo commessa fatturabile" />
+                        </ListItemButton>
+                    </List>
+                </Collapse>
                 <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClick(PathPf.LISTA_NOTIFICHE)}>
                     <ListItemIcon>
                         <MarkUnreadChatAltIcon fontSize="inherit" />

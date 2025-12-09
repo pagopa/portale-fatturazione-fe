@@ -1,21 +1,14 @@
-import { IconButton, Tooltip, Typography } from "@mui/material";
 import React , { useState, useEffect, useContext} from 'react';
-import { TextField,Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import { getTipologiaProfilo, manageError, managePresaInCarico} from "../../api/api";
 import {NotificheList, FlagContestazione, Contestazione, ElementMultiSelect, ListaRecCon, OptionMultiselectChackbox  } from "../../types/typeReportDettaglio";
 import { BodyListaNotifiche } from "../../types/typesGeneral";
 import ModalContestazione from '../../components/reportDettaglio/modalContestazione';
 import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
-import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
-import DownloadIcon from '@mui/icons-material/Download';
-import { useNavigate } from "react-router";
 import { getAnniNotifiche, getMesiNotifiche, listaNotifichePagoPa, getTipologiaEntiCompletiPagoPa, getContestazionePagoPa, downloadNotifchePagoPa } from "../../api/apiPagoPa/notifichePA/api";
 import { getTipologiaProdotto } from "../../api/apiSelfcare/moduloCommessaSE/api";
-import { listaEntiNotifichePageConsolidatore, listaEntiNotifichePage, listaNotifiche, listaNotificheRecapitista, listaNotificheConsolidatore, getContestazione, getContestazioneRecapitista, getContestazioneCosolidatore, downloadNotifche, downloadNotifcheRecapitista, downloadNotifcheConsolidatore, getMessaggiCountEnte } from "../../api/apiSelfcare/notificheSE/api";
+import { listaEntiNotifichePageConsolidatore, listaEntiNotifichePage, listaNotifiche, listaNotificheRecapitista, listaNotificheConsolidatore, getContestazione, getContestazioneRecapitista, getContestazioneCosolidatore, downloadNotifche, downloadNotifcheRecapitista, downloadNotifcheConsolidatore, getMessaggiCountEnte, flagContestazione } from "../../api/apiSelfcare/notificheSE/api";
 import ModalRedirect from "../../components/commessaInserimento/madalRedirect";
 import ModalScadenziario from "../../components/reportDettaglio/modalScadenziario";
-import MultiSelectStatoContestazione from "../../components/reportDettaglio/multiSelectGroupedBy";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
@@ -23,7 +16,9 @@ import { profiliEnti } from "../../reusableFunction/actionLocalStorage";
 import { mesiGrid, mesiWithZero, tipoNotifica } from "../../reusableFunction/reusableArrayObj";
 import { GlobalContext } from "../../store/context/globalContext";
 import { PathPf } from "../../types/enum";
-import EventNoteIcon from '@mui/icons-material/EventNote';
+import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
+import MainFilter from "../../components/reusableComponents/mainFilter";
+
 
 
 const ReportDettaglio : React.FC = () => {
@@ -41,10 +36,7 @@ const ReportDettaglio : React.FC = () => {
     const enti = profiliEnti(mainState);
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
-    const navigate = useNavigate();
-    const currentMonth = (new Date()).getMonth() + 1;
-
-    
+   
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [profili, setProfili] = useState([]);
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
@@ -83,7 +75,7 @@ const ReportDettaglio : React.FC = () => {
             dataInserimentoConsolidatore: '',
             dataModificaConsolidatore: '',
             dataChiusura: '',
-            anno: 0,
+            anno: null,
             mese: 0
         }
     });
@@ -94,11 +86,12 @@ const ReportDettaglio : React.FC = () => {
     const [showLoadingGrid, setShowLoadingGrid] = useState(false);
     const [showModalScadenziario, setShowModalScadenziario ] = useState(false);   
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
+    const [fgContestazione, setFgContestazione] = useState<FlagContestazione[]>([]);
     const [bodyGetLista, setBodyGetLista] = useState<BodyListaNotifiche>({
-        profilo:'',
-        prodotto:'',
-        anno:0,
-        mese:0, 
+        profilo:"",
+        prodotto:"",
+        anno:null,
+        mese:null, 
         tipoNotifica:null,
         statoContestazione:[],
         cap:null,
@@ -111,8 +104,8 @@ const ReportDettaglio : React.FC = () => {
     const [bodyDownload, setBodyDownload] = useState<BodyListaNotifiche>({
         profilo:'',
         prodotto:'',
-        anno:0,
-        mese:0, 
+        anno:null,
+        mese:null, 
         tipoNotifica:null,
         statoContestazione:[],
         cap:null,
@@ -122,6 +115,7 @@ const ReportDettaglio : React.FC = () => {
         recapitisti:[],
         consolidatori:[]
     });
+   
     const [contestazioneSelected, setContestazioneSelected] = useState<Contestazione>({ 
         risposta:true,
         modifica: true,
@@ -146,7 +140,7 @@ const ReportDettaglio : React.FC = () => {
             dataInserimentoConsolidatore: '',
             dataModificaConsolidatore: '',
             dataChiusura: '',
-            anno: 0,
+            anno: null,
             mese: 0
         }
     });
@@ -168,66 +162,92 @@ const ReportDettaglio : React.FC = () => {
         }
     }, []);
     
-    useEffect(()=>{
-        if((bodyGetLista.anno !== 0) && (!isInitialRender.current)){
-            getMesi(bodyGetLista.anno.toString());
-        }
-    },[bodyGetLista.anno]);
-    
-    const funInitialRender = async(newBody, dataFromLocalStorage) => {
-        setGetNotificheWorking(true);
-        getProdotti();
-        getProfili();
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const {idEnti, recapitisti, consolidatori, ...body} = newBody;
-        await getAnniNotifiche(token, profilo.nonce).then(async(resAnno)=> {
-            const allYearToNumber = resAnno.data.map( el => Number(el));
-            let annoToSet = resAnno.data[0];
-            if(dataFromLocalStorage){
-                annoToSet = filters.body.anno;
-            }
+    const funInitialRender = async (newBody, dataFromLocalStorage) => {
+        try {
+            setGetNotificheWorking(true);
+
+            // Fire these in parallel (not awaiting each)
+            getProdotti();
+            getProfili();
+            getFlagContestazione();
+
+            // Remove unused keys
+            const { idEnti, recapitisti, consolidatori, ...body } = newBody;
+
+            const resAnno = await getAnniNotifiche(token, profilo.nonce);
+            const allYearToNumber = resAnno.data.map(Number);
             setArrayAnni(allYearToNumber);
-            if(resAnno.data.length > 0){
-                await getMesiNotifiche(token, profilo.nonce,{anno:annoToSet?.toString()}).then(async(resMese)=> {
-                    setArrayMesi(resMese.data);
-                    let meseToSet = resMese.data[0].mese;
-                    if(dataFromLocalStorage){
-                        meseToSet = filters.body.mese;
-                    }
-                    let page = 1;
-                    let row = 10;
-                    
-                    setBodyGetLista({...newBody,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
-                    setBodyDownload({...newBody,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
-                    if(dataFromLocalStorage){
-                        setTextValue(filters.textAutocomplete);
-                        setValueAutocomplete(filters.valueAutocomplete);
-                        setValueFgContestazione(filters.valueFgContestazione);
-                        setPage(filters.page);
-                        setRowsPerPage(filters.rows);
-                        
-                        meseToSet = filters.body.mese;
-                        page = filters.page + 1;
-                        row = filters.rows;
-                    }
-                    
-                    if(profilo.auth === 'SELFCARE' && mainState.datiFatturazione === true){
-                        await getlistaNotifiche( page, row,{...body,...{mese:Number(meseToSet),anno:Number(annoToSet)}}); 
-                    }else if((profilo.auth === 'SELFCARE') && (profilo.profilo === 'CON' || profilo.profilo === 'REC')){
-                        await getlistaNotifiche( page, row,{...body,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
-                    }else if(profilo.auth === 'PAGOPA'){
-                        await getlistaNotifichePagoPa( page, row,{...newBody,...{mese:Number(meseToSet),anno:Number(annoToSet)}});
-                        await getRecapitistConsolidatori();
-                    }
-                }).catch((err)=>{
-                    manageError(err,dispatchMainState);
-                    setGetNotificheWorking(false);
-                });
+
+            if (resAnno.data.length === 0) {
+                setGetNotificheWorking(false);
+                return;
             }
-        }).catch((err)=>{
+
+            const annoToSet = dataFromLocalStorage ? filters.body.anno : resAnno.data[0];
+
+            const resMese = await getMesiNotifiche(token, profilo.nonce, {
+                anno: annoToSet.toString(),
+            });
+
+            const camelCaseMonth = resMese.data.map(el => ({
+                ...el,
+                descrizione:
+                el.descrizione.charAt(0).toUpperCase() +
+                el.descrizione.slice(1).toLowerCase(),
+            }));
+
+            setArrayMesi(camelCaseMonth);
+
+            const meseToSet = dataFromLocalStorage
+                ? filters.body.mese
+                : camelCaseMonth[0].mese;
+
+            const page = dataFromLocalStorage ? filters.page + 1 : 1;
+            const row = dataFromLocalStorage ? filters.rows : 10;
+
+            const newBodyWithDates = {
+                ...newBody,
+                mese: Number(meseToSet),
+                anno: Number(annoToSet),
+            };
+
+            setBodyGetLista(newBodyWithDates);
+            setBodyDownload(newBodyWithDates);
+
+            // Restore filters only if needed
+            if (dataFromLocalStorage) {
+                setTextValue(filters.textAutocomplete);
+                setValueAutocomplete(filters.valueAutocomplete);
+                setValueFgContestazione(filters.valueFgContestazione);
+                setPage(filters.page);
+                setRowsPerPage(filters.rows);
+            }
+
+          
+            if (profilo.auth === "SELFCARE" && mainState.datiFatturazione) {
+                await getlistaNotifiche(page, row, {
+                    ...body,
+                    mese: Number(meseToSet),
+                    anno: Number(annoToSet),
+                });
+            } else if (
+                profilo.auth === "SELFCARE" &&
+            (profilo.profilo === "CON" || profilo.profilo === "REC")
+            ) {
+                await getlistaNotifiche(page, row, {
+                    ...body,
+                    mese: Number(meseToSet),
+                    anno: Number(annoToSet),
+                });
+            } else if (profilo.auth === "PAGOPA") {
+                await getlistaNotifichePagoPa(page, row, newBodyWithDates);
+                await getRecapitistConsolidatori();
+            }
+        } catch (err) {
+            console.log("Error NOTIFICHE");
+        } finally {
             setGetNotificheWorking(false);
-            manageError(err,dispatchMainState);
-        });
+        }
     };
     
     useEffect(()=>{
@@ -266,12 +286,26 @@ const ReportDettaglio : React.FC = () => {
         }, 800);
         return () => clearTimeout(timer);
     },[textValue]);
+
+    const getFlagContestazione =  async() => {
+        await flagContestazione(token, profilo.nonce ).then((res)=>{
+            setFgContestazione(res.data);                
+        }).catch(((err)=>{
+            manageError(err,dispatchMainState);
+        }));
+    };
     
     const getMesi = async (anno) => {
         await getMesiNotifiche(token, profilo.nonce,{anno}).then((res)=> {
-            setArrayMesi(res.data);
-            if(res.data.length > 0){
-                setBodyGetLista((prev)=> ({...prev, ...{mese:Number(res.data[0].mese)}}));
+
+            const camelCaseMonth = res.data.map((el) =>{
+                el.descrizione = el?.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase();
+                return el;
+            });
+         
+            setArrayMesi(camelCaseMonth);
+            if(camelCaseMonth.length > 0){
+                setBodyGetLista((prev)=> ({...prev, ...{mese:Number(camelCaseMonth[0].mese)}}));
             }  
             setGetNotificheWorking(false);
         }).catch((err)=>{
@@ -392,8 +426,8 @@ const ReportDettaglio : React.FC = () => {
         funInitialRender({
             profilo:'',
             prodotto:'',
-            anno:0,
-            mese:0,
+            anno:null,
+            mese:null,
             tipoNotifica:null,
             statoContestazione:[],
             cap:null,
@@ -707,7 +741,7 @@ const ReportDettaglio : React.FC = () => {
                 const a = document.createElement('a');
                 a.setAttribute('hidden', '');
                 a.setAttribute('href', url);
-                a.setAttribute('download',`Notifiche /${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`);
+                a.setAttribute('download',`Notifiche /${mesiWithZero[(bodyDownload?.mese||0)-1]} /${bodyDownload.anno}.csv`);
                 document.body.appendChild(a);
                 a.click();
                 setShowLoading(false);
@@ -725,7 +759,7 @@ const ReportDettaglio : React.FC = () => {
                 const a = document.createElement('a');
                 a.setAttribute('hidden', '');
                 a.setAttribute('href', url);
-                a.setAttribute('download', `Notifiche /${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`);
+                a.setAttribute('download', `Notifiche /${mesiWithZero[(bodyDownload?.mese||0)-1]} /${bodyDownload.anno}.csv`);
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -736,9 +770,9 @@ const ReportDettaglio : React.FC = () => {
             }));
         }else if(profilo.auth === 'PAGOPA'){
             await downloadNotifchePagoPa(token, profilo.nonce,bodyDownload).then((res)=>{
-                let fileName = `Notifiche /${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`;
+                let fileName = `Notifiche /${mesiWithZero[(bodyDownload?.mese||0)-1]} /${bodyDownload.anno}.csv`;
                 if(bodyDownload.idEnti.length === 1){
-                    fileName = `Notifiche /${notificheList[0].ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]} /${bodyDownload.anno}.csv`;
+                    fileName = `Notifiche /${notificheList[0].ragioneSociale}/${mesiWithZero[(bodyDownload?.mese||0)-1]} /${bodyDownload.anno}.csv`;
                 }
                 const blob = new Blob([res.data], { type: 'text/csv' });
                 const url = window.URL.createObjectURL(blob);
@@ -757,355 +791,208 @@ const ReportDettaglio : React.FC = () => {
         }
     }; 
     
-    //const backgroundColorButtonScadenzario = (profilo.auth === 'PAGOPA' || enti) ? "#0062C3" : 'red';
     
     return (
-        <div className="mx-5 marginTop24">
-            <div className="row">
-                <div className="col-9">
-                    <Typography variant="h4">Notifiche</Typography>
-                </div>
-                <div className="col-3 ">
-                    <Box sx={{width:'80%', marginLeft:'20px', display:'flex', justifyContent:'end'}}  >
-                        <Tooltip  title="Scadenzario contestazioni">
-                            <Button  
-                                variant="outlined"
-                                size="medium"  onClick={()=> setShowModalScadenziario(true)} >
-                                <EventNoteIcon></EventNoteIcon>
-                            </Button>
-                        </Tooltip>
-                    </Box>
-                </div>
-            </div>
-            {/*title container end */}
-            <div className="mt-5 mb-5 ">
-                <div className="row">
-                    <div className="col-3">
-                        <Box sx={{width:'80%'}} >
-                            <FormControl
-                                fullWidth
-                                size="medium"
-                            >
-                                <InputLabel>
-        Anno
-                                </InputLabel>
-                                <Select
-                                    label='Seleziona Prodotto'
-                                    onChange={(e) => {
-                                        isInitialRender.current = false;
-                                        const value = Number(e.target.value);
-                                        setBodyGetLista((prev)=> ({...prev, ...{anno:value}}));  
-                                        clearOnChangeFilter();
-                                    }}
-                                    value={bodyGetLista.anno||''}
-                                >
-                                    {arrayAnni.map((el) => (
-                                        <MenuItem
-                                            key={Math.random()}
-                                            value={el}>
-                                            {el}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </div>
-                    <div className="col-3">
-                        <Box sx={{width:'80%', marginLeft:'20px'}}  >
-                            <FormControl
-                                fullWidth
-                                size="medium"
-                            >
-                                <InputLabel> Mese</InputLabel>
-                                <Select
-                                    label='Seleziona Mese'
-                                    onChange={(e) =>{
-                                        const value = Number(e.target.value);
-                                        setBodyGetLista((prev)=> ({...prev, ...{mese:value}}));
-                                        clearOnChangeFilter();
-                                    }}
-                                    value={bodyGetLista.mese||''}
-                                >
-                                    {arrayMesi.map((el) =>{
-                                        return(
-                                            <MenuItem
-                                                key={el.mese}
-                                                value={el.mese}
-                                            >
-                                                {el?.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase()}
-                                            </MenuItem>
-                                        );
-                                    })}
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </div>
-                    <div className="col-3  ">
-                        <Box sx={{width:'80%', marginLeft:'20px'}} >
-                            <FormControl
-                                fullWidth
-                                size="medium"
-                            >
-                                <InputLabel>
-        Seleziona Prodotto
-                                </InputLabel>
-                                <Select
-                                    label='Seleziona Prodotto'
-                                    onChange={(e) =>{
-                                        clearOnChangeFilter();
-                                        setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}));
-                                    }}
-                                    value={bodyGetLista.prodotto}
-                                >
-                                    {prodotti.map((el) => (
-                                        <MenuItem
-                                            key={Math.random()}
-                                            value={el.nome}
-                                        >
-                                            {el.nome}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </div>
-                    <div className="col-3 ">
-                        <Box sx={{width:'80%',marginLeft:'20px'}} >
-                            <TextField
-                                fullWidth
-                                label='IUN'
-                                placeholder='IUN'
-                                value={bodyGetLista.iun || ''}
-                                onChange={(e) =>{
-                                    clearOnChangeFilter();
-                                    setBodyGetLista((prev)=>{             
-                                        if(e.target.value === ''){
-                                            return {...prev, ...{iun:null}};
-                                        }else{
-                                            return {...prev, ...{iun:e.target.value}};
-                                        }
-                                    });}
-                                }            
-                            />
-                        </Box>
-                    </div>
-                </div>                                         
-                <div className="row mt-5" >           
-                    <div className="col-3">
-                        <Box sx={{width:'80%'}} >
-                            <FormControl
-                                fullWidth
-                                size="medium"
-                            >
-                                <InputLabel>
-        Tipo Notifica     
-                                </InputLabel>
-                                <Select
-                                    id="sea"
-                                    label='Tipo Notifica'
-                                    labelId="search-by-label"
-                                    onChange={(e) =>{
-                                        const value = Number(e.target.value);
-                                        setBodyGetLista((prev)=> ({...prev, ...{tipoNotifica:value}}));
-                                        clearOnChangeFilter();
-                                    }}
-                                    value={bodyGetLista.tipoNotifica || ''}        
-                                >
-                                    {tipoNotifica.map((el) => (     
-                                        <MenuItem
-                                            key={Math.random()}
-                                            value={Object.values(el)[0].toString()}
-                                        >
-                                            {Object.keys(el)[0].toString()}
-                                        </MenuItem>      
-                                    ))}       
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </div>
-                    <div className=" col-3 ">
-                        <Box sx={{width:'80%', marginLeft:'20px'}}>
-                            <MultiSelectStatoContestazione 
-                                mainState={mainState}
-                                dispatchMainState={dispatchMainState}
-                                setBodyGetLista={setBodyGetLista}
-                                valueFgContestazione={valueFgContestazione}
-                                setValueFgContestazione={setValueFgContestazione}
-                                clearOnChangeFilter={clearOnChangeFilter}></MultiSelectStatoContestazione>
-                        </Box>
-                    </div>
-                    <div className="col-3 ">
-                        <Box sx={{width:'80%', marginLeft:'20px'}} >
-                            <TextField
-                                fullWidth
-                                label='CAP'
-                                placeholder='CAP'
-                                value={bodyGetLista.cap || ''}
-                                onChange={(e) =>{
-                                    clearOnChangeFilter();
-                                    setBodyGetLista((prev)=>{               
-                                        if(e.target.value === ''){
-                                            return {...prev, ...{cap:null}};
-                                        }else{
-                                            return {...prev, ...{cap:e.target.value}};
-                                        }
-                                    });
-                                }}
-                            />
-                        </Box>
-                    </div>
-                    <div className="col-3 ">
-                        <Box sx={{width:'80%',  marginLeft:'20px'}} >
-                            <TextField
-                                fullWidth
-                                label='Recipient ID'
-                                placeholder='Recipient ID'
-                                value={bodyGetLista.recipientId || ''}
-                                onChange={(e) =>{
-                                    clearOnChangeFilter();
-                                    setBodyGetLista((prev)=>{                
-                                        if(e.target.value === ''){
-                                            return {...prev, ...{recipientId:null}};
-                                        }else{
-                                            return {...prev, ...{recipientId:e.target.value}};
-                                        }
-                                    });
-                                }}                     
-                            />
-                        </Box>
-                    </div>                         
-                </div>
-                <div className="row mt-5" >
-                    {profilo.auth === 'PAGOPA' &&
-            <div  className="col-3">
-                <MultiselectCheckbox 
-                    setBodyGetLista={setBodyGetLista}
+      
+        <MainBoxStyled title={"Notifiche"} actionButton={[{
+            onButtonClick: () => setShowModalScadenziario(true),
+            variant: "outlined",
+            icon:{name:"event_note", sx:{} },
+            withText:false,
+            tooltipMessage:"Scadenzario contestazioni"
+        }]}>
+            <ResponsiveGridContainer >
+                <MainFilter 
+                    filterName={"select_value_string"} 
+                    inputLabel={"Anno"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyValue={"anno"}
+                    keyDescription='anno'
+                    keyBody={"anno"}
+                    arrayValues={arrayAnni}
+                    extraCodeOnChange={(e)=>{
+                        isInitialRender.current = false;
+                        const value = Number(e);
+                        setBodyGetLista((prev)=> ({...prev, ...{anno:value}}));  
+                        getMesi(e.toString());
+                    }}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"select_key_value"}
+                    inputLabel={"Mese"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyValue={"mese"}
+                    keyDescription='descrizione'
+                    keyBody={"mese"}
+                    arrayValues={arrayMesi}
+                    extraCodeOnChange={(e)=>{
+                        const value = Number(e);
+                        setBodyGetLista((prev)=> ({...prev, ...{mese:value}}));
+                      
+                    }}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"input_text"}
+                    inputLabel={"IUN"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyDescription='iun'
+                    keyBody={"iun"}
+                    keyValue={"iun"} //ad input text non viene utilizzata
+                    extraCodeOnChange={(e)=>{
+                        setBodyGetLista((prev)=>{             
+                            if(e === ''){
+                                return {...prev, ...{iun:null}};
+                            }else{
+                                return {...prev, ...{iun:e}};
+                            }
+                        });
+                    }}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"select_key_value"}
+                    inputLabel={"Tipo notifica"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyValue={"id"}
+                    keyDescription='name'
+                    keyBody={"tipoNotifica"}
+                    arrayValues={tipoNotifica}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"multi_checkbox"}
+                    inputLabel={"Contestazione"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    keyCompare={""}
+                    dataSelect={fgContestazione}
+                    body={bodyGetLista}
+                    setTextValue={setTextValue}
+                    textValue={textValue}
+                    valueAutocomplete={valueFgContestazione}
+                    setValueAutocomplete={setValueFgContestazione}
+                    keyDescription={"flag"}
+                    arrayValues={fgContestazione}
+                    keyValue={"id"}
+                    keyOption='flag'
+                    groupByKey={"descrizione"}
+                    keyBody={"statoContestazione"}
+                    iconMaterial={RenderIcon("invoice",true)}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"input_text"}
+                    inputLabel={"CAP"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyValue={"cap"}
+                    keyDescription={"cap"}
+                    keyBody={"cap"}
+                    extraCodeOnChange={(e)=>{
+                        setBodyGetLista((prev)=>{             
+                            if(e === ''){
+                                return {...prev, ...{cap:null}};
+                            }else{
+                                return {...prev, ...{cap:e}};
+                            }
+                        });
+                    }}
+                    defaultValue={""}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"input_text"}
+                    inputLabel={"Recipient ID"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyValue={"recipientId"}
+                    keyDescription={"recipientId"}
+                    keyBody={"recipientId"}
+                    extraCodeOnChange={(e)=>{
+                        setBodyGetLista((prev)=>{             
+                            if(e === ''){
+                                return {...prev, ...{recipientId:null}};
+                            }else{
+                                return {...prev, ...{recipientId:e}};
+                            }
+                        });
+                    }}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"multi_checkbox"}
+                    inputLabel={"Rag. Soc. Ente"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyCompare={""}
                     dataSelect={dataSelect}
                     setTextValue={setTextValue}
+                    textValue={textValue}
                     valueAutocomplete={valueAutocomplete}
                     setValueAutocomplete={setValueAutocomplete}
+                    keyDescription={"descrizione"}
+                    keyValue={"idEnte"}
+                    keyOption='descrizione'
+                    keyBody={"idEnti"}
+                    hidden={profilo.auth !== 'PAGOPA'}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"select_key_value"}
+                    inputLabel={"Consolidatore"}
                     clearOnChangeFilter={clearOnChangeFilter}
-                ></MultiselectCheckbox>
-            </div>
-                    }
-                    {profilo.auth === 'PAGOPA' && 
-            <>
-                <div className="col-3">
-                    <Box sx={{width:'80%', marginLeft:'20px'}} >
-                        <FormControl
-                            fullWidth
-                            size="medium"
-                        >
-                            <InputLabel>
-            Consolidatore     
-                            </InputLabel>
-                            <Select
-                                id="sea"
-                                label='Consolidatore'
-                                labelId="search-by-label"
-                                onChange={(e) =>{
-                                    clearOnChangeFilter();
-                                    const value = e.target.value;
-                                    setBodyGetLista((prev)=> ({...prev, ...{consolidatori:[value]}}));
-                                }}
-                                value={bodyGetLista.consolidatori[0] || ''}        
-                            >
-                                {listaConsolidatori.map((el) => (     
-                                    <MenuItem
-                                        key={el.idEnte}
-                                        value={el.idEnte}
-                                    >
-                                        {el.descrizione}
-                                    </MenuItem>      
-                                ))}       
-                            </Select>
-                        </FormControl>
-                    </Box>
-                </div>
-                <div className="col-3">
-                    <Box sx={{width:'80%', marginLeft:'20px'}} >
-                        <FormControl
-                            fullWidth
-                            size="medium"
-                        >
-                            <InputLabel
-                                id="selectRecapitista"
-                            >
-            Recapitista     
-                            </InputLabel>
-                            <Select
-                                label='Recapitista'
-                                labelId="search-by-label"
-                                onChange={(e) =>{
-                                    clearOnChangeFilter();
-                                    const value = e.target.value;
-                                    setBodyGetLista((prev)=> ({...prev, ...{recapitisti:[value]}}));
-                                }}
-                                value={bodyGetLista.recapitisti[0] || ''}        
-                            >
-                                {listaRecapitista.map((el) => (     
-                                    <MenuItem
-                                        key={el.idEnte}
-                                        value={el.idEnte}
-                                    >
-                                        {el.descrizione}
-                                    </MenuItem>      
-                                ))}       
-                            </Select>
-                        </FormControl>
-                    </Box>
-                </div>
-            </>
-                    }
-                </div>
-
-                <div className="row mt-5">
-                    <div className="col-9">
-                        <div className="d-flex justify-content-start">
-                            <Button 
-                                onClick={onButtonFiltra} 
-                                disabled={getNotificheWorking}
-                                variant="contained"> Filtra  
-                            </Button>                
-                            {statusAnnulla === 'hidden' ? null :
-                                <Button
-                                    onClick={onAnnullaFiltri}
-                                    disabled={getNotificheWorking}
-                                    sx={{marginLeft:'24px'}} >
-                                    Annulla filtri
-                                </Button>
-                            }
-                        </div>               
-                    </div>  
-                </div>
-            </div>
-            { notificheList.length > 0  &&
-            <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
-                <div>
-                    <Button
-                        disabled={getNotificheWorking|| mainState.apiError !== null}
-                        onClick={downloadNotificheOnDownloadButton}  >
-            Download Risultati 
-                        <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
-                    </Button>
-                </div>           
-            </div>
-            }            
-            <div className="mb-5">
-                <GridCustom
-                    nameParameterApi='idNotifica'
-                    elements={notificheListWithOnere}
-                    changePage={handleChangePage}
-                    changeRow={handleChangeRowsPerPage} 
-                    total={totalNotifiche}
-                    page={page}
-                    rows={rowsPerPage}
-                    headerNames={headerNames}
-                    apiGet={getContestazioneModal}
-                    disabled={getNotificheWorking}
-                    widthCustomSize="2000px"></GridCustom>
-            </div>             
-            {/* MODAL */}                                 
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyValue={"idEnte"}
+                    keyDescription={"descrizione"}
+                    arrayValues={listaConsolidatori}
+                    keyBody={"consolidatori"}
+                    hidden={profilo.auth !== 'PAGOPA'}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"select_key_value"}
+                    inputLabel={"Recapitista"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyValue={"idEnte"}
+                    keyDescription={"descrizione"}
+                    arrayValues={listaRecapitista}
+                    keyBody={"recapitisti"}
+                    hidden={profilo.auth !== 'PAGOPA'}
+                ></MainFilter>
+            </ResponsiveGridContainer>
+            <FilterActionButtons 
+                onButtonFiltra={onButtonFiltra} 
+                onButtonAnnulla={onAnnullaFiltri} 
+                statusAnnulla={statusAnnulla} 
+            ></FilterActionButtons>
+            <ActionTopGrid
+                actionButtonRight={[{
+                    onButtonClick: () => downloadNotificheOnDownloadButton(),
+                    variant: "outlined",
+                    label: "Download risultati",
+                    icon:{name:"download" },
+                    disabled:(notificheList.length === 0 || getNotificheWorking|| mainState.apiError !== null)
+                }]}
+            />      
+            <GridCustom
+                nameParameterApi='idNotifica'
+                elements={notificheListWithOnere}
+                changePage={handleChangePage}
+                changeRow={handleChangeRowsPerPage} 
+                total={totalNotifiche}
+                page={page}
+                rows={rowsPerPage}
+                headerNames={headerNames}
+                apiGet={getContestazioneModal}
+                disabled={getNotificheWorking}
+                widthCustomSize="2000px"></GridCustom>                        
             <ModalContestazione open={open} 
                 setOpen={setOpen} 
                 mainState={mainState}
@@ -1143,7 +1030,7 @@ const ReportDettaglio : React.FC = () => {
                 setOpen={setShowModalScadenziario}
                 nonce={profilo.nonce}
                 dispatchMainState={dispatchMainState}></ModalScadenziario>                                    
-        </div>
+        </MainBoxStyled>
     );
 };                                        
 export default ReportDettaglio;

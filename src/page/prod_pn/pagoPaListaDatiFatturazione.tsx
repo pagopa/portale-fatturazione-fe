@@ -1,23 +1,22 @@
-import {  Tooltip, Typography } from "@mui/material";
-import { Box, FormControl, InputLabel,Select, MenuItem, Button} from '@mui/material';
 import { getTipologiaProfilo, manageError, } from '../../api/api';
 import { BodyGetListaDatiFatturazione, GridElementListaFatturazione, ResponseDownloadListaFatturazione } from "../../types/typeListaDatiFatturazione";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import {BodyListaDatiFatturazione, Params} from '../../types/typesGeneral';
-import { DataGrid, GridRowParams,GridEventListener,MuiEvent, GridColDef } from '@mui/x-data-grid';
-import DownloadIcon from '@mui/icons-material/Download';
+import { DataGrid, GridRowParams,GridEventListener,MuiEvent } from '@mui/x-data-grid';
 import { getTipologiaProdotto } from "../../api/apiSelfcare/moduloCommessaSE/api";
 import { downloadDocumentoListaDatiFatturazionePagoPa, listaDatiFatturazionePagopa } from "../../api/apiPagoPa/datiDiFatturazionePA/api";
 import { saveAs } from "file-saver";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../../types/enum";
-import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
 import { GlobalContext } from "../../store/context/globalContext";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
+import { configListaFatturazione } from "../../assets/configurations/cong_GridListaDatiFatturazione";
+import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
+import MainFilter from "../../components/reusableComponents/mainFilter";
+import { text } from 'node:stream/consumers';
 
 
 const PagoPaListaDatiFatturazione:React.FC = () =>{
@@ -47,6 +46,7 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
     const [textValue, setTextValue] = useState('');
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
     const [showLoading,setShowLoading] = useState(false);
+
     const { 
         filters,
         updateFilters,
@@ -54,9 +54,6 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
         isInitialRender
     } = useSavedFilters(PathPf.LISTA_DATI_FATTURAZIONE,{});
 
-    // al primo reload se torno inditro da dettaglio dati tturazione ho gli stessi filtri per il download
-    // start branch 537
-    
     useEffect(()=>{  
         getProdotti();
         getProfili();
@@ -70,8 +67,6 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
         }
     },[bodyGetLista]);
 
-    
-
     useEffect(()=>{
         const timer = setTimeout(() => {
             if(textValue.length >= 3){ 
@@ -81,15 +76,11 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
         return () => clearTimeout(timer);
     },[textValue]);
 
-  
-
     const getProdotti = async() => {
         await getTipologiaProdotto(token,profilo.nonce )
             .then((res)=>{
                 setProdotti(res.data);
-               
-            })
-            .catch(((err)=>{
+            }).catch(((err)=>{
                 manageError(err,dispatchMainState);
             }));
     };
@@ -109,8 +100,7 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                 }else{
                     getListaDatifatturazione(bodyGetLista);
                 }
-            })
-            .catch(((err)=>{
+            }).catch(((err)=>{
                 manageError(err,dispatchMainState);
             }));
     };
@@ -127,8 +117,7 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                 setGridData(editedData);
                 setGetListaLoading(false);
                 isInitialRender.current = false;
-            })
-            .catch(((err)=>{
+            }).catch(((err)=>{
                 setGridData([]);
                 setGetListaLoading(false);
                 manageError(err,dispatchMainState);
@@ -143,11 +132,8 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
             await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} )
                 .then((res)=>{
                     setDataSelect(res.data);
-                })
-                .catch(((err)=>{
-                 
-                    manageError(err,dispatchMainState);
-                   
+                }).catch(((err)=>{
+                    manageError(err,dispatchMainState);  
                 }));
         }
     };
@@ -229,150 +215,73 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
         setInfoPageListaDatiFat(e);
     };
       
-    const columns: GridColDef[] = [
-        { field: 'ragioneSociale', headerName: 'Ragione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <Tooltip key={param.row.id} title={param.row.ragioneSociale.length > 20 ? param.row.ragioneSociale : null }><a className="mese_alidita text-primary fw-bolder" href="/">{param.row.ragioneSociale?.toString().length > 20 ? param.row.ragioneSociale?.toString().slice(0, 20) + '...' : param.row.ragioneSociale}</a></Tooltip>},
-        { field: 'cup', headerName: 'CUP', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align: 'center' },
-        { field: 'splitPayment', headerName: 'Split payment', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align: 'center' },
-        { field: 'idDocumento', headerName: 'ID Documento', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align: 'center' },
-        { field: 'dataDocumento', headerName: 'Data Documento', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align: 'center',valueFormatter: (value:any) =>  ( value.value !== null &&  value.value !== "--") ? new Date(value.value).toLocaleString().split(',')[0] : '--'},
-        { field: 'codCommessa', headerName: 'Cod. Commessa', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align: 'center' },
-        { field: 'dataCreazione', headerName: 'Data Primo Acc.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align: 'center',valueFormatter: (value:{value:string}) => ( value.value !== null &&  value.value !== "--") ? new Date(value.value).toLocaleString().split(',')[0] : '--'},
-        { field: 'dataModifica', headerName: 'Data Ultimo Acc.', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align: 'center',valueFormatter: (value:{value:string}) =>  ( value.value !== null &&  value.value !== "--") ? new Date(value.value).toLocaleString().split(',')[0] : '--' },
-        {field: 'action', headerName: '',sortable: false,width:70,headerAlign: 'center', align: 'center',disableColumnMenu :true,renderCell: (() => ( <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }}/>)),}
-    ];
-
     return(
-        <div className="mx-5">
-            {/*title container start */}
-            <div className="marginTop24 ">
-                <Typography variant="h4">Lista Dati Fatturazione</Typography>
-            </div>
-            {/*title container end */}
-            <div className="row mb-5 mt-5" >
-                <div className="col-3">
-                    <Box  style={{ width: '80%' }}>
-                        <FormControl
-                            fullWidth
-                            size="medium"
-                        >
-                            <InputLabel
-                                id="sea"
-                            >
-                                Seleziona Prodotto
-                            </InputLabel>
-                            <Select
-                                id="sea"
-                                label='Seleziona Prodotto'
-                                labelId="search-by-label"
-                                onChange={(e) =>{
-                                    clearOnChangeFilter();
-                                    setBodyGetLista((prev)=> ({...prev, ...{prodotto:e.target.value}}));
-                                }}
-                                value={bodyGetLista.prodotto}
-                            >
-                                {prodotti.map((el) => (
-                                    <MenuItem
-                                        key={Math.random()}
-                                        value={el.nome||''}
-                                    >
-                                        {el.nome}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Box>
-                </div>
-                <div className="col-3">
-                    <Box style={{ width: '80%' }}>
-                        <FormControl
-                            fullWidth
-                            size="medium"
-                        >
-                            <InputLabel
-                                id="sea"
-                            >
-                                Seleziona Profilo
-                            </InputLabel>
-                            <Select
-                                id="sea"
-                                label='Seleziona Profilo'
-                                labelId="search-by-label"
-                                onChange={(e) => {
-                                    clearOnChangeFilter();
-                                    setBodyGetLista((prev)=> ({...prev, ...{profilo:e.target.value}}));
-                                }}
-                                value={bodyGetLista.profilo||''}
-                            >
-                                {profili.map((el) => (
-                                    <MenuItem
-                                        key={Math.random()}
-                                        value={el||''}
-                                    >
-                                        {el}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Box>
-                </div>
-                <div  className="col-3">
-                    <MultiselectCheckbox 
-                        setBodyGetLista={setBodyGetLista}
-                        dataSelect={dataSelect}
-                        setTextValue={setTextValue}
-                        valueAutocomplete={valueAutocomplete}
-                        setValueAutocomplete={setValueAutocomplete}
-                        clearOnChangeFilter={clearOnChangeFilter}
-                    ></MultiselectCheckbox>
-                </div>
-            </div>
-            <div className="d-flex">
-                <div className=" d-flex justify-content-center align-items-center">
-                    <div>
-                        <Button 
-                            onClick={onButtonFiltra} 
-                            sx={{ marginTop: 'auto', marginBottom: 'auto'}}
-                            variant="contained"> Filtra
-                        </Button>
-                        {statusAnnulla === 'hidden'? null :
-                            <Button
-                                onClick={onButtonAnnulla}
-                                sx={{marginLeft:'24px'}} >
-                        Annulla filtri
-                            </Button>}
-                    </div>
-                </div>
-            </div>
-            {/* grid */}
-            <div className="marginTop24" style={{display:'flex', justifyContent:'end'}}>
-                {
-                    gridData.length > 0 &&
-                <Button onClick={onDownloadButton}
-                    disabled={getListaLoading}
-                >
-                Download Risultati
-                    <DownloadIcon sx={{marginRight:'10px'}}></DownloadIcon>
-                </Button>
-                }
-            </div>
+        <MainBoxStyled title={"Lista Dati Fatturazione"}>
+            <ResponsiveGridContainer >
+                <MainFilter 
+                    filterName={"select_value_string"}
+                    inputLabel={"Seleziona profilo"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyDescription={"profilo"}
+                    keyValue={"profilo"}
+                    keyBody={"profilo"}
+                    arrayValues={profili}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"multi_checkbox"}
+                    inputLabel={"Rag. Soc. Ente"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyCompare={""}
+                    dataSelect={dataSelect}
+                    setTextValue={setTextValue}
+                    textValue={textValue}
+                    valueAutocomplete={valueAutocomplete}
+                    setValueAutocomplete={setValueAutocomplete}
+                    keyDescription={"descrizione"}
+                    keyValue={"idEnte"}
+                    keyOption='descrizione'
+                    keyBody={"idEnti"}
+                ></MainFilter>
+            </ResponsiveGridContainer>
+            <FilterActionButtons 
+                onButtonFiltra={onButtonFiltra} 
+                onButtonAnnulla={onButtonAnnulla} 
+                statusAnnulla={statusAnnulla} 
+            ></FilterActionButtons>
+            <ActionTopGrid
+                actionButtonRight={[{
+                    onButtonClick:onDownloadButton,
+                    variant: "outlined",
+                    label: "Download risultati",
+                    icon:{name:"download"},
+                    disabled:(gridData.length === 0 || getListaLoading)
+                }]}/>
+           
             <div className="mt-1 mb-5" style={{ width: '100%'}}>
                 <DataGrid 
                     sx={{
-                        height:'400px',
+                        height:gridData.length < 5 ?"400px" :"auto",
                         '& .MuiDataGrid-virtualScroller': {
                             backgroundColor: 'white',
                         },
                         "& .MuiDataGrid-row": {
                             borderTop: "4px solid #F2F2F2",
                             borderBottom: "2px solid #F2F2F2",
-                        }
+                        },
+                        "& .MuiDataGrid-overlay": {
+                            backgroundColor: "white",
+                        },
                     }}
                     rowHeight={80}
                     pageSizeOptions={[10, 25, 50,100]}
                     onPaginationModelChange={(e)=> onChangePageOrRowGrid(e)}
                     paginationModel={infoPageListaDatiFat}
                     rows={gridData} 
-                    columns={columns}
+                    columns={configListaFatturazione}
                     getRowId={(row) => row.key}
                     onRowClick={handleEvent}
                     onCellClick={handleOnCellClick}
@@ -388,7 +297,7 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                 setOpen={setShowLoading}
                 sentence={'Downloading...'} >
             </ModalLoading>
-        </div>
+        </MainBoxStyled>
     );
 }; 
 export default PagoPaListaDatiFatturazione;

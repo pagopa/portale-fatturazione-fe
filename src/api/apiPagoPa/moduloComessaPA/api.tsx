@@ -131,3 +131,13 @@ export const modifyDatiModuloCommessaPagoPaV2 = async (body:PostModuloCommessa[]
 
     return response;
 };
+ 
+export const getContrattoModuliCommessaPA = async(token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/modulocommessa/pagopa/tipologiacontratto?nonce=${nonce}`,
+       
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+};

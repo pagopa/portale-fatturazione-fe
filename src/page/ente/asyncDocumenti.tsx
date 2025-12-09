@@ -3,21 +3,17 @@ import { GlobalContext } from "../../store/context/globalContext";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { PathPf } from "../../types/enum";
 import { manageError } from "../../api/api";
-import { Typography, Button } from "@mui/material";
-import { Box } from "@mui/system";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
-import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { formatDateToValidation, isDateInvalid, transformDateTime, transformDateTimeWithNameMonth } from "../../reusableFunction/function";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import {  transformDateTime, transformDateTimeWithNameMonth } from "../../reusableFunction/function";
 import { getListaAsyncDoc } from "../../api/apiSelfcare/asyncDoc/api";
-import { it } from "date-fns/locale";
 import { headerNameAsyncDoc } from "../../assets/configurations/conf_GridAsyncDocEnte";
 import { mesiGrid } from "../../reusableFunction/reusableArrayObj";
 import dayjs from "dayjs";
 import { getMessaggiCountEnte, getNotificheDownloadFromAsync } from "../../api/apiSelfcare/notificheSE/api";
 import ModalRedirect from "../../components/commessaInserimento/madalRedirect";
-import { profiliEnti } from "../../reusableFunction/actionLocalStorage";
+import { FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
+import MainFilter from "../../components/reusableComponents/mainFilter";
 export interface BodyAsyncDoc{
     init: string|null|Date,
     end: string|null|Date,
@@ -39,7 +35,6 @@ const AsyncDocumenti = () => {
     const {dispatchMainState,mainState,setCountMessages,statusQueryGetUri} = globalContextObj;
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
-    const enti = profiliEnti(mainState);
 
     const { 
         filters,
@@ -207,118 +202,54 @@ const AsyncDocumenti = () => {
     };
  
     return (
-        <div className="mx-5" style={{minHeight:'600px'}}>
-            <div className="marginTop24">
-                <div className="row ">
-                    <div className="col-9">
-                        <Typography variant="h4">Download documenti</Typography>
-                    </div>
-                </div>
-                <div className="mb-5 mt-5 marginTop24" >
-                    <div className="row">
-                        <div className="col-3">
-                            <Box >
-                                <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it} >
-                                    <DesktopDatePicker
-                                        label={"Data inizio"}
-                                        format="dd/MM/yyyy"
-                                        value={(bodyGetLista.init === ''||bodyGetLista.init === null) ? null : bodyGetLista.init}
-                                        onChange={(e:any | null)  => {
-                                            if(e !== null && !isDateInvalid(e)){
-                                                setBodyGetLista(prev => ({...prev,...{init:e}}));
-                                                if(bodyGetLista.end !== null && ((formatDateToValidation(e)||0) > (formatDateToValidation(bodyGetLista.end)||0))){
-                                                    setError(true);
-                                                }else{
-                                                    setError(false);
-                                                }
-                                            }else{
-                                                setBodyGetLista(prev => ({...prev,...{init:null}}));
-                                                if(bodyGetLista.end !== null){
-                                                    setError(true);
-                                                }else{
-                                                    setError(false);
-                                                }
-                                            }
-                                            clearOnChangeFilter();
-                                            formatDateToValidation(e);
-                                        }}
-                                        slotProps={{
-                                            textField: {
-                                                error:error,
-                                            },
-                                        }}
-                                    />
-                                </LocalizationProvider>
-                            </Box>
-                        </div>
-                        <div className="col-3">
-                            <Box >
-                                <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it}>
-                                    <DesktopDatePicker
-                                        label={"Data fine"}
-                                        value={(bodyGetLista.end === ''||bodyGetLista.end === null) ? null : bodyGetLista.end}
-                                        onChange={(e:any | null)  =>{
-                                            if(e !== null && !isDateInvalid(e)){
-                                                setBodyGetLista(prev => ({...prev,...{end:e}}));
-                                                if(bodyGetLista.init !== null && ((formatDateToValidation(e)||0) < (formatDateToValidation(bodyGetLista.init)||0))){
-                                                    setError(true);
-                                                }else if(bodyGetLista.init === null && e !== null){
-                                                    setError(true);
-                                                }else{
-                                                    setError(false);
-                                                }
-                                            }else{
-                                                setBodyGetLista(prev => ({...prev,...{end:null}}));
-                                                setError(false);
-                                            }
-                                            clearOnChangeFilter();
-                                        }}
-                                        format="dd/MM/yyyy"
-                                        slotProps={{
-                                            textField: {
-                                                error:error,
-                                            },
-                                        }}
-                                    />
-                                </LocalizationProvider>
-                            </Box>
-                        </div>
-                        <div className="col-3 d-flex align-items-center justify-content-center"> 
-                            <Box style={{ width: '50%' }}>
-                                <Button disabled={error} onClick={handleFiltra} sx={{ marginTop: 'auto', marginBottom: 'auto'}}variant="contained">
-                                     Filtra
-                                </Button>
-                            </Box>   
-                            <Box style={{ width: '50%' }}>
-                                {disableListaCompletaButton &&
-                                    <Button disabled={error} onClick={handleAnnullaButton}>
-                   Annulla filtri
-                                    </Button>
-                                }
-                            </Box>  
-                        </div>
-                    </div>
-                   
-                    <div className="mt-5">
-                        <div className="mt-1 mb-5" style={{ width: '100%'}}>
-                            <GridCustom
-                                nameParameterApi='asyncDocEnte'
-                                elements={dataGrid}
-                                changePage={handleChangePage}
-                                changeRow={handleChangeRowsPerPage} 
-                                total={totDoc}
-                                page={page}
-                                rows={rowsPerPage}
-                                headerNames={headerNameAsyncDoc}
-                                apiGet={handleClickOnDetail}
-                                disabled={false}
-                                headerAction={headerAction}
-                                body={bodyGetLista}
-                                widthCustomSize="auto"></GridCustom>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <MainBoxStyled title={"Download documenti"}>
+            <ResponsiveGridContainer >
+                <MainFilter 
+                    filterName={"date_from_to"}
+                    inputLabel={"Data inizio"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyValue={"init"}
+                    keyDescription="start"
+                    keyCompare={"end"}
+                    error={error}
+                    setError={setError}
+                    keyBody="init"
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"date_from_to"}
+                    inputLabel={"Data fine"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyValue={"end"}
+                    keyDescription="end"
+                    keyCompare={"init"}
+                    error={error}
+                    setError={setError}
+                    keyBody="end"
+                ></MainFilter>
+            </ResponsiveGridContainer>
+            <FilterActionButtons 
+                onButtonFiltra={handleFiltra} 
+                onButtonAnnulla={handleAnnullaButton} 
+                statusAnnulla={!disableListaCompletaButton? "hidden":"show"} 
+            ></FilterActionButtons>
+            <GridCustom
+                nameParameterApi='asyncDocEnte'
+                elements={dataGrid}
+                changePage={handleChangePage}
+                changeRow={handleChangeRowsPerPage} 
+                total={totDoc}
+                page={page}
+                rows={rowsPerPage}
+                headerNames={headerNameAsyncDoc}
+                apiGet={handleClickOnDetail}
+                disabled={false}
+                headerAction={headerAction}
+                body={bodyGetLista}
+                widthCustomSize="auto"></GridCustom>
             <ModalLoading 
                 open={showLoading} 
                 setOpen={setShowLoading} 
@@ -334,7 +265,7 @@ const AsyncDocumenti = () => {
                 open={openModalRedirect}
                 sentence={`Per poter visualizzare la sezione Download Documenti è obbligatorio fornire i seguenti dati di fatturazione:`}>
             </ModalRedirect>
-        </div>
+        </MainBoxStyled>
     );
 };
 

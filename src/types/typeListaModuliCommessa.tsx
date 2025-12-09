@@ -11,7 +11,7 @@ export interface ListaModuliCommessaProps{
 
 export interface BodyDownloadModuliCommessa{
     idEnti:string[],
-    prodotto:string,
+    idTipoContratto:number|null,
     anno:number|string,
     mese:number|string
 }

@@ -4,6 +4,10 @@ import Autocomplete from '@mui/material/Autocomplete';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { MultiselectNotificheProps, OptionMultiselectChackbox } from '../../types/typeReportDettaglio';
+import { useLocation } from 'react-router';
+import { PathPf } from '../../types/enum';
+
+
 
 const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetLista, dataSelect,setTextValue,valueAutocomplete, setValueAutocomplete,clearOnChangeFilter}) => {
 
@@ -13,9 +17,8 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
 
     return (
         <Autocomplete
-            sx={{width:'80%'}}
-            limitTags={1}
             multiple
+            limitTags={1}
             onChange={(event, value) => {
                 const arrayIdEnte = value.map(obj=> obj.idEnte);
                 setBodyGetLista((prev:any) => ({...prev,...{idEnti:arrayIdEnte}}));
@@ -42,9 +45,9 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
                     </li>
                 );
             } }
+            style={{ width: '80%'}}
             renderInput={(params) =>{
                 return <TextField 
-                    sx={{backgroundColor:"#F2F2F2"}}
                     onChange={(e)=> setTextValue(e.target.value)} 
                     {...params}
                     label="Rag Soc. Ente" 

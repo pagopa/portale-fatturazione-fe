@@ -127,9 +127,9 @@ const InvioFatture = () => {
     const statoFattura = (row) =>{
         let tooltipObj:any= {label:'...',title:'...'};
         if(row.statoInvio === 0){
-            tooltipObj = {label:'Da inviare',title:'Da inviare',color:'info'};
+            tooltipObj = {label:'Da inviare',title:'Da inviare',color:'#86E1FD'};
         }else if(row.statoInvio === 2){
-            tooltipObj = {label:'Elaborazione',title:'La fattura è in elaborazione',color:'warning'};
+            tooltipObj = {label:'Elaborazione',title:'La fattura è in elaborazione',color:"#FFE5A3"};
         }
         return tooltipObj;
     };
@@ -218,8 +218,13 @@ const InvioFatture = () => {
                                             height:'400px',
                                             '& .MuiDataGrid-virtualScroller': {
                                                 backgroundColor: 'white',
+                                            },
+                                            "& .MuiDataGrid-row": {
+                                                borderTop: "4px solid #F2F2F2",
+                                                borderBottom: "2px solid #F2F2F2",
                                             }
                                         }}
+                                        rowHeight={70}
                                         getRowId={(row) => row.id}
                                         rows={listaFatture}
                                         columns={configGridJsonSap(statoFattura)}

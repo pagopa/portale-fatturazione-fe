@@ -26,6 +26,7 @@ const ModuloCommessaInserimentoPn : React.FC = () => {
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
+    const backPath = mainState.infoTrimestreComSelected?.from === PathPf.LISTA_MODULICOMMESSA ? PathPf.LISTA_MODULICOMMESSA :PathPf.LISTA_MODULICOMMESSA_PREVISONALE;
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -107,7 +108,7 @@ const ModuloCommessaInserimentoPn : React.FC = () => {
             {/*Hide   modulo commessa sul click contina , save del modulo commessa cosi da mostrare dati fatturazione,
             il componente visualizzato è AreaPersonaleUtenteEnte  */}
             <div>
-                <NavigatorHeader pageFrom={"Modulo commessa/"} pageIn={"Modifica modulo commessa"} backPath={PathPf.LISTA_MODULICOMMESSA} icon={<ViewModuleIcon sx={{padding:"3px"}}  fontSize='small'></ViewModuleIcon>}></NavigatorHeader>
+                <NavigatorHeader pageFrom={"Modulo commessa/"} pageIn={"Modifica modulo commessa"} backPath={backPath} icon={<ViewModuleIcon sx={{padding:"3px"}}  fontSize='small'></ViewModuleIcon>}></NavigatorHeader>
             </div>
             <div className="marginTop24 ms-5 me-5">
                 <div className="marginTop24">

@@ -8,6 +8,7 @@ import { BodyGetListaDatiFatturazione } from "./typeListaDatiFatturazione";
 import { BodyStoricoContestazioni } from "../page/prod_pn/storicoContestazioni";
 import { BodyWhite } from "../api/apiPagoPa/whiteListPA/whiteList";
 import { BodyContratto } from "../page/prod_pn/tipologiaContratto";
+import { OptionType } from "dayjs";
 
 export interface ReportDettaglioProps {
     mainState:MainState,
@@ -94,8 +95,8 @@ export interface Contestazione {
         dataInserimentoConsolidatore: string,
         dataModificaConsolidatore: string,
         dataChiusura: string,
-        anno: number,
-        mese: number
+        anno: number|null,
+        mese: number|null
     }
 
   
