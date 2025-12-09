@@ -7,9 +7,9 @@ export enum Profilo {
 
 export enum PathPf {
     DATI_FATTURAZIONE = "/datidifatturazione", 
-    LISTA_DATI_FATTURAZIONE = "/listadatifatturazione",
+    LISTA_DATI_FATTURAZIONE = "listadatifatturazione",
     MODULOCOMMESSA = "/modulocommessa", 
-    LISTA_MODULICOMMESSA = "/listamodulicommessa",
+    LISTA_MODULICOMMESSA = "listamodulicommessa",
     LISTA_COMMESSE = "/modulicommessa", 
     PDF_COMMESSA = "/pdfmodulocommessa",
     LISTA_NOTIFICHE = "/listanotifiche",

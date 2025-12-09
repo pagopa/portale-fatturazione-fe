@@ -10,7 +10,7 @@ import {
     Collapse,
     IconButton
 } from '@mui/material';
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import DnsIcon from '@mui/icons-material/Dns';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import MarkUnreadChatAltIcon from '@mui/icons-material/MarkUnreadChatAlt';
@@ -52,13 +52,14 @@ const SideNavSend : React.FC = () => {
     const currentLocation = location.pathname;
 
     useEffect(()=>{
+        console.log({currentLocation});
         if(currentLocation === PathPf.DATI_FATTURAZIONE){
             setSelectedIndex(0);
         }else if(currentLocation === PathPf.MODULOCOMMESSA){
             setSelectedIndex(1);
-        }else if(currentLocation === PathPf.LISTA_DATI_FATTURAZIONE){
+        }else if(currentLocation === "/send/"+PathPf.LISTA_DATI_FATTURAZIONE){
             setSelectedIndex(0);
-        }else if(currentLocation === PathPf.LISTA_MODULICOMMESSA){
+        }else if(currentLocation === "/send/"+PathPf.LISTA_MODULICOMMESSA){
             setSelectedIndex(1);
         }else if(currentLocation === PathPf.PDF_COMMESSA){
             setSelectedIndex(1);
@@ -235,6 +236,7 @@ const SideNavSend : React.FC = () => {
                 </ListItemButton>
             </List>
             <Divider />
+            <Outlet />
         </Box>
     );
 };

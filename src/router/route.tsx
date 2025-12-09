@@ -8,9 +8,9 @@ import SelectProdottiRoute from "./routeProfiles/selectProdotti";
 import ProdPnRoute from "./routeProfiles/prodPnRoute";
 import PagoPaRoute from "./routeProfiles/pagoPaRoute";
 import RecConRoute from "./routeProfiles/recapitistaConsolidatoreRoute";
-import { ThemeProvider} from '@mui/material';
+import { Grid, ThemeProvider} from '@mui/material';
 import {theme} from '@pagopa/mui-italia';
-import {Routes, Route, Navigate, useLocation} from "react-router";
+import {Routes, Route, Navigate, useLocation, RouterProvider, Outlet} from "react-router";
 import BasicAlerts from "../components/reusableComponents/modals/alert";
 import Auth from "../page/auth";
 import AuthAzure from "../page/authAzure";
@@ -19,9 +19,34 @@ import AzureLogin from "../page/azureLogin";
 import ErrorPage from "../page/error";
 import { PathPf } from "../types/enum";
 import LayoutLoggedOut from '../layout/layoutLoggedOut';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, createBrowserRouter } from 'react-router-dom';
 import useIsTabActive from '../reusableFunction/tabIsActiv';
 import { getPageApiKeyVisible, redirect } from '../api/api';
+import HeaderLogAzure from '../layout/mainHeader/headerLogInOutAzure';
+import FooterComponent from '../layout/footer';
+import AreaPersonaleUtenteEnte from '../page/prod_pn/areaPersonaleUtenteEnte';
+import LayoutAzure from '../layout/layOutLoggedInAzure';
+import Messaggi from '../page/messaggi';
+import Accertamenti from '../page/prod_pn/accertamenti';
+import AdesioneBando from '../page/prod_pn/adesioneBando';
+import DettaglioStoricoContestazione from '../page/prod_pn/dettaglioStoricoContestazione';
+import Fatturazione from '../page/prod_pn/fatturazione';
+import InserimentoContestazioni from '../page/prod_pn/inserimentoContestazioni';
+import InvioFatture from '../page/prod_pn/invioFatture';
+import InvioFattureDetails from '../page/prod_pn/invioFattureDetails';
+import ModuloCommessaInserimentoPn from '../page/prod_pn/moduloCommessaInserimentoPn';
+import ModuloCommessaPdf from '../page/prod_pn/moduloCommessaPdf';
+import PagoPaListaDatiFatturazione from '../page/prod_pn/pagoPaListaDatiFatturazione';
+import PagoPaListaModuliCommessa from '../page/prod_pn/pagoPaListaModuliCommessa';
+import ProcessiOrchestartore from '../page/prod_pn/processiOrchestratore';
+import RelPdfPage from '../page/prod_pn/relPdfUtPa';
+import RelPage from '../page/prod_pn/relUtPa';
+import ReportDettaglio from '../page/prod_pn/reportDettaglioUtPa';
+import Storico from '../page/prod_pn/storicoContestazioni';
+import PageTipologiaContratto from '../page/prod_pn/tipologiaContratto';
+import ListaDocEmessi from '../page/prod_pn/whiteList';
+import SideNavSend from '../layout/sideNavs/sideNavSend';
+import AuthAzureProdotti from '../page/authAzureProdotti';
 
 const RouteProfile = () => {
     const globalContextObj = useContext(GlobalContext);
@@ -91,11 +116,20 @@ const RouteProfile = () => {
 
   
     return (
-        <BrowserRouter>
-            <ThemeProvider theme={theme}>
-                <div className="App">
-                    <BasicAlerts></BasicAlerts>
-                    <Routes>
+        <ThemeProvider theme={theme}>
+            <div className="App">
+               
+                <RouterProvider router={router2} />
+            </div>
+        </ThemeProvider>
+    
+        
+    );
+
+};
+
+/*
+<Routes>
                         <Route path="/auth" element={<Auth/>} />
                         <Route path="/auth/azure" element={<AuthAzure/>} />
                         <Route path="/azure" element={<Azure/>} />
@@ -104,11 +138,113 @@ const RouteProfile = () => {
                         <Route path="*" element={<Navigate  to={redirectRoute} replace />} />
                         {route}
                     </Routes>
-                </div>
-            </ThemeProvider>
-        </BrowserRouter>
-    );
-
-};
+                     */
 
 export default RouteProfile;
+
+const LayoutLoggedOut2 = () => {
+    return (
+        <>
+            <BasicAlerts></BasicAlerts>
+            <HeaderLogAzure/>
+            <Grid sx={{ height: '100%' }}>
+                <Outlet />
+            </Grid>
+            <FooterComponent  />
+        </>
+    );
+};
+
+
+const prodPnRoutes = [
+    {
+        Component: LayoutAzure,
+        path:"",
+        children: [
+            { path: PathPf.DATI_FATTURAZIONE, Component: AreaPersonaleUtenteEnte },
+            { path: PathPf.LISTA_MODULICOMMESSA, Component: PagoPaListaModuliCommessa },
+            { path: PathPf.MODULOCOMMESSA, Component: ModuloCommessaInserimentoPn },
+            { path: PathPf.PDF_COMMESSA + "/:annoPdf?/:mesePdf?", Component: ModuloCommessaPdf },
+            { path: PathPf.LISTA_DATI_FATTURAZIONE, Component: PagoPaListaDatiFatturazione },
+            { path: PathPf.LISTA_REL, Component: RelPage },
+            { path: PathPf.PDF_REL, Component: RelPdfPage },
+            { path: PathPf.ADESIONE_BANDO, Component: AdesioneBando },
+            { path: PathPf.FATTURAZIONE, Component: Fatturazione },
+            { path: PathPf.LISTA_NOTIFICHE, Component: ReportDettaglio },
+            { path: "/messaggi", Component: Messaggi },
+            { path: "/accertamenti", Component: Accertamenti },
+            { path: PathPf.INSERIMENTO_CONTESTAZIONI, Component: InserimentoContestazioni },
+            { path: PathPf.STORICO_CONTEST, Component: Storico },
+            { path: PathPf.TIPOLOGIA_CONTRATTO, Component: PageTipologiaContratto },
+            { path: PathPf.LISTA_DOC_EMESSI, Component: ListaDocEmessi },
+            { path: PathPf.JSON_TO_SAP, Component: InvioFatture },
+            { path: PathPf.JSON_TO_SAP_DETAILS, Component: InvioFattureDetails },
+            { path: PathPf.STORICO_DETTAGLIO_CONTEST, Component: DettaglioStoricoContestazione },
+            { path: PathPf.ORCHESTRATORE, Component: ProcessiOrchestartore },
+        ],
+    },
+];
+
+const test = () => {
+    console.log(999);
+    return true;
+};
+
+const router2 = createBrowserRouter([
+    {
+        path: "/",
+        Component:LayoutLoggedOut2,
+        children: [
+            {
+                Component: AzureLogin,
+                index:true
+          
+            },
+            {
+                
+                path: "azureLogin",
+                Component: AzureLogin,
+              
+          
+            },
+            {
+                path: "azure",
+                Component: Azure,
+          
+            },
+            {
+                path: "auth",
+                Component: Auth,
+          
+            },
+            {
+                path: "selezionaprodotto",
+                Component: AuthAzureProdotti,
+            },
+            {
+                path: "auth/azure",
+                Component: AuthAzure,
+               
+            },
+            {
+                path: "send",
+                Component: () => <LayoutAzure sideNav={<SideNavSend />} />,
+                children: [
+                    { path: PathPf.LISTA_MODULICOMMESSA, Component: PagoPaListaModuliCommessa },
+      
+                    { path: PathPf.LISTA_DATI_FATTURAZIONE, Component: PagoPaListaDatiFatturazione },
+                  
+                        
+                ],
+            },
+            {
+                path: "*",
+                Component: () => <Navigate to={"azureLogin"} replace />,
+            },
+           
+        ],
+    },
+]);
+
+
+

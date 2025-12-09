@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router";
+import { Outlet, useNavigate } from "react-router";
 import { getAuthProfilo, redirect } from "../api/api";
 import MultipleSelectProdotti from "../components/authSelectProdottiPa/selectProdotti";
 import { PathPf } from "../types/enum";
@@ -69,7 +69,7 @@ const AuthAzureProdotti : React.FC = () => {
                     if(productSelected.prodotto === 'prod-pagopa'){
                         navigate(PathPf.ANAGRAFICAPSP);
                     }else if(productSelected.prodotto === 'prod-pn'){
-                        navigate(PathPf.LISTA_DATI_FATTURAZIONE);
+                        navigate("/send/listadatifatturazione");
                     }
                     setLoading(false);
                 }).catch(()=> {
