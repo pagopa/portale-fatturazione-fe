@@ -115,7 +115,7 @@ const ReportDettaglio : React.FC = () => {
         recapitisti:[],
         consolidatori:[]
     });
-    console.log({bodyGetLista,getNotificheWorking});
+   
     const [contestazioneSelected, setContestazioneSelected] = useState<Contestazione>({ 
         risposta:true,
         modifica: true,
@@ -161,7 +161,6 @@ const ReportDettaglio : React.FC = () => {
             isInitialRender.current = false;
         }
     }, []);
-    console.log({arrayAnni});
     
     const funInitialRender = async (newBody, dataFromLocalStorage) => {
         try {

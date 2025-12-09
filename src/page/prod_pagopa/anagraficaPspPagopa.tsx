@@ -288,7 +288,6 @@ const AnagraficaPsp:React.FC = () =>{
             rows:parseInt(event.target.value, 10)
         });
     };
-    console.log({year});
     return(
   
         <MainBoxStyled title={"Anagrafica PSP"}>

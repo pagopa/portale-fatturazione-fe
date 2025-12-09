@@ -79,7 +79,10 @@ const InvioFattureDetails = () => {
     const getDetailSingleRow = async() => {
         setLoadingCustomAction(true);
         await sendListaJsonFatturePagoPa(token,profilo.nonce,{annoRiferimento: Number(idSplitted[0]),meseRiferimento: Number(idSplitted[1]),tipologiaFattura: idSplitted[2]}).then(async(res)=>{
-            const x  = await filter(res).then(res => res).catch(err => console.log({err}));
+            const x  = await filter(res).then(res => res).catch(() =>{
+                managePresaInCarico("ERROR_LIST_JSON_TO_SAP",dispatchMainState);
+                navigate(PathPf.JSON_TO_SAP);
+            });
             const orderData : DetailsSingleRow[] = x.map(el => {
                 return {
                     ragioneSociale:el.ragioneSociale,

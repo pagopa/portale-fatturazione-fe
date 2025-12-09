@@ -216,7 +216,7 @@ const ModuloCommessaPdf : React.FC = () =>{
     const arrWithlabelDateMonth = replaceDate(dataPdf.datiModuloCommessa,'[data]',string );
 
     const { toPDF, targetRef } = usePDF({filename: `Modulo Commessa /${dataPdf.descrizione}/${mesePdf}/${annoPdf}.pdf`});
-    console.log(annoPdf, mesePdf);
+
     if(showLoadingDettaglio){
         return(
             <SkeletonComPdf></SkeletonComPdf>

@@ -121,10 +121,8 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
             
             
             if (isInitialRender.current && Object.keys(filters).length > 0) {
-                console.log(55);
                 await getContratti(filters.body.anno, filters.body.mese);
             }else{
-                console.log(5);
                 await getContratti(yearSelected, mese_X_plus_one);
             }
             
@@ -144,11 +142,9 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
 
   
     const getContratti = async(y,m) => {
-        console.log({y,m});
         await getContrattoModuliCommessaPA(token, profilo.nonce).then((res)=>{
           
             setArrayContratto([{id:3,descrizione:"Tutti"}, ...res.data]);
-            console.log({isUnit:isInitialRender.current, OB:Object.keys(filters).length,FI:filters.body});
             if(isInitialRender.current && Object.keys(filters).length > 0){
                 setBodyGetLista(filters.body);
                 setTextValue(filters.textValue);
@@ -299,7 +295,6 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
     };
 
     const onButtonAnnulla = () =>{
-        console.log(defaultYearMonth);
         setInfoPageListaCom({ page: 0, pageSize: 10 });
         getListaCommesseOnAnnulla();
         setBodyGetLista({idEnti:[],idTipoContratto:null, anno:defaultYearMonth.current.year, mese:defaultYearMonth.current.month});
@@ -311,7 +306,6 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
 
 
     const statusAnnulla = (bodyGetLista.idTipoContratto !== null || bodyGetLista.idEnti.length > 0)? "show":"hidden";
-    console.log({yearMonths});
 
     return (
         <MainBoxStyled title={"Lista Modulo Commessa Fatturabile"}>

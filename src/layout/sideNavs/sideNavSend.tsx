@@ -58,10 +58,8 @@ const SideNavSend : React.FC = () => {
             setSelectedIndex(0);
         }else if(currentLocation === PathPf.MODULOCOMMESSA){
             if( mainState.infoTrimestreComSelected?.from === PathPf.LISTA_MODULICOMMESSA_PREVISONALE){
-                console.log("22222222");
                 setSelectedIndex(12);
             }else{
-                console.log("33333333",mainState.infoTrimestreComSelected);
                 setSelectedIndex(1);
             }
             

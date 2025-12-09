@@ -246,7 +246,6 @@ const ListaCommessaPrevisionale:React.FC = () =>{
         });
     };
 
-    console.log({name:`Moduli Commessa Previsonale/dal/${dayjs(bodyGetLista.dataInizioModulo).format("YYYY-MM-DD")}/al/${dayjs(bodyGetLista.dataFineModulo).format("YYYY-MM-DD")}.xlsx`});
     const handleChangePage = (
         event: React.MouseEvent<HTMLButtonElement> | null,
         newPage: number,

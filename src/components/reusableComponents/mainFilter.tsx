@@ -109,12 +109,9 @@ const MainFilter = <T,>({
     let valueOnBodydifferentFromRealValue = body[keyBody];
 
     if (inputLabel === "Stato" && keyBody === "cancellata") {
-        console.log("zorro",1);
         if (body[keyBody] === false) {
-            console.log("zorro",2);
             valueOnBodydifferentFromRealValue = 1;
         } else if (body[keyBody] === true) {
-            console.log("zorro",3);
             valueOnBodydifferentFromRealValue = 2;
         }
     }
@@ -150,7 +147,7 @@ const MainFilter = <T,>({
                     </Select>
                 </FormControl>
             </MainBoxContainer>);
-        case "select_key_value_description":  //case "select_prodotto":case "select_profilo":case "select_anno":case "select_mese":consolidatore recapitista
+        case "select_key_value_description":
             return ( !hidden && keyBody && keyOption && <MainBoxContainer>
                 <FormControl fullWidth >
                     <InputLabel>
@@ -307,33 +304,20 @@ const MainFilter = <T,>({
                                 setBody(prev => ({...prev,...{[keyValue]:e}}));
                                 if(keyDescription === "start" && keyCompare && body[keyCompare] !== null && ((formatDateToValidation(e)||0) > (formatDateToValidation(body[keyCompare])||0))){
                                     setError && setError(true);
-                                    console.log(1);
-                                
                                 }else if(keyDescription === "end" && keyCompare && body[keyCompare] !== null && ((formatDateToValidation(e)||0) < (formatDateToValidation(body[keyCompare])||0))){
                                     setError && setError(true);
-                                    console.log(2);
-                               
                                 }else if(keyDescription === "end" &&  body[keyCompare] === null && e !== null){
                                     setError && setError(true);
-                                    console.log(3);
-                              
                                 }else if(keyCompare){
                                     setError && setError(false);
-                                    console.log(4);
-                                
                                 }
                             }else{
                                 setBody(prev => ({...prev,...{[keyValue]:null}}));
                                 if((keyDescription === "start" && body[keyCompare] !== null  && (e === null || e instanceof Date && isNaN(e.getTime())))){
                                     setError && setError(true);
-                                    console.log(5);
-                                
                                 }else{
                                     setError && setError(false);
-                                    console.log(6);
-                                    
-                                }
-                               
+                                }  
                             }
                             clearOnChangeFilter();
                         }}

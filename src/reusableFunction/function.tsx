@@ -252,9 +252,6 @@ export const fixResponseForDataGridRollBack = (arr:any[]):any =>{
                 arrow:""
             };
         });
-           
-       
-    
     }catch(err){
         console.log({err});
     }
