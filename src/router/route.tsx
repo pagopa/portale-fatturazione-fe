@@ -17,7 +17,7 @@ import AuthAzure from "../page/authAzure";
 import Azure from "../page/azure";
 import AzureLogin from "../page/azureLogin";
 import ErrorPage from "../page/error";
-import { PathPf } from "../types/enum";
+import { PathPf, PathRoutePf } from "../types/enum";
 import LayoutLoggedOut from '../layout/layoutLoggedOut';
 import { BrowserRouter, createBrowserRouter } from 'react-router-dom';
 import useIsTabActive from '../reusableFunction/tabIsActiv';
@@ -47,6 +47,19 @@ import PageTipologiaContratto from '../page/prod_pn/tipologiaContratto';
 import ListaDocEmessi from '../page/prod_pn/whiteList';
 import SideNavSend from '../layout/sideNavs/sideNavSend';
 import AuthAzureProdotti from '../page/authAzureProdotti';
+import ListaCommessaPrevisionale from '../page/prod_pn/listaModuloComPrevisonale';
+import AnagraficaPsp from '../page/prod_pagopa/anagraficaPspPagopa';
+import DocumentiContabili from '../page/prod_pagopa/documentiContabiliPagopa';
+import DettaglioDocContabile from '../page/prod_pagopa/dettaglioDocumentoContabile';
+import KpiPagamenti from '../page/prod_pagopa/kpiPagamenti';
+import SideNavPagopa from '../layout/sideNavs/sideNavPagoPA';
+import SideNavEnte from '../layout/sideNavs/sidNavEnte';
+import ModuloCommessaElencoUtPa from '../page/ente/moduloCommessaElencoUtPa';
+import ModuloCommessaInserimentoUtEn30 from '../page/ente/moduloCommessaInserimentoUtEn30';
+import AsyncDocumenti from '../page/ente/asyncDocumenti';
+import ApiKeyEnte from '../page/apiKeyEnte';
+import LayoutEnte from '../layout/layOutLoggedInEnte';
+import SideNavRecCon from '../layout/sideNavs/sideNavConRec';
 
 const RouteProfile = () => {
     const globalContextObj = useContext(GlobalContext);
@@ -118,7 +131,6 @@ const RouteProfile = () => {
     return (
         <ThemeProvider theme={theme}>
             <div className="App">
-               
                 <RouterProvider router={router2} />
             </div>
         </ThemeProvider>
@@ -142,50 +154,25 @@ const RouteProfile = () => {
                     </Routes>
                      */
 
+
+
 export default RouteProfile;
 
 const LayoutLoggedOut2 = () => {
     return (
         <>
             <BasicAlerts></BasicAlerts>
-            <HeaderLogAzure/>
+           
             <Grid sx={{ height: '100%' }}>
                 <Outlet />
             </Grid>
-            <FooterComponent  />
+            <FooterComponent></FooterComponent>
         </>
     );
 };
 
 
-const prodPnRoutes = [
-    {
-        Component: LayoutAzure,
-        path:"",
-        children: [
-            { path: PathPf.DATI_FATTURAZIONE, Component: AreaPersonaleUtenteEnte },
-            { path: PathPf.LISTA_MODULICOMMESSA, Component: PagoPaListaModuliCommessa },
-            { path: PathPf.MODULOCOMMESSA, Component: ModuloCommessaInserimentoPn },
-            { path: PathPf.PDF_COMMESSA + "/:annoPdf?/:mesePdf?", Component: ModuloCommessaPdf },
-            { path: PathPf.LISTA_DATI_FATTURAZIONE, Component: PagoPaListaDatiFatturazione },
-            { path: PathPf.LISTA_REL, Component: RelPage },
-            { path: PathPf.PDF_REL, Component: RelPdfPage },
-            { path: PathPf.ADESIONE_BANDO, Component: AdesioneBando },
-            { path: PathPf.FATTURAZIONE, Component: Fatturazione },
-            { path: PathPf.LISTA_NOTIFICHE, Component: ReportDettaglio },
-            { path: "/messaggi", Component: Messaggi },
-            { path: "/accertamenti", Component: Accertamenti },
-            { path: PathPf.INSERIMENTO_CONTESTAZIONI, Component: InserimentoContestazioni },
-            { path: PathPf.STORICO_CONTEST, Component: Storico },
-            { path: PathPf.TIPOLOGIA_CONTRATTO, Component: PageTipologiaContratto },
-            { path: PathPf.LISTA_DOC_EMESSI, Component: ListaDocEmessi },
-            { path: PathPf.JSON_TO_SAP, Component: InvioFatture },
-            { path: PathPf.JSON_TO_SAP_DETAILS, Component: InvioFattureDetails },
-            { path: PathPf.STORICO_DETTAGLIO_CONTEST, Component: DettaglioStoricoContestazione },
-            { path: PathPf.ORCHESTRATORE, Component: ProcessiOrchestartore },
-        ],
-    },
-];
+
 
 const test = () => {
     console.log(999);
@@ -200,24 +187,18 @@ const router2 = createBrowserRouter([
             {
                 Component: AzureLogin,
                 index:true
-          
             },
-            {
-                
+            { 
                 path: "azureLogin",
                 Component: AzureLogin,
-              
-          
             },
             {
                 path: "azure",
                 Component: Azure,
-          
             },
             {
                 path: "auth",
                 Component: Auth,
-          
             },
             {
                 path: "selezionaprodotto",
@@ -226,22 +207,70 @@ const router2 = createBrowserRouter([
             {
                 path: "auth/azure",
                 Component: AuthAzure,
-               
             },
             {
                 path: "send",
                 Component: () => <LayoutAzure sideNav={<SideNavSend />} />,
                 children: [
-                    { path: PathPf.LISTA_MODULICOMMESSA, Component: PagoPaListaModuliCommessa },
-      
-                    { path: PathPf.LISTA_DATI_FATTURAZIONE, Component: PagoPaListaDatiFatturazione },
-                  
-                        
+                    { path: PathRoutePf.LISTA_DATI_FATTURAZIONE, Component: PagoPaListaDatiFatturazione },
+                    { path: PathRoutePf.DATI_FATTURAZIONE, Component: AreaPersonaleUtenteEnte },
+                    { path: PathRoutePf.TIPOLOGIA_CONTRATTO, Component: PageTipologiaContratto },
+                    { path: PathRoutePf.LISTA_MODULICOMMESSA_PREVISONALE, Component: ListaCommessaPrevisionale },
+                    { path: PathRoutePf.LISTA_MODULICOMMESSA, Component: PagoPaListaModuliCommessa },
+                    { path: PathRoutePf.LISTA_NOTIFICHE, Component: ReportDettaglio },
+                    { path: PathRoutePf.INSERIMENTO_CONTESTAZIONI, Component: InserimentoContestazioni },
+                    { path: PathRoutePf.STORICO_CONTEST, Component: Storico },
+                    { path: PathRoutePf.STORICO_DETTAGLIO_CONTEST, Component: DettaglioStoricoContestazione },
+                    { path: PathRoutePf.MODULOCOMMESSA, Component: ModuloCommessaInserimentoPn },
+                    { path: PathRoutePf.PDF_COMMESSA+"/:annoPdf?/:mesePdf?", Component: ModuloCommessaPdf },
+                    { path: PathRoutePf.LISTA_REL, Component: RelPage },
+                    { path: PathRoutePf.PDF_REL, Component: RelPdfPage },
+                    { path: PathRoutePf.ADESIONE_BANDO, Component: AdesioneBando },
+                    { path: PathRoutePf.FATTURAZIONE, Component: Fatturazione },
+                    { path: PathRoutePf.MESSAGGI, Component: Messaggi },
+                    { path: PathRoutePf.ACCERTAMENTI, Component: Accertamenti },
+                    { path: PathRoutePf.LISTA_DOC_EMESSI, Component: ListaDocEmessi },
+                    { path: PathRoutePf.JSON_TO_SAP, Component: InvioFatture },
+                    { path: PathRoutePf.JSON_TO_SAP_DETAILS, Component: InvioFattureDetails },
+                    { path: PathRoutePf.ORCHESTRATORE, Component: ProcessiOrchestartore }
+                ],
+            },
+            {
+                path: "pn",
+                Component: () => <LayoutAzure sideNav={<SideNavPagopa />} />,
+                children: [
+                    { path:PathRoutePf.ANAGRAFICAPSP, Component: AnagraficaPsp },
+                    { path:PathRoutePf.DOCUMENTICONTABILI, Component: DocumentiContabili },
+                    { path:PathRoutePf.DETTAGLIO_DOC_CONTABILE, Component: DettaglioDocContabile },
+                    { path:PathRoutePf.KPI, Component: KpiPagamenti },
+                    { path: PathRoutePf.MESSAGGI, Component: Messaggi },
+                ],
+            },
+            {
+                path: "ente",
+                Component: () => <LayoutEnte sideNav={<SideNavEnte />} />,
+                children: [
+                    {path: PathRoutePf.DATI_FATTURAZIONE,Component: AreaPersonaleUtenteEnte},
+                    {path: PathRoutePf.LISTA_COMMESSE, Component: ModuloCommessaElencoUtPa},
+                    {path: PathRoutePf.MODULOCOMMESSA,Component: ModuloCommessaInserimentoUtEn30},
+                    {path: PathRoutePf.PDF_COMMESSA + "/:annoPdf?/:mesePdf?",Component: ModuloCommessaPdf},
+                    {path: PathRoutePf.LISTA_REL,Component: RelPage},
+                    {path: PathRoutePf.PDF_REL,Component: RelPdfPage},
+                    {path: PathRoutePf.LISTA_NOTIFICHE, Component: ReportDettaglio},
+                    {path: PathRoutePf.ASYNC_DOCUMENTI_ENTE, Component: AsyncDocumenti},
+                    {path: PathRoutePf.API_KEY_ENTE,Component: ApiKeyEnte}
+                ],
+            },
+            {
+                path: "reccon",
+                Component: () => <LayoutEnte sideNav={<SideNavRecCon />} />,
+                children: [
+                    {path: PathRoutePf.LISTA_NOTIFICHE, Component: ReportDettaglio}
                 ],
             },
             {
                 path: "*",
-                Component: () => <Navigate to={"azureLogin"} replace />,
+                Component: () => <Navigate to={PathPf.LISTA_DATI_FATTURAZIONE} replace />,
             },
            
         ],

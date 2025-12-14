@@ -29,7 +29,7 @@ interface DetailsSingleRow
     dataFattura: string
 }
 
-const InvioFattureDetails = () => {
+const InvioFattureDetails : React.FC = () => {
 
     const globalContextObj = useContext(GlobalContext);
     const {mainState,dispatchMainState } = globalContextObj;

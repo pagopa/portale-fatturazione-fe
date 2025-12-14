@@ -28,6 +28,13 @@ const RelPage : React.FC = () =>{
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
     const enti = profiliEnti(mainState);
+    let profilePath; 
+
+    if(profilo.auth === 'PAGOPA'){
+        profilePath = PathPf.PDF_REL;
+    }else{
+        profilePath = PathPf.PDF_REL_EN;
+    }
  
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -75,7 +82,7 @@ const RelPage : React.FC = () =>{
         updateFilters,
         resetFilters,
         isInitialRender
-    } = useSavedFilters(PathPf.LISTA_REL,{});
+    } = useSavedFilters(profilePath,{});
 
     useEffect(()=>{
         getAnni();
@@ -323,7 +330,7 @@ const RelPage : React.FC = () =>{
 
     const onButtonFiltra = () =>{
         updateFilters({
-            pathPage:PathPf.LISTA_REL,
+            pathPage:profilePath,
             body:bodyRel,
             textValue,
             valueAutocomplete:valueAutocomplete,
@@ -391,7 +398,7 @@ const RelPage : React.FC = () =>{
         getlista(bodyRel,realPage, rowsPerPage);
         setPage(newPage);
         updateFilters({
-            pathPage:PathPf.LISTA_REL,
+            pathPage:profilePath,
             body:bodyDownload,
             textValue,
             valueAutocomplete:valueAutocomplete,
@@ -409,7 +416,7 @@ const RelPage : React.FC = () =>{
         const realPage = page + 1;
         getlista(bodyRel,realPage,parseInt(event.target.value, 10));
         updateFilters({
-            pathPage:PathPf.LISTA_REL,
+            pathPage:profilePath,
             body:bodyDownload,
             textValue,
             valueAutocomplete:valueAutocomplete,
@@ -421,7 +428,7 @@ const RelPage : React.FC = () =>{
    
     const setIdRel = async(el) => {
         handleModifyMainState({relSelected:el});
-        navigate(PathPf.PDF_REL);
+        navigate(profilePath);
     };  
 
     const getListTipologiaFattura = async(anno,mese) => {

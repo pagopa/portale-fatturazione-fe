@@ -11,8 +11,9 @@ import HeaderLogEnte from "./mainHeader/headerLogInOutEnte";
 const LayoutEnte = ({sideNav}) => {
     return (
         <>
-            <HeaderLogEnte/>
+            <HeaderLogEnte></HeaderLogEnte>
             <HeaderProductEnte/>
+            
             <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
                 <Grid item xs={2}>
                     {sideNav}
@@ -21,7 +22,6 @@ const LayoutEnte = ({sideNav}) => {
                     <Outlet />
                 </Grid>
             </Grid>
-            <FooterComponent/>
         </>
       
     );

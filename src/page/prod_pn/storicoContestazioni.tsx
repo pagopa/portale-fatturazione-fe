@@ -56,7 +56,7 @@ export interface ContestazioneRowGrid {
     ragioneSociale: string
 }
 
-const Storico = () => {
+const Storico: React.FC = () => {
 
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState} = globalContextObj;

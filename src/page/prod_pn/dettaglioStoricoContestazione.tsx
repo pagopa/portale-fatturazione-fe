@@ -41,7 +41,7 @@ interface Contestazione {
     rispostaEnte:string
 }
 
-const DettaglioStoricoContestazione = () => {
+const DettaglioStoricoContestazione: React.FC = () => {
 
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState} = globalContextObj;

@@ -256,7 +256,11 @@ function useSaveModifyModuloCommessa({
                         managePresaInCarico("SAVE_COMMESSA_OK", dispatchMainState);
 
                         if (isObbligatorioLayout) {
-                            navigate(PathPf.DATI_FATTURAZIONE);
+                            if(profilo.auth === 'PAGOPA'){
+                                navigate(PathPf.DATI_FATTURAZIONE);
+                            }else{
+                                navigate(PathPf.DATI_FATTURAZIONE_EN);
+                            }
                         } else {
                             await handleGetDettaglioModuloCommessaVecchio(
                                 activeCommessa.annoValidita,
@@ -282,7 +286,12 @@ function useSaveModifyModuloCommessa({
                     setOpenModalLoading(false);
                     if (err?.response?.status === 404) {
                         handleModifyMainState({ datiFatturazione: false });
-                        navigate(PathPf.DATI_FATTURAZIONE);
+                        if(profilo.auth === 'PAGOPA'){
+                            navigate(PathPf.DATI_FATTURAZIONE);
+                        }else{
+                            navigate(PathPf.DATI_FATTURAZIONE_EN);
+                        }
+
                     } else {
                         manageError(err, dispatchMainState);
                         navigate(PathPf.LISTA_COMMESSE);

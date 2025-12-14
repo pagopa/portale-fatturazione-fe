@@ -86,6 +86,16 @@ const HeaderProductAzure = () => {
             window.location.href = redirect;
         });
     };
+
+    let conditionalPath =  PathPf.MESSAGGI; 
+    if(profilo.auth === 'PAGOPA'  && mainState.profilo.prodotto === "prod-pn"){
+        conditionalPath =  PathPf.MESSAGGI;
+    }else if(profilo.auth === 'PAGOPA'  && mainState.profilo.prodotto === "prod-pagopa"){
+        conditionalPath =  PathPf.MESSAGGIPN;
+    }
+
+
+
     return (
         <div style={{display:'flex', backgroundColor:'white'}}>
             <div style={{width:'95%'}}>
@@ -109,7 +119,7 @@ const HeaderProductAzure = () => {
                     variant="standard"
                 >
                     <IconButton onClick={()=> {
-                        navigate(PathPf.MESSAGGI);
+                        navigate(conditionalPath);
                     } }  color="default">
                         <MarkEmailUnreadIcon fontSize="medium" sx={{color: '#17324D'}}
                         />

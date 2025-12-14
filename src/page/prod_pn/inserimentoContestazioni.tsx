@@ -49,7 +49,7 @@ interface RecapObjContestazioni{
     totaleNotificheDigitali: number  
 }
 
-const InserimentoContestazioni = () =>{
+const InserimentoContestazioni  : React.FC = () =>{
     const globalContextObj = useContext(GlobalContext);
     const {mainState,dispatchMainState,setErrorAlert} = globalContextObj;
     const token =  mainState.profilo.jwt;

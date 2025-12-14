@@ -18,6 +18,16 @@ interface GridComponentProps {
 
 const GridComponent  = ({data,dispatchMainState,mainState}) => {
 
+    const profilo = mainState.profilo;
+
+    let profilePath; 
+
+    if(profilo.auth === 'PAGOPA'){
+        profilePath = PathPf.MODULOCOMMESSA;
+    }else{
+        profilePath = PathPf.MODULOCOMMESSA_EN;
+    }
+
 
     const navigate = useNavigate();
 
@@ -56,7 +66,7 @@ const GridComponent  = ({data,dispatchMainState,mainState}) => {
                 userClickOn:'GRID',
                 inserisciModificaCommessa:"MODIFY"
             });
-            navigate(PathPf.MODULOCOMMESSA);
+            navigate(profilePath);
         }
     };
     

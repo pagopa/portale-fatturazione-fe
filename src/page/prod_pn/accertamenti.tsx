@@ -14,6 +14,7 @@ import { getMessaggiCount } from "../../api/apiPagoPa/centroMessaggi/api";
 import { headerColumsDocContabili } from "../../assets/configurations/conf_GridDocContabili";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
+import { PathPf } from "../../types/enum";
 
 
 export interface MatriceArray {
@@ -50,7 +51,7 @@ const Accertamenti : React.FC = () =>{
         updateFilters,
         resetFilters,
         isInitialRender
-    } = useSavedFilters('/accertamenti',{});
+    } = useSavedFilters(PathPf.ACCERTAMENTI,{});
     
     useEffect(()=>{
         getAnni();
@@ -170,7 +171,7 @@ const Accertamenti : React.FC = () =>{
 
     const onButtonFiltra = () =>{
         updateFilters({
-            pathPage:'/accertamenti',
+            pathPage:PathPf.ACCERTAMENTI,
             body:bodyAccertamenti,
             page:0,
             rows:10,
@@ -193,7 +194,7 @@ const Accertamenti : React.FC = () =>{
         updateFilters(
             {
                 body:bodyAccertamenti,
-                pathPage:'/accertamenti',
+                pathPage:PathPf.ACCERTAMENTI,
                 page:e.page,
                 rows:e.pageSize
             });

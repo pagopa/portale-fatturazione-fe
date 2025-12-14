@@ -118,13 +118,20 @@ const BasicAlerts:React.FC = () => {
 
     //const checkIfShowMessageDirectly =  test.toString().slice(0,4) !== '409_';
 
+    let conditionalPath =  PathPf.ASYNC_DOCUMENTI_ENTE; 
+    if(profilo.auth === 'PAGOPA'  && mainState.profilo.prodotto === "prod-pn"){
+        conditionalPath =  PathPf.MESSAGGI;
+    }else if(profilo.auth === 'PAGOPA'  && mainState.profilo.prodotto === "prod-pagopa"){
+        conditionalPath =  PathPf.MESSAGGIPN;
+    }
+
     return createPortal(
         <div className={css}>
             <Alert sx={{display:'flex', justifyContent:'center'}} severity={colorAlert}  variant="standard">{mainState.apiError !== null ? t(`errori.${mainState.apiError}`, {defaultValue:t(`errori.400`)}) : errorAlert.message ? errorAlert.message : t(`errori.400`)} 
                 {(mainState.apiError === 'PRESA_IN_CARICO_DOCUMENTO'|| mainState.apiError === 'PRESA_IN_CARICO_DOCUMENTO_ENTE') &&
                 <IconButton sx={{marginLeft:'20px'}} onClick={()=> {
                     setCss('main_container_alert_component_hidden');
-                    navigate(profilo.auth === 'PAGOPA' ? PathPf.MESSAGGI : PathPf.ASYNC_DOCUMENTI_ENTE);
+                    navigate(conditionalPath);
                 }}  color="default">
                     <ArrowForwardIcon fontSize="medium" sx={{color: '#17324D'}}/>
                 </IconButton>

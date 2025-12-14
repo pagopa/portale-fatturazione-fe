@@ -16,7 +16,7 @@ export interface BodyApiKey {
     refresh: boolean|null
 }
 
-const ApiKeyEnte = () => {
+const ApiKeyEnte : React.FC = () => {
 
     const globalContextObj = useContext(GlobalContext);
     const { mainState,mainData,setMainData,dispatchMainState} = globalContextObj;

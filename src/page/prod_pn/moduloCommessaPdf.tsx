@@ -31,6 +31,14 @@ const ModuloCommessaPdf : React.FC = () =>{
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 
+    let profilePathModuloCommessa; 
+            
+    if(profilo.auth === 'PAGOPA'){
+        profilePathModuloCommessa = PathPf.MODULOCOMMESSA;
+    }else{
+        profilePathModuloCommessa = PathPf.MODULOCOMMESSA_EN;
+    }
+
     const tipoCommessa =  getTipoCommessa();
     const navigate = useNavigate();
     const enti = profiliEnti(mainState);
@@ -146,7 +154,7 @@ const ModuloCommessaPdf : React.FC = () =>{
         }).catch((err)=>{
             setShowLoadingDettaglio(false);
             manageError(err,dispatchMainState);
-            navigate(PathPf.MODULOCOMMESSA);
+            navigate(profilePathModuloCommessa);
         });  
     };
 
@@ -159,7 +167,7 @@ const ModuloCommessaPdf : React.FC = () =>{
             }).catch((err)=>{
                 setShowLoadingDettaglio(false);
                 manageError(err,dispatchMainState);
-                navigate(PathPf.MODULOCOMMESSA);
+                navigate(profilePathModuloCommessa);
             });  
     };
 
@@ -226,7 +234,7 @@ const ModuloCommessaPdf : React.FC = () =>{
         <>
             <div className="">
                 <div>
-                    <NavigatorHeader pageFrom={"Modulo commessa/"} pageIn={"Anteprima"} backPath={PathPf.MODULOCOMMESSA} icon={<ViewModuleIcon sx={{paddingBottom:"4px"}}  fontSize='small'></ViewModuleIcon>}></NavigatorHeader>
+                    <NavigatorHeader pageFrom={"Modulo commessa/"} pageIn={"Anteprima"} backPath={profilePathModuloCommessa} icon={<ViewModuleIcon sx={{paddingBottom:"4px"}}  fontSize='small'></ViewModuleIcon>}></NavigatorHeader>
                 </div>
                 <div className="bg-white m-5 p-5">
                     <div className=" ">

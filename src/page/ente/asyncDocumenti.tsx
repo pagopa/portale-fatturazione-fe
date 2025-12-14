@@ -30,7 +30,7 @@ export interface DataGridAsyncDoc {
     letto:boolean
 }
 
-const AsyncDocumenti = () => {
+const AsyncDocumenti : React.FC = () => {
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState,setCountMessages,statusQueryGetUri} = globalContextObj;
     const token =  mainState.profilo.jwt;

@@ -62,7 +62,7 @@ const Auth : React.FC<any> = () =>{
                     primoInserimetoCommessa:false
                 });
             }
-            navigate(PathPf.DATI_FATTURAZIONE);
+            navigate(PathPf.DATI_FATTURAZIONE_EN);
         }).catch((err)=>{
             manageError(err,dispatchMainState);
         
@@ -116,7 +116,8 @@ const Auth : React.FC<any> = () =>{
                     messaggioSelected:null
                 });
                 if(resp.data.profilo === "REC" || resp.data.profilo === "CON"){
-                    navigate(PathPf.LISTA_NOTIFICHE);
+                    console.log({HH:resp.data.profilo});
+                    navigate(PathPf.LISTA_NOTIFICHE_REC_CON);
                 }else{
                     getCommessa(newProfilo);  
                 }

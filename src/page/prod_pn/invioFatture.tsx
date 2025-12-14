@@ -35,7 +35,7 @@ export interface SelectedJsonSap {
 }
 
 
-const InvioFatture = () => {
+const InvioFatture : React.FC = () => {
     const globalContextObj = useContext(GlobalContext);
     const {mainState,dispatchMainState} = globalContextObj;
     const token =  mainState.profilo.jwt;
@@ -49,6 +49,8 @@ const InvioFatture = () => {
     const [showLoader, setShowLoader] = useState(false);
     const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
     const [infoPage , setInfoPage] = useState({ page: 0, pageSize: 10 });
+
+   
 
     const { 
         filters,

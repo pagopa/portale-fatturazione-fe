@@ -25,14 +25,14 @@ const SideNavRecCon: React.FC = () => {
     
     const handleListItemClickNotifiche = () => {
         if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.LISTA_NOTIFICHE}}));
+            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.LISTA_NOTIFICHE_REC_CON}}));
         }else{
-            navigate(PathPf.LISTA_NOTIFICHE);
+            navigate(PathPf.LISTA_NOTIFICHE_REC_CON);
         }
     };
 
     useEffect(()=>{
-        if(currentLocation === PathPf.LISTA_NOTIFICHE){
+        if(currentLocation === PathPf.LISTA_NOTIFICHE_REC_CON){
             setSelectedIndex(2);
         }
     },[currentLocation]);

@@ -35,6 +35,14 @@ const RelPdfPage : React.FC = () =>{
     const navigate = useNavigate();
     const enti = profiliEnti(mainState);
 
+    let profilePath; 
+
+    if(profilo.auth === 'PAGOPA'){
+        profilePath = PathPf.LISTA_REL;
+    }else{
+        profilePath = PathPf.LISTA_REL_EN;
+    }
+
     const [showDownloading, setShowDownloading] = useState(false);
     const [disableButtonDettaglioNot, setDisableButtonDettaglioNot] = useState(false);
     const [lastUpdateDocFirmato, setLastUpdateDocFirmato] = useState('');
@@ -74,7 +82,7 @@ const RelPdfPage : React.FC = () =>{
             window.location.href = redirect;
         }
         if(mainState.relSelected === null){
-            navigate(PathPf.LISTA_REL);
+            navigate(profilePath);
         }
     },[]);
 
@@ -268,7 +276,7 @@ const RelPdfPage : React.FC = () =>{
                 }
             }).catch((err)=>{
                 setLoadingDettaglio(false);
-                navigate(PathPf.LISTA_REL);
+                navigate(profilePath);
                 manageError(err,dispatchMainState);
             });
         }else{
@@ -284,7 +292,7 @@ const RelPdfPage : React.FC = () =>{
                 });
             }).catch((err)=>{
                 setLoadingDettaglio(false);
-                navigate(PathPf.LISTA_REL);
+                navigate(profilePath);
                 manageError(err,dispatchMainState);
 
             });
@@ -302,7 +310,7 @@ const RelPdfPage : React.FC = () =>{
             <div style={{ position:'absolute',zIndex:-1, top:'-1000px'}}  id='file_download_rel' ref={targetRef}>
             </div>
             <div>
-                <NavigatorHeader pageFrom={"Regolare Esecuzione/"} pageIn={"Dettaglio"} backPath={PathPf.LISTA_REL} icon={<ManageAccountsIcon  sx={{paddingBottom:"5px"}}  fontSize='small'></ManageAccountsIcon>}></NavigatorHeader>
+                <NavigatorHeader pageFrom={"Regolare Esecuzione/"} pageIn={"Dettaglio"} backPath={profilePath} icon={<ManageAccountsIcon  sx={{paddingBottom:"5px"}}  fontSize='small'></ManageAccountsIcon>}></NavigatorHeader>
             </div>
             <div className='d-flex justify-content-end mt-4 me-5'>
                 <Button disabled={disableButtonDettaglioNot}  onClick={()=> downloadRelExel()} >Scarica report di dettaglio notifiche Reg. Es. <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>

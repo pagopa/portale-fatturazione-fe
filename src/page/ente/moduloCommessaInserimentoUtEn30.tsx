@@ -94,6 +94,14 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
+
+    let profilePathModuloCommessapdf; 
+            
+    if(profilo.auth === 'PAGOPA'){
+        profilePathModuloCommessapdf = PathPf.PDF_COMMESSA;
+    }else{
+        profilePathModuloCommessapdf = PathPf.PDF_COMMESSA_EN;
+    }
     
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -303,7 +311,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                             meseCommessaSelected:activeCommessa.meseValidita.toString(),
                             moduloSelectedIndex:activeStep}
                         });
-                        navigate(PathPf.PDF_COMMESSA+`/${activeCommessa.annoValidita}/${activeCommessa.meseValidita}`);}
+                        navigate(profilePathModuloCommessapdf+`/${activeCommessa.annoValidita}/${activeCommessa.meseValidita}`);}
                     } variant="contained">Vedi anteprima</Button>   
                 </div> 
                 }

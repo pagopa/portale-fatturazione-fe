@@ -11,6 +11,7 @@ import HeaderLogAzure from "./mainHeader/headerLogInOutAzure";
 const LayoutAzure = ({sideNav}) => {
     return (
         <>
+            <HeaderLogAzure/>
             <HeaderProductAzure/>
             <Grid sx={{ height: '100%' }} container spacing={2} columns={12}>
                 <Grid item xs={2}>
@@ -20,7 +21,6 @@ const LayoutAzure = ({sideNav}) => {
                     <Outlet />
                 </Grid>
             </Grid>
-            <FooterComponent/>
         </>
       
     );

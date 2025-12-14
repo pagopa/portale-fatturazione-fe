@@ -30,6 +30,13 @@ const Fatturazione : React.FC = () =>{
     const callLista = useRef(true);
     const callAnnulla = useRef(false);
     const navigate = useNavigate();
+    let profilePath; 
+
+    if(profilo.auth === 'PAGOPA'){
+        profilePath = PathPf.FATTURAZIONE;
+    }else{
+        profilePath = PathPf.FATTURAZIONE_EN;
+    }
 
     const [gridData, setGridData] = useState<FattureObj[]>([]);
     const [arrayYears,setArrayYears] = useState<number[]>([]);
@@ -79,7 +86,7 @@ const Fatturazione : React.FC = () =>{
         updateFilters,
         resetFilters,
         isInitialRender
-    } = useSavedFilters(PathPf.FATTURAZIONE,{});
+    } = useSavedFilters(profilePath,{});
 
     useEffect(()=>{
         getAnni();
@@ -356,7 +363,7 @@ const Fatturazione : React.FC = () =>{
 
     const onButtonFiltra = () => {
         updateFilters({
-            pathPage:PathPf.FATTURAZIONE,
+            pathPage:profilePath,
             body:bodyFatturazione,
             textValue:textValue,
             valueAutocomplete,
@@ -400,7 +407,7 @@ const Fatturazione : React.FC = () =>{
     
     const upadateOnSelctedChange = (page,rowsPerPage) =>{
         updateFilters({
-            pathPage:PathPf.FATTURAZIONE,
+            pathPage:profilePath,
             body:bodyFatturazione,
             textValue:textValue,
             valueAutocomplete,
@@ -613,7 +620,7 @@ const Fatturazione : React.FC = () =>{
                 selected={fattureSelected}
                 setSelected={setFattureSelected}
                 updateFilters={updateFilters}
-                pathPage={PathPf.FATTURAZIONE}
+                pathPage={profilePath}
                 body={{
                     body:bodyFatturazioneDownload,
                     textValue:textValue,

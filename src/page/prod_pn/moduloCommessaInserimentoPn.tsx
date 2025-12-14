@@ -28,6 +28,14 @@ const ModuloCommessaInserimentoPn : React.FC = () => {
     const navigate = useNavigate();
     const backPath = mainState.infoTrimestreComSelected?.from === PathPf.LISTA_MODULICOMMESSA ? PathPf.LISTA_MODULICOMMESSA :PathPf.LISTA_MODULICOMMESSA_PREVISONALE;
 
+
+    let profilePathModuloCommessapdf; 
+            
+    if(profilo.auth === 'PAGOPA'){
+        profilePathModuloCommessapdf = PathPf.PDF_COMMESSA;
+    }else{
+        profilePathModuloCommessapdf = PathPf.PDF_COMMESSA_EN;
+    }
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
             type:'MODIFY_MAIN_STATE',
@@ -153,7 +161,7 @@ const ModuloCommessaInserimentoPn : React.FC = () => {
                             { (activeCommessa?.totaleNotifiche !== null && !isEditAllow && !loadingData) && 
                             <div  className="d-flex justify-content-center align-items-center">
                                 <Button onClick={()=>{
-                                    navigate(PathPf.PDF_COMMESSA+`/${activeCommessa.annoValidita}/${activeCommessa.meseValidita}`);}
+                                    navigate(profilePathModuloCommessapdf+`/${activeCommessa.annoValidita}/${activeCommessa.meseValidita}`);}
                                 } variant="contained">Vedi anteprima</Button>   
                             </div> 
                             }

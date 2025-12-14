@@ -36,6 +36,16 @@ const ReportDettaglio : React.FC = () => {
     const enti = profiliEnti(mainState);
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
+
+    let profilePath; 
+
+    if(profilo.auth === 'PAGOPA'&& profilo.profilo !== "REC" && profilo.profilo !== "CON"){
+        profilePath = PathPf.LISTA_NOTIFICHE;
+    }else if(profilo.auth === 'PAGOPA' && profilo.profilo === "REC" || profilo.profilo === "CON"){
+        profilePath = PathPf.LISTA_NOTIFICHE_REC_CON;
+    }else{
+        profilePath = PathPf.LISTA_NOTIFICHE_EN;
+    }
    
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [profili, setProfili] = useState([]);
@@ -151,7 +161,7 @@ const ReportDettaglio : React.FC = () => {
         updateFilters,
         resetFilters,
         isInitialRender
-    } = useSavedFilters(PathPf.LISTA_NOTIFICHE,{});
+    } = useSavedFilters(profilePath,{});
     
     useEffect(() => {
         if(isInitialRender.current && Object.keys(filters).length > 0){
@@ -541,7 +551,7 @@ const ReportDettaglio : React.FC = () => {
         setRowsPerPage(10);
         setBodyDownload(bodyGetLista);
         updateFilters({
-            pathPage:PathPf.LISTA_NOTIFICHE,
+            pathPage:profilePath,
             body:bodyGetLista,
             textAutocomplete:textValue,
             valueAutocomplete:valueAutocomplete,
@@ -570,7 +580,7 @@ const ReportDettaglio : React.FC = () => {
         }
         setPage(newPage);
         updateFilters({
-            pathPage:PathPf.LISTA_NOTIFICHE,
+            pathPage:profilePath,
             body:bodyDownload,
             textValue,
             valueAutocomplete,
@@ -585,7 +595,7 @@ const ReportDettaglio : React.FC = () => {
     ) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         updateFilters({
-            pathPage:PathPf.LISTA_NOTIFICHE,
+            pathPage:profilePath,
             body:bodyDownload,
             textValue,
             valueAutocomplete,

@@ -43,7 +43,7 @@ export interface Whitelist {
 
 
 
-const ListaDocEmessi = () => {
+const ListaDocEmessi : React.FC = () => {
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState} = globalContextObj;
     

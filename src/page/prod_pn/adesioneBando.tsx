@@ -15,7 +15,7 @@ import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { PathPf } from "../../types/enum";
 
 
-const AdesioneBando = () => {
+const AdesioneBando : React.FC = () => {
 
     const globalContextObj = useContext(GlobalContext);
     const {dispatchMainState,mainState} = globalContextObj;

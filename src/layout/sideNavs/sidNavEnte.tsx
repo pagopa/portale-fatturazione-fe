@@ -48,12 +48,13 @@ const SideNavEnte: React.FC = () => {
     const [openContestazioni, setOpenContestazioni] = useState(false);
     
     const handleListItemClick = async(pathToGo) => {
-        if(pathToGo === PathPf.LISTA_COMMESSE && location.pathname !== PathPf.MODULOCOMMESSA ){
+        console.log({pathToGo});
+        if(pathToGo === PathPf.LISTA_COMMESSE && location.pathname !== PathPf.MODULOCOMMESSA_EN ){
             localStorage.setItem('redirectToInsert',JSON.stringify(true));
         }
-        if(((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA))){
+        if(((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE_EN)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA_EN))){
             setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:pathToGo}}));
-        }else if(location.pathname === PathPf.MODULOCOMMESSA && pathToGo === PathPf.LISTA_COMMESSE){
+        }else if(location.pathname === PathPf.MODULOCOMMESSA_EN && pathToGo === PathPf.LISTA_COMMESSE){
             return;
         }else{
             navigate(pathToGo);
@@ -88,30 +89,22 @@ const SideNavEnte: React.FC = () => {
     const currentLocation = location.pathname;
 
     useEffect(()=>{
-        if(currentLocation === PathPf.DATI_FATTURAZIONE){
+        if(currentLocation === PathPf.DATI_FATTURAZIONE_EN){
             setSelectedIndex(0);
         }else if(currentLocation === PathPf.LISTA_COMMESSE){
             setSelectedIndex(1);
-        }else if(currentLocation === PathPf.MODULOCOMMESSA){
+        }else if(currentLocation === PathPf.MODULOCOMMESSA_EN){
             setSelectedIndex(1);
-        }else if(currentLocation === PathPf.LISTA_DATI_FATTURAZIONE){
-            setSelectedIndex(0);
-        }else if(currentLocation === PathPf.LISTA_MODULICOMMESSA){
+        }else if(currentLocation === PathPf.PDF_COMMESSA_EN){
             setSelectedIndex(1);
-        }else if(currentLocation === PathPf.PDF_COMMESSA){
-            setSelectedIndex(1);
-        }else if(currentLocation === PathPf.LISTA_NOTIFICHE){
+        }else if(currentLocation === PathPf.LISTA_NOTIFICHE_EN){
             setSelectedIndex(2);
-        }else if(currentLocation === PathPf.LISTA_REL){
+        }else if(currentLocation === PathPf.LISTA_REL_EN){
             setSelectedIndex(3);
-        }else if(currentLocation === PathPf.PDF_REL){
+        }else if(currentLocation === PathPf.PDF_REL_EN){
             setSelectedIndex(3);
         }else if(currentLocation ===  PathPf.API_KEY_ENTE){
             setSelectedIndex(5);
-        }else if(currentLocation === "/messaggi"){
-            setSelectedIndex(null);
-        }else if(currentLocation === "/accertamenti"){
-            setSelectedIndex(7);
         }else if(currentLocation === PathPf.ASYNC_DOCUMENTI_ENTE){
             setSelectedIndex(8);
         }else if(currentLocation === PathPf.STORICO_CONTEST_ENTE || currentLocation === PathPf.STORICO_DETTAGLIO_CONTEST|| currentLocation === PathPf.INSERIMENTO_CONTESTAZIONI_ENTE){
@@ -119,7 +112,7 @@ const SideNavEnte: React.FC = () => {
             setOpenContestazioni(true);
         }
 
-        if(openContestazioni && (currentLocation !== PathPf.STORICO_CONTEST_ENTE && currentLocation !== PathPf.LISTA_NOTIFICHE && currentLocation !== PathPf.STORICO_DETTAGLIO_CONTEST && currentLocation !== PathPf.INSERIMENTO_CONTESTAZIONI_ENTE )){
+        if(openContestazioni && (currentLocation !== PathPf.STORICO_CONTEST_ENTE && currentLocation !== PathPf.LISTA_NOTIFICHE_EN && currentLocation !== PathPf.STORICO_DETTAGLIO_CONTEST && currentLocation !== PathPf.INSERIMENTO_CONTESTAZIONI_ENTE )){
             setOpenContestazioni(false);
         }
     },[currentLocation]);
@@ -132,7 +125,7 @@ const SideNavEnte: React.FC = () => {
         }}
         >
             <List component="nav" aria-label="main piattaforma-notifiche sender">
-                <><ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick(PathPf.DATI_FATTURAZIONE)}>
+                <><ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick(PathPf.DATI_FATTURAZIONE_EN)}>
                     <ListItemIcon>
                         <DnsIcon fontSize="inherit"></DnsIcon>
                     </ListItemIcon>
@@ -144,13 +137,13 @@ const SideNavEnte: React.FC = () => {
                     </ListItemIcon>
                     <ListItemText primary="Modulo commessa" />
                 </ListItemButton></>
-                <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClick(PathPf.LISTA_NOTIFICHE)}>
+                <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClick(PathPf.LISTA_NOTIFICHE_EN)}>
                     <ListItemIcon>
                         <MarkUnreadChatAltIcon fontSize="inherit" />
                     </ListItemIcon>
                     <ListItemText primary="Notifiche" />
                 </ListItemButton>
-                <ListItemButton selected={selectedIndex === 3} onClick={()=>handleListItemClick(PathPf.LISTA_REL)}>
+                <ListItemButton selected={selectedIndex === 3} onClick={()=>handleListItemClick(PathPf.LISTA_REL_EN)}>
                     <ListItemIcon>
                         <ManageAccountsIcon fontSize="inherit" />
                     </ListItemIcon>

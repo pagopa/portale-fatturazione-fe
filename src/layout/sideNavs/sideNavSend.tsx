@@ -59,7 +59,7 @@ const SideNavSend : React.FC = () => {
             setSelectedIndex(0);
         }else if(currentLocation === PathPf.MODULOCOMMESSA){
             setSelectedIndex(1);
-        }else if(currentLocation === "/send/"+PathPf.LISTA_DATI_FATTURAZIONE){
+        }else if(currentLocation === PathPf.LISTA_MODULICOMMESSA){
             if( mainState.infoTrimestreComSelected?.from === PathPf.LISTA_MODULICOMMESSA_PREVISONALE){
                 setSelectedIndex(12);
             }else{
@@ -68,8 +68,6 @@ const SideNavSend : React.FC = () => {
             
         }else if(currentLocation === PathPf.LISTA_DATI_FATTURAZIONE){
             setSelectedIndex(0);
-        }else if(currentLocation === "/send/"+PathPf.LISTA_MODULICOMMESSA){
-            setSelectedIndex(1);
         }else if(currentLocation === PathPf.PDF_COMMESSA){
             setSelectedIndex(1);
         }else if(currentLocation === PathPf.LISTA_NOTIFICHE){
@@ -82,9 +80,9 @@ const SideNavSend : React.FC = () => {
             setSelectedIndex(4);
         }else if(currentLocation === PathPf.FATTURAZIONE){
             setSelectedIndex(5);
-        }else if(currentLocation === "/messaggi"){
+        }else if(currentLocation === "messaggi"){
             setSelectedIndex(null);
-        }else if(currentLocation === "/accertamenti"){
+        }else if(currentLocation === PathPf.ACCERTAMENTI){
             setSelectedIndex(7);
         }else if(currentLocation === PathPf.TIPOLOGIA_CONTRATTO){
             setSelectedIndex(8);
@@ -259,7 +257,7 @@ const SideNavSend : React.FC = () => {
                         </ListItemButton>
                     </List>
                 </Collapse> 
-                <ListItemButton selected={selectedIndex === 7} onClick={() => handleListItemClick("/accertamenti")}>
+                <ListItemButton selected={selectedIndex === 7} onClick={() => handleListItemClick("accertamenti")}>
                     <ListItemIcon>
                         <ManageSearchIcon fontSize="inherit"></ManageSearchIcon>
                     </ListItemIcon>
@@ -273,7 +271,6 @@ const SideNavSend : React.FC = () => {
                 </ListItemButton>
             </List>
             <Divider />
-            <Outlet />
         </Box>
     );
 };

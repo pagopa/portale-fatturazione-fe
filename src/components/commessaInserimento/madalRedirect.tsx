@@ -25,6 +25,8 @@ const ModalRedirect : React.FC<ModalProps> =({setOpen, open, sentence}) => {
 
     const globalContextObj = useContext(GlobalContext);
     const {mainState} = globalContextObj;
+    const profilo =  mainState.profilo;
+
   
     const navigate = useNavigate();
 
@@ -35,7 +37,12 @@ const ModalRedirect : React.FC<ModalProps> =({setOpen, open, sentence}) => {
     };
 
     const handleGoToDatiFatturazione = () =>{
-        navigate(PathPf.DATI_FATTURAZIONE);  
+        if(profilo.auth === 'PAGOPA'){
+            navigate(PathPf.DATI_FATTURAZIONE);
+        }else{
+            navigate(PathPf.DATI_FATTURAZIONE_EN);
+        }
+          
     };
 
     return (

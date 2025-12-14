@@ -16,7 +16,7 @@ const MultiselectWithKeyValue : React.FC <MultiselectWithKeyValueProps> = ({setB
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
     const location = useLocation();
 
-    const customMargin = location.pathname === PathPf.FATTURAZIONE ? { width: '80%', height:'59px'} : { width: '80%'};
+    //const customMargin = location.pathname === PathPf.FATTURAZIONE ? { width: '80%', height:'59px'} : { width: '80%'};
 
 
     return (

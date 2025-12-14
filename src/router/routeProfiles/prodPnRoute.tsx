@@ -28,27 +28,41 @@ import ListaCommessaPrevisionale from "../../page/prod_pn/listaModuloComPrevison
 
 const ProdPnRoute = () => {
     const prodPnRoute =  <Route element={<LayoutAzure  sideNav={<SideNavSend />}></LayoutAzure >}>
-        <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte />} />
+       
+       
+    
+        
+        
+       
+       
+      
+        {/*
+       <Route path={PathPf.TIPOLOGIA_CONTRATTO} element={<PageTipologiaContratto/>} />
         <Route path={PathPf.LISTA_MODULICOMMESSA} element={<PagoPaListaModuliCommessa/>}/>
-        <Route path={PathPf.MODULOCOMMESSA} element={<ModuloCommessaInserimentoPn/>} />
+       <Route path={PathPf.LISTA_DATI_FATTURAZIONE} element={<PagoPaListaDatiFatturazione/>} />
+       <Route path={PathPf.LISTA_MODULICOMMESSA_PREVISONALE} element={<ListaCommessaPrevisionale/>} />
+        <Route path={PathPf.DATI_FATTURAZIONE} element={<AreaPersonaleUtenteEnte />} />
+         <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio />} />
+         <Route path={PathPf.INSERIMENTO_CONTESTAZIONI} element={<InserimentoContestazioni />} />
+         <Route path={PathPf.STORICO_CONTEST} element={<Storico />} />
+         <Route path={PathPf.STORICO_DETTAGLIO_CONTEST} element={<DettaglioStoricoContestazione/>} />
+             <Route path={PathPf.MODULOCOMMESSA} element={<ModuloCommessaInserimentoPn/>} />
         <Route path={PathPf.PDF_COMMESSA+"/:annoPdf?/:mesePdf?"} element={<ModuloCommessaPdf/>} />
-        <Route path={PathPf.LISTA_DATI_FATTURAZIONE} element={<PagoPaListaDatiFatturazione/>} />
         <Route path={PathPf.LISTA_REL} element={<RelPage />} />
         <Route path={PathPf.PDF_REL} element={<RelPdfPage/>} />
-        <Route path={PathPf.ADESIONE_BANDO} element={<AdesioneBando/>} />
+         <Route path={PathPf.ADESIONE_BANDO} element={<AdesioneBando/>} />
         <Route path={PathPf.FATTURAZIONE} element={<Fatturazione/>} />
-        <Route path={PathPf.LISTA_NOTIFICHE} element={<ReportDettaglio />} />
-        <Route path={'/messaggi'} element={<Messaggi />} />
+          <Route path={'/messaggi'} element={<Messaggi />} />
         <Route path={'/accertamenti'} element={<Accertamenti/>} />
-        <Route path={PathPf.INSERIMENTO_CONTESTAZIONI} element={<InserimentoContestazioni />} />
-        <Route path={PathPf.STORICO_CONTEST} element={<Storico />} />
-        <Route path={PathPf.TIPOLOGIA_CONTRATTO} element={<PageTipologiaContratto/>} />
+        
+        
+        
         <Route path={PathPf.LISTA_DOC_EMESSI} element={<ListaDocEmessi/>} />
         <Route path={PathPf.JSON_TO_SAP} element={<InvioFatture/>} />
         <Route path={PathPf.JSON_TO_SAP_DETAILS} element={<InvioFattureDetails/>} />
-        <Route path={PathPf.STORICO_DETTAGLIO_CONTEST} element={<DettaglioStoricoContestazione/>} />
+        
         <Route path={PathPf.ORCHESTRATORE} element={<ProcessiOrchestartore/>} />
-        <Route path={PathPf.LISTA_MODULICOMMESSA_PREVISONALE} element={<ListaCommessaPrevisionale/>} />
+        */}
     </Route>;
     return prodPnRoute;
 };

@@ -27,6 +27,14 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
     const navigate = useNavigate();
     const location = useLocation();
     const enti = profiliEnti(mainState);
+
+    let profilePathModuloCommessa; 
+    
+    if(profilo.auth === 'PAGOPA'){
+        profilePathModuloCommessa = PathPf.MODULOCOMMESSA;
+    }else{
+        profilePathModuloCommessa = PathPf.MODULOCOMMESSA_EN;
+    }
    
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
@@ -41,7 +49,7 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
 
     const handleEsci = () =>{
      
-        if(location.pathname === PathPf.DATI_FATTURAZIONE ){
+        if(location.pathname === PathPf.DATI_FATTURAZIONE ||location.pathname === PathPf.DATI_FATTURAZIONE_EN ){
             if(profilo.auth === 'PAGOPA'&& mainState.statusPageDatiFatturazione === 'mutable' && mainState.datiFatturazione === false){
               
                 navigate(open.clickOn);
@@ -92,7 +100,7 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
                 localStorage.removeItem("pageRowListaDatiFatturazione");*/
             }
         }
-        if(location.pathname === PathPf.MODULOCOMMESSA){
+        if(location.pathname === profilePathModuloCommessa){
             if(profilo.auth === 'PAGOPA' && open.clickOn === 'INDIETRO_BUTTON'){
                 handleGetDettaglioModuloCommessa();
                 setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));

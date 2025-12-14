@@ -9,6 +9,7 @@ import DivProdotto from "../components/authSelectProdottiPa/divProdotto";
 import { GlobalContext } from "../store/context/globalContext";
 import Loader from "../components/reusableComponents/loader";
 import { getMessaggiCount } from "../api/apiPagoPa/centroMessaggi/api";
+import HeaderLogAzure from "../layout/mainHeader/headerLogInOutAzure";
 
 const AuthAzureProdotti : React.FC = () => {
 
@@ -80,30 +81,33 @@ const AuthAzureProdotti : React.FC = () => {
     };
 
     return (
-        <div style={{height: '600px',marginTop:'100px'}}>
-            <div className="row">
-                <div className="col">
-                </div>
-                <div className="col">
-                    <div className=" d-flex align-items-center justify-content-center">
-                        <Typography variant="h2">Seleziona il prodotto</Typography>
+        <>
+            <HeaderLogAzure/>
+      
+            <div style={{height: '600px',marginTop:'100px'}}>
+                <div className="row">
+                    <div className="col">
                     </div>
-                    <div className=" d-flex align-items-center justify-content-center mt-2">
-                        <Typography  align="center">{`Se operi per più prodotti, potrai modificare la tua scelta dopo aver effettuato l’accesso.`}</Typography>                                                               
-                    </div>
-                    {!productSelected? 
-                        <div className=" d-flex align-items-center justify-content-center mt-5">
-                            <MultipleSelectProdotti  setProductSelected={setProductSelected}></MultipleSelectProdotti>
-                        </div> :
-                        <div className=" d-flex align-items-center justify-content-center mt-5">
-                            <DivProdotto productSelected={productSelected} setProductSelected={setProductSelected}/>
+                    <div className="col">
+                        <div className=" d-flex align-items-center justify-content-center">
+                            <Typography variant="h2">Seleziona il prodotto</Typography>
                         </div>
-                    }
+                        <div className=" d-flex align-items-center justify-content-center mt-2">
+                            <Typography  align="center">{`Se operi per più prodotti, potrai modificare la tua scelta dopo aver effettuato l’accesso.`}</Typography>                                                               
+                        </div>
+                        {!productSelected? 
+                            <div className=" d-flex align-items-center justify-content-center mt-5">
+                                <MultipleSelectProdotti  setProductSelected={setProductSelected}></MultipleSelectProdotti>
+                            </div> :
+                            <div className=" d-flex align-items-center justify-content-center mt-5">
+                                <DivProdotto productSelected={productSelected} setProductSelected={setProductSelected}/>
+                            </div>
+                        }
+                    </div>
+                    <div className="col">
+                    </div>
                 </div>
-                <div className="col">
-                </div>
-            </div>
-            {productSelected && 
+                {productSelected && 
                 <div className="row mt-3">
 
                     <div className="col">
@@ -121,8 +125,9 @@ const AuthAzureProdotti : React.FC = () => {
                     <div className="col">
                     </div>
                 </div>
-            }
-        </div>
+                }
+            </div>
+        </>
     );
 };
 

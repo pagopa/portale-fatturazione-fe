@@ -28,6 +28,14 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
+
+    let profilePathModuloCommessa; 
+        
+    if(profilo.auth === 'PAGOPA'){
+        profilePathModuloCommessa = PathPf.MODULOCOMMESSA;
+    }else{
+        profilePathModuloCommessa = PathPf.MODULOCOMMESSA_EN;
+    }
   
     const [valueSelect, setValueSelect] = useState('');
     
@@ -75,7 +83,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
             const redirectToInsert =  JSON.parse(redirect);
             setIsMandatory(res.data);
             if(res.data && redirectToInsert){
-                navigate(PathPf.MODULOCOMMESSA);
+                navigate(profilePathModuloCommessa);
             }else{
                 localStorage.setItem('redirectToInsert',JSON.stringify(false));
                 getAnniSelect();
@@ -141,7 +149,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
 
     const handleListItemClickModuloCommessa = async () => {
         //cliccando sulla side nav Modulo commessa e sono un ente qualsiasi
-        navigate(PathPf.MODULOCOMMESSA);
+        navigate(profilePathModuloCommessa);
     };
 
     //_________________________________NUOVA LOGICA
@@ -222,7 +230,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
                 prodotto:profilo.prodotto,
                 idEnte:profilo.idEnte,
             }});
-            navigate(PathPf.MODULOCOMMESSA);
+            navigate(profilePathModuloCommessa);
         }else if(!isMandatory){
             /*handleModifyMainState({infoTrimestreComSelected:{
                 meseCommessaSelected:el.id.length === 6 ? el.id.slice(0,1):el.id.slice(0,2),
@@ -244,9 +252,9 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
                 prodotto:profilo.prodotto,
                 idEnte:profilo.idEnte,
             }});
-            navigate(PathPf.MODULOCOMMESSA);
+            navigate(profilePathModuloCommessa);
         }else if(isMandatory && el.source === "obbligatorio"){
-            navigate(PathPf.MODULOCOMMESSA);
+            navigate(profilePathModuloCommessa);
         }
       
         
