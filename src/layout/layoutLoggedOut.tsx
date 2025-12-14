@@ -1,16 +1,18 @@
 import { Grid } from "@mui/material";
 import FooterComponent from "./footer";
-import HeaderLogAzure from "./mainHeader/headerLogInOutAzure";
+
+import { Outlet } from "react-router";
+import BasicAlerts from "../components/reusableComponents/modals/alert";
 
 
-const LayoutLoggedOut = ({page}) => {
+const LayoutLoggedOut = () => {
     return (
         <>
-            <HeaderLogAzure/>
+            <BasicAlerts></BasicAlerts>
             <Grid sx={{ height: '100%' }}>
-                {page}
+                <Outlet />
             </Grid>
-            <FooterComponent  />
+            <FooterComponent></FooterComponent>
         </>
     );
 };

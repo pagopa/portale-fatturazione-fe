@@ -60,6 +60,7 @@ import AsyncDocumenti from '../page/ente/asyncDocumenti';
 import ApiKeyEnte from '../page/apiKeyEnte';
 import LayoutEnte from '../layout/layOutLoggedInEnte';
 import SideNavRecCon from '../layout/sideNavs/sideNavConRec';
+import { apiKeyLoader } from '../loaderRoutes/apiKeyLoader';
 
 const RouteProfile = () => {
     const globalContextObj = useContext(GlobalContext);
@@ -74,7 +75,7 @@ const RouteProfile = () => {
 
     const globalLocalStorage = localStorage.getItem('globalState') || '{}';
     const result =  JSON.parse(globalLocalStorage);
-
+    /*
     useEffect(()=>{
         if(token && profilo.nonce && isEnte){
             apiKeyPageAvailable();
@@ -116,7 +117,7 @@ const RouteProfile = () => {
         route = RecConRoute();
         redirectRoute = PathPf.LISTA_NOTIFICHE;
     }
-
+*/
     const tabActive = useIsTabActive();
    
     useEffect(()=>{
@@ -140,49 +141,20 @@ const RouteProfile = () => {
 
 };
 
-/*
-<Routes>
-                        <Route path="/auth" element={<Auth/>} />
-                        <Route path="/auth/azure" element={<AuthAzure/>} />
-                        <Route path="/azure" element={<Azure/>} />
-                        <Route path="/azureLogin" element={<LayoutLoggedOut page={<AzureLogin/>}></LayoutLoggedOut>}></Route>
-                        <Route path="/error"  element={<ErrorPage/>} />
-                        <Route path="*" element={<Navigate  to={redirectRoute} replace />} />
-                       
-                        <Route path={"/test"} element={<TestListaModuli/>}/>
-                        {route}
-                    </Routes>
-                     */
-
-
 
 export default RouteProfile;
 
-const LayoutLoggedOut2 = () => {
-    return (
-        <>
-            <BasicAlerts></BasicAlerts>
-           
-            <Grid sx={{ height: '100%' }}>
-                <Outlet />
-            </Grid>
-            <FooterComponent></FooterComponent>
-        </>
-    );
-};
 
 
 
 
-const test = () => {
-    console.log(999);
-    return true;
-};
+
+
 
 const router2 = createBrowserRouter([
     {
         path: "/",
-        Component:LayoutLoggedOut2,
+        Component:LayoutLoggedOut,
         children: [
             {
                 Component: AzureLogin,

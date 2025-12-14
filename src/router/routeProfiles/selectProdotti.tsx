@@ -6,7 +6,7 @@ import LayoutLoggedOut from "../../layout/layoutLoggedOut";
 
 const SelectProdottiRoute = () => {
 
-    const selectProfiloRoute = <Route  path="/selezionaprodotto" element={<LayoutLoggedOut page={<AuthAzureProdotti />}></LayoutLoggedOut>}></Route>;
+    const selectProfiloRoute = <Route  path="/selezionaprodotto" element={<LayoutLoggedOut></LayoutLoggedOut>}></Route>;
     return selectProfiloRoute;
 };
 
