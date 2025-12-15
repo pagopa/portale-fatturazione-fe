@@ -53,6 +53,7 @@ import SideNavRecCon from '../layout/sideNavs/sideNavConRec';
 import { useGlobalStore } from '../store/context/useGlobalStore';
 import { createBrowserRouter } from 'react-router-dom';
 import { apiKeyLoader } from '../loaderRoutes/apiKeyLoader';
+import { authEnteLoader } from '../loaderRoutes/loaderAuthEnte';
 
 const RouteProfile = () => {
     const mainState = useGlobalStore(state => state.mainState);
@@ -164,6 +165,7 @@ const router2 = createBrowserRouter([
             },
             {
                 path: "auth",
+                loader:authEnteLoader,
                 Component: Auth,
             },
             {
@@ -215,7 +217,6 @@ const router2 = createBrowserRouter([
             {
                 path: "ente",
                 Component: () => <LayoutEnte sideNav={<SideNavEnte />} />,
-                loader:apiKeyLoader,
                 children: [
                     {path: PathRoutePf.DATI_FATTURAZIONE,Component: AreaPersonaleUtenteEnte},
                     {path: PathRoutePf.LISTA_COMMESSE, Component: ModuloCommessaElencoUtPa},

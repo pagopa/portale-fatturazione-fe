@@ -82,10 +82,10 @@ export const useGlobalStore = create<GlobalStore>()(
                 })),
         }),
         {
-            name: "globalState",
+            name: "globalStatePF",
             partialize: (state) => ({
                 mainState: state.mainState,
-                statusQueryGetUri: state.statusQueryGetUri,
+                statusQueryGetUri: state.statusQueryGetUri
             }),
         }
     )

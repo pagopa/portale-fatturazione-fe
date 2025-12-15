@@ -24,6 +24,8 @@ interface ParameterGetProfilo {
     data:Jwt[]
 }
 const Auth : React.FC<any> = () =>{
+
+    /*
     const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
 
     const handleModifyMainState = (valueObj) => {
@@ -145,6 +147,7 @@ const Auth : React.FC<any> = () =>{
    
         getSelfcare();
     },[]);
+    */
    
     return (
         <>
