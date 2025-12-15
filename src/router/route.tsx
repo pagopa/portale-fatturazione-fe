@@ -1,29 +1,18 @@
 import '../App.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import { useContext, useEffect, useState } from "react";
+import {  useEffect } from "react";
 import { profiliEnti } from "../reusableFunction/actionLocalStorage";
-import { GlobalContext } from "../store/context/globalContext";
-import EnteRoute from "./routeProfiles/enteRoute";
-import SelectProdottiRoute from "./routeProfiles/selectProdotti";
-import ProdPnRoute from "./routeProfiles/prodPnRoute";
-import PagoPaRoute from "./routeProfiles/pagoPaRoute";
-import RecConRoute from "./routeProfiles/recapitistaConsolidatoreRoute";
-import { Grid, ThemeProvider} from '@mui/material';
+import { ThemeProvider} from '@mui/material';
 import {theme} from '@pagopa/mui-italia';
-import {Routes, Route, Navigate, useLocation, RouterProvider, Outlet} from "react-router";
-import BasicAlerts from "../components/reusableComponents/modals/alert";
+import {Navigate, RouterProvider} from "react-router";
 import Auth from "../page/auth";
 import AuthAzure from "../page/authAzure";
 import Azure from "../page/azure";
 import AzureLogin from "../page/azureLogin";
-import ErrorPage from "../page/error";
 import { PathPf, PathRoutePf } from "../types/enum";
 import LayoutLoggedOut from '../layout/layoutLoggedOut';
-import { BrowserRouter, createBrowserRouter } from 'react-router-dom';
 import useIsTabActive from '../reusableFunction/tabIsActiv';
-import { getPageApiKeyVisible, redirect } from '../api/api';
-import HeaderLogAzure from '../layout/mainHeader/headerLogInOutAzure';
-import FooterComponent from '../layout/footer';
+import {  redirect } from '../api/api';
 import AreaPersonaleUtenteEnte from '../page/prod_pn/areaPersonaleUtenteEnte';
 import LayoutAzure from '../layout/layOutLoggedInAzure';
 import Messaggi from '../page/messaggi';
@@ -60,11 +49,14 @@ import AsyncDocumenti from '../page/ente/asyncDocumenti';
 import ApiKeyEnte from '../page/apiKeyEnte';
 import LayoutEnte from '../layout/layOutLoggedInEnte';
 import SideNavRecCon from '../layout/sideNavs/sideNavConRec';
+
+import { useGlobalStore } from '../store/context/useGlobalStore';
+import { createBrowserRouter } from 'react-router-dom';
 import { apiKeyLoader } from '../loaderRoutes/apiKeyLoader';
 
 const RouteProfile = () => {
-    const globalContextObj = useContext(GlobalContext);
-    const  { mainState,setMainData,mainData}  = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    /*
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const isEnte = profiliEnti(mainState);
@@ -75,7 +67,7 @@ const RouteProfile = () => {
 
     const globalLocalStorage = localStorage.getItem('globalState') || '{}';
     const result =  JSON.parse(globalLocalStorage);
-    /*
+   
     useEffect(()=>{
         if(token && profilo.nonce && isEnte){
             apiKeyPageAvailable();
@@ -118,6 +110,8 @@ const RouteProfile = () => {
         redirectRoute = PathPf.LISTA_NOTIFICHE;
     }
 */
+
+    /*TODO DA SETTARE A FINE SVILUPPO ZUNDUST
     const tabActive = useIsTabActive();
    
     useEffect(()=>{
@@ -127,7 +121,7 @@ const RouteProfile = () => {
             }
         }
     },[tabActive]);
-
+*/
   
     return (
         <ThemeProvider theme={theme}>
@@ -221,6 +215,7 @@ const router2 = createBrowserRouter([
             {
                 path: "ente",
                 Component: () => <LayoutEnte sideNav={<SideNavEnte />} />,
+                loader:apiKeyLoader,
                 children: [
                     {path: PathRoutePf.DATI_FATTURAZIONE,Component: AreaPersonaleUtenteEnte},
                     {path: PathRoutePf.LISTA_COMMESSE, Component: ModuloCommessaElencoUtPa},

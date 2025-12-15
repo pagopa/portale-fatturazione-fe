@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useState, useEffect } from 'react';
 import {
     List,
@@ -10,13 +10,14 @@ import {
 } from '@mui/material';
 import { useNavigate, useLocation } from "react-router-dom";
 import MarkUnreadChatAltIcon from '@mui/icons-material/MarkUnreadChatAlt';
-import { GlobalContext } from '../../store/context/globalContext';
 import { PathPf } from '../../types/enum';
+import { useGlobalStore } from '../../store/context/useGlobalStore';
 
 const SideNavRecCon: React.FC = () => {
 
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState,setOpenBasicModal_DatFat_ModCom} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    const setOpenBasicModal_DatFat_ModCom = useGlobalStore(state => state.setOpenBasicModal_DatFat_ModCom);
+
     const navigate = useNavigate();
     const location = useLocation();
     const currentLocation = location.pathname;
@@ -25,7 +26,7 @@ const SideNavRecCon: React.FC = () => {
     
     const handleListItemClickNotifiche = () => {
         if((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA)){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:PathPf.LISTA_NOTIFICHE_REC_CON}}));
+            setOpenBasicModal_DatFat_ModCom({visible:true,clickOn:PathPf.LISTA_NOTIFICHE_REC_CON});
         }else{
             navigate(PathPf.LISTA_NOTIFICHE_REC_CON);
         }

@@ -1,27 +1,24 @@
 import { useNavigate } from "react-router";
-import { getProfilo, getToken } from "../../reusableFunction/actionLocalStorage";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { manageError } from "../../api/api";
-import { saveAs } from "file-saver";
 import SkeletonRelPdf from "../../components/rel/skeletonRelPdf";
 import { getDetailsDocContabilePa } from "../../api/apiPagoPa/documentiContabiliPA/api";
 import { PathPf } from "../../types/enum";
-import { ButtonNaked } from "@pagopa/mui-italia";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import TextDettaglioPdf from "../../components/commessaPdf/textDettaglioPdf";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { DocContabile } from "../../types/typeDocumentiContabili";
 import DownloadIcon from '@mui/icons-material/Download';
-import { GlobalContext } from "../../store/context/globalContext";
 import NavigatorHeader from "../../components/reusableComponents/navigatorHeader";
+import { useGlobalStore } from "../../store/context/useGlobalStore";
 
 
 const DettaglioDocContabile : React.FC = () =>{
 
-    const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+
  
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;

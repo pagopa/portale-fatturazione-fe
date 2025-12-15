@@ -1,5 +1,5 @@
 import {Box, Button, Chip, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TablePagination, Typography } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import SelectUltimiDueAnni from "../components/reusableComponents/select/selectUltimiDueAnni";
 import SelectMese from "../components/reusableComponents/select/selectMese";
 import { downloadMessaggioPagoPaCsv, downloadMessaggioPagoPaZipExel, getListaMessaggi, getMessaggiCount, readMessaggioPagoPa} from "../api/apiPagoPa/centroMessaggi/api";
@@ -12,10 +12,10 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ModalLoading from "../components/reusableComponents/modals/modalLoading";
 import { month } from "../reusableFunction/reusableArrayObj";
-import { GlobalContext } from "../store/context/globalContext";
 import PreviewIcon from '@mui/icons-material/Preview';
 import { useNavigate } from "react-router";
 import { PathPf } from "../types/enum";
+import { useGlobalStore } from "../store/context/useGlobalStore";
 
 export interface Messaggio {
     idMessaggio:number,
@@ -51,9 +51,11 @@ interface FilterMessaggi{
 
 
 const Messaggi : React.FC<any> = () => {
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+    const setCountMessages = useGlobalStore(state => state.setCountMessages);
 
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState,setCountMessages,dispatchMainState} = globalContextObj;
+
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
@@ -96,7 +98,7 @@ const Messaggi : React.FC<any> = () => {
             setGetListaLoading(false);
             setGridData([]);
             setCountMessaggi(0);
-            manageError(err,globalContextObj.dispatchMainState);
+            manageError(err,dispatchMainState);
         });
     };
     //aggiorna il counter messaggi(icona in alto nell'header a destra)
@@ -139,7 +141,7 @@ const Messaggi : React.FC<any> = () => {
                 readMessage(item.idMessaggio);
             }).catch(((err)=>{
                 setShowDownloading(false);
-                manageError(err,globalContextObj.dispatchMainState);
+                manageError(err,dispatchMainState);
                 getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra);
             }));
         }else if(contentType === "application/zip"){
@@ -151,7 +153,7 @@ const Messaggi : React.FC<any> = () => {
                     readMessage(item.idMessaggio);
                 }).catch(((err)=>{
                     setShowDownloading(false);
-                    manageError(err,globalContextObj.dispatchMainState);
+                    manageError(err,dispatchMainState);
                     getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra);
                 }));
         }else if(contentType ==="application/vnd.ms-excel"){
@@ -161,7 +163,7 @@ const Messaggi : React.FC<any> = () => {
                 setShowDownloading(false);
                 readMessage(item.idMessaggio);
             }).catch((err)=>{
-                manageError(err,globalContextObj.dispatchMainState);
+                manageError(err,dispatchMainState);
                 setShowDownloading(false);
                 getMessaggi(page+1, rowsPerPage, bodyCentroMessaggiOnFiltra);
             }); 

@@ -6,7 +6,6 @@ import { useNavigate, useParams } from "react-router";
 import FilterListIcon from '@mui/icons-material/FilterList';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import { GlobalContext } from "../../store/context/globalContext";
 import { managePresaInCarico } from "../../api/api";
 import { sendListaJsonFatturePagoPa } from "../../api/apiPagoPa/fatturazionePA/api";
 import SkeletonRelPdf from "../../components/rel/skeletonRelPdf";
@@ -15,6 +14,7 @@ import SkeletonGridLoading from "../../components/reusableComponents/skeletonGri
 import { mesiGrid, month } from "../../reusableFunction/reusableArrayObj";
 import { PathPf } from "../../types/enum";
 import IosShareIcon from '@mui/icons-material/IosShare';
+import { useGlobalStore } from "../../store/context/useGlobalStore";
 
 
 interface DetailsSingleRow 
@@ -30,9 +30,10 @@ interface DetailsSingleRow
 }
 
 const InvioFattureDetails : React.FC = () => {
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
 
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState,dispatchMainState } = globalContextObj;
+
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const navigate = useNavigate();

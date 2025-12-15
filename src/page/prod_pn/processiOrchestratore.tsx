@@ -1,29 +1,19 @@
-import { Autocomplete, Checkbox,TextField, Tooltip, Typography } from "@mui/material";
-import { Box, Button} from '@mui/material';
 import { useContext, useEffect, useState } from "react";
-import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import DownloadIcon from '@mui/icons-material/Download';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import ListIcon from '@mui/icons-material/List';
-import { it } from "date-fns/locale";
 import dayjs from "dayjs";
 import { saveAs } from "file-saver";
-import { GlobalContext } from "../../store/context/globalContext";
 import { manageError } from "../../api/api";
 import { getListaActionMonitoring, downloadOrchestratore, getStatiMonitoring, getTipologieMonitoring, getFasiMonitoring } from "../../api/apiPagoPa/orchestratore/api";
-
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
-import { transformDateTimeWithNameMonth, transformDateTime, transformObjectToArray, isDateInvalid, formatDateToValidation } from "../../reusableFunction/function";
+import { transformDateTimeWithNameMonth, transformDateTime, transformObjectToArray } from "../../reusableFunction/function";
 import { mesiGrid } from "../../reusableFunction/reusableArrayObj";
 import { PathPf } from "../../types/enum";
 import { ElementMultiSelect } from "../../types/typeReportDettaglio";
 import { headersName } from "../../assets/configurations/config_GridOrchestratore";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
+import { useGlobalStore } from "../../store/context/useGlobalStore";
 
 export interface DataGridOrchestratore {
     idOrchestratore:string,
@@ -48,8 +38,10 @@ export interface BodyOrchestratore{
 }
 
 const ProcessiOrchestartore:React.FC = () =>{
-    const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState} = globalContextObj;
+
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+ 
     
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;

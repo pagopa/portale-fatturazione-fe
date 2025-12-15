@@ -1,19 +1,22 @@
-import { useState, useEffect, useContext} from 'react';
+import {  useEffect, useContext} from 'react';
 import { useNavigate } from 'react-router';
 import {HeaderProduct, PartyEntity } from '@pagopa/mui-italia';
 import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
 import Badge from '@mui/material/Badge';
 import { IconButton } from '@mui/material';
-import { GlobalContext } from '../../store/context/globalContext';
 import { getAuthProfilo, redirect } from '../../api/api';
 import { getMessaggiCount } from '../../api/apiPagoPa/centroMessaggi/api';
 import { PathPf } from '../../types/enum';
 import {  products } from '../../assets/dataLayout';
+import { useGlobalStore } from '../../store/context/useGlobalStore';
 
 const HeaderProductAzure = () => {
    
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState, dispatchMainState,setCountMessages,countMessages } = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+    const setCountMessages = useGlobalStore(state => state.setCountMessages);
+    const countMessages = useGlobalStore(state => state.countMessages);
+
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
@@ -47,13 +50,13 @@ const HeaderProductAzure = () => {
     };
     
     useEffect(()=>{
-        if(globalContextObj.mainState.authenticated === true ){
+        if(mainState.authenticated === true ){
             const interval = setInterval(() => {
                 getCount();
             }, 30000);
             return () => clearInterval(interval); 
         }
-    },[globalContextObj.mainState.authenticated]);
+    },[mainState.authenticated]);
 
     const getProfilo = async (jwt, productSelected)=>{
         await getAuthProfilo(jwt).then((resp) => {

@@ -14,23 +14,24 @@ import ModalLoading from "../../components/reusableComponents/modals/modalLoadin
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { profiliEnti } from "../../reusableFunction/actionLocalStorage";
 import { mesiGrid, mesiWithZero, tipoNotifica } from "../../reusableFunction/reusableArrayObj";
-import { GlobalContext } from "../../store/context/globalContext";
+
 import { PathPf } from "../../types/enum";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
+import { useGlobalStore } from '../../store/context/useGlobalStore';
+
 
 
 
 const ReportDettaglio : React.FC = () => {
-    const globalContextObj = useContext(GlobalContext);
-    const {
-        dispatchMainState,
-        mainState,
-        setOpenModalInfo,
-        setCountMessages,
-        openModalInfo,
-        setStatusQueryGetUri,
-    } = globalContextObj;
+ 
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+    const setCountMessages = useGlobalStore(state => state.setCountMessages);
+
+    const setOpenModalInfo = useGlobalStore(state => state.setOpenModalInfo);
+    const openModalInfo = useGlobalStore(state => state.openModalInfo);
+    const setStatusQueryGetUri = useGlobalStore(state => state.setStatusQueryGetUri);
 
 
     const enti = profiliEnti(mainState);
@@ -720,7 +721,7 @@ const ReportDettaglio : React.FC = () => {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars  
             await downloadNotifche(token, profilo.nonce,bodyEnti ).then(async(res)=>{
                 setShowLoading(false); 
-                setStatusQueryGetUri((prev)=>([...prev,...[res?.data?.statusQueryGetUri]]));
+                setStatusQueryGetUri([res?.data?.statusQueryGetUri]);
                 managePresaInCarico('PRESA_IN_CARICO_DOCUMENTO_ENTE',dispatchMainState);
                 await getMessaggiCountEnte(token,profilo.nonce).then((res)=>{
                     const numMessaggi = res.data;

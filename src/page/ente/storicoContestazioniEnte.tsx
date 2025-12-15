@@ -1,8 +1,7 @@
 import { Autocomplete, Box, Button, Checkbox, FormControl, InputLabel, MenuItem, Select, TextField, Tooltip, Typography } from "@mui/material";
 import { month } from "../../reusableFunction/reusableArrayObj";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { manageError } from "../../api/api";
-import { GlobalContext } from "../../store/context/globalContext";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../../types/enum";
@@ -13,6 +12,7 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { getAnniContestazioniSE, getListaStoricoSE, getMesiContestazioniSE, getTipoReportSE } from "../../api/apiSelfcare/storicoContestazioneSE/api";
 import { headersName } from "../../assets/configurations/conf_GridStoricoContestazioni_ente";
+import { useGlobalStore } from "../../store/context/useGlobalStore";
 
 export interface BodyStoricoContestazioniSE{
     anno:string,
@@ -52,8 +52,8 @@ export interface ContestazioneRowGrid {
 
 const StoricoEnte = () => {
 
-    const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const navigate = useNavigate();

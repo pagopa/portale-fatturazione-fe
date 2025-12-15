@@ -4,16 +4,16 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { Autocomplete, Checkbox, FormControl, InputLabel, MenuItem, Select, TextField} from '@mui/material';
-import { SetStateAction, useContext, useEffect, useState } from 'react';
-import { GlobalContext } from '../../store/context/globalContext';
+import { SetStateAction, useEffect, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
-import { ElementMultiSelect, OptionMultiselectChackbox } from '../../types/typeReportDettaglio';
+import { ElementMultiSelect} from '../../types/typeReportDettaglio';
 import { listaEntiNotifichePage } from '../../api/apiSelfcare/notificheSE/api';
 import { manageError, managePresaInCarico } from '../../api/api';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { getAnniWhiteAdd, getMesiWhiteAdd, getTipologiaFatturaWhite, whiteListAdd } from '../../api/apiPagoPa/whiteListPA/whiteList';
 import Loader from '../reusableComponents/loader';
+import { useGlobalStore } from '../../store/context/useGlobalStore';
 
 const style = {
     position: 'absolute' as const,
@@ -45,8 +45,10 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) => {
 
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState,dispatchMainState} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+
+  
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 

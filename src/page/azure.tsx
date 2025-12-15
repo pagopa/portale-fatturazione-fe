@@ -1,24 +1,21 @@
 import { useMsal } from "@azure/msal-react";
-import { useContext, useEffect} from 'react';
+import {  useEffect} from 'react';
 import { loginRequest } from '../authConfig';
 import {InteractionStatus,
 } from "@azure/msal-browser";
 
-import { GlobalContext } from "../store/context/globalContext";
 import Loader from "../components/reusableComponents/loader";
+import { useGlobalStore } from "../store/context/useGlobalStore";
 
 //Pagina di accesso con l'autenticazione AZURE
 
 const Azure : React.FC<any> = () =>{
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState} = globalContextObj;
-
-    /*if(checkIfUserIsAutenticated === 'PAGOPA'){
-        navigate(PathPf.LISTA_DATI_FATTURAZIONE);
-    }*/
+ 
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
 
     const handleModifyMainState = (valueObj) => {
-        globalContextObj.dispatchMainState({
+        dispatchMainState({
             type:'MODIFY_MAIN_STATE',
             value:valueObj
         });

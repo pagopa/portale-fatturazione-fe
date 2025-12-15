@@ -1,18 +1,16 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Grid , Typography} from '@mui/material';
 import LabelComponent from './label';
 import { PrimoContainerInsComProps } from '../../types/typeModuloCommessaInserimento';
 import { month } from '../../reusableFunction/reusableArrayObj';
-import { GlobalContext } from '../../store/context/globalContext';
+import { useGlobalStore } from '../../store/context/useGlobalStore';
+
 
 const PrimoContainerInsCom : React.FC<PrimoContainerInsComProps> = () => {
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState} = globalContextObj;
-   
+ 
+    const mainState = useGlobalStore(state => state.mainState);
     const profilo =  mainState.profilo;
     
- 
-
     let mese = '';
     let anno = 2000;
     if(mainState.inserisciModificaCommessa === 'MODIFY' ){

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { saveAs } from "file-saver";
@@ -11,12 +11,12 @@ import ModalLoading from "../../components/reusableComponents/modals/modalLoadin
 import ModalAggiungi from "../../components/whiteList/modalAggiungi";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { month } from "../../reusableFunction/reusableArrayObj";
-import { GlobalContext } from "../../store/context/globalContext";
 import { PathPf } from "../../types/enum";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
 import { BodyWhite, getAnniWhite, getMesiWhite, getTipologiaFatturaWhite, getWhiteListPagoPa, deleteWhiteListPagoPa, downloadWhiteListPagopa } from "../../api/apiPagoPa/whiteListPA/whiteList";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
+import { useGlobalStore } from "../../store/context/useGlobalStore";
 
 
 
@@ -44,10 +44,11 @@ export interface Whitelist {
 
 
 const ListaDocEmessi : React.FC = () => {
-    const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
     
     const token =  mainState.profilo.jwt;
+
     const profilo =  mainState.profilo;
 
     const [gridData, setGridData] = useState<Whitelist[]>([]);

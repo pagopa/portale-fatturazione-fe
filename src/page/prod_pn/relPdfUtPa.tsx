@@ -1,10 +1,9 @@
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { ButtonNaked, SingleFileInput } from '@pagopa/mui-italia';
+
+import { SingleFileInput } from '@pagopa/mui-italia';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { Button, Typography } from "@mui/material";
 import { useNavigate } from 'react-router';
-
-import { useContext, useEffect, useRef, useState} from 'react';
+import { useEffect, useRef, useState} from 'react';
 import TextDettaglioPdf from '../../components/commessaPdf/textDettaglioPdf';
 import { ResponseDownloadPdf } from '../../types/typeModuloCommessaInserimento';
 import { getRelExel, getRelPdf, uploadPdfRel ,getRelPdfFirmato, getSingleRel, getLogRelDocumentoFirmato } from '../../api/apiSelfcare/relSE/api';
@@ -20,14 +19,14 @@ import {profiliEnti } from '../../reusableFunction/actionLocalStorage';
 import {mesiWithZero, month } from '../../reusableFunction/reusableArrayObj';
 import { createDateFromString } from '../../reusableFunction/function';
 import SkeletonRelPdf from '../../components/rel/skeletonRelPdf';
-import { GlobalContext } from '../../store/context/globalContext';
 import { Rel } from '../../types/typeRel';
 import NavigatorHeader from '../../components/reusableComponents/navigatorHeader';
+import { useGlobalStore } from '../../store/context/useGlobalStore';
 
 const RelPdfPage : React.FC = () =>{
 
-    const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
 
     const targetRef  = useRef<HTMLInputElement>(null);
     const token =  mainState.profilo.jwt;

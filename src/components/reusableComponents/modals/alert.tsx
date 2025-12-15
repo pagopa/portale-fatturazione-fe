@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Alert, { AlertColor } from '@mui/material/Alert';
-import { Dispatch, SetStateAction, useContext, useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { MainState } from '../../../types/typesGeneral';
 import { redirect } from '../../../api/api';
@@ -10,7 +10,8 @@ import { useNavigate } from 'react-router';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { PathPf } from '../../../types/enum';
 import { ActionReducerType } from '../../../reducer/reducerMainState';
-import { GlobalContext } from '../../../store/context/globalContext';
+import { useGlobalStore } from '../../../store/context/useGlobalStore';
+
 
 type AlertProps = {
     setVisible:Dispatch<SetStateAction<boolean>>,
@@ -23,16 +24,14 @@ const BasicAlerts:React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
 
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+    const setErrorAlert = useGlobalStore(state => state.setErrorAlert);
+    const errorAlert = useGlobalStore(state => state.errorAlert);
+    const setShowAlert = useGlobalStore(state => state.setShowAlert);
+    const showAlert = useGlobalStore(state => state.showAlert);
 
-    const globalContextObj = useContext(GlobalContext);
-    const {
-        dispatchMainState,
-        mainState,
-        showAlert,
-        setShowAlert,
-        errorAlert,
-        setErrorAlert
-    } = globalContextObj;
+  
  
     const profilo = mainState.profilo;
 

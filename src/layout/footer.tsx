@@ -1,13 +1,12 @@
 import { Footer } from '@pagopa/mui-italia';
-import { useContext, useState } from 'react';
-import { GlobalContext } from '../store/context/globalContext';
+import {  useState } from 'react';
 import { LangCode } from '../types/typesGeneral';
 import { companyLegalInfo, LANGUAGES, pagoPALink, postLoginLinks, preLoginLinks } from '../assets/dataLayout';
+import { useGlobalStore } from '../store/context/useGlobalStore';
 
 const FooterComponent = () => {
 
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
     const [ lang, setLang ] = useState<LangCode>("it"); 
 
     return (

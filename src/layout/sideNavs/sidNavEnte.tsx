@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext } from 'react';
 import { useState, useEffect } from 'react';
 import {
     List,
@@ -6,30 +6,28 @@ import {
     ListItemText,
     ListItemIcon,
     Box,
-    Divider,
-    IconButton,
-    Collapse
+    Divider
 } from '@mui/material';
 import { useNavigate, useLocation } from "react-router-dom";
 import DnsIcon from '@mui/icons-material/Dns';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import MarkUnreadChatAltIcon from '@mui/icons-material/MarkUnreadChatAlt';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import { GlobalContext } from '../../store/context/globalContext';
 import { PathPf } from '../../types/enum';
-import { getDatiModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
 import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
-import { manageError } from '../../api/api';
 import DownloadIcon from '@mui/icons-material/Download';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
-import GavelIcon from '@mui/icons-material/Gavel';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
+import { useGlobalStore } from '../../store/context/useGlobalStore';
+
 
 const SideNavEnte: React.FC = () => {
 
-    const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState,setOpenBasicModal_DatFat_ModCom,mainData} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+    const setOpenBasicModal_DatFat_ModCom = useGlobalStore(state => state.setOpenBasicModal_DatFat_ModCom);
+    const mainData = useGlobalStore(state => state.mainData);
+
+    
     const navigate = useNavigate();
     const location = useLocation();
     const token =  mainState.profilo.jwt;
@@ -53,7 +51,7 @@ const SideNavEnte: React.FC = () => {
             localStorage.setItem('redirectToInsert',JSON.stringify(true));
         }
         if(((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE_EN)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA_EN))){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:pathToGo}}));
+            setOpenBasicModal_DatFat_ModCom({visible:true,clickOn:pathToGo});
         }else if(location.pathname === PathPf.MODULOCOMMESSA_EN && pathToGo === PathPf.LISTA_COMMESSE){
             return;
         }else{

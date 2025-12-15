@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect } from 'react';
 import { manageError, managePresaInCarico } from '../../api/api';
 import { useNavigate} from 'react-router';
 import '../../style/areaPersonaleUtenteEnte.css';
@@ -24,24 +24,22 @@ import ModalLoading from '../../components/reusableComponents/modals/modalLoadin
 import {PathPf} from '../../types/enum';
 import { profiliEnti, } from '../../reusableFunction/actionLocalStorage';
 import SuspenseDatiFatturazione from '../../components/areaPersonale/skeletonDatiFatturazione';
-import { GlobalContext } from '../../store/context/globalContext';
 import ModalInfo from '../../components/reusableComponents/modals/modalInfo';
 import { toLocalISOString } from '../../reusableFunction/function';
+import { useGlobalStore } from '../../store/context/useGlobalStore';
         
         
         
 const AreaPersonaleUtenteEnte : React.FC = () => {
 
-    const globalContextObj = useContext(GlobalContext);
-    const {
-        dispatchMainState,
-        mainState,
-        openBasicModal_DatFat_ModCom,
-        setOpenBasicModal_DatFat_ModCom,
-        setOpenModalInfo,
-        openModalInfo,
-        setErrorAlert
-    } = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+    const openBasicModal_DatFat_ModCom = useGlobalStore(state => state.openBasicModal_DatFat_ModCom);
+    const setOpenBasicModal_DatFat_ModCom = useGlobalStore(state => state.setOpenBasicModal_DatFat_ModCom);
+    const setOpenModalInfo = useGlobalStore(state => state.setOpenModalInfo);
+    const openModalInfo = useGlobalStore(state => state.openModalInfo);
+    const setErrorAlert = useGlobalStore(state => state.setErrorAlert);
+
    
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
@@ -331,7 +329,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
         if(mainState.statusPageDatiFatturazione === 'immutable' &&  profilo.auth === 'PAGOPA'){
             navigate(PathPf.LISTA_DATI_FATTURAZIONE);
         }else{
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:'INDIETRO_BUTTON'}}));
+            setOpenBasicModal_DatFat_ModCom({visible:true,clickOn:'INDIETRO_BUTTON'});
         }
     };
             

@@ -6,8 +6,7 @@ import Modal from '@mui/material/Modal';
 import { ModalProps } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
 import { PathPf } from '../../types/enum';
-import { useContext } from 'react';
-import { GlobalContext } from '../../store/context/globalContext';
+import { useGlobalStore } from '../../store/context/useGlobalStore';
 
 const style = {
     position: 'absolute' as const,
@@ -23,8 +22,7 @@ const style = {
 
 const ModalRedirect : React.FC<ModalProps> =({setOpen, open, sentence}) => {
 
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
     const profilo =  mainState.profilo;
 
   

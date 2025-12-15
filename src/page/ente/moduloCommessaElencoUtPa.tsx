@@ -1,9 +1,8 @@
-import React, {useState, useEffect, useContext, useRef} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { manageError } from '../../api/api';
 import { Button, Box, Typography, FormControl, InputLabel,Select, MenuItem, Skeleton} from '@mui/material';
 import { useNavigate } from 'react-router';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { GlobalContext } from '../../store/context/globalContext';
 import { DataGridCommessa, GetAnniResponse, ResponseGetListaCommesse } from '../../types/typeModuloCommessaElenco';
 import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
 import { getAnni, getListaCommessaFilteredV2, getCommessaObbligatoriVerificaV2 } from '../../api/apiSelfcare/moduloCommessaSE/api';
@@ -16,14 +15,14 @@ import ModalInfo from '../../components/reusableComponents/modals/modalInfo';
 import useSavedFilters from '../../hooks/useSaveFiltersLocalStorage';
 import { subHeaderNameModComTrimestraleENTE } from '../../assets/configurations/config_SubGridModComEnte';
 import ModalLoading from '../../components/reusableComponents/modals/modalLoading';
-
 import { CustomButton } from '../../components/reusableComponents/layout/mainComponent';
+import { useGlobalStore } from '../../store/context/useGlobalStore';
 
 
 const ModuloCommessaElencoUtPa: React.FC = () => {
 
-    const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState, mainState}  = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
 
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;

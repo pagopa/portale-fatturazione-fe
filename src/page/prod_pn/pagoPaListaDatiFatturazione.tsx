@@ -1,6 +1,6 @@
 import { getTipologiaProfilo, manageError, } from '../../api/api';
 import { BodyGetListaDatiFatturazione, GridElementListaFatturazione, ResponseDownloadListaFatturazione } from "../../types/typeListaDatiFatturazione";
-import { useContext, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import {BodyListaDatiFatturazione, Params} from '../../types/typesGeneral';
 import { DataGrid, GridRowParams,GridEventListener,MuiEvent } from '@mui/x-data-grid';
@@ -11,17 +11,17 @@ import ModalLoading from "../../components/reusableComponents/modals/modalLoadin
 import { PathPf } from "../../types/enum";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
-import { GlobalContext } from "../../store/context/globalContext";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { configListaFatturazione } from "../../assets/configurations/cong_GridListaDatiFatturazione";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
-import { text } from 'node:stream/consumers';
+import { useGlobalStore } from '../../store/context/useGlobalStore';
 
 
 const PagoPaListaDatiFatturazione:React.FC = () =>{
-    const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+   
 
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({

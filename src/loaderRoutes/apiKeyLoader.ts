@@ -1,14 +1,12 @@
-import { LoaderFunctionArgs } from "react-router-dom";
 import { getPageApiKeyVisible } from "../api/api";
-import { useContext } from "react";
-import { GlobalContext } from "../store/context/globalContext";
+import { useGlobalStore } from "../store/context/useGlobalStore";
 
 export async function apiKeyLoader() {
-    const globalContextObj = useContext(GlobalContext);
-    const  { mainState,setMainData,mainData}  = globalContextObj;
-    const token =  mainState.profilo.jwt;
-    const profilo =  mainState.profilo;
 
+    const value = localStorage.getItem("globalState");
+    console.log({value});
+    return true;
+/*
     try {
         const res = await getPageApiKeyVisible(token, profilo.nonce);
 
@@ -55,4 +53,5 @@ export async function apiKeyLoader() {
             }));
         }
     }
+        */
 }

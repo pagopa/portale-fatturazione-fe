@@ -1,7 +1,6 @@
 import { Box,Button,FormControl, InputLabel, MenuItem, Select, Skeleton, styled, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
 import { PathPf } from "../../types/enum";
-import {  useContext, useEffect, useRef, useState } from "react";
-import { GlobalContext } from "../../store/context/globalContext";
+import {  useEffect, useRef, useState } from "react";
 import { manageError, managePresaInCarico, manageStringMessage } from "../../api/api";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { month } from "../../reusableFunction/reusableArrayObj";
@@ -12,6 +11,7 @@ import useSavedFiltersNested from "../../hooks/usaSaveFiltersLocalStorageNested"
 import DeleteIcon from '@mui/icons-material/Delete';
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { getAnniContestazioniAzioniSE, getMesiContestazioniAzioniSE, recapContestazioniSE, uploadContestazioniSE } from "../../api/apiSelfcare/storicoContestazioneSE/api";
+import { useGlobalStore } from "../../store/context/useGlobalStore";
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -44,8 +44,10 @@ interface RecapObjContestazioni{
 }
 
 const InserimentoContestazioniEnte = () =>{
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState,dispatchMainState,setErrorAlert} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+    const setErrorAlert = useGlobalStore(state => state.setErrorAlert);
+   
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 

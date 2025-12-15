@@ -1,5 +1,5 @@
 
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { DataGrid, GridEventListener, GridRowParams, MuiEvent } from "@mui/x-data-grid";
 import { Params } from "../../types/typesGeneral";
@@ -8,13 +8,13 @@ import { manageError, managePresaInCarico } from "../../api/api";
 import { Accertamento, BodyAccertamenti } from "../../types/typeAccertamenti";
 import ModalMatriceAccertamenti from "../../components/accertamenti/modalMatrice";
 import { saveAs } from "file-saver";
-import { GlobalContext } from "../../store/context/globalContext";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { getMessaggiCount } from "../../api/apiPagoPa/centroMessaggi/api";
 import { headerColumsDocContabili } from "../../assets/configurations/conf_GridDocContabili";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { PathPf } from "../../types/enum";
+import { useGlobalStore } from "../../store/context/useGlobalStore";
 
 
 export interface MatriceArray {
@@ -24,8 +24,9 @@ export interface MatriceArray {
 
 const Accertamenti : React.FC = () =>{
 
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState,dispatchMainState,setCountMessages} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+    const setCountMessages = useGlobalStore(state => state.setCountMessages);
 
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;

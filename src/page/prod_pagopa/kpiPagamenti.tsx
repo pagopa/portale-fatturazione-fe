@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { manageError, manageErrorDownload } from "../../api/api";
 import { AutocompleteMultiselect, OptionMultiselectCheckboxQarter, OptionMultiselectCheckboxPsp, } from "../../types/typeAngraficaPsp";
@@ -6,7 +6,6 @@ import { getListaNamePsp } from "../../api/apiPagoPa/anagraficaPspPA/api";
 import {getQuartersDocContabiliPa, getYearsDocContabiliPa } from "../../api/apiPagoPa/documentiContabiliPA/api";
 import CollapsibleTablePa from "../../components/reusableComponents/grid/gridCollapsible/gridCustomCollapsiblePa";
 import { HeaderCollapsible } from "../../types/typeFatturazione";
-import { GlobalContext } from "../../store/context/globalContext";
 import ModalMatriceKpi from "../../components/kpi/modalMatriceKpi";
 import { kpiObj, RequestBodyKpi } from "../../types/typeKpi";
 import { downloadKpiList, getListaKpi } from "../../api/apiPagoPa/kpi/api";
@@ -16,11 +15,13 @@ import { PathPf } from "../../types/enum";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
+import { useGlobalStore } from "../../store/context/useGlobalStore";
 
 const KpiPagamenti:React.FC = () =>{
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
 
-    const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState} = globalContextObj;
+   
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const { 

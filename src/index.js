@@ -6,7 +6,6 @@ import reportWebVitals from './reportWebVitals';
 import { PublicClientApplication, EventType } from '@azure/msal-browser';
 import { msalConfig } from './authConfig';
 import './i18n';
-import GlobalContextProvider from './store/context/globalContext';
 import { SnackbarProvider} from 'notistack';
 
 
@@ -36,11 +35,11 @@ msalInstance.addEventCallback((event) => {
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   
-    <GlobalContextProvider>
-        <SnackbarProvider maxSnack={3} autoHideDuration={7000} >
-            <App instance={msalInstance}/> 
-        </SnackbarProvider>
-    </GlobalContextProvider>
+ 
+    <SnackbarProvider maxSnack={3} autoHideDuration={7000} >
+        <App instance={msalInstance}/> 
+    </SnackbarProvider>
+
 
    
 );

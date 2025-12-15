@@ -9,19 +9,22 @@ import { PathPf } from '../../types/enum';
 import { month } from '../../reusableFunction/reusableArrayObj';
 import ModalConfermaInserimento from '../../components/commessaInserimento/modalConfermaInserimento';
 import SkeletonComIns from '../../components/commessaInserimento/skeletonComIns';
-import { GlobalContext } from '../../store/context/globalContext';
 import MainInserimentoModuloCommessa from '../../components/commessaInserimentoTrimestrale/mainComponentInserimentoCommessa';
 import NavigatorHeader from '../../components/reusableComponents/navigatorHeader';
 import useSaveModifyModuloCommessa from '../../hooks/useSaveModifyModuloCommessa';
 import { getRegioniModuloCommessaPA } from '../../api/apiPagoPa/moduloComessaPA/api';
 import ModalInfo from '../../components/reusableComponents/modals/modalInfo';
+import { useGlobalStore } from '../../store/context/useGlobalStore';
 
 
 
 const ModuloCommessaInserimentoPn : React.FC = () => {
 
-    const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState,openBasicModal_DatFat_ModCom,setOpenBasicModal_DatFat_ModCom,setErrorAlert} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+    const openBasicModal_DatFat_ModCom = useGlobalStore(state => state.openBasicModal_DatFat_ModCom);
+    const setOpenBasicModal_DatFat_ModCom = useGlobalStore(state => state.setOpenBasicModal_DatFat_ModCom);
+    const setErrorAlert = useGlobalStore(state => state.setErrorAlert);
 
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;

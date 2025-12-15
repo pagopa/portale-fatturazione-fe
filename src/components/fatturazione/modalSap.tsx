@@ -8,9 +8,8 @@ import { FormControl, InputLabel, MenuItem, Select, Table, TableBody, TableCell,
 import { fattureInvioSapPa, fattureResetSapPa } from '../../api/apiPagoPa/fatturazionePA/api';
 import { manageError } from '../../api/api';
 import { month } from '../../reusableFunction/reusableArrayObj';
-import { useContext } from 'react';
-import { GlobalContext } from '../../store/context/globalContext';
 import CloseIcon from '@mui/icons-material/Close';
+import { useGlobalStore } from '../../store/context/useGlobalStore';
 
 const style = {
     position: 'absolute' as const,
@@ -26,8 +25,7 @@ const style = {
 
 const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,mese,anno,dispatchMainState,getListaFatture,bodyFatturazioneDownload}) => {
 
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 

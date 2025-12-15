@@ -6,7 +6,6 @@ import SkeletonRelPdf from "../../components/rel/skeletonRelPdf";
 import { useContext, useEffect, useState } from "react";
 import { Box,FormControl,IconButton,InputLabel,MenuItem,Select,Table, TableBody, TableCell, TableHead, TableRow,Typography } from "@mui/material";
 import TextDettaglioPdf from "../../components/commessaPdf/textDettaglioPdf";
-import { GlobalContext } from "../../store/context/globalContext";
 import { getContestazioneExel, getDettaglioContestazione } from "../../api/apiPagoPa/notifichePA/api";
 import { manageError, manageErrorDownload } from "../../api/api";
 import { mesiGrid} from "../../reusableFunction/reusableArrayObj";
@@ -14,6 +13,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { downloadReportContestazione, getDettaglioContestazionePA, getTipoContestazioni } from "../../api/apiPagoPa/storicoContestazioni/api";
 import { downloadReportContestazioneSE, getContestazioneExelSE, getDettaglioContestazioneSE, getTipoContestazioniSE } from "../../api/apiSelfcare/storicoContestazioneSE/api";
+import { useGlobalStore } from "../../store/context/useGlobalStore";
 interface Contestazione {
     reportId: number;
     step:number;
@@ -42,9 +42,10 @@ interface Contestazione {
 }
 
 const DettaglioStoricoContestazione: React.FC = () => {
+    
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
 
-    const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState} = globalContextObj;
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const singleContest = mainState.contestazioneSelected;

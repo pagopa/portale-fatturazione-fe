@@ -10,7 +10,7 @@ import {
     Collapse,
     IconButton
 } from '@mui/material';
-import { useNavigate, useLocation, Outlet } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import DnsIcon from '@mui/icons-material/Dns';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import MarkUnreadChatAltIcon from '@mui/icons-material/MarkUnreadChatAlt';
@@ -18,7 +18,6 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import AnnouncementIcon from '@mui/icons-material/Announcement';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
-import { GlobalContext } from '../../store/context/globalContext';
 import { PathPf } from '../../types/enum';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
@@ -27,12 +26,14 @@ import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import GavelIcon from '@mui/icons-material/Gavel';
 import DvrIcon from '@mui/icons-material/Dvr';
 import BatchPredictionIcon from '@mui/icons-material/BatchPrediction';
+import { useGlobalStore } from '../../store/context/useGlobalStore';
 
 
 const SideNavSend : React.FC = () => {
 
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState,setOpenBasicModal_DatFat_ModCom} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    const setOpenBasicModal_DatFat_ModCom = useGlobalStore(state => state.setOpenBasicModal_DatFat_ModCom);
+   
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -45,7 +46,7 @@ const SideNavSend : React.FC = () => {
     
     const handleListItemClick = async(pathToGo) => {
         if(((mainState.statusPageDatiFatturazione === 'mutable'&& location.pathname === PathPf.DATI_FATTURAZIONE)||(mainState.statusPageInserimentoCommessa === 'mutable' && location.pathname === PathPf.MODULOCOMMESSA))){
-            setOpenBasicModal_DatFat_ModCom(prev => ({...prev, ...{visible:true,clickOn:pathToGo}}));
+            setOpenBasicModal_DatFat_ModCom({visible:true,clickOn:pathToGo});
         }else{
             navigate(pathToGo);
         } 

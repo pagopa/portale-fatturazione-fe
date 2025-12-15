@@ -12,8 +12,8 @@ import YupString from '../../validations/string/index';
 import { createContestazione, modifyContestazioneConsolidatore, modifyContestazioneEnte,modifyContestazioneRecapitista, tipologiaTipoContestazione } from '../../api/apiSelfcare/notificheSE/api';
 import { modifyContestazioneEntePagoPa } from '../../api/apiPagoPa/notifichePA/api';
 import { profiliEnti } from '../../reusableFunction/actionLocalStorage';
-import { GlobalContext } from '../../store/context/globalContext';
 import CloseIcon from '@mui/icons-material/Close';
+import { useGlobalStore } from '../../store/context/useGlobalStore';
 
 const style = {
     position: 'absolute' as const,
@@ -29,8 +29,7 @@ const style = {
 
 const ModalContestazione : React.FC <ModalContestazioneProps> = ({setOpen, open, contestazioneSelected, setContestazioneSelected, funGetNotifiche, funGetNotifichePagoPa, openModalLoading, page, rows, valueRispostaEnte, contestazioneStatic,dispatchMainState}) => {
 
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
 
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;

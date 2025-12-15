@@ -1,15 +1,16 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Grid, Typography, InputLabel, Box, Skeleton } from '@mui/material';
 import {  CategorieTotali} from '../../types/typeModuloCommessaInserimento';
 import { useNavigate } from 'react-router';
 import { getDatiConfigurazioneCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
 import { createDateFromString } from '../../reusableFunction/function';
-import { GlobalContext } from '../../store/context/globalContext';
+import { useGlobalStore } from '../../store/context/useGlobalStore';
+
 
 const TerzoContainerTrimestrale  = ({dataModulo, dataModifica, meseAnno}) => {
 
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+
   
     const navigate = useNavigate();
     const token =  mainState.profilo.jwt;

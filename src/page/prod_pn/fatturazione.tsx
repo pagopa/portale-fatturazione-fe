@@ -3,12 +3,12 @@ import { BodyFatturazione, FattureObj, TipologiaSap} from "../../types/typeFattu
 import { manageError, manageErrorDownload, managePresaInCarico } from "../../api/api";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
-import { useContext, useEffect, useRef, useState } from "react";
+import {  useEffect, useRef, useState } from "react";
 import { saveAs } from "file-saver";
 import { month, statoInvio } from "../../reusableFunction/reusableArrayObj";
 import ModalSap from "../../components/fatturazione/modalSap";
 import { useNavigate } from "react-router";
-import { GlobalContext } from "../../store/context/globalContext";
+
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { PathPf } from "../../types/enum";
 import { downloadFatturePagopa, downloadFattureReportPagopa, fattureCancellazioneRipristinoPagoPa, fattureTipologiaSapPa, getAnniDocEmessiPagoPa, getFatturazionePagoPa, getMesiDocEmessiPagoPa, getTipologieContratto, getTipologieFaPagoPa, getTipologieFaPagoPaWithData } from "../../api/apiPagoPa/fatturazionePA/api";
@@ -19,12 +19,15 @@ import ModalResetFilter from "../../components/fatturazione/modalResetFilter";
 import { headersObjGrid } from "../../assets/configurations/config_GridFatturazione";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
+import { useGlobalStore } from "../../store/context/useGlobalStore";
 
 
 const Fatturazione : React.FC = () =>{
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+    const setCountMessages = useGlobalStore(state => state.setCountMessages);
 
-    const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState, mainState,setCountMessages} = globalContextObj;
+
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const callLista = useRef(true);

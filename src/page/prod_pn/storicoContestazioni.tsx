@@ -1,11 +1,10 @@
 import { Autocomplete, Box, Button, Checkbox, FormControl, InputLabel, MenuItem, Select, TextField, Tooltip, Typography } from "@mui/material";
 import { month } from "../../reusableFunction/reusableArrayObj";
 import MultiselectCheckbox from "../../components/reportDettaglio/multiSelectCheckbox";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
 import { manageError } from "../../api/api";
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
-import { GlobalContext } from "../../store/context/globalContext";
 import { getListaStorico, getTipoReportCon } from "../../api/apiPagoPa/storicoContestazioni/api";
 import { getAnniContestazioni,  getMesiContestazioni} from "../../api/apiPagoPa/notifichePA/api";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
@@ -18,6 +17,7 @@ import NoteAddIcon from '@mui/icons-material/NoteAdd';
 
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { headersName } from "../../assets/configurations/config_GridStoricoContestazioni";
+import { useGlobalStore } from "../../store/context/useGlobalStore";
 
 export interface BodyStoricoContestazioni{
     anno:string,
@@ -58,8 +58,9 @@ export interface ContestazioneRowGrid {
 
 const Storico: React.FC = () => {
 
-    const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState); 
+    
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const navigate = useNavigate();

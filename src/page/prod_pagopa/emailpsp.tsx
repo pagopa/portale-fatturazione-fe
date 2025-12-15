@@ -7,11 +7,11 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import DataObjectIcon from '@mui/icons-material/DataObject';
 import EmailIcon from '@mui/icons-material/Email';
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getQuartersDocContabiliPa, getYearsDocContabiliPa } from "../../api/apiPagoPa/documentiContabiliPA/api";
-import { GlobalContext } from "../../store/context/globalContext";
 import { manageError } from "../../api/api";
 import { getListaNamePsp } from "../../api/apiPagoPa/anagraficaPspPA/api";
+import { useGlobalStore } from "../../store/context/useGlobalStore";
 
 export interface RequestBodyMailPsp{
     contractIds: string[],
@@ -21,8 +21,9 @@ export interface RequestBodyMailPsp{
 
 const EmailPsp = () => {
 
-    const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+   
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 

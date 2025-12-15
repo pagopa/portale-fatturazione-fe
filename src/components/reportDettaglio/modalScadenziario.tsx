@@ -8,8 +8,8 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from
 import Paper from '@mui/material/Paper';
 import { getTipologieScadenziario } from '../../api/apiPagoPa/notifichePA/api';
 import { ActionReducerType } from '../../reducer/reducerMainState';
-import { GlobalContext } from '../../store/context/globalContext';
 import CloseIcon from '@mui/icons-material/Close';
+import { useGlobalStore } from '../../store/context/useGlobalStore';
 
 
 
@@ -32,8 +32,7 @@ interface Scadenziario {
 
 const ModalScadenziario : React.FC<ModalScadenziario> = ({setOpen, open, nonce,dispatchMainState}) => {
 
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 

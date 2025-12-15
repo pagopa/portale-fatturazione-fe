@@ -2,7 +2,6 @@ import { Autocomplete, Box,Button,FormControl, InputLabel, MenuItem, Select, Ske
 import { PathPf } from "../../types/enum";
 import {  useContext, useEffect, useRef, useState } from "react";
 import { getAnniContestazioni, getEntiContestazioni, getMesiContestazioni, recapContestazioniAzure, uploadContestazioniAzure } from "../../api/apiPagoPa/notifichePA/api";
-import { GlobalContext } from "../../store/context/globalContext";
 import { manageError, managePresaInCarico, manageStringMessage } from "../../api/api";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { month } from "../../reusableFunction/reusableArrayObj";
@@ -12,6 +11,7 @@ import GavelIcon from '@mui/icons-material/Gavel';
 import useSavedFiltersNested from "../../hooks/usaSaveFiltersLocalStorageNested";
 import DeleteIcon from '@mui/icons-material/Delete';
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
+import { useGlobalStore } from "../../store/context/useGlobalStore";
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -50,8 +50,10 @@ interface RecapObjContestazioni{
 }
 
 const InserimentoContestazioni  : React.FC = () =>{
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState,dispatchMainState,setErrorAlert} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+    const setErrorAlert = useGlobalStore(state => state.setErrorAlert);
+  
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 

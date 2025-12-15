@@ -10,9 +10,8 @@ import { useContext} from 'react';
 import { Card, TablePagination} from '@mui/material';
 import { HeaderCollapsible } from '../../../../types/typeFatturazione';
 import { MainState } from '../../../../types/typesGeneral';
-import { GlobalContext } from '../../../../store/context/globalContext';
 import { DocContabili } from '../../../../types/typeDocumentiContabili';
-import { PathPf } from '../../../../types/enum';
+import { useGlobalStore } from '../../../../store/context/useGlobalStore';
 
 export interface GridCollapsibleBase{
     data:DocContabili[],
@@ -30,8 +29,7 @@ export interface GridCollapsibleBase{
 
 const CollapsibleTablePa = ({headerNames,page,setPage,rowsPerPage,setRowsPerPage,count,dataPaginated,RowComponent,updateFilters,body}) => {
 
-    const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState} = globalContextObj;
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
  
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({

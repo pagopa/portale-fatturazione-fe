@@ -1,11 +1,7 @@
-import { useContext, useEffect, useState } from "react";
-
+import { useEffect, useState } from "react";
 import IosShareIcon from '@mui/icons-material/IosShare';
-
-
 import { Box } from "@mui/system";
 import { InputLabel, Select, MenuItem, FormControl, Button, Toolbar, Typography} from "@mui/material";
-
 import { DataGrid, GridCellParams, GridEventListener, GridRowParams, GridRowSelectionModel, MuiEvent } from "@mui/x-data-grid";
 import { useNavigate } from "react-router";
 import { manageError, managePresaInCarico } from "../../api/api";
@@ -14,8 +10,8 @@ import { configGridJsonSap } from "../../assets/configurations/config_GridInvioF
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import NavigatorHeader from "../../components/reusableComponents/navigatorHeader";
 import useSavedFiltersNested from "../../hooks/usaSaveFiltersLocalStorageNested";
-import { GlobalContext } from "../../store/context/globalContext";
 import { PathPf } from "../../types/enum";
+import { useGlobalStore } from "../../store/context/useGlobalStore";
 
 
 interface ListaFatture {
@@ -36,8 +32,10 @@ export interface SelectedJsonSap {
 
 
 const InvioFatture : React.FC = () => {
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState,dispatchMainState} = globalContextObj;
+
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const navigate = useNavigate();

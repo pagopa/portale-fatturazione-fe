@@ -1,10 +1,11 @@
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { selfcareLogin, getAuthProfilo, manageError, redirect } from '../api/api';
-import {useContext, useEffect} from 'react';
+import { useEffect} from 'react';
 import { getDatiModuloCommessa } from '../api/apiSelfcare/moduloCommessaSE/api';
 import { PathPf } from '../types/enum';
-import { GlobalContext } from '../store/context/globalContext';
+
 import Loader from '../components/reusableComponents/loader';
+import { useGlobalStore } from '../store/context/useGlobalStore';
 
 // Blank page utilizzata per l'accesso degli utenti tramite  Selfcare
 
@@ -23,11 +24,10 @@ interface ParameterGetProfilo {
     data:Jwt[]
 }
 const Auth : React.FC<any> = () =>{
-    const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState} = globalContextObj;
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
 
     const handleModifyMainState = (valueObj) => {
-        globalContextObj.dispatchMainState({
+        dispatchMainState({
             type:'MODIFY_MAIN_STATE',
             value:valueObj
         });

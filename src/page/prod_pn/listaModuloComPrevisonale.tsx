@@ -1,5 +1,3 @@
-import { GridElementListaCommesse } from "../../types/typeListaModuliCommessa";
-import {  Params } from "../../types/typesGeneral";
 import { manageError } from '../../api/api';
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
@@ -9,7 +7,6 @@ import ModalLoading from "../../components/reusableComponents/modals/modalLoadin
 import { PathPf } from "../../types/enum";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
-import { GlobalContext } from "../../store/context/globalContext";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
@@ -18,8 +15,8 @@ import dayjs from "dayjs";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import { headersGridPrevisionale } from "../../assets/configurations/conf_GridModComPrevisionale";
 import { mesiGrid } from "../../reusableFunction/reusableArrayObj";
-import { transformDateTime } from "../../reusableFunction/function";
-import { GridEventListener, GridRowParams, MuiEvent } from "@mui/x-data-grid";
+import { useGlobalStore } from '../../store/context/useGlobalStore';
+
 
 
 export interface BodyPrevisionale {
@@ -47,8 +44,9 @@ export interface ItemGridPrevisonale {
 
 
 const ListaCommessaPrevisionale:React.FC = () =>{
-    const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const navigate = useNavigate();

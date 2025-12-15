@@ -1,19 +1,20 @@
 import { useMsal } from '@azure/msal-react';
 import { HeaderAccount } from '@pagopa/mui-italia';
-import { useContext, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router';
-import { GlobalContext } from '../../store/context/globalContext';
+import {  useState } from 'react';
+import {  useNavigate } from 'react-router';
 import { loginRequest } from '../../authConfig';
 import { pagoPALinkHeder } from '../../assets/dataLayout';
 import { JwtUser } from '../../types/typesGeneral';
 import { getManuale, managePresaInCarico } from '../../api/api';
 import { saveAs } from "file-saver";
 import ModalLoading from '../../components/reusableComponents/modals/modalLoading';
+import { useGlobalStore } from '../../store/context/useGlobalStore';
 
 const HeaderLogAzure = () => {
     const { instance } = useMsal();
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState,dispatchMainState} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+  
     const navigate = useNavigate();
     const [showDownloading, setShowDownloading] = useState(false);
 

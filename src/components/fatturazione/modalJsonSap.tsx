@@ -5,12 +5,12 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { FormControl, InputLabel, MenuItem, Select, Table, TableCell, TableHead, TableRow } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
-import { GlobalContext } from '../../store/context/globalContext';
 import { getListaJsonFatturePagoPa, invioListaJsonFatturePagoPa, sendListaJsonFatturePagoPa } from '../../api/apiPagoPa/fatturazionePA/api';
 import CloseIcon from '@mui/icons-material/Close';
 import { manageError, managePresaInCarico } from '../../api/api';
 import RowJsonSap from './rowPopJson';
 import Loader from '../reusableComponents/loader';
+import { useGlobalStore } from '../../store/context/useGlobalStore';
 
 
 
@@ -45,8 +45,8 @@ interface SelectedJsonSap {
 
 const ModalJsonSap = ({open,setOpen}) => {
 
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState,dispatchMainState} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 

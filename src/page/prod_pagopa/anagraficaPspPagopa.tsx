@@ -1,21 +1,22 @@
-import { useContext, useEffect,  useState } from "react";
+import { useEffect,  useState } from "react";
 import { AutocompleteMultiselect, GridElementListaPsp, OptionMultiselectCheckboxPsp, OptionMultiselectCheckboxQarter, RequestBodyListaAnagraficaPsp } from "../../types/typeAngraficaPsp";
 import { downloadPsp, getListaAnagraficaPsp, getListaAnniPsp, getListaNamePsp, getListaQuarters } from "../../api/apiPagoPa/anagraficaPspPA/api";
 import { manageError } from "../../api/api";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { saveAs } from "file-saver";
-import { GlobalContext } from '../../store/context/globalContext';
 import { PathPf } from '../../types/enum';
 import useSavedFilters from '../../hooks/useSaveFiltersLocalStorage';
 import GridCustom from '../../components/reusableComponents/grid/gridCustom';
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from '../../components/reusableComponents/layout/mainComponent';
 import MainFilter from '../../components/reusableComponents/mainFilter';
+import { useGlobalStore } from "../../store/context/useGlobalStore";
 
 
 const AnagraficaPsp:React.FC = () =>{
 
-    const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 

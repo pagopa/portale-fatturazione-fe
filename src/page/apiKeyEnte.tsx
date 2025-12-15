@@ -1,14 +1,14 @@
 import { Button, FilledInput, FormControl, FormHelperText, IconButton, InputAdornment, Skeleton, Typography } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import AddIcon from '@mui/icons-material/Add';
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { GlobalContext } from "../store/context/globalContext";
 import { createApiKey, getPageApiKeyVisibleIP} from "../api/apiSelfcare/apiKeySE/api";
 import ModalRedirect from "../components/commessaInserimento/madalRedirect";
 import { getPageApiKeyVisible, managePresaInCarico } from "../api/api";
 import IPAddressInput from "../components/reusableComponents/textField/inputIpAddress";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { useGlobalStore } from "../store/context/useGlobalStore";
 
 export interface BodyApiKey {
     apiKey: string|null,
@@ -17,9 +17,11 @@ export interface BodyApiKey {
 }
 
 const ApiKeyEnte : React.FC = () => {
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+    const mainData = useGlobalStore(state => state.mainData);
+    const setMainData = useGlobalStore(state => state.setMainData);
 
-    const globalContextObj = useContext(GlobalContext);
-    const { mainState,mainData,setMainData,dispatchMainState} = globalContextObj;
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 

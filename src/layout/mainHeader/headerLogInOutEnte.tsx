@@ -1,15 +1,16 @@
 import { HeaderAccount } from '@pagopa/mui-italia';
-import { useContext, useState } from 'react';
-import { GlobalContext } from '../../store/context/globalContext';
+import { useState } from 'react';
 import { getManuale, managePresaInCarico, redirect } from '../../api/api';
 import { pagoPALinkHeder } from '../../assets/dataLayout';
 import { JwtUser } from '../../types/typesGeneral';
 import { saveAs } from "file-saver";
 import ModalLoading from '../../components/reusableComponents/modals/modalLoading';
+import { useGlobalStore } from '../../store/context/useGlobalStore';
 
 const HeaderLogEnte = () => {
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState,dispatchMainState} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+
     const [showDownloading, setShowDownloading] = useState(false);
 
     

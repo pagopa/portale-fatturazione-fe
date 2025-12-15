@@ -1,10 +1,9 @@
-import {useEffect, useContext} from 'react';
+import {useEffect} from 'react';
 import {Typography, Button, Tooltip, Skeleton } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { useNavigate } from 'react-router';
-import { GlobalContext } from '../../store/context/globalContext';
 import {  getRegioniModuloCommessa } from '../../api/apiSelfcare/moduloCommessaSE/api';
 import ModalRedirect from '../../components/commessaInserimento/madalRedirect';
 import BasicModal from '../../components/reusableComponents/modals/modal';
@@ -16,6 +15,7 @@ import ModalInfo from '../../components/reusableComponents/modals/modalInfo';
 import StepperCommessa from '../../components/commessaInserimentoTrimestrale/stepperModCommessa';
 import MainInserimentoModuloCommessa from '../../components/commessaInserimentoTrimestrale/mainComponentInserimentoCommessa';
 import useSaveModifyModuloCommessa from '../../hooks/useSaveModifyModuloCommessa';
+import { useGlobalStore } from '../../store/context/useGlobalStore';
 
 
 export interface ModuloCommessaType {
@@ -88,9 +88,13 @@ export interface  TotaleCommessa {
 
 
 const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
-  
-    const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState,openBasicModal_DatFat_ModCom,setOpenBasicModal_DatFat_ModCom,setErrorAlert} = globalContextObj;
+
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+    const openBasicModal_DatFat_ModCom = useGlobalStore(state => state.openBasicModal_DatFat_ModCom);
+    const setOpenBasicModal_DatFat_ModCom = useGlobalStore(state => state.setOpenBasicModal_DatFat_ModCom);
+    const setErrorAlert = useGlobalStore(state => state.setErrorAlert);
+
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const navigate = useNavigate();

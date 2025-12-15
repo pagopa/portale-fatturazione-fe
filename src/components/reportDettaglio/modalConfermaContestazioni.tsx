@@ -6,8 +6,7 @@ import Modal from '@mui/material/Modal';
 import { Dispatch, SetStateAction } from 'react';
 import { month } from '../../reusableFunction/reusableArrayObj';
 import CircularProgressWithLabel from '../reusableComponents/progress';
-import { width } from '@mui/system';
-import { GlobalContext } from '../../store/context/globalContext';
+import { useGlobalStore } from '../../store/context/useGlobalStore';
 
 interface PropsModalContestazioni{
     open:boolean,
@@ -36,8 +35,7 @@ const style = {
 
 const ModalInvioContestazioni : React.FC<PropsModalContestazioni> =({setOpen, open, onButtonComferma,info,progress,uploading}) => {
     
-    const globalContextObj = React.useContext(GlobalContext);
-    const {mainState} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
     const profilo =  mainState.profilo;
 
     const handleClose = (event:object, reason: string) =>{

@@ -1,7 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {HeaderProduct, PartyEntity} from '@pagopa/mui-italia';
 import { arrayProducts } from '../../assets/dataLayout';
-import { GlobalContext } from '../../store/context/globalContext';
 import { Badge, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { PathPf } from '../../types/enum';
@@ -10,12 +9,19 @@ import DownloadIcon from '@mui/icons-material/Download';
 import {  useSnackbar } from 'notistack';
 import { mesiGrid } from '../../reusableFunction/reusableArrayObj';
 import { manageError } from '../../api/api';
+import { useGlobalStore } from '../../store/context/useGlobalStore';
 
 
 
 const HeaderProductEnte : React.FC = () => {
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState,setCountMessages, countMessages,statusQueryGetUri,setStatusQueryGetUri,dispatchMainState } = globalContextObj;
+
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+    const setCountMessages = useGlobalStore(state => state.setCountMessages);
+    const statusQueryGetUri = useGlobalStore(state => state.statusQueryGetUri);
+    const setStatusQueryGetUri = useGlobalStore(state => state.setStatusQueryGetUri);
+    const countMessages = useGlobalStore(state => state.countMessages);
+   
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
     const profilo =  mainState.profilo;
@@ -46,13 +52,13 @@ const HeaderProductEnte : React.FC = () => {
     };
     
     useEffect(()=>{
-        if(globalContextObj.mainState.authenticated === true ){
+        if(mainState.authenticated === true ){
             const interval = setInterval(() => {
                 getCount();
             }, 20000);
             return () => clearInterval(interval); 
         }
-    },[globalContextObj.mainState.authenticated]);
+    },[mainState.authenticated]);
 
    
     useEffect(()=>{
@@ -68,7 +74,7 @@ const HeaderProductEnte : React.FC = () => {
             return;
         };
 
-        if(globalContextObj.mainState.authenticated === true && statusQueryGetUri?.length > 0 && isTabVisible){
+        if(mainState.authenticated === true && statusQueryGetUri?.length > 0 && isTabVisible){
             interval2 = setInterval( async() => {
                 await callSequentially();
                 const deleteQueryCompleted = statusQueryGetUri.filter(element => !stringsArray.includes(element));
@@ -79,7 +85,7 @@ const HeaderProductEnte : React.FC = () => {
         return () => {
             clearInterval(interval2); 
         };
-    },[globalContextObj.mainState.authenticated,statusQueryGetUri?.length,isTabVisible]);
+    },[mainState.authenticated,statusQueryGetUri?.length,isTabVisible]);
 
     const getCount = async () =>{
         await getMessaggiCountEnte(token,profilo.nonce).then((res)=>{

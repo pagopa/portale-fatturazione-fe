@@ -5,7 +5,7 @@ import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import { useNavigate } from "react-router";
 import { PathPf } from "../../types/enum";
 import PaymentsIcon from '@mui/icons-material/Payments';
-import AttachEmailIcon from '@mui/icons-material/AttachEmail';
+
 
 const SideNavPagopa = () => {
     const navigate = useNavigate();

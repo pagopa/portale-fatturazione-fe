@@ -1,7 +1,7 @@
 import { BodyDownloadModuliCommessa, GridElementListaCommesse } from "../../types/typeListaModuliCommessa";
 import { ManageErrorResponse, Params } from "../../types/typesGeneral";
 import { manageError } from '../../api/api';
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { DataGrid, GridRowParams,GridEventListener,MuiEvent} from '@mui/x-data-grid';
 import { anniMesiModuliCommessa, downloadDocumentoListaModuloCommessaPagoPa, downloadPostalizzazioneReport, getContrattoModuliCommessaPA, listaModuloCommessaPagopa } from "../../api/apiPagoPa/moduloComessaPA/api";
@@ -11,17 +11,17 @@ import { PathPf } from "../../types/enum";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
 import { mesiWithZero } from "../../reusableFunction/reusableArrayObj";
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
-import { GlobalContext } from "../../store/context/globalContext";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { headerNameListaModuliCommessaSEND } from "../../assets/configurations/conf_GridListaModuliCommessaSend";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
-import { currentMonth } from "../../reusableFunction/function";
+import { useGlobalStore } from "../../store/context/useGlobalStore";
 
 
 const PagoPaListaModuliCommessa:React.FC = () =>{
-    const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+  
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
@@ -229,7 +229,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
             setShowLoading(false);
          
         }).catch((err)=>{
-            manageError(err,globalContextObj.dispatchMainState);
+            manageError(err,dispatchMainState);
             setShowLoading(false);
         }); 
     };

@@ -1,8 +1,6 @@
 import { manageError } from "../../api/api";
-import {useContext, useEffect, useRef, useState} from 'react';
+import { useEffect, useState} from 'react';
 import {Typography, Button} from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { ButtonNaked} from '@pagopa/mui-italia';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { useNavigate } from "react-router";
 import TextDettaglioPdf from '../../components/commessaPdf/textDettaglioPdf';
@@ -14,19 +12,21 @@ import { downloadModuloCommessaPagoPaPdf, getModuloCommessaPagoPaPdfV2 } from ".
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { PathPf } from "../../types/enum";
 import { getTipoCommessa, profiliEnti} from "../../reusableFunction/actionLocalStorage";
-import { mesiWithZero, month } from "../../reusableFunction/reusableArrayObj";
+import { month } from "../../reusableFunction/reusableArrayObj";
 import { DatiCommessaPdf, ResponseGetPdfPagoPa } from "../../types/typeListaModuliCommessa";
 import { createDateFromString, replaceDate } from "../../reusableFunction/function";
 import SkeletonComPdf from "../../components/commessaPdf/skeletonComPdf";
-import { GlobalContext } from "../../store/context/globalContext";
+
 import {useParams} from "react-router-dom";
 import NavigatorHeader from "../../components/reusableComponents/navigatorHeader";
+import { useGlobalStore } from "../../store/context/useGlobalStore";
 
 const ModuloCommessaPdf : React.FC = () =>{
 
     const {annoPdf, mesePdf} = useParams();
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState,dispatchMainState} = globalContextObj;
+  
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
 
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;

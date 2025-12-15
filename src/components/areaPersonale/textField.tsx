@@ -1,21 +1,19 @@
-import React, {useState, useContext, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {TextField,} from '@mui/material';
 import {DatiFatturazione, TextFieldProps, StateEnableConferma}  from '../../types/typesAreaPersonaleUtenteEnte';
 import { _YupPec} from '../../validations/email/index';
 import YupString from '../../validations/string/index';
 import { getValidationCodiceSdi } from '../../api/apiPagoPa/datiDiFatturazionePA/api';
-import { GlobalContext } from '../../store/context/globalContext';
+
 import { getValidationCodiceSdiEnte } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
+import { useGlobalStore } from '../../store/context/useGlobalStore';
 
 
 
 const TextFieldComponent : React.FC<TextFieldProps> = props => {
 
-    const globalContextObj = useContext(GlobalContext);
-    const {
-        setOpenModalInfo
-    } = globalContextObj;
-
+    const setOpenModalInfo = useGlobalStore(state => state.setOpenModalInfo);
+    
     const {
         helperText,
         label,

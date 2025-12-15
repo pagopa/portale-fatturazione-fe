@@ -7,11 +7,12 @@ import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import { useEffect,  useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import { getQuartersDocContabiliPa } from '../../api/apiPagoPa/documentiContabiliPA/api';
-import { GlobalContext } from '../../store/context/globalContext';
+
 import { OptionMultiselectCheckboxQarter } from '../../types/typeAngraficaPsp';
 import { manageError, manageErrorDownload } from '../../api/api';
 import { getMatriceKpi } from '../../api/apiPagoPa/kpi/api';
 import { saveAs } from "file-saver";
+import { useGlobalStore } from '../../store/context/useGlobalStore';
 const style = {
     position: 'absolute' as const,
     top: '50%',
@@ -26,8 +27,8 @@ const style = {
 
 const ModalMatriceKpi = ({setOpen, open,anni,setShowLoading}) => {
 
-    const globalContextObj = React.useContext(GlobalContext);
-    const {dispatchMainState,mainState} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
  
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;

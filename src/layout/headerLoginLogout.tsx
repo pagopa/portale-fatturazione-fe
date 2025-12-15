@@ -2,11 +2,11 @@ import { useMsal } from '@azure/msal-react';
 import { HeaderAccount } from '@pagopa/mui-italia';
 import { useLocation, useNavigate } from 'react-router';
 import { loginRequest } from '../authConfig';
-import { useContext, useState } from 'react';
+import {  useState } from 'react';
 import { saveAs } from "file-saver";
-import { GlobalContext } from '../store/context/globalContext';
 import {  getManuale, managePresaInCarico, redirect} from '../api/api';
 import ModalLoading from '../components/reusableComponents/modals/modalLoading';
+import { useGlobalStore } from '../store/context/useGlobalStore';
 
 
 
@@ -18,8 +18,9 @@ type JwtUser = {
 };
 
 const HeaderPostLogin = () => {
-    const globalContextObj = useContext(GlobalContext);
-    const {mainState,dispatchMainState} = globalContextObj;
+
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
 
     const location  = useLocation();
     const navigate = useNavigate();

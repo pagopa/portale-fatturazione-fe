@@ -2,22 +2,14 @@ import {redirect, pagopaLogin2 } from "../api/api";
 import {InteractionRequiredAuthError,InteractionStatus,
 } from "@azure/msal-browser";
 import { useMsal } from "@azure/msal-react";
-import {useState, useEffect, useContext} from 'react';
+import {useState, useEffect } from 'react';
 import { useNavigate } from "react-router";
-import { GlobalContext } from "../store/context/globalContext";
 import Loader from "../components/reusableComponents/loader";
-
-
-
-
-// Blank Page utilizzata per l'autenticazione Azure e le conseguenti chiamate di accesso pagoPA
-// e salvataggio del profilo nlla local storage
-
+import { useGlobalStore } from "../store/context/useGlobalStore";
 
 const AuthAzure : React.FC<any> = () =>{
 
-    const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState} = globalContextObj;
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
 
   
     const handleModifyMainState = (valueObj) => {

@@ -5,10 +5,8 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
-import { getProdotti } from '../../reusableFunction/actionLocalStorage';
 import { Typography } from '@mui/material';
-import { useContext } from 'react';
-import { GlobalContext } from '../../store/context/globalContext';
+import { useGlobalStore } from '../../store/context/useGlobalStore';
 
 
 const MenuProps = {
@@ -20,13 +18,9 @@ const MenuProps = {
 };
 
 
-
-
-
 export default function MultipleSelectProdotti({setProductSelected}) {
 
-    const globalContextObj = useContext(GlobalContext); 
-    const {mainState} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
 
     const [valueSelect, setValueSelect] = React.useState('');
     const [openSelect, setOpenselect] = React.useState(false);

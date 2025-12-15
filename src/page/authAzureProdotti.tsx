@@ -1,20 +1,19 @@
-import { Outlet, useNavigate } from "react-router";
+import {  useNavigate } from "react-router";
 import { getAuthProfilo, redirect } from "../api/api";
 import MultipleSelectProdotti from "../components/authSelectProdottiPa/selectProdotti";
 import { PathPf } from "../types/enum";
 import { ProfiloObject } from "../types/typesGeneral";
-import { useContext, useState } from "react";
+import {  useState } from "react";
 import { Button, Typography } from "@mui/material";
 import DivProdotto from "../components/authSelectProdottiPa/divProdotto";
-import { GlobalContext } from "../store/context/globalContext";
 import Loader from "../components/reusableComponents/loader";
 import { getMessaggiCount } from "../api/apiPagoPa/centroMessaggi/api";
 import HeaderLogAzure from "../layout/mainHeader/headerLogInOutAzure";
+import { useGlobalStore } from "../store/context/useGlobalStore";
 
 const AuthAzureProdotti : React.FC = () => {
-
-    const globalContextObj = useContext(GlobalContext); 
-    const {dispatchMainState,setCountMessages } = globalContextObj;
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+    const setCountMessages = useGlobalStore(state => state.setCountMessages);
     const navigate = useNavigate();
 
     const [productSelected, setProductSelected] = useState<ProfiloObject|null>(null);

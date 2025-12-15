@@ -10,15 +10,17 @@ import { manageError } from "../../api/api";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { SingleFileInput } from "@pagopa/mui-italia";
 import ModalUploadPdf from "../../components/rel/modalUploadPdf";
-import { GlobalContext } from "../../store/context/globalContext";
+
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { PathPf } from "../../types/enum";
+import { useGlobalStore } from "../../store/context/useGlobalStore";
 
 
 const AdesioneBando : React.FC = () => {
 
-    const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 

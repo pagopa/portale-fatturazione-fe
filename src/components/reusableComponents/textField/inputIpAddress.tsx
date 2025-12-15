@@ -1,15 +1,18 @@
-import React, { useContext, useState } from 'react';
+import { useState } from 'react';
 import { Button, TextField, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { GlobalContext } from '../../../store/context/globalContext';
+
 import { createIP, deleteIP } from '../../../api/apiSelfcare/apiKeySE/api';
 import { manageError } from '../../../api/api';
+import { useGlobalStore } from '../../../store/context/useGlobalStore';
 
 const IPAddressInput = ({singleIp,getIPs,button,ipsToCompare,setLoading,disable}) => {
   
-    const globalContextObj = useContext(GlobalContext);
-    const { mainState,dispatchMainState,setErrorAlert} = globalContextObj;
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+    const setErrorAlert = useGlobalStore(state => state.setErrorAlert);
+ 
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 

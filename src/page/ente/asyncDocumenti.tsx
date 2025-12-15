@@ -1,5 +1,4 @@
-import { useContext, useEffect, useState } from "react";
-import { GlobalContext } from "../../store/context/globalContext";
+import {  useEffect, useState } from "react";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { PathPf } from "../../types/enum";
 import { manageError } from "../../api/api";
@@ -14,6 +13,7 @@ import { getMessaggiCountEnte, getNotificheDownloadFromAsync } from "../../api/a
 import ModalRedirect from "../../components/commessaInserimento/madalRedirect";
 import { FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
+import { useGlobalStore } from "../../store/context/useGlobalStore";
 export interface BodyAsyncDoc{
     init: string|null|Date,
     end: string|null|Date,
@@ -31,8 +31,13 @@ export interface DataGridAsyncDoc {
 }
 
 const AsyncDocumenti : React.FC = () => {
-    const globalContextObj = useContext(GlobalContext);
-    const {dispatchMainState,mainState,setCountMessages,statusQueryGetUri} = globalContextObj;
+
+    const mainState = useGlobalStore(state => state.mainState);
+    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+    const setCountMessages = useGlobalStore(state => state.setCountMessages);
+    const statusQueryGetUri = useGlobalStore(state => state.statusQueryGetUri);
+ 
+ 
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 
