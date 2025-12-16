@@ -1,4 +1,3 @@
-import { Dispatch, SetStateAction } from "react";
 import { InfoOpen, MainState } from "./typesGeneral";
 
 export interface SuccesResponseGetDatiFatturazione {

@@ -4,7 +4,6 @@ import { Button, Box, Typography, FormControl, InputLabel,Select, MenuItem, Skel
 import { useNavigate } from 'react-router';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { DataGridCommessa, GetAnniResponse, ResponseGetListaCommesse } from '../../types/typeModuloCommessaElenco';
-import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
 import { getAnni, getListaCommessaFilteredV2, getCommessaObbligatoriVerificaV2 } from '../../api/apiSelfcare/moduloCommessaSE/api';
 import ModalRedirect from '../../components/commessaInserimento/madalRedirect';
 import {  fixResponseForDataGridRollBack } from '../../reusableFunction/function';
@@ -135,16 +134,6 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
         });
     };
    
-
-    const getDatiFat = async () =>{
-        await getDatiFatturazione(token,profilo.nonce).then(( ) =>{      
-            handleModifyMainState({datiFatturazione:true});
-        }).catch(err =>{
-            if(err?.response?.status === 404){
-                handleModifyMainState({datiFatturazione:false});
-            }
-        });
-    };
 
     const handleListItemClickModuloCommessa = async () => {
         //cliccando sulla side nav Modulo commessa e sono un ente qualsiasi

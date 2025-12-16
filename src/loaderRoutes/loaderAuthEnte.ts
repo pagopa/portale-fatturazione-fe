@@ -1,9 +1,11 @@
-import { redirect } from "react-router-dom";
+import { defer, redirect } from "react-router-dom";
 import { useGlobalStore } from "../store/context/useGlobalStore";
 import { getAuthProfilo, getPageApiKeyVisible, manageError, selfcareLogin } from "../api/api";
 import { getDatiModuloCommessa } from "../api/apiSelfcare/moduloCommessaSE/api";
 import { PathPf } from "../types/enum";
 import { redirect as globalRedirect } from "../api/api";
+import { getDatiFatturazione } from "../api/apiSelfcare/datiDiFatturazioneSE/api";
+
 
 export async function authEnteLoader({ request }) {
 
@@ -101,19 +103,19 @@ export async function authEnteLoader({ request }) {
             });
         }
 
-        await apiKeyPageAvailable(token, newProfilo.nonce,setMainData);
+        await getDatiFat(newProfilo.jwt, newProfilo.nonce,handleModifyMainState);
+        await apiKeyPageAvailable(newProfilo.jwt, newProfilo.nonce,setMainData);
         //evita la chimata se lato AZURE
-    
-       
-      
-    
-
-        return redirect(PathPf.DATI_FATTURAZIONE_EN);
+        //redirect(PathPf.DATI_FATTURAZIONE_EN);
+        
+        return defer({ authData: true });
 
     } catch (err) {
     
         return redirect(globalRedirect);
     }
+
+   
 }
 
 
@@ -153,6 +155,25 @@ const apiKeyPageAvailable = async (token: string, profilo, setMainData) => {
                 ...prev,
                 apiKeyPage: { ...prev.apiKeyPage, visible: false },
             }));
+        }
+    }
+};
+
+
+const getDatiFat = async (token: string, profilo,handleModifyMainState) => {
+    try {
+        await getDatiFatturazione(token, profilo);
+
+        // ✅ dati fatturazione presenti
+        handleModifyMainState({ datiFatturazione: true });
+
+    } catch (err: any) {
+    // ✅ 404 = dati fatturazione NON presenti
+        if (err?.response?.status === 404) {
+            handleModifyMainState({ datiFatturazione: false });
+        } else {
+            // optional: handle other errors if needed
+            handleModifyMainState({ datiFatturazione: false });
         }
     }
 };

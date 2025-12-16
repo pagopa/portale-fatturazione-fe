@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useState, useEffect } from 'react';
 import {
     List,
@@ -14,7 +14,6 @@ import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import MarkUnreadChatAltIcon from '@mui/icons-material/MarkUnreadChatAlt';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { PathPf } from '../../types/enum';
-import { getDatiFatturazione } from '../../api/apiSelfcare/datiDiFatturazioneSE/api';
 import DownloadIcon from '@mui/icons-material/Download';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import { useGlobalStore } from '../../store/context/useGlobalStore';
@@ -23,25 +22,13 @@ import { useGlobalStore } from '../../store/context/useGlobalStore';
 const SideNavEnte: React.FC = () => {
 
     const mainState = useGlobalStore(state => state.mainState);
-    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
     const setOpenBasicModal_DatFat_ModCom = useGlobalStore(state => state.setOpenBasicModal_DatFat_ModCom);
     const mainData = useGlobalStore(state => state.mainData);
 
     
     const navigate = useNavigate();
     const location = useLocation();
-    const token =  mainState.profilo.jwt;
-    const profilo =  mainState.profilo;
-
-
-
-    const handleModifyMainState = (valueObj) => {
-        dispatchMainState({
-            type:'MODIFY_MAIN_STATE',
-            value:valueObj
-        });
-    };
-
+ 
     const [selectedIndex, setSelectedIndex] = useState<number | null>(0);
     const [openContestazioni, setOpenContestazioni] = useState(false);
     
@@ -68,6 +55,8 @@ const SideNavEnte: React.FC = () => {
     // nella page moduloCommessInserimento questa function viene applicata sia lato selfcare che pago pa poichè se si è loggati come Pago pa
     // viene mostrata la grid lista commesse , solo nel momento in cui l'utente va a selezionare un comune potrà essere eseguita la
     // chiamata con i parametri necessari (id ente)
+    /*
+    TODO: da eliminare
     const getDatiFat = async () =>{
         await getDatiFatturazione(token,profilo.nonce).then(( ) =>{ 
             handleModifyMainState({datiFatturazione:true});
@@ -82,7 +71,7 @@ const SideNavEnte: React.FC = () => {
     useEffect(()=>{
         getDatiFat();
     },[]);
-
+*/
 
     const currentLocation = location.pathname;
 

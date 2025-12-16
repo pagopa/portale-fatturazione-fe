@@ -153,7 +153,8 @@ const router2 = createBrowserRouter([
         children: [
             {
                 Component: AzureLogin,
-                index:true
+                index:true,
+                element: <Navigate to={"/azureLogin"} replace />
             },
             { 
                 path: "azureLogin",
@@ -165,7 +166,6 @@ const router2 = createBrowserRouter([
             },
             {
                 path: "auth",
-                loader:authEnteLoader,
                 Component: Auth,
             },
             {
@@ -180,6 +180,10 @@ const router2 = createBrowserRouter([
                 path: "send",
                 Component: () => <LayoutAzure sideNav={<SideNavSend />} />,
                 children: [
+                    {
+                        index: true,
+                        element: <Navigate to={PathRoutePf.LISTA_DATI_FATTURAZIONE} replace />
+                    },
                     { path: PathRoutePf.LISTA_DATI_FATTURAZIONE, Component: PagoPaListaDatiFatturazione },
                     { path: PathRoutePf.DATI_FATTURAZIONE, Component: AreaPersonaleUtenteEnte },
                     { path: PathRoutePf.TIPOLOGIA_CONTRATTO, Component: PageTipologiaContratto },
@@ -207,6 +211,10 @@ const router2 = createBrowserRouter([
                 path: "pn",
                 Component: () => <LayoutAzure sideNav={<SideNavPagopa />} />,
                 children: [
+                    {
+                        index: true,
+                        element: <Navigate to={PathRoutePf.ANAGRAFICAPSP} replace />
+                    },
                     { path:PathRoutePf.ANAGRAFICAPSP, Component: AnagraficaPsp },
                     { path:PathRoutePf.DOCUMENTICONTABILI, Component: DocumentiContabili },
                     { path:PathRoutePf.DETTAGLIO_DOC_CONTABILE, Component: DettaglioDocContabile },
@@ -218,6 +226,10 @@ const router2 = createBrowserRouter([
                 path: "ente",
                 Component: () => <LayoutEnte sideNav={<SideNavEnte />} />,
                 children: [
+                    {
+                        index: true,
+                        element: <Navigate to={PathRoutePf.DATI_FATTURAZIONE} replace />
+                    },
                     {path: PathRoutePf.DATI_FATTURAZIONE,Component: AreaPersonaleUtenteEnte},
                     {path: PathRoutePf.LISTA_COMMESSE, Component: ModuloCommessaElencoUtPa},
                     {path: PathRoutePf.MODULOCOMMESSA,Component: ModuloCommessaInserimentoUtEn30},
@@ -233,12 +245,12 @@ const router2 = createBrowserRouter([
                 path: "reccon",
                 Component: () => <LayoutEnte sideNav={<SideNavRecCon />} />,
                 children: [
+                    {
+                        index: true,
+                        element: <Navigate to={PathRoutePf.LISTA_NOTIFICHE} replace />
+                    },
                     {path: PathRoutePf.LISTA_NOTIFICHE, Component: ReportDettaglio}
                 ],
-            },
-            {
-                path: "*",
-                Component: () => <Navigate to={PathPf.LISTA_DATI_FATTURAZIONE} replace />,
             },
            
         ],
