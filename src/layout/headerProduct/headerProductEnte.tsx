@@ -9,7 +9,8 @@ import { getMessaggiCountEnte, getVerificaNotificheEnte } from '../../api/apiSel
 import DownloadIcon from '@mui/icons-material/Download';
 import {  useSnackbar } from 'notistack';
 import { mesiGrid } from '../../reusableFunction/reusableArrayObj';
-import { manageError } from '../../api/api';
+import { manageError, url } from '../../api/api';
+import axios from 'axios';
 
 
 
@@ -81,13 +82,42 @@ const HeaderProductEnte : React.FC = () => {
         };
     },[globalContextObj.mainState.authenticated,statusQueryGetUri?.length,isTabVisible]);
 
-    const getCount = async () =>{
-        await getMessaggiCountEnte(token,profilo.nonce).then((res)=>{
-            const numMessaggi = res.data;
-            setCountMessages(numMessaggi);
-        }).catch((err)=>{
-            manageError(err,dispatchMainState);
-        });
+    const getCount = async () => {
+        try {
+            let response;
+
+            switch (profilo.profilo) {
+                case "CON":
+                    response = await axios.get(
+                        `${url}/api/notifiche/consolidatore/richiesta/count?nonce=${profilo.nonce}`,
+                        {
+                            headers: {
+                                Authorization: "Bearer " + token,
+                            },
+                        }
+                    );
+                    break;
+
+                case "REC":
+                    response = await axios.get(
+                        `${url}/api/notifiche/recapitista/richiesta/count?nonce=${profilo.nonce}`,
+                        {
+                            headers: {
+                                Authorization: "Bearer " + token,
+                            },
+                        }
+                    );
+                    break;
+
+                default:
+                    response = await getMessaggiCountEnte(token, profilo.nonce);
+                    break;
+            }
+
+            setCountMessages(response.data);
+        } catch (err) {
+            console.log({err});
+        }
     };
 
     const getValidationNotifiche = async(queryString) => {

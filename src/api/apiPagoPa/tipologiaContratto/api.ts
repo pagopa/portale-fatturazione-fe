@@ -37,6 +37,15 @@ export const modifyContrattoPagoPa = async (token:string, nonce:string , body: {
     return response;
 };
 
+export const getContrattoDatiDiFatturazionePA = async(token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/datifatturazione/pagopa/tipologiacontratto?nonce=${nonce}`,
+       
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+};
 
 
 
