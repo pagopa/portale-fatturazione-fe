@@ -1,15 +1,13 @@
 import '../App.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import {  useEffect } from "react";
-import { profiliEnti } from "../reusableFunction/actionLocalStorage";
 import { ThemeProvider} from '@mui/material';
 import {theme} from '@pagopa/mui-italia';
-import {Navigate, RouterProvider} from "react-router";
+import { Navigate, RouterProvider} from "react-router";
 import Auth from "../page/auth";
 import AuthAzure from "../page/authAzure";
 import Azure from "../page/azure";
 import AzureLogin from "../page/azureLogin";
-import { PathPf, PathRoutePf } from "../types/enum";
+import { PathRoutePf } from "../types/enum";
 import LayoutLoggedOut from '../layout/layoutLoggedOut';
 import useIsTabActive from '../reusableFunction/tabIsActiv';
 import {  redirect } from '../api/api';
@@ -49,11 +47,9 @@ import AsyncDocumenti from '../page/ente/asyncDocumenti';
 import ApiKeyEnte from '../page/apiKeyEnte';
 import LayoutEnte from '../layout/layOutLoggedInEnte';
 import SideNavRecCon from '../layout/sideNavs/sideNavConRec';
-
 import { useGlobalStore } from '../store/context/useGlobalStore';
 import { createBrowserRouter } from 'react-router-dom';
-import { apiKeyLoader } from '../loaderRoutes/apiKeyLoader';
-import { authEnteLoader } from '../loaderRoutes/loaderAuthEnte';
+import { RoleBasedIndexRedirect } from './redirectRoute';
 
 const RouteProfile = () => {
     const mainState = useGlobalStore(state => state.mainState);
@@ -152,9 +148,8 @@ const router2 = createBrowserRouter([
         Component:LayoutLoggedOut,
         children: [
             {
-                Component: AzureLogin,
-                index:true,
-                element: <Navigate to={"/azureLogin"} replace />
+                index: true,
+                element: <RoleBasedIndexRedirect />
             },
             { 
                 path: "azureLogin",
@@ -180,10 +175,6 @@ const router2 = createBrowserRouter([
                 path: "send",
                 Component: () => <LayoutAzure sideNav={<SideNavSend />} />,
                 children: [
-                    {
-                        index: true,
-                        element: <Navigate to={PathRoutePf.LISTA_DATI_FATTURAZIONE} replace />
-                    },
                     { path: PathRoutePf.LISTA_DATI_FATTURAZIONE, Component: PagoPaListaDatiFatturazione },
                     { path: PathRoutePf.DATI_FATTURAZIONE, Component: AreaPersonaleUtenteEnte },
                     { path: PathRoutePf.TIPOLOGIA_CONTRATTO, Component: PageTipologiaContratto },
@@ -211,10 +202,6 @@ const router2 = createBrowserRouter([
                 path: "pn",
                 Component: () => <LayoutAzure sideNav={<SideNavPagopa />} />,
                 children: [
-                    {
-                        index: true,
-                        element: <Navigate to={PathRoutePf.ANAGRAFICAPSP} replace />
-                    },
                     { path:PathRoutePf.ANAGRAFICAPSP, Component: AnagraficaPsp },
                     { path:PathRoutePf.DOCUMENTICONTABILI, Component: DocumentiContabili },
                     { path:PathRoutePf.DETTAGLIO_DOC_CONTABILE, Component: DettaglioDocContabile },
@@ -226,10 +213,6 @@ const router2 = createBrowserRouter([
                 path: "ente",
                 Component: () => <LayoutEnte sideNav={<SideNavEnte />} />,
                 children: [
-                    {
-                        index: true,
-                        element: <Navigate to={PathRoutePf.DATI_FATTURAZIONE} replace />
-                    },
                     {path: PathRoutePf.DATI_FATTURAZIONE,Component: AreaPersonaleUtenteEnte},
                     {path: PathRoutePf.LISTA_COMMESSE, Component: ModuloCommessaElencoUtPa},
                     {path: PathRoutePf.MODULOCOMMESSA,Component: ModuloCommessaInserimentoUtEn30},
@@ -245,16 +228,18 @@ const router2 = createBrowserRouter([
                 path: "reccon",
                 Component: () => <LayoutEnte sideNav={<SideNavRecCon />} />,
                 children: [
-                    {
-                        index: true,
-                        element: <Navigate to={PathRoutePf.LISTA_NOTIFICHE} replace />
-                    },
                     {path: PathRoutePf.LISTA_NOTIFICHE, Component: ReportDettaglio}
                 ],
+            },
+            {
+                path: "*",
+                Component: () => <RoleBasedIndexRedirect></RoleBasedIndexRedirect>,
             },
            
         ],
     },
+    
+   
 ]);
 
 
