@@ -15,7 +15,10 @@ export interface ResponseDownloadListaFatturazione {
 export interface BodyGetListaDatiFatturazione {
     idEnti:string[],
     prodotto:string,
-    profilo:string
+    profilo:string,
+    idTipoContratto: number|null,
+    page: number,
+    size: number
 }
 
 export interface GridElementListaFatturazione {

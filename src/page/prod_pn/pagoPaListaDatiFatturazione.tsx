@@ -4,7 +4,6 @@ import {  useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import {BodyListaDatiFatturazione, Params} from '../../types/typesGeneral';
 import { DataGrid, GridRowParams,GridEventListener,MuiEvent } from '@mui/x-data-grid';
-import { getTipologiaProdotto } from "../../api/apiSelfcare/moduloCommessaSE/api";
 import { downloadDocumentoListaDatiFatturazionePagoPa, listaDatiFatturazionePagopa } from "../../api/apiPagoPa/datiDiFatturazionePA/api";
 import { saveAs } from "file-saver";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
@@ -16,6 +15,7 @@ import { configListaFatturazione } from "../../assets/configurations/cong_GridLi
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from '../../store/context/useGlobalStore';
+import { getContrattoModuliCommessaPA } from '../../api/apiPagoPa/moduloComessaPA/api';
 
 
 const PagoPaListaDatiFatturazione:React.FC = () =>{
@@ -34,18 +34,22 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 
-    const [prodotti, setProdotti] = useState([{nome:''}]);
     const [profili, setProfili] = useState(['']);
     const [gridData, setGridData] = useState<GridElementListaFatturazione[]>([]);
-    const [statusAnnulla, setStatusAnnulla] = useState('hidden');
-    const [filtersDownload, setFiltersDownload] = useState<BodyGetListaDatiFatturazione>({idEnti:[],prodotto:'',profilo:''});
+    const [filtersDownload, setFiltersDownload] = useState<BodyGetListaDatiFatturazione>({idEnti:[],prodotto:'',profilo:'',idTipoContratto:null,page: 1,size: 10});
     const [getListaLoading, setGetListaLoading] = useState(false);
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
-    const [bodyGetLista, setBodyGetLista] = useState<BodyGetListaDatiFatturazione>({idEnti:[],prodotto:'',profilo:''});
+    const [bodyGetLista, setBodyGetLista] = useState<BodyGetListaDatiFatturazione>({idEnti:[],prodotto:'',profilo:'',idTipoContratto:null,page: 1,size: 10});
     const [infoPageListaDatiFat , setInfoPageListaDatiFat] = useState({ page: 0, pageSize: 10 });
     const [textValue, setTextValue] = useState('');
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
     const [showLoading,setShowLoading] = useState(false);
+    const [arrayContratto,setArrayContratto]= useState<{id:number,descrizione:string}[]>([{id:3,descrizione:"Tutti"}]);
+
+    const [rowCount, setRowCount] = useState(0);
+    const [page, setPage] = useState(0);
+    const [pageSize, setPageSize] = useState(10);
+    const [loading, setLoading] = useState(false);
 
     const { 
         filters,
@@ -55,17 +59,9 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
     } = useSavedFilters(PathPf.LISTA_DATI_FATTURAZIONE,{});
 
     useEffect(()=>{  
-        getProdotti();
         getProfili();
+        getContratti();
     }, []);
-
-    useEffect(()=>{
-        if(bodyGetLista.idEnti?.length  !== 0 || bodyGetLista.prodotto !== '' || bodyGetLista.profilo !== ''){
-            setStatusAnnulla('show');
-        }else{
-            setStatusAnnulla('hidden');
-        }
-    },[bodyGetLista]);
 
     useEffect(()=>{
         const timer = setTimeout(() => {
@@ -76,13 +72,13 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
         return () => clearTimeout(timer);
     },[textValue]);
 
-    const getProdotti = async() => {
-        await getTipologiaProdotto(token,profilo.nonce )
-            .then((res)=>{
-                setProdotti(res.data);
-            }).catch(((err)=>{
-                manageError(err,dispatchMainState);
-            }));
+    const getContratti = async() => {
+        await getContrattoModuliCommessaPA(token, profilo.nonce).then((res)=>{
+            setArrayContratto([{id:3,descrizione:"Tutti"}, ...res.data]);
+        }).catch((err)=>{
+            setArrayContratto([]);
+            manageError(err,dispatchMainState);
+        });
     };
 
     const getProfili = async() => {
@@ -193,10 +189,10 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
     };
 
     const onButtonAnnulla = () => {
-        setBodyGetLista({idEnti:[],prodotto:'',profilo:''});
+        setBodyGetLista({idEnti:[],prodotto:'',profilo:'',idTipoContratto:null,page: 1,size: 10});
         setInfoPageListaDatiFat({ page: 0, pageSize: 10 });
-        getListaDatifatturazione({idEnti:[],prodotto:'',profilo:''});
-        setFiltersDownload({idEnti:[],prodotto:'',profilo:''});
+        getListaDatifatturazione({idEnti:[],prodotto:'',profilo:'',idTipoContratto:null,page: 1,size: 10});
+        setFiltersDownload({idEnti:[],prodotto:'',profilo:'',idTipoContratto:null,page: 1,size: 10});
         setDataSelect([]);
         setValueAutocomplete([]);
         resetFilters();
@@ -214,6 +210,9 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
             });
         setInfoPageListaDatiFat(e);
     };
+
+
+    const statusAnnulla = (bodyGetLista.idEnti?.length  !== 0 || bodyGetLista.prodotto !== '' || bodyGetLista.profilo !== '') ?'show':'hidden';
       
     return(
         <MainBoxStyled title={"Lista Dati Fatturazione"}>
@@ -245,6 +244,22 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                     keyValue={"idEnte"}
                     keyOption='descrizione'
                     keyBody={"idEnti"}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"select_key_value"}
+                    inputLabel={"Tipologia contratto"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyDescription={"descrizione"}
+                    keyBody={"idTipoContratto"}
+                    keyValue={"id"}
+                    arrayValues={arrayContratto}
+                    defaultValue={"3"}
+                    extraCodeOnChange={(e)=>{
+                        const val = (Number(e) === 3) ? null : Number(e);
+                        setBodyGetLista((prev)=>({...prev,...{idTipoContratto:val}}));
+                    }}
                 ></MainFilter>
             </ResponsiveGridContainer>
             <FilterActionButtons 
@@ -285,6 +300,31 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                     getRowId={(row) => row.key}
                     onRowClick={handleEvent}
                     onCellClick={handleOnCellClick}
+                />
+                <DataGrid
+                    sx={{
+                        height:gridData.length < 5 ?"400px" :"auto",
+                        '& .MuiDataGrid-virtualScroller': {
+                            backgroundColor: 'white',
+                        },
+                        "& .MuiDataGrid-row": {
+                            borderTop: "4px solid #F2F2F2",
+                            borderBottom: "2px solid #F2F2F2",
+                        },
+                        "& .MuiDataGrid-overlay": {
+                            backgroundColor: "white",
+                        },
+                    }}
+                    rows={gridData}
+                    rowHeight={80}
+                    columns={configListaFatturazione}
+                    pagination
+                    paginationMode="server"
+                    rowCount={rowCount}
+                    paginationModel={infoPageListaDatiFat}
+                    onPaginationModelChange={setInfoPageListaDatiFat}
+                    loading={loading}
+                    pageSizeOptions={[10, 25, 50,100]}
                 />
             </div>
             <ModalLoading 

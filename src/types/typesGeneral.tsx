@@ -63,7 +63,10 @@ export type AuthAzureProps = {
 export type BodyListaDatiFatturazione = {
     idEnti:string[],
     prodotto: string,
-    profilo: string
+    profilo: string,
+    idTipoContratto: number|null,
+    page: number,
+    size: number
 }
 
 export type BodyListaModuloCommessa = {
