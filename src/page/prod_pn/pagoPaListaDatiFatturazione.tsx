@@ -207,7 +207,7 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
 
 
 
-    const statusAnnulla = (bodyGetLista.idEnti?.length  !== 0 || bodyGetLista.prodotto !== '' || bodyGetLista.profilo !== '') ?'show':'hidden';
+    const statusAnnulla = (bodyGetLista.idEnti?.length  !== 0 || bodyGetLista.idTipoContratto !== null || bodyGetLista.profilo !== '') ?'show':'hidden';
       
     return(
         <MainBoxStyled title={"Lista Dati Fatturazione"}>
