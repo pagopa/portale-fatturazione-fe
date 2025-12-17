@@ -43,18 +43,19 @@ export const insertDatiFatturazionePagoPa = async (token:string, nonce:string ,b
     return response;
 };
 
-export const downloadDocumentoListaDatiFatturazionePagoPa = async (token:string, nonce:string ,body: BodyDownloadDatiFatturazione) => {
-    const response =  await axios.post(`${url}/api/datifatturazione/pagopa/documento/ricerca?nonce=${nonce}`,
-        body,
-        
-        { headers: {
-            Authorization: 'Bearer ' + token,
-            ContentType: 'application/octet-stream',
-        },
-        }
-    );
+export const downloadDocumentoListaDatiFatturazionePagoPa =  async (token:string, nonce:string ,body: BodyDownloadDatiFatturazione) => {
+    const response = await fetch(`${url}/api/datifatturazione/pagopa/documento/ricerca?nonce=${nonce}`, 
+        {
+            headers: {
+                Authorization: 'Bearer '+token,
+                'Content-type':'application/json'
+            },
+            method: 'POST',
+            body:JSON.stringify(body),
+        });
     return response;
 };
+
 
 export const getValidationCodiceSdi = async (token:string, nonce:string ,body: {idEnte:string,codiceSDI:string|null}) => {
     const response =  await axios.post(`${url}/api/datifatturazione/pagopa/codiceSDI?nonce=${nonce}`,

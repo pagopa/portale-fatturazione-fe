@@ -126,7 +126,7 @@ export interface BodyDownloadDatiFatturazione{
 
 export  type Params = {
     field:string,
-    row:DataGridCommessa
+    row:any
 }
 
 export interface BodyDownloadListaCommesse{
