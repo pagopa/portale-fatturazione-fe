@@ -1,4 +1,4 @@
-import { getTipologiaProfilo, manageError, } from '../../api/api';
+import { getTipologiaProfilo, manageError, manageErrorDownload, } from '../../api/api';
 import { BodyGetListaDatiFatturazione, GridElementListaFatturazione, ResponseDownloadListaFatturazione } from "../../types/typeListaDatiFatturazione";
 import {  useEffect, useState } from "react";
 import { useNavigate } from "react-router";
@@ -11,7 +11,7 @@ import { PathPf } from "../../types/enum";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
-import { configListaFatturazione } from "../../assets/configurations/cong_GridListaDatiFatturazione";
+import { configListaFatturazione, configListaFatturazioneSever } from "../../assets/configurations/cong_GridListaDatiFatturazione";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from '../../store/context/useGlobalStore';
@@ -47,9 +47,7 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
     const [arrayContratto,setArrayContratto]= useState<{id:number,descrizione:string}[]>([{id:3,descrizione:"Tutti"}]);
 
     const [rowCount, setRowCount] = useState(0);
-    const [page, setPage] = useState(0);
-    const [pageSize, setPageSize] = useState(10);
-    const [loading, setLoading] = useState(false);
+
 
     const { 
         filters,
@@ -92,7 +90,7 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                     setValueAutocomplete(filters.valueAutocomplete);
                     getListaDatifatturazione(filters.body);
                     setFiltersDownload(filters.body);
-                    setInfoPageListaDatiFat({page:filters.page,pageSize:filters.rows});
+                    setInfoPageListaDatiFat({page:(filters.body.page-1),pageSize:filters.body.size});
                 }else{
                     getListaDatifatturazione(bodyGetLista);
                 }
@@ -105,12 +103,14 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
         setGetListaLoading(true);
         await listaDatiFatturazionePagopa(body ,token,profilo.nonce)
             .then((res)=>{
-                const editedData = res.data.map((el)=>{
+                console.log({res});
+                const editedData = res.data.datiFatturazione.map((el)=>{
                     return Object.fromEntries(
                         Object.entries(el).map(([key, value]) => [key, (value === null || value === "") ? "--" : value])
                     );
                 });
                 setGridData(editedData);
+                setRowCount(res.data.count);
                 setGetListaLoading(false);
                 isInitialRender.current = false;
             }).catch(((err)=>{
@@ -136,16 +136,24 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
 
     const onDownloadButton = async() =>{
         setShowLoading(true);
-        await downloadDocumentoListaDatiFatturazionePagoPa(token,profilo.nonce, filtersDownload).then((res:ResponseDownloadListaFatturazione) => {
-            let fileName = `Lista dati di fatturazione.xlsx`;
-            if(gridData.length === 1){
-                fileName = `Dati di fatturazione / ${gridData[0]?.ragioneSociale}.xlsx`;
+        await downloadDocumentoListaDatiFatturazionePagoPa(token,profilo.nonce, filtersDownload).then((response) =>{
+            if (response.ok) {
+                return response.blob();
             }
-            saveAs("data:text/plain;base64," + res.data.documento,fileName);
-            setShowLoading(false);
-        }).catch(err => {
-            manageError(err,dispatchMainState);
-        });
+            throw '404';
+        }).then(
+            (response)=>{
+                let fileName = `Lista dati di fatturazione.xlsx`;
+                if(gridData.length === 1){
+                    fileName = `Dati di fatturazione / ${gridData[0]?.ragioneSociale}.xlsx`;
+                }
+                setShowLoading(true);
+                saveAs(response,fileName);
+                setShowLoading(false);
+            }).catch(err =>{
+            manageErrorDownload('404',dispatchMainState);
+        } );
+         
     };
 
     let columsSelectedGrid = '';
@@ -157,6 +165,7 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
         params:GridRowParams,
         event: MuiEvent<React.MouseEvent<HTMLElement>>,
     ) => {
+      
         event.preventDefault();
         // l'evento verrà eseguito solo se l'utente farà il clik sul 
         if(columsSelectedGrid  === 'ragioneSociale' || columsSelectedGrid === 'action' ){
@@ -174,17 +183,15 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
 
 
     const onButtonFiltra = () => {
-        getListaDatifatturazione(bodyGetLista);
+        getListaDatifatturazione({...bodyGetLista,page: 1, size: 10});
         setInfoPageListaDatiFat({ page: 0, pageSize: 10 });
-        setFiltersDownload(bodyGetLista);
+        setFiltersDownload({...bodyGetLista,page: 1, size: 10});
         updateFilters(
             {
-                body:bodyGetLista,
+                body:{...bodyGetLista,page: 1, size: 10},
                 pathPage:PathPf.LISTA_DATI_FATTURAZIONE,
                 textValue,
                 valueAutocomplete,
-                page:0,
-                rows:10
             });
     };
 
@@ -198,18 +205,7 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
         resetFilters();
     };
 
-    const onChangePageOrRowGrid = (e) => {
-        updateFilters(
-            {
-                body:filtersDownload,
-                pathPage:PathPf.LISTA_DATI_FATTURAZIONE,
-                textValue,
-                valueAutocomplete,
-                page:e.page,
-                rows:e.pageSize
-            });
-        setInfoPageListaDatiFat(e);
-    };
+
 
 
     const statusAnnulla = (bodyGetLista.idEnti?.length  !== 0 || bodyGetLista.prodotto !== '' || bodyGetLista.profilo !== '') ?'show':'hidden';
@@ -277,30 +273,6 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                 }]}/>
            
             <div className="mt-1 mb-5" style={{ width: '100%'}}>
-                <DataGrid 
-                    sx={{
-                        height:gridData.length < 5 ?"400px" :"auto",
-                        '& .MuiDataGrid-virtualScroller': {
-                            backgroundColor: 'white',
-                        },
-                        "& .MuiDataGrid-row": {
-                            borderTop: "4px solid #F2F2F2",
-                            borderBottom: "2px solid #F2F2F2",
-                        },
-                        "& .MuiDataGrid-overlay": {
-                            backgroundColor: "white",
-                        },
-                    }}
-                    rowHeight={80}
-                    pageSizeOptions={[10, 25, 50,100]}
-                    onPaginationModelChange={(e)=> onChangePageOrRowGrid(e)}
-                    paginationModel={infoPageListaDatiFat}
-                    rows={gridData} 
-                    columns={configListaFatturazione}
-                    getRowId={(row) => row.key}
-                    onRowClick={handleEvent}
-                    onCellClick={handleOnCellClick}
-                />
                 <DataGrid
                     sx={{
                         height:gridData.length < 5 ?"400px" :"auto",
@@ -317,14 +289,31 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                     }}
                     rows={gridData}
                     rowHeight={80}
-                    columns={configListaFatturazione}
+                    columns={configListaFatturazioneSever}
                     pagination
                     paginationMode="server"
                     rowCount={rowCount}
                     paginationModel={infoPageListaDatiFat}
-                    onPaginationModelChange={setInfoPageListaDatiFat}
-                    loading={loading}
+                    onPaginationModelChange={(e)=>{
+                        console.log({e});
+                        setInfoPageListaDatiFat(e);
+                        setBodyGetLista((prev)=>({...prev,page:e.page+1,size:e.pageSize}));
+                        setFiltersDownload((prev)=>({...prev,page:e.page+1,size:e.pageSize}));
+                        getListaDatifatturazione({...bodyGetLista,page:e.page+1,size:e.pageSize});
+                        updateFilters(
+                            {
+                                body:{...bodyGetLista,page:e.page+1,size:e.pageSize},
+                                pathPage:PathPf.LISTA_DATI_FATTURAZIONE,
+                                textValue,
+                                valueAutocomplete,
+                            });
+                    }}
+                    loading={getListaLoading}
                     pageSizeOptions={[10, 25, 50,100]}
+                    getRowId={(row) => row.key}
+                    onRowClick={handleEvent}
+                    onCellClick={handleOnCellClick}
+                     
                 />
             </div>
             <ModalLoading 
