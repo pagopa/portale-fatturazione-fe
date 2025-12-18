@@ -15,9 +15,7 @@ const SelectUltimiDueAnni : React.FC<SelectUltimiDueAnniProps> = ({setValue, val
                             Anno   
                 </InputLabel>
                 <Select
-                    id="selectAnno"
-                    label='Seleziona Anno'
-                    labelId="Anno mess"
+                    label='Anno'
                     onChange={(e) => {
                         if(clearOnChangeFilter){
                             clearOnChangeFilter(); 

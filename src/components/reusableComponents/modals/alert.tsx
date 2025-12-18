@@ -81,7 +81,7 @@ const BasicAlerts:React.FC = () => {
                     if(profilo.auth === 'PAGOPA'){
                         window.location.href = '/azureLogin';
                     }else{
-                        localStorage.removeItem("globalState");
+                        localStorage.removeItem("globalStatePF");
                         localStorage.removeItem("filters");
                         window.location.href = redirect;
                     }

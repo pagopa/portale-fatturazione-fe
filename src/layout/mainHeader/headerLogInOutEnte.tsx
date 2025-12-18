@@ -55,7 +55,7 @@ const HeaderLogEnte = () => {
                 loggedUser={statusUser}
                 onAssistanceClick={() => onEmailClick()}
                 onLogout={() => {
-                    localStorage.removeItem("globalState");
+                    localStorage.removeItem("globalStatePF");
                     localStorage.removeItem("filters");
                     window.location.href = redirect;
                 }}

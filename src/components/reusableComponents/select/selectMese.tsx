@@ -11,17 +11,10 @@ const SelectMese : React.FC<SelectMeseProps> = ({setValue, values, getTipologia,
                 fullWidth
                 size="medium"
             >
-                <InputLabel
-                    id="sea"
-                >
-                                Mese   
-                </InputLabel>
+                <InputLabel> Mese </InputLabel>
                 <Select
-                    id="sea"
-                    label='Seleziona Prodotto'
-                    labelId="search-by-label"
-                    onChange={(e) =>{
-                                    
+                    label='Mese'
+                    onChange={(e) =>{   
                         const value = Number(e.target.value);
                         setValue((prev)=> ({...prev, ...{mese:value}}));
                         if(getTipologia){
@@ -29,14 +22,11 @@ const SelectMese : React.FC<SelectMeseProps> = ({setValue, values, getTipologia,
                         }
                         if(clearOnChangeFilter){
                             clearOnChangeFilter();
-                        }
-                        
-                        
+                        }  
                     }}         
                     value={values.mese||''}             
                 >
-                    {mesi.map((el) => (
-                                    
+                    {mesi.map((el) => (          
                         <MenuItem
                             key={Math.random()}
                             value={Object.keys(el)[0].toString()}

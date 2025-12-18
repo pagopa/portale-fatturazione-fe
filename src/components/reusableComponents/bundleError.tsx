@@ -5,7 +5,7 @@ import { IllusError } from "@pagopa/mui-italia";
 
 function  BundleError({ error, resetErrorBoundary }){
   
-    const profile = localStorage.getItem('globalState') || '{}';
+    const profile = localStorage.getItem('globalStatePF') || '{}';
     const result =  JSON.parse(profile);
 
     let line1 = error.message;

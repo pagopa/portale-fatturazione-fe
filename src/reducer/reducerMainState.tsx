@@ -45,7 +45,7 @@ export function reducerMainState(mainState:MainState, action:{ type: string; val
 
 export function loadState (){ 
     try{
-        const savedState = localStorage.getItem('globalState');
+        const savedState = localStorage.getItem('globalStatePF');
         const globalIsNotEmpty = Object.keys(JSON.parse(savedState||'{}')).length > 0;
         return (savedState && globalIsNotEmpty) ? JSON.parse(savedState) : initialState;
     }catch(err){

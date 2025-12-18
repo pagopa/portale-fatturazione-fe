@@ -1,8 +1,8 @@
 import '../App.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import { ThemeProvider} from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Modal, ThemeProvider, Typography} from '@mui/material';
 import {theme} from '@pagopa/mui-italia';
-import { Navigate, RouterProvider} from "react-router";
+import { isRouteErrorResponse, RouterProvider, useLocation, useRouteError} from "react-router";
 import Auth from "../page/auth";
 import AuthAzure from "../page/authAzure";
 import Azure from "../page/azure";
@@ -50,95 +50,32 @@ import SideNavRecCon from '../layout/sideNavs/sideNavConRec';
 import { useGlobalStore } from '../store/context/useGlobalStore';
 import { createBrowserRouter } from 'react-router-dom';
 import { RoleBasedIndexRedirect } from './redirectRoute';
+import { useEffect, useState } from 'react';
+import { authVerify } from '../loaderRoutes/loaderAuthVerify';
 
 const RouteProfile = () => {
     const mainState = useGlobalStore(state => state.mainState);
-    /*
-    const token =  mainState.profilo.jwt;
-    const profilo =  mainState.profilo;
-    const isEnte = profiliEnti(mainState);
-    const isLoggedWithoutProfile = mainState.prodotti?.length > 0 && mainState.authenticated === true && !mainState.profilo.auth;
-    const isProdPnProfile = mainState.profilo?.prodotto === 'prod-pn' && mainState.prodotti?.length > 0 && mainState.authenticated;
-    const isPagoPaProfile = mainState.profilo?.prodotto === 'prod-pagopa' && mainState.prodotti?.length > 0 && mainState.authenticated;
-    const isRececapitistaOrConsolidatore = (mainState.profilo?.profilo === 'REC' || mainState.profilo?.profilo ==='CON') && mainState.authenticated;
-
-    const globalLocalStorage = localStorage.getItem('globalState') || '{}';
+    const globalLocalStorage = localStorage.getItem('globalStatePF') || '{}';
     const result =  JSON.parse(globalLocalStorage);
-   
-    useEffect(()=>{
-        if(token && profilo.nonce && isEnte){
-            apiKeyPageAvailable();
-        }
-    },[token,profilo.nonce,isEnte]);
-
-    const apiKeyPageAvailable = async() => {
-        //evita la chimata se lato AZURE
-        await getPageApiKeyVisible(token,profilo.nonce).then(async(res)=>{
-            const newKeys = res?.data.map(el => el.apiKey).filter(el => el !== null);
-            setMainData((prev) => ({...prev, apiKeyPage:{ keys:newKeys,ip:[],visible:true}}));
-        }).catch((err)=>{
-         
-            if(err?.response?.status === 401){
-                setMainData((prev) => ({...prev, apiKeyPage:{...prev.apiKeyPage,visible:false}}));
-            }else if (err.response.status === 404){
-                setMainData((prev) => ({...prev, apiKeyPage:{...prev.apiKeyPage,visible:true}}));
-            }else{
-                setMainData((prev) => ({...prev, apiKeyPage:{...prev.apiKeyPage,visible:false}}));
-            }
-        });
-    };
-
-    let route:any  = <Route/>;
-    let redirectRoute = "/azureLogin";
-    if(isEnte){
-        route = EnteRoute({apiIsVisible:mainData.apiKeyPage.visible});
-        redirectRoute = PathPf.DATI_FATTURAZIONE;
-    }else if(isLoggedWithoutProfile){
-        route = SelectProdottiRoute();
-        redirectRoute = "/selezionaprodotto";
-    }else if(isProdPnProfile){
-        route = ProdPnRoute();
-        redirectRoute = PathPf.LISTA_DATI_FATTURAZIONE;
-    }else if(isPagoPaProfile){
-        route = PagoPaRoute();
-        redirectRoute = PathPf.ANAGRAFICAPSP;
-    }else if(isRececapitistaOrConsolidatore){
-        route = RecConRoute();
-        redirectRoute = PathPf.LISTA_NOTIFICHE;
-    }
-*/
-
-    /*TODO DA SETTARE A FINE SVILUPPO ZUNDUST
     const tabActive = useIsTabActive();
    
     useEffect(()=>{
         if(mainState.authenticated === true  && tabActive === true){
-            if(profilo?.nonce  !== result?.profilo?.nonce){
+            if(mainState.profilo?.nonce  !== result?.state?.mainState?.profilo?.nonce){
                 window.location.href = redirect;
             }
         }
     },[tabActive]);
-*/
-  
+
     return (
         <ThemeProvider theme={theme}>
             <div className="App">
                 <RouterProvider router={router2} />
             </div>
-        </ThemeProvider>
-    
-        
+        </ThemeProvider> 
     );
-
 };
-
-
 export default RouteProfile;
-
-
-
-
-
 
 
 
@@ -146,6 +83,9 @@ const router2 = createBrowserRouter([
     {
         path: "/",
         Component:LayoutLoggedOut,
+        errorElement: <RouteErrorBoundary />,
+        loader:authVerify,
+       
         children: [
             {
                 index: true,
@@ -153,7 +93,7 @@ const router2 = createBrowserRouter([
             },
             { 
                 path: "azureLogin",
-                Component: AzureLogin,
+                Component: AzureLogin, 
             },
             {
                 path: "azure",
@@ -244,3 +184,72 @@ const router2 = createBrowserRouter([
 
 
 
+const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 420,
+    bgcolor: "background.paper",
+    borderRadius: 3,
+    boxShadow: "0px 20px 60px rgba(38, 189, 203, 0.25)",
+    border: "2px solid",
+    borderColor: "#1BB8C6",
+    p: 4,
+    outline: "none",
+};
+
+
+function RouteErrorBoundary() {
+
+    const location = useLocation();
+    const [error, setError] = useState<{message:string,stack:string}|null>(null);
+    console.log({error,location});
+    // Example: simulate an error (remove this in real usage)
+    useEffect(() => {
+        try {
+            throw new Error("Something went wrong!");
+        } catch (err:any) {
+            setError(err);
+        }
+    }, []);
+
+    const handleClose = () => {
+        setError(null);
+        localStorage.clear();
+        window.location.href = redirect;
+    };
+    return (
+        <div>
+            <Modal
+                open={error !== null}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <div className='text-center'>
+                        <Typography fontSize={"2.2rem"} fontWeight={900} id="modal-modal-title" variant="h6" component="h2">
+        ERRORE!
+                        </Typography>
+                        <Typography fontSize={"1.15rem"} fontWeight={500}   id="modal-modal-description" sx={{ mt: 2 }}>
+            SEZIONE: {location.pathname.split("/")?.filter(Boolean)?.pop()||"Generic"}
+                        </Typography>
+                        <Typography fontSize={"1.15rem"} fontWeight={500} id="modal-modal-description" sx={{ mt: 2 }}>
+            Contattare l'assistenza.
+                        </Typography>
+                    </div>
+                   
+                    <div className='container_buttons_modal d-flex justify-content-center'>
+                        <Button 
+                            sx={{marginRight:'20px'}} 
+                            variant='contained'
+                            onClick={handleClose}
+                        >Login</Button>
+                      
+                    </div>
+                </Box>
+            </Modal>
+        </div>
+    );
+}
