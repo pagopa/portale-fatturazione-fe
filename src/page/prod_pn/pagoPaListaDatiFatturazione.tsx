@@ -204,11 +204,9 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
         setValueAutocomplete([]);
         resetFilters();
     };
-
-
-
-
+    
     const statusAnnulla = (bodyGetLista.idEnti?.length  !== 0 || bodyGetLista.idTipoContratto !== null || bodyGetLista.profilo !== '') ?'show':'hidden';
+      
     return(
         <MainBoxStyled title={"Lista Dati Fatturazione"}>
             <ResponsiveGridContainer >

@@ -32,12 +32,12 @@ const  RadioComponent: React.FC<RadioComponentProps> = (props) => {
         }
     }
 
+    const disableOnPACContract = mainState.profilo.auth === "SELFCARE" && mainState.profilo.idTipoContratto === 2 && keyObject === "splitPayment";
     return (
         <FormControl>
             <FormLabel id="demo-row-radio-buttons-group-label">{label}</FormLabel>
             <RadioGroup
                 row
-                
                 aria-labelledby="demo-row-radio-buttons-group-label"
                 name="row-radio-buttons-group"
                 onChange={(e)=>{setDatiFatturazione((prevState: DatiFatturazione) =>{
@@ -55,7 +55,7 @@ const  RadioComponent: React.FC<RadioComponentProps> = (props) => {
                     return newState;
                 } );}}>
                 {options.map((el:OptinsRadio) => (
-                    <FormControlLabel  key={Math.random()} value={el.id} control={<Radio checked={el.id === valueRadio} disabled={makeSplitRadioDisable} />} label={el.descrizione} />
+                    <FormControlLabel  key={Math.random()} value={el.id} control={<Radio checked={el.id === valueRadio} disabled={makeSplitRadioDisable ||disableOnPACContract } />} label={el.descrizione} />
                 ))}
             </RadioGroup>
         </FormControl>
