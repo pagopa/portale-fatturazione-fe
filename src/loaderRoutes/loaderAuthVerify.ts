@@ -17,7 +17,7 @@ export async function authVerify({ request }) {
                 await getAuthProfilo(result?.state?.mainState.profilo.jwt);    
             }
         } catch (err) {
-            //return redirect(globalRedirect);
+            return redirect(globalRedirect);
         }
     } 
     

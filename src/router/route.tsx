@@ -229,11 +229,11 @@ function RouteErrorBoundary() {
             >
                 <Box sx={style}>
                     <div className='text-center'>
-                        <Typography fontSize={"2.2rem"} fontWeight={900} id="modal-modal-title" variant="h6" component="h2">
+                        <Typography fontSize={"2.2rem"} fontWeight={900} id="modal-modal-title" variant="h4" component="h2">
         ERRORE!
                         </Typography>
                         <Typography fontSize={"1.15rem"} fontWeight={500}   id="modal-modal-description" sx={{ mt: 2 }}>
-            SEZIONE: {location.pathname.split("/")?.filter(Boolean)?.pop()||"Generic"}
+                            {location.pathname.split("/")?.filter(Boolean)?.pop()||"Generic"}
                         </Typography>
                         <Typography fontSize={"1.15rem"} fontWeight={500} id="modal-modal-description" sx={{ mt: 2 }}>
             Contattare l'assistenza.
