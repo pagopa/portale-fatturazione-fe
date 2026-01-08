@@ -3,6 +3,7 @@ import { TokenObject,ManageErrorResponse} from '../types/typesGeneral';
 
 export const url = process.env.REACT_APP_URL;
 export const redirect = process.env.REACT_APP_REDIRECT || '';
+export const redirectAZ = process.env.REACT_APP_REDIRECT_AZURE || '';
 
 export const manageError = (res:ManageErrorResponse,dispatchMainState) =>{
 

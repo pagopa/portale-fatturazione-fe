@@ -5,7 +5,7 @@ import { useGlobalStore } from "../store/context/useGlobalStore";
 export function RoleBasedIndexRedirect() {
 
     const mainState = useGlobalStore(state => state?.mainState);
-    console.log({mainState});
+
     if(mainState?.profilo?.prodotto && mainState?.profilo?.auth){
         if (mainState.profilo.prodotto === "prod-pagopa") {
             return <Navigate to={PathPf.ANAGRAFICAPSP} replace />;

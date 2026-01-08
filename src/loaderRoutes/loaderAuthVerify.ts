@@ -1,6 +1,7 @@
 import { redirect } from "react-router-dom";
 import { getAuthProfilo } from "../api/api";
 import { redirect as globalRedirect } from "../api/api";
+import { redirectAZ as globalRedirectAZ } from "../api/api";
 
 
 
@@ -17,7 +18,14 @@ export async function authVerify({ request }) {
                 await getAuthProfilo(result?.state?.mainState.profilo.jwt);    
             }
         } catch (err) {
-            return redirect(globalRedirect);
+            localStorage.clear();
+            if(result?.state?.mainState?.profilo.auth === "PAGOPA"){
+                return redirect(globalRedirectAZ);
+            }else{
+                return redirect(globalRedirect);
+            }
+                
+            
         }
     } 
     
