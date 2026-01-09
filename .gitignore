@@ -17,7 +17,7 @@
 .env.development.local
 .env.test.local
 .env.production.local
-.env-cmddrc.json
+.env-cmdrc.json
  authConfig.js
 
 npm-debug.log*
