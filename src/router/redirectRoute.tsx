@@ -1,6 +1,7 @@
 import {Navigate, Route} from "react-router";
 import { PathPf } from "../types/enum";
 import { useGlobalStore } from "../store/context/useGlobalStore";
+import { redirect } from "../api/api";
 
 export function RoleBasedIndexRedirect() {
 
@@ -22,6 +23,6 @@ export function RoleBasedIndexRedirect() {
     }
  
 
-    return <Navigate to="/azureLogin" replace />;
+    return  window.location.href = redirect;//<Navigate to="/azureLogin" replace />;
 }
 
