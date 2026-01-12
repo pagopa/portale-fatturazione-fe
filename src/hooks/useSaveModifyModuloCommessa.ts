@@ -79,7 +79,7 @@ function useSaveModifyModuloCommessa({
 
             const res = await getCommessaObbligatoriVerificaV2(token, profilo.nonce);
 
-            if (res.data && Object.keys(mainState.infoTrimestreComSelected)?.length === 0) {
+            if (res.data && Object.keys(mainState.infoTrimestreComSelected||{})?.length === 0) {
                 setIsObbligatorioLayout(res.data);
 
                 try {
@@ -416,22 +416,21 @@ function useSaveModifyModuloCommessa({
     };
 
     const handleNext = () => {
-        let newSkipped = skipped;
-        if (isStepSkipped(activeStep)) {
-            newSkipped = new Set(newSkipped.values());
-            newSkipped.delete(activeStep);
-        }
+        setActiveStep(prev => prev + 1);
+      
+        setSkipped(prevSkipped => {
+            if (!isStepSkipped(activeStep)) return prevSkipped;
 
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-        setSkipped(newSkipped);
+            const newSkipped = new Set(prevSkipped);
+            newSkipped.delete(activeStep);
+            return newSkipped;
+        });
     };
 
     const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
     };
 
-
-    
     const onAddRegioniButton =  () => {
         const activeCommessa = dataModuli.length > 1 ? dataModuli[activeStep] : dataModuli[0];
         const activeCommessaIndex = dataModuli?.findIndex(el => el?.meseValidita === activeCommessa?.meseValidita);

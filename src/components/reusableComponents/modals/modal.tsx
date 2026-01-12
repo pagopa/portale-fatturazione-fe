@@ -52,7 +52,7 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
         if(location.pathname === PathPf.DATI_FATTURAZIONE ||location.pathname === PathPf.DATI_FATTURAZIONE_EN ){
             if(profilo.auth === 'PAGOPA'&& mainState.statusPageDatiFatturazione === 'mutable' && mainState.datiFatturazione === false){
               
-                navigate(open.clickOn);
+                navigate(open?.clickOn);
                 setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
                 handleModifyMainState({statusPageDatiFatturazione:'immutable'});
                 
@@ -78,7 +78,7 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
                 getDatiFatPagoPa();
                 setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
                 handleModifyMainState({statusPageDatiFatturazione:'immutable'});
-                navigate(open.clickOn);
+                navigate(open?.clickOn);
                 localStorage.removeItem("filtersModuliCommessa");
                 localStorage.removeItem("pageRowListaModuliCommessa");
                 localStorage.removeItem("filtersRel");
@@ -90,7 +90,7 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
                 getDatiFat();
                 setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
                 handleModifyMainState({statusPageDatiFatturazione:'immutable'});
-                navigate(open.clickOn);
+                navigate(open?.clickOn);
                 
                 /* localStorage.removeItem("filtersModuliCommessa");
                 localStorage.removeItem("pageRowListaModuliCommessa");
@@ -100,15 +100,15 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
                 localStorage.removeItem("pageRowListaDatiFatturazione");*/
             }
         }
-        if(location.pathname === profilePathModuloCommessa){
-            if(profilo.auth === 'PAGOPA' && open.clickOn === 'INDIETRO_BUTTON'){
+        if(location.pathname === PathPf.MODULOCOMMESSA){
+            if(profilo.auth === 'PAGOPA' && open?.clickOn === 'INDIETRO_BUTTON'){
                 handleGetDettaglioModuloCommessa();
                 setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
                 handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
 
-            }else if(profilo.auth === 'PAGOPA' && open.clickOn !== 'INDIETRO_BUTTON'){
+            }else if(profilo.auth === 'PAGOPA' && open?.clickOn !== 'INDIETRO_BUTTON'){
                 handleGetDettaglioModuloCommessa();
-                navigate(open.clickOn);
+                navigate(open?.clickOn);
                 setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
                 handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
                 // localStorage.removeItem("filtersModuliCommessa");
@@ -118,19 +118,19 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
                 localStorage.removeItem("filtersListaDatiFatturazione");
                 localStorage.removeItem("pageRowListaDatiFatturazione");
 
-            }else if(mainState.statusPageInserimentoCommessa === 'mutable' && enti && open.clickOn === 'INDIETRO_BUTTON' && mainState.inserisciModificaCommessa === 'MODIFY'){
+            }else if(mainState.statusPageInserimentoCommessa === 'mutable' && enti && open?.clickOn === 'INDIETRO_BUTTON' && mainState.inserisciModificaCommessa === 'MODIFY'){
                 setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
                 handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
                 handleGetDettaglioModuloCommessa();
 
-            }else if(mainState.statusPageInserimentoCommessa === 'mutable' && enti && open.clickOn === 'INDIETRO_BUTTON' && mainState.inserisciModificaCommessa === 'INSERT'){
+            }else if(mainState.statusPageInserimentoCommessa === 'mutable' && enti && open?.clickOn === 'INDIETRO_BUTTON' && mainState.inserisciModificaCommessa === 'INSERT'){
                 setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
                 handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
                 navigate(PathPf.LISTA_COMMESSE);
                 //handleGetDettaglioModuloCommessa();
 
-            }else if(mainState.statusPageInserimentoCommessa === 'mutable' && enti && open.clickOn !== 'INDIETRO_BUTTON'){
-                navigate(open.clickOn);
+            }else if(mainState.statusPageInserimentoCommessa === 'mutable' && enti && open?.clickOn !== 'INDIETRO_BUTTON'){
+                navigate(open?.clickOn);
                 setOpen(prev => ({...prev, ...{visible:false,clickOn:''}}));
                 handleModifyMainState({statusPageInserimentoCommessa:'immutable'});
             }
@@ -138,37 +138,36 @@ const BasicModal : React.FC<ModalProps> =({setOpen, open, dispatchMainState, get
        
     };
     return (
-        <div>
-            <Modal
-                open={open.visible}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Box sx={style}>
-                    <div className='text-center'>
-                        <Typography id="modal-modal-title" variant="h6" component="h2">
+        <Modal
+            open={open?.visible ?? false}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+        >
+            <Box sx={style}>
+                <div className='text-center'>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
         Attenzione!
-                        </Typography>
-                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                    </Typography>
+                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             Le modifiche andranno perse
-                        </Typography>
-                    </div>
+                    </Typography>
+                </div>
                    
-                    <div className='container_buttons_modal d-flex justify-content-center'>
-                        <Button 
-                            sx={{marginRight:'20px'}} 
-                            variant='outlined'
-                            onClick={()=>handleClose()}
-                        >Annulla</Button>
-                        <Button
-                            variant='contained'
-                            onClick={()=>handleEsci()}
-                        >Ok</Button>
-                    </div>
-                </Box>
-            </Modal>
-        </div>
+                <div className='container_buttons_modal d-flex justify-content-center'>
+                    <Button 
+                        sx={{marginRight:'20px'}} 
+                        variant='outlined'
+                        onClick={()=>handleClose()}
+                    >Annulla</Button>
+                    <Button
+                        variant='contained'
+                        onClick={()=>handleEsci()}
+                    >Ok</Button>
+                </div>
+            </Box>
+        </Modal>
+      
     );
 };
 export default  BasicModal;

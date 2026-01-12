@@ -181,14 +181,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         localStorage.setItem('redirectToInsert',JSON.stringify(false));
     },[]);
 
-   
-
-
-
-
-
-
- 
     /* TODO: da eliminare a fine sviluppo
     const handleSkip = () => {
         if (!isStepFacoltativo(activeStep)) {
@@ -215,8 +207,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         labelButtonAvantiListaModuliSave = "Prosegui per salvare";
     }else if(isEditAllow || activeCommessa?.stato === null){
         labelButtonAvantiListaModuliSave = "Salva";
-    }
-  
+    }  
 
     return (
         <>

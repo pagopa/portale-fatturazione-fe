@@ -201,28 +201,36 @@ const style = {
 
 
 function RouteErrorBoundary() {
-
+    const error = useRouteError();
     const location = useLocation();
-    const [error, setError] = useState<{message:string,stack:string}|null>(null);
-    console.log({error,location});
-    // Example: simulate an error (remove this in real usage)
-    useEffect(() => {
-        try {
-            throw new Error("Something went wrong!");
-        } catch (err:any) {
-            setError(err);
-        }
-    }, []);
+
+    console.log({error});
+
+    const errorMessage = isRouteErrorResponse(error)
+        ? `Error ${error.status}: ${error.statusText}`
+        : error instanceof Error
+            ? error.message
+            : "Unknown error";
 
     const handleClose = () => {
-        setError(null);
         localStorage.clear();
         window.location.href = redirect;
     };
+    const handleCopy = () => {
+        const infoObject = {
+            page:location.pathname.split("/")?.filter(Boolean)?.pop()||"ERROR",
+            version:process.env.REACT_APP_VERSION,
+            message:errorMessage
+        };
+        const stringMessage = JSON.stringify(infoObject);
+        navigator.clipboard.writeText(stringMessage);
+    };
+
+    
     return (
         <div>
             <Modal
-                open={error !== null}
+                open={true}
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
@@ -230,11 +238,12 @@ function RouteErrorBoundary() {
                 <Box sx={style}>
                     <div className='text-center'>
                         <Typography fontSize={"2.2rem"} fontWeight={900} id="modal-modal-title" variant="h4" component="h2">
-        ERRORE!
+            ERRORE!
                         </Typography>
                         <Typography fontSize={"1.15rem"} fontWeight={500}   id="modal-modal-description" sx={{ mt: 2 }}>
-                            {location.pathname.split("/")?.filter(Boolean)?.pop()||"Generic"}
+                            {`${location.pathname.split("/")?.filter(Boolean)?.pop() } V.${process.env.REACT_APP_VERSION}`||`Generic V.${process.env.REACT_APP_VERSION}`}
                         </Typography>
+                        
                         <Typography fontSize={"1.15rem"} fontWeight={500} id="modal-modal-description" sx={{ mt: 2 }}>
             Contattare l'assistenza.
                         </Typography>
@@ -246,6 +255,11 @@ function RouteErrorBoundary() {
                             variant='contained'
                             onClick={handleClose}
                         >Login</Button>
+                        <Button 
+                            sx={{marginRight:'20px'}} 
+                            variant='outlined'
+                            onClick={handleCopy}
+                        >Copia</Button>
                       
                     </div>
                 </Box>
