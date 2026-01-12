@@ -204,8 +204,6 @@ function RouteErrorBoundary() {
     const error = useRouteError();
     const location = useLocation();
 
-    console.log({error});
-
     const errorMessage = isRouteErrorResponse(error)
         ? `Error ${error.status}: ${error.statusText}`
         : error instanceof Error

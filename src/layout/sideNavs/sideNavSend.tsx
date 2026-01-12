@@ -55,7 +55,6 @@ const SideNavSend : React.FC = () => {
     const currentLocation = location.pathname;
 
     useEffect(()=>{
-        console.log({currentLocation});
         if(currentLocation === PathPf.DATI_FATTURAZIONE){
             setSelectedIndex(0);
         }else if(currentLocation === PathPf.MODULOCOMMESSA){

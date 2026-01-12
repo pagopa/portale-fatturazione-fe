@@ -103,7 +103,6 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
         setGetListaLoading(true);
         await listaDatiFatturazionePagopa(body ,token,profilo.nonce)
             .then((res)=>{
-                console.log({res});
                 const editedData = res.data.datiFatturazione.map((el)=>{
                     return Object.fromEntries(
                         Object.entries(el).map(([key, value]) => [key, (value === null || value === "") ? "--" : value])
@@ -292,7 +291,6 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                     rowCount={rowCount}
                     paginationModel={infoPageListaDatiFat}
                     onPaginationModelChange={(e)=>{
-                        console.log({e});
                         setInfoPageListaDatiFat(e);
                         setBodyGetLista((prev)=>({...prev,page:e.page+1,size:e.pageSize}));
                         setFiltersDownload((prev)=>({...prev,page:e.page+1,size:e.pageSize}));
