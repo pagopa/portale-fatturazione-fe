@@ -208,7 +208,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     }else if(isEditAllow || activeCommessa?.stato === null){
         labelButtonAvantiListaModuliSave = "Salva";
     }  
-
+    
     return (
         <>
             <BasicModal setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} dispatchMainState={dispatchMainState} handleGetDettaglioModuloCommessa={getDettaglioEnte}  mainState={mainState}></BasicModal>

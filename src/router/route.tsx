@@ -257,7 +257,7 @@ function RouteErrorBoundary() {
                             sx={{marginRight:'20px'}} 
                             variant='outlined'
                             onClick={handleCopy}
-                        >Copia</Button>
+                        >Copia Errore</Button>
                       
                     </div>
                 </Box>
