@@ -64,9 +64,6 @@ export enum PathPf {
 }
 
 export enum PathRoutePf {
-    
-
-    
     //NEW logic
     DATI_FATTURAZIONE = "datidifatturazione", 
     LISTA_DATI_FATTURAZIONE = "listadatifatturazione",

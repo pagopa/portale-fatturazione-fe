@@ -179,7 +179,9 @@ const router2 = createBrowserRouter([
                     {path: PathRoutePf.API_KEY_ENTE,Component: ApiKeyEnte},
                     {path: PathRoutePf.LISTA_STORICO_DOCUMENTI,Component: DocStorico},
                     {path: PathRoutePf.DOCUMENTI_EMESSI,Component: DocEm},
-                    {path: PathRoutePf.DOCUMENTI_SOSPESI,Component: DocSos} 
+                    {path: PathRoutePf.DOCUMENTI_SOSPESI,Component: DocSos},
+                    {path: PathRoutePf.STORICO_CONTEST_ENTE,Component: Storico}
+                    
                 ],
             },
             {

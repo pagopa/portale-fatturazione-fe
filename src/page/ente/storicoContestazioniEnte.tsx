@@ -54,6 +54,7 @@ const StoricoEnte = () => {
 
     const mainState = useGlobalStore(state => state.mainState);
     const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
