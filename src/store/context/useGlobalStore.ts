@@ -37,6 +37,7 @@ type GlobalStore = {
         apiKeyPage: ApiKeyPage;
     };
     setMainData: (updater: (prev: GlobalStore["mainData"]) => GlobalStore["mainData"]) => void;
+    appVersion:string
 };
 
 export const useGlobalStore = create<GlobalStore>()(
@@ -80,6 +81,7 @@ export const useGlobalStore = create<GlobalStore>()(
                 set((state) => ({
                     mainData: updater(state.mainData),
                 })),
+            appVersion:""
         }),
         {
             name: "globalStatePF",

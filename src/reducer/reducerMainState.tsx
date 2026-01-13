@@ -28,7 +28,8 @@ const initialState =  {
     prodotti:[],
     profilo:{},
     docContabileSelected:{key:''},
-    infoTrimestreComSelected:{}
+    infoTrimestreComSelected:{},
+    appVersion:process.env.REACT_APP_VERSION||""
 };
 
 
