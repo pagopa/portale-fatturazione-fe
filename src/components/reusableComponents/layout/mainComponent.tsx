@@ -15,6 +15,7 @@ import DateRangeIcon from '@mui/icons-material/DateRange';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import InboxIcon from '@mui/icons-material/Inbox';
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
+import PersonIcon from '@mui/icons-material/Person';
 
 
 const MainBox = styled(Box)({
@@ -353,6 +354,8 @@ export const RenderIcon = (iconName,sx = true) => {
             return <InboxIcon fontSize={sx ? "small":"medium"} ></InboxIcon>;  
         case "fase":
             return <HourglassBottomIcon fontSize={sx ? "small":"medium"} ></HourglassBottomIcon>;
+        case "person":
+            return <PersonIcon fontSize={sx ? "small":"medium"}></PersonIcon>;
 
     }
 };

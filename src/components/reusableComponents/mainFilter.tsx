@@ -274,7 +274,7 @@ const MainFilter = <T,>({
             return (!hidden && 
             <MainBoxContainer> 
                 <TextField
-                   
+                    fullWidth
                     label={inputLabel}
                     placeholder={inputLabel}
                     value={body[keyDescription] ?? ""}

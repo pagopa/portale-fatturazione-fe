@@ -54,6 +54,8 @@ const ReportDettaglio : React.FC = () => {
     const [notificheList, setNotificheList] = useState<NotificheList[]>([]);
     const [textValue, setTextValue] = useState('');
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
+    const [valueAutocompleteCon, setValueAutocompleteCon] = useState<OptionMultiselectChackbox[]>([]);
+    const [valueAutocompleteRec, setValueAutocompleteRec] = useState<OptionMultiselectChackbox[]>([]);
     const [listaRecapitista, setListaRecapitisti] = useState<ListaRecCon[]>([]);
     const [listaConsolidatori, setListaConsolidatori] = useState<ListaRecCon[]>([]);
     const [getNotificheWorking, setGetNotificheWorking] = useState(false);
@@ -94,7 +96,7 @@ const ReportDettaglio : React.FC = () => {
     const [valueFgContestazione, setValueFgContestazione] = useState<FlagContestazione[]>([]);       
     const [open, setOpen] = useState(false);
     const [showLoading, setShowLoading] = useState(false);
-    const [showLoadingGrid, setShowLoadingGrid] = useState(false);
+    const [showLoadingGrid, setShowLoadingGrid] = useState(true);
     const [showModalScadenziario, setShowModalScadenziario ] = useState(false);   
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
     const [fgContestazione, setFgContestazione] = useState<FlagContestazione[]>([]);
@@ -225,15 +227,7 @@ const ReportDettaglio : React.FC = () => {
             setBodyGetLista(newBodyWithDates);
             setBodyDownload(newBodyWithDates);
 
-            // Restore filters only if needed
-            if (dataFromLocalStorage) {
-                setTextValue(filters.textAutocomplete);
-                setValueAutocomplete(filters.valueAutocomplete);
-                setValueFgContestazione(filters.valueFgContestazione);
-                setPage(filters.page);
-                setRowsPerPage(filters.rows);
-            }
-
+            
           
             if (profilo.auth === "SELFCARE" && mainState.datiFatturazione) {
                 await getlistaNotifiche(page, row, {
@@ -254,6 +248,17 @@ const ReportDettaglio : React.FC = () => {
                 await getlistaNotifichePagoPa(page, row, newBodyWithDates);
                 await getRecapitistConsolidatori();
             }
+            // Restore filters only if needed
+            if (dataFromLocalStorage) {
+                setTextValue(filters.textAutocomplete);
+                setValueAutocomplete(filters.valueAutocomplete);
+                setValueFgContestazione(filters.valueFgContestazione);
+                setValueAutocompleteCon(filters.valueAutocompleteCon);
+                setValueAutocompleteRec(filters.valueAutocompleteRec);
+                setPage(filters.page);
+                setRowsPerPage(filters.rows);
+            }
+
         } catch (err) {
             console.log("Error NOTIFICHE");
         } finally {
@@ -452,6 +457,8 @@ const ReportDettaglio : React.FC = () => {
         setValueFgContestazione([]);
         setDataSelect([]);
         setValueAutocomplete([]);
+        setValueAutocompleteCon([]);
+        setValueAutocompleteRec([]);
         setPage(0);
         setRowsPerPage(10);
         resetFilters();
@@ -556,6 +563,8 @@ const ReportDettaglio : React.FC = () => {
             body:bodyGetLista,
             textAutocomplete:textValue,
             valueAutocomplete:valueAutocomplete,
+            valueAutocompleteCon:valueAutocompleteCon,
+            valueAutocompleteRec:valueAutocompleteRec,
             page:0,
             rows:10,
             valueFgContestazione:valueFgContestazione
@@ -585,6 +594,8 @@ const ReportDettaglio : React.FC = () => {
             body:bodyDownload,
             textValue,
             valueAutocomplete,
+            valueAutocompleteCon:valueAutocompleteCon,
+            valueAutocompleteRec:valueAutocompleteRec,
             page:newPage,
             rows:rowsPerPage,
             valueFgContestazione
@@ -600,6 +611,8 @@ const ReportDettaglio : React.FC = () => {
             body:bodyDownload,
             textValue,
             valueAutocomplete,
+            valueAutocompleteCon:valueAutocompleteCon,
+            valueAutocompleteRec:valueAutocompleteRec,
             page,
             rows:parseInt(event.target.value, 10),
             valueFgContestazione
@@ -954,28 +967,44 @@ const ReportDettaglio : React.FC = () => {
                     hidden={profilo.auth !== 'PAGOPA'}
                 ></MainFilter>
                 <MainFilter 
-                    filterName={"select_key_value"}
+                    filterName={"multi_checkbox"}
                     inputLabel={"Consolidatore"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
-                    keyValue={"idEnte"}
+                    valueAutocomplete={valueAutocompleteCon}
+                    setValueAutocomplete={setValueAutocompleteCon}
                     keyDescription={"descrizione"}
+                    keyValue={"idEnte"}
+                    keyOption='descrizione'
+                    iconMaterial={RenderIcon("person",true)}
+                    keyCompare={""}
+                    dataSelect={listaConsolidatori}
+                    setTextValue={setTextValue}
+                    textValue={textValue}
+                    hidden={profilo.auth !== 'PAGOPA'}
                     arrayValues={listaConsolidatori}
                     keyBody={"consolidatori"}
-                    hidden={profilo.auth !== 'PAGOPA'}
                 ></MainFilter>
                 <MainFilter 
-                    filterName={"select_key_value"}
+                    filterName={"multi_checkbox"}
                     inputLabel={"Recapitista"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
-                    keyValue={"idEnte"}
+                    valueAutocomplete={valueAutocompleteRec}
+                    setValueAutocomplete={setValueAutocompleteRec}
                     keyDescription={"descrizione"}
+                    keyValue={"idEnte"}
+                    keyOption='descrizione'
+                    iconMaterial={RenderIcon("person",true)}
+                    keyCompare={""}
+                    dataSelect={listaRecapitista}
+                    setTextValue={setTextValue}
+                    textValue={textValue}
+                    hidden={profilo.auth !== 'PAGOPA'}
                     arrayValues={listaRecapitista}
                     keyBody={"recapitisti"}
-                    hidden={profilo.auth !== 'PAGOPA'}
                 ></MainFilter>
             </ResponsiveGridContainer>
             <FilterActionButtons 
