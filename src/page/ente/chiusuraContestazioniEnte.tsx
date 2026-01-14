@@ -1,24 +1,26 @@
 import { useState } from "react";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
-import { Box, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
+import { Box, IconButton, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import GridUploadContestazioni from "../../components/contestazioni/gridUploadContestazioni";
 import { downloadNotifche, getMessaggiCountEnte } from "../../api/apiSelfcare/notificheSE/api";
 import { manageError, managePresaInCarico } from "../../api/api";
 import { tipoNotificaArray } from "../../reusableFunction/reusableArrayObj";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 interface RecapObjContestazioni{
     tipologiaFattura: string
     idFlagContestazione: number
-    flagContestazione: string
-    totale: number
-    totaleNotificheAnalogiche: number
-    totaleNotificheDigitali: number  
+    totaleNotificheAnalogiche: number,
+    acc: number,
+    rif:number,
+    icon:string
 }
 
-const NotificheChiusura = () => {
+
+const ChiusuraContestazioniEnte : React.FC = () => {
     const mainState = useGlobalStore(state => state.mainState);
     const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
     const setCountMessages = useGlobalStore(state => state.setCountMessages);
@@ -50,20 +52,20 @@ const NotificheChiusura = () => {
 
     const mock = [
         {
-            "tipologiaFattura": "CONTESTAZIONE",
-            "idFlagContestazione": 1,
-            "flagContestazione": "Risposta Ente",
-            "totale": 377032,
-            "totaleNotificheAnalogiche": 136108,
-            "totaleNotificheDigitali": 240924
+            "tipologiaFattura": "Notifica assente",
+            "idFlagContestazione": 10,
+            "totaleNotificheAnalogiche": 10,
+            "acc": 7,
+            "rif":5,
+            "icon":""
         },
         {
-            "tipologiaFattura": "CONTESTAZIONE",
+            "tipologiaFattura": "Notifica già fatturata",
             "idFlagContestazione": 8,
-            "flagContestazione": "Risposta SEND",
-            "totale": 1,
-            "totaleNotificheAnalogiche": 0,
-            "totaleNotificheDigitali": 1
+            "totaleNotificheAnalogiche": 7,
+            "acc": 7,
+            "rif":5,
+            "icon":""
         }
     ];
 
@@ -165,12 +167,12 @@ const NotificheChiusura = () => {
                     <Table size="small" aria-label="purchases">
                         <TableHead>
                             <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
-                                <TableCell align="center" sx={{ width:"300px"}} >Tipologia Fattura</TableCell>
-                                <TableCell align="center" sx={{ width:"300px"}} >Tipologia Contestazione</TableCell>
-                          
-                                <TableCell align="center" sx={{ width:"300px"}}>Tot. Not. Analog.</TableCell>
-                                <TableCell align="center" sx={{ width:"300px"}}>Tot. Not. Digit.</TableCell>
-                                <TableCell align="center" sx={{ width:"300px"}}>Totale</TableCell>
+                                <TableCell align="center" sx={{ width:"300px"}} >Motivo contestazione</TableCell>
+                                <TableCell align="center" sx={{ width:"300px"}}>N. Contestazioni</TableCell>
+                                <TableCell align="center" sx={{ width:"300px"}}>N. Risposta SEND</TableCell>
+                                <TableCell align="center" sx={{ width:"300px"}}>N. Cont. Accettate</TableCell>
+                                <TableCell align="center" sx={{ width:"300px"}}>N. Cont. Rifiutate</TableCell>
+                                <TableCell align="center" sx={{ width:"300px"}}></TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
@@ -178,17 +180,22 @@ const NotificheChiusura = () => {
                                 return (
                                     <TableRow key={Math.random()}>
                                         <TableCell align="center"  sx={{ width:"300px"}} >{sigleRec.tipologiaFattura}</TableCell>
-                                        <TableCell align="center" sx={{ width:"300px"}} >{sigleRec.flagContestazione}</TableCell>
-                                   
+                                        <TableCell align="center" sx={{ width:"300px"}} >{sigleRec.idFlagContestazione}</TableCell>
                                         <TableCell align="center" sx={{ width:"300px"}}>{sigleRec.totaleNotificheAnalogiche}</TableCell>
-                                        <TableCell align="center" sx={{ width:"300px"}}>{sigleRec.totaleNotificheDigitali}</TableCell>
-                                        <TableCell align="center" sx={{ width:"300px"}}>{sigleRec.totale}</TableCell>
+                                        <TableCell align="center" sx={{ width:"300px"}}>{sigleRec.acc}</TableCell>
+                                        <TableCell align="center" sx={{ width:"300px"}}>{sigleRec.rif}</TableCell>
+                                        <TableCell align="center" sx={{ width:"80px"}}><IconButton
+                                            aria-label="Scarica"
+                                            size="medium"
+                                        > <FileDownloadIcon/>
+                                        </IconButton></TableCell>
+                                        
                                     </TableRow>
                                 );})}
                         </TableBody>
                     </Table>
                 </Box>
-                <GridUploadContestazioni popUp={false}></GridUploadContestazioni>
+              
            
             </MainBoxStyled>
             <ModalLoading 
@@ -200,4 +207,4 @@ const NotificheChiusura = () => {
     );
 };
 
-export default NotificheChiusura;
+export default ChiusuraContestazioniEnte;

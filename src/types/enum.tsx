@@ -46,8 +46,6 @@ export enum PathPf {
     ASYNC_DOCUMENTI_ENTE = "/ente/downloaddocumenti",
     LISTA_COMMESSE = "/ente/modulicommessa", 
     API_KEY_ENTE = "/ente/apikeys",
-    STORICO_CONTEST_ENTE = "/ente/storicoente",
-    INSERIMENTO_CONTESTAZIONI_ENTE = "/ente/contestazioniente",
     FATTURAZIONE_EN = "/ente/fatturazione",
     DATI_FATTURAZIONE_EN = "/ente/datidifatturazione", 
     LISTA_REL_EN = "/ente/listarel",
@@ -58,6 +56,10 @@ export enum PathPf {
     LISTA_STORICO_DOCUMENTI = "/ente/storicodoc",
     DOCUMENTI_EMESSI = "/ente/docemessi",
     DOCUMENTI_SOSPESI = "/ente/docsospesi",
+    STORICO_CONTEST_ENTE = "/ente/storicoente",
+    INIZIO_CONTEST_ENTE = "/ente/iniziocontestazione",
+    RISPOSTA_CONTEST_ENTE = "/ente/rispostacontestazione",
+    CHIUSURA_CONTEST_ENTE = "/ente/chiusuracontestazione",
 
     //REC CON
     LISTA_NOTIFICHE_REC_CON = "/reccon/listanotifiche"
@@ -105,6 +107,9 @@ export enum PathRoutePf {
     LISTA_STORICO_DOCUMENTI = "storicodoc",
     DOCUMENTI_EMESSI = "docemessi",
     DOCUMENTI_SOSPESI = "docsospesi",
+    INIZIO_CONTEST_ENTE = "iniziocontestazione",
+    RISPOSTA_CONTEST_ENTE = "rispostacontestazione",
+    CHIUSURA_CONTEST_ENTE = "chiusuracontestazione"
 
     
 }

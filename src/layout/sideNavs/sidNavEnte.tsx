@@ -24,6 +24,9 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import PageviewIcon from '@mui/icons-material/Pageview';
+import FlakyIcon from '@mui/icons-material/Flaky';
+import GavelIcon from '@mui/icons-material/Gavel';
+import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 
 
 const SideNavEnte: React.FC = () => {
@@ -103,14 +106,17 @@ const SideNavEnte: React.FC = () => {
             setSelectedIndex(5);
         }else if(currentLocation === PathPf.ASYNC_DOCUMENTI_ENTE){
             setSelectedIndex(8);
-        }else if(currentLocation === PathPf.STORICO_CONTEST_ENTE || currentLocation === PathPf.STORICO_DETTAGLIO_CONTEST|| currentLocation === PathPf.INSERIMENTO_CONTESTAZIONI_ENTE){
-            setSelectedIndex(6);
-            setOpenContestazioni(true);
         }else if(currentLocation === PathPf.LISTA_STORICO_DOCUMENTI){
             setSelectedIndex(9);
         }else if(currentLocation === PathPf.DOCUMENTI_SOSPESI || currentLocation.includes("documentisospesi") ){
             setSelectedIndex(10);
         }else if(currentLocation === PathPf.DOCUMENTI_EMESSI || currentLocation.includes("documentiemessi")){
+        }else if(currentLocation === PathPf.STORICO_CONTEST_ENTE || currentLocation === PathPf.STORICO_DETTAGLIO_CONTEST|| currentLocation === PathPf.INIZIO_CONTEST_ENTE || currentLocation === "/notdacont"){
+            setSelectedIndex(6);
+            setOpenContestazioni(true);
+        }else if(currentLocation === PathPf.RISPOSTA_CONTEST_ENTE){
+            setSelectedIndex(10);
+        }else if(currentLocation === PathPf.CHIUSURA_CONTEST_ENTE){
             setSelectedIndex(11);
         } 
         
@@ -119,7 +125,7 @@ const SideNavEnte: React.FC = () => {
             setOpenDocContabili(true);
         }
 
-        if(openContestazioni && (currentLocation !== PathPf.STORICO_CONTEST_ENTE && currentLocation !== PathPf.LISTA_NOTIFICHE_EN && currentLocation !== PathPf.STORICO_DETTAGLIO_CONTEST && currentLocation !== PathPf.INSERIMENTO_CONTESTAZIONI_ENTE )){
+        if(openContestazioni && (currentLocation !== PathPf.STORICO_CONTEST_ENTE && currentLocation !== PathPf.LISTA_NOTIFICHE_EN && currentLocation !== PathPf.STORICO_DETTAGLIO_CONTEST )){
             setOpenContestazioni(false);
         }
         if(openDocContabili && (currentLocation !== PathPf.DOCUMENTI_EMESSI && currentLocation !== PathPf.DOCUMENTI_SOSPESI &&  !currentLocation.includes("documentiemessi") && !currentLocation.includes("documentisospesi") )){
@@ -153,7 +159,36 @@ const SideNavEnte: React.FC = () => {
                     </ListItemIcon>
                     <ListItemText primary="Notifiche" />
                 </ListItemButton>
-                {relIsVisible && 
+                
+                <Collapse in={openContestazioni} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                        <ListItemButton selected={selectedIndex === 6} sx={{ pl: 4 }} onClick={()=>handleListItemClick(PathPf.STORICO_CONTEST_ENTE)}>
+                            <ListItemIcon>
+                                <GavelIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Contestazioni" />
+                        </ListItemButton>
+                    </List>
+                    <Collapse in={openContestazioni} timeout="auto" unmountOnExit>
+                        <List component="div" disablePadding>
+                            <ListItemButton selected={selectedIndex === 10} sx={{ pl: 6 }} onClick={() =>handleListItemClick(PathPf.RISPOSTA_CONTEST_ENTE)}>
+                                <ListItemIcon>
+                                    <QuestionAnswerIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Risposta a SEND" />
+                            </ListItemButton>
+                        </List>
+                        <List component="div" disablePadding>
+                            <ListItemButton selected={selectedIndex === 11} sx={{ pl: 6 }} onClick={() =>handleListItemClick(PathPf.CHIUSURA_CONTEST_ENTE)}>
+                                <ListItemIcon>
+                                    <FlakyIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Chiusura" />
+                            </ListItemButton>
+                        </List>
+                    </Collapse>
+                </Collapse>
+              {relIsVisible && 
                 <ListItemButton selected={selectedIndex === 3} onClick={()=>handleListItemClick(PathPf.LISTA_REL_EN)}>
                     <ListItemIcon>
                         <ManageAccountsIcon fontSize="inherit" />

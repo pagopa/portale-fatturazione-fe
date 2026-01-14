@@ -12,9 +12,11 @@ import SideNavEnte from "../../layout/sideNavs/sidNavEnte";
 import AsyncDocumenti from "../../page/ente/asyncDocumenti";
 import ApiKeyEnte from "../../page/apiKeyEnte";
 import LoadingRoute from "./loadingRoute";
-import StoricoEnte from "../../page/ente/storicoContestazioniEnte";
 import InserimentoContestazioniEnte from "../../page/ente/inserimentoContestazioniEnte";
 import DettaglioStoricoContestazione from "../../page/prod_pn/dettaglioStoricoContestazione";
+import NotificheRispostaSend from "../../page/ente/rispostaContestazioniEnte";
+import NotificheChiusura from "../../page/ente/chiusuraContestazioniEnte";
+import InizioContestazione from "../../page/ente/inizioContestazione";
 
 
 
@@ -38,6 +40,12 @@ const EnteRoute  : React.FC<{apiIsVisible:boolean|null}> = ({apiIsVisible}) => {
         <Route path={PathPf.STORICO_CONTEST_ENTE} element={<StoricoEnte />} />
         <Route path={PathPf.INSERIMENTO_CONTESTAZIONI_ENTE} element={<InserimentoContestazioniEnte />} />
         <Route path={PathPf.STORICO_DETTAGLIO_CONTEST} element={<DettaglioStoricoContestazione/>} />*/}
+        <Route path={PathPf.INIZIO_CONTEST_ENTE} element={<InserimentoContestazioniEnte />} />
+        <Route path={PathPf.STORICO_DETTAGLIO_CONTEST} element={<DettaglioStoricoContestazione/>} />
+        <Route path={"notdacont"} element={<InizioContestazione/>} />
+        <Route path={"rispsend"} element={<NotificheRispostaSend/>} />
+        <Route path={"chiu"} element={<NotificheChiusura/>} />
+        
     </Route>;
     return enteRoute; 
   

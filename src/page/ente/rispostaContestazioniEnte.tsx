@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
-import { Box, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
+import { Box, IconButton, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import GridUploadContestazioni from "../../components/contestazioni/gridUploadContestazioni";
 import { manageError, managePresaInCarico } from "../../api/api";
 import { downloadNotifche, getMessaggiCountEnte } from "../../api/apiSelfcare/notificheSE/api";
@@ -9,17 +9,16 @@ import { tipoNotificaArray } from "../../reusableFunction/reusableArrayObj";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import ModalUpload from "../../components/reusableComponents/modals/modalUploadContestazioni";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 interface RecapObjContestazioni{
     tipologiaFattura: string
     idFlagContestazione: number
-    flagContestazione: string
-    totale: number
     totaleNotificheAnalogiche: number
-    totaleNotificheDigitali: number  
+    icon:string
 }
 
-const NotificheRispostaSend = () => {
+const RispostaContestazioniEnte : React.FC = () => {
     const mainState = useGlobalStore(state => state.mainState);
     const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
     const setCountMessages = useGlobalStore(state => state.setCountMessages);
@@ -52,20 +51,16 @@ const NotificheRispostaSend = () => {
 
     const mock = [
         {
-            "tipologiaFattura": "CONTESTAZIONE",
-            "idFlagContestazione": 1,
-            "flagContestazione": "Contestata ENTE",
-            "totale": 377032,
-            "totaleNotificheAnalogiche": 136108,
-            "totaleNotificheDigitali": 240924
+            "tipologiaFattura": "Notifica assente",
+            "idFlagContestazione": 10,
+            "totaleNotificheAnalogiche": 10,
+            "icon":""
         },
         {
-            "tipologiaFattura": "CONTESTAZIONE",
+            "tipologiaFattura": "Notifica già fatturata",
             "idFlagContestazione": 8,
-            "flagContestazione": "Contestata ENTE",
-            "totale": 1,
-            "totaleNotificheAnalogiche": 0,
-            "totaleNotificheDigitali": 1
+            "totaleNotificheAnalogiche": 7,
+            "icon":""
         }
     ];
 
@@ -147,17 +142,7 @@ const NotificheRispostaSend = () => {
                         keyBody={"tipoNotifica"}
                         arrayValues={tipoNotificaArray}
                     ></MainFilter>
-                    <MainFilter 
-                        filterName={"select_value_string"}
-                        inputLabel={"Risp. SEND"}
-                        clearOnChangeFilter={clearOnChangeFilter}
-                        setBody={setBodyGetLista}
-                        body={bodyGetLista}
-                        keyDescription={"ris"}
-                        keyValue={"ris"}
-                        keyBody={"ris"}
-                        arrayValues={[]}
-                    ></MainFilter>
+
                 </ResponsiveGridContainer>
                 <FilterActionButtons 
                     onButtonFiltra={()=> console.log("filtera")} 
@@ -177,12 +162,10 @@ const NotificheRispostaSend = () => {
                     <Table size="small" aria-label="purchases">
                         <TableHead>
                             <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
-                                <TableCell align="center" sx={{ width:"300px"}} >Tipologia Fattura</TableCell>
-                                <TableCell align="center" sx={{ width:"300px"}} >Tipologia Contestazione</TableCell>
-                          
-                                <TableCell align="center" sx={{ width:"300px"}}>Tot. Not. Analog.</TableCell>
-                                <TableCell align="center" sx={{ width:"300px"}}>Tot. Not. Digit.</TableCell>
-                                <TableCell align="center" sx={{ width:"300px"}}>Totale</TableCell>
+                                <TableCell align="center" sx={{ width:"300px"}} >Motivo contestazione</TableCell>
+                                <TableCell align="center" sx={{ width:"300px"}}>N. Contestazioni</TableCell>
+                                <TableCell align="center" sx={{ width:"300px"}}>N. Risposta SEND</TableCell>
+                                <TableCell align="center" sx={{ width:"300px"}}></TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
@@ -190,11 +173,14 @@ const NotificheRispostaSend = () => {
                                 return (
                                     <TableRow key={Math.random()}>
                                         <TableCell align="center"  sx={{ width:"300px"}} >{sigleRec.tipologiaFattura}</TableCell>
-                                        <TableCell align="center" sx={{ width:"300px"}} >{sigleRec.flagContestazione}</TableCell>
-                                   
+                                        <TableCell align="center" sx={{ width:"300px"}} >{sigleRec.idFlagContestazione}</TableCell>
                                         <TableCell align="center" sx={{ width:"300px"}}>{sigleRec.totaleNotificheAnalogiche}</TableCell>
-                                        <TableCell align="center" sx={{ width:"300px"}}>{sigleRec.totaleNotificheDigitali}</TableCell>
-                                        <TableCell align="center" sx={{ width:"300px"}}>{sigleRec.totale}</TableCell>
+                                        <TableCell align="center" sx={{ width:"80px"}}><IconButton
+                                            aria-label="Scarica"
+                                            size="medium"
+                                        > <FileDownloadIcon/>
+                                        </IconButton></TableCell>
+                                        
                                     </TableRow>
                                 );})}
                         </TableBody>
@@ -213,4 +199,4 @@ const NotificheRispostaSend = () => {
     );
 };
 
-export default NotificheRispostaSend;
+export default RispostaContestazioniEnte;

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { manageError } from "../../api/api";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
-import { PathPf } from "../../types/enum";
+import { PathPf, PathRoutePf } from "../../types/enum";
 import { useNavigate } from "react-router";
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
@@ -50,7 +50,7 @@ export interface ContestazioneRowGrid {
     ragioneSociale: string
 }
 
-const StoricoEnte = () => {
+const StoricoEnte : React.FC = () => {
 
     const mainState = useGlobalStore(state => state.mainState);
     const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
@@ -81,7 +81,38 @@ const StoricoEnte = () => {
 
     const [valueYears, setValueYears] = useState<string[]>([]);
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
-    const [dataGrid,setDataGrid] = useState<ContestazioneRowGrid[]>([]);
+    const [dataGrid,setDataGrid] = useState<any[]>([
+        {
+            reportId:1,
+            dataInserimento:"11/12/2025",
+            num:1234,
+            mese:month[11],
+            anno:2025,
+            stato:"Draft",
+            draft:true,
+            idStato:1
+        },
+        {
+            reportId:2,
+            dataInserimento:"11/12/2025",
+            num:99,
+            mese:month[11],
+            anno:2025,
+            stato:"Processo completato",
+            draft:false,
+            idStato:3
+        },
+        {
+            reportId:3,
+            dataInserimento:"11/12/2025",
+            num:44,
+            mese:month[11],
+            anno:2025,
+            stato:"In elaborazione",
+            draft:false,
+            idStato:2
+        }
+    ]);
     const [listaToMap,setListaToMap] = useState<ContestazioneRowGrid[]>([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -311,39 +342,6 @@ const StoricoEnte = () => {
                                 </FormControl>
                             </Box>
                         </div>
-                        <div className="col-3 "> 
-                            <Autocomplete
-                                sx={{width:'80%',height:'59px'}}
-                                multiple
-                                onChange={(event, value) => {
-                                    setTipologiaSelected(value);
-                                    const allId = value.map(el => el.idTipologiaReport);
-                                    setBodyGetLista((prev) => ({...prev,...{idTipologiaReports:allId}}));
-                                    clearOnChangeFilter();
-                                }}
-                                limitTags={1}
-                                value={tipologiaSelcted}
-                                options={tipologieDoc}
-                                disableCloseOnSelect
-                                getOptionLabel={(option:TipologieDoc) => option.categoriaDocumento}
-                                renderOption={(props, option,{ selected }) =>(
-                                    <li {...props}>
-                                        <Checkbox
-                                            icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                                            checkedIcon={<CheckBoxIcon fontSize="small" />}
-                                            style={{ marginRight: 8 }}
-                                            checked={selected}
-                                        />
-                                        { option.categoriaDocumento}
-                                    </li>
-                                )}
-                                renderInput={(params) => {
-                                    return <TextField {...params}
-                                        label="Categoria Doc." 
-                                        placeholder="Categoria Doc." />;
-                                }}
-                            />
-                        </div>
                     </div>
                     <div className="row mt-5">
                         <div className="col-9">
@@ -361,9 +359,7 @@ const StoricoEnte = () => {
                         <div className="col-3">
                             <div className="d-flex justify-content-end me-5" style={{width:'80%'}}>
                                 <Tooltip  title="Contestazioni multiple">
-                                    <span>
-                                        <Button  variant="outlined" onClick={()=> navigate(PathPf.INSERIMENTO_CONTESTAZIONI_ENTE)} ><NoteAddIcon></NoteAddIcon></Button>
-                                    </span>
+                                    <Button  variant="outlined" onClick={()=> navigate(PathPf.INIZIO_CONTEST_ENTE)} ><NoteAddIcon></NoteAddIcon></Button>
                                 </Tooltip>
                             </div>
                         </div>
@@ -371,7 +367,7 @@ const StoricoEnte = () => {
                     <div className="mt-5">
                         <div className="mt-1 mb-5" style={{ width: '100%'}}>
                             <GridCustom
-                                nameParameterApi='contestazionePage'
+                                nameParameterApi='contestazioneEnte'
                                 elements={dataGrid}
                                 changePage={handleChangePage}
                                 changeRow={handleChangeRowsPerPage} 

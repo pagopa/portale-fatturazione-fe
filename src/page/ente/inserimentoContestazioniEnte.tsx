@@ -56,7 +56,7 @@ const InserimentoContestazioniEnte = () =>{
         updateFilters,
         isInitialRender,
         resetFilters
-    } = useSavedFiltersNested(PathPf.INSERIMENTO_CONTESTAZIONI_ENTE,{});
+    } = useSavedFiltersNested(PathPf.INIZIO_CONTEST_ENTE,{});
 
     const [body,setBody] = useState<BodyContestazionePage>({
         anno:'',
@@ -112,13 +112,13 @@ const InserimentoContestazioniEnte = () =>{
                 if(uploadRef.current){
                     setBody((prev)=> ({...prev, ...{anno:y,mese:res.data[0].mese,idEnte:"",contractId:""}}));
                     updateFilters({
-                        pathPage:PathPf.INSERIMENTO_CONTESTAZIONI_ENTE,
+                        pathPage:PathPf.INIZIO_CONTEST_ENTE,
                         body:{...body, ...{anno:y,mese:res.data[0].mese,idEnte:"",contractId:""}},
                     });
                 }else{
                     setBody((prev)=> ({...prev, ...{anno:y,mese:res.data[0].mese}}));
                     updateFilters({
-                        pathPage:PathPf.INSERIMENTO_CONTESTAZIONI_ENTE,
+                        pathPage:PathPf.INIZIO_CONTEST_ENTE,
                         body:{...body, ...{anno:y,mese:res.data[0].mese}},
                     });
                 }
@@ -228,7 +228,7 @@ const InserimentoContestazioniEnte = () =>{
         recapContestazioni({...body,...{mese:e.target.value}});
         // }
         updateFilters({
-            pathPage:PathPf.INSERIMENTO_CONTESTAZIONI_ENTE,
+            pathPage:PathPf.INIZIO_CONTEST_ENTE,
             body:{...body, ...{mese:e.target.value}}
         });
     };

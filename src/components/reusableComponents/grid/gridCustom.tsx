@@ -162,7 +162,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                                 </Tooltip>}
                                             </TableCell>
                                         );
-                                    }else if(nameParameterApi === 'contestazionePage'|| nameParameterApi === "modComTrimestrale"){
+                                    }if(nameParameterApi === 'contestazionePage'|| nameParameterApi === "modComTrimestrale"||nameParameterApi === "contestazioneEnte"){
                                         return(
                                             <TableCell key={Math.random()} align={el.align} width={el.width}>{el.label}</TableCell>
                                         );

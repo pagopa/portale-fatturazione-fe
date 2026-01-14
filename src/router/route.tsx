@@ -54,10 +54,14 @@ import DocEm from '../page/ente/docConEme';
 import DocStorico from '../page/ente/docConStorico';
 import Messaggi from '../page/messaggi';
 import EmailPsp from '../page/prod_pagopa/emailpsp';
-import { useEffect } from 'react';
 import { authVerify, authVerifyIsLoggedEnte, authVerifyIsLoggedProdPn, authVerifyIsLoggedSend, authVerifyIfEnteAllowRelSection, authVerifyPageProdotto } from '../loaderRoutes/loaderAuthVerify';
 import DocSospesiSend from '../page/prod_pn/docSospesiSend';
 import DocStoricoSend from '../page/prod_pn/docStoricoSend';
+import StoricoEnte from '../page/ente/storicoContestazioniEnte';
+import { useEffect, useState } from 'react';
+import InizioContestazione from '../page/ente/inizioContestazione';
+import RispostaContestazioniEnte from '../page/ente/rispostaContestazioniEnte';
+import ChiusuraContestazioniEnte from '../page/ente/chiusuraContestazioniEnte';
 
 const RouteProfile = () => {
     const mainState = useGlobalStore(state => state.mainState);
@@ -180,7 +184,11 @@ const router2 = createBrowserRouter([
                     {path: PathRoutePf.LISTA_STORICO_DOCUMENTI,Component: DocStorico},
                     {path: PathRoutePf.DOCUMENTI_EMESSI,Component: DocEm},
                     {path: PathRoutePf.DOCUMENTI_SOSPESI,Component: DocSos},
-                    {path: PathRoutePf.STORICO_CONTEST_ENTE,Component: Storico}
+                   // {path: PathRoutePf.STORICO_CONTEST_ENTE,Component: Storico}
+                    {path: PathRoutePf.STORICO_CONTEST_ENTE,Component: StoricoEnte},
+                    {path: PathRoutePf.INIZIO_CONTEST_ENTE,Component: InizioContestazione},
+                    {path: PathRoutePf.RISPOSTA_CONTEST_ENTE,Component: RispostaContestazioniEnte},
+                    {path: PathRoutePf.CHIUSURA_CONTEST_ENTE,Component: ChiusuraContestazioniEnte},
                     
                 ],
             },

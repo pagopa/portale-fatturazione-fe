@@ -21,7 +21,7 @@ interface RecapObjContestazioni{
     totaleNotificheDigitali: number  
 }
 
-const InizioContestazione = () => {
+const InizioContestazione : React.FC = () => {
 
     const mainState = useGlobalStore(state => state.mainState);
     const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
