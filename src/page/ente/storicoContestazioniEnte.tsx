@@ -393,7 +393,7 @@ const StoricoEnte : React.FC = () => {
                             </div>
                         </div>
                         <div className="col-3">
-                            <div className="d-flex justify-content-end me-5" style={{width:'80%'}}>
+                            <div className="d-flex justify-content-end" >
                                 <Tooltip  title="Crea contestazione">
                                     <Button sx={{gap:2}} variant="outlined" onClick={()=> navigate(PathPf.INIZIO_CONTEST_ENTE)} ><NoteAddIcon/>Crea contestazione</Button>
                                 </Tooltip>

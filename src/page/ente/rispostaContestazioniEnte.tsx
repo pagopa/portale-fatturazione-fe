@@ -162,7 +162,7 @@ const RispostaContestazioniEnte : React.FC = () => {
                     actionButtonRight={[ {
                         onButtonClick:() => downloadNotificheOnDownloadButton(),
                         variant: "outlined",
-                        label: "Download file notifiche",
+                        label: "Download file contestazioni",
                         icon:{name:"download"},
                         disabled:false
                     },
@@ -171,20 +171,20 @@ const RispostaContestazioniEnte : React.FC = () => {
                     <Table size="small" aria-label="purchases">
                         <TableHead>
                             <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
-                                <TableCell align="center" sx={{ width:"300px"}} >Motivo contestazione</TableCell>
-                                <TableCell align="center" sx={{ width:"300px"}}>N. Contestazioni</TableCell>
-                                <TableCell align="center" sx={{ width:"300px"}}>N. Risposta SEND</TableCell>
-                                <TableCell align="center" sx={{ width:"300px"}}></TableCell>
+                                <TableCell align="center" sx={{width:"30%"}} >Motivo contestazione</TableCell>
+                                <TableCell align="center" sx={{width:"30%"}}>N. Contestazioni</TableCell>
+                                <TableCell align="center" sx={{width:"30%"}}>N. Risposta SEND</TableCell>
+                                <TableCell align="center" sx={{width:"10%"}}></TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
                             {mock.map((sigleRec:RecapObjContestazioni)=>{
                                 return (
                                     <TableRow key={Math.random()}>
-                                        <TableCell align="center"  sx={{ width:"300px"}} >{sigleRec.tipologiaFattura}</TableCell>
-                                        <TableCell align="center" sx={{ width:"300px"}} >{sigleRec.idFlagContestazione}</TableCell>
-                                        <TableCell align="center" sx={{ width:"300px"}}>{sigleRec.totaleNotificheAnalogiche}</TableCell>
-                                        <TableCell align="center" sx={{ width:"80px"}}><IconButton
+                                        <TableCell align="center"  sx={{width:"30%"}} >{sigleRec.tipologiaFattura}</TableCell>
+                                        <TableCell align="center" sx={{width:"30%"}} >{sigleRec.idFlagContestazione}</TableCell>
+                                        <TableCell align="center" sx={{width:"30%"}}>{sigleRec.totaleNotificheAnalogiche}</TableCell>
+                                        <TableCell align="center" sx={{width:"10%"}}><IconButton
                                             aria-label="Scarica"
                                             size="medium"
                                         > <FileDownloadIcon/>

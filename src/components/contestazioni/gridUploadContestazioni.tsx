@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, styled, TableCell, TableHead, TableRow, Tooltip } from "@mui/material";
+import { Box, Button, IconButton, styled, Table, TableCell, TableHead, TableRow, Tooltip } from "@mui/material";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useState } from "react";
 import { fi } from "date-fns/locale";
@@ -132,13 +132,13 @@ const GridUploadContestazioni = ({popUp}) => {
 
     return (     
         <>
-            <Box sx={{ backgroundColor:'#F8F8F8', padding:'10px', marginTop:"50px",width:"1000px",border:"10px solid",borderColor: "#FFFFFF"}}>
+            <Table sx={{ backgroundColor:'#F8F8F8', padding:'10px', marginTop:"50px",width:"100%",border:"10px solid",borderColor: "#FFFFFF"}}>
                 <TableHead>
                     <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
-                        <TableCell align="center" sx={{ width:"300px"}} >Motivo contestazione</TableCell>
-                        <TableCell align="center" sx={{ width:"300px"}}>Anno</TableCell>
-                        <TableCell align="center" sx={{ width:"300px"}} >Mese</TableCell>
-                        <TableCell align="center" sx={{ width:"100px"}}></TableCell>
+                        <TableCell align="center" sx={{width:"30%"}}>Motivo contestazione</TableCell>
+                        <TableCell align="center" sx={{width:"30%"}}>Anno</TableCell>
+                        <TableCell align="center" sx={{width:"30%"}}>Mese</TableCell>
+                        <TableCell align="center" sx={{ width:"10%"}}></TableCell>
                     </TableRow>
                 </TableHead>
                    
@@ -233,7 +233,7 @@ const GridUploadContestazioni = ({popUp}) => {
                             </TableRow>
                         );
                     })}
-            </Box>
+            </Table>
             <Box
                 sx={{
                     display: "flex",
@@ -241,7 +241,7 @@ const GridUploadContestazioni = ({popUp}) => {
                     alignItems: "center",   
                     gap: 5,                
                     height: "100%",   
-                    width:"1000px",
+                    width:"100%",
                     marginY:"50px"      
                 }}
             >
