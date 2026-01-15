@@ -256,6 +256,8 @@ const ReportDettaglio : React.FC = () => {
                 setValueFgContestazione(filters.valueFgContestazione);
                 setValueAutocompleteCon(filters.valueAutocompleteCon);
                 setValueAutocompleteRec(filters.valueAutocompleteRec);
+                setValueAutocompleteTipoNot(filters.valueAutocompleteTipoNot);
+              
                 setPage(filters.page);
                 setRowsPerPage(filters.rows);
             }
@@ -567,6 +569,7 @@ const ReportDettaglio : React.FC = () => {
         setPage(0);
         setRowsPerPage(10);
         setBodyDownload(bodyGetLista);
+
         updateFilters({
             pathPage:profilePath,
             body:bodyGetLista,
@@ -574,6 +577,7 @@ const ReportDettaglio : React.FC = () => {
             valueAutocomplete:valueAutocomplete,
             valueAutocompleteCon:valueAutocompleteCon,
             valueAutocompleteRec:valueAutocompleteRec,
+            valueAutocompleteTipoNot:valueAutocompleteTipoNot,
             page:0,
             rows:10,
             valueFgContestazione:valueFgContestazione
@@ -605,6 +609,7 @@ const ReportDettaglio : React.FC = () => {
             valueAutocomplete,
             valueAutocompleteCon:valueAutocompleteCon,
             valueAutocompleteRec:valueAutocompleteRec,
+            valueAutocompleteTipoNot:valueAutocompleteTipoNot,
             page:newPage,
             rows:rowsPerPage,
             valueFgContestazione
@@ -622,6 +627,7 @@ const ReportDettaglio : React.FC = () => {
             valueAutocomplete,
             valueAutocompleteCon:valueAutocompleteCon,
             valueAutocompleteRec:valueAutocompleteRec,
+            valueAutocompleteTipoNot:valueAutocompleteTipoNot,
             page,
             rows:parseInt(event.target.value, 10),
             valueFgContestazione
