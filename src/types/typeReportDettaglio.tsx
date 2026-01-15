@@ -15,6 +15,11 @@ export interface ReportDettaglioProps {
     dispatchMainState:Dispatch<ActionReducerType>,
 }
 
+export interface OptionMultiselectChackboxTipoNot {
+    id:number,
+    name:string
+}
+
 export interface NotificheList{
     idNotifica:string
     ragioneSociale?:string,

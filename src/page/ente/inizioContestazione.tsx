@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
+import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { Box, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import NavigatorHeader from "../../components/reusableComponents/navigatorHeader";
@@ -9,8 +9,9 @@ import GridUploadContestazioni from "../../components/contestazioni/gridUploadCo
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { downloadNotifche, getMessaggiCountEnte } from "../../api/apiSelfcare/notificheSE/api";
 import { manageError, managePresaInCarico } from "../../api/api";
-import { tipoNotificaArray } from "../../reusableFunction/reusableArrayObj";
+import { tipoNotifica, tipoNotificaArray } from "../../reusableFunction/reusableArrayObj";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
+import { OptionMultiselectChackboxTipoNot } from "../../types/typeReportDettaglio";
 
 interface RecapObjContestazioni{
     tipologiaFattura: string
@@ -20,6 +21,7 @@ interface RecapObjContestazioni{
     totaleNotificheAnalogiche: number
     totaleNotificheDigitali: number  
 }
+
 
 const InizioContestazione : React.FC = () => {
 
@@ -46,6 +48,7 @@ const InizioContestazione : React.FC = () => {
     const [arrayMonths, setArrayMonths] = useState([12]);
     const [showModalUpload,setShowModalUpload] = useState(false);
     const [showLoading, setShowLoading] = useState(false);
+    const [valueAutocompleteTipoNot,setValueAutocompleteTipoNot] = useState<OptionMultiselectChackboxTipoNot[]>([]);
 
     const clearOnChangeFilter =  () => {
         console.log("mimmo");
@@ -136,15 +139,21 @@ const InizioContestazione : React.FC = () => {
                         disabeledSelect={true}
                     ></MainFilter>
                     <MainFilter 
-                        filterName={"select_value_string"}
-                        inputLabel={"Tipo Notifica"}
+                        filterName={"multi_checkbox"}
+                        inputLabel={"Tipo notifica"}
                         clearOnChangeFilter={clearOnChangeFilter}
                         setBody={setBodyGetLista}
                         body={bodyGetLista}
-                        keyDescription={"tipoNotifica"}
-                        keyValue={"tipoNotifica"}
+                        valueAutocomplete={valueAutocompleteTipoNot}
+                        setValueAutocomplete={setValueAutocompleteTipoNot}
+                        keyDescription={"name"}
+                        keyValue={"id"}
+                        keyOption='name'
+                        iconMaterial={RenderIcon("type-not",true)}
+                        keyCompare={""}
+                        dataSelect={tipoNotifica}
+                        arrayValues={tipoNotifica}
                         keyBody={"tipoNotifica"}
-                        arrayValues={tipoNotificaArray}
                     ></MainFilter>
                 </ResponsiveGridContainer>
                 <FilterActionButtons 

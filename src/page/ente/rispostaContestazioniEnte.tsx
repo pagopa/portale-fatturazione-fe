@@ -1,15 +1,16 @@
 import { useState } from "react";
-import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
+import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { Box, IconButton, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import GridUploadContestazioni from "../../components/contestazioni/gridUploadContestazioni";
 import { manageError, managePresaInCarico } from "../../api/api";
 import { downloadNotifche, getMessaggiCountEnte } from "../../api/apiSelfcare/notificheSE/api";
-import { tipoNotificaArray } from "../../reusableFunction/reusableArrayObj";
+import { tipoNotifica, tipoNotificaArray } from "../../reusableFunction/reusableArrayObj";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import ModalUpload from "../../components/reusableComponents/modals/modalUploadContestazioni";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import { OptionMultiselectChackboxTipoNot } from "../../types/typeReportDettaglio";
 
 interface RecapObjContestazioni{
     tipologiaFattura: string
@@ -42,7 +43,9 @@ const RispostaContestazioniEnte : React.FC = () => {
     const [showLoading, setShowLoading] = useState(false);
     const [arrayYears, setArrayYears] = useState(["2026"]);
     const [arrayMonths, setArrayMonths] = useState([1]);
+    const [valueAutocompleteTipoNot,setValueAutocompleteTipoNot] = useState<OptionMultiselectChackboxTipoNot[]>([]);
   
+
 
     const clearOnChangeFilter =  () => {
         console.log("mimmo");
@@ -132,15 +135,21 @@ const RispostaContestazioniEnte : React.FC = () => {
                         disabeledSelect={true}
                     ></MainFilter>
                     <MainFilter 
-                        filterName={"select_value_string"}
-                        inputLabel={"Tipo Notifica"}
+                        filterName={"multi_checkbox"}
+                        inputLabel={"Tipo notifica"}
                         clearOnChangeFilter={clearOnChangeFilter}
                         setBody={setBodyGetLista}
                         body={bodyGetLista}
-                        keyDescription={"tipoNotifica"}
-                        keyValue={"tipoNotifica"}
+                        valueAutocomplete={valueAutocompleteTipoNot}
+                        setValueAutocomplete={setValueAutocompleteTipoNot}
+                        keyDescription={"name"}
+                        keyValue={"id"}
+                        keyOption='name'
+                        iconMaterial={RenderIcon("type-not",true)}
+                        keyCompare={""}
+                        dataSelect={tipoNotifica}
+                        arrayValues={tipoNotifica}
                         keyBody={"tipoNotifica"}
-                        arrayValues={tipoNotificaArray}
                     ></MainFilter>
 
                 </ResponsiveGridContainer>
