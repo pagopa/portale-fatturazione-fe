@@ -142,7 +142,7 @@ export interface BodyListaNotifiche{
     prodotto: string,
     cap: string|null ,
     profilo: string,
-    tipoNotifica: number | null,
+    tipoNotifica: number[],
     statoContestazione: number[] | [],
     iun:string | null,
     idEnti: string[],  // solo lato PAGOPA

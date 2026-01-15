@@ -140,6 +140,11 @@ export interface OptionMultiselectChackbox {
     idEnte: string,
     descrizione:string
 }
+
+export interface OptionMultiselectChackboxTipoNot {
+    id:number,
+    name:string
+}
 export interface ModalBodyContestazioneModifyPagoPa{
     idNotifica?: string,
     onere?: string,

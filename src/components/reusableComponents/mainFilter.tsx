@@ -341,16 +341,13 @@ const MainFilter = <T,>({
                                 height:"59px",
                                 "& .MuiAutocomplete-inputRoot.Mui-focused": {
                                     zIndex: 2,
-                                    backgroundColor: "#F3F4F6",
-                                    
-                                    
+                                    backgroundColor: "#F3F4F6",  
                                 },
                                 "& .MuiInputLabel-root.Mui-focused": {
                                     zIndex: 3,     
                                     position: "absolute",
                                     height:"59px",
                                 },
-                              
                             }}
                             multiple
                             limitTags={1}
@@ -402,9 +399,7 @@ const MainFilter = <T,>({
                                         checked={selected}
                                     />
                                     <Typography sx={{ fontSize: fontSize ? "0.875rem":undefined}}>{getLabel(option)}</Typography>
-                                    
-                                </li>
-                               
+                                </li> 
                             )}
                             renderInput={(params) => (
                                 <TextField
@@ -414,7 +409,6 @@ const MainFilter = <T,>({
                                     value={textValue||""}
                                 />
                             )}
-                            
                         />
                     </MainBoxContainer>
                 );

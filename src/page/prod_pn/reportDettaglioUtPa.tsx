@@ -1,7 +1,7 @@
 import React , { useState, useEffect, useContext} from 'react';
 import { getTipologiaProfilo, manageError, managePresaInCarico} from "../../api/api";
-import {NotificheList, FlagContestazione, Contestazione, ElementMultiSelect, ListaRecCon, OptionMultiselectChackbox  } from "../../types/typeReportDettaglio";
-import { BodyListaNotifiche } from "../../types/typesGeneral";
+import {NotificheList, FlagContestazione, Contestazione, ElementMultiSelect, ListaRecCon, OptionMultiselectChackbox, OptionMultiselectChackboxTipoNot  } from "../../types/typeReportDettaglio";
+import { BodyListaNotifiche, BodyListaNotificheSelfcare } from "../../types/typesGeneral";
 import ModalContestazione from '../../components/reportDettaglio/modalContestazione';
 import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
 import { getAnniNotifiche, getMesiNotifiche, listaNotifichePagoPa, getTipologiaEntiCompletiPagoPa, getContestazionePagoPa, downloadNotifchePagoPa } from "../../api/apiPagoPa/notifichePA/api";
@@ -56,6 +56,7 @@ const ReportDettaglio : React.FC = () => {
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
     const [valueAutocompleteCon, setValueAutocompleteCon] = useState<OptionMultiselectChackbox[]>([]);
     const [valueAutocompleteRec, setValueAutocompleteRec] = useState<OptionMultiselectChackbox[]>([]);
+    const [valueAutocompleteTipoNot, setValueAutocompleteTipoNot] = useState<OptionMultiselectChackboxTipoNot[]>([]);
     const [listaRecapitista, setListaRecapitisti] = useState<ListaRecCon[]>([]);
     const [listaConsolidatori, setListaConsolidatori] = useState<ListaRecCon[]>([]);
     const [getNotificheWorking, setGetNotificheWorking] = useState(false);
@@ -105,7 +106,7 @@ const ReportDettaglio : React.FC = () => {
         prodotto:"",
         anno:null,
         mese:null, 
-        tipoNotifica:null,
+        tipoNotifica:[],
         statoContestazione:[],
         cap:null,
         iun:null,
@@ -119,7 +120,7 @@ const ReportDettaglio : React.FC = () => {
         prodotto:'',
         anno:null,
         mese:null, 
-        tipoNotifica:null,
+        tipoNotifica:[],
         statoContestazione:[],
         cap:null,
         iun:null,
@@ -471,8 +472,16 @@ const ReportDettaglio : React.FC = () => {
         // disable button filtra e annulla filtri nell'attesa dei dati
         setShowLoadingGrid(true);
         setGetNotificheWorking(true);
+        const bodyTipoNotificaNumberOrNull: BodyListaNotificheSelfcare = {
+            ...newBody,
+            tipoNotifica: Array.isArray(newBody.tipoNotifica)
+                ? newBody.tipoNotifica[0] ?? null
+                : newBody.tipoNotifica ?? null,
+        };
+
         if(enti){
-            await listaNotifiche(token,profilo.nonce,nPage, nRow, newBody).then((res)=>{
+           
+            await listaNotifiche(token,profilo.nonce,nPage, nRow, bodyTipoNotificaNumberOrNull).then((res)=>{
                 setNotificheList(res.data.notifiche);
                 setTotalNotifiche(res.data.count);
                 // abilita button filtra e annulla filtri all'arrivo dei dati
@@ -489,7 +498,7 @@ const ReportDettaglio : React.FC = () => {
                 manageError(error, dispatchMainState);
             });
         }else if(profilo.profilo === 'REC'){
-            await listaNotificheRecapitista(token,profilo.nonce,nPage, nRow, newBody).then((res)=>{
+            await listaNotificheRecapitista(token,profilo.nonce,nPage, nRow, bodyTipoNotificaNumberOrNull).then((res)=>{
                 setNotificheList(res.data.notifiche);
                 setTotalNotifiche(res.data.count);
                 // abilita button filtra e annulla filtri all'arrivo dei dati
@@ -506,7 +515,7 @@ const ReportDettaglio : React.FC = () => {
                 manageError(error, dispatchMainState);
             });
         }else if(profilo.profilo === 'CON'){
-            await listaNotificheConsolidatore(token,profilo.nonce,nPage, nRow,newBody).then((res)=>{
+            await listaNotificheConsolidatore(token,profilo.nonce,nPage, nRow,bodyTipoNotificaNumberOrNull).then((res)=>{
                 setNotificheList(res.data.notifiche);
                 setTotalNotifiche(res.data.count);
                 // abilita button filtra e annulla filtri all'arrivo dei dati
@@ -729,10 +738,18 @@ const ReportDettaglio : React.FC = () => {
 
     const downloadNotificheOnDownloadButton = async () =>{
         setShowLoading(true);
+     
         if(enti){
             const {idEnti, recapitisti, consolidatori, ...bodyEnti} = bodyDownload; 
             // eslint-disable-next-line @typescript-eslint/no-unused-vars  
-            await downloadNotifche(token, profilo.nonce,bodyEnti ).then(async(res)=>{
+
+            const bodyTipoNotificaNumberOrNull: BodyListaNotificheSelfcare = {
+                ...bodyEnti,
+                tipoNotifica: Array.isArray(bodyEnti.tipoNotifica)
+                    ? bodyEnti.tipoNotifica[0] ?? null
+                    : bodyEnti.tipoNotifica ?? null,
+            };
+            await downloadNotifche(token, profilo.nonce,bodyTipoNotificaNumberOrNull ).then(async(res)=>{
                 setShowLoading(false); 
                 setStatusQueryGetUri([res?.data?.statusQueryGetUri]);
                 managePresaInCarico('PRESA_IN_CARICO_DOCUMENTO_ENTE',dispatchMainState);
@@ -759,7 +776,13 @@ const ReportDettaglio : React.FC = () => {
         }else if(profilo.profilo === 'REC'){
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const {idEnti, recapitisti, consolidatori, ...bodyRecapitista} = bodyDownload;
-            await downloadNotifcheRecapitista(token, profilo.nonce,bodyRecapitista ).then((res)=>{
+            const bodyTipoNotificaNumberOrNull: BodyListaNotificheSelfcare = {
+                ...bodyRecapitista,
+                tipoNotifica: Array.isArray(bodyRecapitista.tipoNotifica)
+                    ? bodyRecapitista.tipoNotifica[0] ?? null
+                    : bodyRecapitista.tipoNotifica ?? null,
+            };
+            await downloadNotifcheRecapitista(token, profilo.nonce,bodyTipoNotificaNumberOrNull ).then((res)=>{
                 const blob = new Blob([res.data], { type: 'text/csv' });
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -777,7 +800,13 @@ const ReportDettaglio : React.FC = () => {
         }else if(profilo.profilo === 'CON'){
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { idEnti, recapitisti, consolidatori, ...bodyConsolidatore} = bodyDownload;
-            await downloadNotifcheConsolidatore(token, profilo.nonce,bodyConsolidatore ).then((res)=>{
+            const bodyTipoNotificaNumberOrNull: BodyListaNotificheSelfcare = {
+                ...bodyConsolidatore,
+                tipoNotifica: Array.isArray(bodyConsolidatore.tipoNotifica)
+                    ? bodyConsolidatore.tipoNotifica[0] ?? null
+                    : bodyConsolidatore.tipoNotifica ?? null,
+            };
+            await downloadNotifcheConsolidatore(token, profilo.nonce,bodyTipoNotificaNumberOrNull ).then((res)=>{
                 const blob = new Blob([res.data], { type: 'text/csv' });
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -883,11 +912,40 @@ const ReportDettaglio : React.FC = () => {
                     inputLabel={"Tipo notifica"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyGetLista}
+                    extraCodeOnChange={(e)=>{
+                        setBodyGetLista((prev)=>{             
+                            if(e === '' || e === null){
+                                return {...prev, ...{tipoNotifica:[]}};
+                            }else{
+                                return {...prev, ...{tipoNotifica:[Number(e)]}};
+                            }
+                        });
+                    }}
                     body={bodyGetLista}
                     keyValue={"id"}
                     keyDescription='name'
                     keyBody={"tipoNotifica"}
+                    hidden={profilo.auth === 'PAGOPA'}
                     arrayValues={tipoNotifica}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"multi_checkbox"}
+                    inputLabel={"Tipo notifica"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    valueAutocomplete={valueAutocompleteTipoNot}
+                    setValueAutocomplete={setValueAutocompleteTipoNot}
+                    keyDescription={"name"}
+                    keyValue={"id"}
+                    keyOption='name'
+                    iconMaterial={RenderIcon("type-not",true)}
+                    keyCompare={""}
+                    dataSelect={tipoNotifica}
+                    setTextValue={setTextValue}
+                    hidden={profilo.auth !== 'PAGOPA'}
+                    arrayValues={tipoNotifica}
+                    keyBody={"tipoNotifica"}
                 ></MainFilter>
                 <MainFilter 
                     filterName={"multi_checkbox"}
@@ -980,8 +1038,6 @@ const ReportDettaglio : React.FC = () => {
                     iconMaterial={RenderIcon("person",true)}
                     keyCompare={""}
                     dataSelect={listaConsolidatori}
-                    setTextValue={setTextValue}
-                    textValue={textValue}
                     hidden={profilo.auth !== 'PAGOPA'}
                     arrayValues={listaConsolidatori}
                     keyBody={"consolidatori"}
@@ -1000,8 +1056,6 @@ const ReportDettaglio : React.FC = () => {
                     iconMaterial={RenderIcon("person",true)}
                     keyCompare={""}
                     dataSelect={listaRecapitista}
-                    setTextValue={setTextValue}
-                    textValue={textValue}
                     hidden={profilo.auth !== 'PAGOPA'}
                     arrayValues={listaRecapitista}
                     keyBody={"recapitisti"}

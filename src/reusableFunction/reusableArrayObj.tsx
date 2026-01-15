@@ -18,7 +18,7 @@ export  const mesiFix = [
 
 export  const mesiGrid = ["Dicembre", "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
 
-export const tipoNotifica = [ { id: 1, name: "Digitali" },
+export const tipoNotifica : {id:number,name:string}[] = [ { id: 1, name: "Digitali" },
     { id: 2, name: "Analogico AR Nazionali" },
     { id: 3, name: "Analogico AR Internazionali" },
     { id: 4, name: "Analogico RS Nazionali" },
