@@ -370,16 +370,16 @@ const MainFilter = <T,>({
                             onInputChange={(e, val) => setTextValue && setTextValue(val)}
                             renderTags={(value, getTagProps) =>
                                 value.map((option, index) => {
-                                    const props = getTagProps({ index });
+                                    const { key, ...tagProps } = getTagProps({ index });
 
                                     return (
                                         <Tooltip
                                             title={getLabel(option)}
-                                            key={getId(option)}
+                                            key={key}
                                             placement="top"
                                         >
                                             <Chip
-                                                {...props}
+                                                {...tagProps}
                                                 label={
                                                     iconMaterial ? iconMaterial :<AccountBalanceIcon
                                                         fontSize="small"

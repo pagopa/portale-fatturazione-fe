@@ -462,6 +462,7 @@ const ReportDettaglio : React.FC = () => {
         setValueAutocomplete([]);
         setValueAutocompleteCon([]);
         setValueAutocompleteRec([]);
+        setValueAutocompleteTipoNot([]);
         setPage(0);
         setRowsPerPage(10);
         resetFilters();
