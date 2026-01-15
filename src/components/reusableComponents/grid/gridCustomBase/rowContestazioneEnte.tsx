@@ -1,7 +1,7 @@
 import { Button, IconButton, TableCell, TableRow, Tooltip, Typography } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
-const RowContestazioni = ({sliced,handleClickOnGrid,apiGet,element,headerNames}) => {
+const RowContestazioniEnte = ({sliced,handleClickOnGrid,apiGet,element,headerNames}) => {
 
     let bgColorRow = "#F0F8FF"; 
     if(element.idStato === 1){
@@ -13,9 +13,7 @@ const RowContestazioni = ({sliced,handleClickOnGrid,apiGet,element,headerNames})
     }else if(element.idStato === 4){
         bgColorRow = "#FFE5A3";
     }
-
-
-
+    
     return (
         <TableRow key={Math.random()}
             sx={{
@@ -33,26 +31,23 @@ const RowContestazioni = ({sliced,handleClickOnGrid,apiGet,element,headerNames})
                     console.log({valueEl});
                     if(headerNames[i]?.renderCell){
                         return  headerNames[i]?.renderCell(valueEl,bgColorRow);
-                       
+                    }else if(headerNames[i]?.renderCell2){
+                        return  headerNames[i]?.renderCell2();   
                     }else{
                         return (
                             <Tooltip key={Math.random()} title={(value?.length > 20 && i === 0) ? value: null}>
                                 <TableCell
                                     sx={cssFirstColum} 
-                                    align={i !== 0 ? "center": "left"}
+                                    align={"center"}
                                     onClick={()=>{
-                                        if(i === 0){
-                                            handleClickOnGrid(element);
-                                        }            
+                                        if(i === 0){handleClickOnGrid(element);}            
                                     }}
                                 >
                                     {valueEl}
-                                   
                                 </TableCell>
                             </Tooltip>
                         );
                     }
-                   
                 })
             }
             {apiGet &&  <TableCell align="center"><IconButton onClick={()=>{handleClickOnGrid(element);}} ><ArrowForwardIcon fontSize="small" sx={{ color: '#1976D2', cursor: 'pointer' }} /></IconButton></TableCell> }
@@ -60,4 +55,4 @@ const RowContestazioni = ({sliced,handleClickOnGrid,apiGet,element,headerNames})
     );
 };
 
-export default RowContestazioni;
+export default RowContestazioniEnte;

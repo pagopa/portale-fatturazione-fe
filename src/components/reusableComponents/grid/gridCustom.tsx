@@ -19,6 +19,7 @@ import { Whitelist } from "../../../page/prod_pn/whiteList";
 import DefaultRow from "./gridCustomBase/rowDefault";
 import RowModCommessaPrevisionale from "./gridCustomBase/rowModCommessaPrevisonale";
 import RowCollapsible from "./gridCustomBase/rowCollapsible";
+import RowContestazioniEnte from "./gridCustomBase/rowContestazioneEnte";
 interface GridCustomProps {
     elements:NotificheList[]|Rel[]|GridElementListaPsp[]|ContestazioneRowGrid[]|any
     changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
@@ -231,7 +232,9 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                     return <RowAsyncDoc key={Math.random()} sliced={sliced} headerNames={headerNames} handleClickOnGrid={handleClickOnGrid} element={element}></RowAsyncDoc>;
                                 }else if(nameParameterApi === "contestazionePage"){
                                     return <RowContestazioni key={Math.random()} sliced={sliced}apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} headerNames={headerNames}></RowContestazioni>;
-                                }else if(nameParameterApi === "modComTrimestrale"){
+                                }else if( nameParameterApi === "contestazioneEnte"){
+                                        return <RowContestazioniEnte key={Math.random()} sliced={sliced}apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} headerNames={headerNames}></RowContestazioniEnte>;
+                                    }else if(nameParameterApi === "modComTrimestrale"){
                                     return  <DefaultRow key={element.id} handleClickOnGrid={handleClickOnGrid} element={element} sliced={sliced} apiGet={()=> console.log("go to details")} headerNames={headerNames}></DefaultRow>;
                                 }else if(nameParameterApi === "idPrevisonale"){
                                     return <RowModCommessaPrevisionale key={element.id} sliced={sliced} element={element} headerNames={headerNames}></RowModCommessaPrevisionale>;

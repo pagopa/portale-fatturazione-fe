@@ -1,4 +1,4 @@
-import { Autocomplete, Box, Button, Checkbox, FormControl, InputLabel, MenuItem, Select, TextField, Tooltip, Typography } from "@mui/material";
+import { Autocomplete, Box, Button, Checkbox, FormControl, InputLabel, MenuItem, Select, Table, TableBody, TableCell, TableHead, TableRow, TextField, Tooltip, Typography } from "@mui/material";
 import { month } from "../../reusableFunction/reusableArrayObj";
 import { useEffect, useState } from "react";
 import { manageError } from "../../api/api";
@@ -50,6 +50,15 @@ export interface ContestazioneRowGrid {
     ragioneSociale: string
 }
 
+interface RecapObjContestazioni{
+    tipologiaFattura: string
+    idFlagContestazione: number
+    flagContestazione: string
+    totale: number
+    totaleNotificheAnalogiche: number
+    totaleNotificheDigitali: number  
+}
+
 const StoricoEnte : React.FC = () => {
 
     const mainState = useGlobalStore(state => state.mainState);
@@ -74,13 +83,13 @@ const StoricoEnte : React.FC = () => {
     };
 
     const [bodyGetLista,setBodyGetLista] = useState<BodyStoricoContestazioniSE>({
-        anno:'',
-        mese:'',
+        anno:'2025',
+        mese:"12",
         idTipologiaReports:[]
     });
 
-    const [valueYears, setValueYears] = useState<string[]>([]);
     const [statusAnnulla, setStatusAnnulla] = useState('hidden');
+    const [valueYears, setValueYears] = useState<string[]>(["2025"]);
     const [dataGrid,setDataGrid] = useState<any[]>([
         {
             reportId:1,
@@ -88,9 +97,8 @@ const StoricoEnte : React.FC = () => {
             num:1234,
             mese:month[11],
             anno:2025,
-            stato:"Draft",
-            draft:true,
-            idStato:1
+            stato:"Bozza",
+            idStato:4
         },
         {
             reportId:2,
@@ -99,8 +107,7 @@ const StoricoEnte : React.FC = () => {
             mese:month[11],
             anno:2025,
             stato:"Processo completato",
-            draft:false,
-            idStato:3
+            idStato:2
         },
         {
             reportId:3,
@@ -109,8 +116,16 @@ const StoricoEnte : React.FC = () => {
             mese:month[11],
             anno:2025,
             stato:"In elaborazione",
-            draft:false,
-            idStato:2
+            idStato:1
+        },
+        {
+            reportId:3,
+            dataInserimento:"11/12/2025",
+            num:44,
+            mese:month[11],
+            anno:2025,
+            stato:"Errore",
+            idStato:3
         }
     ]);
     const [listaToMap,setListaToMap] = useState<ContestazioneRowGrid[]>([]);
@@ -118,7 +133,7 @@ const StoricoEnte : React.FC = () => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalContestazioni, setTotalContestazioni]  = useState(0);
     const [getListaContestazioniRunning, setGetListaContestazioniRunning] = useState(false);
-    const [arrayMesi,setArrayMesi] = useState<{descrizione:string,mese:string}[]>([]);
+    const [arrayMesi,setArrayMesi] = useState<{descrizione:string,mese:string}[]>([{descrizione:"Dicembre",mese:"12"}]);
     const [tipologieDoc, setTipologieDoc] = useState<TipologieDoc[]>([]);
     const [tipologiaSelcted,setTipologiaSelected] = useState<TipologieDoc[]>([]);
 
@@ -276,6 +291,27 @@ const StoricoEnte : React.FC = () => {
     };  
 
 
+
+    const statusAnnulla = (bodyGetLista.idTipologiaReports.length > 0 || bodyGetLista.mese !== '') ? "show":"hidden";
+
+    const arrayReacpCon = [{
+        "tipologiaFattura": "CONTESTAZIONE",
+        "idFlagContestazione": 1,
+        "flagContestazione": "Non Contestata",
+        "totale": 2263,
+        "totaleNotificheAnalogiche": 789,
+        "totaleNotificheDigitali": 1474
+    },
+    {
+        "tipologiaFattura": "CONTESTAZIONE",
+        "idFlagContestazione": 1,
+        "flagContestazione": "Contestata Ente",
+        "totale": 10,
+        "totaleNotificheAnalogiche": 2,
+        "totaleNotificheDigitali": 8
+    }];
+
+
     return (
         <div className="mx-5" style={{minHeight:'600px'}}>
             <div className="marginTop24">
@@ -358,12 +394,49 @@ const StoricoEnte : React.FC = () => {
                         </div>
                         <div className="col-3">
                             <div className="d-flex justify-content-end me-5" style={{width:'80%'}}>
-                                <Tooltip  title="Contestazioni multiple">
-                                    <Button  variant="outlined" onClick={()=> navigate(PathPf.INIZIO_CONTEST_ENTE)} ><NoteAddIcon></NoteAddIcon></Button>
+                                <Tooltip  title="Crea contestazione">
+                                    <Button sx={{gap:2}} variant="outlined" onClick={()=> navigate(PathPf.INIZIO_CONTEST_ENTE)} ><NoteAddIcon/>Crea contestazione</Button>
                                 </Tooltip>
                             </div>
                         </div>
                     </div>
+                    
+                    <div className="bg-white my-5 ">
+                       
+                        <div className="row text-center">  
+                            <div  className="col-12">
+                                <Box sx={{ margin: 2 ,backgroundColor:'#F8F8F8', padding:'10px'}}>
+                                    <Typography variant="h4">Notifiche {month[Number(bodyGetLista.mese)-1]} {bodyGetLista.anno}</Typography>
+                                </Box>
+                                {/*se la UI lato ente viene approvato fai un unico componente sie ente che send */}
+                                <Box sx={{ margin: 2 , backgroundColor:'#F8F8F8', padding:'10px'}}>
+                                    <Table size="small" aria-label="purchases">
+                                        <TableHead>
+                                            <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
+                                                <TableCell align="center" sx={{ width:"300px"}} >Tipologia Fattura</TableCell>
+                                                <TableCell align="center" sx={{ width:"300px"}} >Tipologia Contestazione</TableCell>
+                                                <TableCell align="center" sx={{ width:"300px"}}>Tot. Not. Analog.</TableCell>
+                                                <TableCell align="center" sx={{ width:"300px"}}>Tot. Not. Digit.</TableCell>
+                                                <TableCell align="center" sx={{ width:"300px"}}>Totale</TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
+                                            {arrayReacpCon.map((sigleRec:RecapObjContestazioni)=>{
+                                                return (
+                                                    <TableRow key={Math.random()}>
+                                                        <TableCell align="center"  sx={{ width:"300px"}} >{sigleRec.tipologiaFattura}</TableCell>
+                                                        <TableCell align="center" sx={{ width:"300px"}} >{sigleRec.flagContestazione}</TableCell>
+                                                        <TableCell align="center" sx={{ width:"300px"}}>{sigleRec.totaleNotificheAnalogiche}</TableCell>
+                                                        <TableCell align="center" sx={{ width:"300px"}}>{sigleRec.totaleNotificheDigitali}</TableCell>
+                                                        <TableCell align="center" sx={{ width:"300px"}}>{sigleRec.totale}</TableCell>
+                                                    </TableRow>
+                                                );})}
+                                        </TableBody>
+                                    </Table>
+                                </Box>
+                            </div>
+                        </div>
+                    </div>               
                     <div className="mt-5">
                         <div className="mt-1 mb-5" style={{ width: '100%'}}>
                             <GridCustom
