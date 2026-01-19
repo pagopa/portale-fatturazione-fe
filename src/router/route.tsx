@@ -177,9 +177,7 @@ const router2 = createBrowserRouter([
             },
            
         ],
-    },
-    
-   
+    }, 
 ]);
 
 

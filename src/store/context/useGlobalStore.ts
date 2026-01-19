@@ -1,6 +1,7 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import { loadState, reducerMainState } from "../../reducer/reducerMainState";
+import { createJSONStorage, persist } from "zustand/middleware";
+import { initialState, loadState, reducerMainState } from "../../reducer/reducerMainState";
+import { MainState } from "../../types/typesGeneral";
 
 
 type ApiKeyPage = {
@@ -10,7 +11,7 @@ type ApiKeyPage = {
 
 type GlobalStore = {
     /* ---------- MAIN STATE ---------- */
-    mainState: any;
+    mainState: MainState;
     dispatchMainState: (action: { type: string; value?: any }) => void;
 
     /* ---------- UI ---------- */
@@ -29,7 +30,7 @@ type GlobalStore = {
     countMessages: number;
     setCountMessages: (v: number) => void;
 
-    statusQueryGetUri: any[];
+    statusQueryGetUri: string[];
     setStatusQueryGetUri: (v: any[]) => void;
 
     /* ---------- EXTRA DATA ---------- */
@@ -40,11 +41,11 @@ type GlobalStore = {
     appVersion:string
 };
 
-export const useGlobalStore = create<GlobalStore>()(
+export const useGlobalStore = create(
     persist(
         (set, get) => ({
             /* ===== MAIN STATE ===== */
-            mainState: loadState(),
+            mainState: initialState,
             dispatchMainState: (action) =>
                 set((state) => ({
                     mainState: reducerMainState(state.mainState, action),
@@ -81,14 +82,13 @@ export const useGlobalStore = create<GlobalStore>()(
                 set((state) => ({
                     mainData: updater(state.mainData),
                 })),
-            appVersion:""
+            appVersion:"",
         }),
-        {
+        {  
             name: "globalStatePF",
-            partialize: (state) => ({
-                mainState: state.mainState,
-                statusQueryGetUri: state.statusQueryGetUri
-            }),
+            partialize: (state:GlobalStore) => ({
+                mainState: state?.mainState,
+                statusQueryGetUri:state?.statusQueryGetUri }),
         }
     )
 );
