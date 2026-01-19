@@ -17,6 +17,8 @@ import { PathPf } from '../../types/enum';
 import DownloadIcon from '@mui/icons-material/Download';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import { useGlobalStore } from '../../store/context/useGlobalStore';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
+import DescriptionIcon from '@mui/icons-material/Description';
 
 
 const SideNavEnte: React.FC = () => {
@@ -96,6 +98,8 @@ const SideNavEnte: React.FC = () => {
         }else if(currentLocation === PathPf.STORICO_CONTEST_ENTE || currentLocation === PathPf.STORICO_DETTAGLIO_CONTEST|| currentLocation === PathPf.INSERIMENTO_CONTESTAZIONI_ENTE){
             setSelectedIndex(6);
             setOpenContestazioni(true);
+        }else if(currentLocation === PathPf.LISTA_REL_EN_2){
+            setSelectedIndex(9);
         }
 
         if(openContestazioni && (currentLocation !== PathPf.STORICO_CONTEST_ENTE && currentLocation !== PathPf.LISTA_NOTIFICHE_EN && currentLocation !== PathPf.STORICO_DETTAGLIO_CONTEST && currentLocation !== PathPf.INSERIMENTO_CONTESTAZIONI_ENTE )){
@@ -131,11 +135,20 @@ const SideNavEnte: React.FC = () => {
                 </ListItemButton>
                 <ListItemButton selected={selectedIndex === 3} onClick={()=>handleListItemClick(PathPf.LISTA_REL_EN)}>
                     <ListItemIcon>
-                        <ManageAccountsIcon fontSize="inherit" />
+                        <FileCopyIcon fontSize="inherit" />
                     </ListItemIcon>
                     <Box className="ms-3" display="flex" flexDirection="column">
-                        <ListItemText primary="Regolare esecuzione /" />
-                        <ListItemText primary="Documenti di cortesia" />
+                        <ListItemText primary="Documenti contabili sospesi" />
+
+                    </Box>
+                </ListItemButton>
+                <ListItemButton selected={selectedIndex === 9} onClick={()=>handleListItemClick(PathPf.LISTA_REL_EN_2)}>
+                    <ListItemIcon>
+                        <DescriptionIcon fontSize="inherit" />
+                    </ListItemIcon>
+                    <Box className="ms-3" display="flex" flexDirection="column">
+                        <ListItemText primary="Documenti contabili emessi" />
+
                     </Box>
                 </ListItemButton>
                 <ListItemButton selected={selectedIndex === 8} onClick={() => handleListItemClick(PathPf.ASYNC_DOCUMENTI_ENTE)}>

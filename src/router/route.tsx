@@ -52,6 +52,8 @@ import { createBrowserRouter } from 'react-router-dom';
 import { RoleBasedIndexRedirect } from './redirectRoute';
 import { useEffect, useState } from 'react';
 import { authVerify } from '../loaderRoutes/loaderAuthVerify';
+import DocSos from '../page/ente/docContSos';
+import DocEm from '../page/ente/docConEme';
 
 const RouteProfile = () => {
     const mainState = useGlobalStore(state => state.mainState);
@@ -157,11 +159,13 @@ const router2 = createBrowserRouter([
                     {path: PathRoutePf.LISTA_COMMESSE, Component: ModuloCommessaElencoUtPa},
                     {path: PathRoutePf.MODULOCOMMESSA,Component: ModuloCommessaInserimentoUtEn30},
                     {path: PathRoutePf.PDF_COMMESSA + "/:annoPdf?/:mesePdf?",Component: ModuloCommessaPdf},
-                    {path: PathRoutePf.LISTA_REL,Component: RelPage},
+                    //{path: PathRoutePf.LISTA_REL,Component: RelPage},
                     {path: PathRoutePf.PDF_REL,Component: RelPdfPage},
                     {path: PathRoutePf.LISTA_NOTIFICHE, Component: ReportDettaglio},
                     {path: PathRoutePf.ASYNC_DOCUMENTI_ENTE, Component: AsyncDocumenti},
-                    {path: PathRoutePf.API_KEY_ENTE,Component: ApiKeyEnte}
+                    {path: PathRoutePf.API_KEY_ENTE,Component: ApiKeyEnte},
+                    {path: PathRoutePf.LISTA_REL,Component: DocSos},
+                    {path: PathRoutePf.LISTA_REL_EN_2,Component: DocEm},
                 ],
             },
             {

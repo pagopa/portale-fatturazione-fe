@@ -1,7 +1,7 @@
 
 import { SingleFileInput } from '@pagopa/mui-italia';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import { Button, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { useNavigate } from 'react-router';
 import { useEffect, useRef, useState} from 'react';
 import TextDettaglioPdf from '../../components/commessaPdf/textDettaglioPdf';
@@ -336,7 +336,12 @@ const RelPdfPage : React.FC = () =>{
                     </div>
                 </div>
             </div>
-            <div className='d-flex justify-content-between m-5'>
+            <Box sx={{display:"flex",justifyContent:"center",mt:5}}>
+                <Typography variant="h6" gutterBottom>
+        Da nascondere con contratto PAC
+                </Typography>
+            </Box>
+            <div className='d-flex justify-content-between '>
                 {(profilo.auth === 'PAGOPA' &&  !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) &&
                 <div>
                     <Button sx={{width:'274px'}} onClick={() => downloadPdfRel()}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
