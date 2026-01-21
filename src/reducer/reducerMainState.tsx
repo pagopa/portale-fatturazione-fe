@@ -30,7 +30,6 @@ export const initialState:MainState =  {
     profilo:{},
     docContabileSelected:{key:''},
     infoTrimestreComSelected:{},
-    appVersion:process.env.REACT_APP_VERSION||"",
     contestazioneSelected:{ 
         ragioneSociale:"",
         anno:0,

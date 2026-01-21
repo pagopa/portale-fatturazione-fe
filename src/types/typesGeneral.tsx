@@ -103,7 +103,6 @@ export interface MainState{
     profilo:any,
     docContabileSelected:{key:string},
     infoTrimestreComSelected:any,
-    appVersion:string,
     datiFatturazioneNotCompleted:boolean,
     contestazioneSelected:{
         ragioneSociale:string,

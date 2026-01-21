@@ -24,15 +24,50 @@ export async function authVerify({ request }) {
             }
         } catch (err) {
             localStorage.clear();
+            /*Probabilmete da eliminare
             if(result?.state?.mainState?.profilo.auth === "PAGOPA"){
                 return redirect(globalRedirectAZ);
             }else{
                 return redirect(globalRedirect);
-            }
+            }*/
                 
             
         }
     } 
     
+    return null;
+}
+
+
+export async function authVerifyIsLoggedEnte({ request }) {
+
+    const globalLocalStorage = localStorage.getItem('globalStatePF') || '{}';
+    const result =  JSON.parse(globalLocalStorage);
+
+    if(globalLocalStorage === "{}"){
+        return redirect(globalRedirect);
+    } 
+
+   
+    if(result?.state?.mainState?.profilo.auth === "PAGOPA"){
+        return redirect(globalRedirect);
+    }
+                
+    return null;
+}
+
+export async function authVerifyIsLoggedSend({ request }) {
+
+    const globalLocalStorage = localStorage.getItem('globalStatePF') || '{}';
+    const result =  JSON.parse(globalLocalStorage);
+
+    if(globalLocalStorage === "{}"){
+        return redirect(globalRedirect);
+    } 
+
+    if(result?.state?.mainState?.profilo.auth === "SELFCARE"){
+        return redirect(globalRedirect);
+    }
+                
     return null;
 }

@@ -38,7 +38,6 @@ type GlobalStore = {
         apiKeyPage: ApiKeyPage;
     };
     setMainData: (updater: (prev: GlobalStore["mainData"]) => GlobalStore["mainData"]) => void;
-    appVersion:string
 };
 
 export const useGlobalStore = create(
@@ -81,14 +80,22 @@ export const useGlobalStore = create(
             setMainData: (updater) =>
                 set((state) => ({
                     mainData: updater(state.mainData),
-                })),
-            appVersion:"",
+                }))
         }),
-        {  
+        {
             name: "globalStatePF",
-            partialize: (state:GlobalStore) => ({
-                mainState: state?.mainState,
-                statusQueryGetUri:state?.statusQueryGetUri }),
+            version: Number(process.env.REACT_APP_VERSION)||0,
+            partialize: (state: GlobalStore) => ({
+                mainState: state.mainState,
+                statusQueryGetUri: state.statusQueryGetUri,
+            }),
+            migrate: (persistedState: any, version) => {
+                return {
+                    ...persistedState,
+                    mainState: persistedState.mainState,
+                    statusQueryGetUri: persistedState.statusQueryGetUri ?? [],
+                };
+            },
         }
     )
 );
