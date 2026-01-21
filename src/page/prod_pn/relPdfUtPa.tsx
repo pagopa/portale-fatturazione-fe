@@ -338,7 +338,7 @@ const RelPdfPage : React.FC = () =>{
             </div>
             <Box sx={{display:"flex",justifyContent:"center",mt:5}}>
                 <Typography variant="h6" gutterBottom>
-        Da nascondere con contratto PAC
+        Da nascondere con contratto PAL
                 </Typography>
             </Box>
             <div className='d-flex justify-content-between '>
