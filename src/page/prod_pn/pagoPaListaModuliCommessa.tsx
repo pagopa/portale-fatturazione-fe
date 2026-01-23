@@ -126,10 +126,6 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                 await getContratti(yearSelected, mese_X_plus_one);
             }
             
-          
-            
-        
-            
         } catch (err) {
             if (err && typeof err === "object") {
                 manageError(err as ManageErrorResponse, dispatchMainState);

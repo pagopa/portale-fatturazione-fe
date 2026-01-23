@@ -31,7 +31,7 @@ const SideNavEnte: React.FC = () => {
     const mainState = useGlobalStore(state => state.mainState);
     const setOpenBasicModal_DatFat_ModCom = useGlobalStore(state => state.setOpenBasicModal_DatFat_ModCom);
     const mainData = useGlobalStore(state => state.mainData);
-    const relIsVisible = mainState?.profilo?.idTipoContratto === 1;
+    const relIsVisible = mainState?.profilo?.idTipoContratto === 2;
 
 
     

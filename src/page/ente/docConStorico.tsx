@@ -282,11 +282,11 @@ const DocStorico : React.FC = () =>{
                     // 'id serve per la chiamata get dettaglio dell'elemento selezionato nella grid
                     return {
                         idTestata:Math.random(),
-                        tipologiaFattura:obj.FkTipologiaFattura === 1 ? "Anticipo": "Primo saldo",
-                        stato:obj.stato.charAt(0).toUpperCase() + obj.stato.slice(1),
-                        importoSospeso:obj.importo_sospeso_parziale.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
-                        mese:mesiGrid[obj.MeseRiferimento],
                         anno:obj.AnnoRiferimento,
+                        mese:mesiGrid[obj.MeseRiferimento],
+                        tipologiaFattura:obj.FkTipologiaFattura === 1 ? "Anticipo": "Primo saldo",
+                        importoSospeso:obj.importo_sospeso_parziale.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
+                        stato:obj.stato.charAt(0).toUpperCase() + obj.stato.slice(1),
                         progressivo:obj.Progressivo
                     };
                 });
@@ -511,7 +511,7 @@ const DocStorico : React.FC = () =>{
 
   
 
-    const headerGridKeys = ['Tipologia Fattura',"Stato", 'Importo Sospeso','Mese','Anno','Progressivo'];
+    const headerGridKeys = ['Anno','Mese','Tipologia Fattura','Importo Sospeso',"Stato",'N. Fattura'];
    
 
     const  hiddenAnnullaFiltri = bodyRel.tipologiaFattura === null && bodyRel.idEnti?.length === 0 && bodyRel.caricata === null && bodyRel.idTipoContratto === null; 
@@ -576,10 +576,10 @@ const DocStorico : React.FC = () =>{
                 actionButtonLeft={[]}/>
             <Paper sx={{ p: 2, mb: 2 }}>
                 <Typography variant="body2" color="text.secondary">
-    Storno totale
+   Credito sospeso
                 </Typography>
                 <Typography variant="h6">
-    € 1.234,56
+                    {storno}
                 </Typography>
             </Paper>
            
