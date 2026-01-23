@@ -209,10 +209,10 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                                                         ?null
                                                                         :value}>
                                                                 <TableCell
-                                                                    align={(nameParameterApi === "modComTrimestrale"||i !== 0)?"center":"left"}
+                                                                    align={(nameParameterApi === "modComTrimestrale" ||nameParameterApi === "storico_documenti_contabili" ||i !== 0)?"center":"left"}
                                                                     sx={cssFirstColum} 
                                                                     onClick={()=>{
-                                                                        if(i === 0){
+                                                                        if(i === 0 && nameParameterApi !== "storico_documenti_contabili"){
                                                                             handleClickOnGrid(element);
                                                                         }            
                                                                     }}
@@ -223,7 +223,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                                         );
                                                     })
                                                 }
-                                                {apiGet && <TableCell align="center" onClick={()=>{handleClickOnGrid(element);}}>
+                                                {apiGet && nameParameterApi !== "storico_documenti_contabili" && <TableCell align="center" onClick={()=>{handleClickOnGrid(element);}}>
                                                     <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
                                                 </TableCell> }
                                             </TableRow>

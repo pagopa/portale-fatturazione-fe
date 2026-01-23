@@ -49,11 +49,13 @@ export enum PathPf {
     FATTURAZIONE_EN = "/ente/fatturazione",
     DATI_FATTURAZIONE_EN = "/ente/datidifatturazione", 
     LISTA_REL_EN = "/ente/listarel",
-    LISTA_REL_EN_2 = "/ente/listarel2",
     PDF_REL_EN = "/ente/relpdf",
     LISTA_NOTIFICHE_EN = "/ente/listanotifiche",
     MODULOCOMMESSA_EN = "/ente/modulocommessa", 
     PDF_COMMESSA_EN = "/ente/pdfmodulocommessa",
+    LISTA_STORICO_DOCUMENTI = "/ente/storicodoc",
+    DOCUMENTI_EMESSI = "/ente/docemessi",
+    DOCUMENTI_SOSPESI = "/ente/docsospesi",
 
     //REC CON
     LISTA_NOTIFICHE_REC_CON = "/reccon/listanotifiche"
@@ -98,7 +100,10 @@ export enum PathRoutePf {
     API_KEY_ENTE = "apikeys",
     STORICO_CONTEST_ENTE = "storicoente",
     INSERIMENTO_CONTESTAZIONI_ENTE = "contestazioniente",
-    LISTA_REL_EN_2 = "listarel2",
+  
+    LISTA_STORICO_DOCUMENTI = "storicodoc",
+    DOCUMENTI_EMESSI = "docemessi",
+    DOCUMENTI_SOSPESI = "docsospesi",
 
     
 }

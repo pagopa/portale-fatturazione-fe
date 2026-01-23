@@ -6,7 +6,9 @@ import {
     ListItemText,
     ListItemIcon,
     Box,
-    Divider
+    Divider,
+    Collapse,
+    IconButton
 } from '@mui/material';
 import { useNavigate, useLocation } from "react-router-dom";
 import DnsIcon from '@mui/icons-material/Dns';
@@ -19,6 +21,9 @@ import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import { useGlobalStore } from '../../store/context/useGlobalStore';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import DescriptionIcon from '@mui/icons-material/Description';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import PageviewIcon from '@mui/icons-material/Pageview';
 
 
 const SideNavEnte: React.FC = () => {
@@ -26,6 +31,8 @@ const SideNavEnte: React.FC = () => {
     const mainState = useGlobalStore(state => state.mainState);
     const setOpenBasicModal_DatFat_ModCom = useGlobalStore(state => state.setOpenBasicModal_DatFat_ModCom);
     const mainData = useGlobalStore(state => state.mainData);
+    const relIsVisible = mainState?.profilo?.idTipoContratto === 1;
+
 
     
     const navigate = useNavigate();
@@ -33,6 +40,7 @@ const SideNavEnte: React.FC = () => {
  
     const [selectedIndex, setSelectedIndex] = useState<number | null>(0);
     const [openContestazioni, setOpenContestazioni] = useState(false);
+    const [openDocContabili, setOpenDocContabili] = useState(false);
     
     const handleListItemClick = async(pathToGo) => {
         if(pathToGo === PathPf.LISTA_COMMESSE && location.pathname !== PathPf.MODULOCOMMESSA_EN ){
@@ -98,12 +106,24 @@ const SideNavEnte: React.FC = () => {
         }else if(currentLocation === PathPf.STORICO_CONTEST_ENTE || currentLocation === PathPf.STORICO_DETTAGLIO_CONTEST|| currentLocation === PathPf.INSERIMENTO_CONTESTAZIONI_ENTE){
             setSelectedIndex(6);
             setOpenContestazioni(true);
-        }else if(currentLocation === PathPf.LISTA_REL_EN_2){
+        }else if(currentLocation === PathPf.LISTA_STORICO_DOCUMENTI){
             setSelectedIndex(9);
+        }else if(currentLocation === PathPf.DOCUMENTI_SOSPESI){
+            setSelectedIndex(10);
+        }else if(currentLocation === PathPf.DOCUMENTI_EMESSI){
+            setSelectedIndex(11);
+        } 
+        
+        
+        if(currentLocation === PathPf.DOCUMENTI_EMESSI || currentLocation === PathPf.DOCUMENTI_SOSPESI){
+            setOpenDocContabili(true);
         }
 
         if(openContestazioni && (currentLocation !== PathPf.STORICO_CONTEST_ENTE && currentLocation !== PathPf.LISTA_NOTIFICHE_EN && currentLocation !== PathPf.STORICO_DETTAGLIO_CONTEST && currentLocation !== PathPf.INSERIMENTO_CONTESTAZIONI_ENTE )){
             setOpenContestazioni(false);
+        }
+        if(openDocContabili && (currentLocation !== PathPf.LISTA_STORICO_DOCUMENTI && currentLocation !== PathPf.DOCUMENTI_EMESSI && currentLocation !== PathPf.DOCUMENTI_SOSPESI )){
+            setOpenDocContabili(false);
         }
     },[currentLocation]);
 
@@ -133,24 +153,54 @@ const SideNavEnte: React.FC = () => {
                     </ListItemIcon>
                     <ListItemText primary="Notifiche" />
                 </ListItemButton>
+                {relIsVisible && 
                 <ListItemButton selected={selectedIndex === 3} onClick={()=>handleListItemClick(PathPf.LISTA_REL_EN)}>
                     <ListItemIcon>
-                        <FileCopyIcon fontSize="inherit" />
+                        <ManageAccountsIcon fontSize="inherit" />
                     </ListItemIcon>
                     <Box className="ms-3" display="flex" flexDirection="column">
-                        <ListItemText primary="Documenti contabili sospesi" />
-
+                        <ListItemText primary="Regolare esecuzione /" />
+                        <ListItemText primary="Documenti di cortesia" />
                     </Box>
                 </ListItemButton>
-                <ListItemButton selected={selectedIndex === 9} onClick={()=>handleListItemClick(PathPf.LISTA_REL_EN_2)}>
+                }
+                <ListItemButton selected={selectedIndex === 9} onClick={()=>handleListItemClick(PathPf.LISTA_STORICO_DOCUMENTI)}>
                     <ListItemIcon>
-                        <DescriptionIcon fontSize="inherit" />
+                        <PageviewIcon fontSize="inherit" />
                     </ListItemIcon>
-                    <Box className="ms-3" display="flex" flexDirection="column">
-                        <ListItemText primary="Documenti contabili emessi" />
-
-                    </Box>
+                    <ListItemText primary="Documenti contabili" />
+                    {openDocContabili ? 
+                        <IconButton onClick={(e)=> {
+                            e.stopPropagation();
+                            setOpenDocContabili(false);
+                        }}  size="small">
+                            <ExpandLess fontSize="inherit"  />
+                        </IconButton>:
+                        <IconButton onClick={(e)=>{
+                            e.stopPropagation();
+                            setOpenDocContabili(true);
+                        } }  size="small">
+                            <ExpandMore fontSize="inherit"  />
+                        </IconButton>}
                 </ListItemButton>
+                <Collapse in={openDocContabili} timeout="auto" unmountOnExit>
+                    <ListItemButton sx={{ pl: 4 }} selected={selectedIndex === 10} onClick={()=>handleListItemClick(PathPf.DOCUMENTI_SOSPESI)}>
+                        <ListItemIcon>
+                            <FileCopyIcon fontSize="inherit" />
+                        </ListItemIcon>
+                        <Box className="ms-3" display="flex" flexDirection="column">
+                            <ListItemText primary="Documenti contabili sospesi" />
+                        </Box>
+                    </ListItemButton>
+                    <ListItemButton sx={{ pl: 4 }} selected={selectedIndex === 11} onClick={()=>handleListItemClick(PathPf.DOCUMENTI_EMESSI)}>
+                        <ListItemIcon>
+                            <DescriptionIcon fontSize="inherit" />
+                        </ListItemIcon>
+                        <Box className="ms-3" display="flex" flexDirection="column">
+                            <ListItemText primary="Documenti contabili emessi" />
+                        </Box>
+                    </ListItemButton>
+                </Collapse>
                 <ListItemButton selected={selectedIndex === 8} onClick={() => handleListItemClick(PathPf.ASYNC_DOCUMENTI_ENTE)}>
                     <ListItemIcon>
                         <DownloadIcon fontSize="inherit"/>
