@@ -13,7 +13,7 @@ import useIsTabActive from '../reusableFunction/tabIsActiv';
 import {  redirect } from '../api/api';
 import AreaPersonaleUtenteEnte from '../page/prod_pn/areaPersonaleUtenteEnte';
 import LayoutAzure from '../layout/layOutLoggedInAzure';
-import Messaggi from '../page/messaggi';
+
 import Accertamenti from '../page/prod_pn/accertamenti';
 import AdesioneBando from '../page/prod_pn/adesioneBando';
 import DettaglioStoricoContestazione from '../page/prod_pn/dettaglioStoricoContestazione';
@@ -39,6 +39,7 @@ import AnagraficaPsp from '../page/prod_pagopa/anagraficaPspPagopa';
 import DocumentiContabili from '../page/prod_pagopa/documentiContabiliPagopa';
 import DettaglioDocContabile from '../page/prod_pagopa/dettaglioDocumentoContabile';
 import KpiPagamenti from '../page/prod_pagopa/kpiPagamenti';
+
 import SideNavPagopa from '../layout/sideNavs/sideNavPagoPA';
 import SideNavEnte from '../layout/sideNavs/sidNavEnte';
 import ModuloCommessaElencoUtPa from '../page/ente/moduloCommessaElencoUtPa';
@@ -52,6 +53,8 @@ import { createBrowserRouter } from 'react-router-dom';
 import { RoleBasedIndexRedirect } from './redirectRoute';
 import { useEffect, useState } from 'react';
 import { authVerify } from '../loaderRoutes/loaderAuthVerify';
+import Messaggi from '../page/messaggi';
+import EmailPsp from '../page/prod_pagopa/emailpsp';
 
 const RouteProfile = () => {
     const mainState = useGlobalStore(state => state.mainState);
@@ -147,6 +150,7 @@ const router2 = createBrowserRouter([
                     { path:PathRoutePf.DETTAGLIO_DOC_CONTABILE, Component: DettaglioDocContabile },
                     { path:PathRoutePf.KPI, Component: KpiPagamenti },
                     { path: PathRoutePf.MESSAGGI, Component: Messaggi },
+                    { path: PathRoutePf.EMAIL_PSP, Component: EmailPsp }
                 ],
             },
             {

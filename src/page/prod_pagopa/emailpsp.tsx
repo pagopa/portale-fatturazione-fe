@@ -1,17 +1,20 @@
-import { Autocomplete, Box, Button, Checkbox, FormControl, InputLabel, MenuItem, Select, TextField, Tooltip, Typography } from "@mui/material";
 import { AutocompleteMultiselect, OptionMultiselectCheckboxPsp, OptionMultiselectCheckboxQarter } from "../../types/typeAngraficaPsp";
-import MultiselectWithKeyValue from "../../components/anagraficaPsp/multiselectKeyValue";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { PathPf } from "../../types/enum";
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import DataObjectIcon from '@mui/icons-material/DataObject';
-import EmailIcon from '@mui/icons-material/Email';
 import { useEffect, useState } from "react";
 import { getQuartersDocContabiliPa, getYearsDocContabiliPa } from "../../api/apiPagoPa/documentiContabiliPA/api";
 import { manageError } from "../../api/api";
 import { getListaNamePsp } from "../../api/apiPagoPa/anagraficaPspPA/api";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
+import GridCustom from "../../components/reusableComponents/grid/gridCustom";
+import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
+import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
+import MainFilter from "../../components/reusableComponents/mainFilter";
+import { downloadListaMailPsp, getListaMailPsp } from "../../api/apiPagoPa/mailPsp/api";
+import { saveAs } from "file-saver";
+import { DataGrid } from "@mui/x-data-grid";
 
 export interface RequestBodyMailPsp{
     contractIds: string[],
@@ -19,7 +22,7 @@ export interface RequestBodyMailPsp{
     year: string
 }
 
-const EmailPsp = () => {
+const EmailPsp:React.FC = () => {
 
     const mainState = useGlobalStore(state => state.mainState);
     const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
@@ -34,9 +37,6 @@ const EmailPsp = () => {
         isInitialRender
     } = useSavedFilters(PathPf.EMAIL_PSP,{});
 
-    const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-    const checkedIcon = <CheckBoxIcon fontSize="small" />;
-
     const [bodyGetLista, setBodyGetLista] = useState<RequestBodyMailPsp>({
         contractIds: [],
         quarters: [],
@@ -47,12 +47,16 @@ const EmailPsp = () => {
         quarters: [],
         year: ''
     });
+    const [gridData, setGridData] = useState<any[]>([]);
     const [yearOnSelect,setYearOnSelect] = useState<string[]>([]);
     const [valueQuarters, setValueQuarters] = useState<OptionMultiselectCheckboxQarter[]>([]);
     const [dataSelect, setDataSelect] = useState<OptionMultiselectCheckboxPsp[]>([]);
     const [dataSelectQuarter, setDataSelectQuarter] = useState<OptionMultiselectCheckboxQarter[]>([]);
     const [valueAutocomplete, setValueAutocomplete] = useState<AutocompleteMultiselect[]>([]);
     const [textValue, setTextValue] = useState<string>('');
+    const [showLoading,setShowLoading] = useState(false);
+  
+    const [getListaLoading, setGetListaLoading] = useState(false);
 
     useEffect(()=>{
         getYears();
@@ -88,6 +92,9 @@ const EmailPsp = () => {
             }));
     };
 
+
+    console.log({gridData});
+
     const getQuarters = async (y) =>{
         await getQuartersDocContabiliPa(token, profilo.nonce,{year:y})
             .then((res)=>{
@@ -106,8 +113,39 @@ const EmailPsp = () => {
             .then((res)=>{
                 setDataSelect(res.data);
             }).catch(((err)=>{
+                setDataSelect([]);
                 manageError(err,dispatchMainState); 
             }));
+    };
+
+    const getListaMail = async (body) =>{
+        await getListaMailPsp( body, token, profilo.nonce, )
+            .then((res)=>{
+                setGridData(res.data);
+             
+            }).catch(((err)=>{
+                setGridData([]);
+                manageError(err,dispatchMainState); 
+            }));
+    };
+
+    const onDownloadButton = async() =>{
+        setShowLoading(true);
+        await downloadListaMailPsp(filtersDownload,token,profilo.nonce).then(response => response.blob()).then((res) => {
+            let fileName = '';
+            const stringQuarterSelected = filtersDownload.quarters.map(el => "Q" + el.slice(5)).join("_");
+            const yearSelected = gridData[0].yearQuarter?.slice(0,4);
+            if(filtersDownload.contractIds.length === 1){
+                fileName = `Anagrafica PSP/${gridData[0].documentName}/${yearSelected}/${stringQuarterSelected}.xlsx`;
+            }else{
+                fileName = `Anagrafica PSP/${yearSelected}/${stringQuarterSelected}.xlsx`;
+            }
+            saveAs( res,fileName );
+            setShowLoading(false);
+        }).catch(err => {
+            setShowLoading(false);
+            manageError(err,dispatchMainState);
+        });
     };
 
     useEffect(()=>{
@@ -124,132 +162,146 @@ const EmailPsp = () => {
         console.log("clear");
     };
 
+       
+    const onButtonFiltra = () =>{
+        setFiltersDownload(bodyGetLista);
+        getListaMail(bodyGetLista); 
+        updateFilters(
+            {
+                body:bodyGetLista,
+                pathPage:PathPf.EMAIL_PSP,
+                textValue,
+                valueAutocomplete,
+                valueQuarters,
+                yearOnSelect
+            });
+    };
+
+    const onButtonAnnulla = () => {
+        const newBody = {
+            contractIds: [],
+            quarters: [],
+            year: yearOnSelect[0]};
+        getListaMail(newBody);
+        setBodyGetLista(newBody);
+        setFiltersDownload(newBody);
+        setDataSelect([]);
+        setValueAutocomplete([]);
+        setValueQuarters([]);
+        resetFilters();
+    };
+
+
+            
+    const statusAnnulla = bodyGetLista.contractIds.length > 0 || bodyGetLista.quarters.length > 0 ? "show":"hidden";
+
 
     return (
-        <div className="mx-5">
-            {/*title container start */}
-            <div className="d-flex marginTop24 ">
-                <div className="col-9">
-                    <Typography variant="h4">Invio email PSP</Typography>
-                </div>
-               
-            </div>
-            <div className="row mb-5 mt-5" >
-                <div className="col-3">
-                    <Box sx={{width:'80%'}} >
-                        <FormControl
-                            fullWidth
-                            size="medium"
-                        >
-                            <InputLabel
-                                id="Anno_doc_contabili"
-                            >
-                                            Anno
-                            </InputLabel>
-                            <Select
-                                id="Anno_doc_contabili"
-                                label='Anno'
-                                labelId="search-by-label"
-                                onChange={(e) =>{
-                                    clearOnChangeFilter(); 
-                                    setBodyGetLista((prev) => ({...prev,...{year:e.target.value}}));
-                                }}
-                                value={bodyGetLista.year}
-                            >
-                                {yearOnSelect.map((el) => (
-                                    <MenuItem
-                                        key={Math.random()}
-                                        value={el}
-                                    >
-                                        {el}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Box>
-                </div>
-                <div className="col-3">
-                    <Autocomplete
-                        multiple
-                        limitTags={1}
-                        onChange={(event, value) => {
-                            const arrayId = value.map(el => el.value);
-                            setBodyGetLista((prev) => ({...prev,...{quarters:arrayId}}));
-                            setValueQuarters(value);
-                            clearOnChangeFilter(); 
-                        }}
-                        id="checkboxes-quarters"
-                        options={dataSelectQuarter}
-                        value={valueQuarters}
-                        disableCloseOnSelect
-                        isOptionEqualToValue={(option, value) => option.value === value.value}
-                        getOptionLabel={(option:OptionMultiselectCheckboxQarter) => {
-                            return option.quarter;}}
-                        renderOption={(props, option,{ selected }) =>(
-                            <li {...props}>
-                                <Checkbox
-                                    icon={icon}
-                                    checkedIcon={checkedIcon}
-                                    style={{ marginRight: 8 }}
-                                    checked={selected}
-                                />
-                                {option.quarter}
-                            </li>
-                        )}
-                        style={{ width: '80%',height:'59px' }}
-                        renderInput={(params) => {
-                            
-                            return <TextField {...params}
-                                sx={{backgroundColor:"#F2F2F2"}}
-                                label="Trimestre" 
-                                placeholder="Trimestre" />;
-                        }}
-                    />
-                </div>
-                <div  className="col-3">
-                    <MultiselectWithKeyValue 
-                        setBodyGetLista={setBodyGetLista}
-                        clearOnChangeFilter={clearOnChangeFilter}
-                        setValueAutocomplete={setValueAutocomplete}
-                        dataSelect={dataSelect}
-                        valueAutocomplete={valueAutocomplete}
-                        setTextValue={setTextValue}
-                        keyId={"contractId"}
-                        valueId={'name'}
-                        label={"Nome PSP"} 
-                        keyArrayName={"contractIds"}/>
-                </div>
-            </div>
-            <div className="row mt-5">
-                <div  className="col-6 mt-5">
-                    <div className="d-flex">
-                        <Button 
-                            sx={{ marginTop: 'auto', marginBottom: 'auto'}} variant="contained"> 
-                                            Filtra
-                        </Button>
-                    
-                        <Button sx={{marginLeft:'24px'}} >
-                               Annulla filtri
-                        </Button>
-                        
-                    </div>
-                </div>
-                <div className="col-6 mt-5">
-                    <div className="d-flex flex-row-reverse">
-                        <Tooltip  className="mx-2" title="Invia Json PSP">
-                            <span>
-                                <Button variant="outlined"><DataObjectIcon></DataObjectIcon></Button>
-                            </span>
-                        </Tooltip>
-                        <Tooltip  className="mx-2" title="Invia financial report PSP">
-                            <span>
-                                <Button variant="outlined">  <EmailIcon></EmailIcon></Button>
-                            </span>
-                        </Tooltip>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <MainBoxStyled title={"Invio email PSP"}>
+            <ResponsiveGridContainer >
+                <MainFilter 
+                    filterName={"select_value_string"}
+                    inputLabel={"Anno"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    keyDescription={"year"}
+                    keyValue={"year"}
+                    keyBody={"year"}
+                    arrayValues={yearOnSelect}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"multi_checkbox"}
+                    inputLabel={"Trimestre"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    dataSelect={dataSelectQuarter}
+                    setTextValue={setTextValue}
+                    textValue={textValue}
+                    valueAutocomplete={valueQuarters}
+                    setValueAutocomplete={setValueQuarters}
+                    keyDescription={"quarter"}
+                    keyValue={"value"}
+                    keyBody={"quarters"}
+                    extraCodeOnChangeArray={(value)=>{
+                        const arrayId = value.map(el => el.value);
+                        setBodyGetLista((prev) => ({...prev,...{quarters:arrayId}}));
+                        setValueQuarters(value);
+                    }}
+                    iconMaterial={RenderIcon("date",true)}
+                ></MainFilter>
+                <MainFilter 
+                    filterName={"multi_checkbox"}
+                    inputLabel={"Nome PSP"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyGetLista}
+                    body={bodyGetLista}
+                    dataSelect={dataSelect}
+                    setTextValue={setTextValue}
+                    textValue={textValue}
+                    valueAutocomplete={valueAutocomplete}
+                    setValueAutocomplete={setValueAutocomplete}
+                    keyDescription={"name"}
+                    keyValue={"contractId"}
+                    keyBody={"contractIds"}
+                ></MainFilter>
+                                       
+            </ResponsiveGridContainer>
+            <FilterActionButtons 
+                onButtonFiltra={onButtonFiltra} 
+                onButtonAnnulla={onButtonAnnulla} 
+                statusAnnulla={statusAnnulla} 
+            ></FilterActionButtons>
+            <ActionTopGrid
+                actionButtonRight={[{
+                    onButtonClick: () => onDownloadButton(),
+                    variant: "outlined",
+                    label: "Download risultati",
+                    icon:{name:"download" },
+                    disabled:( gridData.length === 0 || getListaLoading )
+                },{
+                    onButtonClick: () => onDownloadButton(),
+                    variant: "outlined",
+                    label: "Download Financial Report",
+                    icon:{name:"download" },
+                    disabled:( gridData.length === 0 || getListaLoading )
+                }]}
+            />      
+            <div className="mt-1 mb-5" style={{ width: '100%'}}>
+                {/* <DataGrid sx={{
+                    height:gridData.length < 5 ?"400px" :"auto",
+                    '& .MuiDataGrid-virtualScroller': {
+                        backgroundColor: 'white',
+                    },
+                    "& .MuiDataGrid-row": {
+                        borderTop: "4px solid #F2F2F2",
+                        borderBottom: "2px solid #F2F2F2",
+                    }
+                }}
+                rowHeight={80}
+                rows={gridData} 
+                columns={headerNameListaModuliCommessaSEND}
+                getRowId={(row) => `${row.idEnte}_${row.meseValidita}_${row.annoValidita}`}
+                onRowClick={handleEvent}
+                onCellClick={handleOnCellClick}
+                onPaginationModelChange={(e)=> onChangePageOrRowGrid(e)}
+                paginationModel={infoPageListaCom}
+                pageSizeOptions={[10, 25, 50,100]}
+                />*/}
+            </div> 
+                      
+            <ModalLoading 
+                open={showLoading} 
+                setOpen={setShowLoading}
+                sentence={'Downloading...'} >
+            </ModalLoading>
+            <ModalLoading 
+                open={getListaLoading} 
+                setOpen={setGetListaLoading}
+                sentence={'Loading...'} >
+            </ModalLoading>
+        </MainBoxStyled>
     );
 };
 
