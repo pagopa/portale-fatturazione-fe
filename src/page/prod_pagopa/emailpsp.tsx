@@ -15,6 +15,7 @@ import MainFilter from "../../components/reusableComponents/mainFilter";
 import { downloadListaMailPsp, getListaMailPsp } from "../../api/apiPagoPa/mailPsp/api";
 import { saveAs } from "file-saver";
 import { DataGrid } from "@mui/x-data-grid";
+import { headerMailPsp } from "../../assets/configurations/conf_GridMailPsp";
 
 export interface RequestBodyMailPsp{
     contractIds: string[],
@@ -55,6 +56,7 @@ const EmailPsp:React.FC = () => {
     const [valueAutocomplete, setValueAutocomplete] = useState<AutocompleteMultiselect[]>([]);
     const [textValue, setTextValue] = useState<string>('');
     const [showLoading,setShowLoading] = useState(false);
+    const [infoPageMailPsp , setInfoPageMailPsp] = useState({ page: 0, pageSize: 10 });
   
     const [getListaLoading, setGetListaLoading] = useState(false);
 
@@ -82,9 +84,8 @@ const EmailPsp:React.FC = () => {
                     }else{
                         setBodyGetLista((prev) => ({...prev,...{year:res.data[0]}}));
                         setFiltersDownload((prev) => ({...prev,...{year:res.data[0]}}));
-                        //getListaKpiGrid({...bodyGetLista,...{year:res.data[0]}});
-                        getQuarters(res.data[0]);
-                          
+                        getListaMail({...bodyGetLista,...{year:res.data[0]}});
+                        getQuarters(res.data[0]);  
                     }
                 }
             }).catch(((err)=>{
@@ -192,6 +193,19 @@ const EmailPsp:React.FC = () => {
     };
 
 
+    const onChangePageOrRowGrid = (e) => {
+        updateFilters(
+            {
+                body:bodyGetLista,
+                pathPage:PathPf.EMAIL_PSP,
+                textValue,
+                valueAutocomplete,
+                page:e.page,
+                rows:e.pageSize
+            });
+        setInfoPageMailPsp(e);
+    };
+
             
     const statusAnnulla = bodyGetLista.contractIds.length > 0 || bodyGetLista.quarters.length > 0 ? "show":"hidden";
 
@@ -260,17 +274,11 @@ const EmailPsp:React.FC = () => {
                     label: "Download risultati",
                     icon:{name:"download" },
                     disabled:( gridData.length === 0 || getListaLoading )
-                },{
-                    onButtonClick: () => onDownloadButton(),
-                    variant: "outlined",
-                    label: "Download Financial Report",
-                    icon:{name:"download" },
-                    disabled:( gridData.length === 0 || getListaLoading )
                 }]}
             />      
             <div className="mt-1 mb-5" style={{ width: '100%'}}>
-                {/* <DataGrid sx={{
-                    height:gridData.length < 5 ?"400px" :"auto",
+                <DataGrid sx={{
+                    minHeight:"400px",
                     '& .MuiDataGrid-virtualScroller': {
                         backgroundColor: 'white',
                     },
@@ -281,14 +289,12 @@ const EmailPsp:React.FC = () => {
                 }}
                 rowHeight={80}
                 rows={gridData} 
-                columns={headerNameListaModuliCommessaSEND}
-                getRowId={(row) => `${row.idEnte}_${row.meseValidita}_${row.annoValidita}`}
-                onRowClick={handleEvent}
-                onCellClick={handleOnCellClick}
+                columns={headerMailPsp}
+                getRowId={(row) => `${row.messaggio}`}
                 onPaginationModelChange={(e)=> onChangePageOrRowGrid(e)}
-                paginationModel={infoPageListaCom}
+                paginationModel={infoPageMailPsp}
                 pageSizeOptions={[10, 25, 50,100]}
-                />*/}
+                />
             </div> 
                       
             <ModalLoading 
