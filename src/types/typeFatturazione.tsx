@@ -78,13 +78,6 @@ export interface GridCollapsible{
     //setShowedData: Dispatch<SetStateAction<FattureObj[]>>,
 }
 
-
-export type HeaderCollapsible = {
-    name:string,
-    align:"center" | "inherit" | "left" | "right" | "justify" | undefined,
-    id:number
-}
-
 export interface ModalSapProps {
     open:{show:boolean,who:number},
     setOpen:any,
@@ -119,3 +112,17 @@ export interface ModalResetFilterProps {
     getListaFatture:any,
     filterNotExecuted:BodyFatturazione
 }
+
+export interface GridCollapsible{
+    data:FattureObj[],
+    showedData:FattureObj[],
+    setShowedData:any,
+    headerNames:HeaderCollapsible[]
+}
+
+export type HeaderCollapsible = {
+    name:string,
+    align:"center" | "inherit" | "left" | "right" | "justify" | undefined,
+    id:number
+}
+

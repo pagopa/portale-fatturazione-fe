@@ -18,6 +18,8 @@ import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContai
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
 import { downloadFattureEnte, getFatturazioneEnte, getTipologieFaEnte } from "../../api/apiSelfcare/apiDocEmessiSE/api";
+import CollapsibleTableStandard from "../../components/reusableComponents/grid/gridCollapsible/gridCollapsibleDocEmessiEnte";
+import { headersObjGrid } from "../../assets/configurations/config_GridFatturazione";
 
 
 const DocEm : React.FC = () =>{
@@ -305,13 +307,7 @@ const DocEm : React.FC = () =>{
     };  
   
     return (
-        <MainBoxStyled title={"Documenti contabili emessi"} actionButton={[{
-            onButtonClick: downloadListaFatturazione,
-            variant: "outlined",
-            icon:{name:"circle_arrow_icon", sx:{} },
-            withText:false,
-            tooltipMessage:"Report Documenti emessi"
-        }]}>
+        <MainBoxStyled title={"Documenti contabili emessi"} actionButton={[]}>
             <ResponsiveGridContainer >
                 <MainFilter 
                     filterName={"select_value_string"}
@@ -376,18 +372,11 @@ const DocEm : React.FC = () =>{
                 }]}
                 actionButtonLeft={[]}/>
            
-            <GridCustom
-                nameParameterApi='idTestata'
-                elements={data}
-                changePage={handleChangePage}
-                changeRow={handleChangeRowsPerPage} 
-                total={totalNotifiche}
-                page={page}
-                rows={rowsPerPage}
-                headerNames={headerGridKeys}
-                apiGet={setIdRel}
-                disabled={getListaRelRunning}
-                widthCustomSize="2000px"></GridCustom>
+            <CollapsibleTableStandard 
+                data={gridData}
+                showedData={showedData}
+                setShowedData={setShowedData}
+                headerNames={headersObjGrid}></CollapsibleTableStandard>
             <ModalLoading 
                 open={showLoading} 
                 setOpen={setShowLoading} 

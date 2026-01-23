@@ -84,13 +84,15 @@ export interface MainState{
     inserisciModificaCommessa:string |undefined, // INSERT MODIFY  se il sevizio get commessa mi restituisce true []
     statusPageDatiFatturazione:string,
     statusPageInserimentoCommessa:string,
+    primoInserimetoCommessa:boolean,
     nomeEnteClickOn:string,
     datiFatturazione:boolean, // parametro utilizato in modulo commessa per capire se accettare l'inserimento commessa o fare il redirect t dati fatturazione se non sono stati inseriti
     relSelected:{
         nomeEnteClickOn:string,
         mese:number,
         anno:number,
-        idElement:string
+        idElement:string,
+        id:string
     },
     apiError:number|string|null,
     authenticated:boolean,
@@ -99,7 +101,9 @@ export interface MainState{
     prodotti:ProfiloObject[],
     profilo:any,
     docContabileSelected:{key:string},
-    infoTrimestreComSelected:any
+    infoTrimestreComSelected:any,
+    appVersion:string,
+    datiFatturazioneNotCompleted:boolean
 }
 
 export type ProfiloObject = {
