@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { profiliEnti,  } from "../../reusableFunction/actionLocalStorage";
-import { OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
+import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
 import { downloadListaRel, getAnniRelSend, getListaRel, getMesiRelSend, getTipologieFatture } from "../../api/apiSelfcare/relSE/api";
-import { mesiGrid, mesiWithZero } from "../../reusableFunction/reusableArrayObj";
+import { mesiGrid, mesiWithZero, month } from "../../reusableFunction/reusableArrayObj";
 import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, downloadQuadraturaRelPagopa, downloadReportRelPagoPa, getAnniRel, getListaRelPagoPa, getMesiRel, getTipologieContrattoRel, getTipologieFatturePagoPa } from "../../api/apiPagoPa/relPA/api";
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
 import { PathPf } from "../../types/enum";
@@ -17,25 +17,20 @@ import { Rel, BodyRel } from "../../types/typeRel";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
+import { downloadFattureEnte, getFatturazioneEnte, getTipologieFaEnte } from "../../api/apiSelfcare/apiDocEmessiSE/api";
 
 
 const DocEm : React.FC = () =>{
-
     const mainState = useGlobalStore(state => state.mainState);
     const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
 
-    const token =  mainState.profilo.jwt;
-    const profilo =  mainState.profilo;
+    
+    
+  
     const navigate = useNavigate();
-    const enti = profiliEnti(mainState);
-    let profilePath; 
-
-    if(profilo.auth === 'PAGOPA'){
-        profilePath = PathPf.PDF_REL;
-    }else{
-        profilePath = PathPf.PDF_REL_EN;
-    }
  
+      
+     
     const handleModifyMainState = (valueObj) => {
         dispatchMainState({
             type:'MODIFY_MAIN_STATE',
@@ -43,22 +38,38 @@ const DocEm : React.FC = () =>{
         });
     };
 
+    const token =  mainState.profilo.jwt;
+    const profilo =  mainState.profilo;
+    const currentYear = (new Date()).getFullYear();
+    const currentMonth = (new Date()).getMonth() + 1;
+    const monthNumber = Number(currentMonth);
+
+    const { 
+        filters,
+        updateFilters,
+        resetFilters,
+        isInitialRender
+    } = useSavedFilters(PathPf.DOCUMENTI_EMESSI,{});
+    const [data, setData] = useState<any[]>([]);
+    const [gridData, setGridData] = useState<any[]>([]);
+    const [totalNotifiche, setTotalNotifiche]  = useState(0);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [showLoading, setShowLoading] = useState(false);
-    const [totalNotifiche, setTotalNotifiche]  = useState(0);
-    const [dataSelect, setDataSelect] = useState([]);
-    const [data, setData] = useState<Rel[]>([]);
-    const [arrayYears,setArrayYears] = useState<number[]>([]);
-    const [arrayMonths,setArrayMonths] = useState<{mese:string,descrizione:string}[]>([]);
-    const [getListaRelRunning, setGetListaRelRunning] = useState(false);
-    const [disableDownloadListaPdf, setDisableListaPdf] = useState(true);
+    
+    const [showLoadingGrid,setShowLoadingGrid] = useState(false);
+    const [showDownloading,setShowDownloading] = useState(false);
+    const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
     const [textValue, setTextValue] = useState('');
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
+    const [statusAnnulla, setStatusAnnulla] = useState<string>('hidden');
+    const [tipologie, setTipologie] = useState<string[]>([]);
+    const [valueMulitselectTipologie, setValueMultiselectTipologie] = useState<string[]>([]);
+    const [showedData, setShowedData] = useState<any[]>([]);
     const [tipologiaFatture, setTipologiaFatture] = useState<string[]>([]);
     const [valuetipologiaFattura, setValueTipologiaFattura] = useState<string>('');
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
-    const [arrayContratti, setArrayContratto] = useState<{id:number,descrizione:string}[]>([{id:3,descrizione:"Tutti"}]);
+    const [getListaRelRunning, setGetListaRelRunning] = useState(false);
+    const [showLoading, setShowLoading] = useState(false);
     const [bodyDownload, setBodyDownload] = useState<BodyRel>({
         anno:0,
         mese:0,
@@ -77,252 +88,118 @@ const DocEm : React.FC = () =>{
         caricata:null,
         idTipoContratto:null
     });
-    const { 
-        filters,
-        updateFilters,
-        resetFilters,
-        isInitialRender
-    } = useSavedFilters(profilePath,{});
+  
+    const [bodyFatturazione, setBodyFatturazione] = useState<any>({
+        anno:currentYear,
+        mese:monthNumber,
+        tipologiaFattura:[],
+        idEnti:[]
+    });
+    const [bodyFatturazioneDownload, setBodyFatturazioneDownload] = useState<any>({
+        anno:currentYear,
+        mese:monthNumber,
+        tipologiaFattura:[],
+        idEnti:[]
+    });
 
+    const [arrayYears,setArrayYears] = useState<number[]>([]);
+
+    
     useEffect(()=>{
-        getAnni();
+      
+        getlistaFatturazione(bodyFatturazione);
+        
     },[]);
 
     useEffect(()=>{
-        const timer = setTimeout(() => {
-            if(textValue.length >= 3){
-                listaEntiNotifichePageOnSelect();
-            }
-        }, 800);
-        return () => clearTimeout(timer);
-    },[textValue]);
+        if(bodyFatturazione.idEnti.length !== 0 || bodyFatturazione.tipologiaFattura.length !== 0 ){
+            setStatusAnnulla('show');
+        }else{
+            setStatusAnnulla('hidden');
+        }
+    },[bodyFatturazione]);
 
+  
     useEffect(()=>{
-        if((mainState.datiFatturazione === false || mainState.datiFatturazioneNotCompleted) && enti){
-            setOpenModalRedirect(true);
-        }
-    },[]);
-
-    const getAnni = async() => {
-        
-        if(enti && mainState.datiFatturazione === true){
-            setGetListaRelRunning(true);
-            await getAnniRelSend(token, profilo.nonce).then((res)=>{
-                const arrayNumber = res.data.map(el => Number(el.toString()));
-                setArrayYears(arrayNumber);
-                if(isInitialRender.current && Object.keys(filters).length > 0){
-                    getMesi(filters.body.anno?.toString());
-                }else{
-                    setBodyRel((prev)=> ({...prev,...{anno:Number(res.data[0])}}));
-                    setBodyDownload((prev)=> ({...prev,...{anno:Number(res.data[0])}}));
-                    getMesi(res.data[0]);
-                }
-            }).catch((err)=>{
-                setArrayYears([]);
-                setGetListaRelRunning(false);
-                manageError(err,dispatchMainState);
-            });
-        }else if(profilo.auth === 'PAGOPA'){
-            setGetListaRelRunning(true);
-            await getContratti();
-            await getAnniRel(token, profilo.nonce).then((res)=>{
-                const arrayNumber = res.data.map(el => Number(el.toString()));
-                setArrayYears(arrayNumber);
-                if(isInitialRender.current && Object.keys(filters).length > 0){
-                    getMesi(filters.body.anno?.toString());
-                }else{
-                    setBodyRel((prev)=> ({...prev,...{anno:Number(res.data[0])}}));
-                    setBodyDownload((prev)=> ({...prev,...{anno:Number(res.data[0])}}));
-                    getMesi(res.data[0]);
-                    
-                }
-            }).catch((err)=>{
-                setArrayYears([]);
-                setGetListaRelRunning(false);
-                manageError(err,dispatchMainState);
-            });
-        }
        
-    };
-
-    const getMesi = async(year) =>{
+        getTipologieFatturazione();
+        setValueMultiselectTipologie([]);
         
-        if(enti && mainState.datiFatturazione === true){
-            setGetListaRelRunning(true);
-            await getMesiRelSend(token, profilo.nonce,{anno:year}).then((res)=>{
-                const mesiCamelCase = res.data.map(el => {
-                    el.descrizione = el?.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase();
-                    return el;
-                });
-                setArrayMonths(mesiCamelCase);
-                if(isInitialRender.current && Object.keys(filters).length > 0){
-                    getListTipologiaFattura(filters.body.anno,filters.body.mese);
-                    setTextValue(filters.textValue);
-                    setPage(filters.page);
-                    setRowsPerPage(filters.rows);
-                    setBodyDownload(filters.body);
-                    setBodyRel(filters.body);
-                    setBodyDownload(filters.body);
-                    getlista(filters.body,filters.page + 1, filters.rows);
-                }else if(isInitialRender.current){
-                    setBodyRel((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
-                    setBodyDownload((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
-                    getListTipologiaFattura(year, mesiCamelCase[0].mese);
-                    getlista({...bodyRel,...{anno:year,mese:mesiCamelCase[0].mese}},1,rowsPerPage);
-                }else{
-                    setBodyRel((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
-                    setBodyDownload((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
-                   
-                    setGetListaRelRunning(false);
-                }
-            }).catch((err)=>{
-                setArrayMonths([]);
-                setBodyRel((prev)=> ({...prev,...{mese:0}}));
-                setBodyDownload((prev)=> ({...prev,...{mese:0}}));
-                setGetListaRelRunning(false);
-                manageError(err,dispatchMainState);
-            });
-        }else if(profilo.auth === 'PAGOPA'){
-            setGetListaRelRunning(true);
-            await getMesiRel(token, profilo.nonce,{anno:year}).then((res)=>{
-                const mesiCamelCase = res.data.map(el => {
-                    el.descrizione = el?.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase();
-                    return el;
-                });
-                
-                setArrayMonths(mesiCamelCase);
-                if(isInitialRender.current && Object.keys(filters).length > 0){
-                    setTextValue(filters.textValue);
-                    setValueAutocomplete(filters.valueAutocomplete);
-                    getlista(filters.body,filters.page + 1, filters.rows);
-                    setPage(filters.page);
-                    setRowsPerPage(filters.rows);
-                    setBodyDownload(filters.body);
-                    getListTipologiaFattura(filters.body.anno,filters.body.mese);
-                    setBodyRel(filters.body);
-                }else if(isInitialRender.current){
-                    setBodyRel((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
-                    setBodyDownload((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
-                    getListTipologiaFattura(year, mesiCamelCase[0].mese);
-                    getlista({...bodyRel,...{anno:year,mese:mesiCamelCase[0].mese}},1,rowsPerPage);
-                }else{
-                    setBodyRel((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
-                    setBodyDownload((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
-                    setGetListaRelRunning(false);
-                }
-            }).catch((err)=>{
-                setArrayMonths([]);
-                setBodyRel((prev)=> ({...prev,...{mese:0}}));
-                setBodyDownload((prev)=> ({...prev,...{mese:0}}));
-                setGetListaRelRunning(false);
-                manageError(err,dispatchMainState);
-            });
-        }
-       
-    };
-
-    const getContratti = async() => {
-        await getTipologieContrattoRel(token, profilo.nonce).then((res)=>{
-            setArrayContratto(prev => [...prev, ...res.data]);
-        }).catch((err)=>{
-            setArrayContratto([]);
-
-        });
-    };
+    },[bodyFatturazione.mese,bodyFatturazione.anno]);
 
 
-    const getlista = async (bodyRel,nPage,nRows) => {
+  
 
-        if(enti && mainState.datiFatturazione === true){
-            setGetListaRelRunning(true);
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const {idEnti,idTipoContratto, ...newBody} = bodyRel;
-            await  getListaRel(token,profilo.nonce,nPage, nRows, newBody)
-                .then((res)=>{
-                    // ordino i dati in base all'header della grid
-                    const orderDataCustom = res.data.relTestate.map((obj)=>{
-                        // inserire come prima chiave l'id se non si vuol renderlo visibile nella grid
-                        // 'id serve per la chiamata get dettaglio dell'elemento selezionato nella grid
-                        return {
-                            idTestata:obj.idTestata,
-                            ragioneSociale:obj.ragioneSociale,
-                            tipologiaFattura:obj.tipologiaFattura,
-                            firmata:"FATTURATA",
-                            idContratto:obj.idContratto,
-                            anno:obj.anno,
-                            mese:mesiGrid[obj.mese],
-                            totaleAnalogico:obj.totaleAnalogico.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
-                            totaleDigitale:obj.totaleDigitale.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
-                            totaleNotificheAnalogiche:obj.totaleNotificheAnalogiche,
-                            totaleNotificheDigitali:obj.totaleNotificheDigitali,
-                            totale:obj.totale.toLocaleString("de-DE", { style: "currency", currency: "EUR" })
-                        };
-                    });
-                    setData(orderDataCustom);
-                    setTotalNotifiche(res.data.count);
-                    setGetListaRelRunning(false);
-                }).catch((error)=>{
-                    if(error?.response?.status === 404){
-                        setData([]);
-                        setTotalNotifiche(0);
-                    }
-                    setGetListaRelRunning(false);
-                    manageError(error, dispatchMainState);
-                });
-        }else if(profilo.auth === 'PAGOPA'){
-            setGetListaRelRunning(true);
-            await  getListaRelPagoPa(token,profilo.nonce,nPage, nRows, bodyRel).then((res)=>{
-                // controllo che tutte le rel abbiano il pdf caricato, se TRUE abilito il button download
-                const checkIfAllCaricata = res.data.relTestate.every(v => v.caricata === 1);
-                setDisableListaPdf(checkIfAllCaricata);
-                // ordino i dati in base all'header della grid
-                const orderDataCustom = res.data.relTestate.map((obj)=>{
-                    // inserire come prima chiave l'id se non si vuol renderlo visibile nella grid
-                    // 'id serve per la chiamata get dettaglio dell'elemento selezionato nella grid
-                    return {
-                        idTestata:obj.idTestata,
-                        ragioneSociale:obj.ragioneSociale,
-                        tipologiaFattura:obj.tipologiaFattura,
-                        tipologiaContratto:obj?.tipologiaContratto,
-                        firmata:obj.firmata,
-                        idContratto:obj.idContratto,
-                        anno:obj.anno,
-                        mese:mesiGrid[obj.mese],
-                        totaleAnalogico:obj.totaleAnalogico.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
-                        totaleDigitale:obj.totaleDigitale.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
-                        totaleNotificheAnalogiche:obj.totaleNotificheAnalogiche,
-                        totaleNotificheDigitali:obj.totaleNotificheDigitali,
-                        totale:obj.totale.toLocaleString("de-DE", { style: "currency", currency: "EUR" })
-                    };
-                });
-                setData(orderDataCustom);
-                setTotalNotifiche(res.data.count);
-                setGetListaRelRunning(false);
-            }).catch((error)=>{
-                if(error?.response?.status === 404){
-                    setData([]);
-                    setTotalNotifiche(0);
-                }
-                setGetListaRelRunning(false);
-                manageError(error, dispatchMainState);
-            });
-        }     
-        isInitialRender.current = false;       
-    };
-
-    // servizio che popola la select con la checkbox
-    const listaEntiNotifichePageOnSelect = async () =>{
-        if(profilo.auth === 'PAGOPA'){
-            await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} ).then((res)=>{
-                setDataSelect(res.data);
-            }).catch(((err)=>{
+    const getTipologieFatturazione =  async() => {
+        await getTipologieFaEnte(token, profilo.nonce, {anno:bodyFatturazione.anno,mese:bodyFatturazione.mese}  )
+            .then((res)=>{
+                setTipologie(res.data);
+                setBodyFatturazione((prev)=>({...prev,...{tipologiaFattura:[]}}));
+                setBodyFatturazioneDownload((prev)=>({...prev,...{tipologiaFattura:[]}}));
+                            
+            })
+            .catch(((err)=>{
+                setTipologie([]);
+                setBodyFatturazione((prev)=>({...prev,...{tipologiaFattura:[]}}));
+                setBodyFatturazioneDownload((prev)=>({...prev,...{tipologiaFattura:[]}}));
                 manageError(err,dispatchMainState);
             }));
-        }
+    };
+    
+    const getlistaFatturazione = async (body) => {
+        setShowLoadingGrid(true);
+
+        await  getFatturazioneEnte(token,profilo.nonce,body)
+            .then((res)=>{
+                const orderDataCustom = res.data.map(el => el.fattura).map(obj=> ({...{id:Math.random()},...obj}));
+                setGridData(orderDataCustom);
+                setShowLoadingGrid(false);
+                setBodyFatturazioneDownload(bodyFatturazione);
+            }).catch((error)=>{
+                if(error?.response?.status === 404){
+                    setGridData([]);
+                }
+                setShowLoadingGrid(false);
+                manageError(error, dispatchMainState);
+            });        
+    };
+
+    const getListTipologiaFattura = async(anno,mese) => {
+     
+        await getTipologieFatture(token, profilo.nonce, {mese,anno}).then((res)=>{
+            setTipologiaFatture(res.data);
+            if(filters.valuetipologiaFattura){
+                setValueTipologiaFattura(filters.valuetipologiaFattura);
+            }else{
+                setValueTipologiaFattura('');
+            }
+        }).catch((()=>{
+            setTipologiaFatture([]);
+            setValueTipologiaFattura("");
+            // manageError(err,dispatchMainState);
+        }));
+       
+            
+    };
+
+
+
+    const downloadListaFatturazione = async () => {
+        setShowDownloading(true);
+        await downloadFattureEnte(token,profilo.nonce, bodyFatturazioneDownload).then(response => response.blob()).then((response)=>{
+          
+            const title = `Documenti emessi/ ${gridData[0]?.ragionesociale}/${month[bodyFatturazioneDownload.mese - 1]}/${bodyFatturazioneDownload.anno}.xlsx`;
+         
+            saveAs(response,title);
+            setShowDownloading(false);
+        }).catch(((err)=>{
+            setShowDownloading(false);
+            manageError(err,dispatchMainState);
+        }));
     };
 
     const clearOnChangeFilter = () => {
-        setData([]);
+        setGridData([]);
         setTotalNotifiche(0);
         setPage(0);
         setRowsPerPage(10); 
@@ -330,7 +207,7 @@ const DocEm : React.FC = () =>{
 
     const onButtonFiltra = () =>{
         updateFilters({
-            pathPage:profilePath,
+            pathPage:PathPf.DOCUMENTI_EMESSI,
             body:bodyRel,
             textValue,
             valueAutocomplete:valueAutocomplete,
@@ -341,20 +218,16 @@ const DocEm : React.FC = () =>{
         setPage(0);
         setRowsPerPage(10);
         setBodyDownload(bodyRel);
-        getlista(bodyRel,1,10); 
+        getlistaFatturazione(bodyRel); 
     };
-
+    
     const onButtonAnnulla = async () => {
         let firstMonth = {mese:0};
-        if(enti){
-            firstMonth = await getMesiRelSend(token, profilo.nonce,{anno:arrayYears[0]?.toString()})
-                .then(res => res.data[0])
-                .catch(err => manageError(err,dispatchMainState));
-        }else if(profilo.auth === 'PAGOPA'){
-            firstMonth = await getMesiRel(token, profilo.nonce,{anno:arrayYears[0]?.toString()})
-                .then(res => res.data[0])
-                .catch(err => manageError(err,dispatchMainState));
-        }
+           
+        firstMonth = await getMesiRelSend(token, profilo.nonce,{anno:arrayYears[0]?.toString()})
+            .then(res => res.data[0])
+            .catch(err => manageError(err,dispatchMainState));
+       
         setBodyRel({
             anno:arrayYears[0],
             mese:firstMonth.mese,
@@ -378,16 +251,16 @@ const DocEm : React.FC = () =>{
         setPage(0);
         setRowsPerPage(10);
         setValueAutocomplete([]);
-        getlista({
+        getlistaFatturazione({
             anno:arrayYears[0],
             mese:firstMonth.mese,
             tipologiaFattura:null,
             idEnti:[],
             idContratto:null,
             caricata:null
-        },1,10);
+        });
         resetFilters();
-    
+        
     };
 
     const handleChangePage = (
@@ -395,10 +268,10 @@ const DocEm : React.FC = () =>{
         newPage: number,
     ) => {
         const realPage = newPage + 1;
-        getlista(bodyRel,realPage, rowsPerPage);
+        getlistaFatturazione(bodyRel);
         setPage(newPage);
         updateFilters({
-            pathPage:profilePath,
+            pathPage:PathPf.DOCUMENTI_EMESSI,
             body:bodyDownload,
             textValue,
             valueAutocomplete:valueAutocomplete,
@@ -407,16 +280,16 @@ const DocEm : React.FC = () =>{
             valuetipologiaFattura
         });
     };
-                    
+                        
     const handleChangeRowsPerPage = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
         const realPage = page + 1;
-        getlista(bodyRel,realPage,parseInt(event.target.value, 10));
+        getlistaFatturazione(bodyRel);
         updateFilters({
-            pathPage:profilePath,
+            pathPage:PathPf.DOCUMENTI_EMESSI,
             body:bodyDownload,
             textValue,
             valueAutocomplete:valueAutocomplete,
@@ -425,176 +298,15 @@ const DocEm : React.FC = () =>{
             valuetipologiaFattura
         });
     };
-   
+
     const setIdRel = async(el) => {
         handleModifyMainState({relSelected:el});
-        navigate(profilePath);
+        navigate(PathPf.DOCUMENTI_EMESSI);
     };  
-
-    const getListTipologiaFattura = async(anno,mese) => {
-        if(enti){
-            await getTipologieFatture(token, profilo.nonce, {mese,anno}).then((res)=>{
-                setTipologiaFatture(res.data);
-                if(filters.valuetipologiaFattura){
-                    setValueTipologiaFattura(filters.valuetipologiaFattura);
-                }else{
-                    setValueTipologiaFattura('');
-                }
-            }).catch((()=>{
-                setTipologiaFatture([]);
-                setValueTipologiaFattura("");
-                // manageError(err,dispatchMainState);
-            }));
-        }else if(profilo.auth === 'PAGOPA'){
-            await getTipologieFatturePagoPa(token, profilo.nonce, {mese,anno}).then((res)=>{
-                setTipologiaFatture(res.data);
-                if(filters.valuetipologiaFattura){
-                    setValueTipologiaFattura(filters.valuetipologiaFattura);
-                }else{
-                    setValueTipologiaFattura('');
-                } 
-            }).catch((()=>{
-                setTipologiaFatture([]);
-                setValueTipologiaFattura("");
-                // manageError(err,dispatchMainState);
-            }));
-        }
-        
-    };
-
-    const getListTipologiaFatturaOnChangeMonthYear = async(mese,anno) => {
-        if(enti){
-            await getTipologieFatture(token, profilo.nonce, {mese,anno}).then((res)=>{
-                setTipologiaFatture(res.data);
-                setValueTipologiaFattura('');
-                setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
-                setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
-            }).catch((()=>{
-                setTipologiaFatture([]);
-                setValueTipologiaFattura('');
-                setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
-                setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
-               
-                // manageError(err,dispatchMainState);
-            }));
-        }else if(profilo.auth === 'PAGOPA'){
-            await getTipologieFatturePagoPa(token, profilo.nonce, {mese,anno}).then((res)=>{
-                setTipologiaFatture(res.data);
-                setValueTipologiaFattura('');
-                setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
-                setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
-            }).catch((()=>{
-                setTipologiaFatture([]);
-                setValueTipologiaFattura('');
-                setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
-                setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
-                // manageError(err,dispatchMainState);
-            }));
-
-        }
-        setGetListaRelRunning(false);
-    };
-
-    const downloadListaRelExel = async() =>{
-        setShowLoading(true);
-        if(enti){
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const {idEnti,idTipoContratto, ...newBody} = bodyDownload;
-            await downloadListaRel(token,profilo.nonce,newBody).then((res)=>{
-                saveAs("data:text/plain;base64," + res.data.documento,`Regolari esecuzioni/${data[0]?.ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]}/${bodyDownload.anno}.xlsx` );
-                setShowLoading(false);
-            }).catch((err)=>{
-                setShowLoading(false);
-                manageError(err,dispatchMainState);
-            }); 
-        }else{
-            await downloadListaRelPagopa(token,profilo.nonce,bodyDownload).then((res)=>{
-                let fileName = `Regolari esecuzioni/${mesiWithZero[bodyDownload.mese-1]}/${bodyDownload.anno}.xlsx`;
-                if(bodyDownload.idEnti.length === 1){
-                    fileName = `Regolari esecuzioni/${data[0]?.ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]}/${bodyDownload.anno}.xlsx`;
-                }
-                saveAs("data:text/plain;base64," + res.data.documento,fileName );
-                setShowLoading(false);
-            }).catch((err)=>{
-                setShowLoading(false);
-                manageErrorDownload('404',dispatchMainState);
-            }); 
-        }
-    };
-
-    const downloadQuadratura = async() => {
-        setShowLoading(true);
-        downloadQuadraturaRelPagopa(token,profilo.nonce,bodyDownload).then((res)=>{
-            let fileName = `Quadratura regolari esecuzioni/${mesiWithZero[bodyDownload.mese-1]}/${bodyDownload.anno}.xlsx`;
-            if(bodyDownload.idEnti.length === 1){
-                fileName = `Quadratura regolare esecuzione/${data[0]?.ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]}/${bodyDownload.anno}.xlsx`;
-            }
-            saveAs("data:text/plain;base64," + res.data.documento,fileName );
-            setShowLoading(false);
-        }).catch((err)=>{
-            setShowLoading(false);
-            if(err){
-                manageErrorDownload('404',dispatchMainState);
-            }
-           
-        });  
-    };
   
-    const downloadListaPdfPagopa = async() =>{
-        setShowLoading(true);
-        await downloadListaRelPdfZipPagopa(token,profilo.nonce,bodyRel)
-            .then((response) => {
-                if (response.ok) {
-                    return response.blob();
-                }
-                setShowLoading(false);
-                throw '404';
-            }).then(blob => {
-                let fileName = `REL /Firmate/${mesiWithZero[bodyRel.mese -1]}/${bodyRel.anno}.zip`;
-                if(bodyDownload.idEnti.length === 1){
-                    fileName = `REL /Firmate/${data[0]?.ragioneSociale}/${mesiWithZero[bodyRel.mese -1]}/${bodyRel.anno}.zip`;
-                }
-                saveAs(blob,fileName );
-                setShowLoading(false);
-            }).catch(() => {
-                manageErrorDownload('404',dispatchMainState);
-            
-            });
-    };
-
-    const downloadReport = async () => {
-        setShowLoading(true);
-        await downloadReportRelPagoPa(token, profilo.nonce).then((response) => {
-            if (response.ok) {
-                return response.blob();
-            }
-            throw '404';
-        }).then((res)=>{
-            const fileName = `Report regolare esecuzione non fatturate.xlsx`;
-            saveAs(res,fileName );
-            setShowLoading(false);
-        }).catch(()=>{
-            manageErrorDownload('404',dispatchMainState);
-            setShowLoading(false);
-        });
-    };
-
-    const statoPdf = [
-        'Non Caricata',
-        'Firmata',
-        'Invalidata'
-    ];
-
-
-    let headerGridKeys = ['Ragione Sociale','Tipologia Fattura',"Tipo Contratto", 'Reg. Es. PDF','ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale',''];
-    if(profilo.auth !== "PAGOPA"){
-        headerGridKeys = ['Ragione Sociale','Tipologia Fattura', 'Stato','ID Contratto','Anno','Mese','Tot. Analogico','Tot. Digitale','Tot. Not. Analogico','Tot. Not. Digitali','Totale',''];
-    }
-
-    const  hiddenAnnullaFiltri = bodyRel.tipologiaFattura === null && bodyRel.idEnti?.length === 0 && bodyRel.caricata === null && bodyRel.idTipoContratto === null; 
     return (
         <MainBoxStyled title={"Documenti contabili emessi"} actionButton={[{
-            onButtonClick: downloadReport,
+            onButtonClick: downloadListaFatturazione,
             variant: "outlined",
             icon:{name:"circle_arrow_icon", sx:{} },
             withText:false,
@@ -610,12 +322,12 @@ const DocEm : React.FC = () =>{
                     keyDescription={"anno"}
                     keyValue={"anno"}
                     keyBody={"anno"}
-                    arrayValues={arrayYears}
+                    arrayValues={[2025,2026]}
                     extraCodeOnChange={(e)=>{
                         const value = Number(e);
                         setBodyRel((prev)=> ({...prev, ...{anno:value}}));
-                        getMesi(value.toString());
-                        getListTipologiaFatturaOnChangeMonthYear(bodyRel.mese,bodyRel.anno);
+                        //getMesi(value.toString());
+                        // getListTipologiaFatturaOnChangeMonthYear(bodyRel.mese,bodyRel.anno);
                     }}
                 ></MainFilter>
                 <MainFilter 
@@ -627,11 +339,11 @@ const DocEm : React.FC = () =>{
                     keyValue={"mese"}
                     keyDescription='descrizione'
                     keyBody={"mese"}
-                    arrayValues={arrayMonths}
+                    arrayValues={[{mese:1,descrizione:"Gennaio"},{mese:2,descrizione:"Febbrio"}]}
                     extraCodeOnChange={(e)=>{
                         const value = Number(e);
                         setBodyRel((prev)=> ({...prev, ...{mese:value}})); 
-                        getListTipologiaFatturaOnChangeMonthYear(value,bodyRel.anno);            
+                        // getListTipologiaFatturaOnChangeMonthYear(value,bodyRel.anno);            
                     }}
                 ></MainFilter>
                 <MainFilter 
@@ -652,29 +364,17 @@ const DocEm : React.FC = () =>{
             <FilterActionButtons 
                 onButtonFiltra={onButtonFiltra} 
                 onButtonAnnulla={onButtonAnnulla} 
-                statusAnnulla={hiddenAnnullaFiltri ? "hidden":"show"} 
+                statusAnnulla={statusAnnulla ? "hidden":"show"} 
             ></FilterActionButtons>
             <ActionTopGrid
                 actionButtonRight={[{
-                    onButtonClick:downloadListaPdfPagopa,
-                    variant: "outlined",
-                    label: "Download documenti firmati",
-                    icon:{name:"download"},
-                    disabled:(data.length === 0 || getListaRelRunning  || !disableDownloadListaPdf)
-                },{
-                    onButtonClick:downloadListaRelExel,
+                    onButtonClick:downloadListaFatturazione,
                     variant: "outlined",
                     label: "Download risultati",
                     icon:{name:"download"},
-                    disabled:(data.length === 0||getListaRelRunning)
+                    disabled:(data.length === 0)
                 }]}
-                actionButtonLeft={profilo.auth === 'PAGOPA'?[{
-                    onButtonClick:downloadQuadratura,
-                    variant: "outlined",
-                    label: "Quadratura notifiche Rel",
-                    icon:{name:"download"},
-                    disabled:(data.length === 0||getListaRelRunning)
-                }]:[]}/>
+                actionButtonLeft={[]}/>
            
             <GridCustom
                 nameParameterApi='idTestata'
@@ -696,7 +396,7 @@ const DocEm : React.FC = () =>{
             <ModalRedirect
                 setOpen={setOpenModalRedirect} 
                 open={openModalRedirect}
-                sentence={`Per poter visualizzare il dettaglio REL è obbligatorio fornire i seguenti dati di fatturazione:`}>
+                sentence={`Per poter visualizzare il dettaglio dei Documenti EMESSI è obbligatorio fornire i seguenti dati di fatturazione:`}>
             </ModalRedirect>
             <ModalLoading 
                 open={getListaRelRunning} 
