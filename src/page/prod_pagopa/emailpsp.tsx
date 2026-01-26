@@ -223,6 +223,11 @@ const EmailPsp:React.FC = () => {
                     keyValue={"year"}
                     keyBody={"year"}
                     arrayValues={yearOnSelect}
+                    extraCodeOnChangeArray={(value)=>{
+                        setBodyGetLista((prev) => ({...prev,...{anno:value}}));
+                        setValueQuarters([]);
+                    }}
+                     
                 ></MainFilter>
                 <MainFilter 
                     filterName={"multi_checkbox"}

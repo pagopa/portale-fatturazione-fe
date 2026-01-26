@@ -10,6 +10,7 @@ export const headerMailPsp: GridColDef[] = [
         headerClassName: 'super-app-theme--header',
         headerAlign: 'left',
         sortable: false,
+        filterable: false,
         align: 'left',
         renderCell: (param: any) => (
             <Tooltip
@@ -32,6 +33,7 @@ export const headerMailPsp: GridColDef[] = [
         headerAlign: 'center',
         align: 'center',
         sortable: false,
+        filterable: false,
     },
     {
         field: 'trimestre',
@@ -41,6 +43,7 @@ export const headerMailPsp: GridColDef[] = [
         headerAlign: 'center',
         align: 'center',
         sortable: false,
+        filterable: false,
     },
     {
         field: 'tipologia',
@@ -50,6 +53,7 @@ export const headerMailPsp: GridColDef[] = [
         headerAlign: 'center',
         align: 'center',
         sortable: false,
+        filterable: false,
         renderCell: (param: any) => (
             <Chip
                 variant="outlined"
@@ -66,6 +70,7 @@ export const headerMailPsp: GridColDef[] = [
         headerAlign: 'center',
         align: 'center',
         sortable: false,
+        filterable: false,
     },
     {
         field: 'email',
@@ -75,6 +80,7 @@ export const headerMailPsp: GridColDef[] = [
         headerAlign: 'left',
         align: 'left',
         sortable: false,
+        filterable: false,
     },
     {
         field: 'dataEvento',
@@ -84,6 +90,7 @@ export const headerMailPsp: GridColDef[] = [
         headerAlign: 'center',
         align: 'center',
         sortable: false,
+        filterable: false,
         valueFormatter: ({ value }) => value?.split('T')[0] || '--',
     },
     {
@@ -94,6 +101,7 @@ export const headerMailPsp: GridColDef[] = [
         headerAlign: 'center',
         align: 'center',
         sortable: false,
+        filterable: false,
         renderCell: (param: any) => (
             <Chip
                 label={param.value ? 'Inviato' : 'Non inviato'}
@@ -110,6 +118,7 @@ export const headerMailPsp: GridColDef[] = [
         headerAlign: 'center',
         align: 'center',
         sortable: false,
+        filterable: false,
         valueFormatter: ({ value }) => value ? value.slice(0, 10) + '...' : '--',
     },
 ];
