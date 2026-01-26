@@ -62,7 +62,7 @@ const TerzoContainerTrimestrale  = ({dataModulo, dataModifica, meseAnno}) => {
     const labelDigitale = labelCategorie.filter((obj) => obj.idCategoriaSpedizione === 2);
     const labelAnalogica = labelCategorie.filter((obj) => obj.idCategoriaSpedizione === 1);
 
-    const sum = (dataModulo[0]?.totale || 0) + (dataModulo[1]?.totale || 0);
+    const sum = (dataModulo[0]?.totaleCategoria || 0) + (dataModulo[1]?.totaleCategoria || 0);
     const sumFixed2Decimal = sum?.toLocaleString("de-DE", { style: "currency", currency: "EUR" });
     
     if(configurazioneLoading){
@@ -103,7 +103,7 @@ const TerzoContainerTrimestrale  = ({dataModulo, dataModifica, meseAnno}) => {
                         variant="caption-semibold"
                         sx={{fontSize:'18px'}}
                     >
-                        {dataModulo[1]?.totale?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })|| '0 €'} 
+                        {dataModulo[1]?.totaleCategoria?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })|| '0 €'} 
                     </Typography>
                 </Grid>
             </Grid>
@@ -131,7 +131,7 @@ const TerzoContainerTrimestrale  = ({dataModulo, dataModifica, meseAnno}) => {
                     <Typography
                         sx={{fontSize:'18px', textAlign:'center'}}
                     >
-                        {dataModulo[0]?.totale?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })|| '0 €'} 
+                        {dataModulo[0]?.totaleCategoria?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })|| '0 €'} 
                     </Typography>
                 </Grid>
             </Grid>
