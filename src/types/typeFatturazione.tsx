@@ -113,12 +113,6 @@ export interface ModalResetFilterProps {
     filterNotExecuted:BodyFatturazione
 }
 
-export interface GridCollapsible{
-    data:FattureObj[],
-    showedData:FattureObj[],
-    setShowedData:any,
-    headerNames:HeaderCollapsible[]
-}
 
 export type HeaderCollapsible = {
     name:string,

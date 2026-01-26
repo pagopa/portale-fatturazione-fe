@@ -15,11 +15,13 @@ export const initialState:MainState =  {
     primoInserimetoCommessa:true,// la commessa mese corrente è stata inserita?
     statusPageDatiFatturazione:'immutable',
     statusPageInserimentoCommessa:'immutable',
+    datiFatturazioneNotCompleted:false,
     relSelected:{
         nomeEnteClickOn:'',
         mese:0,
         anno:0,
-        idElement:''
+        idElement:'',
+        id:"",
     },
     apiError:null,
     authenticated:false,

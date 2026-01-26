@@ -164,7 +164,9 @@ const SideNavEnte: React.FC = () => {
                     </Box>
                 </ListItemButton>
                 }
-                <ListItemButton selected={selectedIndex === 9} onClick={()=>handleListItemClick(PathPf.LISTA_STORICO_DOCUMENTI)}>
+                <ListItemButton selected={selectedIndex === 9} onClick={()=>{
+                    setOpenDocContabili(true);
+                    handleListItemClick(PathPf.DOCUMENTI_SOSPESI);}}>
                     <ListItemIcon>
                         <PageviewIcon fontSize="inherit" />
                     </ListItemIcon>

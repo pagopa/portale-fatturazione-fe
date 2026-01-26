@@ -16,6 +16,7 @@ import { anniMesiDocumentiEmessi, downloadFattureEnte, getFatturazioneEnte, getT
 import CollapsibleTableStandard from "../../components/reusableComponents/grid/gridCollapsible/gridCollapsibleDocEmessiEnte";
 import { headersObjGrid } from "../../assets/configurations/config_GridFatturazione";
 import { ManageErrorResponse } from "../../types/typesGeneral";
+import { Paper, Typography } from "@mui/material";
 
 
 export type BodyDocumentiEmessiEnte = {
@@ -337,6 +338,14 @@ const DocEm : React.FC = () =>{
                 onButtonAnnulla={onButtonAnnulla} 
                 statusAnnulla={statusAnnulla ? "hidden":"show"} 
             ></FilterActionButtons>
+            <Paper sx={{ p: 2, mb: 2 }}>
+                <Typography variant="body2" color="text.secondary">
+   Totale fatturato
+                </Typography>
+                <Typography variant="h6">
+                    {(300).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
+                </Typography>
+            </Paper>
             <ActionTopGrid
                 actionButtonRight={[{
                     onButtonClick:downloadListaFatturazione,

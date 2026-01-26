@@ -17,6 +17,10 @@ import { Rel, BodyRel } from "../../types/typeRel";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
+import { Paper, Typography } from "@mui/material";
+import CollapsibleTableStandard from "../../components/reusableComponents/grid/gridCollapsible/gridCollapsibleDocEmessiEnte";
+import { headersObjGrid } from "../../assets/configurations/config_GridFatturazione";
+import { getFatturazioneEnte } from "../../api/apiSelfcare/apiDocEmessiSE/api";
 
 
 const DocSos : React.FC = () =>{
@@ -44,6 +48,10 @@ const DocSos : React.FC = () =>{
     };
 
     const [page, setPage] = useState(0);
+
+    const [gridData, setGridData] = useState<any[]>([]);
+    const [showedData, setShowedData] = useState<any[]>([]);
+    const [showLoadingGrid,setShowLoadingGrid] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [showLoading, setShowLoading] = useState(false);
     const [totalNotifiche, setTotalNotifiche]  = useState(0);
@@ -462,38 +470,24 @@ const DocSos : React.FC = () =>{
         
     };
 
-    const getListTipologiaFatturaOnChangeMonthYear = async(mese,anno) => {
-        if(enti){
-            await getTipologieFatture(token, profilo.nonce, {mese,anno}).then((res)=>{
-                setTipologiaFatture(res.data);
-                setValueTipologiaFattura('');
-                setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
-                setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
-            }).catch((()=>{
-                setTipologiaFatture([]);
-                setValueTipologiaFattura('');
-                setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
-                setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
-               
-                // manageError(err,dispatchMainState);
-            }));
-        }else if(profilo.auth === 'PAGOPA'){
-            await getTipologieFatturePagoPa(token, profilo.nonce, {mese,anno}).then((res)=>{
-                setTipologiaFatture(res.data);
-                setValueTipologiaFattura('');
-                setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
-                setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
-            }).catch((()=>{
-                setTipologiaFatture([]);
-                setValueTipologiaFattura('');
-                setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
-                setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
-                // manageError(err,dispatchMainState);
-            }));
-
-        }
-        setGetListaRelRunning(false);
+    const getlistaFatturazione = async (body) => {
+        setShowLoadingGrid(true);
+   
+        await  getFatturazioneEnte(token,profilo.nonce,body)
+            .then((res)=>{
+                const orderDataCustom = res.data.map(el => el.fattura).map(obj=> ({...{id:Math.random()},...obj}));
+                setGridData(orderDataCustom);
+                setShowLoadingGrid(false);
+                //setBodyFatturazioneDownload(bodyFatturazione);
+            }).catch((error)=>{
+                if(error?.response?.status === 404){
+                    setGridData([]);
+                }
+                setShowLoadingGrid(false);
+                manageError(error, dispatchMainState);
+            });        
     };
+   
 
     const downloadListaRelExel = async() =>{
         setShowLoading(true);
@@ -615,7 +609,7 @@ const DocSos : React.FC = () =>{
                         const value = Number(e);
                         setBodyRel((prev)=> ({...prev, ...{anno:value}}));
                         getMesi(value.toString());
-                        getListTipologiaFatturaOnChangeMonthYear(bodyRel.mese,bodyRel.anno);
+                        getListTipologiaFattura(bodyRel.mese,bodyRel.anno);
                     }}
                 ></MainFilter>
                 <MainFilter 
@@ -631,7 +625,7 @@ const DocSos : React.FC = () =>{
                     extraCodeOnChange={(e)=>{
                         const value = Number(e);
                         setBodyRel((prev)=> ({...prev, ...{mese:value}})); 
-                        getListTipologiaFatturaOnChangeMonthYear(value,bodyRel.anno);            
+                        getListTipologiaFattura(value,bodyRel.anno);            
                     }}
                 ></MainFilter>
                 <MainFilter 
@@ -654,14 +648,16 @@ const DocSos : React.FC = () =>{
                 onButtonAnnulla={onButtonAnnulla} 
                 statusAnnulla={hiddenAnnullaFiltri ? "hidden":"show"} 
             ></FilterActionButtons>
+            <Paper sx={{ p: 2, mb: 2 }}>
+                <Typography variant="body2" color="text.secondary">
+   Credito sospeso
+                </Typography>
+                <Typography variant="h6">
+                    {(300).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
+                </Typography>
+            </Paper>
             <ActionTopGrid
                 actionButtonRight={[{
-                    onButtonClick:downloadListaPdfPagopa,
-                    variant: "outlined",
-                    label: "Download documenti firmati",
-                    icon:{name:"download"},
-                    disabled:(data.length === 0 || getListaRelRunning  || !disableDownloadListaPdf)
-                },{
                     onButtonClick:downloadListaRelExel,
                     variant: "outlined",
                     label: "Download risultati",
@@ -675,19 +671,12 @@ const DocSos : React.FC = () =>{
                     icon:{name:"download"},
                     disabled:(data.length === 0||getListaRelRunning)
                 }]:[]}/>
-           
-            <GridCustom
-                nameParameterApi='idTestata'
-                elements={data}
-                changePage={handleChangePage}
-                changeRow={handleChangeRowsPerPage} 
-                total={totalNotifiche}
-                page={page}
-                rows={rowsPerPage}
-                headerNames={headerGridKeys}
-                apiGet={setIdRel}
-                disabled={getListaRelRunning}
-                widthCustomSize="2000px"></GridCustom>
+            
+            <CollapsibleTableStandard 
+                data={gridData}
+                showedData={showedData}
+                setShowedData={setShowedData}
+                headerNames={headersObjGrid}></CollapsibleTableStandard>
             <ModalLoading 
                 open={showLoading} 
                 setOpen={setShowLoading} 
