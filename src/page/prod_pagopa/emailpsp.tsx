@@ -1,14 +1,11 @@
 import { AutocompleteMultiselect, OptionMultiselectCheckboxPsp, OptionMultiselectCheckboxQarter } from "../../types/typeAngraficaPsp";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { PathPf } from "../../types/enum";
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { useEffect, useState } from "react";
 import { getQuartersDocContabiliPa, getYearsDocContabiliPa } from "../../api/apiPagoPa/documentiContabiliPA/api";
 import { manageError } from "../../api/api";
 import { getListaNamePsp } from "../../api/apiPagoPa/anagraficaPspPA/api";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
-import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
@@ -22,6 +19,18 @@ export interface RequestBodyMailPsp{
     quarters: string[],
     year: string
 }
+
+export type EventoPsp = {
+    psp: string;
+    tipologia: string;
+    anno: number;
+    trimestre: string;
+    dataEvento: string;
+    email: string;
+    messaggio: string;
+    ragioneSociale: string;
+    invio: boolean;
+};
 
 const EmailPsp:React.FC = () => {
 
@@ -48,7 +57,7 @@ const EmailPsp:React.FC = () => {
         quarters: [],
         year: ''
     });
-    const [gridData, setGridData] = useState<any[]>([]);
+    const [gridData, setGridData] = useState<EventoPsp[]>([]);
     const [yearOnSelect,setYearOnSelect] = useState<string[]>([]);
     const [valueQuarters, setValueQuarters] = useState<OptionMultiselectCheckboxQarter[]>([]);
     const [dataSelect, setDataSelect] = useState<OptionMultiselectCheckboxPsp[]>([]);
@@ -70,17 +79,15 @@ const EmailPsp:React.FC = () => {
                 setYearOnSelect(res.data);
                 if(res.data.length > 0){
                     if(isInitialRender.current && Object.keys(filters).length > 0){
+                        setShowLoading(true);
                         setBodyGetLista(filters.body);
                         setFiltersDownload(filters.body);
+                       
+                        getQuarters(filters.body.year); 
+                        getListaMail(filters.body);
                         setValueAutocomplete(filters.valueAutocomplete);
                         setTextValue(filters.textValue);
-                        // getListaKpiGrid(filters.body);
-                        setValueQuarters(filters.valueQuarters);
-                        //setPage(filters.page);
-                        //setRowsPerPage(filters.rows);
-                        getQuarters(filters.body.year);
-    
-                            
+                        setInfoPageMailPsp(filters?.infoPageMailPsp);
                     }else{
                         setBodyGetLista((prev) => ({...prev,...{year:res.data[0]}}));
                         setFiltersDownload((prev) => ({...prev,...{year:res.data[0]}}));
@@ -93,12 +100,14 @@ const EmailPsp:React.FC = () => {
             }));
     };
 
-
-    console.log({gridData});
-
     const getQuarters = async (y) =>{
         await getQuartersDocContabiliPa(token, profilo.nonce,{year:y})
             .then((res)=>{
+                if(isInitialRender.current && Object.keys(filters).length > 0){
+                    setValueQuarters(filters.valueQuarters);
+                }else{
+                    setValueQuarters([]);
+                }
                 setDataSelectQuarter(res.data);
                 isInitialRender.current = false;
             }).catch(((err)=>{
@@ -109,10 +118,14 @@ const EmailPsp:React.FC = () => {
             }));
     };
 
-    const listaNamePspOnSelect = async () =>{
-        await getListaNamePsp(token, profilo.nonce, {name:textValue} )
+    const listaNamePspOnSelect = async (text) =>{
+        await getListaNamePsp(token, profilo.nonce, {name:text} )
             .then((res)=>{
                 setDataSelect(res.data);
+                if(isInitialRender.current && Object.keys(filters).length > 0){
+                    setValueAutocomplete(filters.valueAutocomplete);
+                    
+                }
             }).catch(((err)=>{
                 setDataSelect([]);
                 manageError(err,dispatchMainState); 
@@ -123,9 +136,11 @@ const EmailPsp:React.FC = () => {
         await getListaMailPsp( body, token, profilo.nonce, )
             .then((res)=>{
                 setGridData(res.data);
+                setShowLoading(false);
              
             }).catch(((err)=>{
                 setGridData([]);
+                setShowLoading(false);
                 manageError(err,dispatchMainState); 
             }));
     };
@@ -135,11 +150,11 @@ const EmailPsp:React.FC = () => {
         await downloadListaMailPsp(filtersDownload,token,profilo.nonce).then(response => response.blob()).then((res) => {
             let fileName = '';
             const stringQuarterSelected = filtersDownload.quarters.map(el => "Q" + el.slice(5)).join("_");
-            const yearSelected = gridData[0].yearQuarter?.slice(0,4);
+            const yearSelected = gridData[0].anno;
             if(filtersDownload.contractIds.length === 1){
-                fileName = `Anagrafica PSP/${gridData[0].documentName}/${yearSelected}/${stringQuarterSelected}.xlsx`;
+                fileName = `Lista Email PSP/${gridData[0]?.ragioneSociale}/${yearSelected}/${stringQuarterSelected}.xlsx`;
             }else{
-                fileName = `Anagrafica PSP/${yearSelected}/${stringQuarterSelected}.xlsx`;
+                fileName = `Lista Email PSP/${yearSelected}/${stringQuarterSelected}.xlsx`;
             }
             saveAs( res,fileName );
             setShowLoading(false);
@@ -152,33 +167,33 @@ const EmailPsp:React.FC = () => {
     useEffect(()=>{
         const timer = setTimeout(() => {
             if(textValue.length >= 3){ 
-                listaNamePspOnSelect();
+                listaNamePspOnSelect(textValue);
             }
         }, 800);
         return () => clearTimeout(timer);
     },[textValue]);
 
-    
-    const clearOnChangeFilter = () => {
-        console.log("clear");
-    };
 
-       
     const onButtonFiltra = () =>{
+        setShowLoading(true);
+        setInfoPageMailPsp({ page: 0, pageSize: 10 });
         setFiltersDownload(bodyGetLista);
         getListaMail(bodyGetLista); 
+        console.log({textValue});
         updateFilters(
             {
                 body:bodyGetLista,
                 pathPage:PathPf.EMAIL_PSP,
-                textValue,
+                textValue:textValue,
                 valueAutocomplete,
                 valueQuarters,
-                yearOnSelect
+                infoPageMailPsp
             });
     };
 
     const onButtonAnnulla = () => {
+        setShowLoading(true);
+        setInfoPageMailPsp({ page: 0, pageSize: 10 });
         const newBody = {
             contractIds: [],
             quarters: [],
@@ -186,22 +201,25 @@ const EmailPsp:React.FC = () => {
         getListaMail(newBody);
         setBodyGetLista(newBody);
         setFiltersDownload(newBody);
-        setDataSelect([]);
         setValueAutocomplete([]);
         setValueQuarters([]);
         resetFilters();
     };
 
+    const clearOnChangeFilter = () => {
+        setGridData([]);
+        setInfoPageMailPsp({ page: 0, pageSize: 10 });
+    };
 
     const onChangePageOrRowGrid = (e) => {
         updateFilters(
             {
-                body:bodyGetLista,
                 pathPage:PathPf.EMAIL_PSP,
-                textValue,
+                infoPageMailPsp:e,
+                body:bodyGetLista,
+                textValue:textValue,
                 valueAutocomplete,
-                page:e.page,
-                rows:e.pageSize
+                valueQuarters
             });
         setInfoPageMailPsp(e);
     };
@@ -223,9 +241,9 @@ const EmailPsp:React.FC = () => {
                     keyValue={"year"}
                     keyBody={"year"}
                     arrayValues={yearOnSelect}
-                    extraCodeOnChangeArray={(value)=>{
-                        setBodyGetLista((prev) => ({...prev,...{anno:value}}));
-                        setValueQuarters([]);
+                    extraCodeOnChange={(value)=>{
+                        getQuarters(value);
+                        setBodyGetLista((prev) => ({...prev,...{year:value,quarters:[]}}));
                     }}
                      
                 ></MainFilter>
@@ -236,7 +254,6 @@ const EmailPsp:React.FC = () => {
                     setBody={setBodyGetLista}
                     body={bodyGetLista}
                     dataSelect={dataSelectQuarter}
-                    setTextValue={setTextValue}
                     textValue={textValue}
                     valueAutocomplete={valueQuarters}
                     setValueAutocomplete={setValueQuarters}
@@ -281,26 +298,29 @@ const EmailPsp:React.FC = () => {
                     disabled:( gridData.length === 0 || getListaLoading )
                 }]}
             />      
-            <div className="mt-1 mb-5" style={{ width: '100%'}}>
-                <DataGrid sx={{
-                    minHeight:"400px",
-                    '& .MuiDataGrid-virtualScroller': {
-                        backgroundColor: 'white',
-                    },
-                    "& .MuiDataGrid-row": {
-                        borderTop: "4px solid #F2F2F2",
-                        borderBottom: "2px solid #F2F2F2",
-                    }
-                }}
-                rowHeight={80}
-                rows={gridData} 
-                columns={headerMailPsp}
-                getRowId={(row) => `${row.messaggio}`}
-                onPaginationModelChange={(e)=> onChangePageOrRowGrid(e)}
-                paginationModel={infoPageMailPsp}
-                pageSizeOptions={[10, 25, 50,100]}
-                />
-            </div> 
+        
+            <DataGrid sx={{
+                height:gridData.length < 5 ?"400px" :"auto",
+                '& .MuiDataGrid-virtualScroller': {
+                    backgroundColor: 'white',
+                },
+                "& .MuiDataGrid-row": {
+                    borderTop: "4px solid #F2F2F2",
+                    borderBottom: "2px solid #F2F2F2",
+                },
+                "& .MuiDataGrid-overlay": {
+                    backgroundColor: "white",
+                },
+            }}
+            rowHeight={80}
+            rows={gridData} 
+            columns={headerMailPsp}
+            getRowId={(row) => `${row.messaggio}`}
+            onPaginationModelChange={(e)=> onChangePageOrRowGrid(e)}
+            paginationModel={infoPageMailPsp}
+            pageSizeOptions={[10, 25, 50,100]}
+            />
+           
                       
             <ModalLoading 
                 open={showLoading} 
