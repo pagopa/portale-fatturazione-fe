@@ -49,7 +49,7 @@ export async function authVerifyIsLoggedEnte({ request }) {
     } 
 
    
-    if(result?.state?.mainState?.profilo.auth === "PAGOPA"){
+    if(result?.state?.mainState?.profilo.auth === "PAGOPA"&& result?.state?.mainState?.profilo.prodotto === "prod-pn"){
         return redirect(globalRedirect);
     }
                 
@@ -66,6 +66,22 @@ export async function authVerifyIsLoggedSend({ request }) {
     } 
 
     if(result?.state?.mainState?.profilo.auth === "SELFCARE"){
+        return redirect(globalRedirect);
+    }
+                
+    return null;
+}
+
+export async function authVerifyIsLoggedProdPn({ request }) {
+
+    const globalLocalStorage = localStorage.getItem('globalStatePF') || '{}';
+    const result =  JSON.parse(globalLocalStorage);
+
+    if(globalLocalStorage === "{}"){
+        return redirect(globalRedirect);
+    } 
+
+    if(result?.state?.mainState?.profilo.auth === "PAGOPA" && result?.state?.mainState?.profilo.prodotto === "prod-pagopa"){
         return redirect(globalRedirect);
     }
                 

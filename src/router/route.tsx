@@ -143,7 +143,7 @@ const router2 = createBrowserRouter([
             },
             {
                 path: "pn",
-                loader:authVerifyIsLoggedEnte,
+                loader:authVerifyIsLoggedSend,
                 Component: () => <LayoutAzure sideNav={<SideNavPagopa />} />,
                 children: [
                     { path:PathRoutePf.ANAGRAFICAPSP, Component: AnagraficaPsp },
