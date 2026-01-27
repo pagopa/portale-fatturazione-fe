@@ -51,10 +51,10 @@ import SideNavRecCon from '../layout/sideNavs/sideNavConRec';
 import { useGlobalStore } from '../store/context/useGlobalStore';
 import { createBrowserRouter } from 'react-router-dom';
 import { RoleBasedIndexRedirect } from './redirectRoute';
-import { useEffect, useState } from 'react';
-import { authVerify } from '../loaderRoutes/loaderAuthVerify';
 import Messaggi from '../page/messaggi';
 import EmailPsp from '../page/prod_pagopa/emailpsp';
+import { useEffect } from 'react';
+import { authVerify, authVerifyIsLoggedEnte, authVerifyIsLoggedSend } from '../loaderRoutes/loaderAuthVerify';
 
 const RouteProfile = () => {
     const mainState = useGlobalStore(state => state.mainState);
@@ -88,7 +88,6 @@ const router2 = createBrowserRouter([
         Component:LayoutLoggedOut,
         errorElement: <RouteErrorBoundary />,
         loader:authVerify,
-       
         children: [
             {
                 index: true,
@@ -116,6 +115,7 @@ const router2 = createBrowserRouter([
             },
             {
                 path: "send",
+                loader:authVerifyIsLoggedSend,
                 Component: () => <LayoutAzure sideNav={<SideNavSend />} />,
                 children: [
                     { path: PathRoutePf.LISTA_DATI_FATTURAZIONE, Component: PagoPaListaDatiFatturazione },
@@ -143,6 +143,7 @@ const router2 = createBrowserRouter([
             },
             {
                 path: "pn",
+                loader:authVerifyIsLoggedEnte,
                 Component: () => <LayoutAzure sideNav={<SideNavPagopa />} />,
                 children: [
                     { path:PathRoutePf.ANAGRAFICAPSP, Component: AnagraficaPsp },
@@ -155,6 +156,7 @@ const router2 = createBrowserRouter([
             },
             {
                 path: "ente",
+                loader:authVerifyIsLoggedEnte,
                 Component: () => <LayoutEnte sideNav={<SideNavEnte />} />,
                 children: [
                     {path: PathRoutePf.DATI_FATTURAZIONE,Component: AreaPersonaleUtenteEnte},
@@ -181,9 +183,7 @@ const router2 = createBrowserRouter([
             },
            
         ],
-    },
-    
-   
+    }, 
 ]);
 
 
