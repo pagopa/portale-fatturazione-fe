@@ -59,6 +59,7 @@ const DocEm : React.FC = () =>{
     const [showLoadingGrid,setShowLoadingGrid] = useState(false);
     const [showDownloading,setShowDownloading] = useState(false);
     const [valueMulitselectTipologie, setValueMultiselectTipologie] = useState<string[]>([]);
+    const [totaleHeader, setTotaleHeader] = useState(0);
     //____________________________________
 
 
@@ -119,13 +120,14 @@ const DocEm : React.FC = () =>{
             setYears(anni);
             
             const currentYear = anni[0];
-    
+            console.log(currentYear);
             if (isInitialRender.current && Object.keys(filters).length > 0) {
                 setYearMonths(mesi[filters.body.anno]);
                 setValueMultiselectTipologie(filters.valueMulitselectTipologie);
             }else {
                 setYearMonths(mesi[currentYear]);
                 setBodyFatturazione((prev)=> ({...prev,anno:currentYear}));//mese:mesi[currentYear][0]
+                setBodyFatturazioneDownload((prev)=> ({...prev,anno:currentYear}));
                 getTipologieFatturazione({anno:currentYear,});//mese:mesi[currentYear][0]
                 getlistaFatturazione({...bodyFatturazione,anno:currentYear});//,mese:mesi[currentYear][0]
             }
@@ -173,6 +175,7 @@ const DocEm : React.FC = () =>{
                         divisa:obj.divisa,
                         metodoPagamento:obj.metodoPagamento,
                         split:obj.split?.toString()|| "--",
+                        arrowDetails:"arrowDetails",
                         posizioni:obj.posizioni.map(el => {
                             return{
                                 "numerolinea": el.numerolinea,
@@ -186,6 +189,10 @@ const DocEm : React.FC = () =>{
                         })
                     };
                 });
+                const totaleSum = res.data
+                    .map(el => el.fattura)
+                    .reduce((acc, obj) => acc + (obj.totale ?? 0), 0);
+                setTotaleHeader(totaleSum);
                 setGridData(orderDataCustom);
                 setShowLoadingGrid(false);
                 setBodyFatturazioneDownload(bodyFatturazione);
@@ -193,6 +200,7 @@ const DocEm : React.FC = () =>{
             }).catch((error)=>{
                 if(error?.response?.status === 404){
                     setGridData([]);
+                    setTotaleHeader(0);
                 }
                 isInitialRender.current = false;
                 setShowLoadingGrid(false);
@@ -285,6 +293,15 @@ const DocEm : React.FC = () =>{
         });
     };
 
+    let bgHeader = "#E3E7EB";
+    if(totaleHeader === 0){
+        bgHeader = "#E3E7EB";
+    }else if(totaleHeader > 0){
+        bgHeader = "#F2FAF2";
+    }else if(totaleHeader < 0){
+        bgHeader = "#FB9EAC";
+    }
+
     const statusAnnulla = (bodyFatturazione.tipologiaFattura.length !== 0 || bodyFatturazione.mese !== null) ? false :true;
   
     return (
@@ -322,7 +339,6 @@ const DocEm : React.FC = () =>{
                         getTipologieFatturazione({anno:bodyFatturazione.anno,mese:Number(e)});
                         setValueMultiselectTipologie([]);
                     }}
-                    defaultValue={""}
                 ></MainFilter>
                 <MainFilter 
                     filterName={"multi_checkbox"}
@@ -348,12 +364,12 @@ const DocEm : React.FC = () =>{
                 onButtonAnnulla={onButtonAnnulla} 
                 statusAnnulla={statusAnnulla ? "hidden":"show"} 
             ></FilterActionButtons>
-            <Paper sx={{ p: 2, mb: 2 }}>
+            <Paper sx={{ p: 2, mb: 2,backgroundColor:bgHeader }}>
                 <Typography variant="body2" color="text.secondary">
-   Totale fatturato
+                    {`Totale fatturato/${bodyFatturazioneDownload.anno}`}
                 </Typography>
                 <Typography variant="h6">
-                    {(300).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
+                    {totaleHeader === 0 ? "--" :totaleHeader.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
                 </Typography>
             </Paper>
             <ActionTopGrid

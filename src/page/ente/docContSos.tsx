@@ -47,7 +47,7 @@ const DocSos : React.FC = () =>{
         updateFilters,
         resetFilters,
         isInitialRender
-    } = useSavedFilters(PathPf.DOCUMENTI_EMESSI,{});
+    } = useSavedFilters(PathPf.DOCUMENTI_SOSPESI,{});
 
 
     //______________________NEW_________________
@@ -114,6 +114,7 @@ const DocSos : React.FC = () =>{
             }else {
                 setYearMonths(mesi[currentYear]);
                 setBodyFatturazione((prev)=> ({...prev,anno:currentYear}));//mese:mesi[currentYear][0]
+                setBodyFatturazioneDownload((prev)=> ({...prev,anno:currentYear}));
                 getTipologieFatturazione({anno:currentYear,});//mese:mesi[currentYear][0]
                 getlistaFatturazione({...bodyFatturazione,anno:currentYear});//,mese:mesi[currentYear][0]
             }
@@ -151,7 +152,7 @@ const DocSos : React.FC = () =>{
                         id:Math.random(),
                         arrow:"",
                         dataFattura:obj.dataFattura !== null ? new Date(obj.dataFattura).toLocaleString().split(',')[0] : '--',
-                        stato:"Emesso",
+                        stato:"Sospesa",
                         tipologiaFattura:obj.tipologiaFattura,
                         identificativo:obj.identificativo,
                         tipocontratto:obj.tipocontratto,
@@ -161,6 +162,7 @@ const DocSos : React.FC = () =>{
                         divisa:obj.divisa,
                         metodoPagamento:obj.metodoPagamento,
                         split:obj.split?.toString()|| "--",
+                        arrowDetails:"arrowDetails",
                         posizioni:obj.posizioni.map(el => {
                             return{
                                 "numerolinea": el.numerolinea,
@@ -168,12 +170,17 @@ const DocSos : React.FC = () =>{
                                 "quantita": el.quantita,
                                 "prezzoUnitario": el.imponibile.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
                                 "imponibile": el.imponibile || "--",
-                                "periodoRiferimento": el.periodoRiferimento || "--"
+                                "periodoRiferimento": el.periodoRiferimento || "--",
+                               
                             };
                             
                         })
                     };
                 });
+                const totaleSum = res.data
+                    .map(el => el.fattura)
+                    .reduce((acc, obj) => acc + (obj.totale ?? 0), 0);
+                setTotaleHeader(totaleSum);
                 setGridData(orderDataCustom);
                 setShowLoadingGrid(false);
                 setBodyFatturazioneDownload(bodyFatturazione);
@@ -181,6 +188,7 @@ const DocSos : React.FC = () =>{
             }).catch((error)=>{
                 if(error?.response?.status === 404){
                     setGridData([]);
+                    setTotaleHeader(0);
                 }
                 isInitialRender.current = false;
                 setShowLoadingGrid(false);
@@ -191,9 +199,9 @@ const DocSos : React.FC = () =>{
     const downloadListaFatturazione = async () => {
         setShowDownloading(true);
         await downloadFattureEnte(token,profilo.nonce, bodyFatturazioneDownload).then(response => response.blob()).then((response)=>{
-            let title = `Documenti emessi/${bodyFatturazioneDownload.anno}.xlsx`;
+            let title = `Documenti sospesi/${bodyFatturazioneDownload.anno}.xlsx`;
             if(bodyFatturazioneDownload.mese){
-                title = `Documenti emessi/${month[bodyFatturazioneDownload.mese - 1]}/${bodyFatturazioneDownload.anno}.xlsx`;
+                title = `Documenti sospesi/${month[bodyFatturazioneDownload.mese - 1]}/${bodyFatturazioneDownload.anno}.xlsx`;
             }
             saveAs(response,title);
             setShowDownloading(false);
@@ -211,7 +219,7 @@ const DocSos : React.FC = () =>{
 
     const onButtonFiltra = () =>{
         updateFilters({
-            pathPage:PathPf.DOCUMENTI_EMESSI,
+            pathPage:PathPf.DOCUMENTI_SOSPESI,
             body:bodyFatturazione,
             page:0,
             rows:10
@@ -248,7 +256,7 @@ const DocSos : React.FC = () =>{
         getlistaFatturazione(bodyFatturazione);
         setPage(newPage);
         updateFilters({
-            pathPage:PathPf.DOCUMENTI_EMESSI,
+            pathPage:PathPf.DOCUMENTI_SOSPESI,
             body:bodyFatturazioneDownload,
        
             page:newPage,
@@ -264,7 +272,7 @@ const DocSos : React.FC = () =>{
         setPage(0);
         getlistaFatturazione(bodyFatturazione);
         updateFilters({
-            pathPage:PathPf.DOCUMENTI_EMESSI,
+            pathPage:PathPf.DOCUMENTI_SOSPESI,
             body:bodyFatturazione,
            
             page:0,
@@ -278,7 +286,7 @@ const DocSos : React.FC = () =>{
     if(totaleHeader === 0){
         bgHeader = "#E3E7EB";
     }else if(totaleHeader > 0){
-        bgHeader = "#B5E2B4";
+        bgHeader = "#F2FAF2";
     }else if(totaleHeader < 0){
         bgHeader = "#FB9EAC";
     }
@@ -288,7 +296,7 @@ const DocSos : React.FC = () =>{
     const statusAnnulla = (bodyFatturazione.tipologiaFattura.length !== 0 || bodyFatturazione.mese !== null) ? false :true;
   
     return (
-        <MainBoxStyled title={"Documenti contabili emessi"} actionButton={[]}>
+        <MainBoxStyled title={"Documenti contabili sospesi"} actionButton={[]}>
             <ResponsiveGridContainer >
                 <MainFilter 
                     filterName={"select_value_string"}
@@ -350,7 +358,7 @@ const DocSos : React.FC = () =>{
             ></FilterActionButtons>
             <Paper sx={{ p: 2, mb: 2, backgroundColor:bgHeader}}>
                 <Typography variant="body2" color="text.secondary">
-   Credito Sospeso
+                    {`Credito Sospeso/${bodyFatturazioneDownload.anno}`}
                 </Typography>
                 <Typography variant="h6">
                     {totaleHeader === 0 ? "--" :totaleHeader.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}

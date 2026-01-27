@@ -13,6 +13,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useState } from 'react';
 import { FattureObj, HeaderCollapsible } from '../../../../types/typeFatturazione';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 
 
@@ -41,6 +42,7 @@ const RowCollapsible = ({sliced,element ,headerNames, headerNamesCollapse}) => {
             
                 {
                     Object.values(sliced)?.map((value:any, i:number)=>{
+                        console.log({value});
                         const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
                         const valueEl = (i === 0 && value?.toString().length > 20) ? value?.toString().slice(0, 20) + '...' : value;
                         if(i === 0){
@@ -56,7 +58,13 @@ const RowCollapsible = ({sliced,element ,headerNames, headerNamesCollapse}) => {
                                     </IconButton>
                                 </TableCell>
                             );
-                        
+                        }else if(value === "arrowDetails"){
+                            
+                            return (
+                                <TableCell align="center" onClick={()=>{console.log("mimmo");}}>
+                                    <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
+                                </TableCell>
+                            );
                         }else{
                             return (
                                 <TableCell sx={cssFirstColum}  align={"center"}>{valueEl}</TableCell>

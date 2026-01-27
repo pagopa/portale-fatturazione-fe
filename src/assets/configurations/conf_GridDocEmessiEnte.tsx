@@ -22,6 +22,8 @@ export const headersDocumentiEmessiEnte : HeaderGridCustom[] = [
     {label:"Divisa",align:"center",width:"100px"},
     {label:"M. Pagamento",align:"center",width:"100px"},
     {label:"Split",align:"center",width:"100px"},
+    {label:"",align:"center",width:"80px"},
+
 ];
 
 export const headersDocumentiEmessiEnteCollapse : HeaderGridCustom[] = [
