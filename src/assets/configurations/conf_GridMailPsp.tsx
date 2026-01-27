@@ -5,10 +5,10 @@ export const headerMailPsp: GridColDef[] = [
 
     {
         field: 'ragioneSociale',
-        headerName: 'Ragione Sociale',
-        width: 220,
+        headerName: 'Nome PSP',
+        width: 300,
         headerClassName: 'super-app-theme--header',
-        headerAlign: 'left',
+        headerAlign: 'center',
         sortable: false,
         filterable: false,
         align: 'left',
@@ -18,17 +18,16 @@ export const headerMailPsp: GridColDef[] = [
             >
                 <span className="text-primary fw-bolder">
                     {param.row.ragioneSociale?.length > 20
-                        ? param.row.ragioneSociale.slice(0, 20) + '...'
+                        ? param.row.ragioneSociale.slice(0, 30) + '...'
                         : param.row.ragioneSociale}
                 </span>
             </Tooltip>
         ),
     },
-
     {
-        field: 'anno',
-        headerName: 'Anno',
-        width: 100,
+        field: 'psp',
+        headerName: 'ID Contratto',
+        width: 160,
         headerClassName: 'super-app-theme--header',
         headerAlign: 'center',
         align: 'center',
@@ -46,53 +45,28 @@ export const headerMailPsp: GridColDef[] = [
         filterable: false,
     },
     {
-        field: 'tipologia',
-        headerName: 'Tipologia',
-        width: 150,
+        field: 'dataEvento',
+        headerName: 'Data Invio',
+        width: 200,
         headerClassName: 'super-app-theme--header',
         headerAlign: 'center',
         align: 'center',
         sortable: false,
         filterable: false,
-        renderCell: (param: any) => (
-            <Chip
-                variant="outlined"
-                label={param.value}
-                sx={{ fontWeight: 600 }}
-            />
-        ),
-    },
-    {
-        field: 'psp',
-        headerName: 'PSP',
-        width: 160,
-        headerClassName: 'super-app-theme--header',
-        headerAlign: 'center',
-        align: 'center',
-        sortable: false,
-        filterable: false,
+        valueFormatter: ({ value }) => value?.replaceAll("T", "-") || '--',
     },
     {
         field: 'email',
         headerName: 'Email',
-        width: 220,
-        headerClassName: 'super-app-theme--header',
-        headerAlign: 'left',
-        align: 'left',
-        sortable: false,
-        filterable: false,
-    },
-    {
-        field: 'dataEvento',
-        headerName: 'Data Evento',
-        width: 150,
+        flex: 1,         
+        minWidth: 50,
         headerClassName: 'super-app-theme--header',
         headerAlign: 'center',
         align: 'center',
         sortable: false,
         filterable: false,
-        valueFormatter: ({ value }) => value?.split('T')[0] || '--',
     },
+   
     {
         field: 'invio',
         headerName: 'Invio',
@@ -110,7 +84,11 @@ export const headerMailPsp: GridColDef[] = [
             />
         ),
     },
-    {
+   
+];
+
+/*
+ {
         field: 'messaggio',
         headerName: 'ID Messaggio',
         width: 200,
@@ -120,5 +98,31 @@ export const headerMailPsp: GridColDef[] = [
         sortable: false,
         filterable: false,
         valueFormatter: ({ value }) => value ? value.slice(0, 10) + '...' : '--',
+         {
+        field: 'anno',
+        headerName: 'Anno',
+        width: 100,
+        headerClassName: 'super-app-theme--header',
+        headerAlign: 'center',
+        align: 'center',
+        sortable: false,
+        filterable: false,
     },
-];
+       {
+        field: 'tipologia',
+        headerName: 'Tipologia',
+        width: 150,
+        headerClassName: 'super-app-theme--header',
+        headerAlign: 'center',
+        align: 'center',
+        sortable: false,
+        filterable: false,
+        renderCell: (param: any) => (
+            <Chip
+                variant="outlined"
+                label={param.value}
+                sx={{ fontWeight: 600 }}
+            />
+        ),
+    },
+},*/
