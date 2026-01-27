@@ -57,8 +57,7 @@ const Auth : React.FC = () =>{
         // 1️⃣ selfcare
             const selfcareRes = await selfcareLogin(token);
     
-            localStorage.removeItem("globalStatePF");
-            localStorage.removeItem("filters");
+            localStorage.clear();
     
             if (selfcareRes.status !== 200) {
                 return window.location.href = redirect;
@@ -156,7 +155,7 @@ const Auth : React.FC = () =>{
 export default Auth;
 
 
-const apiKeyPageAvailable = async (token: string, profilo, setMainData) => {
+export const apiKeyPageAvailable = async (token: string, profilo, setMainData) => {
     try {
         const res = await getPageApiKeyVisible(token, profilo);
     

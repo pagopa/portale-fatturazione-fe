@@ -13,7 +13,7 @@ import useIsTabActive from '../reusableFunction/tabIsActiv';
 import {  redirect } from '../api/api';
 import AreaPersonaleUtenteEnte from '../page/prod_pn/areaPersonaleUtenteEnte';
 import LayoutAzure from '../layout/layOutLoggedInAzure';
-import Messaggi from '../page/messaggi';
+
 import Accertamenti from '../page/prod_pn/accertamenti';
 import AdesioneBando from '../page/prod_pn/adesioneBando';
 import DettaglioStoricoContestazione from '../page/prod_pn/dettaglioStoricoContestazione';
@@ -39,6 +39,7 @@ import AnagraficaPsp from '../page/prod_pagopa/anagraficaPspPagopa';
 import DocumentiContabili from '../page/prod_pagopa/documentiContabiliPagopa';
 import DettaglioDocContabile from '../page/prod_pagopa/dettaglioDocumentoContabile';
 import KpiPagamenti from '../page/prod_pagopa/kpiPagamenti';
+
 import SideNavPagopa from '../layout/sideNavs/sideNavPagoPA';
 import SideNavEnte from '../layout/sideNavs/sidNavEnte';
 import ModuloCommessaElencoUtPa from '../page/ente/moduloCommessaElencoUtPa';
@@ -50,11 +51,13 @@ import SideNavRecCon from '../layout/sideNavs/sideNavConRec';
 import { useGlobalStore } from '../store/context/useGlobalStore';
 import { createBrowserRouter } from 'react-router-dom';
 import { RoleBasedIndexRedirect } from './redirectRoute';
-import { useEffect, useState } from 'react';
-import { authVerify } from '../loaderRoutes/loaderAuthVerify';
 import DocSos from '../page/ente/docContSos';
 import DocEm from '../page/ente/docConEme';
 import DocStorico from '../page/ente/docConStorico';
+import Messaggi from '../page/messaggi';
+import EmailPsp from '../page/prod_pagopa/emailpsp';
+import { useEffect } from 'react';
+import { authVerify, authVerifyIsLoggedEnte, authVerifyIsLoggedSend } from '../loaderRoutes/loaderAuthVerify';
 
 const RouteProfile = () => {
     const mainState = useGlobalStore(state => state.mainState);
@@ -88,7 +91,6 @@ const router2 = createBrowserRouter([
         Component:LayoutLoggedOut,
         errorElement: <RouteErrorBoundary />,
         loader:authVerify,
-       
         children: [
             {
                 index: true,
@@ -116,6 +118,7 @@ const router2 = createBrowserRouter([
             },
             {
                 path: "send",
+                loader:authVerifyIsLoggedSend,
                 Component: () => <LayoutAzure sideNav={<SideNavSend />} />,
                 children: [
                     { path: PathRoutePf.LISTA_DATI_FATTURAZIONE, Component: PagoPaListaDatiFatturazione },
@@ -143,6 +146,7 @@ const router2 = createBrowserRouter([
             },
             {
                 path: "pn",
+                loader:authVerifyIsLoggedSend,
                 Component: () => <LayoutAzure sideNav={<SideNavPagopa />} />,
                 children: [
                     { path:PathRoutePf.ANAGRAFICAPSP, Component: AnagraficaPsp },
@@ -150,10 +154,12 @@ const router2 = createBrowserRouter([
                     { path:PathRoutePf.DETTAGLIO_DOC_CONTABILE, Component: DettaglioDocContabile },
                     { path:PathRoutePf.KPI, Component: KpiPagamenti },
                     { path: PathRoutePf.MESSAGGI, Component: Messaggi },
+                    { path: PathRoutePf.EMAIL_PSP, Component: EmailPsp }
                 ],
             },
             {
                 path: "ente",
+                loader:authVerifyIsLoggedEnte,
                 Component: () => <LayoutEnte sideNav={<SideNavEnte />} />,
                 children: [
                     {path: PathRoutePf.DATI_FATTURAZIONE,Component: AreaPersonaleUtenteEnte},
@@ -182,7 +188,7 @@ const router2 = createBrowserRouter([
                 Component: () => <RoleBasedIndexRedirect></RoleBasedIndexRedirect>,
             },
         ],
-    },
+    }, 
 ]);
 
 

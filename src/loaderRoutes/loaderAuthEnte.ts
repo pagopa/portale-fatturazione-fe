@@ -6,7 +6,7 @@ import { PathPf } from "../types/enum";
 import { redirect as globalRedirect } from "../api/api";
 import { getDatiFatturazione } from "../api/apiSelfcare/datiDiFatturazioneSE/api";
 
-
+//:TODO da eliminare
 export async function authEnteLoader({ request }) {
 
     const url = new URL(request.url);

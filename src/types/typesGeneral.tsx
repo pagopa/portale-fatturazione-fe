@@ -1,4 +1,5 @@
 import { DataGridCommessa } from "./typeModuloCommessaElenco";
+import { Contestazione } from "./typeReportDettaglio";
 
 export interface ModalProps {
     setOpen : any,
@@ -103,7 +104,18 @@ export interface MainState{
     docContabileSelected:{key:string},
     infoTrimestreComSelected:any,
     appVersion:string,
-    datiFatturazioneNotCompleted:boolean
+    datiFatturazioneNotCompleted:boolean,
+    contestazioneSelected:{
+        ragioneSociale:string,
+        anno:number,
+        mese:number,
+        categoriaDocumento:string,
+        dataInserimento:string,
+        descrizioneStato:string,
+        stato:number,
+        reportId:number
+
+    }
 }
 
 export type ProfiloObject = {

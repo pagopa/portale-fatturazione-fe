@@ -21,7 +21,7 @@ export const initialState:MainState =  {
         mese:0,
         anno:0,
         idElement:'',
-        id:"",
+        id:""
     },
     apiError:null,
     authenticated:false,
@@ -31,7 +31,17 @@ export const initialState:MainState =  {
     profilo:{},
     docContabileSelected:{key:''},
     infoTrimestreComSelected:{},
-    appVersion:process.env.REACT_APP_VERSION||""
+    contestazioneSelected:{ 
+        ragioneSociale:"",
+        anno:0,
+        mese:0,
+        categoriaDocumento:"",
+        dataInserimento:"",
+        descrizioneStato:"",
+        stato:0,
+        reportId:0
+
+    }
 };
 
 
