@@ -18,6 +18,7 @@ import { DataGridOrchestratore } from "../../../page/prod_pn/processiOrchestrato
 import { Whitelist } from "../../../page/prod_pn/whiteList";
 import DefaultRow from "./gridCustomBase/rowDefault";
 import RowModCommessaPrevisionale from "./gridCustomBase/rowModCommessaPrevisonale";
+import RowCollapsible from "./gridCustomBase/rowCollapsible";
 interface GridCustomProps {
     elements:NotificheList[]|Rel[]|GridElementListaPsp[]|ContestazioneRowGrid[]|any
     changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
@@ -26,6 +27,7 @@ interface GridCustomProps {
     total:number,
     rows:number,
     headerNames:string[]|{label:string,align:string,width:number|string}[],
+    headerNamesCollapse?:string[]|{label:string,align:string,width:number|string}[],
     nameParameterApi:string 
     apiGet?:(el:any)=>void 
     disabled:boolean
@@ -64,7 +66,8 @@ const GridCustom : React.FC<GridCustomProps> = ({
     setSelected,
     headerAction,
     body,
-    paginationVisibile
+    paginationVisibile,
+    headerNamesCollapse
 }) =>{
 
     const handleClickOnGrid = (element) =>{
@@ -113,7 +116,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
         }  
     };
 
-   
+    console.log(headerNames);
 
     return (
         <div>
@@ -124,7 +127,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                         <TableHead sx={{backgroundColor:'#f2f2f2'}}>
                             <TableRow>
                                 {headerNames.map((el,i)=>{
-                                    if(nameParameterApi === 'idOrchestratore' || nameParameterApi === "asyncDocEnte"|| nameParameterApi === "idPrevisonale" ){ //|| nameParameterApi === "modComTrimestrale"
+                                    if(nameParameterApi === 'idOrchestratore' || nameParameterApi === "asyncDocEnte"|| nameParameterApi === "idPrevisonale"|| nameParameterApi === "docEmessiEnte" ){ //|| nameParameterApi === "modComTrimestrale"
                                         return(
                                             <TableCell key={Math.random()} align={el.align} width={el.width}>{el.label}
                                                 {el.headerAction &&
@@ -157,7 +160,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                     let sliced = Object.fromEntries(
                                         Object.entries(element).slice(1)
                                     );
-                                    if(nameParameterApi === 'idWhite'){
+                                    if(nameParameterApi === 'idWhite' || nameParameterApi === "docEmessiEnte"){
                                         sliced = Object.fromEntries(Object.entries(element).slice(1, -1));
                                     }else if(nameParameterApi === "contestazionePage"){
                                         sliced = Object.fromEntries(Object.entries(element).slice(1, -1));
@@ -183,6 +186,8 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                         //return <RowModComTrimestreEnte key={element.id} sliced={sliced} headerNames={headerNames} handleClickOnGrid={handleClickOnGrid} element={element}></RowModComTrimestreEnte>;
                                     }else if(nameParameterApi === "idPrevisonale"){
                                         return <RowModCommessaPrevisionale key={element.id} sliced={sliced} element={element} headerNames={headerNames}></RowModCommessaPrevisionale>;
+                                    }else if(nameParameterApi === "docEmessiEnte"){
+                                        return <RowCollapsible key={element.id} sliced={sliced} element={element} headerNames={headerNames} headerNamesCollapse={headerNamesCollapse}></RowCollapsible>;
                                     }else{
                                      
                                         return (

@@ -1,6 +1,5 @@
 import React, {  useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
 import { getMesiRelSend } from "../../api/apiSelfcare/relSE/api";
 import { month } from "../../reusableFunction/reusableArrayObj";
 import { PathPf } from "../../types/enum";
@@ -13,15 +12,15 @@ import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, Responsi
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
 import { anniMesiDocumentiEmessi, downloadFattureEnte, getFatturazioneEnte, getTipologieFaEnte } from "../../api/apiSelfcare/apiDocEmessiSE/api";
-import CollapsibleTableStandard from "../../components/reusableComponents/grid/gridCollapsible/gridCollapsibleDocEmessiEnte";
-import { headersObjGrid } from "../../assets/configurations/config_GridFatturazione";
 import { ManageErrorResponse } from "../../types/typesGeneral";
 import { Paper, Typography } from "@mui/material";
+import GridCustom from "../../components/reusableComponents/grid/gridCustom";
+import { headersDocumentiEmessiEnte, headersDocumentiEmessiEnteCollapse } from "../../assets/configurations/conf_GridDocEmessiEnte";
 
 
 export type BodyDocumentiEmessiEnte = {
     anno:number|null,
-    mese:number,
+    mese:number|null,
     tipologiaFattura:string[]
 }
 
@@ -57,41 +56,40 @@ const DocEm : React.FC = () =>{
     const [monthsFat,setMonthsFat] = useState<{[key:number]:number[]}>({});
     const [yearMonths, setYearMonths] = useState<number[]>([]);
     const [dataSelect, setDataSelect] = useState<string[]>([]);
-
+    const [showLoadingGrid,setShowLoadingGrid] = useState(false);
+    const [showDownloading,setShowDownloading] = useState(false);
+    const [valueMulitselectTipologie, setValueMultiselectTipologie] = useState<string[]>([]);
     //____________________________________
 
 
-
-    const [data, setData] = useState<any[]>([]);
     const [gridData, setGridData] = useState<any[]>([]);
-    const [totalNotifiche, setTotalNotifiche]  = useState(0);
+    const [totalDocumenti, setTotalDocumenti]  = useState(0);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     
-    const [showLoadingGrid,setShowLoadingGrid] = useState(false);
-    const [showDownloading,setShowDownloading] = useState(false);
     
-    const [textValue, setTextValue] = useState('');
-    const [valueAutocomplete, setValueAutocomplete] = useState<string[]>([]);
+ 
+    
+
+
     const [tipologie, setTipologie] = useState<string[]>([]);
-    const [valueMulitselectTipologie, setValueMultiselectTipologie] = useState<OptionMultiselectChackbox[]>([]);
+    
     const [showedData, setShowedData] = useState<any[]>([]);
-    const [tipologiaFatture, setTipologiaFatture] = useState<string[]>([]);
-    const [valuetipologiaFattura, setValueTipologiaFattura] = useState<string>('');
+ 
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
     const [getListaRelRunning, setGetListaRelRunning] = useState(false);
-    const [showLoading, setShowLoading] = useState(false);
+
 
   
     const [bodyFatturazione, setBodyFatturazione] = useState<BodyDocumentiEmessiEnte>({
         anno:null,
-        mese:monthNumber,
+        mese:null,
         tipologiaFattura:[]
     });
 
     const [bodyFatturazioneDownload, setBodyFatturazioneDownload] = useState<BodyDocumentiEmessiEnte>({
-        anno:currentYear,
-        mese:monthNumber,
+        anno:null,
+        mese:null,
         tipologiaFattura:[]
     });
 
@@ -105,6 +103,7 @@ const DocEm : React.FC = () =>{
 
     const getAnniMesi = async () => {
         try {
+            setShowLoadingGrid(true);
             const res = await anniMesiDocumentiEmessi(token, profilo.nonce);
     
             const allAnni = res.data.map((item: { anno: number }) => item.anno);
@@ -123,11 +122,12 @@ const DocEm : React.FC = () =>{
     
             if (isInitialRender.current && Object.keys(filters).length > 0) {
                 setYearMonths(mesi[filters.body.anno]);
+                setValueMultiselectTipologie(filters.valueMulitselectTipologie);
             }else {
                 setYearMonths(mesi[currentYear]);
-                setBodyFatturazione((prev)=> ({...prev,anno:currentYear,mese:mesi[currentYear][0]}));
-                getTipologieFatturazione({anno:currentYear,mese:mesi[currentYear][0]});
-                getlistaFatturazione({...bodyFatturazione,anno:currentYear,mese:mesi[currentYear][0]});
+                setBodyFatturazione((prev)=> ({...prev,anno:currentYear}));//mese:mesi[currentYear][0]
+                getTipologieFatturazione({anno:currentYear,});//mese:mesi[currentYear][0]
+                getlistaFatturazione({...bodyFatturazione,anno:currentYear});//,mese:mesi[currentYear][0]
             }
                
         } catch (err) {
@@ -137,6 +137,7 @@ const DocEm : React.FC = () =>{
                 // fallback for unexpected errors
                 manageError({ message: String(err) } as ManageErrorResponse, dispatchMainState);
             }
+            setShowLoadingGrid(false);
         }
     };
 
@@ -144,27 +145,56 @@ const DocEm : React.FC = () =>{
     const getTipologieFatturazione =  async(body) => {
         await getTipologieFaEnte(token, profilo.nonce, body)
             .then((res)=>{
-                setDataSelect(res.data);              
-            })
-            .catch(((err)=>{
+                setDataSelect(res.data);  
+                       
+            }).catch(((err)=>{
                 setDataSelect([]);
                 manageError(err,dispatchMainState);
+                
             }));
     };
     
     const getlistaFatturazione = async (body) => {
         setShowLoadingGrid(true);
-
         await  getFatturazioneEnte(token,profilo.nonce,body)
             .then((res)=>{
-                const orderDataCustom = res.data.map(el => el.fattura).map(obj=> ({...{id:Math.random()},...obj}));
+                const orderDataCustom = res.data.map(el => el.fattura).map(obj=>{
+                    return {
+                        id:Math.random(),
+                        arrow:"",
+                        dataFattura:obj.dataFattura !== null ? new Date(obj.dataFattura).toLocaleString().split(',')[0] : '--',
+                        stato:"Emesso",
+                        tipologiaFattura:obj.tipologiaFattura,
+                        identificativo:obj.identificativo,
+                        tipocontratto:obj.tipocontratto,
+                        totale:obj.totale.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
+                        numero:obj.numero,
+                        tipoDocumento:obj.tipoDocumento,
+                        divisa:obj.divisa,
+                        metodoPagamento:obj.metodoPagamento,
+                        split:obj.split?.toString()|| "--",
+                        posizioni:obj.posizioni.map(el => {
+                            return{
+                                "numerolinea": el.numerolinea,
+                                "codiceMateriale": el.codiceMateriale,
+                                "quantita": el.quantita,
+                                "prezzoUnitario": el.imponibile.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
+                                "imponibile": el.imponibile || "--",
+                                "periodoRiferimento": el.periodoRiferimento || "--"
+                            };
+                            
+                        })
+                    };
+                });
                 setGridData(orderDataCustom);
                 setShowLoadingGrid(false);
                 setBodyFatturazioneDownload(bodyFatturazione);
+                isInitialRender.current = false;
             }).catch((error)=>{
                 if(error?.response?.status === 404){
                     setGridData([]);
                 }
+                isInitialRender.current = false;
                 setShowLoadingGrid(false);
                 manageError(error, dispatchMainState);
             });        
@@ -173,7 +203,10 @@ const DocEm : React.FC = () =>{
     const downloadListaFatturazione = async () => {
         setShowDownloading(true);
         await downloadFattureEnte(token,profilo.nonce, bodyFatturazioneDownload).then(response => response.blob()).then((response)=>{
-            const title = `Documenti emessi/ ${gridData[0]?.ragionesociale}/${month[bodyFatturazioneDownload.mese - 1]}/${bodyFatturazioneDownload.anno}.xlsx`;
+            let title = `Documenti emessi/${bodyFatturazioneDownload.anno}.xlsx`;
+            if(bodyFatturazioneDownload.mese){
+                title = `Documenti emessi/${month[bodyFatturazioneDownload.mese - 1]}/${bodyFatturazioneDownload.anno}.xlsx`;
+            }
             saveAs(response,title);
             setShowDownloading(false);
         }).catch(((err)=>{
@@ -184,7 +217,6 @@ const DocEm : React.FC = () =>{
 
     const clearOnChangeFilter = () => {
         setGridData([]);
-        setTotalNotifiche(0);
         setPage(0);
         setRowsPerPage(10); 
     };
@@ -194,8 +226,7 @@ const DocEm : React.FC = () =>{
             pathPage:PathPf.DOCUMENTI_EMESSI,
             body:bodyFatturazione,
             page:0,
-            rows:10,
-            valuetipologiaFattura
+            rows:10
         });
         setPage(0);
         setRowsPerPage(10);
@@ -204,35 +235,19 @@ const DocEm : React.FC = () =>{
     };
     
     const onButtonAnnulla = async () => {
-        let firstMonth = {mese:0};
-           
-        firstMonth = await getMesiRelSend(token, profilo.nonce,{anno:arrayYears[0]?.toString()})
-            .then(res => res.data[0])
-            .catch(err => manageError(err,dispatchMainState));
+        const resetBody = {
+            anno:years[0],
+            mese:null,
+            tipologiaFattura:[],
+        };
        
-        setBodyFatturazione({
-            anno:currentYear,
-            mese:monthNumber,
-            tipologiaFattura:[],
-        });
-        setBodyFatturazioneDownload({
-            anno:arrayYears[0],
-            mese:firstMonth.mese,
-            tipologiaFattura:[],
-        });
-        setValueTipologiaFattura('');
-        setData([]);
+        setBodyFatturazione(resetBody);
+        setBodyFatturazioneDownload(resetBody);
+        setValueMultiselectTipologie([]);
         setPage(0);
         setRowsPerPage(10);
-        setValueAutocomplete([]);
-        getlistaFatturazione({
-            anno:arrayYears[0],
-            mese:firstMonth.mese,
-            tipologiaFattura:null,
-            idEnti:[],
-            idContratto:null,
-            caricata:null
-        });
+        getlistaFatturazione(resetBody);
+        getTipologieFatturazione({anno:years[0],mese:null});
         resetFilters();
         
     };
@@ -247,10 +262,10 @@ const DocEm : React.FC = () =>{
         updateFilters({
             pathPage:PathPf.DOCUMENTI_EMESSI,
             body:bodyFatturazioneDownload,
-            valueAutocomplete:valueAutocomplete,
+       
             page:newPage,
             rows:rowsPerPage,
-            valuetipologiaFattura
+         
         });
     };
                         
@@ -263,20 +278,14 @@ const DocEm : React.FC = () =>{
         updateFilters({
             pathPage:PathPf.DOCUMENTI_EMESSI,
             body:bodyFatturazione,
-            valueAutocomplete:valueAutocomplete,
+           
             page:0,
             rows:parseInt(event.target.value, 10),
-            valuetipologiaFattura
+      
         });
     };
 
-    const setIdRel = async(el) => {
-        handleModifyMainState({relSelected:el});
-        navigate(PathPf.DOCUMENTI_EMESSI);
-    };  
-
-
-    const statusAnnulla = bodyFatturazione.tipologiaFattura.length !== 0 ? "show" : "hidden";
+    const statusAnnulla = (bodyFatturazione.tipologiaFattura.length !== 0 || bodyFatturazione.mese !== null) ? false :true;
   
     return (
         <MainBoxStyled title={"Documenti contabili emessi"} actionButton={[]}>
@@ -293,8 +302,9 @@ const DocEm : React.FC = () =>{
                     arrayValues={years}
                     extraCodeOnChange={(e)=>{
                         setYearMonths(monthsFat[Number(e)]);
-                        setBodyFatturazione((prev)=> ({...prev, ...{anno:Number(e),mese:monthsFat[Number(e)][0]}}));
-                        getTipologieFatturazione({anno:Number(e),mese:monthsFat[Number(e)][0]});
+                        setBodyFatturazione((prev)=> ({...prev, ...{anno:Number(e),mese:null}}));
+                        getTipologieFatturazione({anno:Number(e),mese:null});
+                        setValueMultiselectTipologie([]);
                     }}
                 ></MainFilter>
                 <MainFilter 
@@ -310,6 +320,7 @@ const DocEm : React.FC = () =>{
                     extraCodeOnChange={(e)=>{
                         setBodyFatturazione((prev)=> ({...prev, mese:Number(e)}));
                         getTipologieFatturazione({anno:bodyFatturazione.anno,mese:Number(e)});
+                        setValueMultiselectTipologie([]);
                     }}
                     defaultValue={""}
                 ></MainFilter>
@@ -319,15 +330,14 @@ const DocEm : React.FC = () =>{
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyFatturazione}
                     dataSelect={dataSelect}
-                    valueAutocomplete={valueAutocomplete}
-                    setValueAutocomplete={setValueAutocomplete}
+                    valueAutocomplete={valueMulitselectTipologie}
+                    setValueAutocomplete={setValueMultiselectTipologie}
                     body={bodyFatturazione}
                     keyDescription={"tipologiaFattura"}
                     keyValue={"tipologiaFattura"}
                     keyBody={"tipologiaFattura"}
-                    arrayValues={tipologiaFatture}
                     extraCodeOnChangeArray={(e)=>{
-                        setValueAutocomplete(e);
+                        setValueMultiselectTipologie(e);
                         setBodyFatturazione((prev) => ({...prev,...{tipologiaFattura:e}}));
                     }}
                     iconMaterial={RenderIcon("invoice",true)}
@@ -352,18 +362,24 @@ const DocEm : React.FC = () =>{
                     variant: "outlined",
                     label: "Download risultati",
                     icon:{name:"download"},
-                    disabled:(data.length === 0)
+                    disabled:(gridData.length === 0)
                 }]}
                 actionButtonLeft={[]}/>
-           
-            <CollapsibleTableStandard 
-                data={gridData}
-                showedData={showedData}
-                setShowedData={setShowedData}
-                headerNames={headersObjGrid}></CollapsibleTableStandard>
+            <GridCustom
+                nameParameterApi='docEmessiEnte'
+                elements={gridData}
+                changePage={handleChangePage}
+                changeRow={handleChangeRowsPerPage} 
+                total={totalDocumenti}
+                page={page}
+                rows={rowsPerPage}
+                headerNames={headersDocumentiEmessiEnte}
+                headerNamesCollapse={headersDocumentiEmessiEnteCollapse}
+                disabled={getListaRelRunning}
+                widthCustomSize="2000px"></GridCustom>
             <ModalLoading 
-                open={showLoading} 
-                setOpen={setShowLoading} 
+                open={showDownloading} 
+                setOpen={setShowDownloading} 
                 sentence={'Downloading...'}>
             </ModalLoading>
             <ModalRedirect
