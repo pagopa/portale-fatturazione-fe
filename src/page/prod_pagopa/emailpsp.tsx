@@ -64,7 +64,7 @@ const EmailPsp:React.FC = () => {
     const [dataSelectQuarter, setDataSelectQuarter] = useState<OptionMultiselectCheckboxQarter[]>([]);
     const [valueAutocomplete, setValueAutocomplete] = useState<AutocompleteMultiselect[]>([]);
     const [textValue, setTextValue] = useState<string>('');
-    const [showLoading,setShowLoading] = useState(false);
+    const [showLoading,setShowLoading] = useState(true);
     const [infoPageMailPsp , setInfoPageMailPsp] = useState({ page: 0, pageSize: 10 });
   
     const [getListaLoading, setGetListaLoading] = useState(false);
@@ -320,8 +320,6 @@ const EmailPsp:React.FC = () => {
             paginationModel={infoPageMailPsp}
             pageSizeOptions={[10, 25, 50,100]}
             />
-           
-                      
             <ModalLoading 
                 open={showLoading} 
                 setOpen={setShowLoading}
