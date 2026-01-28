@@ -57,7 +57,7 @@ import DocStorico from '../page/ente/docConStorico';
 import Messaggi from '../page/messaggi';
 import EmailPsp from '../page/prod_pagopa/emailpsp';
 import { useEffect } from 'react';
-import { authVerify, authVerifyIsLoggedEnte, authVerifyIsLoggedSend } from '../loaderRoutes/loaderAuthVerify';
+import { authVerify, authVerifyIsLoggedEnte, authVerifyIsLoggedProdPn, authVerifyIsLoggedSend } from '../loaderRoutes/loaderAuthVerify';
 
 const RouteProfile = () => {
     const mainState = useGlobalStore(state => state.mainState);
@@ -146,7 +146,7 @@ const router2 = createBrowserRouter([
             },
             {
                 path: "pn",
-                loader:authVerifyIsLoggedSend,
+                loader:authVerifyIsLoggedProdPn,
                 Component: () => <LayoutAzure sideNav={<SideNavPagopa />} />,
                 children: [
                     { path:PathRoutePf.ANAGRAFICAPSP, Component: AnagraficaPsp },
