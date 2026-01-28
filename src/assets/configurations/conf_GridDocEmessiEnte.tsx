@@ -29,8 +29,8 @@ export const headersDocumentiEmessiEnte : HeaderGridCustom[] = [
 export const headersDocumentiEmessiEnteCollapse : HeaderGridCustom[] = [
     {label:"Numero Linea",align:"center",width:"100px"},
     {label:"Codice Materiale",align:"center",width:"100px"},
-    {label:"Quantità",align:"center",width:"100px"},
-    {label:"Prezzo Unitario",align:"center",width:"100px"},
     {label:"Imponibile",align:"center",width:"100px"},
-    {label:"Periodo di riferimento",align:"center",width:"100px"}
+    {label:"Periodo di riferimento",align:"center",width:"100px"},
+    {label:"Periodo di fatturazione",align:"center",width:"100px"},
+    
 ];

@@ -126,10 +126,10 @@ const DocEm : React.FC = () =>{
                 setValueMultiselectTipologie(filters.valueMulitselectTipologie);
             }else {
                 setYearMonths(mesi[currentYear]);
-                setBodyFatturazione((prev)=> ({...prev,anno:currentYear}));//mese:mesi[currentYear][0]
-                setBodyFatturazioneDownload((prev)=> ({...prev,anno:currentYear}));
-                getTipologieFatturazione({anno:currentYear,});//mese:mesi[currentYear][0]
-                getlistaFatturazione({...bodyFatturazione,anno:currentYear});//,mese:mesi[currentYear][0]
+                //setBodyFatturazione((prev)=> ({...prev,anno:currentYear}));//mese:mesi[currentYear][0]
+                //setBodyFatturazioneDownload((prev)=> ({...prev,anno:currentYear}));
+                getTipologieFatturazione({anno:null,mese:null});//mese:mesi[currentYear][0]
+                getlistaFatturazione(bodyFatturazione);//,mese:mesi[currentYear][0]
             }
                
         } catch (err) {
@@ -168,22 +168,21 @@ const DocEm : React.FC = () =>{
                         stato:"Emesso",
                         tipologiaFattura:obj.tipologiaFattura,
                         identificativo:obj.identificativo,
-                        tipocontratto:obj.tipocontratto,
+                        tipocontratto:obj.tipocontratto === "PAL"?"PAC - PAL senza requisiti":"PAC - PAL con requisiti",
                         totale:obj.totale.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
                         numero:obj.numero,
                         tipoDocumento:obj.tipoDocumento,
                         divisa:obj.divisa,
                         metodoPagamento:obj.metodoPagamento,
-                        split:obj.split?.toString()|| "--",
+                        split:obj.split ? "Si" : "No",
                         arrowDetails:"arrowDetails",
                         posizioni:obj.posizioni.map(el => {
                             return{
                                 "numerolinea": el.numerolinea,
                                 "codiceMateriale": el.codiceMateriale,
-                                "quantita": el.quantita,
-                                "prezzoUnitario": el.imponibile.toLocaleString("de-DE", { style: "currency", currency: "EUR" }),
                                 "imponibile": el.imponibile || "--",
-                                "periodoRiferimento": el.periodoRiferimento || "--"
+                                "periodoRiferimento": el.periodoRiferimento || "--",
+                                "periodoFatturazione":"--"
                             };
                             
                         })
@@ -303,7 +302,15 @@ const DocEm : React.FC = () =>{
     }
 
     const statusAnnulla = (bodyFatturazione.tipologiaFattura.length !== 0 || bodyFatturazione.mese !== null) ? false :true;
-  
+    let labelAmount = `Totale fatturato`;
+    if(bodyFatturazioneDownload.anno !== null && bodyFatturazioneDownload.mese === null){
+        console.log(1);
+        labelAmount = `Totale fatturato/${bodyFatturazioneDownload.anno}`;
+    }else if(bodyFatturazioneDownload.mese !== null){
+        console.log(2);
+        labelAmount = `Totale fatturato/${bodyFatturazioneDownload.anno}-${month[bodyFatturazioneDownload.mese-1]}`;
+    }
+    console.log({bodyFatturazioneDownload});
     return (
         <MainBoxStyled title={"Documenti contabili emessi"} actionButton={[]}>
             <ResponsiveGridContainer >
@@ -358,6 +365,20 @@ const DocEm : React.FC = () =>{
                     }}
                     iconMaterial={RenderIcon("invoice",true)}
                 ></MainFilter>
+                <MainFilter 
+                    filterName={"date_from_to"}
+                    inputLabel={"Data fattura"}
+                    clearOnChangeFilter={clearOnChangeFilter}
+                    setBody={setBodyFatturazione}
+                    body={bodyFatturazione}
+                    keyValue={"init"}
+                    keyDescription="start"
+                    keyCompare={"end"}
+                    keyBody="init"
+                    format="MM/yyyy"
+                    viewDate={['year', 'month']}
+                    error={false}
+                ></MainFilter>
             </ResponsiveGridContainer>
             <FilterActionButtons 
                 onButtonFiltra={onButtonFiltra} 
@@ -366,7 +387,7 @@ const DocEm : React.FC = () =>{
             ></FilterActionButtons>
             <Paper sx={{ p: 2, mb: 2,backgroundColor:bgHeader }}>
                 <Typography variant="body2" color="text.secondary">
-                    {`Totale fatturato/${bodyFatturazioneDownload.anno}`}
+                    {labelAmount}
                 </Typography>
                 <Typography variant="h6">
                     {totaleHeader === 0 ? "--" :totaleHeader.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
