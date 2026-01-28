@@ -47,7 +47,7 @@ export const useGlobalStore = create(
         (set, get) => ({
             /* ===== MAIN STATE ===== */
             mainState: initialState,
-            appVersion:process.env.REACT_APP_VERSION??"---",
+            appVersion:"0.0.5",
             dispatchMainState: (action) =>
                 set((state) => ({
                     mainState: reducerMainState(state.mainState, action),
