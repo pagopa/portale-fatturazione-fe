@@ -5,7 +5,7 @@ export interface ActionReducerType{
     value:any
 }
 
-const initialState =  {
+export const initialState:MainState =  {
     mese:'',
     anno:'',
     nomeEnteClickOn:'',
@@ -19,7 +19,8 @@ const initialState =  {
         nomeEnteClickOn:'',
         mese:0,
         anno:0,
-        idElement:''
+        idElement:'',
+        id:""
     },
     apiError:null,
     authenticated:false,
@@ -29,29 +30,34 @@ const initialState =  {
     profilo:{},
     docContabileSelected:{key:''},
     infoTrimestreComSelected:{},
-    appVersion:process.env.REACT_APP_VERSION||""
+    contestazioneSelected:{ 
+        ragioneSociale:"",
+        anno:0,
+        mese:0,
+        categoriaDocumento:"",
+        dataInserimento:"",
+        descrizioneStato:"",
+        stato:0,
+        reportId:0
+
+    },
+    datiFatturazioneNotCompleted:false,
 };
 
 
-export function reducerMainState(mainState:MainState, action:{ type: string; value?: any }) {
+export function reducerMainState(
+    mainState: MainState,
+    action: { type: string; value?: any }
+): MainState {
+    switch (action.type) {
+        case 'MODIFY_MAIN_STATE':
+            return {
+                ...mainState,
+                ...action.value,
+            };
 
-    const updateInfoObj = action.value;
-    if (action.type === 'MODIFY_MAIN_STATE') {
-    
-        return {
-            ...mainState, ...updateInfoObj      
-        };
+        default:
+            return mainState;
     }
 }
 
-export function loadState (){ 
-    try{
-        const savedState = localStorage.getItem('globalStatePF');
-        const globalIsNotEmpty = Object.keys(JSON.parse(savedState||'{}')).length > 0;
-        return (savedState && globalIsNotEmpty) ? JSON.parse(savedState) : initialState;
-    }catch(err){
-        localStorage.clear();
-        return initialState;
-    }
-   
-}

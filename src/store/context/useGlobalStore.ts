@@ -1,6 +1,7 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import { loadState, reducerMainState } from "../../reducer/reducerMainState";
+import { createJSONStorage, persist } from "zustand/middleware";
+import { initialState, reducerMainState } from "../../reducer/reducerMainState";
+import { MainState } from "../../types/typesGeneral";
 
 
 type ApiKeyPage = {
@@ -10,8 +11,10 @@ type ApiKeyPage = {
 
 type GlobalStore = {
     /* ---------- MAIN STATE ---------- */
-    mainState: any;
+    mainState: MainState;
     dispatchMainState: (action: { type: string; value?: any }) => void;
+
+    appVersion:string;
 
     /* ---------- UI ---------- */
     openBasicModal_DatFat_ModCom: { visible: boolean; clickOn: string };
@@ -29,7 +32,7 @@ type GlobalStore = {
     countMessages: number;
     setCountMessages: (v: number) => void;
 
-    statusQueryGetUri: any[];
+    statusQueryGetUri: string[];
     setStatusQueryGetUri: (v: any[]) => void;
 
     /* ---------- EXTRA DATA ---------- */
@@ -37,14 +40,14 @@ type GlobalStore = {
         apiKeyPage: ApiKeyPage;
     };
     setMainData: (updater: (prev: GlobalStore["mainData"]) => GlobalStore["mainData"]) => void;
-    appVersion:string
 };
 
-export const useGlobalStore = create<GlobalStore>()(
+export const useGlobalStore = create(
     persist(
         (set, get) => ({
             /* ===== MAIN STATE ===== */
-            mainState: loadState(),
+            mainState: initialState,
+            appVersion:process.env.REACT_APP_VERSION??"---",
             dispatchMainState: (action) =>
                 set((state) => ({
                     mainState: reducerMainState(state.mainState, action),
@@ -80,15 +83,24 @@ export const useGlobalStore = create<GlobalStore>()(
             setMainData: (updater) =>
                 set((state) => ({
                     mainData: updater(state.mainData),
-                })),
-            appVersion:""
+                }))
         }),
         {
             name: "globalStatePF",
-            partialize: (state) => ({
+            version: 0,
+            partialize: (state: GlobalStore) => ({
                 mainState: state.mainState,
-                statusQueryGetUri: state.statusQueryGetUri
+                statusQueryGetUri: state.statusQueryGetUri,
+                appVersion:state.appVersion
             }),
+            migrate: (persistedState: any, version) => {
+                return {
+                    ...persistedState,
+                    mainState: persistedState.mainState,
+                    statusQueryGetUri: persistedState.statusQueryGetUri ?? [],
+                    appVersion:persistedState.appVersion ??"---"
+                };
+            },
         }
     )
 );

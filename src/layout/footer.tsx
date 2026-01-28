@@ -24,7 +24,7 @@ const FooterComponent = () => {
                         console.log("Changed Language");
                     }
                 }
-                productsJsonUrl="https://dev.selfcare.pagopa.it/assets/products.json"
+                productsJsonUrl="https://selfcare.pagopa.it/assets/products.json"
                 hideProductsColumn={false}
             /> 
         </div>
