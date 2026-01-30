@@ -428,7 +428,7 @@ const RelPage : React.FC = () =>{
    
     const setIdRel = async(el) => {
         handleModifyMainState({relSelected:el});
-        navigate(profilePath);
+        navigate(profilePath+"/rel");
     };  
 
     const getListTipologiaFattura = async(anno,mese) => {

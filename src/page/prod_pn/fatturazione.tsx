@@ -428,7 +428,7 @@ const Fatturazione : React.FC = () =>{
 
 
     return (
-        <MainBoxStyled title={"Documenti emessi"}>
+        <MainBoxStyled title={"Documenti contabili emessi"}>
             <ResponsiveGridContainer >
                 <MainFilter 
                     filterName={"select_value_string"}

@@ -1,302 +1,79 @@
 
 import { SingleFileInput } from '@pagopa/mui-italia';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import { Box, Button, Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { useNavigate } from 'react-router';
-import { useEffect, useRef, useState} from 'react';
 import TextDettaglioPdf from '../../components/commessaPdf/textDettaglioPdf';
-import { ResponseDownloadPdf } from '../../types/typeModuloCommessaInserimento';
-import { getRelExel, getRelPdf, uploadPdfRel ,getRelPdfFirmato, getSingleRel, getLogRelDocumentoFirmato } from '../../api/apiSelfcare/relSE/api';
-import { getLogPagoPaRelDocumentoFirmato, getRelExelPagoPa, getRelPdfFirmatoPagoPa, getRelPdfPagoPa, getSingleRelPagopa } from '../../api/apiPagoPa/relPA/api';
 import DownloadIcon from '@mui/icons-material/Download';
 import ModalUploadPdf from '../../components/rel/modalUploadPdf';
-import { saveAs } from "file-saver";
-import generatePDF from 'react-to-pdf';
-import { manageError, manageErrorDownload, redirect } from '../../api/api';
 import ModalLoading from '../../components/reusableComponents/modals/modalLoading';
 import { PathPf } from '../../types/enum';
-import {profiliEnti } from '../../reusableFunction/actionLocalStorage';
-import {mesiWithZero, month } from '../../reusableFunction/reusableArrayObj';
+import { month } from '../../reusableFunction/reusableArrayObj';
 import { createDateFromString } from '../../reusableFunction/function';
 import SkeletonRelPdf from '../../components/rel/skeletonRelPdf';
-import { Rel } from '../../types/typeRel';
 import NavigatorHeader from '../../components/reusableComponents/navigatorHeader';
 import { useGlobalStore } from '../../store/context/useGlobalStore';
+import usePageRelDocPdf from '../../hooks/usePageRelDocPdf';
+import { useLocation } from 'react-router-dom';
 
 const RelPdfPage : React.FC = () =>{
 
     const mainState = useGlobalStore(state => state.mainState);
     const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
-
-    const targetRef  = useRef<HTMLInputElement>(null);
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
-    const enti = profiliEnti(mainState);
+    const location = useLocation();
 
+    console.log(location.pathname); // current route
+    console.log(location.search);   // query string
+    console.log(location.hash); 
     let profilePath; 
+    let pageFrom;
 
-    if(profilo.auth === 'PAGOPA'){
+    if(profilo.auth === 'PAGOPA' ){
         profilePath = PathPf.LISTA_REL;
-    }else{
+        pageFrom = "Regolare Esecuzione/";
+    }else if(profilo.auth !== 'PAGOPA'&& location.pathname.includes("documentiemessi")){
+        profilePath = PathPf.DOCUMENTI_EMESSI;
+        pageFrom = "Documenti Emessi/";
+    }else if(profilo.auth !== 'PAGOPA'&& location.pathname.includes("documentisospesi")){
+        profilePath = PathPf.DOCUMENTI_SOSPESI;
+        pageFrom = "Documenti Sospesi/";
+    }else if(profilo.auth !== 'PAGOPA'&& location.pathname.includes("rel")){
         profilePath = PathPf.LISTA_REL_EN;
+        pageFrom = "Regolare Esecuzione/";
     }
 
-    const [showDownloading, setShowDownloading] = useState(false);
-    const [disableButtonDettaglioNot, setDisableButtonDettaglioNot] = useState(false);
-    const [lastUpdateDocFirmato, setLastUpdateDocFirmato] = useState('');
-    const [file, setFile] = useState<File | null>(null);
-    const [loadingUpload, setLoadingUpload] = useState<boolean>(false);
-    const [errorUpload, setErrorUpload] = useState<boolean>(false);
-    const [openModalConfirmUploadPdf, setOpenModalConfirmUploadPdf] = useState<boolean>(false);
-    const [loadingDettaglio , setLoadingDettaglio] = useState(false);
-    const [rel, setRel]  = useState<Rel>({
-        idTestata: "",
-        idEnte: "",
-        ragioneSociale: "",
-        dataDocumento: null,
-        idDocumento: "",
-        cup:"",
-        idContratto: "",
-        tipologiaFattura: "",
-        anno: "",
-        mese: "",
-        totaleAnalogico: 0,
-        totaleDigitale: 0,
-        totaleNotificheAnalogiche: 0,
-        totaleNotificheDigitali: 0,
-        totale: 0,
-        datiFatturazione: false,
-        iva: 0,
-        totaleAnalogicoIva: 0,
-        totaleDigitaleIva: 0,
-        totaleIva: 0,
-        firmata: "",
-        caricata: 0
+    const {
+        disableButtonDettaglioNot,
+        targetRef,
+        loadingDettaglio,
+        rel,
+        downloadRelExel,
+        downloadPdfRel,
+        downloadPdfRelFirmato,
+        lastUpdateDocFirmato,
+        enti,
+        file,
+        loadingUpload, 
+        errorUpload,
+        openModalConfirmUploadPdf,
+        setOpenModalConfirmUploadPdf,
+        showDownloading,
+        setShowDownloading,
+        setFile,
+        uploadPdf
+    } = usePageRelDocPdf({
+        token,
+        profilo,
+        mainState,
+        dispatchMainState,
+        whoInvoke:"pippo",
+        navigate
     });
-    
-    const meseOnDoc = rel?.mese || 0;
-    useEffect(()=>{
-        if(!token){
-            window.location.href = redirect;
-        }
-        if(mainState.relSelected === null){
-            navigate(profilePath);
-        }
-    },[]);
 
-    useEffect(()=>{
-        if(mainState.relSelected !== null){
-            getRel(mainState.relSelected.id);
-        }
-    },[]);
-
-    const downloadRelExel = async() =>{
-        setShowDownloading(true);
-        if(enti){
-            await getRelExel(token, profilo.nonce, mainState.relSelected.id).then((res)=>{
-                /*saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio/ ${ rel?.ragioneSociale} /${rel?.mese}/${rel?.anno}.xlsx` );
-                const blob = new Blob([res.data], { type: 'text/csv' });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.setAttribute('hidden', '');
-                a.setAttribute('href', url);
-                a.setAttribute('download',`Rel/Report di dettaglio/${ rel?.ragioneSociale}/${rel?.mese}/${rel?.anno}.csv`);
-                document.body.appendChild(a);
-                a.click();
-                setShowDownloading(false);
-                document.body.removeChild(a);*/
-
-                setShowDownloading(false);
-                const link = document.createElement("a");
-                link.href = res.data;
-                link.download = `Rel/Report di dettaglio/${ rel?.ragioneSociale}/${rel?.mese}/${rel?.anno}.csv`;
-                document.body.appendChild(link);
-            
-                link.click();
-            
-                document.body.removeChild(link);
-                window.URL.revokeObjectURL(res.data);
-               
-            }).catch(()=>{
-                manageErrorDownload('404_RIGHE_ID',dispatchMainState);
-                setDisableButtonDettaglioNot(true);
-                setShowDownloading(false);
-            });
-        }else{
-            await getRelExelPagoPa(token, profilo.nonce, mainState.relSelected.id).then((res)=>{
-               
-                setShowDownloading(false);
-                const link = document.createElement("a");
-                link.href = res.data;
-                link.download = `Rel/Report di dettaglio/${ rel?.ragioneSociale}/${rel?.mese}/${rel?.anno}.csv`;
-                document.body.appendChild(link);
-            
-                link.click();
-            
-                document.body.removeChild(link);
-                window.URL.revokeObjectURL(res.data);
-                /* 
-                const blob = new Blob([res.data], { type: 'text/csv' });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.setAttribute('hidden', '');
-                a.setAttribute('href', url);
-                a.setAttribute('download',`Rel/Report di dettaglio/${ rel?.ragioneSociale}/${rel?.mese}/${rel?.anno}.csv`);
-                document.body.appendChild(a);
-                a.click();
-                setShowDownloading(false);
-                document.body.removeChild(a);*/
-            }).catch((err)=>{
-                manageErrorDownload('404_RIGHE_ID',dispatchMainState);
-                setDisableButtonDettaglioNot(true);
-                setShowDownloading(false);
-            });
-        }
-        
-    };
-
-    const downloadPdfRel = async() =>{
-        if(enti){
-            setShowDownloading(true);
-            await getRelPdf(token, profilo.nonce, mainState.relSelected.id).then((res: ResponseDownloadPdf)=>{
-                toDoOnDownloadPdf(res);
-            }).catch((err)=>{
-                setShowDownloading(false);
-                manageError(err,dispatchMainState);
-            });
-        }else if(profilo.auth === 'PAGOPA'){
-            setShowDownloading(true);
-            await getRelPdfPagoPa(token, profilo.nonce, mainState.relSelected.id).then((res: ResponseDownloadPdf)=>{
-                toDoOnDownloadPdf(res);
-            }).catch((err)=>{
-                setShowDownloading(false);
-                manageError(err,dispatchMainState);
-            });
-        }
-       
-    };
-
-    const downloadPdfRelFirmato = async() =>{
-        setShowDownloading(true);
-        if(enti){
-            await getRelPdfFirmato(token, profilo.nonce, mainState.relSelected.id).then((res)=>{
-                saveAs("data:text/plain;base64," + res.data.documento,`REL firmata/${ rel?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${rel?.anno}.pdf` );
-                setShowDownloading(false);
-            }).catch((err)=>{
-                manageError(err,dispatchMainState);
-                setShowDownloading(false);
-            });
-        }else{
-            await getRelPdfFirmatoPagoPa(token, profilo.nonce, mainState.relSelected.id).then((res)=>{
-                saveAs("data:text/plain;base64," + res.data.documento,`REL firmata/${ rel?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${rel?.anno}.pdf` );
-                setShowDownloading(false);
-            }).catch((err)=>{
-                manageError(err,dispatchMainState);
-                setShowDownloading(false);
-            });
-        } 
-        
-    };
-
-    const getDateLastDownloadPdfFirmato = async(body) =>{
-     
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const {idEnte, ...bodySelf} = body;
-        if(enti){
-            await getLogRelDocumentoFirmato(token, profilo.nonce,bodySelf).then((res) =>{
-                setLastUpdateDocFirmato(res.data[0].dataEvento);
-            }).catch(()=>{ 
-                //manageErrorDownload('404',dispatchMainState);
-            });
-        }else if(profilo.auth === 'PAGOPA'){
-            await getLogPagoPaRelDocumentoFirmato(token, profilo.nonce,body).then((res) =>{
-                setLastUpdateDocFirmato(res.data[0].dataEvento);
-            }).catch(()=>{
-                //manageErrorDownload('404',dispatchMainState);
-            });
-        }
-        
-    };
-    
-    const toDoOnDownloadPdf = (res:ResponseDownloadPdf) =>{
-        const wrapper = document.getElementById('file_download_rel');
-        if(wrapper){
-            wrapper.innerHTML = res.data;
-            generatePDF(targetRef, {filename: `Regolare Esecuzione/${ rel?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${rel.anno}.pdf`});
-            setShowDownloading(false);
-        }
-    };
-    //prova
-    const uploadPdf = async (file) =>{
-        setLoadingUpload(true);
-        setErrorUpload(false);
-       
-        await uploadPdfRel(token, profilo.nonce, rel.idTestata, {file:file} ).then((res)=>{
-            getRel(rel.idTestata);
-            setFile(null);
-            setLoadingUpload(false);
-            if(res.status === 200){
-                setOpenModalConfirmUploadPdf(true);
-                
-                getDateLastDownloadPdfFirmato({
-                    anno: Number(rel.anno),
-                    mese: Number(rel.mese),
-                    tipologiaFattura: rel.tipologiaFattura,
-                    idContratto: rel.idContratto,
-                    idEnte:rel.idEnte
-                });
-            }
-        }).catch((err)=>{
-            setLoadingUpload(false);
-            setErrorUpload(true);
-            manageError(err,dispatchMainState);
-            setFile(null);
-        });
-        
-    };
-
-    const getRel = async(idRel) => {
-        setLoadingDettaglio(true);
-        if(enti){
-            getSingleRel(token,profilo.nonce,idRel).then((res) =>{
-                if(res.data.datiFatturazione === true){
-                    setLoadingDettaglio(false);
-                    setRel(res.data);
-                    getDateLastDownloadPdfFirmato({
-                        anno: Number(res.data.anno),
-                        mese: Number(res.data.mese),
-                        tipologiaFattura: res.data.tipologiaFattura,
-                        idContratto: res.data.idContratto,
-                        idEnte:res.data.idEnte
-                    });
-                }else{
-                    setLoadingDettaglio(false);
-                }
-            }).catch((err)=>{
-                setLoadingDettaglio(false);
-                navigate(profilePath);
-                manageError(err,dispatchMainState);
-            });
-        }else{
-            getSingleRelPagopa(token,profilo.nonce,idRel).then((res) =>{
-                setLoadingDettaglio(false);
-                setRel(res.data);
-                getDateLastDownloadPdfFirmato({
-                    anno: Number(res.data.anno),
-                    mese: Number(res.data.mese),
-                    tipologiaFattura: res.data.tipologiaFattura,
-                    idContratto: res.data.idContratto,
-                    idEnte:res.data.idEnte
-                });
-            }).catch((err)=>{
-                setLoadingDettaglio(false);
-                navigate(profilePath);
-                manageError(err,dispatchMainState);
-
-            });
-        }
-    };  
+   
 
     if(loadingDettaglio){
         return(
@@ -309,7 +86,7 @@ const RelPdfPage : React.FC = () =>{
             <div style={{ position:'absolute',zIndex:-1, top:'-1000px'}}  id='file_download_rel' ref={targetRef}>
             </div>
             <div>
-                <NavigatorHeader pageFrom={"Regolare Esecuzione/"} pageIn={"Dettaglio"} backPath={profilePath} icon={<ManageAccountsIcon  sx={{paddingBottom:"5px"}}  fontSize='small'></ManageAccountsIcon>}></NavigatorHeader>
+                <NavigatorHeader pageFrom={pageFrom} pageIn={"Dettaglio"} backPath={profilePath} icon={<ManageAccountsIcon  sx={{paddingBottom:"5px"}}  fontSize='small'></ManageAccountsIcon>}></NavigatorHeader>
             </div>
             <div className='d-flex justify-content-end mt-4 me-5'>
                 <Button disabled={disableButtonDettaglioNot}  onClick={()=> downloadRelExel()} >Scarica report di dettaglio notifiche Reg. Es. <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
@@ -336,12 +113,8 @@ const RelPdfPage : React.FC = () =>{
                     </div>
                 </div>
             </div>
-            <Box sx={{display:"flex",justifyContent:"center",mt:5}}>
-                <Typography variant="h6" gutterBottom>
-        Da nascondere con contratto PAL
-                </Typography>
-            </Box>
-            <div className='d-flex justify-content-between '>
+       
+            <div className='d-flex justify-content-between ms-5'>
                 {(profilo.auth === 'PAGOPA' &&  !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) &&
                 <div>
                     <Button sx={{width:'274px'}} onClick={() => downloadPdfRel()}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
@@ -359,7 +132,7 @@ const RelPdfPage : React.FC = () =>{
                     </div>
                 }
             </div>
-            <div className="d-flex justify-content-between m-5">
+            <div className="d-flex justify-content-between ms-5 me-5 mb-3">
                
                 {(enti && rel.totale > 0 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) &&
                     <>

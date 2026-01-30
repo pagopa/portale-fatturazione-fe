@@ -288,6 +288,17 @@ const DocSos : React.FC = () =>{
         bgHeader = "#FB9EAC";
     }
 
+    const setIdDoc = async(el) => {
+        handleModifyMainState({relSelected:{
+            "nomeEnteClickOn": "Comune di Bisceglie",
+            "mese": "Giugno",
+            "anno": 2025,
+            "id": "234c45ca-da5f-4067-a4d6-1391774162b4_28e1103f-43c7-4268-bab3-91ee62cea226_PRIMO-SALDO_2025_6"
+        }});
+        navigate(PathPf.PDF_REL_EN+"/documentisospesi");
+    };  
+
+
   
 
     const statusAnnulla = (bodyFatturazione.tipologiaFattura.length !== 0 || bodyFatturazione.mese !== null) ? false :true;
@@ -403,7 +414,9 @@ const DocSos : React.FC = () =>{
                 headerNames={headersDocumentiEmessiEnte}
                 headerNamesCollapse={headersDocumentiEmessiEnteCollapse}
                 disabled={getListaRelRunning}
-                widthCustomSize="2000px"></GridCustom>
+                widthCustomSize="2000px"
+                apiGet={setIdDoc}
+            ></GridCustom>
             <ModalLoading 
                 open={showDownloading} 
                 setOpen={setShowDownloading} 

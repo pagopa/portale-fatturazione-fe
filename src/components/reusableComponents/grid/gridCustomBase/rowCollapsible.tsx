@@ -33,12 +33,19 @@ interface GridCollapsible{
 }
 
 
-const RowCollapsible = ({sliced,element ,headerNames, headerNamesCollapse}) => {
+const RowCollapsible = ({sliced,element ,headerNames, headerNamesCollapse, apiGet}) => {
     const [open, setOpen] = useState(false);
  
     return(
         <>
-            <TableRow  sx={{ '& > *': { borderBottom: 'unset' } }}>
+            <TableRow  sx={{
+                height: '80px',
+                borderTop: '4px solid #F2F2F2',
+                borderBottom: '2px solid #F2F2F2',
+                '&:hover': {
+                    backgroundColor: '#EDEFF1',
+                },
+            }}>
             
                 {
                     Object.values(sliced)?.map((value:any, i:number)=>{
@@ -59,11 +66,10 @@ const RowCollapsible = ({sliced,element ,headerNames, headerNamesCollapse}) => {
                                 </TableCell>
                             );
                         }else if(value === "arrowDetails"){
-                            
                             return (
-                                <TableCell align="center" onClick={()=>{console.log("mimmo");}}>
+                                <TableCell align="center" onClick={()=>{apiGet(element);}}>
                                     <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
-                                </TableCell>
+                                </TableCell> 
                             );
                         }else{
                             return (

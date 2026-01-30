@@ -108,21 +108,21 @@ const SideNavEnte: React.FC = () => {
             setOpenContestazioni(true);
         }else if(currentLocation === PathPf.LISTA_STORICO_DOCUMENTI){
             setSelectedIndex(9);
-        }else if(currentLocation === PathPf.DOCUMENTI_SOSPESI){
+        }else if(currentLocation === PathPf.DOCUMENTI_SOSPESI || currentLocation.includes("documentisospesi") ){
             setSelectedIndex(10);
-        }else if(currentLocation === PathPf.DOCUMENTI_EMESSI){
+        }else if(currentLocation === PathPf.DOCUMENTI_EMESSI || currentLocation.includes("documentiemessi")){
             setSelectedIndex(11);
         } 
         
         
-        if(currentLocation === PathPf.DOCUMENTI_EMESSI || currentLocation === PathPf.DOCUMENTI_SOSPESI){
+        if(currentLocation === PathPf.DOCUMENTI_EMESSI || currentLocation === PathPf.DOCUMENTI_SOSPESI ||  currentLocation.includes("documentiemessi") || currentLocation.includes("documentisospesi")  ){
             setOpenDocContabili(true);
         }
 
         if(openContestazioni && (currentLocation !== PathPf.STORICO_CONTEST_ENTE && currentLocation !== PathPf.LISTA_NOTIFICHE_EN && currentLocation !== PathPf.STORICO_DETTAGLIO_CONTEST && currentLocation !== PathPf.INSERIMENTO_CONTESTAZIONI_ENTE )){
             setOpenContestazioni(false);
         }
-        if(openDocContabili && (currentLocation !== PathPf.LISTA_STORICO_DOCUMENTI && currentLocation !== PathPf.DOCUMENTI_EMESSI && currentLocation !== PathPf.DOCUMENTI_SOSPESI )){
+        if(openDocContabili && (currentLocation !== PathPf.DOCUMENTI_EMESSI && currentLocation !== PathPf.DOCUMENTI_SOSPESI &&  !currentLocation.includes("documentiemessi") && !currentLocation.includes("documentisospesi") )){
             setOpenDocContabili(false);
         }
     },[currentLocation]);
