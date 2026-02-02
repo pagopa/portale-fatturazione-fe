@@ -8,9 +8,11 @@ import { InfoOpen } from '../../types/typesGeneral';
 import { useGlobalStore } from '../../store/context/useGlobalStore';
 
 
+
 const PageTitleNavigation = ({setOpen}) => {
     const mainState = useGlobalStore(state => state.mainState);
     const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+    const setOpenBasicModal_DatFat_ModCom = useGlobalStore(state => state.setOpenBasicModal_DatFat_ModCom);
 
     const profilo =  mainState.profilo;
 
@@ -34,9 +36,11 @@ const PageTitleNavigation = ({setOpen}) => {
 
     const onIndietroButtonPagoPa = () =>{
         if(mainState.statusPageDatiFatturazione === 'immutable' &&  profilo.auth === 'PAGOPA'){
+            console.log(1);
             navigate(PathPf.LISTA_DATI_FATTURAZIONE);
         }else{
-            setOpen((prev:InfoOpen) => ({...prev, ...{visible:true,clickOn:'INDIETRO_BUTTON'}}));
+            console.log(2,setOpen);
+            setOpen(({visible:true,clickOn:'INDIETRO_BUTTON'}));
         }
     };
 

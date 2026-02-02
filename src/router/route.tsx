@@ -151,7 +151,7 @@ const router2 = createBrowserRouter([
                     { path:PathRoutePf.DETTAGLIO_DOC_CONTABILE, Component: DettaglioDocContabile },
                     { path:PathRoutePf.KPI, Component: KpiPagamenti },
                     { path: PathRoutePf.MESSAGGI, Component: Messaggi },
-                    { path: PathRoutePf.EMAIL_PSP, Component: EmailPsp }
+                    // { path: PathRoutePf.EMAIL_PSP, Component: EmailPsp }
                 ],
             },
             {

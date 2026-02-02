@@ -47,7 +47,7 @@ export const useGlobalStore = create(
         (set, get) => ({
             /* ===== MAIN STATE ===== */
             mainState: initialState,
-            appVersion:"0.0.5",
+            appVersion:"0",
             dispatchMainState: (action) =>
                 set((state) => ({
                     mainState: reducerMainState(state.mainState, action),
@@ -87,18 +87,18 @@ export const useGlobalStore = create(
         }),
         {
             name: "globalStatePF",
-            version: 0,
+            version: 1,
             partialize: (state: GlobalStore) => ({
                 mainState: state.mainState,
                 statusQueryGetUri: state.statusQueryGetUri,
-                appVersion:state.appVersion
+                appVersion:process.env.REACT_APP_VERSION
             }),
             migrate: (persistedState: any, version) => {
                 return {
                     ...persistedState,
                     mainState: persistedState.mainState,
                     statusQueryGetUri: persistedState.statusQueryGetUri ?? [],
-                    appVersion:persistedState.appVersion ??"---"
+                    appVersion:process.env.REACT_APP_VERSION,
                 };
             },
         }

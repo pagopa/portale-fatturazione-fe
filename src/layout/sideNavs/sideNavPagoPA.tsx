@@ -59,12 +59,14 @@ const SideNavPagopa = () => {
                     </ListItemIcon>
                     <ListItemText primary="KPI Pagamenti" />
                 </ListItemButton>
+                {/* 
                 <ListItemButton selected={selectedIndex === 3} onClick={() => handleListItemClick(PathPf.EMAIL_PSP)}>
                     <ListItemIcon>
                         <SendIcon fontSize="inherit"></SendIcon>
                     </ListItemIcon>
                     <ListItemText primary="Mail PSP" />
                 </ListItemButton>
+                */}
             </List>
             <Divider />
         </Box>

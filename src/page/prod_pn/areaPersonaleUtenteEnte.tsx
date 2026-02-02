@@ -351,7 +351,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
         );
                 
     }
-
+    console.log({ss:setOpenBasicModal_DatFat_ModCom,openBasicModal_DatFat_ModCom});
     return (
                 
         <div >
