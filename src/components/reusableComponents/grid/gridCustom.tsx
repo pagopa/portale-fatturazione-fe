@@ -116,7 +116,6 @@ const GridCustom : React.FC<GridCustomProps> = ({
         }  
     };
 
-    console.log(headerNames);
 
     return (
         <div>

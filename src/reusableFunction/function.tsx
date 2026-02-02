@@ -277,3 +277,34 @@ export function toLocalISOString(date: Date) {
 export function isManageErrorResponse(err: any): err is ManageErrorResponse {
     return err && typeof err === "object" && "statusCode" in err;
 }
+
+
+export function groupByAnno(array) {
+    return array.reduce((acc, item) => {
+        const { anno, tipologiaFattura, mese, dataFattura } = item;
+
+        if (!acc[anno]) {
+            acc[anno] = {
+                tipologiaFattura: [],
+                mese: [],
+                dataFattura: [],
+            };
+        }
+
+        const tipo = tipologiaFattura.trim();
+
+        if (!acc[anno].tipologiaFattura.includes(tipo)) {
+            acc[anno].tipologiaFattura.push(tipo);
+        }
+
+        if (!acc[anno].mese.includes(mese)) {
+            acc[anno].mese.push(mese);
+        }
+
+        if (!acc[anno].dataFattura.includes(dataFattura)) {
+            acc[anno].dataFattura.push(dataFattura);
+        }
+
+        return acc;
+    }, {});
+}

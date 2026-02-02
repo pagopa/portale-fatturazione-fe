@@ -24,6 +24,7 @@ export type MainFilterProps<T> = {
     keyValue:number|string;
     defaultValue?:string|number|null // valore da settare se si ha un valore null da inserire nel body
     fontSize?:string|null,
+    disabled?:boolean,
 
     keyOption?:string;   // field used as label
     keyCompare?: string;  // optional compare field
@@ -82,7 +83,8 @@ const MainFilter = <T,>({
     fontSize,
     iconMaterial,
     format="dd/MM/yyyy",
-    viewDate=['year', 'month',"day"]
+    viewDate=['year', 'month',"day"],
+    disabled=false
 }: MainFilterProps<T>) => {
 
 
@@ -182,8 +184,8 @@ const MainFilter = <T,>({
             </MainBoxContainer>);
         case "select_value":
             return ( !hidden &&  keyBody && arrayValues &&
-            <MainBoxContainer>
-                <FormControl fullWidth >
+            <MainBoxContainer >
+                <FormControl fullWidth disabled={disabled}>
                     <InputLabel>
                         {inputLabel}
                     </InputLabel>
@@ -199,7 +201,7 @@ const MainFilter = <T,>({
                             }
                             
                         }}
-                        value={arrayValues[body[keyDescription]] ?? ""}
+                        value={inputLabel === "Mese" ? body[keyDescription]: arrayValues[body[keyDescription]] ?? ""}
                     >
                         {arrayValues?.map((el) => (
                             <MenuItem
@@ -207,6 +209,30 @@ const MainFilter = <T,>({
                                 value={el}
                             >
                                 {inputLabel === "Mese" ? mesiGrid[el] : el}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            </MainBoxContainer>);
+        case "select_value_with_tutti":
+            return ( !hidden &&  keyBody && arrayValues &&
+            <MainBoxContainer >
+                <FormControl fullWidth disabled={disabled}>
+                    <InputLabel>{inputLabel}</InputLabel>
+                    <Select
+                        label={inputLabel}
+                        value={body[keyDescription] ? body[keyDescription] : "Tutti"}
+                        renderValue={(selected) =>
+                            Number(selected) === 9999 ? 'Tutti' : selected
+                        }
+                        onChange={(e) => {
+                            clearOnChangeFilter();
+                            extraCodeOnChange && extraCodeOnChange(e.target.value);
+                        }}
+                    >
+                        {arrayValues?.map((el) => (
+                            <MenuItem key={el} value={el}>
+                                {Number(el) === 9999 ? 'Tutti' : el}
                             </MenuItem>
                         ))}
                     </Select>
