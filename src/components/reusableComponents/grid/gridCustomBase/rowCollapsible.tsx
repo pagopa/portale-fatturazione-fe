@@ -49,9 +49,8 @@ const RowCollapsible = ({sliced,element ,headerNames, headerNamesCollapse, apiGe
             
                 {
                     Object.values(sliced)?.map((value:any, i:number)=>{
-                        console.log({value});
-                        const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
-                        const valueEl = (i === 0 && value?.toString().length > 20) ? value?.toString().slice(0, 20) + '...' : value;
+                        const cssFirstColum = i === 1 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
+                        //const valueEl = (i === 0 && value?.toString().length > 20) ? value?.toString().slice(0, 20) + '...' : value;
                         if(i === 0){
                             return(
                                 <TableCell align={"center"}>
@@ -73,7 +72,7 @@ const RowCollapsible = ({sliced,element ,headerNames, headerNamesCollapse, apiGe
                             );
                         }else{
                             return (
-                                <TableCell sx={cssFirstColum}  align={"center"}>{valueEl}</TableCell>
+                                <TableCell  onClick={()=>{i === 1 && apiGet(element);}} sx={cssFirstColum}  align={"center"}>{value}</TableCell>
                             );
                         }             
                     })

@@ -201,7 +201,11 @@ const MainFilter = <T,>({
                             }
                             
                         }}
-                        value={inputLabel === "Mese" ? body[keyDescription]: arrayValues[body[keyDescription]] ?? ""}
+                        value={
+                            inputLabel === "Mese"
+                                ? body[keyDescription] ?? ""
+                                : arrayValues[body[keyDescription]] ?? ""
+                        }
                     >
                         {arrayValues?.map((el) => (
                             <MenuItem
@@ -221,7 +225,7 @@ const MainFilter = <T,>({
                     <InputLabel>{inputLabel}</InputLabel>
                     <Select
                         label={inputLabel}
-                        value={body[keyDescription] ? body[keyDescription] : "Tutti"}
+                        value={body[keyDescription] ?? 9999} 
                         renderValue={(selected) =>
                             Number(selected) === 9999 ? 'Tutti' : selected
                         }
@@ -366,6 +370,7 @@ const MainFilter = <T,>({
                 return (
                     <MainBoxContainer>
                         <Autocomplete
+                            disabled={disabled}
                             fullWidth
                             sx={{
                              

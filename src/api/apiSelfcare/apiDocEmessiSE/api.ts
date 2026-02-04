@@ -49,3 +49,13 @@ export const anniMesiDocumentiEmessi = async (token:string, nonce:string ) => {
     );
     return response;
 };
+
+
+export const getPeriodoEmesso = async (token:string , nonce:string) =>{
+    const response = await axios.get(
+        `${url}/api/fatture/ente/periodo?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }});
+    return response;
+};
