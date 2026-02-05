@@ -15,7 +15,7 @@ import { downloadFattureEnte } from "../../api/apiSelfcare/apiDocEmessiSE/api";
 import { ManageErrorResponse } from "../../types/typesGeneral";
 import { month } from "../../reusableFunction/reusableArrayObj";
 import { headersDocumentiEmessiEnte, headersDocumentiEmessiEnteCollapse } from "../../assets/configurations/conf_GridDocEmessiEnte";
-import { getListaDocumentiEmessi, getPeriodoSospeso } from "../../api/apiSelfcare/documentiSospesiSE/api";
+import { getListaDocumentiEmessi, getListaDocumentiSospesi, getPeriodoSospeso } from "../../api/apiSelfcare/documentiSospesiSE/api";
 import { groupByAnno } from "../../reusableFunction/function";
 
 export type BodyDocumentiEmessiEnte = {
@@ -105,6 +105,7 @@ const DocSos : React.FC = () =>{
 
     const [valueMulitselectDate, setValueMultiselectDate] = useState<string[]>([]);
     const [valueMulitselectTipologie, setValueMultiselectTipologie] = useState<string[]>([]);
+
     const [globalResponse, setGlobalResponse] = useState<ResponsePeriodo[]>([]);
     //____________________________________
 
@@ -141,9 +142,9 @@ const DocSos : React.FC = () =>{
             const result = groupByAnno(res.data);
            
             const yearsArray:number[] = Array.from( new Set(res.data.map(el => el.anno)));
-            const allMonths:number[] = Array.from( new Set(res.data.map(el => el.mese)));
+            const allMonths:number[] = Array.from( new Set(res.data.map(el => el.mese)));//da eliminare
             const allTipologie:string[] = Array.from( new Set(res.data.map(el => el.tipologiaFattura)));
-            const dataFattura:string[] = Array.from( new Set(res.data.map(el => `${el.dataFattura}-${el.tipologiaFattura}`)));
+            const dataFattura:string[] = Array.from( new Set(res.data.map(el => `${el.dataFattura}-${el.tipologiaFattura}`)));//da eliminare
             setResponseByAnno(result);
             setYears([9999,...yearsArray]);
             if(isInitialRender.current && Object.keys(filters)?.length > 0){
@@ -193,7 +194,7 @@ const DocSos : React.FC = () =>{
     const getlistaFatturazione = async (body) => {
         try {
             const res = await getListaDocumentiEmessi(token,profilo.nonce,body);
-            const totaleSum = res.data.importoSospeso;
+            const totaleSum = res.data.importo;
             console.log({res});
             setListaResponse(res.data.dettagli);
             setTotalDocumenti(res.data.dettagli.length);
@@ -206,8 +207,8 @@ const DocSos : React.FC = () =>{
                 dataFattura: obj.dataFattura
                     ? new Date(obj.dataFattura).toLocaleDateString()
                     : '--',
-                stato: 'Sospesa',
-                tipologiaFattura: obj.tipoDocumento,
+                stato: 'Emessa',
+                tipologiaFattura: obj.datiGeneraliDocumento[0].tipologia || "--",
                 identificativo: obj.identificativo,
                 tipocontratto: obj.tipocontratto === 'PAL'
                     ? 'PAC - PAL senza requisiti'
@@ -268,7 +269,6 @@ const DocSos : React.FC = () =>{
         setGridData([]);
         setPage(0);
         setRowsPerPage(10); 
-        setTotaleHeader(0);
     };
 
     const onButtonFiltra = () =>{
@@ -298,7 +298,6 @@ const DocSos : React.FC = () =>{
         setValueMultiselectDate([]);
         setPage(0);
         setRowsPerPage(10);
-        
         getlistaFatturazione(resetBody);
         resetFilters();
         
@@ -352,6 +351,18 @@ const DocSos : React.FC = () =>{
         bgHeader = "#ffeff1";
     }
 
+
+    const statusAnnulla = (bodyFatturazione.tipologiaFattura.length !== 0 || bodyFatturazione.mese !== null) ? false :true;
+    let labelAmount = `Totale fatturato`;
+    if(bodyFatturazioneDownload.anno !== null && bodyFatturazioneDownload.mese === null){
+        console.log(1);
+        labelAmount = `Totale fatturato/${bodyFatturazioneDownload.anno}`;
+    }else if(bodyFatturazioneDownload.mese !== null){
+        console.log(2);
+        labelAmount = `Totale fatturato/${bodyFatturazioneDownload.anno}-${month[bodyFatturazioneDownload.mese-1]}`;
+    }
+    console.log({bodyFatturazioneDownload});
+
     const setIdDoc = async(el) => {
         handleModifyMainState({relSelected:{
             "nomeEnteClickOn": "Comune di Bisceglie",
@@ -359,7 +370,7 @@ const DocSos : React.FC = () =>{
             "anno": 2025,
             "id": "234c45ca-da5f-4067-a4d6-1391774162b4_28e1103f-43c7-4268-bab3-91ee62cea226_PRIMO-SALDO_2025_6"
         }});
-        navigate(PathPf.PDF_REL_EN+"/documentisospesi");
+        navigate(PathPf.PDF_REL_EN+"/documentiemessi");
     };  
 
 
@@ -373,22 +384,8 @@ const DocSos : React.FC = () =>{
             )
         );
     }
-
-  
-
-    const statusAnnulla = (bodyFatturazione.tipologiaFattura.length !== 0 || bodyFatturazione.mese !== null || bodyFatturazione.anno !== null) ? false :true;
-    let labelAmount = `Credito sospeso`;
-    if(bodyFatturazioneDownload.anno !== null && bodyFatturazioneDownload.mese === null){
-  
-        labelAmount = `Credito sospeso/${bodyFatturazioneDownload.anno}`;
-    }else if(bodyFatturazioneDownload.mese !== null){
-   
-        labelAmount = `Credito sospeso/${bodyFatturazioneDownload.anno}-${month[bodyFatturazioneDownload.mese-1]}`;
-    }
-
-  
     return (
-        <MainBoxStyled title={"Documenti contabili sospesi"} actionButton={[]}>
+        <MainBoxStyled title={"Documenti contabili emessi"} actionButton={[]}>
             <ResponsiveGridContainer >
                 <MainFilter 
                     filterName={"select_value_with_tutti"}
@@ -403,7 +400,7 @@ const DocSos : React.FC = () =>{
                     extraCodeOnChange={(e)=>{
                     
                         if(e.toString() === "9999"){
-                            //getDataFilter();
+                            getDataFilter();
                             setBodyFatturazione((prev)=> ({...prev, ...{anno:null,mese:null,dataFattura:[],tipologiaFattura:[]}}));
                         }else{
                             setBodyFatturazione((prev)=> ({...prev, ...{anno:Number(e),mese:null,dataFattura:[],tipologiaFattura:[]}}));
@@ -413,7 +410,6 @@ const DocSos : React.FC = () =>{
                         
                         setValueMultiselectTipologie([]);
                         setValueMultiselectDate([]);
-                        
                     }}
                 ></MainFilter>
                 <MainFilter 
@@ -430,12 +426,12 @@ const DocSos : React.FC = () =>{
                         setBodyFatturazione((prev)=> ({...prev, mese:Number(e),tipologiaFattura:[],dataFattura:[]}));
                         setValueMultiselectTipologie([]);
                         setValueMultiselectDate([]);
+                        console.log("dio ");
                         const arrayTipogie = Array.from( new Set(globalResponse
                             .filter(el =>
                                 el.anno === bodyFatturazione.anno && el.mese === Number(e))
                             .map(el => el.tipologiaFattura)));
                         setDataSelect(arrayTipogie);
-                   
                     }}
                     disabled={bodyFatturazione.anno === null}
                 ></MainFilter>
@@ -464,8 +460,9 @@ const DocSos : React.FC = () =>{
                             responseByAnno && setArrayDataFatturaFiltered(result);
                         }
                         setValueMultiselectDate([]);
+                        
+                     
                         setBodyFatturazione((prev) => ({...prev,...{tipologiaFattura:e}}));
-                   
                     }}
                     iconMaterial={RenderIcon("invoice",true)}
                 ></MainFilter>
@@ -485,7 +482,7 @@ const DocSos : React.FC = () =>{
                         setValueMultiselectDate(e);
                     }}
                     iconMaterial={RenderIcon("date",true)}
-                    disabled={valueMulitselectTipologie.length === 0 || bodyFatturazione.anno === null|| bodyFatturazione.mese !== null}
+                    disabled={valueMulitselectTipologie.length === 0 || bodyFatturazione.anno === null || bodyFatturazione.mese !== null}
                 ></MainFilter>
             </ResponsiveGridContainer>
             <FilterActionButtons 
@@ -495,7 +492,7 @@ const DocSos : React.FC = () =>{
             ></FilterActionButtons>
             <Paper sx={{ p: 2, mb: 2, backgroundColor:bgHeader}}>
                 <Typography variant="body2" color="text.secondary">
-                    {"Credito sospeso"}
+                    {labelAmount}
                 </Typography>
                 <Typography variant="h6">
                     {totaleHeader === 0 ? "--" :totaleHeader.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
@@ -540,7 +537,6 @@ const DocSos : React.FC = () =>{
                 sentence={'Loading...'}>
             </ModalLoading>
         </MainBoxStyled>
-        
     );
 };
 

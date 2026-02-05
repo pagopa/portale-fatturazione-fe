@@ -11,8 +11,18 @@ export const getPeriodoSospeso = async (token:string , nonce:string) =>{
     return response;
 };
 
-export const getListaDocumentiEmessi = async (token:string, nonce:string , body:BodyDocumentiEmessiEnte)  => {
+export const getListaDocumentiSospesi = async (token:string, nonce:string , body:BodyDocumentiEmessiEnte)  => {
     const response = await axios.post(`${url}/api/fatture/ente/credito/sospeso?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+};
+
+export const getListaDocumentiEmessi = async (token:string, nonce:string , body:BodyDocumentiEmessiEnte)  => {
+    const response = await axios.post(`${url}/api/fatture/ente/periodo/emesse?nonce=${nonce}`,
         body,
         { headers: {
             Authorization: 'Bearer ' + token

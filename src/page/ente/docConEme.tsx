@@ -197,7 +197,7 @@ const DocEm : React.FC = () =>{
     const getlistaFatturazione = async (body) => {
         try {
             const res = await getListaDocumentiEmessi(token,profilo.nonce,body);
-            const totaleSum = res.data.importoSospeso;
+            const totaleSum = res.data.importo;
             console.log({res});
             setListaResponse(res.data.dettagli);
             setTotalDocumenti(res.data.dettagli.length);
@@ -211,7 +211,7 @@ const DocEm : React.FC = () =>{
                     ? new Date(obj.dataFattura).toLocaleDateString()
                     : '--',
                 stato: 'Emessa',
-                tipologiaFattura: obj.tipoDocumento,
+                tipologiaFattura: obj.datiGeneraliDocumento[0].tipologia || "--",
                 identificativo: obj.identificativo,
                 tipocontratto: obj.tipocontratto === 'PAL'
                     ? 'PAC - PAL senza requisiti'
