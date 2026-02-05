@@ -268,6 +268,7 @@ const DocSos : React.FC = () =>{
         setGridData([]);
         setPage(0);
         setRowsPerPage(10); 
+        setTotaleHeader(0);
     };
 
     const onButtonFiltra = () =>{
@@ -297,6 +298,7 @@ const DocSos : React.FC = () =>{
         setValueMultiselectDate([]);
         setPage(0);
         setRowsPerPage(10);
+        
         getlistaFatturazione(resetBody);
         resetFilters();
         
@@ -347,7 +349,7 @@ const DocSos : React.FC = () =>{
     }else if(totaleHeader > 0){
         bgHeader = "#F2FAF2";
     }else if(totaleHeader < 0){
-        bgHeader = "#FB9EAC";
+        bgHeader = "#ffeff1";
     }
 
     const setIdDoc = async(el) => {
@@ -401,7 +403,7 @@ const DocSos : React.FC = () =>{
                     extraCodeOnChange={(e)=>{
                     
                         if(e.toString() === "9999"){
-                            getDataFilter();
+                            //getDataFilter();
                             setBodyFatturazione((prev)=> ({...prev, ...{anno:null,mese:null,dataFattura:[],tipologiaFattura:[]}}));
                         }else{
                             setBodyFatturazione((prev)=> ({...prev, ...{anno:Number(e),mese:null,dataFattura:[],tipologiaFattura:[]}}));
@@ -411,6 +413,7 @@ const DocSos : React.FC = () =>{
                         
                         setValueMultiselectTipologie([]);
                         setValueMultiselectDate([]);
+                        
                     }}
                 ></MainFilter>
                 <MainFilter 
@@ -432,6 +435,7 @@ const DocSos : React.FC = () =>{
                                 el.anno === bodyFatturazione.anno && el.mese === Number(e))
                             .map(el => el.tipologiaFattura)));
                         setDataSelect(arrayTipogie);
+                   
                     }}
                     disabled={bodyFatturazione.anno === null}
                 ></MainFilter>
@@ -460,9 +464,8 @@ const DocSos : React.FC = () =>{
                             responseByAnno && setArrayDataFatturaFiltered(result);
                         }
                         setValueMultiselectDate([]);
-                        
-                     
                         setBodyFatturazione((prev) => ({...prev,...{tipologiaFattura:e}}));
+                   
                     }}
                     iconMaterial={RenderIcon("invoice",true)}
                 ></MainFilter>

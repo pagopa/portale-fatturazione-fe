@@ -351,7 +351,7 @@ const DocEm : React.FC = () =>{
     }else if(totaleHeader > 0){
         bgHeader = "#F2FAF2";
     }else if(totaleHeader < 0){
-        bgHeader = "#FB9EAC";
+        bgHeader = "#ffeff1";
     }
 
 
