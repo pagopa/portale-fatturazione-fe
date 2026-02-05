@@ -376,17 +376,6 @@ const DocEm : React.FC = () =>{
         navigate(PathPf.PDF_REL_EN+"/documentiemessi");
     };  
 
-
-    function filterByCombinedMatch(firstArray, secondArray) {
-        const year = firstArray[firstArray.length - 1];
-        const valuesToCheck = firstArray.slice(0, -1);
-
-        return secondArray.filter(item =>
-            valuesToCheck.some(val =>
-                item.includes(val) && item.includes(year)
-            )
-        );
-    }
     return (
         <MainBoxStyled title={"Documenti contabili emessi"} actionButton={[]}>
             <ResponsiveGridContainer >
@@ -452,15 +441,14 @@ const DocEm : React.FC = () =>{
                     keyBody={"tipologiaFattura"}
                     extraCodeOnChangeArray={(e)=>{
                         setValueMultiselectTipologie(e);
-                        let arrayToCheck = e;
+                        const arrayToCheck = e;
                         if(bodyFatturazione.anno !== null && bodyFatturazione.anno.toString() && arrayToCheck.length > 0){
-                            arrayToCheck = [...arrayToCheck,bodyFatturazione.anno.toString()];
-                            console.log({arrayToCheck});
 
-                            const result = filterByCombinedMatch(arrayToCheck, arrayDataFattura);
-                            
-                            console.log({result});
-                            responseByAnno && setArrayDataFatturaFiltered(result);
+
+                            const arrayDataFattura = Array.from( new Set(globalResponse.filter(el =>
+                                el.anno === bodyFatturazione.anno && arrayToCheck.includes(el.tipologiaFattura) )
+                                .map(el => el.dataFattura)));
+                            responseByAnno && setArrayDataFatturaFiltered(arrayDataFattura);
                         }
                         setValueMultiselectDate([]);
                         

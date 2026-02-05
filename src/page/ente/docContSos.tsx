@@ -140,7 +140,7 @@ const DocSos : React.FC = () =>{
             const res = await getPeriodoSospeso(token, profilo.nonce);
             setGlobalResponse(res.data);
             const result = groupByAnno(res.data);
-           
+            console.log({ff:result});
             const yearsArray:number[] = Array.from( new Set(res.data.map(el => el.anno)));
             const allMonths:number[] = Array.from( new Set(res.data.map(el => el.mese)));//da eliminare
             const allTipologie:string[] = Array.from( new Set(res.data.map(el => el.tipologiaFattura)));
@@ -353,13 +353,13 @@ const DocSos : React.FC = () =>{
 
 
     const statusAnnulla = (bodyFatturazione.tipologiaFattura.length !== 0 || bodyFatturazione.mese !== null) ? false :true;
-    let labelAmount = `Totale fatturato`;
+    let labelAmount = `Credito sospeso`;
     if(bodyFatturazioneDownload.anno !== null && bodyFatturazioneDownload.mese === null){
         console.log(1);
-        labelAmount = `Totale fatturato/${bodyFatturazioneDownload.anno}`;
+        labelAmount = `Credito sospeso`; ///${bodyFatturazioneDownload.anno}
     }else if(bodyFatturazioneDownload.mese !== null){
         console.log(2);
-        labelAmount = `Totale fatturato/${bodyFatturazioneDownload.anno}-${month[bodyFatturazioneDownload.mese-1]}`;
+        labelAmount = `Credito sospeso`;///${bodyFatturazioneDownload.anno}-${month[bodyFatturazioneDownload.mese-1]}
     }
     console.log({bodyFatturazioneDownload});
 
@@ -370,22 +370,13 @@ const DocSos : React.FC = () =>{
             "anno": 2025,
             "id": "234c45ca-da5f-4067-a4d6-1391774162b4_28e1103f-43c7-4268-bab3-91ee62cea226_PRIMO-SALDO_2025_6"
         }});
-        navigate(PathPf.PDF_REL_EN+"/documentiemessi");
+        navigate(PathPf.PDF_REL_EN+"/documentisospesi");
     };  
 
 
-    function filterByCombinedMatch(firstArray, secondArray) {
-        const year = firstArray[firstArray.length - 1];
-        const valuesToCheck = firstArray.slice(0, -1);
 
-        return secondArray.filter(item =>
-            valuesToCheck.some(val =>
-                item.includes(val) && item.includes(year)
-            )
-        );
-    }
     return (
-        <MainBoxStyled title={"Documenti contabili emessi"} actionButton={[]}>
+        <MainBoxStyled title={"Documenti contabili sospesi"} actionButton={[]}>
             <ResponsiveGridContainer >
                 <MainFilter 
                     filterName={"select_value_with_tutti"}
@@ -449,15 +440,14 @@ const DocSos : React.FC = () =>{
                     keyBody={"tipologiaFattura"}
                     extraCodeOnChangeArray={(e)=>{
                         setValueMultiselectTipologie(e);
-                        let arrayToCheck = e;
+                        const arrayToCheck = e;
                         if(bodyFatturazione.anno !== null && bodyFatturazione.anno.toString() && arrayToCheck.length > 0){
-                            arrayToCheck = [...arrayToCheck,bodyFatturazione.anno.toString()];
-                            console.log({arrayToCheck});
 
-                            const result = filterByCombinedMatch(arrayToCheck, arrayDataFattura);
-                            
-                            console.log({result});
-                            responseByAnno && setArrayDataFatturaFiltered(result);
+
+                            const arrayDataFattura = Array.from( new Set(globalResponse.filter(el =>
+                                el.anno === bodyFatturazione.anno && arrayToCheck.includes(el.tipologiaFattura) )
+                                .map(el => el.dataFattura)));
+                            responseByAnno && setArrayDataFatturaFiltered(arrayDataFattura);
                         }
                         setValueMultiselectDate([]);
                         
@@ -529,7 +519,7 @@ const DocSos : React.FC = () =>{
             <ModalRedirect
                 setOpen={setOpenModalRedirect} 
                 open={openModalRedirect}
-                sentence={`Per poter visualizzare il dettaglio dei Documenti EMESSI è obbligatorio fornire i seguenti dati di fatturazione:`}>
+                sentence={`Per poter visualizzare il dettaglio dei Documenti SOSPESI è obbligatorio fornire i seguenti dati di fatturazione:`}>
             </ModalRedirect>
             <ModalLoading 
                 open={showLoadingGrid} 
