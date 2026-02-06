@@ -43,7 +43,8 @@ interface GridCustomProps {
     }[],
     headerAction?:(val:any) =>void,
     body?:any,
-    paginationVisibile?:boolean
+    paginationVisibile?:boolean,
+    objectSort?:{[key:string]:number}
 }
 
 
@@ -67,7 +68,8 @@ const GridCustom : React.FC<GridCustomProps> = ({
     headerAction,
     body,
     paginationVisibile,
-    headerNamesCollapse
+    headerNamesCollapse,
+    objectSort
 }) =>{
 
     const handleClickOnGrid = (element) =>{
@@ -126,7 +128,16 @@ const GridCustom : React.FC<GridCustomProps> = ({
                         <TableHead sx={{backgroundColor:'#f2f2f2'}}>
                             <TableRow>
                                 {headerNames.map((el,i)=>{
-                                    if(nameParameterApi === 'idOrchestratore' || nameParameterApi === "asyncDocEnte"|| nameParameterApi === "idPrevisonale"|| nameParameterApi === "docEmessiEnte" ){ //|| nameParameterApi === "modComTrimestrale"
+                                    let sortValue = 0;
+                                    if(objectSort && objectSort[el.label] === 1){
+                                        sortValue = Number(objectSort[el.label]);
+                                    }else if(objectSort && objectSort[el.label] === 2){
+                                        sortValue = Number(objectSort[el.label]);
+                                    }else if(objectSort && objectSort[el.label] === 3){
+                                        sortValue = Number(objectSort[el.label]);
+                                    }
+                                    //TODO : da sistemare nel file di configurazione come fatto con doc emessi , doc sospesi ente 06/02/26
+                                    if(nameParameterApi === 'idOrchestratore' || nameParameterApi === "asyncDocEnte"|| nameParameterApi === "idPrevisonale" ){ //|| nameParameterApi === "modComTrimestrale"
                                         return(
                                             <TableCell key={Math.random()} align={el.align} width={el.width}>{el.label}
                                                 {el.headerAction &&
@@ -140,9 +151,25 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                                 </Tooltip>}
                                             </TableCell>
                                         );
-                                    }if(nameParameterApi === 'contestazionePage'|| nameParameterApi === "modComTrimestrale"){
+                                    }else if(nameParameterApi === 'contestazionePage'|| nameParameterApi === "modComTrimestrale"){
                                         return(
                                             <TableCell key={Math.random()} align={el.align} width={el.width}>{el.label}</TableCell>
+                                        );
+                                    }else if(nameParameterApi === "docEmessiEnte"){
+                                        return(
+                                            <TableCell key={Math.random()} align={el.align} width={el.width}>{el.label}
+                                                {(el.headerActionSort &&  objectSort && objectSort[el.label]) &&
+                                                <Tooltip title="Sort">
+                                                    <span>
+                                                        <IconButton disabled={ total === 0 ? true : false} sx={{marginLeft:'10px'}}  onClick={()=> headerAction && headerAction(el.label)}  size="small">
+                                                            {(sortValue === 1) ? <ArrowUpwardIcon sx={{ color: 'text.disabled'}}></ArrowUpwardIcon> :
+                                                                (sortValue === 2) ? <ArrowUpwardIcon></ArrowUpwardIcon>:
+                                                                    <ArrowDownwardIcon></ArrowDownwardIcon>}
+                                                        </IconButton>
+                                                    </span>
+                                                   
+                                                </Tooltip>}
+                                            </TableCell>
                                         );
                                     }else{
                                         return <TableCell align="center" key={Math.random()}>{el}</TableCell>;
