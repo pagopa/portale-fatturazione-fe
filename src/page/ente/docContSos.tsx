@@ -193,8 +193,8 @@ const DocSos : React.FC = () =>{
 
     const getlistaFatturazione = async (body) => {
         try {
-            const res = await getListaDocumentiEmessi(token,profilo.nonce,body);
-            const totaleSum = res.data.importo;
+            const res = await getListaDocumentiSospesi(token,profilo.nonce,body);
+            const totaleSum = res.data.importoSospeso;
             console.log({res});
             setListaResponse(res.data.dettagli);
             setTotalDocumenti(res.data.dettagli.length);
@@ -207,7 +207,7 @@ const DocSos : React.FC = () =>{
                 dataFattura: obj.dataFattura
                     ? new Date(obj.dataFattura).toLocaleDateString()
                     : '--',
-                stato: 'Emessa',
+                stato: 'Sospesa',
                 tipologiaFattura: obj.datiGeneraliDocumento[0].tipologia || "--",
                 identificativo: obj.identificativo,
                 tipocontratto: obj.tipocontratto === 'PAL'
@@ -485,7 +485,7 @@ const DocSos : React.FC = () =>{
                     {labelAmount}
                 </Typography>
                 <Typography variant="h6">
-                    {totaleHeader === 0 ? "--" :totaleHeader.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
+                    {totaleHeader === 0 ? "--" :totaleHeader?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
                 </Typography>
             </Paper>
             <ActionTopGrid
