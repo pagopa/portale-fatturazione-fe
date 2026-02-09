@@ -1,6 +1,5 @@
 import React, {  useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { getMesiRelSend } from "../../api/apiSelfcare/relSE/api";
 import { month } from "../../reusableFunction/reusableArrayObj";
 import { PathPf } from "../../types/enum";
 import { saveAs } from "file-saver";
@@ -11,7 +10,7 @@ import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
-import { anniMesiDocumentiEmessi, downloadFattureEnte, getFatturazioneEnte, getPeriodoEmesso, getTipologieFaEnte } from "../../api/apiSelfcare/apiDocEmessiSE/api";
+import { downloadFattureEnte, getPeriodoEmesso} from "../../api/apiSelfcare/apiDocEmessiSE/api";
 import { ManageErrorResponse } from "../../types/typesGeneral";
 import { Paper, Typography } from "@mui/material";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
@@ -201,9 +200,7 @@ const DocEm : React.FC = () =>{
         try {
             const res = await getListaDocumentiEmessi(token,profilo.nonce,body);
             const totaleSum = res.data.importo;
-            console.log({res});
-           
-            
+    
             const getObjectFattura = res.data.dettagli.map(el => el.fattura);
             const orderDataCustom = getObjectFattura.map((obj, index) => ({
                 id: obj.identificativo ?? index,
@@ -296,8 +293,8 @@ const DocEm : React.FC = () =>{
     
     const onButtonAnnulla = async () => {
         const resetBody:BodyDocumentiEmessiEnte = {
-            anno:null,
-            mese:null,
+            anno:9999,
+            mese:9999,
             tipologiaFattura:[],
             dataFattura:[]
         };
@@ -321,7 +318,7 @@ const DocEm : React.FC = () =>{
         
         const start = newPage * rowsPerPage;
         const end = start + rowsPerPage;
-        console.log({newPage,start,end,listaResponse});
+     
         const elementsToShow = listaResponse.slice(start, end);
         setGridData(elementsToShow);
 
@@ -365,13 +362,13 @@ const DocEm : React.FC = () =>{
     const statusAnnulla = (bodyFatturazione.tipologiaFattura.length !== 0 || bodyFatturazione.mese !== null) ? false :true;
     let labelAmount = `Totale fatturato`;
     if(bodyFatturazioneDownload.anno !== null && bodyFatturazioneDownload.mese === null){
-        console.log(1);
+
         labelAmount = `Totale fatturato/${bodyFatturazioneDownload.anno}`;
     }else if(bodyFatturazioneDownload.mese !== null){
-        console.log(2);
+ 
         labelAmount = `Totale fatturato/${bodyFatturazioneDownload.anno}-${month[bodyFatturazioneDownload.mese-1]}`;
     }
-    console.log({bodyFatturazioneDownload});
+
 
     const setIdDoc = async(el) => {
         handleModifyMainState({relSelected:{
@@ -390,13 +387,13 @@ const DocEm : React.FC = () =>{
         setObjectSort(prev =>
             Object.fromEntries(
                 Object.keys(prev).map(key => {
-                    console.log({key,label});
+                   
                     if (key === label) {
                        
                         const current = prev[key];
                         const next = current === 1 ? 2 : current === 2 ? 3 : 1;
 
-                        console.log({key,next});
+                    
                         if(label === "Data Fattura"){
                             if(next === 2){
                                 const result = sortDates(gridData, true);
@@ -411,29 +408,29 @@ const DocEm : React.FC = () =>{
                             return [key, next];
                             
                         }else if(label === "Ident."){
-                            console.log(1);
+                     
                             if(next === 2){
                                 const result = sortMonthYear(gridData, true);
                                 setGridData(result);
-                                console.log(2);
+                           
                             }else if(next === 3){
                                 const result = sortMonthYear(gridData, false);
                                 setGridData(result);
-                                console.log(3);
+                            
                             }else{
                                 setGridData(gridDataNoSorted);
-                                console.log(4);
+                           
                             }
 
                             return [key, next];
                         }else if(label === "Tot." ){
                             if(next === 2){
                                 const result = sortByTotale(gridData, true, "totale");
-                                console.log({yyy2:result});
+                         
                                 setGridData(result);
                             }else if(next === 3){
                                 const result = sortByTotale(gridData, false,"totale");
-                                console.log({yyy:result});
+                           
                                 setGridData(result);
                             }else{
                                 setGridData(gridDataNoSorted);
@@ -527,7 +524,7 @@ const DocEm : React.FC = () =>{
                             .map(el => el.tipologiaFattura)));
                         setDataSelect(arrayTipogie);
                     }}
-                    disabled={bodyFatturazione.anno === null}
+                    disabled={bodyFatturazione.anno === 9999}
                 ></MainFilter>
                 <MainFilter 
                     filterName={"multi_checkbox"}
@@ -575,7 +572,7 @@ const DocEm : React.FC = () =>{
                         setValueMultiselectDate(e);
                     }}
                     iconMaterial={RenderIcon("date",true)}
-                    disabled={valueMulitselectTipologie.length === 0 || bodyFatturazione.anno === null || bodyFatturazione.mese !== null}
+                    disabled={valueMulitselectTipologie.length === 0 || bodyFatturazione.anno === 9999 || bodyFatturazione.mese !== 9999}
                 ></MainFilter>
             </ResponsiveGridContainer>
             <FilterActionButtons 
