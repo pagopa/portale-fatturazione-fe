@@ -213,7 +213,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                     }else if(nameParameterApi === "idPrevisonale"){
                                         return <RowModCommessaPrevisionale key={element.id} sliced={sliced} element={element} headerNames={headerNames}></RowModCommessaPrevisionale>;
                                     }else if(nameParameterApi === "docEmessiEnte"){
-                                        return <RowCollapsible key={element.id} sliced={sliced} element={element} headerNames={headerNames} headerNamesCollapse={headerNamesCollapse} apiGet={apiGet}></RowCollapsible>;
+                                        return <RowCollapsible key={Math.random()} sliced={sliced} element={element} headerNames={headerNames} headerNamesCollapse={headerNamesCollapse} apiGet={apiGet}></RowCollapsible>;
                                     }else{
                                      
                                         return (

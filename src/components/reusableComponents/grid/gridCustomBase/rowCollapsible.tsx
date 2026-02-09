@@ -38,7 +38,7 @@ const RowCollapsible = ({sliced,element ,headerNames, headerNamesCollapse, apiGe
  
     return(
         <>
-            <TableRow  sx={{
+            <TableRow key={Math.random()} sx={{
                 height: '80px',
                 borderTop: '4px solid #F2F2F2',
                 borderBottom: '2px solid #F2F2F2',

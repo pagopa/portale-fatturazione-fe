@@ -90,7 +90,7 @@ const DocEm : React.FC = () =>{
 
     //______________________NEW_________________
     const [listaResponse, setListaResponse] = useState<Fattura[]>([]);
-    const [responseByAnno, setResponseByAnno] = useState<{anno:{ mese:number[],tipologiaFattura:string[],dataFattura:string[]}[]}>();
+    //const [responseByAnno, setResponseByAnno] = useState<{anno:{ mese:number[],tipologiaFattura:string[],dataFattura:string[]}[]}>();
     const [years,setYears] = useState<number[]>([]);
     const [arraymonths,setArrayMonths] = useState<number[]>([]);
     const [arrayDataFattura,setArrayDataFattura] = useState<string[]>([]);
@@ -138,42 +138,77 @@ const DocEm : React.FC = () =>{
         }
     },[]);
 
-
-
     const getDataFilter = async() => {
+        setShowLoadingGrid(true);
         try{
             const res = await getPeriodoEmesso(token, profilo.nonce);
             setGlobalResponse(res.data);
-            const result = groupByAnno(res.data);
            
             const yearsArray:number[] = Array.from( new Set(res.data.map(el => el.anno)));
             const allMonths:number[] = Array.from( new Set(res.data.map(el => el.mese)));//da eliminare
             const allTipologie:string[] = Array.from( new Set(res.data.map(el => el.tipologiaFattura)));
             const dataFattura:string[] = Array.from( new Set(res.data.map(el => `${el.dataFattura}-${el.tipologiaFattura}`)));//da eliminare
-            setResponseByAnno(result);
+            //setResponseByAnno(result);
             setYears(yearsArray);
             if(isInitialRender.current && Object.keys(filters)?.length > 0){
-               
-                if(filters.body.anno !== null){
-                    result && setArrayMonths(result[filters.body.anno]?.mese);
-                    result && setDataSelect(result[filters.body.anno]?.tipologiaFattura);
-                }else{
-                    setArrayMonths(allMonths);
-                    setDataSelect(allTipologie);
-                }
+                console.log(1);
+                if(filters.body.anno !== 9999){
+                    console.log(2);
+                    const arrayMonths:number[] = Array.from( new Set(res.data
+                        .filter(el =>
+                            el.anno === Number(filters.body.anno))
+                        .map(el => el.mese)));
+                    console.log(arrayMonths,{RR:res.data});
+                    setArrayMonths(arrayMonths);
 
-                let arrayToCheck = filters.body.tipologiaFattura;
-                if(filters.body.anno !== null && arrayToCheck.length > 0){
-                    arrayToCheck = [...arrayToCheck,filters.body.anno.toString()];
-                    const result = arrayDataFattura.filter(item =>
-                        arrayToCheck.some(key =>
-                            item.toUpperCase().includes(key.toUpperCase())
-                        )
-                    );
-                    responseByAnno && setArrayDataFatturaFiltered(result);
+                    const arrayTipogie:string[] = Array.from( new Set(res.data
+                        .filter(el =>
+                            el.anno === Number(filters.body.anno))
+                        .map(el => el.tipologiaFattura)));
+                    console.log({arrayTipogie,bb:filters.body.tipologiaFattura,filters});
+                    setDataSelect(arrayTipogie);
+                    if(filters.body?.tipologiaFattura?.length > 0){
+                        setValueMultiselectTipologie(filters.body.tipologiaFattura);
+                    }
+                    
+             
+                    if(filters?.body?.tipologiaFattura?.length > 0 && filters?.body?.mese === 9999){
+                        console.log(4);
+                        const arrayDataFattura:string[] = Array.from( new Set(res.data.filter(el =>
+                            el.anno === Number(filters?.body?.anno) &&  filters?.body?.tipologiaFattura.includes(el.tipologiaFattura) )
+                            .map(el => el.dataFattura)));
+                        console.log(arrayDataFattura);
+                        setArrayDataFatturaFiltered(arrayDataFattura);
+                        if(filters?.body?.dataFattura?.length > 0){
+                            console.log(5);
+                            setValueMultiselectDate(filters.body.dataFattura);
+                        }
+
+                    }
+
+                    console.log(6);
+                    setBodyFatturazione(filters.body);
+                    setBodyFatturazioneDownload(filters.body);
+                    getlistaFatturazione(filters.body);
+                 
+                }else{
+                    if( filters?.body?.tipologiaFattura?.length > 0 && filters.body.anno === 9999){
+
+                        const arrayTipogie:string[] = Array.from( new Set(res.data.map(el => el.tipologiaFattura)));
+                  
+                        setDataSelect(arrayTipogie);
+                        setValueMultiselectTipologie(filters?.body?.tipologiaFattura);
+                    }
+                   
+                
+              
+                    setDataSelect(allTipologie);
+                    console.log(7);
+                    setBodyFatturazione(filters.body);
+                    setBodyFatturazioneDownload(filters.body);
+                    getlistaFatturazione(filters.body);
                 }
-                setBodyFatturazione(filters.body);
-                setBodyFatturazioneDownload(filters.body);
+                
             }else{
                
                 setArrayMonths(allMonths);
@@ -232,16 +267,29 @@ const DocEm : React.FC = () =>{
                     periodoFatturazione: '--',
                 })),
             }));
+            if(isInitialRender.current && Object.keys(filters)?.length > 0 && (filters.page !== 0 || filters.rows !== 10) ){
+                const start = filters.page * filters.rows;
+                const end = start + filters.rows;
+     
+                const elementsToShow = orderDataCustom.slice(start, end);
+                setGridData(elementsToShow);
+                setGridDataNoSorted(elementsToShow);
+                setPage(filters.page);
+                setRowsPerPage(filters.rows);
+
+            }else{
+                const dataToShow = orderDataCustom.slice(0, 10);
+                setGridData(dataToShow);
+                setGridDataNoSorted(dataToShow);
+               
+            }
             setListaResponse(orderDataCustom);
             setTotalDocumenti(res.data.dettagli.length);
-            setPage(0);
-            const dataToShow = orderDataCustom.slice(0, 10);
-
             setTotaleHeader(totaleSum);
-            setGridData(dataToShow);
-            setGridDataNoSorted(dataToShow);
             setBodyFatturazioneDownload(bodyFatturazione);
             isInitialRender.current = false;
+            setShowLoadingGrid(false);
+            
         } catch (err) {
             isInitialRender.current = false;
             if (err && typeof err === "object") {
@@ -480,11 +528,11 @@ const DocEm : React.FC = () =>{
                     extraCodeOnChange={(e)=>{
                     
                         if(e.toString() === "9999"){
-                            //getDataFilter();
-                            setBodyFatturazione((prev)=> ({...prev, ...{anno:null,mese:null,dataFattura:[],tipologiaFattura:[]}}));
+                        
+                            setBodyFatturazione((prev)=> ({...prev, ...{anno:9999,mese:9999,dataFattura:[],tipologiaFattura:[]}}));
                             setArrayMonths([]);
                         }else{
-                            setBodyFatturazione((prev)=> ({...prev, ...{anno:Number(e),mese:null,dataFattura:[],tipologiaFattura:[]}}));
+                            setBodyFatturazione((prev)=> ({...prev, ...{anno:Number(e),mese:9999,dataFattura:[],tipologiaFattura:[]}}));
                             const arrayMonths = Array.from( new Set(globalResponse
                                 .filter(el =>
                                     el.anno === Number(e))
@@ -496,7 +544,7 @@ const DocEm : React.FC = () =>{
                                     el.anno === Number(e))
                                 .map(el => el.tipologiaFattura)));
                             setDataSelect(arrayTipogie);
-                            //responseByAnno && setDataSelect(responseByAnno[e]?.tipologiaFattura);
+                           
                         }
                         
                         setValueMultiselectTipologie([]);
@@ -547,7 +595,7 @@ const DocEm : React.FC = () =>{
                             const arrayDataFattura = Array.from( new Set(globalResponse.filter(el =>
                                 el.anno === bodyFatturazione.anno && arrayToCheck.includes(el.tipologiaFattura) )
                                 .map(el => el.dataFattura)));
-                            responseByAnno && setArrayDataFatturaFiltered(arrayDataFattura);
+                            setArrayDataFatturaFiltered(arrayDataFattura);
                         }
                         setValueMultiselectDate([]);
                         
@@ -570,6 +618,7 @@ const DocEm : React.FC = () =>{
                     keyBody={"dataFattura"}
                     extraCodeOnChangeArray={(e)=>{
                         setValueMultiselectDate(e);
+                        setBodyFatturazione(prev => ({...prev,dataFattura:e}));
                     }}
                     iconMaterial={RenderIcon("date",true)}
                     disabled={valueMulitselectTipologie.length === 0 || bodyFatturazione.anno === 9999 || bodyFatturazione.mese !== 9999}
