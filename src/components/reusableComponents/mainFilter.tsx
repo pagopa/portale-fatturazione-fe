@@ -201,18 +201,14 @@ const MainFilter = <T,>({
                             }
                             
                         }}
-                        value={
-                            inputLabel === "Mese"
-                                ? body[keyDescription] ?? ""
-                                : arrayValues[body[keyDescription]] ?? ""
-                        }
+                        value={ arrayValues[body[keyDescription]] ?? ""}
                     >
                         {arrayValues?.map((el) => (
                             <MenuItem
                                 key={Math.random()}
                                 value={el}
                             >
-                                {inputLabel === "Mese" ? mesiGrid[el] : el}
+                                {el}
                             </MenuItem>
                         ))}
                     </Select>
@@ -234,14 +230,58 @@ const MainFilter = <T,>({
                             extraCodeOnChange && extraCodeOnChange(e.target.value);
                         }}
                     >
+                        <MenuItem value={9999}>Tutti</MenuItem>
                         {arrayValues?.map((el) => (
                             <MenuItem key={el} value={el}>
-                                {Number(el) === 9999 ? 'Tutti' : el}
+                                {el}
                             </MenuItem>
                         ))}
                     </Select>
                 </FormControl>
             </MainBoxContainer>);
+        case "select_mese_with_tutti":
+            return (
+                !hidden &&  keyBody && arrayValues &&
+            <MainBoxContainer >
+                <FormControl fullWidth disabled={disabled}>
+                    <InputLabel>{inputLabel}</InputLabel>
+
+                    <Select
+                        label={inputLabel}
+                        value={
+                            body[keyDescription] ?? 9999
+                        }
+                        renderValue={(selected) =>
+                            Number(selected) === 9999 ? "Tutti" : (
+                                inputLabel === "Mese" ? mesiGrid[selected] : selected
+                            )
+                        }
+                        onChange={(e) => {
+                            clearOnChangeFilter();
+                            const value = e.target.value;
+
+                            if (extraCodeOnChange) {
+                                extraCodeOnChange(value);
+                            } else {
+                                setBody((prev) => ({
+                                    ...prev,
+                                    [keyBody]: value,
+                                }));
+                            }
+                        }}
+                    >
+                        {/* 🔹 TUTTI OPTION */}
+                        <MenuItem value={9999}>Tutti</MenuItem>
+
+                        {arrayValues?.map((el) => (
+                            <MenuItem key={el} value={el}>
+                                {inputLabel === "Mese" ? mesiGrid[el] : el}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            </MainBoxContainer>
+            );
         case "select_value_nobody":
             return ( !hidden &&  keyBody && arrayValues &&
             <MainBoxContainer>

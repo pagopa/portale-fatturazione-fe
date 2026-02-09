@@ -17,7 +17,7 @@ import { Paper, Typography } from "@mui/material";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import { headersDocumentiEmessiEnte, headersDocumentiEmessiEnteCollapse } from "../../assets/configurations/conf_GridDocEmessiEnte";
 import { getListaDocumentiEmessi } from "../../api/apiSelfcare/documentiSospesiSE/api";
-import { groupByAnno } from "../../reusableFunction/function";
+import { groupByAnno, sortByNumeroFattura, sortByTotale, sortDates, sortMonthYear } from "../../reusableFunction/function";
 
 
 export type BodyDocumentiEmessiEnte = {
@@ -118,15 +118,15 @@ const DocEm : React.FC = () =>{
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
 
     const [bodyFatturazione, setBodyFatturazione] = useState<BodyDocumentiEmessiEnte>({
-        anno:null,
-        mese:null,
+        anno:9999,
+        mese:9999,
         tipologiaFattura:[],
         dataFattura:[]
     });
 
     const [bodyFatturazioneDownload, setBodyFatturazioneDownload] = useState<BodyDocumentiEmessiEnte>({
-        anno:null,
-        mese:null,
+        anno:9999,
+        mese:9999,
         tipologiaFattura:[],
         dataFattura:[]
     });
@@ -152,7 +152,7 @@ const DocEm : React.FC = () =>{
             const allTipologie:string[] = Array.from( new Set(res.data.map(el => el.tipologiaFattura)));
             const dataFattura:string[] = Array.from( new Set(res.data.map(el => `${el.dataFattura}-${el.tipologiaFattura}`)));//da eliminare
             setResponseByAnno(result);
-            setYears([9999,...yearsArray]);
+            setYears(yearsArray);
             if(isInitialRender.current && Object.keys(filters)?.length > 0){
                
                 if(filters.body.anno !== null){
@@ -385,25 +385,6 @@ const DocEm : React.FC = () =>{
        
     };  
 
-    const sortDates = (array: Fattura[], ascending = true) => {
-        return [...array].sort((a, b) => 
-            ascending 
-                ? a.dataFattura.localeCompare(b.dataFattura)   // oldest → newest
-                : b.dataFattura.localeCompare(a.dataFattura)   // newest → oldest
-        );
-    };
-
-    const sortMonthYear = (array: Fattura[], ascending = true) => {
-        return [...array].sort((a, b) => {
-            const parse = (s: string) => {
-                const [month, year] = s.split('/');       // ["02","2024"]
-                return Number(year + month.padStart(2, '0')); // 202402
-            };
-            return ascending
-                ? parse(a.dataFattura) - parse(b.dataFattura)
-                : parse(b.dataFattura) - parse(a.dataFattura);
-        });
-    };
 
     const headerAction = (label:string) => {
         setObjectSort(prev =>
@@ -430,23 +411,41 @@ const DocEm : React.FC = () =>{
                             return [key, next];
                             
                         }else if(label === "Ident."){
+                            console.log(1);
                             if(next === 2){
                                 const result = sortMonthYear(gridData, true);
                                 setGridData(result);
+                                console.log(2);
                             }else if(next === 3){
                                 const result = sortMonthYear(gridData, false);
+                                setGridData(result);
+                                console.log(3);
+                            }else{
+                                setGridData(gridDataNoSorted);
+                                console.log(4);
+                            }
+
+                            return [key, next];
+                        }else if(label === "Tot." ){
+                            if(next === 2){
+                                const result = sortByTotale(gridData, true, "totale");
+                                console.log({yyy2:result});
+                                setGridData(result);
+                            }else if(next === 3){
+                                const result = sortByTotale(gridData, false,"totale");
+                                console.log({yyy:result});
                                 setGridData(result);
                             }else{
                                 setGridData(gridDataNoSorted);
                             }
 
                             return [key, next];
-                        }else if(label === "Tot."){
+                        }else if(label === "N. Fattura"){
                             if(next === 2){
-                                const result = sortMonthYear(gridData, true);
+                                const result = sortByNumeroFattura(gridData, true,"numero");
                                 setGridData(result);
                             }else if(next === 3){
-                                const result = sortMonthYear(gridData, false);
+                                const result = sortByNumeroFattura(gridData, false,"numero");
                                 setGridData(result);
                             }else{
                                 setGridData(gridDataNoSorted);
@@ -466,7 +465,7 @@ const DocEm : React.FC = () =>{
         );
     };
 
-    console.log({objectSort});
+   
 
     return (
         <MainBoxStyled title={"Documenti contabili emessi"} actionButton={[]}>
@@ -484,12 +483,23 @@ const DocEm : React.FC = () =>{
                     extraCodeOnChange={(e)=>{
                     
                         if(e.toString() === "9999"){
-                            getDataFilter();
+                            //getDataFilter();
                             setBodyFatturazione((prev)=> ({...prev, ...{anno:null,mese:null,dataFattura:[],tipologiaFattura:[]}}));
+                            setArrayMonths([]);
                         }else{
                             setBodyFatturazione((prev)=> ({...prev, ...{anno:Number(e),mese:null,dataFattura:[],tipologiaFattura:[]}}));
-                            responseByAnno && setArrayMonths(responseByAnno[e]?.mese);
-                            responseByAnno && setDataSelect(responseByAnno[e]?.tipologiaFattura);
+                            const arrayMonths = Array.from( new Set(globalResponse
+                                .filter(el =>
+                                    el.anno === Number(e))
+                                .map(el => el.mese)));
+                            setArrayMonths(arrayMonths);
+
+                            const arrayTipogie = Array.from( new Set(globalResponse
+                                .filter(el =>
+                                    el.anno === Number(e))
+                                .map(el => el.tipologiaFattura)));
+                            setDataSelect(arrayTipogie);
+                            //responseByAnno && setDataSelect(responseByAnno[e]?.tipologiaFattura);
                         }
                         
                         setValueMultiselectTipologie([]);
@@ -497,7 +507,7 @@ const DocEm : React.FC = () =>{
                     }}
                 ></MainFilter>
                 <MainFilter 
-                    filterName={"select_value"}
+                    filterName={"select_mese_with_tutti"}
                     inputLabel={"Mese"}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyFatturazione}
@@ -510,7 +520,7 @@ const DocEm : React.FC = () =>{
                         setBodyFatturazione((prev)=> ({...prev, mese:Number(e),tipologiaFattura:[],dataFattura:[]}));
                         setValueMultiselectTipologie([]);
                         setValueMultiselectDate([]);
-                        console.log("dio ");
+                     
                         const arrayTipogie = Array.from( new Set(globalResponse
                             .filter(el =>
                                 el.anno === bodyFatturazione.anno && el.mese === Number(e))
@@ -575,7 +585,7 @@ const DocEm : React.FC = () =>{
             ></FilterActionButtons>
             <Paper sx={{ p: 2, mb: 2, backgroundColor:bgHeader}}>
                 <Typography variant="body2" color="text.secondary">
-                    {labelAmount}
+                    Totale fatturato
                 </Typography>
                 <Typography variant="h6">
                     {totaleHeader === 0 ? "--" :totaleHeader.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}

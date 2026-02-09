@@ -3,6 +3,7 @@ import { DataGridCommessa } from "../types/typeModuloCommessaElenco";
 import { ArrayTipologieCommesse, DatiModuloCommessaPdf, ModuliCommessa } from "../types/typeModuloCommessaInserimento";
 import { month, objMesiWithZero } from "./reusableArrayObj";
 import { ManageErrorResponse } from "../types/typesGeneral";
+import { Fattura } from "../page/ente/docConEme";
 
 export const fixResponseForDataGrid = (arr:any[]):any =>{
       
@@ -308,3 +309,63 @@ export function groupByAnno(array) {
         return acc;
     }, {});
 }
+
+
+export const sortDates = (array: Fattura[], ascending = true) => {
+    return [...array].sort((a, b) => 
+        ascending 
+            ? a.dataFattura.localeCompare(b.dataFattura)   // oldest → newest
+            : b.dataFattura.localeCompare(a.dataFattura)   // newest → oldest
+    );
+};
+
+export const sortMonthYear = (array: Fattura[], ascending = true) => {
+    return [...array].sort((a, b) => {
+        const parse = (s: string) => {
+            const [month, year] = s.split('/');       // ["02","2024"]
+            return Number(year + month.padStart(2, '0')); // 202402
+        };
+        return ascending
+            ? parse(a.identificativo) - parse(b.identificativo)
+            : parse(b.identificativo) - parse(a.identificativo);
+    });
+};
+
+export const sortByNumeroFattura = (array, state,key) => {
+    if (state === true) {
+        return [...array].sort((a, b) => a[key] - b[key]);
+    }else  if (state === false) {
+        return [...array].sort((a, b) => b[key] - a[key]);
+    }
+    return array;
+};
+
+export const sortByTotale = (array: any[], state: boolean, key: string) => {
+    // helper to clean the value: remove non-digits
+    const parseValue = (val: string | number) => {
+        if (typeof val === 'number') return val;
+        if (typeof val === 'string') {
+            // remove everything that is not a digit
+            return Number(val.replace(/[^0-9]/g, ''));
+        }
+        return 0;
+    };
+
+    if (state === true) {
+        // ascending
+        return [...array].sort(
+            (a, b) => {
+                console.log({chiave:a,key});
+                return parseValue(a[key]) - parseValue(b[key]);
+            }
+        );
+    } else if (state === false) {
+        // descending
+        return [...array].sort(
+            (a, b) => parseValue(b[key]) - parseValue(a[key])
+        );
+    }
+
+    return array;
+};
+
