@@ -16,7 +16,7 @@ import { Paper, Typography } from "@mui/material";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import { headersDocumentiEmessiEnte, headersDocumentiEmessiEnteCollapse } from "../../assets/configurations/conf_GridDocEmessiEnte";
 import { getListaDocumentiEmessi } from "../../api/apiSelfcare/documentiSospesiSE/api";
-import { groupByAnno, sortByNumeroFattura, sortByTotale, sortDates, sortMonthYear } from "../../reusableFunction/function";
+import { sortByNumeroFattura, sortByTotale, sortDates, sortMonthYear } from "../../reusableFunction/function";
 
 
 export type BodyDocumentiEmessiEnte = {

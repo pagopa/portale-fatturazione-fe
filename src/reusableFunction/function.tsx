@@ -345,8 +345,9 @@ export const sortByTotale = (array: any[], state: boolean, key: string) => {
     const parseValue = (val: string | number) => {
         if (typeof val === 'number') return val;
         if (typeof val === 'string') {
-            // remove everything that is not a digit
-            return Number(val.replace(/[^0-9]/g, ''));
+        // keep digits and minus sign
+            const cleaned = val.replace(/[^0-9-]/g, '');
+            return Number(cleaned);
         }
         return 0;
     };

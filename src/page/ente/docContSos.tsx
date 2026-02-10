@@ -62,7 +62,6 @@ export type Posizione = {
 
 
 const DocSos : React.FC = () =>{
-
     const mainState = useGlobalStore(state => state.mainState);
     const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
     const navigate = useNavigate();
@@ -88,7 +87,7 @@ const DocSos : React.FC = () =>{
 
     //______________________NEW_________________
     const [listaResponse, setListaResponse] = useState<Fattura[]>([]);
-    const [responseByAnno, setResponseByAnno] = useState<{anno:{ mese:number[],tipologiaFattura:string[],dataFattura:string[]}[]}>();
+    //const [responseByAnno, setResponseByAnno] = useState<{anno:{ mese:number[],tipologiaFattura:string[],dataFattura:string[]}[]}>();
     const [years,setYears] = useState<number[]>([]);
     const [arraymonths,setArrayMonths] = useState<number[]>([]);
     const [arrayDataFattura,setArrayDataFattura] = useState<string[]>([]);
@@ -136,42 +135,77 @@ const DocSos : React.FC = () =>{
         }
     },[]);
 
-
-
     const getDataFilter = async() => {
+        setShowLoadingGrid(true);
         try{
             const res = await getPeriodoSospeso(token, profilo.nonce);
             setGlobalResponse(res.data);
-            const result = groupByAnno(res.data);
            
             const yearsArray:number[] = Array.from( new Set(res.data.map(el => el.anno)));
             const allMonths:number[] = Array.from( new Set(res.data.map(el => el.mese)));//da eliminare
             const allTipologie:string[] = Array.from( new Set(res.data.map(el => el.tipologiaFattura)));
             const dataFattura:string[] = Array.from( new Set(res.data.map(el => `${el.dataFattura}-${el.tipologiaFattura}`)));//da eliminare
-            setResponseByAnno(result);
+            //setResponseByAnno(result);
             setYears(yearsArray);
             if(isInitialRender.current && Object.keys(filters)?.length > 0){
-               
-                if(filters.body.anno !== null){
-                    result && setArrayMonths(result[filters.body.anno]?.mese);
-                    result && setDataSelect(result[filters.body.anno]?.tipologiaFattura);
-                }else{
-                    setArrayMonths(allMonths);
-                    setDataSelect(allTipologie);
-                }
+                console.log(1);
+                if(filters.body.anno !== 9999){
+                    console.log(2);
+                    const arrayMonths:number[] = Array.from( new Set(res.data
+                        .filter(el =>
+                            el.anno === Number(filters.body.anno))
+                        .map(el => el.mese)));
+                    console.log(arrayMonths,{RR:res.data});
+                    setArrayMonths(arrayMonths);
 
-                let arrayToCheck = filters.body.tipologiaFattura;
-                if(filters.body.anno !== null && arrayToCheck.length > 0){
-                    arrayToCheck = [...arrayToCheck,filters.body.anno.toString()];
-                    const result = arrayDataFattura.filter(item =>
-                        arrayToCheck.some(key =>
-                            item.toUpperCase().includes(key.toUpperCase())
-                        )
-                    );
-                    responseByAnno && setArrayDataFatturaFiltered(result);
+                    const arrayTipogie:string[] = Array.from( new Set(res.data
+                        .filter(el =>
+                            el.anno === Number(filters.body.anno))
+                        .map(el => el.tipologiaFattura)));
+                    console.log({arrayTipogie,bb:filters.body.tipologiaFattura,filters});
+                    setDataSelect(arrayTipogie);
+                    if(filters.body?.tipologiaFattura?.length > 0){
+                        setValueMultiselectTipologie(filters.body.tipologiaFattura);
+                    }
+                    
+             
+                    if(filters?.body?.tipologiaFattura?.length > 0 && filters?.body?.mese === 9999){
+                        console.log(4);
+                        const arrayDataFattura:string[] = Array.from( new Set(res.data.filter(el =>
+                            el.anno === Number(filters?.body?.anno) &&  filters?.body?.tipologiaFattura.includes(el.tipologiaFattura) )
+                            .map(el => el.dataFattura)));
+                        console.log(arrayDataFattura);
+                        setArrayDataFatturaFiltered(arrayDataFattura);
+                        if(filters?.body?.dataFattura?.length > 0){
+                            console.log(5);
+                            setValueMultiselectDate(filters.body.dataFattura);
+                        }
+
+                    }
+
+                    console.log(6);
+                    setBodyFatturazione(filters.body);
+                    setBodyFatturazioneDownload(filters.body);
+                    getlistaFatturazione(filters.body);
+                 
+                }else{
+                    if( filters?.body?.tipologiaFattura?.length > 0 && filters.body.anno === 9999){
+
+                        const arrayTipogie:string[] = Array.from( new Set(res.data.map(el => el.tipologiaFattura)));
+                  
+                        setDataSelect(arrayTipogie);
+                        setValueMultiselectTipologie(filters?.body?.tipologiaFattura);
+                    }
+                   
+                
+              
+                    setDataSelect(allTipologie);
+                    console.log(7);
+                    setBodyFatturazione(filters.body);
+                    setBodyFatturazioneDownload(filters.body);
+                    getlistaFatturazione(filters.body);
                 }
-                setBodyFatturazione(filters.body);
-                setBodyFatturazioneDownload(filters.body);
+                
             }else{
                
                 setArrayMonths(allMonths);
@@ -198,9 +232,7 @@ const DocSos : React.FC = () =>{
         try {
             const res = await getListaDocumentiSospesi(token,profilo.nonce,body);
             const totaleSum = res.data.importoSospeso;
-            console.log({res});
-           
-            
+    
             const getObjectFattura = res.data.dettagli.map(el => el.fattura);
             const orderDataCustom = getObjectFattura.map((obj, index) => ({
                 id: obj.identificativo ?? index,
@@ -232,16 +264,29 @@ const DocSos : React.FC = () =>{
                     periodoFatturazione: '--',
                 })),
             }));
+            if(isInitialRender.current && Object.keys(filters)?.length > 0 && (filters.page !== 0 || filters.rows !== 10) ){
+                const start = filters.page * filters.rows;
+                const end = start + filters.rows;
+     
+                const elementsToShow = orderDataCustom.slice(start, end);
+                setGridData(elementsToShow);
+                setGridDataNoSorted(elementsToShow);
+                setPage(filters.page);
+                setRowsPerPage(filters.rows);
+
+            }else{
+                const dataToShow = orderDataCustom.slice(0, 10);
+                setGridData(dataToShow);
+                setGridDataNoSorted(dataToShow);
+               
+            }
             setListaResponse(orderDataCustom);
             setTotalDocumenti(res.data.dettagli.length);
-            setPage(0);
-            const dataToShow = orderDataCustom.slice(0, 10);
-
             setTotaleHeader(totaleSum);
-            setGridData(dataToShow);
-            setGridDataNoSorted(dataToShow);
             setBodyFatturazioneDownload(bodyFatturazione);
             isInitialRender.current = false;
+            setShowLoadingGrid(false);
+            
         } catch (err) {
             isInitialRender.current = false;
             if (err && typeof err === "object") {
@@ -293,8 +338,8 @@ const DocSos : React.FC = () =>{
     
     const onButtonAnnulla = async () => {
         const resetBody:BodyDocumentiEmessiEnte = {
-            anno:null,
-            mese:null,
+            anno:9999,
+            mese:9999,
             tipologiaFattura:[],
             dataFattura:[]
         };
@@ -318,7 +363,7 @@ const DocSos : React.FC = () =>{
         
         const start = newPage * rowsPerPage;
         const end = start + rowsPerPage;
-        console.log({newPage,start,end,listaResponse});
+     
         const elementsToShow = listaResponse.slice(start, end);
         setGridData(elementsToShow);
 
@@ -362,13 +407,13 @@ const DocSos : React.FC = () =>{
     const statusAnnulla = (bodyFatturazione.tipologiaFattura.length !== 0 || bodyFatturazione.mese !== null) ? false :true;
     let labelAmount = `Totale fatturato`;
     if(bodyFatturazioneDownload.anno !== null && bodyFatturazioneDownload.mese === null){
-        console.log(1);
+
         labelAmount = `Totale fatturato/${bodyFatturazioneDownload.anno}`;
     }else if(bodyFatturazioneDownload.mese !== null){
-        console.log(2);
+ 
         labelAmount = `Totale fatturato/${bodyFatturazioneDownload.anno}-${month[bodyFatturazioneDownload.mese-1]}`;
     }
-    console.log({bodyFatturazioneDownload});
+
 
     const setIdDoc = async(el) => {
         handleModifyMainState({relSelected:{
@@ -387,13 +432,13 @@ const DocSos : React.FC = () =>{
         setObjectSort(prev =>
             Object.fromEntries(
                 Object.keys(prev).map(key => {
-                    console.log({key,label});
+                   
                     if (key === label) {
                        
                         const current = prev[key];
                         const next = current === 1 ? 2 : current === 2 ? 3 : 1;
 
-                        console.log({key,next});
+                    
                         if(label === "Data Fattura"){
                             if(next === 2){
                                 const result = sortDates(gridData, true);
@@ -408,29 +453,29 @@ const DocSos : React.FC = () =>{
                             return [key, next];
                             
                         }else if(label === "Ident."){
-                            console.log(1);
+                     
                             if(next === 2){
                                 const result = sortMonthYear(gridData, true);
                                 setGridData(result);
-                                console.log(2);
+                           
                             }else if(next === 3){
                                 const result = sortMonthYear(gridData, false);
                                 setGridData(result);
-                                console.log(3);
+                            
                             }else{
                                 setGridData(gridDataNoSorted);
-                                console.log(4);
+                           
                             }
 
                             return [key, next];
                         }else if(label === "Tot." ){
                             if(next === 2){
                                 const result = sortByTotale(gridData, true, "totale");
-                                console.log({yyy2:result});
+                         
                                 setGridData(result);
                             }else if(next === 3){
                                 const result = sortByTotale(gridData, false,"totale");
-                                console.log({yyy:result});
+                           
                                 setGridData(result);
                             }else{
                                 setGridData(gridDataNoSorted);
@@ -465,7 +510,7 @@ const DocSos : React.FC = () =>{
    
 
     return (
-        <MainBoxStyled title={"Documenti contabili sospesi"} actionButton={[]}>
+        <MainBoxStyled title={"Documenti contabili emessi"} actionButton={[]}>
             <ResponsiveGridContainer >
                 <MainFilter 
                     filterName={"select_value_with_tutti"}
@@ -480,11 +525,11 @@ const DocSos : React.FC = () =>{
                     extraCodeOnChange={(e)=>{
                     
                         if(e.toString() === "9999"){
-                            //getDataFilter();
-                            setBodyFatturazione((prev)=> ({...prev, ...{anno:null,mese:null,dataFattura:[],tipologiaFattura:[]}}));
+                        
+                            setBodyFatturazione((prev)=> ({...prev, ...{anno:9999,mese:9999,dataFattura:[],tipologiaFattura:[]}}));
                             setArrayMonths([]);
                         }else{
-                            setBodyFatturazione((prev)=> ({...prev, ...{anno:Number(e),mese:null,dataFattura:[],tipologiaFattura:[]}}));
+                            setBodyFatturazione((prev)=> ({...prev, ...{anno:Number(e),mese:9999,dataFattura:[],tipologiaFattura:[]}}));
                             const arrayMonths = Array.from( new Set(globalResponse
                                 .filter(el =>
                                     el.anno === Number(e))
@@ -496,7 +541,7 @@ const DocSos : React.FC = () =>{
                                     el.anno === Number(e))
                                 .map(el => el.tipologiaFattura)));
                             setDataSelect(arrayTipogie);
-                            //responseByAnno && setDataSelect(responseByAnno[e]?.tipologiaFattura);
+                           
                         }
                         
                         setValueMultiselectTipologie([]);
@@ -524,7 +569,7 @@ const DocSos : React.FC = () =>{
                             .map(el => el.tipologiaFattura)));
                         setDataSelect(arrayTipogie);
                     }}
-                    disabled={bodyFatturazione.anno === null}
+                    disabled={bodyFatturazione.anno === 9999}
                 ></MainFilter>
                 <MainFilter 
                     filterName={"multi_checkbox"}
@@ -547,7 +592,7 @@ const DocSos : React.FC = () =>{
                             const arrayDataFattura = Array.from( new Set(globalResponse.filter(el =>
                                 el.anno === bodyFatturazione.anno && arrayToCheck.includes(el.tipologiaFattura) )
                                 .map(el => el.dataFattura)));
-                            responseByAnno && setArrayDataFatturaFiltered(arrayDataFattura);
+                            setArrayDataFatturaFiltered(arrayDataFattura);
                         }
                         setValueMultiselectDate([]);
                         
@@ -570,9 +615,10 @@ const DocSos : React.FC = () =>{
                     keyBody={"dataFattura"}
                     extraCodeOnChangeArray={(e)=>{
                         setValueMultiselectDate(e);
+                        setBodyFatturazione(prev => ({...prev,dataFattura:e}));
                     }}
                     iconMaterial={RenderIcon("date",true)}
-                    disabled={valueMulitselectTipologie.length === 0 || bodyFatturazione.anno === null || bodyFatturazione.mese !== null}
+                    disabled={valueMulitselectTipologie.length === 0 || bodyFatturazione.anno === 9999 || bodyFatturazione.mese !== 9999}
                 ></MainFilter>
             </ResponsiveGridContainer>
             <FilterActionButtons 
@@ -621,7 +667,7 @@ const DocSos : React.FC = () =>{
             <ModalRedirect
                 setOpen={setOpenModalRedirect} 
                 open={openModalRedirect}
-                sentence={`Per poter visualizzare il dettaglio dei Documenti SOSPESI è obbligatorio fornire i seguenti dati di fatturazione:`}>
+                sentence={`Per poter visualizzare il dettaglio dei Documenti EMESSI è obbligatorio fornire i seguenti dati di fatturazione:`}>
             </ModalRedirect>
             <ModalLoading 
                 open={showLoadingGrid} 
