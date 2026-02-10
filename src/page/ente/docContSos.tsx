@@ -240,7 +240,7 @@ const DocSos : React.FC = () =>{
                 dataFattura: obj.dataFattura
                     ?  new Date(obj.dataFattura).toLocaleDateString('en-CA')
                     : '--',
-                stato: 'Emessa',
+                stato: 'Sospesa',
                 tipologiaFattura: obj.datiGeneraliDocumento[0].tipologia || "--",
                 identificativo: obj.identificativo,
                 tipocontratto: obj.tipocontratto === 'PAL'
@@ -510,7 +510,7 @@ const DocSos : React.FC = () =>{
    
 
     return (
-        <MainBoxStyled title={"Documenti contabili emessi"} actionButton={[]}>
+        <MainBoxStyled title={"Documenti contabili sospesi"} actionButton={[]}>
             <ResponsiveGridContainer >
                 <MainFilter 
                     filterName={"select_value_with_tutti"}
