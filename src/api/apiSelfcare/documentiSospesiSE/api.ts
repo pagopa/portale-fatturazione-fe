@@ -86,7 +86,7 @@ export const downloadFattureEmesseEnte = async (token:string, nonce:string,body:
         mese: body.mese === 9999 ? null : body.mese,
         anno: body.anno === 9999 ? null : body.anno,
     };
-    const response = await fetch(`${url}/api/fatture/ente/sospese/download?nonce=${nonce}`, 
+    const response = await fetch(`${url}/api/fatture/ente/emesse/download?nonce=${nonce}`, 
         {
             headers: {
                 Authorization: 'Bearer '+token,

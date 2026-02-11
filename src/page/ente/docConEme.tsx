@@ -307,8 +307,7 @@ const DocEm : React.FC = () =>{
     };
 
     const downloadListaFatturazione = async () => {
-        //waiting api
-        /*
+      
         setShowDownloading(true);
         await downloadFattureEmesseEnte(token,profilo.nonce, bodyFatturazioneDownload).then(response => response.blob()).then((response)=>{
             let title = `Documenti emessi.xlsx`;
@@ -324,7 +323,6 @@ const DocEm : React.FC = () =>{
             setShowDownloading(false);
             manageError(err,dispatchMainState);
         }));
-         */
     };
 
     const clearOnChangeFilter = () => {
