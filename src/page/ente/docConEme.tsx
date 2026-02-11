@@ -15,13 +15,13 @@ import { ManageErrorResponse } from "../../types/typesGeneral";
 import { Paper, Typography } from "@mui/material";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import { headersDocumentiEmessiEnte, headersDocumentiEmessiEnteCollapse } from "../../assets/configurations/conf_GridDocEmessiEnte";
-import { getListaDocumentiEmessi } from "../../api/apiSelfcare/documentiSospesiSE/api";
+import { downloadFattureEmesseEnte, getListaDocumentiEmessi } from "../../api/apiSelfcare/documentiSospesiSE/api";
 import { sortByNumeroFattura, sortByTotale, sortDates, sortMonthYear } from "../../reusableFunction/function";
 
 
 export type BodyDocumentiEmessiEnte = {
-    anno:number|null|string,
-    mese:number|null,
+    anno:number,
+    mese:number,
     tipologiaFattura:string[],
     dataFattura:string[]
 }
@@ -307,18 +307,24 @@ const DocEm : React.FC = () =>{
     };
 
     const downloadListaFatturazione = async () => {
+        //waiting api
+        /*
         setShowDownloading(true);
-        await downloadFattureEnte(token,profilo.nonce, bodyFatturazioneDownload).then(response => response.blob()).then((response)=>{
-            let title = `Documenti sospesi/${bodyFatturazioneDownload.anno}.xlsx`;
-            if(bodyFatturazioneDownload.mese){
-                title = `Documenti sospesi/${month[bodyFatturazioneDownload.mese - 1]}/${bodyFatturazioneDownload.anno}.xlsx`;
+        await downloadFattureEmesseEnte(token,profilo.nonce, bodyFatturazioneDownload).then(response => response.blob()).then((response)=>{
+            let title = `Documenti emessi.xlsx`;
+            if(bodyFatturazioneDownload.anno !== 9999 && bodyFatturazioneDownload.mese === 9999){
+                title = `Documenti emessi/${bodyFatturazioneDownload.anno}.xlsx`;
+            }else if(bodyFatturazioneDownload.mese !== 9999 && bodyFatturazioneDownload.anno !== 9999){
+                title = `Documenti emessi/${month[bodyFatturazioneDownload.mese - 1]}/${bodyFatturazioneDownload.anno}.xlsx`;
             }
             saveAs(response,title);
             setShowDownloading(false);
+           
         }).catch(((err)=>{
             setShowDownloading(false);
             manageError(err,dispatchMainState);
         }));
+         */
     };
 
     const clearOnChangeFilter = () => {
@@ -408,7 +414,7 @@ const DocEm : React.FC = () =>{
     }
 
 
-    const statusAnnulla = (bodyFatturazione.tipologiaFattura.length !== 0 || bodyFatturazione.mese !== null) ? false :true;
+    const statusAnnulla = (bodyFatturazione.tipologiaFattura.length !== 0 || bodyFatturazione.mese !== 9999) ? false :true;
     let labelAmount = `Totale fatturato`;
     if(bodyFatturazioneDownload.anno !== null && bodyFatturazioneDownload.mese === null){
 

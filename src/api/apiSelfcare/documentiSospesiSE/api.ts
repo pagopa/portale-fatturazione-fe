@@ -61,6 +61,44 @@ export const getDettaglioFatturaSospesa = async (token:string , nonce:string , i
     return response;
 };
 
+export const downloadFattureSospeseEnte = async (token:string, nonce:string,body: any) => {
+    const finalBody = {
+        ...body,
+        mese: body.mese === 9999 ? null : body.mese,
+        anno: body.anno === 9999 ? null : body.anno,
+    };
+    const response = await fetch(`${url}/api/fatture/ente/sospese/download?nonce=${nonce}`, 
+        {
+            headers: {
+                Authorization: 'Bearer '+token,
+                'Content-type':'application/json'
+            },
+            method: 'POST',
+            body:JSON.stringify(finalBody),
+        });
+   
+    return response;
+};
+
+export const downloadFattureEmesseEnte = async (token:string, nonce:string,body: any) => {
+    const finalBody = {
+        ...body,
+        mese: body.mese === 9999 ? null : body.mese,
+        anno: body.anno === 9999 ? null : body.anno,
+    };
+    const response = await fetch(`${url}/api/fatture/ente/sospese/download?nonce=${nonce}`, 
+        {
+            headers: {
+                Authorization: 'Bearer '+token,
+                'Content-type':'application/json'
+            },
+            method: 'POST',
+            body:JSON.stringify(finalBody),
+        });
+   
+    return response;
+};
+
 
 
 

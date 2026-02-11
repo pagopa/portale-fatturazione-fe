@@ -11,16 +11,15 @@ import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, Responsi
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
 import { Paper, Typography } from "@mui/material";
-import { downloadFattureEnte } from "../../api/apiSelfcare/apiDocEmessiSE/api";
 import { ManageErrorResponse } from "../../types/typesGeneral";
 import { month } from "../../reusableFunction/reusableArrayObj";
 import { headersDocumentiEmessiEnte, headersDocumentiEmessiEnteCollapse } from "../../assets/configurations/conf_GridDocEmessiEnte";
-import {  getListaDocumentiSospesi, getPeriodoSospeso } from "../../api/apiSelfcare/documentiSospesiSE/api";
-import { groupByAnno, sortByNumeroFattura, sortByTotale, sortDates, sortMonthYear } from "../../reusableFunction/function";
+import {  downloadFattureSospeseEnte, getListaDocumentiSospesi, getPeriodoSospeso } from "../../api/apiSelfcare/documentiSospesiSE/api";
+import { sortByNumeroFattura, sortByTotale, sortDates, sortMonthYear } from "../../reusableFunction/function";
 
 export type BodyDocumentiEmessiEnte = {
-    anno:number|null|string,
-    mese:number|null,
+    anno:number
+    mese:number,
     tipologiaFattura:string[],
     dataFattura:string[]
 }
@@ -305,9 +304,11 @@ const DocSos : React.FC = () =>{
 
     const downloadListaFatturazione = async () => {
         setShowDownloading(true);
-        await downloadFattureEnte(token,profilo.nonce, bodyFatturazioneDownload).then(response => response.blob()).then((response)=>{
-            let title = `Documenti sospesi/${bodyFatturazioneDownload.anno}.xlsx`;
-            if(bodyFatturazioneDownload.mese){
+        await downloadFattureSospeseEnte(token,profilo.nonce, bodyFatturazioneDownload).then(response => response.blob()).then((response)=>{
+            let title = `Documenti sospesi.xlsx`;
+            if(bodyFatturazioneDownload.anno !== 9999 && bodyFatturazioneDownload.mese === 9999){
+                title = `Documenti sospesi/${bodyFatturazioneDownload.anno}.xlsx`;
+            }else if(bodyFatturazioneDownload.mese !== 9999 && bodyFatturazioneDownload.anno !== 9999){
                 title = `Documenti sospesi/${month[bodyFatturazioneDownload.mese - 1]}/${bodyFatturazioneDownload.anno}.xlsx`;
             }
             saveAs(response,title);
@@ -405,7 +406,7 @@ const DocSos : React.FC = () =>{
     }
 
 
-    const statusAnnulla = (bodyFatturazione.tipologiaFattura.length !== 0 || bodyFatturazione.mese !== null) ? false :true;
+    const statusAnnulla = (bodyFatturazione.tipologiaFattura.length !== 0 || bodyFatturazione.mese !== 9999) ? false :true;
     let labelAmount = `Totale fatturato`;
     if(bodyFatturazioneDownload.anno !== null && bodyFatturazioneDownload.mese === null){
 
