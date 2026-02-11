@@ -75,7 +75,8 @@ export const useGlobalStore = create(
                 apiKeyPage: {
                     visible: null,
                     keys: [],
-                },
+                }
+
             },
             setMainData: (updater) =>
                 set((state) => ({

@@ -92,7 +92,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
             };
             apiGet(newDetail);
             //modComTrimestrale
-        }else if(apiGet && nameParameterApi === 'modComTrimestrale'){
+        }else if(apiGet && (nameParameterApi === 'modComTrimestrale'|| nameParameterApi === "docEmessiEnte" )){
             apiGet(element);
         }else if(apiGet){
             const newDetail = {
@@ -186,7 +186,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                     let sliced = Object.fromEntries(
                                         Object.entries(element).slice(1)
                                     );
-                                    if(nameParameterApi === 'idWhite' || nameParameterApi === "docEmessiEnte"){
+                                    if(nameParameterApi === 'idWhite'){
                                         sliced = Object.fromEntries(Object.entries(element).slice(1, -1));
                                     }else if(nameParameterApi === "contestazionePage"){
                                         sliced = Object.fromEntries(Object.entries(element).slice(1, -1));
@@ -194,6 +194,8 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                         sliced = Object.fromEntries(Object.entries(element).slice(1, -4));
                                     }else if( nameParameterApi === "idPrevisonale"){
                                         sliced = Object.fromEntries(Object.entries(element).slice(5));
+                                    }else if(nameParameterApi === "docEmessiEnte"){
+                                        sliced = Object.fromEntries(Object.entries(element).slice(2, -1));
                                     }
 
 

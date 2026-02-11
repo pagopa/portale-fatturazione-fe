@@ -235,6 +235,7 @@ const DocSos : React.FC = () =>{
     
             const getObjectFattura = res.data.dettagli.map(el => el.fattura);
             const orderDataCustom = getObjectFattura.map((obj, index) => ({
+                idFattura:obj.idfattura,
                 id: obj.identificativo ?? index,
                 arrow: '',
                 dataFattura: obj.dataFattura
@@ -415,17 +416,9 @@ const DocSos : React.FC = () =>{
     }
 
 
-    const setIdDoc = async(el) => {
-        handleModifyMainState({relSelected:{
-            "nomeEnteClickOn": "Comune di Bisceglie",
-            "mese": "Giugno",
-            "anno": 2025,
-            "id": "234c45ca-da5f-4067-a4d6-1391774162b4_28e1103f-43c7-4268-bab3-91ee62cea226_PRIMO-SALDO_2025_6"
-        }});
-        navigate(PathPf.PDF_REL_EN+"/documentiemessi");
-
-       
-    };  
+    const setIdDoc =(el) => {
+        navigate(PathPf.PDF_REL_EN+"/documentisospesi/"+el.idFattura);
+    };   
 
 
     const headerAction = (label:string) => {

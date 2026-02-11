@@ -40,3 +40,27 @@ export const getListaDocumentiEmessi = async (token:string, nonce:string , body:
     );
     return response;
 };
+
+export const getDettaglioFatturaEmessa = async (token:string , nonce:string , id:number) =>{
+    const response = await axios.post(`${url}/api/fatture/ente/emesse/dettaglio?nonce=${nonce}`,
+        {Idfattura:id},
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+};
+
+export const getDettaglioFatturaSospesa = async (token:string , nonce:string , id:number) =>{
+    const response = await axios.post(`${url}/api/fatture/ente/sospese/dettaglio?nonce=${nonce}`,
+        {Idfattura:id},
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+};
+
+
+
+

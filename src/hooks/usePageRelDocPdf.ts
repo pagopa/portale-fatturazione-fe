@@ -9,6 +9,8 @@ import { ResponseDownloadPdf } from "../types/typeModuloCommessaInserimento";
 import { mesiWithZero } from "../reusableFunction/reusableArrayObj";
 import { saveAs } from "file-saver";
 import generatePDF from "react-to-pdf";
+import { ManageErrorResponse } from "../types/typesGeneral";
+import { getDettaglioFatturaEmessa, getDettaglioFatturaSospesa } from "../api/apiSelfcare/documentiSospesiSE/api";
 
 function usePageRelDocPdf({
     token,
@@ -16,22 +18,16 @@ function usePageRelDocPdf({
     mainState,
     dispatchMainState,
     whoInvoke,
-    navigate
+    pageFrom,
+    navigate,
+    profilePath,
+    rowId
 }) {
 
     const targetRef  = useRef<HTMLInputElement>(null);
     const enti = profiliEnti(mainState);
      
-      
-    
-    let profilePath; 
-    
-    if(profilo.auth === 'PAGOPA'){
-        profilePath = PathPf.LISTA_REL;
-    }else{
-        profilePath = PathPf.LISTA_REL_EN;
-    }
-    
+  
     const [showDownloading, setShowDownloading] = useState(false);
     const [disableButtonDettaglioNot, setDisableButtonDettaglioNot] = useState(false);
     const [lastUpdateDocFirmato, setLastUpdateDocFirmato] = useState('');
@@ -66,20 +62,55 @@ function usePageRelDocPdf({
     });
         
     const meseOnDoc = rel?.mese || 0;
-    useEffect(()=>{
-        if(!token){
-            window.location.href =  redirect;
-        }
-        if(mainState.relSelected === null){
-            navigate(profilePath);
-        }
-    },[]);
+
     
     useEffect(()=>{
-        if(mainState.relSelected !== null){
-            getRel(mainState.relSelected.id);
-        }
+        getRel(rowId);
     },[]);
+
+    const getRel = async (id) => {
+        setLoadingDettaglio(true);
+
+        try {
+            let res; 
+            if(whoInvoke === "ente" && pageFrom === "rel"){
+                res = await getSingleRel(token, profilo.nonce, id);
+            }else if(whoInvoke === "ente" && pageFrom === "documentiemessi"){
+                res = await  getDettaglioFatturaEmessa(token,profilo.nonce,id);
+            }else if(whoInvoke === "ente" && pageFrom === "documentisospesi"){
+                res = await  getDettaglioFatturaSospesa(token,profilo.nonce,id);
+            }else if(whoInvoke === "send"&& pageFrom === "rel"){
+                res = await  getSingleRelPagopa(token,profilo.nonce,id);
+            }
+
+            
+            console.log({resRel:res});
+            setRel(res.data);
+            if (res.data.datiFatturazione === true && pageFrom === "rel") {
+               
+
+                await getDateLastDownloadPdfFirmato({
+                    anno: Number(res.data.anno),
+                    mese: Number(res.data.mese),
+                    tipologiaFattura: res.data.tipologiaFattura,
+                    idContratto: res.data.idContratto,
+                    idEnte: res.data.idEnte,
+                });
+            }
+        } catch (err) {
+            navigate(profilePath);
+            if (err && typeof err === "object") {
+                manageError(err as ManageErrorResponse, dispatchMainState);
+            } else {
+                // fallback for unexpected errors
+                manageError({ message: String(err) } as ManageErrorResponse, dispatchMainState);
+            }
+        } finally {
+            setLoadingDettaglio(false);
+        }
+    };
+
+     
     
     const downloadRelExel = async() =>{
         setShowDownloading(true);
@@ -246,47 +277,7 @@ function usePageRelDocPdf({
             
     };
     
-    const getRel = async(idRel) => {
-        setLoadingDettaglio(true);
-        if(enti){
-            getSingleRel(token,profilo.nonce,idRel).then((res) =>{
-                if(res.data.datiFatturazione === true){
-                    setLoadingDettaglio(false);
-                    setRel(res.data);
-                    getDateLastDownloadPdfFirmato({
-                        anno: Number(res.data.anno),
-                        mese: Number(res.data.mese),
-                        tipologiaFattura: res.data.tipologiaFattura,
-                        idContratto: res.data.idContratto,
-                        idEnte:res.data.idEnte
-                    });
-                }else{
-                    setLoadingDettaglio(false);
-                }
-            }).catch((err)=>{
-                setLoadingDettaglio(false);
-                navigate(profilePath);
-                manageError(err,dispatchMainState);
-            });
-        }else{
-            getSingleRelPagopa(token,profilo.nonce,idRel).then((res) =>{
-                setLoadingDettaglio(false);
-                setRel(res.data);
-                getDateLastDownloadPdfFirmato({
-                    anno: Number(res.data.anno),
-                    mese: Number(res.data.mese),
-                    tipologiaFattura: res.data.tipologiaFattura,
-                    idContratto: res.data.idContratto,
-                    idEnte:res.data.idEnte
-                });
-            }).catch((err)=>{
-                setLoadingDettaglio(false);
-                navigate(profilePath);
-                manageError(err,dispatchMainState);
-    
-            });
-        }
-    }; 
+  
 
     return {
         disableButtonDettaglioNot,

@@ -2,7 +2,7 @@
 import { SingleFileInput } from '@pagopa/mui-italia';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { Button, Typography } from "@mui/material";
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import TextDettaglioPdf from '../../components/commessaPdf/textDettaglioPdf';
 import DownloadIcon from '@mui/icons-material/Download';
 import ModalUploadPdf from '../../components/rel/modalUploadPdf';
@@ -17,7 +17,7 @@ import usePageRelDocPdf from '../../hooks/usePageRelDocPdf';
 import { useLocation } from 'react-router-dom';
 
 const RelPdfPage : React.FC = () =>{
-
+    const { pageFrom, id } = useParams();
     const mainState = useGlobalStore(state => state.mainState);
     const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
     const token =  mainState.profilo.jwt;
@@ -25,25 +25,25 @@ const RelPdfPage : React.FC = () =>{
     const navigate = useNavigate();
     const location = useLocation();
 
-    console.log(location.pathname); // current route
-    console.log(location.search);   // query string
-    console.log(location.hash); 
+   
     let profilePath; 
-    let pageFrom;
-
-    if(profilo.auth === 'PAGOPA' ){
+    let headerNavigationFrom;
+  
+    if(location.pathname.includes("send") && location.pathname.includes("rel") ){
         profilePath = PathPf.LISTA_REL;
-        pageFrom = "Regolare Esecuzione/";
-    }else if(profilo.auth !== 'PAGOPA'&& location.pathname.includes("documentiemessi")){
+        headerNavigationFrom = "Regolare Esecuzione/";
+    }else if(location.pathname.includes("ente") && location.pathname.includes("documentiemessi")){
         profilePath = PathPf.DOCUMENTI_EMESSI;
-        pageFrom = "Documenti Emessi/";
-    }else if(profilo.auth !== 'PAGOPA'&& location.pathname.includes("documentisospesi")){
+        headerNavigationFrom = "Documenti Emessi/";
+    }else if(location.pathname.includes("ente") && location.pathname.includes("documentisospesi")){
         profilePath = PathPf.DOCUMENTI_SOSPESI;
-        pageFrom = "Documenti Sospesi/";
-    }else if(profilo.auth !== 'PAGOPA'&& location.pathname.includes("rel")){
+        headerNavigationFrom = "Documenti Sospesi/";
+    }else if(location.pathname.includes("ente") && location.pathname.includes("rel")){
         profilePath = PathPf.LISTA_REL_EN;
-        pageFrom = "Regolare Esecuzione/";
+        headerNavigationFrom = "Regolare Esecuzione/";
     }
+
+  
 
     const {
         disableButtonDettaglioNot,
@@ -69,8 +69,11 @@ const RelPdfPage : React.FC = () =>{
         profilo,
         mainState,
         dispatchMainState,
-        whoInvoke:"pippo",
-        navigate
+        whoInvoke:location.pathname.includes("ente")?"ente":"send",
+        pageFrom:pageFrom,
+        navigate,
+        profilePath,
+        rowId:id
     });
 
    
@@ -86,7 +89,7 @@ const RelPdfPage : React.FC = () =>{
             <div style={{ position:'absolute',zIndex:-1, top:'-1000px'}}  id='file_download_rel' ref={targetRef}>
             </div>
             <div>
-                <NavigatorHeader pageFrom={pageFrom} pageIn={"Dettaglio"} backPath={profilePath} icon={<ManageAccountsIcon  sx={{paddingBottom:"5px"}}  fontSize='small'></ManageAccountsIcon>}></NavigatorHeader>
+                <NavigatorHeader pageFrom={headerNavigationFrom} pageIn={"Dettaglio"} backPath={profilePath} icon={<ManageAccountsIcon  sx={{paddingBottom:"5px"}}  fontSize='small'></ManageAccountsIcon>}></NavigatorHeader>
             </div>
             <div className='d-flex justify-content-end mt-4 me-5'>
                 <Button disabled={disableButtonDettaglioNot}  onClick={()=> downloadRelExel()} >Scarica report di dettaglio notifiche Reg. Es. <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
