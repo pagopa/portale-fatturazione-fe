@@ -125,7 +125,7 @@ const SideNavSend : React.FC = () => {
             backgroundColor: 'background.paper',
         }}
         >
-            <List component="nav" aria-label="main piattaforma-notifiche sender">
+            <List component="nav">
                 <ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick(PathPf.LISTA_DATI_FATTURAZIONE)}>
                     <ListItemIcon>
                         <DnsIcon fontSize="inherit"></DnsIcon>

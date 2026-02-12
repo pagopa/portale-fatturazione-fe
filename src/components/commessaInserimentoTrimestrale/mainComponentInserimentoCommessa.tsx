@@ -174,7 +174,6 @@ const MainInserimentoModuloCommessa = ({
                                                     <IconButton
                                                         key="delete"
                                                         onClick={() => onDeleteSingleRegione(element.istatRegione)}
-                                                        aria-label="Delete"
                                                         sx={{ color: "#FE6666" }}
                                                         size="large"
                                                     >

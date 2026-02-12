@@ -75,7 +75,6 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
                 <TableCell>
                     <IconButton
                         sx={{color:'#227AFC'}}
-                        aria-label="expand row"
                         size="small"
                         onClick={() => setOpen(!open)}
                     >
@@ -112,7 +111,7 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
                             <Typography sx={{marginLeft:"6px"}} variant="h6" gutterBottom component="div">
                 Posizioni
                             </Typography>
-                            <Table size="small" aria-label="purchases">
+                            <Table size="small">
                                 <TableHead>
                                     <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
                                         <TableCell sx={{ marginLeft:"16px"}} >Numero Linea</TableCell>

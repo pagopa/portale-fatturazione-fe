@@ -75,7 +75,7 @@ const ModalConfermaRipristina : React.FC<ModalConfermaRipristinaProps> =({setOpe
                             </Typography>
                          
                            
-                            <Table size="small" aria-label="purchases"sx={{}}>
+                            <Table size="small">
                                 <TableHead >
                                     <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
                                         <TableCell sx={{ marginLeft:"16px"}}> Ragione Sociale</TableCell>

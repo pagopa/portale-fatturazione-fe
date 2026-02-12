@@ -73,7 +73,6 @@ const InputRegioni = ({isEditAllow,selected,setValue,array, action}) => {
                         <Button
                             disabled={!isEditAllow || selected.length === 0}
                             onClick={() => action()}
-                            aria-label="Edit"
                             color="primary"
                             size="large"
                             variant="contained"

@@ -147,12 +147,7 @@ const ApiKeyEnte : React.FC = () => {
                                     type={showPassword ? 'text' : 'password'}
                                     endAdornment={
                                         <InputAdornment position="end">
-                                            <IconButton
-                                                aria-label={
-                                                    showPassword ? 'Nascondi API Key' : 'Mostra Api key'
-                                                }
-                                                onClick={handleClickShowPassword}
-                                            >
+                                            <IconButton onClick={handleClickShowPassword}>
                                                 {showPassword ? <VisibilityOff /> : <Visibility />}
                                             </IconButton>
                                         </InputAdornment>
@@ -176,12 +171,7 @@ const ApiKeyEnte : React.FC = () => {
                                             type={showPassword2 ? 'text' : 'password'}
                                             endAdornment={
                                                 <InputAdornment position="end">
-                                                    <IconButton
-                                                        aria-label={
-                                                            showPassword2 ? 'Nascondi API Key' : 'Mostra Api key'
-                                                        }
-                                                        onClick={handleClickShowPassword2}
-                                                    >
+                                                    <IconButton onClick={handleClickShowPassword2}>
                                                         {showPassword2 ? <VisibilityOff /> : <Visibility />}
                                                     </IconButton>
                                                 </InputAdornment>

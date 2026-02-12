@@ -83,7 +83,7 @@ const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element}) 
                                 {`Moduli commessa ${element.anno}/${element.quarter}`}
                             </Typography>
                             
-                            <Table size="small" aria-label="purchases">
+                            <Table size="small">
                                 <TableHead>
                                     <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
                                         {subHeaderNameModComTrimestraleENTE.map((el,i)=>{

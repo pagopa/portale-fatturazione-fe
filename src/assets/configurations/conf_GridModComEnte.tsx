@@ -21,7 +21,6 @@ export interface HeaderGridCustom {
 export const headerNameModComTrimestraleENTE: HeaderGridCustom[] = [
     { label: '',align:'center',width:'60px', headerAction:false,gridOpenDetail:(disabled,open,setOpen) =>
         <IconButton
-            aria-label="Espandi"
             size="medium"
             onClick={() => setOpen && setOpen(!open)}
             disabled={disabled}

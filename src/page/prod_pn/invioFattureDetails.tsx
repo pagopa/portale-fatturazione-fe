@@ -149,7 +149,7 @@ const InvioFattureDetails : React.FC = () => {
                                                         <TableCell align="center" >Ragione sociale
                                                             <Tooltip title='Filtra'>
                                                                 <span>
-                                                                    <IconButton sx={{marginLeft:'10px'}} aria-describedby={idPop} onClick={handleClick} aria-label="Filtra" size="small">
+                                                                    <IconButton sx={{marginLeft:'10px'}} aria-describedby={idPop} onClick={handleClick}size="small">
                                                                         <FilterListIcon></FilterListIcon>
                                                                     </IconButton>
                                                                     <Popover anchorOrigin={{ vertical: 'top',horizontal: 'right'}} open={open} anchorEl={anchorEl} onClose={handleClose}id={idPop}>

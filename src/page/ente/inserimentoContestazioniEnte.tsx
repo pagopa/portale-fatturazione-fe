@@ -323,7 +323,7 @@ const InserimentoContestazioniEnte = () =>{
                                     </Box>
                                     {/*se la UI lato ente viene approvato fai un unico componente sie ente che send */}
                                     <Box sx={{ margin: 2 , backgroundColor:'#F8F8F8', padding:'10px'}}>
-                                        <Table size="small" aria-label="purchases">
+                                        <Table size="small">
                                             <TableHead>
                                                 <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
                                                     <TableCell align="center" sx={{ width:"300px"}} >Tipologia Fattura</TableCell>

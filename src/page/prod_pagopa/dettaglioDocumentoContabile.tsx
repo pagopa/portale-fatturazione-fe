@@ -224,7 +224,7 @@ const DettaglioDocContabile : React.FC = () =>{
                                 return (
                                     <div key={singlePosizione.progressivoRiga} className="col-12">
                                         <Box sx={{ margin: 2 , backgroundColor:'#F8F8F8', padding:'10px'}}>
-                                            <Table size="small" aria-label="purchases">
+                                            <Table size="small">
                                                 <TableHead>
                                                     <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
                                                         <TableCell sx={{ width:"300px"}} >ID Categoria</TableCell>

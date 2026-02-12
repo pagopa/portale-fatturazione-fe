@@ -40,7 +40,7 @@ const SideNavPagopa = () => {
             backgroundColor: 'background.paper',
         }}
         >
-            <List component="nav" aria-label="main piattaforma-notifiche sender">
+            <List component="nav">
                 <ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick(PathPf.ANAGRAFICAPSP)}>
                     <ListItemIcon>
                         <ReceiptIcon fontSize="inherit" />

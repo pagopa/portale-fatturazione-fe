@@ -414,7 +414,7 @@ const InserimentoContestazioni  : React.FC = () =>{
                                         <Typography variant="h4">{nameEnteTitle} {month[Number(body.mese)-1]} {body.anno}</Typography>
                                     </Box>
                                     <Box sx={{ margin: 2 , backgroundColor:'#F8F8F8', padding:'10px'}}>
-                                        <Table size="small" aria-label="purchases">
+                                        <Table size="small">
                                             <TableHead>
                                                 <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
                                                     <TableCell align="center" sx={{ width:"300px"}} >Tipologia Fattura</TableCell>

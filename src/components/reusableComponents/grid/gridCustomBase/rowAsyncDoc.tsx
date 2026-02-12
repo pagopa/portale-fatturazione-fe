@@ -113,7 +113,7 @@ const RowAsyncDoc = ({sliced,headerNames,handleClickOnGrid,element}) => {
                             <Typography sx={{marginLeft:"6px"}} variant="h6" gutterBottom component="div">
           Filtri applicati
                             </Typography>
-                            <Table size="small" aria-label="purchases">
+                            <Table size="small">
                                 <TableHead>
                                     <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
                                         <TableCell align="center"  >Anno</TableCell>
