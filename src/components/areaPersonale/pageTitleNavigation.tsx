@@ -36,10 +36,8 @@ const PageTitleNavigation = ({setOpen}) => {
 
     const onIndietroButtonPagoPa = () =>{
         if(mainState.statusPageDatiFatturazione === 'immutable' &&  profilo.auth === 'PAGOPA'){
-            console.log(1);
             navigate(PathPf.LISTA_DATI_FATTURAZIONE);
         }else{
-            console.log(2,setOpen);
             setOpen(({visible:true,clickOn:'INDIETRO_BUTTON'}));
         }
     };

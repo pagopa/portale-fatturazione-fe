@@ -41,19 +41,19 @@ const InputRegioni = ({isEditAllow,selected,setValue,array, action}) => {
                         input={<OutlinedInput label="Inserisci regione" />}
                         renderValue={(selected) => (
                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                {selected.map((value) => {
+                                {selected.map((value,ind) => {
                                                                 
                                     const nameRegione  = array?.find(el => el.istatRegione === value)?.regione;
                                                       
-                                    return <Chip variant="outlined" key={value} label={nameRegione} />;
+                                    return <Chip variant="outlined" key={`${value}-${ind}`} label={nameRegione} />;
                                 })}
                             </Box>
                         )}
                         MenuProps={MenuProps}
                     >
-                        {array.map((el:Regioni) => (
+                        {array.map((el:Regioni,i) => (
                             <MenuItem
-                                key={el.istatRegione}
+                                key={`${el.istatRegione}-${i}`}
                                 value={el.istatRegione}
                                 style={getStyles(el.regione, [], theme)}
                             >
@@ -71,12 +71,12 @@ const InputRegioni = ({isEditAllow,selected,setValue,array, action}) => {
                 <Tooltip title="Aggiungi regione">
                     <span>
                         <Button
-                            disabled={!isEditAllow || selected.length === 0}
+                            disabled={!isEditAllow || selected?.length === 0}
                             onClick={() => action()}
                             color="primary"
                             size="large"
-                            variant="contained"
-                        >Aggiungi regione
+                            variant="contained">
+                            Aggiungi regione
                         </Button>
                     </span>
                 </Tooltip>

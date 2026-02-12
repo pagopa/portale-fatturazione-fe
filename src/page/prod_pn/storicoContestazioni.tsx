@@ -161,7 +161,6 @@ const Storico: React.FC = () => {
         await getMesiContestazioni(token, profilo.nonce,anno).then((res)=> {
             setArrayMesi(res.data);
             if(!isInitialRender.current){
-                console.log(1);
                 setGetListaContestazioniRunning(false);
             }
             
@@ -169,7 +168,7 @@ const Storico: React.FC = () => {
             setArrayMesi([]);
             manageError(err,dispatchMainState);  
             if(!isInitialRender.current){
-                console.log(2);
+    
                 setGetListaContestazioniRunning(false);
             }
         });
