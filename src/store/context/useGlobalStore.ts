@@ -87,7 +87,7 @@ export const useGlobalStore = create(
         }),
         {
             name: "globalStatePF",
-            version: 1,
+            version: 2,
             partialize: (state: GlobalStore) => ({
                 mainState: state.mainState,
                 statusQueryGetUri: state.statusQueryGetUri,
