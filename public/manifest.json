@@ -1,0 +1,25 @@
+{
+  "short_name": "PF",
+  "name": "Portale Fatturazione",
+  "icons": [
+    {
+      "src": "iconPF192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "iconPF192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "iconPF.png",
+      "type": "image/png",
+      "sizes": "32x32"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
