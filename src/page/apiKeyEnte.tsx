@@ -108,7 +108,7 @@ const ApiKeyEnte : React.FC = () => {
         <div className="m-5 ">
            
             <div className="mt-5 pb-5">
-                <Typography>Genera API KEY per gestire l'autenticazione dei soggetti connessi al nodo PAGOPA </Typography>
+                <Typography>Genera API KEY per gestire l'autenticazione dei soggetti abilitati alle API di Portale Fatturazione </Typography>
                 <div className="row mt-5">
                     <div className="col-8 p-0">
                         <div style={{ display: 'flex', justifyContent: 'start', alignItems: 'center', height: '100%' }}>

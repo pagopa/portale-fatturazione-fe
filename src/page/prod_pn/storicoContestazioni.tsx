@@ -160,9 +160,18 @@ const Storico: React.FC = () => {
     const getMesi = async (anno) => {
         await getMesiContestazioni(token, profilo.nonce,anno).then((res)=> {
             setArrayMesi(res.data);
+            if(!isInitialRender.current){
+                console.log(1);
+                setGetListaContestazioniRunning(false);
+            }
+            
         }).catch((err)=>{
             setArrayMesi([]);
             manageError(err,dispatchMainState);  
+            if(!isInitialRender.current){
+                console.log(2);
+                setGetListaContestazioniRunning(false);
+            }
         });
     };
 
@@ -210,10 +219,12 @@ const Storico: React.FC = () => {
             setDataGrid(orderDataCustom);
             setTotalContestazioni(res.data.count);
             setGetListaContestazioniRunning(false);
+            isInitialRender.current = false;
         }).catch((err)=>{
             setDataGrid([]);
             setTotalContestazioni(0);
             setGetListaContestazioniRunning(false);
+            isInitialRender.current = false;
             manageError(err,dispatchMainState);
         });
     };
@@ -320,6 +331,7 @@ const Storico: React.FC = () => {
                                         onChange={(e) =>{
                                             setBodyGetLista((prev)=> ({...prev, ...{anno:e.target.value,mese:''}}));
                                             if(e.target.value !== "Tutti"){
+                                                setGetListaContestazioniRunning(true);
                                                 getMesi(e.target.value);
                                             }else{
                                                 setArrayMesi([]);
@@ -346,6 +358,7 @@ const Storico: React.FC = () => {
                                 <FormControl
                                     fullWidth
                                     size="medium"
+                                    disabled={bodyGetLista.anno === "Tutti"}
                                 >
                                     <InputLabel> Mese</InputLabel>
                                     <Select
@@ -395,6 +408,10 @@ const Storico: React.FC = () => {
                                 )}
                                 renderInput={(params) => {
                                     return <TextField {...params}
+                                        inputProps={{
+                                            ...params.inputProps,
+                                            readOnly: true,
+                                        }}
                                         label="Categoria Doc." 
                                         placeholder="Categoria Doc." />;
                                 }}

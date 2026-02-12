@@ -213,6 +213,26 @@ function RouteErrorBoundary() {
         : error instanceof Error
             ? error.message
             : "Unknown error";
+    /*
+    function getErrorFileLine(error: unknown): string {
+        if (error instanceof Error && error.stack) {
+            // Dividiamo lo stack in righe
+            const lines = error.stack.split("\n");
+
+            // Cerchiamo la prima riga con il formato (file:line:col)
+            for (const line of lines) {
+                const match = line.match(/([a-zA-Z0-9_\-./]+\.tsx|\.ts|\.js):(\d+):(\d+)/);
+                if (match) {
+                    // match[0] è esattamente la parte file:line:column
+                    return match[0];
+                }
+            }
+        }
+        return "Unknown location";
+    }
+
+    const fileLine = getErrorFileLine(error);
+    */
 
     const handleClose = () => {
         localStorage.clear();

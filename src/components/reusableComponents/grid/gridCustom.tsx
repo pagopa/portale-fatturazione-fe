@@ -179,8 +179,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                     }else if(nameParameterApi === "contestazionePage"){
                                         return <RowContestazioni key={Math.random()} sliced={sliced}apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} headerNames={headerNames}></RowContestazioni>;
                                     }else if(nameParameterApi === "modComTrimestrale"){
-                                        return  <DefaultRow handleClickOnGrid={handleClickOnGrid} element={element} sliced={sliced} apiGet={()=> console.log("go to details")} nameParameterApi={"test"} headerNames={headerNames}></DefaultRow>;
-                                        //return <RowModComTrimestreEnte key={element.id} sliced={sliced} headerNames={headerNames} handleClickOnGrid={handleClickOnGrid} element={element}></RowModComTrimestreEnte>;
+                                        return  <DefaultRow key={element.id} handleClickOnGrid={handleClickOnGrid} element={element} sliced={sliced} apiGet={()=> console.log("go to details")} headerNames={headerNames}></DefaultRow>;
                                     }else if(nameParameterApi === "idPrevisonale"){
                                         return <RowModCommessaPrevisionale key={element.id} sliced={sliced} element={element} headerNames={headerNames}></RowModCommessaPrevisionale>;
                                     }else{
