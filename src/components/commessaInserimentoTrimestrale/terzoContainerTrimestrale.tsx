@@ -35,11 +35,11 @@ const TerzoContainerTrimestrale  = ({dataModulo, dataModifica, meseAnno}) => {
         getConfigurazione();
     },[]);
 
-    const replaceDate = (arr:[], stringToRepace:string, stringToInsert:string) =>{
-        return arr.map((singleObj:CategorieTotali) =>{
-            singleObj.descrizione = singleObj.descrizione.replace(stringToRepace,stringToInsert);
-            return singleObj;
-        });
+    const replaceDate = (arr: CategorieTotali[], from: string, to: string) => {
+        return arr.map((obj) => ({
+            ...obj,
+            descrizione: obj.descrizione.replace(from, to)
+        }));
     };
 
     const getConfigurazione = async() =>{
@@ -74,107 +74,110 @@ const TerzoContainerTrimestrale  = ({dataModulo, dataModifica, meseAnno}) => {
         >
             <Skeleton variant="rectangular" height="100%" />
         </Box>;
-    }
+    }else{
 
-    return (
-        <div className=" m-3 pl-5 pt-3">
-            {/* prima row start */}
-            <Grid
-                container
-                columns={12}
-            >
+
+        return (
+            <div className=" m-3 pl-5 pt-3">
+                {/* prima row start */}
+                <Grid
+                    container
+                    columns={12}
+                >
+                    <Grid
+                        sx={{
+                            textAlign: 'left',
+                        }}
+                        item
+                        xs={6}
+                    >
+                        <Typography>
+                            {labelDigitale[0]?.descrizione} <span style={{fontWeight:'bold'}}>{meseAnno}</span>
+                        </Typography>
+                    </Grid>
+                    <Grid
+                        sx={{ display:'flex', alignItems:'center', justifyContent:'center' }}
+                        item
+                        xs={6}
+                    >
+                        <Typography
+                            variant="caption-semibold"
+                            sx={{fontSize:'18px'}}
+                        >
+                            {dataModulo[1]?.totaleCategoria?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })|| '0 €'} 
+                        </Typography>
+                    </Grid>
+                </Grid>
+                <hr></hr>
+                <Grid
+                    container
+                    columns={12}
+                >
+                    <Grid
+                        sx={{
+                            textAlign: 'left',
+                        }}
+                        item
+                        xs={6}
+                    >
+                        <Typography>
+                            {labelAnalogica[0]?.descrizione} <span style={{fontWeight:'bold'}}>{meseAnno}</span>
+                        </Typography>
+                    </Grid>
+                    <Grid
+                        sx={{ display:'flex', alignItems:'center', justifyContent:'center' }}
+                        item
+                        xs={6}
+                    >
+                        <Typography
+                            sx={{fontSize:'18px', textAlign:'center'}}
+                        >
+                            {dataModulo[0]?.totaleCategoria?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })|| '0 €'} 
+                        </Typography>
+                    </Grid>
+                </Grid>
+                {/* seconda row end */}
+                <hr></hr>
                 <Grid
                     sx={{
-                        textAlign: 'left',
+                        marginTop: '3%',
+                        paddingBottom: '3%'
                     }}
-                    item
-                    xs={6}
+                    container
+                    columns={12}
                 >
-                    <Typography>
-                        {labelDigitale[0]?.descrizione} <span style={{fontWeight:'bold'}}>{meseAnno}</span>
-                    </Typography>
-                </Grid>
-                <Grid
-                    sx={{ display:'flex', alignItems:'center', justifyContent:'center' }}
-                    item
-                    xs={6}
-                >
-                    <Typography
-                        variant="caption-semibold"
-                        sx={{fontSize:'18px'}}
+                    <Grid item xs={6}>
+                        <div className='d-flex justify-content-end'>
+                            <Typography sx={{fontWeight:'bold'}} >TOTALE MODULO COMMESSA NETTO IVA</Typography>
+                        </div> 
+                    </Grid>
+                    <Grid
+                        sx={{ textAlign: 'center' }}
+                        item
+                        xs={6}
                     >
-                        {dataModulo[1]?.totaleCategoria?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })|| '0 €'} 
-                    </Typography>
+                        <Typography
+                            variant="caption-semibold"
+                            sx={{fontSize:'18px'}}
+                        >
+                            {sumFixed2Decimal}
+                        </Typography>
+                    </Grid>
                 </Grid>
-            </Grid>
-            <hr></hr>
-            <Grid
-                container
-                columns={12}
-            >
-                <Grid
-                    sx={{
-                        textAlign: 'left',
-                    }}
-                    item
-                    xs={6}
-                >
-                    <Typography>
-                        {labelAnalogica[0]?.descrizione} <span style={{fontWeight:'bold'}}>{meseAnno}</span>
-                    </Typography>
-                </Grid>
-                <Grid
-                    sx={{ display:'flex', alignItems:'center', justifyContent:'center' }}
-                    item
-                    xs={6}
-                >
-                    <Typography
-                        sx={{fontSize:'18px', textAlign:'center'}}
-                    >
-                        {dataModulo[0]?.totaleCategoria?.toLocaleString("de-DE", { style: "currency", currency: "EUR" })|| '0 €'} 
-                    </Typography>
-                </Grid>
-            </Grid>
-            {/* seconda row end */}
-            <hr></hr>
-            <Grid
-                sx={{
-                    marginTop: '3%',
-                    paddingBottom: '3%'
-                }}
-                container
-                columns={12}
-            >
-                <Grid item xs={6}>
-                    <div className='d-flex justify-content-end'>
-                        <Typography sx={{fontWeight:'bold'}} >TOTALE MODULO COMMESSA NETTO IVA</Typography>
-                    </div> 
-                </Grid>
-                <Grid
-                    sx={{ textAlign: 'center' }}
-                    item
-                    xs={6}
-                >
-                    <Typography
-                        variant="caption-semibold"
-                        sx={{fontSize:'18px'}}
-                    >
-                        {sumFixed2Decimal}
-                    </Typography>
-                </Grid>
-            </Grid>
-            <hr />
-            {
-                dataModifica && 
+                <hr />
+                {
+                    dataModifica && 
                     <div className="d-flex justify-content-around marginTopBottom24">
                         <div className='d-flex'>
                             <InputLabel  sx={{ marginRight:'20px'}}  size={"normal"}>Data modifica</InputLabel>
                             <Typography >{createDateFromString(dataModifica)}</Typography>
                         </div>
                     </div>
-            }
-        </div>
-    );
+                }
+            </div>
+        );
+            
+    }
 };
 
 export default TerzoContainerTrimestrale;

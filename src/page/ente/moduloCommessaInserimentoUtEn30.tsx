@@ -260,8 +260,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                 sx={{color:"#5c6f81"}}
                                 size='large'
                                 disabled={activeStep === 0}
-                                onClick={onIndietroButton}><ArrowBackIcon  sx={{fontSize:"60px",marginRight:"20px",color:activeStep === 0 ?"inherit" :"#5c6f81"}}/> Indiero
-                                
+                                onClick={onIndietroButton}><ArrowBackIcon  sx={{fontSize:"60px",marginRight:"20px",color:activeStep === 0 ?"inherit" :"#5c6f81"}}/>
+                                 Indiero
                             </Button>
                         </span>
                     </Tooltip>
@@ -269,7 +269,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 </div>
                 {((dataModuli?.length > 0 && (activeCommessa?.source === "archiviato")) || !activeCommessa?.modifica) ? null:
                     <div className="d-flex justify-content-center align-items-center">
-                        <Button  disabled={error890Regioni|| errorArRegioni|| (isObbligatorioLayout && (activeStep+1 < steps?.length))} onClick={onHandleSalvaModificaButton} variant={labelButtonAvantiListaModuliSave === "Prosegui per salvare"? "text":"outlined"}>{labelButtonAvantiListaModuliSave}
+                        <Button  disabled={error890Regioni|| errorArRegioni|| (isObbligatorioLayout && (activeStep+1 < steps?.length))} onClick={onHandleSalvaModificaButton} variant={labelButtonAvantiListaModuliSave === "Prosegui per salvare"? "text":"outlined"}>
+                            {labelButtonAvantiListaModuliSave}
                         </Button>
                     </div>} 
                 { (activeCommessa?.totaleNotifiche !== null && !isEditAllow && !loadingData) && 
@@ -287,7 +288,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 }
                 <div >
                     {steps.length > 1 &&  (activeStep === 0 || activeStep > 0) &&
-                    <Tooltip  title={(activeStep+1) !== steps.length && "Avanti"}>
+                    <Tooltip  title={(activeStep+1) !== steps?.length && "Avanti"}>
                         <span>
                             <Button
                                 sx={{color:"#5c6f81"}}

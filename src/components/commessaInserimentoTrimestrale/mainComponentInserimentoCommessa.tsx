@@ -314,8 +314,9 @@ const MainInserimentoModuloCommessa = ({
                                                 />
                                             ]}
                                             styles={[{
-                                                justifyContent:"center",
-                                                alignItems:"center"
+                                                display: 'flex',
+                                                alignItems: 'center',    
+                                                justifyContent:"right"
                                             },{
                                                 textAlign: 'center',
                                                 borderColor: '#ffffff',
