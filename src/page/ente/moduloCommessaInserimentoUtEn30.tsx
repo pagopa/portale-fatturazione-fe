@@ -286,7 +286,7 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 </div> 
                 }
                 <div >
-                    {steps.length > 1 && 
+                    {steps.length > 1 &&  (activeStep === 0 || activeStep > 0) &&
                     <Tooltip  title={(activeStep+1) !== steps.length && "Avanti"}>
                         <span>
                             <Button
