@@ -58,7 +58,8 @@ function usePageRelDocPdf({
         totaleDigitaleIva: 0,
         totaleIva: 0,
         firmata: "",
-        caricata: 0
+        caricata: 0,
+        fattureSospese:[]
     });
         
     const meseOnDoc = rel?.mese || 0;

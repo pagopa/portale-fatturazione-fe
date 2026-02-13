@@ -10,13 +10,13 @@ import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
-import { downloadFattureEnte, getPeriodoEmesso} from "../../api/apiSelfcare/apiDocEmessiSE/api";
+import { getPeriodoEmesso} from "../../api/apiSelfcare/apiDocEmessiSE/api";
 import { ManageErrorResponse } from "../../types/typesGeneral";
 import { Paper, Typography } from "@mui/material";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import { headersDocumentiEmessiEnte, headersDocumentiEmessiEnteCollapse } from "../../assets/configurations/conf_GridDocEmessiEnte";
 import { downloadFattureEmesseEnte, getListaDocumentiEmessi } from "../../api/apiSelfcare/documentiSospesiSE/api";
-import { sortByNumeroFattura, sortByTotale, sortDates, sortMonthYear } from "../../reusableFunction/function";
+import { sortByNumeroFattura, sortByTipoFattura, sortByTotale, sortDates, sortMonthYear } from "../../reusableFunction/function";
 
 
 export type BodyDocumentiEmessiEnte = {
@@ -111,7 +111,7 @@ const DocEm : React.FC = () =>{
 
     const [globalResponse, setGlobalResponse] = useState<ResponsePeriodo[]>([]);
 
-    const [objectSort, setObjectSort] = useState<{[key:string]:number}>({"Data Fattura":1,"Ident.":1,"Tot.":1,"N. Fattura":1});
+    const [objectSort, setObjectSort] = useState<{[key:string]:number}>({"Data Fattura":1,"Ident.":1,"Tot.":1,"N. Fattura":1,"Tipo Documento":1});
     //____________________________________
 
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
@@ -504,6 +504,18 @@ const DocEm : React.FC = () =>{
                             }
 
                             return [key, next];
+                        }else if(label === "Tipo Documento"){
+                            if(next === 2){
+                                const result = sortByTipoFattura(gridData, true,"tipoDocumento");
+                                setGridData(result);
+                            }else if(next === 3){
+                                const result = sortByTipoFattura(gridData, false,"tipoDocumento");
+                                setGridData(result);
+                            }else{
+                                setGridData(gridDataNoSorted);
+                            }
+
+                            return [key, next];
                         }else{
                             return [key, 1];
                         }
@@ -572,12 +584,21 @@ const DocEm : React.FC = () =>{
                         setBodyFatturazione((prev)=> ({...prev, mese:Number(e),tipologiaFattura:[],dataFattura:[]}));
                         setValueMultiselectTipologie([]);
                         setValueMultiselectDate([]);
-                     
-                        const arrayTipogie = Array.from( new Set(globalResponse
-                            .filter(el =>
-                                el.anno === bodyFatturazione.anno && el.mese === Number(e))
-                            .map(el => el.tipologiaFattura)));
-                        setDataSelect(arrayTipogie);
+                        if(e.toString() === "9999"){
+                            const arrayTipogie = Array.from( new Set(globalResponse
+                                .filter(el =>
+                                    el.anno === bodyFatturazione.anno)
+                                .map(el => el.tipologiaFattura)));
+                            setDataSelect(arrayTipogie);
+
+                        }else{
+                            const arrayTipogie = Array.from( new Set(globalResponse
+                                .filter(el =>
+                                    el.anno === bodyFatturazione.anno && el.mese === Number(e))
+                                .map(el => el.tipologiaFattura)));
+                            setDataSelect(arrayTipogie);
+                        }
+                        
                     }}
                     disabled={bodyFatturazione.anno === 9999}
                 ></MainFilter>

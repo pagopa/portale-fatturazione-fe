@@ -1,7 +1,7 @@
 
 import { SingleFileInput } from '@pagopa/mui-italia';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import { Button, Typography } from "@mui/material";
+import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { useNavigate, useParams } from 'react-router';
 import TextDettaglioPdf from '../../components/commessaPdf/textDettaglioPdf';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -76,6 +76,8 @@ const RelPdfPage : React.FC = () =>{
         rowId:id
     });
 
+
+
    
 
     if(loadingDettaglio){
@@ -94,29 +96,7 @@ const RelPdfPage : React.FC = () =>{
             <div className='d-flex justify-content-end mt-4 me-5'>
                 <Button disabled={disableButtonDettaglioNot}  onClick={()=> downloadRelExel()} >Scarica report di dettaglio notifiche Reg. Es. <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
             </div>
-            <div className="bg-white mb-5 me-5 ms-5">
-                <div className="pt-5 pb-5 ">
-                    <div className="container text-center">
-                        <TextDettaglioPdf description='Soggetto aderente' value={rel.ragioneSociale}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Tipologia Fattura' value={rel.tipologiaFattura}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='ID Documento' value={rel.idDocumento}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Anno' value={rel.anno}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Mese' value={month[Number(rel.mese) - 1]}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Cup' value={rel.cup}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='N. Notifiche Analogiche' value={rel.totaleNotificheAnalogiche}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='N. Notifiche Digitali' value={rel.totaleNotificheDigitali}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='N. Totale Notifiche' value={rel.totaleNotificheDigitali + rel.totaleNotificheAnalogiche }></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Totale Imponibile Analogico' value={Number(rel.totaleAnalogico).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Totale Imponibile Digitale' value={Number(rel.totaleDigitale).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Totale Imponibile' value={Number(rel.totale).toLocaleString()+' €'}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Iva' value={rel.iva +' %'}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Totale Ivato Analogico ' value={Number(rel.totaleAnalogicoIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Totale Ivato Digitale' value={Number(rel.totaleDigitaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Totale Ivato' value={Number(rel.totaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                    </div>
-                </div>
-            </div>
-       
+            <MainComponentBasedOnUrl mainObj={rel} profilePath={profilePath}></MainComponentBasedOnUrl>
             <div className='d-flex justify-content-between ms-5'>
                 {(profilo.auth === 'PAGOPA' &&  !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) &&
                 <div>
@@ -176,3 +156,130 @@ const RelPdfPage : React.FC = () =>{
 };
 
 export default RelPdfPage;
+
+
+
+
+const MainComponentBasedOnUrl = ({mainObj,profilePath}) => {
+    if(profilePath === PathPf.LISTA_REL ||  profilePath === PathPf.LISTA_REL_EN){
+        return (
+            <div className="bg-white mb-5 me-5 ms-5">
+                <div className="pt-5 pb-5 ">
+                    <div className="container text-center">
+                        <TextDettaglioPdf description='Soggetto aderente' value={mainObj.ragioneSociale}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Tipologia Fattura' value={mainObj.tipologiaFattura}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='ID Documento' value={mainObj.idDocumento}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Anno' value={mainObj.anno}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Mese' value={month[Number(mainObj.mese) - 1]}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Cup' value={mainObj.cup}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='N. Notifiche Analogiche' value={mainObj.totaleNotificheAnalogiche}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='N. Notifiche Digitali' value={mainObj.totaleNotificheDigitali}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='N. Totale Notifiche' value={mainObj.totaleNotificheDigitali + mainObj.totaleNotificheAnalogiche }></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Totale Imponibile Analogico' value={Number(mainObj.totaleAnalogico).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Totale Imponibile Digitale' value={Number(mainObj.totaleDigitale).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Totale Imponibile' value={Number(mainObj.totale).toLocaleString()+' €'}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Iva' value={mainObj.iva +' %'}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Totale Ivato Analogico ' value={Number(mainObj.totaleAnalogicoIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Totale Ivato Digitale' value={Number(mainObj.totaleDigitaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Totale Ivato' value={Number(mainObj.totaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                    </div>
+                </div>
+            </div>
+        );
+    }else if(profilePath === PathPf.DOCUMENTI_EMESSI){
+        return (
+            <Box>
+                <div className="bg-white mb-5 me-5 ms-5">
+                    <div className="pt-5 pb-5 ">
+                        <div className="container text-center">
+                            <TextDettaglioPdf description='Soggetto aderente' value={mainObj.ragioneSociale}></TextDettaglioPdf>
+                            <TextDettaglioPdf description='Tipologia Fattura' value={mainObj.tipologiaFattura}></TextDettaglioPdf>
+                            <TextDettaglioPdf description='ID Documento' value={mainObj.idDocumento}></TextDettaglioPdf>
+                            <TextDettaglioPdf description='Anno' value={mainObj.anno}></TextDettaglioPdf>
+                            <TextDettaglioPdf description='Mese' value={month[Number(mainObj.mese) - 1]}></TextDettaglioPdf>
+                            <TextDettaglioPdf description='Cup' value={mainObj.cup}></TextDettaglioPdf>
+                            <TextDettaglioPdf description='N. Notifiche Analogiche' value={mainObj.totaleNotificheAnalogiche}></TextDettaglioPdf>
+                            <TextDettaglioPdf description='N. Notifiche Digitali' value={mainObj.totaleNotificheDigitali}></TextDettaglioPdf>
+                            <TextDettaglioPdf description='N. Totale Notifiche' value={mainObj.totaleNotificheDigitali + mainObj.totaleNotificheAnalogiche }></TextDettaglioPdf>
+                            <TextDettaglioPdf description='Totale Imponibile Analogico' value={Number(mainObj.totaleAnalogico).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                            <TextDettaglioPdf description='Totale Imponibile Digitale' value={Number(mainObj.totaleDigitale).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                            <TextDettaglioPdf description='Totale Imponibile' value={Number(mainObj.totale).toLocaleString()+' €'}></TextDettaglioPdf>
+                            <TextDettaglioPdf description='Iva' value={mainObj.iva +' %'}></TextDettaglioPdf>
+                            <TextDettaglioPdf description='Totale Ivato Analogico ' value={Number(mainObj.totaleAnalogicoIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                            <TextDettaglioPdf description='Totale Ivato Digitale' value={Number(mainObj.totaleDigitaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                            <TextDettaglioPdf description='Totale Ivato' value={Number(mainObj.totaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                        </div>
+                    </div>
+                </div>
+                {mainObj.fattureSospese.length > 0 &&
+                <div className="bg-white mb-5 me-5 ms-5">
+                    <div className="d-flex justify-content-center pt-3">
+                        <Typography variant="h4">Fatture sospese</Typography>
+                    </div>
+                    <div className="pt-3 pb-3 ">
+                        <div className="container text-center">
+                            <div className="row">
+                                {mainObj.fattureSospese.map((fat)=>{
+                                    return (
+                                        <div key={fat.idFattura} className="col-12">
+                                            <Box sx={{ margin: 2 , backgroundColor:'#F8F8F8', padding:'10px'}}>
+                                                <Table size="small" aria-label="purchases">
+                                                    <TableHead>
+                                                        <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
+                                                            <TableCell align="center" sx={{ width:"300px"}} >Data Fattura</TableCell>
+                                                            <TableCell align="center" sx={{ width:"300px"}} >Tipo Documento</TableCell>
+                                                            <TableCell align="center" sx={{ width:"300px"}}>Metodo Pagamento</TableCell>
+                                                            <TableCell align="center" sx={{ width:"300px"}}>Totale Fattura Imponibile €</TableCell>
+                                                        </TableRow>
+                                                    </TableHead>
+                                                    <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
+                                                        <TableRow>
+                                                            <TableCell align="center" sx={{ width:"300px"}}>{new Date(fat.dataFattura).toLocaleDateString('en-CA')}</TableCell>
+                                                            <TableCell align="center" sx={{ width:"300px"}}>{fat.tipoDocumento}</TableCell>
+                                                            <TableCell align="center" sx={{ width:"300px"}}>{fat.metodoPagamento}</TableCell>
+                                                            <TableCell align="center" sx={{ width:"300px"}}>{fat.totaleFatturaImponibile.toLocaleString("de-DE", { style: 'decimal',maximumFractionDigits: 14})}</TableCell> 
+                                                        </TableRow>
+                                                    </TableBody>
+                                                </Table>
+                                            </Box>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+            </Box>
+           
+        );
+
+    }else if(profilePath === PathPf.DOCUMENTI_SOSPESI){
+        return (
+            <div className="bg-white mb-5 me-5 ms-5">
+                <div className="pt-5 pb-5 ">
+                    <div className="container text-center">
+                        <TextDettaglioPdf description='Soggetto aderente' value={mainObj.ragioneSociale}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Tipologia Fattura' value={mainObj.tipologiaFattura}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='ID Documento' value={mainObj.idDocumento}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Anno' value={mainObj.anno}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Mese' value={month[Number(mainObj.mese) - 1]}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Cup' value={mainObj.cup}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='N. Notifiche Analogiche' value={mainObj.totaleNotificheAnalogiche}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='N. Notifiche Digitali' value={mainObj.totaleNotificheDigitali}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='N. Totale Notifiche' value={mainObj.totaleNotificheDigitali + mainObj.totaleNotificheAnalogiche }></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Totale Imponibile Analogico' value={Number(mainObj.totaleAnalogico).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Totale Imponibile Digitale' value={Number(mainObj.totaleDigitale).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Totale Imponibile' value={Number(mainObj.totale).toLocaleString()+' €'}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Iva' value={mainObj.iva +' %'}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Totale Ivato Analogico ' value={Number(mainObj.totaleAnalogicoIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Totale Ivato Digitale' value={Number(mainObj.totaleDigitaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Totale Ivato' value={Number(mainObj.totaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                    </div>
+                </div>
+            </div>
+        );
+
+    }
+    
+};

@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { profiliEnti,  } from "../../reusableFunction/actionLocalStorage";
 import { OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
-import { downloadListaRel, getAnniRelSend, getListaRel, getMesiRelSend, getTipologieFatture } from "../../api/apiSelfcare/relSE/api";
-import { mesiGrid, mesiWithZero } from "../../reusableFunction/reusableArrayObj";
-import { downloadListaRelPagopa, downloadListaRelPdfZipPagopa, downloadQuadraturaRelPagopa, downloadReportRelPagoPa, getAnniRel, getListaRelPagoPa, getMesiRel, getTipologieContrattoRel, getTipologieFatturePagoPa } from "../../api/apiPagoPa/relPA/api";
+import {  getAnniRelSend, getListaRel, getMesiRelSend, getTipologieFatture } from "../../api/apiSelfcare/relSE/api";
+import { mesiGrid } from "../../reusableFunction/reusableArrayObj";
+import { downloadReportRelPagoPa, getAnniRel, getMesiRel, getTipologieContrattoRel, getTipologieFatturePagoPa } from "../../api/apiPagoPa/relPA/api";
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
 import { PathPf } from "../../types/enum";
 import { saveAs } from "file-saver";
@@ -13,7 +13,7 @@ import ModalLoading from "../../components/reusableComponents/modals/modalLoadin
 import ModalRedirect from "../../components/commessaInserimento/madalRedirect";
 import { manageError, manageErrorDownload } from "../../api/api";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
-import { Rel, BodyRel } from "../../types/typeRel";
+import { BodyRel } from "../../types/typeRel";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";

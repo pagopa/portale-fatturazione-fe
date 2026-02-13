@@ -19,7 +19,7 @@ export const headersDocumentiEmessiEnte : HeaderGridCustom[] = [
     {label:"Tipo Contratto",align:"center",width:"100px"},
     {label:"Tot.",align:"center",width:"100px",headerActionSort:true},
     {label:"N. Fattura",align:"center",width:"150px",headerActionSort:true},
-    {label:"Tipo Documento",align:"center",width:"100px"},
+    {label:"Tipo Documento",align:"center",width:"150px",headerActionSort:true},
     {label:"Divisa",align:"center",width:"100px"},
     {label:"M. Pagamento",align:"center",width:"100px"},
     {label:"Split",align:"center",width:"100px"},

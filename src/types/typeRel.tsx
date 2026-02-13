@@ -55,7 +55,22 @@ export interface Rel {
     totaleDigitaleIva:number,
     totaleIva:number,
     firmata:string|null,
-    tipologiaContratto?:string|null
+    tipologiaContratto?:string|null,
+    fattureSospese:FatturaDettaglio[]
+}
+
+export interface FatturaDettaglio {
+    idFattura: string;
+    dataFattura: string; // or Date (see note below)
+    progressivo: number;
+    tipoDocumento: string;
+    totaleFatturaImponibile: number;
+    totale: number;
+    metodoPagamento: string;
+    causale: string;
+    split: boolean;
+    inviata: number; // could also be boolean if 0/1
+    sollecito: string | null;
 }
 
 export interface BodyRelLog {

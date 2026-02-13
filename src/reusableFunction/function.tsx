@@ -370,3 +370,12 @@ export const sortByTotale = (array: any[], state: boolean, key: string) => {
     return array;
 };
 
+export const sortByTipoFattura = (array, state,key) => {
+    if (state === true) {
+        return array.sort((a, b) => a[key].localeCompare(b[key]));
+    }else  if (state === false) {
+        return array.sort((a, b) => b[key].localeCompare(a[key]));
+    }
+    return array;
+};
+
