@@ -16,8 +16,8 @@ export interface TextRegioneSocialeRelProps{
 }
 
 export interface BodyRel{
-    anno:number,
-    mese:number,
+    anno:number|"",
+    mese:number|"",
     tipologiaFattura:string|null,
     idEnti:string[] | [],
     idContratto: string | null,
@@ -26,8 +26,8 @@ export interface BodyRel{
 } 
 
 export interface BodyRelSelfcare{
-    anno:number,
-    mese:number,
+    anno:number|"",
+    mese:number|"",
     tipologiaFattura:string|null,
     idContratto: string | null,
     caricata: number|null

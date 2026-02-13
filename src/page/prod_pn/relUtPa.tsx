@@ -60,8 +60,8 @@ const RelPage : React.FC = () =>{
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
     const [arrayContratti, setArrayContratto] = useState<{id:number,descrizione:string}[]>([{id:3,descrizione:"Tutti"}]);
     const [bodyDownload, setBodyDownload] = useState<BodyRel>({
-        anno:0,
-        mese:0,
+        anno:"",
+        mese:"",
         tipologiaFattura:null,
         idEnti:[],
         idContratto:null,
@@ -69,8 +69,8 @@ const RelPage : React.FC = () =>{
         idTipoContratto:null
     });
     const [bodyRel, setBodyRel] = useState<BodyRel>({
-        anno:0,
-        mese:0,
+        anno:"",
+        mese:"",
         tipologiaFattura:null,
         idEnti:[],
         idContratto:null,
@@ -154,7 +154,7 @@ const RelPage : React.FC = () =>{
                     el.descrizione = el?.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase();
                     return el;
                 });
-                console.log({resMesi:res});
+             
                 setArrayMonths(mesiCamelCase);
                 if(isInitialRender.current && Object.keys(filters).length > 0){
                     getListTipologiaFattura(filters.body.anno,filters.body.mese);
@@ -369,7 +369,7 @@ const RelPage : React.FC = () =>{
                 .then(res => res.data[0])
                 .catch(err => manageError(err,dispatchMainState));
         }
-        console.log({firstMonth});
+   
         setBodyRel({
             anno:arrayYears[0],
             mese:firstMonth.mese,
@@ -494,8 +494,9 @@ const RelPage : React.FC = () =>{
         if(enti){
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const {idEnti,idTipoContratto, ...newBody} = bodyDownload;
+            const customBody = bodyDownload.mese !== "" ? bodyDownload.mese : 0;
             await downloadListaRel(token,profilo.nonce,newBody).then((res)=>{
-                saveAs("data:text/plain;base64," + res.data.documento,`Regolari esecuzioni/${data[0]?.ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]}/${bodyDownload.anno}.xlsx` );
+                saveAs("data:text/plain;base64," + res.data.documento,`Regolari esecuzioni/${data[0]?.ragioneSociale}/${mesiWithZero[customBody-1]}/${bodyDownload.anno}.xlsx` );
                 setShowLoading(false);
             }).catch((err)=>{
                 setShowLoading(false);
@@ -503,9 +504,10 @@ const RelPage : React.FC = () =>{
             }); 
         }else{
             await downloadListaRelPagopa(token,profilo.nonce,bodyDownload).then((res)=>{
-                let fileName = `Regolari esecuzioni/${mesiWithZero[bodyDownload.mese-1]}/${bodyDownload.anno}.xlsx`;
+                const customBody = bodyDownload.mese !== "" ? bodyDownload.mese : 0;
+                let fileName = `Regolari esecuzioni/${mesiWithZero[customBody-1]}/${bodyDownload.anno}.xlsx`;
                 if(bodyDownload.idEnti.length === 1){
-                    fileName = `Regolari esecuzioni/${data[0]?.ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]}/${bodyDownload.anno}.xlsx`;
+                    fileName = `Regolari esecuzioni/${data[0]?.ragioneSociale}/${mesiWithZero[customBody-1]}/${bodyDownload.anno}.xlsx`;
                 }
                 saveAs("data:text/plain;base64," + res.data.documento,fileName );
                 setShowLoading(false);
@@ -519,9 +521,10 @@ const RelPage : React.FC = () =>{
     const downloadQuadratura = async() => {
         setShowLoading(true);
         downloadQuadraturaRelPagopa(token,profilo.nonce,bodyDownload).then((res)=>{
-            let fileName = `Quadratura regolari esecuzioni/${mesiWithZero[bodyDownload.mese-1]}/${bodyDownload.anno}.xlsx`;
+            const customBody = bodyDownload.mese !== "" ? bodyDownload.mese : 0;
+            let fileName = `Quadratura regolari esecuzioni/${mesiWithZero[customBody-1]}/${bodyDownload.anno}.xlsx`;
             if(bodyDownload.idEnti.length === 1){
-                fileName = `Quadratura regolare esecuzione/${data[0]?.ragioneSociale}/${mesiWithZero[bodyDownload.mese-1]}/${bodyDownload.anno}.xlsx`;
+                fileName = `Quadratura regolare esecuzione/${data[0]?.ragioneSociale}/${mesiWithZero[customBody-1]}/${bodyDownload.anno}.xlsx`;
             }
             saveAs("data:text/plain;base64," + res.data.documento,fileName );
             setShowLoading(false);
@@ -544,9 +547,10 @@ const RelPage : React.FC = () =>{
                 setShowLoading(false);
                 throw '404';
             }).then(blob => {
-                let fileName = `REL /Firmate/${mesiWithZero[bodyRel.mese -1]}/${bodyRel.anno}.zip`;
+                const customBody = bodyDownload.mese !== "" ? bodyDownload.mese : 0;
+                let fileName = `REL /Firmate/${mesiWithZero[customBody -1]}/${bodyRel.anno}.zip`;
                 if(bodyDownload.idEnti.length === 1){
-                    fileName = `REL /Firmate/${data[0]?.ragioneSociale}/${mesiWithZero[bodyRel.mese -1]}/${bodyRel.anno}.zip`;
+                    fileName = `REL /Firmate/${data[0]?.ragioneSociale}/${mesiWithZero[customBody -1]}/${bodyRel.anno}.zip`;
                 }
                 saveAs(blob,fileName );
                 setShowLoading(false);

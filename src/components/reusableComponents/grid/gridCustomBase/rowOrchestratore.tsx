@@ -13,7 +13,7 @@ const RowOrchestratore = ({sliced,headerNames,element}) => {
     }else if(sliced.esecuzione === 3){
         bgColorRow = "#FFF0F5";
     }
-    console.log({Element:element});
+ 
     return (
         <TableRow key={`${element.idOrchestratore}-${element.mese}-${element.tipologia}`} sx={{
             backgroundColor:bgColorRow,

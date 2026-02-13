@@ -171,7 +171,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                 }else if(nameParameterApi === 'idWhite'){
                                     return <RowWhiteList key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} setSelected={setSelected} selected={selected||[]}  checkIfChecked={checkIfChecked} ></RowWhiteList>;
                                 }else if(nameParameterApi === 'idOrchestratore'){
-                                    return <RowOrchestratore element={element} sliced={sliced} headerNames={headerNames}></RowOrchestratore>;
+                                    return <RowOrchestratore key={Math.random()}  element={element} sliced={sliced} headerNames={headerNames}></RowOrchestratore>;
                                 }else if(nameParameterApi === 'asyncDocEnte'){
                                     return <RowAsyncDoc key={Math.random()} sliced={sliced} headerNames={headerNames} handleClickOnGrid={handleClickOnGrid} element={element}></RowAsyncDoc>;
                                 }else if(nameParameterApi === "contestazionePage"){
