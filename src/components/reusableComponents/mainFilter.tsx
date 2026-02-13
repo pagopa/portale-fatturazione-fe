@@ -257,7 +257,7 @@ const MainFilter = <T,>({
                                 setBody((prev)=> ({...prev, ...{[keyBody]:e.target.value}}));
                             } 
                         }}
-                        value={arrayValues?.includes(body[keyDescription]) ? body[keyDescription] : ""}
+                        value={body[keyDescription] ?? defaultValue}
                     >
                         {arrayValues?.map((el) => (
                             <MenuItem

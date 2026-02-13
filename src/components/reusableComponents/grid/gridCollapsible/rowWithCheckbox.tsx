@@ -116,23 +116,23 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
                             <Table size="small">
                                 <TableHead>
                                     <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
-                                        <TableCell sx={{ marginLeft:"16px"}} >Numero Linea</TableCell>
-                                        <TableCell sx={{ marginLeft:"16px"}}>Codice Materiale</TableCell>
-                                        <TableCell sx={{ marginLeft:"16px"}}>Imponibile</TableCell>
-                                        <TableCell sx={{ marginLeft:"16px"}}>Periodo di riferimento</TableCell>
+                                        <TableCell align="center" sx={{ marginLeft:"16px"}} >Numero Linea</TableCell>
+                                        <TableCell align="center" sx={{ marginLeft:"16px"}}>Codice Materiale</TableCell>
+                                        <TableCell align="center" sx={{ marginLeft:"16px"}}>Imponibile</TableCell>
+                                        <TableCell align="center" sx={{ marginLeft:"16px"}}>Periodo di riferimento</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
                                     {row?.posizioni?.map((obj) => (
                                         <TableRow key={Math.random()}>
-                                            <TableCell>
+                                            <TableCell align="center">
                                                 {obj.numerolinea}
                                             </TableCell>
-                                            <TableCell>{obj.codiceMateriale}</TableCell>
-                                            <TableCell align="right" component="th" scope="row">
+                                            <TableCell align="center" >{obj.codiceMateriale}</TableCell>
+                                            <TableCell align="center" component="th" scope="row">
                                                 {obj.imponibile.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
                                             </TableCell>
-                                            <TableCell >{obj.periodoRiferimento}</TableCell>
+                                            <TableCell align="center" >{obj.periodoRiferimento}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { profiliEnti,  } from "../../reusableFunction/actionLocalStorage";
 import { OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
@@ -56,7 +56,6 @@ const RelPage : React.FC = () =>{
     const [textValue, setTextValue] = useState('');
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
     const [tipologiaFatture, setTipologiaFatture] = useState<string[]>([]);
-    const [valuetipologiaFattura, setValueTipologiaFattura] = useState<string>('');
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
     const [arrayContratti, setArrayContratto] = useState<{id:number,descrizione:string}[]>([{id:3,descrizione:"Tutti"}]);
     const [bodyDownload, setBodyDownload] = useState<BodyRel>({
@@ -207,7 +206,9 @@ const RelPage : React.FC = () =>{
                     setBodyDownload(filters.body);
                     getListTipologiaFattura(filters.body.anno,filters.body.mese);
                     setBodyRel(filters.body);
-                }else if(isInitialRender.current){
+                    setBodyDownload(filters.body);
+                }else if(isInitialRender.current ){
+                
                     setBodyRel((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
                     setBodyDownload((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
                     getListTipologiaFattura(year, mesiCamelCase[0].mese);
@@ -217,8 +218,6 @@ const RelPage : React.FC = () =>{
                     getListTipologiaFattura(year,mesiCamelCase[0].mese);
                     setBodyRel((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
                     setBodyDownload((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
-
-
                 }else{
                     setBodyRel((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
                     setBodyDownload((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
@@ -321,7 +320,7 @@ const RelPage : React.FC = () =>{
                 manageError(error, dispatchMainState);
             });
         }     
-        isInitialRender.current = false;       
+              
     };
 
     // servizio che popola la select con la checkbox
@@ -350,7 +349,6 @@ const RelPage : React.FC = () =>{
             valueAutocomplete:valueAutocomplete,
             page:0,
             rows:10,
-            valuetipologiaFattura
         });
         setPage(0);
         setRowsPerPage(10);
@@ -359,20 +357,28 @@ const RelPage : React.FC = () =>{
     };
 
     const onButtonAnnulla = async () => {
-        let firstMonth = {mese:0};
+        let res:{descrizione:string,mese:string}[] = [];
         if(enti){
-            firstMonth = await getMesiRelSend(token, profilo.nonce,{anno:arrayYears[0]?.toString()})
-                .then(res => res.data[0])
+            res = await getMesiRelSend(token, profilo.nonce,{anno:arrayYears[0]?.toString()})
+                .then(res => res.data)
                 .catch(err => manageError(err,dispatchMainState));
         }else if(profilo.auth === 'PAGOPA'){
-            firstMonth = await getMesiRel(token, profilo.nonce,{anno:arrayYears[0]?.toString()})
-                .then(res => res.data[0])
+            res = await getMesiRel(token, profilo.nonce,{anno:arrayYears[0]?.toString()})
+                .then(res => res.data)
                 .catch(err => manageError(err,dispatchMainState));
         }
+        console.log(res);
+        const mesiCamelCase = res.map(el => {
+            el.descrizione = el?.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase();
+            return el;
+        });
+             
+        setArrayMonths(mesiCamelCase);
+        getListTipologiaFattura(arrayYears[0],Number(mesiCamelCase[0].mese));
    
         setBodyRel({
             anno:arrayYears[0],
-            mese:firstMonth.mese,
+            mese:Number(mesiCamelCase[0].mese),
             tipologiaFattura:null,
             idEnti:[],
             idContratto:null,
@@ -381,21 +387,20 @@ const RelPage : React.FC = () =>{
         });
         setBodyDownload({
             anno:arrayYears[0],
-            mese:firstMonth.mese,
+            mese:Number(mesiCamelCase[0].mese),
             tipologiaFattura:null,
             idEnti:[],
             idContratto:null,
             caricata:null,
             idTipoContratto:null
         });
-        setValueTipologiaFattura('');
         setData([]);
         setPage(0);
         setRowsPerPage(10);
         setValueAutocomplete([]);
         getlista({
             anno:arrayYears[0],
-            mese:firstMonth.mese,
+            mese:Number(mesiCamelCase[0].mese),
             tipologiaFattura:null,
             idEnti:[],
             idContratto:null,
@@ -418,8 +423,7 @@ const RelPage : React.FC = () =>{
             textValue,
             valueAutocomplete:valueAutocomplete,
             page:newPage,
-            rows:rowsPerPage,
-            valuetipologiaFattura
+            rows:rowsPerPage
         });
     };
                     
@@ -437,7 +441,6 @@ const RelPage : React.FC = () =>{
             valueAutocomplete:valueAutocomplete,
             page:0,
             rows:parseInt(event.target.value, 10),
-            valuetipologiaFattura
         });
     };
    
@@ -450,43 +453,34 @@ const RelPage : React.FC = () =>{
         if(enti){
             await getTipologieFatture(token, profilo.nonce, {mese,anno}).then((res)=>{
                 setTipologiaFatture(res.data);
-                if(filters.valuetipologiaFattura){
-                    setValueTipologiaFattura(filters.valuetipologiaFattura);
-                }else{
-                    setValueTipologiaFattura('');
+                if(!isInitialRender.current && Object.keys(filters).length > 0){
                     setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
                     setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
                 }
                 setGetListaRelRunning(false);
             }).catch((()=>{
                 setTipologiaFatture([]);
-                setValueTipologiaFattura("");
                 setGetListaRelRunning(false);
                 setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
                 setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
-                // manageError(err,dispatchMainState);
             }));
         }else if(profilo.auth === 'PAGOPA'){
             await getTipologieFatturePagoPa(token, profilo.nonce, {mese,anno}).then((res)=>{
                 setTipologiaFatture(res.data);
-                if(filters.valuetipologiaFattura){
-                    setValueTipologiaFattura(filters.valuetipologiaFattura);
-                }else{
-                    setValueTipologiaFattura('');
+                if(!isInitialRender.current){
                     setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
                     setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
                 } 
                 setGetListaRelRunning(false);
             }).catch((()=>{
                 setTipologiaFatture([]);
-                setValueTipologiaFattura("");
                 setGetListaRelRunning(false);
                 setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
                 setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
                 // manageError(err,dispatchMainState);
             }));
         }
-        
+        isInitialRender.current = false; 
     };
 
     const downloadListaRelExel = async() =>{

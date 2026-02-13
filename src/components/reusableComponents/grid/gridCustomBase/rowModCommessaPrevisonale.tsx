@@ -41,30 +41,31 @@ const RowModCommessaPrevisionale = ({sliced,headerNames,element}) => {
                             </TableCell>
                         );
                     }else{
-                        return(
-                            <>
-                                {value !== "--" ?
-                                    <Tooltip key={Math.random()} title={i === 0 && value?.length >= 20 ? value : undefined}  placement="right">
-                                        <TableCell
-                                            onClick={()=> headerNames[i]?.rowAction && headerNames[i]?.rowAction(element)}
-                                            sx={cssFirstColum}
-                                            align={headerNames[i]?.align}>
-                                            {valueEl}
-                                            
-                                        </TableCell>
-                                    </Tooltip>: 
-                                    <TableCell
-                                        key={Math.random()}
-                                        align={headerNames[i]?.align}>
-                                        {value} 
-                                    </TableCell>
-                                }
-                            </>
+                        return value !== "--" ? (
+                            <Tooltip
+                                key={`cell-${element.id}-${i}`}
+                                title={i === 0 && value?.length >= 20 ? value : undefined}
+                                placement="right"
+                            >
+                                <TableCell
+                                    onClick={() =>
+                                        headerNames[i]?.rowAction && headerNames[i]?.rowAction(element)
+                                    }
+                                    sx={cssFirstColum}
+                                    align={headerNames[i]?.align}
+                                >
+                                    {valueEl}
+                                </TableCell>
+                            </Tooltip>
+                        ) : (
+                            <TableCell
+                                key={`cell-${element.id}-${i}`}
+                                align={headerNames[i]?.align}
+                            >
+                                {value}
+                            </TableCell>
                         );
-
                     }
-                  
-                   
                 })
             }
         </TableRow>

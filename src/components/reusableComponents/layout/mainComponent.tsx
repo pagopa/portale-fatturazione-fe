@@ -208,7 +208,7 @@ export const FilterActionButtons = ({
                     >
                         {actionButton?.map((action, index) => (
 
-                            <Tooltip key={action.label}  title={action?.tooltipMessage ? action?.tooltipMessage:null}>
+                            <Tooltip key={`${action.label}-${index}`}  title={action?.tooltipMessage ? action?.tooltipMessage:null}>
                                 <span>
                                     <CustomButton
                                         key={index}
