@@ -164,9 +164,11 @@ const InvioFattureDetails : React.FC = () => {
                                                         <TableCell align="center">Mese</TableCell>
                                                         <TableCell align="center">Importo
                                                             <Tooltip title="Sort">
-                                                                <IconButton sx={{marginLeft:'10px'}}  onClick={handleClickArrow}  size="small">
-                                                                    {(sortImport === null || sortImport === true) ? <ArrowUpwardIcon></ArrowUpwardIcon>:<ArrowDownwardIcon></ArrowDownwardIcon>}
-                                                                </IconButton>
+                                                                <span>
+                                                                    <IconButton sx={{marginLeft:'10px'}}  onClick={handleClickArrow}  size="small">
+                                                                        {(sortImport === null || sortImport === true) ? <ArrowUpwardIcon></ArrowUpwardIcon>:<ArrowDownwardIcon></ArrowDownwardIcon>}
+                                                                    </IconButton>
+                                                                </span>
                                                             </Tooltip>
                                                         </TableCell>
                                                     </TableRow>
@@ -177,9 +179,11 @@ const InvioFattureDetails : React.FC = () => {
                                                         return ( 
                                                             <TableRow key={Math.random()}>
                                                                 <Tooltip title={obj.ragioneSociale}>
-                                                                    <TableCell sx={{color:'#0D6EFD',fontWeight: 'bold',width:"300px"}} >
-                                                                        {obj.ragioneSociale?.toString().length > 30 ? obj.ragioneSociale?.toString().slice(0, 27) + '...' : obj.ragioneSociale}
-                                                                    </TableCell>
+                                                                    <span>
+                                                                        <TableCell sx={{color:'#0D6EFD',fontWeight: 'bold',width:"300px"}} >
+                                                                            {obj.ragioneSociale?.toString().length > 30 ? obj.ragioneSociale?.toString().slice(0, 27) + '...' : obj.ragioneSociale}
+                                                                        </TableCell>
+                                                                    </span>
                                                                 </Tooltip>
                                                                 <TableCell align="center">{new Date(obj.dataFattura).toLocaleString().split(",")[0]||''}</TableCell>
                                                                 <TableCell align="center">{obj.tipologiaFattura}</TableCell>

@@ -138,7 +138,7 @@ const MainFilter = <T,>({
                     >
                         {arrayValues?.map((el) => (
                             <MenuItem
-                                key={Math.random()}
+                                key={el[keyValue]}
                                 value={el[keyValue]}
                             >
                                 {el[keyDescription]??""}
@@ -257,11 +257,11 @@ const MainFilter = <T,>({
                                 setBody((prev)=> ({...prev, ...{[keyBody]:e.target.value}}));
                             } 
                         }}
-                        value={body[keyDescription] ?? defaultValue}
+                        value={arrayValues?.includes(body[keyDescription]) ? body[keyDescription] : ""}
                     >
                         {arrayValues?.map((el) => (
                             <MenuItem
-                                key={Math.random()}
+                                key={el}
                                 value={el}
                             >
                                 {inputLabel === "Mese" ? mesiGrid[el] : el}
@@ -377,7 +377,7 @@ const MainFilter = <T,>({
                                             title={getLabel(option)}
                                             key={key}
                                             placement="top"
-                                        >
+                                        > 
                                             <Chip
                                                 {...tagProps}
                                                 label={

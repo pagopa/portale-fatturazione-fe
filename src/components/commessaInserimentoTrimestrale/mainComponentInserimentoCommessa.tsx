@@ -130,9 +130,11 @@ const MainInserimentoModuloCommessa = ({
                                                     <Grid item xs={2} sx={{ textAlign: "right" }}>
                                                         {element?.obbligatorio === 1 && (
                                                             <Tooltip title="Regione di appartenenza">
-                                                                <IconButton>
-                                                                    <InfoIcon fontSize="medium" />
-                                                                </IconButton>
+                                                                <span>
+                                                                    <IconButton>
+                                                                        <InfoIcon fontSize="medium" />
+                                                                    </IconButton>
+                                                                </span>
                                                             </Tooltip>
                                                         )}
                                                     </Grid>

@@ -74,16 +74,18 @@ export  const MainBoxStyled = ({
             >
                 {actionButton?.map((action, index) => (
                     <Tooltip key={index}  title={action?.tooltipMessage ? action?.tooltipMessage:null}>
-                        <CustomButton
-                            sx={{marginRight:"20%"}}
-                            key={index}
-                            variant={action.variant}
-                            onClick={action.onButtonClick}
-                            withText={action.withText}
-                        >
-                            {action.icon && RenderIcon(action.icon.name, false)} 
-                            {action.label}
-                        </CustomButton>
+                        <span>
+                            <CustomButton
+                                sx={{marginRight:"20%"}}
+                                key={index}
+                                variant={action.variant}
+                                onClick={action.onButtonClick}
+                                withText={action.withText}
+                            >
+                                {action.icon && RenderIcon(action.icon.name, false)} 
+                                {action.label}
+                            </CustomButton>
+                        </span>
                     </Tooltip>
                     
                 ))}
@@ -184,9 +186,11 @@ export const FilterActionButtons = ({
                         )}
                         {statusAnnulla !== "hidden" && annullaButtonOptional && (
                             <Tooltip title={annullaButtonOptional?.tooltipMessage ? annullaButtonOptional?.tooltipMessage : null}>
-                                <CustomButton onClick={onButtonAnnulla} variant={annullaButtonOptional?.variant}>
-                                    {annullaButtonOptional?.label}{annullaButtonOptional.icon && RenderIcon(annullaButtonOptional.icon.name, false)} 
-                                </CustomButton>
+                                <span>
+                                    <CustomButton onClick={onButtonAnnulla} variant={annullaButtonOptional?.variant}>
+                                        {annullaButtonOptional?.label}{annullaButtonOptional.icon && RenderIcon(annullaButtonOptional.icon.name, false)} 
+                                    </CustomButton>
+                                </span>
                             </Tooltip>
                             
                         )}
@@ -204,18 +208,20 @@ export const FilterActionButtons = ({
                     >
                         {actionButton?.map((action, index) => (
 
-                            <Tooltip  title={action?.tooltipMessage ? action?.tooltipMessage:null}>
-                                <CustomButton
-                                    key={index}
-                                    variant={action.variant}
-                                    onClick={action.onButtonClick}
-                                    withText={action.withText}
-                                    color={action.colorAction ? "error":undefined}
-                                    disabled={action.disabled}
-                                >
-                                    {action.icon && RenderIcon(action.icon.name, false)} 
-                                    {action.label}
-                                </CustomButton>
+                            <Tooltip key={action.label}  title={action?.tooltipMessage ? action?.tooltipMessage:null}>
+                                <span>
+                                    <CustomButton
+                                        key={index}
+                                        variant={action.variant}
+                                        onClick={action.onButtonClick}
+                                        withText={action.withText}
+                                        color={action.colorAction ? "error":undefined}
+                                        disabled={action.disabled}
+                                    >
+                                        {action.icon && RenderIcon(action.icon.name, false)} 
+                                        {action.label}
+                                    </CustomButton>
+                                </span>
                             </Tooltip>
                         ))}
                     </Box>
@@ -314,9 +320,11 @@ interface CustomButtonProps extends ButtonProps {
     colorAction?:"inherit" | "secondary" | "primary" | "success" | "error" | "info" | "warning"
 }
 
-export const CustomButton = styled(Button)<CustomButtonProps>(({ theme, withText=true,colorAction }) => ({
+export const CustomButton = styled(Button, {
+    shouldForwardProp: (prop) => prop !== "withText" && prop !== "colorAction",
+})<CustomButtonProps>(({ theme, withText = true, colorAction }) => ({
     minWidth: withText ? "130px" : undefined,
-    padding: withText? theme.spacing(1, 3):undefined,
+    padding: withText ? theme.spacing(1, 3) : undefined,
     fontWeight: 500,
     textTransform: "none",
     display: "flex",

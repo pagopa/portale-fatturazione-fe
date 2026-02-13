@@ -90,7 +90,9 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
                         placement="bottom"
                         title={tooltipObj.title}
                     >
-                        <Chip variant="outlined" label={tooltipObj.label} sx={{backgroundColor:tooltipObj.color}} />
+                        <span>
+                            <Chip variant="outlined" label={tooltipObj.label} sx={{backgroundColor:tooltipObj.color}} />
+                        </span>
                     </Tooltip>
                 </TableCell>
                 <TableCell align='center'>{row.tipologiaFattura||"--"}</TableCell>

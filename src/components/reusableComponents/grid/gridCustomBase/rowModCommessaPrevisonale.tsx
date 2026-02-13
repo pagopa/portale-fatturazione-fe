@@ -11,9 +11,8 @@ const RowModCommessaPrevisionale = ({sliced,headerNames,element}) => {
         statusColor = "#f7e7bc";
     }
 
-
     return (
-        <TableRow sx={{
+        <TableRow key={element.id} sx={{
             borderTop:"4px solid #F2F2F2",
             borderBottom: "2px solid #F2F2F2",
             '&:hover': {

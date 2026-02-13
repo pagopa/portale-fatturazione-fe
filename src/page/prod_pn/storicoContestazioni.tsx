@@ -443,7 +443,9 @@ const Storico: React.FC = () => {
                         <div className="col-3">
                             <div className="d-flex justify-content-end me-5" style={{width:'80%'}}>
                                 <Tooltip  title="Contestazioni multiple">
-                                    <Button  variant="outlined" onClick={()=> navigate(PathPf.INSERIMENTO_CONTESTAZIONI)} ><NoteAddIcon></NoteAddIcon></Button>
+                                    <span>
+                                        <Button  variant="outlined" onClick={()=> navigate(PathPf.INSERIMENTO_CONTESTAZIONI)} ><NoteAddIcon></NoteAddIcon></Button>
+                                    </span>
                                 </Tooltip>
                             </div>
                         </div>

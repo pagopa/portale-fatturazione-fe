@@ -378,26 +378,30 @@ const InserimentoContestazioni  : React.FC = () =>{
                         </div>
                         <div className="col-3 m-auto">
                             <Tooltip title={file ? (file?.name || ""):"Carica file"}>
-                                <Button
-                                    disabled={body.contractId === '' || arrayReacpCon.length === 0}
-                                    component="label"
-                                    variant="contained"
-                                    onClick={()=> file && setOpenModalConferma(true)}
-                                    startIcon={<CloudUploadIcon />}
-                                >
-                                    {file ? "Inserisci":"Carica file"}
-                                    {!file && <VisuallyHiddenInput type="file" onChange={(e:any)=> handleSelect(e.target.files[0])}/>}
-                                </Button>
+                                <span>
+                                    <Button
+                                        disabled={body.contractId === '' || arrayReacpCon.length === 0}
+                                        component="label"
+                                        variant="contained"
+                                        onClick={()=> file && setOpenModalConferma(true)}
+                                        startIcon={<CloudUploadIcon />}
+                                    >
+                                        {file ? "Inserisci":"Carica file"}
+                                        {!file && <VisuallyHiddenInput type="file" onChange={(e:any)=> handleSelect(e.target.files[0])}/>}
+                                    </Button>
+                                </span>
                             </Tooltip>
                             {file &&
                             <Tooltip title={"Elimina file"}>
-                                <Button  
-                                    sx={{marginLeft:'20px'}}
-                                    size="medium"
-                                    variant="outlined"
-                                    onClick={() => setFile(null)}> 
-                                    <DeleteIcon  />
-                                </Button>
+                                <span>
+                                    <Button  
+                                        sx={{marginLeft:'20px'}}
+                                        size="medium"
+                                        variant="outlined"
+                                        onClick={() => setFile(null)}> 
+                                        <DeleteIcon  />
+                                    </Button>
+                                </span>
                             </Tooltip>
                             }
                         </div>

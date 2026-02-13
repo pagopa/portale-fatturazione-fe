@@ -32,15 +32,17 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) =>{
                 {numSelected} Selezionate
             </Typography>
             <Tooltip title={stringIcon}>
-                <Button variant="outlined" onClick={()=>{
-                    if(monthFilterIsEqualMonthDownload){
-                        setOpenConfermaModal(true);
-                    }else{
-                        setOpenResetFilterModal(true);
-                    }
-                }}>
-                    {stringIcon} {icon}
-                </Button>
+                <span>
+                    <Button variant="outlined" onClick={()=>{
+                        if(monthFilterIsEqualMonthDownload){
+                            setOpenConfermaModal(true);
+                        }else{
+                            setOpenResetFilterModal(true);
+                        }
+                    }}>
+                        {stringIcon} {icon}
+                    </Button>
+                </span>
             </Tooltip>
         </Toolbar>
     );

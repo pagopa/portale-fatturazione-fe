@@ -148,88 +148,80 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                 })}
                             </TableRow>
                         </TableHead>
-                        {elements.length === 0 ?
-                            <TableBody key={0} style={{height: '50px'}}>
-                            </TableBody> :
-                            <TableBody key={1} sx={{marginLeft:'20px'}}>  {/*da eliminare any nella riga sottostante */}
-                                {elements.map((element:Rel|NotificheList|GridElementListaPsp|Whitelist|DataGridOrchestratore|DataGridAsyncDoc|ContestazioneRowGrid|any ) =>{
-                                    // tolgo da ogni oggetto la prima chiave valore  perchè il cliente non vuole vedere es. l'id ma serve per la chiamata get di dettaglio 
-                                    let sliced = Object.fromEntries(
-                                        Object.entries(element).slice(1)
-                                    );
-                                    if(nameParameterApi === 'idWhite'){
-                                        sliced = Object.fromEntries(Object.entries(element).slice(1, -1));
-                                    }else if(nameParameterApi === "contestazionePage"){
-                                        sliced = Object.fromEntries(Object.entries(element).slice(1, -1));
-                                    }else if(nameParameterApi === "modComTrimestrale"){
-                                        sliced = Object.fromEntries(Object.entries(element).slice(1, -4));
-                                    }else if( nameParameterApi === "idPrevisonale"){
-                                        sliced = Object.fromEntries(Object.entries(element).slice(5));
-                                    }
+                        
+                        <TableBody sx={{marginLeft:'20px',height: '50px'}}>
+                            {elements.length > 0 && elements.map((element:Rel|NotificheList|GridElementListaPsp|Whitelist|DataGridOrchestratore|DataGridAsyncDoc|ContestazioneRowGrid|any ) =>{
+                                // tolgo da ogni oggetto la prima chiave valore  perchè il cliente non vuole vedere es. l'id ma serve per la chiamata get di dettaglio 
+                                let sliced = Object.fromEntries(
+                                    Object.entries(element).slice(1)
+                                );
+                                if(nameParameterApi === 'idWhite'){
+                                    sliced = Object.fromEntries(Object.entries(element).slice(1, -1));
+                                }else if(nameParameterApi === "contestazionePage"){
+                                    sliced = Object.fromEntries(Object.entries(element).slice(1, -1));
+                                }else if(nameParameterApi === "modComTrimestrale"){
+                                    sliced = Object.fromEntries(Object.entries(element).slice(1, -4));
+                                }else if( nameParameterApi === "idPrevisonale"){
+                                    sliced = Object.fromEntries(Object.entries(element).slice(5));
+                                }
 
 
-                                    if(nameParameterApi === 'idContratto'){
-                                        return <RowContratto key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} ></RowContratto>;
-                                    }else if(nameParameterApi === 'idWhite'){
-                                        return <RowWhiteList key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} setSelected={setSelected} selected={selected||[]}  checkIfChecked={checkIfChecked} ></RowWhiteList>;
-                                    }else if(nameParameterApi === 'idOrchestratore'){
-                                        return <RowOrchestratore key={Math.random()} sliced={sliced} headerNames={headerNames}></RowOrchestratore>;
-                                    }else if(nameParameterApi === 'asyncDocEnte'){
-                                        return <RowAsyncDoc key={Math.random()} sliced={sliced} headerNames={headerNames} handleClickOnGrid={handleClickOnGrid} element={element}></RowAsyncDoc>;
-                                    }else if(nameParameterApi === "contestazionePage"){
-                                        return <RowContestazioni key={Math.random()} sliced={sliced}apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} headerNames={headerNames}></RowContestazioni>;
-                                    }else if(nameParameterApi === "modComTrimestrale"){
-                                        return  <DefaultRow key={element.id} handleClickOnGrid={handleClickOnGrid} element={element} sliced={sliced} apiGet={()=> console.log("go to details")} headerNames={headerNames}></DefaultRow>;
-                                    }else if(nameParameterApi === "idPrevisonale"){
-                                        return <RowModCommessaPrevisionale key={element.id} sliced={sliced} element={element} headerNames={headerNames}></RowModCommessaPrevisionale>;
-                                    }else{
+                                if(nameParameterApi === 'idContratto'){
+                                    return <RowContratto key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} ></RowContratto>;
+                                }else if(nameParameterApi === 'idWhite'){
+                                    return <RowWhiteList key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} setSelected={setSelected} selected={selected||[]}  checkIfChecked={checkIfChecked} ></RowWhiteList>;
+                                }else if(nameParameterApi === 'idOrchestratore'){
+                                    return <RowOrchestratore element={element} sliced={sliced} headerNames={headerNames}></RowOrchestratore>;
+                                }else if(nameParameterApi === 'asyncDocEnte'){
+                                    return <RowAsyncDoc key={Math.random()} sliced={sliced} headerNames={headerNames} handleClickOnGrid={handleClickOnGrid} element={element}></RowAsyncDoc>;
+                                }else if(nameParameterApi === "contestazionePage"){
+                                    return <RowContestazioni key={Math.random()} sliced={sliced}apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} headerNames={headerNames}></RowContestazioni>;
+                                }else if(nameParameterApi === "modComTrimestrale"){
+                                    return  <DefaultRow key={element.id} handleClickOnGrid={handleClickOnGrid} element={element} sliced={sliced} apiGet={()=> console.log("go to details")} headerNames={headerNames}></DefaultRow>;
+                                }else if(nameParameterApi === "idPrevisonale"){
+                                    return <RowModCommessaPrevisionale key={element.id} sliced={sliced} element={element} headerNames={headerNames}></RowModCommessaPrevisionale>;
+                                }else{
                                      
-                                        return (
-                                            <TableRow sx={{
-                                                height: '80px',
-                                                borderTop: '4px solid #F2F2F2',
-                                                borderBottom: '2px solid #F2F2F2',
-                                                '&:hover': {
-                                                    backgroundColor: '#EDEFF1',
-                                                },
-                                            }}  key={Math.random()}>
-                                                {
-                                                    Object.values(sliced).map((value:string|number|any, i:number)=>{
-                                                        const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
-                                                        const valueEl = (i === 0 && value?.toString().length > 30) ? value?.toString().slice(0, 30) + '...' : value;
-                                                        return (
-                                                            <Tooltip key={Math.random()} 
-                                                                title={
-                                                                    (value === "--" 
+                                    return (
+                                        <TableRow sx={{
+                                            height: '80px',
+                                            borderTop: '4px solid #F2F2F2',
+                                            borderBottom: '2px solid #F2F2F2',
+                                            '&:hover': {
+                                                backgroundColor: '#EDEFF1',
+                                            },
+                                        }}  key={Math.random()}>
+                                            {
+                                                Object.values(sliced).map((value:string|number|any, i:number)=>{
+                                                    const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
+                                                    const valueEl = (i === 0 && value?.toString().length > 30) ? value?.toString().slice(0, 30) + '...' : value;
+                                                    return (
+                                                        <Tooltip key={Math.random()} 
+                                                            title={
+                                                                (value === "--" 
                                                                 || nameParameterApi === "idNotifica"
                                                                 || valueEl?.length < 30
                                                                 ||((nameParameterApi=== "idTestata"&& i === 0 && valueEl?.length < 30) 
                                                                 ||nameParameterApi=== "idTestata"&& i !== 0 ))
-                                                                        ?null
-                                                                        :value}>
-                                                                <TableCell
-                                                                    align={(nameParameterApi === "modComTrimestrale"||i !== 0)?"center":"left"}
-                                                                    sx={cssFirstColum} 
-                                                                    onClick={()=>{
-                                                                        if(i === 0){
-                                                                            handleClickOnGrid(element);
-                                                                        }            
-                                                                    }}
-                                                                >
-                                                                    {(valueEl === null||valueEl === "") ? "--":valueEl}
-                                                                </TableCell>
-                                                            </Tooltip>
-                                                        );
-                                                    })
-                                                }
-                                                {apiGet && <TableCell align="center" onClick={()=>{handleClickOnGrid(element);}}>
-                                                    <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
-                                                </TableCell> }
-                                            </TableRow>
-                                        );}
-                                } )}
-                            </TableBody>
-                        }
+                                                                    ?null
+                                                                    :value}>
+                                                            <TableCell
+                                                                align={(nameParameterApi === "modComTrimestrale"||i !== 0)?"center":"left"}
+                                                                sx={cssFirstColum} 
+                                                                onClick={()=>{if(i === 0){handleClickOnGrid(element);}}}>
+                                                                {(valueEl === null||valueEl === "") ? "--":valueEl}
+                                                            </TableCell>
+                                                        </Tooltip>
+                                                    );
+                                                })
+                                            }
+                                            {apiGet && <TableCell align="center" onClick={()=>{handleClickOnGrid(element);}}>
+                                                <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
+                                            </TableCell> }
+                                        </TableRow>
+                                    );}
+                            } )}
+                        </TableBody>
                     </Table>      
                 </Card>
             </div>

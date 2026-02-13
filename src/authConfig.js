@@ -3,7 +3,7 @@ export const msalConfig = {
     auth: {
         
         // eslint-disable-next-line no-undef
-        clientId: "b5f6a72a-c9f1-4d74-9464-0bffdd76ea79", // This is the ONLY mandatory field that you need to supply.
+        clientId: "3f40708b-4f51-49f1-8c28-fd3e2bccc709", // This is the ONLY mandatory field that you need to supply.
         // eslint-disable-next-line no-undef
         authority: `https://login.microsoftonline.com/7788edaf-0346-4068-9d79-c868aed15b3d`, // Replace the placeholder with your tenant subdomain 
         redirectUri: '/auth/azure', // Points to window.location.origin. You must register this URI on Azure Portal/App Registration.

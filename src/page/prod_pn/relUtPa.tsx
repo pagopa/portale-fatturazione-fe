@@ -145,7 +145,7 @@ const RelPage : React.FC = () =>{
        
     };
 
-    const getMesi = async(year) =>{
+    const getMesi = async(year, isCalledOnChangeMonth = false) =>{
         
         if(enti && mainState.datiFatturazione === true){
             setGetListaRelRunning(true);
@@ -154,6 +154,7 @@ const RelPage : React.FC = () =>{
                     el.descrizione = el?.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase();
                     return el;
                 });
+                console.log({resMesi:res});
                 setArrayMonths(mesiCamelCase);
                 if(isInitialRender.current && Object.keys(filters).length > 0){
                     getListTipologiaFattura(filters.body.anno,filters.body.mese);
@@ -169,6 +170,12 @@ const RelPage : React.FC = () =>{
                     setBodyDownload((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
                     getListTipologiaFattura(year, mesiCamelCase[0].mese);
                     getlista({...bodyRel,...{anno:year,mese:mesiCamelCase[0].mese}},1,rowsPerPage);
+                }else if(isCalledOnChangeMonth){
+
+                    getListTipologiaFattura(year,mesiCamelCase[0].mese);
+                    setBodyRel((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
+                    setBodyDownload((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
+
                 }else{
                     setBodyRel((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
                     setBodyDownload((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
@@ -205,6 +212,13 @@ const RelPage : React.FC = () =>{
                     setBodyDownload((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
                     getListTipologiaFattura(year, mesiCamelCase[0].mese);
                     getlista({...bodyRel,...{anno:year,mese:mesiCamelCase[0].mese}},1,rowsPerPage);
+                }else if(isCalledOnChangeMonth){
+
+                    getListTipologiaFattura(year,mesiCamelCase[0].mese);
+                    setBodyRel((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
+                    setBodyDownload((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
+
+
                 }else{
                     setBodyRel((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
                     setBodyDownload((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
@@ -355,6 +369,7 @@ const RelPage : React.FC = () =>{
                 .then(res => res.data[0])
                 .catch(err => manageError(err,dispatchMainState));
         }
+        console.log({firstMonth});
         setBodyRel({
             anno:arrayYears[0],
             mese:firstMonth.mese,
@@ -439,10 +454,16 @@ const RelPage : React.FC = () =>{
                     setValueTipologiaFattura(filters.valuetipologiaFattura);
                 }else{
                     setValueTipologiaFattura('');
+                    setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
+                    setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
                 }
+                setGetListaRelRunning(false);
             }).catch((()=>{
                 setTipologiaFatture([]);
                 setValueTipologiaFattura("");
+                setGetListaRelRunning(false);
+                setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
+                setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
                 // manageError(err,dispatchMainState);
             }));
         }else if(profilo.auth === 'PAGOPA'){
@@ -452,47 +473,20 @@ const RelPage : React.FC = () =>{
                     setValueTipologiaFattura(filters.valuetipologiaFattura);
                 }else{
                     setValueTipologiaFattura('');
+                    setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
+                    setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
                 } 
+                setGetListaRelRunning(false);
             }).catch((()=>{
                 setTipologiaFatture([]);
                 setValueTipologiaFattura("");
+                setGetListaRelRunning(false);
+                setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
+                setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
                 // manageError(err,dispatchMainState);
             }));
         }
         
-    };
-
-    const getListTipologiaFatturaOnChangeMonthYear = async(mese,anno) => {
-        if(enti){
-            await getTipologieFatture(token, profilo.nonce, {mese,anno}).then((res)=>{
-                setTipologiaFatture(res.data);
-                setValueTipologiaFattura('');
-                setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
-                setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
-            }).catch((()=>{
-                setTipologiaFatture([]);
-                setValueTipologiaFattura('');
-                setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
-                setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
-               
-                // manageError(err,dispatchMainState);
-            }));
-        }else if(profilo.auth === 'PAGOPA'){
-            await getTipologieFatturePagoPa(token, profilo.nonce, {mese,anno}).then((res)=>{
-                setTipologiaFatture(res.data);
-                setValueTipologiaFattura('');
-                setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
-                setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
-            }).catch((()=>{
-                setTipologiaFatture([]);
-                setValueTipologiaFattura('');
-                setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
-                setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
-                // manageError(err,dispatchMainState);
-            }));
-
-        }
-        setGetListaRelRunning(false);
     };
 
     const downloadListaRelExel = async() =>{
@@ -610,12 +604,12 @@ const RelPage : React.FC = () =>{
                     keyDescription={"anno"}
                     keyValue={"anno"}
                     keyBody={"anno"}
+                    defaultValue={""}
                     arrayValues={arrayYears}
                     extraCodeOnChange={(e)=>{
                         const value = Number(e);
                         setBodyRel((prev)=> ({...prev, ...{anno:value}}));
-                        getMesi(value.toString());
-                        getListTipologiaFatturaOnChangeMonthYear(bodyRel.mese,bodyRel.anno);
+                        getMesi(value.toString(),true);
                     }}
                 ></MainFilter>
                 <MainFilter 
@@ -631,7 +625,7 @@ const RelPage : React.FC = () =>{
                     extraCodeOnChange={(e)=>{
                         const value = Number(e);
                         setBodyRel((prev)=> ({...prev, ...{mese:value}})); 
-                        getListTipologiaFatturaOnChangeMonthYear(value,bodyRel.anno);            
+                        getListTipologiaFattura(Number(bodyRel.anno),value);            
                     }}
                 ></MainFilter>
                 <MainFilter 
@@ -741,7 +735,7 @@ const RelPage : React.FC = () =>{
                 headerNames={headerGridKeys}
                 apiGet={setIdRel}
                 disabled={getListaRelRunning}
-                widthCustomSize="2000px"></GridCustom>
+                widthCustomSize="2000px"/>
             <ModalLoading 
                 open={showLoading} 
                 setOpen={setShowLoading} 

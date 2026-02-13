@@ -50,9 +50,11 @@ const RowBase = ({row,handleModifyMainState}) => {
                 <TableCell align='center'>{new Date(row.data).toLocaleString().split(',')[0]||"--"}</TableCell>
                 <TableCell align='center' onClick={()=> handleOnDetail(row)}>
                     <Tooltip title="Dettaglio">
-                        <IconButton>
-                            <ArrowForwardIcon sx={{ color: '#1976D2'}} /> 
-                        </IconButton>
+                        <span>
+                            <IconButton>
+                                <ArrowForwardIcon sx={{ color: '#1976D2'}} /> 
+                            </IconButton>
+                        </span>
                     </Tooltip>
                 </TableCell>
             </TableRow>
