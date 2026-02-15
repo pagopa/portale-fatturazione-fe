@@ -3,8 +3,8 @@ import { Dispatch, SetStateAction } from "react";
 import { MainState } from "./typesGeneral";
 import { ActionReducerType } from "../reducer/reducerMainState";
 export interface BodyFatturazione{
-    anno:number,
-    mese:number,
+    anno:number|"",
+    mese:number|"",
     tipologiaFattura:string[],
     idEnti:string[],
     cancellata:boolean,

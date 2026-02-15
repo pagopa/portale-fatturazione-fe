@@ -464,7 +464,7 @@ const ListaDocEmessi : React.FC = () => {
                             }
                         }
                     }}
-                    defaultValue={"Tutte"}
+                    defaultValue={(tipologiaFatture && tipologiaFatture?.length > 0) ? "Tutte": ""}
                 ></MainFilter>
                 <MainFilter 
                     filterName={"select_key_value"}
@@ -476,7 +476,7 @@ const ListaDocEmessi : React.FC = () => {
                     keyBody={"idTipoContratto"}
                     keyValue={"id"}
                     arrayValues={contratti}
-                    defaultValue={"3"}
+                    defaultValue={3}
                     extraCodeOnChange={(e)=>{
                         const val = (Number(e) === 3) ? null : Number(e);
                         setBodyGetLista((prev)=>({...prev,...{idTipoContratto:val}}));

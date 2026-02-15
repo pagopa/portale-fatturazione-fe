@@ -47,6 +47,7 @@ const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, headerNames}) =>
                      
                         return (
                             <TableCell
+                                key={i}
                                 align={"center"}
                                 sx={cssFirstColum} 
                                 onClick={()=>{
@@ -62,7 +63,7 @@ const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, headerNames}) =>
                     
                 })
             }
-            {apiGet && <TableCell align="center" onClick={()=>{handleClickOnGrid(element);}}>
+            {apiGet && <TableCell key={`arrow-mod-commess-${element.id}`} align="center" onClick={()=>{handleClickOnGrid(element);}}>
                 <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
             </TableCell> }
         </TableRow>

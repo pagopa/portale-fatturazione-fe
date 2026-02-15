@@ -155,7 +155,7 @@ const InvioFatture : React.FC = () => {
     };
 
     return(
-        <>
+        <Box>
             <div>
                 <NavigatorHeader pageFrom={"Documenti emessi/"} pageIn={"Inserimento fatture"} backPath={PathPf.FATTURAZIONE} icon={<IosShareIcon sx={{paddingBottom:"5px"}}  fontSize='small'></IosShareIcon>}></NavigatorHeader>
             </div>
@@ -273,7 +273,7 @@ const InvioFatture : React.FC = () => {
                 setOpen={setShowLoader}
                 sentence={'Loading...'} >
             </ModalLoading>
-        </>
+        </Box>
     );
 };
 export default InvioFatture;

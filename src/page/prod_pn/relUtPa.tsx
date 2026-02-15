@@ -157,13 +157,7 @@ const RelPage : React.FC = () =>{
                 setArrayMonths(mesiCamelCase);
                 if(isInitialRender.current && Object.keys(filters).length > 0){
                     getListTipologiaFattura(filters.body.anno,filters.body.mese);
-                    setTextValue(filters.textValue);
-                    setPage(filters.page);
-                    setRowsPerPage(filters.rows);
-                    setBodyDownload(filters.body);
-                    setBodyRel(filters.body);
-                    setBodyDownload(filters.body);
-                    getlista(filters.body,filters.page + 1, filters.rows);
+                   
                 }else if(isInitialRender.current){
                     setBodyRel((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
                     setBodyDownload((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
@@ -198,15 +192,7 @@ const RelPage : React.FC = () =>{
                 
                 setArrayMonths(mesiCamelCase);
                 if(isInitialRender.current && Object.keys(filters).length > 0){
-                    setTextValue(filters.textValue);
-                    setValueAutocomplete(filters.valueAutocomplete);
-                    getlista(filters.body,filters.page + 1, filters.rows);
-                    setPage(filters.page);
-                    setRowsPerPage(filters.rows);
-                    setBodyDownload(filters.body);
                     getListTipologiaFattura(filters.body.anno,filters.body.mese);
-                    setBodyRel(filters.body);
-                    setBodyDownload(filters.body);
                 }else if(isInitialRender.current ){
                 
                     setBodyRel((prev)=> ({...prev,...{mese:mesiCamelCase[0].mese}}));
@@ -453,7 +439,15 @@ const RelPage : React.FC = () =>{
         if(enti){
             await getTipologieFatture(token, profilo.nonce, {mese,anno}).then((res)=>{
                 setTipologiaFatture(res.data);
-                if(!isInitialRender.current && Object.keys(filters).length > 0){
+                if(isInitialRender.current && Object.keys(filters).length > 0){
+                    setTextValue(filters.textValue);
+                    setPage(filters.page);
+                    setRowsPerPage(filters.rows);
+                    setBodyDownload(filters.body);
+                    setBodyRel(filters.body);
+                    setBodyDownload(filters.body);
+                    getlista(filters.body,filters.page + 1, filters.rows);
+                }else  if(!isInitialRender.current){
                     setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
                     setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
                 }
@@ -467,7 +461,16 @@ const RelPage : React.FC = () =>{
         }else if(profilo.auth === 'PAGOPA'){
             await getTipologieFatturePagoPa(token, profilo.nonce, {mese,anno}).then((res)=>{
                 setTipologiaFatture(res.data);
-                if(!isInitialRender.current){
+                if(isInitialRender.current && Object.keys(filters).length > 0){
+                    setTextValue(filters.textValue);
+                    setValueAutocomplete(filters.valueAutocomplete);
+                    getlista(filters.body,filters.page + 1, filters.rows);
+                    setPage(filters.page);
+                    setRowsPerPage(filters.rows);
+                    setBodyDownload(filters.body);
+                    setBodyRel(filters.body);
+                    setBodyDownload(filters.body);
+                }else if(!isInitialRender.current){
                     setBodyRel((prev)=>({...prev,...{tipologiaFattura:null}}));
                     setBodyDownload((prev)=>({...prev,...{tipologiaFattura:null}}));
                 } 
@@ -629,6 +632,7 @@ const RelPage : React.FC = () =>{
                 <MainFilter 
                     filterName={"select_value_string"}
                     inputLabel={"Tipologia Fattura"}
+                    defaultValue={""}
                     clearOnChangeFilter={clearOnChangeFilter}
                     setBody={setBodyRel}
                     body={bodyRel}
