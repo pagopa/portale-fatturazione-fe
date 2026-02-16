@@ -56,7 +56,11 @@ export interface Rel {
     totaleIva:number,
     firmata:string|null,
     tipologiaContratto?:string|null,
-    fattureSospese:FatturaDettaglio[]
+    fattureSospese:FatturaDettaglio[],
+    accontoAnalogico:number,
+    accontoDigitale:number,
+    stornoAnalogico:number,
+    stornoDigitale:number
 }
 
 export interface FatturaDettaglio {

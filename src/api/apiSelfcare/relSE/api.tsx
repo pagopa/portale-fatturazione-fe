@@ -115,3 +115,25 @@ export const getMesiRelSend = async (token:string, nonce:string , body:{anno:str
     );
     return response;
 };
+
+export const getDocumentiEmessiPdf = async ( token:string ,nonce:string , id:number) => {
+    const response =  await axios.get(`${url}/api/fatture/ente/emesse/dettaglio/download/${id}?nonce=${nonce}`,  
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
+export const getDocumentiSospesiPdf = async ( token:string ,nonce:string , id:number) => {
+    const response =  await axios.get(`${url}/api/fatture/ente/sospese/dettaglio/download/${id}?nonce=${nonce}`,  
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
+

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Rel } from "../types/typeRel";
 import { profiliEnti } from "../reusableFunction/actionLocalStorage";
 import { PathPf } from "../types/enum";
-import { getLogRelDocumentoFirmato, getRelExel, getRelPdf, getRelPdfFirmato, getSingleRel, uploadPdfRel } from "../api/apiSelfcare/relSE/api";
+import { getDocumentiEmessiPdf, getDocumentiSospesiPdf, getLogRelDocumentoFirmato, getRelExel, getRelPdf, getRelPdfFirmato, getSingleRel, uploadPdfRel } from "../api/apiSelfcare/relSE/api";
 import { manageError, manageErrorDownload, redirect } from "../api/api";
 import { getLogPagoPaRelDocumentoFirmato, getRelExelPagoPa, getRelPdfFirmatoPagoPa, getRelPdfPagoPa, getSingleRelPagopa } from "../api/apiPagoPa/relPA/api";
 import { ResponseDownloadPdf } from "../types/typeModuloCommessaInserimento";
@@ -59,7 +59,11 @@ function usePageRelDocPdf({
         totaleIva: 0,
         firmata: "",
         caricata: 0,
-        fattureSospese:[]
+        fattureSospese:[],
+        accontoAnalogico: 0,
+        accontoDigitale: 0,
+        stornoAnalogico: 0,
+        stornoDigitale: 0
     });
         
     const meseOnDoc = rel?.mese || 0;
@@ -117,18 +121,6 @@ function usePageRelDocPdf({
         setShowDownloading(true);
         if(enti){
             await getRelExel(token, profilo.nonce, mainState.relSelected.id).then((res)=>{
-                /*saveAs("data:text/plain;base64," + res.data.documento,`Rel / Report di dettaglio/ ${ rel?.ragioneSociale} /${rel?.mese}/${rel?.anno}.xlsx` );
-                    const blob = new Blob([res.data], { type: 'text/csv' });
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.setAttribute('hidden', '');
-                    a.setAttribute('href', url);
-                    a.setAttribute('download',`Rel/Report di dettaglio/${ rel?.ragioneSociale}/${rel?.mese}/${rel?.anno}.csv`);
-                    document.body.appendChild(a);
-                    a.click();
-                    setShowDownloading(false);
-                    document.body.removeChild(a);*/
-    
                 setShowDownloading(false);
                 const link = document.createElement("a");
                 link.href = res.data;
@@ -158,17 +150,7 @@ function usePageRelDocPdf({
                 
                 document.body.removeChild(link);
                 window.URL.revokeObjectURL(res.data);
-                /* 
-                    const blob = new Blob([res.data], { type: 'text/csv' });
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.setAttribute('hidden', '');
-                    a.setAttribute('href', url);
-                    a.setAttribute('download',`Rel/Report di dettaglio/${ rel?.ragioneSociale}/${rel?.mese}/${rel?.anno}.csv`);
-                    document.body.appendChild(a);
-                    a.click();
-                    setShowDownloading(false);
-                    document.body.removeChild(a);*/
+              
             }).catch((err)=>{
                 manageErrorDownload('404_RIGHE_ID',dispatchMainState);
                 setDisableButtonDettaglioNot(true);
@@ -178,26 +160,35 @@ function usePageRelDocPdf({
             
     };
     
-    const downloadPdfRel = async() =>{
-        if(enti){
-            setShowDownloading(true);
-            await getRelPdf(token, profilo.nonce, mainState.relSelected.id).then((res: ResponseDownloadPdf)=>{
+    const downloadPdf = async () => {
+        try {
+            if (enti) {
+                setShowDownloading(true);
+                let res: ResponseDownloadPdf|undefined;
+                if(pageFrom === "rel"){
+                    res = await getRelPdf( token,  profilo.nonce,  mainState.relSelected.id );
+                }else if(pageFrom === "documentiemessi"){ 
+                    res = await getDocumentiEmessiPdf(token, profilo.nonce, mainState.relSelected.id);
+                }else if(pageFrom === "documentisospesi"){
+                    res = await getDocumentiSospesiPdf(token, profilo.nonce, mainState.relSelected.id);
+                }
+                if(res){
+                    toDoOnDownloadPdf(res);
+                }
+
+            }else if (profilo.auth === 'PAGOPA') {
+                setShowDownloading(true);
+                const res: ResponseDownloadPdf = await getRelPdfPagoPa(token,profilo.nonce, mainState.relSelected.id);
                 toDoOnDownloadPdf(res);
-            }).catch((err)=>{
-                setShowDownloading(false);
-                manageError(err,dispatchMainState);
-            });
-        }else if(profilo.auth === 'PAGOPA'){
-            setShowDownloading(true);
-            await getRelPdfPagoPa(token, profilo.nonce, mainState.relSelected.id).then((res: ResponseDownloadPdf)=>{
-                toDoOnDownloadPdf(res);
-            }).catch((err)=>{
-                setShowDownloading(false);
-                manageError(err,dispatchMainState);
-            });
+            }
+
+        } catch (err:any) {
+            setShowDownloading(false);
+            manageError(err, dispatchMainState);
         }
-           
     };
+
+
     
     const downloadPdfRelFirmato = async() =>{
         setShowDownloading(true);
@@ -286,7 +277,7 @@ function usePageRelDocPdf({
         loadingDettaglio,
         rel,
         downloadRelExel,
-        downloadPdfRel,
+        downloadPdf,
         downloadPdfRelFirmato,
         lastUpdateDocFirmato,
         enti,

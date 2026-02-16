@@ -69,13 +69,6 @@ const DocEm : React.FC = () =>{
     const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
     const navigate = useNavigate();
  
-    const handleModifyMainState = (valueObj) => {
-        dispatchMainState({
-            type:'MODIFY_MAIN_STATE',
-            value:valueObj
-        });
-    };
-
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
 
@@ -158,14 +151,14 @@ const DocEm : React.FC = () =>{
                         .filter(el =>
                             el.anno === Number(filters.body.anno))
                         .map(el => el.mese)));
-                    console.log(arrayMonths,{RR:res.data});
+                 
                     setArrayMonths(arrayMonths);
 
                     const arrayTipogie:string[] = Array.from( new Set(res.data
                         .filter(el =>
                             el.anno === Number(filters.body.anno))
                         .map(el => el.tipologiaFattura)));
-                    console.log({arrayTipogie,bb:filters.body.tipologiaFattura,filters});
+    
                     setDataSelect(arrayTipogie);
                     if(filters.body?.tipologiaFattura?.length > 0){
                         setValueMultiselectTipologie(filters.body.tipologiaFattura);
@@ -173,20 +166,17 @@ const DocEm : React.FC = () =>{
                     
              
                     if(filters?.body?.tipologiaFattura?.length > 0 && filters?.body?.mese === 9999){
-                        console.log(4);
+                    
                         const arrayDataFattura:string[] = Array.from( new Set(res.data.filter(el =>
                             el.anno === Number(filters?.body?.anno) &&  filters?.body?.tipologiaFattura.includes(el.tipologiaFattura) )
                             .map(el => el.dataFattura)));
-                        console.log(arrayDataFattura);
+             
                         setArrayDataFatturaFiltered(arrayDataFattura);
                         if(filters?.body?.dataFattura?.length > 0){
-                            console.log(5);
                             setValueMultiselectDate(filters.body.dataFattura);
                         }
-
                     }
 
-                    console.log(6);
                     setBodyFatturazione(filters.body);
                     setBodyFatturazioneDownload(filters.body);
                     getlistaFatturazione(filters.body);
@@ -200,10 +190,8 @@ const DocEm : React.FC = () =>{
                         setValueMultiselectTipologie(filters?.body?.tipologiaFattura);
                     }
                    
-                
-              
                     setDataSelect(allTipologie);
-                    console.log(7);
+                   
                     setBodyFatturazione(filters.body);
                     setBodyFatturazioneDownload(filters.body);
                     getlistaFatturazione(filters.body);

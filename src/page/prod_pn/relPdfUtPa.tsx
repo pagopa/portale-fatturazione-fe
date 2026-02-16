@@ -28,6 +28,8 @@ const RelPdfPage : React.FC = () =>{
    
     let profilePath; 
     let headerNavigationFrom;
+    let labelScaricaPdf = "Scarica PDF Reg. Es.";
+    let labelScaricaReportDettaglio = "Scarica report di dettaglio notifiche Reg. Es.";
   
     if(location.pathname.includes("send") && location.pathname.includes("rel") ){
         profilePath = PathPf.LISTA_REL;
@@ -35,9 +37,13 @@ const RelPdfPage : React.FC = () =>{
     }else if(location.pathname.includes("ente") && location.pathname.includes("documentiemessi")){
         profilePath = PathPf.DOCUMENTI_EMESSI;
         headerNavigationFrom = "Documenti Emessi/";
+        labelScaricaPdf = "Scarica PDF Doc. Emessi";
+        labelScaricaReportDettaglio = "Scarica report di dettaglio notifiche Doc. Emessi";
     }else if(location.pathname.includes("ente") && location.pathname.includes("documentisospesi")){
         profilePath = PathPf.DOCUMENTI_SOSPESI;
         headerNavigationFrom = "Documenti Sospesi/";
+        labelScaricaPdf = "Scarica PDF Doc. Sospesi";
+        labelScaricaReportDettaglio = "Scarica report di dettaglio notifiche Doc. Sospesi";
     }else if(location.pathname.includes("ente") && location.pathname.includes("rel")){
         profilePath = PathPf.LISTA_REL_EN;
         headerNavigationFrom = "Regolare Esecuzione/";
@@ -51,7 +57,7 @@ const RelPdfPage : React.FC = () =>{
         loadingDettaglio,
         rel,
         downloadRelExel,
-        downloadPdfRel,
+        downloadPdf,
         downloadPdfRelFirmato,
         lastUpdateDocFirmato,
         enti,
@@ -94,13 +100,13 @@ const RelPdfPage : React.FC = () =>{
                 <NavigatorHeader pageFrom={headerNavigationFrom} pageIn={"Dettaglio"} backPath={profilePath} icon={<ManageAccountsIcon  sx={{paddingBottom:"5px"}}  fontSize='small'></ManageAccountsIcon>}></NavigatorHeader>
             </div>
             <div className='d-flex justify-content-end mt-4 me-5'>
-                <Button disabled={disableButtonDettaglioNot}  onClick={()=> downloadRelExel()} >Scarica report di dettaglio notifiche Reg. Es. <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+                <Button disabled={disableButtonDettaglioNot}  onClick={()=> downloadRelExel()} >{labelScaricaReportDettaglio} <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
             </div>
             <MainComponentBasedOnUrl mainObj={rel} profilePath={profilePath}></MainComponentBasedOnUrl>
             <div className='d-flex justify-content-between ms-5'>
                 {(profilo.auth === 'PAGOPA' &&  !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) &&
                 <div>
-                    <Button sx={{width:'274px'}} onClick={() => downloadPdfRel()}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+                    <Button sx={{width:'274px'}} onClick={downloadPdf}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
                 </div>}
                 {(profilo.auth === 'PAGOPA' && rel?.caricata >= 1 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) &&
                     <div>
@@ -118,18 +124,28 @@ const RelPdfPage : React.FC = () =>{
             <div className="d-flex justify-content-between ms-5 me-5 mb-3">
                
                 {(enti && rel.totale > 0 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) &&
-                    <>
+                    <Box>
                         <div className="">
-                            <Button sx={{width:'274px'}} onClick={() => downloadPdfRel()}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+                            <Button sx={{width:'274px'}} onClick={downloadPdf}  variant="contained">{labelScaricaPdf}<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
                         </div>
+                   
                         <div id='singleInput' style={{minWidth: '300px', height:'40px'}}>
                             <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".pdf"]} onFileSelected={(e) => uploadPdf(e)} onFileRemoved={() => setFile(null)} dropzoneLabel={(rel?.caricata === 1 || rel?.caricata === 2) ? 'Reinserisci nuovo PDF Reg. Es. firmato' : "Inserisci PDF Reg. Es. firmato"} rejectedLabel="Tipo file non supportato" dropzoneButton=""></SingleFileInput>
                         </div> 
-                    </>
+                        
+                    </Box> 
+                }
+                {(enti && location.pathname.includes("documentiemessi") || location.pathname.includes("documentisospesi")) &&
+                    <Box>
+                        <div className="">
+                            <Button sx={{width:'274px'}} onClick={downloadPdf}  variant="contained">{labelScaricaPdf}<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+                        </div>
+                    </Box>
                 }
               
+              
                
-                {(enti && rel?.caricata >= 1 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) &&
+                {(enti && rel?.caricata >= 1 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) && location.pathname.includes("rel") &&
                 <div>
                     <div>
                         <Button sx={{width:'300px'}} onClick={() => downloadPdfRelFirmato()}   variant="contained">Scarica PDF Firmato <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
@@ -198,6 +214,12 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath}) => {
                             <TextDettaglioPdf description='Anno' value={mainObj.anno}></TextDettaglioPdf>
                             <TextDettaglioPdf description='Mese' value={month[Number(mainObj.mese) - 1]}></TextDettaglioPdf>
                             <TextDettaglioPdf description='Cup' value={mainObj.cup}></TextDettaglioPdf>
+                            
+                            <TextDettaglioPdf description='Anticipo Analogico' value={Number(mainObj.anticipoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                            <TextDettaglioPdf description='Anticipo Digitale' value={Number(mainObj.anticipoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                            <TextDettaglioPdf description='Storno Analogico' value={Number(mainObj.stornoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                            <TextDettaglioPdf description='Storno Digitale' value={Number(mainObj.stornoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                            
                             <TextDettaglioPdf description='N. Notifiche Analogiche' value={mainObj.totaleNotificheAnalogiche}></TextDettaglioPdf>
                             <TextDettaglioPdf description='N. Notifiche Digitali' value={mainObj.totaleNotificheDigitali}></TextDettaglioPdf>
                             <TextDettaglioPdf description='N. Totale Notifiche' value={mainObj.totaleNotificheDigitali + mainObj.totaleNotificheAnalogiche }></TextDettaglioPdf>
@@ -265,6 +287,12 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath}) => {
                         <TextDettaglioPdf description='Anno' value={mainObj.anno}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Mese' value={month[Number(mainObj.mese) - 1]}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Cup' value={mainObj.cup}></TextDettaglioPdf>
+
+                        <TextDettaglioPdf description='Anticipo Analogico' value={Number(mainObj.anticipoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Anticipo Digitale' value={Number(mainObj.anticipoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Storno Analogico' value={Number(mainObj.stornoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Storno Digitale' value={Number(mainObj.stornoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+
                         <TextDettaglioPdf description='N. Notifiche Analogiche' value={mainObj.totaleNotificheAnalogiche}></TextDettaglioPdf>
                         <TextDettaglioPdf description='N. Notifiche Digitali' value={mainObj.totaleNotificheDigitali}></TextDettaglioPdf>
                         <TextDettaglioPdf description='N. Totale Notifiche' value={mainObj.totaleNotificheDigitali + mainObj.totaleNotificheAnalogiche }></TextDettaglioPdf>
