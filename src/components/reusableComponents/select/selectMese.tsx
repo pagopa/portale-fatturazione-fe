@@ -1,0 +1,45 @@
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { Box } from "@mui/system";
+import { SelectMeseProps } from "../../../types/typesGeneral";
+import { mesi } from "../../../reusableFunction/reusableArrayObj";
+
+const SelectMese : React.FC<SelectMeseProps> = ({setValue, values, getTipologia,clearOnChangeFilter}) =>{
+
+    return (
+        <Box sx={{width:'80%', marginLeft:'20px'}}  >
+            <FormControl
+                fullWidth
+                size="medium"
+            >
+                <InputLabel> Mese </InputLabel>
+                <Select
+                    label='Mese'
+                    onChange={(e) =>{   
+                        const value = Number(e.target.value);
+                        setValue((prev)=> ({...prev, ...{mese:value}}));
+                        if(getTipologia){
+                            getTipologia(e.target.value, values.anno);
+                        }
+                        if(clearOnChangeFilter){
+                            clearOnChangeFilter();
+                        }  
+                    }}         
+                    value={values.mese||''}             
+                >
+                    {mesi.map((el) => (          
+                        <MenuItem
+                            key={Math.random()}
+                            value={Object.keys(el)[0].toString()}
+                        >
+                            {Object.values(el)[0]}
+                        </MenuItem>
+                                    
+                    ))}
+                                    
+                </Select>
+            </FormControl>
+        </Box>
+    );
+};
+
+export default SelectMese;

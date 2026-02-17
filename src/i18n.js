@@ -1,0 +1,59 @@
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
+import Backend from "i18next-http-backend";
+import LanguageDetector from "i18next-browser-languagedetector";
+
+i18n.use(Backend)    
+    .use(LanguageDetector)
+    .use(initReactI18next).init({
+        fallbackLng: 'ita',
+        resources:{
+            it:{
+                translation:{
+                    errori:{
+                        401:"Utente non autenticato. Effettuare nuovamente l'accesso",
+                        403:"Utente non autenticato. Effettuare nuovamente l'accesso",
+                        409:"L'operazione non è andata a buon fine",
+                        419:"Sessione scaduta. Effettuare nuovamente l'accesso",
+                        500:"L'operazione non è andata a buon fine. Si prega di riprovare",
+                        400:"L'operazione non è andata a buon fine. Contattare l'assistenza",// mauro messaggio 
+                        404:"La ricerca non ha prodotto risultati",
+                        410:"La risorsa non è più disponibile",
+                        '404_DOWNLOAD':"L'azione di download non ha prodotto risultati",
+                        '404_RAGIONE_SOCIALE':"La ricerca per Rag. Soc. Ente non ha prodotto risultati",
+                        "Network Error":"La connessione Internet risulta non attiva",
+                        'PRESA':"Azione presa in carico",
+                        'FATTURA_SOSPESA_RIPRISTINATA':"Operazione andata a buon fine",
+                        'CAMBIO_TIPOLOGIA_CONTRATTO':"Operazione andata a buon fine",
+                        'INSER_DELETE_WHITE_LIST':"Operazione andata a buon fine",
+                        "SEND_JSON_SAP_OK":"Operazione andata a buon fine",
+                        'PRESA_IN_CARICO_DOCUMENTO':"Azione presa in carico. Vai ai messaggi per visualizzare lo stato di elaborazione",
+                        'PRESA_IN_CARICO_DOCUMENTO_ENTE':"Azione presa in carico. Visualizza lo stato di elaborazione",
+                        'NO_OPERAZIONE':"Al momento non è possibile effettuare l'operazione",
+                        'ERRORE_MANUALE':'Manuale momentaneamente non disponibile',
+                        'ERROR_LIST_JSON_TO_SAP':"Dettaglio momentaneamente non disponibile",
+                        "404_RIGHE_ID":"Il report di dettaglio notifiche Regolare Esecuzione sarà disponibile a breve",
+                        "DOWNLOAD_NOTIFICHE_DOUBLE_REQUEST":"Attendi l'esecuzione della richiesta precedente",
+                        'NO_ENTE_FILTRI_CONTESTAZIONE':"Per procedere con l'UPLOAD delle contestazioni bisogna inserire il filtro 'Rag Soc. Ente'",
+                        "404_NO_CONTESTAZIONI": 'Non sono presenti notifiche per il mese di riferimento selezionato',
+                        "FORMAT_FILE_ERROR":"Formato del file non ammesso. Inserire formato CSV",
+                        "SAVE_KEY_KO":"Operazione fallita",
+                        "SAVE_KEY_OK":"Copia eseguita",
+                        "REGEN_KEY_KO":"L'operazione non è andata a buon fine. Contattare l'assistenza",
+                        "CREAT_KEY_KO":"L'operazione non è andata a buon fine. Contattare l'assistenza",
+                        "REGEN_KEY_OK":"Rigenerazione eseguita",
+                        "CREAT_KEY_OK":"Creazione avvenuta con successo",
+                        'NO_INSERIMENTO_COMMESSA':"Al momento non è possibile inserire il modulo commessa. Contattare l'assistenza",
+                        'SAVE_COMMESSA_OK':"Modulo commessa inserito",
+                        'SAVE_DATIFATTURAZIONE_OK':"Dati di fatturazione inseriti ",
+
+
+
+                    }
+                }
+            }
+        }
+    });
+
+
+export default i18n;
