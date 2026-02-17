@@ -123,7 +123,7 @@ const RelPdfPage : React.FC = () =>{
             </div>
             <div className="d-flex justify-content-between ms-5 me-5 mb-3">
                
-                {(enti && rel.totale > 0 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) &&
+                {(enti && rel.totale > 0 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")&& location.pathname.includes("rel"))  &&
                     <Box>
                         <div className="">
                             <Button sx={{width:'274px'}} onClick={downloadPdf}  variant="contained">{labelScaricaPdf}<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>

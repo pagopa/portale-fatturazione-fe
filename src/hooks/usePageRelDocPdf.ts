@@ -21,7 +21,7 @@ function usePageRelDocPdf({
     pageFrom,
     navigate,
     profilePath,
-    rowId
+    rowId,
 }) {
 
     const targetRef  = useRef<HTMLInputElement>(null);
@@ -166,11 +166,11 @@ function usePageRelDocPdf({
                 setShowDownloading(true);
                 let res: ResponseDownloadPdf|undefined;
                 if(pageFrom === "rel"){
-                    res = await getRelPdf( token,  profilo.nonce,  mainState.relSelected.id );
+                    res = await getRelPdf( token,  profilo.nonce,  rowId );
                 }else if(pageFrom === "documentiemessi"){ 
-                    res = await getDocumentiEmessiPdf(token, profilo.nonce, mainState.relSelected.id);
+                    res = await getDocumentiEmessiPdf(token, profilo.nonce, rowId);
                 }else if(pageFrom === "documentisospesi"){
-                    res = await getDocumentiSospesiPdf(token, profilo.nonce, mainState.relSelected.id);
+                    res = await getDocumentiSospesiPdf(token, profilo.nonce, rowId);
                 }
                 if(res){
                     toDoOnDownloadPdf(res);
@@ -178,7 +178,8 @@ function usePageRelDocPdf({
 
             }else if (profilo.auth === 'PAGOPA') {
                 setShowDownloading(true);
-                const res: ResponseDownloadPdf = await getRelPdfPagoPa(token,profilo.nonce, mainState.relSelected.id);
+                console.log({MM:mainState});
+                const res: ResponseDownloadPdf = await getRelPdfPagoPa(token,profilo.nonce, rowId);
                 toDoOnDownloadPdf(res);
             }
 

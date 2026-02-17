@@ -161,7 +161,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                                 {(el.headerActionSort &&  objectSort && objectSort[el.label]) &&
                                                 <Tooltip title="Sort">
                                                     <span>
-                                                        <IconButton disabled={ total === 0 ? true : false} sx={{marginLeft:'10px'}}  onClick={()=> headerAction && headerAction(el.label)}  size="small">
+                                                        <IconButton disabled={ (total === 0 ||elements.length === 0) ? true : false} sx={{marginLeft:'10px'}}  onClick={()=> headerAction && headerAction(el.label)}  size="small">
                                                             {(sortValue === 1) ? <ArrowUpwardIcon sx={{ color: 'text.disabled'}}></ArrowUpwardIcon> :
                                                                 (sortValue === 2) ? <ArrowUpwardIcon></ArrowUpwardIcon>:
                                                                     <ArrowDownwardIcon></ArrowDownwardIcon>}

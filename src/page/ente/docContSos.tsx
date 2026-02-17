@@ -423,96 +423,97 @@ const DocSos : React.FC = () =>{
 
 
     const headerAction = (label:string) => {
+        const start = page * rowsPerPage;
+        const end = start + rowsPerPage;
         setObjectSort(prev =>
             Object.fromEntries(
                 Object.keys(prev).map(key => {
-                   
-                    if (key === label) {
                        
+                    if (key === label) {
+                           
                         const current = prev[key];
                         const next = current === 1 ? 2 : current === 2 ? 3 : 1;
-
-                    
+    
+                        
                         if(label === "Data Fattura"){
                             if(next === 2){
-                                const result = sortDates(gridData, true);
+                                const result = sortDates(listaResponse.slice(start,end), true);
                                 setGridData(result);
                             }else if(next === 3){
-                                const result = sortDates(gridData, false);
+                                const result = sortDates(listaResponse.slice(start,end), false);
                                 setGridData(result);
                             }else{
-                                setGridData(gridDataNoSorted);
+                                setGridData(listaResponse.slice(start,end));
                             }
-                        
+                            
                             return [key, next];
-                            
+                                
                         }else if(label === "Ident."){
-                     
+                         
                             if(next === 2){
-                                const result = sortMonthYear(gridData, true);
+                                const result = sortMonthYear(listaResponse.slice(start,end), true);
                                 setGridData(result);
-                           
+                               
                             }else if(next === 3){
-                                const result = sortMonthYear(gridData, false);
+                                const result = sortMonthYear(listaResponse.slice(start,end), false);
                                 setGridData(result);
-                            
+                                
                             }else{
-                                setGridData(gridDataNoSorted);
-                           
+                                setGridData(listaResponse.slice(start,end));
+                               
                             }
-
+    
                             return [key, next];
                         }else if(label === "Tot." ){
                             if(next === 2){
-                                const result = sortByTotale(gridData, true, "totale");
-                         
+                                const result = sortByTotale(listaResponse.slice(start,end), true, "totale");
+                             
                                 setGridData(result);
                             }else if(next === 3){
-                                const result = sortByTotale(gridData, false,"totale");
-                           
+                                const result = sortByTotale(listaResponse.slice(start,end), false,"totale");
+                               
                                 setGridData(result);
                             }else{
-                                setGridData(gridDataNoSorted);
+                                setGridData(listaResponse.slice(start,end));
                             }
-
+    
                             return [key, next];
                         }else if(label === "N. Fattura"){
                             if(next === 2){
-                                const result = sortByNumeroFattura(gridData, true,"numero");
+                                const result = sortByNumeroFattura(listaResponse.slice(start,end), true,"numero");
                                 setGridData(result);
                             }else if(next === 3){
-                                const result = sortByNumeroFattura(gridData, false,"numero");
+                                const result = sortByNumeroFattura(listaResponse.slice(start,end), false,"numero");
                                 setGridData(result);
                             }else{
-                                setGridData(gridDataNoSorted);
+                                setGridData(listaResponse.slice(start,end));
                             }
-
+    
                             return [key, next];
                         }else if(label === "Tipo Documento"){
                             if(next === 2){
-                                const result = sortByTipoFattura(gridData, true,"tipoDocumento");
+                                const result = sortByTipoFattura(listaResponse.slice(start,end), true,"tipoDocumento");
                                 setGridData(result);
                             }else if(next === 3){
-                                const result = sortByTipoFattura(gridData, false,"tipoDocumento");
+                                const result = sortByTipoFattura(listaResponse.slice(start,end), false,"tipoDocumento");
                                 setGridData(result);
                             }else{
-                                setGridData(gridDataNoSorted);
+                                setGridData(listaResponse.slice(start,end));
                             }
-                        
+    
                             return [key, next];
                         }else{
                             return [key, 1];
                         }
-                       
+                           
                     }else{
                         return [key, 1];
                     }
-                    
+                        
                 })
             )
         );
     };
-
    
 
     return (
