@@ -12,7 +12,7 @@ import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
 import { getPeriodoEmesso} from "../../api/apiSelfcare/apiDocEmessiSE/api";
 import { ManageErrorResponse } from "../../types/typesGeneral";
-import { Paper, Typography } from "@mui/material";
+import { Grid, Paper, Typography } from "@mui/material";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import { headersDocumentiEmessiEnte, headersDocumentiEmessiEnteCollapse } from "../../assets/configurations/conf_GridDocEmessiEnte";
 import { downloadFattureEmesseEnte, getListaDocumentiEmessi } from "../../api/apiSelfcare/documentiSospesiSE/api";
@@ -252,8 +252,10 @@ const DocEm : React.FC = () =>{
                     numerolinea: el.numeroLinea,
                     codiceMateriale: el.codiceMateriale,
                     imponibile: el.imponibile || '--',
-                    periodoRiferimento: el.periodoRiferimento || '--',
-                    periodoFatturazione: '--',
+                    periodoRiferimento: obj.dataFattura
+                        ? new Date(obj.dataFattura).toLocaleDateString('it-IT')
+                        : '--', 
+                    periodoFatturazione:el.periodoRiferimento || '--',
                 })),
             }));
             if(isInitialRender.current && Object.keys(filters)?.length > 0 && (filters.page !== 0 || filters.rows !== 10) ){
@@ -317,6 +319,7 @@ const DocEm : React.FC = () =>{
         setGridData([]);
         setPage(0);
         setRowsPerPage(10); 
+        setTotaleHeader(0);
     };
 
     const onButtonFiltra = () =>{
@@ -680,7 +683,36 @@ const DocEm : React.FC = () =>{
                 apiGet={setIdDoc}
                 objectSort={objectSort}
                 headerAction={headerAction}
-            ></GridCustom>
+            />
+            <Grid
+                container
+                spacing={2}
+                sx={{ alignItems: "center",my:3 }}
+            >
+                <Typography
+                    variant="h5"
+                    sx={{ textAlign: { xs: "center", md: "left" } }}
+                >
+                        Fatture Contestate
+                </Typography>
+            </Grid>
+            <GridCustom
+                nameParameterApi='docEmessiEnte'
+                elements={[]}
+                changePage={handleChangePage}
+                changeRow={handleChangeRowsPerPage} 
+                total={0}
+                page={0}
+                rows={10}
+                headerNames={headersDocumentiEmessiEnte}
+                headerNamesCollapse={headersDocumentiEmessiEnteCollapse}
+                disabled={showLoadingGrid}
+                widthCustomSize="2000px"
+                apiGet={setIdDoc}
+                objectSort={objectSort}
+                headerAction={headerAction}
+                sentenseEmpty={"Non sono presenti fatture contestate"}
+            />
             <ModalLoading 
                 open={showDownloading} 
                 setOpen={setShowDownloading} 

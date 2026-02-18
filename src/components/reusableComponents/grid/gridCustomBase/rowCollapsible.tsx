@@ -80,7 +80,7 @@ const RowCollapsible = ({sliced,element ,headerNames, headerNamesCollapse, apiGe
            
             </TableRow>
             <TableRow >
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0}} colSpan={6}>
+                <TableCell style={{ paddingBottom: 0, paddingTop: 0}} colSpan={7}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box sx={{ margin: 2 , backgroundColor:'#F8F8F8', padding:'10px'}}>
                             <Typography sx={{marginLeft:"6px"}} variant="h6" gutterBottom component="div">
@@ -92,7 +92,7 @@ const RowCollapsible = ({sliced,element ,headerNames, headerNamesCollapse, apiGe
                                         {
                                             Object.values(headerNamesCollapse)?.map((value:any, i:number)=>{
                                                 return (
-                                                    <TableCell align='center' >{value.label}</TableCell>
+                                                    <TableCell align='center'  >{value.label}</TableCell>
                                                 );
                                             })
                                         }

@@ -1,4 +1,4 @@
-import { Card, IconButton, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip } from "@mui/material";
+import { Card, IconButton, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip, Typography } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { GridElementListaPsp } from "../../../types/typeAngraficaPsp";
 import { Rel } from "../../../types/typeRel";
@@ -44,7 +44,8 @@ interface GridCustomProps {
     headerAction?:(val:any) =>void,
     body?:any,
     paginationVisibile?:boolean,
-    objectSort?:{[key:string]:number}
+    objectSort?:{[key:string]:number},
+    sentenseEmpty?:string
 }
 
 
@@ -69,7 +70,8 @@ const GridCustom : React.FC<GridCustomProps> = ({
     body,
     paginationVisibile,
     headerNamesCollapse,
-    objectSort
+    objectSort,
+    sentenseEmpty
 }) =>{
 
     const handleClickOnGrid = (element) =>{
@@ -178,7 +180,12 @@ const GridCustom : React.FC<GridCustomProps> = ({
                             </TableRow>
                         </TableHead>
                         {elements.length === 0 ?
-                            <TableBody key={0} style={{height: '50px'}}>
+                            <TableBody key={0} style={{height: '80px'}}>
+                                <TableRow>
+                                    <TableCell colSpan={100} align="center">
+                                        <Typography fontWeight={"bold"}>{sentenseEmpty && sentenseEmpty}</Typography>
+                                    </TableCell>
+                                </TableRow>
                             </TableBody> :
                             <TableBody key={1} sx={{marginLeft:'20px'}}>  {/*da eliminare any nella riga sottostante */}
                                 {elements.map((element:Rel|NotificheList|GridElementListaPsp|Whitelist|DataGridOrchestratore|DataGridAsyncDoc|ContestazioneRowGrid|any ) =>{

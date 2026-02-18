@@ -10,7 +10,7 @@ import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
-import { Paper, Typography } from "@mui/material";
+import { Box, Grid, Paper, Typography } from "@mui/material";
 import { ManageErrorResponse } from "../../types/typesGeneral";
 import { month } from "../../reusableFunction/reusableArrayObj";
 import { headersDocumentiEmessiEnte, headersDocumentiEmessiEnteCollapse } from "../../assets/configurations/conf_GridDocEmessiEnte";
@@ -260,8 +260,10 @@ const DocSos : React.FC = () =>{
                     numerolinea: el.numeroLinea,
                     codiceMateriale: el.codiceMateriale,
                     imponibile: el.imponibile || '--',
-                    periodoRiferimento: el.periodoRiferimento || '--',
-                    periodoFatturazione: '--',
+                    periodoRiferimento: obj.dataFattura
+                        ? new Date(obj.dataFattura).toLocaleDateString('it-IT')
+                        : '--', 
+                    periodoFatturazione:el.periodoRiferimento || '--',
                 })),
             }));
             if(isInitialRender.current && Object.keys(filters)?.length > 0 && (filters.page !== 0 || filters.rows !== 10) ){
@@ -323,6 +325,7 @@ const DocSos : React.FC = () =>{
         setGridData([]);
         setPage(0);
         setRowsPerPage(10); 
+        setTotaleHeader(0);
     };
 
     const onButtonFiltra = () =>{
@@ -676,6 +679,8 @@ const DocSos : React.FC = () =>{
                 objectSort={objectSort}
                 headerAction={headerAction}
             ></GridCustom>
+           
+          
             <ModalLoading 
                 open={showDownloading} 
                 setOpen={setShowDownloading} 
