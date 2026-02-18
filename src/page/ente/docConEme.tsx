@@ -219,7 +219,10 @@ const DocEm : React.FC = () =>{
     };
 
 
-    const getlistaFatturazione = async (body) => {
+    const getlistaFatturazione = async (body,isCalledOnFiltraButton=false) => {
+        if(isCalledOnFiltraButton){
+            setShowLoadingGrid(true);
+        }
         try {
             const res = await getListaDocumentiEmessi(token,profilo.nonce,body);
             const totaleSum = res.data.importo;
@@ -293,6 +296,10 @@ const DocEm : React.FC = () =>{
             setGridDataNoSorted([]);
             setListaResponse([]);
             setShowLoadingGrid(false);
+        }finally{
+            if(isCalledOnFiltraButton){
+                setShowLoadingGrid(false);
+            }
         }
     };
 
@@ -332,7 +339,7 @@ const DocEm : React.FC = () =>{
         setPage(0);
         setRowsPerPage(10);
         setBodyFatturazioneDownload(bodyFatturazione);
-        getlistaFatturazione(bodyFatturazione); 
+        getlistaFatturazione(bodyFatturazione,true); 
     };
     
     const onButtonAnnulla = async () => {
@@ -349,7 +356,7 @@ const DocEm : React.FC = () =>{
         setValueMultiselectDate([]);
         setPage(0);
         setRowsPerPage(10);
-        getlistaFatturazione(resetBody);
+        getlistaFatturazione(resetBody,true);
         resetFilters();
         setTotaleHeader(0);
         

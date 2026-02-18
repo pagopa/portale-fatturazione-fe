@@ -227,7 +227,10 @@ const DocSos : React.FC = () =>{
     };
 
 
-    const getlistaFatturazione = async (body) => {
+    const getlistaFatturazione = async (body,isCalledOnFiltraButton=false) => {
+        if(isCalledOnFiltraButton){
+            setShowLoadingGrid(true);
+        }
         try {
             const res = await getListaDocumentiSospesi(token,profilo.nonce,body);
             const totaleSum = res.data.importoSospeso;
@@ -301,6 +304,10 @@ const DocSos : React.FC = () =>{
             setGridDataNoSorted([]);
             setListaResponse([]);
             setShowLoadingGrid(false);
+        }finally{
+            if(isCalledOnFiltraButton){
+                setShowLoadingGrid(false);
+            }
         }
     };
 
@@ -338,7 +345,7 @@ const DocSos : React.FC = () =>{
         setPage(0);
         setRowsPerPage(10);
         setBodyFatturazioneDownload(bodyFatturazione);
-        getlistaFatturazione(bodyFatturazione); 
+        getlistaFatturazione(bodyFatturazione,true); 
     };
     
     const onButtonAnnulla = async () => {
@@ -355,7 +362,7 @@ const DocSos : React.FC = () =>{
         setValueMultiselectDate([]);
         setPage(0);
         setRowsPerPage(10);
-        getlistaFatturazione(resetBody);
+        getlistaFatturazione(resetBody,true);
         resetFilters();
         setTotaleHeader(0);
         
