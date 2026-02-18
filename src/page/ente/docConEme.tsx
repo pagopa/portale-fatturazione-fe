@@ -251,7 +251,7 @@ const DocEm : React.FC = () =>{
                 posizioni: obj.posizioni.map(el => ({
                     numerolinea: el.numeroLinea,
                     codiceMateriale: el.codiceMateriale,
-                    imponibile: el.imponibile || '--',
+                    imponibile:el.imponibile.toLocaleString("de-DE", { style: "currency", currency: "EUR" })  || '--',
                     periodoRiferimento: obj.dataFattura
                         ? new Date(obj.dataFattura).toLocaleDateString('it-IT')
                         : '--', 
