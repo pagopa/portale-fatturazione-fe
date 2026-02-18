@@ -348,6 +348,7 @@ const DocEm : React.FC = () =>{
         setRowsPerPage(10);
         getlistaFatturazione(resetBody);
         resetFilters();
+        setTotaleHeader(0);
         
     };
 
