@@ -33,6 +33,8 @@ i18n.use(Backend)
                         'ERRORE_MANUALE':'Manuale momentaneamente non disponibile',
                         'ERROR_LIST_JSON_TO_SAP':"Dettaglio momentaneamente non disponibile",
                         "404_RIGHE_ID":"Il report di dettaglio notifiche Regolare Esecuzione sarà disponibile a breve",
+                        "404_RIGHE_ID_EMESSE":"Il report di dettaglio notifiche Documenti Emessi sarà disponibile a breve",
+                        "404_RIGHE_ID_SOSPESE":"Il report di dettaglio notifiche Documenti Sospesi sarà disponibile a breve",
                         "DOWNLOAD_NOTIFICHE_DOUBLE_REQUEST":"Attendi l'esecuzione della richiesta precedente",
                         'NO_ENTE_FILTRI_CONTESTAZIONE':"Per procedere con l'UPLOAD delle contestazioni bisogna inserire il filtro 'Rag Soc. Ente'",
                         "404_NO_CONTESTAZIONI": 'Non sono presenti notifiche per il mese di riferimento selezionato',

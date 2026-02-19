@@ -117,47 +117,54 @@ function usePageRelDocPdf({
 
      
     
-    const downloadRelExel = async() =>{
+    const downloadReportDettaglio = async () => {
         setShowDownloading(true);
-        if(enti){
-            await getRelExel(token, profilo.nonce, mainState.relSelected.id).then((res)=>{
-                setShowDownloading(false);
-                const link = document.createElement("a");
-                link.href = res.data;
-                link.download = `Rel/Report di dettaglio/${ rel?.ragioneSociale}/${rel?.mese}/${rel?.anno}.csv`;
-                document.body.appendChild(link);
-                
-                link.click();
-                
-                document.body.removeChild(link);
-                window.URL.revokeObjectURL(res.data);
-                   
-            }).catch(()=>{
-                manageErrorDownload('404_RIGHE_ID',dispatchMainState);
-                setDisableButtonDettaglioNot(true);
-                setShowDownloading(false);
-            });
-        }else{
-            await getRelExelPagoPa(token, profilo.nonce, mainState.relSelected.id).then((res)=>{
-                   
-                setShowDownloading(false);
-                const link = document.createElement("a");
-                link.href = res.data;
-                link.download = `Rel/Report di dettaglio/${ rel?.ragioneSociale}/${rel?.mese}/${rel?.anno}.csv`;
-                document.body.appendChild(link);
-                
-                link.click();
-                
-                document.body.removeChild(link);
-                window.URL.revokeObjectURL(res.data);
-              
-            }).catch((err)=>{
-                manageErrorDownload('404_RIGHE_ID',dispatchMainState);
-                setDisableButtonDettaglioNot(true);
-                setShowDownloading(false);
-            });
+
+        try {
+            let response;
+            if (enti) {
+         
+                if(pageFrom === "rel"){
+                    response = await getRelExel(token, profilo.nonce, mainState.relSelected.id);
+                }else if(pageFrom === "documentiemessi"){ 
+                    throw new Error('404_RIGHE_ID_EMESSE');
+                }else if(pageFrom === "documentisospesi"){
+                    throw new Error('404_RIGHE_ID_SOSPESE');
+                }
+            }else if(profilo.auth === 'PAGOPA'){
+                response = await getRelExelPagoPa(token, profilo.nonce, mainState.relSelected.id);
+            }
+
+            const fileUrl = response.data;
+
+            const link = document.createElement("a");
+            link.href = fileUrl;
+            link.download = `${rel?.ragioneSociale}_${rel?.mese}_${rel?.anno}.csv`;
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            window.URL.revokeObjectURL(fileUrl);
+
+        } catch (error) {
+            if (enti) {
+         
+                if(pageFrom === "rel"){
+                    manageErrorDownload('404_RIGHE_ID', dispatchMainState);
+                }else if(pageFrom === "documentiemessi"){ 
+                    manageErrorDownload('404_RIGHE_ID_EMESSE', dispatchMainState);
+                }else if(pageFrom === "documentisospesi"){
+                    manageErrorDownload('404_RIGHE_ID_SOSPESE', dispatchMainState);
+                }
+            }else if(profilo.auth === 'PAGOPA'){
+                manageErrorDownload('404_RIGHE_ID', dispatchMainState);
+            }
+        
+            setDisableButtonDettaglioNot(true);
+        } finally {
+            setShowDownloading(false);
         }
-            
     };
     
     const downloadPdf = async () => {
@@ -277,7 +284,7 @@ function usePageRelDocPdf({
         targetRef,
         loadingDettaglio,
         rel,
-        downloadRelExel,
+        downloadReportDettaglio,
         downloadPdf,
         downloadPdfRelFirmato,
         lastUpdateDocFirmato,

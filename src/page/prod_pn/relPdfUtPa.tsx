@@ -24,6 +24,7 @@ const RelPdfPage : React.FC = () =>{
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
     const location = useLocation();
+    const accontoIsVisible = mainState?.profilo?.idTipoContratto === 2;
 
    
     let profilePath; 
@@ -56,7 +57,7 @@ const RelPdfPage : React.FC = () =>{
         targetRef,
         loadingDettaglio,
         rel,
-        downloadRelExel,
+        downloadReportDettaglio,
         downloadPdf,
         downloadPdfRelFirmato,
         lastUpdateDocFirmato,
@@ -100,9 +101,9 @@ const RelPdfPage : React.FC = () =>{
                 <NavigatorHeader pageFrom={headerNavigationFrom} pageIn={"Dettaglio"} backPath={profilePath} icon={<ManageAccountsIcon  sx={{paddingBottom:"5px"}}  fontSize='small'></ManageAccountsIcon>}></NavigatorHeader>
             </div>
             <div className='d-flex justify-content-end mt-4 me-5'>
-                <Button disabled={disableButtonDettaglioNot}  onClick={()=> downloadRelExel()} >{labelScaricaReportDettaglio} <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+                <Button disabled={disableButtonDettaglioNot}  onClick={()=> downloadReportDettaglio()} >{labelScaricaReportDettaglio} <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
             </div>
-            <MainComponentBasedOnUrl mainObj={rel} profilePath={profilePath}></MainComponentBasedOnUrl>
+            <MainComponentBasedOnUrl mainObj={rel} profilePath={profilePath} accontoIsVisible={accontoIsVisible}></MainComponentBasedOnUrl>
             <div className='d-flex justify-content-between ms-5'>
                 {(profilo.auth === 'PAGOPA' &&  !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) &&
                 <div>
@@ -121,10 +122,10 @@ const RelPdfPage : React.FC = () =>{
                     </div>
                 }
             </div>
-            <div className="d-flex justify-content-between ms-5 me-5 mb-3">
+            <div className="ms-5 me-5 mb-3">
                
-                {(enti && rel.totale > 0 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")&& location.pathname.includes("rel"))  &&
-                    <Box>
+                {(enti && rel.totale > 0 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")&& location.pathname.includes("/rel/"))  &&
+                    <Box sx={{display:"flex",justifyContent:"space-between"}}>
                         <div className="">
                             <Button sx={{width:'274px'}} onClick={downloadPdf}  variant="contained">{labelScaricaPdf}<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
                         </div>
@@ -132,7 +133,18 @@ const RelPdfPage : React.FC = () =>{
                         <div id='singleInput' style={{minWidth: '300px', height:'40px'}}>
                             <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".pdf"]} onFileSelected={(e) => uploadPdf(e)} onFileRemoved={() => setFile(null)} dropzoneLabel={(rel?.caricata === 1 || rel?.caricata === 2) ? 'Reinserisci nuovo PDF Reg. Es. firmato' : "Inserisci PDF Reg. Es. firmato"} rejectedLabel="Tipo file non supportato" dropzoneButton=""></SingleFileInput>
                         </div> 
-                        
+                        {(enti && rel?.caricata >= 1 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) && location.pathname.includes("/rel/") &&
+                         <div>
+                             <div>
+                                 <Button sx={{width:'300px'}} onClick={() => downloadPdfRelFirmato()}   variant="contained">Scarica PDF Firmato <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+                             </div>
+                             {lastUpdateDocFirmato !== '' &&
+                            <div className='text-center mt-2'>
+                                <Typography variant="overline" >{createDateFromString(lastUpdateDocFirmato)}</Typography>
+                            </div>
+                             }
+                         </div>
+                        }
                     </Box> 
                 }
                 {(enti && location.pathname.includes("documentiemessi") || location.pathname.includes("documentisospesi")) &&
@@ -141,21 +153,6 @@ const RelPdfPage : React.FC = () =>{
                             <Button sx={{width:'274px'}} onClick={downloadPdf}  variant="contained">{labelScaricaPdf}<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
                         </div>
                     </Box>
-                }
-              
-              
-               
-                {(enti && rel?.caricata >= 1 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) && location.pathname.includes("rel") &&
-                <div>
-                    <div>
-                        <Button sx={{width:'300px'}} onClick={() => downloadPdfRelFirmato()}   variant="contained">Scarica PDF Firmato <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
-                    </div>
-                    {lastUpdateDocFirmato !== '' &&
-                    <div className='text-center mt-2'>
-                        <Typography variant="overline" >{createDateFromString(lastUpdateDocFirmato)}</Typography>
-                    </div>
-                    }
-                </div>
                 }
             </div>
             {openModalConfirmUploadPdf &&
@@ -176,7 +173,7 @@ export default RelPdfPage;
 
 
 
-const MainComponentBasedOnUrl = ({mainObj,profilePath}) => {
+const MainComponentBasedOnUrl = ({mainObj,profilePath,accontoIsVisible}) => {
     if(profilePath === PathPf.LISTA_REL ||  profilePath === PathPf.LISTA_REL_EN){
         return (
             <div className="bg-white mb-5 me-5 ms-5">
@@ -217,6 +214,10 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath}) => {
                             
                             <TextDettaglioPdf description='Anticipo Analogico' value={Number(mainObj.anticipoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                             <TextDettaglioPdf description='Anticipo Digitale' value={Number(mainObj.anticipoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+
+                            {accontoIsVisible && <TextDettaglioPdf description='Acconto Analogico' value={Number(mainObj.anticipoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
+                            {accontoIsVisible && <TextDettaglioPdf description='Acconto Digitale' value={Number(mainObj.anticipoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
+
                             <TextDettaglioPdf description='Storno Analogico' value={Number(mainObj.stornoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                             <TextDettaglioPdf description='Storno Digitale' value={Number(mainObj.stornoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                             
