@@ -201,7 +201,7 @@ function usePageRelDocPdf({
     const downloadPdfRelFirmato = async() =>{
         setShowDownloading(true);
         if(enti){
-            await getRelPdfFirmato(token, profilo.nonce, mainState.relSelected.id).then((res)=>{
+            await getRelPdfFirmato(token, profilo.nonce, rowId).then((res)=>{
                 saveAs("data:text/plain;base64," + res.data.documento,`REL firmata/${ rel?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${rel?.anno}.pdf` );
                 setShowDownloading(false);
             }).catch((err)=>{
@@ -209,7 +209,7 @@ function usePageRelDocPdf({
                 setShowDownloading(false);
             });
         }else{
-            await getRelPdfFirmatoPagoPa(token, profilo.nonce, mainState.relSelected.id).then((res)=>{
+            await getRelPdfFirmatoPagoPa(token, profilo.nonce, rowId).then((res)=>{
                 saveAs("data:text/plain;base64," + res.data.documento,`REL firmata/${ rel?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${rel?.anno}.pdf` );
                 setShowDownloading(false);
             }).catch((err)=>{

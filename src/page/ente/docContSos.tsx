@@ -241,7 +241,7 @@ const DocSos : React.FC = () =>{
                 id: obj.identificativo ?? index,
                 arrow: '',
                 dataFattura: obj.dataFattura
-                    ?  new Date(obj.dataFattura).toLocaleDateString('en-CA')
+                    ?  new Date(obj.dataFattura).toLocaleDateString('it-IT')
                     : '--',
                 stato: 'Sospesa',
                 tipologiaFattura: obj.datiGeneraliDocumento[0].tipologia || "--",
