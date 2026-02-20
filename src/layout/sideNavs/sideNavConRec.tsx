@@ -45,7 +45,7 @@ const SideNavRecCon: React.FC = () => {
             backgroundColor: 'background.paper',
         }}
         >
-            <List component="nav" aria-label="main piattaforma-notifiche sender">
+            <List component="nav">
                 <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClickNotifiche()}>
                     <ListItemIcon>
                         <MarkUnreadChatAltIcon fontSize="inherit" />

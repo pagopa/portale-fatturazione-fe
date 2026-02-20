@@ -205,6 +205,18 @@ const AsyncDocumenti : React.FC = () => {
             body:{ ...bodyGetLista,...{ordinamento:newParam}}
         });
     };
+
+    /*
+    const CrashApp = () => {
+        // Questo crasha durante il render
+        const fakeParent = document.createElement("div");
+        const child = document.createElement("div");
+        fakeParent.removeChild(child); // <-- qui crash reale
+
+        return <div>Non vedrai mai questo</div>;
+    };
+*/
+    
  
     return (
         <MainBoxStyled title={"Download documenti"}>

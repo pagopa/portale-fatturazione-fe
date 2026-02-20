@@ -91,7 +91,6 @@ const RowJsonSap = ({row,setSelected,selected,apiDetail,lista}) => {
                 <TableCell >
                     <IconButton
                         sx={{color:'#227AFC'}}
-                        aria-label="expand row"
                         size="small"
                         onClick={() => setOpen(!open)}
                     >
@@ -103,8 +102,7 @@ const RowJsonSap = ({row,setSelected,selected,apiDetail,lista}) => {
                     <Tooltip
                         placement="bottom"
                         title={tooltipObj.title}
-                    >
-                        <Chip variant="outlined" label={tooltipObj.label} color={tooltipObj.color} />
+                    ><span> <Chip variant="outlined" label={tooltipObj.label} color={tooltipObj.color} /></span>
                     </Tooltip>
                 </TableCell>
                 <TableCell align='center'>{row.numeroFatture}</TableCell>
@@ -121,7 +119,7 @@ const RowJsonSap = ({row,setSelected,selected,apiDetail,lista}) => {
                                 <Typography sx={{marginLeft:"6px"}} variant="h6" gutterBottom component="div">
                 Dettaglio 
                                 </Typography>
-                                <Table size="small" aria-label="purchases">
+                                <Table size="small">
                                     <Box
                                         style={{
                                             overflowY: "auto",

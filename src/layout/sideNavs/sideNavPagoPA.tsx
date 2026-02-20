@@ -40,7 +40,7 @@ const SideNavPagopa = () => {
             backgroundColor: 'background.paper',
         }}
         >
-            <List component="nav" aria-label="main piattaforma-notifiche sender">
+            <List component="nav">
                 <ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick(PathPf.ANAGRAFICAPSP)}>
                     <ListItemIcon>
                         <ReceiptIcon fontSize="inherit" />
@@ -59,12 +59,14 @@ const SideNavPagopa = () => {
                     </ListItemIcon>
                     <ListItemText primary="KPI Pagamenti" />
                 </ListItemButton>
+                {/* 
                 <ListItemButton selected={selectedIndex === 3} onClick={() => handleListItemClick(PathPf.EMAIL_PSP)}>
                     <ListItemIcon>
                         <SendIcon fontSize="inherit"></SendIcon>
                     </ListItemIcon>
                     <ListItemText primary="Mail PSP" />
                 </ListItemButton>
+                */}
             </List>
             <Divider />
         </Box>

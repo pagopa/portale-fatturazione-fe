@@ -348,8 +348,7 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
     if(loadingData){
         return(
             <SuspenseDatiFatturazione></SuspenseDatiFatturazione>
-        );
-                
+        );          
     }
 
     return (

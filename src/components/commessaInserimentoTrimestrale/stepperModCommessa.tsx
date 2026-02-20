@@ -1,7 +1,9 @@
-import { Step, StepLabel, Stepper, Typography } from "@mui/material";
+import { Step, StepLabel, Stepper } from "@mui/material";
 
-const StepperCommessa = ({mainState,activeStep,steps}) => {
-
+const StepperCommessa = ({activeStep,steps}) => {
+/*
+DA utilizzare nel caso di inserimento con piu moduli commessa
+La logica era stata pensata con l'inserimento multiplo , logica iniziale del modulo commessa trimestrale
     const isStepFacoltativo = (step: number) => {
         const indexes = mainState.infoTrimestreComSelected?.moduli?.reduce((acc, obj, index) => {
             if (obj?.source === "facoltativo") acc?.push(index);
@@ -23,11 +25,16 @@ const StepperCommessa = ({mainState,activeStep,steps}) => {
         }, []);
         return indexes?.includes(step);
     };
-
+*/
     return(
         <Stepper activeStep={activeStep}>
             {steps.map((label, index) => {
-                const stepProps: { completed?: boolean } = {};
+               
+                /*
+                DA utilizzare nel caso di inserimento con piu moduli commessa
+                La logica era stata pensata con l'inserimento multiplo , logica iniziale del modulo commessa trimestrale
+
+                 const stepProps: { completed?: boolean } = {};
                 const labelProps: {
                     optional?: React.ReactNode;
                 } = {};
@@ -45,12 +52,11 @@ const StepperCommessa = ({mainState,activeStep,steps}) => {
                     labelProps.optional = (
                         <Typography variant="caption">Obbligatorio</Typography>
                     );
-                }
+                }*/
 
-                stepProps.completed = index === activeStep ? false : false;
                 return (
-                    <Step key={label} {...stepProps}>
-                        <StepLabel {...labelProps}>{label}</StepLabel>
+                    <Step key={`${label}-${index}`}>
+                        <StepLabel>{label}</StepLabel>
                     </Step>
                 );
             })}

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { initialState, loadState, reducerMainState } from "../../reducer/reducerMainState";
+import { initialState, reducerMainState } from "../../reducer/reducerMainState";
 import { MainState } from "../../types/typesGeneral";
 
 
@@ -13,6 +13,8 @@ type GlobalStore = {
     /* ---------- MAIN STATE ---------- */
     mainState: MainState;
     dispatchMainState: (action: { type: string; value?: any }) => void;
+
+    appVersion:string;
 
     /* ---------- UI ---------- */
     openBasicModal_DatFat_ModCom: { visible: boolean; clickOn: string };
@@ -45,6 +47,7 @@ export const useGlobalStore = create(
         (set, get) => ({
             /* ===== MAIN STATE ===== */
             mainState: initialState,
+            appVersion:"0",
             dispatchMainState: (action) =>
                 set((state) => ({
                     mainState: reducerMainState(state.mainState, action),
@@ -85,16 +88,18 @@ export const useGlobalStore = create(
         }),
         {
             name: "globalStatePF",
-            version: Number(process.env.REACT_APP_VERSION)||0,
+            version: 3,
             partialize: (state: GlobalStore) => ({
                 mainState: state.mainState,
                 statusQueryGetUri: state.statusQueryGetUri,
+                appVersion:process.env.REACT_APP_VERSION
             }),
             migrate: (persistedState: any, version) => {
                 return {
                     ...persistedState,
                     mainState: persistedState.mainState,
                     statusQueryGetUri: persistedState.statusQueryGetUri ?? [],
+                    appVersion:process.env.REACT_APP_VERSION,
                 };
             },
         }

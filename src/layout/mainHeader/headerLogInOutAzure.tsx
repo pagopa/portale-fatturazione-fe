@@ -66,7 +66,7 @@ const HeaderLogAzure = () => {
                 rootLink={pagoPALinkHeder}
                 loggedUser={statusUser}
                 onAssistanceClick={() => onEmailClick()}
-                onLogin={handleLoginRedirect}
+                onLogin={() => handleLoginRedirect()}
                 onLogout={() => {
                     localStorage.clear();
                     navigate('/azureLogin');

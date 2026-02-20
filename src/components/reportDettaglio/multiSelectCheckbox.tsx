@@ -27,6 +27,7 @@ const MultiselectCheckbox : React.FC <MultiselectNotificheProps> = ({setBodyGetL
             }}
             id="checkboxes-tags-demo"
             options={dataSelect}
+            noOptionsText={ "Inizia a digitare..."}
             disableCloseOnSelect
             getOptionLabel={(option:OptionMultiselectChackbox) => (option.descrizione)}
             value={valueAutocomplete}

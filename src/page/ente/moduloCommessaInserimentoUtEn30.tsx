@@ -1,5 +1,5 @@
 import {useEffect} from 'react';
-import {Typography, Button, Tooltip, Skeleton } from '@mui/material';
+import {Typography, Button, Tooltip, Skeleton, Box } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
@@ -181,27 +181,6 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
         localStorage.setItem('redirectToInsert',JSON.stringify(false));
     },[]);
 
-    /* TODO: da eliminare a fine sviluppo
-    const handleSkip = () => {
-        if (!isStepFacoltativo(activeStep)) {
-            // You probably want to guard against something like this,
-            // it should never occur unless someone's actively trying to break something.
-            throw new Error("You can't skip a step that isn't optional.");
-        }
-
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-        setSkipped((prevSkipped) => {
-            const newSkipped = new Set(prevSkipped.values());
-            newSkipped.add(activeStep);
-            return newSkipped;
-        });
-    };
-
-    const handleReset = () => {
-        setActiveStep(0);
-    };
-    */
-    
     let labelButtonAvantiListaModuliSave = "Modifica";
     if(isEditAllow && (isObbligatorioLayout && (activeStep+1 < steps.length))){
         labelButtonAvantiListaModuliSave = "Prosegui per salvare";
@@ -216,10 +195,9 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             il componente visualizzato è AreaPersonaleUtenteEnte  */}
             <div className="marginTop24 ms-5 me-5">
                 {loadingData ?  
-                   
                     <Skeleton sx={{margin:"24px"}} variant="rectangular" height="30px" />
                     :
-                    <>
+                    <Box>
                         <div className='d-flex'>
                             <ButtonNaked
                                 color="primary"
@@ -241,14 +219,12 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                                     <Typography  variant="caption">/ Dettaglio-Inserimento modulo commessa</Typography>
                             }
                         </div>
-               
-               
                         <div className='mt-5 mb-5'>
-                            {steps.length > 1  && 
-                    <           StepperCommessa mainState={mainState} activeStep={activeStep} steps={steps}></StepperCommessa>
+                            {steps && (activeStep === 0 || activeStep > 0) && steps.length > 1  && 
+                              <StepperCommessa  activeStep={activeStep} steps={steps}/>
                             }
                         </div>
-                    </>
+                    </Box>
                 }
                 <MainInserimentoModuloCommessa 
                     activeCommessa={activeCommessa}
@@ -276,17 +252,16 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
             </div> 
             {!loadingData &&
             <div className="d-flex justify-content-between m-5 ">
-                <div >
+                <div>
                     {steps.length > 1 && 
                     <Tooltip title={activeStep !== 0 && "Indietro"}>
                         <span>
-                      
                             <Button
                                 sx={{color:"#5c6f81"}}
                                 size='large'
                                 disabled={activeStep === 0}
-                                onClick={onIndietroButton}><ArrowBackIcon  sx={{fontSize:"60px",marginRight:"20px",color:activeStep === 0 ?"inherit" :"#5c6f81"}}/> Indiero
-                                
+                                onClick={onIndietroButton}><ArrowBackIcon  sx={{fontSize:"60px",marginRight:"20px",color:activeStep === 0 ?"inherit" :"#5c6f81"}}/>
+                                 Indiero
                             </Button>
                         </span>
                     </Tooltip>
@@ -294,7 +269,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 </div>
                 {((dataModuli?.length > 0 && (activeCommessa?.source === "archiviato")) || !activeCommessa?.modifica) ? null:
                     <div className="d-flex justify-content-center align-items-center">
-                        <Button  disabled={error890Regioni|| errorArRegioni|| (isObbligatorioLayout && (activeStep+1 < steps?.length))} onClick={onHandleSalvaModificaButton} variant={labelButtonAvantiListaModuliSave === "Prosegui per salvare"? "text":"outlined"}>{labelButtonAvantiListaModuliSave}
+                        <Button  disabled={error890Regioni|| errorArRegioni|| (isObbligatorioLayout && (activeStep+1 < steps?.length))} onClick={onHandleSalvaModificaButton} variant={labelButtonAvantiListaModuliSave === "Prosegui per salvare"? "text":"outlined"}>
+                            {labelButtonAvantiListaModuliSave}
                         </Button>
                     </div>} 
                 { (activeCommessa?.totaleNotifiche !== null && !isEditAllow && !loadingData) && 
@@ -311,8 +287,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                 </div> 
                 }
                 <div >
-                    {steps.length > 1 && 
-                    <Tooltip  title={(activeStep+1) !== steps.length && "Avanti"}>
+                    {steps.length > 1 &&  (activeStep === 0 || activeStep > 0) &&
+                    <Tooltip  title={(activeStep+1) !== steps?.length && "Avanti"}>
                         <span>
                             <Button
                                 sx={{color:"#5c6f81"}}

@@ -1,8 +1,7 @@
-import { TableRow, TableCell, TableBody } from "@mui/material";
-import { Tooltip } from "react-bootstrap";
+import { TableRow, TableCell } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
-const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, nameParameterApi, headerNames}) => {
+const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, headerNames}) => {
 
     // const elToMap = Object.fromEntries(Object.entries(sliced).slice(1, -4));
     //:TODO spostare i colori nel file di configurazione
@@ -29,7 +28,6 @@ const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, nameParameterApi
                     const valueEl = (i === 0 && value?.toString().length > 50) ? value?.toString().slice(0, 50) + '...' : value;
                    
                     if(headerNames[i]?.headerTooltip){
-                      
                         return (
                             <TableCell
                                 key={i}
@@ -38,7 +36,6 @@ const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, nameParameterApi
                             </TableCell>
                         );
                     }else if(headerNames[i]?.headerChip){
-                      
                         return (
                             <TableCell
                                 key={i}
@@ -50,6 +47,7 @@ const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, nameParameterApi
                      
                         return (
                             <TableCell
+                                key={i}
                                 align={"center"}
                                 sx={cssFirstColum} 
                                 onClick={()=>{
@@ -65,7 +63,7 @@ const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, nameParameterApi
                     
                 })
             }
-            {apiGet && <TableCell align="center" onClick={()=>{handleClickOnGrid(element);}}>
+            {apiGet && <TableCell key={`arrow-mod-commess-${element.id}`} align="center" onClick={()=>{handleClickOnGrid(element);}}>
                 <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
             </TableCell> }
         </TableRow>

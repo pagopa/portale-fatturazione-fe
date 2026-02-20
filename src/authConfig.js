@@ -1,23 +1,11 @@
-/*
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-
 import { LogLevel } from '@azure/msal-browser';
-
-/**
- * Configuration object to be passed to MSAL instance on creation. 
- * For a full list of MSAL.js configuration parameters, visit:
- * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/configuration.md 
- */
-
 export const msalConfig = {
     auth: {
         
         // eslint-disable-next-line no-undef
-        clientId: process.env.REACT_APP_CLIENT_ID, // This is the ONLY mandatory field that you need to supply.
+        clientId: "b5f6a72a-c9f1-4d74-9464-0bffdd76ea79", // This is the ONLY mandatory field that you need to supply.
         // eslint-disable-next-line no-undef
-        authority: `https://login.microsoftonline.com/${process.env.REACT_APP_TENANT_ID}`, // Replace the placeholder with your tenant subdomain 
+        authority: `https://login.microsoftonline.com/7788edaf-0346-4068-9d79-c868aed15b3d`, // Replace the placeholder with your tenant subdomain 
         redirectUri: '/auth/azure', // Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
         postLogoutRedirectUri: '/azureLogin', // Indicates the page to navigate after logout.
         navigateToLoginRequestUrl: false, // If "true", will navigate back to the original request location before processing the auth code response.
@@ -71,3 +59,4 @@ export const loginRequest = {
 //     scopes: ["openid", "profile"],
 //     loginHint: "example@domain.net"
 // };
+

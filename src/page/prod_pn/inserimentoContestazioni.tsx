@@ -378,26 +378,30 @@ const InserimentoContestazioni  : React.FC = () =>{
                         </div>
                         <div className="col-3 m-auto">
                             <Tooltip title={file ? (file?.name || ""):"Carica file"}>
-                                <Button
-                                    disabled={body.contractId === '' || arrayReacpCon.length === 0}
-                                    component="label"
-                                    variant="contained"
-                                    onClick={()=> file && setOpenModalConferma(true)}
-                                    startIcon={<CloudUploadIcon />}
-                                >
-                                    {file ? "Inserisci":"Carica file"}
-                                    {!file && <VisuallyHiddenInput type="file" onChange={(e:any)=> handleSelect(e.target.files[0])}/>}
-                                </Button>
+                                <span>
+                                    <Button
+                                        disabled={body.contractId === '' || arrayReacpCon.length === 0}
+                                        component="label"
+                                        variant="contained"
+                                        onClick={()=> file && setOpenModalConferma(true)}
+                                        startIcon={<CloudUploadIcon />}
+                                    >
+                                        {file ? "Inserisci":"Carica file"}
+                                        {!file && <VisuallyHiddenInput type="file" onChange={(e:any)=> handleSelect(e.target.files[0])}/>}
+                                    </Button>
+                                </span>
                             </Tooltip>
                             {file &&
                             <Tooltip title={"Elimina file"}>
-                                <Button  
-                                    sx={{marginLeft:'20px'}}
-                                    size="medium"
-                                    variant="outlined"
-                                    onClick={() => setFile(null)}> 
-                                    <DeleteIcon  />
-                                </Button>
+                                <span>
+                                    <Button  
+                                        sx={{marginLeft:'20px'}}
+                                        size="medium"
+                                        variant="outlined"
+                                        onClick={() => setFile(null)}> 
+                                        <DeleteIcon  />
+                                    </Button>
+                                </span>
                             </Tooltip>
                             }
                         </div>
@@ -414,7 +418,7 @@ const InserimentoContestazioni  : React.FC = () =>{
                                         <Typography variant="h4">{nameEnteTitle} {month[Number(body.mese)-1]} {body.anno}</Typography>
                                     </Box>
                                     <Box sx={{ margin: 2 , backgroundColor:'#F8F8F8', padding:'10px'}}>
-                                        <Table size="small" aria-label="purchases">
+                                        <Table size="small">
                                             <TableHead>
                                                 <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
                                                     <TableCell align="center" sx={{ width:"300px"}} >Tipologia Fattura</TableCell>

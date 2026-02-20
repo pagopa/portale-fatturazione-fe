@@ -42,7 +42,7 @@ const Accertamenti : React.FC = () =>{
     const [dataMatrice, setDataMatrice] = useState<MatriceArray[]>([]);
     const [valueSelectMatrice,setValueSelectMatrice ] = useState('');
     const [bodyAccertamenti, setBodyAccertamenti] = useState<BodyAccertamenti>({
-        anno:0,
+        anno:"",
         mese:null,
         tipologiaFattura:[],
         idEnti:[]

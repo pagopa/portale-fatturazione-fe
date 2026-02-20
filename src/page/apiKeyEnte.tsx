@@ -108,7 +108,7 @@ const ApiKeyEnte : React.FC = () => {
         <div className="m-5 ">
            
             <div className="mt-5 pb-5">
-                <Typography>Genera API KEY per gestire l'autenticazione dei soggetti connessi al nodo PAGOPA </Typography>
+                <Typography>Genera API KEY per gestire l'autenticazione dei soggetti abilitati alle API di Portale Fatturazione </Typography>
                 <div className="row mt-5">
                     <div className="col-8 p-0">
                         <div style={{ display: 'flex', justifyContent: 'start', alignItems: 'center', height: '100%' }}>
@@ -147,12 +147,7 @@ const ApiKeyEnte : React.FC = () => {
                                     type={showPassword ? 'text' : 'password'}
                                     endAdornment={
                                         <InputAdornment position="end">
-                                            <IconButton
-                                                aria-label={
-                                                    showPassword ? 'Nascondi API Key' : 'Mostra Api key'
-                                                }
-                                                onClick={handleClickShowPassword}
-                                            >
+                                            <IconButton onClick={handleClickShowPassword}>
                                                 {showPassword ? <VisibilityOff /> : <Visibility />}
                                             </IconButton>
                                         </InputAdornment>
@@ -176,12 +171,7 @@ const ApiKeyEnte : React.FC = () => {
                                             type={showPassword2 ? 'text' : 'password'}
                                             endAdornment={
                                                 <InputAdornment position="end">
-                                                    <IconButton
-                                                        aria-label={
-                                                            showPassword2 ? 'Nascondi API Key' : 'Mostra Api key'
-                                                        }
-                                                        onClick={handleClickShowPassword2}
-                                                    >
+                                                    <IconButton onClick={handleClickShowPassword2}>
                                                         {showPassword2 ? <VisibilityOff /> : <Visibility />}
                                                     </IconButton>
                                                 </InputAdornment>

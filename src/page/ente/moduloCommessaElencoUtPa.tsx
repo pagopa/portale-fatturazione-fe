@@ -251,12 +251,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
     return (
         <>
             {loadingMandatory ?
-                <Box
-                    sx={{
-                        padding:"24px",
-                        height: '100vh'
-                    }}
-                >
+                <Box sx={{padding:"24px", height: '100vh'}}>
                     <Skeleton variant="rectangular" height="100%" />
                 </Box>
                 :
@@ -291,10 +286,12 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
                                     </Select>
                                 </FormControl>
                             </Box>
-                            <Box sx={{display: 'flex',
+                            <Box sx={{
+                                display: 'flex',
                                 justifyContent: 'center',   
                                 alignItems: 'center',
-                                marginLeft:"40px" }}>
+                                marginLeft:"40px" 
+                            }}>
                                 <CustomButton onClick={()=>{
                                     getListaCommessaGrid(valueSelect);
                                     updateFilters({valueSelect,pathPage:PathPf.LISTA_COMMESSE,});
@@ -345,8 +342,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
                             headerAction={headerAction}
                             body={valueSelect}
                             widthCustomSize="auto"
-                            paginationVisibile={false}></GridCustom>
-                
+                            paginationVisibile={false}/>
                     </div>
                     <ModalRedirect 
                         setOpen={setOpenModalRedirect}

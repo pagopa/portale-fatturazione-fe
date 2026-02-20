@@ -83,7 +83,7 @@ const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element}) 
                                 {`Moduli commessa ${element.anno}/${element.quarter}`}
                             </Typography>
                             
-                            <Table size="small" aria-label="purchases">
+                            <Table size="small">
                                 <TableHead>
                                     <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
                                         {subHeaderNameModComTrimestraleENTE.map((el,i)=>{
@@ -96,7 +96,7 @@ const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element}) 
                                     {element.moduli.map(el => {
                                         return(
                                         
-                                            <DefaultRow handleClickOnGrid={handleClickOnGrid} element={el} sliced={el} apiGet={goToDetails} nameParameterApi={"test"} headerNames={subHeaderNameModComTrimestraleENTE}></DefaultRow>
+                                            <DefaultRow key={element?.id} handleClickOnGrid={handleClickOnGrid} element={el} sliced={el} apiGet={goToDetails}  headerNames={subHeaderNameModComTrimestraleENTE}></DefaultRow>
                                         );
                                     })}
                                 </TableBody>

@@ -1,5 +1,5 @@
 
-import { TableHead, TableRow, TableCell, Typography, Table,  Tooltip, IconButton, TextField, Popover} from "@mui/material";
+import { TableHead, TableRow, TableCell, Typography, Table,  Tooltip, IconButton, TextField, Popover, TableBody} from "@mui/material";
 import { Box} from "@mui/system";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
@@ -129,7 +129,7 @@ const InvioFattureDetails : React.FC = () => {
         );
     }else{
         return(
-            <>
+            <Box>
                 <div>
                     <NavigatorHeader pageFrom={"Documenti emessi/Inserimento fatture/"} pageIn={"Dettaglio"} backPath={PathPf.JSON_TO_SAP} icon={<IosShareIcon sx={{paddingBottom:"5px"}}  fontSize='small'></IosShareIcon>}></NavigatorHeader>
                 </div>
@@ -149,7 +149,7 @@ const InvioFattureDetails : React.FC = () => {
                                                         <TableCell align="center" >Ragione sociale
                                                             <Tooltip title='Filtra'>
                                                                 <span>
-                                                                    <IconButton sx={{marginLeft:'10px'}} aria-describedby={idPop} onClick={handleClick} aria-label="Filtra" size="small">
+                                                                    <IconButton sx={{marginLeft:'10px'}} aria-describedby={idPop} onClick={handleClick}size="small">
                                                                         <FilterListIcon></FilterListIcon>
                                                                     </IconButton>
                                                                     <Popover anchorOrigin={{ vertical: 'top',horizontal: 'right'}} open={open} anchorEl={anchorEl} onClose={handleClose}id={idPop}>
@@ -164,29 +164,37 @@ const InvioFattureDetails : React.FC = () => {
                                                         <TableCell align="center">Mese</TableCell>
                                                         <TableCell align="center">Importo
                                                             <Tooltip title="Sort">
-                                                                <IconButton sx={{marginLeft:'10px'}}  onClick={handleClickArrow}  size="small">
-                                                                    {(sortImport === null || sortImport === true) ? <ArrowUpwardIcon></ArrowUpwardIcon>:<ArrowDownwardIcon></ArrowDownwardIcon>}
-                                                                </IconButton>
+                                                                <span>
+                                                                    <IconButton sx={{marginLeft:'10px'}}  onClick={handleClickArrow}  size="small">
+                                                                        {(sortImport === null || sortImport === true) ? <ArrowUpwardIcon></ArrowUpwardIcon>:<ArrowDownwardIcon></ArrowDownwardIcon>}
+                                                                    </IconButton>
+                                                                </span>
                                                             </Tooltip>
                                                         </TableCell>
                                                     </TableRow>
                                                 </TableHead>
                                                 {loadingCustomAction ? 
                                                     <SkeletonGridLoading columnLength={10} rowLength={6}></SkeletonGridLoading> 
-                                                    : detailsSingleRow.map((obj)=>{
+                                                    : detailsSingleRow.map((obj,i)=>{
                                                         return ( 
-                                                            <TableRow key={Math.random()}>
-                                                                <Tooltip title={obj.ragioneSociale}>
-                                                                    <TableCell sx={{color:'#0D6EFD',fontWeight: 'bold',width:"300px"}} >
-                                                                        {obj.ragioneSociale?.toString().length > 30 ? obj.ragioneSociale?.toString().slice(0, 27) + '...' : obj.ragioneSociale}
+                                                            <TableBody key={`${i}-${obj.ragioneSociale}`}>
+                                                                <TableRow >
+                                                                    <TableCell sx={{ color:'#0D6EFD', fontWeight:'bold', width:"300px" }}>
+                                                                        <Tooltip title={obj.ragioneSociale}>
+                                                                            <span>
+                                                                                {obj.ragioneSociale?.toString().length > 30
+                                                                                    ? obj.ragioneSociale?.toString().slice(0, 27) + '...'
+                                                                                    : obj.ragioneSociale}
+                                                                            </span>
+                                                                        </Tooltip>
                                                                     </TableCell>
-                                                                </Tooltip>
-                                                                <TableCell align="center">{new Date(obj.dataFattura).toLocaleString().split(",")[0]||''}</TableCell>
-                                                                <TableCell align="center">{obj.tipologiaFattura}</TableCell>
-                                                                <TableCell align="center" > {obj.annoRiferimento} </TableCell>
-                                                                <TableCell align="center">{month[obj.meseRiferimento-1]}</TableCell>
-                                                                <TableCell  align="right">{obj.importo}</TableCell>
-                                                            </TableRow>
+                                                                    <TableCell align="center">{new Date(obj.dataFattura).toLocaleString().split(",")[0]||''}</TableCell>
+                                                                    <TableCell align="center">{obj.tipologiaFattura}</TableCell>
+                                                                    <TableCell align="center" > {obj.annoRiferimento} </TableCell>
+                                                                    <TableCell align="center">{month[obj.meseRiferimento-1]}</TableCell>
+                                                                    <TableCell  align="center">{obj.importo}</TableCell>
+                                                                </TableRow>
+                                                            </TableBody>
                                                         );
                                                     })}
                                             </Table>
@@ -197,7 +205,7 @@ const InvioFattureDetails : React.FC = () => {
                         </div>
                     </div>
                 </div> 
-            </>
+            </Box>
         );
     }
 };

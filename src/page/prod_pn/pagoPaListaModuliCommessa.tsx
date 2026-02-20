@@ -35,12 +35,12 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
     };
 
     const [gridData, setGridData] = useState<GridElementListaCommesse[]>([]);
-    const [bodyGetLista, setBodyGetLista] = useState<BodyDownloadModuliCommessa>({idEnti:[],idTipoContratto:null, anno:0, mese:0});
+    const [bodyGetLista, setBodyGetLista] = useState<BodyDownloadModuliCommessa>({idEnti:[],idTipoContratto:null, anno:"", mese:""});
     const [infoPageListaCom , setInfoPageListaCom] = useState({ page: 0, pageSize: 10 });
     const [dataSelect, setDataSelect] = useState<ElementMultiSelect[]>([]);
     const [textValue, setTextValue] = useState('');
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
-    const [bodyDownload, setBodyDownload] = useState<BodyDownloadModuliCommessa>({idEnti:[],idTipoContratto:null, anno:0, mese:0});
+    const [bodyDownload, setBodyDownload] = useState<BodyDownloadModuliCommessa>({idEnti:[],idTipoContratto:null, anno:"", mese:""});
     const [showLoading,setShowLoading] = useState(false);
     const [showLoadingLista,setShowLoadingLista] = useState(false);
     const [arrayContratto,setArrayContratto]= useState<{id:number,descrizione:string}[]>([{id:3,descrizione:"Tutti"}]);
@@ -48,7 +48,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
     const [monthsCommessa,setMonthsCommessa] = useState<{[key:number]:number[]}>({});
     const [yearMonths, setYearMonths] = useState<number[]>([]);
 
-    const defaultYearMonth = useRef<{year:number,month:number}>({year:0,month:0});
+    const defaultYearMonth = useRef<{year:number|"",month:number|""}>({year:"",month:""});
    
     const { 
         filters,
@@ -316,6 +316,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                     keyValue={"anno"}
                     keyBody={"anno"}
                     arrayValues={years}
+                    defaultValue={""}
                     extraCodeOnChange={(e)=>{
                         setYearMonths(monthsCommessa[Number(e)]);
                         setBodyGetLista((prev)=> ({...prev, ...{anno:Number(e),mese:monthsCommessa[Number(e)][0]}}));
@@ -343,7 +344,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                     keyBody={"idTipoContratto"}
                     keyValue={"id"}
                     arrayValues={arrayContratto}
-                    defaultValue={"3"}
+                    defaultValue={3}
                     extraCodeOnChange={(e)=>{
                         const val = (Number(e) === 3) ? null : Number(e);
                         setBodyGetLista((prev)=>({...prev,...{idTipoContratto:val}}));

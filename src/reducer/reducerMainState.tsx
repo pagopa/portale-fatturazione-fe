@@ -41,7 +41,7 @@ export const initialState:MainState =  {
         stato:0,
         reportId:0
 
-    }
+    },
 };
 
 
@@ -61,14 +61,3 @@ export function reducerMainState(
     }
 }
 
-export function loadState (){ 
-    try{
-        const savedState = localStorage.getItem('globalStatePF');
-        const globalIsNotEmpty = Object.keys(JSON.parse(savedState||'{}')).length > 0;
-        return (savedState && globalIsNotEmpty) ? JSON.parse(savedState) : initialState;
-    }catch(err){
-        localStorage.clear();
-        return initialState;
-    }
-   
-}
