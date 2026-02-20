@@ -174,20 +174,21 @@ function usePageRelDocPdf({
                 let res: ResponseDownloadPdf|undefined;
                 if(pageFrom === "rel"){
                     res = await getRelPdf( token,  profilo.nonce,  rowId );
+                    toDoOnDownloadPdf(res,"Regolare Esecuzione");
                 }else if(pageFrom === "documentiemessi"){ 
                     res = await getDocumentiEmessiPdf(token, profilo.nonce, rowId);
+                    toDoOnDownloadPdf(res,"Documenti Emessi");
                 }else if(pageFrom === "documentisospesi"){
                     res = await getDocumentiSospesiPdf(token, profilo.nonce, rowId);
+                    toDoOnDownloadPdf(res,"Documenti Sospesi");
                 }
-                if(res){
-                    toDoOnDownloadPdf(res);
-                }
+                
 
             }else if (profilo.auth === 'PAGOPA') {
                 setShowDownloading(true);
                 console.log({MM:mainState});
                 const res: ResponseDownloadPdf = await getRelPdfPagoPa(token,profilo.nonce, rowId);
-                toDoOnDownloadPdf(res);
+                toDoOnDownloadPdf(res,"Regolare Esecuzione");
             }
 
         } catch (err:any) {
@@ -240,11 +241,11 @@ function usePageRelDocPdf({
             
     };
         
-    const toDoOnDownloadPdf = (res:ResponseDownloadPdf) =>{
+    const toDoOnDownloadPdf = (res:ResponseDownloadPdf,nameSection) =>{
         const wrapper = document.getElementById('file_download_rel');
         if(wrapper){
             wrapper.innerHTML = res.data;
-            generatePDF(targetRef, {filename: `Regolare Esecuzione/${ rel?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${rel.anno}.pdf`});
+            generatePDF(targetRef, {filename: `${nameSection}/${ rel?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${rel.anno}.pdf`});
             setShowDownloading(false);
         }
     };

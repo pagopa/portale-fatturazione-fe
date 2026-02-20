@@ -159,7 +159,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                         );
                                     }else if(nameParameterApi === "docEmessiEnte"){
                                         return(
-                                            <TableCell key={Math.random()} align={el.align} width={el.width}>{el.label}
+                                            <TableCell key={`tableCell-${i}`} align={el.align} width={el.width}>{el.label}
                                                 {(el.headerActionSort &&  objectSort && objectSort[el.label]) &&
                                                 <Tooltip title="Sort">
                                                     <span>
@@ -174,7 +174,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                             </TableCell>
                                         );
                                     }else{
-                                        return <TableCell align="center" key={Math.random()}>{el}</TableCell>;
+                                        return <TableCell key={`tableCell-${i}`} align="center">{el}</TableCell>;
                                     }  
                                 })}
                             </TableRow>
@@ -182,7 +182,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                         
                         <TableBody sx={{marginLeft:'20px',height: '50px'}}>
                             {elements.length === 0 && nameParameterApi === "docEmessiEnte" && 
-                            <TableRow>
+                            <TableRow key={"no-data"}>
                                 <TableCell colSpan={100} align="center">
                                     <Typography fontWeight={"bold"}>{sentenseEmpty && sentenseEmpty}</Typography>
                                 </TableCell>
@@ -221,7 +221,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                 }else if(nameParameterApi === "idPrevisonale"){
                                     return <RowModCommessaPrevisionale key={element.id} sliced={sliced} element={element} headerNames={headerNames}></RowModCommessaPrevisionale>;
                                 }else if(nameParameterApi === "docEmessiEnte"){
-                                    return <RowCollapsible key={Math.random()} sliced={sliced} element={element} headerNames={headerNames} headerNamesCollapse={headerNamesCollapse} apiGet={apiGet}></RowCollapsible>;
+                                    return <RowCollapsible key={element.id} sliced={sliced} element={element} headerNames={headerNames} headerNamesCollapse={headerNamesCollapse} apiGet={apiGet}></RowCollapsible>;
                                 }else{
                                      
                                     return (

@@ -11,7 +11,7 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { FattureObj, HeaderCollapsible } from '../../../../types/typeFatturazione';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
@@ -37,8 +37,8 @@ const RowCollapsible = ({sliced,element ,headerNames, headerNamesCollapse, apiGe
     const [open, setOpen] = useState(false);
  
     return(
-        <>
-            <TableRow key={Math.random()} sx={{
+        <Fragment key={element.id}>
+            <TableRow key={`tableRow-${element.id}`} sx={{
                 height: '80px',
                 borderTop: '4px solid #F2F2F2',
                 borderBottom: '2px solid #F2F2F2',
@@ -53,7 +53,7 @@ const RowCollapsible = ({sliced,element ,headerNames, headerNamesCollapse, apiGe
                         //const valueEl = (i === 0 && value?.toString().length > 20) ? value?.toString().slice(0, 20) + '...' : value;
                         if(i === 0){
                             return(
-                                <TableCell align={"center"}>
+                                <TableCell key={`expand-${element.id}-${i}`} align={"center"}>
                                     <IconButton
                                         sx={{color:'#227AFC'}}
                                         aria-label="expand row"
@@ -66,20 +66,20 @@ const RowCollapsible = ({sliced,element ,headerNames, headerNamesCollapse, apiGe
                             );
                         }else if(value === "arrowDetails"){
                             return (
-                                <TableCell align="center" onClick={()=>{apiGet(element);}}>
+                                <TableCell key={`expand-${element.id}-${i}`} align="center" onClick={()=>{apiGet(element);}}>
                                     <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
                                 </TableCell> 
                             );
                         }else{
                             return (
-                                <TableCell  onClick={()=>{i === 1 && apiGet(element);}} sx={cssFirstColum}  align={"center"}>{value}</TableCell>
+                                <TableCell key={`expand-${element.id}-${i}`}  onClick={()=>{i === 1 && apiGet(element);}} sx={cssFirstColum}  align={"center"}>{value}</TableCell>
                             );
                         }             
                     })
                 }
            
             </TableRow>
-            <TableRow >
+            <TableRow key={`tableRow-position-${element.id}`} >
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0}} colSpan={7}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box sx={{ margin: 2 , backgroundColor:'#F8F8F8', padding:'10px'}}>
@@ -92,7 +92,7 @@ const RowCollapsible = ({sliced,element ,headerNames, headerNamesCollapse, apiGe
                                         {
                                             Object.values(headerNamesCollapse)?.map((value:any, i:number)=>{
                                                 return (
-                                                    <TableCell align='center'  >{value.label}</TableCell>
+                                                    <TableCell key={`position-${value.label}-${i}`} align='center'>{value.label}</TableCell>
                                                 );
                                             })
                                         }
@@ -100,12 +100,12 @@ const RowCollapsible = ({sliced,element ,headerNames, headerNamesCollapse, apiGe
                                     </TableRow>
                                 </TableHead>
                                 <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
-                                    {element?.posizioni?.map((obj) => (
-                                        <TableRow key={Math.random()}>
+                                    {element?.posizioni?.map((obj,i) => (
+                                        <TableRow key={`position-row-${i}`}>
                                             {
                                                 Object.values(obj)?.map((value:any, i:number)=>{
                                                     return (
-                                                        <TableCell align='center' >{value}</TableCell>
+                                                        <TableCell key={`position-value-${value}-${i}`} align='center' >{value}</TableCell>
                                                     );
                                                 })
                                             } 
@@ -117,7 +117,7 @@ const RowCollapsible = ({sliced,element ,headerNames, headerNamesCollapse, apiGe
                     </Collapse>
                 </TableCell>
             </TableRow> 
-        </>
+        </Fragment> 
 
     );
    

@@ -48,6 +48,7 @@ i18n.use(Backend)
                         'NO_INSERIMENTO_COMMESSA':"Al momento non è possibile inserire il modulo commessa. Contattare l'assistenza",
                         'SAVE_COMMESSA_OK':"Modulo commessa inserito",
                         'SAVE_DATIFATTURAZIONE_OK':"Dati di fatturazione inseriti ",
+                        "AZURE_LOGIN_ERROR":"Errore durante il login. Contattare l'assistenza"
 
 
 

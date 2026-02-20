@@ -1,4 +1,3 @@
-import { redirect } from "../api/api";
 import { MainState } from "../types/typesGeneral";
 export interface ActionReducerType{
     type:string,
@@ -16,13 +15,6 @@ export const initialState:MainState =  {
     statusPageDatiFatturazione:'immutable',
     statusPageInserimentoCommessa:'immutable',
     datiFatturazioneNotCompleted:false,
-    relSelected:{
-        nomeEnteClickOn:'',
-        mese:0,
-        anno:0,
-        idElement:'',
-        id:""
-    },
     apiError:null,
     authenticated:false,
     badgeContent:0,

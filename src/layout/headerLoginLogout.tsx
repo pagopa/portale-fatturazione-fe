@@ -77,7 +77,9 @@ const HeaderPostLogin = () => {
     const { instance } = useMsal();
    
     const handleLoginRedirect = () => {
-        instance.loginRedirect(loginRequest).catch((error) => console.log(error));
+        instance.loginRedirect(loginRequest).catch(() => {
+            managePresaInCarico('AZURE_LOGIN_ERROR',dispatchMainState); 
+        });
     };
 
     const statusUser = mainState.authenticated && user;
