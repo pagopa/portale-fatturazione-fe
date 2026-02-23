@@ -284,8 +284,8 @@ const DocSos : React.FC = () =>{
                     headerAction(label[0],setGridData,true,setObjectSort,filters.page,filters.rows,orderDataCustom);
                     //setObjectSort(filters.objectSort);
                 }else{
-                    const start = filters.page * filters.rowsPerPage;
-                    const end = start + filters.rowsPerPage;
+                    const start = filters.page * filters.rows;
+                    const end = start + filters.rows;
                  
                     const elementsToShow = orderDataCustom.slice(start, end);
                     setGridData(elementsToShow);

@@ -318,7 +318,7 @@ const DocEm : React.FC = () =>{
             const orderDataCustom:Fattura[] = funcToMapElements(getObjectFattura);
 
            
-            if(isInitialRender.current && Object.keys(filters)?.length > 0 ){
+            if(isInitialRender.current && Object.keys(filters)?.length > 0  ){
                 console.log({filters});
                 if(Object.values(filters.objectSort).some(value => value !== 1)){
                     const obj = filters.objectSort;
@@ -327,10 +327,11 @@ const DocEm : React.FC = () =>{
                     headerAction(label[0],setGridData,true,setObjectSort,filters.page,filters.rows,orderDataCustom);
                     //setObjectSort(filters.objectSort);
                 }else{
-                    const start = filters.page * filters.rowsPerPage;
-                    const end = start + filters.rowsPerPage;
+                    const start = filters.page * filters.rows;
+                    const end = start + filters.rows;
      
                     const elementsToShow = orderDataCustom.slice(start, end);
+                    console.log({elementsToShow});
                     setGridData(elementsToShow);
                 }
                 if(filters.page !== 0){
@@ -341,6 +342,7 @@ const DocEm : React.FC = () =>{
                 }
             }else{
                 const dataToShow = orderDataCustom.slice(0, 10);
+                console.log({dataToShow});
                 setGridData(dataToShow);
             }
             setListaResponse(orderDataCustom);
