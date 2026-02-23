@@ -127,7 +127,8 @@ function usePageRelDocPdf({
                 if(pageFrom === "rel"){
                     response = await getRelExel(token, profilo.nonce, rowId);
                 }else if(pageFrom === "documentiemessi"){ 
-                    throw new Error('404_RIGHE_ID_EMESSE');
+                    //PROBBILMENTE DA SOSTITUIRE
+                    response = await getRelExel(token, profilo.nonce, rowId);
                 }else if(pageFrom === "documentisospesi"){
                     response = await getSospesiReportExel(token, profilo.nonce, rowId);
                 }

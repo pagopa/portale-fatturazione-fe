@@ -38,7 +38,7 @@ const RowCollapsible = ({sliced,element ,headerNames, headerNamesCollapse, apiGe
  
     return(
         <Fragment key={element.id}>
-            <TableRow key={`tableRow-${element.id}`} sx={{
+            <TableRow key={`tableRow-${element.id}-${element.idFattura}`} sx={{
                 height: '80px',
                 borderTop: '4px solid #F2F2F2',
                 borderBottom: '2px solid #F2F2F2',

@@ -46,10 +46,11 @@ interface GridCustomProps {
     paginationVisibile?:boolean,
     objectSort?:{[key:string]:number},
     sentenseEmpty?:string,
-    headerAction2?:(val:string, setGridData:React.Dispatch<SetStateAction<any[]>>,val2:boolean,setObjet:React.Dispatch<SetStateAction<{[key:string]:number}>>,p:number,r:number) =>void,
+    headerActionSort?:(val:string, setGridData:React.Dispatch<SetStateAction<any[]>>,val2:boolean,setObjet:React.Dispatch<SetStateAction<{[key:string]:number}>>,p:number,r:number,listaResponse:any[]) =>void,
     setGridData?:React.Dispatch<SetStateAction<any[]>>
     gridType?:boolean,
-    setObjectSort?:React.Dispatch<SetStateAction<{[key:string]:number}>>
+    setObjectSort?:React.Dispatch<SetStateAction<{[key:string]:number}>>,
+    listaResponse?:any[]
 }
 
 
@@ -77,9 +78,10 @@ const GridCustom : React.FC<GridCustomProps> = ({
     objectSort,
     sentenseEmpty,
     setGridData,
-    gridType,
-    headerAction2,
-    setObjectSort
+    gridType=false,
+    headerActionSort,
+    setObjectSort,
+    listaResponse=[]
 }) =>{
 
     const handleClickOnGrid = (element) =>{
@@ -127,8 +129,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
             return selected.includes(id);
         }  
     };
-
-
+    
     return (
         <div>
             {nameParameterApi === "idWhite" && <EnhancedTableCustom  setOpenModal={setOpenModalDelete} setOpenModalAdd={setOpenModalAdd} selected={selected||[]} buttons={buttons} ></EnhancedTableCustom>}
@@ -161,17 +162,17 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                                 </Tooltip>}
                                             </TableCell>
                                         );
-                                    }else if(nameParameterApi === 'contestazionePage'|| nameParameterApi === "modComTrimestrale" || nameParameterApi === "docEmessiEnte"|| nameParameterApi === "docEmessiEnteContestate"){
+                                    }else if(nameParameterApi === 'contestazionePage'|| nameParameterApi === "modComTrimestrale"){
                                         return(
                                             <TableCell key={Math.random()} align={el.align} width={el.width}>{el.label}</TableCell>
                                         );
-                                    }else if(nameParameterApi === "docEmessiEnte_mock"){
+                                    }else if(nameParameterApi === "docEmessiEnte" || nameParameterApi === "docEmessiEnteContestate"){
                                         return(
                                             <TableCell key={`tableCell-${i}`} align={el.align} width={el.width}>{el.label}
                                                 {(el.headerActionSort &&  objectSort && objectSort[el.label]) &&
                                                 <Tooltip title="Sort">
                                                     <span>
-                                                        <IconButton disabled={ (total === 0 ||elements.length === 0) ? true : false} sx={{marginLeft:'10px'}}  onClick={()=> (headerAction2 && setGridData && gridType && setObjectSort) && headerAction2(el.label,setGridData,gridType,setObjectSort,page,rows)}  size="small">
+                                                        <IconButton disabled={ (total === 0 ||elements.length === 0) ? true : false} sx={{marginLeft:'10px'}}  onClick={()=> (headerActionSort && setGridData && setObjectSort&&  listaResponse) && headerActionSort(el.label,setGridData,gridType,setObjectSort,page,rows,listaResponse)}  size="small">
                                                             {(sortValue === 1) ? <ArrowUpwardIcon sx={{ color: 'text.disabled'}}></ArrowUpwardIcon> :
                                                                 (sortValue === 2) ? <ArrowUpwardIcon></ArrowUpwardIcon>:
                                                                     <ArrowDownwardIcon></ArrowDownwardIcon>}
@@ -231,7 +232,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                 }else if(nameParameterApi === "idPrevisonale"){
                                     return <RowModCommessaPrevisionale key={element.id} sliced={sliced} element={element} headerNames={headerNames}></RowModCommessaPrevisionale>;
                                 }else if(nameParameterApi === "docEmessiEnte"){
-                                    return <RowCollapsible key={element.id} sliced={sliced} element={element} headerNames={headerNames} headerNamesCollapse={headerNamesCollapse} apiGet={apiGet}></RowCollapsible>;
+                                    return <RowCollapsible key={`${element.idFattura}-${element.id}`} sliced={sliced} element={element} headerNames={headerNames} headerNamesCollapse={headerNamesCollapse} apiGet={apiGet}></RowCollapsible>;
                                 }else{
                                      
                                     return (
@@ -239,6 +240,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                             height: '80px',
                                             borderTop: '4px solid #F2F2F2',
                                             borderBottom: '2px solid #F2F2F2',
+                                            backgroundColor: nameParameterApi === "docEmessiEnteContestate" ?"#ffeff1":undefined,
                                             '&:hover': {
                                                 backgroundColor: '#EDEFF1',
                                             },

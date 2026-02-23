@@ -444,7 +444,8 @@ const DocSos : React.FC = () =>{
         emessiGrid = true,
         setObjectSort: React.Dispatch<React.SetStateAction<{[key:string]:number}>>,
         page:number,    
-        rowsPerPage:number
+        rowsPerPage:number,
+        listaResponseParameter:any[]
     ) => {
         const start = page * rowsPerPage;
         const end = start + rowsPerPage;
@@ -665,7 +666,7 @@ const DocSos : React.FC = () =>{
                 widthCustomSize="2000px"
                 apiGet={setIdDoc}
                 objectSort={objectSort}
-                headerAction2={headerAction}
+                headerActionSort={headerAction}
                 setGridData={setGridData}
                 gridType={true}
                 setObjectSort={setObjectSort}

@@ -312,11 +312,19 @@ export function groupByAnno(array) {
 
 
 export const sortDates = (array: Fattura[], ascending = true) => {
-    return [...array].sort((a, b) => 
-        ascending 
-            ? a.dataFattura.localeCompare(b.dataFattura)   // oldest → newest
-            : b.dataFattura.localeCompare(a.dataFattura)   // newest → oldest
-    );
+    const normalize = (dateStr: string) => {
+        const [day, month, year] = dateStr.split('/');
+        return `${year}${month.padStart(2, '0')}${day.padStart(2, '0')}`;
+    };
+
+    return [...array].sort((a, b) => {
+        const dateA = normalize(a.dataFattura);
+        const dateB = normalize(b.dataFattura);
+
+        return ascending
+            ? dateA.localeCompare(dateB)
+            : dateB.localeCompare(dateA);
+    });
 };
 
 export const sortMonthYear = (array: Fattura[], ascending = true) => {
