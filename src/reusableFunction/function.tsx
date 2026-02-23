@@ -356,7 +356,6 @@ export const sortByTotale = (array: any[], state: boolean, key: string) => {
         // ascending
         return [...array].sort(
             (a, b) => {
-                console.log({chiave:a,key});
                 return parseValue(a[key]) - parseValue(b[key]);
             }
         );

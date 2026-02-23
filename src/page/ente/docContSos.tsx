@@ -25,6 +25,7 @@ export type BodyDocumentiEmessiEnte = {
 }
 
 export type Fattura = {
+    ragioneSociale: string;
     dataFattura: string;
     stato:string;
     tipoDocumento:string;
@@ -33,13 +34,16 @@ export type Fattura = {
     idfattura: number;
     prodotto: string;
     identificativo: string;
-    istitutioId: string;
+    istitutioId: number;
     tipocontratto: "PAL" | string;
     divisa: "EUR" | string;
     causale: string;
     split: boolean;
     inviata: number;
     posizioni: Posizione[];
+    datiGeneraliDocumento:any[],
+    metodoPagamento:any,
+    idFattura:number, 
 };
 
 export type Posizione = {
@@ -237,6 +241,7 @@ const DocSos : React.FC = () =>{
     
             const getObjectFattura = res.data.dettagli.map(el => el.fattura);
             const orderDataCustom = getObjectFattura.map((obj, index) => ({
+                ragioneSociale: obj.ragioneSociale || '--',
                 idFattura:obj.idfattura,
                 id: obj.identificativo ?? index,
                 arrow: '',
@@ -314,11 +319,11 @@ const DocSos : React.FC = () =>{
     const downloadListaFatturazione = async () => {
         setShowDownloading(true);
         await downloadFattureSospeseEnte(token,profilo.nonce, bodyFatturazioneDownload).then(response => response.blob()).then((response)=>{
-            let title = `Documenti sospesi.xlsx`;
+            let title = `Documenti sospesi/${listaResponse[0].ragioneSociale}.xlsx`;
             if(bodyFatturazioneDownload.anno !== 9999 && bodyFatturazioneDownload.mese === 9999){
-                title = `Documenti sospesi/${bodyFatturazioneDownload.anno}.xlsx`;
+                title = `Documenti sospesi/${listaResponse[0].ragioneSociale}/${bodyFatturazioneDownload.anno}.xlsx`;
             }else if(bodyFatturazioneDownload.mese !== 9999 && bodyFatturazioneDownload.anno !== 9999){
-                title = `Documenti sospesi/${month[bodyFatturazioneDownload.mese - 1]}/${bodyFatturazioneDownload.anno}.xlsx`;
+                title = `Documenti sospesi/${listaResponse[0].ragioneSociale}/${month[bodyFatturazioneDownload.mese - 1]}/${bodyFatturazioneDownload.anno}.xlsx`;
             }
             saveAs(response,title);
             setShowDownloading(false);
@@ -433,97 +438,73 @@ const DocSos : React.FC = () =>{
     };   
 
 
-    const headerAction = (label:string) => {
+    const headerAction = (
+        label: string,
+        setGridData: (data: any[]) => void,
+        emessiGrid = true,
+        setObjectSort: React.Dispatch<React.SetStateAction<{[key:string]:number}>>,
+        page:number,    
+        rowsPerPage:number
+    ) => {
         const start = page * rowsPerPage;
         const end = start + rowsPerPage;
-        setObjectSort(prev =>
-            Object.fromEntries(
-                Object.keys(prev).map(key => {
-                       
-                    if (key === label) {
-                           
-                        const current = prev[key];
-                        const next = current === 1 ? 2 : current === 2 ? 3 : 1;
-    
-                        
-                        if(label === "Data Fattura"){
-                            if(next === 2){
-                                const result = sortDates(listaResponse.slice(start,end), true);
-                                setGridData(result);
-                            }else if(next === 3){
-                                const result = sortDates(listaResponse.slice(start,end), false);
-                                setGridData(result);
-                            }else{
-                                setGridData(listaResponse.slice(start,end));
-                            }
-                            
-                            return [key, next];
-                                
-                        }else if(label === "Ident."){
-                         
-                            if(next === 2){
-                                const result = sortMonthYear(listaResponse.slice(start,end), true);
-                                setGridData(result);
-                               
-                            }else if(next === 3){
-                                const result = sortMonthYear(listaResponse.slice(start,end), false);
-                                setGridData(result);
-                                
-                            }else{
-                                setGridData(listaResponse.slice(start,end));
-                               
-                            }
-    
-                            return [key, next];
-                        }else if(label === "Tot." ){
-                            if(next === 2){
-                                const result = sortByTotale(listaResponse.slice(start,end), true, "totale");
-                             
-                                setGridData(result);
-                            }else if(next === 3){
-                                const result = sortByTotale(listaResponse.slice(start,end), false,"totale");
-                               
-                                setGridData(result);
-                            }else{
-                                setGridData(listaResponse.slice(start,end));
-                            }
-    
-                            return [key, next];
-                        }else if(label === "N. Fattura"){
-                            if(next === 2){
-                                const result = sortByNumeroFattura(listaResponse.slice(start,end), true,"numero");
-                                setGridData(result);
-                            }else if(next === 3){
-                                const result = sortByNumeroFattura(listaResponse.slice(start,end), false,"numero");
-                                setGridData(result);
-                            }else{
-                                setGridData(listaResponse.slice(start,end));
-                            }
-    
-                            return [key, next];
-                        }else if(label === "Tipo Documento"){
-                            if(next === 2){
-                                const result = sortByTipoFattura(listaResponse.slice(start,end), true,"tipoDocumento");
-                                setGridData(result);
-                            }else if(next === 3){
-                                const result = sortByTipoFattura(listaResponse.slice(start,end), false,"tipoDocumento");
-                                setGridData(result);
-                            }else{
-                                setGridData(listaResponse.slice(start,end));
-                            }
-    
-                            return [key, next];
-                        }else{
-                            return [key, 1];
-                        }
-                           
-                    }else{
-                        return [key, 1];
-                    }
-                        
-                })
-            )
-        );
+   
+        setObjectSort(prev => {
+            const current = prev[label];
+            const next = current === 1 ? 2 : current === 2 ? 3 : 1;
+            let sorted = [...listaResponse]; 
+   
+            if (next !== 1) {
+                const isAsc = next === 2;
+   
+                switch (label) {
+                    case "Data Fattura":
+                        sorted = sortDates(listaResponse, isAsc);
+                        break;
+   
+                    case "Ident.":
+                        sorted = sortMonthYear(listaResponse, isAsc);
+                        break;
+   
+                    case "Tot.":
+                        sorted = sortByTotale(listaResponse, isAsc, "totale");
+                        break;
+   
+                    case "N. Fattura":
+                        sorted = sortByNumeroFattura(listaResponse, isAsc, "numero");
+                        break;
+   
+                    case "Tipo Documento":
+                        sorted = sortByTipoFattura(listaResponse, isAsc, "tipoDocumento");
+                        break;
+   
+                    default:
+                        break;
+                }
+            }
+   
+             
+            const paginated = sorted.slice(start, end);
+            setGridData(paginated);
+   
+            // reset other columns to 1
+            const newSortObject = Object.fromEntries(
+                Object.keys(prev).map(key => [
+                    key,
+                    key === label ? next : 1
+                ])
+            );
+   
+            updateFilters({
+                pathPage: PathPf.DOCUMENTI_EMESSI,
+                body: bodyFatturazioneDownload,
+                page: page,
+                rows: rowsPerPage,
+                objectSort:objectSort});
+           
+   
+            return newSortObject;
+        });
     };
    
 
@@ -684,7 +665,10 @@ const DocSos : React.FC = () =>{
                 widthCustomSize="2000px"
                 apiGet={setIdDoc}
                 objectSort={objectSort}
-                headerAction={headerAction}
+                headerAction2={headerAction}
+                setGridData={setGridData}
+                gridType={true}
+                setObjectSort={setObjectSort}
             ></GridCustom>
            
           

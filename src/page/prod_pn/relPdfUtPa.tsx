@@ -207,10 +207,10 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,accontoIsVisible}) => {
                         <div className="container text-center">
                             <TextDettaglioPdf description='Soggetto aderente' value={mainObj.ragioneSociale}></TextDettaglioPdf>
                             <TextDettaglioPdf description='Tipologia Fattura' value={mainObj.tipologiaFattura}></TextDettaglioPdf>
-                            <TextDettaglioPdf description='ID Documento' value={mainObj.idDocumento}></TextDettaglioPdf>
+                            <TextDettaglioPdf description='ID Documento' value={mainObj.idDocumento||"--"}></TextDettaglioPdf>
                             <TextDettaglioPdf description='Anno' value={mainObj.anno}></TextDettaglioPdf>
                             <TextDettaglioPdf description='Mese' value={month[Number(mainObj.mese) - 1]}></TextDettaglioPdf>
-                            <TextDettaglioPdf description='Cup' value={mainObj.cup}></TextDettaglioPdf>
+                            <TextDettaglioPdf description='Cup' value={mainObj.cup||"--"}></TextDettaglioPdf>
                             
                             <TextDettaglioPdf description='Anticipo Analogico' value={Number(mainObj.anticipoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                             <TextDettaglioPdf description='Anticipo Digitale' value={Number(mainObj.anticipoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
@@ -284,10 +284,10 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,accontoIsVisible}) => {
                     <div className="container text-center">
                         <TextDettaglioPdf description='Soggetto aderente' value={mainObj.ragioneSociale}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Tipologia Fattura' value={mainObj.tipologiaFattura}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='ID Documento' value={mainObj.idDocumento}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='ID Documento' value={mainObj.idDocumento||"--"}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Anno' value={mainObj.anno}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Mese' value={month[Number(mainObj.mese) - 1]}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Cup' value={mainObj.cup}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Cup' value={mainObj.cup||"--"}></TextDettaglioPdf>
 
                         <TextDettaglioPdf description='Anticipo Analogico' value={Number(mainObj.anticipoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Anticipo Digitale' value={Number(mainObj.anticipoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>

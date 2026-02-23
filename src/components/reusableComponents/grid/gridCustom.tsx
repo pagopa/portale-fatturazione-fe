@@ -41,11 +41,15 @@ interface GridCustomProps {
         icon:React.ReactNode
         action:string
     }[],
-    headerAction?:(val:any) =>void,
+    headerAction?:(val:number) =>void,
     body?:any,
     paginationVisibile?:boolean,
     objectSort?:{[key:string]:number},
-    sentenseEmpty?:string
+    sentenseEmpty?:string,
+    headerAction2?:(val:string, setGridData:React.Dispatch<SetStateAction<any[]>>,val2:boolean,setObjet:React.Dispatch<SetStateAction<{[key:string]:number}>>,p:number,r:number) =>void,
+    setGridData?:React.Dispatch<SetStateAction<any[]>>
+    gridType?:boolean,
+    setObjectSort?:React.Dispatch<SetStateAction<{[key:string]:number}>>
 }
 
 
@@ -71,7 +75,11 @@ const GridCustom : React.FC<GridCustomProps> = ({
     paginationVisibile,
     headerNamesCollapse,
     objectSort,
-    sentenseEmpty
+    sentenseEmpty,
+    setGridData,
+    gridType,
+    headerAction2,
+    setObjectSort
 }) =>{
 
     const handleClickOnGrid = (element) =>{
@@ -153,17 +161,17 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                                 </Tooltip>}
                                             </TableCell>
                                         );
-                                    }else if(nameParameterApi === 'contestazionePage'|| nameParameterApi === "modComTrimestrale"){
+                                    }else if(nameParameterApi === 'contestazionePage'|| nameParameterApi === "modComTrimestrale" || nameParameterApi === "docEmessiEnte"|| nameParameterApi === "docEmessiEnteContestate"){
                                         return(
                                             <TableCell key={Math.random()} align={el.align} width={el.width}>{el.label}</TableCell>
                                         );
-                                    }else if(nameParameterApi === "docEmessiEnte"){
+                                    }else if(nameParameterApi === "docEmessiEnte_mock"){
                                         return(
                                             <TableCell key={`tableCell-${i}`} align={el.align} width={el.width}>{el.label}
                                                 {(el.headerActionSort &&  objectSort && objectSort[el.label]) &&
                                                 <Tooltip title="Sort">
                                                     <span>
-                                                        <IconButton disabled={ (total === 0 ||elements.length === 0) ? true : false} sx={{marginLeft:'10px'}}  onClick={()=> headerAction && headerAction(el.label)}  size="small">
+                                                        <IconButton disabled={ (total === 0 ||elements.length === 0) ? true : false} sx={{marginLeft:'10px'}}  onClick={()=> (headerAction2 && setGridData && gridType && setObjectSort) && headerAction2(el.label,setGridData,gridType,setObjectSort,page,rows)}  size="small">
                                                             {(sortValue === 1) ? <ArrowUpwardIcon sx={{ color: 'text.disabled'}}></ArrowUpwardIcon> :
                                                                 (sortValue === 2) ? <ArrowUpwardIcon></ArrowUpwardIcon>:
                                                                     <ArrowDownwardIcon></ArrowDownwardIcon>}
@@ -183,7 +191,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                         <TableBody sx={{marginLeft:'20px',height: '50px'}}>
                             {elements.length === 0 && nameParameterApi === "docEmessiEnte" && 
                             <TableRow key={"no-data"}>
-                                <TableCell colSpan={100} align="center">
+                                <TableCell colSpan={100} align="left">
                                     <Typography fontWeight={"bold"}>{sentenseEmpty && sentenseEmpty}</Typography>
                                 </TableCell>
                             </TableRow>
@@ -202,7 +210,9 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                 }else if( nameParameterApi === "idPrevisonale"){
                                     sliced = Object.fromEntries(Object.entries(element).slice(5));
                                 }else if(nameParameterApi === "docEmessiEnte"){
-                                    sliced = Object.fromEntries(Object.entries(element).slice(2, -1));
+                                    sliced = Object.fromEntries(Object.entries(element).slice(3, -1));
+                                }else if(nameParameterApi === "docEmessiEnteContestate"){
+                                    sliced = Object.fromEntries(Object.entries(element).slice(4, -2));
                                 }
 
 
@@ -248,7 +258,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                                                     ?null
                                                                     :value}>
                                                             <TableCell
-                                                                align={(nameParameterApi === "modComTrimestrale"||i !== 0)?"center":"left"}
+                                                                align={(nameParameterApi === "modComTrimestrale"|| nameParameterApi === "docEmessiEnteContestate" ||i !== 0)?"center":"left"}
                                                                 sx={cssFirstColum} 
                                                                 onClick={()=>{if(i === 0){handleClickOnGrid(element);}}}>
                                                                 {(valueEl === null||valueEl === "") ? "--":valueEl}

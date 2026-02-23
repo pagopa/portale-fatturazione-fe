@@ -10,7 +10,7 @@ import { mesiWithZero } from "../reusableFunction/reusableArrayObj";
 import { saveAs } from "file-saver";
 import generatePDF from "react-to-pdf";
 import { ManageErrorResponse } from "../types/typesGeneral";
-import { getDettaglioFatturaEmessa, getDettaglioFatturaSospesa } from "../api/apiSelfcare/documentiSospesiSE/api";
+import { getDettaglioFatturaEmessa, getDettaglioFatturaSospesa, getSospesiReportExel } from "../api/apiSelfcare/documentiSospesiSE/api";
 
 function usePageRelDocPdf({
     token,
@@ -125,14 +125,14 @@ function usePageRelDocPdf({
             if (enti) {
          
                 if(pageFrom === "rel"){
-                    response = await getRelExel(token, profilo.nonce, mainState.relSelected.id);
+                    response = await getRelExel(token, profilo.nonce, rowId);
                 }else if(pageFrom === "documentiemessi"){ 
                     throw new Error('404_RIGHE_ID_EMESSE');
                 }else if(pageFrom === "documentisospesi"){
-                    throw new Error('404_RIGHE_ID_SOSPESE');
+                    response = await getSospesiReportExel(token, profilo.nonce, rowId);
                 }
             }else if(profilo.auth === 'PAGOPA'){
-                response = await getRelExelPagoPa(token, profilo.nonce, mainState.relSelected.id);
+                response = await getRelExelPagoPa(token, profilo.nonce, rowId);
             }
 
             const fileUrl = response.data;
