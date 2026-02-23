@@ -90,6 +90,7 @@ const DocSos : React.FC = () =>{
 
     //______________________NEW_________________
     const [listaResponse, setListaResponse] = useState<Fattura[]>([]);
+    const [listaResponseSorted, setListaResponseSorted] = useState<Fattura[]>([]);
     //const [responseByAnno, setResponseByAnno] = useState<{anno:{ mese:number[],tipologiaFattura:string[],dataFattura:string[]}[]}>();
     const [years,setYears] = useState<number[]>([]);
     const [arraymonths,setArrayMonths] = useState<number[]>([]);
@@ -100,7 +101,7 @@ const DocSos : React.FC = () =>{
     const [showLoadingGrid,setShowLoadingGrid] = useState(true);
     const [showDownloading,setShowDownloading] = useState(false);
     const [gridData, setGridData] = useState<Fattura[]>([]);
-    const [gridDataNoSorted, setGridDataNoSorted] = useState<Fattura[]>([]);
+  
     const [totalDocumenti, setTotalDocumenti]  = useState(0);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -148,7 +149,7 @@ const DocSos : React.FC = () =>{
             const allMonths:number[] = Array.from( new Set(res.data.map(el => el.mese)));//da eliminare
             const allTipologie:string[] = Array.from( new Set(res.data.map(el => el.tipologiaFattura)));
             const dataFattura:string[] = Array.from( new Set(res.data.map(el => `${el.dataFattura}-${el.tipologiaFattura}`)));//da eliminare
-            //setResponseByAnno(result);
+        
             setYears(yearsArray);
             if(isInitialRender.current && Object.keys(filters)?.length > 0){
                 console.log(1);
@@ -158,14 +159,14 @@ const DocSos : React.FC = () =>{
                         .filter(el =>
                             el.anno === Number(filters.body.anno))
                         .map(el => el.mese)));
-                    console.log(arrayMonths,{RR:res.data});
+             
                     setArrayMonths(arrayMonths);
 
                     const arrayTipogie:string[] = Array.from( new Set(res.data
                         .filter(el =>
                             el.anno === Number(filters.body.anno))
                         .map(el => el.tipologiaFattura)));
-                    console.log({arrayTipogie,bb:filters.body.tipologiaFattura,filters});
+                
                     setDataSelect(arrayTipogie);
                     if(filters.body?.tipologiaFattura?.length > 0){
                         setValueMultiselectTipologie(filters.body.tipologiaFattura);
@@ -185,11 +186,9 @@ const DocSos : React.FC = () =>{
                         }
 
                     }
-
-                    console.log(6);
                     setBodyFatturazione(filters.body);
                     setBodyFatturazioneDownload(filters.body);
-                    getlistaFatturazione(filters.body);
+                    getlistaFatturazione(filters.body,true);
                  
                 }else{
                     if( filters?.body?.tipologiaFattura?.length > 0 && filters.body.anno === 9999){
@@ -203,10 +202,10 @@ const DocSos : React.FC = () =>{
                 
               
                     setDataSelect(allTipologie);
-                    console.log(7);
+                   
                     setBodyFatturazione(filters.body);
                     setBodyFatturazioneDownload(filters.body);
-                    getlistaFatturazione(filters.body);
+                    getlistaFatturazione(filters.body,true);
                 }
                 
             }else{
@@ -274,29 +273,53 @@ const DocSos : React.FC = () =>{
                     periodoFatturazione:el.periodoRiferimento || '--',
                 })),
             }));
-            if(isInitialRender.current && Object.keys(filters)?.length > 0 && (filters.page !== 0 || filters.rows !== 10) ){
-                const start = filters.page * filters.rows;
-                const end = start + filters.rows;
-     
-                const elementsToShow = orderDataCustom.slice(start, end);
-                setGridData(elementsToShow);
-                setGridDataNoSorted(elementsToShow);
-                setPage(filters.page);
-                setRowsPerPage(filters.rows);
-
+          
+          
+            if(isInitialRender.current && Object.keys(filters)?.length > 0 ){
+                console.log({filters});
+                if(Object.values(filters.objectSort).some(value => value !== 1)){
+                    const obj = filters.objectSort;
+                    const label = Object.keys(obj).filter(key => obj[key] !== 1);
+                             
+                    headerAction(label[0],setGridData,true,setObjectSort,filters.page,filters.rows,orderDataCustom);
+                    //setObjectSort(filters.objectSort);
+                }else{
+                    const start = filters.page * filters.rowsPerPage;
+                    const end = start + filters.rowsPerPage;
+                 
+                    const elementsToShow = orderDataCustom.slice(start, end);
+                    setGridData(elementsToShow);
+                }
+                if(filters.page !== 0){
+                    setPage(filters.page);
+                }
+                if(filters.rows !== 10){
+                    setRowsPerPage(filters.rows);
+                }
             }else{
                 const dataToShow = orderDataCustom.slice(0, 10);
                 setGridData(dataToShow);
-                setGridDataNoSorted(dataToShow);
-               
             }
             setListaResponse(orderDataCustom);
+            setListaResponseSorted(orderDataCustom);
             setTotalDocumenti(res.data.dettagli.length);
             setTotaleHeader(totaleSum);
+                     
             setBodyFatturazioneDownload(bodyFatturazione);
+            
+                      
+            if(isInitialRender.current && Object.keys(filters).length === 0){
+                updateFilters({
+                    pathPage:PathPf.DOCUMENTI_SOSPESI,
+                    body:bodyFatturazione,
+                    page:0,
+                    rows:10,
+                    objectSort,
+                });
+            }
             isInitialRender.current = false;
             setShowLoadingGrid(false);
-            
+                        
         } catch (err) {
             isInitialRender.current = false;
             if (err && typeof err === "object") {
@@ -306,7 +329,6 @@ const DocSos : React.FC = () =>{
                 manageError({ message: String(err) } as ManageErrorResponse, dispatchMainState);
             }
             setGridData([]);
-            setGridDataNoSorted([]);
             setListaResponse([]);
             setShowLoadingGrid(false);
         }finally{
@@ -345,12 +367,14 @@ const DocSos : React.FC = () =>{
             pathPage:PathPf.DOCUMENTI_SOSPESI,
             body:bodyFatturazione,
             page:0,
-            rows:10
+            rows:10,
+            objectSort
         });
         setPage(0);
         setRowsPerPage(10);
         setBodyFatturazioneDownload(bodyFatturazione);
         getlistaFatturazione(bodyFatturazione,true); 
+        setObjectSort({"Data Fattura":1,"Ident.":1,"Tot.":1,"N. Fattura":1,"Tipo Documento":1});
     };
     
     const onButtonAnnulla = async () => {
@@ -360,7 +384,7 @@ const DocSos : React.FC = () =>{
             tipologiaFattura:[],
             dataFattura:[]
         };
-       
+          
         setBodyFatturazione(resetBody);
         setBodyFatturazioneDownload(resetBody);
         setValueMultiselectTipologie([]);
@@ -370,7 +394,8 @@ const DocSos : React.FC = () =>{
         getlistaFatturazione(resetBody,true);
         resetFilters();
         setTotaleHeader(0);
-        
+        setObjectSort({"Data Fattura":1,"Ident.":1,"Tot.":1,"N. Fattura":1,"Tipo Documento":1});
+           
     };
 
     const handleChangePage = (
@@ -378,13 +403,13 @@ const DocSos : React.FC = () =>{
         newPage: number,
     ) => {
         setPage(newPage);
-        
+            
         const start = newPage * rowsPerPage;
         const end = start + rowsPerPage;
-     
-        const elementsToShow = listaResponse.slice(start, end);
+         
+        const elementsToShow = listaResponseSorted.slice(start, end);
         setGridData(elementsToShow);
-
+    
         updateFilters({
             pathPage: PathPf.DOCUMENTI_SOSPESI,
             body: bodyFatturazioneDownload,
@@ -392,16 +417,16 @@ const DocSos : React.FC = () =>{
             rows: rowsPerPage,
         });
     };
-                        
+                            
     const handleChangeRowsPerPage = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
         const newRows = parseInt(event.target.value, 10);
-
+    
         setRowsPerPage(newRows);
         setPage(0);
-
-        const elementsToShow = listaResponse.slice(0, newRows);
+    
+        const elementsToShow = listaResponseSorted.slice(0, newRows);
         setGridData(elementsToShow);
         updateFilters({
             pathPage: PathPf.DOCUMENTI_SOSPESI,
@@ -410,7 +435,6 @@ const DocSos : React.FC = () =>{
             rows: newRows,
         });
     };
-
 
     let bgHeader = "#E3E7EB";
     if(totaleHeader === 0){
@@ -440,73 +464,122 @@ const DocSos : React.FC = () =>{
 
     const headerAction = (
         label: string,
-        setGridData: (data: any[]) => void,
+        setGridDataParam: (data: any[]) => void,
         emessiGrid = true,
-        setObjectSort: React.Dispatch<React.SetStateAction<{[key:string]:number}>>,
-        page:number,    
-        rowsPerPage:number,
-        listaResponseParameter:any[]
+        setObjectSort: React.Dispatch<React.SetStateAction<{ [key: string]: number }>>,
+        page: number,
+        rowsPerPage: number,
+        listaResponseParameter: any[],
     ) => {
+   
         const start = page * rowsPerPage;
         const end = start + rowsPerPage;
-   
-        setObjectSort(prev => {
-            const current = prev[label];
-            const next = current === 1 ? 2 : current === 2 ? 3 : 1;
-            let sorted = [...listaResponse]; 
-   
-            if (next !== 1) {
-                const isAsc = next === 2;
-   
+        if(isInitialRender.current && Object.keys(filters)?.length > 0){
+            const prev = filters.objectSort;
+             
+           
+            //const label = Object.keys(prev).filter(key => prev[key] !== 1);
+            const valueNotOne = Object.values(prev).find(value => value !== 1);
+            let sortedFull = [...listaResponseParameter];
+            if(valueNotOne){   
+                const booleanValue = valueNotOne === 2 ? true : false;
                 switch (label) {
                     case "Data Fattura":
-                        sorted = sortDates(listaResponse, isAsc);
+                        sortedFull = sortDates(sortedFull, booleanValue);
                         break;
    
                     case "Ident.":
-                        sorted = sortMonthYear(listaResponse, isAsc);
+                        sortedFull = sortMonthYear(sortedFull, booleanValue);
                         break;
    
                     case "Tot.":
-                        sorted = sortByTotale(listaResponse, isAsc, "totale");
+                        sortedFull = sortByTotale(sortedFull, booleanValue, "totale");
                         break;
    
                     case "N. Fattura":
-                        sorted = sortByNumeroFattura(listaResponse, isAsc, "numero");
+                        console.log("sort by numero fattura", booleanValue);
+                        sortedFull = sortByNumeroFattura(sortedFull, booleanValue, "numero");
                         break;
    
                     case "Tipo Documento":
-                        sorted = sortByTipoFattura(listaResponse, isAsc, "tipoDocumento");
+                        sortedFull = sortByTipoFattura(sortedFull, booleanValue, "tipoDocumento");
                         break;
    
                     default:
                         break;
                 }
             }
+            
+            setListaResponseSorted(sortedFull);
+            setObjectSort(filters.objectSort);
+            const paginated = sortedFull.slice(start, end);
+            setGridDataParam(paginated);
+        
+        }else{
+            setObjectSort(prev => {
+                console.log ({prev});
+                const current = prev[label] ?? 1;
+                const next = current === 1 ? 2 : current === 2 ? 3 : 1;
    
+                // reset all columns to 1 except selected
+                const newSortObject = Object.fromEntries(
+                    Object.keys(prev).map(key => [
+                        key,
+                        key === label ? next : 1
+                    ])
+                );
+   
+                let sortedFull = [...listaResponseParameter];
+                if (next !== 1) {
+                    const isAsc = next === 2;
+   
+                    switch (label) {
+                        case "Data Fattura":
+                            sortedFull = sortDates(sortedFull, isAsc);
+                            break;
+   
+                        case "Ident.":
+                            sortedFull = sortMonthYear(sortedFull, isAsc);
+                            break;
+   
+                        case "Tot.":
+                            sortedFull = sortByTotale(sortedFull, isAsc, "totale");
+                            break;
+   
+                        case "N. Fattura":
+                            console.log("sort by numero fattura", isAsc);
+                            sortedFull = sortByNumeroFattura(sortedFull, isAsc, "numero");
+                            break;
+   
+                        case "Tipo Documento":
+                            sortedFull = sortByTipoFattura(sortedFull, isAsc, "tipoDocumento");
+                            break;
+   
+                        default:
+                            break;
+                    }
+                }
              
-            const paginated = sorted.slice(start, end);
-            setGridData(paginated);
-   
-            // reset other columns to 1
-            const newSortObject = Object.fromEntries(
-                Object.keys(prev).map(key => [
-                    key,
-                    key === label ? next : 1
-                ])
-            );
-   
-            updateFilters({
-                pathPage: PathPf.DOCUMENTI_EMESSI,
-                body: bodyFatturazioneDownload,
-                page: page,
-                rows: rowsPerPage,
-                objectSort:objectSort});
-           
-   
-            return newSortObject;
-        });
+                setListaResponseSorted(sortedFull);
+               
+                const paginated = sortedFull.slice(start, end);
+                setGridDataParam(paginated);
+                console.log(4);
+                if(!isInitialRender.current){
+                    updateFilters({
+                        pathPage: PathPf.DOCUMENTI_SOSPESI,
+                        body: bodyFatturazioneDownload,
+                        page:page,
+                        rows: rowsPerPage,
+                        objectSort:newSortObject,
+                    });
+                }
+                return newSortObject;
+            });
+        }
+          
     };
+      
    
 
     return (
@@ -670,6 +743,7 @@ const DocSos : React.FC = () =>{
                 setGridData={setGridData}
                 gridType={true}
                 setObjectSort={setObjectSort}
+                listaResponse={listaResponse}
             ></GridCustom>
            
           
