@@ -744,6 +744,7 @@ const DocSos : React.FC = () =>{
                 gridType={true}
                 setObjectSort={setObjectSort}
                 listaResponse={listaResponse}
+                sentenseEmpty={"Non sono presenti fatture sospese"}
             ></GridCustom>
            
           

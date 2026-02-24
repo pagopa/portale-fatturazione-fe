@@ -851,6 +851,7 @@ const DocEm : React.FC = () =>{
                 gridType={true}
                 setObjectSort={setObjectSort}
                 listaResponse={listaResponse}
+                sentenseEmpty={"Non sono presenti fatture emesse"}
             />
             <Box sx={{marginLeft:"1.25rem"}}>
                 <Grid
