@@ -104,7 +104,7 @@ const RelPdfPage : React.FC = () =>{
                 <Button disabled={disableButtonDettaglioNot}  onClick={()=> downloadReportDettaglio()} >{labelScaricaReportDettaglio} <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
             </div>
             <MainComponentBasedOnUrl mainObj={rel} profilePath={profilePath} accontoIsVisible={accontoIsVisible}></MainComponentBasedOnUrl>
-            <div className='d-flex justify-content-between ms-5'>
+            <div className='d-flex justify-content-between ms-5 me-5'>
                 {(profilo.auth === 'PAGOPA' &&  !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) &&
                 <div>
                     <Button sx={{width:'274px'}} onClick={downloadPdf}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
