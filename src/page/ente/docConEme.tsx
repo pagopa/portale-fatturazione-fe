@@ -535,7 +535,7 @@ const DocEm : React.FC = () =>{
     }
 
 
-    const statusAnnulla = (bodyFatturazione.tipologiaFattura.length !== 0 || bodyFatturazione.mese !== 9999) ? false :true;
+    const statusAnnulla = (bodyFatturazione.tipologiaFattura.length !== 0 || bodyFatturazione.mese !== 9999 || bodyFatturazione.anno !== 9999) ? false :true;
     let labelAmount = `Totale fatturato`;
     if(bodyFatturazioneDownload.anno !== null && bodyFatturazioneDownload.mese === null){
 

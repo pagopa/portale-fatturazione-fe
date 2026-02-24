@@ -247,7 +247,8 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                         }}  key={Math.random()}>
                                             {
                                                 Object.values(sliced).map((value:string|number|any, i:number)=>{
-                                                    const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
+                                                    const firstColumIsNotClickable =  nameParameterApi === "docEmessiEnteContestate" || i !== 0;
+                                                    const cssFirstColum = !firstColumIsNotClickable ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
                                                     const valueEl = (i === 0 && value?.toString().length > 30) ? value?.toString().slice(0, 30) + '...' : value;
                                                     return (
                                                         <Tooltip key={Math.random()} 
