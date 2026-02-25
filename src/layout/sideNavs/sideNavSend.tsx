@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useState, useEffect } from 'react';
 import {
     List,
@@ -27,8 +27,6 @@ import GavelIcon from '@mui/icons-material/Gavel';
 import DvrIcon from '@mui/icons-material/Dvr';
 import BatchPredictionIcon from '@mui/icons-material/BatchPrediction';
 import { useGlobalStore } from '../../store/context/useGlobalStore';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import DescriptionIcon from '@mui/icons-material/Description';
 
 
 const SideNavSend : React.FC = () => {
@@ -127,7 +125,7 @@ const SideNavSend : React.FC = () => {
             backgroundColor: 'background.paper',
         }}
         >
-            <List component="nav">
+            <List component="nav" aria-label="main piattaforma-notifiche sender">
                 <ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick(PathPf.LISTA_DATI_FATTURAZIONE)}>
                     <ListItemIcon>
                         <DnsIcon fontSize="inherit"></DnsIcon>
@@ -230,11 +228,11 @@ const SideNavSend : React.FC = () => {
                     </ListItemIcon>
                     <ListItemText primary="Adesione al bando" />
                 </ListItemButton>
-                <ListItemButton  onClick={() =>{ handleListItemClick(PathPf.FATTURAZIONE); setOpen2(true);}}>
+                <ListItemButton selected={selectedIndex === 5} onClick={() => handleListItemClick(PathPf.FATTURAZIONE)}>
                     <ListItemIcon>
                         <ReceiptIcon fontSize="inherit" />
                     </ListItemIcon>
-                    <ListItemText primary="Documenti contabili" />
+                    <ListItemText primary="Documenti emessi" />
                     {open2 ? 
                         <IconButton onClick={(e)=>{
                             e.stopPropagation();
@@ -251,22 +249,6 @@ const SideNavSend : React.FC = () => {
                 </ListItemButton> 
                 <Collapse in={open2} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
-                        <ListItemButton sx={{ pl: 4 }} selected={selectedIndex === 12} onClick={()=>handleListItemClick(PathPf.DOCUMENTI_SOSPESI)}>
-                            <ListItemIcon>
-                                <FileCopyIcon fontSize="inherit" />
-                            </ListItemIcon>
-                            <Box className="ms-3" display="flex" flexDirection="column">
-                                <ListItemText primary="Documenti contabili sospesi" />
-                            </Box>
-                        </ListItemButton>
-                        <ListItemButton sx={{ pl: 4 }} selected={selectedIndex === 5} onClick={() => handleListItemClick(PathPf.FATTURAZIONE)}>
-                            <ListItemIcon>
-                                <DescriptionIcon fontSize="inherit" />
-                            </ListItemIcon>
-                            <Box className="ms-3" display="flex" flexDirection="column">
-                                <ListItemText primary="Documenti contabili emessi" />
-                            </Box>
-                        </ListItemButton>
                         <ListItemButton selected={selectedIndex === 9} sx={{ pl: 4 }} onClick={() => handleListItemClick(PathPf.LISTA_DOC_EMESSI)}>
                             <ListItemIcon>
                                 <FormatListBulletedIcon fontSize="inherit" />
