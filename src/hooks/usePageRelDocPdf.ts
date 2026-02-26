@@ -123,14 +123,16 @@ function usePageRelDocPdf({
         try {
             let response;
             if (enti) {
-         
+                const customId = `${rel.idEnte}_${rel.idContratto}_${rel.tipologiaFattura.replace(/ /g, "-")}_${rel.anno}_${rel.mese}`;
                 if(pageFrom === "rel"){
                     response = await getRelExel(token, profilo.nonce, rowId);
                 }else if(pageFrom === "documentiemessi"){ 
                     //PROBBILMENTE DA SOSTITUIRE
-                    response = await getRelExel(token, profilo.nonce, rowId);
+                    response = await getRelExel(token, profilo.nonce, customId);
                 }else if(pageFrom === "documentisospesi"){
-                    response = await getSospesiReportExel(token, profilo.nonce, rowId);
+                    
+                    console.log({customId});
+                    response = await getSospesiReportExel(token, profilo.nonce, customId);
                 }
             }else if(profilo.auth === 'PAGOPA'){
                 response = await getRelExelPagoPa(token, profilo.nonce, rowId);

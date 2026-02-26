@@ -85,7 +85,7 @@ const RelPdfPage : React.FC = () =>{
 
 
 
-   
+    console.log({rel});
 
     if(loadingDettaglio){
         return(
@@ -100,9 +100,14 @@ const RelPdfPage : React.FC = () =>{
             <div>
                 <NavigatorHeader pageFrom={headerNavigationFrom} pageIn={"Dettaglio"} backPath={profilePath} icon={<ManageAccountsIcon  sx={{paddingBottom:"5px"}}  fontSize='small'></ManageAccountsIcon>}></NavigatorHeader>
             </div>
-            <div className='d-flex justify-content-end mt-4 me-5'>
-                <Button disabled={disableButtonDettaglioNot}  onClick={()=> downloadReportDettaglio()} >{labelScaricaReportDettaglio} <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
-            </div>
+            { (location.pathname.includes("ente") && 
+            (location.pathname.includes("documentiemessi") || location.pathname.includes("documentisospesi") ) &&
+            rel.tipologiaFattura !== "PRIMO SALDO" && rel.tipologiaFattura !== "SECONDO SALDO")
+                ? null:
+                <div className='d-flex justify-content-end mt-4 me-5'>
+                    <Button disabled={disableButtonDettaglioNot}  onClick={()=> downloadReportDettaglio()} >{labelScaricaReportDettaglio} <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+                </div>
+            }
             <MainComponentBasedOnUrl mainObj={rel} profilePath={profilePath} accontoIsVisible={accontoIsVisible}></MainComponentBasedOnUrl>
             <div className='d-flex justify-content-between ms-5 me-5'>
                 {(profilo.auth === 'PAGOPA' &&  !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) &&
@@ -126,7 +131,7 @@ const RelPdfPage : React.FC = () =>{
                
                 {(enti && rel.totale > 0 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")&& location.pathname.includes("/rel/"))  &&
                     <Box sx={{display:"flex",justifyContent:"space-between"}}>
-                        <div className="">
+                        <div>
                             <Button sx={{width:'274px'}} onClick={downloadPdf}  variant="contained">{labelScaricaPdf}<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
                         </div>
                    
@@ -148,6 +153,7 @@ const RelPdfPage : React.FC = () =>{
                     </Box> 
                 }
                 {(enti && location.pathname.includes("documentiemessi") || location.pathname.includes("documentisospesi")) &&
+                    (rel.tipologiaFattura === "PRIMO SALDO" || rel.tipologiaFattura === "SECONDO SALDO" ) &&
                     <Box>
                         <div className="">
                             <Button sx={{width:'274px'}} onClick={downloadPdf}  variant="contained">{labelScaricaPdf}<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
