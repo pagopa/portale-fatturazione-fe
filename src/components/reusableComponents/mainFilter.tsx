@@ -1,6 +1,6 @@
 import { Autocomplete, Checkbox, Chip, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Tooltip, Typography } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
-import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { DateView, DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { it } from "date-fns/locale";
 import { formatDateToValidation, isDateInvalid } from "../../reusableFunction/function";
@@ -24,11 +24,14 @@ export type MainFilterProps<T> = {
     keyValue:number|string;
     defaultValue?:string|number|null // valore da settare se si ha un valore null da inserire nel body
     fontSize?:string|null,
+    disabled?:boolean,
 
     keyOption?:string;   // field used as label
     keyCompare?: string;  // optional compare field
     error?: boolean;
     setError?: Dispatch<SetStateAction<boolean>>;
+    format?:string;
+    viewDate?:DateView[]
 
     dataSelect?:T[];
     //valuesSelected?: T[];
@@ -78,7 +81,10 @@ const MainFilter = <T,>({
     defaultValue="",
     groupByKey="", //valore inserito quando si ha una chiave uguale a null
     fontSize,
-    iconMaterial
+    iconMaterial,
+    format="dd/MM/yyyy",
+    viewDate=['year', 'month',"day"],
+    disabled=false
 }: MainFilterProps<T>) => {
 
 
@@ -138,7 +144,7 @@ const MainFilter = <T,>({
                     >
                         {arrayValues?.map((el) => (
                             <MenuItem
-                                key={Math.random()}
+                                key={el[keyValue]}
                                 value={el[keyValue]}
                             >
                                 {el[keyDescription]??""}
@@ -178,8 +184,8 @@ const MainFilter = <T,>({
             </MainBoxContainer>);
         case "select_value":
             return ( !hidden &&  keyBody && arrayValues &&
-            <MainBoxContainer>
-                <FormControl fullWidth >
+            <MainBoxContainer >
+                <FormControl fullWidth disabled={disabled}>
                     <InputLabel>
                         {inputLabel}
                     </InputLabel>
@@ -195,19 +201,87 @@ const MainFilter = <T,>({
                             }
                             
                         }}
-                        value={arrayValues[body[keyDescription]] ?? ""}
+                        value={ arrayValues[body[keyDescription]] ?? ""}
                     >
                         {arrayValues?.map((el) => (
                             <MenuItem
                                 key={Math.random()}
                                 value={el}
                             >
-                                {inputLabel === "Mese" ? mesiGrid[el] : el}
+                                {el}
                             </MenuItem>
                         ))}
                     </Select>
                 </FormControl>
             </MainBoxContainer>);
+        case "select_value_with_tutti":
+            return ( !hidden &&  keyBody && arrayValues &&
+            <MainBoxContainer >
+                <FormControl fullWidth disabled={disabled}>
+                    <InputLabel>{inputLabel}</InputLabel>
+                    <Select
+                        label={inputLabel}
+                        value={body[keyDescription] ?? 9999} 
+                        renderValue={(selected) =>
+                            Number(selected) === 9999 ? 'Tutti' : selected
+                        }
+                        onChange={(e) => {
+                            clearOnChangeFilter();
+                            extraCodeOnChange && extraCodeOnChange(e.target.value);
+                        }}
+                    >
+                        <MenuItem value={9999}>Tutti</MenuItem>
+                        {arrayValues?.map((el) => (
+                            <MenuItem key={el} value={el}>
+                                {el}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            </MainBoxContainer>);
+        case "select_mese_with_tutti":
+            return (
+                !hidden &&  keyBody && arrayValues &&
+            <MainBoxContainer >
+                <FormControl fullWidth disabled={disabled}>
+                    <InputLabel>{inputLabel}</InputLabel>
+
+                    <Select
+                        label={inputLabel}
+                        value={
+                            body[keyDescription] ?? 9999
+                        }
+                        renderValue={(selected) =>
+                            Number(selected) === 9999 ? "Tutti" : (
+                                inputLabel === "Mese" ? mesiGrid[selected] : selected
+                            )
+                        }
+                        onChange={(e) => {
+                            clearOnChangeFilter();
+                            const value = e.target.value;
+
+                            if (extraCodeOnChange) {
+                                extraCodeOnChange(value);
+                            } else {
+                                setBody((prev) => ({
+                                    ...prev,
+                                    [keyBody]: value,
+                                }));
+                            }
+                        }}
+                    >
+                        {/* 🔹 TUTTI OPTION */}
+                        <MenuItem value={9999}>Tutti</MenuItem>
+
+                        {arrayValues?.map((el) => (
+                            <MenuItem key={el} value={el}>
+                                {inputLabel === "Mese" ? mesiGrid[el] : el}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            </MainBoxContainer>
+            );
         case "select_value_nobody":
             return ( !hidden &&  keyBody && arrayValues &&
             <MainBoxContainer>
@@ -261,7 +335,7 @@ const MainFilter = <T,>({
                     >
                         {arrayValues?.map((el) => (
                             <MenuItem
-                                key={Math.random()}
+                                key={el}
                                 value={el}
                             >
                                 {inputLabel === "Mese" ? mesiGrid[el] : el}
@@ -321,7 +395,8 @@ const MainFilter = <T,>({
                             }
                             clearOnChangeFilter();
                         }}
-                        format="dd/MM/yyyy"
+                        views={viewDate}
+                        format={format}
                         slotProps={{
                             textField: {
                                 error:error,
@@ -335,6 +410,7 @@ const MainFilter = <T,>({
                 return (
                     <MainBoxContainer>
                         <Autocomplete
+                            disabled={disabled}
                             fullWidth
                             sx={{
                              
@@ -377,7 +453,7 @@ const MainFilter = <T,>({
                                             title={getLabel(option)}
                                             key={key}
                                             placement="top"
-                                        >
+                                        > 
                                             <Chip
                                                 {...tagProps}
                                                 label={

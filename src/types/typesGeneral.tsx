@@ -88,13 +88,6 @@ export interface MainState{
     primoInserimetoCommessa:boolean,
     nomeEnteClickOn:string,
     datiFatturazione:boolean, // parametro utilizato in modulo commessa per capire se accettare l'inserimento commessa o fare il redirect t dati fatturazione se non sono stati inseriti
-    relSelected:{
-        nomeEnteClickOn:string,
-        mese:number,
-        anno:number,
-        idElement:string,
-        id:string
-    },
     apiError:number|string|null,
     authenticated:boolean,
     badgeContent:number,

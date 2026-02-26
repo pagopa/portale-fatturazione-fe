@@ -19,7 +19,6 @@ export interface HeaderGridCustom {
 export const headerNameAsyncDoc: HeaderGridCustom[] = [
     { label: '',align:'center',width:'60px', headerAction:false,gridOpenDetail:(disabled,open,setOpen) =>
         <IconButton
-            aria-label="Espandi"
             size="medium"
             onClick={() => setOpen && setOpen(!open)}
             disabled={disabled}
@@ -36,7 +35,6 @@ export const headerNameAsyncDoc: HeaderGridCustom[] = [
     { label: '',align:'center',width:'60',headerAction:false,
         gridAction:(fun,color,disabled,obj) =>
             <IconButton
-                aria-label="Scarica"
                 size="medium"
                 onClick={() => fun(obj)}
                 disabled={disabled}

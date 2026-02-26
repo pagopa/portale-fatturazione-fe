@@ -149,7 +149,6 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
                             <div className='d-flex ms-3'>
                                 {status === 'immutable' ? null:
                                     <IconButton
-                                        aria-label="Edit"
                                         color="primary"
                                         size="small"
                                         onClick={(e)=> editArray(e, email)}
@@ -157,7 +156,6 @@ const  DynamicInsert : React.FC<DynamicInsertProps> = (props) => {
                                     </IconButton>}
                                 {status === 'immutable' ? null:
                                     <IconButton
-                                        aria-label="Scarica"
                                         size="medium"
                                         onClick={(e) => deleteElementFromArr(e, email)}
                                     > <DeleteIcon

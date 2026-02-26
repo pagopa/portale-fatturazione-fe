@@ -22,7 +22,7 @@ export enum PathPf {
     MODULOCOMMESSA = "/send/modulocommessa", 
     PDF_COMMESSA = "/send/pdfmodulocommessa",
     LISTA_REL = "/send/listarel",
-    PDF_REL = "/send/relpdf",
+    PDF_REL = "/send/fatturapdf",
     ADESIONE_BANDO = "/send/adesionealbando",
     FATTURAZIONE = "/send/fatturazione",
     LISTA_DOC_EMESSI = "/send/listadocemessi",
@@ -49,10 +49,13 @@ export enum PathPf {
     FATTURAZIONE_EN = "/ente/fatturazione",
     DATI_FATTURAZIONE_EN = "/ente/datidifatturazione", 
     LISTA_REL_EN = "/ente/listarel",
-    PDF_REL_EN = "/ente/relpdf",
+    PDF_REL_EN = "/ente/fatturapdf",
     LISTA_NOTIFICHE_EN = "/ente/listanotifiche",
     MODULOCOMMESSA_EN = "/ente/modulocommessa", 
     PDF_COMMESSA_EN = "/ente/pdfmodulocommessa",
+    LISTA_STORICO_DOCUMENTI = "/ente/storicodoc",
+    DOCUMENTI_EMESSI = "/ente/docemessi",
+    DOCUMENTI_SOSPESI = "/ente/docsospesi",
 
     //REC CON
     LISTA_NOTIFICHE_REC_CON = "/reccon/listanotifiche"
@@ -75,7 +78,7 @@ export enum PathRoutePf {
     MODULOCOMMESSA = "modulocommessa", 
     PDF_COMMESSA = "pdfmodulocommessa",
     LISTA_REL = "listarel",
-    PDF_REL = "relpdf",
+    PDF_REL = "fatturapdf",
     ADESIONE_BANDO = "adesionealbando",
     FATTURAZIONE = "fatturazione",
     LISTA_DOC_EMESSI = "listadocemessi",
@@ -97,6 +100,10 @@ export enum PathRoutePf {
     API_KEY_ENTE = "apikeys",
     STORICO_CONTEST_ENTE = "storicoente",
     INSERIMENTO_CONTESTAZIONI_ENTE = "contestazioniente",
+  
+    LISTA_STORICO_DOCUMENTI = "storicodoc",
+    DOCUMENTI_EMESSI = "docemessi",
+    DOCUMENTI_SOSPESI = "docsospesi",
 
     
 }

@@ -137,12 +137,13 @@ const Storico: React.FC = () => {
                 setValueYears(["Tutti",...res.data]);
                 
                 if(isInitialRender.current && Object.keys(filters).length > 0){
-                    const newBody = {...filters.body,anno:null};
+                  
                     setBodyGetLista(filters.body);
-                    getListaContestazioni(newBody,filters.page+1,filters.rows);
-                    if(newBody.anno !== null){
-                        getMesi(newBody.anno);
+                    getListaContestazioni(filters.body,filters.page+1,filters.rows);
+                    if(filters.body.anno !== null && filters.body.anno !== "Tutti"){
+                        getMesi(filters.body.anno);
                     }
+                   
                     setTipologiaSelected(filters.tipologiaSelcted);
                     setValueAutocomplete(filters.valueAutocomplete);
                     setPage(filters.page);
@@ -160,9 +161,17 @@ const Storico: React.FC = () => {
     const getMesi = async (anno) => {
         await getMesiContestazioni(token, profilo.nonce,anno).then((res)=> {
             setArrayMesi(res.data);
+            if(!isInitialRender.current){
+                setGetListaContestazioniRunning(false);
+            }
+            
         }).catch((err)=>{
             setArrayMesi([]);
             manageError(err,dispatchMainState);  
+            if(!isInitialRender.current){
+    
+                setGetListaContestazioniRunning(false);
+            }
         });
     };
 
@@ -187,7 +196,7 @@ const Storico: React.FC = () => {
     const getListaContestazioni = async(body,pag, rowpag) => {
         setGetListaContestazioniRunning(true);
         let newBody = body;
-        if(bodyGetLista.anno === "Tutti"){
+        if(body.anno === "Tutti" || body.anno === ""|| body.anno === null){
             newBody = {...body,anno:null};
         }
         await getListaStorico(token,profilo.nonce,newBody,pag,rowpag).then((res)=>{
@@ -210,17 +219,19 @@ const Storico: React.FC = () => {
             setDataGrid(orderDataCustom);
             setTotalContestazioni(res.data.count);
             setGetListaContestazioniRunning(false);
+            isInitialRender.current = false;
         }).catch((err)=>{
             setDataGrid([]);
             setTotalContestazioni(0);
             setGetListaContestazioniRunning(false);
+            isInitialRender.current = false;
             manageError(err,dispatchMainState);
         });
     };
 
     const handleAnnullaButton = () => {
         setBodyGetLista({
-            anno:valueYears[0],
+            anno:"",
             mese:'',
             idEnti:[],
             idTipologiaReports:[]
@@ -232,7 +243,7 @@ const Storico: React.FC = () => {
             mese:'',
             idEnti:[],
             idTipologiaReports:[],
-            anno:valueYears[0]
+            anno:""
         },1,10);
         resetFilters();
     };
@@ -320,6 +331,7 @@ const Storico: React.FC = () => {
                                         onChange={(e) =>{
                                             setBodyGetLista((prev)=> ({...prev, ...{anno:e.target.value,mese:''}}));
                                             if(e.target.value !== "Tutti"){
+                                                setGetListaContestazioniRunning(true);
                                                 getMesi(e.target.value);
                                             }else{
                                                 setArrayMesi([]);
@@ -346,6 +358,7 @@ const Storico: React.FC = () => {
                                 <FormControl
                                     fullWidth
                                     size="medium"
+                                    disabled={bodyGetLista.anno === "Tutti" ||bodyGetLista.anno === null}
                                 >
                                     <InputLabel> Mese</InputLabel>
                                     <Select
@@ -380,6 +393,7 @@ const Storico: React.FC = () => {
                                 limitTags={1}
                                 value={tipologiaSelcted}
                                 options={tipologieDoc}
+                                isOptionEqualToValue={(option, value) => option.idTipologiaReport === value.idTipologiaReport}
                                 disableCloseOnSelect
                                 getOptionLabel={(option:TipologieDoc) => option.categoriaDocumento}
                                 renderOption={(props, option,{ selected }) =>(
@@ -395,6 +409,10 @@ const Storico: React.FC = () => {
                                 )}
                                 renderInput={(params) => {
                                     return <TextField {...params}
+                                        inputProps={{
+                                            ...params.inputProps,
+                                            readOnly: true,
+                                        }}
                                         label="Categoria Doc." 
                                         placeholder="Categoria Doc." />;
                                 }}
@@ -427,7 +445,9 @@ const Storico: React.FC = () => {
                         <div className="col-3">
                             <div className="d-flex justify-content-end me-5" style={{width:'80%'}}>
                                 <Tooltip  title="Contestazioni multiple">
-                                    <Button  variant="outlined" onClick={()=> navigate(PathPf.INSERIMENTO_CONTESTAZIONI)} ><NoteAddIcon></NoteAddIcon></Button>
+                                    <span>
+                                        <Button  variant="outlined" onClick={()=> navigate(PathPf.INSERIMENTO_CONTESTAZIONI)} ><NoteAddIcon></NoteAddIcon></Button>
+                                    </span>
                                 </Tooltip>
                             </div>
                         </div>

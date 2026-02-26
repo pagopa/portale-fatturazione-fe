@@ -21,7 +21,6 @@ export interface HeaderGridCustom {
 export const headerNameModComTrimestraleENTE: HeaderGridCustom[] = [
     { label: '',align:'center',width:'60px', headerAction:false,gridOpenDetail:(disabled,open,setOpen) =>
         <IconButton
-            aria-label="Espandi"
             size="medium"
             onClick={() => setOpen && setOpen(!open)}
             disabled={disabled}
@@ -34,7 +33,7 @@ export const headerNameModComTrimestraleENTE: HeaderGridCustom[] = [
         <Tooltip
             placement="bottom"
             title={label}
-        ><CheckCircleIcon sx={{ color: color }}/></Tooltip> },
+        ><span><CheckCircleIcon sx={{ color: color }}/></span></Tooltip> },
     // { label: 'Tot. Notifiche',align:'center',width:'100px',headerAction:false},
     { label: '',align:'center',width:'60',headerAction:false,
         gridAction:(fun,color,disabled,obj) =>

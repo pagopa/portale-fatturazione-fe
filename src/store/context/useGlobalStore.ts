@@ -78,7 +78,8 @@ export const useGlobalStore = create(
                 apiKeyPage: {
                     visible: null,
                     keys: [],
-                },
+                }
+
             },
             setMainData: (updater) =>
                 set((state) => ({
@@ -87,7 +88,7 @@ export const useGlobalStore = create(
         }),
         {
             name: "globalStatePF",
-            version: 1,
+            version: 3,
             partialize: (state: GlobalStore) => ({
                 mainState: state.mainState,
                 statusQueryGetUri: state.statusQueryGetUri,

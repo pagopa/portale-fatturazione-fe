@@ -22,7 +22,7 @@ export const subHeaderNameModComTrimestraleENTE: HeaderGridCustom[] = [
         return ( <Tooltip
             placement="bottom"
             title={label}
-        ><CheckCircleIcon sx={{ color: color }}/></Tooltip> );}},
+        ><span><CheckCircleIcon sx={{ color: color }}/></span></Tooltip> );}},
     { label: 'Inserimento',align:'center',width:'100px',headerAction:false, headerChip:(title,label,color) => <Chip variant="outlined" label={label} sx={{backgroundColor:color}} /> },
     { label: 'Data inserimento',align:'center',width:'160px', headerAction:false},
     { label: 'Data chiusura',align:'center',width:'160px', headerAction:false},

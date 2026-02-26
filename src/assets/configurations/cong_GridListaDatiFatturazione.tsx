@@ -3,7 +3,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Tooltip } from "@mui/material";
 
 export  const configListaFatturazione: GridColDef[] = [
-    { field: 'ragioneSociale', headerName: 'Ragione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <Tooltip key={param.row.id} title={param.row.ragioneSociale.length > 20 ? param.row.ragioneSociale : null }><a className="mese_alidita text-primary fw-bolder" href="/">{param.row.ragioneSociale?.toString().length > 20 ? param.row.ragioneSociale?.toString().slice(0, 20) + '...' : param.row.ragioneSociale}</a></Tooltip>},
+    { field: 'ragioneSociale', headerName: 'Ragione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left',  renderCell: (param:any) => <Tooltip key={param.row.id} title={param.row.ragioneSociale.length > 20 ? param.row.ragioneSociale : null }><span><a className="mese_alidita text-primary fw-bolder" href="/">{param.row.ragioneSociale?.toString().length > 20 ? param.row.ragioneSociale?.toString().slice(0, 20) + '...' : param.row.ragioneSociale}</a></span></Tooltip>},
     { field: 'cup', headerName: 'CUP', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align: 'center' },
     { field: 'splitPayment', headerName: 'Split payment', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align: 'center' },
     { field: 'idDocumento', headerName: 'ID Documento', width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center', align: 'center' },

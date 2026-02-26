@@ -47,7 +47,7 @@ const BasicAlerts:React.FC = () => {
 
     if(mainState.apiError === 400 || errorAlert.error === 400 || mainState.apiError === 500 || errorAlert.error === 500||mainState.apiError === 419 || errorAlert.error === 419||mainState.apiError === 401 || mainState.apiError === 403|| errorAlert.error === 401){
         colorAlert = 'error';
-    }else if(mainState.apiError === 404 ||errorAlert.error === 404|| mainState.apiError === '404_DOWNLOAD' || mainState.apiError === 'PRESA_IN_CARICO_DOCUMENTO'|| mainState.apiError === '404_NO_CONTESTAZIONI'||mainState.apiError === 'PRESA'|| mainState.apiError === '404_RIGHE_ID'|| mainState.apiError === 'PRESA'||mainState.apiError === "SAVE_KEY_OK"||mainState.apiError === "NO_ENTE_FILTRI_CONTESTAZIONE"){
+    }else if(mainState.apiError === 404 ||errorAlert.error === 404|| mainState.apiError === '404_DOWNLOAD' || mainState.apiError === 'PRESA_IN_CARICO_DOCUMENTO'|| mainState.apiError === '404_NO_CONTESTAZIONI'||mainState.apiError === 'PRESA'|| mainState.apiError?.toString().includes('404_RIGHE_ID')|| mainState.apiError === 'PRESA'||mainState.apiError === "SAVE_KEY_OK"||mainState.apiError === "NO_ENTE_FILTRI_CONTESTAZIONE"){
         colorAlert = "info";
     }else if(mainState.apiError === 400 || errorAlert.error === 400 || mainState.apiError === "CREAT_KEY_KO" || mainState.apiError === "REGEN_KEY_KO"||mainState.apiError === "SAVE_KEY_KO"){
         colorAlert = 'error';
@@ -57,7 +57,7 @@ const BasicAlerts:React.FC = () => {
         colorAlert = 'warning';
     }else if(!mainState.apiError && !errorAlert.error){
         colorAlert = 'warning';
-    }else if(mainState.apiError === "FORMAT_FILE_ERROR" || mainState.apiError === "NO_INSERIMENTO_COMMESSA"){
+    }else if(mainState.apiError === "FORMAT_FILE_ERROR" || mainState.apiError === "NO_INSERIMENTO_COMMESSA"|| mainState.apiError === "AZURE_LOGIN_ERROR"){
         colorAlert = 'error';
     }
 

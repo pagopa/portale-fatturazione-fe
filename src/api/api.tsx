@@ -57,8 +57,8 @@ export const manageErrorDownload = (res:string,dispatchMainState) =>{
     if(res === '404'){
         const value = res+"_DOWNLOAD";
         handleModifyMainState({apiError:value});
-    }else if(res === '404_RIGHE_ID'){
-        handleModifyMainState({apiError:'404_RIGHE_ID'});
+    }else if(res.includes('404_RIGHE_ID')){
+        handleModifyMainState({apiError:res});
     }
 };
 

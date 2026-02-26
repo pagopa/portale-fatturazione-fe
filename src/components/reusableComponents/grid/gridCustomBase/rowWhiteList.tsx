@@ -39,8 +39,7 @@ const RowWhiteList :React.FC<RowWhite>  = ({sliced, apiGet, handleClickOnGrid, e
         }}>
             <TableCell align="center"  sx={{ width: "80px" }}>
                 <Checkbox key={Math.random()} onClick={handleCheckSingleRow} disabled={!element.cancella} checked={checkIfChecked(element.idWhite)} />
-            </TableCell>
-                
+            </TableCell> 
             {
                 Object.values(sliced).map((value:any, i:number)=>{
                     // stato per loa switch utilizzato nella page tipologia contratto
@@ -49,14 +48,11 @@ const RowWhiteList :React.FC<RowWhite>  = ({sliced, apiGet, handleClickOnGrid, e
                 
                     return (
                         <Tooltip key={Math.random()} title={(value.length > 20 && i === 0) ? value : null}>
-                         
                             <TableCell align="center" sx={cssFirstColum}>
                                 {valueEl}
                             </TableCell>
-                         
                         </Tooltip>
-                    );
-                    
+                    ); 
                 })
             }
         </TableRow>

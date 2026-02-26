@@ -348,10 +348,9 @@ const AreaPersonaleUtenteEnte : React.FC = () => {
     if(loadingData){
         return(
             <SuspenseDatiFatturazione></SuspenseDatiFatturazione>
-        );
-                
+        );          
     }
-    console.log({ss:setOpenBasicModal_DatFat_ModCom,openBasicModal_DatFat_ModCom});
+
     return (
                 
         <div >

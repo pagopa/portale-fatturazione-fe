@@ -1,5 +1,5 @@
 export interface BodyAccertamenti{
-    anno:number,
+    anno:number|"",
     mese:null|number,
     tipologiaFattura:string[]|[],
     idEnti:string[]|[]

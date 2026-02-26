@@ -3,8 +3,8 @@ import { Dispatch, SetStateAction } from "react";
 import { MainState } from "./typesGeneral";
 import { ActionReducerType } from "../reducer/reducerMainState";
 export interface BodyFatturazione{
-    anno:number,
-    mese:number,
+    anno:number|"",
+    mese:number|"",
     tipologiaFattura:string[],
     idEnti:string[],
     cancellata:boolean,
@@ -78,13 +78,6 @@ export interface GridCollapsible{
     //setShowedData: Dispatch<SetStateAction<FattureObj[]>>,
 }
 
-
-export type HeaderCollapsible = {
-    name:string,
-    align:"center" | "inherit" | "left" | "right" | "justify" | undefined,
-    id:number
-}
-
 export interface ModalSapProps {
     open:{show:boolean,who:number},
     setOpen:any,
@@ -119,3 +112,11 @@ export interface ModalResetFilterProps {
     getListaFatture:any,
     filterNotExecuted:BodyFatturazione
 }
+
+
+export type HeaderCollapsible = {
+    name:string,
+    align:"center" | "inherit" | "left" | "right" | "justify" | undefined,
+    id:number
+}
+

@@ -248,7 +248,7 @@ const DettaglioStoricoContestazione: React.FC = () => {
                         {(singleContest.stato === 3) && 
                         <>
                             <Box sx={{ margin: 5 , backgroundColor:'#F8F8F8', padding:'10px'}}>
-                                <Table size="small" aria-label="purchases">
+                                <Table size="small">
                                     <TableHead>
                                         <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
                                             <TableCell align="center" sx={{ width:"300px"}}>Contestate Ente</TableCell>
@@ -269,7 +269,7 @@ const DettaglioStoricoContestazione: React.FC = () => {
                             </Box>
 
                             <Box sx={{ margin:5, backgroundColor:'#F8F8F8', padding:'10px'}}>
-                                <Table size="small" aria-label="purchases">
+                                <Table size="small">
                                     <TableHead>
                                         <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
                                             <TableCell align="center" sx={{ width:"300px"}}>Risposte Ente</TableCell>
@@ -290,7 +290,7 @@ const DettaglioStoricoContestazione: React.FC = () => {
                             </Box>
                             <div className="d-flex justify-content-between">
                                 <Box sx={{ marginX: 5 , backgroundColor:'#F2F2F2', padding:'10px'}}>
-                                    <Table size="small" aria-label="purchases">
+                                    <Table size="small">
                                         <TableHead>
                                             <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
                                                 <TableCell align="center" sx={{ width:"300px"}} ><Typography variant="h6">Fatturabili</Typography></TableCell>
@@ -304,7 +304,7 @@ const DettaglioStoricoContestazione: React.FC = () => {
                                     </Table>
                                 </Box>
                                 <Box sx={{ marginX: 5 , backgroundColor:'#F2F2F2', padding:'10px'}}>
-                                    <Table size="small" aria-label="purchases">
+                                    <Table size="small">
                                         <TableHead>
                                             <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
                                                 <TableCell align="center" sx={{ width:"300px"}} ><Typography variant="h6">Non Fatturabili</Typography></TableCell>

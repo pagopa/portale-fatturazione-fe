@@ -5,7 +5,7 @@ import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import { useNavigate } from "react-router";
 import { PathPf } from "../../types/enum";
 import PaymentsIcon from '@mui/icons-material/Payments';
-import SendIcon from '@mui/icons-material/Send';
+
 
 
 const SideNavPagopa = () => {
@@ -40,7 +40,7 @@ const SideNavPagopa = () => {
             backgroundColor: 'background.paper',
         }}
         >
-            <List component="nav" aria-label="main piattaforma-notifiche sender">
+            <List component="nav">
                 <ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick(PathPf.ANAGRAFICAPSP)}>
                     <ListItemIcon>
                         <ReceiptIcon fontSize="inherit" />

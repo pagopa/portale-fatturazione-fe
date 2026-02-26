@@ -59,7 +59,7 @@ const ModalConfermaRipristina : React.FC<ModalConfermaRipristinaProps> =({setOpe
                         </Typography>
                         <div className='mt-3'>
                             <Typography id="modal-modal-description" variant="body1" sx={{ mt: 2 }}>
-                                {`${filterInfo.cancellata ? 'Ripristino':'Sospensione'} delle fatture di ${month[filterInfo.mese-1]?.toLocaleUpperCase()}: confermi l'operazione?`}
+                                {`${filterInfo.cancellata ? 'Ripristino':'Sospensione'} delle fatture di ${month[(filterInfo.mese||0)-1]?.toLocaleUpperCase()}: confermi l'operazione?`}
                             </Typography>
                         </div>
                         
@@ -75,7 +75,7 @@ const ModalConfermaRipristina : React.FC<ModalConfermaRipristinaProps> =({setOpe
                             </Typography>
                          
                            
-                            <Table size="small" aria-label="purchases"sx={{}}>
+                            <Table size="small">
                                 <TableHead >
                                     <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
                                         <TableCell sx={{ marginLeft:"16px"}}> Ragione Sociale</TableCell>

@@ -425,8 +425,7 @@ const ProcessiOrchestartore:React.FC = () =>{
                 disabled={getListaLoading}
                 widthCustomSize="auto"
                 body={bodyGetLista}
-                headerAction={headerAction}
-            ></GridCustom>
+                headerAction={headerAction}/>
             <ModalLoading 
                 open={getListaLoading} 
                 setOpen={setGetListaLoading}

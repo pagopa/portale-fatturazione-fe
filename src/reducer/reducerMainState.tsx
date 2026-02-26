@@ -1,4 +1,3 @@
-import { redirect } from "../api/api";
 import { MainState } from "../types/typesGeneral";
 export interface ActionReducerType{
     type:string,
@@ -15,13 +14,7 @@ export const initialState:MainState =  {
     primoInserimetoCommessa:true,// la commessa mese corrente è stata inserita?
     statusPageDatiFatturazione:'immutable',
     statusPageInserimentoCommessa:'immutable',
-    relSelected:{
-        nomeEnteClickOn:'',
-        mese:0,
-        anno:0,
-        idElement:'',
-        id:""
-    },
+    datiFatturazioneNotCompleted:false,
     apiError:null,
     authenticated:false,
     badgeContent:0,
@@ -41,7 +34,6 @@ export const initialState:MainState =  {
         reportId:0
 
     },
-    datiFatturazioneNotCompleted:false,
 };
 
 

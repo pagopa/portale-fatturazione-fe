@@ -3,6 +3,7 @@ import { DataGridCommessa } from "../types/typeModuloCommessaElenco";
 import { ArrayTipologieCommesse, DatiModuloCommessaPdf, ModuliCommessa } from "../types/typeModuloCommessaInserimento";
 import { month, objMesiWithZero } from "./reusableArrayObj";
 import { ManageErrorResponse } from "../types/typesGeneral";
+import { Fattura } from "../page/ente/docConEme";
 
 export const fixResponseForDataGrid = (arr:any[]):any =>{
       
@@ -277,3 +278,111 @@ export function toLocalISOString(date: Date) {
 export function isManageErrorResponse(err: any): err is ManageErrorResponse {
     return err && typeof err === "object" && "statusCode" in err;
 }
+
+
+export function groupByAnno(array) {
+    return array.reduce((acc, item) => {
+        const { anno, tipologiaFattura, mese, dataFattura } = item;
+
+        if (!acc[anno]) {
+            acc[anno] = {
+                tipologiaFattura: [],
+                mese: [],
+                dataFattura: [],
+            };
+        }
+
+        const tipo = tipologiaFattura.trim();
+
+        if (!acc[anno].tipologiaFattura.includes(tipo)) {
+            acc[anno].tipologiaFattura.push(tipo);
+        }
+
+        if (!acc[anno].mese.includes(mese)) {
+            acc[anno].mese.push(mese);
+        }
+
+        if (!acc[anno].dataFattura.includes(dataFattura)) {
+            acc[anno].dataFattura.push(dataFattura);
+        }
+
+        return acc;
+    }, {});
+}
+
+
+export const sortDates = (array: Fattura[], ascending = true) => {
+    const normalize = (dateStr: string) => {
+        const [day, month, year] = dateStr.split('/');
+        return `${year}${month.padStart(2, '0')}${day.padStart(2, '0')}`;
+    };
+
+    return [...array].sort((a, b) => {
+        const dateA = normalize(a.dataFattura);
+        const dateB = normalize(b.dataFattura);
+
+        return ascending
+            ? dateA.localeCompare(dateB)
+            : dateB.localeCompare(dateA);
+    });
+};
+
+export const sortMonthYear = (array: Fattura[], ascending = true) => {
+    return [...array].sort((a, b) => {
+        const parse = (s: string) => {
+            const [month, year] = s.split('/');       // ["02","2024"]
+            return Number(year + month.padStart(2, '0')); // 202402
+        };
+        return ascending
+            ? parse(a.identificativo) - parse(b.identificativo)
+            : parse(b.identificativo) - parse(a.identificativo);
+    });
+};
+
+export const sortByNumeroFattura = (array, state,key) => {
+    if (state === true) {
+        return [...array].sort((a, b) => a[key] - b[key]);
+    }else  if (state === false) {
+        return [...array].sort((a, b) => b[key] - a[key]);
+    }
+    return array;
+};
+
+export const sortByTotale = (array: any[], state: boolean, key: string) => {
+    // helper to clean the value: remove non-digits
+    const parseValue = (val: string | number) => {
+        if (typeof val === 'number') return val;
+        if (typeof val === 'string') {
+        // keep digits and minus sign
+            const cleaned = val.replace(/[^0-9-]/g, '');
+            return Number(cleaned);
+        }
+        return 0;
+    };
+
+    if (state === true) {
+        // ascending
+        return [...array].sort(
+            (a, b) => {
+                return parseValue(a[key]) - parseValue(b[key]);
+            }
+        );
+    } else if (state === false) {
+        // descending
+        return [...array].sort(
+            (a, b) => parseValue(b[key]) - parseValue(a[key])
+        );
+    }
+
+    return array;
+};
+
+export const sortByTipoFattura = (array, state,key) => {
+    if (state === true) {
+        return array.sort((a, b) => a[key].localeCompare(b[key]));
+    }else  if (state === false) {
+        return array.sort((a, b) => b[key].localeCompare(a[key]));
+    }
+    return array;
+};
+

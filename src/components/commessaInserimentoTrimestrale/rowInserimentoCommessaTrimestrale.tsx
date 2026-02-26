@@ -5,7 +5,7 @@ interface RowInsComTrimestraleProps {
     textBoxHidden : boolean
     setValue:(e,key) => void,
     keys:string[],
-    values:string|number[]
+    values:string[]|number[]
     meseAnno:string,
     modifica:boolean,
     totale:number,
@@ -41,7 +41,7 @@ const RowInserimentoCommessaTrimestrale : React.FC<RowInsComTrimestraleProps> = 
                     disabled={!modifica}//da modificare
                     size="small"
                     error={errorAnyValueIsEqualNull && values[0] === null }
-                    value={values[0] === 0 ? 0 : (values[0]||"")}
+                    value={values?.[0] ?? ""}
                     InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                     onChange={(e)=>setValue(e,keys[0])}
                 />
@@ -51,18 +51,17 @@ const RowInserimentoCommessaTrimestrale : React.FC<RowInsComTrimestraleProps> = 
                 item
                 xs={2}
             >
-                {keys.length < 2 ? null
-                    : (
+                {keys.length > 1  &&
                         <TextField
                             sx={{ backgroundColor: '#ffffff', width: '100px' }}
                             disabled={!modifica}
                             size="small"
-                            value={values[1] === 0 ? 0 : (values[1]||"")}
+                            value={values?.[1] ?? ""}
                             error={errorAnyValueIsEqualNull && values[1] === null }
                             InputProps={{ inputProps: { min: 0, style: { textAlign: 'center' }} }}
                             onChange={(e)=>setValue(e,keys[1])}
                         />
-                    )}
+                }
             </Grid>
             <Grid
                 sx={{ textAlign: 'center', marginTop:'8.5px' }}

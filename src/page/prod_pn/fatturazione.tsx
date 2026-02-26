@@ -65,8 +65,8 @@ const Fatturazione : React.FC = () =>{
 
    
     const [bodyFatturazione, setBodyFatturazione] = useState<BodyFatturazione>({
-        anno:0,
-        mese:0,
+        anno:"",
+        mese:"",
         tipologiaFattura:[],
         idEnti:[],
         cancellata:false,
@@ -75,8 +75,8 @@ const Fatturazione : React.FC = () =>{
     });
 
     const [bodyFatturazioneDownload, setBodyFatturazioneDownload] = useState<BodyFatturazione>({
-        anno:0,
-        mese:0,
+        anno:"",
+        mese:"",
         tipologiaFattura:[],
         idEnti:[],
         cancellata:false,
@@ -286,9 +286,9 @@ const Fatturazione : React.FC = () =>{
         }
         setShowDownloading(true);
         await downloadFatturePagopa(token,profilo.nonce, body).then(response => response.blob()).then((response)=>{
-            let title = `Lista fatturazione/${month[body.mese - 1]}/${body.anno}.xlsx`;
+            let title = `Lista fatturazione/${month[(body.mese||0) - 1]}/${body.anno}.xlsx`;
             if(body.idEnti.length === 1 && gridData[0]){
-                title = `Lista fatturazione/ ${gridData[0]?.ragionesociale}/${month[body.mese - 1]}/${body.anno}.xlsx`;
+                title = `Lista fatturazione/ ${gridData[0]?.ragionesociale}/${month[(body.mese||0)  - 1]}/${body.anno}.xlsx`;
             }
             saveAs(response,title);
             setShowDownloading(false);
@@ -312,9 +312,9 @@ const Fatturazione : React.FC = () =>{
             }
             throw '404';
         }).then((response)=>{
-            let title = `Lista report/${month[body.mese - 1]}/${body.anno}.zip`;
+            let title = `Lista report/${month[(body.mese||0)  - 1]}/${body.anno}.zip`;
             if(body.idEnti.length === 1 && gridData[0]){
-                title = `Lista report/ ${gridData[0]?.ragionesociale}/${month[body.mese - 1]}/${body.anno}.zip`;
+                title = `Lista report/ ${gridData[0]?.ragionesociale}/${month[(body.mese||0)  - 1]}/${body.anno}.zip`;
             }
             saveAs(response,title);
             setShowDownloading(false);
@@ -428,7 +428,7 @@ const Fatturazione : React.FC = () =>{
 
 
     return (
-        <MainBoxStyled title={"Documenti emessi"}>
+        <MainBoxStyled title={"Documenti contabili emessi"}>
             <ResponsiveGridContainer >
                 <MainFilter 
                     filterName={"select_value_string"}
@@ -474,6 +474,7 @@ const Fatturazione : React.FC = () =>{
                     keyValue={"id"}
                     keyDescription='descrizione'
                     keyBody={"cancellata"}
+                    defaultValue={""}
                     arrayValues={[{id:1,descrizione:"Fatturate"},{id:2,descrizione:"Non fatturate"}]}
                     extraCodeOnChange={(e)=>{
                       
@@ -562,6 +563,7 @@ const Fatturazione : React.FC = () =>{
                     keyDescription='description'
                     keyBody={"inviata"}
                     arrayValues={statoInvio}
+                    defaultValue={""}
                     extraCodeOnChange={(e)=>{ 
                         const value = Number(e);
                         setBodyFatturazione((prev)=>({...prev,...{inviata:value}}));
@@ -650,8 +652,8 @@ const Fatturazione : React.FC = () =>{
                 open={openSapModal} 
                 setOpen={setOpenSapModal}
                 responseTipologiaSap={responseTipologieSap}
-                mese={bodyFatturazioneDownload.mese}
-                anno={bodyFatturazioneDownload.anno}
+                mese={bodyFatturazioneDownload.mese||0}
+                anno={bodyFatturazioneDownload.anno||0}
                 dispatchMainState={dispatchMainState}
                 getListaFatture={getlistaFatturazione}
                 bodyFatturazioneDownload={bodyFatturazioneDownload}></ModalSap>

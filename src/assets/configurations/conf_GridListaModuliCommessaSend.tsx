@@ -6,7 +6,7 @@ import { Chip, Tooltip } from "@mui/material";
 
 
 export const headerNameListaModuliCommessaSEND: GridColDef[] = [
-    { field: 'regioneSociale', headerName: 'Ragione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left', align:"left", renderCell: (param:any) => <Tooltip key={param.row.idEnte} title={param.row.ragioneSociale.length > 20 ? param.row.ragioneSociale : null }><a className="mese_alidita text-primary fw-bolder" href="/">{param.row.ragioneSociale?.toString().length > 20 ? param.row.ragioneSociale?.toString().slice(0, 20) + '...' : param.row.ragioneSociale}</a></Tooltip>},
+    { field: 'regioneSociale', headerName: 'Ragione Sociale', width: 200 , headerClassName: 'super-app-theme--header', headerAlign: 'left', align:"left", renderCell: (param:any) => <Tooltip key={param.row.idEnte} title={param.row.ragioneSociale.length > 20 ? param.row.ragioneSociale : null }><span><a className="mese_alidita text-primary fw-bolder" href="/">{param.row.ragioneSociale?.toString().length > 20 ? param.row.ragioneSociale?.toString().slice(0, 20) + '...' : param.row.ragioneSociale}</a></span></Tooltip>},
  
     { field: 'meseValidita', headerName: 'Mese',sortable: false, width: 150, headerClassName: 'super-app-theme--header', headerAlign: 'center',align:"center",  renderCell: (param:{row:GridElementListaCommesse}) => <div className="MuiDataGrid-cellContent" title={mesiGrid[param.row.meseValidita]} role="presentation">{mesiGrid[param.row.meseValidita]}</div>},
     { field: 'stato', headerName: 'Stato',sortable: false, width:150,headerAlign: 'center',align:"center",disableColumnMenu :true, renderCell: ((param:{row:GridElementListaCommesse}) =>{

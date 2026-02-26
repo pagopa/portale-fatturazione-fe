@@ -114,7 +114,7 @@ const ModalSap : React.FC<ModalSapProps> = ({open,setOpen,responseTipologiaSap,m
                             <Typography sx={{marginLeft:"6px"}} variant="h6" gutterBottom component="div">
                                     Fatture
                             </Typography>
-                            <Table size="small" aria-label="purchases">
+                            <Table size="small">
                                 <TableHead>
                                     <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
                                         <TableCell sx={{ marginLeft:"16px"}} >Tipologia Fattura</TableCell>

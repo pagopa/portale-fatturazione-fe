@@ -16,8 +16,8 @@ export interface TextRegioneSocialeRelProps{
 }
 
 export interface BodyRel{
-    anno:number,
-    mese:number,
+    anno:number|"",
+    mese:number|"",
     tipologiaFattura:string|null,
     idEnti:string[] | [],
     idContratto: string | null,
@@ -26,8 +26,8 @@ export interface BodyRel{
 } 
 
 export interface BodyRelSelfcare{
-    anno:number,
-    mese:number,
+    anno:number|"",
+    mese:number|"",
     tipologiaFattura:string|null,
     idContratto: string | null,
     caricata: number|null
@@ -55,7 +55,26 @@ export interface Rel {
     totaleDigitaleIva:number,
     totaleIva:number,
     firmata:string|null,
-    tipologiaContratto?:string|null
+    tipologiaContratto?:string|null,
+    fattureSospese:FatturaDettaglio[],
+    accontoAnalogico:number,
+    accontoDigitale:number,
+    stornoAnalogico:number,
+    stornoDigitale:number
+}
+
+export interface FatturaDettaglio {
+    idFattura: string;
+    dataFattura: string; // or Date (see note below)
+    progressivo: number;
+    tipoDocumento: string;
+    totaleFatturaImponibile: number;
+    totale: number;
+    metodoPagamento: string;
+    causale: string;
+    split: boolean;
+    inviata: number; // could also be boolean if 0/1
+    sollecito: string | null;
 }
 
 export interface BodyRelLog {

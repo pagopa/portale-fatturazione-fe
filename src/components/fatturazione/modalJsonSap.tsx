@@ -200,7 +200,7 @@ const ModalJsonSap = ({open,setOpen}) => {
                                 marginY:'2%'
                             }}
                         >
-                            <Table  aria-label="purchases">
+                            <Table>
                                 <TableHead sx={{position: "sticky", top:'0',zIndex:"2",backgroundColor: "#E3E6E9"}}>
                                     <TableRow >
                                         <TableCell sx={{ marginLeft:"16px"}} ></TableCell>

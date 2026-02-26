@@ -179,7 +179,6 @@ const EmailPsp:React.FC = () => {
         setInfoPageMailPsp({ page: 0, pageSize: 10 });
         setFiltersDownload(bodyGetLista);
         getListaMail(bodyGetLista); 
-        console.log({textValue});
         updateFilters(
             {
                 body:bodyGetLista,

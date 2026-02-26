@@ -51,6 +51,9 @@ import SideNavRecCon from '../layout/sideNavs/sideNavConRec';
 import { useGlobalStore } from '../store/context/useGlobalStore';
 import { createBrowserRouter } from 'react-router-dom';
 import { RoleBasedIndexRedirect } from './redirectRoute';
+import DocSos from '../page/ente/docContSos';
+import DocEm from '../page/ente/docConEme';
+import DocStorico from '../page/ente/docConStorico';
 import Messaggi from '../page/messaggi';
 import EmailPsp from '../page/prod_pagopa/emailpsp';
 import { useEffect } from 'react';
@@ -130,7 +133,7 @@ const router2 = createBrowserRouter([
                     { path: PathRoutePf.MODULOCOMMESSA, Component: ModuloCommessaInserimentoPn },
                     { path: PathRoutePf.PDF_COMMESSA+"/:annoPdf?/:mesePdf?", Component: ModuloCommessaPdf },
                     { path: PathRoutePf.LISTA_REL, Component: RelPage },
-                    { path: PathRoutePf.PDF_REL, Component: RelPdfPage },
+                    { path: PathRoutePf.PDF_REL+"/:pageFrom/:id", Component: RelPdfPage },
                     { path: PathRoutePf.ADESIONE_BANDO, Component: AdesioneBando },
                     { path: PathRoutePf.FATTURAZIONE, Component: Fatturazione },
                     { path: PathRoutePf.MESSAGGI, Component: Messaggi },
@@ -164,10 +167,13 @@ const router2 = createBrowserRouter([
                     {path: PathRoutePf.MODULOCOMMESSA,Component: ModuloCommessaInserimentoUtEn30},
                     {path: PathRoutePf.PDF_COMMESSA + "/:annoPdf?/:mesePdf?",Component: ModuloCommessaPdf},
                     {path: PathRoutePf.LISTA_REL,Component: RelPage},
-                    {path: PathRoutePf.PDF_REL,Component: RelPdfPage},
+                    {path: PathRoutePf.PDF_REL+"/:pageFrom/:id",Component: RelPdfPage},
                     {path: PathRoutePf.LISTA_NOTIFICHE, Component: ReportDettaglio},
                     {path: PathRoutePf.ASYNC_DOCUMENTI_ENTE, Component: AsyncDocumenti},
-                    {path: PathRoutePf.API_KEY_ENTE,Component: ApiKeyEnte}
+                    {path: PathRoutePf.API_KEY_ENTE,Component: ApiKeyEnte},
+                    {path: PathRoutePf.LISTA_STORICO_DOCUMENTI,Component: DocStorico},
+                    {path: PathRoutePf.DOCUMENTI_EMESSI,Component: DocEm},
+                    {path: PathRoutePf.DOCUMENTI_SOSPESI,Component: DocSos} 
                 ],
             },
             {
@@ -181,7 +187,6 @@ const router2 = createBrowserRouter([
                 path: "*",
                 Component: () => <RoleBasedIndexRedirect></RoleBasedIndexRedirect>,
             },
-           
         ],
     }, 
 ]);
@@ -213,6 +218,26 @@ function RouteErrorBoundary() {
         : error instanceof Error
             ? error.message
             : "Unknown error";
+    /*
+    function getErrorFileLine(error: unknown): string {
+        if (error instanceof Error && error.stack) {
+            // Dividiamo lo stack in righe
+            const lines = error.stack.split("\n");
+
+            // Cerchiamo la prima riga con il formato (file:line:col)
+            for (const line of lines) {
+                const match = line.match(/([a-zA-Z0-9_\-./]+\.tsx|\.ts|\.js):(\d+):(\d+)/);
+                if (match) {
+                    // match[0] è esattamente la parte file:line:column
+                    return match[0];
+                }
+            }
+        }
+        return "Unknown location";
+    }
+
+    const fileLine = getErrorFileLine(error);
+    */
 
     const handleClose = () => {
         localStorage.clear();
