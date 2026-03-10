@@ -246,7 +246,7 @@ function RouteErrorBoundary() {
     const handleCopy = () => {
         const infoObject = {
             page:location.pathname.split("/")?.filter(Boolean)?.pop()||"ERROR",
-            version:process.env.REACT_APP_VERSION,
+            version:import.meta.env.VITE_APP_VERSION,
             message:errorMessage
         };
         const stringMessage = JSON.stringify(infoObject);
@@ -268,7 +268,7 @@ function RouteErrorBoundary() {
             ERRORE!
                         </Typography>
                         <Typography fontSize={"1.15rem"} fontWeight={500}   id="modal-modal-description" sx={{ mt: 2 }}>
-                            {`${location.pathname.split("/")?.filter(Boolean)?.pop() } V.${process.env.REACT_APP_VERSION}`||`Generic V.${process.env.REACT_APP_VERSION}`}
+                            {`${location.pathname.split("/")?.filter(Boolean)?.pop() } V.${import.meta.env.VITE_APP_VERSION}`||`Generic V.${import.meta.env.VITE_APP_VERSION}`}
                         </Typography>
                         
                         <Typography fontSize={"1.15rem"} fontWeight={500} id="modal-modal-description" sx={{ mt: 2 }}>

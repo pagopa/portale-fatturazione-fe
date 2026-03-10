@@ -4,6 +4,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { ModalProps } from 'react-bootstrap';
 import Loader from '../loader';
+import { CircularProgress } from '@mui/material';
 const style = {
     position: 'absolute' as const,
     top: '50%',
@@ -40,10 +41,11 @@ const ModalLoading : React.FC<ModalProps> = ({setOpen, open, sentence, sentence2
             Attendere la fine del processo  
                         </Typography>
                     </div>
-                    <div className='d-flex justify-content-center mt-3'>
-                        <div   id='loader_download_contestazione'>
-                            <Loader sentence={sentence}></Loader> 
-                        </div> 
+                    <div className='d-flex justify-content-center mt-3 gap-3'>
+                            <Typography>{sentence}</Typography>
+                            <CircularProgress />
+                            
+                        
                     </div>
                 </Box>
             </Modal>
