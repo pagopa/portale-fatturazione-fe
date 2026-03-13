@@ -15,10 +15,9 @@ import { ManageErrorResponse } from "../../types/typesGeneral";
 import { Box, Grid, Paper, Typography } from "@mui/material";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import { headersDocumentiEmessiEnte, headersDocumentiEmessiEnteCollapse, headersDocumentiEmessiEnteContestate } from "../../assets/configurations/conf_GridDocEmessiEnte";
-import { downloadFattureEmesseEnte, getListaDocumentiContestati, getListaDocumentiEmessi } from "../../api/apiSelfcare/documentiSospesiSE/api";
+import { downloadFattureEmesseEnte, getListaDocumentiContestati, getListaDocumentiEmessi, downloadFattureContestateEnte } from "../../api/apiSelfcare/documentiSospesiSE/api";
 import { sortByNumeroFattura, sortByTipoFattura, sortByTotale, sortDates, sortMonthYear } from "../../reusableFunction/function";
-import { fi } from "date-fns/locale";
-import { set } from "date-fns";
+
 
 
 export type BodyDocumentiEmessiEnte = {
@@ -159,7 +158,6 @@ const DocEm : React.FC = () =>{
             if(isInitialRender.current && Object.keys(filters)?.length > 0){
              
                 if(filters.body.anno !== 9999){
-                    console.log(2);
                     const arrayMonths:number[] = Array.from( new Set(res.data
                         .filter(el =>
                             el.anno === Number(filters.body.anno))
@@ -259,10 +257,9 @@ const DocEm : React.FC = () =>{
                 numerolinea: el.numeroLinea,
                 codiceMateriale: el.codiceMateriale,
                 imponibile:el.imponibile.toLocaleString("de-DE", { style: "currency", currency: "EUR" })  || '--',
-                periodoRiferimento: obj.dataFattura
-                    ? new Date(obj.dataFattura).toLocaleDateString('it-IT')
-                    : '--', 
-                periodoFatturazione:el.periodoRiferimento || '--',
+                periodoRiferimento: el.periodoRiferimento
+                    ? el.periodoRiferimento : '--', 
+                periodoFatturazione:el?.periodoFatturazione || '--',
             })):[],
         }));
     };
@@ -283,11 +280,9 @@ const DocEm : React.FC = () =>{
                 setTotalDocumentiContestate(resCancellati.data.dettagli.length);
                 
                 if(isInitialRender.current && Object.keys(filters)?.length > 0){
-                    console.log({filters});
                     if(Object.values(filters.objectSortContestate).some(value => value !== 1)){
                         const obj = filters.objectSortContestate;
                         const label = Object.keys(obj).filter(key => obj[key] !== 1);
-                        console.log({label,obj});
                         headerAction(label[0],setGridDataContestate,false,setObjectSortContestate,filters.pageContestate,filters.rowsPerPageContestate,orderDataCustomContestate);
                         //setObjectSortContestate(filters.objectSortContestate);
                     }else{
@@ -295,7 +290,6 @@ const DocEm : React.FC = () =>{
                         const end = start + filters.rowsPerPageContestate;
      
                         const elementsToShow = orderDataCustomContestate.slice(start, end);
-                        console.log({diobestia:elementsToShow});
                         setGridDataContestate(elementsToShow);
                     }
                     if(filters.pageContestate !== 0){
@@ -319,7 +313,6 @@ const DocEm : React.FC = () =>{
 
            
             if(isInitialRender.current && Object.keys(filters)?.length > 0  ){
-                console.log({filters});
                 if(Object.values(filters.objectSort).some(value => value !== 1)){
                     const obj = filters.objectSort;
                     const label = Object.keys(obj).filter(key => obj[key] !== 1);
@@ -331,7 +324,6 @@ const DocEm : React.FC = () =>{
                     const end = start + filters.rows;
      
                     const elementsToShow = orderDataCustom.slice(start, end);
-                    console.log({elementsToShow});
                     setGridData(elementsToShow);
                 }
                 if(filters.page !== 0){
@@ -342,7 +334,6 @@ const DocEm : React.FC = () =>{
                 }
             }else{
                 const dataToShow = orderDataCustom.slice(0, 10);
-                console.log({dataToShow});
                 setGridData(dataToShow);
             }
             setListaResponse(orderDataCustom);
@@ -350,7 +341,7 @@ const DocEm : React.FC = () =>{
             setTotalDocumenti(res.data.dettagli.length);
             setTotaleHeader(totaleSum);
          
-            setBodyFatturazioneDownload(bodyFatturazione);
+            //setBodyFatturazioneDownload(bodyFatturazione);
 
           
             if(isInitialRender.current && Object.keys(filters).length === 0){
@@ -406,6 +397,27 @@ const DocEm : React.FC = () =>{
         }));
     };
 
+    const downloadListaFatturazioneContestate = async () => {
+
+        const bodyCont = {
+            anno:null,
+            mese:null,
+            tipologiaFattura:[],
+            dataFattura:[]
+        };
+      
+        setShowDownloading(true);
+        await downloadFattureContestateEnte(token,profilo.nonce, bodyCont).then(response => response.blob()).then((response)=>{
+            const title = `Documenti contestati/${listaResponse[0].ragioneSociale}.xlsx`;
+            saveAs(response,title);
+            setShowDownloading(false);
+           
+        }).catch(((err)=>{
+            setShowDownloading(false);
+            manageError(err,dispatchMainState);
+        }));
+    };
+
     const clearOnChangeFilter = () => {
         setGridData([]);
         setPage(0);
@@ -419,8 +431,11 @@ const DocEm : React.FC = () =>{
             body:bodyFatturazione,
             page:0,
             rows:10,
-            objectSort
-        });
+            objectSort,
+            pageContestate,
+            rowsPerPageContestate,
+            objectSortContestate
+        });   
         setPage(0);
         setRowsPerPage(10);
         setBodyFatturazioneDownload(bodyFatturazione);
@@ -466,6 +481,10 @@ const DocEm : React.FC = () =>{
             body: bodyFatturazioneDownload,
             page: newPage,
             rows: rowsPerPage,
+            objectSort,
+            pageContestate,
+            rowsPerPageContestate,
+            objectSortContestate
         });
     };
                         
@@ -484,6 +503,10 @@ const DocEm : React.FC = () =>{
             body: bodyFatturazioneDownload,
             page: page,
             rows: newRows,
+            objectSort,
+            pageContestate,
+            rowsPerPageContestate,
+            objectSortContestate
         });
     };
 
@@ -504,6 +527,11 @@ const DocEm : React.FC = () =>{
             pathPage: PathPf.DOCUMENTI_EMESSI,
             pageContestate: newPage,
             rowsPerPageContestate: rowsPerPageContestate,
+            body:bodyFatturazione,
+            page:0,
+            rows:10,
+            objectSort,
+            objectSortContestate
         });
     };
                         
@@ -521,6 +549,11 @@ const DocEm : React.FC = () =>{
             pathPage: PathPf.DOCUMENTI_EMESSI,
             pageContestate: pageContestate,
             rowsPerPageContestate: newRows,
+            body:bodyFatturazione,
+            page:0,
+            rows:10,
+            objectSort,
+            objectSortContestate
         });
     };
 
@@ -586,7 +619,6 @@ const DocEm : React.FC = () =>{
                         break;
 
                     case "N. Fattura":
-                        console.log("sort by numero fattura", booleanValue);
                         sortedFull = sortByNumeroFattura(sortedFull, booleanValue, "numero");
                         break;
 
@@ -600,22 +632,16 @@ const DocEm : React.FC = () =>{
             }
          
             if(emessiGrid){ 
-                console.log("first",{sortedFull});
                 setListaResponseaSorted(sortedFull);
                 setObjectSort(filters.objectSort);
             }else{
-                console.log("first",3,{sortedFull});
                 setListaResponseaSortedContestate(sortedFull);
                 setObjectSort(filters.objectSortContestate);
             }
             const paginated = sortedFull.slice(start, end);
             setGridDataParam(paginated);
-            console.log("first",4);
-         
-
         }else{
             setObjectSort(prev => {
-                console.log ({prev});
                 const current = prev[label] ?? 1;
                 const next = current === 1 ? 2 : current === 2 ? 3 : 1;
 
@@ -645,7 +671,6 @@ const DocEm : React.FC = () =>{
                             break;
 
                         case "N. Fattura":
-                            console.log("sort by numero fattura", isAsc);
                             sortedFull = sortByNumeroFattura(sortedFull, isAsc, "numero");
                             break;
 
@@ -658,19 +683,16 @@ const DocEm : React.FC = () =>{
                     }
                 }
                 if(emessiGrid){ 
-                    console.log(2,{sortedFull});
                     setListaResponseaSorted(sortedFull);
                 }else{
-                    console.log(3);
                     setListaResponseaSortedContestate(sortedFull);
                 }
                 const paginated = sortedFull.slice(start, end);
                 setGridDataParam(paginated);
-                console.log(4);
                 if(!isInitialRender.current){
                     updateFilters({
                         pathPage: PathPf.DOCUMENTI_EMESSI,
-                        body: bodyFatturazioneDownload,
+                        body: bodyFatturazione,
                         page:page,
                         rows: rowsPerPage,
                         pageContestate: pageContestate,
@@ -867,6 +889,15 @@ const DocEm : React.FC = () =>{
                     </Typography>
                 </Grid>
             </Box>
+            <ActionTopGrid
+                actionButtonRight={[{
+                    onButtonClick:downloadListaFatturazioneContestate,
+                    variant: "outlined",
+                    label: "Download risultati contestate",
+                    icon:{name:"download"},
+                    disabled:(gridDataContestate.length === 0)
+                }]}
+                actionButtonLeft={[]}/>
             <GridCustom
                 nameParameterApi='docEmessiEnteContestate'
                 elements={gridDataContestate}

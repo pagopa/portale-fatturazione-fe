@@ -121,6 +121,21 @@ export const getSospesiReportExel = async ( token:string ,nonce:string , id:stri
 
     return response;
 };
+
+
+export const downloadFattureContestateEnte = async (token:string, nonce:string,body: any) => {
+    const response = await fetch(`${url}/api/fatture/ente/eliminate/download?nonce=${nonce}`, 
+        {
+            headers: {
+                Authorization: 'Bearer '+token,
+                'Content-type':'application/json'
+            },
+            method: 'POST',
+            body:JSON.stringify(body),
+        });
+                
+    return response;
+};
                 
                 
                 

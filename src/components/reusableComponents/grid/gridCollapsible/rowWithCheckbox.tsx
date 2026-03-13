@@ -120,6 +120,7 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
                                         <TableCell align="center" sx={{ marginLeft:"16px"}}>Codice Materiale</TableCell>
                                         <TableCell align="center" sx={{ marginLeft:"16px"}}>Imponibile</TableCell>
                                         <TableCell align="center" sx={{ marginLeft:"16px"}}>Periodo di riferimento</TableCell>
+                                        <TableCell align="center" sx={{ marginLeft:"16px"}}>Periodo di fatturazione</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
@@ -133,6 +134,7 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
                                                 {obj.imponibile.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
                                             </TableCell>
                                             <TableCell align="center" >{obj.periodoRiferimento}</TableCell>
+                                            <TableCell align="center" >{obj?.periodoFatturazione||"--"}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>

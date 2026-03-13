@@ -83,10 +83,6 @@ const RelPdfPage : React.FC = () =>{
         rowId:id
     });
 
-
-
-    console.log({rel});
-
     if(loadingDettaglio){
         return(
             <SkeletonRelPdf></SkeletonRelPdf>
@@ -97,14 +93,14 @@ const RelPdfPage : React.FC = () =>{
         <div>
             <div style={{ position:'absolute',zIndex:-1, top:'-1000px'}}  id='file_download_rel' ref={targetRef}>
             </div>
-            <div>
+            <div className='mb-4'>
                 <NavigatorHeader pageFrom={headerNavigationFrom} pageIn={"Dettaglio"} backPath={profilePath} icon={<ManageAccountsIcon  sx={{paddingBottom:"5px"}}  fontSize='small'></ManageAccountsIcon>}></NavigatorHeader>
             </div>
             { (location.pathname.includes("ente") && 
             (location.pathname.includes("documentiemessi") || location.pathname.includes("documentisospesi") ) &&
             rel.tipologiaFattura !== "PRIMO SALDO" && rel.tipologiaFattura !== "SECONDO SALDO")
                 ? null:
-                <div className='d-flex justify-content-end mt-4 me-5'>
+                <div className='d-flex justify-content-end mt-2 me-5'>
                     <Button disabled={disableButtonDettaglioNot}  onClick={()=> downloadReportDettaglio()} >{labelScaricaReportDettaglio} <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
                 </div>
             }
@@ -243,7 +239,7 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,accontoIsVisible}) => {
                 {mainObj.fattureSospese.length > 0 &&
                 <div className="bg-white mb-5 me-5 ms-5">
                     <div className="d-flex justify-content-center pt-3">
-                        <Typography variant="h4">Fatture sospese</Typography>
+                        <Typography variant="h4">Elenco Fatture Emesse</Typography>
                     </div>
                     <div className="pt-3 pb-3 ">
                         <div className="container text-center">

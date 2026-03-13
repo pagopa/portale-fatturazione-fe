@@ -59,6 +59,11 @@ const ModalInfo : React.FC<ModalInfoProps> = ({setOpen, open,width}) => {
                     <div className='d-flex justify-content-evenly text-center mt-5'>
                         <Button variant="outlined" onClick={handleClose}>Annulla</Button>
                         <Button variant="contained" onClick={() =>{
+                            window.scrollTo({
+                                top: 0,
+                                left: 0,
+                                behavior: "auto"
+                            });
                             handleClose();
                             open?.actionButton && open?.actionButton();}}>Prosegui</Button>
                        

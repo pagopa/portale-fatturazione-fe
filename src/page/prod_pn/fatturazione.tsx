@@ -41,6 +41,7 @@ const Fatturazione : React.FC = () =>{
         profilePath = PathPf.FATTURAZIONE_EN;
     }
 
+    const [firstYearMonth, setFirstYearMonth] = useState<number[]>([]);
     const [gridData, setGridData] = useState<FattureObj[]>([]);
     const [arrayYears,setArrayYears] = useState<number[]>([]);
     const [arrayMonths,setArrayMonths] = useState<{mese:string,descrizione:string}[]>([]);
@@ -124,6 +125,9 @@ const Fatturazione : React.FC = () =>{
         await getAnniDocEmessiPagoPa(token, profilo.nonce).then((res)=>{
             const arrayNumber = res.data.map(el => Number(el.toString()));
             setArrayYears(arrayNumber);
+            if(arrayNumber.length > 0 && isInitialRender.current){
+                setFirstYearMonth((prev) => ([...prev,arrayNumber[0]]));
+            }
             if(isInitialRender.current && Object.keys(filters).length > 0){
                 getMesi(filters.body.anno?.toString());
             }else{
@@ -150,6 +154,9 @@ const Fatturazione : React.FC = () =>{
                 el.descrizione = el?.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase();
                 return el;
             });
+            if(mesiCamelCase.length > 0 && isInitialRender.current){
+                setFirstYearMonth((prev) => ([...prev,Number(mesiCamelCase[0].mese)]));
+            }
             setArrayMonths(mesiCamelCase);
             if(isInitialRender.current && Object.keys(filters).length > 0){
                 setBodyFatturazione(filters.body);
@@ -382,6 +389,7 @@ const Fatturazione : React.FC = () =>{
 
     const onButtonAnnulla = () => {
         callAnnulla.current = true;
+        callLista.current = true;
         resetFilters();
         getAnni();
         setBodyFatturazione({
@@ -424,7 +432,12 @@ const Fatturazione : React.FC = () =>{
 
 
 
-    const statusAnnulla = bodyFatturazione.idEnti.length !== 0 || bodyFatturazione.tipologiaFattura.length !== 0 || bodyFatturazione.cancellata === true || bodyFatturazione.idTipoContratto !== null ? "show" :"hidden";
+    const statusAnnulla = bodyFatturazione.idEnti.length !== 0 || 
+     bodyFatturazione.tipologiaFattura.length !== 0 ||
+     bodyFatturazione.cancellata === true ||
+     bodyFatturazione.idTipoContratto !== null ||
+     bodyFatturazione.anno !== firstYearMonth[0] ||
+     Number(bodyFatturazione.mese) !== firstYearMonth[1]  ? "show" :"hidden";
 
 
     return (

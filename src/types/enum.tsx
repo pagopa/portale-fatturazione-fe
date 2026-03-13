@@ -31,6 +31,8 @@ export enum PathPf {
     ORCHESTRATORE = "/send/orchestratore",
     MESSAGGI = "/send/messaggi",
     ACCERTAMENTI = "/send/accertamenti",
+    LISTA_STORICO_DOCUMENTI_SEND = "/send/storicodoc",
+    DOCUMENTI_SOSPESI_SEND = "/send/docsospesi",
 
     //psp
     ANAGRAFICAPSP = "/pn/anagraficapsp",
@@ -87,6 +89,8 @@ export enum PathRoutePf {
     ORCHESTRATORE = "orchestratore",
     MESSAGGI = "messaggi",
     ACCERTAMENTI = "accertamenti",
+    LISTA_STORICO_DOCUMENTI_SEND = "storicodoc",
+    DOCUMENTI_SOSPESI_SEND = "docsospesi",
 
     ANAGRAFICAPSP = "anagraficapsp",
     DOCUMENTICONTABILI = "documenticontabilipagopa",

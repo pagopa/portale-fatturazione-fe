@@ -88,8 +88,6 @@ function usePageRelDocPdf({
                 res = await  getSingleRelPagopa(token,profilo.nonce,id);
             }
 
-            
-            console.log({resRel:res});
             setRel(res.data);
             if (res.data.datiFatturazione === true && pageFrom === "rel") {
                
@@ -130,8 +128,6 @@ function usePageRelDocPdf({
                     //PROBBILMENTE DA SOSTITUIRE
                     response = await getRelExel(token, profilo.nonce, customId);
                 }else if(pageFrom === "documentisospesi"){
-                    
-                    console.log({customId});
                     response = await getSospesiReportExel(token, profilo.nonce, customId);
                 }
             }else if(profilo.auth === 'PAGOPA'){
@@ -189,7 +185,6 @@ function usePageRelDocPdf({
 
             }else if (profilo.auth === 'PAGOPA') {
                 setShowDownloading(true);
-                console.log({MM:mainState});
                 const res: ResponseDownloadPdf = await getRelPdfPagoPa(token,profilo.nonce, rowId);
                 toDoOnDownloadPdf(res,"Regolare Esecuzione");
             }
