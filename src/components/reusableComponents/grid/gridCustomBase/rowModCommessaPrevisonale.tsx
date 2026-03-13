@@ -3,11 +3,11 @@ import { Chip, TableCell, TableRow, Tooltip } from "@mui/material";
 
 const RowModCommessaPrevisionale = ({sliced,headerNames,element}) => {
     let statusColor = "#ffffff";
-    if(sliced.source === "obbligatorio"){
+    if(sliced.stato === "obbligatorio"){
         statusColor = "#5BB0D5";
-    }else if(sliced.source === "archiviato"){
+    }else if(sliced.stato === "archiviato"){
         statusColor =  "#fafafa";
-    }else if(sliced.source === "facoltativo"){
+    }else if(sliced.stato === "facoltativo"){
         statusColor = "#f7e7bc";
     }
 

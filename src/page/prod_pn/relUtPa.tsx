@@ -353,7 +353,6 @@ const RelPage : React.FC = () =>{
                 .then(res => res.data)
                 .catch(err => manageError(err,dispatchMainState));
         }
-        console.log(res);
         const mesiCamelCase = res.map(el => {
             el.descrizione = el?.descrizione.charAt(0).toUpperCase() + el.descrizione.slice(1).toLowerCase();
             return el;
@@ -431,7 +430,6 @@ const RelPage : React.FC = () =>{
     };
    
     const setIdRel = async(el) => {
-        console.log({el});
         //handleModifyMainState({relSelected:el});
         navigate(profilePath+"/rel/"+el.id);
     };  

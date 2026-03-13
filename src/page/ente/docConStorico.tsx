@@ -32,7 +32,7 @@ type DocumentiStorico =  {
  
 
 const DocStorico : React.FC = () =>{
-
+    //DA SISTEMARE SE VERRA RICHEIESTA LA PAGINA STORICO LATO ENEE
     const mainState = useGlobalStore(state => state.mainState);
     const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
 

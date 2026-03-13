@@ -14,6 +14,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { Fragment, useState } from 'react';
 import { FattureObj, HeaderCollapsible } from '../../../../types/typeFatturazione';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { Tooltip } from '@mui/material';
 
 
 
@@ -33,8 +34,10 @@ interface GridCollapsible{
 }
 
 
-const RowCollapsible = ({sliced,element ,headerNames, headerNamesCollapse, apiGet}) => {
+const RowCollapsible = ({sliced,element ,headerNames, headerNamesCollapse, apiGet,nameParameterApi}) => {
     const [open, setOpen] = useState(false);
+
+      
  
     return(
         <Fragment key={element.id}>
@@ -49,8 +52,15 @@ const RowCollapsible = ({sliced,element ,headerNames, headerNamesCollapse, apiGe
             
                 {
                     Object.values(sliced)?.map((value:any, i:number)=>{
-                        const cssFirstColum = i === 1 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
-                        //const valueEl = (i === 0 && value?.toString().length > 20) ? value?.toString().slice(0, 20) + '...' : value;
+                        let cssFirstColum : {
+                            color: string;
+                            fontWeight: string;
+                            cursor?: string;
+                        } | null = i === 1 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
+                        if(nameParameterApi === "docSospesiSend"){
+                            cssFirstColum = i === 1 ? {color:'#0D6EFD', fontWeight: 'bold'} : null;
+                        }
+                        const valueEl = (i === 1 && value?.toString().length > 20) ? value?.toString().slice(0, 20) + '...' : value;
                         if(i === 0){
                             return(
                                 <TableCell key={`expand-${element.id}-${i}`} align={"center"}>
@@ -66,13 +76,16 @@ const RowCollapsible = ({sliced,element ,headerNames, headerNamesCollapse, apiGe
                             );
                         }else if(value === "arrowDetails"){
                             return (
-                                <TableCell key={`expand-${element.id}-${i}`} align="center" onClick={()=>{apiGet(element);}}>
+                                <TableCell key={`expand-${element.id}-${i}`} align="center" onClick={()=>{apiGet && apiGet(element);}}>
                                     <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
                                 </TableCell> 
                             );
                         }else{
                             return (
-                                <TableCell key={`expand-${element.id}-${i}`}  onClick={()=>{i === 1 && apiGet(element);}} sx={cssFirstColum}  align={"center"}>{value}</TableCell>
+                                <Tooltip key={`${value}-${i}`}  title={(i === 1 && value?.toString().length > 20) ?value:null} >
+                                    <TableCell key={`expand-${element.id}-${i}`}  onClick={()=>{(i === 1 && apiGet) && apiGet(element);}} sx={cssFirstColum}  align={"center"}>{valueEl}</TableCell>
+                            
+                                </Tooltip>
                             );
                         }             
                     })

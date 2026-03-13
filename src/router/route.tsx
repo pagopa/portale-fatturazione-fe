@@ -1,8 +1,8 @@
 import '../App.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Modal, ThemeProvider, Typography} from '@mui/material';
+import { Box, Button, Modal, ThemeProvider, Typography} from '@mui/material';
 import {theme} from '@pagopa/mui-italia';
-import { isRouteErrorResponse, RouterProvider, useLocation, useRouteError} from "react-router";
+import { isRouteErrorResponse, RouterProvider, useLocation, useRouteError,Navigate} from "react-router";
 import Auth from "../page/auth";
 import AuthAzure from "../page/authAzure";
 import Azure from "../page/azure";
@@ -13,7 +13,6 @@ import useIsTabActive from '../reusableFunction/tabIsActiv';
 import {  redirect } from '../api/api';
 import AreaPersonaleUtenteEnte from '../page/prod_pn/areaPersonaleUtenteEnte';
 import LayoutAzure from '../layout/layOutLoggedInAzure';
-
 import Accertamenti from '../page/prod_pn/accertamenti';
 import AdesioneBando from '../page/prod_pn/adesioneBando';
 import DettaglioStoricoContestazione from '../page/prod_pn/dettaglioStoricoContestazione';
@@ -39,7 +38,6 @@ import AnagraficaPsp from '../page/prod_pagopa/anagraficaPspPagopa';
 import DocumentiContabili from '../page/prod_pagopa/documentiContabiliPagopa';
 import DettaglioDocContabile from '../page/prod_pagopa/dettaglioDocumentoContabile';
 import KpiPagamenti from '../page/prod_pagopa/kpiPagamenti';
-
 import SideNavPagopa from '../layout/sideNavs/sideNavPagoPA';
 import SideNavEnte from '../layout/sideNavs/sidNavEnte';
 import ModuloCommessaElencoUtPa from '../page/ente/moduloCommessaElencoUtPa';
@@ -57,7 +55,9 @@ import DocStorico from '../page/ente/docConStorico';
 import Messaggi from '../page/messaggi';
 import EmailPsp from '../page/prod_pagopa/emailpsp';
 import { useEffect } from 'react';
-import { authVerify, authVerifyIsLoggedEnte, authVerifyIsLoggedProdPn, authVerifyIsLoggedSend } from '../loaderRoutes/loaderAuthVerify';
+import { authVerify, authVerifyIsLoggedEnte, authVerifyIsLoggedProdPn, authVerifyIsLoggedSend, authVerifyIfEnteAllowRelSection, authVerifyPageProdotto } from '../loaderRoutes/loaderAuthVerify';
+import DocSospesiSend from '../page/prod_pn/docSospesiSend';
+import DocStoricoSend from '../page/prod_pn/docStoricoSend';
 
 const RouteProfile = () => {
     const mainState = useGlobalStore(state => state.mainState);
@@ -110,6 +110,7 @@ const router2 = createBrowserRouter([
             },
             {
                 path: "selezionaprodotto",
+                loader:authVerifyPageProdotto,
                 Component: AuthAzureProdotti,
             },
             {
@@ -121,6 +122,7 @@ const router2 = createBrowserRouter([
                 loader:authVerifyIsLoggedSend,
                 Component: () => <LayoutAzure sideNav={<SideNavSend />} />,
                 children: [
+                    { index: true, element: <Navigate to={PathRoutePf.LISTA_DATI_FATTURAZIONE} replace /> },
                     { path: PathRoutePf.LISTA_DATI_FATTURAZIONE, Component: PagoPaListaDatiFatturazione },
                     { path: PathRoutePf.DATI_FATTURAZIONE, Component: AreaPersonaleUtenteEnte },
                     { path: PathRoutePf.TIPOLOGIA_CONTRATTO, Component: PageTipologiaContratto },
@@ -141,7 +143,9 @@ const router2 = createBrowserRouter([
                     { path: PathRoutePf.LISTA_DOC_EMESSI, Component: ListaDocEmessi },
                     { path: PathRoutePf.JSON_TO_SAP, Component: InvioFatture },
                     { path: PathRoutePf.JSON_TO_SAP_DETAILS, Component: InvioFattureDetails },
-                    { path: PathRoutePf.ORCHESTRATORE, Component: ProcessiOrchestartore }
+                    { path: PathRoutePf.ORCHESTRATORE, Component: ProcessiOrchestartore },
+                    { path: PathRoutePf.LISTA_STORICO_DOCUMENTI_SEND, Component:  DocStoricoSend },
+                    { path: PathRoutePf.DOCUMENTI_SOSPESI_SEND, Component:  DocSospesiSend },
                 ],
             },
             {
@@ -149,6 +153,7 @@ const router2 = createBrowserRouter([
                 loader:authVerifyIsLoggedProdPn,
                 Component: () => <LayoutAzure sideNav={<SideNavPagopa />} />,
                 children: [
+                    { index: true, element: <Navigate to={PathRoutePf.ANAGRAFICAPSP} replace /> },
                     { path:PathRoutePf.ANAGRAFICAPSP, Component: AnagraficaPsp },
                     { path:PathRoutePf.DOCUMENTICONTABILI, Component: DocumentiContabili },
                     { path:PathRoutePf.DETTAGLIO_DOC_CONTABILE, Component: DettaglioDocContabile },
@@ -162,11 +167,12 @@ const router2 = createBrowserRouter([
                 loader:authVerifyIsLoggedEnte,
                 Component: () => <LayoutEnte sideNav={<SideNavEnte />} />,
                 children: [
+                    { index: true, element: <Navigate to={PathRoutePf.DATI_FATTURAZIONE} replace /> },
                     {path: PathRoutePf.DATI_FATTURAZIONE,Component: AreaPersonaleUtenteEnte},
                     {path: PathRoutePf.LISTA_COMMESSE, Component: ModuloCommessaElencoUtPa},
                     {path: PathRoutePf.MODULOCOMMESSA,Component: ModuloCommessaInserimentoUtEn30},
                     {path: PathRoutePf.PDF_COMMESSA + "/:annoPdf?/:mesePdf?",Component: ModuloCommessaPdf},
-                    {path: PathRoutePf.LISTA_REL,Component: RelPage},
+                    {path: PathRoutePf.LISTA_REL, loader: authVerifyIfEnteAllowRelSection,Component: RelPage},
                     {path: PathRoutePf.PDF_REL+"/:pageFrom/:id",Component: RelPdfPage},
                     {path: PathRoutePf.LISTA_NOTIFICHE, Component: ReportDettaglio},
                     {path: PathRoutePf.ASYNC_DOCUMENTI_ENTE, Component: AsyncDocumenti},
@@ -180,6 +186,7 @@ const router2 = createBrowserRouter([
                 path: "reccon",
                 Component: () => <LayoutEnte sideNav={<SideNavRecCon />} />,
                 children: [
+                    { index: true, element: <Navigate to={PathRoutePf.LISTA_NOTIFICHE} replace /> },
                     {path: PathRoutePf.LISTA_NOTIFICHE, Component: ReportDettaglio}
                 ],
             },
@@ -218,26 +225,6 @@ function RouteErrorBoundary() {
         : error instanceof Error
             ? error.message
             : "Unknown error";
-    /*
-    function getErrorFileLine(error: unknown): string {
-        if (error instanceof Error && error.stack) {
-            // Dividiamo lo stack in righe
-            const lines = error.stack.split("\n");
-
-            // Cerchiamo la prima riga con il formato (file:line:col)
-            for (const line of lines) {
-                const match = line.match(/([a-zA-Z0-9_\-./]+\.tsx|\.ts|\.js):(\d+):(\d+)/);
-                if (match) {
-                    // match[0] è esattamente la parte file:line:column
-                    return match[0];
-                }
-            }
-        }
-        return "Unknown location";
-    }
-
-    const fileLine = getErrorFileLine(error);
-    */
 
     const handleClose = () => {
         localStorage.clear();
@@ -294,3 +281,9 @@ function RouteErrorBoundary() {
         </div>
     );
 }
+
+
+{/*LOGICA NASCOSAT  DI CONTESTAZIONI MASSIVE LATO ENTE
+        <Route path={PathPf.STORICO_CONTEST_ENTE} element={<StoricoEnte />} />
+        <Route path={PathPf.INSERIMENTO_CONTESTAZIONI_ENTE} element={<InserimentoContestazioniEnte />} />
+        <Route path={PathPf.STORICO_DETTAGLIO_CONTEST} element={<DettaglioStoricoContestazione/>} />*/}

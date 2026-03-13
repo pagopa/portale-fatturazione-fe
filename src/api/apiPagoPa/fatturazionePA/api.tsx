@@ -1,6 +1,8 @@
 import axios from "axios";
 import { url } from "../../api";
 import { BodyFatturazione } from "../../../types/typeFatturazione";
+import { BodyFatturazioneSospeseSend } from "../../../page/prod_pn/docSospesiSend";
+
 
 export const getFatturazionePagoPa = async (token:string, nonce:string, body: BodyFatturazione) => {
     const response =  await axios.post(`${url}/api/fatture?nonce=${nonce}`,
@@ -174,6 +176,110 @@ export const getTipologieContratto = async (token:string, nonce:string) => {
 };
 
 
+export const getFatturazioneRiepilogoPagoPa = async (token:string, nonce:string, body: {anno:number|null,mese:number|null,idEnti:string[]}) => {
+    const response =  await axios.post(`${url}/api/fatture/riepilogo?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },
+        }
+    );
+    return response;
+};
+
+export const getFatturazioneSospesePagoPa = async (token:string, nonce:string, body:BodyFatturazioneSospeseSend) => {
+    const response =  await axios.post(`${url}/api/fatture/sospese?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },
+        }
+    );
+    return response;
+};
+
+export const downloadFattureSospesePagopa = async (token:string, nonce:string,body: BodyFatturazioneSospeseSend) => {
+    const response = await fetch(`${url}/api/fatture/sospese/download?nonce=${nonce}`, 
+        {
+            headers: {
+                Authorization: 'Bearer '+token,
+                'Content-type':'application/json'
+            },
+            method: 'POST',
+            body:JSON.stringify(body),
+        });
+   
+    return response;
+};
 
 
 
+export const getAnniDocSospesiPagoPa = async (token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/fatture/sospese/anni?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+};
+
+export const getMesiDocSospesiPagoPa = async (token:string, nonce:string, body:{anno: string}) => {
+    const response =  await axios.post(`${url}/api/fatture/sospese/mesi?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        }}
+    );
+    return response;
+};
+
+export const getTipologieFaSospesePagoPaWithData = async (token:string, nonce:string, body: {anno:number,mese:number,idEnti:string[],tipologiaFattura:string[],cancellata:boolean}) => {
+    const response =  await axios.post(`${url}/api/fatture/sospese/date?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },
+        }
+    );
+    return response;
+};
+
+export const getTipologieSospeseContratto = async (token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/fatture/sospese/tipologiacontratto?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+};
+
+export const getTipologieFaSospesePagoPa = async (token:string, nonce:string, body: {anno:number,mese:number,cancellata:boolean}) => {
+    const response =  await axios.post(`${url}/api/fatture/sospese/tipologia?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },
+        }
+    );
+    return response;
+};
+
+export const getAnniDocStoricoPagoPa = async (token:string, nonce:string) => {
+    const response =  await axios.get(`${url}/api/fatture/riepilogo/anni?nonce=${nonce}`,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+};
+
+export const getMesiDocStoricoPagoPa = async (token:string, nonce:string, body: {anno:number}) => {
+    const response =  await axios.post(`${url}/api/fatture/riepilogo/mesi?nonce=${nonce}`,
+        body,
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },
+        }
+    );
+    return response;
+};
