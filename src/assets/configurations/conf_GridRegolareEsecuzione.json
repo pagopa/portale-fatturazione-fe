@@ -1,0 +1,18 @@
+
+
+ [
+   {"headerItem":"hidden","rowValue":"idTestata","type":"id"},
+   {"headerItem":"Ragione Sociale","rowValue":"ragioneSociale","type":"value"},
+   {"headerItem":"Tipologia Fattura","rowValue":"tipologiaFattura","type":"value"},
+   {"headerItem":"Reg. Es. PDF","rowValue":"firmata","type":"value"},
+   {"headerItem":"ID Contratto","rowValue":"idContratto","type":"value"},
+   {"headerItem":"Anno","rowValue":"anno","type":"value"},
+   {"headerItem":"Mese","rowValue":"mese","type":"month"},
+   {"headerItem":"Tot. Analogico","rowValue":"totaleAnalogico","type":"currency"},
+   {"headerItem":"Tot. Digitale","rowValue":"totaleDigitale","type":"currency"},
+   {"headerItem":"Tot. Not. Analogico","rowValue":"totaleNotificheAnalogiche","type":"value"},
+   {"headerItem":"Tot. Not. Digitali","rowValue":"totaleNotificheDigitali","type":"value"},
+   {"headerItem":"Totale","rowValue":"totale","type":"currency"},
+   {"headerItem":"action","rowValue":"","type":"icon"}
+   ]
+
