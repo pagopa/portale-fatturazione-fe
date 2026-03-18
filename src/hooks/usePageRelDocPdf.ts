@@ -4,7 +4,7 @@ import { profiliEnti } from "../reusableFunction/actionLocalStorage";
 import { PathPf } from "../types/enum";
 import { getDocumentiEmessiPdf, getDocumentiSospesiPdf, getLogRelDocumentoFirmato, getRelExel, getRelPdf, getRelPdfFirmato, getSingleRel, uploadPdfRel } from "../api/apiSelfcare/relSE/api";
 import { manageError, manageErrorDownload, redirect } from "../api/api";
-import { getLogPagoPaRelDocumentoFirmato, getRelExelPagoPa, getRelPdfFirmatoPagoPa, getRelPdfPagoPa, getSingleRelPagopa } from "../api/apiPagoPa/relPA/api";
+import { getDocEmessiExelPagoPa, getLogPagoPaRelDocumentoFirmato, getRelExelPagoPa, getRelPdfFirmatoPagoPa, getRelPdfPagoPa, getSingleRelPagopa } from "../api/apiPagoPa/relPA/api";
 import { ResponseDownloadPdf } from "../types/typeModuloCommessaInserimento";
 import { mesiWithZero } from "../reusableFunction/reusableArrayObj";
 import { saveAs } from "file-saver";
@@ -135,8 +135,10 @@ function usePageRelDocPdf({
                     response = await getSospesiReportExel(token, profilo.nonce, customId);
                 }
             }else if(profilo.auth === 'PAGOPA'){
-                if(pageFrom === "rel" || pageFrom === "documentiemessi"){
+                if(pageFrom === "rel"){
                     response = await getRelExelPagoPa(token, profilo.nonce, rowId);
+                }else if(pageFrom === "documentiemessi"){
+                    response = await getDocEmessiExelPagoPa(token, profilo.nonce, customId);
                 }
             }
 
