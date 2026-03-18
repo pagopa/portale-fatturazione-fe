@@ -1,0 +1,10 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "",
+    "appService.deploySubpath": "build",
+    "zenMode.hideActivityBar": false,
+    "workbench.settings.openDefaultKeybindings": false
+}
