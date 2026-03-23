@@ -151,25 +151,9 @@ export const getTipologieContrattoRel = async (token:string, nonce:string) => {
     return response;
 };
 
-export const getDocEmessiExelPagoPa = async ( token:string ,nonce:string , id:string) => {
-    const response =  await axios.get(`${url}/api/fatture/emesse/dettaglio/download/${id}?nonce=${nonce}`,  
-        { headers: {
-            Authorization: 'Bearer ' + token
-        },}
-    );
-    return response;
-};
 
-/*
-export const getDocEmessiExelPagoPa = async ( token:string ,nonce:string , idConcat:string, idEnte:string) => {
-    const response =  await axios.post(`${url}/api/fatture/emesse/dettaglio/download/${idConcat}?nonce=${nonce}&idEnte=${idEnte}`,
-        body,
-        { headers: {
-            Authorization: 'Bearer ' + token,
-        }}
-    );
-    return response;
-};*/
+
+
 
 
 

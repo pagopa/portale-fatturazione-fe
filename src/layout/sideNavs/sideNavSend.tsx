@@ -118,7 +118,7 @@ const SideNavSend : React.FC = () => {
         }
 
     },[currentLocation]);
-    console.log({currentLocation});
+
     return (
         <Box sx={{
             height: '100%',
