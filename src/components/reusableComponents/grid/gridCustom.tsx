@@ -215,7 +215,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                 }else if(nameParameterApi === "docEmessiEnteContestate"){
                                     sliced = Object.fromEntries(Object.entries(element).slice(4, -2));
                                 }else if(nameParameterApi === "docSospesiSend"){
-                                    sliced = Object.fromEntries(Object.entries(element).slice(2, -1));
+                                    sliced = Object.fromEntries(Object.entries(element).slice(2, -3));
                                 }
 
                             

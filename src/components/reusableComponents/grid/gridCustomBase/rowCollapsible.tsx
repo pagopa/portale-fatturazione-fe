@@ -52,14 +52,12 @@ const RowCollapsible = ({sliced,element ,headerNames, headerNamesCollapse, apiGe
             
                 {
                     Object.values(sliced)?.map((value:any, i:number)=>{
-                        let cssFirstColum : {
+                        const cssFirstColum : {
                             color: string;
                             fontWeight: string;
                             cursor?: string;
                         } | null = i === 1 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
-                        if(nameParameterApi === "docSospesiSend"){
-                            cssFirstColum = i === 1 ? {color:'#0D6EFD', fontWeight: 'bold'} : null;
-                        }
+                       
                         const valueEl = (i === 1 && value?.toString().length > 20) ? value?.toString().slice(0, 20) + '...' : value;
                         if(i === 0){
                             return(
@@ -84,7 +82,6 @@ const RowCollapsible = ({sliced,element ,headerNames, headerNamesCollapse, apiGe
                             return (
                                 <Tooltip key={`${value}-${i}`}  title={(i === 1 && value?.toString().length > 20) ?value:null} >
                                     <TableCell key={`expand-${element.id}-${i}`}  onClick={()=>{(i === 1 && apiGet) && apiGet(element);}} sx={cssFirstColum}  align={"center"}>{valueEl}</TableCell>
-                            
                                 </Tooltip>
                             );
                         }             
