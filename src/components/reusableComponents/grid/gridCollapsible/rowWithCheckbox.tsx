@@ -1,0 +1,169 @@
+import { Box, Checkbox, Chip, Collapse, IconButton, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
+import { useState } from "react";
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { useNavigate } from "react-router";
+import { PathPf } from "../../../../types/enum";
+
+const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqualMonthDownload}) => {
+    const [open, setOpen] = useState(false);
+    const navigate = useNavigate();
+   
+  
+    const handleClick = ( id: number) => {
+
+        if(monthFilterIsEqualMonthDownload){
+            //logica per id
+            const selectedIndex = selected.indexOf(id);
+            let newSelected: readonly number[] = [];
+        
+            if (selectedIndex === -1) {
+                newSelected = newSelected.concat(selected, id);
+            } else if (selectedIndex === 0) {
+                newSelected = newSelected.concat(selected.slice(1));
+            } else if (selectedIndex === selected.length - 1) {
+                newSelected = newSelected.concat(selected.slice(0, -1));
+            } else if (selectedIndex > 0) {
+                newSelected = newSelected.concat(
+                    selected.slice(0, selectedIndex),
+                    selected.slice(selectedIndex + 1),
+                );
+            }
+            setSelected(newSelected);
+        }else{
+            setOpenResetFilterModal(true);
+        }
+        
+    };
+
+    const handleGoToDetail = async(el) => {
+        let idTipoContratto = 0;
+        if(el.tipocontratto === "PAL"){
+            idTipoContratto = 2;
+        }else if(el.tipocontratto === "PAC"){
+            idTipoContratto = 1;
+        }
+        navigate(`${PathPf.PDF_REL}/documentiemessi/${el.idfattura}/${el.istitutioID}/${idTipoContratto}`); 
+    };  
+
+    const isSelected = (id: number) => selected.indexOf(id) !== -1;
+
+
+
+    let tooltipObj:any= {label:'Non Inviata',title:'La fattura non è stata inviata'};
+    if(row.inviata === 1){
+        tooltipObj = {label:'Inviata',title:'La fattura è stata inviata',color:'#B5E2B4'};
+    }else if(row.inviata === 2){
+        tooltipObj = {label:'Elaborazione',title:'La fattura è in elaborazione',color:'#FFE5A3'};
+    }else if(row.inviata === 3){
+        tooltipObj = {label:'Cancellata',title:'La fattura è stata cancellata',color:'#86E1FD'};
+    }
+ 
+    return(
+        
+        <TableBody sx={{minHeight:"100px"}}>
+            <TableRow sx={{
+                height: '80px',
+                borderTop: '4px solid #F2F2F2',
+                borderBottom: '2px solid #F2F2F2',
+                '&:hover': {
+                    backgroundColor: '#EDEFF1',
+                },
+                '& > *': { borderBottom: 'unset' }
+            }}>
+                <TableCell padding="checkbox">
+                    <Checkbox
+                        color="primary"
+                        indeterminate={false}
+                        checked={isSelected(row.idfattura)}
+                        disabled={row.elaborazione === 2}
+                        onChange={()=>{
+                            handleClick(row.idfattura);
+                        }}
+                        inputProps={{
+                            'aria-label': 'select all desserts',
+                        }}
+                    />
+                </TableCell>
+                <TableCell>
+                    <IconButton
+                        sx={{color:'#227AFC'}}
+                        size="small"
+                        onClick={() => setOpen(!open)}
+                    >
+                        {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                    </IconButton>
+                </TableCell>
+                <Tooltip  title={row?.ragionesociale?.length > 20 ? row?.ragionesociale : null }>
+                    <TableCell onClick={()=>{handleGoToDetail(row);}}  sx={{color:'#0D6EFD',fontWeight: 'bold',cursor:"pointer"}} >{row.ragionesociale?.toString().length > 20 ? row.ragionesociale?.toString().slice(0, 20) + '...' : row.ragionesociale}</TableCell>
+                </Tooltip>
+                <TableCell align='center'>{row.dataFattura !== null ? new Date(row.dataFattura).toLocaleString().split(',')[0] : ''}</TableCell>
+                <TableCell align='center'>
+                    <Tooltip
+                        placement="bottom"
+                        title={tooltipObj.title}
+                    >
+                        <span>
+                            <Chip variant="outlined" label={tooltipObj.label} sx={{backgroundColor:tooltipObj.color}} />
+                        </span>
+                    </Tooltip>
+                </TableCell>
+                <TableCell align='center'>{row.tipologiaFattura||"--"}</TableCell>
+                <TableCell align='center'>{row.identificativo||"--"}</TableCell>
+                <TableCell align='center' >{row.tipocontratto||"--"}</TableCell>
+                <TableCell align='right' >{row.totale.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}</TableCell>
+                <TableCell align='right' >{row.numero === null ? "--":row.numero}</TableCell>
+                <TableCell align='center' >{row.tipoDocumento||"--"}</TableCell>
+                <TableCell align='center' >{row.divisa||"--"}</TableCell>
+                <TableCell align='center' >{row.metodoPagamento||"--"}</TableCell>
+                <TableCell align='center'>{row?.split?.toString()|| '--'}</TableCell>
+                <TableCell align="center" onClick={()=>{handleGoToDetail(row);}}>
+                    <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
+                </TableCell>
+                
+            </TableRow>
+            <TableRow>
+                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                    <Collapse in={open} timeout="auto" unmountOnExit>
+                        <Box sx={{ margin: 2 , backgroundColor:'#F8F8F8', padding:'10px'}}>
+                            <Typography sx={{marginLeft:"6px"}} variant="h6" gutterBottom component="div">
+                Posizioni
+                            </Typography>
+                            <Table size="small">
+                                <TableHead>
+                                    <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
+                                        <TableCell align="center" sx={{ marginLeft:"16px"}} >Numero Linea</TableCell>
+                                        <TableCell align="center" sx={{ marginLeft:"16px"}}>Codice Materiale</TableCell>
+                                        <TableCell align="center" sx={{ marginLeft:"16px"}}>Imponibile</TableCell>
+                                        <TableCell align="center" sx={{ marginLeft:"16px"}}>Periodo di riferimento</TableCell>
+                                        <TableCell align="center" sx={{ marginLeft:"16px"}}>Periodo di fatturazione</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
+                                    {row?.posizioni?.map((obj) => (
+                                        <TableRow key={Math.random()}>
+                                            <TableCell align="center">
+                                                {obj.numerolinea}
+                                            </TableCell>
+                                            <TableCell align="center" >{obj.codiceMateriale}</TableCell>
+                                            <TableCell align="center" component="th" scope="row">
+                                                {obj.imponibile.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
+                                            </TableCell>
+                                            <TableCell align="center" >{obj.periodoRiferimento}</TableCell>
+                                            <TableCell align="center" >{obj?.periodoFatturazione||"--"}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </Box>
+                    </Collapse>
+                </TableCell>
+            </TableRow> 
+        </TableBody>);
+   
+   
+   
+};
+
+export default Row;
