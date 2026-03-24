@@ -8,12 +8,11 @@ import { downloadDocumentoAsseverazionePagoPa, exportDocumentoAsseverazionePagoP
 import { Asseverazione } from "../../types/typeAdesioneBando";
 import { manageError } from "../../api/api";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
-import { SingleFileInput } from "@pagopa/mui-italia";
 import ModalUploadPdf from "../../components/rel/modalUploadPdf";
-
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { PathPf } from "../../types/enum";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
+import { SingleFileInput } from "@pagopa/mui-italia";
 
 
 const AdesioneBando : React.FC = () => {
