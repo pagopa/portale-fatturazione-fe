@@ -11,6 +11,7 @@ import { saveAs } from "file-saver";
 import generatePDF from "react-to-pdf";
 import { ManageErrorResponse } from "../types/typesGeneral";
 import { getDettaglioFatturaEmessa, getDettaglioFatturaSospesa, getSospesiReportExel } from "../api/apiSelfcare/documentiSospesiSE/api";
+import { getDettaglioFatturaEmessaPa, getDocumentiEmessiPdfPa } from "../api/apiPagoPa/fatturazionePA/api";
 
 function usePageRelDocPdf({
     token,
@@ -22,6 +23,7 @@ function usePageRelDocPdf({
     navigate,
     profilePath,
     rowId,
+    idEnte
 }) {
 
     const targetRef  = useRef<HTMLInputElement>(null);
@@ -86,10 +88,10 @@ function usePageRelDocPdf({
                 res = await  getDettaglioFatturaSospesa(token,profilo.nonce,id);
             }else if(whoInvoke === "send"&& pageFrom === "rel"){
                 res = await  getSingleRelPagopa(token,profilo.nonce,id);
+            }else if(whoInvoke === "send" && pageFrom === "documentiemessi"){
+                res = await  getDettaglioFatturaEmessaPa(token,profilo.nonce,idEnte,id);
             }
 
-            
-            console.log({resRel:res});
             setRel(res.data);
             if (res.data.datiFatturazione === true && pageFrom === "rel") {
                
@@ -122,20 +124,20 @@ function usePageRelDocPdf({
 
         try {
             let response;
+            const customId = `${rel.idEnte}_${rel.idContratto}_${rel.tipologiaFattura.replace(/ /g, "-")}_${rel.anno}_${rel.mese}`;
             if (enti) {
-                const customId = `${rel.idEnte}_${rel.idContratto}_${rel.tipologiaFattura.replace(/ /g, "-")}_${rel.anno}_${rel.mese}`;
                 if(pageFrom === "rel"){
                     response = await getRelExel(token, profilo.nonce, rowId);
                 }else if(pageFrom === "documentiemessi"){ 
                     //PROBBILMENTE DA SOSTITUIRE
                     response = await getRelExel(token, profilo.nonce, customId);
                 }else if(pageFrom === "documentisospesi"){
-                    
-                    console.log({customId});
                     response = await getSospesiReportExel(token, profilo.nonce, customId);
                 }
             }else if(profilo.auth === 'PAGOPA'){
-                response = await getRelExelPagoPa(token, profilo.nonce, rowId);
+                if(pageFrom === "rel" || pageFrom === "documentiemessi"){
+                    response = await getRelExelPagoPa(token, profilo.nonce, rowId);
+                }
             }
 
             const fileUrl = response.data;
@@ -169,7 +171,7 @@ function usePageRelDocPdf({
             setShowDownloading(false);
         }
     };
-    
+ 
     const downloadPdf = async () => {
         try {
             if (enti) {
@@ -189,9 +191,14 @@ function usePageRelDocPdf({
 
             }else if (profilo.auth === 'PAGOPA') {
                 setShowDownloading(true);
-                console.log({MM:mainState});
-                const res: ResponseDownloadPdf = await getRelPdfPagoPa(token,profilo.nonce, rowId);
-                toDoOnDownloadPdf(res,"Regolare Esecuzione");
+                let res: ResponseDownloadPdf|undefined;
+                if(pageFrom === "rel"){
+                    res = await getRelPdfPagoPa(token,profilo.nonce, rowId);
+                    toDoOnDownloadPdf(res,"Regolare Esecuzione");
+                }else if(pageFrom === "documentiemessi"){ 
+                    res = await getDocumentiEmessiPdfPa(token, profilo.nonce, Number(rel.idTestata) , rel.idEnte);
+                    toDoOnDownloadPdf(res,"Documenti Emessi");
+                }
             }
 
         } catch (err:any) {

@@ -2,9 +2,13 @@ import { Box, Checkbox, Chip, Collapse, IconButton, Table, TableBody, TableCell,
 import { useState } from "react";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { useNavigate } from "react-router";
+import { PathPf } from "../../../../types/enum";
 
 const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqualMonthDownload}) => {
     const [open, setOpen] = useState(false);
+    const navigate = useNavigate();
    
   
     const handleClick = ( id: number) => {
@@ -32,6 +36,16 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
         }
         
     };
+
+    const handleGoToDetail = async(el) => {
+        let idTipoContratto = 0;
+        if(el.tipocontratto === "PAL"){
+            idTipoContratto = 2;
+        }else if(el.tipocontratto === "PAC"){
+            idTipoContratto = 1;
+        }
+        navigate(`${PathPf.PDF_REL}/documentiemessi/${el.idfattura}/${el.istitutioID}/${idTipoContratto}`); 
+    };  
 
     const isSelected = (id: number) => selected.indexOf(id) !== -1;
 
@@ -82,7 +96,7 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
                     </IconButton>
                 </TableCell>
                 <Tooltip  title={row?.ragionesociale?.length > 20 ? row?.ragionesociale : null }>
-                    <TableCell  sx={{color:'#0D6EFD',fontWeight: 'bold'}} >{row.ragionesociale?.toString().length > 20 ? row.ragionesociale?.toString().slice(0, 20) + '...' : row.ragionesociale}</TableCell>
+                    <TableCell onClick={()=>{handleGoToDetail(row);}}  sx={{color:'#0D6EFD',fontWeight: 'bold',cursor:"pointer"}} >{row.ragionesociale?.toString().length > 20 ? row.ragionesociale?.toString().slice(0, 20) + '...' : row.ragionesociale}</TableCell>
                 </Tooltip>
                 <TableCell align='center'>{row.dataFattura !== null ? new Date(row.dataFattura).toLocaleString().split(',')[0] : ''}</TableCell>
                 <TableCell align='center'>
@@ -104,6 +118,9 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
                 <TableCell align='center' >{row.divisa||"--"}</TableCell>
                 <TableCell align='center' >{row.metodoPagamento||"--"}</TableCell>
                 <TableCell align='center'>{row?.split?.toString()|| '--'}</TableCell>
+                <TableCell align="center" onClick={()=>{handleGoToDetail(row);}}>
+                    <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
+                </TableCell>
                 
             </TableRow>
             <TableRow>
@@ -120,6 +137,7 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
                                         <TableCell align="center" sx={{ marginLeft:"16px"}}>Codice Materiale</TableCell>
                                         <TableCell align="center" sx={{ marginLeft:"16px"}}>Imponibile</TableCell>
                                         <TableCell align="center" sx={{ marginLeft:"16px"}}>Periodo di riferimento</TableCell>
+                                        <TableCell align="center" sx={{ marginLeft:"16px"}}>Periodo di fatturazione</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
@@ -133,6 +151,7 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
                                                 {obj.imponibile.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
                                             </TableCell>
                                             <TableCell align="center" >{obj.periodoRiferimento}</TableCell>
+                                            <TableCell align="center" >{obj?.periodoFatturazione||"--"}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>

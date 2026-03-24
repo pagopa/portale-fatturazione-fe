@@ -1,4 +1,4 @@
-import { SingleFileInput } from "@pagopa/mui-italia";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import React, { useState } from "react";
 
 type LoderProp = {
@@ -6,15 +6,11 @@ type LoderProp = {
 }
 
 const Loader : React.FC<LoderProp> = ({sentence}) => {
-    const [file, setFile] = useState<File | null>(null);
-    const handleSelect = (file: File) => {
-        setFile(file);
-    };
-    const handleRemove = () => {
-        setFile(null);
-    };
-    
-    return  <SingleFileInput  value={file} onFileSelected={handleSelect} onFileRemoved={handleRemove} loadingLabel={sentence} loading={true} dropzoneButton={"cc"} dropzoneLabel={"pp"}  />;
+   
+    return  <Box display="flex" alignItems="center" gap={2}>
+                <Typography sx={{ fontSize: "18px" }} variant="subtitle2">{sentence}</Typography>
+                <CircularProgress size="3rem" />
+            </Box>
 
 };
 

@@ -81,6 +81,7 @@ const Auth : React.FC = () =>{
                 user: { name: "", ruolo: storeProfilo.descrizioneRuolo, id: "1" },
                 idTipoContratto: storeProfilo.idTipoContratto,
                 idEnte: storeProfilo.idEnte,
+                infoTrimestreComSelected:{}
             };
     
             handleModifyMainState({
@@ -97,6 +98,7 @@ const Auth : React.FC = () =>{
                 apiError: null,
                 badgeContent: 0,
                 messaggioSelected: null,
+                infoTrimestreComSelected:{}
             });
     
     

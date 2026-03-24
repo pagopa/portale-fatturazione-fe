@@ -17,14 +17,14 @@ import usePageRelDocPdf from '../../hooks/usePageRelDocPdf';
 import { useLocation } from 'react-router-dom';
 
 const RelPdfPage : React.FC = () =>{
-    const { pageFrom, id } = useParams();
+    const { pageFrom, id, idEnte, idTipoContratto } = useParams();
     const mainState = useGlobalStore(state => state.mainState);
     const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
     const navigate = useNavigate();
     const location = useLocation();
-    const accontoIsVisible = mainState?.profilo?.idTipoContratto === 2;
+    
 
    
     let profilePath; 
@@ -48,7 +48,21 @@ const RelPdfPage : React.FC = () =>{
     }else if(location.pathname.includes("ente") && location.pathname.includes("rel")){
         profilePath = PathPf.LISTA_REL_EN;
         headerNavigationFrom = "Regolare Esecuzione/";
+    }else if(location.pathname.includes("send") && location.pathname.includes("documentiemessi")){
+        profilePath = PathPf.FATTURAZIONE;
+        headerNavigationFrom = "Documenti Emessi/";
+        labelScaricaPdf = "Scarica PDF Doc. Emessi";
+        labelScaricaReportDettaglio = "Scarica report di dettaglio notifiche Doc. Emessi";
     }
+
+    let accontoIsVisible:boolean = mainState?.profilo?.idTipoContratto === 2;
+    if(profilo.auth === "PAGOPA"){
+        if(Number(idTipoContratto) === 0){
+            navigate(profilePath);
+        }
+        accontoIsVisible = Number(idTipoContratto) === 2;
+    }
+
 
   
 
@@ -80,12 +94,63 @@ const RelPdfPage : React.FC = () =>{
         pageFrom:pageFrom,
         navigate,
         profilePath,
-        rowId:id
+        rowId:id,
+        idEnte:idEnte
     });
 
+    let showComponentPdfAdmin = false;
 
+    if(profilo.auth === "PAGOPA"){
+        if(location.pathname.includes("/rel/") && (!rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) ){
+            showComponentPdfAdmin = true;
+        }else if(location.pathname.includes("/documentiemessi") && (rel.tipologiaFattura === "PRIMO SALDO" || rel.tipologiaFattura === "SECONDO SALDO") ){
+            showComponentPdfAdmin = true;
+        }
+    }
 
-    console.log({rel});
+    let showButtonDownloadReport = false;
+
+    if(profilo.auth === "PAGOPA"){
+        if((location.pathname.includes("documentiemessi") || location.pathname.includes("documentisospesi") ) &&
+            rel.tipologiaFattura !== "PRIMO SALDO" && rel.tipologiaFattura !== "SECONDO SALDO"){
+            showButtonDownloadReport = false;
+        }else if(location.pathname.includes("/rel/")){
+            showButtonDownloadReport = true;
+        }else{
+            showButtonDownloadReport = true;
+        }
+    }else if(profilo.auth === "SELFCARE"){
+        if((location.pathname.includes("documentiemessi") || location.pathname.includes("documentisospesi") ) &&
+            rel.tipologiaFattura !== "PRIMO SALDO" && rel.tipologiaFattura !== "SECONDO SALDO"){
+            showButtonDownloadReport = false;
+        }else if(location.pathname.includes("/rel/")){
+            showButtonDownloadReport = true;
+        }else{
+            showButtonDownloadReport = true;
+        }
+    }
+
+    let showDownloadPdfRELEnteFirmato = false;
+    if(profilo.auth === "SELFCARE"){
+        if(rel.totale >= 1 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")&& location.pathname.includes("/rel/")){
+            showDownloadPdfRELEnteFirmato = true;
+        }
+    }
+ 
+    let showComponentActionOnBottomEnte = false;
+    if(profilo.auth === "SELFCARE"){
+        if(rel.totale > 0 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE") && location.pathname.includes("/rel/")){
+            showComponentActionOnBottomEnte = true;
+        }
+    }
+
+    let showDownloadPdfDocEmessiSospesiEnte = false;
+    if(profilo.auth === "SELFCARE"){
+        if((location.pathname.includes("documentiemessi") || location.pathname.includes("documentisospesi"))&&
+            (rel.tipologiaFattura === "PRIMO SALDO" || rel.tipologiaFattura === "SECONDO SALDO" )){
+            showDownloadPdfDocEmessiSospesiEnte= true;
+        }
+    }
 
     if(loadingDettaglio){
         return(
@@ -97,24 +162,21 @@ const RelPdfPage : React.FC = () =>{
         <div>
             <div style={{ position:'absolute',zIndex:-1, top:'-1000px'}}  id='file_download_rel' ref={targetRef}>
             </div>
-            <div>
+            <div className='mb-4'>
                 <NavigatorHeader pageFrom={headerNavigationFrom} pageIn={"Dettaglio"} backPath={profilePath} icon={<ManageAccountsIcon  sx={{paddingBottom:"5px"}}  fontSize='small'></ManageAccountsIcon>}></NavigatorHeader>
             </div>
-            { (location.pathname.includes("ente") && 
-            (location.pathname.includes("documentiemessi") || location.pathname.includes("documentisospesi") ) &&
-            rel.tipologiaFattura !== "PRIMO SALDO" && rel.tipologiaFattura !== "SECONDO SALDO")
-                ? null:
-                <div className='d-flex justify-content-end mt-4 me-5'>
+            {showButtonDownloadReport &&
+                <div className='d-flex justify-content-end mt-2 me-5'>
                     <Button disabled={disableButtonDettaglioNot}  onClick={()=> downloadReportDettaglio()} >{labelScaricaReportDettaglio} <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
                 </div>
             }
             <MainComponentBasedOnUrl mainObj={rel} profilePath={profilePath} accontoIsVisible={accontoIsVisible}></MainComponentBasedOnUrl>
             <div className='d-flex justify-content-between ms-5 me-5'>
-                {(profilo.auth === 'PAGOPA' &&  !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) &&
+                {showComponentPdfAdmin &&
                 <div>
-                    <Button sx={{width:'274px'}} onClick={downloadPdf}  variant="contained">Scarica PDF Reg. Es.<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+                    <Button sx={{width:'274px'}} onClick={downloadPdf}  variant="contained">{labelScaricaPdf}<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
                 </div>}
-                {(profilo.auth === 'PAGOPA' && rel?.caricata >= 1 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) &&
+                {(profilo.auth === 'PAGOPA' && rel?.caricata >= 1 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) && location.pathname.includes("/rel/") &&
                     <div>
                         <div>
                             <Button sx={{width:'300px'}} onClick={() => downloadPdfRelFirmato()}   variant="contained">Scarica PDF Firmato <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
@@ -128,17 +190,15 @@ const RelPdfPage : React.FC = () =>{
                 }
             </div>
             <div className="ms-5 me-5 mb-3">
-               
-                {(enti && rel.totale > 0 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")&& location.pathname.includes("/rel/"))  &&
+                {showComponentActionOnBottomEnte  &&
                     <Box sx={{display:"flex",justifyContent:"space-between"}}>
                         <div>
                             <Button sx={{width:'274px'}} onClick={downloadPdf}  variant="contained">{labelScaricaPdf}<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
                         </div>
-                   
                         <div id='singleInput' style={{minWidth: '300px', height:'40px'}}>
                             <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".pdf"]} onFileSelected={(e) => uploadPdf(e)} onFileRemoved={() => setFile(null)} dropzoneLabel={(rel?.caricata === 1 || rel?.caricata === 2) ? 'Reinserisci nuovo PDF Reg. Es. firmato' : "Inserisci PDF Reg. Es. firmato"} rejectedLabel="Tipo file non supportato" dropzoneButton=""></SingleFileInput>
                         </div> 
-                        {(enti && rel?.caricata >= 1 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) && location.pathname.includes("/rel/") &&
+                        {showDownloadPdfRELEnteFirmato &&
                          <div>
                              <div>
                                  <Button sx={{width:'300px'}} onClick={() => downloadPdfRelFirmato()}   variant="contained">Scarica PDF Firmato <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
@@ -152,8 +212,7 @@ const RelPdfPage : React.FC = () =>{
                         }
                     </Box> 
                 }
-                {(enti && location.pathname.includes("documentiemessi") || location.pathname.includes("documentisospesi")) &&
-                    (rel.tipologiaFattura === "PRIMO SALDO" || rel.tipologiaFattura === "SECONDO SALDO" ) &&
+                {showDownloadPdfDocEmessiSospesiEnte &&
                     <Box>
                         <div className="">
                             <Button sx={{width:'274px'}} onClick={downloadPdf}  variant="contained">{labelScaricaPdf}<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
@@ -205,7 +264,7 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,accontoIsVisible}) => {
                 </div>
             </div>
         );
-    }else if(profilePath === PathPf.DOCUMENTI_EMESSI){
+    }else if(profilePath === PathPf.DOCUMENTI_EMESSI || profilePath === PathPf.FATTURAZIONE){
         return (
             <Box>
                 <div className="bg-white mb-5 me-5 ms-5">
@@ -243,7 +302,7 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,accontoIsVisible}) => {
                 {mainObj.fattureSospese.length > 0 &&
                 <div className="bg-white mb-5 me-5 ms-5">
                     <div className="d-flex justify-content-center pt-3">
-                        <Typography variant="h4">Fatture sospese</Typography>
+                        <Typography variant="h4">Elenco Fatture Emesse</Typography>
                     </div>
                     <div className="pt-3 pb-3 ">
                         <div className="container text-center">

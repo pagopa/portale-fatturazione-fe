@@ -10,7 +10,7 @@ import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
-import { Box, Grid, Paper, Typography } from "@mui/material";
+import { Paper, Typography } from "@mui/material";
 import { ManageErrorResponse } from "../../types/typesGeneral";
 import { month } from "../../reusableFunction/reusableArrayObj";
 import { headersDocumentiEmessiEnte, headersDocumentiEmessiEnteCollapse } from "../../assets/configurations/conf_GridDocEmessiEnte";
@@ -152,9 +152,7 @@ const DocSos : React.FC = () =>{
         
             setYears(yearsArray);
             if(isInitialRender.current && Object.keys(filters)?.length > 0){
-                console.log(1);
                 if(filters.body.anno !== 9999){
-                    console.log(2);
                     const arrayMonths:number[] = Array.from( new Set(res.data
                         .filter(el =>
                             el.anno === Number(filters.body.anno))
@@ -174,17 +172,13 @@ const DocSos : React.FC = () =>{
                     
              
                     if(filters?.body?.tipologiaFattura?.length > 0 && filters?.body?.mese === 9999){
-                        console.log(4);
                         const arrayDataFattura:string[] = Array.from( new Set(res.data.filter(el =>
                             el.anno === Number(filters?.body?.anno) &&  filters?.body?.tipologiaFattura.includes(el.tipologiaFattura) )
                             .map(el => el.dataFattura)));
-                        console.log(arrayDataFattura);
                         setArrayDataFatturaFiltered(arrayDataFattura);
                         if(filters?.body?.dataFattura?.length > 0){
-                            console.log(5);
                             setValueMultiselectDate(filters.body.dataFattura);
                         }
-
                     }
                     setBodyFatturazione(filters.body);
                     setBodyFatturazioneDownload(filters.body);
@@ -267,16 +261,13 @@ const DocSos : React.FC = () =>{
                     numerolinea: el.numeroLinea,
                     codiceMateriale: el.codiceMateriale,
                     imponibile:el.imponibile.toLocaleString("de-DE", { style: "currency", currency: "EUR" })  || '--',
-                    periodoRiferimento: obj.dataFattura
-                        ? new Date(obj.dataFattura).toLocaleDateString('it-IT')
-                        : '--', 
-                    periodoFatturazione:el.periodoRiferimento || '--',
-                })),
+                    periodoRiferimento: el.periodoRiferimento|| '--', 
+                    periodoFatturazione:el?.periodoFatturazione || '--',
+                }))?.sort((a, b) => (a.numerolinea ?? 0) - (b.numerolinea ?? 0)),
             }));
           
           
             if(isInitialRender.current && Object.keys(filters)?.length > 0 ){
-                console.log({filters});
                 if(Object.values(filters.objectSort).some(value => value !== 1)){
                     const obj = filters.objectSort;
                     const label = Object.keys(obj).filter(key => obj[key] !== 1);
@@ -305,16 +296,15 @@ const DocSos : React.FC = () =>{
             setTotalDocumenti(res.data.dettagli.length);
             setTotaleHeader(totaleSum);
                      
-            setBodyFatturazioneDownload(bodyFatturazione);
+            //setBodyFatturazioneDownload(bodyFatturazione);
             
-                      
             if(isInitialRender.current && Object.keys(filters).length === 0){
                 updateFilters({
                     pathPage:PathPf.DOCUMENTI_SOSPESI,
                     body:bodyFatturazione,
                     page:0,
                     rows:10,
-                    objectSort,
+                    objectSort
                 });
             }
             isInitialRender.current = false;
@@ -415,6 +405,7 @@ const DocSos : React.FC = () =>{
             body: bodyFatturazioneDownload,
             page: newPage,
             rows: rowsPerPage,
+            objectSort
         });
     };
                             
@@ -433,6 +424,7 @@ const DocSos : React.FC = () =>{
             body: bodyFatturazioneDownload,
             page: page,
             rows: newRows,
+            objectSort
         });
     };
 
@@ -497,7 +489,6 @@ const DocSos : React.FC = () =>{
                         break;
    
                     case "N. Fattura":
-                        console.log("sort by numero fattura", booleanValue);
                         sortedFull = sortByNumeroFattura(sortedFull, booleanValue, "numero");
                         break;
    
@@ -517,7 +508,6 @@ const DocSos : React.FC = () =>{
         
         }else{
             setObjectSort(prev => {
-                console.log ({prev});
                 const current = prev[label] ?? 1;
                 const next = current === 1 ? 2 : current === 2 ? 3 : 1;
    
@@ -547,7 +537,6 @@ const DocSos : React.FC = () =>{
                             break;
    
                         case "N. Fattura":
-                            console.log("sort by numero fattura", isAsc);
                             sortedFull = sortByNumeroFattura(sortedFull, isAsc, "numero");
                             break;
    
@@ -564,11 +553,10 @@ const DocSos : React.FC = () =>{
                
                 const paginated = sortedFull.slice(start, end);
                 setGridDataParam(paginated);
-                console.log(4);
                 if(!isInitialRender.current){
                     updateFilters({
                         pathPage: PathPf.DOCUMENTI_SOSPESI,
-                        body: bodyFatturazioneDownload,
+                        body: bodyFatturazione,
                         page:page,
                         rows: rowsPerPage,
                         objectSort:newSortObject,

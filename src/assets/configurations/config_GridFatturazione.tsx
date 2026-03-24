@@ -14,4 +14,5 @@ export const headersObjGrid : HeaderCollapsible[] = [
     {name:"Divisa",align:"center",id:7},
     {name:"M. Pagamento",align:"center",id:8},
     {name:"Split",align:"center",id:11},
+    {name:"",align:"center",id:14},
 ];
