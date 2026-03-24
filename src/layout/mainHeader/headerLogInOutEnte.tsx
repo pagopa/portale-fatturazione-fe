@@ -43,7 +43,7 @@ const HeaderLogEnte = () => {
 
     function onEmailClick() {
 
-        window.location.href = process.env.REACT_APP_REDIRECT_ASSISTENZA ||'';
+        window.location.href = import.meta.env.VITE_APP_REDIRECT_ASSISTENZA ||'';
     }
   
     const statusUser = mainState.authenticated && user;

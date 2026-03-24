@@ -92,14 +92,14 @@ export const useGlobalStore = create(
             partialize: (state: GlobalStore) => ({
                 mainState: state.mainState,
                 statusQueryGetUri: state.statusQueryGetUri,
-                appVersion:process.env.REACT_APP_VERSION
+                appVersion:import.meta.env.VITE_APP_VERSION
             }),
             migrate: (persistedState: any, version) => {
                 return {
                     ...persistedState,
                     mainState: persistedState.mainState,
                     statusQueryGetUri: persistedState.statusQueryGetUri ?? [],
-                    appVersion:process.env.REACT_APP_VERSION,
+                    appVersion:import.meta.env.VITE_APP_VERSION,
                 };
             },
         }
