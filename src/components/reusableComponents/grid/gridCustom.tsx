@@ -166,7 +166,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                         return(
                                             <TableCell key={Math.random()} align={el.align} width={el.width}>{el.label}</TableCell>
                                         );
-                                    }else if(nameParameterApi === "docEmessiEnte" || nameParameterApi === "docEmessiEnteContestate"){
+                                    }else if(nameParameterApi === "docEmessiEnte" || nameParameterApi === "docEmessiEnteContestate"|| nameParameterApi === "docSospesiSend"){
                                         return(
                                             <TableCell key={`tableCell-${i}`} align={el.align} width={el.width}>{el.label}
                                                 {(el.headerActionSort &&  objectSort && objectSort[el.label]) &&
@@ -190,7 +190,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                         </TableHead>
                         
                         <TableBody sx={{marginLeft:'20px',height: '50px'}}>
-                            {elements.length === 0 && (nameParameterApi === "docEmessiEnte" || nameParameterApi === "docEmessiEnteContestate") && 
+                            {elements.length === 0 && (nameParameterApi === "docEmessiEnte" || nameParameterApi === "docEmessiEnteContestate"|| nameParameterApi === "docSospesiSend") && 
                             <TableRow key={"no-data"}>
                                 <TableCell colSpan={100} align="left">
                                     <Typography fontWeight={"bold"}>{sentenseEmpty && sentenseEmpty}</Typography>
@@ -214,7 +214,11 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                     sliced = Object.fromEntries(Object.entries(element).slice(3, -1));
                                 }else if(nameParameterApi === "docEmessiEnteContestate"){
                                     sliced = Object.fromEntries(Object.entries(element).slice(4, -2));
+                                }else if(nameParameterApi === "docSospesiSend"){
+                                    sliced = Object.fromEntries(Object.entries(element).slice(2, -1));
                                 }
+
+                            
 
 
                                 if(nameParameterApi === 'idContratto'){
@@ -231,8 +235,8 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                     return  <DefaultRow key={element.id} handleClickOnGrid={handleClickOnGrid} element={element} sliced={sliced} apiGet={()=> console.log("go to details")} headerNames={headerNames}></DefaultRow>;
                                 }else if(nameParameterApi === "idPrevisonale"){
                                     return <RowModCommessaPrevisionale key={element.id} sliced={sliced} element={element} headerNames={headerNames}></RowModCommessaPrevisionale>;
-                                }else if(nameParameterApi === "docEmessiEnte"){
-                                    return <RowCollapsible key={`${element.idFattura}-${element.id}`} sliced={sliced} element={element} headerNames={headerNames} headerNamesCollapse={headerNamesCollapse} apiGet={apiGet}></RowCollapsible>;
+                                }else if(nameParameterApi === "docEmessiEnte"||nameParameterApi ==="docSospesiSend" ){
+                                    return <RowCollapsible key={`${element.idFattura}-${element.id}`} sliced={sliced} element={element} headerNames={headerNames} headerNamesCollapse={headerNamesCollapse} apiGet={apiGet} nameParameterApi={nameParameterApi}></RowCollapsible>;
                                 }else{
                                      
                                     return (
@@ -247,8 +251,19 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                         }}  key={Math.random()}>
                                             {
                                                 Object.values(sliced).map((value:string|number|any, i:number)=>{
-                                                    const firstColumIsNotClickable =  nameParameterApi === "docEmessiEnteContestate" || i !== 0;
-                                                    const cssFirstColum = !firstColumIsNotClickable ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
+                                                   
+                                                    let cssFirstColum : {
+                                                        color: string;
+                                                        fontWeight?: string;
+                                                        cursor?: string;
+                                                    } | undefined  = {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'};
+                                                    if( i === 0 && nameParameterApi !== "storico_documenti_contabili" && nameParameterApi !== "docEmessiEnteContestate"  ){
+                                                        cssFirstColum = {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'};
+                                                    }else if( i !== 0 ){
+                                                        cssFirstColum = undefined;
+                                                    }else if((nameParameterApi === "storico_documenti_contabili"|| nameParameterApi === "docEmessiEnteContestate")  && i === 0){
+                                                        cssFirstColum = {color:'#0D6EFD', fontWeight: 'bold'};
+                                                    }
                                                     const valueEl = (i === 0 && value?.toString().length > 30) ? value?.toString().slice(0, 30) + '...' : value;
                                                     return (
                                                         <Tooltip key={Math.random()} 
@@ -256,7 +271,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                                                 (value === "--" 
                                                                 || nameParameterApi === "idNotifica"
                                                                 || valueEl?.length < 30
-                                                                ||((nameParameterApi=== "idTestata"&& i === 0 && valueEl?.length < 30) 
+                                                                ||(((nameParameterApi=== "idTestata"||nameParameterApi === "storico_documenti_contabili") && i === 0 && valueEl?.length < 30) 
                                                                 ||nameParameterApi=== "idTestata"&& i !== 0 ))
                                                                     ?null
                                                                     :value}>

@@ -353,6 +353,7 @@ function useSaveModifyModuloCommessa({
                 setOpenModalAlert(true);
             }else{
                 indietroFunction();
+                setTimeout(() => window.scrollTo(0, 0), 50);
             }
         }  
     };
@@ -384,6 +385,7 @@ function useSaveModifyModuloCommessa({
                 avantiFunction();
             }
         }
+       
     };
 
     const avantiFunction = () => {
@@ -480,23 +482,24 @@ function useSaveModifyModuloCommessa({
 
 
     const onChangeModuloValue = (e,valueKey) => {
-    
-        const activeCommessa = dataModuli.length > 1 ? dataModuli[activeStep] : dataModuli[0];
-        const restOfCommesse = dataModuli.filter(el => el.meseValidita !== activeCommessa?.meseValidita);
-        const activeCommessaIndex = dataModuli.findIndex(el => el.meseValidita === activeCommessa?.meseValidita);
-        const regioniActiveCommessa = activeCommessa?.valoriRegione;
+        const val = e.target.value;
+        if (val === '' || Number(val) >= 0) {
+            const activeCommessa = dataModuli.length > 1 ? dataModuli[activeStep] : dataModuli[0];
+            const restOfCommesse = dataModuli.filter(el => el.meseValidita !== activeCommessa?.meseValidita);
+            const activeCommessaIndex = dataModuli.findIndex(el => el.meseValidita === activeCommessa?.meseValidita);
+            const regioniActiveCommessa = activeCommessa?.valoriRegione;
 
-        const updatedCommessa = {
-            ...activeCommessa,
-            [valueKey]:e.target.value === "" ? null : Number(e.target.value),
-        };
+            const updatedCommessa = {
+                ...activeCommessa,
+                [valueKey]:e.target.value === "" ? null : Number(e.target.value),
+            };
      
-        setDataModuli([
-            ...restOfCommesse.slice(0,activeCommessaIndex),
-            updatedCommessa,
-            ...restOfCommesse.slice(activeCommessaIndex)]);
-        
-        if(e.target.value === "0"){
+            setDataModuli([
+                ...restOfCommesse.slice(0,activeCommessaIndex),
+                updatedCommessa,
+                ...restOfCommesse.slice(activeCommessaIndex)]);
+            //fix modulo commessa eliminare prefill 
+            /*if(e.target.value === "0"){
             let tipoNotifica = "";
             if(valueKey === "totaleNotificheAnalogicoARNaz"){
                 tipoNotifica = "totaleAnalogicoARNaz";
@@ -508,13 +511,21 @@ function useSaveModifyModuloCommessa({
             
         }else{
             errorOnOver(regioniActiveCommessa,updatedCommessa);
-        }
+        }*/
  
-        
+            errorOnOver(regioniActiveCommessa,updatedCommessa);
+        }
     };
 
     const handleChangeTotale_Ar_890_regione = (e, tipoNotifiche, element,isCallonChangeModuloValue=false) => {
-        const value = e.target.value !== "" ? Number(e.target.value) : null;
+        let value = e.target.value !== "" ? Number(e.target.value) : null;
+        if(e.target.value === ""){
+            value = null;
+        }else if(Number(e.target.value) >= 0){
+            value = Number(e.target.value);
+        }else{
+            value = null;
+        }
 
         setDataModuli(prev => {
             const activeCommessaIndex = prev.length > 1 ? prev.findIndex(el => el.meseValidita === prev[activeStep].meseValidita): 0;
@@ -623,9 +634,9 @@ function useSaveModifyModuloCommessa({
      || activeCommessa.totaleNotificheAnalogicoARInternaz === null 
      || activeCommessa.totaleNotificheAnalogicoARNaz === null 
      || activeCommessa.totaleNotificheDigitaleInternaz === null 
-     || activeCommessa.totaleNotificheDigitaleNaz === null
-     || activeCommessa.valoriRegione.filter(el => el.obbligatorio !== 1).map(el => el[890]).includes(null)
-     || activeCommessa.valoriRegione.filter(el => el.obbligatorio !== 1).map(el => el.ar).includes(null);
+     || activeCommessa.totaleNotificheDigitaleNaz === null;
+        //|| activeCommessa.valoriRegione.filter(el => el.obbligatorio !== 1).map(el => el[890]).includes(null)
+        //|| activeCommessa.valoriRegione.filter(el => el.obbligatorio !== 1).map(el => el.ar).includes(null);
     };
   
     const activeCommessa = dataModuli.length > 1 ? dataModuli[activeStep] : dataModuli[0];

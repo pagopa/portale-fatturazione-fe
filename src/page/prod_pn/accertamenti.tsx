@@ -147,8 +147,6 @@ const Accertamenti : React.FC = () =>{
         await getMessaggiCount(token,profilo.nonce).then((res)=>{
             const numMessaggi = res.data;
             setCountMessages(numMessaggi);
-        }).catch((err)=>{
-            console.log(err);
         });
     };
 

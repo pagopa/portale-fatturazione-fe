@@ -27,7 +27,8 @@ import GavelIcon from '@mui/icons-material/Gavel';
 import DvrIcon from '@mui/icons-material/Dvr';
 import BatchPredictionIcon from '@mui/icons-material/BatchPrediction';
 import { useGlobalStore } from '../../store/context/useGlobalStore';
-
+import FileCopyIcon from '@mui/icons-material/FileCopy';
+import DescriptionIcon from '@mui/icons-material/Description';
 
 const SideNavSend : React.FC = () => {
 
@@ -60,12 +61,9 @@ const SideNavSend : React.FC = () => {
         }else if(currentLocation === PathPf.MODULOCOMMESSA){
             setSelectedIndex(1);
         }else if(currentLocation === PathPf.LISTA_MODULICOMMESSA){
-            if( mainState.infoTrimestreComSelected?.from === PathPf.LISTA_MODULICOMMESSA_PREVISONALE){
-                setSelectedIndex(12);
-            }else{
-                setSelectedIndex(1);
-            }
-            
+            setSelectedIndex(1);  
+        }else if(currentLocation === PathPf.LISTA_MODULICOMMESSA_PREVISONALE){
+            setSelectedIndex(12); 
         }else if(currentLocation === PathPf.LISTA_DATI_FATTURAZIONE){
             setSelectedIndex(0);
         }else if(currentLocation === PathPf.PDF_COMMESSA){
@@ -99,11 +97,14 @@ const SideNavSend : React.FC = () => {
             setSelectedIndex(10);
         }else if(currentLocation === PathPf.ORCHESTRATORE){
             setSelectedIndex(11);
-        }else if(currentLocation === PathPf.LISTA_MODULICOMMESSA_PREVISONALE ){
-            setSelectedIndex(12);
+        }else if(currentLocation === PathPf.LISTA_STORICO_DOCUMENTI_SEND){
+            setSelectedIndex(13);
+        }else if(currentLocation === PathPf.DOCUMENTI_SOSPESI_SEND){
+            setSelectedIndex(14);
         }
 
-        if(open2 && (currentLocation !== PathPf.LISTA_DOC_EMESSI && currentLocation !== PathPf.FATTURAZIONE)){
+
+        if(open2 && (currentLocation !== PathPf.LISTA_DOC_EMESSI && currentLocation !== PathPf.FATTURAZIONE && currentLocation !== PathPf.DOCUMENTI_SOSPESI_SEND &&  !currentLocation.includes("/send/fatturapdf/"))){
             setOpen2(false);
         }
         if(open && (currentLocation !== PathPf.TIPOLOGIA_CONTRATTO && currentLocation !== PathPf.LISTA_DATI_FATTURAZIONE)){
@@ -228,11 +229,11 @@ const SideNavSend : React.FC = () => {
                     </ListItemIcon>
                     <ListItemText primary="Adesione al bando" />
                 </ListItemButton>
-                <ListItemButton selected={selectedIndex === 5} onClick={() => handleListItemClick(PathPf.FATTURAZIONE)}>
+                <ListItemButton selected={selectedIndex === 13} onClick={() => handleListItemClick(PathPf.LISTA_STORICO_DOCUMENTI_SEND)}>
                     <ListItemIcon>
                         <ReceiptIcon fontSize="inherit" />
                     </ListItemIcon>
-                    <ListItemText primary="Documenti emessi" />
+                    <ListItemText primary="Report Documenti contabili" />
                     {open2 ? 
                         <IconButton onClick={(e)=>{
                             e.stopPropagation();
@@ -248,6 +249,22 @@ const SideNavSend : React.FC = () => {
                         </IconButton>}
                 </ListItemButton> 
                 <Collapse in={open2} timeout="auto" unmountOnExit>
+                    <ListItemButton sx={{ pl: 4 }} selected={selectedIndex === 14} onClick={()=>handleListItemClick(PathPf.DOCUMENTI_SOSPESI_SEND)}>
+                        <ListItemIcon>
+                            <FileCopyIcon fontSize="inherit" />
+                        </ListItemIcon>
+                        <Box className="ms-3" display="flex" flexDirection="column">
+                            <ListItemText primary="Documenti contabili sospesi" />
+                        </Box>
+                    </ListItemButton>
+                    <ListItemButton sx={{ pl: 4 }} selected={selectedIndex === 5} onClick={()=>handleListItemClick(PathPf.FATTURAZIONE)}>
+                        <ListItemIcon>
+                            <DescriptionIcon fontSize="inherit" />
+                        </ListItemIcon>
+                        <Box className="ms-3" display="flex" flexDirection="column">
+                            <ListItemText primary="Documenti contabili emessi" />
+                        </Box>
+                    </ListItemButton>
                     <List component="div" disablePadding>
                         <ListItemButton selected={selectedIndex === 9} sx={{ pl: 4 }} onClick={() => handleListItemClick(PathPf.LISTA_DOC_EMESSI)}>
                             <ListItemIcon>

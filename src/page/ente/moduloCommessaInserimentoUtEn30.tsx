@@ -187,7 +187,21 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
     }else if(isEditAllow || activeCommessa?.stato === null){
         labelButtonAvantiListaModuliSave = "Salva";
     }  
-    
+
+    // function to check if in regioni array there are regions with only one of the two values (ar or 890) equal to null, if true return an array with the istatRegione of the regions that mismatch
+    // viene utilizzata anche all'interno del componente MainInserimentoModuloCommessa per evidenziare in rosso i campi regione che hanno un valore null e l'altro valorizzato
+    //06/03/26 non è piu richiesto il check da eliminare se non verrà richiesto il rollback
+    const checkifRegioneHasBothValuesNull = (regioni: Regioni[]) => {
+        return regioni
+            .filter(el => {
+                const arIsNull = el.ar === null;
+                const val890IsNull = el[890] === null;
+                // Check if only one of them is null (mismatch)
+                return arIsNull !== val890IsNull;
+            })
+            .map(el => el.istatRegione);
+    };
+
     return (
         <>
             <BasicModal setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} dispatchMainState={dispatchMainState} handleGetDettaglioModuloCommessa={getDettaglioEnte}  mainState={mainState}></BasicModal>
@@ -259,8 +273,8 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                             <Button
                                 sx={{color:"#5c6f81"}}
                                 size='large'
-                                disabled={activeStep === 0}
-                                onClick={onIndietroButton}><ArrowBackIcon  sx={{fontSize:"60px",marginRight:"20px",color:activeStep === 0 ?"inherit" :"#5c6f81"}}/>
+                                disabled={activeStep === 0 || error890Regioni || errorArRegioni }
+                                onClick={onIndietroButton}><ArrowBackIcon  sx={{fontSize:"60px",marginRight:"20px",color:activeStep === 0 || error890Regioni || errorArRegioni ?"inherit" :"#5c6f81"}}/>
                                  Indiero
                             </Button>
                         </span>
@@ -293,10 +307,10 @@ const ModuloCommessaInserimentoUtEn30 : React.FC = () => {
                             <Button
                                 sx={{color:"#5c6f81"}}
                                 size='large'
-                                disabled={(activeStep+1) === steps.length || error890Regioni || errorArRegioni}
+                                disabled={(activeStep+1) === steps.length || error890Regioni || errorArRegioni }
                                 onClick={onAvantiButton}> 
                                 Avanti
-                                <ArrowForwardIcon sx={{fontSize:"60px", color:(activeStep+1) === steps.length || error890Regioni || errorArRegioni ?"inherit" :"#5c6f81",marginLeft:"20px"}}/>
+                                <ArrowForwardIcon sx={{fontSize:"60px", color:(activeStep+1) === steps.length || error890Regioni || errorArRegioni  ?"inherit" :"#5c6f81",marginLeft:"20px"}}/>
                             </Button>
                         </span>
                     </Tooltip>

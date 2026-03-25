@@ -31,8 +31,6 @@ const AuthAzureProdotti : React.FC = () => {
         await getMessaggiCount(token,nonce).then((res)=>{
             const numMessaggi = res.data;
             setCountMessages(numMessaggi);
-        }).catch((err)=>{
-            console.log(err);
         });
     };
 

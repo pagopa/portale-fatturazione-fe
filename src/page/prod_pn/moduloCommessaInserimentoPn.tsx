@@ -15,6 +15,7 @@ import useSaveModifyModuloCommessa from '../../hooks/useSaveModifyModuloCommessa
 import { getRegioniModuloCommessaPA } from '../../api/apiPagoPa/moduloComessaPA/api';
 import ModalInfo from '../../components/reusableComponents/modals/modalInfo';
 import { useGlobalStore } from '../../store/context/useGlobalStore';
+import { Regioni } from '../ente/moduloCommessaInserimentoUtEn30';
 
 
 
@@ -106,6 +107,21 @@ const ModuloCommessaInserimentoPn : React.FC = () => {
         labelButtonAvantiListaModuliSave = "Salva";
     }
 
+    
+    // function to check if in regioni array there are regions with only one of the two values (ar or 890) equal to null, if true return an array with the istatRegione of the regions that mismatch
+    // viene utilizzata anche all'interno del componente MainInserimentoModuloCommessa per evidenziare in rosso i campi regione che hanno un valore null e l'altro valorizzato
+    const checkifRegioneHasBothValuesNull = (regioni: Regioni[]) => {
+        return regioni
+            .filter(el => {
+                const arIsNull = el.ar === null;
+                const val890IsNull = el[890] === null;
+                // Check if only one of them is null (mismatch)
+                return arIsNull !== val890IsNull;
+            })
+            .map(el => el.istatRegione);
+    };
+        //activeCommessa?.valoriRegione
+
 
     if(loadingData){
         return(
@@ -158,7 +174,7 @@ const ModuloCommessaInserimentoPn : React.FC = () => {
                             </div>
                             {((dataModuli.length > 0 && (activeCommessa?.source === "archiviato")) || !activeCommessa.modifica) ? null:
                                 <div className="d-flex justify-content-center align-items-center">
-                                    <Button  disabled={error890Regioni|| errorArRegioni} onClick={onHandleSalvaModificaButton} variant={"outlined"}>{labelButtonAvantiListaModuliSave}
+                                    <Button  disabled={error890Regioni|| errorArRegioni } onClick={onHandleSalvaModificaButton} variant={"outlined"}>{labelButtonAvantiListaModuliSave}
                                     </Button>
                                 </div>} 
                             { (activeCommessa?.totaleNotifiche !== null && !isEditAllow && !loadingData) && 
