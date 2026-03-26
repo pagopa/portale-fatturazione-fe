@@ -100,7 +100,7 @@ const RelPdfPage : React.FC = () =>{
     if(profilo.auth === "PAGOPA"){
         if(location.pathname.includes("/rel/") && (!rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) ){
             showComponentPdfAdmin = true;
-        }else if(location.pathname.includes("/documentiemessi") && (rel.tipologiaFattura === "PRIMO SALDO" || rel.tipologiaFattura === "SECONDO SALDO") ){
+        }else if((location.pathname.includes("/documentiemessi") ||location.pathname.includes("/documentisospesi")) && (rel.tipologiaFattura === "PRIMO SALDO" || rel.tipologiaFattura === "SECONDO SALDO") ){
             showComponentPdfAdmin = true;
         }
     }

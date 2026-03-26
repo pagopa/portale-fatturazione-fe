@@ -332,4 +332,23 @@ export const downloadFattureReportSospesiPagopa = async (token:string, nonce:str
     
     return response;
 };
+
+export const getDocumentiSospesiPdfPa = async ( token:string ,nonce:string , idFattura:number,idEnte:string) => {
+    const response =  await axios.get(`${url}/api/fatture/sospese/dettaglio/download/${idFattura}?idEnte=${idEnte}&nonce=${nonce}`,  
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
+export const getDocSospesiExelPagoPa = async ( token:string ,nonce:string, id:string) => {
+    const response =  await axios.get(`${url}/api/rel/sospese/righe/${id}/?nonce=${nonce}`,  
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+};
     

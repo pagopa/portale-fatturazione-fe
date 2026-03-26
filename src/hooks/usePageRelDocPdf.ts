@@ -11,7 +11,7 @@ import { saveAs } from "file-saver";
 import generatePDF from "react-to-pdf";
 import { ManageErrorResponse } from "../types/typesGeneral";
 import { getDettaglioFatturaEmessa, getDettaglioFatturaSospesa, getSospesiReportExel } from "../api/apiSelfcare/documentiSospesiSE/api";
-import { getDettaglioFatturaEmessaPa, getDettaglioFatturaSospesaPa, getDocumentiEmessiPdfPa } from "../api/apiPagoPa/fatturazionePA/api";
+import { getDettaglioFatturaEmessaPa, getDettaglioFatturaSospesaPa, getDocSospesiExelPagoPa, getDocumentiEmessiPdfPa, getDocumentiSospesiPdfPa } from "../api/apiPagoPa/fatturazionePA/api";
 
 function usePageRelDocPdf({
     token,
@@ -136,8 +136,10 @@ function usePageRelDocPdf({
                     response = await getSospesiReportExel(token, profilo.nonce, customId);
                 }
             }else if(profilo.auth === 'PAGOPA'){
-                if(pageFrom === "rel" || pageFrom === "documentiemessi" || pageFrom === "documentisospesi" ){
+                if(pageFrom === "rel" || pageFrom === "documentiemessi"){
                     response = await getRelExelPagoPa(token, profilo.nonce, rowId);
+                }else if(pageFrom === "documentisospesi"){
+                    response = await getDocSospesiExelPagoPa(token, profilo.nonce, customId);
                 }
             }
 
@@ -194,7 +196,7 @@ function usePageRelDocPdf({
                     res = await getDocumentiEmessiPdfPa(token, profilo.nonce, Number(rel.idTestata) , rel.idEnte);
                     toDoOnDownloadPdf(res,"Documenti Emessi");
                 }else if(pageFrom === "documentisospesi"){ 
-                    res = await getDocumentiEmessiPdfPa(token, profilo.nonce, Number(rel.idTestata) , rel.idEnte);
+                    res = await getDocumentiSospesiPdfPa(token, profilo.nonce, Number(rel.idTestata) , rel.idEnte);
                     toDoOnDownloadPdf(res,"Documenti Sospesi");
                 }
             }
