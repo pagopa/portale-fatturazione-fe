@@ -237,6 +237,8 @@ const DocSospesiSend : React.FC = () =>{
                 }
             }).catch((()=>{
                 if(isInitialRender.current && Object.keys(filters).length > 0){
+                    setValueMultiselectDateTipologie(filters.valueMulitselectDateTipologie);
+                    getTipologieFatturazione(filters.body.anno, filters.body.mese, filters.body.cancellata);
                     setShowLoadingGrid(false);
                 }
                 setDateTipologie([]);
