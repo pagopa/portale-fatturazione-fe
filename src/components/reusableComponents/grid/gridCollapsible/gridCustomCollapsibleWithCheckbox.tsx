@@ -7,7 +7,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { useEffect, useState } from 'react';
-import { Card} from '@mui/material';
+import { Card, Typography} from '@mui/material';
 import { FattureObj, GridCollapsible } from '../../../../types/typeFatturazione';
 import TablePaginationDemo from './tablePagination';
 import EnhancedTableToolbar from './enhanceTableToolbar';
@@ -90,9 +90,11 @@ const CollapsibleTable: React.FC<GridCollapsible> = ({data, headerNames,stato,se
                                     })}
                                 </TableRow>
                             </TableHead>
-                            {showedData.length === 0 ? <TableBody  style={{height: '50px'}}>
-
-                            </TableBody> :
+                            {showedData.length === 0 ?  <TableRow key={"no-data"}>
+                                <TableCell colSpan={100} align="left">
+                                    <Typography fontWeight={"bold"}>{"Non sono presenti documenti contabili"}</Typography>
+                                </TableCell>
+                            </TableRow> :
                                 showedData.map((row) => {
             
                                     return(

@@ -190,10 +190,10 @@ const GridCustom : React.FC<GridCustomProps> = ({
                         </TableHead>
                         
                         <TableBody sx={{marginLeft:'20px',height: '50px'}}>
-                            {elements.length === 0 && (nameParameterApi === "docEmessiEnte" || nameParameterApi === "docEmessiEnteContestate"|| nameParameterApi === "docSospesiSend") && 
+                            {(elements.length === 0 && sentenseEmpty) && 
                             <TableRow key={"no-data"}>
                                 <TableCell colSpan={100} align="left">
-                                    <Typography fontWeight={"bold"}>{sentenseEmpty && sentenseEmpty}</Typography>
+                                    <Typography fontWeight={"bold"}>{sentenseEmpty}</Typography>
                                 </TableCell>
                             </TableRow>
                             }

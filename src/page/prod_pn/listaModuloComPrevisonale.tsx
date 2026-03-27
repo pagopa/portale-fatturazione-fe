@@ -451,6 +451,7 @@ const ListaCommessaPrevisionale:React.FC = () =>{
                 disabled={showLoadingLista}
                 widthCustomSize="2000px"
                 body={bodyGetLista}
+                sentenseEmpty={"Non sono presenti moduli commessa"}
             ></GridCustom>
           
             <ModalLoading 

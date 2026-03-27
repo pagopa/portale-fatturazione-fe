@@ -736,7 +736,9 @@ const RelPage : React.FC = () =>{
                 headerNames={headerGridKeys}
                 apiGet={setIdRel}
                 disabled={getListaRelRunning}
-                widthCustomSize="2000px"/>
+                widthCustomSize="2000px"
+                sentenseEmpty={"Non sono presenti Regolari esecuzioni/Documenti di cortesia"}
+                />
             <ModalLoading 
                 open={showLoading} 
                 setOpen={setShowLoading} 
