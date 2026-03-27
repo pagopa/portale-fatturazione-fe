@@ -168,7 +168,9 @@ function useSaveModifyModuloCommessa({
                     setisEditAllow(false);
                 }else if(res?.source !== "archiviato" && isCallAfterSaveData){
                     setisEditAllow(false);
-                }else if(!res.modifica){
+                }
+                
+                if(!res.modifica){
                     setisEditAllow(false);
                 }
             }).catch((err:ManageErrorResponse)=>{
@@ -203,7 +205,8 @@ function useSaveModifyModuloCommessa({
                     setisEditAllow(false);
                 }else if(res?.source !== "archiviato" && isCallAfterSaveData){
                     setisEditAllow(false);
-                }else if(!res.modifica){
+                }
+                if(!res.modifica){
                     setisEditAllow(false);
                 }
             }).catch((err:ManageErrorResponse)=>{
