@@ -423,6 +423,9 @@ const DocEm : React.FC = () =>{
         setPage(0);
         setRowsPerPage(10); 
         setTotaleHeader(0);
+        setListaResponse([]);
+        setListaResponseaSorted([]);
+        setTotalDocumenti(0);
     };
 
     const onButtonFiltra = () =>{
