@@ -51,7 +51,8 @@ export type MainFilterProps<T> = {
 
 
     groupByKey?:string,
-    iconMaterial?:React.ReactNode
+    iconMaterial?:React.ReactNode,
+    id?:string
 };
 
 const MainFilter = <T,>({
@@ -84,7 +85,8 @@ const MainFilter = <T,>({
     iconMaterial,
     format="dd/MM/yyyy",
     viewDate=['year', 'month',"day"],
-    disabled=false
+    disabled=false,
+    id
 }: MainFilterProps<T>) => {
 
 
@@ -126,7 +128,7 @@ const MainFilter = <T,>({
         
         case "select_key_value": 
             return ( !hidden && keyBody && <MainBoxContainer>
-                <FormControl fullWidth>
+                <FormControl id={id||inputLabel} fullWidth>
                     <InputLabel>
                         {inputLabel}
                     </InputLabel>
@@ -155,7 +157,7 @@ const MainFilter = <T,>({
             </MainBoxContainer>);
         case "select_key_value_description":
             return ( !hidden && keyBody && keyOption && <MainBoxContainer>
-                <FormControl fullWidth >
+                <FormControl id={id||inputLabel} fullWidth >
                     <InputLabel>
                         {inputLabel}
                     </InputLabel>
@@ -185,7 +187,7 @@ const MainFilter = <T,>({
         case "select_value":
             return ( !hidden &&  keyBody && arrayValues &&
             <MainBoxContainer >
-                <FormControl fullWidth disabled={disabled}>
+                <FormControl id={id||inputLabel} fullWidth disabled={disabled}>
                     <InputLabel>
                         {inputLabel}
                     </InputLabel>
@@ -217,7 +219,7 @@ const MainFilter = <T,>({
         case "select_value_with_tutti":
             return ( !hidden &&  keyBody && arrayValues &&
             <MainBoxContainer >
-                <FormControl fullWidth disabled={disabled}>
+                <FormControl id={id||inputLabel} fullWidth disabled={disabled}>
                     <InputLabel>{inputLabel}</InputLabel>
                     <Select
                         label={inputLabel}
@@ -243,7 +245,7 @@ const MainFilter = <T,>({
             return (
                 !hidden &&  keyBody && arrayValues &&
             <MainBoxContainer >
-                <FormControl fullWidth disabled={disabled}>
+                <FormControl id={id||inputLabel} fullWidth disabled={disabled}>
                     <InputLabel>{inputLabel}</InputLabel>
 
                     <Select
@@ -285,7 +287,7 @@ const MainFilter = <T,>({
         case "select_value_nobody":
             return ( !hidden &&  keyBody && arrayValues &&
             <MainBoxContainer>
-                <FormControl fullWidth >
+                <FormControl id={id||inputLabel} fullWidth >
                     <InputLabel>
                         {inputLabel}
                     </InputLabel>
@@ -317,7 +319,7 @@ const MainFilter = <T,>({
         case "select_value_string":
             return ( !hidden &&  keyBody &&
             <MainBoxContainer>
-                <FormControl  fullWidth >
+                <FormControl id={id||inputLabel}  fullWidth >
                     <InputLabel>
                         {inputLabel}
                     </InputLabel>
@@ -410,6 +412,7 @@ const MainFilter = <T,>({
                 return (
                     <MainBoxContainer>
                         <Autocomplete
+                            id={id||inputLabel}
                             disabled={disabled}
                             fullWidth
                             sx={{

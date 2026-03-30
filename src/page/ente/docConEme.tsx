@@ -147,6 +147,7 @@ const DocEm : React.FC = () =>{
         setShowLoadingGrid(true);
         try{
             const res = await getPeriodoEmesso(token, profilo.nonce);
+            console.log({res})
             setGlobalResponse(res.data);
            
             const yearsArray:number[] = Array.from( new Set(res.data.map(el => el.anno)));
@@ -715,6 +716,7 @@ const DocEm : React.FC = () =>{
         <MainBoxStyled title={"Documenti contabili emessi"} actionButton={[]}>
             <ResponsiveGridContainer >
                 <MainFilter 
+                    id="filter_anno"
                     filterName={"select_value_with_tutti"}
                     inputLabel={"Anno"}
                     clearOnChangeFilter={clearOnChangeFilter}
@@ -730,6 +732,8 @@ const DocEm : React.FC = () =>{
                         
                             setBodyFatturazione((prev)=> ({...prev, ...{anno:9999,mese:9999,dataFattura:[],tipologiaFattura:[]}}));
                             setArrayMonths([]);
+                            const arrayTipogie = Array.from( new Set(globalResponse.map(el => el.tipologiaFattura)));
+                            setDataSelect(arrayTipogie);
                         }else{
                             setBodyFatturazione((prev)=> ({...prev, ...{anno:Number(e),mese:9999,dataFattura:[],tipologiaFattura:[]}}));
                             const arrayMonths = Array.from( new Set(globalResponse
@@ -751,6 +755,7 @@ const DocEm : React.FC = () =>{
                     }}
                 ></MainFilter>
                 <MainFilter 
+                    id="filter_mese"
                     filterName={"select_mese_with_tutti"}
                     inputLabel={"Mese"}
                     clearOnChangeFilter={clearOnChangeFilter}
@@ -782,7 +787,8 @@ const DocEm : React.FC = () =>{
                     }}
                     disabled={bodyFatturazione.anno === 9999}
                 ></MainFilter>
-                <MainFilter 
+                <MainFilter
+                    id="filter_tipologia_fattura"
                     filterName={"multi_checkbox"}
                     inputLabel={"Tipologia Fattura"}
                     clearOnChangeFilter={clearOnChangeFilter}
@@ -813,6 +819,7 @@ const DocEm : React.FC = () =>{
                     iconMaterial={RenderIcon("invoice",true)}
                 ></MainFilter>
                 <MainFilter 
+                    id="filter_data_fattura"
                     filterName={"multi_checkbox"}
                     inputLabel={"Data Fattura"}
                     clearOnChangeFilter={clearOnChangeFilter}
