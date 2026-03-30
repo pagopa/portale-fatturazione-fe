@@ -400,7 +400,9 @@ const AnagraficaPsp:React.FC = () =>{
                 rows={rowsPerPage}
                 headerNames={['Nome PSP', 'ID Contratto', 'Trimestre', 'Nome Fornitore', 'E-mail PEC', 'Codice SDI', 'Codice ABI', 'E-Mail Ref. Fattura', 'Data', '']}
                 disabled={getListaLoading}
-                widthCustomSize="2000px"></GridCustom>
+                widthCustomSize="2000px"
+                sentenseEmpty={"Nessun dato disponibile"}
+                />
                 
             <ModalLoading 
                 open={showLoading} 

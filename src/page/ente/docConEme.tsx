@@ -732,7 +732,8 @@ const DocEm : React.FC = () =>{
                         
                             setBodyFatturazione((prev)=> ({...prev, ...{anno:9999,mese:9999,dataFattura:[],tipologiaFattura:[]}}));
                             setArrayMonths([]);
-                            const arrayTipogie = Array.from( new Set(globalResponse.map(el => el.tipologiaFattura)));
+                            const arrayTipogie = Array.from( new Set(globalResponse
+                                .map(el => el.tipologiaFattura)));
                             setDataSelect(arrayTipogie);
                         }else{
                             setBodyFatturazione((prev)=> ({...prev, ...{anno:Number(e),mese:9999,dataFattura:[],tipologiaFattura:[]}}));

@@ -1093,7 +1093,9 @@ const ReportDettaglio : React.FC = () => {
                 headerNames={headerNames}
                 apiGet={getContestazioneModal}
                 disabled={getNotificheWorking}
-                widthCustomSize="2000px"></GridCustom>                        
+                widthCustomSize="2000px"
+                sentenseEmpty={"Non sono presenti notifiche"}
+                />                       
             <ModalContestazione open={open} 
                 setOpen={setOpen} 
                 mainState={mainState}

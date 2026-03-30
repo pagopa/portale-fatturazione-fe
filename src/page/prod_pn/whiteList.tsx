@@ -526,7 +526,9 @@ const ListaDocEmessi : React.FC = () => {
                 setOpenModalAdd={setOpenModalAdd}
                 buttons={buttonsTopHeader}
                 selected={selected}
-                setSelected={setSelected}></GridCustom>
+                setSelected={setSelected}
+                sentenseEmpty={"Non sono presenti documenti"}
+                />
             <ModalAggiungi 
                 getLista={onButtonAggiungi}
                 open={openModalAdd}

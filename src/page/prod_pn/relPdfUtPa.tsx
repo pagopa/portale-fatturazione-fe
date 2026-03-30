@@ -53,17 +53,14 @@ const RelPdfPage : React.FC = () =>{
         headerNavigationFrom = "Documenti Emessi/";
         labelScaricaPdf = "Scarica PDF Doc. Emessi";
         labelScaricaReportDettaglio = "Scarica report di dettaglio notifiche Doc. Emessi";
+    }else if(location.pathname.includes("send") && location.pathname.includes("documentisospesi")){
+        profilePath = PathPf.DOCUMENTI_SOSPESI_SEND;
+        headerNavigationFrom = "Documenti Sospesi/";
+        labelScaricaPdf = "Scarica PDF Doc. Sospesi";
+        labelScaricaReportDettaglio = "Scarica report di dettaglio notifiche Doc. Sospesi";
     }
 
-    let accontoIsVisible:boolean = mainState?.profilo?.idTipoContratto === 2;
-    if(profilo.auth === "PAGOPA"){
-        if(Number(idTipoContratto) === 0){
-            navigate(profilePath);
-        }
-        accontoIsVisible = Number(idTipoContratto) === 2;
-    }
-
-
+    const accontoIsVisible:boolean = mainState?.profilo?.idTipoContratto === 2;
   
 
     const {
@@ -103,7 +100,7 @@ const RelPdfPage : React.FC = () =>{
     if(profilo.auth === "PAGOPA"){
         if(location.pathname.includes("/rel/") && (!rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) ){
             showComponentPdfAdmin = true;
-        }else if(location.pathname.includes("/documentiemessi") && (rel.tipologiaFattura === "PRIMO SALDO" || rel.tipologiaFattura === "SECONDO SALDO") ){
+        }else if((location.pathname.includes("/documentiemessi") ||location.pathname.includes("/documentisospesi")) && (rel.tipologiaFattura === "PRIMO SALDO" || rel.tipologiaFattura === "SECONDO SALDO") ){
             showComponentPdfAdmin = true;
         }
     }
@@ -342,7 +339,7 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,accontoIsVisible}) => {
            
         );
 
-    }else if(profilePath === PathPf.DOCUMENTI_SOSPESI){
+    }else if(profilePath === PathPf.DOCUMENTI_SOSPESI || profilePath === PathPf.DOCUMENTI_SOSPESI_SEND){
         return (
             <div className="bg-white mb-5 me-5 ms-5">
                 <div className="pt-5 pb-5 ">

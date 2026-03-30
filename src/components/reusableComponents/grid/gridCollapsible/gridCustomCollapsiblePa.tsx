@@ -7,7 +7,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { useContext} from 'react';
-import { Card, TablePagination} from '@mui/material';
+import { Card, TablePagination, Typography} from '@mui/material';
 import { HeaderCollapsible } from '../../../../types/typeFatturazione';
 import { MainState } from '../../../../types/typesGeneral';
 import { DocContabili } from '../../../../types/typeDocumentiContabili';
@@ -76,8 +76,11 @@ const CollapsibleTablePa = ({headerNames,page,setPage,rowsPerPage,setRowsPerPage
                                     })}
                                 </TableRow>
                             </TableHead>
-                            {dataPaginated.length === 0 ? <TableBody  style={{height: '50px'}}>
-                            </TableBody>: dataPaginated.map((row) => {
+                            {dataPaginated.length === 0 ? <TableRow key={"no-data"}>
+                                <TableCell colSpan={100} align="left">
+                                    <Typography fontWeight={"bold"}>{"Nessun dato disponibile"}</Typography>
+                                </TableCell>
+                            </TableRow>: dataPaginated.map((row) => {
                                 return(
                                     <RowComponent key={row.key} 
                                         row={row}

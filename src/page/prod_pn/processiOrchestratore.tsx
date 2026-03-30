@@ -425,7 +425,9 @@ const ProcessiOrchestartore:React.FC = () =>{
                 disabled={getListaLoading}
                 widthCustomSize="auto"
                 body={bodyGetLista}
-                headerAction={headerAction}/>
+                headerAction={headerAction}
+                sentenseEmpty={"Nessun processo disponibile"}
+                />
             <ModalLoading 
                 open={getListaLoading} 
                 setOpen={setGetListaLoading}

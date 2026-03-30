@@ -278,6 +278,9 @@ const Accertamenti : React.FC = () =>{
             onRowClick={handleEvent}
             onCellClick={handleOnCellClick}
             pageSizeOptions={[10, 25, 50,100]}
+            localeText={{
+                    noRowsLabel: "Non sono presenti documenti contabili",
+                }}
             />
             <ModalLoading 
                 open={showLoadingGrid} 

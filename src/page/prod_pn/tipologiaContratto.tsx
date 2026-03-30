@@ -128,6 +128,9 @@ const PageTipologiaContratto :React.FC = () =>{
 
     const clearOnChangeFilter = () => {
         setGridData([]);
+        setPage(0);
+        setRowsPerPage(10);
+        setTotalContratti(0);
     };
 
     const onButtonFiltra = () => {
@@ -288,7 +291,9 @@ const PageTipologiaContratto :React.FC = () =>{
                 headerNames={headerNames}
                 apiGet={changeContractType}
                 disabled={false}
-                widthCustomSize="auto"></GridCustom>
+                widthCustomSize="auto"
+                sentenseEmpty={"Nessun ente disponibile"}
+                />
             <ModalLoading 
                 open={getListaLoading} 
                 setOpen={setGetListaLoading}

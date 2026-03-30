@@ -403,6 +403,15 @@ const MainFilter = <T,>({
                             textField: {
                                 error:error,
                                 fullWidth: true,
+                                sx: {
+                                        // Force calendar icon to default color
+                                    "& .MuiInputAdornment-root .MuiSvgIcon-root": {
+                                        color: "rgba(0,0,0,0.54)", // default MUI icon color
+                                     },
+                                    "& .MuiInputAdornment-root .MuiSvgIcon-root.Mui-focused": {
+                                         color: "rgba(0,0,0,0.54)", // keep same when focused
+                                        },
+                                     },
                             },
                         }}
                     />
@@ -483,7 +492,12 @@ const MainFilter = <T,>({
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
-                                    label={inputLabel}
+                                    sx={{
+                                        "& .MuiAutocomplete-popupIndicator": {
+                                            color: "rgba(0,0,0,0.54)",
+                                            },
+                                    }}
+                                    label={inputLabel.toString()}
                                     placeholder={inputLabel}
                                     value={textValue||""}
                                 />

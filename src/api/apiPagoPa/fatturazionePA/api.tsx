@@ -305,4 +305,50 @@ export const getDocumentiEmessiPdfPa = async ( token:string ,nonce:string , idFa
 
     return response;
 };
+
+export const getDettaglioFatturaSospesaPa = async (token:string , nonce:string , idEnte:string, idFattura:number) =>{
+    const response = await axios.post(`${url}/api/fatture/sospese/dettaglio?nonce=${nonce}`,
+        {
+            "idEnte": idEnte,
+            "idFattura": idFattura
+        },
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+};
+
+export const downloadFattureReportSospesiPagopa = async (token:string, nonce:string,body: BodyFatturazioneSospeseSend) => {
+    const response = await fetch(`${url}/api/fatture/sospese/report?nonce=${nonce}`, 
+        {
+            headers: {
+                Authorization: 'Bearer '+token,
+                'Content-type':'application/json'
+            },
+            method: 'POST',
+            body:JSON.stringify(body),
+        });
+    
+    return response;
+};
+
+export const getDocumentiSospesiPdfPa = async ( token:string ,nonce:string , idFattura:number,idEnte:string) => {
+    const response =  await axios.get(`${url}/api/fatture/sospese/dettaglio/download/${idFattura}?idEnte=${idEnte}&nonce=${nonce}`,  
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+
+    return response;
+};
+
+export const getDocSospesiExelPagoPa = async ( token:string ,nonce:string, id:string) => {
+    const response =  await axios.get(`${url}/api/rel/sospese/righe/${id}/?nonce=${nonce}`,  
+        { headers: {
+            Authorization: 'Bearer ' + token
+        },}
+    );
+    return response;
+};
     

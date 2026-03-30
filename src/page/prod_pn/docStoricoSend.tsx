@@ -389,7 +389,9 @@ const DocStoricoSend : React.FC = () =>{
                 rows={rowsPerPage}
                 headerNames={headerGridKeys}
                 disabled={getListaRelRunning}
-                widthCustomSize="2000px"></GridCustom>
+                widthCustomSize="2000px"
+                sentenseEmpty={"Non sono presenti documenti contabili"}
+                />
             <ModalLoading 
                 open={showLoading} 
                 setOpen={setShowLoading} 

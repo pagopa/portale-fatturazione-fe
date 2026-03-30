@@ -266,7 +266,9 @@ const AsyncDocumenti : React.FC = () => {
                 disabled={false}
                 headerAction={headerAction}
                 body={bodyGetLista}
-                widthCustomSize="auto"></GridCustom>
+                widthCustomSize="auto"
+                sentenseEmpty={"Non sono presenti documenti"}
+                />
             <ModalLoading 
                 open={showLoading} 
                 setOpen={setShowLoading} 
