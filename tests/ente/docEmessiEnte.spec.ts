@@ -55,7 +55,7 @@ test.describe("Documenti Emessi ENTE", () => {
     await expect(annullaButton).toHaveCount(0); // hidden
   });
 
-  test("test click button Annula Filtri", async ({ page }) => {
+  test("test click button ANNULLA FILTRI", async ({ page }) => {
     CallMockPeriodoDOcumentiEmessiEnte(page);
     await page.goto("/ente/docemessi");
     const annullaButton = page.locator("button", { hasText: "Annulla Filtri" });
@@ -129,22 +129,31 @@ test.describe("Documenti Emessi ENTE", () => {
   });
 
   test("test click button DOWNLOAD RISULTATI", async ({ page }) => {
-   
     await page.goto("/ente/docemessi");
-    CallMockPeriodoDOcumentiEmessiEnte(page);
-    CallMockListaDE(page)
+    //Chiamo api periodo che popola i filtri
+    const buttonDownload = page.getByRole("button", {
+      name: "Download risultati",
+      exact: true,
+    });
 
-    const rows = page.locator('table tbody tr');
+  
+    CallMockPeriodoDOcumentiEmessiEnte(page);
+
+    //chiamo api lista che popola la grid
+    CallMockListaDE(page);
+
+    //Deve essere visibile una row
+    const rows = page.locator("table tbody tr");
     await expect(rows.first()).toBeVisible();
     // Start waiting for the download
     const [download] = await Promise.all([
-      page.waitForEvent("download"), 
-      page.click('button:has-text("Download risultati")'), 
+      page.waitForEvent("download"),
+      page.click('button:has-text("Download risultati")'),
     ]);
 
-    // Get suggested filename
+    // Nome atteso del file download
     const filename = download.suggestedFilename();
-    expect(filename).toBe("Documenti emessi_Comune di San Mauro Torinese.xlsx"); 
+    expect(filename).toBe("Documenti emessi_Comune di San Mauro Torinese.xlsx");
 
     // Optional: save the file to check contents
     const path = await download.path();
@@ -157,27 +166,48 @@ test.describe("Documenti Emessi ENTE", () => {
     //Seleziono anno 2023
     await page.locator("li", { hasText: "2023" }).click();
 
+    //il button  è diabled ed é presente solamente un button con la lebel descritta
+    await expect(buttonDownload).toHaveCount(1);
+    await expect(buttonDownload).toBeDisabled();
+    //click su filtra
     await page.click('button:has-text("Filtra")');
 
-    // Start waiting for the download
+    // Click su button download
     const [download2] = await Promise.all([
-      page.waitForEvent("download"), 
-      page.click('button:has-text("Download risultati")'), 
+      page.waitForEvent("download"),
+      page.click('button:has-text("Download risultati")'),
     ]);
 
-    // Get suggested filename
+    // nome atteso del file
     const filename2 = download2.suggestedFilename();
-    expect(filename2).toBe("Documenti emessi_Comune di San Mauro Torinese_2023.xlsx"); 
+    expect(filename2).toBe(
+      "Documenti emessi_Comune di San Mauro Torinese_2023.xlsx",
+    );
 
     // Optional: save the file to check contents
     const path2 = await download.path();
     expect(path2).not.toBeNull();
+
+    await annoSelect.click();
+    //Seleziono anno 2024
+    await page.locator("li", { hasText: "2024" }).click();
+    //Seleziono mese GENNAIO
+    await meseSelect.click();
+    await page.locator("li", { hasText: "Gennaio" }).click();
+    await expect(buttonDownload).toBeDisabled();
+
+    await page.click('button:has-text("Filtra")');
+    //CLICK sul button DOWNLOAD
+    const [download3] = await Promise.all([
+      page.waitForEvent("download"),
+      page.click('button:has-text("Download risultati")'),
+    ]);
+    //Nome del file atteso
+    const filename3 = download3.suggestedFilename();
+    expect(filename3).toBe(
+      "Documenti emessi_Comune di San Mauro Torinese_Gennaio_2024.xlsx",
+    );
   });
-
-
-
-
-
 
   test("test logica filtri", async ({ page }) => {
     // 1️⃣ Mock API getPeriodoEmesso
@@ -367,77 +397,81 @@ export async function CallMockPeriodoDOcumentiEmessiEnte(page: Page) {
   });
 }
 
-
 export async function CallMockListaDE(page: Page) {
-
-  await page.route("**/api/fatture/ente/periodo/emesse**", async (route, request) => {
-  const postData = request.postDataJSON();
-  const mockData = [{
-    "fattura": {
-        "totale": 1261,
-        "numero": 3559,
-        "idfattura": 10220,
-        "dataFattura": "2024-08-20",
-        "prodotto": "prod-pn",
-        "identificativo": "09/2024",
-        "istitutioId": "729352e9-5bb9-4aff-a6b5-ca0c80c0d3b4",
-        "onboardingTokenID": "85d72d7c-5955-408b-8d0d-f2c39fcacc82",
-        "ragioneSociale": "Comune di San Mauro Torinese",
-        "idcontratto": "85d72d7c-5955-408b-8d0d-f2c39fcacc82",
-        "tipoDocumento": "TD01",
-        "tipocontratto": "PAL",
-        "divisa": "EUR",
-        "metodoPagamento": "B30",
-        "causale": "prod-pn ANTICIPO",
-        "split": true,
-        "inviata": 0,
-        "sollecito": null,
-        "stato": null,
-        "datiGeneraliDocumento": [
-            {
-                "tipologia": "ANTICIPO",
-                "riferimentoNumeroLinea": "",
-                "idDocumento": "",
-                "data": "2024-08-06",
-                "numItem": "",
-                "codiceCommessaConvenzione": "01_2024",
-                "CUP": "",
-                "CIG": null
-            }
-        ],
-        "posizioni": [
-            {
-                "numeroLinea": 1,
-                "testo": "",
-                "codiceMateriale": "ANTICIPO ND 50%",
-                "quantita": 1,
-                "prezzoUnitario": 350,
-                "imponibile": 350,
-                "periodoRiferimento": "09/2024",
-                "periodoFatturazione": "09/2024"
+  await page.route(
+    "**/api/fatture/ente/periodo/emesse**",
+    async (route, request) => {
+      const postData = request.postDataJSON();
+      const mockData = {
+        dettagli: [
+          {
+            fattura: {
+              totale: 1261,
+              numero: 3559,
+              idfattura: 10220,
+              dataFattura: "2024-08-20",
+              prodotto: "prod-pn",
+              identificativo: "09/2024",
+              istitutioId: "729352e9-5bb9-4aff-a6b5-ca0c80c0d3b4",
+              onboardingTokenID: "85d72d7c-5955-408b-8d0d-f2c39fcacc82",
+              ragioneSociale: "Comune di San Mauro Torinese",
+              idcontratto: "85d72d7c-5955-408b-8d0d-f2c39fcacc82",
+              tipoDocumento: "TD01",
+              tipocontratto: "PAL",
+              divisa: "EUR",
+              metodoPagamento: "B30",
+              causale: "prod-pn ANTICIPO",
+              split: true,
+              inviata: 0,
+              sollecito: null,
+              stato: null,
+              datiGeneraliDocumento: [
+                {
+                  tipologia: "ANTICIPO",
+                  riferimentoNumeroLinea: "",
+                  idDocumento: "",
+                  data: "2024-08-06",
+                  numItem: "",
+                  codiceCommessaConvenzione: "01_2024",
+                  CUP: "",
+                  CIG: null,
+                },
+              ],
+              posizioni: [
+                {
+                  numeroLinea: 1,
+                  testo: "",
+                  codiceMateriale: "ANTICIPO ND 50%",
+                  quantita: 1,
+                  prezzoUnitario: 350,
+                  imponibile: 350,
+                  periodoRiferimento: "09/2024",
+                  periodoFatturazione: "09/2024",
+                },
+                {
+                  numeroLinea: 2,
+                  testo: "",
+                  codiceMateriale: "ANTICIPO NA 50%",
+                  quantita: 1,
+                  prezzoUnitario: 911,
+                  imponibile: 911,
+                  periodoRiferimento: "09/2024",
+                  periodoFatturazione: "09/2024",
+                },
+              ],
             },
-            {
-                "numeroLinea": 2,
-                "testo": "",
-                "codiceMateriale": "ANTICIPO NA 50%",
-                "quantita": 1,
-                "prezzoUnitario": 911,
-                "imponibile": 911,
-                "periodoRiferimento": "09/2024",
-                "periodoFatturazione": "09/2024"
-            }
-        ]
-    }
-}
-    ];
+          },
+        ],
+        importo: "100.33",
+      };
 
-  console.log(postData); // 👈 super useful for debugging
+      console.log(postData); // 👈 super useful for debugging
 
-  await route.fulfill({
-    status: 200,
-    contentType: 'application/json',
-    body: JSON.stringify(mockData),
-  });
-});
-
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(mockData),
+      });
+    },
+  );
 }

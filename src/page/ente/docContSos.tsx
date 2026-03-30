@@ -350,6 +350,9 @@ const DocSos : React.FC = () =>{
         setPage(0);
         setRowsPerPage(10); 
         setTotaleHeader(0);
+        setListaResponse([]);
+        setListaResponseSorted([]);
+        setTotalDocumenti(0);
     };
 
     const onButtonFiltra = () =>{
