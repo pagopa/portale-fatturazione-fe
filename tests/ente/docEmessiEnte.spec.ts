@@ -366,8 +366,9 @@ test.describe("Documenti Emessi ENTE", () => {
     await expect(annullaButton).toHaveCount(0);
   });
 
-  test("test pagination", async ({ page }) => {
-    
+  test("test pagination grid EMESSE", async ({ page }) => {
+    //vai pagina doc emessi
+    await page.goto("/ente/docemessi");
     const allItems = Array.from({ length: 33 }, (_, i) => ({
       fattura: {
         idfattura: i + 1,
@@ -390,35 +391,182 @@ test.describe("Documenti Emessi ENTE", () => {
         sollecito: null,
         stato: null,
         datiGeneraliDocumento: [
-                {
-                  tipologia: "ANTICIPO"+i + 1,
-                  riferimentoNumeroLinea: "",
-                  idDocumento: "",
-                  data: "2024-08-06",
-                  numItem: "",
-                  codiceCommessaConvenzione: "01_2024",
-                  CUP: "",
-                  CIG: null,
-                },
-              ],
+          {
+            tipologia: "ANTICIPO" + i + 1,
+            riferimentoNumeroLinea: "",
+            idDocumento: "",
+            data: "2024-08-06",
+            numItem: "",
+            codiceCommessaConvenzione: "01_2024",
+            CUP: "",
+            CIG: null,
+          },
+        ],
         posizioni: [],
       },
     }));
-    const mockListaDocTestPagination: MockListaDoc = { dettagli: allItems, importo: "3300" };
-
+    const mockListaDocTestPagination: MockListaDoc = {
+      dettagli: allItems,
+      importo: "3300",
+    };
+    // chiamata che popola filtri e lista grid - il periodo non servirebbe
     CallMockPeriodoDOcumentiEmessiEnte(page, mockJsonPeriodo2);
     CallMockListaDE(page, mockListaDocTestPagination);
-     await page.goto("/ente/docemessi");
-  
 
+    // Select dei buttons paginator della grid emessi e NON contestate
+    const pagination = page.locator("#docEmessiEnte-pagination");
+    // Locate the "Go to next page" button inside that container
+    const nextPageButton = pagination.getByRole("button", {
+      name: "Go to next page",
+    });
+    const prevPageButton = pagination.getByRole("button", {
+      name: "Go to previous page",
+    });
+    //il button per andare alla pagina precedente deve essere disabilitato
+    await expect(prevPageButton).toBeDisabled();
 
-const grid = page.locator("#docEmessiEnte");
-const visibleRows = await grid.locator("tbody tr").count();
+    //Seleziono la grid emesse
+    const grid = page.locator("#docEmessiEnte > tbody");
+    const visibleRows = grid.locator("> tr:visible").filter({
+      hasText: "Emessa",
+    });
+    //dovrei vedere 10 righe per pagina
+    const rowCount = await visibleRows.count();
+    await expect(visibleRows).toHaveCount(10);
 
-console.log("ALL:", visibleRows);
+    //controllo che siano effettivamente i primi 10 elementi della lista
+    for (let i = 0; i < rowCount; i++) {
+      const row = visibleRows.nth(i);
+      const rowText = await row.innerText();
 
+      const expectedText = `ID-${i}`;
+      await expect(rowText).toContain(expectedText);
+    }
+    // il button per andare alla pagina successiva deve essere abilitato
+    await expect(nextPageButton).toBeEnabled();
+
+    //click sul button per andare alla pagina successiva
+    await nextPageButton.click();
+
+    //Check che siano visibili i successivi 10 elementi della lista (11 to 20)
+    for (let i = 0; i < rowCount; i++) {
+      const row = visibleRows.nth(i);
+      const rowText = await row.innerText();
+      const expectedText = `ID-${Number(i) + 10}`;
+      await expect(rowText).toContain(expectedText);
+    }
+    // doppio click sul button per andare alla pagina successiva
+    await nextPageButton.click();
+    await nextPageButton.click();
+    //deve essere visibile solamente gli ultimi 3 elementi della lista (31-33)
+    await expect(visibleRows).toHaveCount(3);
+    //il button per andare alla pagina successiva deve essere disabilitato
+    await expect(nextPageButton).toBeDisabled();
+  });
+
+    test("test pagination grid CONTESTATE", async ({ page }) => {
+    //vai pagina doc emessi
+    await page.goto("/ente/docemessi");
+    const allItems = Array.from({ length: 33 }, (_, i) => ({
+      fattura: {
+        idfattura: i + 1,
+        numero: i + 1,
+        totale: 100 + i,
+        ragioneSociale: `Comune ${i + 1}`,
+        dataFattura: "2024-01-01",
+        prodotto: "test",
+        identificativo: `ID-${i}`,
+        istitutioId: "x",
+        onboardingTokenID: "x",
+        idcontratto: "x",
+        tipoDocumento: "TD01",
+        tipocontratto: "PAL",
+        divisa: "EUR",
+        metodoPagamento: "B30",
+        causale: "test",
+        split: true,
+        inviata: 0,
+        sollecito: null,
+        stato: null,
+        datiGeneraliDocumento: [
+          {
+            tipologia: "ANTICIPO" + i + 1,
+            riferimentoNumeroLinea: "",
+            idDocumento: "",
+            data: "2024-08-06",
+            numItem: "",
+            codiceCommessaConvenzione: "01_2024",
+            CUP: "",
+            CIG: null,
+          },
+        ],
+        posizioni: [],
+      },
+    }));
+    const mockListaDocTestPagination: MockListaDoc = {
+      dettagli: allItems,
+      importo: "3300",
+    };
+    // chiamata che popola filtri e lista grid - il periodo non servirebbe
+    CallMockPeriodoDOcumentiEmessiEnte(page, mockJsonPeriodo2);
+    CallMockListaDE(page, mockListaDocTestPagination);
+
+    // Select dei buttons paginator della grid emessi e NON contestate
+    const pagination = page.locator("#docEmessiEnte-pagination");
+    // Locate the "Go to next page" button inside that container
+    const nextPageButton = pagination.getByRole("button", {
+      name: "Go to next page",
+    });
+    const prevPageButton = pagination.getByRole("button", {
+      name: "Go to previous page",
+    });
+    //il button per andare alla pagina precedente deve essere disabilitato
+    await expect(prevPageButton).toBeDisabled();
+
+    //Seleziono la grid emesse
+    const grid = page.locator("#docEmessiEnte > tbody");
+    const visibleRows = grid.locator("> tr:visible").filter({
+      hasText: "Emessa",
+    });
+    //dovrei vedere 10 righe per pagina
+    const rowCount = await visibleRows.count();
+    await expect(visibleRows).toHaveCount(10);
+
+    //controllo che siano effettivamente i primi 10 elementi della lista
+    for (let i = 0; i < rowCount; i++) {
+      const row = visibleRows.nth(i);
+      const rowText = await row.innerText();
+
+      const expectedText = `ID-${i}`;
+      await expect(rowText).toContain(expectedText);
+    }
+    // il button per andare alla pagina successiva deve essere abilitato
+    await expect(nextPageButton).toBeEnabled();
+
+    //click sul button per andare alla pagina successiva
+    await nextPageButton.click();
+
+    //Check che siano visibili i successivi 10 elementi della lista (11 to 20)
+    for (let i = 0; i < rowCount; i++) {
+      const row = visibleRows.nth(i);
+      const rowText = await row.innerText();
+      const expectedText = `ID-${Number(i) + 10}`;
+      await expect(rowText).toContain(expectedText);
+    }
+    // doppio click sul button per andare alla pagina successiva
+    await nextPageButton.click();
+    await nextPageButton.click();
+    //deve essere visibile solamente gli ultimi 3 elementi della lista (31-33)
+    await expect(visibleRows).toHaveCount(3);
+    //il button per andare alla pagina successiva deve essere disabilitato
+    await expect(nextPageButton).toBeDisabled();
   });
 });
+
+
+
+
+
 export async function CallMockPeriodoDOcumentiEmessiEnte(
   page: Page,
   customJson: ResponsePeriodo[],
@@ -437,7 +585,7 @@ export async function CallMockListaDE(page: Page, customJson: MockListaDoc) {
     "**/api/fatture/ente/periodo/emesse**",
     async (route, request) => {
       //const postData = request.postDataJSON();
-     
+
       await route.fulfill({
         status: 200,
         contentType: "application/json",

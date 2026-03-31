@@ -298,6 +298,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
             {paginationVisibile !== false &&
             <div className="pt-3">                           
                 <TablePagination
+                    id={`${nameParameterApi}-pagination`}
                     sx={{'.MuiTablePagination-selectLabel': {
                         display:'none',
                         backgroundColor:'#f2f2f2'
