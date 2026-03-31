@@ -145,10 +145,10 @@ test.describe("Documenti Emessi ENTE", () => {
       exact: true,
     });
 
-    CallMockPeriodoDOcumentiEmessiEnte(page, mockJsonPeriodo);
+    CallMockPeriodoDOcumentiEmessiEnte(page, mockJsonPeriodo,"**/api/fatture/ente/periodo**");
 
     //chiamo api lista che popola la grid
-    CallMockListaDE(page, mockJsonListaDoc);
+    CallMockListaDE(page, mockJsonListaDoc,"**/api/fatture/ente/periodo/emesse**");
 
     //Deve essere visibile una row
     const rows = page.locator("table tbody tr");
@@ -219,7 +219,7 @@ test.describe("Documenti Emessi ENTE", () => {
 
   test("test logica filtri", async ({ page }) => {
     // 1️⃣ Mock API getPeriodoEmesso
-    CallMockPeriodoDOcumentiEmessiEnte(page, mockJsonPeriodo);
+    CallMockPeriodoDOcumentiEmessiEnte(page, mockJsonPeriodo,"**/api/fatture/ente/periodo**");
     //vai page documenti emessi
     await page.goto("/ente/docemessi");
     //Button Annulla deve essere nascosto
@@ -410,8 +410,8 @@ test.describe("Documenti Emessi ENTE", () => {
       importo: "3300",
     };
     // chiamata che popola filtri e lista grid - il periodo non servirebbe
-    CallMockPeriodoDOcumentiEmessiEnte(page, mockJsonPeriodo2);
-    CallMockListaDE(page, mockListaDocTestPagination);
+    CallMockPeriodoDOcumentiEmessiEnte(page, mockJsonPeriodo2,"**/api/fatture/ente/periodo**");
+    CallMockListaDE(page, mockListaDocTestPagination,"**/api/fatture/ente/periodo/emesse**");
 
     // Select dei buttons paginator della grid emessi e NON contestate
     const pagination = page.locator("#docEmessiEnte-pagination");
@@ -464,7 +464,7 @@ test.describe("Documenti Emessi ENTE", () => {
     await expect(nextPageButton).toBeDisabled();
   });
 
-    test("test pagination grid CONTESTATE", async ({ page }) => {
+  test("test pagination grid CONTESTATE", async ({ page }) => {
     //vai pagina doc emessi
     await page.goto("/ente/docemessi");
     const allItems = Array.from({ length: 33 }, (_, i) => ({
@@ -508,11 +508,11 @@ test.describe("Documenti Emessi ENTE", () => {
       importo: "3300",
     };
     // chiamata che popola filtri e lista grid - il periodo non servirebbe
-    CallMockPeriodoDOcumentiEmessiEnte(page, mockJsonPeriodo2);
-    CallMockListaDE(page, mockListaDocTestPagination);
+  
+    CallMockListaDE(page, mockListaDocTestPagination, "**/api/fatture/ente/eliminate**");
 
     // Select dei buttons paginator della grid emessi e NON contestate
-    const pagination = page.locator("#docEmessiEnte-pagination");
+    const pagination = page.locator("#docEmessiEnteContestate-pagination");
     // Locate the "Go to next page" button inside that container
     const nextPageButton = pagination.getByRole("button", {
       name: "Go to next page",
@@ -524,7 +524,7 @@ test.describe("Documenti Emessi ENTE", () => {
     await expect(prevPageButton).toBeDisabled();
 
     //Seleziono la grid emesse
-    const grid = page.locator("#docEmessiEnte > tbody");
+    const grid = page.locator("#docEmessiEnteContestate > tbody");
     const visibleRows = grid.locator("> tr:visible").filter({
       hasText: "Emessa",
     });
@@ -570,8 +570,9 @@ test.describe("Documenti Emessi ENTE", () => {
 export async function CallMockPeriodoDOcumentiEmessiEnte(
   page: Page,
   customJson: ResponsePeriodo[],
+  path:string
 ) {
-  await page.route("**/api/fatture/ente/periodo**", async (route) => {
+  await page.route(path, async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -580,9 +581,9 @@ export async function CallMockPeriodoDOcumentiEmessiEnte(
   });
 }
 
-export async function CallMockListaDE(page: Page, customJson: MockListaDoc) {
+export async function CallMockListaDE(page: Page, customJson: MockListaDoc,path:string) {
   await page.route(
-    "**/api/fatture/ente/periodo/emesse**",
+    path,
     async (route, request) => {
       //const postData = request.postDataJSON();
 
