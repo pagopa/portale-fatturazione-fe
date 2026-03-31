@@ -59,7 +59,7 @@ export type Posizione = {
     periodoRiferimento: string; // MM/YYYY
 };
 
- type ResponsePeriodo = {
+ export type ResponsePeriodo = {
      anno: number,
      tipologiaFattura: string,
      dataFattura: string,

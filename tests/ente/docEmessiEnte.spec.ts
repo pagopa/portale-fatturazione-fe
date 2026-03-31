@@ -1,6 +1,15 @@
 import { test, expect, Page, Route } from "@playwright/test";
 import path from "path";
 import { checkAutocomplete, checkFilter } from "../utils/filters";
+import {
+  MockListaDoc,
+  ResponsePeriodo,
+} from "../utils/docEmessiMock/docEmessiMockType";
+import {
+  mockJsonListaDoc,
+  mockJsonPeriodo,
+  mockJsonPeriodo2,
+} from "../utils/docEmessiMock/docEmessiMock";
 const authFile = path.join(__dirname, "../.auth/user.json");
 
 test.describe("Documenti Emessi ENTE", () => {
@@ -56,7 +65,7 @@ test.describe("Documenti Emessi ENTE", () => {
   });
 
   test("test click button ANNULLA FILTRI", async ({ page }) => {
-    CallMockPeriodoDOcumentiEmessiEnte(page);
+    CallMockPeriodoDOcumentiEmessiEnte(page, mockJsonPeriodo);
     await page.goto("/ente/docemessi");
     const annullaButton = page.locator("button", { hasText: "Annulla Filtri" });
     await expect(annullaButton).toHaveCount(0);
@@ -136,11 +145,10 @@ test.describe("Documenti Emessi ENTE", () => {
       exact: true,
     });
 
-  
-    CallMockPeriodoDOcumentiEmessiEnte(page);
+    CallMockPeriodoDOcumentiEmessiEnte(page, mockJsonPeriodo);
 
     //chiamo api lista che popola la grid
-    CallMockListaDE(page);
+    CallMockListaDE(page, mockJsonListaDoc);
 
     //Deve essere visibile una row
     const rows = page.locator("table tbody tr");
@@ -211,7 +219,7 @@ test.describe("Documenti Emessi ENTE", () => {
 
   test("test logica filtri", async ({ page }) => {
     // 1️⃣ Mock API getPeriodoEmesso
-    CallMockPeriodoDOcumentiEmessiEnte(page);
+    CallMockPeriodoDOcumentiEmessiEnte(page, mockJsonPeriodo);
     //vai page documenti emessi
     await page.goto("/ente/docemessi");
     //Button Annulla deve essere nascosto
@@ -357,77 +365,33 @@ test.describe("Documenti Emessi ENTE", () => {
     //Button annulla filtri hidden
     await expect(annullaButton).toHaveCount(0);
   });
-});
 
-export async function CallMockPeriodoDOcumentiEmessiEnte(page: Page) {
-  await page.route("**/api/fatture/ente/periodo**", async (route) => {
-    const json = [
-      {
-        anno: 2023,
-        tipologiaFattura: "SECONDO SALDO",
-        dataFattura: "2026-02-01",
-        mese: 9,
-      },
-      {
-        anno: 2025,
-        tipologiaFattura: "PRIMO SALDO",
-        dataFattura: "2024-01-24",
-        mese: 10,
-      },
-      {
-        anno: 2025,
-        tipologiaFattura: "PRIMO SALDO",
-        dataFattura: "2024-01-24",
-        mese: 11,
-      },
-      {
-        anno: 2024,
-        tipologiaFattura: "ACCONTO",
-        dataFattura: "2025-02-03",
-        mese: 1,
-      },
-      {
-        anno: 2024,
-        tipologiaFattura: "PRIMO SALDO",
-        dataFattura: "2025-02-03",
-        mese: 1,
-      },
-    ];
-    await route.fulfill({ json });
-  });
-}
-
-export async function CallMockListaDE(page: Page) {
-  await page.route(
-    "**/api/fatture/ente/periodo/emesse**",
-    async (route, request) => {
-      const postData = request.postDataJSON();
-      const mockData = {
-        dettagli: [
-          {
-            fattura: {
-              totale: 1261,
-              numero: 3559,
-              idfattura: 10220,
-              dataFattura: "2024-08-20",
-              prodotto: "prod-pn",
-              identificativo: "09/2024",
-              istitutioId: "729352e9-5bb9-4aff-a6b5-ca0c80c0d3b4",
-              onboardingTokenID: "85d72d7c-5955-408b-8d0d-f2c39fcacc82",
-              ragioneSociale: "Comune di San Mauro Torinese",
-              idcontratto: "85d72d7c-5955-408b-8d0d-f2c39fcacc82",
-              tipoDocumento: "TD01",
-              tipocontratto: "PAL",
-              divisa: "EUR",
-              metodoPagamento: "B30",
-              causale: "prod-pn ANTICIPO",
-              split: true,
-              inviata: 0,
-              sollecito: null,
-              stato: null,
-              datiGeneraliDocumento: [
+  test("test pagination", async ({ page }) => {
+    
+    const allItems = Array.from({ length: 33 }, (_, i) => ({
+      fattura: {
+        idfattura: i + 1,
+        numero: i + 1,
+        totale: 100 + i,
+        ragioneSociale: `Comune ${i + 1}`,
+        dataFattura: "2024-01-01",
+        prodotto: "test",
+        identificativo: `ID-${i}`,
+        istitutioId: "x",
+        onboardingTokenID: "x",
+        idcontratto: "x",
+        tipoDocumento: "TD01",
+        tipocontratto: "PAL",
+        divisa: "EUR",
+        metodoPagamento: "B30",
+        causale: "test",
+        split: true,
+        inviata: 0,
+        sollecito: null,
+        stato: null,
+        datiGeneraliDocumento: [
                 {
-                  tipologia: "ANTICIPO",
+                  tipologia: "ANTICIPO"+i + 1,
                   riferimentoNumeroLinea: "",
                   idDocumento: "",
                   data: "2024-08-06",
@@ -437,40 +401,47 @@ export async function CallMockListaDE(page: Page) {
                   CIG: null,
                 },
               ],
-              posizioni: [
-                {
-                  numeroLinea: 1,
-                  testo: "",
-                  codiceMateriale: "ANTICIPO ND 50%",
-                  quantita: 1,
-                  prezzoUnitario: 350,
-                  imponibile: 350,
-                  periodoRiferimento: "09/2024",
-                  periodoFatturazione: "09/2024",
-                },
-                {
-                  numeroLinea: 2,
-                  testo: "",
-                  codiceMateriale: "ANTICIPO NA 50%",
-                  quantita: 1,
-                  prezzoUnitario: 911,
-                  imponibile: 911,
-                  periodoRiferimento: "09/2024",
-                  periodoFatturazione: "09/2024",
-                },
-              ],
-            },
-          },
-        ],
-        importo: "100.33",
-      };
+        posizioni: [],
+      },
+    }));
+    const mockListaDocTestPagination: MockListaDoc = { dettagli: allItems, importo: "3300" };
 
-      console.log(postData); // 👈 super useful for debugging
+    CallMockPeriodoDOcumentiEmessiEnte(page, mockJsonPeriodo2);
+    CallMockListaDE(page, mockListaDocTestPagination);
+     await page.goto("/ente/docemessi");
+  
 
+
+const grid = page.locator("#docEmessiEnte");
+const visibleRows = await grid.locator("tbody tr").count();
+
+console.log("ALL:", visibleRows);
+
+  });
+});
+export async function CallMockPeriodoDOcumentiEmessiEnte(
+  page: Page,
+  customJson: ResponsePeriodo[],
+) {
+  await page.route("**/api/fatture/ente/periodo**", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      json: customJson, // ✅ use json, not customJson
+    });
+  });
+}
+
+export async function CallMockListaDE(page: Page, customJson: MockListaDoc) {
+  await page.route(
+    "**/api/fatture/ente/periodo/emesse**",
+    async (route, request) => {
+      //const postData = request.postDataJSON();
+     
       await route.fulfill({
         status: 200,
         contentType: "application/json",
-        body: JSON.stringify(mockData),
+        body: JSON.stringify(customJson),
       });
     },
   );

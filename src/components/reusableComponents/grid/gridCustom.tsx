@@ -135,7 +135,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
             {nameParameterApi === "idWhite" && <EnhancedTableCustom  setOpenModal={setOpenModalDelete} setOpenModalAdd={setOpenModalAdd} selected={selected||[]} buttons={buttons} ></EnhancedTableCustom>}
             <div style={{overflowX:'auto'}}>
                 <Card sx={{width: widthCustomSize}}  >
-                    <Table >
+                    <Table id={nameParameterApi}>
                         <TableHead sx={{backgroundColor:'#f2f2f2'}}>
                             <TableRow>
                                 {headerNames.map((el,i)=>{
