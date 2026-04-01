@@ -65,7 +65,7 @@ test.describe("Documenti Emessi ENTE", () => {
   });
 
   test("test click button ANNULLA FILTRI", async ({ page }) => {
-    CallMockPeriodoDOcumentiEmessiEnte(page, mockJsonPeriodo);
+    CallMockPeriodoDOcumentiEmessiEnte(page, mockJsonPeriodo,"**/api/fatture/ente/periodo**");
     await page.goto("/ente/docemessi");
     const annullaButton = page.locator("button", { hasText: "Annulla Filtri" });
     await expect(annullaButton).toHaveCount(0);
@@ -636,12 +636,13 @@ test.describe("Documenti Emessi ENTE", () => {
     );
     const table = page.locator("#docEmessiEnte");
 
+    //DATA FATTURA
     // Find the column header by accessible name
-    const header = table.getByRole("columnheader", { name: "Data Fattura" });
+    const buttonDataFattura = table.getByRole("columnheader", { name: "Data Fattura" });
 
     // Click the button inside that header
 
-    await header.locator("button").click();
+    await buttonDataFattura.locator("button").click();
       //Seleziono la grid emesse
     const grid = page.locator("#docEmessiEnte > tbody");
     const visibleRows = grid.locator("> tr:visible").filter({
@@ -649,14 +650,14 @@ test.describe("Documenti Emessi ENTE", () => {
     })
     
     const firstRow = visibleRows.first();
-    console.log(firstRow);
+    console.log(await firstRow.innerText());
     await expect(firstRow).toContainText("01/08/2000");
 
  
-    await header.locator("button").click();
+    await buttonDataFattura.locator("button").click();
     await expect(firstRow).toContainText("31/08/2030");
    
-    await header.locator("button").click()
+    await buttonDataFattura.locator("button").click()
     await expect(firstRow).toContainText("01/08/2000");
 
      const pagination = page.locator("#docEmessiEnte-pagination");
@@ -664,6 +665,36 @@ test.describe("Documenti Emessi ENTE", () => {
     const nextPageButton = pagination.getByRole("button", {
       name: "Go to next page",
     });
+     const prevPageButton = pagination.getByRole("button", {
+      name: "Go to previous page",
+    });
+    //il button per andare alla pagina precedente deve essere disabilitato
+    await expect(prevPageButton).toBeDisabled();
+     // il button per andare alla pagina successiva deve essere abilitato
+    await expect(nextPageButton).toBeEnabled();
+
+    //click sul button per andare alla pagina successiva
+    await nextPageButton.click();
+   
+    await expect(firstRow).toContainText("11/08/2010");
+    await expect(prevPageButton).toBeEnabled();
+  
+    //IDENTIFICATIVO 
+    const buttonIdentificativo = table.getByRole("columnheader", { name: "Ident." });
+
+    await buttonIdentificativo.locator("button").click();
+
+    const visibleRows2 = grid.locator("> tr:visible").filter({
+      hasText: "Emessa",
+    })
+    
+    const firstRow2 = visibleRows2.first();
+    console.log(2,await firstRow2.innerText());
+    await expect(firstRow2).toContainText("0/2024");
+
+    await nextPageButton.click();
+     await page.pause()
+    await expect(firstRow2).toContainText("20/2024");
  
   });
 });
