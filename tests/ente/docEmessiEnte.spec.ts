@@ -145,10 +145,18 @@ test.describe("Documenti Emessi ENTE", () => {
       exact: true,
     });
 
-    CallMockPeriodoDOcumentiEmessiEnte(page, mockJsonPeriodo,"**/api/fatture/ente/periodo**");
+    CallMockPeriodoDOcumentiEmessiEnte(
+      page,
+      mockJsonPeriodo,
+      "**/api/fatture/ente/periodo**",
+    );
 
     //chiamo api lista che popola la grid
-    CallMockListaDE(page, mockJsonListaDoc,"**/api/fatture/ente/periodo/emesse**");
+    CallMockListaDE(
+      page,
+      mockJsonListaDoc,
+      "**/api/fatture/ente/periodo/emesse**",
+    );
 
     //Deve essere visibile una row
     const rows = page.locator("table tbody tr");
@@ -219,7 +227,11 @@ test.describe("Documenti Emessi ENTE", () => {
 
   test("test logica filtri", async ({ page }) => {
     // 1️⃣ Mock API getPeriodoEmesso
-    CallMockPeriodoDOcumentiEmessiEnte(page, mockJsonPeriodo,"**/api/fatture/ente/periodo**");
+    CallMockPeriodoDOcumentiEmessiEnte(
+      page,
+      mockJsonPeriodo,
+      "**/api/fatture/ente/periodo**",
+    );
     //vai page documenti emessi
     await page.goto("/ente/docemessi");
     //Button Annulla deve essere nascosto
@@ -410,8 +422,16 @@ test.describe("Documenti Emessi ENTE", () => {
       importo: "3300",
     };
     // chiamata che popola filtri e lista grid - il periodo non servirebbe
-    CallMockPeriodoDOcumentiEmessiEnte(page, mockJsonPeriodo2,"**/api/fatture/ente/periodo**");
-    CallMockListaDE(page, mockListaDocTestPagination,"**/api/fatture/ente/periodo/emesse**");
+    CallMockPeriodoDOcumentiEmessiEnte(
+      page,
+      mockJsonPeriodo2,
+      "**/api/fatture/ente/periodo**",
+    );
+    CallMockListaDE(
+      page,
+      mockListaDocTestPagination,
+      "**/api/fatture/ente/periodo/emesse**",
+    );
 
     // Select dei buttons paginator della grid emessi e NON contestate
     const pagination = page.locator("#docEmessiEnte-pagination");
@@ -508,8 +528,12 @@ test.describe("Documenti Emessi ENTE", () => {
       importo: "3300",
     };
     // chiamata che popola filtri e lista grid - il periodo non servirebbe
-  
-    CallMockListaDE(page, mockListaDocTestPagination, "**/api/fatture/ente/eliminate**");
+
+    CallMockListaDE(
+      page,
+      mockListaDocTestPagination,
+      "**/api/fatture/ente/eliminate**",
+    );
 
     // Select dei buttons paginator della grid emessi e NON contestate
     const pagination = page.locator("#docEmessiEnteContestate-pagination");
@@ -561,16 +585,93 @@ test.describe("Documenti Emessi ENTE", () => {
     //il button per andare alla pagina successiva deve essere disabilitato
     await expect(nextPageButton).toBeDisabled();
   });
+  test("test sort filters grid", async ({ page }) => {
+    //vai pagina doc emessi
+    await page.goto("/ente/docemessi");
+    const allItems = Array.from({ length: 31 }, (_, i) => ({
+      fattura: {
+        idfattura: i + 1,
+        numero: i + 1,
+        totale: 100 + Number(i),
+        ragioneSociale: `Comune ${i + 1}`,
+        dataFattura: `${Number(2000) + Number(i)}-08-${Number(i)+1}`,
+        prodotto: "test",
+        identificativo: `${i}/2024`,
+        istitutioId: "x",
+        onboardingTokenID: "x",
+        idcontratto: "x",
+        tipoDocumento: `TD${Number(i) + 1}`,
+        tipocontratto: "PAL",
+        divisa: "EUR",
+        metodoPagamento: "B30",
+        causale: "test",
+        split: true,
+        inviata: 0,
+        sollecito: null,
+        stato: null,
+        datiGeneraliDocumento: [
+          {
+            tipologia: "ANTICIPO" + (Number(i) + 1),
+            riferimentoNumeroLinea: "",
+            idDocumento: "",
+            data: "2024-08-06",
+            numItem: "",
+            codiceCommessaConvenzione: "01_2024",
+            CUP: "",
+            CIG: null,
+          },
+        ],
+        posizioni: [],
+      },
+    }));
+    const mockListaDocTestPagination: MockListaDoc = {
+      dettagli: allItems,
+      importo: "3300",
+    };
+    // chiamata che popola la grid doc emessi
+    CallMockListaDE(
+      page,
+      mockListaDocTestPagination,
+      "**/api/fatture/ente/periodo/emesse**",
+    );
+    const table = page.locator("#docEmessiEnte");
+
+    // Find the column header by accessible name
+    const header = table.getByRole("columnheader", { name: "Data Fattura" });
+
+    // Click the button inside that header
+
+    await header.locator("button").click();
+      //Seleziono la grid emesse
+    const grid = page.locator("#docEmessiEnte > tbody");
+    const visibleRows = grid.locator("> tr:visible").filter({
+      hasText: "Emessa",
+    })
+    
+    const firstRow = visibleRows.first();
+    console.log(firstRow);
+    await expect(firstRow).toContainText("01/08/2000");
+
+ 
+    await header.locator("button").click();
+    await expect(firstRow).toContainText("31/08/2030");
+   
+    await header.locator("button").click()
+    await expect(firstRow).toContainText("01/08/2000");
+
+     const pagination = page.locator("#docEmessiEnte-pagination");
+    // Locate the "Go to next page" button inside that container
+    const nextPageButton = pagination.getByRole("button", {
+      name: "Go to next page",
+    });
+ 
+  });
 });
-
-
-
-
 
 export async function CallMockPeriodoDOcumentiEmessiEnte(
   page: Page,
   customJson: ResponsePeriodo[],
-  path:string
+  path: string,
 ) {
   await page.route(path, async (route) => {
     await route.fulfill({
@@ -581,17 +682,18 @@ export async function CallMockPeriodoDOcumentiEmessiEnte(
   });
 }
 
-export async function CallMockListaDE(page: Page, customJson: MockListaDoc,path:string) {
-  await page.route(
-    path,
-    async (route, request) => {
-      //const postData = request.postDataJSON();
+export async function CallMockListaDE(
+  page: Page,
+  customJson: MockListaDoc,
+  path: string,
+) {
+  await page.route(path, async (route, request) => {
+    //const postData = request.postDataJSON();
 
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify(customJson),
-      });
-    },
-  );
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify(customJson),
+    });
+  });
 }
