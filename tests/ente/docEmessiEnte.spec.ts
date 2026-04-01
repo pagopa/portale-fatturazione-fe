@@ -1,6 +1,10 @@
 import { test, expect, Page, Route } from "@playwright/test";
 import path from "path";
-import { checkAutocomplete, checkFilter } from "../utils/filters";
+import {
+  checkAutocomplete,
+  checkFilter,
+  testSortFilter,
+} from "../utils/filters";
 import {
   MockListaDoc,
   ResponsePeriodo,
@@ -65,7 +69,11 @@ test.describe("Documenti Emessi ENTE", () => {
   });
 
   test("test click button ANNULLA FILTRI", async ({ page }) => {
-    CallMockPeriodoDOcumentiEmessiEnte(page, mockJsonPeriodo,"**/api/fatture/ente/periodo**");
+    CallMockPeriodoDOcumentiEmessiEnte(
+      page,
+      mockJsonPeriodo,
+      "**/api/fatture/ente/periodo**",
+    );
     await page.goto("/ente/docemessi");
     const annullaButton = page.locator("button", { hasText: "Annulla Filtri" });
     await expect(annullaButton).toHaveCount(0);
@@ -594,7 +602,7 @@ test.describe("Documenti Emessi ENTE", () => {
         numero: i + 1,
         totale: 100 + Number(i),
         ragioneSociale: `Comune ${i + 1}`,
-        dataFattura: `${Number(2000) + Number(i)}-08-${Number(i)+1}`,
+        dataFattura: `${Number(2000) + Number(i)}-08-${Number(i) + 1}`,
         prodotto: "test",
         identificativo: `${i}/2024`,
         istitutioId: "x",
@@ -634,68 +642,17 @@ test.describe("Documenti Emessi ENTE", () => {
       mockListaDocTestPagination,
       "**/api/fatture/ente/periodo/emesse**",
     );
+
     const table = page.locator("#docEmessiEnte");
-
-    //DATA FATTURA
-    // Find the column header by accessible name
-    const buttonDataFattura = table.getByRole("columnheader", { name: "Data Fattura" });
-
-    // Click the button inside that header
-
-    await buttonDataFattura.locator("button").click();
-      //Seleziono la grid emesse
     const grid = page.locator("#docEmessiEnte > tbody");
-    const visibleRows = grid.locator("> tr:visible").filter({
-      hasText: "Emessa",
-    })
-    
-    const firstRow = visibleRows.first();
-    console.log(await firstRow.innerText());
-    await expect(firstRow).toContainText("01/08/2000");
-
- 
-    await buttonDataFattura.locator("button").click();
-    await expect(firstRow).toContainText("31/08/2030");
-   
-    await buttonDataFattura.locator("button").click()
-    await expect(firstRow).toContainText("01/08/2000");
-
-     const pagination = page.locator("#docEmessiEnte-pagination");
-    // Locate the "Go to next page" button inside that container
-    const nextPageButton = pagination.getByRole("button", {
-      name: "Go to next page",
+    const pagination = page.locator("#docEmessiEnte-pagination");
+    await testSortFilter({
+      table:table,
+      grid:grid,
+      pagination:pagination,
+      columnName: "Data Fattura",
+      expectedValues: ["01/08/2000", "31/08/2030", "01/08/2000","11/08/2024"],
     });
-     const prevPageButton = pagination.getByRole("button", {
-      name: "Go to previous page",
-    });
-    //il button per andare alla pagina precedente deve essere disabilitato
-    await expect(prevPageButton).toBeDisabled();
-     // il button per andare alla pagina successiva deve essere abilitato
-    await expect(nextPageButton).toBeEnabled();
-
-    //click sul button per andare alla pagina successiva
-    await nextPageButton.click();
-   
-    await expect(firstRow).toContainText("11/08/2010");
-    await expect(prevPageButton).toBeEnabled();
-  
-    //IDENTIFICATIVO 
-    const buttonIdentificativo = table.getByRole("columnheader", { name: "Ident." });
-
-    await buttonIdentificativo.locator("button").click();
-
-    const visibleRows2 = grid.locator("> tr:visible").filter({
-      hasText: "Emessa",
-    })
-    
-    const firstRow2 = visibleRows2.first();
-    console.log(2,await firstRow2.innerText());
-    await expect(firstRow2).toContainText("0/2024");
-
-    await nextPageButton.click();
-     await page.pause()
-    await expect(firstRow2).toContainText("20/2024");
- 
   });
 });
 

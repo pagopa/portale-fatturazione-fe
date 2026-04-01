@@ -35,22 +35,23 @@ export async function checkAutocomplete(page: Page, filter: Filter) {
   await expect(label).toHaveText(filter.label);
 }
 
-async function testSortFilter({
-  page,
+export async function testSortFilter({
   table,
   grid,
   pagination,
   columnName,
   expectedValues,
 }: {
-  page: Page;
-  table: Locator;
+  table: any;
   grid: Locator;
   pagination: Locator;
   columnName: string;
-  expectedValues: [string, string, string];
+  expectedValues: [string, string, string,string];
 }) {
+
+  await expect(table).toBeVisible();
   const header = table.getByRole("columnheader", { name: columnName });
+  await expect(header).toHaveCount(1);
   const button = header.locator("button");
 
   const nextPageButton = pagination.getByRole("button", {
@@ -63,7 +64,7 @@ async function testSortFilter({
 
   const getFirstRow = () =>
     grid.locator("> tr:visible").filter({ hasText: "Emessa" }).first();
-
+  console.log(await button.innerText())
   // 🔹 click ASC
   await button.click();
   await expect(getFirstRow()).toContainText(expectedValues[0]);
@@ -81,7 +82,7 @@ async function testSortFilter({
   await expect(nextPageButton).toBeEnabled();
 
   await nextPageButton.click();
-  await expect(getFirstRow()).toContainText(expectedValues[2]);
+  await expect(getFirstRow()).toContainText(expectedValues[3]);
 
   await expect(prevPageButton).toBeEnabled();
 }
