@@ -230,6 +230,7 @@ const DocStoricoSend : React.FC = () =>{
 
     const clearOnChangeFilter = () => {
         setData([]);
+        setGridDataPaginated([])
         setTotalListEl(0);
         setPage(0);
         setRowsPerPage(10); 

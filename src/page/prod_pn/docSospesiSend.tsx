@@ -378,6 +378,9 @@ const DocSospesiSend : React.FC = () =>{
         setGridData([]);
         setPage(0);
         setRowsPerPage(10); 
+        setGridData([]);
+        setListaResponse([]);
+        setTotalDocumenti(0);
     
     };
 
