@@ -377,12 +377,28 @@ export const sortByTotale = (array: any[], state: boolean, key: string) => {
     return array;
 };
 
-export const sortByTipoFattura = (array, state,key) => {
-    if (state === true) {
-        return array.sort((a, b) => a[key].localeCompare(b[key]));
-    }else  if (state === false) {
-        return array.sort((a, b) => b[key].localeCompare(a[key]));
-    }
-    return array;
+export const sortByTipoFattura = (
+  array: any[],
+  state: boolean | null,
+  key: string
+) => {
+  const extractNumber = (value: string): number => {
+    const match = value.match(/\d+/); // extract number
+    return match ? Number(match[0]) : 0;
+  };
+
+  const copy = [...array];
+
+  if (state === true) {
+    return copy.sort(
+      (a, b) => extractNumber(a[key]) - extractNumber(b[key])
+    );
+  } else if (state === false) {
+    return copy.sort(
+      (a, b) => extractNumber(b[key]) - extractNumber(a[key])
+    );
+  }
+
+  return copy;
 };
 
