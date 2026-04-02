@@ -36,17 +36,21 @@ export async function checkAutocomplete(page: Page, filter: Filter) {
 }
 
 export async function testSortFilter({
+  page,
   table,
   grid,
   pagination,
   columnName,
   expectedValues,
+  hasText
 }: {
+  page:Page
   table: any;
   grid: Locator;
   pagination: Locator;
   columnName: string;
   expectedValues: [string, string, string,string];
+  hasText?: string;
 }) {
 
   await expect(table).toBeVisible();
@@ -62,27 +66,27 @@ export async function testSortFilter({
     name: "Go to previous page",
   });
 
-  const getFirstRow = () =>
-    grid.locator("> tr:visible").filter({ hasText: "Emessa" }).first();
+  const getFirstRow = grid.locator("> tr:visible").filter({ hasText: hasText ? hasText :"Emessa" }).first();
   console.log(await button.innerText())
   // 🔹 click ASC
   await button.click();
-  await expect(getFirstRow()).toContainText(expectedValues[0]);
+ 
+  await expect(getFirstRow).toContainText(expectedValues[0]);
 
   // 🔹 click DESC
   await button.click();
-  await expect(getFirstRow()).toContainText(expectedValues[1]);
+  await expect(getFirstRow).toContainText(expectedValues[1]);
 
   // 🔹 click RESET (if applicable)
   await button.click();
-  await expect(getFirstRow()).toContainText(expectedValues[0]);
+  await expect(getFirstRow).toContainText(expectedValues[0]);
 
   // 🔹 pagination checks
   await expect(prevPageButton).toBeDisabled();
   await expect(nextPageButton).toBeEnabled();
 
   await nextPageButton.click();
-  await expect(getFirstRow()).toContainText(expectedValues[3]);
+  await expect(getFirstRow).toContainText(expectedValues[3]);
 
   await expect(prevPageButton).toBeEnabled();
 }

@@ -154,8 +154,8 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                                 {el.headerAction &&
                                                 <Tooltip title="Sort">
                                                     <span>
-                                                        <IconButton disabled={ total === 0 ? true : false} sx={{marginLeft:'10px'}}  onClick={()=> headerAction && headerAction((body?.ordinamento === 0) ? 1:0)}  size="small">
-                                                            {(body?.ordinamento === 0) ? <ArrowUpwardIcon></ArrowUpwardIcon>:<ArrowDownwardIcon></ArrowDownwardIcon>}
+                                                        <IconButton id={`sort-button-${el.label}`} disabled={ total === 0 ? true : false} sx={{marginLeft:'10px'}}  onClick={()=> headerAction && headerAction((body?.ordinamento === 0) ? 1:0)}  size="small">
+                                                            {(body?.ordinamento === 0) ? <ArrowUpwardIcon></ArrowUpwardIcon>:<ArrowDownwardIcon/>}
                                                         </IconButton>
                                                     </span>
                                                    
@@ -172,7 +172,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                                 {(el.headerActionSort &&  objectSort && objectSort[el.label]) &&
                                                 <Tooltip title="Sort">
                                                     <span>
-                                                        <IconButton disabled={ (total === 0 ||elements.length === 0) ? true : false} sx={{marginLeft:'10px'}}  onClick={()=> (headerActionSort && setGridData && setObjectSort&&  listaResponse) && headerActionSort(el.label,setGridData,gridType,setObjectSort,page,rows,listaResponse)}  size="small">
+                                                        <IconButton id={`${nameParameterApi}-sort-button-${el.label.replace(/ /g, "-")}`}  disabled={ (total === 0 ||elements.length === 0) ? true : false} sx={{marginLeft:'10px'}}  onClick={()=> (headerActionSort && setGridData && setObjectSort&&  listaResponse) && headerActionSort(el.label,setGridData,gridType,setObjectSort,page,rows,listaResponse)}  size="small">
                                                             {(sortValue === 1) ? <ArrowUpwardIcon sx={{ color: 'text.disabled'}}></ArrowUpwardIcon> :
                                                                 (sortValue === 2) ? <ArrowUpwardIcon></ArrowUpwardIcon>:
                                                                     <ArrowDownwardIcon></ArrowDownwardIcon>}

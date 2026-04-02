@@ -353,6 +353,7 @@ const DocSos : React.FC = () =>{
         setListaResponse([]);
         setListaResponseSorted([]);
         setTotalDocumenti(0);
+        setObjectSort({"Data Fattura":1,"Ident.":1,"Tot.":1,"N. Fattura":1,"Tipo Documento":1});
     };
 
     const onButtonFiltra = () =>{
@@ -576,7 +577,8 @@ const DocSos : React.FC = () =>{
     return (
         <MainBoxStyled title={"Documenti contabili sospesi"} actionButton={[]}>
             <ResponsiveGridContainer >
-                <MainFilter 
+                <MainFilter
+                    id="filter_anno"
                     filterName={"select_value_with_tutti"}
                     inputLabel={"Anno"}
                     clearOnChangeFilter={clearOnChangeFilter}
@@ -616,6 +618,7 @@ const DocSos : React.FC = () =>{
                     }}
                 ></MainFilter>
                 <MainFilter 
+                    id="filter_mese"
                     filterName={"select_mese_with_tutti"}
                     inputLabel={"Mese"}
                     clearOnChangeFilter={clearOnChangeFilter}
@@ -648,6 +651,7 @@ const DocSos : React.FC = () =>{
                     disabled={bodyFatturazione.anno === 9999}
                 ></MainFilter>
                 <MainFilter 
+                    id="filter_tipologia_fattura"
                     filterName={"multi_checkbox"}
                     inputLabel={"Tipologia Fattura"}
                     clearOnChangeFilter={clearOnChangeFilter}
@@ -678,6 +682,7 @@ const DocSos : React.FC = () =>{
                     iconMaterial={RenderIcon("invoice",true)}
                 ></MainFilter>
                 <MainFilter 
+                    id="filter_data_fattura"
                     filterName={"multi_checkbox"}
                     inputLabel={"Data Fattura"}
                     clearOnChangeFilter={clearOnChangeFilter}

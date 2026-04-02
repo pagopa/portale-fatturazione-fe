@@ -5,18 +5,13 @@ import {
   checkFilter,
   testSortFilter,
 } from "../utils/filters";
-import {
-  MockListaDoc,
-  ResponsePeriodo,
-} from "../utils/docEmessiMock/docEmessiMockType";
-import {
-  mockJsonListaDoc,
-  mockJsonPeriodo,
-  mockJsonPeriodo2,
-} from "../utils/docEmessiMock/docEmessiMock";
+import { mockJsonListaDocSospeso, mockJsonPeriodoSospeso, mockJsonPeriodoSospeso2 } from "../utils/docSospesiMock/dosSospesiMock";
+import { MockListaDoc, ResponsePeriodo } from "../utils/docSospesiMock/type";
+
+
 const authFile = path.join(__dirname, "../.auth/user.json");
 
-test.describe("Documenti Emessi ENTE", () => {
+test.describe("Documenti SOSPESI ENTE", () => {
   const filters = [
     { name: "anno", label: "Anno", type: "form_input" },
     { name: "mese", label: "Mese", type: "form_input" },
@@ -31,11 +26,20 @@ test.describe("Documenti Emessi ENTE", () => {
   test("test presenza dei filtri nel DOM", async ({ page }) => {
     // Page exist
     await page.context().storageState({ path: authFile });
-    await page.goto("/ente/docemessi");
+    await page.goto("/ente/docsospesi");
+    
+    //chiamo api lista che popola la grid
+    CallMockListaDE(
+      page,
+      mockJsonListaDocSospeso,
+      "**/api/fatture/ente/credito/sospeso**",
+    );
 
-    const h4 = page.locator("h4", { hasText: "Documenti contabili emessi" });
+    
+
+    const h4 = page.locator("h4", { hasText: "Documenti contabili sospesi" });
     await expect(h4).toHaveCount(1);
-
+  
     for (const filter of filters) {
       if (filter.type === "autocomplete") {
         await checkAutocomplete(page, filter);
@@ -44,20 +48,7 @@ test.describe("Documenti Emessi ENTE", () => {
       }
     }
 
-    await page.route("**/api/fatture/ente/periodo/emesse**", async (route) => {
-      const mockResponse = {
-        data: [],
-      };
 
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify(mockResponse),
-      });
-    });
-
-    // Trigger the API call: either page reload or button click if SPA triggers on mount
-    await page.reload();
 
     // Now check buttons
     const filterButton = page.locator("button", { hasText: "Filtra" });
@@ -69,12 +60,12 @@ test.describe("Documenti Emessi ENTE", () => {
   });
 
   test("test click button ANNULLA FILTRI", async ({ page }) => {
-    CallMockPeriodoDOcumentiEmessiEnte(
+    CallMockPeriodoDOcumentiSospesiEnte(
       page,
-      mockJsonPeriodo,
-      "**/api/fatture/ente/periodo**",
+      mockJsonPeriodoSospeso,
+      "**/api/fatture/ente/periodo/sospeso**",
     );
-    await page.goto("/ente/docemessi");
+    await page.goto("/ente/docsospesi");
     const annullaButton = page.locator("button", { hasText: "Annulla Filtri" });
     await expect(annullaButton).toHaveCount(0);
 
@@ -146,24 +137,24 @@ test.describe("Documenti Emessi ENTE", () => {
   });
 
   test("test click button DOWNLOAD RISULTATI", async ({ page }) => {
-    await page.goto("/ente/docemessi");
+    await page.goto("/ente/docsospesi");
     //Chiamo api periodo che popola i filtri
     const buttonDownload = page.getByRole("button", {
       name: "Download risultati",
       exact: true,
     });
 
-    CallMockPeriodoDOcumentiEmessiEnte(
+    CallMockPeriodoDOcumentiSospesiEnte(
       page,
-      mockJsonPeriodo,
-      "**/api/fatture/ente/periodo**",
+      mockJsonPeriodoSospeso,
+      "**/api/fatture/ente/periodo/sospeso**",
     );
 
     //chiamo api lista che popola la grid
     CallMockListaDE(
       page,
-      mockJsonListaDoc,
-      "**/api/fatture/ente/periodo/emesse**",
+      mockJsonListaDocSospeso,
+      "**/api/fatture/ente/credito/sospeso**",
     );
 
     //Deve essere visibile una row
@@ -177,7 +168,7 @@ test.describe("Documenti Emessi ENTE", () => {
 
     // Nome atteso del file download
     const filename = download.suggestedFilename();
-    expect(filename).toBe("Documenti emessi_Comune di San Mauro Torinese.xlsx");
+    expect(filename).toBe("Documenti sospesi_Comune di San Mauro Torinese.xlsx");
 
     // Optional: save the file to check contents
     const path = await download.path();
@@ -205,7 +196,7 @@ test.describe("Documenti Emessi ENTE", () => {
     // nome atteso del file
     const filename2 = download2.suggestedFilename();
     expect(filename2).toBe(
-      "Documenti emessi_Comune di San Mauro Torinese_2023.xlsx",
+      "Documenti sospesi_Comune di San Mauro Torinese_2023.xlsx",
     );
 
     // Optional: save the file to check contents
@@ -229,19 +220,19 @@ test.describe("Documenti Emessi ENTE", () => {
     //Nome del file atteso
     const filename3 = download3.suggestedFilename();
     expect(filename3).toBe(
-      "Documenti emessi_Comune di San Mauro Torinese_Gennaio_2024.xlsx",
+      "Documenti sospesi_Comune di San Mauro Torinese_Gennaio_2024.xlsx",
     );
   });
 
   test("test logica filtri", async ({ page }) => {
     // 1️⃣ Mock API getPeriodoEmesso
-    CallMockPeriodoDOcumentiEmessiEnte(
+    CallMockPeriodoDOcumentiSospesiEnte(
       page,
-      mockJsonPeriodo,
-      "**/api/fatture/ente/periodo**",
+      mockJsonPeriodoSospeso,
+      "**/api/fatture/ente/periodo/sospeso**",
     );
     //vai page documenti emessi
-    await page.goto("/ente/docemessi");
+    await page.goto("/ente/docsospesi");
     //Button Annulla deve essere nascosto
     const annullaButton = page.locator("button", { hasText: "Annulla Filtri" });
     await expect(annullaButton).toHaveCount(0);
@@ -402,7 +393,6 @@ test.describe("Documenti Emessi ENTE", () => {
     await page.getByRole("option", { name: "SECONDO SALDO" }).click();
     await page.click('button:has-text("Filtra")');
     await page.reload();
-    await page.pause()
 
     await meseSelect.click();
     await expect(page.locator("li", { hasText: "Tutti" })).toBeVisible();
@@ -423,12 +413,12 @@ test.describe("Documenti Emessi ENTE", () => {
 
     await page.click('button:has-text("Filtra")');
     await page.reload();
-    await page.pause()
+   
   });
 
-  test("test pagination grid EMESSE", async ({ page }) => {
+  test("test pagination grid SOSPESE", async ({ page }) => {
     //vai pagina doc emessi
-    await page.goto("/ente/docemessi");
+    await page.goto("/ente/docsospesi");
     const allItems = Array.from({ length: 33 }, (_, i) => ({
       fattura: {
         idfattura: i + 1,
@@ -467,18 +457,18 @@ test.describe("Documenti Emessi ENTE", () => {
     }));
     const mockListaDocTestPagination: MockListaDoc = {
       dettagli: allItems,
-      importo: "3300",
+      importoSospeso: "3300",
     };
     // chiamata che popola filtri e lista grid - il periodo non servirebbe
-    CallMockPeriodoDOcumentiEmessiEnte(
+    CallMockPeriodoDOcumentiSospesiEnte(
       page,
-      mockJsonPeriodo2,
-      "**/api/fatture/ente/periodo**",
+      mockJsonPeriodoSospeso2,
+      "**/api/fatture/ente/periodo/sospeso**",
     );
     CallMockListaDE(
       page,
       mockListaDocTestPagination,
-      "**/api/fatture/ente/periodo/emesse**",
+      "**/api/fatture/ente/credito/sospeso**",
     );
 
     // Select dei buttons paginator della grid emessi e NON contestate
@@ -496,12 +486,13 @@ test.describe("Documenti Emessi ENTE", () => {
     //Seleziono la grid emesse
     const grid = page.locator("#docEmessiEnte > tbody");
     const visibleRows = grid.locator("> tr:visible").filter({
-      hasText: "Emessa",
+      hasText: "Sospesa",
     });
+
     //dovrei vedere 10 righe per pagina
     const rowCount = await visibleRows.count();
     await expect(visibleRows).toHaveCount(10);
-
+   
     //controllo che siano effettivamente i primi 10 elementi della lista
     for (let i = 0; i < rowCount; i++) {
       const row = visibleRows.nth(i);
@@ -532,110 +523,10 @@ test.describe("Documenti Emessi ENTE", () => {
     await expect(nextPageButton).toBeDisabled();
   });
 
-  test("test pagination grid CONTESTATE", async ({ page }) => {
-    //vai pagina doc emessi
-    await page.goto("/ente/docemessi");
-    const allItems = Array.from({ length: 33 }, (_, i) => ({
-      fattura: {
-        idfattura: i + 1,
-        numero: i + 1,
-        totale: 100 + i,
-        ragioneSociale: `Comune ${i + 1}`,
-        dataFattura: "2024-01-01",
-        prodotto: "test",
-        identificativo: `ID-${i}`,
-        istitutioId: "x",
-        onboardingTokenID: "x",
-        idcontratto: "x",
-        tipoDocumento: "TD01",
-        tipocontratto: "PAL",
-        divisa: "EUR",
-        metodoPagamento: "B30",
-        causale: "test",
-        split: true,
-        inviata: 0,
-        sollecito: null,
-        stato: null,
-        datiGeneraliDocumento: [
-          {
-            tipologia: "ANTICIPO" + i + 1,
-            riferimentoNumeroLinea: "",
-            idDocumento: "",
-            data: "2024-08-06",
-            numItem: "",
-            codiceCommessaConvenzione: "01_2024",
-            CUP: "",
-            CIG: null,
-          },
-        ],
-        posizioni: [],
-      },
-    }));
-    const mockListaDocTestPagination: MockListaDoc = {
-      dettagli: allItems,
-      importo: "3300",
-    };
-    // chiamata che popola filtri e lista grid - il periodo non servirebbe
-
-    CallMockListaDE(
-      page,
-      mockListaDocTestPagination,
-      "**/api/fatture/ente/eliminate**",
-    );
-
-    // Select dei buttons paginator della grid emessi e NON contestate
-    const pagination = page.locator("#docEmessiEnteContestate-pagination");
-    // Locate the "Go to next page" button inside that container
-    const nextPageButton = pagination.getByRole("button", {
-      name: "Go to next page",
-    });
-    const prevPageButton = pagination.getByRole("button", {
-      name: "Go to previous page",
-    });
-    //il button per andare alla pagina precedente deve essere disabilitato
-    await expect(prevPageButton).toBeDisabled();
-
-    //Seleziono la grid emesse
-    const grid = page.locator("#docEmessiEnteContestate > tbody");
-    const visibleRows = grid.locator("> tr:visible").filter({
-      hasText: "Emessa",
-    });
-    //dovrei vedere 10 righe per pagina
-    const rowCount = await visibleRows.count();
-    await expect(visibleRows).toHaveCount(10);
-
-    //controllo che siano effettivamente i primi 10 elementi della lista
-    for (let i = 0; i < rowCount; i++) {
-      const row = visibleRows.nth(i);
-      const rowText = await row.innerText();
-
-      const expectedText = `ID-${i}`;
-      await expect(rowText).toContain(expectedText);
-    }
-    // il button per andare alla pagina successiva deve essere abilitato
-    await expect(nextPageButton).toBeEnabled();
-
-    //click sul button per andare alla pagina successiva
-    await nextPageButton.click();
-
-    //Check che siano visibili i successivi 10 elementi della lista (11 to 20)
-    for (let i = 0; i < rowCount; i++) {
-      const row = visibleRows.nth(i);
-      const rowText = await row.innerText();
-      const expectedText = `ID-${Number(i) + 10}`;
-      await expect(rowText).toContain(expectedText);
-    }
-    // doppio click sul button per andare alla pagina successiva
-    await nextPageButton.click();
-    await nextPageButton.click();
-    //deve essere visibile solamente gli ultimi 3 elementi della lista (31-33)
-    await expect(visibleRows).toHaveCount(3);
-    //il button per andare alla pagina successiva deve essere disabilitato
-    await expect(nextPageButton).toBeDisabled();
-  });
+ 
   test("test sort filters grid", async ({ page }) => {
     //vai pagina doc emessi
-    await page.goto("/ente/docemessi");
+    await page.goto("/ente/docsospesi");
     const allItems = Array.from({ length: 31 }, (_, i) => ({
       fattura: {
         idfattura: i + 1,
@@ -674,18 +565,18 @@ test.describe("Documenti Emessi ENTE", () => {
     }));
     const mockListaDocTestPagination: MockListaDoc = {
       dettagli: allItems,
-      importo: "3300",
+      importoSospeso: "3300",
     };
-    CallMockPeriodoDOcumentiEmessiEnte(
+    CallMockPeriodoDOcumentiSospesiEnte(
       page,
-      mockJsonPeriodo2,
-      "**/api/fatture/ente/periodo**",
+      mockJsonPeriodoSospeso2,
+      "**/api/fatture/ente/periodo/sospeso**",
     );
     // chiamata che popola la grid doc emessi
     CallMockListaDE(
       page,
       mockListaDocTestPagination,
-      "**/api/fatture/ente/periodo/emesse**",
+      "**/api/fatture/ente/credito/sospeso**",
     );
 
     const table = page.locator("#docEmessiEnte");
@@ -700,6 +591,7 @@ test.describe("Documenti Emessi ENTE", () => {
       pagination: pagination,
       columnName: "Data Fattura",
       expectedValues: ["01/08/2000", "31/08/2030", "01/08/2000", "11/08/2010"],
+      hasText:"Sospesa"
     });
     await page.click('button:has-text("Filtra")');
 
@@ -710,6 +602,7 @@ test.describe("Documenti Emessi ENTE", () => {
       pagination: pagination,
       columnName: "Ident.",
       expectedValues: ["0/2024", "30/2024", "0/2024", "10/2024"],
+      hasText:"Sospesa"
     });
     await page.click('button:has-text("Filtra")');
     await testSortFilter({
@@ -719,6 +612,7 @@ test.describe("Documenti Emessi ENTE", () => {
       pagination: pagination,
       columnName: "Tot.",
       expectedValues: ["0", "30", "0", "10"],
+      hasText:"Sospesa"
     });
     await page.click('button:has-text("Filtra")');
 
@@ -729,6 +623,7 @@ test.describe("Documenti Emessi ENTE", () => {
       pagination: pagination,
       columnName: "N. Fattura",
       expectedValues: ["1", "31", "1", "11"],
+      hasText:"Sospesa"
     });
     await page.click('button:has-text("Filtra")');
     await testSortFilter({
@@ -738,6 +633,7 @@ test.describe("Documenti Emessi ENTE", () => {
       pagination: pagination,
       columnName: "Tipo Documento",
       expectedValues: ["TD1", "TD31", "TD1", "TD11"],
+      hasText:"Sospesa"
     });
     await page.click('button:has-text("Filtra")');
 
@@ -787,7 +683,7 @@ test.describe("Documenti Emessi ENTE", () => {
     await nextPageButton.click();
     // controlllo che gli elementi siano 3 / 4
     const visibleRows = grid.locator("> tr:visible").filter({
-      hasText: "Emessa",
+      hasText: "Sospesa",
     });
   
     expect(await visibleRows.count()).toBe(6);
@@ -800,9 +696,8 @@ test.describe("Documenti Emessi ENTE", () => {
     // controllo che l'ordinamento sia corretto anche nella seconda pagina
     const getFirstRow = grid
       .locator("> tr:visible")
-      .filter({ hasText: "Emessa" })
+      .filter({ hasText: "Sospesa" })
       .first();
-    console.log(await buttonDataFattura.innerText());
 
     await buttonDataFattura.click();
     await buttonDataFattura.click();
@@ -841,7 +736,7 @@ test.describe("Documenti Emessi ENTE", () => {
 
 });
 
-export async function CallMockPeriodoDOcumentiEmessiEnte(
+export async function CallMockPeriodoDOcumentiSospesiEnte(
   page: Page,
   customJson: ResponsePeriodo[],
   path: string,
