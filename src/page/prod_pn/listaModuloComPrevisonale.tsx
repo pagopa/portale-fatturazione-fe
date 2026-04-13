@@ -339,7 +339,7 @@ const ListaCommessaPrevisionale:React.FC = () =>{
 
 
     return (
-        <MainBoxStyled title={"Lista Modulo Commessa Previsonale"}>
+        <MainBoxStyled title={"Lista Modulo Commessa Previsionale"}>
             <ResponsiveGridContainer >
                 <MainFilter 
                     filterName={"date_from_to"}
