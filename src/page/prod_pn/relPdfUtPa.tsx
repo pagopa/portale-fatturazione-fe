@@ -60,10 +60,7 @@ const RelPdfPage : React.FC = () =>{
         labelScaricaReportDettaglio = "Scarica report di dettaglio notifiche Doc. Sospesi";
     }
 
-    let accontoIsVisible:boolean = profilo.auth === "SELFCARE" && mainState?.profilo?.idTipoContratto === 2;
-    if(profilo.auth === "PAGOPA" && Number(idTipoContratto) === 2){
-        accontoIsVisible = true;
-    }
+ 
   
 
     const {
@@ -150,6 +147,11 @@ const RelPdfPage : React.FC = () =>{
             (rel.tipologiaFattura === "PRIMO SALDO" || rel.tipologiaFattura === "SECONDO SALDO" )){
             showDownloadPdfDocEmessiSospesiEnte= true;
         }
+    }
+
+    let accontoIsVisible:boolean = profilo.auth === "SELFCARE" && Number(mainState?.profilo?.idTipoContratto) === 1 && rel.tipologiaFattura !== "ANTICIPO"
+    if(profilo.auth === "PAGOPA" && Number(idTipoContratto) === 1 && rel.tipologiaFattura !== "ANTICIPO"){
+        accontoIsVisible = true;
     }
 
     if(loadingDettaglio){
