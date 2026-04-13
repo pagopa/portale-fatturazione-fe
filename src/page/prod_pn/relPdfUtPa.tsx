@@ -60,7 +60,10 @@ const RelPdfPage : React.FC = () =>{
         labelScaricaReportDettaglio = "Scarica report di dettaglio notifiche Doc. Sospesi";
     }
 
-    const accontoIsVisible:boolean = mainState?.profilo?.idTipoContratto === 2;
+    let accontoIsVisible:boolean = profilo.auth === "SELFCARE" && mainState?.profilo?.idTipoContratto === 2;
+    if(profilo.auth === "PAGOPA" && Number(idTipoContratto) === 2){
+        accontoIsVisible = true;
+    }
   
 
     const {
