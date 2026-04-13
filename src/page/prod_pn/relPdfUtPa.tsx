@@ -149,8 +149,8 @@ const RelPdfPage : React.FC = () =>{
         }
     }
 
-    let accontoIsVisible:boolean = profilo.auth === "SELFCARE" && Number(mainState?.profilo?.idTipoContratto) === 1 && rel.tipologiaFattura !== "ANTICIPO"
-    if(profilo.auth === "PAGOPA" && Number(idTipoContratto) === 1 && rel.tipologiaFattura !== "ANTICIPO"){
+    let accontoIsVisible:boolean = profilo.auth === "SELFCARE" && Number(mainState?.profilo?.idTipoContratto) === 2 && rel.tipologiaFattura !== "ANTICIPO"
+    if(profilo.auth === "PAGOPA" && Number(idTipoContratto) === 2 && rel.tipologiaFattura !== "ANTICIPO"){
         accontoIsVisible = true;
     }
 

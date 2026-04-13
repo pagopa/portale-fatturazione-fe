@@ -136,8 +136,10 @@ function usePageRelDocPdf({
                     response = await getSospesiReportExel(token, profilo.nonce, customId);
                 }
             }else if(profilo.auth === 'PAGOPA'){
-                if(pageFrom === "rel" || pageFrom === "documentiemessi"){
+                if(pageFrom === "rel"){
                     response = await getRelExelPagoPa(token, profilo.nonce, rowId);
+                }if( pageFrom === "documentiemessi"){
+                    response = await getRelExelPagoPa(token, profilo.nonce, customId);
                 }else if(pageFrom === "documentisospesi"){
                     response = await getDocSospesiExelPagoPa(token, profilo.nonce, customId);
                 }
