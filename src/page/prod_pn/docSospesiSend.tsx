@@ -488,9 +488,9 @@ const DocSospesiSend : React.FC = () =>{
         console.log({el});
         let idTipoContratto = 0;
         if(el.tipocontratto === "PAL"){
-            idTipoContratto = 2;
-        }else if(el.tipocontratto === "PAC"){
             idTipoContratto = 1;
+        }else if(el.tipocontratto === "PAC"){
+            idTipoContratto = 2;
         }
         console.log(`${PathPf.PDF_REL}/documentisospesi/${el.idFattura}/${el.istitutioID}/${idTipoContratto}`);
         navigate(`${PathPf.PDF_REL}/documentisospesi/${el.idFattura}/${el.istitutioID}/${idTipoContratto}`); 
