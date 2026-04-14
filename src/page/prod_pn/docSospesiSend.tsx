@@ -180,7 +180,7 @@ const DocSospesiSend : React.FC = () =>{
                 setTextValue(filters.textValue);
               
                 getlistaFatturazione(filters.body);
-                setShowLoadingGrid(false);
+                //setShowLoadingGrid(false);
             }else{
                 setBodyFatturazione({anno:Number(year),mese:mesiCamelCase[0].mese, tipologiaFattura:[],cancellata:false,idEnti:[],idTipoContratto:null,inviata:null});
                 
@@ -232,7 +232,7 @@ const DocSospesiSend : React.FC = () =>{
                 if(isInitialRender.current && Object.keys(filters).length > 0){
                     setValueMultiselectDateTipologie(filters.valueMulitselectDateTipologie);
                     getTipologieFatturazione(filters.body.anno, filters.body.mese, filters.body.cancellata);
-                    setShowLoadingGrid(false);
+                    //setShowLoadingGrid(false);
                 }else{
                     setValueMultiselectDateTipologie([]);
                 }
@@ -485,14 +485,12 @@ const DocSospesiSend : React.FC = () =>{
     };
 
     const setIdDoc =(el) => {
-        console.log({el});
         let idTipoContratto = 0;
         if(el.tipocontratto === "PAL"){
             idTipoContratto = 1;
         }else if(el.tipocontratto === "PAC"){
             idTipoContratto = 2;
         }
-        console.log(`${PathPf.PDF_REL}/documentisospesi/${el.idFattura}/${el.istitutioID}/${idTipoContratto}`);
         navigate(`${PathPf.PDF_REL}/documentisospesi/${el.idFattura}/${el.istitutioID}/${idTipoContratto}`); 
     }; 
 
