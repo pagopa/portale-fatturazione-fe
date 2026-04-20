@@ -60,7 +60,7 @@ const RelPdfPage : React.FC = () =>{
         labelScaricaReportDettaglio = "Scarica report di dettaglio notifiche Doc. Sospesi";
     }
 
-    const accontoIsVisible:boolean = mainState?.profilo?.idTipoContratto === 2;
+ 
   
 
     const {
@@ -147,6 +147,11 @@ const RelPdfPage : React.FC = () =>{
             (rel.tipologiaFattura === "PRIMO SALDO" || rel.tipologiaFattura === "SECONDO SALDO" )){
             showDownloadPdfDocEmessiSospesiEnte= true;
         }
+    }
+
+    let accontoIsVisible:boolean = profilo.auth === "SELFCARE" && Number(mainState?.profilo?.idTipoContratto) === 2 && rel.tipologiaFattura !== "ANTICIPO"
+    if(profilo.auth === "PAGOPA" && Number(idTipoContratto) === 2 && rel.tipologiaFattura !== "ANTICIPO"){
+        accontoIsVisible = true;
     }
 
     if(loadingDettaglio){
@@ -353,6 +358,9 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,accontoIsVisible}) => {
 
                         <TextDettaglioPdf description='Anticipo Analogico' value={Number(mainObj.anticipoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Anticipo Digitale' value={Number(mainObj.anticipoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+
+                        {accontoIsVisible && <TextDettaglioPdf description='Acconto Analogico' value={Number(mainObj.accontoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
+                        {accontoIsVisible && <TextDettaglioPdf description='Acconto Digitale' value={Number(mainObj.accontoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
                         <TextDettaglioPdf description='Storno Analogico' value={Number(mainObj.stornoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Storno Digitale' value={Number(mainObj.stornoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
 

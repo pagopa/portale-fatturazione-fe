@@ -428,7 +428,6 @@ const DocEm : React.FC = () =>{
         setListaResponseaSorted([]);
         setTotalDocumenti(0);
         setObjectSort({"Data Fattura":1,"Ident.":1,"Tot.":1,"N. Fattura":1,"Tipo Documento":1});
-    
     };
 
     const onButtonFiltra = () =>{
