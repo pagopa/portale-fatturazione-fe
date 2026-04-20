@@ -160,6 +160,11 @@ const RelPdfPage : React.FC = () =>{
 
     let idTipoContrattoBasedOnProfile = profilo.auth === "PAGOPA" ? Number(idTipoContratto) : Number(mainState?.profilo?.idTipoContratto) 
 
+    let accontoIsVisible:boolean = profilo.auth === "SELFCARE" && Number(mainState?.profilo?.idTipoContratto) === 2 && rel.tipologiaFattura !== "ANTICIPO"
+    if(profilo.auth === "PAGOPA" && Number(idTipoContratto) === 2 && rel.tipologiaFattura !== "ANTICIPO"){
+        accontoIsVisible = true;
+    }
+
     if(loadingDettaglio){
         return(
             <SkeletonRelPdf></SkeletonRelPdf>
