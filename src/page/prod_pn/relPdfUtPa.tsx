@@ -1,4 +1,3 @@
-
 import { SingleFileInput } from '@pagopa/mui-italia';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
@@ -31,6 +30,7 @@ const RelPdfPage : React.FC = () =>{
     let headerNavigationFrom;
     let labelScaricaPdf = "Scarica PDF Reg. Es.";
     let labelScaricaReportDettaglio = "Scarica report di dettaglio notifiche Reg. Es.";
+    let fatturaType = "";
   
     if(location.pathname.includes("send") && location.pathname.includes("rel") ){
         profilePath = PathPf.LISTA_REL;
@@ -40,11 +40,13 @@ const RelPdfPage : React.FC = () =>{
         headerNavigationFrom = "Documenti Emessi/";
         labelScaricaPdf = "Scarica PDF Doc. Emessi";
         labelScaricaReportDettaglio = "Scarica report di dettaglio notifiche Doc. Emessi";
+        fatturaType = "Emessa";
     }else if(location.pathname.includes("ente") && location.pathname.includes("documentisospesi")){
         profilePath = PathPf.DOCUMENTI_SOSPESI;
         headerNavigationFrom = "Documenti Sospesi/";
         labelScaricaPdf = "Scarica PDF Doc. Sospesi";
         labelScaricaReportDettaglio = "Scarica report di dettaglio notifiche Doc. Sospesi";
+        fatturaType = "Sospesa";
     }else if(location.pathname.includes("ente") && location.pathname.includes("rel")){
         profilePath = PathPf.LISTA_REL_EN;
         headerNavigationFrom = "Regolare Esecuzione/";
@@ -52,12 +54,14 @@ const RelPdfPage : React.FC = () =>{
         profilePath = PathPf.FATTURAZIONE;
         headerNavigationFrom = "Documenti Emessi/";
         labelScaricaPdf = "Scarica PDF Doc. Emessi";
+        fatturaType = "Emessa";
         labelScaricaReportDettaglio = "Scarica report di dettaglio notifiche Doc. Emessi";
     }else if(location.pathname.includes("send") && location.pathname.includes("documentisospesi")){
         profilePath = PathPf.DOCUMENTI_SOSPESI_SEND;
         headerNavigationFrom = "Documenti Sospesi/";
         labelScaricaPdf = "Scarica PDF Doc. Sospesi";
         labelScaricaReportDettaglio = "Scarica report di dettaglio notifiche Doc. Sospesi";
+        fatturaType = "Sospesa";
     }
 
  
@@ -148,6 +152,13 @@ const RelPdfPage : React.FC = () =>{
             showDownloadPdfDocEmessiSospesiEnte= true;
         }
     }
+    /*
+    let accontoIsVisible:boolean = profilo.auth === "SELFCARE" && Number(mainState?.profilo?.idTipoContratto) === 2 && rel.tipologiaFattura !== "ANTICIPO"
+    if(profilo.auth === "PAGOPA" && Number(idTipoContratto) === 2 && rel.tipologiaFattura !== "ANTICIPO"){
+        accontoIsVisible = true;
+    }*/
+
+    let idTipoContrattoBasedOnProfile = profilo.auth === "PAGOPA" ? Number(idTipoContratto) : Number(mainState?.profilo?.idTipoContratto) 
 
     let accontoIsVisible:boolean = profilo.auth === "SELFCARE" && Number(mainState?.profilo?.idTipoContratto) === 2 && rel.tipologiaFattura !== "ANTICIPO"
     if(profilo.auth === "PAGOPA" && Number(idTipoContratto) === 2 && rel.tipologiaFattura !== "ANTICIPO"){
@@ -172,7 +183,7 @@ const RelPdfPage : React.FC = () =>{
                     <Button disabled={disableButtonDettaglioNot}  onClick={()=> downloadReportDettaglio()} >{labelScaricaReportDettaglio} <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
                 </div>
             }
-            <MainComponentBasedOnUrl mainObj={rel} profilePath={profilePath} accontoIsVisible={accontoIsVisible}></MainComponentBasedOnUrl>
+            <MainComponentBasedOnUrl mainObj={rel} profilePath={profilePath} idTipoContrattoBasedOnProfile={idTipoContrattoBasedOnProfile} fatturaType={fatturaType}></MainComponentBasedOnUrl>
             <div className='d-flex justify-content-between ms-5 me-5'>
                 {showComponentPdfAdmin &&
                 <div>
@@ -240,68 +251,65 @@ export default RelPdfPage;
 
 
 
-const MainComponentBasedOnUrl = ({mainObj,profilePath,accontoIsVisible}) => {
-    if(profilePath === PathPf.LISTA_REL ||  profilePath === PathPf.LISTA_REL_EN){
-        return (
-            <div className="bg-white mb-5 me-5 ms-5">
-                <div className="pt-5 pb-5 ">
-                    <div className="container text-center">
-                        <TextDettaglioPdf description='Soggetto aderente' value={mainObj.ragioneSociale}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Tipologia Fattura' value={mainObj.tipologiaFattura}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='ID Documento' value={mainObj.idDocumento||"--"}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Anno' value={mainObj.anno}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Mese' value={month[Number(mainObj.mese) - 1]}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Cup' value={mainObj.cup||"--"}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='N. Notifiche Analogiche' value={mainObj.totaleNotificheAnalogiche}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='N. Notifiche Digitali' value={mainObj.totaleNotificheDigitali}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='N. Totale Notifiche' value={mainObj.totaleNotificheDigitali + mainObj.totaleNotificheAnalogiche }></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Totale Imponibile Analogico' value={Number(mainObj.totaleAnalogico).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Totale Imponibile Digitale' value={Number(mainObj.totaleDigitale).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Totale Imponibile' value={Number(mainObj.totale).toLocaleString()+' €'}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Iva' value={mainObj.iva +' %'}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Totale Ivato Analogico ' value={Number(mainObj.totaleAnalogicoIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Totale Ivato Digitale' value={Number(mainObj.totaleDigitaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Totale Ivato' value={Number(mainObj.totaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                    </div>
+const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProfile,fatturaType}) => {
+    const isRel = profilePath === PathPf.LISTA_REL || profilePath === PathPf.LISTA_REL_EN;
+    const totale_Imponibile_Ivato_IsVisible = mainObj.tipologiaFattura === "PRIMO SALDO" || mainObj.tipologiaFattura === "SECONDO SALDO" || mainObj.tipologiaFattura === "VAR. SEMESTRALE";    
+    const anticipo_analogico_digitale_IsVisible = mainObj.tipologiaFattura === "ANTICIPO";
+    const acconto_analogico_digitale_IsVisible = mainObj.tipologiaFattura === "ACCONTO" && idTipoContrattoBasedOnProfile === 2;
+    const storno_analogico_digitale_totale_storno_IsVisible = (mainObj.tipologiaFattura === "PRIMO SALDO" || mainObj.tipologiaFattura === "SECONDO SALDO" || mainObj.tipologiaFattura === "VAR. SEMESTRALE") && (profilePath !== PathPf.LISTA_REL  && profilePath !== PathPf.LISTA_REL_EN);
+       return ( 
+       <div>
+         <div className="bg-white mb-5 me-5 ms-5">
+            <div className="d-flex justify-content-center pt-3">
+                <Typography variant="h4">Dettaglio Fattura {fatturaType}</Typography>
+            </div>
+            <div className="pt-3 pb-3 ">
+                <div className="container text-center">
+                    <TextDettaglioPdf description='Soggetto aderente' value={mainObj.ragioneSociale}></TextDettaglioPdf>
+                    <TextDettaglioPdf description='Tipologia Fattura' value={mainObj.tipologiaFattura}></TextDettaglioPdf>
+                    <TextDettaglioPdf description='Anno' value={mainObj.anno}></TextDettaglioPdf>
+                    <TextDettaglioPdf description='Mese' value={month[Number(mainObj.mese) - 1]}></TextDettaglioPdf>
+                    <TextDettaglioPdf description='ID Documento' value={mainObj.idDocumento||"--"}></TextDettaglioPdf>
+                    <TextDettaglioPdf description='Cup' value={mainObj.cup||"--"}></TextDettaglioPdf>
                 </div>
             </div>
-        );
-    }else if(profilePath === PathPf.DOCUMENTI_EMESSI || profilePath === PathPf.FATTURAZIONE){
-        return (
-            <Box>
-                <div className="bg-white mb-5 me-5 ms-5">
-                    <div className="pt-5 pb-5 ">
-                        <div className="container text-center">
-                            <TextDettaglioPdf description='Soggetto aderente' value={mainObj.ragioneSociale}></TextDettaglioPdf>
-                            <TextDettaglioPdf description='Tipologia Fattura' value={mainObj.tipologiaFattura}></TextDettaglioPdf>
-                            <TextDettaglioPdf description='ID Documento' value={mainObj.idDocumento||"--"}></TextDettaglioPdf>
-                            <TextDettaglioPdf description='Anno' value={mainObj.anno}></TextDettaglioPdf>
-                            <TextDettaglioPdf description='Mese' value={month[Number(mainObj.mese) - 1]}></TextDettaglioPdf>
-                            <TextDettaglioPdf description='Cup' value={mainObj.cup||"--"}></TextDettaglioPdf>
-                            
-                            <TextDettaglioPdf description='Anticipo Analogico' value={Number(mainObj.anticipoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                            <TextDettaglioPdf description='Anticipo Digitale' value={Number(mainObj.anticipoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-
-                            {accontoIsVisible && <TextDettaglioPdf description='Acconto Analogico' value={Number(mainObj.accontoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
-                            {accontoIsVisible && <TextDettaglioPdf description='Acconto Digitale' value={Number(mainObj.accontoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
-
-                            <TextDettaglioPdf description='Storno Analogico' value={Number(mainObj.stornoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                            <TextDettaglioPdf description='Storno Digitale' value={Number(mainObj.stornoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                            
-                            <TextDettaglioPdf description='N. Notifiche Analogiche' value={mainObj.totaleNotificheAnalogiche}></TextDettaglioPdf>
-                            <TextDettaglioPdf description='N. Notifiche Digitali' value={mainObj.totaleNotificheDigitali}></TextDettaglioPdf>
-                            <TextDettaglioPdf description='N. Totale Notifiche' value={mainObj.totaleNotificheDigitali + mainObj.totaleNotificheAnalogiche }></TextDettaglioPdf>
-                            <TextDettaglioPdf description='Totale Imponibile Analogico' value={Number(mainObj.totaleAnalogico).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                            <TextDettaglioPdf description='Totale Imponibile Digitale' value={Number(mainObj.totaleDigitale).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                            <TextDettaglioPdf description='Totale Imponibile' value={Number(mainObj.totaleFattura).toLocaleString()+' €'}></TextDettaglioPdf>
-                            <TextDettaglioPdf description='Iva' value={mainObj.iva +' %'}></TextDettaglioPdf>
-                            <TextDettaglioPdf description='Totale Ivato Analogico ' value={Number(mainObj.totaleAnalogicoIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                            <TextDettaglioPdf description='Totale Ivato Digitale' value={Number(mainObj.totaleDigitaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                            <TextDettaglioPdf description='Totale Ivato' value={Number(mainObj.totaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                        </div>
-                    </div>
+         </div>
+         <div className="bg-white mb-5 me-5 ms-5">
+            <div className="d-flex justify-content-center pt-3">
+                <Typography variant="h4">Consumato</Typography>
+            </div>
+            <div className="pt-3 pb-3 ">
+                <div className="container text-center">
+                    <TextDettaglioPdf description='N. Notifiche Analogiche' value={mainObj.totaleNotificheAnalogiche}></TextDettaglioPdf>
+                    <TextDettaglioPdf description='N. Notifiche Digitali' value={mainObj.totaleNotificheDigitali}></TextDettaglioPdf>
+                    <TextDettaglioPdf description='N. Totale Notifiche' value={mainObj.totaleNotificheDigitali + mainObj.totaleNotificheAnalogiche }></TextDettaglioPdf>
+                    {totale_Imponibile_Ivato_IsVisible && <TextDettaglioPdf description='Totale Imponibile Analogico' value={Number(mainObj.totaleAnalogico).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
+                    {totale_Imponibile_Ivato_IsVisible &&<TextDettaglioPdf description='Totale Imponibile Digitale' value={Number(mainObj.totaleDigitale).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
+                    {totale_Imponibile_Ivato_IsVisible &&<TextDettaglioPdf description='Totale Ivato Analogico ' value={Number(mainObj.totaleAnalogicoIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
+                    {totale_Imponibile_Ivato_IsVisible &&<TextDettaglioPdf description='Totale Ivato Digitale' value={Number(mainObj.totaleDigitaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
                 </div>
-                {mainObj.fattureSospese.length > 0 &&
+            </div>
+         </div>
+         <div className="bg-white mb-5 me-5 ms-5">
+            <div className="d-flex justify-content-center pt-3">
+                <Typography variant="h4">Dati Fatture</Typography>
+            </div>
+            <div className="pt-3 pb-3 ">
+                <div className="container text-center">
+                  {anticipo_analogico_digitale_IsVisible && <TextDettaglioPdf description='Anticipo Analogico' value={Number(mainObj.anticipoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
+                  {anticipo_analogico_digitale_IsVisible && <TextDettaglioPdf description='Anticipo Digitale' value={Number(mainObj.anticipoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
+                  {acconto_analogico_digitale_IsVisible && <TextDettaglioPdf description='Acconto Analogico' value={Number(mainObj.accontoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
+                  {acconto_analogico_digitale_IsVisible && <TextDettaglioPdf description='Acconto Digitale' value={Number(mainObj.accontoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
+                  {storno_analogico_digitale_totale_storno_IsVisible &&<TextDettaglioPdf description='Storno Analogico' value={Number(mainObj.stornoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
+                  {storno_analogico_digitale_totale_storno_IsVisible &&<TextDettaglioPdf description='Storno Digitale' value={Number(mainObj.stornoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
+                  {storno_analogico_digitale_totale_storno_IsVisible &&<TextDettaglioPdf description='Totale Storni' value={Number(mainObj.stornoDigitale||0+ mainObj.stornoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
+                  <TextDettaglioPdf description='Totale Imponibile' value={ Number(isRel ?mainObj.totale:mainObj.totaleFattura||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                  <TextDettaglioPdf description='Iva' value={mainObj.iva +' %'}></TextDettaglioPdf>
+                  <TextDettaglioPdf description='Totale Ivato' value={Number(mainObj.totaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                </div>
+            </div>
+         </div>
+          {mainObj?.fattureSospese?.length > 0 &&
                 <div className="bg-white mb-5 me-5 ms-5">
                     <div className="d-flex justify-content-center pt-3">
                         <Typography variant="h4">Elenco Fatture Emesse</Typography>
@@ -340,45 +348,9 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,accontoIsVisible}) => {
                     </div>
                 </div>
                 }
-            </Box>
-           
-        );
-
-    }else if(profilePath === PathPf.DOCUMENTI_SOSPESI || profilePath === PathPf.DOCUMENTI_SOSPESI_SEND){
-        return (
-            <div className="bg-white mb-5 me-5 ms-5">
-                <div className="pt-5 pb-5 ">
-                    <div className="container text-center">
-                        <TextDettaglioPdf description='Soggetto aderente' value={mainObj.ragioneSociale}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Tipologia Fattura' value={mainObj.tipologiaFattura}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='ID Documento' value={mainObj.idDocumento||"--"}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Anno' value={mainObj.anno}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Mese' value={month[Number(mainObj.mese) - 1]}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Cup' value={mainObj.cup||"--"}></TextDettaglioPdf>
-
-                        <TextDettaglioPdf description='Anticipo Analogico' value={Number(mainObj.anticipoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Anticipo Digitale' value={Number(mainObj.anticipoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-
-                        {accontoIsVisible && <TextDettaglioPdf description='Acconto Analogico' value={Number(mainObj.accontoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
-                        {accontoIsVisible && <TextDettaglioPdf description='Acconto Digitale' value={Number(mainObj.accontoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
-                        <TextDettaglioPdf description='Storno Analogico' value={Number(mainObj.stornoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Storno Digitale' value={Number(mainObj.stornoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-
-                        <TextDettaglioPdf description='N. Notifiche Analogiche' value={mainObj.totaleNotificheAnalogiche}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='N. Notifiche Digitali' value={mainObj.totaleNotificheDigitali}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='N. Totale Notifiche' value={mainObj.totaleNotificheDigitali + mainObj.totaleNotificheAnalogiche }></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Totale Imponibile Analogico' value={Number(mainObj.totaleAnalogico).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Totale Imponibile Digitale' value={Number(mainObj.totaleDigitale).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Totale Imponibile' value={Number(mainObj.totaleFattura).toLocaleString()+' €'}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Iva' value={mainObj.iva +' %'}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Totale Ivato Analogico ' value={Number(mainObj.totaleAnalogicoIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Totale Ivato Digitale' value={Number(mainObj.totaleDigitaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Totale Ivato' value={Number(mainObj.totaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                    </div>
-                </div>
-            </div>
-        );
-
-    }
+         
+        </div>
+       )
+    
     
 };

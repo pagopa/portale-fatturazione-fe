@@ -105,7 +105,6 @@ function usePageRelDocPdf({
                 });
             }
         } catch (err) {
-            console.log({err,profilePath});
             navigate(profilePath);
             if (err && typeof err === "object") {
                 manageError(err as ManageErrorResponse, dispatchMainState);
