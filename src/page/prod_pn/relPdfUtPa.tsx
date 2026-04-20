@@ -256,7 +256,7 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
     const totale_Imponibile_Ivato_IsVisible = mainObj.tipologiaFattura === "PRIMO SALDO" || mainObj.tipologiaFattura === "SECONDO SALDO" || mainObj.tipologiaFattura === "VAR. SEMESTRALE";    
     const anticipo_analogico_digitale_IsVisible = mainObj.tipologiaFattura === "ANTICIPO";
     const acconto_analogico_digitale_IsVisible = mainObj.tipologiaFattura === "ACCONTO" && idTipoContrattoBasedOnProfile === 2;
-    const storno_analogico_digitale_totale_storno_IsVisible = mainObj.tipologiaFattura === "PRIMO SALDO" || mainObj.tipologiaFattura === "SECONDO SALDO" || mainObj.tipologiaFattura === "VAR. SEMESTRALE";
+    const storno_analogico_digitale_totale_storno_IsVisible = (mainObj.tipologiaFattura === "PRIMO SALDO" || mainObj.tipologiaFattura === "SECONDO SALDO" || mainObj.tipologiaFattura === "VAR. SEMESTRALE") && (profilePath !== PathPf.LISTA_REL  && profilePath !== PathPf.LISTA_REL_EN);
        return ( 
        <div>
          <div className="bg-white mb-5 me-5 ms-5">
