@@ -53,17 +53,14 @@ const RelPdfPage : React.FC = () =>{
         headerNavigationFrom = "Documenti Emessi/";
         labelScaricaPdf = "Scarica PDF Doc. Emessi";
         labelScaricaReportDettaglio = "Scarica report di dettaglio notifiche Doc. Emessi";
+    }else if(location.pathname.includes("send") && location.pathname.includes("documentisospesi")){
+        profilePath = PathPf.DOCUMENTI_SOSPESI_SEND;
+        headerNavigationFrom = "Documenti Sospesi/";
+        labelScaricaPdf = "Scarica PDF Doc. Sospesi";
+        labelScaricaReportDettaglio = "Scarica report di dettaglio notifiche Doc. Sospesi";
     }
 
-    let accontoIsVisible:boolean = mainState?.profilo?.idTipoContratto === 2;
-    if(profilo.auth === "PAGOPA"){
-        if(Number(idTipoContratto) === 0){
-            navigate(profilePath);
-        }
-        accontoIsVisible = Number(idTipoContratto) === 2;
-    }
-
-
+ 
   
 
     const {
@@ -103,7 +100,7 @@ const RelPdfPage : React.FC = () =>{
     if(profilo.auth === "PAGOPA"){
         if(location.pathname.includes("/rel/") && (!rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) ){
             showComponentPdfAdmin = true;
-        }else if(location.pathname.includes("/documentiemessi") && (rel.tipologiaFattura === "PRIMO SALDO" || rel.tipologiaFattura === "SECONDO SALDO") ){
+        }else if((location.pathname.includes("/documentiemessi") ||location.pathname.includes("/documentisospesi")) && (rel.tipologiaFattura === "PRIMO SALDO" || rel.tipologiaFattura === "SECONDO SALDO") ){
             showComponentPdfAdmin = true;
         }
     }
@@ -150,6 +147,11 @@ const RelPdfPage : React.FC = () =>{
             (rel.tipologiaFattura === "PRIMO SALDO" || rel.tipologiaFattura === "SECONDO SALDO" )){
             showDownloadPdfDocEmessiSospesiEnte= true;
         }
+    }
+
+    let accontoIsVisible:boolean = profilo.auth === "SELFCARE" && Number(mainState?.profilo?.idTipoContratto) === 2 && rel.tipologiaFattura !== "ANTICIPO"
+    if(profilo.auth === "PAGOPA" && Number(idTipoContratto) === 2 && rel.tipologiaFattura !== "ANTICIPO"){
+        accontoIsVisible = true;
     }
 
     if(loadingDettaglio){
@@ -342,7 +344,7 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,accontoIsVisible}) => {
            
         );
 
-    }else if(profilePath === PathPf.DOCUMENTI_SOSPESI){
+    }else if(profilePath === PathPf.DOCUMENTI_SOSPESI || profilePath === PathPf.DOCUMENTI_SOSPESI_SEND){
         return (
             <div className="bg-white mb-5 me-5 ms-5">
                 <div className="pt-5 pb-5 ">
@@ -356,6 +358,9 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,accontoIsVisible}) => {
 
                         <TextDettaglioPdf description='Anticipo Analogico' value={Number(mainObj.anticipoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Anticipo Digitale' value={Number(mainObj.anticipoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+
+                        {accontoIsVisible && <TextDettaglioPdf description='Acconto Analogico' value={Number(mainObj.accontoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
+                        {accontoIsVisible && <TextDettaglioPdf description='Acconto Digitale' value={Number(mainObj.accontoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
                         <TextDettaglioPdf description='Storno Analogico' value={Number(mainObj.stornoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Storno Digitale' value={Number(mainObj.stornoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
 

@@ -423,6 +423,10 @@ const DocEm : React.FC = () =>{
         setPage(0);
         setRowsPerPage(10); 
         setTotaleHeader(0);
+        setListaResponse([]);
+        setListaResponseaSorted([]);
+        setTotalDocumenti(0);
+        setObjectSort({"Data Fattura":1,"Ident.":1,"Tot.":1,"N. Fattura":1,"Tipo Documento":1});
     };
 
     const onButtonFiltra = () =>{
@@ -730,6 +734,9 @@ const DocEm : React.FC = () =>{
                         
                             setBodyFatturazione((prev)=> ({...prev, ...{anno:9999,mese:9999,dataFattura:[],tipologiaFattura:[]}}));
                             setArrayMonths([]);
+                            const arrayTipogie = Array.from( new Set(globalResponse
+                                .map(el => el.tipologiaFattura)));
+                            setDataSelect(arrayTipogie);
                         }else{
                             setBodyFatturazione((prev)=> ({...prev, ...{anno:Number(e),mese:9999,dataFattura:[],tipologiaFattura:[]}}));
                             const arrayMonths = Array.from( new Set(globalResponse

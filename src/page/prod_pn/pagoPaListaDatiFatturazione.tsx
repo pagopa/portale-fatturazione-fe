@@ -178,6 +178,7 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
     const clearOnChangeFilter = () => {
         setGridData([]);
         setInfoPageListaDatiFat({ page: 0, pageSize: 10 });
+        setRowCount(0);
     };
 
 
@@ -308,7 +309,10 @@ const PagoPaListaDatiFatturazione:React.FC = () =>{
                     getRowId={(row) => row.key}
                     onRowClick={handleEvent}
                     onCellClick={handleOnCellClick}
-                     
+                    localeText={{
+                    noRowsLabel: "Non sono presenti dati di fatturazione",
+                 }}
+                   
                 />
             </div>
             <ModalLoading 

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { PathPf } from "../../types/enum";
 import { saveAs } from "file-saver";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
-import { manageError} from "../../api/api";
+import { manageError, manageErrorDownload} from "../../api/api";
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
@@ -12,7 +12,7 @@ import { ManageErrorResponse } from "../../types/typesGeneral";
 import { month } from "../../reusableFunction/reusableArrayObj";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
 import { headersDocumentiSospesiiSend, headersDocumentiSospesiSendCollapse } from "../../assets/configurations/conf_GridDocSospesiSend";
-import { downloadFattureSospesePagopa, getAnniDocSospesiPagoPa, getFatturazioneSospesePagoPa, getMesiDocSospesiPagoPa, getTipologieFaSospesePagoPa, getTipologieFaSospesePagoPaWithData, getTipologieSospeseContratto } from "../../api/apiPagoPa/fatturazionePA/api";
+import { downloadFattureReportSospesiPagopa, downloadFattureSospesePagopa, getAnniDocSospesiPagoPa, getFatturazioneSospesePagoPa, getMesiDocSospesiPagoPa, getTipologieFaSospesePagoPa, getTipologieFaSospesePagoPaWithData, getTipologieSospeseContratto } from "../../api/apiPagoPa/fatturazionePA/api";
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
 
@@ -64,6 +64,7 @@ export type Posizione = {
 const DocSospesiSend : React.FC = () =>{
     const mainState = useGlobalStore(state => state.mainState);
     const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+    const navigate = useNavigate();
  
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
@@ -179,7 +180,7 @@ const DocSospesiSend : React.FC = () =>{
                 setTextValue(filters.textValue);
               
                 getlistaFatturazione(filters.body);
-               
+                //setShowLoadingGrid(false);
             }else{
                 setBodyFatturazione({anno:Number(year),mese:mesiCamelCase[0].mese, tipologiaFattura:[],cancellata:false,idEnti:[],idTipoContratto:null,inviata:null});
                 
@@ -231,7 +232,7 @@ const DocSospesiSend : React.FC = () =>{
                 if(isInitialRender.current && Object.keys(filters).length > 0){
                     setValueMultiselectDateTipologie(filters.valueMulitselectDateTipologie);
                     getTipologieFatturazione(filters.body.anno, filters.body.mese, filters.body.cancellata);
-                    setShowLoadingGrid(false);
+                    //setShowLoadingGrid(false);
                 }else{
                     setValueMultiselectDateTipologie([]);
                 }
@@ -294,7 +295,7 @@ const DocSospesiSend : React.FC = () =>{
                 stato: 'Sospesa',
                 tipologiaFattura: obj.tipologiaFattura || "--",
                 identificativo: obj.identificativo,
-                tipocontratto: obj.tipocontratto === 'PAL'
+                tipoContratto: obj.tipocontratto === 'PAL'
                     ? 'PAC - PAL senza requisiti'
                     : 'PAC - PAL con requisiti',
                 totale: obj.totale.toLocaleString('de-DE', {
@@ -306,6 +307,9 @@ const DocSospesiSend : React.FC = () =>{
                 divisa: obj.divisa,
                 metodoPagamento: obj.metodoPagamento,
                 split: obj.split ? 'Si' : 'No',
+                arrowDetails: 'arrowDetails',
+                tipocontratto:obj.tipocontratto,
+                istitutioID:obj.istitutioID,
                 posizioni: obj.posizioni.map(el => ({
                     numerolinea: el.numerolinea,
                     codiceMateriale: el.codiceMateriale,
@@ -374,6 +378,9 @@ const DocSospesiSend : React.FC = () =>{
         setGridData([]);
         setPage(0);
         setRowsPerPage(10); 
+        setGridData([]);
+        setListaResponse([]);
+        setTotalDocumenti(0);
     
     };
 
@@ -451,6 +458,43 @@ const DocSospesiSend : React.FC = () =>{
         });
     };
 
+    const downloadListaReportFatturazione = async () => {
+        let body = bodyFatturazioneDownload;
+        if(body.inviata === 3){
+            body =  {...bodyFatturazioneDownload,inviata:null};
+        }else if(body.inviata === 4){
+            body =  {...bodyFatturazioneDownload,inviata:0};
+        }
+        setShowDownloading(true);
+        await downloadFattureReportSospesiPagopa(token,profilo.nonce, bodyFatturazione).then((response)=>{
+            if (response.ok) {
+                return response.blob();
+            }
+            throw '404';
+        }).then((response)=>{
+            let title = `Lista report sospesi/${month[(body.mese||0)  - 1]}/${body.anno}.zip`;
+            if(body.idEnti.length === 1 && gridData[0]){
+                title = `Lista report sospesi/ ${gridData[0]?.ragioneSociale}/${month[(body.mese||0)  - 1]}/${body.anno}.zip`;
+            }
+            saveAs(response,title);
+            setShowDownloading(false);
+        }).catch((()=>{
+            setShowDownloading(false);
+            manageErrorDownload('404',dispatchMainState);
+        }));
+    };
+
+    const setIdDoc =(el) => {
+        let idTipoContratto = 0;
+        if(el.tipocontratto === "PAL"){
+            idTipoContratto = 1;
+        }else if(el.tipocontratto === "PAC"){
+            idTipoContratto = 2;
+        }
+        navigate(`${PathPf.PDF_REL}/documentisospesi/${el.idFattura}/${el.istitutioID}/${idTipoContratto}`); 
+    }; 
+
+   
    
 
     const statusAnnulla = ( 
@@ -587,6 +631,12 @@ const DocSospesiSend : React.FC = () =>{
             ></FilterActionButtons>
             <ActionTopGrid
                 actionButtonRight={[{
+                    onButtonClick:downloadListaReportFatturazione,
+                    variant: "outlined",
+                    label: "Download Report",
+                    icon:{name:"download"},
+                    disabled:(gridData.length === 0)
+                },{
                     onButtonClick:downloadListaFatturazione,
                     variant: "outlined",
                     label: "Download risultati",
@@ -610,6 +660,7 @@ const DocSospesiSend : React.FC = () =>{
                 gridType={true}
                 listaResponse={listaResponse}
                 sentenseEmpty={"Non sono presenti fatture sospese"}
+                apiGet={setIdDoc}
             ></GridCustom>
            
           

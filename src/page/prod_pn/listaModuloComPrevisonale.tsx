@@ -339,7 +339,7 @@ const ListaCommessaPrevisionale:React.FC = () =>{
 
 
     return (
-        <MainBoxStyled title={"Lista Modulo Commessa Previsonale"}>
+        <MainBoxStyled title={"Lista Modulo Commessa Previsionale"}>
             <ResponsiveGridContainer >
                 <MainFilter 
                     filterName={"date_from_to"}
@@ -451,6 +451,7 @@ const ListaCommessaPrevisionale:React.FC = () =>{
                 disabled={showLoadingLista}
                 widthCustomSize="2000px"
                 body={bodyGetLista}
+                sentenseEmpty={"Non sono presenti moduli commessa"}
             ></GridCustom>
           
             <ModalLoading 

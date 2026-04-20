@@ -230,6 +230,7 @@ const DocStoricoSend : React.FC = () =>{
 
     const clearOnChangeFilter = () => {
         setData([]);
+        setGridDataPaginated([])
         setTotalListEl(0);
         setPage(0);
         setRowsPerPage(10); 
@@ -389,7 +390,9 @@ const DocStoricoSend : React.FC = () =>{
                 rows={rowsPerPage}
                 headerNames={headerGridKeys}
                 disabled={getListaRelRunning}
-                widthCustomSize="2000px"></GridCustom>
+                widthCustomSize="2000px"
+                sentenseEmpty={"Non sono presenti documenti contabili"}
+                />
             <ModalLoading 
                 open={showLoading} 
                 setOpen={setShowLoading} 

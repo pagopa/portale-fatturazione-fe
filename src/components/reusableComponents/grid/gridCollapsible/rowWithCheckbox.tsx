@@ -40,9 +40,9 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
     const handleGoToDetail = async(el) => {
         let idTipoContratto = 0;
         if(el.tipocontratto === "PAL"){
-            idTipoContratto = 2;
-        }else if(el.tipocontratto === "PAC"){
             idTipoContratto = 1;
+        }else if(el.tipocontratto === "PAC"){
+            idTipoContratto = 2;
         }
         navigate(`${PathPf.PDF_REL}/documentiemessi/${el.idfattura}/${el.istitutioID}/${idTipoContratto}`); 
     };  

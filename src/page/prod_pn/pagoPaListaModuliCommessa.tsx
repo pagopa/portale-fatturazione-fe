@@ -406,6 +406,9 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
                 onPaginationModelChange={(e)=> onChangePageOrRowGrid(e)}
                 paginationModel={infoPageListaCom}
                 pageSizeOptions={[10, 25, 50,100]}
+                localeText={{
+                    noRowsLabel: "Non sono presenti moduli commessa",
+                 }}
                 />
             </div>
             <ModalLoading 

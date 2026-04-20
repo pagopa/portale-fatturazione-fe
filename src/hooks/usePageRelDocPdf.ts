@@ -11,7 +11,7 @@ import { saveAs } from "file-saver";
 import generatePDF from "react-to-pdf";
 import { ManageErrorResponse } from "../types/typesGeneral";
 import { getDettaglioFatturaEmessa, getDettaglioFatturaSospesa, getSospesiReportExel } from "../api/apiSelfcare/documentiSospesiSE/api";
-import { getDettaglioFatturaEmessaPa, getDocumentiEmessiPdfPa } from "../api/apiPagoPa/fatturazionePA/api";
+import { getDettaglioFatturaEmessaPa, getDettaglioFatturaSospesaPa, getDocSospesiExelPagoPa, getDocumentiEmessiPdfPa, getDocumentiSospesiPdfPa } from "../api/apiPagoPa/fatturazionePA/api";
 
 function usePageRelDocPdf({
     token,
@@ -90,12 +90,12 @@ function usePageRelDocPdf({
                 res = await  getSingleRelPagopa(token,profilo.nonce,id);
             }else if(whoInvoke === "send" && pageFrom === "documentiemessi"){
                 res = await  getDettaglioFatturaEmessaPa(token,profilo.nonce,idEnte,id);
+            }else if(whoInvoke === "send" && pageFrom === "documentisospesi"){
+                res = await  getDettaglioFatturaSospesaPa(token,profilo.nonce,idEnte,id);
             }
 
             setRel(res.data);
             if (res.data.datiFatturazione === true && pageFrom === "rel") {
-               
-
                 await getDateLastDownloadPdfFirmato({
                     anno: Number(res.data.anno),
                     mese: Number(res.data.mese),
@@ -135,8 +135,12 @@ function usePageRelDocPdf({
                     response = await getSospesiReportExel(token, profilo.nonce, customId);
                 }
             }else if(profilo.auth === 'PAGOPA'){
-                if(pageFrom === "rel" || pageFrom === "documentiemessi"){
+                if(pageFrom === "rel"){
                     response = await getRelExelPagoPa(token, profilo.nonce, rowId);
+                }if( pageFrom === "documentiemessi"){
+                    response = await getRelExelPagoPa(token, profilo.nonce, customId);
+                }else if(pageFrom === "documentisospesi"){
+                    response = await getDocSospesiExelPagoPa(token, profilo.nonce, customId);
                 }
             }
 
@@ -153,19 +157,13 @@ function usePageRelDocPdf({
             window.URL.revokeObjectURL(fileUrl);
 
         } catch (error) {
-            if (enti) {
-         
-                if(pageFrom === "rel"){
-                    manageErrorDownload('404_RIGHE_ID', dispatchMainState);
-                }else if(pageFrom === "documentiemessi"){ 
-                    manageErrorDownload('404_RIGHE_ID_EMESSE', dispatchMainState);
-                }else if(pageFrom === "documentisospesi"){
-                    manageErrorDownload('404_RIGHE_ID_SOSPESE', dispatchMainState);
-                }
-            }else if(profilo.auth === 'PAGOPA'){
+            if(pageFrom === "rel"){
                 manageErrorDownload('404_RIGHE_ID', dispatchMainState);
+            }else if(pageFrom === "documentiemessi"){ 
+                manageErrorDownload('404_RIGHE_ID_EMESSE', dispatchMainState);
+            }else if(pageFrom === "documentisospesi"){
+                manageErrorDownload('404_RIGHE_ID_SOSPESE', dispatchMainState);
             }
-        
             setDisableButtonDettaglioNot(true);
         } finally {
             setShowDownloading(false);
@@ -198,6 +196,9 @@ function usePageRelDocPdf({
                 }else if(pageFrom === "documentiemessi"){ 
                     res = await getDocumentiEmessiPdfPa(token, profilo.nonce, Number(rel.idTestata) , rel.idEnte);
                     toDoOnDownloadPdf(res,"Documenti Emessi");
+                }else if(pageFrom === "documentisospesi"){ 
+                    res = await getDocumentiSospesiPdfPa(token, profilo.nonce, Number(rel.idTestata) , rel.idEnte);
+                    toDoOnDownloadPdf(res,"Documenti Sospesi");
                 }
             }
 
