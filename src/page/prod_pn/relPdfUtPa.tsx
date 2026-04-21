@@ -183,7 +183,7 @@ const RelPdfPage : React.FC = () =>{
                     <Button disabled={disableButtonDettaglioNot}  onClick={()=> downloadReportDettaglio()} >{labelScaricaReportDettaglio} <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
                 </div>
             }
-            <MainComponentBasedOnUrl mainObj={rel} profilePath={profilePath} idTipoContrattoBasedOnProfile={idTipoContrattoBasedOnProfile} fatturaType={fatturaType}></MainComponentBasedOnUrl>
+            <MainComponentBasedOnUrl mainObj={rel} profilePath={profilePath} idTipoContrattoBasedOnProfile={idTipoContrattoBasedOnProfile} ></MainComponentBasedOnUrl>
             <div className='d-flex justify-content-between ms-5 me-5'>
                 {showComponentPdfAdmin &&
                 <div>
@@ -251,17 +251,17 @@ export default RelPdfPage;
 
 
 
-const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProfile,fatturaType}) => {
+const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProfile}) => {
     const isRel = profilePath === PathPf.LISTA_REL || profilePath === PathPf.LISTA_REL_EN;
-    const totale_Imponibile_Ivato_IsVisible = mainObj.tipologiaFattura === "PRIMO SALDO" || mainObj.tipologiaFattura === "SECONDO SALDO" || mainObj.tipologiaFattura === "VAR. SEMESTRALE";    
+    const totale_Imponibile_Ivato_IsVisible = mainObj.tipologiaFattura === "PRIMO SALDO" || mainObj.tipologiaFattura === "SECONDO SALDO" || mainObj.tipologiaFattura === "VAR. SEMESTRALE"||mainObj.tipologiaFattura === "ACCONTO";    
     const anticipo_analogico_digitale_IsVisible = mainObj.tipologiaFattura === "ANTICIPO" && (profilePath !== PathPf.LISTA_REL  && profilePath !== PathPf.LISTA_REL_EN);
-    const acconto_analogico_digitale_IsVisible = mainObj.tipologiaFattura === "ACCONTO" && idTipoContrattoBasedOnProfile === 2 && (profilePath !== PathPf.LISTA_REL  && profilePath !== PathPf.LISTA_REL_EN);
-    const storno_analogico_digitale_totale_storno_IsVisible = (mainObj.tipologiaFattura === "PRIMO SALDO" || mainObj.tipologiaFattura === "SECONDO SALDO" || mainObj.tipologiaFattura === "VAR. SEMESTRALE") && (profilePath !== PathPf.LISTA_REL  && profilePath !== PathPf.LISTA_REL_EN);
+    const acconto_analogico_digitale_IsVisible = mainObj.tipologiaFattura === "ACCONTO" && idTipoContrattoBasedOnProfile === 2;
+    const storno_analogico_digitale_totale_storno_IsVisible = (mainObj.tipologiaFattura === "PRIMO SALDO" || mainObj.tipologiaFattura === "SECONDO SALDO" || mainObj.tipologiaFattura === "VAR. SEMESTRALE") ;
        return ( 
        <div>
          <div className="bg-white mb-5 me-5 ms-5">
             <div className="d-flex justify-content-center pt-3">
-                <Typography variant="h4">Dettaglio Fattura {fatturaType}</Typography>
+                <Typography variant="h4">Dati di fatturazione</Typography>
             </div>
             <div className="pt-3 pb-3 ">
                 <div className="container text-center">
@@ -269,6 +269,7 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
                     <TextDettaglioPdf description='Tipologia Fattura' value={mainObj.tipologiaFattura}></TextDettaglioPdf>
                     <TextDettaglioPdf description='Anno' value={mainObj.anno}></TextDettaglioPdf>
                     <TextDettaglioPdf description='Mese' value={month[Number(mainObj.mese) - 1]}></TextDettaglioPdf>
+                    <TextDettaglioPdf description='Tipo Contratto' value={mainObj.idTipoContratto === 1 ? 'PAC - PAL senza requisiti': 'PAC - PAL con requisiti'}></TextDettaglioPdf>
                     <TextDettaglioPdf description='ID Documento' value={mainObj.idDocumento||"--"}></TextDettaglioPdf>
                     <TextDettaglioPdf description='Cup' value={mainObj.cup||"--"}></TextDettaglioPdf>
                 </div>
@@ -276,23 +277,26 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
          </div>
          <div className="bg-white mb-5 me-5 ms-5">
             <div className="d-flex justify-content-center pt-3">
-                <Typography variant="h4">Consumato</Typography>
+                <Typography variant="h4">Base Imponibile</Typography>
             </div>
             <div className="pt-3 pb-3 ">
                 <div className="container text-center">
                     <TextDettaglioPdf description='N. Notifiche Analogiche' value={mainObj.totaleNotificheAnalogiche}></TextDettaglioPdf>
                     <TextDettaglioPdf description='N. Notifiche Digitali' value={mainObj.totaleNotificheDigitali}></TextDettaglioPdf>
                     <TextDettaglioPdf description='N. Totale Notifiche' value={mainObj.totaleNotificheDigitali + mainObj.totaleNotificheAnalogiche }></TextDettaglioPdf>
+                    {/*
+                    <TextDettaglioPdf description='N. Notifiche ContestateAnalogiche' value={mainObj.totaleNotificheAnalogiche}></TextDettaglioPdf>
+                    <TextDettaglioPdf description='N. Notifiche Contestate Digitali' value={mainObj.totaleNotificheDigitali}></TextDettaglioPdf>
+                    <TextDettaglioPdf description='N. Totale Notifiche Contestate' value={mainObj.totaleNotificheDigitali + mainObj.totaleNotificheAnalogiche }></TextDettaglioPdf>
+                     */}
                     {totale_Imponibile_Ivato_IsVisible && <TextDettaglioPdf description='Totale Imponibile Analogico' value={Number(mainObj.totaleAnalogico).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
                     {totale_Imponibile_Ivato_IsVisible &&<TextDettaglioPdf description='Totale Imponibile Digitale' value={Number(mainObj.totaleDigitale).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
-                    {totale_Imponibile_Ivato_IsVisible &&<TextDettaglioPdf description='Totale Ivato Analogico ' value={Number(mainObj.totaleAnalogicoIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
-                    {totale_Imponibile_Ivato_IsVisible &&<TextDettaglioPdf description='Totale Ivato Digitale' value={Number(mainObj.totaleDigitaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
                 </div>
             </div>
          </div>
          <div className="bg-white mb-5 me-5 ms-5">
             <div className="d-flex justify-content-center pt-3">
-                <Typography variant="h4">Dati Fatture</Typography>
+                <Typography variant="h4">Posizioni Fattura</Typography>
             </div>
             <div className="pt-3 pb-3 ">
                 <div className="container text-center">
