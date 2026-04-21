@@ -254,8 +254,8 @@ export default RelPdfPage;
 const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProfile,fatturaType}) => {
     const isRel = profilePath === PathPf.LISTA_REL || profilePath === PathPf.LISTA_REL_EN;
     const totale_Imponibile_Ivato_IsVisible = mainObj.tipologiaFattura === "PRIMO SALDO" || mainObj.tipologiaFattura === "SECONDO SALDO" || mainObj.tipologiaFattura === "VAR. SEMESTRALE";    
-    const anticipo_analogico_digitale_IsVisible = mainObj.tipologiaFattura === "ANTICIPO";
-    const acconto_analogico_digitale_IsVisible = mainObj.tipologiaFattura === "ACCONTO" && idTipoContrattoBasedOnProfile === 2;
+    const anticipo_analogico_digitale_IsVisible = mainObj.tipologiaFattura === "ANTICIPO" && (profilePath !== PathPf.LISTA_REL  && profilePath !== PathPf.LISTA_REL_EN);
+    const acconto_analogico_digitale_IsVisible = mainObj.tipologiaFattura === "ACCONTO" && idTipoContrattoBasedOnProfile === 2 && (profilePath !== PathPf.LISTA_REL  && profilePath !== PathPf.LISTA_REL_EN);
     const storno_analogico_digitale_totale_storno_IsVisible = (mainObj.tipologiaFattura === "PRIMO SALDO" || mainObj.tipologiaFattura === "SECONDO SALDO" || mainObj.tipologiaFattura === "VAR. SEMESTRALE") && (profilePath !== PathPf.LISTA_REL  && profilePath !== PathPf.LISTA_REL_EN);
        return ( 
        <div>
