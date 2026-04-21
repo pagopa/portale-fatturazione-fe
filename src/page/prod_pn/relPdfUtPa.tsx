@@ -261,7 +261,7 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
        <div>
          <div className="bg-white mb-5 me-5 ms-5">
             <div className="d-flex justify-content-center pt-3">
-                <Typography variant="h4">Dati di fatturazione</Typography>
+                <Typography variant="h4">Dati di Fatturazione</Typography>
             </div>
             <div className="pt-3 pb-3 ">
                 <div className="container text-center">
