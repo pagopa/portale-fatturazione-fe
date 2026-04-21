@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ESNext",
+    "module": "commonjs",
+    "moduleResolution": "node",
     "lib": [
       "dom",
       "dom.iterable",
@@ -15,12 +17,11 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
-    "module": "esnext",
-    "moduleResolution": "Node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "types": ["node"]
   },
   "include": [
     "src"
