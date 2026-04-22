@@ -265,7 +265,7 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
             </div>
             <div className="pt-3 pb-3 ">
                 <div className="container text-center">
-                    <TextDettaglioPdf description='Soggetto aderente' value={mainObj.ragioneSociale}></TextDettaglioPdf>
+                    <TextDettaglioPdf description='Soggetto Aderente' value={mainObj.ragioneSociale}></TextDettaglioPdf>
                     <TextDettaglioPdf description='Tipologia Fattura' value={mainObj.tipologiaFattura}></TextDettaglioPdf>
                     <TextDettaglioPdf description='Anno' value={mainObj.anno}></TextDettaglioPdf>
                     <TextDettaglioPdf description='Mese' value={month[Number(mainObj.mese) - 1]}></TextDettaglioPdf>
