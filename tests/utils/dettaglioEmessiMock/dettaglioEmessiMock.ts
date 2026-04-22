@@ -34,3 +34,90 @@ export const mockDettaglioDocEmesso = (tipologiaFattura: string) => ({
     "totaleStorni": null,
     "fattureSospese": []
 });
+
+export const labelsAnticipo = [
+    "Soggetto Aderente",
+    "Tipologia Fattura",
+    "Anno",
+    "Mese",
+    "Tipo Contratto",
+    "ID Documento",
+    "Cup",
+    "Iva",
+    "N. Notifiche Analogiche",
+    "N. Notifiche Digitali",
+    "N. Totale Notifiche",
+    "Anticipo Analogico",
+    "Anticipo Digitale",
+    "Totale Imponibile",
+];
+
+export const labelsAcconto = [
+    "Soggetto Aderente",
+    "Tipologia Fattura",
+    "Anno",
+    "Mese",
+    "Tipo Contratto",
+    "ID Documento",
+    "Cup",
+    "Iva",
+    "N. Notifiche Analogiche",
+    "N. Notifiche Digitali",
+    "N. Totale Notifiche",
+    "Totale Imponibile Analogico",
+    "Totale Imponibile Digitale",
+    "Acconto Analogico",
+    "Acconto Digitale",
+    "Totale Imponibile",
+];
+
+export const labelsPrimoSaldo = [
+    "Soggetto Aderente",
+    "Tipologia Fattura",
+    "Anno",
+    "Mese",
+    "Tipo Contratto",
+    "ID Documento",
+    "Cup",
+    "Iva",
+    "N. Notifiche Analogiche",
+    "N. Notifiche Digitali",
+    "N. Totale Notifiche",
+    "Totale Imponibile Analogico",
+    "Totale Imponibile Digitale",
+    "Totale Imponibile",
+]
+
+export const labelsSecondoSaldo = [
+    "Soggetto Aderente",
+    "Tipologia Fattura",
+    "Anno",
+    "Mese",
+    "Tipo Contratto",
+    "ID Documento",
+    "Cup",
+    "Iva",
+    "N. Notifiche Analogiche",
+    "N. Notifiche Digitali",
+    "N. Totale Notifiche",
+    "Totale Imponibile Analogico",
+    "Totale Imponibile Digitale",
+    "Totale Imponibile",
+];
+
+export let labelsVarSemestrale = [
+    "Soggetto Aderente",
+    "Tipologia Fattura",
+    "Anno",
+    "Mese",
+    "Tipo Contratto",
+    "ID Documento",
+    "Cup",
+    "Iva",
+    "N. Notifiche Analogiche",
+    "N. Notifiche Digitali",
+    "N. Totale Notifiche",
+    "Totale Imponibile Analogico",
+    "Totale Imponibile Digitale",
+    "Totale Imponibile",
+]

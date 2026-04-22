@@ -12,20 +12,20 @@ import { defineConfig, devices } from '@playwright/test';
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  projects: [
+    projects: [
     // Setup project
-    { name: 'setup', testMatch: /.*\.setup\.ts/ },
+        { name: 'setup', testMatch: /.*\.setup\.ts/ },
 
-    {
-      name: 'chromium',
-      use: {
-        ...devices['Desktop Chrome'],
-        // Use prepared auth state.
-         headless: false,
-         baseURL: 'http://localhost:3000',
-        storageState: 'playwright/.auth/user.json',
-      },
-      dependencies: ['setup'],
-    }
-  ],
+        {
+            name: 'chromium',
+            use: {
+                ...devices['Desktop Chrome'],
+                // Use prepared auth state.
+                headless: false,
+                baseURL: 'http://localhost:3000',
+                storageState: 'playwright/.auth/user.json',
+            },
+            dependencies: ['setup'],
+        }
+    ],
 });

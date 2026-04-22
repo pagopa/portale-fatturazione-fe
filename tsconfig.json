@@ -1,14 +1,9 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    // aggiunta con l'installazione di react CSV
+    "module": "ESNext",          // ← change from "commonjs" to "ESNext"
+    "moduleResolution": "bundler", // ← change from "node" to "bundler" (Vite uses bundler)
+    "lib": ["dom", "dom.iterable", "esnext"],
     "noImplicitAny": false,
     "allowJs": true,
     "skipLibCheck": true,
@@ -21,9 +16,13 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "types": ["node"]
+    "types": ["node", "vite/client"]  // ← add "vite/client" for import.meta.env types
   },
   "include": [
-    "src"
+    "src",
+    "tests",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.jsx"
   ]
 }
