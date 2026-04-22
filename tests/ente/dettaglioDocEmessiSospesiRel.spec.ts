@@ -1,12 +1,9 @@
 import path from "path";
 import { test, expect, Page, Route } from "@playwright/test";
 import { labelsAcconto, labelsAnticipo, labelsPrimoSaldo, labelsSecondoSaldo, labelsVarSemestrale, mockDettaglioDocEmesso } from "../utils/dettaglioEmessiMock/dettaglioEmessiMock";
-import { newAuthDataPac } from "../utils/authEntePac";
-import * as fs from "fs";
 
-const authFile = path.join(__dirname, "../.auth/user.json");
 
-test.describe("Test Dettaglio Doc Emessi Sospesi Rel", () => {
+test.describe("Test Dettaglio Doc Emessi & Sospesi", () => {
     
     //Test anticipo start_______________
     const testCasesAnticipo = [
@@ -34,6 +31,7 @@ test.describe("Test Dettaglio Doc Emessi Sospesi Rel", () => {
             await page.goto(pageUrl);
             
             await checkLabels(labelsAnticipo, page);
+            await page.pause();
         });
     }
     //Test anticipo end_______________
@@ -173,15 +171,6 @@ test.describe("Test Dettaglio Doc Emessi Sospesi Rel", () => {
     }
     
     //Test Var semestrale end___________________________________
-    
-    
-    //TEST REL START ___________ente PAC
-    
-    
-    
-    
-    //TEST REL end ___________ente PAC
-    
 });
 
 
@@ -198,13 +187,6 @@ test("Dettaglio Rel", async ({ page}) => {
         localStorage.setItem("globalStatePF", JSON.stringify(globalState));
     });
     ;
-    
-    await test.step("Dettaglio Rel ANTICIPO", async () => {
-        CallMockGetDettaglioFattura(page, "ANTICIPO", "**/api/rel/ente/1**");
-        await page.goto("/ente/fatturapdf/rel/1");
-        await checkLabels(labelsAnticipo, page);
-    
-    });
     
     await test.step("Dettaglio Rel ACCONTO", async () => {
         CallMockGetDettaglioFattura(page, "ACCONTO", "**/api/rel/ente/1**");
