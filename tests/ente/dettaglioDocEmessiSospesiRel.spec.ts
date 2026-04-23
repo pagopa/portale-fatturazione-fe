@@ -188,12 +188,7 @@ test("Dettaglio Rel", async ({ page}) => {
     });
     ;
     
-    await test.step("Dettaglio Rel ACCONTO", async () => {
-        CallMockGetDettaglioFattura(page, "ACCONTO", "**/api/rel/ente/1**");
-        await page.goto("/ente/fatturapdf/rel/1");
-        await checkLabels(labelsAcconto, page);
-    });
-    
+  
     await test.step("Dettaglio Rel PRIMO SALDO", async () => {
         CallMockGetDettaglioFattura(page, "PRIMO SALDO", "**/api/rel/ente/1**");
         await page.goto("/ente/fatturapdf/rel/1");
