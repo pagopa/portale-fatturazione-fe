@@ -228,12 +228,19 @@ const Fatturazione : React.FC = () =>{
                 dataString = [];
             }
        
-            let data; 
+            let data: FattureObj[] = []
             if(dataString.length === 0){
-                data = res.data.map(el => el?.fattura);
+                data = res.data.map(el => el?.fattura)
             }else{
                 data = res.data.map(el => el?.fattura).filter(obj => dataString.includes(obj.dataFattura));
-            }  
+            } 
+            if(data.length > 0){
+                data = data.map(fat =>{
+                     fat.tipocontratto === 'PAL' ? fat.tipocontratto = 'PAC - PAL senza requisiti' : fat.tipocontratto = 'PAC - PAL con requisiti';
+                     return fat;
+                } )
+            } 
+            console.log("data",data);
             setGridData(data);
             setShowLoadingGrid(false);
             setBodyFatturazioneDownload(body);
