@@ -437,7 +437,12 @@ const RelPage : React.FC = () =>{
         }else if(el.tipologiaContratto === "PAC"){
             idTipoContratto = 2;
         }
-        navigate(`${profilePath}/rel/${el.id}/_/${idTipoContratto}`);
+        if(profilo.auth === 'PAGOPA'){
+          navigate(`${profilePath}/rel/${el.id}/_/${idTipoContratto}`);
+        }else{
+            navigate(`${profilePath}/rel/${el.id}`);
+        }
+        
     };  
 
     const getListTipologiaFattura = async(anno,mese) => {
