@@ -158,7 +158,7 @@ const RelPdfPage : React.FC = () =>{
         accontoIsVisible = true;
     }*/
 
-    let idTipoContrattoBasedOnProfile = profilo.auth === "PAGOPA" ? Number(idTipoContratto) : Number(mainState?.profilo?.idTipoContratto) 
+    let idTipoContrattoBasedOnProfile:Number = profilo.auth === "PAGOPA" ? Number(idTipoContratto) : Number(mainState?.profilo?.idTipoContratto) 
 
     let accontoIsVisible:boolean = profilo.auth === "SELFCARE" && Number(mainState?.profilo?.idTipoContratto) === 2 && rel.tipologiaFattura !== "ANTICIPO"
     if(profilo.auth === "PAGOPA" && Number(idTipoContratto) === 2 && rel.tipologiaFattura !== "ANTICIPO"){
@@ -269,7 +269,7 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
                     <TextDettaglioPdf description='Tipologia Fattura' value={mainObj.tipologiaFattura}></TextDettaglioPdf>
                     <TextDettaglioPdf description='Anno' value={mainObj.anno}></TextDettaglioPdf>
                     <TextDettaglioPdf description='Mese' value={month[Number(mainObj.mese) - 1]}></TextDettaglioPdf>
-                    <TextDettaglioPdf description='Tipo Contratto' value={mainObj.idTipoContratto === 1 ? 'PAC - PAL senza requisiti': 'PAC - PAL con requisiti'}></TextDettaglioPdf>
+                    <TextDettaglioPdf description='Tipo Contratto' value={idTipoContrattoBasedOnProfile === 1 ? 'PAC - PAL senza requisiti': 'PAC - PAL con requisiti'}></TextDettaglioPdf>
                     <TextDettaglioPdf description='ID Documento' value={mainObj.idDocumento||"--"}></TextDettaglioPdf>
                     <TextDettaglioPdf description='Cup' value={mainObj.cup||"--"}></TextDettaglioPdf>
                 </div>

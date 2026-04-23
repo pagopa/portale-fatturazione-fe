@@ -430,8 +430,14 @@ const RelPage : React.FC = () =>{
     };
    
     const setIdRel = async(el) => {
-        //handleModifyMainState({relSelected:el});
-        navigate(profilePath+"/rel/"+el.id);
+
+         let idTipoContratto = 0;
+        if(el.tipologiaContratto === "PAL"){
+            idTipoContratto = 1;
+        }else if(el.tipologiaContratto === "PAC"){
+            idTipoContratto = 2;
+        }
+        navigate(`${profilePath}/rel/${el.id}/_/${idTipoContratto}`);
     };  
 
     const getListTipologiaFattura = async(anno,mese) => {

@@ -106,6 +106,15 @@ const GridCustom : React.FC<GridCustomProps> = ({
             //modComTrimestrale
         }else if(apiGet && (nameParameterApi === 'modComTrimestrale'|| nameParameterApi === "docEmessiEnte" )){
             apiGet(element);
+        }else if(apiGet && nameParameterApi === "idTestata"){
+            const newDetail = {
+                nomeEnteClickOn:element.ragioneSociale,
+                mese:element.mese,
+                anno:element.anno,
+                id:element[nameParameterApi],
+                tipologiaContratto:element.tipologiaContratto
+            };
+            apiGet(newDetail);
         }else if(apiGet){
             const newDetail = {
                 nomeEnteClickOn:element.ragioneSociale,
