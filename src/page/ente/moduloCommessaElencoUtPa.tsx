@@ -265,6 +265,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
                                 <FormControl
                                     fullWidth
                                     size="medium"
+                                    id="filter_anno"
                                 >
                                     <InputLabel>
                             Filtra per anno

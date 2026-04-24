@@ -164,7 +164,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                         );
                                     }else if(nameParameterApi === 'contestazionePage'|| nameParameterApi === "modComTrimestrale"){
                                         return(
-                                            <TableCell key={Math.random()} align={el.align} width={el.width}>{el.label}</TableCell>
+                                            <TableCell id={`tableCell-${nameParameterApi}-${i}`} key={`tableCell-${nameParameterApi}-${i}`} align={el.align} width={el.width}>{el.label}</TableCell>
                                         );
                                     }else if(nameParameterApi === "docEmessiEnte" || nameParameterApi === "docEmessiEnteContestate"|| nameParameterApi === "docSospesiSend"){
                                         return(
@@ -197,7 +197,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                 </TableCell>
                             </TableRow>
                             }
-                            {elements.length > 0 && elements.map((element:Rel|NotificheList|GridElementListaPsp|Whitelist|DataGridOrchestratore|DataGridAsyncDoc|ContestazioneRowGrid|any ) =>{
+                            {elements.length > 0 && elements.map((element:Rel|NotificheList|GridElementListaPsp|Whitelist|DataGridOrchestratore|DataGridAsyncDoc|ContestazioneRowGrid|any,indexRow:number ) =>{
                                 // tolgo da ogni oggetto la prima chiave valore  perchè il cliente non vuole vedere es. l'id ma serve per la chiamata get di dettaglio 
                                 let sliced = Object.fromEntries(
                                     Object.entries(element).slice(1)
@@ -232,7 +232,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                 }else if(nameParameterApi === "contestazionePage"){
                                     return <RowContestazioni key={Math.random()} sliced={sliced}apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} headerNames={headerNames}></RowContestazioni>;
                                 }else if(nameParameterApi === "modComTrimestrale"){
-                                    return  <DefaultRow key={element.id} handleClickOnGrid={handleClickOnGrid} element={element} sliced={sliced} apiGet={()=> console.log("go to details")} headerNames={headerNames}></DefaultRow>;
+                                    return  <DefaultRow indexRow={indexRow} key={element.id} handleClickOnGrid={handleClickOnGrid} element={element} sliced={sliced} apiGet={()=> console.log("go to details")} headerNames={headerNames}></DefaultRow>;
                                 }else if(nameParameterApi === "idPrevisonale"){
                                     return <RowModCommessaPrevisionale key={element.id} sliced={sliced} element={element} headerNames={headerNames}></RowModCommessaPrevisionale>;
                                 }else if(nameParameterApi === "docEmessiEnte"||nameParameterApi ==="docSospesiSend" ){

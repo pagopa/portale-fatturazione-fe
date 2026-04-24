@@ -1,7 +1,7 @@
 import { TableRow, TableCell } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
-const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, headerNames}) => {
+const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, headerNames,indexRow}) => {
 
     // const elToMap = Object.fromEntries(Object.entries(sliced).slice(1, -4));
     //:TODO spostare i colori nel file di configurazione
@@ -16,6 +16,7 @@ const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, headerNames}) =>
  
     return (
         <TableRow 
+            id={`row-${indexRow}`}
             sx={{
                 backgroundColor:"#ffffff",
                 borderTop:"4px solid #F2F2F2",
@@ -26,10 +27,11 @@ const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, headerNames}) =>
                 Object.values(sliced).map((value:string|number|any, i:number)=>{
                     const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
                     const valueEl = (i === 0 && value?.toString().length > 50) ? value?.toString().slice(0, 50) + '...' : value;
-                   
+              
                     if(headerNames[i]?.headerTooltip){
                         return (
                             <TableCell
+                                id={`tooltip-${indexRow}`}
                                 key={i}
                                 align={headerNames[i]?.align}>
                                 {headerNames[i]?.headerTooltip("",sliced.stato !== "--"?sliced.stato:sliced.source,statusColor)}              
@@ -38,6 +40,7 @@ const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, headerNames}) =>
                     }else if(headerNames[i]?.headerChip){
                         return (
                             <TableCell
+                                id={`chip-${indexRow}`}
                                 key={i}
                                 align={headerNames[i]?.align}>
                                 {headerNames[i]?.headerChip("",sliced.inserimento.inserimento,sliced.inserimento.color)}              
@@ -47,6 +50,7 @@ const DefaultRow = ({handleClickOnGrid,element, sliced, apiGet, headerNames}) =>
                      
                         return (
                             <TableCell
+                                id={`${headerNames[i]?.label}-${indexRow}`}
                                 key={i}
                                 align={"center"}
                                 sx={cssFirstColum} 

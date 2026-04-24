@@ -139,19 +139,19 @@ const SideNavEnte: React.FC = () => {
                     <ListItemIcon>
                         <DnsIcon fontSize="inherit"></DnsIcon>
                     </ListItemIcon>
-                    <ListItemText primary="Dati di fatturazione" />
+                    <ListItemText id={"nav_datidifatturazione"} primary="Dati di fatturazione" />
                 </ListItemButton>
                 <ListItemButton selected={selectedIndex === 1} onClick={() =>handleListItemClick(PathPf.LISTA_COMMESSE)}>
                     <ListItemIcon>
                         <ViewModuleIcon fontSize="inherit" />
                     </ListItemIcon>
-                    <ListItemText primary="Modulo commessa" />
+                    <ListItemText id={"nav_modulocommessa"} primary="Modulo commessa" />
                 </ListItemButton></>
                 <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClick(PathPf.LISTA_NOTIFICHE_EN)}>
                     <ListItemIcon>
                         <MarkUnreadChatAltIcon fontSize="inherit" />
                     </ListItemIcon>
-                    <ListItemText primary="Notifiche" />
+                    <ListItemText id={"nav_notifiche"} primary="Notifiche" />
                 </ListItemButton>
                 {relIsVisible && 
                 <ListItemButton selected={selectedIndex === 3} onClick={()=>handleListItemClick(PathPf.LISTA_REL_EN)}>
@@ -159,8 +159,8 @@ const SideNavEnte: React.FC = () => {
                         <ManageAccountsIcon fontSize="inherit" />
                     </ListItemIcon>
                     <Box className="ms-3" display="flex" flexDirection="column">
-                        <ListItemText primary="Regolare esecuzione /" />
-                        <ListItemText primary="Documenti di cortesia" />
+                        <ListItemText id={"nav_regolaresecuzione"} primary="Regolare esecuzione /" />
+                        <ListItemText id={"nav_documentidicortsia"} primary="Documenti di cortesia" />
                     </Box>
                 </ListItemButton>
                 }
@@ -170,7 +170,7 @@ const SideNavEnte: React.FC = () => {
                     <ListItemIcon>
                         <PageviewIcon fontSize="inherit" />
                     </ListItemIcon>
-                    <ListItemText primary="Documenti contabili" />
+                    <ListItemText id={"nav_documenticontabili"} primary="Documenti contabili" />
                     {openDocContabili ? 
                         <IconButton onClick={(e)=> {
                             e.stopPropagation();
@@ -191,7 +191,7 @@ const SideNavEnte: React.FC = () => {
                             <FileCopyIcon fontSize="inherit" />
                         </ListItemIcon>
                         <Box className="ms-3" display="flex" flexDirection="column">
-                            <ListItemText primary="Documenti contabili sospesi" />
+                            <ListItemText id={"nav_documenticontabilisospesi"} primary="Documenti contabili sospesi" />
                         </Box>
                     </ListItemButton>
                     <ListItemButton sx={{ pl: 4 }} selected={selectedIndex === 11} onClick={()=>handleListItemClick(PathPf.DOCUMENTI_EMESSI)}>
@@ -199,7 +199,7 @@ const SideNavEnte: React.FC = () => {
                             <DescriptionIcon fontSize="inherit" />
                         </ListItemIcon>
                         <Box className="ms-3" display="flex" flexDirection="column">
-                            <ListItemText primary="Documenti contabili emessi" />
+                            <ListItemText id={"nav_documenticontabiliemessi"} primary="Documenti contabili emessi" />
                         </Box>
                     </ListItemButton>
                 </Collapse>
@@ -207,14 +207,14 @@ const SideNavEnte: React.FC = () => {
                     <ListItemIcon>
                         <DownloadIcon fontSize="inherit"/>
                     </ListItemIcon>
-                    <ListItemText primary="Download documenti"/>
+                    <ListItemText id={"nav_downloaddocumenti"} primary="Download documenti"/>
                 </ListItemButton>
                 {mainData.apiKeyPage.visible &&
                 <ListItemButton selected={selectedIndex === 5} onClick={() => handleListItemClick(PathPf.API_KEY_ENTE)}>
                     <ListItemIcon>
                         <VpnKeyIcon fontSize="inherit" />
                     </ListItemIcon>
-                    <ListItemText primary="API key"/>
+                    <ListItemText id={"nav_apikey"} primary="API key"/>
                 </ListItemButton>}
             </List>
             <Divider />
