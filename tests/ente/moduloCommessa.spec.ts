@@ -1,10 +1,10 @@
 import { test, expect, Page, Route } from "@playwright/test";
-import { anniModuloCommessaMock } from "../utils/moduloCommessaMock/moduloCommessaMock";
+import { anniModuloCommessaMock, mesiGridTest } from "../utils/moduloCommessaMock/moduloCommessaMock";
 test.describe("Test Logica Modulo Commessa", () => {
     
     test("Test modulo commessa , inserimento non abilitato", async ({ page}) => {
         //arrivo sul portale
-        await page.goto("ente/datidifattiurazione");
+        await page.goto("ente/datidifatturazione");
         //page.on('request', request => console.log('REQUEST:', request.url()));
         //page.on('response', response => console.log('RESPONSE:', response.url()));
         //click side nav modulo commessa 
@@ -124,10 +124,11 @@ test.describe("Test Logica Modulo Commessa", () => {
         });
         await annoSelect.click();
         //select anno 2026 e click su filtra
-        await page.locator("li", { hasText: "2026" }).click();
+        const annoWithMakeTest = "2026";
+        await page.locator("li", { hasText: annoWithMakeTest }).click();
         await page.click('button:has-text("Filtra")');
         await Promise.all([
-            page.waitForResponse('**/api/v2/modulocommessa/lista/2026**'), 
+            page.waitForResponse(`**/api/v2/modulocommessa/lista/${annoWithMakeTest}**`), 
         ]);
         
         const text = await page.locator('[id="Mese/Anno-0"]').innerText();
@@ -139,20 +140,66 @@ test.describe("Test Logica Modulo Commessa", () => {
         //click sul  modulo commessa  della row 0
         await meseAnnoTd.click();
         
-        await page.pause();
+        
         // controllo che arrivo su path /ente/modulocommessa
         await page.waitForURL('**/ente/modulocommessa**');
         expect(page.url()).toContain('/ente/modulocommessa');
-
-        await expect(page.locator(`text=${text}`)).toHaveCount(6);
-
         
+        await expect(page.locator(`text=${text}`)).toHaveCount(6);
         
         //click sul tasto indietro
+        const buttonIndietro = page.locator('button').filter({ hasText: 'Indietro' });
+        
+        await expect(buttonIndietro).toHaveCount(1);
+        await buttonIndietro.click();
         // controllo che arrivo su path /ente/modulocommessa/lista
+        await page.waitForURL('**/ente/modulicommessa**');
+        expect(page.url()).toContain('/ente/modulicommessa');
+        
+        await Promise.all([
+            page.waitForResponse(`**/api/v2/modulocommessa/lista/${annoWithMakeTest}**`), 
+        ]);
+        
+        //cerco tutte le row con NON inserito
+        const tds = page.locator('td').filter({
+            has: page.locator('div span', { hasText: 'Non inserito' })
+        });
+        
+        const count = await tds.count();
+        let idArray: string[] = [];
+        for (let i = 0; i < count; i++) {
+            const id = await tds.nth(i).getAttribute('id');
+            if(id){
+                idArray.push(id.split('-')[1]);
+            }
+            
+        }
+        //Seleziono un mese random tra quelli con stato NON inserito
+        const randomElement = idArray[Math.floor(Math.random() * idArray.length)];
+        console.log(`TD id:`, idArray,{random:mesiGridTest[randomElement],randomElement});
         
         ////click su un modulo commessa NON inserito della grid
+        const text2 = await page.locator(`[id="Mese/Anno-${randomElement}"]`).innerText();
+        console.log('Text:', text2); 
+        const meseAnnoTd2 = page.locator('td').filter({ hasText: text2 });
+        
+        await expect(meseAnnoTd2).toHaveCount(1);
+        await expect(meseAnnoTd2).toBeVisible();
+        //click sul  modulo commessa  della row mesiGridTest[randomElement]
+        page.waitForResponse('**/api/v2/modulocommessa/obbligatori/verifica**');
+        page.waitForResponse(`**/api/v2/modulocommessa/lista/${annoWithMakeTest}/${Number(randomElement)+1}**`);
+        
+        await meseAnnoTd2.click();
+        
+        
+        await page.waitForURL('**/ente/modulocommessa**');
+        expect(page.url()).toContain('/ente/modulocommessa');
+        
+        
+        await page.pause();
         //controllo che ci sia la label mese/anno e che cia sia lo stesso mese e anno della row selezionata
+        await expect(page.locator(`text=${text2}`)).toHaveCount(4);
+        
         //controllo che il tipo contratto sia ugiuale a quello della localstorage
         //controllo che ci sia la regione di appartenenza
         //controllo su tutte le label
