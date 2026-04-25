@@ -9,7 +9,7 @@ import { MockListaDoc, ResponsePeriodo } from "../utils/docSospesiMock/type";
 
 import path from "path";
 
-const authFile = path.join(__dirname, "../.auth/user.json");
+const authFile = path.join(__dirname, "../playwright/.auth/user.json");
 
 test.describe("Test Dettaglio Doc Emessi Sospesi Rel", () => {});
 

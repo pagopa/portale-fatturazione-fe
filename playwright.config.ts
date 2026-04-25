@@ -12,6 +12,7 @@ import { defineConfig, devices } from '@playwright/test';
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
+    workers: 1,
     projects: [
     // Setup project
         { name: 'setup', testMatch: /.*\.setup\.ts/ },
@@ -23,7 +24,7 @@ export default defineConfig({
                 // Use prepared auth state.
                 headless: false,
                 baseURL: 'http://localhost:3000',
-                storageState: 'playwright/.auth/user.json',
+                storageState: 'tests/playwright/.auth/user.json',
             },
             dependencies: ['setup'],
         }

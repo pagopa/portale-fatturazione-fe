@@ -31,7 +31,6 @@ test.describe("Test Dettaglio Doc Emessi & Sospesi", () => {
             await page.goto(pageUrl);
             
             await checkLabels(labelsAnticipo, page);
-            await page.pause();
         });
     }
     //Test anticipo end_______________

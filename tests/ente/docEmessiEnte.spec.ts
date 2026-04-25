@@ -16,7 +16,7 @@ import {
 
 import path from "path";
 
-const authFile = path.join(__dirname, "../.auth/user.json");
+const authFile = path.join(__dirname, "../playwright/.auth/user.json");
 
 test.describe("Test Dettaglio Doc Emessi Sospesi Rel", () => {});
 
@@ -406,7 +406,7 @@ test.describe("Documenti Emessi ENTE", () => {
         await page.getByRole("option", { name: "SECONDO SALDO" }).click();
         await page.click('button:has-text("Filtra")');
         await page.reload();
-        await page.pause();
+      
 
         await meseSelect.click();
         await expect(page.locator("li", { hasText: "Tutti" })).toBeVisible();
@@ -427,7 +427,6 @@ test.describe("Documenti Emessi ENTE", () => {
 
         await page.click('button:has-text("Filtra")');
         await page.reload();
-        await page.pause();
     });
 
     test("test pagination grid EMESSE", async ({ page }) => {

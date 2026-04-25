@@ -12,10 +12,10 @@ const LabelComponent : React.FC<LabelProps> = ({ label, input }) => {
     return (
         <div className="row">
             <div className='col-6 col-sm-3'>
-                <InputLabel sx={{textAlign:'start'}}  size={"normal"}>{label}</InputLabel>
+                <InputLabel id={label} sx={{textAlign:'start'}}  size={"normal"}>{label}</InputLabel>
             </div>
             <div className='col-6 col-sm-3'>
-                <Typography sx={{textAlign:'start'}} >{input}</Typography>
+                <Typography id={input} sx={{textAlign:'start'}} >{input}</Typography>
             </div>
       
         </div>

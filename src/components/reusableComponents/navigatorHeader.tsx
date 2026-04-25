@@ -22,6 +22,7 @@ const NavigatorHeader:React.FC<NavigationHeaderProps> = ({pageFrom,pageIn, backP
         <div className='marginTop24'>
             <div className='ms-5'>
                 <ButtonNaked
+                    id={`indietro-${pageIn.toLocaleLowerCase()}`}
                     color="primary"
                     size="small"
                     startIcon={<ArrowBackIcon />}
