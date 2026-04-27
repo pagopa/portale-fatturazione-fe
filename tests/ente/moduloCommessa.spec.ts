@@ -10,9 +10,8 @@ const authData = JSON.parse(fs.readFileSync(authFile, 'utf-8'));
 const localStorageValue = authData.origins[0].localStorage[0].value;
 const globalState = JSON.parse(localStorageValue);
 const tipoContratto = globalState.state.mainState.profilo.idTipoContratto
-
+const nomeEnte = globalState.state.mainState.profilo.nomeEnte
 test.describe("Test Logica Modulo Commessa", () => {
-    
     test("Test modulo commessa , inserimento non abilitato", async ({ page}) => {
         //arrivo sul portale
         await page.goto("ente/datidifatturazione");
@@ -22,8 +21,8 @@ test.describe("Test Logica Modulo Commessa", () => {
         const span = page.locator('#nav_modulocommessa .MuiListItemText-primary');
         await expect(span).toBeVisible();
         await expect(span).toHaveText('Modulo commessa');
-        await span.click();
-        //intercepr api/v2/modulocommessa/obbligatori/verifica
+
+            //intercepr api/v2/modulocommessa/obbligatori/verifica
         await page.route("**/api/v2/modulocommessa/obbligatori/verifica**", async (route) => {
             await route.fulfill({
                 status: 200,
@@ -31,6 +30,8 @@ test.describe("Test Logica Modulo Commessa", () => {
                 body: JSON.stringify(false),
             });   
         });
+        await span.click();
+    
         //se false arrivo in pagina /ente/modulicommessa
         await page.waitForURL('**/ente/modulicommessa**');
         expect(page.url()).toContain('/ente/modulicommessa');
@@ -72,7 +73,7 @@ test.describe("Test Logica Modulo Commessa", () => {
         await page.click('button:has-text("Filtra")');
         
         await responsePromise;
-        const rows = page.locator('tbody > tr.MuiTableRow-root');
+        const rows = page.locator('td[id*="Mese/Anno"]').filter({ hasText: /\/2024/ })
         const rowCount = await rows.count();
         
         //contollo che tutte le row abbiano 2024 nella colonna anno/mese
@@ -174,18 +175,33 @@ test.describe("Test Logica Modulo Commessa", () => {
         await clickAndVerifyModuloCommessa(page, 'Inserito', annoWithMakeTest, mesiGridTest,buttonIndietro);
         await clickAndVerifyModuloCommessa(page, 'Non inserito', annoWithMakeTest, mesiGridTest,buttonIndietro);
         
-        
-        /*
-        test("Test frase da mostrare all'utente", async ({ page}) => {
-        // constollo che la frase sia "N.B. Gentile Aderente, non sono presenti moduli commessa inseriti. L'inserimento è possibile solo dal 1° al 15 di ogni mese. La finestra di inserimento è attualmente chiusa. Ritorna dal 1° del prossimo mese per compilare i moduli obbligatori"
-        //click  su filtra 
-        //intercept intercept api/v2/modulocommessa/lista/ con dei dati
-        // constollo che la frase sia  "N.B. il Modulo Commessa per le previsioni dei consumi deve essere inserito dal giorno 1 al giorno 15 di ogni mese"
-        //_________________________________________
-        });
-        */
-        
+        await page.close();
     });
+
+     test("Test modulo commessa , inserimento ABILILITATO", async ({ page}) => {
+         await page.goto("ente/datidifatturazione");
+        await page.pause();
+        const span = page.locator('#nav_modulocommessa .MuiListItemText-primary');
+        await expect(span).toBeVisible();
+        await expect(span).toHaveText('Modulo commessa');
+          //intercepr api/v2/modulocommessa/obbligatori/verifica
+        await page.route("**/api/v2/modulocommessa/obbligatori/verifica**", async (route) => {
+            await route.fulfill({
+                status: 200,
+                contentType: "application/json",
+                body: JSON.stringify(true),
+            });   
+        });
+        await span.click();
+       
+      
+        await page.pause();
+        await page.waitForURL('**/ente/modulocommessa**');
+        expect(page.url()).toContain('/ente/modulocommessa');
+        
+        //await expect(page.locator(`text=${text}`)).toHaveCount(6);
+
+     });
 });
 
 
@@ -199,7 +215,7 @@ async function clickAndVerifyModuloCommessa(
     buttonIndietro: any,
     
 ) {
-    // find all rows with chipText (e.g. 'Non inserito' or 'Inserito')
+    
     
     const tds = await page.locator('td').filter({
         has: page.locator('div span', ({ hasText: new RegExp(`^${chipText}$`) }))
@@ -288,8 +304,11 @@ async function clickAndVerifyModuloCommessa(
             const regione = objRegione.regione;
             console.log({regione});
             await expect(page.locator('h4').filter({ hasText: regione })).toHaveCount(1);
-            if(regione.obbligatorio === 1){
+            if(objRegione.obbligatorio === 1){
                 await expect(page.locator('text=Regione di appartenenza')).toHaveCount(1);
+            }else{
+                
+                await expect(page.locator('text=Regione di appartenenza')).toHaveCount(0);
             }
         }
         
@@ -313,6 +332,22 @@ async function clickAndVerifyModuloCommessa(
             
             await page.waitForURL(`**/ente/pdfmodulocommessa/${annoWithMakeTest}/${monthNumber}**`);
             expect(page.url()).toContain('/ente/pdfmodulocommessa');
+            await checkLabels(arraylabelsPdf,page)
+            
+            
+            const buttonDownloadPdf = page.locator('button#scarica-pdf-modulocommessa');
+            
+            await buttonDownloadPdf.waitFor({ state: 'visible' });
+            await expect(buttonDownloadPdf).toHaveCount(1);
+            
+            const [download] = await Promise.all([
+                page.waitForEvent("download"),
+                buttonDownloadPdf.click(),
+            ]);
+            
+            // Nome atteso del file download
+            const filename = download.suggestedFilename();
+            await expect(filename).toBe(`Modulo Commessa _${nomeEnte}_${monthNumber}_${annoWithMakeTest}.pdf`);
             
             
             const buttonIndietroOnPdfPage = page.locator('button#indietro-anteprima');
@@ -326,18 +361,51 @@ async function clickAndVerifyModuloCommessa(
         }
         //TEST PAGINA pdf modulo commessa end
         
+        
+        //const responseListaPromise3 = page.waitForResponse(`**/api/v2/modulocommessa/lista/${annoWithMakeTest}**`);
         //click sul button indietro
         await buttonIndietro.click();
         await page.waitForURL('**/ente/modulicommessa**');
         expect(page.url()).toContain('/ente/modulicommessa');
+        await page.waitForLoadState('networkidle');
         
-        // wait for the grid to be visible before function returns
+        // then wait for grid
         await page.locator('tbody tr').first().waitFor({ state: 'visible' });
-        // controllo che arrivo su path /ente/modulocommessa/lista
-        
-        
-    };
-    
-    
-    
+        //(await responseListaPromise3).json();
+        // wait for the grid to be visible before function returns
+        //await page.locator('tbody tr').first().waitFor({ state: 'visible' });
+    }; 
 }
+
+const checkLabels = async (labels: string[], page: Page) => {
+    await Promise.all(
+        labels.map(async (label) => {
+            console.log({ label });
+            await expect.soft(
+                page.getByText(label)
+            ).toBeVisible();
+        })
+    );
+};
+
+const arraylabelsPdf = [
+    "Soggetto aderente",
+    "Sede Legale completa",
+    "Partita IVA/Codice Fiscale",
+    "Cup",
+    "Cig",
+    "Soggetto Split Payment",
+    "PEC",
+    "Email riferimento contatti",
+    "Data di compilazione",
+    "Territorio nazionale",
+    "Territorio diverso da nazionale",
+    //"Totale notifiche da processare",
+    "TOTALE MODULO COMMESSA NETTO IVA",
+    "Numero complessivo delle notifiche da processare in via digitale in",
+    "Numero complessivo delle notifiche da processare in via analogica tramite Raccomandata A/R in",
+    //"Totale notifiche da processare",
+    "Notifiche Digitali: Art. 2 comma 6 Anticipo pari al 50% per le notifiche oggetto della commessa di",
+    "Notifiche Analogiche: Art. 2 comma 6 Anticipo pari al 50% per le notifiche analogiche oggetto della commessa di",
+    "TOTALE MODULO COMMESSA NETTO IVA"
+]

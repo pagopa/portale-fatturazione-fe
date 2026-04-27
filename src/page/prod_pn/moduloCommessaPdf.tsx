@@ -326,7 +326,7 @@ const ModuloCommessaPdf : React.FC = () =>{
                     </div>
                 </div>
                 <div className="d-flex justify-content-center mb-5">
-                    <Button onClick={()=> onButtonScarica()}  variant="contained">Scarica</Button>
+                    <Button id={"scarica-pdf-modulocommessa"} onClick={()=> onButtonScarica()}  variant="contained">Scarica</Button>
                 </div>
                 <ModalLoading 
                     open={showLoading} 
