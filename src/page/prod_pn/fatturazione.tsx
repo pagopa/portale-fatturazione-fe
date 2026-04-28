@@ -242,7 +242,6 @@ const Fatturazione : React.FC = () =>{
                      return fat;
                 } )
             } 
-            console.log("data",data);
             setGridData(data);
             setShowLoadingGrid(false);
             setBodyFatturazioneDownload(body);
