@@ -156,7 +156,8 @@ export interface BodyListaNotifiche{
     idEnti: string[],  // solo lato PAGOPA
     recipientId:string|null,
     recapitisti:{idEnte:string,descrizione:string}[],  // solo lato PAGOPA
-    consolidatori:{idEnte:string,descrizione:string}[] // solo lato PAGOPA
+    consolidatori:{idEnte:string,descrizione:string}[] // solo lato PAGOPA,
+    data:number
 }
 
 export interface BodyListaNotificheSelfcare{
