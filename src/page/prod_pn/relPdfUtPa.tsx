@@ -269,7 +269,7 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,accontoIsVisible}) => {
     }else if(profilePath === PathPf.DOCUMENTI_EMESSI || profilePath === PathPf.FATTURAZIONE){
         //TODO  logica da eliminare in attesa del back
         let totaleIvatoCalcolatoByFront = mainObj.totaleIva
-        if(mainObj.tipogiaFattura === "PRIMO SALDO" || mainObj.tipogiaFattura === 'SECONDO SALDO' || mainObj.tipogiaFattura === 'VAR. SEMESTRALE'){
+        if(mainObj.tipologiaFattura === "PRIMO SALDO" || mainObj.tipologiaFattura === 'SECONDO SALDO' || mainObj.tipologiaFattura === 'VAR. SEMESTRALE'){
             totaleIvatoCalcolatoByFront = Number(mainObj.totaleAnalogicoIva) + Number(mainObj.totaleDigitaleIva)
         }
         
@@ -301,7 +301,7 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,accontoIsVisible}) => {
                             <TextDettaglioPdf description='Imponibile Digitale' value={Number(mainObj.totaleDigitale).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                             <TextDettaglioPdf description='Totale Imponibile' value={Number(mainObj.totaleFattura).toLocaleString()+' €'}></TextDettaglioPdf>
                             <TextDettaglioPdf description='Iva' value={mainObj.iva +' %'}></TextDettaglioPdf>
-                            <TextDettaglioPdf description='Totale Ivato Analogico ' value={Number(mainObj.totaleAnalogicoIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                            <TextDettaglioPdf description='Totale Ivato Analogico' value={Number(mainObj.totaleAnalogicoIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                             <TextDettaglioPdf description='Totale Ivato Digitale' value={Number(mainObj.totaleDigitaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                             <TextDettaglioPdf description='Totale Ivato' value={Number(totaleIvatoCalcolatoByFront).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                         </div>
