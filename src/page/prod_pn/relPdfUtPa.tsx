@@ -256,7 +256,7 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
     const totale_Imponibile_Ivato_IsVisible = mainObj.tipologiaFattura === "PRIMO SALDO" || mainObj.tipologiaFattura === "SECONDO SALDO" || mainObj.tipologiaFattura === "VAR. SEMESTRALE"||mainObj.tipologiaFattura === "ACCONTO";    
     const anticipo_analogico_digitale_IsVisible = mainObj.tipologiaFattura === "ANTICIPO" && (profilePath !== PathPf.LISTA_REL  && profilePath !== PathPf.LISTA_REL_EN);
     const acconto_analogico_digitale_IsVisible = mainObj.tipologiaFattura === "ACCONTO" && idTipoContrattoBasedOnProfile === 2;
-    const storno_analogico_digitale_totale_storno_IsVisible = (mainObj.tipologiaFattura === "PRIMO SALDO" || mainObj.tipologiaFattura === "SECONDO SALDO" || mainObj.tipologiaFattura === "VAR. SEMESTRALE") ;
+    const storno_analogico_digitale_totale_storno_IsVisible = (mainObj.tipologiaFattura === "PRIMO SALDO" || mainObj.tipologiaFattura === "SECONDO SALDO" || mainObj.tipologiaFattura === "VAR. SEMESTRALE") && (profilePath !== PathPf.LISTA_REL  && profilePath !== PathPf.LISTA_REL_EN );
        return ( 
        <div>
          <div className="bg-white mb-5 me-5 ms-5">
@@ -339,7 +339,10 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
                                                             <TableCell align="center" sx={{ width:"300px"}}>{new Date(fat.dataFattura).toLocaleDateString('en-CA')}</TableCell>
                                                             <TableCell align="center" sx={{ width:"300px"}}>{fat.tipoDocumento}</TableCell>
                                                             <TableCell align="center" sx={{ width:"300px"}}>{fat.metodoPagamento}</TableCell>
-                                                            <TableCell align="center" sx={{ width:"300px"}}>{fat.totaleFatturaImponibile.toLocaleString("de-DE", { style: 'decimal',maximumFractionDigits: 14})}</TableCell> 
+                                                            <TableCell align="center" sx={{ width:"300px"}}>{fat.totaleFatturaImponibile != null 
+                                                                    ? Number(fat.totaleFatturaImponibile||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })
+                                                                    : '--'}
+                                                                    </TableCell> 
                                                         </TableRow>
                                                     </TableBody>
                                                 </Table>

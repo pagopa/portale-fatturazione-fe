@@ -70,13 +70,13 @@ const SideNavSend : React.FC = () => {
             setSelectedIndex(1);
         }else if(currentLocation === PathPf.LISTA_NOTIFICHE){
             setSelectedIndex(2);
-        }else if(currentLocation === PathPf.LISTA_REL){
+        }else if(currentLocation === PathPf.LISTA_REL || currentLocation.includes("send/fatturapdf/rel")){
             setSelectedIndex(3);
         }else if(currentLocation === PathPf.PDF_REL){
             setSelectedIndex(3);
         }else if(currentLocation === PathPf.ADESIONE_BANDO){
             setSelectedIndex(4);
-        }else if(currentLocation === PathPf.FATTURAZIONE){
+        }else if(currentLocation === PathPf.FATTURAZIONE || currentLocation.includes("send/fatturapdf/documentiemessi")){
             setSelectedIndex(5);
         }else if(currentLocation === "messaggi"){
             setSelectedIndex(null);
@@ -99,7 +99,7 @@ const SideNavSend : React.FC = () => {
             setSelectedIndex(11);
         }else if(currentLocation === PathPf.LISTA_STORICO_DOCUMENTI_SEND){
             setSelectedIndex(13);
-        }else if(currentLocation === PathPf.DOCUMENTI_SOSPESI_SEND){
+        }else if(currentLocation === PathPf.DOCUMENTI_SOSPESI_SEND || currentLocation.includes("send/fatturapdf/documentisospesi")){
             setSelectedIndex(14);
         }
 

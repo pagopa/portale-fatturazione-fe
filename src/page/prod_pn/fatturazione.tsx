@@ -234,6 +234,8 @@ const Fatturazione : React.FC = () =>{
             }else{
                 data = res.data.map(el => el?.fattura).filter(obj => dataString.includes(obj.dataFattura));
             } 
+            //ATTENZIONE :Tipo contratto è utilizzato come valore nella sezione dettaglio , 
+            //se bisogna modificare la label nella grid bisogna modificare anche la funzione al click sulla row grid che porta al dettaglio documento emesso 
             if(data.length > 0){
                 data = data.map(fat =>{
                      fat.tipocontratto === 'PAL' ? fat.tipocontratto = 'PAC - PAL senza requisiti' : fat.tipocontratto = 'PAC - PAL con requisiti';
