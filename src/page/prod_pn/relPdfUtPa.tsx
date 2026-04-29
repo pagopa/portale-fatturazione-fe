@@ -259,8 +259,8 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,accontoIsVisible}) => {
                         <TextDettaglioPdf description='Imponibile Digitale' value={Number(mainObj.totaleDigitale).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Totale Imponibile' value={Number(mainObj.totale).toLocaleString()+' €'}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Iva' value={mainObj.iva +' %'}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Totale Ivato Analogico ' value={Number(mainObj.totaleAnalogicoIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Totale Ivato Digitale' value={Number(mainObj.totaleDigitaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Ivato Analogico ' value={Number(mainObj.totaleAnalogicoIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Ivato Digitale' value={Number(mainObj.totaleDigitaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Totale Ivato' value={Number(mainObj.totaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                     </div>
                 </div>
@@ -301,8 +301,8 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,accontoIsVisible}) => {
                             <TextDettaglioPdf description='Imponibile Digitale' value={Number(mainObj.totaleDigitale).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                             <TextDettaglioPdf description='Totale Imponibile' value={Number(mainObj.totaleFattura).toLocaleString()+' €'}></TextDettaglioPdf>
                             <TextDettaglioPdf description='Iva' value={mainObj.iva +' %'}></TextDettaglioPdf>
-                            <TextDettaglioPdf description='Totale Ivato Analogico' value={Number(mainObj.totaleAnalogicoIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                            <TextDettaglioPdf description='Totale Ivato Digitale' value={Number(mainObj.totaleDigitaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                            <TextDettaglioPdf description='Ivato Analogico' value={Number(mainObj.totaleAnalogicoIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                            <TextDettaglioPdf description='Ivato Digitale' value={Number(mainObj.totaleDigitaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                             <TextDettaglioPdf description='Totale Ivato' value={Number(totaleIvatoCalcolatoByFront).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                         </div>
                     </div>
@@ -377,8 +377,8 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,accontoIsVisible}) => {
                         <TextDettaglioPdf description='Imponibile Digitale' value={Number(mainObj.totaleDigitale).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Totale Imponibile' value={Number(mainObj.totaleFattura).toLocaleString()+' €'}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Iva' value={mainObj.iva +' %'}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Totale Ivato Analogico ' value={Number(mainObj.totaleAnalogicoIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                        <TextDettaglioPdf description='Totale Ivato Digitale' value={Number(mainObj.totaleDigitaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Ivato Analogico ' value={Number(mainObj.totaleAnalogicoIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                        <TextDettaglioPdf description='Ivato Digitale' value={Number(mainObj.totaleDigitaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                         <TextDettaglioPdf description='Totale Ivato' value={Number(mainObj.totaleIva).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                     </div>
                 </div>
