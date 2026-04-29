@@ -271,13 +271,14 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,accontoIsVisible}) => {
         let totaleIvatoCalcolatoByFront = mainObj.totaleIva
         let analogicoIvatoCalcolatoByFront = mainObj.totaleAnalogicoIva
         let digitaleIvatoCalcolatoByFront = mainObj.totaleDigitaleIva
-        if(mainObj.tipologiaFattura === "PRIMO SALDO" || mainObj.tipologiaFattura === 'SECONDO SALDO' || mainObj.tipologiaFattura === 'VAR. SEMESTRALE'){
+        if(mainObj.tipologiaFattura === "PRIMO SALDO" || mainObj.tipologiaFattura === 'SECONDO SALDO' || mainObj.tipologiaFattura === 'VAR. SEMESTRALE' ||  mainObj.tipologiaFattura === 'ACCONTO'){
             totaleIvatoCalcolatoByFront = Number(analogicoIvatoCalcolatoByFront) + Number(digitaleIvatoCalcolatoByFront)
         }else if(mainObj.tipologiaFattura === "ANTICIPO"){
-            analogicoIvatoCalcolatoByFront = Number(mainObj.totaleAnalogicoIva) + (Number(mainObj.anticipoAnalogico||0)*1,22)
-            digitaleIvatoCalcolatoByFront = Number(mainObj.totaleDigitaleIva) + (Number(mainObj.anticipoDigitale||0)*1,22)
+            analogicoIvatoCalcolatoByFront = Number(mainObj.anticipoAnalogico||0)* (((mainObj.iva||22)/100)+1)
+            digitaleIvatoCalcolatoByFront = Number(mainObj.anticipoDigitale||0)* (((mainObj.iva||22)/100)+1)
             totaleIvatoCalcolatoByFront = analogicoIvatoCalcolatoByFront + digitaleIvatoCalcolatoByFront
         }
+       
 
 
 
@@ -304,11 +305,12 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,accontoIsVisible}) => {
                             <TextDettaglioPdf description='Cup' value={mainObj.cup||"--"}></TextDettaglioPdf>
                             <TextDettaglioPdf description='Anticipo Digitale' value={Number(mainObj.anticipoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                             <TextDettaglioPdf description='Anticipo Analogico' value={Number(mainObj.anticipoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-                            {showTotaleAnticipo && <TextDettaglioPdf description='Totale Anticipo' value={Number((mainObj.anticipoAnalogico||0)+(mainObj.anticipoDigitale||0)).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
+                           
                             {accontoIsVisible && <TextDettaglioPdf description='Acconto Digitale' value={Number(mainObj.accontoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
                             {accontoIsVisible && <TextDettaglioPdf description='Acconto Analogico' value={Number(mainObj.accontoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
                             <TextDettaglioPdf description='Storno Digitale' value={Number(mainObj.stornoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
                             <TextDettaglioPdf description='Storno Analogico' value={Number(mainObj.stornoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
+                             {showTotaleAnticipo && <TextDettaglioPdf description='Totale Anticipo' value={Number((mainObj.anticipoAnalogico||0)+(mainObj.anticipoDigitale||0)).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
                             {blockFromNotificheToTotaleImponibileVisible &&
                             <>
                             <TextDettaglioPdf description='N. Notifiche Digitali' value={mainObj.totaleNotificheDigitali}></TextDettaglioPdf>
