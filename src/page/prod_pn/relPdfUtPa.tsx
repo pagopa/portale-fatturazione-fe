@@ -261,7 +261,8 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
 
   let stornoRelIsVisible = false;
   if(isRel){
-    stornoRelIsVisible = true;
+    //TODO in attesa che le info vengano inserite nella response
+    stornoRelIsVisible = false;
   }
 
   let numeroNotificheSectionIsVisible = true;
@@ -294,6 +295,8 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
     analogicoIvatoCalcolatoByFront = Number(mainObj.anticipoAnalogico||0)* (((mainObj.iva||22)/100)+1);
     digitaleIvatoCalcolatoByFront = Number(mainObj.anticipoDigitale||0)* (((mainObj.iva||22)/100)+1);
     totaleIvatoCalcolatoByFront = analogicoIvatoCalcolatoByFront + digitaleIvatoCalcolatoByFront;
+
+    totaleImponibileCalcolatoByFront = Number(mainObj.anticipoDigitale||0) + Number(mainObj.anticipoAnalogico||0);
   }else if(mainObj.tipologiaFattura === "ACCONTO"){
     console.log(999);
     analogicoIvatoCalcolatoByFront = Number(mainObj.accontoAnalogico||0)* (((mainObj.iva||22)/100)+1);
@@ -304,6 +307,8 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
   }
 
   const imponibileDaFatturareCalculateByFE = totaleStornoCalculateByFE + totaleImponibileCalcolatoByFront;
+
+  const ivatoDaFatturareCalcolatoByFe = imponibileDaFatturareCalculateByFE * (((mainObj.iva||22)/100)+1);
     
   return ( 
     <div>
@@ -352,7 +357,7 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
             {stornoRelIsVisible &&<TextDettaglioPdf description='Storno Acconto Analogico' value={0}></TextDettaglioPdf>}
 
 
-            {storno_analogico_digitale_totale_storno_IsVisible || stornoRelIsVisible  &&<TextDettaglioPdf description='Totale Storno' value={Number(totaleStornoCalculateByFE).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
+            {(storno_analogico_digitale_totale_storno_IsVisible || stornoRelIsVisible)  && <TextDettaglioPdf description='Totale Storno' value={Number(totaleStornoCalculateByFE).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
             {imponibile_Ivato_IsVisible &&<TextDettaglioPdf description='Imponibile Digitale' value={Number(mainObj.totaleDigitale).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
             {imponibile_Ivato_IsVisible && <TextDettaglioPdf description='Imponibile Analogico' value={Number(mainObj.totaleAnalogico).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
             {anticipo_analogico_digitale_IsVisible && <TextDettaglioPdf description='Anticipo Digitale' value={Number(mainObj.anticipoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
@@ -374,7 +379,7 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
             <TextDettaglioPdf description='Ivato Digitale' value={digitaleIvatoCalcolatoByFront.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
             <TextDettaglioPdf description='Ivato Analogico' value={analogicoIvatoCalcolatoByFront.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
             <TextDettaglioPdf description='Totale Ivato' value={totaleIvatoCalcolatoByFront.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>
-            {ivato_da_fatturare_IsVisible && <TextDettaglioPdf description='Ivato da Fatturare' value={0}></TextDettaglioPdf>}
+            {ivato_da_fatturare_IsVisible && <TextDettaglioPdf description='Ivato da Fatturare' value={ivatoDaFatturareCalcolatoByFe.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
           </div>
         </div>
       </div>
