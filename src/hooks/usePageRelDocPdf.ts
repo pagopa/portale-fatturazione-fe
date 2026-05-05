@@ -8,7 +8,7 @@ import { getLogPagoPaRelDocumentoFirmato, getRelExelPagoPa, getRelPdfFirmatoPago
 import { ResponseDownloadPdf } from "../types/typeModuloCommessaInserimento";
 import { mesiWithZero } from "../reusableFunction/reusableArrayObj";
 import { saveAs } from "file-saver";
-import generatePDF, { Margin, Resolution } from "react-to-pdf";
+import generatePDF from "react-to-pdf";
 import { ManageErrorResponse } from "../types/typesGeneral";
 import { getDettaglioFatturaEmessa, getDettaglioFatturaSospesa, getSospesiReportExel } from "../api/apiSelfcare/documentiSospesiSE/api";
 import { getDettaglioFatturaEmessaPa, getDettaglioFatturaSospesaPa, getDocSospesiExelPagoPa, getDocumentiEmessiPdfPa, getDocumentiSospesiPdfPa } from "../api/apiPagoPa/fatturazionePA/api";
@@ -256,21 +256,7 @@ function usePageRelDocPdf({
         const wrapper = document.getElementById('file_download_rel');
         if(wrapper){
             wrapper.innerHTML = res.data;
-            
-            generatePDF(
-                 targetRef,
-                 {filename: `${nameSection}/${ rel?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${rel.anno}.pdf`,
-                  page: {
-                     margin: { top: 18, bottom: 18, left: 0, right: 0 },
-                     format: "A4",
-                     orientation: "portrait", // or "landscape"
-                   // },
-                    //resolution: Resolution.HIGH,
-                    //canvas: {
-                        //mimeType: "image/png",
-                        //qualityRatio: 1
-                    }
-                });
+            generatePDF(targetRef, {filename: `${nameSection}/${ rel?.ragioneSociale}/${mesiWithZero[Number(meseOnDoc) - 1]}/${rel.anno}.pdf`});
             setShowDownloading(false);
         }
     };
