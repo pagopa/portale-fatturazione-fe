@@ -88,7 +88,6 @@ const StoricoEnte : React.FC = () => {
         idTipologiaReports:[]
     });
 
-    const [statusAnnulla, setStatusAnnulla] = useState('hidden');
     const [valueYears, setValueYears] = useState<string[]>(["2025"]);
     const [dataGrid,setDataGrid] = useState<any[]>([
         {
@@ -141,15 +140,6 @@ const StoricoEnte : React.FC = () => {
         listaTipoReport(); 
         getAnni();
     },[]);
-
-    useEffect(()=>{
-        if(bodyGetLista.idTipologiaReports.length > 0 || bodyGetLista.mese !== ''){
-            setStatusAnnulla('show');
-        }else{
-            setStatusAnnulla('hidden');
-        }
-    },[bodyGetLista]);
-
 
     const clearOnChangeFilter = () => {
         setDataGrid([]);

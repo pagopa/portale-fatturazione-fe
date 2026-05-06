@@ -159,7 +159,6 @@ const SideNavEnte: React.FC = () => {
                     </ListItemIcon>
                     <ListItemText primary="Notifiche" />
                 </ListItemButton>
-                
                 <Collapse in={openContestazioni} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                         <ListItemButton selected={selectedIndex === 6} sx={{ pl: 4 }} onClick={()=>handleListItemClick(PathPf.STORICO_CONTEST_ENTE)}>
