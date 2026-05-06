@@ -1,6 +1,7 @@
 import { Box, Chip, Tooltip } from "@mui/material";
 import { HeaderGridCustom } from "./conf_GridDocEmessiEnte";
 import FingerprintIcon from '@mui/icons-material/Fingerprint';
+import Grid3x3Icon from '@mui/icons-material/Grid3x3';
 
 export const headerNamesEnte: HeaderGridCustom[] = [
     {label:"Contestazione", align:"center", width:"100px"},
@@ -9,14 +10,14 @@ export const headerNamesEnte: HeaderGridCustom[] = [
             title={label}
         ><span><Chip  variant="outlined" label={
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <FingerprintIcon />
+            <Grid3x3Icon fontSize="small"/>
         </Box>
     }  sx={{backgroundColor:"#D6E8FB"}}   /></span></Tooltip>},
     {label:"Onere", align:"center", width:"100px"},
     {label:"Recipient ID", align:"center", width:"100px"},
     {label:"Anno", align:"center", width:"100px"},
     {label:"Mese", align:"center", width:"100px"},
-    {label:"Data", align:"center", width:"150px",headerActionSort:true},
+    {label:"Data", align:"center", width:"150px",headerActionSort:false},
     {label:"Tipo Notifica", align:"center", width:"100px"},
     {label:"IUN", align:"center", width:"100px"},
     {label:"Data invio", align:"center", width:"100px"},
@@ -33,14 +34,14 @@ export const headerNamesAdmin: HeaderGridCustom[] = [
             title={label}
         ><span><Chip  variant="outlined" label={
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <FingerprintIcon />
+            <Grid3x3Icon fontSize="small" />
         </Box>
     }  sx={{backgroundColor:"#D6E8FB"}}   /></span></Tooltip>},
     {label:"Onere", align:"center", width:"100px"},
     {label:"Recipient ID", align:"center", width:"100px"},
     {label:"Anno", align:"center", width:"100px"},
     {label:"Mese", align:"center", width:"100px"},
-    {label:"Data", align:"center", width:"150px",headerActionSort:true},
+    {label:"Data", align:"center", width:"150px",headerActionSort:false},
     {label:"Ragione Sociale", align:"center", width:"100px"},
     {label:"Tipo Notifica", align:"center", width:"100px"},
     {label:"IUN", align:"center", width:"100px"},
