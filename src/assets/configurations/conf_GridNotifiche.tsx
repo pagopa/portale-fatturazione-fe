@@ -1,18 +1,16 @@
 import { Box, Chip, Tooltip } from "@mui/material";
 import { HeaderGridCustom } from "./conf_GridDocEmessiEnte";
-import FingerprintIcon from '@mui/icons-material/Fingerprint';
-import Grid3x3Icon from '@mui/icons-material/Grid3x3';
+import ArticleIcon from '@mui/icons-material/Article';
 
 export const headerNamesEnte: HeaderGridCustom[] = [
     {label:"Contestazione", align:"center", width:"100px"},
     {label:"Id", align:"center", width:"80px",headerTooltip:(title,label,color) => <Tooltip
             placement="bottom"
             title={label}
-        ><span><Chip  variant="outlined" label={
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Grid3x3Icon fontSize="small"/>
-        </Box>
-    }  sx={{backgroundColor:"#D6E8FB"}}   /></span></Tooltip>},
+        ><span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+          <ArticleIcon fontSize="small" />
+         </span>
+         </Tooltip>},
     {label:"Onere", align:"center", width:"100px"},
     {label:"Recipient ID", align:"center", width:"100px"},
     {label:"Anno", align:"center", width:"100px"},
@@ -32,11 +30,10 @@ export const headerNamesAdmin: HeaderGridCustom[] = [
     {label:"Id", align:"center", width:"80px",headerTooltip:(title,label,color) => <Tooltip
             placement="bottom"
             title={label}
-        ><span><Chip  variant="outlined" label={
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Grid3x3Icon fontSize="small" />
-        </Box>
-    }  sx={{backgroundColor:"#D6E8FB"}}   /></span></Tooltip>},
+        ><span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+          <ArticleIcon fontSize="small" />
+         </span>
+        </Tooltip>},
     {label:"Onere", align:"center", width:"100px"},
     {label:"Recipient ID", align:"center", width:"100px"},
     {label:"Anno", align:"center", width:"100px"},
