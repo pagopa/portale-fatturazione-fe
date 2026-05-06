@@ -16,7 +16,7 @@ import { useGlobalStore } from "../../store/context/useGlobalStore";
 
 export interface BodyStoricoContestazioniSE{
     anno:string,
-    mese:string,
+    mese:string|number,//da sistemare
     idTipologiaReports:number[]
 }
 
@@ -137,7 +137,7 @@ const StoricoEnte : React.FC = () => {
     const [tipologiaSelcted,setTipologiaSelected] = useState<TipologieDoc[]>([]);
 
     useEffect(()=>{
-        listaTipoReport(); 
+        //listaTipoReport(); 
         getAnni();
     },[]);
 
@@ -172,9 +172,9 @@ const StoricoEnte : React.FC = () => {
     };
     const getMesi = async (anno) => {
         await getMesiContestazioniSE(token, profilo.nonce,anno).then((res)=> {
-            setArrayMesi(res.data);
+            //setArrayMesi(res.data);
         }).catch((err)=>{
-            setArrayMesi([]);
+            //setArrayMesi([]);
             manageError(err,dispatchMainState);  
         });
     };
@@ -206,11 +206,11 @@ const StoricoEnte : React.FC = () => {
                     idStato:obj.stato
                 };
             });
-            setDataGrid(orderDataCustom);
+            //setDataGrid(orderDataCustom);
             setTotalContestazioni(res.data.count);
             setGetListaContestazioniRunning(false);
         }).catch((err)=>{
-            setDataGrid([]);
+            //setDataGrid([]);
             setTotalContestazioni(0);
             setGetListaContestazioniRunning(false);
             manageError(err,dispatchMainState);
@@ -355,7 +355,7 @@ const StoricoEnte : React.FC = () => {
                                             setBodyGetLista((prev)=> ({...prev, ...{mese:e.target.value}}));
                                             clearOnChangeFilter();
                                         }}
-                                        value={bodyGetLista.mese||''}
+                                        value={(12).toString()}
                                     >
                                         {arrayMesi.map((el) =>{
                                             return(

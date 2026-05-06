@@ -7,7 +7,6 @@ import { manageError, managePresaInCarico } from "../../api/api";
 import { downloadNotifche, getMessaggiCountEnte } from "../../api/apiSelfcare/notificheSE/api";
 import { tipoNotifica, tipoNotificaArray } from "../../reusableFunction/reusableArrayObj";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
-import ModalUpload from "../../components/reusableComponents/modals/modalUploadContestazioni";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { OptionMultiselectChackboxTipoNot } from "../../types/typeReportDettaglio";
@@ -120,7 +119,7 @@ const RispostaContestazioniEnte : React.FC = () => {
                         keyValue={"anno"}
                         keyBody={"anno"}
                         arrayValues={arrayYears}
-                        disabeledSelect={true}
+                        disabled={true}
                     ></MainFilter>
                     <MainFilter 
                         filterName={"select_value_string"}
@@ -132,7 +131,7 @@ const RispostaContestazioniEnte : React.FC = () => {
                         keyValue={"mese"}
                         keyBody={"mese"}
                         arrayValues={arrayMonths}
-                        disabeledSelect={true}
+                        disabled={true}
                     ></MainFilter>
                     <MainFilter 
                         filterName={"multi_checkbox"}

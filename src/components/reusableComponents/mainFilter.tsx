@@ -285,7 +285,7 @@ const MainFilter = <T,>({
         case "select_value_nobody":
             return ( !hidden &&  keyBody && arrayValues &&
             <MainBoxContainer>
-                <FormControl fullWidth >
+                <FormControl fullWidth disabled={disabled}>
                     <InputLabel>
                         {inputLabel}
                     </InputLabel>
@@ -317,7 +317,7 @@ const MainFilter = <T,>({
         case "select_value_string":
             return ( !hidden &&  keyBody &&
             <MainBoxContainer>
-                <FormControl  fullWidth >
+                <FormControl  fullWidth disabled={disabled}>
                     <InputLabel>
                         {inputLabel}
                     </InputLabel>

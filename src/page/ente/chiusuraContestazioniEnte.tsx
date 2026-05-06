@@ -125,7 +125,7 @@ const ChiusuraContestazioniEnte : React.FC = () => {
                         keyValue={"anno"}
                         keyBody={"anno"}
                         arrayValues={arrayYears}
-                        disabeledSelect={true}
+                        disabled={true}
                     ></MainFilter>
                     <MainFilter 
                         filterName={"select_value_string"}
@@ -137,7 +137,7 @@ const ChiusuraContestazioniEnte : React.FC = () => {
                         keyValue={"mese"}
                         keyBody={"mese"}
                         arrayValues={arrayMonths}
-                        disabeledSelect={true}
+                        disabled={true}
                     ></MainFilter>
                     <MainFilter 
                         filterName={"multi_checkbox"}

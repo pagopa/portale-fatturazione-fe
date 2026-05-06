@@ -125,7 +125,11 @@ const SideNavEnte: React.FC = () => {
             setOpenDocContabili(true);
         }
 
-        if(openContestazioni && (currentLocation !== PathPf.STORICO_CONTEST_ENTE && currentLocation !== PathPf.LISTA_NOTIFICHE_EN && currentLocation !== PathPf.STORICO_DETTAGLIO_CONTEST )){
+        if(openContestazioni && (currentLocation !== PathPf.STORICO_CONTEST_ENTE &&
+                 currentLocation !== PathPf.LISTA_NOTIFICHE_EN &&
+                 currentLocation !== PathPf.INIZIO_CONTEST_ENTE  &&
+                 currentLocation !== PathPf.RISPOSTA_CONTEST_ENTE  &&
+                 currentLocation !== PathPf.CHIUSURA_CONTEST_ENTE)){
             setOpenContestazioni(false);
         }
         if(openDocContabili && (currentLocation !== PathPf.DOCUMENTI_EMESSI && currentLocation !== PathPf.DOCUMENTI_SOSPESI &&  !currentLocation.includes("documentiemessi") && !currentLocation.includes("documentisospesi") )){
@@ -158,6 +162,19 @@ const SideNavEnte: React.FC = () => {
                         <MarkUnreadChatAltIcon fontSize="inherit" />
                     </ListItemIcon>
                     <ListItemText primary="Notifiche" />
+                    {openContestazioni ? 
+                        <IconButton onClick={(e)=>{
+                            e.stopPropagation();
+                            setOpenContestazioni(false);
+                        } }  size="small">
+                            <ExpandLess fontSize="inherit"  />
+                        </IconButton>:
+                        <IconButton onClick={(e)=> {
+                            e.stopPropagation();
+                            setOpenContestazioni(true);
+                        }}  size="small">
+                            <ExpandMore fontSize="inherit"  />
+                        </IconButton>}
                 </ListItemButton>
                 <Collapse in={openContestazioni} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
