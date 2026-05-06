@@ -112,7 +112,7 @@ const ReportDettaglio : React.FC = () => {
         recipientId:null,
         recapitisti:[],
         consolidatori:[],
-        data:1
+        //data:1
     });
     const [bodyDownload, setBodyDownload] = useState<BodyListaNotifiche>({
         profilo:'',
@@ -127,7 +127,7 @@ const ReportDettaglio : React.FC = () => {
         recipientId:null,
         recapitisti:[],
         consolidatori:[],
-        data:1
+        //data:1
     });
     
     const [contestazioneSelected, setContestazioneSelected] = useState<Contestazione>({ 
