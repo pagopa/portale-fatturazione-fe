@@ -14,31 +14,30 @@ import ModalLoading from "../../components/reusableComponents/modals/modalLoadin
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { profiliEnti } from "../../reusableFunction/actionLocalStorage";
 import { mesiGrid, mesiWithZero, tipoNotifica } from "../../reusableFunction/reusableArrayObj";
-
 import { PathPf } from "../../types/enum";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from '../../store/context/useGlobalStore';
-
+import { headerNamesAdmin, headerNamesEnte } from '../../assets/configurations/conf_GridNotifiche';
 
 
 
 const ReportDettaglio : React.FC = () => {
- 
     const mainState = useGlobalStore(state => state.mainState);
     const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
     const setCountMessages = useGlobalStore(state => state.setCountMessages);
-
     const setOpenModalInfo = useGlobalStore(state => state.setOpenModalInfo);
     const openModalInfo = useGlobalStore(state => state.openModalInfo);
     const setStatusQueryGetUri = useGlobalStore(state => state.setStatusQueryGetUri);
-
-
     const enti = profiliEnti(mainState);
     const token =  mainState.profilo.jwt;
     const profilo =  mainState.profilo;
-
     let profilePath; 
+    let headerNames = headerNamesEnte;
+    if(profilo.auth === "PAGOPA"){
+        headerNames = headerNamesAdmin 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    }
 
     if(profilo.auth === 'PAGOPA'&& profilo.profilo !== "REC" && profilo.profilo !== "CON"){
         profilePath = PathPf.LISTA_NOTIFICHE;
@@ -47,10 +46,9 @@ const ReportDettaglio : React.FC = () => {
     }else{
         profilePath = PathPf.LISTA_NOTIFICHE_EN;
     }
-   
+    
     const [prodotti, setProdotti] = useState([{nome:''}]);
     const [profili, setProfili] = useState([]);
-    const [statusAnnulla, setStatusAnnulla] = useState('hidden');
     const [notificheList, setNotificheList] = useState<NotificheList[]>([]);
     const [textValue, setTextValue] = useState('');
     const [valueAutocomplete, setValueAutocomplete] = useState<OptionMultiselectChackbox[]>([]);
@@ -97,7 +95,7 @@ const ReportDettaglio : React.FC = () => {
     const [valueFgContestazione, setValueFgContestazione] = useState<FlagContestazione[]>([]);       
     const [open, setOpen] = useState(false);
     const [showLoading, setShowLoading] = useState(false);
-    const [showLoadingGrid, setShowLoadingGrid] = useState(true);
+    const [showLoadingGrid, setShowLoadingGrid] = useState(false);
     const [showModalScadenziario, setShowModalScadenziario ] = useState(false);   
     const [openModalRedirect, setOpenModalRedirect] = useState(false);
     const [fgContestazione, setFgContestazione] = useState<FlagContestazione[]>([]);
@@ -113,7 +111,8 @@ const ReportDettaglio : React.FC = () => {
         idEnti:[],
         recipientId:null,
         recapitisti:[],
-        consolidatori:[]
+        consolidatori:[],
+        data:1
     });
     const [bodyDownload, setBodyDownload] = useState<BodyListaNotifiche>({
         profilo:'',
@@ -127,9 +126,10 @@ const ReportDettaglio : React.FC = () => {
         idEnti:[],
         recipientId:null,
         recapitisti:[],
-        consolidatori:[]
+        consolidatori:[],
+        data:1
     });
-   
+    
     const [contestazioneSelected, setContestazioneSelected] = useState<Contestazione>({ 
         risposta:true,
         modifica: true,
@@ -179,30 +179,24 @@ const ReportDettaglio : React.FC = () => {
     const funInitialRender = async (newBody, dataFromLocalStorage) => {
         try {
             setGetNotificheWorking(true);
-
             // Fire these in parallel (not awaiting each)
             getProdotti();
             getProfili();
             getFlagContestazione();
-
             // Remove unused keys
             const { idEnti, recapitisti, consolidatori, ...body } = newBody;
-
             const resAnno = await getAnniNotifiche(token, profilo.nonce);
             const allYearToNumber = resAnno.data.map(Number);
             setArrayAnni(allYearToNumber);
-
             if (resAnno.data.length === 0) {
                 setGetNotificheWorking(false);
                 return;
             }
 
             const annoToSet = dataFromLocalStorage ? filters.body.anno : resAnno.data[0];
-
             const resMese = await getMesiNotifiche(token, profilo.nonce, {
                 anno: annoToSet.toString(),
             });
-
             const camelCaseMonth = resMese.data.map(el => ({
                 ...el,
                 descrizione:
@@ -270,28 +264,6 @@ const ReportDettaglio : React.FC = () => {
     };
     
     useEffect(()=>{
-        if( 
-            bodyGetLista.profilo !== '' ||
-            bodyGetLista.prodotto !== '' ||
-            bodyGetLista.tipoNotifica !== null ||
-            bodyGetLista.statoContestazione.length !== 0 ||
-            bodyGetLista.cap !== null ||
-            bodyGetLista.idEnti?.length !== 0 ||
-            bodyGetLista.mese !== Number(arrayMesi[0]?.mese) ||
-            bodyGetLista.anno !== arrayAnni[0]||
-            bodyGetLista.recipientId !== null ||
-            bodyGetLista.consolidatori?.length !== 0 ||
-            bodyGetLista.recapitisti?.length !== 0  
-        ){
-            setStatusAnnulla('show');
-        }else{           
-            setStatusAnnulla('hidden');
-        }
-    },[bodyGetLista]);
-    
-    
-    
-    useEffect(()=>{
         if((mainState.datiFatturazione === false || mainState.datiFatturazioneNotCompleted) && enti){
             setOpenModalRedirect(true);
         }
@@ -350,8 +322,7 @@ const ReportDettaglio : React.FC = () => {
         }
     };
     
-    // Modifico l'oggetto notifica per fare il binding dei dati nel componente GRIDCUSTOM
-    let headerNames: string[] = [];
+ 
     const notificheListWithOnere = notificheList.map((notifica:NotificheList) =>{
         let newOnere = '--';
         if( notifica.onere === 'PA_SEND' ){
@@ -417,10 +388,12 @@ const ReportDettaglio : React.FC = () => {
         const element = {
             idNotifica:notifica.idNotifica,
             contestazione:notifica.contestazione,
+            id:notifica.idNotifica,
             onere:newOnere,
             recipientId:notifica.recipientId||"--",
             anno:notifica.anno,
             mese:mesiGrid[Number(notifica.mese)],
+            data:notifica.data?.replace('T', ' ').split('.')[0]||"--",
             ragioneSociale:notifica.ragioneSociale,
             tipoNotifica:notifica.tipoNotifica||"--",
             iun:notifica.iun||"--",
@@ -429,13 +402,10 @@ const ReportDettaglio : React.FC = () => {
             cap:notifica.cap||"--",
             costEuroInCentesimi:(Number(notifica.costEuroInCentesimi) / 100).toLocaleString("de-DE", { style: "currency", currency: "EUR" })
         };
-        if(profilo.profilo === 'REC' || profilo.profilo === 'CON'){
-            headerNames = ['Contestazione', 'Onere', 'Recipient ID','Anno', 'Mese','Tipo Notifica','IUN', 'Data invio','Stato estero', 'CAP', 'Costo', ''];
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        if(profilo.profilo === 'REC' || profilo.profilo === 'CON' || (profilo.profilo === "PA" && profilo.auth === "SELFCARE")){
             const {ragioneSociale, ...result} = element;
             return result;
         }else{
-            headerNames = ['Contestazione', 'Onere', 'Recipient ID','Anno', 'Mese','Ragione Sociale', 'Tipo Notifica','IUN', 'Data invio','Stato estero', 'CAP', 'Costo', ''];
             return element;
         }
     });
@@ -456,7 +426,6 @@ const ReportDettaglio : React.FC = () => {
             recapitisti:[],
             consolidatori:[]
         },false);
-        setStatusAnnulla('hidden');
         setValueFgContestazione([]);
         setDataSelect([]);
         setValueAutocomplete([]);
@@ -850,10 +819,26 @@ const ReportDettaglio : React.FC = () => {
             }));
         }
     }; 
+
+
+    const headerActionSort = () =>{
+        console.log("elelelel")
+    }
+    const statusAnnulla =  (bodyGetLista.profilo !== '' ||
+            bodyGetLista.prodotto !== '' ||
+            bodyGetLista.tipoNotifica !== null ||
+            bodyGetLista.statoContestazione.length !== 0 ||
+            bodyGetLista.cap !== null ||
+            bodyGetLista.idEnti?.length !== 0 ||
+            bodyGetLista.mese !== Number(arrayMesi[0]?.mese) ||
+            bodyGetLista.anno !== arrayAnni[0]||
+            bodyGetLista.recipientId !== null ||
+            bodyGetLista.consolidatori?.length !== 0 ||
+            bodyGetLista.recapitisti?.length !== 0 ) ? "show" : "hidden" 
     
-    
+   
     return (
-      
+        
         <MainBoxStyled title={"Notifiche"} actionButton={[{
             onButtonClick: () => setShowModalScadenziario(true),
             variant: "outlined",
@@ -861,278 +846,276 @@ const ReportDettaglio : React.FC = () => {
             withText:false,
             tooltipMessage:"Scadenzario contestazioni"
         }]}>
-            <ResponsiveGridContainer >
-                <MainFilter 
-                    filterName={"select_value_string"} 
-                    inputLabel={"Anno"}
-                    clearOnChangeFilter={clearOnChangeFilter}
-                    setBody={setBodyGetLista}
-                    body={bodyGetLista}
-                    keyValue={"anno"}
-                    keyDescription='anno'
-                    keyBody={"anno"}
-                    arrayValues={arrayAnni}
-                    extraCodeOnChange={(e)=>{
-                        isInitialRender.current = false;
-                        const value = Number(e);
-                        setBodyGetLista((prev)=> ({...prev, ...{anno:value}}));  
-                        getMesi(e.toString());
-                    }}
-                ></MainFilter>
-                <MainFilter 
-                    filterName={"select_key_value"}
-                    inputLabel={"Mese"}
-                    clearOnChangeFilter={clearOnChangeFilter}
-                    setBody={setBodyGetLista}
-                    body={bodyGetLista}
-                    keyValue={"mese"}
-                    keyDescription='descrizione'
-                    keyBody={"mese"}
-                    arrayValues={arrayMesi}
-                    extraCodeOnChange={(e)=>{
-                        const value = Number(e);
-                        setBodyGetLista((prev)=> ({...prev, ...{mese:value}}));
-                      
-                    }}
-                ></MainFilter>
-                <MainFilter 
-                    filterName={"input_text"}
-                    inputLabel={"IUN"}
-                    clearOnChangeFilter={clearOnChangeFilter}
-                    setBody={setBodyGetLista}
-                    body={bodyGetLista}
-                    keyDescription='iun'
-                    keyBody={"iun"}
-                    keyValue={"iun"} //ad input text non viene utilizzata
-                    extraCodeOnChange={(e)=>{
-                        setBodyGetLista((prev)=>{             
-                            if(e === ''){
-                                return {...prev, ...{iun:null}};
-                            }else{
-                                return {...prev, ...{iun:e}};
-                            }
-                        });
-                    }}
-                ></MainFilter>
-                <MainFilter 
-                    filterName={"select_key_value"}
-                    inputLabel={"Tipo notifica"}
-                    clearOnChangeFilter={clearOnChangeFilter}
-                    setBody={setBodyGetLista}
-                    extraCodeOnChange={(e)=>{
-                        setBodyGetLista((prev)=>{             
-                            if(e === '' || e === null){
-                                return {...prev, ...{tipoNotifica:[]}};
-                            }else{
-                                return {...prev, ...{tipoNotifica:[Number(e)]}};
-                            }
-                        });
-                    }}
-                    body={bodyGetLista}
-                    keyValue={"id"}
-                    keyDescription='name'
-                    keyBody={"tipoNotifica"}
-                    hidden={profilo.auth === 'PAGOPA'}
-                    arrayValues={tipoNotifica}
-                ></MainFilter>
-                <MainFilter 
-                    filterName={"multi_checkbox"}
-                    inputLabel={"Tipo notifica"}
-                    clearOnChangeFilter={clearOnChangeFilter}
-                    setBody={setBodyGetLista}
-                    body={bodyGetLista}
-                    valueAutocomplete={valueAutocompleteTipoNot}
-                    setValueAutocomplete={setValueAutocompleteTipoNot}
-                    keyDescription={"name"}
-                    keyValue={"id"}
-                    keyOption='name'
-                    iconMaterial={RenderIcon("type-not",true)}
-                    keyCompare={""}
-                    dataSelect={tipoNotifica}
-                    setTextValue={setTextValue}
-                    hidden={profilo.auth !== 'PAGOPA'}
-                    arrayValues={tipoNotifica}
-                    keyBody={"tipoNotifica"}
-                ></MainFilter>
-                <MainFilter 
-                    filterName={"multi_checkbox"}
-                    inputLabel={"Contestazione"}
-                    clearOnChangeFilter={clearOnChangeFilter}
-                    setBody={setBodyGetLista}
-                    keyCompare={""}
-                    dataSelect={fgContestazione}
-                    body={bodyGetLista}
-                    setTextValue={setTextValue}
-                    textValue={textValue}
-                    valueAutocomplete={valueFgContestazione}
-                    setValueAutocomplete={setValueFgContestazione}
-                    keyDescription={"flag"}
-                    arrayValues={fgContestazione}
-                    keyValue={"id"}
-                    keyOption='flag'
-                    groupByKey={"descrizione"}
-                    keyBody={"statoContestazione"}
-                    iconMaterial={RenderIcon("invoice",true)}
-                ></MainFilter>
-                <MainFilter 
-                    filterName={"input_text"}
-                    inputLabel={"CAP"}
-                    clearOnChangeFilter={clearOnChangeFilter}
-                    setBody={setBodyGetLista}
-                    body={bodyGetLista}
-                    keyValue={"cap"}
-                    keyDescription={"cap"}
-                    keyBody={"cap"}
-                    extraCodeOnChange={(e)=>{
-                        setBodyGetLista((prev)=>{             
-                            if(e === ''){
-                                return {...prev, ...{cap:null}};
-                            }else{
-                                return {...prev, ...{cap:e}};
-                            }
-                        });
-                    }}
-                    defaultValue={""}
-                ></MainFilter>
-                <MainFilter 
-                    filterName={"input_text"}
-                    inputLabel={"Recipient ID"}
-                    clearOnChangeFilter={clearOnChangeFilter}
-                    setBody={setBodyGetLista}
-                    body={bodyGetLista}
-                    keyValue={"recipientId"}
-                    keyDescription={"recipientId"}
-                    keyBody={"recipientId"}
-                    extraCodeOnChange={(e)=>{
-                        setBodyGetLista((prev)=>{             
-                            if(e === ''){
-                                return {...prev, ...{recipientId:null}};
-                            }else{
-                                return {...prev, ...{recipientId:e}};
-                            }
-                        });
-                    }}
-                ></MainFilter>
-                <MainFilter 
-                    filterName={"multi_checkbox"}
-                    inputLabel={"Rag. Soc. Ente"}
-                    clearOnChangeFilter={clearOnChangeFilter}
-                    setBody={setBodyGetLista}
-                    body={bodyGetLista}
-                    keyCompare={""}
-                    dataSelect={dataSelect}
-                    setTextValue={setTextValue}
-                    textValue={textValue}
-                    valueAutocomplete={valueAutocomplete}
-                    setValueAutocomplete={setValueAutocomplete}
-                    keyDescription={"descrizione"}
-                    keyValue={"idEnte"}
-                    keyOption='descrizione'
-                    keyBody={"idEnti"}
-                    hidden={profilo.auth !== 'PAGOPA'}
-                ></MainFilter>
-                <MainFilter 
-                    filterName={"multi_checkbox"}
-                    inputLabel={"Consolidatore"}
-                    clearOnChangeFilter={clearOnChangeFilter}
-                    setBody={setBodyGetLista}
-                    body={bodyGetLista}
-                    valueAutocomplete={valueAutocompleteCon}
-                    setValueAutocomplete={setValueAutocompleteCon}
-                    keyDescription={"descrizione"}
-                    keyValue={"idEnte"}
-                    keyOption='descrizione'
-                    iconMaterial={RenderIcon("person",true)}
-                    keyCompare={""}
-                    dataSelect={listaConsolidatori}
-                    hidden={profilo.auth !== 'PAGOPA'}
-                    arrayValues={listaConsolidatori}
-                    keyBody={"consolidatori"}
-                ></MainFilter>
-                <MainFilter 
-                    filterName={"multi_checkbox"}
-                    inputLabel={"Recapitista"}
-                    clearOnChangeFilter={clearOnChangeFilter}
-                    setBody={setBodyGetLista}
-                    body={bodyGetLista}
-                    valueAutocomplete={valueAutocompleteRec}
-                    setValueAutocomplete={setValueAutocompleteRec}
-                    keyDescription={"descrizione"}
-                    keyValue={"idEnte"}
-                    keyOption='descrizione'
-                    iconMaterial={RenderIcon("person",true)}
-                    keyCompare={""}
-                    dataSelect={listaRecapitista}
-                    hidden={profilo.auth !== 'PAGOPA'}
-                    arrayValues={listaRecapitista}
-                    keyBody={"recapitisti"}
-                ></MainFilter>
-            </ResponsiveGridContainer>
-            <FilterActionButtons 
-                onButtonFiltra={onButtonFiltra} 
-                onButtonAnnulla={onAnnullaFiltri} 
-                statusAnnulla={statusAnnulla} 
-            ></FilterActionButtons>
-            <ActionTopGrid
-                actionButtonRight={[{
-                    onButtonClick: () => downloadNotificheOnDownloadButton(),
-                    variant: "outlined",
-                    label: "Download risultati",
-                    icon:{name:"download" },
-                    disabled:(notificheList.length === 0 || getNotificheWorking|| mainState.apiError !== null)
-                }]}
-            />      
-            <GridCustom
-                nameParameterApi='idNotifica'
-                elements={notificheListWithOnere}
-                changePage={handleChangePage}
-                changeRow={handleChangeRowsPerPage} 
-                total={totalNotifiche}
-                page={page}
-                rows={rowsPerPage}
-                headerNames={headerNames}
-                apiGet={getContestazioneModal}
-                disabled={getNotificheWorking}
-                widthCustomSize="2000px"
-                sentenseEmpty={"Non sono presenti notifiche"}
-                />                       
-            <ModalContestazione open={open} 
-                setOpen={setOpen} 
-                mainState={mainState}
-                contestazioneSelected={contestazioneSelected}
-                setContestazioneSelected={setContestazioneSelected}
-                funGetNotifiche={getlistaNotifiche}
-                funGetNotifichePagoPa={getlistaNotifichePagoPa}
-                openModalLoading={setShowLoadingGrid}
-                page={realPageNumber}
-                rows={rowsPerPage}
-                valueRispostaEnte={valueRispostaEnte}
-                contestazioneStatic={contestazioneStatic}
-                dispatchMainState={dispatchMainState}
-            ></ModalContestazione>
-            <ModalRedirect
-                setOpen={setOpenModalRedirect} 
-                open={openModalRedirect}
-                sentence={`Per poter visualizzare la lista delle Notifiche è obbligatorio fornire i seguenti dati di fatturazione:`}>
-            </ModalRedirect>
-            <ModalInfo 
-                open={openModalInfo} 
-                setOpen={setOpenModalInfo}/>
-            <ModalLoading 
-                open={showLoading} 
-                setOpen={setShowLoading}
-                sentence={profilo.auth === "PAGOPA"?'Downloading...':"Elaborazione in corso"} >
-            </ModalLoading>
-            <ModalLoading 
-                open={showLoadingGrid} 
-                setOpen={setShowLoadingGrid}
-                sentence={'Loading...'} >
-            </ModalLoading>
-            <ModalScadenziario
-                open={showModalScadenziario} 
-                setOpen={setShowModalScadenziario}
-                nonce={profilo.nonce}
-                dispatchMainState={dispatchMainState}></ModalScadenziario>                                    
+        <ResponsiveGridContainer >
+        <MainFilter 
+        filterName={"select_value_string"} 
+        inputLabel={"Anno"}
+        clearOnChangeFilter={clearOnChangeFilter}
+        setBody={setBodyGetLista}
+        body={bodyGetLista}
+        keyValue={"anno"}
+        keyDescription='anno'
+        keyBody={"anno"}
+        arrayValues={arrayAnni}
+        extraCodeOnChange={(e)=>{
+            isInitialRender.current = false;
+            const value = Number(e);
+            setBodyGetLista((prev)=> ({...prev, ...{anno:value}}));  
+            getMesi(e.toString());
+        }}
+        ></MainFilter>
+        <MainFilter 
+        filterName={"select_key_value"}
+        inputLabel={"Mese"}
+        clearOnChangeFilter={clearOnChangeFilter}
+        setBody={setBodyGetLista}
+        body={bodyGetLista}
+        keyValue={"mese"}
+        keyDescription='descrizione'
+        keyBody={"mese"}
+        arrayValues={arrayMesi}
+        extraCodeOnChange={(e)=>{
+            const value = Number(e);
+            setBodyGetLista((prev)=> ({...prev, ...{mese:value}}));
+            
+        }}
+        ></MainFilter>
+        <MainFilter 
+        filterName={"input_text"}
+        inputLabel={"IUN"}
+        clearOnChangeFilter={clearOnChangeFilter}
+        setBody={setBodyGetLista}
+        body={bodyGetLista}
+        keyDescription='iun'
+        keyBody={"iun"}
+        keyValue={"iun"} //ad input text non viene utilizzata
+        extraCodeOnChange={(e)=>{
+            setBodyGetLista((prev)=>{             
+                if(e === ''){
+                    return {...prev, ...{iun:null}};
+                }else{
+                    return {...prev, ...{iun:e}};
+                }
+            });
+        }}
+        ></MainFilter>
+        <MainFilter 
+        filterName={"select_key_value"}
+        inputLabel={"Tipo notifica"}
+        clearOnChangeFilter={clearOnChangeFilter}
+        setBody={setBodyGetLista}
+        extraCodeOnChange={(e)=>{
+            setBodyGetLista((prev)=>{             
+                if(e === '' || e === null){
+                    return {...prev, ...{tipoNotifica:[]}};
+                }else{
+                    return {...prev, ...{tipoNotifica:[Number(e)]}};
+                }
+            });
+        }}
+        body={bodyGetLista}
+        keyValue={"id"}
+        keyDescription='name'
+        keyBody={"tipoNotifica"}
+        hidden={profilo.auth === 'PAGOPA'}
+        arrayValues={tipoNotifica}
+        ></MainFilter>
+        <MainFilter 
+        filterName={"multi_checkbox"}
+        inputLabel={"Tipo notifica"}
+        clearOnChangeFilter={clearOnChangeFilter}
+        setBody={setBodyGetLista}
+        body={bodyGetLista}
+        valueAutocomplete={valueAutocompleteTipoNot}
+        setValueAutocomplete={setValueAutocompleteTipoNot}
+        keyDescription={"name"}
+        keyValue={"id"}
+        keyOption='name'
+        iconMaterial={RenderIcon("type-not",true)}
+        keyCompare={""}
+        dataSelect={tipoNotifica}
+        setTextValue={setTextValue}
+        hidden={profilo.auth !== 'PAGOPA'}
+        arrayValues={tipoNotifica}
+        keyBody={"tipoNotifica"}
+        ></MainFilter>
+        <MainFilter 
+        filterName={"multi_checkbox"}
+        inputLabel={"Contestazione"}
+        clearOnChangeFilter={clearOnChangeFilter}
+        setBody={setBodyGetLista}
+        keyCompare={""}
+        dataSelect={fgContestazione}
+        body={bodyGetLista}
+        setTextValue={setTextValue}
+        textValue={textValue}
+        valueAutocomplete={valueFgContestazione}
+        setValueAutocomplete={setValueFgContestazione}
+        keyDescription={"flag"}
+        arrayValues={fgContestazione}
+        keyValue={"id"}
+        keyOption='flag'
+        groupByKey={"descrizione"}
+        keyBody={"statoContestazione"}
+        iconMaterial={RenderIcon("invoice",true)}
+        ></MainFilter>
+        <MainFilter 
+        filterName={"input_text"}
+        inputLabel={"CAP"}
+        clearOnChangeFilter={clearOnChangeFilter}
+        setBody={setBodyGetLista}
+        body={bodyGetLista}
+        keyValue={"cap"}
+        keyDescription={"cap"}
+        keyBody={"cap"}
+        extraCodeOnChange={(e)=>{
+            setBodyGetLista((prev)=>{             
+                if(e === ''){
+                    return {...prev, ...{cap:null}};
+                }else{
+                    return {...prev, ...{cap:e}};
+                }
+            });
+        }}
+        defaultValue={""}
+        ></MainFilter>
+        <MainFilter 
+        filterName={"input_text"}
+        inputLabel={"Recipient ID"}
+        clearOnChangeFilter={clearOnChangeFilter}
+        setBody={setBodyGetLista}
+        body={bodyGetLista}
+        keyValue={"recipientId"}
+        keyDescription={"recipientId"}
+        keyBody={"recipientId"}
+        extraCodeOnChange={(e)=>{
+            setBodyGetLista((prev)=>{             
+                if(e === ''){
+                    return {...prev, ...{recipientId:null}};
+                }else{
+                    return {...prev, ...{recipientId:e}};
+                }
+            });
+        }}
+        ></MainFilter>
+        <MainFilter 
+        filterName={"multi_checkbox"}
+        inputLabel={"Rag. Soc. Ente"}
+        clearOnChangeFilter={clearOnChangeFilter}
+        setBody={setBodyGetLista}
+        body={bodyGetLista}
+        keyCompare={""}
+        dataSelect={dataSelect}
+        setTextValue={setTextValue}
+        textValue={textValue}
+        valueAutocomplete={valueAutocomplete}
+        setValueAutocomplete={setValueAutocomplete}
+        keyDescription={"descrizione"}
+        keyValue={"idEnte"}
+        keyOption='descrizione'
+        keyBody={"idEnti"}
+        hidden={profilo.auth !== 'PAGOPA'}
+        ></MainFilter>
+        <MainFilter 
+        filterName={"multi_checkbox"}
+        inputLabel={"Consolidatore"}
+        clearOnChangeFilter={clearOnChangeFilter}
+        setBody={setBodyGetLista}
+        body={bodyGetLista}
+        valueAutocomplete={valueAutocompleteCon}
+        setValueAutocomplete={setValueAutocompleteCon}
+        keyDescription={"descrizione"}
+        keyValue={"idEnte"}
+        keyOption='descrizione'
+        iconMaterial={RenderIcon("person",true)}
+        keyCompare={""}
+        dataSelect={listaConsolidatori}
+        hidden={profilo.auth !== 'PAGOPA'}
+        arrayValues={listaConsolidatori}
+        keyBody={"consolidatori"}
+        ></MainFilter>
+        <MainFilter 
+        filterName={"multi_checkbox"}
+        inputLabel={"Recapitista"}
+        clearOnChangeFilter={clearOnChangeFilter}
+        setBody={setBodyGetLista}
+        body={bodyGetLista}
+        valueAutocomplete={valueAutocompleteRec}
+        setValueAutocomplete={setValueAutocompleteRec}
+        keyDescription={"descrizione"}
+        keyValue={"idEnte"}
+        keyOption='descrizione'
+        iconMaterial={RenderIcon("person",true)}
+        keyCompare={""}
+        dataSelect={listaRecapitista}
+        hidden={profilo.auth !== 'PAGOPA'}
+        arrayValues={listaRecapitista}
+        keyBody={"recapitisti"}
+        ></MainFilter>
+        </ResponsiveGridContainer>
+        <FilterActionButtons 
+        onButtonFiltra={onButtonFiltra} 
+        onButtonAnnulla={onAnnullaFiltri} 
+        statusAnnulla={statusAnnulla} 
+        ></FilterActionButtons>
+        <ActionTopGrid
+        actionButtonRight={[{
+            onButtonClick: () => downloadNotificheOnDownloadButton(),
+            variant: "outlined",
+            label: "Download risultati",
+            icon:{name:"download" },
+            disabled:(notificheList.length === 0 || getNotificheWorking|| mainState.apiError !== null)
+        }]}
+        />      
+        <GridCustom
+        nameParameterApi='idNotifica'
+        elements={notificheListWithOnere}
+        changePage={handleChangePage}
+        changeRow={handleChangeRowsPerPage} 
+        total={totalNotifiche}
+        page={page}
+        rows={rowsPerPage}
+        headerNames={headerNames}
+        apiGet={getContestazioneModal}
+        disabled={getNotificheWorking}
+        headerActionSortServerSide={headerActionSort}
+        widthCustomSize="2000px"
+        sentenseEmpty={"Non sono presenti notifiche"}
+        />                       
+        <ModalContestazione open={open} 
+        setOpen={setOpen} 
+        mainState={mainState}
+        contestazioneSelected={contestazioneSelected}
+        setContestazioneSelected={setContestazioneSelected}
+        funGetNotifiche={getlistaNotifiche}
+        funGetNotifichePagoPa={getlistaNotifichePagoPa}
+        openModalLoading={setShowLoadingGrid}
+        page={realPageNumber}
+        rows={rowsPerPage}
+        valueRispostaEnte={valueRispostaEnte}
+        contestazioneStatic={contestazioneStatic}
+        dispatchMainState={dispatchMainState}
+        ></ModalContestazione>
+        <ModalRedirect
+        setOpen={setOpenModalRedirect} 
+        open={openModalRedirect}
+        sentence={`Per poter visualizzare la lista delle Notifiche è obbligatorio fornire i seguenti dati di fatturazione:`}/>
+        <ModalInfo 
+        open={openModalInfo} 
+        setOpen={setOpenModalInfo}/>
+        <ModalLoading 
+        open={showLoading} 
+        setOpen={setShowLoading}
+        sentence={profilo.auth === "PAGOPA"?'Downloading...':"Elaborazione in corso"} />
+        <ModalLoading 
+        open={showLoadingGrid} 
+        setOpen={setShowLoadingGrid}
+        sentence={'Loading...'} />
+        <ModalScadenziario
+        open={showModalScadenziario} 
+        setOpen={setShowModalScadenziario}
+        nonce={profilo.nonce}
+        dispatchMainState={dispatchMainState}/>                                   
         </MainBoxStyled>
     );
 };                                        
