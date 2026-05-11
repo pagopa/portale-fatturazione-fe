@@ -51,7 +51,7 @@ interface GridCustomProps {
     gridType?:boolean,
     setObjectSort?:React.Dispatch<SetStateAction<{[key:string]:number}>>,
     listaResponse?:any[],
-    headerActionSortServerSide?:() => void
+    headerActionSortServerSide?:(label:string) => void
 }
 
 
@@ -141,6 +141,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                         <TableHead sx={{backgroundColor:'#f2f2f2'}}>
                             <TableRow>
                                 {headerNames.map((el,i)=>{
+                                    //Sort by frontEnd
                                     let sortValue = 0;
                                     if(objectSort && objectSort[el.label] === 1){
                                         sortValue = Number(objectSort[el.label]);
@@ -149,6 +150,9 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                     }else if(objectSort && objectSort[el.label] === 3){
                                         sortValue = Number(objectSort[el.label]);
                                     }
+
+                                    //Sort server side 
+                                    
                                     //TODO : da sistemare nel file di configurazione come fatto con doc emessi , doc sospesi ente 06/02/26
                                     if(nameParameterApi === 'idOrchestratore' || nameParameterApi === "asyncDocEnte"|| nameParameterApi === "idPrevisonale" ){ //|| nameParameterApi === "modComTrimestrale"
                                         return(
@@ -185,14 +189,15 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                             </TableCell>
                                         );
                                     }else if( nameParameterApi === "idNotifica"){
+                                        console.log({body})
                                         return(
                                             <TableCell key={`tableCell-${i}`} align={el.align} width={el.width}>{el.label}
-                                                {(el.headerActionSort &&  headerActionSortServerSide) &&
+                                                {(el.headerActionSort &&  headerActionSortServerSide && body?.sort) &&
                                                 <Tooltip title="Sort">
                                                     <span>
-                                                        <IconButton disabled={ (total === 0 ||elements.length === 0) ? true : false} sx={{marginLeft:'10px'}}  onClick={()=> headerActionSortServerSide &&  headerActionSortServerSide()}  size="small">
-                                                            {(sortValue === 1) ? <ArrowUpwardIcon sx={{ color: 'text.disabled'}}></ArrowUpwardIcon> :
-                                                                (sortValue === 2) ? <ArrowUpwardIcon></ArrowUpwardIcon>:
+                                                        <IconButton disabled={ (total === 0 ||elements.length === 0) ? true : false} sx={{marginLeft:'10px'}}  onClick={()=> headerActionSortServerSide &&  headerActionSortServerSide(el.label)}  size="small">
+                                                            {(body?.sort.order === null) ? <ArrowUpwardIcon sx={{ color: 'text.disabled'}}></ArrowUpwardIcon> :
+                                                                (body?.sort.order === "1") ? <ArrowUpwardIcon></ArrowUpwardIcon>:
                                                                     <ArrowDownwardIcon></ArrowDownwardIcon>}
                                                         </IconButton>
                                                     </span>

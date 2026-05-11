@@ -1,11 +1,11 @@
 import axios from "axios";
-import { BodyListaNotifiche } from "../../../types/typesGeneral";
+import { BodyListaNotifiche, BodyListaNotifichePagoPa } from "../../../types/typesGeneral";
 import { url } from "../../api";
 import { ModalBodyContestazioneModifyPagoPa } from "../../../types/typeReportDettaglio";
 import { BodyContestazionePage } from "../../../page/prod_pn/inserimentoContestazioni";
 
-export const listaNotifichePagoPa = async (token:string, nonce:string , page:number, pageSize:number, body: BodyListaNotifiche) => {
-    const response =  await axios.post(`${url}/api/notifiche/pagopa?page=${page}&pageSize=${pageSize}&nonce=${nonce}`,
+export const listaNotifichePagoPa = async (token:string, nonce:string , page:number, pageSize:number, columnName:string|null,order:string|null, body: BodyListaNotifichePagoPa) => {
+    const response =  await axios.post(`${url}/api/notifiche/pagopa?page=${page}&pageSize=${pageSize}&columnName:${columnName}&order=${order}&nonce=${nonce}`,
         body,
         { headers: {
             Authorization: 'Bearer ' + token
