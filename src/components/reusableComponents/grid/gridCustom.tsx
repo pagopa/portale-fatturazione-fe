@@ -50,7 +50,8 @@ interface GridCustomProps {
     setGridData?:React.Dispatch<SetStateAction<any[]>>
     gridType?:boolean,
     setObjectSort?:React.Dispatch<SetStateAction<{[key:string]:number}>>,
-    listaResponse?:any[]
+    listaResponse?:any[],
+    headerActionSortServerSide?:() => void
 }
 
 
@@ -81,7 +82,8 @@ const GridCustom : React.FC<GridCustomProps> = ({
     gridType=false,
     headerActionSort,
     setObjectSort,
-    listaResponse=[]
+    listaResponse=[],
+    headerActionSortServerSide
 }) =>{
 
     const handleClickOnGrid = (element) =>{
@@ -182,6 +184,22 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                                 </Tooltip>}
                                             </TableCell>
                                         );
+                                    }else if( nameParameterApi === "idNotifica"){
+                                        return(
+                                            <TableCell key={`tableCell-${i}`} align={el.align} width={el.width}>{el.label}
+                                                {(el.headerActionSort &&  headerActionSortServerSide) &&
+                                                <Tooltip title="Sort">
+                                                    <span>
+                                                        <IconButton disabled={ (total === 0 ||elements.length === 0) ? true : false} sx={{marginLeft:'10px'}}  onClick={()=> headerActionSortServerSide &&  headerActionSortServerSide()}  size="small">
+                                                            {(sortValue === 1) ? <ArrowUpwardIcon sx={{ color: 'text.disabled'}}></ArrowUpwardIcon> :
+                                                                (sortValue === 2) ? <ArrowUpwardIcon></ArrowUpwardIcon>:
+                                                                    <ArrowDownwardIcon></ArrowDownwardIcon>}
+                                                        </IconButton>
+                                                    </span>
+                                                   
+                                                </Tooltip>}
+                                            </TableCell>
+                                        );
                                     }else{
                                         return <TableCell key={`tableCell-${i}`} align="center">{el}</TableCell>;
                                     }  
@@ -231,8 +249,8 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                     return <RowAsyncDoc key={Math.random()} sliced={sliced} headerNames={headerNames} handleClickOnGrid={handleClickOnGrid} element={element}></RowAsyncDoc>;
                                 }else if(nameParameterApi === "contestazionePage"){
                                     return <RowContestazioni key={Math.random()} sliced={sliced}apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} headerNames={headerNames}></RowContestazioni>;
-                                }else if(nameParameterApi === "modComTrimestrale"){
-                                    return  <DefaultRow key={element.id} handleClickOnGrid={handleClickOnGrid} element={element} sliced={sliced} apiGet={()=> console.log("go to details")} headerNames={headerNames}></DefaultRow>;
+                                }else if(nameParameterApi === "modComTrimestrale" || nameParameterApi === "idNotifica"){
+                                    return  <DefaultRow key={element.id} handleClickOnGrid={handleClickOnGrid} element={element} sliced={sliced} apiGet={()=> console.log("go to details")} headerNames={headerNames} nameParameterApi={nameParameterApi}></DefaultRow>;
                                 }else if(nameParameterApi === "idPrevisonale"){
                                     return <RowModCommessaPrevisionale key={element.id} sliced={sliced} element={element} headerNames={headerNames}></RowModCommessaPrevisionale>;
                                 }else if(nameParameterApi === "docEmessiEnte"||nameParameterApi ==="docSospesiSend" ){
