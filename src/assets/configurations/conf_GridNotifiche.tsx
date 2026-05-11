@@ -5,6 +5,33 @@ import { useState } from "react";
 
 export const headerNamesEnte: HeaderGridCustom[] = [
     {label:"Contestazione", align:"center", width:"100px"},
+       {label:"Event ID", align:"center", width:"80px",headerTooltip:(title,label,color) => {
+
+    const [open, setOpen] = useState(false);
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText(label);
+        setOpen(true);
+    };
+       return( <>
+            <Tooltip  title={label}>
+                <IconButton onClick={handleCopy}>
+                    <ArticleIcon sx={{color:"default"}} fontSize="small" />
+                </IconButton>
+            </Tooltip>
+            <Snackbar
+                open={open}
+                onClose={() => setOpen(false)}
+                autoHideDuration={2000}
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            ><Alert 
+                onClose={() => setOpen(false)} 
+                severity="success" 
+                >Event ID Copiato!
+            </Alert></Snackbar>
+        </>)
+    }
+    },
     {label:"Onere", align:"center", width:"100px"},
     {label:"Recipient ID", align:"center", width:"100px"},
     {label:"Anno", align:"center", width:"100px"},

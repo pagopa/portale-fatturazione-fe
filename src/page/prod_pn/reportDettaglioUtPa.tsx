@@ -403,7 +403,7 @@ const ReportDettaglio : React.FC = () => {
             costEuroInCentesimi:(Number(notifica.costEuroInCentesimi) / 100).toLocaleString("de-DE", { style: "currency", currency: "EUR" })
         };
         if(profilo.profilo === 'REC' || profilo.profilo === 'CON' || (profilo.profilo === "PA" && profilo.auth === "SELFCARE")){
-            const {ragioneSociale,id, ...result} = element;
+            const {ragioneSociale, ...result} = element;
             return result;
         }else{
             return element;
