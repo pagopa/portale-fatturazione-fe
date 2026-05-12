@@ -3,8 +3,8 @@ import { url } from "../../api";
 import { BodyListaNotificheSelfcare } from "../../../types/typesGeneral";
 import { BodyListaEnti, ModalBodyContestazione, ModalBodyContestazioneModify } from "../../../types/typeReportDettaglio";
 
-export const listaNotifiche = async (token:string, nonce:string , page:number, pageSize:number, body: BodyListaNotificheSelfcare) => {
-    const response =  await axios.post(`${url}/api/notifiche/ente?page=${page}&pageSize=${pageSize}&nonce=${nonce}`,
+export const listaNotifiche = async (token:string, nonce:string , page:number, pageSize:number, columnName:string|null, order:string|null, body: BodyListaNotificheSelfcare) => {
+    const response =  await axios.post(`${url}/api/notifiche/ente?page=${page}&pageSize=${pageSize}&columnName=${columnName}&order=${order}&nonce=${nonce}`,
         body,
         { headers: {
             Authorization: 'Bearer ' + token
@@ -14,8 +14,8 @@ export const listaNotifiche = async (token:string, nonce:string , page:number, p
     return response;
 };
 
-export const listaNotificheRecapitista = async (token:string, nonce:string , page:number, pageSize:number, body: BodyListaNotificheSelfcare) => {
-    const response =  await axios.post(`${url}/api/notifiche/recapitista?page=${page}&pageSize=${pageSize}&nonce=${nonce}`,
+export const listaNotificheRecapitista = async (token:string, nonce:string , page:number, pageSize:number,columnName:string|null, order:string|null, body: BodyListaNotificheSelfcare) => {
+    const response =  await axios.post(`${url}/api/notifiche/recapitista?page=${page}&pageSize=${pageSize}&columnName=${columnName}&order=${order}&nonce=${nonce}`,
         body,
         { headers: {
             Authorization: 'Bearer ' + token
@@ -25,8 +25,8 @@ export const listaNotificheRecapitista = async (token:string, nonce:string , pag
     return response;
 };
 
-export const listaNotificheConsolidatore = async (token:string, nonce:string , page:number, pageSize:number, body: BodyListaNotificheSelfcare) => {
-    const response =  await axios.post(`${url}/api/notifiche/consolidatore?page=${page}&pageSize=${pageSize}&nonce=${nonce}`,
+export const listaNotificheConsolidatore = async (token:string, nonce:string , page:number, pageSize:number,columnName:string|null, order:string|null, body: BodyListaNotificheSelfcare) => {
+    const response =  await axios.post(`${url}/api/notifiche/consolidatore?page=${page}&pageSize=${pageSize}&columnName=${columnName}&order=${order}&nonce=${nonce}`,
         body,
         { headers: {
             Authorization: 'Bearer ' + token

@@ -112,7 +112,10 @@ const ReportDettaglio : React.FC = () => {
         recipientId:null,
         recapitisti:[],
         consolidatori:[],
-        //data:1
+        sort:{
+            columnName:null,
+            order:null
+        }
     });
     const [bodyDownload, setBodyDownload] = useState<BodyListaNotifiche>({
         profilo:'',
@@ -127,7 +130,10 @@ const ReportDettaglio : React.FC = () => {
         recipientId:null,
         recapitisti:[],
         consolidatori:[],
-        //data:1
+        sort:{
+            columnName:null,
+            order:null
+        }
     });
     
     const [contestazioneSelected, setContestazioneSelected] = useState<Contestazione>({ 
@@ -175,11 +181,11 @@ const ReportDettaglio : React.FC = () => {
             isInitialRender.current = false;
         }
     }, []);
-    
+    console.log({filters})
     const funInitialRender = async (newBody, dataFromLocalStorage) => {
         try {
             setGetNotificheWorking(true);
-            // Fire these in parallel (not awaiting each)
+   
             getProdotti();
             getProfili();
             getFlagContestazione();
@@ -225,22 +231,22 @@ const ReportDettaglio : React.FC = () => {
             
           
             if (profilo.auth === "SELFCARE" && mainState.datiFatturazione) {
+                console.log({body})
                 await getlistaNotifiche(page, row, {
                     ...body,
                     mese: Number(meseToSet),
                     anno: Number(annoToSet),
                 });
-            } else if (
-                profilo.auth === "SELFCARE" &&
-            (profilo.profilo === "CON" || profilo.profilo === "REC")
-            ) {
+            } else if (profilo.auth === "SELFCARE" && (profilo.profilo === "CON" || profilo.profilo === "REC")) {
                 await getlistaNotifiche(page, row, {
                     ...body,
                     mese: Number(meseToSet),
                     anno: Number(annoToSet),
                 });
             } else if (profilo.auth === "PAGOPA") {
-                await getlistaNotifichePagoPa(page, row, newBodyWithDates);
+                if(isInitialRender.current && Object.keys(filters).length !== 0 ){
+                    await getlistaNotifichePagoPa(page, row, newBodyWithDates);
+                }
                 await getRecapitistConsolidatori();
             }
             // Restore filters only if needed
@@ -424,7 +430,11 @@ const ReportDettaglio : React.FC = () => {
             idEnti:[],
             recipientId:null,
             recapitisti:[],
-            consolidatori:[]
+            consolidatori:[],
+            sort:{
+                columnName:null,
+                order:null
+            }
         },false);
         setValueFgContestazione([]);
         setDataSelect([]);
@@ -440,8 +450,9 @@ const ReportDettaglio : React.FC = () => {
     const getlistaNotifiche = async (nPage:number, nRow:number, bodyParameter = bodyGetLista) => {
         // elimino idEnti dal paylod della get notifiche lato selfcare
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const {idEnti, recapitisti, consolidatori, ...newBody} = bodyParameter;
+        const {idEnti, recapitisti, consolidatori,sort, ...newBody} = bodyParameter;
         // disable button filtra e annulla filtri nell'attesa dei dati
+        console.log({sort})
         setShowLoadingGrid(true);
         setGetNotificheWorking(true);
         const bodyTipoNotificaNumberOrNull: BodyListaNotificheSelfcare = {
@@ -452,8 +463,7 @@ const ReportDettaglio : React.FC = () => {
         };
 
         if(enti){
-           
-            await listaNotifiche(token,profilo.nonce,nPage, nRow, bodyTipoNotificaNumberOrNull).then((res)=>{
+            await listaNotifiche(token,profilo.nonce,nPage, nRow, sort.columnName,sort.order, bodyTipoNotificaNumberOrNull).then((res)=>{
                 setNotificheList(res.data.notifiche);
                 setTotalNotifiche(res.data.count);
                 // abilita button filtra e annulla filtri all'arrivo dei dati
@@ -470,7 +480,7 @@ const ReportDettaglio : React.FC = () => {
                 manageError(error, dispatchMainState);
             });
         }else if(profilo.profilo === 'REC'){
-            await listaNotificheRecapitista(token,profilo.nonce,nPage, nRow, bodyTipoNotificaNumberOrNull).then((res)=>{
+            await listaNotificheRecapitista(token,profilo.nonce,nPage, nRow,sort.columnName,sort.order, bodyTipoNotificaNumberOrNull).then((res)=>{
                 setNotificheList(res.data.notifiche);
                 setTotalNotifiche(res.data.count);
                 // abilita button filtra e annulla filtri all'arrivo dei dati
@@ -487,7 +497,7 @@ const ReportDettaglio : React.FC = () => {
                 manageError(error, dispatchMainState);
             });
         }else if(profilo.profilo === 'CON'){
-            await listaNotificheConsolidatore(token,profilo.nonce,nPage, nRow,bodyTipoNotificaNumberOrNull).then((res)=>{
+            await listaNotificheConsolidatore(token,profilo.nonce,nPage, nRow,sort.columnName,sort.order,bodyTipoNotificaNumberOrNull).then((res)=>{
                 setNotificheList(res.data.notifiche);
                 setTotalNotifiche(res.data.count);
                 // abilita button filtra e annulla filtri all'arrivo dei dati
@@ -509,9 +519,11 @@ const ReportDettaglio : React.FC = () => {
     
     const getlistaNotifichePagoPa = async (nPage:number, nRow:number, bodyParameter = bodyGetLista) => {
         // disable button filtra e annulla filtri nell'attesa dei dati
+
+         const {sort, ...newBody} = bodyParameter;
         setGetNotificheWorking(true);
         setShowLoadingGrid(true);
-        await listaNotifichePagoPa(token,profilo.nonce,nPage, nRow, bodyParameter).then((res)=>{
+        await listaNotifichePagoPa(token,profilo.nonce,nPage, nRow,sort.columnName,sort.order, newBody).then((res)=>{
             // abilita button filtra e annulla filtri all'arrivo dei dati
             setGetNotificheWorking(false);
             setNotificheList(res.data.notifiche);
@@ -820,13 +832,55 @@ const ReportDettaglio : React.FC = () => {
         }
     }; 
 
-
-    const headerActionSort = () =>{
-        console.log("elelelel")
+    const callGetLista = (body) => {
+         if(profilo.auth === 'SELFCARE'){
+            getlistaNotifiche(page+1, rowsPerPage, body);
+        }else{
+            getlistaNotifichePagoPa(page+1, rowsPerPage, body);
+        }  
     }
-    const statusAnnulla =  (bodyGetLista.profilo !== '' ||
+
+    const headerActionSort = (label) =>{
+        if(label === "Data Evento" && bodyGetLista.sort.order === "1"){
+            setBodyGetLista(prev => {
+                const newBody = {...prev, sort:{columnName:"data",order:"2"}}
+                callGetLista(newBody)
+                setBodyDownload(newBody);
+                updateFilters({
+                    pathPage:profilePath,
+                    body:newBody
+                });
+                return newBody
+            })
+        }else if(label === "Data Evento" && bodyGetLista.sort.order === "2"){
+             setBodyGetLista(prev => {
+                const newBody = {...prev, sort:{columnName:null,order:null}}
+                callGetLista(newBody)
+                setBodyDownload(newBody);
+                updateFilters({
+                    pathPage:profilePath,
+                    body:newBody
+                });
+                return newBody
+            })
+        }else{
+             setBodyGetLista(prev => {
+                const newBody = {...prev, sort:{columnName:"data",order:"1"}}
+                callGetLista(newBody)
+                setBodyDownload(newBody);
+                updateFilters({
+                    pathPage:profilePath,
+                    body:newBody
+                });
+                return newBody
+            })
+        }
+        
+    }
+    const statusAnnulla =  (
+            bodyGetLista.profilo !== '' ||
             bodyGetLista.prodotto !== '' ||
-            bodyGetLista.tipoNotifica !== null ||
+            bodyGetLista.tipoNotifica.length > 0 ||
             bodyGetLista.statoContestazione.length !== 0 ||
             bodyGetLista.cap !== null ||
             bodyGetLista.idEnti?.length !== 0 ||
@@ -834,9 +888,11 @@ const ReportDettaglio : React.FC = () => {
             bodyGetLista.anno !== arrayAnni[0]||
             bodyGetLista.recipientId !== null ||
             bodyGetLista.consolidatori?.length !== 0 ||
-            bodyGetLista.recapitisti?.length !== 0 ) ? "show" : "hidden" 
+            bodyGetLista.recapitisti?.length !== 0 ||
+            bodyGetLista.sort.columnName !== null ||
+            bodyGetLista.sort.order !== null) ? "show" : "hidden" 
     
-   
+
     return (
         
         <MainBoxStyled title={"Notifiche"} actionButton={[{
@@ -1081,6 +1137,7 @@ const ReportDettaglio : React.FC = () => {
         headerActionSortServerSide={headerActionSort}
         widthCustomSize="2000px"
         sentenseEmpty={"Non sono presenti notifiche"}
+        body={bodyGetLista}
         />                       
         <ModalContestazione open={open} 
         setOpen={setOpen} 
