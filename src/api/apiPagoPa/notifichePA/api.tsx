@@ -5,7 +5,7 @@ import { ModalBodyContestazioneModifyPagoPa } from "../../../types/typeReportDet
 import { BodyContestazionePage } from "../../../page/prod_pn/inserimentoContestazioni";
 
 export const listaNotifichePagoPa = async (token:string, nonce:string , page:number, pageSize:number, columnName:string|null,order:string|null, body: BodyListaNotifichePagoPa) => {
-    const response =  await axios.post(`${url}/api/notifiche/pagopa?page=${page}&pageSize=${pageSize}&columnName:${columnName}&order=${order}&nonce=${nonce}`,
+    const response =  await axios.post(`${url}/api/notifiche/pagopa?page=${page}&pageSize=${pageSize}&columnName=${columnName}&order=${order}&nonce=${nonce}`,
         body,
         { headers: {
             Authorization: 'Bearer ' + token

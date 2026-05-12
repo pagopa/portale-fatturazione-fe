@@ -197,7 +197,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                                     <span>
                                                         <IconButton disabled={ (total === 0 ||elements.length === 0) ? true : false} sx={{marginLeft:'10px'}}  onClick={()=> headerActionSortServerSide &&  headerActionSortServerSide(el.label)}  size="small">
                                                             {(body?.sort.order === null) ? <ArrowUpwardIcon sx={{ color: 'text.disabled'}}></ArrowUpwardIcon> :
-                                                                (body?.sort.order === "1") ? <ArrowUpwardIcon></ArrowUpwardIcon>:
+                                                                (body?.sort.order === "2") ? <ArrowUpwardIcon></ArrowUpwardIcon>:
                                                                     <ArrowDownwardIcon></ArrowDownwardIcon>}
                                                         </IconButton>
                                                     </span>
