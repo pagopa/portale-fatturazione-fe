@@ -39,12 +39,14 @@ const Row = ({row, setSelected,selected,setOpenResetFilterModal,monthFilterIsEqu
 
     const handleGoToDetail = async(el) => {
         let idTipoContratto = 0;
-        if(el.tipocontratto === "PAL"){
+        if(el.tipocontratto === "PAC - PAL senza requisiti"){
             idTipoContratto = 1;
-        }else if(el.tipocontratto === "PAC"){
+        }else if(el.tipocontratto === "PAC - PAL con requisiti"){
             idTipoContratto = 2;
         }
-        navigate(`${PathPf.PDF_REL}/documentiemessi/${el.idfattura}/${el.istitutioID}/${idTipoContratto}`); 
+        if(idTipoContratto !== 0){
+         navigate(`${PathPf.PDF_REL}/documentiemessi/${el.idfattura}/${el.istitutioID}/${idTipoContratto}`);
+        }
     };  
 
     const isSelected = (id: number) => selected.indexOf(id) !== -1;
