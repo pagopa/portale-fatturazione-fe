@@ -181,7 +181,7 @@ const ReportDettaglio : React.FC = () => {
             isInitialRender.current = false;
         }
     }, []);
-    console.log({filters})
+   
     const funInitialRender = async (newBody, dataFromLocalStorage) => {
         try {
             setGetNotificheWorking(true);
@@ -244,7 +244,7 @@ const ReportDettaglio : React.FC = () => {
                     anno: Number(annoToSet),
                 });
             } else if (profilo.auth === "PAGOPA") {
-                if(isInitialRender.current && Object.keys(filters).length !== 0 ){
+                if(isInitialRender.current && Object.keys(filters)?.length !== 0 ){
                     await getlistaNotifichePagoPa(page, row, newBodyWithDates);
                 }
                 await getRecapitistConsolidatori();
@@ -880,7 +880,7 @@ const ReportDettaglio : React.FC = () => {
     const statusAnnulla =  (
             bodyGetLista.profilo !== '' ||
             bodyGetLista.prodotto !== '' ||
-            bodyGetLista.tipoNotifica.length > 0 ||
+            (bodyGetLista.tipoNotifica !== null && bodyGetLista.tipoNotifica?.length !== 0) ||
             bodyGetLista.statoContestazione.length !== 0 ||
             bodyGetLista.cap !== null ||
             bodyGetLista.idEnti?.length !== 0 ||
@@ -1165,7 +1165,7 @@ const ReportDettaglio : React.FC = () => {
         setOpen={setShowLoading}
         sentence={profilo.auth === "PAGOPA"?'Downloading...':"Elaborazione in corso"} />
         <ModalLoading 
-        open={showLoadingGrid} 
+        open={showLoadingGrid || getNotificheWorking } 
         setOpen={setShowLoadingGrid}
         sentence={'Loading...'} />
         <ModalScadenziario
