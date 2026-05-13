@@ -231,7 +231,7 @@ const ReportDettaglio : React.FC = () => {
             
           
             if (profilo.auth === "SELFCARE" && mainState.datiFatturazione) {
-                console.log({body})
+              
                 await getlistaNotifiche(page, row, {
                     ...body,
                     mese: Number(meseToSet),
@@ -452,7 +452,7 @@ const ReportDettaglio : React.FC = () => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const {idEnti, recapitisti, consolidatori,sort, ...newBody} = bodyParameter;
         // disable button filtra e annulla filtri nell'attesa dei dati
-        console.log({sort})
+      
         setShowLoadingGrid(true);
         setGetNotificheWorking(true);
         const bodyTipoNotificaNumberOrNull: BodyListaNotificheSelfcare = {
@@ -536,6 +536,7 @@ const ReportDettaglio : React.FC = () => {
             setGetNotificheWorking(false);
             setShowLoadingGrid(false);
             manageError(error, dispatchMainState);
+            console.log({error})
         });     
         isInitialRender.current = false;   
     };
@@ -834,10 +835,12 @@ const ReportDettaglio : React.FC = () => {
 
     const callGetLista = (body) => {
          if(profilo.auth === 'SELFCARE'){
-            getlistaNotifiche(page+1, rowsPerPage, body);
+            getlistaNotifiche(1, 10, body);
         }else{
-            getlistaNotifichePagoPa(page+1, rowsPerPage, body);
+            getlistaNotifichePagoPa(1, 10, body);
         }  
+        setPage(0);
+        setRowsPerPage(10);
     }
 
     const headerActionSort = (label) =>{
@@ -848,7 +851,9 @@ const ReportDettaglio : React.FC = () => {
                 setBodyDownload(newBody);
                 updateFilters({
                     pathPage:profilePath,
-                    body:newBody
+                    body:newBody,
+                    page:0,
+                    rows:10,
                 });
                 return newBody
             })
@@ -859,18 +864,22 @@ const ReportDettaglio : React.FC = () => {
                 setBodyDownload(newBody);
                 updateFilters({
                     pathPage:profilePath,
-                    body:newBody
+                    body:newBody,
+                    page:0,
+                    rows:10,
                 });
                 return newBody
             })
-        }else{
+        }else if(label === "Data Evento" && bodyGetLista.sort.order === null){
              setBodyGetLista(prev => {
                 const newBody = {...prev, sort:{columnName:"data",order:"1"}}
                 callGetLista(newBody)
                 setBodyDownload(newBody);
                 updateFilters({
                     pathPage:profilePath,
-                    body:newBody
+                    body:newBody,
+                    page:0,
+                    rows:10,
                 });
                 return newBody
             })

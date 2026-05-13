@@ -298,7 +298,6 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
 
     totaleImponibileCalcolatoByFront = Number(mainObj.anticipoDigitale||0) + Number(mainObj.anticipoAnalogico||0);
   }else if(mainObj.tipologiaFattura === "ACCONTO"){
-    console.log(999);
     analogicoIvatoCalcolatoByFront = Number(mainObj.accontoAnalogico||0)* (((mainObj.iva||22)/100)+1);
     digitaleIvatoCalcolatoByFront = Number(mainObj.accontoDigitale||0)* (((mainObj.iva||22)/100)+1);
     totaleIvatoCalcolatoByFront = analogicoIvatoCalcolatoByFront + digitaleIvatoCalcolatoByFront;
