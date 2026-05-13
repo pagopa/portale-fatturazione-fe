@@ -536,7 +536,6 @@ const ReportDettaglio : React.FC = () => {
             setGetNotificheWorking(false);
             setShowLoadingGrid(false);
             manageError(error, dispatchMainState);
-            console.log({error})
         });     
         isInitialRender.current = false;   
     };
@@ -729,7 +728,7 @@ const ReportDettaglio : React.FC = () => {
         setShowLoading(true);
      
         if(enti){
-            const {idEnti, recapitisti, consolidatori, ...bodyEnti} = bodyDownload; 
+            const {idEnti, recapitisti, consolidatori,sort, ...bodyEnti} = bodyDownload; 
             // eslint-disable-next-line @typescript-eslint/no-unused-vars  
 
             const bodyTipoNotificaNumberOrNull: BodyListaNotificheSelfcare = {
@@ -764,7 +763,7 @@ const ReportDettaglio : React.FC = () => {
           
         }else if(profilo.profilo === 'REC'){
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const {idEnti, recapitisti, consolidatori, ...bodyRecapitista} = bodyDownload;
+            const {idEnti, recapitisti, consolidatori,sort, ...bodyRecapitista} = bodyDownload;
             const bodyTipoNotificaNumberOrNull: BodyListaNotificheSelfcare = {
                 ...bodyRecapitista,
                 tipoNotifica: Array.isArray(bodyRecapitista.tipoNotifica)
@@ -788,7 +787,7 @@ const ReportDettaglio : React.FC = () => {
             }));
         }else if(profilo.profilo === 'CON'){
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const { idEnti, recapitisti, consolidatori, ...bodyConsolidatore} = bodyDownload;
+            const { idEnti, recapitisti, consolidatori,sort, ...bodyConsolidatore} = bodyDownload;
             const bodyTipoNotificaNumberOrNull: BodyListaNotificheSelfcare = {
                 ...bodyConsolidatore,
                 tipoNotifica: Array.isArray(bodyConsolidatore.tipoNotifica)
@@ -811,7 +810,8 @@ const ReportDettaglio : React.FC = () => {
                 setShowLoading(false);
             }));
         }else if(profilo.auth === 'PAGOPA'){
-            await downloadNotifchePagoPa(token, profilo.nonce,bodyDownload).then((res)=>{
+            const { sort, ...bodyAdmin} = bodyDownload;
+            await downloadNotifchePagoPa(token, profilo.nonce,bodyAdmin as BodyListaNotifiche).then((res)=>{
                 let fileName = `Notifiche /${mesiWithZero[(bodyDownload?.mese||0)-1]} /${bodyDownload.anno}.csv`;
                 if(bodyDownload.idEnti.length === 1){
                     fileName = `Notifiche /${notificheList[0].ragioneSociale}/${mesiWithZero[(bodyDownload?.mese||0)-1]} /${bodyDownload.anno}.csv`;
