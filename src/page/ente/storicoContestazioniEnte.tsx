@@ -91,15 +91,6 @@ const StoricoEnte : React.FC = () => {
     const [valueYears, setValueYears] = useState<string[]>(["2025"]);
     const [dataGrid,setDataGrid] = useState<any[]>([
         {
-            reportId:1,
-            dataInserimento:"11/12/2025",
-            num:1234,
-            mese:month[11],
-            anno:2025,
-            stato:"Bozza",
-            idStato:4
-        },
-        {
             reportId:2,
             dataInserimento:"11/12/2025",
             num:99,
