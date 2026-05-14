@@ -257,13 +257,7 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
   const imponibile_Ivato_IsVisible = mainObj.tipologiaFattura === "PRIMO SALDO" || mainObj.tipologiaFattura === "SECONDO SALDO" || mainObj.tipologiaFattura === "VAR. SEMESTRALE";    
   const anticipo_analogico_digitale_IsVisible = mainObj.tipologiaFattura === "ANTICIPO" && !isRel;
   const acconto_analogico_digitale_IsVisible = mainObj.tipologiaFattura === "ACCONTO" && idTipoContrattoBasedOnProfile === 2;
-  const storno_analogico_digitale_totale_storno_IsVisible = (mainObj.tipologiaFattura === "PRIMO SALDO" || mainObj.tipologiaFattura === "SECONDO SALDO" || mainObj.tipologiaFattura === "VAR. SEMESTRALE" || mainObj.tipologiaFattura === "ACCONTO" ) && !isRel;
-
-  let stornoRelIsVisible = false;
-  if(isRel){
-    //TODO in attesa che le info vengano inserite nella response
-    stornoRelIsVisible = false;
-  }
+  const storno_analogico_digitale_totale_storno_IsVisible = (mainObj.tipologiaFattura === "PRIMO SALDO" || mainObj.tipologiaFattura === "SECONDO SALDO" || mainObj.tipologiaFattura === "VAR. SEMESTRALE" || (mainObj.tipologiaFattura === "ACCONTO" && !isRel) );  // nella rel ne anticipo ne acconto
 
   let numeroNotificheSectionIsVisible = true;
   if(mainObj.tipologiaFattura === "ANTICIPO"){
@@ -280,7 +274,10 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
     ivato_da_fatturare_IsVisible = false;
   }
 
-  const totaleStornoCalculateByFE = Number(mainObj.stornoDigitale||0) + Number(mainObj.stornoAnalogico||0);
+  let totaleStornoCalculateByFE = Number(mainObj.stornoDigitale||0) + Number(mainObj.stornoAnalogico||0);
+  if(isRel){
+    totaleStornoCalculateByFE = Number(mainObj.stornoTotale||0) 
+  }
 
   
 
@@ -349,14 +346,7 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
           <div className="container text-center">
             {storno_analogico_digitale_totale_storno_IsVisible &&<TextDettaglioPdf description='Storno Digitale' value={Number(mainObj.stornoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
             {storno_analogico_digitale_totale_storno_IsVisible &&<TextDettaglioPdf description='Storno Analogico' value={Number(mainObj.stornoAnalogico||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
-
-            {stornoRelIsVisible &&<TextDettaglioPdf description='Storno Anticipo Digitale' value={0}></TextDettaglioPdf>}
-            {stornoRelIsVisible &&<TextDettaglioPdf description='Storno Anticipo Analogico' value={0}></TextDettaglioPdf>}
-            {stornoRelIsVisible &&<TextDettaglioPdf description='Storno Acconto Digitale' value={0}></TextDettaglioPdf>}
-            {stornoRelIsVisible &&<TextDettaglioPdf description='Storno Acconto Analogico' value={0}></TextDettaglioPdf>}
-
-
-            {(storno_analogico_digitale_totale_storno_IsVisible || stornoRelIsVisible)  && <TextDettaglioPdf description='Totale Storno' value={Number(totaleStornoCalculateByFE).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
+            {storno_analogico_digitale_totale_storno_IsVisible && <TextDettaglioPdf description='Totale Storno' value={Number(totaleStornoCalculateByFE).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
             {imponibile_Ivato_IsVisible &&<TextDettaglioPdf description='Imponibile Digitale' value={Number(mainObj.totaleDigitale).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
             {imponibile_Ivato_IsVisible && <TextDettaglioPdf description='Imponibile Analogico' value={Number(mainObj.totaleAnalogico).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
             {anticipo_analogico_digitale_IsVisible && <TextDettaglioPdf description='Anticipo Digitale' value={Number(mainObj.anticipoDigitale||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
