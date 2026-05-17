@@ -17,6 +17,7 @@ import InboxIcon from '@mui/icons-material/Inbox';
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 import PersonIcon from '@mui/icons-material/Person';
 import MarkChatUnreadIcon from '@mui/icons-material/MarkChatUnread';
+import NoteAddIcon from '@mui/icons-material/NoteAdd';
 
 
 const MainBox = styled(Box)({
@@ -365,6 +366,8 @@ export const RenderIcon = (iconName,sx = true) => {
             return <HourglassBottomIcon fontSize={sx ? "small":"medium"} ></HourglassBottomIcon>;
         case "person":
             return <PersonIcon fontSize={sx ? "small":"medium"}></PersonIcon>;
+        case "add":
+            return <NoteAddIcon  fontSize={sx ? "small":"medium"}></NoteAddIcon>;
         case "type-not":
             return <MarkChatUnreadIcon fontSize={sx ? "small":"medium"}></MarkChatUnreadIcon>;
 

@@ -28,7 +28,6 @@ const RowContestazioniEnte = ({sliced,handleClickOnGrid,apiGet,element,headerNam
                 Object.values(sliced)?.map((value:any, i:number)=>{
                     const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
                     const valueEl = (i === 0 && value?.toString().length > 20) ? value?.toString().slice(0, 20) + '...' : value;
-                    console.log({valueEl});
                     if(headerNames[i]?.renderCell){
                         return  headerNames[i]?.renderCell(valueEl,bgColorRow);
                     }else if(headerNames[i]?.renderCell2){

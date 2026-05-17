@@ -218,7 +218,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                 }else if(nameParameterApi === "docSospesiSend"){
                                     sliced = Object.fromEntries(Object.entries(element).slice(2, -3));
                                 }else if(nameParameterApi === "contestazioneEnte"){
-                                    sliced = Object.fromEntries(Object.entries(element).slice(1, -1));
+                                    sliced = Object.fromEntries(Object.entries(element).slice(0, -1));
                                 }
 
                             
@@ -235,7 +235,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                 }else if(nameParameterApi === "contestazionePage"){
                                     return <RowContestazioni key={Math.random()} sliced={sliced}apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} headerNames={headerNames}></RowContestazioni>;
                                 }else if( nameParameterApi === "contestazioneEnte"){
-                                        return <RowContestazioniEnte key={Math.random()} sliced={sliced}apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} headerNames={headerNames}></RowContestazioniEnte>;
+                                        return <RowContestazioniEnte key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} headerNames={headerNames}></RowContestazioniEnte>;
                                     }else if(nameParameterApi === "modComTrimestrale"){
                                     return  <DefaultRow key={element.id} handleClickOnGrid={handleClickOnGrid} element={element} sliced={sliced} apiGet={()=> console.log("go to details")} headerNames={headerNames}></DefaultRow>;
                                 }else if(nameParameterApi === "idPrevisonale"){
