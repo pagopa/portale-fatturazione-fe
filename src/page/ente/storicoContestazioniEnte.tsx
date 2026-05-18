@@ -260,6 +260,11 @@ const StoricoEnte : React.FC = () => {
       mese:firstMonth.toString() ,
       idTipologiaReports:[]
     });
+    setBodyFiltered({
+      anno:firstYear.toString(),
+      mese:firstMonth.toString() ,
+      idTipologiaReports:[]
+    });
     getListaContestazioni({
       mese:firstMonth.toString(),
       idTipologiaReports:[],
