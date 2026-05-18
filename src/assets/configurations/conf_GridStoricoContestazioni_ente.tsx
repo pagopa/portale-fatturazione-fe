@@ -3,7 +3,6 @@ import { Chip, TableCell } from "@mui/material";
 export const headersName: {label:string,align:string,width:number|string,headerAction:boolean,renderCell?:(param:any,param2:string)=> JSX.Element }[]= [
   {label:'ID Processo',align:'center',width:'200px',headerAction:false},
   {label:'Data/Ora Inserimento',align:'center',width:'200px',headerAction:false},
-  {label:'N. Notifiche Contestate',align:'center',width:'200px',headerAction:false},
   { label: 'Mese',align:'center',width:'150px',headerAction:false},
   { label: "Anno",align:'center',width:'150px',headerAction:false},
   { label: 'Stato',align:'center',width:'200px',headerAction:false,renderCell: (param:any,param2:string) =>

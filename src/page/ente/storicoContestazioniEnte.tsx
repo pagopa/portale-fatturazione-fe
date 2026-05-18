@@ -105,7 +105,6 @@ const StoricoEnte : React.FC = () => {
     {
       reportId:2,
       dataInserimento:"11/12/2025 - 11:05",
-      num:99,
       mese:month[11],
       anno:2025,
       stato:"Processo completato",
@@ -115,7 +114,6 @@ const StoricoEnte : React.FC = () => {
     {
       reportId:3,
       dataInserimento:"11/12/2025 - 14:55",
-      num:44,
       mese:month[11],
       anno:2025,
       stato:"In elaborazione",
@@ -125,7 +123,6 @@ const StoricoEnte : React.FC = () => {
     {
       reportId:4,
       dataInserimento:"11/12/2025 - 17:32",
-      num:44,
       mese:month[11],
       anno:2025,
       stato:"Errore",
