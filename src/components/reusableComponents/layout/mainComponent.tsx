@@ -212,6 +212,7 @@ export const FilterActionButtons = ({
                             <Tooltip key={`${action.label}-${index}`}  title={action?.tooltipMessage ? action?.tooltipMessage:null}>
                                 <span>
                                     <CustomButton
+                                        sx={{gap:2}}
                                         key={index}
                                         variant={action.variant}
                                         onClick={action.onButtonClick}

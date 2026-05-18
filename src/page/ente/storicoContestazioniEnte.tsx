@@ -12,7 +12,9 @@ import { useGlobalStore } from "../../store/context/useGlobalStore";
 import GridView from "../../components/reusableComponents/grid/gridView/gridView";
 import { headersNameGridView } from "../../assets/configurations/conf_GridViewStoricoContestazioniEnte";
 import { FilterActionButtons, MainBoxStyled, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
-import MainFilter from "../../components/reusableComponents/mainFilter";
+import MainFilter, { MainBoxContainer } from "../../components/reusableComponents/mainFilter";
+import Box from "@mui/material/Box";
+import { Button } from "@mui/material";
 
 
       
@@ -87,6 +89,12 @@ const StoricoEnte : React.FC = () => {
   };
 
   const [bodyGetLista,setBodyGetLista] = useState<BodyStoricoContestazioniSE>({
+    anno:null,
+    mese:null,
+    idTipologiaReports:[]
+  });
+
+  const [bodyFiltered,setBodyFiltered] = useState<BodyStoricoContestazioniSE>({
     anno:null,
     mese:null,
     idTipologiaReports:[]
@@ -185,9 +193,9 @@ const StoricoEnte : React.FC = () => {
       if(isInitialRender.current){
    
         setBodyGetLista((prev)=> ({...prev, ...{anno:anno,mese:res.data[0].mese,}}));
+        setBodyFiltered((prev)=> ({...prev, ...{anno:anno,mese:res.data[0].mese,}}));
         getListaContestazioni({...bodyGetLista,...{mese:res.data[0].mese,anno:anno}},page+1,rowsPerPage);
       }else{
-     
         setBodyGetLista((prev)=> ({...prev, ...{mese:res.data[0].mese}}));
       }
       
@@ -270,6 +278,7 @@ const StoricoEnte : React.FC = () => {
       rows:10,
     });
     getListaContestazioni(bodyGetLista,page+1,rowsPerPage);
+    setBodyFiltered(bodyGetLista);
   };
          
   const handleChangePage = (
@@ -339,12 +348,7 @@ const StoricoEnte : React.FC = () => {
   }];
 
   return (
-    <MainBoxStyled title={"Contestazioni"} actionButton={[{
-      onButtonClick: () => navigate(PathPf.INIZIO_CONTEST_ENTE),
-      variant: "outlined",
-      withText:true,
-      label:"Crea Contestazione"
-    }]}>
+    <MainBoxStyled title={"Contestazioni"}>
       <ResponsiveGridContainer >
         <MainFilter 
           filterName={"select_value_string"}
@@ -382,11 +386,18 @@ const StoricoEnte : React.FC = () => {
         onButtonFiltra={handleFiltra} 
         onButtonAnnulla={handleAnnullaButton} 
         statusAnnulla={statusAnnulla} 
+        actionButton={[
+          {variant:"outlined",
+            onButtonClick:()=>navigate(PathPf.INIZIO_CONTEST_ENTE),
+            label:"Crea Contestazione",
+            icon:{name:"add"}
+          }]}
       />
+      
       <GridView 
         arrayData={recapListaNotifiche}
         configHeader={headersNameGridView}
-        title={`Notifiche ${month[Number(bodyGetLista.mese)-1]} ${bodyGetLista.anno}`}
+        title={`Notifiche ${month[Number(bodyFiltered.mese)-1]} ${bodyFiltered.anno}`}
         noDataMessage={"Non ci sono notifiche da visualizzare"}
         noDataTitle={"Nessun dato disponibile"}
         apiRunning={getListaContestazioniRunning}
