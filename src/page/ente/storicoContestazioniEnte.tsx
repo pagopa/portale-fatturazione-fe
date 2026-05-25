@@ -1,5 +1,5 @@
 import { month } from "../../reusableFunction/reusableArrayObj";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { manageError } from "../../api/api";
 import GridCustom from "../../components/reusableComponents/grid/gridCustom";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
@@ -73,6 +73,9 @@ const StoricoEnte : React.FC = () => {
   const token =  mainState.profilo.jwt;
   const profilo =  mainState.profilo;
   const navigate = useNavigate();
+  const now = new Date();
+  const currentYear = now.getFullYear();  
+  const currentMonth = now.getMonth() + 1;
 
   const { 
     filters,
@@ -100,36 +103,11 @@ const StoricoEnte : React.FC = () => {
     idTipologiaReports:[]
   });
 
-  const [valueYears, setValueYears] = useState<string[]>(["2025"]);
-  const [dataGrid,setDataGrid] = useState<any[]>([
-    {
-      reportId:2,
-      dataInserimento:"11/12/2025 - 11:05",
-      mese:month[11],
-      anno:2025,
-      stato:"Processo completato",
-      idStato:2,
-           
-    },
-    {
-      reportId:3,
-      dataInserimento:"11/12/2025 - 14:55",
-      mese:month[11],
-      anno:2025,
-      stato:"In elaborazione",
-      idStato:1,
-           
-    },
-    {
-      reportId:4,
-      dataInserimento:"11/12/2025 - 17:32",
-      mese:month[11],
-      anno:2025,
-      stato:"Errore",
-      idStato:3,
-        
-    }
-  ]);
+  const noYearsAvailable = useRef(false);
+
+  const [valueYears, setValueYears] = useState<string[]>([]);
+  const [dataGrid,setDataGrid] = useState<any[]>([]);
+
   const [listaToMap,setListaToMap] = useState<ContestazioneRowGrid[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -173,9 +151,18 @@ const StoricoEnte : React.FC = () => {
         }else{
           getMesi(res.data[0]);
         }
+        noYearsAvailable.current = false;
       }).catch((err)=>{
         setGetListaContestazioniRunning(false);
-        manageError(err,dispatchMainState);
+        if(err?.response?.request?.status === 404){
+          getMesi(currentMonth.toString());
+          setFirstYear(currentMonth);
+          setValueYears([currentYear.toString()]);
+          noYearsAvailable.current = true;
+        }else{
+          manageError(err,dispatchMainState);
+        }
+        
       });
   };
   const getMesi = async (anno) => {
@@ -187,10 +174,10 @@ const StoricoEnte : React.FC = () => {
       });
       setArrayMesi(mesiCamelCase);
       setFirstMonth(res.data[0].mese);
-      if(isInitialRender.current){
+      if(isInitialRender.current &&  Object.keys(filters|| {}).length === 0){
    
-        setBodyGetLista((prev)=> ({...prev, ...{anno:anno,mese:res.data[0].mese,}}));
-        setBodyFiltered((prev)=> ({...prev, ...{anno:anno,mese:res.data[0].mese,}}));
+        setBodyGetLista((prev)=> ({...prev, ...{anno:anno,mese:res.data[0].mese }}));
+        setBodyFiltered((prev)=> ({...prev, ...{anno:anno,mese:res.data[0].mese }}));
         getListaContestazioni({...bodyGetLista,...{mese:res.data[0].mese,anno:anno}},page+1,rowsPerPage);
       }else{
         setBodyGetLista((prev)=> ({...prev, ...{mese:res.data[0].mese}}));
@@ -198,12 +185,23 @@ const StoricoEnte : React.FC = () => {
       
       setGetListaContestazioniRunning(false);
     }).catch((err)=>{
-      setArrayMesi([]);
-      manageError(err,dispatchMainState); 
-      setGetListaContestazioniRunning(false); 
+    
+      setGetListaContestazioniRunning(false);
+      if(err?.response?.request?.status === 404){
+        setFirstMonth(currentMonth);
+        const currentMonthToArray = {
+          mese:currentMonth.toString(),
+          descrizione: month[currentMonth-1]
+        };
+        setArrayMesi([currentMonthToArray]);
+       
+      }else{
+        setArrayMesi([]);
+        manageError(err,dispatchMainState); 
+      } 
     });
   };
-
+  /*TODO:DA ELIMINARE
   const listaTipoReport = async () =>{
     await getTipoReportSE(token, profilo.nonce).then((res)=>{
       setTipologieDoc(res.data);
@@ -212,34 +210,41 @@ const StoricoEnte : React.FC = () => {
       manageError(err,dispatchMainState);
     }));
   };
-
+*/
    
   const getListaContestazioni = async (body, pag, rowpag) => {
     setGetListaContestazioniRunning(true);
 
     try {
-      const resListaStorico = await getListaStoricoSE(token, profilo.nonce, body, pag, rowpag);
-      setListaToMap(resListaStorico.data.reports);
+      if(!noYearsAvailable.current){
+        const resListaStorico = await getListaStoricoSE(token, profilo.nonce, body, pag, rowpag);
+        setListaToMap(resListaStorico.data.reports);
 
-      const orderDataCustom = resListaStorico.data.reports.map((obj) => ({
-        reportId: obj.reportId,
-        dataInserimento: obj.dataInserimento.replace("T", " ").substring(0, 19),
-        mese: month[obj.mese - 1],
-        anno: obj.anno,
-        stato: obj.descrizioneStato,
-        idStato: obj.stato,
-      }));
-
-      setTotalContestazioni(resListaStorico.data.count);
+        const orderDataCustom = resListaStorico.data.reports.map((obj) => ({
+          reportId: obj.reportId,
+          dataInserimento: obj.dataInserimento.replace("T", " ").substring(0, 19),
+          mese: month[obj.mese - 1],
+          anno: obj.anno,
+          stato: obj.descrizioneStato,
+          idStato: obj.stato,
+        }));
+        setDataGrid(orderDataCustom);
+        setTotalContestazioni(resListaStorico.data.count);
+      }
 
     } catch (err: any) {
       setTotalContestazioni(0);
+      setDataGrid([]);
       manageError(err, dispatchMainState);
     }
 
     // this runs even if the first failed
     try {
-      const resRecapNotifiche = await recapContestazioniSE(token, profilo.nonce, body);
+      let newBody = body;
+      if(noYearsAvailable.current){
+        newBody = {...body,...{anno:currentYear.toString(),mese:currentMonth.toString()}};
+      }
+      const resRecapNotifiche = await recapContestazioniSE(token, profilo.nonce, newBody);
       setRecapListaNotifiche(resRecapNotifiche.data);
 
     } catch (err: any) {
@@ -328,26 +333,7 @@ const StoricoEnte : React.FC = () => {
      bodyGetLista.anno?.toString() !== firstYear.toString()
   ) ? "show":"hidden";
   
-  const arrayReacpCon = [{
-    "flagContestazione": "Non Contestata",
-    "totaleNotificheDigitali":1,
-    "totaleNotificheDigitaliInt":2,
-    "totaleNotificheAR":3,
-    "totaleNotificheARInt":4,
-    "totaleNotifiche890":5,
-    "totale": 15,
-    "idFlagContestazione": 1,
-  },
-  {
-    "flagContestazione": "Non Contestata",
-    "totaleNotificheDigitali":2,
-    "totaleNotificheDigitaliInt":4,
-    "totaleNotificheAR":6,
-    "totaleNotificheARInt":8,
-    "totaleNotifiche890":10,
-    "totale": 30,
-    "idFlagContestazione": 1,
-  }];
+
 
   return (
     <MainBoxStyled title={"Contestazioni"}>
@@ -395,7 +381,6 @@ const StoricoEnte : React.FC = () => {
             icon:{name:"add"}
           }]}
       />
-      
       <GridView 
         arrayData={recapListaNotifiche}
         configHeader={headersNameGridView}
@@ -417,7 +402,9 @@ const StoricoEnte : React.FC = () => {
             headerNames={headersName}
             apiGet={handleClickOnDetail}
             disabled={getListaContestazioniRunning}
-            widthCustomSize="1300px"></GridCustom>
+            widthCustomSize="1300px"
+            sentenseEmpty="Non ci sono contestazioni da visualizzare"
+          />
         </div>
       </div>
       <ModalLoading 

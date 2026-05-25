@@ -20,6 +20,7 @@ import DefaultRow from "./gridCustomBase/rowDefault";
 import RowModCommessaPrevisionale from "./gridCustomBase/rowModCommessaPrevisonale";
 import RowCollapsible from "./gridCustomBase/rowCollapsible";
 import RowContestazioniEnte from "./gridCustomBase/rowContestazioneEnte";
+import NoDataRow from "./noDataRow";
 interface GridCustomProps {
     elements:NotificheList[]|Rel[]|GridElementListaPsp[]|ContestazioneRowGrid[]|any
     changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
@@ -84,6 +85,8 @@ const GridCustom : React.FC<GridCustomProps> = ({
     setObjectSort,
     listaResponse=[]
 }) =>{
+
+    console.log({el:elements.length,sentenseEmpty})
 
     const handleClickOnGrid = (element) =>{
       
@@ -192,11 +195,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                         
                         <TableBody sx={{marginLeft:'20px',height: '50px'}}>
                             {(elements.length === 0 && sentenseEmpty) && 
-                            <TableRow key={"no-data"}>
-                                <TableCell colSpan={100} align="left">
-                                    <Typography fontWeight={"bold"}>{sentenseEmpty}</Typography>
-                                </TableCell>
-                            </TableRow>
+                              <NoDataRow colSpan={headerNames.length} noDataTitle={sentenseEmpty} align="left"  />
                             }
                             {elements.length > 0 && elements.map((element:Rel|NotificheList|GridElementListaPsp|Whitelist|DataGridOrchestratore|DataGridAsyncDoc|ContestazioneRowGrid|any ) =>{
                                 // tolgo da ogni oggetto la prima chiave valore  perchè il cliente non vuole vedere es. l'id ma serve per la chiamata get di dettaglio 

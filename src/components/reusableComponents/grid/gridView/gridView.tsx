@@ -1,5 +1,6 @@
 import { Box, IconButton, Skeleton, styled, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import NoDataRow from "../noDataRow";
 
 const StyledBox = styled(Box)({
   margin: "16px",
@@ -46,30 +47,7 @@ const GridView : React.FC<GridViewProps> = ({arrayData,configHeader,title,noData
                 </TableHead>
                 <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
                   {Object.values(arrayData).length === 0 ? (
-                    // NO DATA ROW
-                    <TableRow>
-                      <TableCell
-                        align="center"
-                        colSpan={configHeader.length}
-                        sx={{
-                          py: 6,
-                          color: "text.secondary",
-                          fontSize: "16px",
-                          fontStyle: "italic",
-                          backgroundColor: "#fafafa",
-                          border: "1px dashed #e0e0e0",
-                        }}
-                      >
-                        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 1 }}>
-                          <Typography variant="h6" color="text.secondary">
-                            {noDataTitle}
-                          </Typography>
-                          <Typography variant="body2" color="text.disabled">
-                            {noDataMessage}
-                          </Typography>
-                        </Box>
-                      </TableCell>
-                    </TableRow>
+                    <NoDataRow colSpan={configHeader.length} noDataTitle={noDataTitle} noDataMessage={noDataMessage} />
                   ) : (
                     Object.values(arrayData).map((tabCel: any, index: number) => (
                       <TableRow key={index}>
