@@ -418,6 +418,7 @@ const ReportDettaglio : React.FC = () => {
     
     const onAnnullaFiltri = () =>{
         // to make call equal on initial render
+        isInitialRender.current = true;
         funInitialRender({
             profilo:'',
             prodotto:'',
