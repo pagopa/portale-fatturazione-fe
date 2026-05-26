@@ -52,7 +52,8 @@ interface GridCustomProps {
     setGridData?:React.Dispatch<SetStateAction<any[]>>
     gridType?:boolean,
     setObjectSort?:React.Dispatch<SetStateAction<{[key:string]:number}>>,
-    listaResponse?:any[]
+    listaResponse?:any[],
+    headerActionSortServerSide?:(label:string) => void
 }
 
 
@@ -83,7 +84,8 @@ const GridCustom : React.FC<GridCustomProps> = ({
     gridType=false,
     headerActionSort,
     setObjectSort,
-    listaResponse=[]
+    listaResponse=[],
+    headerActionSortServerSide
 }) =>{
 
     console.log({el:elements.length,sentenseEmpty})
@@ -110,6 +112,15 @@ const GridCustom : React.FC<GridCustomProps> = ({
             //modComTrimestrale
         }else if(apiGet && (nameParameterApi === 'modComTrimestrale'|| nameParameterApi === "docEmessiEnte" )){
             apiGet(element);
+        }else if(apiGet && nameParameterApi === "idTestata"){
+            const newDetail = {
+                nomeEnteClickOn:element.ragioneSociale,
+                mese:element.mese,
+                anno:element.anno,
+                id:element[nameParameterApi],
+                tipologiaContratto:element.tipologiaContratto
+            };
+            apiGet(newDetail);
         }else if(apiGet){
             const newDetail = {
                 nomeEnteClickOn:element.ragioneSociale,
@@ -143,6 +154,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
                         <TableHead sx={{backgroundColor:'#f2f2f2'}}>
                             <TableRow>
                                 {headerNames.map((el,i)=>{
+                                    //Sort by frontEnd
                                     let sortValue = 0;
                                     if(objectSort && objectSort[el.label] === 1){
                                         sortValue = Number(objectSort[el.label]);
@@ -151,6 +163,9 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                     }else if(objectSort && objectSort[el.label] === 3){
                                         sortValue = Number(objectSort[el.label]);
                                     }
+
+                                    //Sort server side 
+                                    
                                     //TODO : da sistemare nel file di configurazione come fatto con doc emessi , doc sospesi ente 06/02/26
                                     if(nameParameterApi === 'idOrchestratore' || nameParameterApi === "asyncDocEnte"|| nameParameterApi === "idPrevisonale" ){ //|| nameParameterApi === "modComTrimestrale"
                                         return(
@@ -179,6 +194,22 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                                         <IconButton disabled={ (total === 0 ||elements.length === 0) ? true : false} sx={{marginLeft:'10px'}}  onClick={()=> (headerActionSort && setGridData && setObjectSort&&  listaResponse) && headerActionSort(el.label,setGridData,gridType,setObjectSort,page,rows,listaResponse)}  size="small">
                                                             {(sortValue === 1) ? <ArrowUpwardIcon sx={{ color: 'text.disabled'}}></ArrowUpwardIcon> :
                                                                 (sortValue === 2) ? <ArrowUpwardIcon></ArrowUpwardIcon>:
+                                                                    <ArrowDownwardIcon></ArrowDownwardIcon>}
+                                                        </IconButton>
+                                                    </span>
+                                                   
+                                                </Tooltip>}
+                                            </TableCell>
+                                        );
+                                    }else if( nameParameterApi === "idNotifica"){
+                                        return(
+                                            <TableCell key={`tableCell-${i}`} align={el.align} width={el.width}>{el.label}
+                                                {(el.headerActionSort &&  headerActionSortServerSide && body?.sort) &&
+                                                <Tooltip title="Sort">
+                                                    <span>
+                                                        <IconButton disabled={ (total === 0 ||elements.length === 0) ? true : false} sx={{marginLeft:'10px'}}  onClick={()=> headerActionSortServerSide &&  headerActionSortServerSide(el.label)}  size="small">
+                                                            {(body?.sort.order === null) ? <ArrowUpwardIcon sx={{ color: 'text.disabled'}}></ArrowUpwardIcon> :
+                                                                (body?.sort.order === "2") ? <ArrowUpwardIcon></ArrowUpwardIcon>:
                                                                     <ArrowDownwardIcon></ArrowDownwardIcon>}
                                                         </IconButton>
                                                     </span>
@@ -235,8 +266,8 @@ const GridCustom : React.FC<GridCustomProps> = ({
                                     return <RowContestazioni key={Math.random()} sliced={sliced}apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} headerNames={headerNames}></RowContestazioni>;
                                 }else if( nameParameterApi === "contestazioneEnte"){
                                         return <RowContestazioniEnte key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} headerNames={headerNames}></RowContestazioniEnte>;
-                                    }else if(nameParameterApi === "modComTrimestrale"){
-                                    return  <DefaultRow key={element.id} handleClickOnGrid={handleClickOnGrid} element={element} sliced={sliced} apiGet={()=> console.log("go to details")} headerNames={headerNames}></DefaultRow>;
+                                }else if(nameParameterApi === "modComTrimestrale" || nameParameterApi === "idNotifica"){
+                                    return  <DefaultRow key={element.id} handleClickOnGrid={handleClickOnGrid} element={element} sliced={sliced} apiGet={()=> console.log("go to details")} headerNames={headerNames} nameParameterApi={nameParameterApi}></DefaultRow>;
                                 }else if(nameParameterApi === "idPrevisonale"){
                                     return <RowModCommessaPrevisionale key={element.id} sliced={sliced} element={element} headerNames={headerNames}></RowModCommessaPrevisionale>;
                                 }else if(nameParameterApi === "docEmessiEnte"||nameParameterApi ==="docSospesiSend" ){
