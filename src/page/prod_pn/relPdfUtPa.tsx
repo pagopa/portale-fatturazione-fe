@@ -14,7 +14,6 @@ import NavigatorHeader from '../../components/reusableComponents/navigatorHeader
 import { useGlobalStore } from '../../store/context/useGlobalStore';
 import usePageRelDocPdf from '../../hooks/usePageRelDocPdf';
 import { useLocation } from 'react-router-dom';
-import { t } from 'i18next';
 
 const RelPdfPage : React.FC = () =>{
   const { pageFrom, id, idEnte, idTipoContratto } = useParams();
@@ -31,7 +30,7 @@ const RelPdfPage : React.FC = () =>{
   let headerNavigationFrom;
   let labelScaricaPdf = "Scarica PDF Reg. Es.";
   let labelScaricaReportDettaglio = "Scarica report di dettaglio notifiche Reg. Es.";
-  let fatturaType = "";
+ 
   
   if(location.pathname.includes("send") && location.pathname.includes("rel") ){
     profilePath = PathPf.LISTA_REL;
@@ -41,13 +40,11 @@ const RelPdfPage : React.FC = () =>{
     headerNavigationFrom = "Documenti Emessi/";
     labelScaricaPdf = "Scarica PDF Doc. Emessi";
     labelScaricaReportDettaglio = "Scarica report di dettaglio notifiche Doc. Emessi";
-    fatturaType = "Emessa";
   }else if(location.pathname.includes("ente") && location.pathname.includes("documentisospesi")){
     profilePath = PathPf.DOCUMENTI_SOSPESI;
     headerNavigationFrom = "Documenti Sospesi/";
     labelScaricaPdf = "Scarica PDF Doc. Sospesi";
     labelScaricaReportDettaglio = "Scarica report di dettaglio notifiche Doc. Sospesi";
-    fatturaType = "Sospesa";
   }else if(location.pathname.includes("ente") && location.pathname.includes("rel")){
     profilePath = PathPf.LISTA_REL_EN;
     headerNavigationFrom = "Regolare Esecuzione/";
@@ -55,14 +52,14 @@ const RelPdfPage : React.FC = () =>{
     profilePath = PathPf.FATTURAZIONE;
     headerNavigationFrom = "Documenti Emessi/";
     labelScaricaPdf = "Scarica PDF Doc. Emessi";
-    fatturaType = "Emessa";
+ 
     labelScaricaReportDettaglio = "Scarica report di dettaglio notifiche Doc. Emessi";
   }else if(location.pathname.includes("send") && location.pathname.includes("documentisospesi")){
     profilePath = PathPf.DOCUMENTI_SOSPESI_SEND;
     headerNavigationFrom = "Documenti Sospesi/";
     labelScaricaPdf = "Scarica PDF Doc. Sospesi";
     labelScaricaReportDettaglio = "Scarica report di dettaglio notifiche Doc. Sospesi";
-    fatturaType = "Sospesa";
+
   }
 
  
@@ -77,7 +74,6 @@ const RelPdfPage : React.FC = () =>{
     downloadPdf,
     downloadPdfRelFirmato,
     lastUpdateDocFirmato,
-    enti,
     file,
     loadingUpload, 
     errorUpload,
@@ -100,6 +96,7 @@ const RelPdfPage : React.FC = () =>{
     idEnte:idEnte
   });
 
+  const totaleCalcolatoByFe = Number(rel.totaleAnalogico) + Number(rel.totaleDigitale);
   let showComponentPdfAdmin = false;
 
   if(profilo.auth === "PAGOPA"){
@@ -134,14 +131,14 @@ const RelPdfPage : React.FC = () =>{
 
   let showDownloadPdfRELEnteFirmato = false;
   if(profilo.auth === "SELFCARE"){
-    if(rel.totale >= 1 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")&& location.pathname.includes("/rel/")){
+    if(rel?.caricata === 1 && totaleCalcolatoByFe > 0 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")&& location.pathname.includes("/rel/")){
       showDownloadPdfRELEnteFirmato = true;
     }
   }
  
   let showComponentActionOnBottomEnte = false;
   if(profilo.auth === "SELFCARE"){
-    if(rel.totale > 0 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE") && location.pathname.includes("/rel/")){
+    if(totaleCalcolatoByFe > 0 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE") && location.pathname.includes("/rel/")){
       showComponentActionOnBottomEnte = true;
     }
   }
@@ -161,10 +158,6 @@ const RelPdfPage : React.FC = () =>{
 
   const idTipoContrattoBasedOnProfile:number = profilo.auth === "PAGOPA" ? Number(idTipoContratto) : Number(mainState?.profilo?.idTipoContratto);
 
-  let accontoIsVisible:boolean = profilo.auth === "SELFCARE" && Number(mainState?.profilo?.idTipoContratto) === 2 && rel.tipologiaFattura !== "ANTICIPO";
-  if(profilo.auth === "PAGOPA" && Number(idTipoContratto) === 2 && rel.tipologiaFattura !== "ANTICIPO"){
-    accontoIsVisible = true;
-  }
 
   if(loadingDettaglio){
     return(
@@ -190,7 +183,7 @@ const RelPdfPage : React.FC = () =>{
                 <div>
                   <Button sx={{width:'274px'}} onClick={downloadPdf}  variant="contained">{labelScaricaPdf}<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
                 </div>}
-        {(profilo.auth === 'PAGOPA' && rel?.caricata >= 1 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) && location.pathname.includes("/rel/") &&
+        {(profilo.auth === 'PAGOPA' && rel?.caricata === 1 && !rel.tipologiaFattura.toUpperCase().includes("SEMESTRALE")) && location.pathname.includes("/rel/") &&
                     <div>
                       <div>
                         <Button sx={{width:'300px'}} onClick={() => downloadPdfRelFirmato()}   variant="contained">Scarica PDF Firmato <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
