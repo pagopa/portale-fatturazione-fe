@@ -616,7 +616,7 @@ const Fatturazione : React.FC = () =>{
                     onButtonClick: () => navigate(PathPf.JSON_TO_SAP),
                     variant: "outlined",
                     icon:{name:"iso_share" },
-                    tooltipMessage:"Invia fatture REL firmate",
+                    tooltipMessage:"Invio fatture",
                     withText:false
                 },
               
