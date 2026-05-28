@@ -319,7 +319,7 @@ const RispostaContestazioniEnte : React.FC = () => {
             disabled:false
           },
           ]}/>
-        <GridUploadContestazioni popUp={true}></GridUploadContestazioni>
+        <GridUploadContestazioni popUp={true} labelButton="Risposta Contestazioni"></GridUploadContestazioni>
       </MainBoxStyled>
       <ModalLoading 
         open={showLoading} 

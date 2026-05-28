@@ -19,7 +19,7 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
-const GridUploadContestazioni = ({popUp}) => {
+const GridUploadContestazioni = ({popUp,labelButton="Invia Contestazioni"}) => {
   const location = useLocation();
   const currentLocation = location.pathname;
   console.log({currentLocation});
@@ -251,7 +251,7 @@ const GridUploadContestazioni = ({popUp}) => {
           marginY:"50px"      
         }}
       >
-        <Button variant="outlined">Invia contestazione</Button>
+        <Button variant="outlined">{labelButton}</Button>
         <Button onClick={()=> setMockGridUpload(defaultObject)} variant="outlined" color={"error"}>Reset</Button>
       </Box>
       <ModalUpload  open={showModalUpload} setOpen={setShowModalUpload} uploadFun={onUpload} valueSelected={valueSelected}></ModalUpload>
