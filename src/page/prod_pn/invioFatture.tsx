@@ -74,17 +74,31 @@ const InvioFatture : React.FC = () => {
   const getLista = async (tipologia) =>{
     await getListaJsonFatturePagoPa(token,profilo.nonce).then((res)=>{
       const array = res.data.map( el => el.tipologiaFattura);
-      const uniqueArray = array.reduce((accumulator, current) => {
-        if (!accumulator.includes(current)) {
-          accumulator.push(current);
-        }
-        return accumulator;
-      }, []);
+      const ORDER = ["Anticipo", "Acconto", "Primo Saldo", "Secondo Saldo", "Var. Semestrale"];
+
+      const toTitleCase = (str: string) =>
+        str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
+      //ATTENZIONE: SE verrà aggiunta un altra tipologia fattura bisogna aggiungerla nell'array ORDER ALTRIMENTI NON VERRà MAPPATA
+      const uniqueArray = array
+        .map(toTitleCase)
+        .reduce((accumulator, current) => {
+          if (!accumulator.includes(current)) {
+            accumulator.push(current);
+          }
+          return accumulator;
+        }, [])
+        .sort((a, b) => {
+          const indexA = ORDER.indexOf(a);
+          const indexB = ORDER.indexOf(b);
+          const rankA = indexA === -1 ? ORDER.length : indexA;
+          const rankB = indexB === -1 ? ORDER.length : indexB;
+          return rankA - rankB;
+        });
                 
       setTipologie([...["Tutte"],...uniqueArray]);
-      let elOrdered = res.data.map((el) => {
+      let elOrdered = res.data.map((el,i) => {
         return {
-          id:el.annoRiferimento+"-"+el.meseRiferimento+"-"+el.tipologiaFattura,
+          id:el.annoRiferimento+"-"+el.meseRiferimento+"-"+el.tipologiaFattura+"-"+i,
           tipologiaFattura: el.tipologiaFattura,   
           statoInvio: el.statoInvio,
           numeroFatture: el.numeroFatture,
@@ -94,7 +108,7 @@ const InvioFatture : React.FC = () => {
         };
       }); 
       if(tipologia !== 'Tutte' ){
-        elOrdered = elOrdered.filter(el => el.tipologiaFattura === tipologia);
+        elOrdered = elOrdered.filter(el => el.tipologiaFattura === tipologia.toUpperCase());
       }
       setListaFatture(elOrdered);
     }).catch((err)=>{
@@ -194,6 +208,7 @@ const InvioFatture : React.FC = () => {
                   <InputLabel> Tipologia Fattura</InputLabel>
                   <Select label='Tipologia Fattura' onChange={(e) => {
                     setTipologia(e.target.value);
+                   
                     updateFilters({
                       pathPage:"/inviofatture",
                       tipologiaInvio:e.target.value,
