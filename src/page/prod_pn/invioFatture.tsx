@@ -17,19 +17,19 @@ import { saveAs } from "file-saver";
 
 
 interface ListaFatture {
-    tipologiaFattura: string,
-    statoInvio:number,
-    numeroFatture: number,
-    annoRiferimento: number,
-    meseRiferimento: number,
-    importo: number,
-    id:string
+  tipologiaFattura: string,
+  statoInvio:number,
+  numeroFatture: number,
+  annoRiferimento: number,
+  meseRiferimento: number,
+  importo: number,
+  id:string
 }
 
 export interface SelectedJsonSap {
-    annoRiferimento: number,
-    meseRiferimento: number,
-    tipologiaFattura: string
+  annoRiferimento: number,
+  meseRiferimento: number,
+  tipologiaFattura: string
 }
 
 
@@ -238,23 +238,20 @@ const InvioFatture : React.FC = () => {
             </div>
             <div className="row mt-5">
               <div className="col-12">
-                { selected?.length > 0 ? 
-                  <Toolbar sx={{bgcolor:"rgba(23, 50, 77, 0.08)"}}>
-                    <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1"component="div">
-                      {`${selected?.length}  Selezionate`} 
-                    </Typography>
-                  </Toolbar>
-                  :
-                  <Typography sx={{ flex: '1 1 100%', visibility: 'hidden', height:'64px' }} variant="subtitle1" component="div">
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Box>
+                    { selected?.length > 0 ? 
+                      <Toolbar sx={{bgcolor:"rgba(23, 50, 77, 0.08)"}}>
+                        <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1"component="div">
+                          {`${selected?.length}  Selezionate`} 
+                        </Typography>
+                      </Toolbar>
+                      :
+                      <Typography sx={{ flex: '1 1 100%', visibility: 'hidden', height:'64px' }} variant="subtitle1" component="div">
                                         Placeholder
-                  </Typography>
-                }
-              </div>
-            </div>
-            
-            <div className="row">
-              <div className="col-12">
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+                      </Typography>
+                    }
+                  </Box>
                   <CustomButton
                     onClick={downloadReport}
                     startIcon={ RenderIcon("download") }
