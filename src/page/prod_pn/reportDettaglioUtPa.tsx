@@ -1162,7 +1162,7 @@ const ReportDettaglio : React.FC = () => {
         valueRispostaEnte={valueRispostaEnte}
         contestazioneStatic={contestazioneStatic}
         dispatchMainState={dispatchMainState}
-        ></ModalContestazione>
+        />
         <ModalRedirect
         setOpen={setOpenModalRedirect} 
         open={openModalRedirect}

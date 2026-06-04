@@ -1,0 +1,30 @@
+export const headerRelEnte: any[] = [
+  { label: "Ragione Sociale", align: "center", width: "200px", keyValue: "ragioneSociale" },
+  { label: "Tipologia Fattura", align: "center", width: "150px", keyValue: "tipologiaFattura" },
+  { label: "Tipo Contratto", align: "center", width: "150px", keyValue: "tipoContratto" },
+  { label: "Reg. Es. PDF", align: "center", width: "120px", keyValue: "regEsPdf" },
+  { label: "ID Contratto", align: "center", width: "120px", keyValue: "idContratto" },
+  { label: "Anno", align: "center", width: "100px", keyValue: "anno" },
+  { label: "Mese", align: "center", width: "100px", keyValue: "mese" },
+  { label: "Tot. Analogico", align: "center", width: "150px", keyValue: "totAnalogico" },
+  { label: "Tot. Digitale", align: "center", width: "150px", keyValue: "totDigitale" },
+  { label: "Tot. Not. Analogico", align: "center", width: "150px", keyValue: "totNotAnalogico" },
+  { label: "Tot. Not. Digitali", align: "center", width: "150px", keyValue: "totNotDigitali" },
+  { label: "Totale", align: "center", width: "150px", keyValue: "totale" },
+  { label: "", align: "center", width: "50px", keyValue: "" },
+];
+
+export const headerRelAdmin: any[] = [
+  { label: "Ragione Sociale", align: "center", width: "200px", keyValue: "ragioneSociale" },
+  { label: "Tipologia Fattura", align: "center", width: "150px", keyValue: "tipologiaFattura" },
+  { label: "Reg. Es. PDF", align: "center", width: "120px", keyValue: "regEsPdf" },
+  { label: "ID Contratto", align: "center", width: "120px", keyValue: "idContratto" },
+  { label: "Anno", align: "center", width: "100px", keyValue: "anno" },
+  { label: "Mese", align: "center", width: "100px", keyValue: "mese" },
+  { label: "Tot. Analogico", align: "center", width: "150px", keyValue: "totAnalogico" },
+  { label: "Tot. Digitale", align: "center", width: "150px", keyValue: "totDigitale" },
+  { label: "Tot. Not. Analogico", align: "center", width: "150px", keyValue: "totNotAnalogico" },
+  { label: "Tot. Not. Digitali", align: "center", width: "150px", keyValue: "totNotDigitali" },
+  { label: "Totale", align: "center", width: "150px", keyValue: "totale" },
+  { label: "", align: "center", width: "50px", keyValue: "" },
+];

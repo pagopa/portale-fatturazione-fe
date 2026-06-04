@@ -184,5 +184,5 @@ export interface ModalConfermaInsProps{
     open:boolean,
     onButtonComfermaPopUp:() => void,
     mainState:MainState,
-    sentence:string
+    sentence:React.ReactNode|null
 }
