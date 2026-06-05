@@ -93,13 +93,14 @@ const MainInserimentoModuloCommessa = ({
                />
              </div>
             }
-            
             <div  className="bg-white mt-3 pt-3 ">
               {activeCommessa?.valoriRegione?.length > 0 &&
                 <Box>
                   <ColumnGrid 
                     elements={[
-                      <Typography sx={{fontWeight:'bold', textAlign:'center'}}>Regioni </Typography>,<Typography sx={{fontWeight:'bold', textAlign:'center'}}>AR Nazionali </Typography>,<Typography sx={{fontWeight:'bold', textAlign:'center'}}>890 Nazionali</Typography>
+                      <Typography sx={{fontWeight:'bold', textAlign:'center',marginBottom:"16px"}}>Regioni </Typography>,
+                      <Typography sx={{fontWeight:'bold', textAlign:'center',marginBottom:"16px"}}>AR Nazionali </Typography>,
+                      <Typography sx={{fontWeight:'bold', textAlign:'center',marginBottom:"16px"}}>890 Nazionali</Typography>
                     ]} styles={[
                       {
                         textAlign: 'left',
@@ -118,7 +119,7 @@ const MainInserimentoModuloCommessa = ({
                     ]} 
                     columns={[6,2,2]}
                   ></ColumnGrid>
-                  <hr className="mx-3"/>
+                 
                 </Box>
               }
               <div>
@@ -127,6 +128,12 @@ const MainInserimentoModuloCommessa = ({
                     key={`${element.istatRegione}-${index}`}
                     style={{
                       backgroundColor: element.obbligatorio === 1  ? "#ffffff" : "#F8F8F8",
+                      borderTop: index === 0 ? '1px solid #d4d4d4':undefined,
+                      borderBottom: index !== (sortedRegioni?.length) ? '1px solid #d4d4d4':undefined,
+                      paddingTop:"16px",
+                      paddingBottom:"16px",
+                      marginLeft:"16px",
+                      marginRight:"16px"
                     }}
                   >
                     <Grid 
@@ -207,7 +214,7 @@ const MainInserimentoModuloCommessa = ({
                           />
                         )}</Grid>
                     </Grid>
-                  
+                    
                   </div>
                 ))}
               </div>
@@ -234,7 +241,7 @@ const MainInserimentoModuloCommessa = ({
                   }
                 ]} 
                 columns={[6,2,2]}
-              ></ColumnGrid>
+              />
               <hr className="mx-3"/>
               <ColumnGrid 
                 elements={[
@@ -279,7 +286,7 @@ const MainInserimentoModuloCommessa = ({
                       <Typography sx={{fontWeight:'bold', textAlign:'right'}}>Percentuale copertura inserita dell’aderente</Typography>,
                       <TextField
                         sx={{ backgroundColor: '#ffffff', width: '100px'}}
-                        disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
+                        disabled={true}
                         size="small"
                         error={(coperturaAr||0) > 100}
                         value={ activeCommessa?.source === "archiviato" ? (coperturaArInseritaManualmente ? coperturaArInseritaManualmente + "%" : 0+ "%"):coperturaAr ? coperturaAr + "%" : 0+ "%"}
@@ -287,7 +294,7 @@ const MainInserimentoModuloCommessa = ({
                       />,
                       <TextField
                         sx={{ backgroundColor: '#ffffff', width: '100px'}}
-                        disabled={mainState.statusPageInserimentoCommessa === 'immutable'}
+                        disabled={true}
                         size="small"
                         error={(copertura890||0) > 100}
                         value={activeCommessa?.source === "archiviato" ? (copertura890InseritaManualmente ? copertura890InseritaManualmente + "%" : 0+ "%"): copertura890 ? copertura890 + "%" : 0+ "%"}
