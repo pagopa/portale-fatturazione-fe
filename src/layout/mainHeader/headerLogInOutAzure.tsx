@@ -11,75 +11,75 @@ import ModalLoading from '../../components/reusableComponents/modals/modalLoadin
 import { useGlobalStore } from '../../store/context/useGlobalStore';
 
 const HeaderLogAzure = () => {
-    const { instance } = useMsal();
-    const mainState = useGlobalStore(state => state.mainState);
-    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+  const { instance } = useMsal();
+  const mainState = useGlobalStore(state => state.mainState);
+  const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
   
-    const navigate = useNavigate();
-    const [showDownloading, setShowDownloading] = useState(false);
+  const navigate = useNavigate();
+  const [showDownloading, setShowDownloading] = useState(false);
 
-    const user: JwtUser = {
-        id: '1',
-        name: mainState.profilo.nomeEnte,
-        surname: "",
-        email: "",
-    };
-
-
-    const onButtonClick = async () => {
-        setShowDownloading(true);
-        await getManuale().then((response) =>{
-            setShowDownloading(false);
-            if(response.status !== 200){
-                managePresaInCarico('ERRORE_MANUALE',dispatchMainState);
-            }else{
-                response.blob().then((res) => {
-                    setShowDownloading(false);
-                    const fileName = 'Manuale Utente Portale Fatturazione.pdf';
-                    saveAs( res,fileName );
-                }); 
-            }
-        } ).catch(() => {
-            setShowDownloading(false);
-            managePresaInCarico('ERRORE_MANUALE',dispatchMainState);
-        });
-    };
+  const user: JwtUser = {
+    id: '1',
+    name: mainState.profilo.nomeEnte,
+    surname: "",
+    email: "",
+  };
 
 
-    //end actions sul manuale operativo , download del manuale
-    // start on click su assistenza redirect alla tua apllicazione predefinita per l'invio mail
-    function onEmailClick() {
-        // if(mainState.profilo.auth === "PAGOPA" || location.pathname === '/azureLogin' || mainState.prodotti.length > 0){
-        window.open(`mailto:fatturazione@assistenza.pagopa.it`);
+  const onButtonClick = async () => {
+    setShowDownloading(true);
+    await getManuale().then((response) =>{
+      setShowDownloading(false);
+      if(response.status !== 200){
+        managePresaInCarico('ERRORE_MANUALE',dispatchMainState);
+      }else{
+        response.blob().then((res) => {
+          setShowDownloading(false);
+          const fileName = 'Manuale Utente Portale Fatturazione.pdf';
+          saveAs( res,fileName );
+        }); 
+      }
+    } ).catch(() => {
+      setShowDownloading(false);
+      managePresaInCarico('ERRORE_MANUALE',dispatchMainState);
+    });
+  };
+
+
+  //end actions sul manuale operativo , download del manuale
+  // start on click su assistenza redirect alla tua apllicazione predefinita per l'invio mail
+  function onEmailClick() {
+    // if(mainState.profilo.auth === "PAGOPA" || location.pathname === '/azureLogin' || mainState.prodotti.length > 0){
+    window.open(`mailto:fatturazione@assistenza.pagopa.it`);
        
-    }
-    // end on click su assistenza redirect alla tua apllicazione predefinita per l'invio mail
+  }
+  // end on click su assistenza redirect alla tua apllicazione predefinita per l'invio mail
 
-    const handleLoginRedirect = () => {
-        instance.loginRedirect(loginRequest).catch((error) => console.log(error));
-    };
+  const handleLoginRedirect = () => {
+    instance.loginRedirect(loginRequest).catch((error) => console.log(error));
+  };
 
-    const statusUser = mainState.authenticated && user;
-    return (
-        <div className="div_header">
-            <HeaderAccount
-                rootLink={pagoPALinkHeder}
-                loggedUser={statusUser}
-                onAssistanceClick={() => onEmailClick()}
-                onLogin={() => handleLoginRedirect()}
-                onLogout={() => {
-                    localStorage.clear();
-                    navigate('/azureLogin');
-                }}
-                onDocumentationClick={()=>onButtonClick()}
-            />
-            <ModalLoading 
-                open={showDownloading} 
-                setOpen={setShowDownloading}
-                sentence={'Downloading...'} >
-            </ModalLoading>
-        </div>
-    );
+  const statusUser = mainState.authenticated && user;
+  return (
+    <div className="div_header">
+      <HeaderAccount
+        rootLink={pagoPALinkHeder}
+        loggedUser={statusUser}
+        onAssistanceClick={() => onEmailClick()}
+        onLogin={() => handleLoginRedirect()}
+        onLogout={() => {
+          localStorage.clear();
+          navigate('/azureLogin');
+        }}
+        onDocumentationClick={()=>onButtonClick()}
+      />
+      <ModalLoading 
+        open={showDownloading} 
+        setOpen={setShowDownloading}
+        sentence={'Downloading...'} >
+      </ModalLoading>
+    </div>
+  );
 };
 
 export default HeaderLogAzure;

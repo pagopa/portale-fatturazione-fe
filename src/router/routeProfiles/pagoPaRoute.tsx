@@ -11,15 +11,15 @@ import EmailPsp from "../../page/prod_pagopa/emailpsp";
 
 const PagoPaRoute = () => {
     
-    const prodPagopaRoute =  <Route element={<LayoutAzure sideNav={<SideNavPagopa/>}></LayoutAzure>}>
-        <Route path={'/messaggi'} element={<Messaggi  />} />
-        <Route path={PathPf.ANAGRAFICAPSP} element={<AnagraficaPsp ></AnagraficaPsp>}/>
-        <Route path={PathPf.DOCUMENTICONTABILI} element={<DocumentiContabili ></DocumentiContabili>}/>
-        <Route path={PathPf.DETTAGLIO_DOC_CONTABILE} element={<DettaglioDocContabile></DettaglioDocContabile>}/> 
-        <Route path={PathPf.KPI} element={<KpiPagamenti></KpiPagamenti>}/>
+  const prodPagopaRoute =  <Route element={<LayoutAzure sideNav={<SideNavPagopa/>}></LayoutAzure>}>
+    <Route path={'/messaggi'} element={<Messaggi  />} />
+    <Route path={PathPf.ANAGRAFICAPSP} element={<AnagraficaPsp ></AnagraficaPsp>}/>
+    <Route path={PathPf.DOCUMENTICONTABILI} element={<DocumentiContabili ></DocumentiContabili>}/>
+    <Route path={PathPf.DETTAGLIO_DOC_CONTABILE} element={<DettaglioDocContabile></DettaglioDocContabile>}/> 
+    <Route path={PathPf.KPI} element={<KpiPagamenti></KpiPagamenti>}/>
        
-    </Route>;
-    return prodPagopaRoute;
+  </Route>;
+  return prodPagopaRoute;
 };
 
 export default PagoPaRoute;

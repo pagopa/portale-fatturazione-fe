@@ -1,44 +1,44 @@
 import { LogLevel } from '@azure/msal-browser';
 export const msalConfig = {
-    auth: {
+  auth: {
         
-        // eslint-disable-next-line no-undef
-        clientId: import.meta.env.VITE_APP_CLIENT_ID, // This is the ONLY mandatory field that you need to supply.
-        // eslint-disable-next-line no-undef
-        authority: `https://login.microsoftonline.com/${import.meta.env.VITE_APP_TENANT_ID}`, // Replace the placeholder with your tenant subdomain 
-        redirectUri: '/auth/azure', // Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
-        postLogoutRedirectUri: '/azureLogin', // Indicates the page to navigate after logout.
-        navigateToLoginRequestUrl: false, // If "true", will navigate back to the original request location before processing the auth code response.
+    // eslint-disable-next-line no-undef
+    clientId: import.meta.env.VITE_APP_CLIENT_ID, // This is the ONLY mandatory field that you need to supply.
+    // eslint-disable-next-line no-undef
+    authority: `https://login.microsoftonline.com/${import.meta.env.VITE_APP_TENANT_ID}`, // Replace the placeholder with your tenant subdomain 
+    redirectUri: '/auth/azure', // Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
+    postLogoutRedirectUri: '/azureLogin', // Indicates the page to navigate after logout.
+    navigateToLoginRequestUrl: false, // If "true", will navigate back to the original request location before processing the auth code response.
+  },
+  cache: {
+    cacheLocation: 'sessionStorage', // Configures cache location. "sessionStorage" is more secure, but "localStorage" gives you SSO between tabs.
+    storeAuthStateInCookie: false, // Set this to "true" if you are having issues on IE11 or Edge
+  },
+  system: {
+    loggerOptions: {
+      loggerCallback: (level, message, containsPii) => {
+        if (containsPii) {
+          return;
+        }
+        switch (level) {
+        case LogLevel.Error:
+          console.error(message);
+          return;
+        case LogLevel.Info:
+          //console.info(message);
+          return;
+        case LogLevel.Verbose:
+          console.debug(message);
+          return;
+        case LogLevel.Warning:
+          console.warn(message);
+          return;
+        default:
+          return;
+        }
+      },
     },
-    cache: {
-        cacheLocation: 'sessionStorage', // Configures cache location. "sessionStorage" is more secure, but "localStorage" gives you SSO between tabs.
-        storeAuthStateInCookie: false, // Set this to "true" if you are having issues on IE11 or Edge
-    },
-    system: {
-        loggerOptions: {
-            loggerCallback: (level, message, containsPii) => {
-                if (containsPii) {
-                    return;
-                }
-                switch (level) {
-                    case LogLevel.Error:
-                        console.error(message);
-                        return;
-                    case LogLevel.Info:
-                        //console.info(message);
-                        return;
-                    case LogLevel.Verbose:
-                        console.debug(message);
-                        return;
-                    case LogLevel.Warning:
-                        console.warn(message);
-                        return;
-                    default:
-                        return;
-                }
-            },
-        },
-    },
+  },
 };
 
 /**
@@ -48,7 +48,7 @@ export const msalConfig = {
  * https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
  */
 export const loginRequest = {
-    scopes: [],
+  scopes: [],
 };
 
 /**

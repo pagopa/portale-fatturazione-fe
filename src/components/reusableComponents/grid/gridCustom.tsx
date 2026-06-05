@@ -1,26 +1,18 @@
-import { Card, Table, TableBody, TableCell, TableCellProps, TablePagination, TableRow, Tooltip } from "@mui/material";
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { Card, Table, TableBody, TableCellProps, TablePagination } from "@mui/material";
 import { GridElementListaPsp } from "../../../types/typeAngraficaPsp";
 import { Rel } from "../../../types/typeRel";
 import { NotificheList } from "../../../types/typeReportDettaglio";
 import { ContestazioneRowGrid } from "../../../page/prod_pn/storicoContestazioni";
-import RowContratto from "./gridCustomBase/rowTipologiaContratto";
-import RowWhiteList from "./gridCustomBase/rowWhiteList";
 import EnhancedTableCustom from "./gridCustomBase/enhancedTabalToolbarCustom";
 import { SetStateAction } from "react";
-import RowOrchestratore from "./gridCustomBase/rowOrchestratore";
 import { DataGridAsyncDoc } from "../../../page/ente/asyncDocumenti";
-import RowAsyncDoc from "./gridCustomBase/rowAsyncDoc";
-import RowContestazioni from "./gridCustomBase/rowContestazioni";
 import { DataGridOrchestratore } from "../../../page/prod_pn/processiOrchestratore";
 import { Whitelist } from "../../../page/prod_pn/whiteList";
-import DefaultRow from "./gridCustomBase/rowDefault";
-import RowModCommessaPrevisionale from "./gridCustomBase/rowModCommessaPrevisonale";
-import RowCollapsible from "./gridCustomBase/rowCollapsible";
 import HeaderGridCustom from "./headerGrid/headerGridCustom";
 import EmptyRow from "./emptyRow";
+import GridRowsRenderer from "./rowComponent/gridRowsRenderer";
 interface GridCustomProps {
-    elements:NotificheList[]|Rel[]|GridElementListaPsp[]|ContestazioneRowGrid[]|any
+    elements: Array<NotificheList | Rel | GridElementListaPsp | ContestazioneRowGrid | Whitelist | DataGridOrchestratore | DataGridAsyncDoc | Record<string, unknown>>
     changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
     changeRow:( event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
     page:number,
@@ -29,7 +21,7 @@ interface GridCustomProps {
     headerNames:{label:string,align: TableCellProps['align'],width:number|string,keyValue:string}[],
     headerNamesCollapse?:string[]|{label:string,align: TableCellProps['align'],width:number|string}[],
     nameParameterApi:string 
-    apiGet?:(el:any)=>void 
+    apiGet?:(el: Record<string, unknown>)=>void 
     disabled:boolean
     widthCustomSize:string
     setOpenModalDelete?:React.Dispatch<SetStateAction<boolean>>
@@ -42,15 +34,15 @@ interface GridCustomProps {
         action:string
     }[],
     headerAction?:(val:number) =>void,
-    body?:any,
+    body?: Record<string, unknown>,
     paginationVisibile?:boolean,
     objectSort?:{[key:string]:number},
     sentenseEmpty?:string,
-    headerActionSort?:(val:string, setGridData:React.Dispatch<SetStateAction<any[]>>,val2:boolean,setObjet:React.Dispatch<SetStateAction<{[key:string]:number}>>,p:number,r:number,listaResponse:any[]) =>void,
-    setGridData?:React.Dispatch<SetStateAction<any[]>>
+    headerActionSort?:(val:string, setGridData:React.Dispatch<SetStateAction<Record<string, unknown>[]>>,val2:boolean,setObjet:React.Dispatch<SetStateAction<{[key:string]:number}>>,p:number,r:number,listaResponse: Record<string, unknown>[]) =>void,
+    setGridData?:React.Dispatch<SetStateAction<Record<string, unknown>[]>>
     gridType?:boolean,
     setObjectSort?:React.Dispatch<SetStateAction<{[key:string]:number}>>,
-    listaResponse?:any[],
+    listaResponse?: Record<string, unknown>[],
     headerActionSortServerSide?:(label:string) => void
 }
 
@@ -85,55 +77,17 @@ const GridCustom : React.FC<GridCustomProps> = ({
   headerActionSortServerSide
 }) =>{
 
-  const handleClickOnGrid = (element) =>{
-      
-    if(apiGet && nameParameterApi ==='asyncDocEnte'){
-      const  newDetail = {
-        idReport:element?.idReport,
-      };
-      apiGet(newDetail);
-    }else if(apiGet && nameParameterApi === 'contestazionePage'){
-      const newDetail = {
-        id:element.reportId
-      };
-      apiGet(newDetail);
-      //modComTrimestrale
-    }else if(apiGet && (nameParameterApi === 'modComTrimestrale'|| nameParameterApi === "docEmessiEnte" )){
-      apiGet(element);
-    }else if(apiGet && nameParameterApi === "idTestata"){
-      const newDetail = {
-        nomeEnteClickOn:element.ragioneSociale,
-        mese:element.mese,
-        anno:element.anno,
-        id:element[nameParameterApi],
-        tipologiaContratto:element.tipologiaContratto
-      };
-      apiGet(newDetail);
-    }else if(apiGet){
-      const newDetail = {
-        nomeEnteClickOn:element.ragioneSociale,
-        mese:element.mese,
-        anno:element.anno,
-        id:element[nameParameterApi]
-      };
-      apiGet(newDetail);
-    }
-  };
-
-
-  const checkIfChecked = (id:any) => {
-    if(selected){
-      return selected.includes(id);
-    }  
+  const checkIfChecked = (id: number) => {
+    return Boolean(selected?.includes(id));
   };
     
   return (
     <div>
       {nameParameterApi === "idWhite" && <EnhancedTableCustom  setOpenModal={setOpenModalDelete} setOpenModalAdd={setOpenModalAdd} selected={selected||[]} buttons={buttons} ></EnhancedTableCustom>}
-      <div style={{overflowX:'auto'}}>
-        <Card sx={{width: widthCustomSize}}  >
-          <Table >
-            <HeaderGridCustom 
+      <div style={{ overflowX: 'auto', width: '100%' }}>
+        <Card sx={{ width: widthCustomSize, minWidth: '100%', backgroundColor: 'transparent' }}>
+          <Table sx={{ backgroundColor: 'white' }}>
+            <HeaderGridCustom
               headerNames={headerNames}
               nameParameterApi={nameParameterApi}
               headerAction={headerAction}
@@ -149,127 +103,75 @@ const GridCustom : React.FC<GridCustomProps> = ({
               rows={rows}
               listaResponse={listaResponse}
               headerActionSortServerSide={headerActionSortServerSide}
-            />   
-            <TableBody sx={{marginLeft:'20px',height: '50px'}}>
-              {(elements.length === 0 && sentenseEmpty) && 
+            />
+            <TableBody sx={{ marginLeft: '20px', height: '50px' }}>
+              {(elements.length === 0 && sentenseEmpty) &&
                 <EmptyRow sentenseEmpty={sentenseEmpty} />
               }
-              {elements.length > 0 && elements.map((element:Rel|NotificheList|GridElementListaPsp|Whitelist|DataGridOrchestratore|DataGridAsyncDoc|ContestazioneRowGrid|any ) =>{
-                // tolgo da ogni oggetto la prima chiave valore  perchè il cliente non vuole vedere es. l'id ma serve per la chiamata get di dettaglio 
-                let sliced = Object.fromEntries(
-                  Object.entries(element).slice(1)
-                );
-                if(nameParameterApi === 'idWhite'){
+              {elements.length > 0 && elements.map((element: Rel | NotificheList | GridElementListaPsp | Whitelist | DataGridOrchestratore | DataGridAsyncDoc | ContestazioneRowGrid | Record<string, unknown>) => {
+                let sliced = Object.fromEntries(Object.entries(element).slice(1));
+
+                if (nameParameterApi === 'idWhite') {
                   sliced = Object.fromEntries(Object.entries(element).slice(1, -1));
-                }else if(nameParameterApi === "contestazionePage"){
+                } else if (nameParameterApi === 'contestazionePage') {
                   sliced = Object.fromEntries(Object.entries(element).slice(1, -1));
-                }else if(nameParameterApi === "modComTrimestrale"){
+                } else if (nameParameterApi === 'modComTrimestrale') {
                   sliced = Object.fromEntries(Object.entries(element).slice(1, -4));
-                }else if( nameParameterApi === "idPrevisonale"){
+                } else if (nameParameterApi === 'idPrevisonale') {
                   sliced = Object.fromEntries(Object.entries(element).slice(5));
-                }else if(nameParameterApi === "docEmessiEnte"){
+                } else if (nameParameterApi === 'docEmessiEnte') {
                   sliced = Object.fromEntries(Object.entries(element).slice(3, -1));
-                }else if(nameParameterApi === "docEmessiEnteContestate"){
+                } else if (nameParameterApi === 'docEmessiEnteContestate') {
                   sliced = Object.fromEntries(Object.entries(element).slice(4, -2));
-                }else if(nameParameterApi === "docSospesiSend"){
+                } else if (nameParameterApi === 'docSospesiSend') {
                   sliced = Object.fromEntries(Object.entries(element).slice(2, -3));
                 }
 
-                            
+                const elementKey = (element as Record<string, unknown>).id ?? Math.random();
 
-
-                if(nameParameterApi === 'idContratto'){
-                  return <RowContratto key={Math.random()} apiGet={apiGet} element={element} headerNames={headerNames}/>;
-                }else if(nameParameterApi === 'idWhite'){
-                  return <RowWhiteList key={Math.random()} element={element} headerNames={headerNames} setSelected={setSelected} selected={selected||[]}  checkIfChecked={checkIfChecked}/>;
-                }else if(nameParameterApi === 'idOrchestratore'){
-                  return <RowOrchestratore key={Math.random()}  sliced={sliced} element={element} headerNames={headerNames}/>;
-                }else if(nameParameterApi === 'asyncDocEnte'){
-                  return <RowAsyncDoc key={Math.random()} sliced={sliced} headerNames={headerNames} handleClickOnGrid={handleClickOnGrid} element={element}></RowAsyncDoc>;
-                }else if(nameParameterApi === "contestazionePage"){
-                  return <RowContestazioni key={Math.random()} sliced={sliced} apiGet={apiGet} handleClickOnGrid={handleClickOnGrid} element={element} headerNames={headerNames}></RowContestazioni>;
-                }else if(nameParameterApi === "modComTrimestrale" || nameParameterApi === "idNotifica"){
-                  return  <DefaultRow key={element.id} handleClickOnGrid={handleClickOnGrid} element={element} sliced={sliced} apiGet={()=> console.log("go to details")} headerNames={headerNames} nameParameterApi={nameParameterApi}></DefaultRow>;
-                }else if(nameParameterApi === "idPrevisonale"){
-                  return <RowModCommessaPrevisionale key={element.id} sliced={sliced} element={element} headerNames={headerNames}></RowModCommessaPrevisionale>;
-                }else if(nameParameterApi === "docEmessiEnte"||nameParameterApi ==="docSospesiSend" ){
-                  return <RowCollapsible key={`${element.idFattura}-${element.id}`} sliced={sliced} element={element} headerNames={headerNames} headerNamesCollapse={headerNamesCollapse} apiGet={apiGet} nameParameterApi={nameParameterApi}></RowCollapsible>;
-                }else{
-                                     
-                  return (
-                    <TableRow sx={{
-                      height: '80px',
-                      borderTop: '4px solid #F2F2F2',
-                      borderBottom: '2px solid #F2F2F2',
-                      backgroundColor: nameParameterApi === "docEmessiEnteContestate" ?"#ffeff1":undefined,
-                      '&:hover': {
-                        backgroundColor: '#EDEFF1',
-                      },
-                    }}  key={Math.random()}>
-                      {
-                        Object.values(sliced).map((value:string|number|any, i:number)=>{
-                                                   
-                          let cssFirstColum : {
-                                                        color: string;
-                                                        fontWeight?: string;
-                                                        cursor?: string;
-                                                    } | undefined  = {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'};
-                          if( i === 0 && nameParameterApi !== "storico_documenti_contabili" && nameParameterApi !== "docEmessiEnteContestate"  ){
-                            cssFirstColum = {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'};
-                          }else if( i !== 0 ){
-                            cssFirstColum = undefined;
-                          }else if((nameParameterApi === "storico_documenti_contabili"|| nameParameterApi === "docEmessiEnteContestate")  && i === 0){
-                            cssFirstColum = {color:'#0D6EFD', fontWeight: 'bold'};
-                          }
-                          const valueEl = (i === 0 && value?.toString().length > 30) ? value?.toString().slice(0, 30) + '...' : value;
-                          return (
-                            <Tooltip key={Math.random()} 
-                              title={
-                                (value === "--" 
-                                  || nameParameterApi === "idNotifica"
-                                  || valueEl?.length < 30
-                                  ||(((nameParameterApi=== "idTestata"||nameParameterApi === "storico_documenti_contabili") && i === 0 && valueEl?.length < 30) 
-                                  ||nameParameterApi=== "idTestata"&& i !== 0 ))
-                                  ?null
-                                  :value}>
-                              <TableCell
-                                align={(nameParameterApi === "modComTrimestrale"|| nameParameterApi === "docEmessiEnteContestate" ||i !== 0)?"center":"left"}
-                                sx={cssFirstColum} 
-                                onClick={()=>{if(i === 0){handleClickOnGrid(element);}}}>
-                                {(valueEl === null||valueEl === "") ? "--":valueEl}
-                              </TableCell>
-                            </Tooltip>
-                          );
-                        })
-                      }
-                      {apiGet && <TableCell align="center" onClick={()=>{handleClickOnGrid(element);}}>
-                        <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
-                      </TableCell> }
-                    </TableRow>
-                  );}
-              } )}
+                return (
+                  <GridRowsRenderer
+                    key={String(elementKey)}
+                    element={element}
+                    sliced={sliced}
+                    nameParameterApi={nameParameterApi}
+                    apiGet={apiGet}
+                    headerNames={headerNames}
+                    headerNamesCollapse={headerNamesCollapse}
+                    selected={selected}
+                    setSelected={setSelected}
+                    checkIfChecked={checkIfChecked}
+                  />
+                );
+              })}
             </TableBody>
-          </Table>      
+          </Table>
         </Card>
       </div>
       {paginationVisibile !== false &&
-            <div className="pt-3">                           
-              <TablePagination
-                sx={{'.MuiTablePagination-selectLabel': {
-                  display:'none',
-                  backgroundColor:'#f2f2f2'                           
-                }}}
-                component="div"
-                page={total > 0 ? page:0}
-                count={total}
-                rowsPerPage={rows}
-                onPageChange={changePage}
-                onRowsPerPageChange={changeRow}
-              />
-            </div>
+        <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end', paddingTop: '0.75rem' }}>
+          <TablePagination
+            sx={{
+              '.MuiTablePagination-toolbar': {
+                justifyContent: 'flex-end',
+                width: '100%'
+              },
+              '.MuiTablePagination-selectLabel': {
+                display: 'none',
+                backgroundColor: '#f2f2f2'
+              }
+            }}
+            component="div"
+            page={total > 0 ? page : 0}
+            count={total}
+            rowsPerPage={rows}
+            onPageChange={changePage}
+            onRowsPerPageChange={changeRow}
+          />
+        </div>
       }
+      
     </div>
-        
   );
 };
 

@@ -17,73 +17,73 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 const MultiSelectStatoContestazione : React.FC<MultiSelectGroupedByProps> =  ({ setBodyGetLista, setValueFgContestazione, valueFgContestazione, dispatchMainState,mainState,clearOnChangeFilter}) => {
 
 
-    const token =  mainState.profilo.jwt;
-    const profilo =  mainState.profilo;
+  const token =  mainState.profilo.jwt;
+  const profilo =  mainState.profilo;
 
 
-    const [fgContestazione, setFgContestazione] = useState<FlagContestazione[]>([]);
+  const [fgContestazione, setFgContestazione] = useState<FlagContestazione[]>([]);
 
-    useEffect(()=>{
+  useEffect(()=>{
        
-        getFlagContestazione();
+    getFlagContestazione();
         
-    },[]);
+  },[]);
 
-    const getFlagContestazione =  async() => {
-        await flagContestazione(token, profilo.nonce )
-            .then((res)=>{
-                setFgContestazione(res.data);                
-            })
-            .catch(((err)=>{
-                manageError(err,dispatchMainState);
-            }));
-    };
+  const getFlagContestazione =  async() => {
+    await flagContestazione(token, profilo.nonce )
+      .then((res)=>{
+        setFgContestazione(res.data);                
+      })
+      .catch(((err)=>{
+        manageError(err,dispatchMainState);
+      }));
+  };
 
-    return (
-        <Autocomplete
-            limitTags={1}
-            multiple
-            onChange={(event, value) => {
-                const arrayIdContestazioni = value.map(obj=> obj.id);
-                setValueFgContestazione(value);
-                setBodyGetLista((prev:BodyListaNotifiche) => ({...prev,...{statoContestazione:arrayIdContestazioni}}));
-                clearOnChangeFilter();
+  return (
+    <Autocomplete
+      limitTags={1}
+      multiple
+      onChange={(event, value) => {
+        const arrayIdContestazioni = value.map(obj=> obj.id);
+        setValueFgContestazione(value);
+        setBodyGetLista((prev:BodyListaNotifiche) => ({...prev,...{statoContestazione:arrayIdContestazioni}}));
+        clearOnChangeFilter();
                 
-            }}
-            value={valueFgContestazione}
-            id="contestazioneNotifiche"
-            options={fgContestazione}
-            groupBy={(option:FlagContestazione) => option.descrizione}
-            disableCloseOnSelect
-            getOptionLabel={(option) => option.flag}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            renderInput={(params) =>{
+      }}
+      value={valueFgContestazione}
+      id="contestazioneNotifiche"
+      options={fgContestazione}
+      groupBy={(option:FlagContestazione) => option.descrizione}
+      disableCloseOnSelect
+      getOptionLabel={(option) => option.flag}
+      isOptionEqualToValue={(option, value) => option.id === value.id}
+      renderInput={(params) =>{
                
-                return <TextField 
-                    sx={{backgroundColor:"#F2F2F2"}}
-                    {...params}
-                    label="Contestazione" 
-                    placeholder="Contestazione" />;
-            } 
+        return <TextField 
+          sx={{backgroundColor:"#F2F2F2"}}
+          {...params}
+          label="Contestazione" 
+          placeholder="Contestazione" />;
+      } 
                 
-            }
-            renderOption={(props, option, { selected }) =>{
-                const newProps = {...props,...{key:option.id}};
-                return (
-                    <div>
-                        <li {...newProps}>
-                            <Checkbox
-                                icon={icon}
-                                checkedIcon={checkedIcon}
-                                style={{ marginRight: 8 }}
-                                checked={selected}
-                            />
-                            {option.flag}
-                        </li>
-                    </div>
-                );
-            } }
-        />
-    );
+      }
+      renderOption={(props, option, { selected }) =>{
+        const newProps = {...props,...{key:option.id}};
+        return (
+          <div>
+            <li {...newProps}>
+              <Checkbox
+                icon={icon}
+                checkedIcon={checkedIcon}
+                style={{ marginRight: 8 }}
+                checked={selected}
+              />
+              {option.flag}
+            </li>
+          </div>
+        );
+      } }
+    />
+  );
 };
 export default MultiSelectStatoContestazione;

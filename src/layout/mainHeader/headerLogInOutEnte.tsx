@@ -8,66 +8,66 @@ import ModalLoading from '../../components/reusableComponents/modals/modalLoadin
 import { useGlobalStore } from '../../store/context/useGlobalStore';
 
 const HeaderLogEnte = () => {
-    const mainState = useGlobalStore(state => state.mainState);
-    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+  const mainState = useGlobalStore(state => state.mainState);
+  const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
 
-    const [showDownloading, setShowDownloading] = useState(false);
+  const [showDownloading, setShowDownloading] = useState(false);
 
     
-    const user: JwtUser = {
-        id: '1',
-        name: mainState.profilo.nomeEnte,
-        surname: "",
-        email: "",
-    };
+  const user: JwtUser = {
+    id: '1',
+    name: mainState.profilo.nomeEnte,
+    surname: "",
+    email: "",
+  };
 
-    const onButtonClick = async () => {
-        setShowDownloading(true);
-        await getManuale().then((response) =>{
-            setShowDownloading(false);
-            if(response.status !== 200){
-                managePresaInCarico('ERRORE_MANUALE',dispatchMainState);
-            }else{
-                response.blob().then((res) => {
-                    setShowDownloading(false);
-                    const fileName = 'Manuale Utente Portale Fatturazione.pdf';
-                    saveAs( res,fileName );
-                }); 
-            }
-        } ).catch(() => {
-            setShowDownloading(false);
-            managePresaInCarico('ERRORE_MANUALE',dispatchMainState);
-        });
-    };
+  const onButtonClick = async () => {
+    setShowDownloading(true);
+    await getManuale().then((response) =>{
+      setShowDownloading(false);
+      if(response.status !== 200){
+        managePresaInCarico('ERRORE_MANUALE',dispatchMainState);
+      }else{
+        response.blob().then((res) => {
+          setShowDownloading(false);
+          const fileName = 'Manuale Utente Portale Fatturazione.pdf';
+          saveAs( res,fileName );
+        }); 
+      }
+    } ).catch(() => {
+      setShowDownloading(false);
+      managePresaInCarico('ERRORE_MANUALE',dispatchMainState);
+    });
+  };
     
 
-    function onEmailClick() {
+  function onEmailClick() {
 
-        window.location.href = import.meta.env.VITE_APP_REDIRECT_ASSISTENZA ||'';
-    }
+    window.location.href = import.meta.env.VITE_APP_REDIRECT_ASSISTENZA ||'';
+  }
   
-    const statusUser = mainState.authenticated && user;
+  const statusUser = mainState.authenticated && user;
 
-    return (
-        <div className="div_header">
-            <HeaderAccount
-                rootLink={pagoPALinkHeder}
-                loggedUser={statusUser}
-                onAssistanceClick={() => onEmailClick()}
-                onLogout={() => {
-                    localStorage.removeItem("globalStatePF");
-                    localStorage.removeItem("filters");
-                    window.location.href = redirect;
-                }}
-                onDocumentationClick={()=>onButtonClick()}
-            />
-            <ModalLoading 
-                open={showDownloading} 
-                setOpen={setShowDownloading}
-                sentence={'Downloading...'} >
-            </ModalLoading>
-        </div>
-    );
+  return (
+    <div className="div_header">
+      <HeaderAccount
+        rootLink={pagoPALinkHeder}
+        loggedUser={statusUser}
+        onAssistanceClick={() => onEmailClick()}
+        onLogout={() => {
+          localStorage.removeItem("globalStatePF");
+          localStorage.removeItem("filters");
+          window.location.href = redirect;
+        }}
+        onDocumentationClick={()=>onButtonClick()}
+      />
+      <ModalLoading 
+        open={showDownloading} 
+        setOpen={setShowDownloading}
+        sentence={'Downloading...'} >
+      </ModalLoading>
+    </div>
+  );
 };
 
 export default HeaderLogEnte;

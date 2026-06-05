@@ -27,7 +27,7 @@ import ListaCommessaPrevisionale from "../../page/prod_pn/listaModuloComPrevison
 
 
 const ProdPnRoute = () => {
-    const prodPnRoute =  <Route element={<LayoutAzure  sideNav={<SideNavSend />}></LayoutAzure >}>
+  const prodPnRoute =  <Route element={<LayoutAzure  sideNav={<SideNavSend />}></LayoutAzure >}>
        
        
     
@@ -36,7 +36,7 @@ const ProdPnRoute = () => {
        
        
       
-        {/*
+    {/*
        <Route path={PathPf.TIPOLOGIA_CONTRATTO} element={<PageTipologiaContratto/>} />
         <Route path={PathPf.LISTA_MODULICOMMESSA} element={<PagoPaListaModuliCommessa/>}/>
        <Route path={PathPf.LISTA_DATI_FATTURAZIONE} element={<PagoPaListaDatiFatturazione/>} />
@@ -63,8 +63,8 @@ const ProdPnRoute = () => {
         
         <Route path={PathPf.ORCHESTRATORE} element={<ProcessiOrchestartore/>} />
         */}
-    </Route>;
-    return prodPnRoute;
+  </Route>;
+  return prodPnRoute;
 };
 
 export default ProdPnRoute;

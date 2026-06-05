@@ -16,29 +16,29 @@ interface NavigationHeaderProps {
 
 const NavigatorHeader:React.FC<NavigationHeaderProps> = ({pageFrom,pageIn, backPath,icon}) => {
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    return (
-        <div className='marginTop24'>
-            <div className='ms-5'>
-                <ButtonNaked
-                    color="primary"
-                    size="small"
-                    startIcon={<ArrowBackIcon />}
-                    onClick={() => navigate(backPath)}
-                >
+  return (
+    <div className='marginTop24'>
+      <div className='ms-5'>
+        <ButtonNaked
+          color="primary"
+          size="small"
+          startIcon={<ArrowBackIcon />}
+          onClick={() => navigate(backPath)}
+        >
             Indietro
-                </ButtonNaked>
-                <Typography sx={{marginLeft:'20px'}} variant="caption">
-                    {icon}
-                    {pageFrom}
-                </Typography>
-                <Typography sx={{fontWeight:'bold', marginLeft:'5px'}} variant="caption">
-                    {pageIn}
-                </Typography>
-            </div>
-        </div>
-    );
+        </ButtonNaked>
+        <Typography sx={{marginLeft:'20px'}} variant="caption">
+          {icon}
+          {pageFrom}
+        </Typography>
+        <Typography sx={{fontWeight:'bold', marginLeft:'5px'}} variant="caption">
+          {pageIn}
+        </Typography>
+      </div>
+    </div>
+  );
 };
 
 export default NavigatorHeader;

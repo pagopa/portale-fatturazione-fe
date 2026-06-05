@@ -10,75 +10,75 @@ import { useGlobalStore } from '../../store/context/useGlobalStore';
 
 
 const MenuProps = {
-    PaperProps: {
-        style: {
-            maxHeight: '200px',
-        },
+  PaperProps: {
+    style: {
+      maxHeight: '200px',
     },
+  },
 };
 
 
 export default function MultipleSelectProdotti({setProductSelected}) {
 
-    const mainState = useGlobalStore(state => state.mainState);
+  const mainState = useGlobalStore(state => state.mainState);
 
-    const [valueSelect, setValueSelect] = React.useState('');
-    const [openSelect, setOpenselect] = React.useState(false);
+  const [valueSelect, setValueSelect] = React.useState('');
+  const [openSelect, setOpenselect] = React.useState(false);
 
-    React.useEffect(()=>{
-        setOpenselect(true);
-    },[]);
+  React.useEffect(()=>{
+    setOpenselect(true);
+  },[]);
   
   
-    const handleChange = (event) => {
-        const {
-            target: { value },
-        } = event;
-        setProductSelected(mainState.prodotti.find((el:any) => el.prodotto === value));
-        setValueSelect(value);
-    };
+  const handleChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setProductSelected(mainState.prodotti.find((el:any) => el.prodotto === value));
+    setValueSelect(value);
+  };
 
     
 
     
 
-    return (
-        <div className='container_select_prodotti'>
-            <FormControl sx={{ marginTop: '20px', width: '430px'}}>
-                <InputLabel id="demo-multiple-name-label">Cerca prodotto</InputLabel>
-                <Select
-                    labelId="demo-multiple-name-label"
-                    id="demo-multiple-name"
-                    open={openSelect}
-                    value={valueSelect}
-                    onChange={(e)=> handleChange(e)}
-                    input={<OutlinedInput label="Cerca prodotto" />}
-                    MenuProps={MenuProps}
-                >
-                    {mainState.prodotti.map((el:any) => {
+  return (
+    <div className='container_select_prodotti'>
+      <FormControl sx={{ marginTop: '20px', width: '430px'}}>
+        <InputLabel id="demo-multiple-name-label">Cerca prodotto</InputLabel>
+        <Select
+          labelId="demo-multiple-name-label"
+          id="demo-multiple-name"
+          open={openSelect}
+          value={valueSelect}
+          onChange={(e)=> handleChange(e)}
+          input={<OutlinedInput label="Cerca prodotto" />}
+          MenuProps={MenuProps}
+        >
+          {mainState.prodotti.map((el:any) => {
 
-                        let name = el?.prodotto;
-                        if(el?.prodotto === 'prod-pagopa'){
-                            name = 'Piattaforma pagoPA';
-                        }else if(el?.prodotto === 'prod-pn'){
-                            name = 'SEND - Servizio Notifiche Digitali';
-                        }
+            let name = el?.prodotto;
+            if(el?.prodotto === 'prod-pagopa'){
+              name = 'Piattaforma pagoPA';
+            }else if(el?.prodotto === 'prod-pn'){
+              name = 'SEND - Servizio Notifiche Digitali';
+            }
 
-                        return (
-                            <MenuItem
-                                key={el.jwt}
-                                value={el.prodotto}
-                            >
-                                <div className='icon_select_prodotti'> 
-                                    <AccountBalanceIcon sx={{color:'#A2ADB8'}} />
-                                </div>
+            return (
+              <MenuItem
+                key={el.jwt}
+                value={el.prodotto}
+              >
+                <div className='icon_select_prodotti'> 
+                  <AccountBalanceIcon sx={{color:'#A2ADB8'}} />
+                </div>
         
-                                <Typography variant="h6">{name}</Typography> 
-                            </MenuItem>
-                        );
-                    } )}
-                </Select>
-            </FormControl>
-        </div>
-    );
+                <Typography variant="h6">{name}</Typography> 
+              </MenuItem>
+            );
+          } )}
+        </Select>
+      </FormControl>
+    </div>
+  );
 }

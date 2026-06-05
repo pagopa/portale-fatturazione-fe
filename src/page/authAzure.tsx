@@ -9,60 +9,60 @@ import { useGlobalStore } from "../store/context/useGlobalStore";
 
 const AuthAzure : React.FC<any> = () =>{
 
-    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+  const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
 
   
-    const handleModifyMainState = (valueObj) => {
-        dispatchMainState({
-            type:'MODIFY_MAIN_STATE',
-            value:valueObj
-        });
-    };
+  const handleModifyMainState = (valueObj) => {
+    dispatchMainState({
+      type:'MODIFY_MAIN_STATE',
+      value:valueObj
+    });
+  };
     
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const { instance, inProgress, accounts } = useMsal();
+  const { instance, inProgress, accounts } = useMsal();
    
-    const [apiData, setApiData] = useState(null);
-    const [tokens, setTokens] = useState({});
+  const [apiData, setApiData] = useState(null);
+  const [tokens, setTokens] = useState({});
   
-    useEffect(() => {
-        const accessTokenRequest = {
-            scopes: ["user.read"],
-            account: accounts[0],
-        };
-        if (!apiData && inProgress === InteractionStatus.None) {
-            instance
-                .acquireTokenSilent(accessTokenRequest)
-                .then((accessTokenResponse) => {
-                    // Acquire token silent success
-                    const accessToken = accessTokenResponse.accessToken;
-                    const idToken = accessTokenResponse.idToken;
+  useEffect(() => {
+    const accessTokenRequest = {
+      scopes: ["user.read"],
+      account: accounts[0],
+    };
+    if (!apiData && inProgress === InteractionStatus.None) {
+      instance
+        .acquireTokenSilent(accessTokenRequest)
+        .then((accessTokenResponse) => {
+          // Acquire token silent success
+          const accessToken = accessTokenResponse.accessToken;
+          const idToken = accessTokenResponse.idToken;
 
-                    setTokens({access_token:accessToken, id_token:idToken});
+          setTokens({access_token:accessToken, id_token:idToken});
                   
-                })
-                .catch((error) => {
+        })
+        .catch((error) => {
                    
-                    if (error instanceof InteractionRequiredAuthError) {
-                        instance.acquireTokenRedirect(accessTokenRequest);
-                    }
-                    navigate('/azureLogin');
+          if (error instanceof InteractionRequiredAuthError) {
+            instance.acquireTokenRedirect(accessTokenRequest);
+          }
+          navigate('/azureLogin');
                  
-                });
-        }
-    }, [instance, accounts, inProgress, apiData]);
+        });
+    }
+  }, [instance, accounts, inProgress, apiData]);
 
 
-    useEffect(()=>{
-        if(Object.values(tokens).length > 0){
-            //postPagoPa();
-            postPagoPa2();
-        }
-    },[tokens]);
+  useEffect(()=>{
+    if(Object.values(tokens).length > 0){
+      //postPagoPa();
+      postPagoPa2();
+    }
+  },[tokens]);
  
   
-    /* const postPagoPa = () =>{
+  /* const postPagoPa = () =>{
         pagopaLogin(tokens).then((res)=>{
             localStorage.clear();
             if(res.status === 200){
@@ -81,55 +81,55 @@ const AuthAzure : React.FC<any> = () =>{
 
     };*/
 
-    const postPagoPa2 = () =>{
-        pagopaLogin2(tokens).then((res)=>{
-            localStorage.clear();
-            if(res.status === 200){
-                //localStorage.removeItem("statusApplication");
-                // store del token nella local storage per tutte le successive chiamate START
-                const infoProdotti = res.data.map((el) => ({jwt:el.jwt,prodotto:el.prodotto,descrizioneRuolo:el.descrizioneRuolo}));
-                handleModifyMainState({
-                    authenticated:true,
-                    prodotti:infoProdotti,
-                    profilo:{},
-                    mese:'',
-                    anno:'',
-                    nomeEnteClickOn:'',
-                    datiFatturazione:false,// l'ente ha i dati di fatturazione?
-                    userClickOn:undefined, // se l'utente clicca su un elemento di lista commesse setto GRID
-                    inserisciModificaCommessa:undefined, // INSERT MODIFY  se il sevizio get commessa mi restituisce true []
-                    primoInserimetoCommessa:true,// la commessa mese corrente è stata inserita?
-                    statusPageDatiFatturazione:'immutable',
-                    statusPageInserimentoCommessa:'immutable',
-                    relSelected:{
-                        nomeEnteClickOn:'',
-                        mese:0,
-                        anno:0,
-                        idElement:''
-                    },
-                    apiError:null,
-                    badgeContent:0,
-                    messaggioSelected:null
-                });
-                navigate('/selezionaprodotto');
-            }
-        }).catch(() =>{
-            window.location.href = redirect;
-
+  const postPagoPa2 = () =>{
+    pagopaLogin2(tokens).then((res)=>{
+      localStorage.clear();
+      if(res.status === 200){
+        //localStorage.removeItem("statusApplication");
+        // store del token nella local storage per tutte le successive chiamate START
+        const infoProdotti = res.data.map((el) => ({jwt:el.jwt,prodotto:el.prodotto,descrizioneRuolo:el.descrizioneRuolo}));
+        handleModifyMainState({
+          authenticated:true,
+          prodotti:infoProdotti,
+          profilo:{},
+          mese:'',
+          anno:'',
+          nomeEnteClickOn:'',
+          datiFatturazione:false,// l'ente ha i dati di fatturazione?
+          userClickOn:undefined, // se l'utente clicca su un elemento di lista commesse setto GRID
+          inserisciModificaCommessa:undefined, // INSERT MODIFY  se il sevizio get commessa mi restituisce true []
+          primoInserimetoCommessa:true,// la commessa mese corrente è stata inserita?
+          statusPageDatiFatturazione:'immutable',
+          statusPageInserimentoCommessa:'immutable',
+          relSelected:{
+            nomeEnteClickOn:'',
+            mese:0,
+            anno:0,
+            idElement:''
+          },
+          apiError:null,
+          badgeContent:0,
+          messaggioSelected:null
         });
+        navigate('/selezionaprodotto');
+      }
+    }).catch(() =>{
+      window.location.href = redirect;
 
-    };
+    });
+
+  };
 
 
-    return (
-        <>
-            <div className="d-flex justify-content-center align-items-center" style={{height: '100vh'}}>
-                <div id='loader_on_gate_pages'>
-                    <Loader sentence={'Autenticazione in corso...'}></Loader> 
-                </div>
-            </div>
-        </>
-    ); 
+  return (
+    <>
+      <div className="d-flex justify-content-center align-items-center" style={{height: '100vh'}}>
+        <div id='loader_on_gate_pages'>
+          <Loader sentence={'Autenticazione in corso...'}></Loader> 
+        </div>
+      </div>
+    </>
+  ); 
 };
 
 export default AuthAzure;

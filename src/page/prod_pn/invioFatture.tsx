@@ -143,7 +143,7 @@ const InvioFatture : React.FC = () => {
   };
 
   const statoFattura = (row) =>{
-    let tooltipObj:any= {label:'...',title:'...'};
+    let tooltipObj:any = {label:'',title:''};
     if(row.statoInvio === 0){
       tooltipObj = {label:'Da inviare',title:'Da inviare',color:'#86E1FD'};
     }else if(row.statoInvio === 2){
@@ -320,13 +320,11 @@ const InvioFatture : React.FC = () => {
       <ModalLoading 
         open={showLoader} 
         setOpen={setShowLoader}
-        sentence={'Loading...'} >
-      </ModalLoading>
+        sentence={'Loading...'} />
       <ModalLoading 
         open={showDownloading} 
         setOpen={setShowDownloading}
-        sentence={'Downloading...'} >
-      </ModalLoading>
+        sentence={'Downloading...'} />
     </Box>
   );
 };
