@@ -9,7 +9,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import {  useSnackbar } from 'notistack';
 import { mesiGrid } from '../../reusableFunction/reusableArrayObj';
 import { useGlobalStore } from '../../store/context/useGlobalStore';
-import { manageError, url } from '../../api/api';
+import { url } from '../../api/api';
 import axios from 'axios';
 
 
@@ -17,7 +17,6 @@ import axios from 'axios';
 const HeaderProductEnte : React.FC = () => {
 
   const mainState = useGlobalStore(state => state.mainState);
-  const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
   const setCountMessages = useGlobalStore(state => state.setCountMessages);
   const statusQueryGetUri = useGlobalStore(state => state.statusQueryGetUri);
   const setStatusQueryGetUri = useGlobalStore(state => state.setStatusQueryGetUri);
@@ -33,7 +32,7 @@ const HeaderProductEnte : React.FC = () => {
       id:'0',
       logoUrl: ``,
       name:profilo.nomeEnte ,
-      productRole: "Amministratore",
+      productRole: "",
     }
   ];
 
@@ -138,8 +137,7 @@ const HeaderProductEnte : React.FC = () => {
         enqueueSnackbar(`La creazione del file delle notifiche di ${mesiGrid[res?.data?.input?.mese]}/${res?.data?.input?.anno} non è andata a buon fine. Si prega di riprovare`, {variant:"info",anchorOrigin:{ horizontal: "center", vertical: "bottom" }});
         return queryString;
       }
-    }).catch((err)=>{
-            
+    }).catch(()=>{
       //const newStatusQueryUri = statusQueryGetUri.filter(el => el !== queryString && el !== null);
       // setStatusQueryGetUri(newStatusQueryUri);
       return queryString;
