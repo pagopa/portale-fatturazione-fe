@@ -394,9 +394,9 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
                                   </TableHead>
                                   <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
                                     <TableRow>
-                                      <TableCell align="center" sx={{ width:"300px"}}>{new Date(fat.dataFattura).toLocaleDateString('en-CA')}</TableCell>
-                                      <TableCell align="center" sx={{ width:"300px"}}>{fat.tipoDocumento}</TableCell>
-                                      <TableCell align="center" sx={{ width:"300px"}}>{fat.metodoPagamento}</TableCell>
+                                      <TableCell align="center" sx={{ width:"300px"}}>{fat.dataFattura  ? new Date(fat.dataFattura).toLocaleDateString('en-CA'):"--"}</TableCell>
+                                      <TableCell align="center" sx={{ width:"300px"}}>{fat.tipoDocumento||"--"}</TableCell>
+                                      <TableCell align="center" sx={{ width:"300px"}}>{fat.metodoPagamento||"--"}</TableCell>
                                       <TableCell align="center" sx={{ width:"300px"}}>{fat.totaleFatturaImponibile != null 
                                         ? Number(fat.totaleFatturaImponibile||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })
                                         : '--'}
