@@ -10,6 +10,7 @@ import GridCustom from '../../components/reusableComponents/grid/gridCustom';
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from '../../components/reusableComponents/layout/mainComponent';
 import MainFilter from '../../components/reusableComponents/mainFilter';
 import { useGlobalStore } from "../../store/context/useGlobalStore";
+import { headerAnagraficaPsp } from "../../assets/configurations/conf_GridAnagraficaPsp";
 
 
 const AnagraficaPsp:React.FC = () =>{
@@ -373,8 +374,7 @@ const AnagraficaPsp:React.FC = () =>{
           keyValue={"abi"}
           keyDescription={"abi"}
           keyBody={"abi"}
-        ></MainFilter>
-                   
+        ></MainFilter>                  
       </ResponsiveGridContainer>
       <FilterActionButtons 
         onButtonFiltra={onButtonFiltra} 
@@ -398,22 +398,19 @@ const AnagraficaPsp:React.FC = () =>{
         total={totalPsp}
         page={page}
         rows={rowsPerPage}
-        headerNames={['Nome PSP', 'ID Contratto', 'Trimestre', 'Nome Fornitore', 'E-mail PEC', 'Codice SDI', 'Codice ABI', 'E-Mail Ref. Fattura', 'Data', '']}
+        headerNames={headerAnagraficaPsp}
         disabled={getListaLoading}
         widthCustomSize="2000px"
         sentenseEmpty={"Nessun dato disponibile"}
-      />
-                
+      />        
       <ModalLoading 
         open={showLoading} 
         setOpen={setShowLoading}
-        sentence={'Downloading...'} >
-      </ModalLoading>
+        sentence={'Downloading...'} />
       <ModalLoading 
         open={getListaLoading} 
         setOpen={setGetListaLoading}
-        sentence={'Loading...'} >
-      </ModalLoading>
+        sentence={'Loading...'} />
     </MainBoxStyled>
        
   );
