@@ -39,7 +39,9 @@ const EnhancedTableCustom = (props: EnhancedTable) =>{
         let disableButton = false;
         if(selected?.length > 0 &&  el.action === "Add"){
           disableButton = true;
-        }else if(selected?.length < 1 &&  el.action === "Delete"){
+        }else if(selected?.length < 1 &&  el.action === "Delete" ){
+          disableButton = true;
+        }else if(selected?.length < 1 &&  el.action === "Restore" ){
           disableButton = true;
         }
         return (

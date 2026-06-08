@@ -31,6 +31,7 @@ import ReportDettaglio from '../page/prod_pn/reportDettaglioUtPa';
 import Storico from '../page/prod_pn/storicoContestazioni';
 import PageTipologiaContratto from '../page/prod_pn/tipologiaContratto';
 import ListaDocEmessi from '../page/prod_pn/whiteList';
+import StagingFatture from '../page/prod_pn/stagingFatture';
 import SideNavSend from '../layout/sideNavs/sideNavSend';
 import AuthAzureProdotti from '../page/authAzureProdotti';
 import ListaCommessaPrevisionale from '../page/prod_pn/listaModuloComPrevisonale';
@@ -138,6 +139,7 @@ const router2 = createBrowserRouter([
           { path: PathRoutePf.PDF_REL+"/:pageFrom/:id/:idEnte?/:idTipoContratto?", Component: RelPdfPage },
           { path: PathRoutePf.ADESIONE_BANDO, Component: AdesioneBando },
           { path: PathRoutePf.FATTURAZIONE, Component: Fatturazione },
+          { path: PathRoutePf.STAGING_FATTURE, Component: StagingFatture },
           { path: PathRoutePf.MESSAGGI, Component: Messaggi },
           { path: PathRoutePf.ACCERTAMENTI, Component: Accertamenti },
           { path: PathRoutePf.LISTA_DOC_EMESSI, Component: ListaDocEmessi },

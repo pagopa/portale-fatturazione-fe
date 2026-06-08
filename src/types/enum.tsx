@@ -26,6 +26,7 @@ export enum PathPf {
     ADESIONE_BANDO = "/send/adesionealbando",
     FATTURAZIONE = "/send/fatturazione",
     LISTA_DOC_EMESSI = "/send/listadocemessi",
+    STAGING_FATTURE = "/send/stagingfatture",
     JSON_TO_SAP = "/send/inviofatture",
     JSON_TO_SAP_DETAILS = "/send/inviofatturedettaglio/:id",
     ORCHESTRATORE = "/send/orchestratore",
@@ -84,6 +85,7 @@ export enum PathRoutePf {
     ADESIONE_BANDO = "adesionealbando",
     FATTURAZIONE = "fatturazione",
     LISTA_DOC_EMESSI = "listadocemessi",
+    STAGING_FATTURE = "stagingfatture",
     JSON_TO_SAP = "inviofatture",
     JSON_TO_SAP_DETAILS = "inviofatturedettaglio/:id",
     ORCHESTRATORE = "orchestratore",
@@ -96,6 +98,7 @@ export enum PathRoutePf {
     DOCUMENTICONTABILI = "documenticontabilipagopa",
     DETTAGLIO_DOC_CONTABILE = "dettagliodoccontabile",
     KPI = 'kpipagamenti',
+    // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
     MESSAGGIPN = "messaggi",
     EMAIL_PSP = "emailpsp",
 
@@ -105,8 +108,10 @@ export enum PathRoutePf {
     STORICO_CONTEST_ENTE = "storicoente",
     INSERIMENTO_CONTESTAZIONI_ENTE = "contestazioniente",
   
+    // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
     LISTA_STORICO_DOCUMENTI = "storicodoc",
     DOCUMENTI_EMESSI = "docemessi",
+    // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
     DOCUMENTI_SOSPESI = "docsospesi",
 
     

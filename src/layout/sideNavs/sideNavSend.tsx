@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useState, useEffect } from 'react';
 import {
   List,
@@ -29,6 +29,7 @@ import BatchPredictionIcon from '@mui/icons-material/BatchPrediction';
 import { useGlobalStore } from '../../store/context/useGlobalStore';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import DescriptionIcon from '@mui/icons-material/Description';
+import RestorePageIcon from '@mui/icons-material/RestorePage';
 
 const SideNavSend : React.FC = () => {
 
@@ -88,6 +89,9 @@ const SideNavSend : React.FC = () => {
     }else if(currentLocation === PathPf.LISTA_DOC_EMESSI){
       setSelectedIndex(9);
       setOpen2(true);
+    }else if(currentLocation === PathPf.STAGING_FATTURE){
+      setSelectedIndex(15);
+      setOpen2(true);
     }else if(currentLocation === PathPf.JSON_TO_SAP){
       setSelectedIndex(5);
     }else if(currentLocation.toLowerCase().includes("/inviofatturedettaglio/")){
@@ -104,7 +108,7 @@ const SideNavSend : React.FC = () => {
     }
 
 
-    if(open2 && (currentLocation !== PathPf.LISTA_DOC_EMESSI && currentLocation !== PathPf.FATTURAZIONE && currentLocation !== PathPf.DOCUMENTI_SOSPESI_SEND &&  !currentLocation.includes("/send/fatturapdf/"))){
+    if(open2 && (currentLocation !== PathPf.LISTA_DOC_EMESSI && currentLocation !== PathPf.STAGING_FATTURE && currentLocation !== PathPf.FATTURAZIONE && currentLocation !== PathPf.DOCUMENTI_SOSPESI_SEND &&  !currentLocation.includes("/send/fatturapdf/"))){
       setOpen2(false);
     }
     if(open && (currentLocation !== PathPf.TIPOLOGIA_CONTRATTO && currentLocation !== PathPf.LISTA_DATI_FATTURAZIONE)){
@@ -271,6 +275,12 @@ const SideNavSend : React.FC = () => {
                 <FormatListBulletedIcon fontSize="inherit" />
               </ListItemIcon>
               <ListItemText primary="White list" />
+            </ListItemButton>
+            <ListItemButton selected={selectedIndex === 15} sx={{ pl: 4 }} onClick={() => handleListItemClick(PathPf.STAGING_FATTURE)}>
+              <ListItemIcon>
+                <RestorePageIcon fontSize="inherit" />
+              </ListItemIcon>
+              <ListItemText primary="Fatture in staging" />
             </ListItemButton>
           </List>
         </Collapse> 
