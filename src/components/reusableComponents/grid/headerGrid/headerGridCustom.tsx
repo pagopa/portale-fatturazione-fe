@@ -1,4 +1,4 @@
-import { IconButton, TableCell, TableCellProps, TableHead, TableRow, Tooltip } from "@mui/material";
+import { IconButton, TableCell, TableHead, TableRow, Tooltip } from "@mui/material";
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import { NotificheList } from "../../../../types/typeReportDettaglio";
@@ -6,6 +6,7 @@ import { GridElementListaPsp } from "../../../../types/typeAngraficaPsp";
 import { ContestazioneRowGrid } from "../../../../page/prod_pn/storicoContestazioni";
 import { Rel } from "../../../../types/typeRel";
 import { SetStateAction } from "react";
+import { HeaderGridCustom as HeaderGridCustomProps } from "../gridCustom";
 
 const HeaderGridCustom = ({
   headerNames,
@@ -28,7 +29,7 @@ const HeaderGridCustom = ({
     page:number,
     total:number,
     rows:number,
-    headerNames:{label:string,align: TableCellProps['align'],width:number|string,headerAction?:(val:number) =>void,headerActionSort?:boolean}[],
+    headerNames:HeaderGridCustomProps[],
     nameParameterApi:string 
     headerAction?:(val:number) =>void,
     body?:any,

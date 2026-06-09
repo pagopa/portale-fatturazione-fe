@@ -1,27 +1,20 @@
 import { Card, Table, TableBody, TableCellProps, TablePagination } from "@mui/material";
-import { GridElementListaPsp } from "../../../types/typeAngraficaPsp";
-import { Rel } from "../../../types/typeRel";
-import { NotificheList } from "../../../types/typeReportDettaglio";
-import { ContestazioneRowGrid } from "../../../page/prod_pn/storicoContestazioni";
 import EnhancedTableCustom from "./gridCustomBase/enhancedTabalToolbarCustom";
-import { SetStateAction } from "react";
-import { DataGridAsyncDoc } from "../../../page/ente/asyncDocumenti";
-import { DataGridOrchestratore } from "../../../page/prod_pn/processiOrchestratore";
-import { Whitelist } from "../../../page/prod_pn/whiteList";
+import React, { SetStateAction } from "react";
 import HeaderGridCustom from "./headerGrid/headerGridCustom";
 import EmptyRow from "./emptyRow";
 import GridRowsRenderer from "./rowComponent/gridRowsRenderer";
-interface GridCustomProps {
-    elements: Array<NotificheList | Rel | GridElementListaPsp | ContestazioneRowGrid | Whitelist | DataGridOrchestratore | DataGridAsyncDoc | Record<string, unknown>>
+interface GridCustomProps<T = any> {
+    elements:  T[],
     changePage:(event: React.MouseEvent<HTMLButtonElement> | null,newPage: number) => void,
     changeRow:( event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
     page:number,
     total:number,
     rows:number,
-    headerNames:{label:string,align: TableCellProps['align'],width:number|string,keyValue:string}[],
+    headerNames:HeaderGridCustom[],
     headerNamesCollapse?:string[]|{label:string,align: TableCellProps['align'],width:number|string}[],
     nameParameterApi:string 
-    apiGet?:(el: Record<string, unknown>)=>void 
+    apiGet?:(el: any)=>void 
     disabled:boolean
     widthCustomSize:string
     setOpenModalDelete?:React.Dispatch<SetStateAction<boolean>>
@@ -34,7 +27,7 @@ interface GridCustomProps {
         action:string
     }[],
     headerAction?:(val:number) =>void,
-    body?: Record<string, unknown>,
+    body?: any,
     paginationVisibile?:boolean,
     objectSort?:{[key:string]:number},
     sentenseEmpty?:string,
@@ -46,8 +39,19 @@ interface GridCustomProps {
     headerActionSortServerSide?:(label:string) => void
 }
 
+export interface HeaderGridCustom {
+    label:string,
+    align:TableCellProps['align'],
+    width:number|string,
+    headerAction:boolean,
+    headerTooltip?: (title: string, label: string, color: string) => JSX.Element,
+    headerChip?: (title: string, label: string, color: string) => JSX.Element,
+    gridAction?:(fun:(id) => void,color:string,disabled:boolean,obj:any) => JSX.Element,
+    gridOpenDetail?:(disabled:boolean,open?:boolean,setOpen?:(val)=>void) => JSX.Element,
+}
 
-const GridCustom : React.FC<GridCustomProps> = ({
+
+const GridCustom: React.FC<GridCustomProps> = ({
   elements,
   changePage,
   changeRow,
@@ -108,7 +112,7 @@ const GridCustom : React.FC<GridCustomProps> = ({
               {(elements.length === 0 && sentenseEmpty) &&
                 <EmptyRow sentenseEmpty={sentenseEmpty} />
               }
-              {elements.length > 0 && elements.map((element: Rel | NotificheList | GridElementListaPsp | Whitelist | DataGridOrchestratore | DataGridAsyncDoc | ContestazioneRowGrid | Record<string, unknown>) => {
+              {elements.length > 0 && elements.map((element: T) => {
                 let sliced = Object.fromEntries(Object.entries(element).slice(1));
 
                 if (nameParameterApi === 'idWhite') {

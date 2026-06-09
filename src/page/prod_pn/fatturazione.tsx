@@ -621,7 +621,7 @@ const Fatturazione : React.FC = () =>{
         },
               
         ]}
-      ></FilterActionButtons>
+      />
       <ActionTopGrid
         actionButtonRight={[{
           onButtonClick:downloadListaReportFatturazione,
@@ -657,19 +657,15 @@ const Fatturazione : React.FC = () =>{
         infoPageLocalStorage={{page:filters.page,rows:filters.rows}}
         firstRender={isInitialRender.current}
         upadateOnSelctedChange={upadateOnSelctedChange}
-      ></CollapsibleTable>
-             
+      />
       <ModalLoading 
         open={showLoadingGrid} 
         setOpen={setShowLoadingGrid}
-        sentence={'Loading...'} >
-      </ModalLoading>
+        sentence={'Loading...'} />
       <ModalLoading 
         open={showDownloading} 
         setOpen={setShowDownloading}
-        sentence={'Downloading...'} >
-      </ModalLoading>
-               
+        sentence={'Downloading...'} />     
       <ModalSap
         open={openSapModal} 
         setOpen={setOpenSapModal}
@@ -678,21 +674,20 @@ const Fatturazione : React.FC = () =>{
         anno={bodyFatturazioneDownload.anno||0}
         dispatchMainState={dispatchMainState}
         getListaFatture={getlistaFatturazione}
-        bodyFatturazioneDownload={bodyFatturazioneDownload}></ModalSap>
+        bodyFatturazioneDownload={bodyFatturazioneDownload}/>
       <ModalConfermaRipristina 
         setOpen={setOpenConfermaModal}
         open={openConfermaModal}
         filterInfo={bodyFatturazioneDownload}
         onButtonComferma={sendCancellazzioneRispristinoFatture}
-        fattureSelectedArr={fattureSelectedArr}></ModalConfermaRipristina>
+        fattureSelectedArr={fattureSelectedArr}/>
       <ModalResetFilter
         setOpen={setOpenResetFilterModal}
         open={openResetFilterModal}
         filterInfo={bodyFatturazioneDownload}
         filterNotExecuted={bodyFatturazione}
-        getListaFatture={getlistaFatturazione}></ModalResetFilter>
-    </MainBoxStyled>
-        
+        getListaFatture={getlistaFatturazione}/>
+    </MainBoxStyled>   
   );
 };
 

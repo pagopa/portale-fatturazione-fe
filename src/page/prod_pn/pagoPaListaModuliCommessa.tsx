@@ -369,8 +369,7 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
       <FilterActionButtons 
         onButtonFiltra={onButtonFiltra} 
         onButtonAnnulla={onButtonAnnulla} 
-        statusAnnulla={statusAnnulla} 
-      ></FilterActionButtons>
+        statusAnnulla={statusAnnulla}/>
       <ActionTopGrid
         actionButtonRight={[{
           onButtonClick:downloadExelListaCommessa,
@@ -385,7 +384,6 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
           icon:{name:"download"},
           disabled:(gridData.length === 0)
         }]}/>
-          
       <div className="mt-1 mb-5" style={{ width: '100%'}}>
         <DataGrid sx={{
           height:gridData.length < 5 ?"400px" :"auto",
@@ -414,13 +412,11 @@ const PagoPaListaModuliCommessa:React.FC = () =>{
       <ModalLoading 
         open={showLoading} 
         setOpen={setShowLoading}
-        sentence={'Downloading...'} >
-      </ModalLoading>
+        sentence={'Downloading...'} />
       <ModalLoading 
         open={showLoadingLista} 
         setOpen={setShowLoadingLista}
-        sentence={'Loading...'} >
-      </ModalLoading>
+        sentence={'Loading...'} />
     </MainBoxStyled>
   );
 };
