@@ -35,8 +35,8 @@ const HeaderGridCustom = ({
     body?:any,
     objectSort?:{[key:string]:number},
     headerActionSort?:(val:string, setGridData:React.Dispatch<SetStateAction<any[]>>,val2:boolean,setObjet:React.Dispatch<SetStateAction<{[key:string]:number}>>,p:number,r:number,listaResponse:any[]) =>void,
-    setGridData?:React.Dispatch<SetStateAction<any[]>>
-    gridType?:boolean,
+    setGridData?:any,
+    gridType:boolean,
     setObjectSort?:React.Dispatch<SetStateAction<{[key:string]:number}>>,
     listaResponse?:any[],
     headerActionSortServerSide?:(label:string) => void
@@ -87,8 +87,10 @@ const HeaderGridCustom = ({
                     <IconButton
                       disabled={total === 0 || elements.length === 0}
                       sx={{marginLeft:'10px'}}
-                      onClick={() => (headerActionSort && setGridData && setObjectSort && listaResponse) &&
-                        headerActionSort(el.label, setGridData, gridType, setObjectSort, page, rows, listaResponse)}
+                      onClick={() => {
+                        if(headerActionSort && setGridData && setObjectSort && listaResponse){
+                          headerActionSort(el.label, setGridData, gridType, setObjectSort, page, rows, listaResponse);
+                        }}}
                       size="small"
                     >
                       {(sortValue === 1) ? <ArrowUpwardIcon sx={{ color: 'text.disabled'}}/> :

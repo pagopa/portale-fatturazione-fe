@@ -573,15 +573,6 @@ const DocEm : React.FC = () =>{
 
 
   const statusAnnulla = (bodyFatturazione.tipologiaFattura.length !== 0 || bodyFatturazione.mese !== 9999 || bodyFatturazione.anno !== 9999) ? false :true;
-  let labelAmount = `Totale fatturato`;
-  if(bodyFatturazioneDownload.anno !== null && bodyFatturazioneDownload.mese === null){
-
-    labelAmount = `Totale fatturato/${bodyFatturazioneDownload.anno}`;
-  }else if(bodyFatturazioneDownload.mese !== null){
- 
-    labelAmount = `Totale fatturato/${bodyFatturazioneDownload.anno}-${month[bodyFatturazioneDownload.mese-1]}`;
-  }
-
 
   const setIdDoc = async(el) => {
     navigate(PathPf.PDF_REL_EN+"/documentiemessi/"+el.idFattura); 

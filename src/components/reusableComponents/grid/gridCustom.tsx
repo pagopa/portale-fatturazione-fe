@@ -32,7 +32,7 @@ interface GridCustomProps<T = any> {
     objectSort?:{[key:string]:number},
     sentenseEmpty?:string,
     headerActionSort?:(val:string, setGridData:React.Dispatch<SetStateAction<Record<string, unknown>[]>>,val2:boolean,setObjet:React.Dispatch<SetStateAction<{[key:string]:number}>>,p:number,r:number,listaResponse: Record<string, unknown>[]) =>void,
-    setGridData?:React.Dispatch<SetStateAction<Record<string, unknown>[]>>
+    setGridData?:React.Dispatch<SetStateAction<any>[]>
     gridType?:boolean,
     setObjectSort?:React.Dispatch<SetStateAction<{[key:string]:number}>>,
     listaResponse?: Record<string, unknown>[],
@@ -43,11 +43,12 @@ export interface HeaderGridCustom {
     label:string,
     align:TableCellProps['align'],
     width:number|string,
-    headerAction:boolean,
+    headerAction?:boolean,
     headerTooltip?: (title: string, label: string, color: string) => JSX.Element,
     headerChip?: (title: string, label: string, color: string) => JSX.Element,
     gridAction?:(fun:(id) => void,color:string,disabled:boolean,obj:any) => JSX.Element,
     gridOpenDetail?:(disabled:boolean,open?:boolean,setOpen?:(val)=>void) => JSX.Element,
+    headerActionSort?:boolean
 }
 
 
@@ -112,7 +113,7 @@ const GridCustom: React.FC<GridCustomProps> = ({
               {(elements.length === 0 && sentenseEmpty) &&
                 <EmptyRow sentenseEmpty={sentenseEmpty} />
               }
-              {elements.length > 0 && elements.map((element: T) => {
+              {elements.length > 0 && elements.map((element,index) => {
                 let sliced = Object.fromEntries(Object.entries(element).slice(1));
 
                 if (nameParameterApi === 'idWhite') {
@@ -135,7 +136,7 @@ const GridCustom: React.FC<GridCustomProps> = ({
 
                 return (
                   <GridRowsRenderer
-                    key={String(elementKey)}
+                    key={String(`${elementKey||"row"}-${index}`)}
                     element={element}
                     sliced={sliced}
                     nameParameterApi={nameParameterApi}
