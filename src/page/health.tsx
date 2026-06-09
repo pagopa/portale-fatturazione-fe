@@ -1,7 +1,7 @@
 const Health = ( ) => {
-    return(
-        <></>
-    );
+  return(
+    <></>
+  );
 };
 
 export default Health;

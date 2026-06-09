@@ -9,57 +9,57 @@ import SendIcon from '@mui/icons-material/Send';
 
 
 const SideNavPagopa = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const [selectedIndex, setSelectedIndex] = useState<number|null>(0);
+  const [selectedIndex, setSelectedIndex] = useState<number|null>(0);
 
-    const handleListItemClick = async(pathToGo) => {
-        navigate(pathToGo);
+  const handleListItemClick = async(pathToGo) => {
+    navigate(pathToGo);
           
-    };
+  };
 
-    const currentLocation = location.pathname;
-    useEffect(()=>{
-        if(currentLocation === PathPf.ANAGRAFICAPSP){
-            setSelectedIndex(0);
-        }else if(currentLocation === PathPf.DOCUMENTICONTABILI){
-            setSelectedIndex(1);
-        }else if(currentLocation === PathPf.KPI){
-            setSelectedIndex(2);
-        }else if(currentLocation === PathPf.EMAIL_PSP){
-            setSelectedIndex(3);
-        }else if(currentLocation === "/messaggi"){
-            setSelectedIndex(null);
-        }
-    },[currentLocation]);
+  const currentLocation = location.pathname;
+  useEffect(()=>{
+    if(currentLocation === PathPf.ANAGRAFICAPSP){
+      setSelectedIndex(0);
+    }else if(currentLocation === PathPf.DOCUMENTICONTABILI){
+      setSelectedIndex(1);
+    }else if(currentLocation === PathPf.KPI){
+      setSelectedIndex(2);
+    }else if(currentLocation === PathPf.EMAIL_PSP){
+      setSelectedIndex(3);
+    }else if(currentLocation === "/messaggi"){
+      setSelectedIndex(null);
+    }
+  },[currentLocation]);
 
-    return (
-        <Box sx={{
-            height: '100%',
-            maxWidth: 360,
-            backgroundColor: 'background.paper',
-        }}
-        >
-            <List component="nav">
-                <ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick(PathPf.ANAGRAFICAPSP)}>
-                    <ListItemIcon>
-                        <ReceiptIcon fontSize="inherit" />
-                    </ListItemIcon>
-                    <ListItemText primary="Anagrafica PSP" />
-                </ListItemButton>
-                <ListItemButton selected={selectedIndex === 1} onClick={() => handleListItemClick(PathPf.DOCUMENTICONTABILI)}>
-                    <ListItemIcon>
-                        <ManageSearchIcon fontSize="inherit"></ManageSearchIcon>
-                    </ListItemIcon>
-                    <ListItemText primary="Documenti contabili" />
-                </ListItemButton>
-                <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClick(PathPf.KPI)}>
-                    <ListItemIcon>
-                        <PaymentsIcon fontSize="inherit"></PaymentsIcon>
-                    </ListItemIcon>
-                    <ListItemText primary="KPI Pagamenti" />
-                </ListItemButton>
-                {/* 
+  return (
+    <Box sx={{
+      height: '100%',
+      maxWidth: 360,
+      backgroundColor: 'background.paper',
+    }}
+    >
+      <List component="nav">
+        <ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick(PathPf.ANAGRAFICAPSP)}>
+          <ListItemIcon>
+            <ReceiptIcon fontSize="inherit" />
+          </ListItemIcon>
+          <ListItemText primary="Anagrafica PSP" />
+        </ListItemButton>
+        <ListItemButton selected={selectedIndex === 1} onClick={() => handleListItemClick(PathPf.DOCUMENTICONTABILI)}>
+          <ListItemIcon>
+            <ManageSearchIcon fontSize="inherit"></ManageSearchIcon>
+          </ListItemIcon>
+          <ListItemText primary="Documenti contabili" />
+        </ListItemButton>
+        <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClick(PathPf.KPI)}>
+          <ListItemIcon>
+            <PaymentsIcon fontSize="inherit"></PaymentsIcon>
+          </ListItemIcon>
+          <ListItemText primary="KPI Pagamenti" />
+        </ListItemButton>
+        {/* 
                 <ListItemButton selected={selectedIndex === 3} onClick={() => handleListItemClick(PathPf.EMAIL_PSP)}>
                     <ListItemIcon>
                         <SendIcon fontSize="inherit"></SendIcon>
@@ -67,10 +67,10 @@ const SideNavPagopa = () => {
                     <ListItemText primary="Mail PSP" />
                 </ListItemButton>
                 */}
-            </List>
-            <Divider />
-        </Box>
-    );
+      </List>
+      <Divider />
+    </Box>
+  );
 };
 export default SideNavPagopa;
 

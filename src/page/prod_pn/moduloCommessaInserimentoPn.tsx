@@ -1,4 +1,4 @@
-import {useEffect, useContext, useState} from 'react';
+import {useEffect, useState} from 'react';
 import { Button, Typography} from '@mui/material';
 import BasicModal from '../../components/reusableComponents/modals/modal';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
@@ -21,192 +21,190 @@ import { Regioni } from '../ente/moduloCommessaInserimentoUtEn30';
 
 const ModuloCommessaInserimentoPn : React.FC = () => {
 
-    const mainState = useGlobalStore(state => state.mainState);
-    const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
-    const openBasicModal_DatFat_ModCom = useGlobalStore(state => state.openBasicModal_DatFat_ModCom);
-    const setOpenBasicModal_DatFat_ModCom = useGlobalStore(state => state.setOpenBasicModal_DatFat_ModCom);
-    const setErrorAlert = useGlobalStore(state => state.setErrorAlert);
+  const mainState = useGlobalStore(state => state.mainState);
+  const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
+  const openBasicModal_DatFat_ModCom = useGlobalStore(state => state.openBasicModal_DatFat_ModCom);
+  const setOpenBasicModal_DatFat_ModCom = useGlobalStore(state => state.setOpenBasicModal_DatFat_ModCom);
+  const setErrorAlert = useGlobalStore(state => state.setErrorAlert);
 
-    const token =  mainState.profilo.jwt;
-    const profilo =  mainState.profilo;
-    const navigate = useNavigate();
-    const backPath = mainState.infoTrimestreComSelected?.from === PathPf.LISTA_MODULICOMMESSA ? PathPf.LISTA_MODULICOMMESSA :PathPf.LISTA_MODULICOMMESSA_PREVISONALE;
+  const token =  mainState.profilo.jwt;
+  const profilo =  mainState.profilo;
+  const navigate = useNavigate();
+  const backPath = mainState.infoTrimestreComSelected?.from === PathPf.LISTA_MODULICOMMESSA ? PathPf.LISTA_MODULICOMMESSA :PathPf.LISTA_MODULICOMMESSA_PREVISONALE;
 
 
-    let profilePathModuloCommessapdf; 
+  let profilePathModuloCommessapdf; 
             
-    if(profilo.auth === 'PAGOPA'){
-        profilePathModuloCommessapdf = PathPf.PDF_COMMESSA;
-    }else{
-        profilePathModuloCommessapdf = PathPf.PDF_COMMESSA_EN;
-    }
-    const handleModifyMainState = (valueObj) => {
-        dispatchMainState({
-            type:'MODIFY_MAIN_STATE',
-            value:valueObj
-        });
-    };
-
-    //da portare nell'hook
-    const [openModalConfermaIns,setOpenModalConfermaIns] = useState(false);
-
-    const onButtonComfermaPopUp = () => {
-        console.log("log");
-    };
-
-    
-    const {
-        setOpenModalRedirect,
-        getDettaglioSend,
-        activeCommessa,
-        isEditAllow,
-        activeStep,
-        onChangeModuloValue,
-        errorAnyValueIsEqualNull,
-        dataTotali,
-        arrayRegioniSelected,
-        setArrayRegioniSelected,
-        arrayRegioni,
-        onAddRegioniButton,
-        errorArRegioni,
-        handleChangeTotale_Ar_890_regione,
-        error890Regioni,
-        onDeleteSingleRegione,
-        coperturaAr,
-        dataModuli,
-        copertura890,
-        loadingData,
-        onHandleSalvaModificaButton,
-        openModalRedirect,
-        setOpenModalInfo,
-        openModalInfo,
-        openModalLoading,
-        setOpenModalLoading,
-        coperturaArInseritaManualmente,
-        copertura890InseritaManualmente
-    } = useSaveModifyModuloCommessa({
-        token,
-        profilo,
-        apiRegioni:getRegioniModuloCommessaPA,
-        dispatchMainState,
-        navigate,
-        mainState,
-        handleModifyMainState,
-        setOpenBasicModal_DatFat_ModCom,
-        whoInvokeHook:"SEND",
-        setErrorAlert
+  if(profilo.auth === 'PAGOPA'){
+    profilePathModuloCommessapdf = PathPf.PDF_COMMESSA;
+  }else{
+    profilePathModuloCommessapdf = PathPf.PDF_COMMESSA_EN;
+  }
+  const handleModifyMainState = (valueObj) => {
+    dispatchMainState({
+      type:'MODIFY_MAIN_STATE',
+      value:valueObj
     });
-   
-    useEffect(()=>{
-        getDettaglioSend();
-    },[]);
+  };
 
-    let labelButtonAvantiListaModuliSave = "Modifica";
-   
-    if(isEditAllow || activeCommessa?.stato === null){
-        labelButtonAvantiListaModuliSave = "Salva";
-    }
+  //da portare nell'hook
+  const [openModalConfermaIns,setOpenModalConfermaIns] = useState(false);
+
+  const onButtonComfermaPopUp = () => {
+    console.log("log");
+  };
 
     
-    // function to check if in regioni array there are regions with only one of the two values (ar or 890) equal to null, if true return an array with the istatRegione of the regions that mismatch
-    // viene utilizzata anche all'interno del componente MainInserimentoModuloCommessa per evidenziare in rosso i campi regione che hanno un valore null e l'altro valorizzato
-    const checkifRegioneHasBothValuesNull = (regioni: Regioni[]) => {
-        return regioni
-            .filter(el => {
-                const arIsNull = el.ar === null;
-                const val890IsNull = el[890] === null;
-                // Check if only one of them is null (mismatch)
-                return arIsNull !== val890IsNull;
-            })
-            .map(el => el.istatRegione);
-    };
-        //activeCommessa?.valoriRegione
+  const {
+    setOpenModalRedirect,
+    getDettaglioSend,
+    activeCommessa,
+    isEditAllow,
+    activeStep,
+    onChangeModuloValue,
+    errorAnyValueIsEqualNull,
+    dataTotali,
+    arrayRegioniSelected,
+    setArrayRegioniSelected,
+    arrayRegioni,
+    onAddRegioniButton,
+    errorArRegioni,
+    handleChangeTotale_Ar_890_regione,
+    error890Regioni,
+    onDeleteSingleRegione,
+    coperturaAr,
+    dataModuli,
+    copertura890,
+    loadingData,
+    onHandleSalvaModificaButton,
+    openModalRedirect,
+    setOpenModalInfo,
+    openModalInfo,
+    openModalLoading,
+    setOpenModalLoading,
+    coperturaArInseritaManualmente,
+    copertura890InseritaManualmente
+  } = useSaveModifyModuloCommessa({
+    token,
+    profilo,
+    apiRegioni:getRegioniModuloCommessaPA,
+    dispatchMainState,
+    navigate,
+    mainState,
+    handleModifyMainState,
+    setOpenBasicModal_DatFat_ModCom,
+    whoInvokeHook:"SEND",
+    setErrorAlert
+  });
+   
+  useEffect(()=>{
+    getDettaglioSend();
+  },[]);
 
+  let labelButtonAvantiListaModuliSave = "Modifica";
+   
+  if(isEditAllow || activeCommessa?.stato === null){
+    labelButtonAvantiListaModuliSave = "Salva";
+  }
 
-    if(loadingData){
-        return(
-            <SkeletonComIns></SkeletonComIns>
-        );
-    }
+    
+  // function to check if in regioni array there are regions with only one of the two values (ar or 890) equal to null, if true return an array with the istatRegione of the regions that mismatch
+  // viene utilizzata anche all'interno del componente MainInserimentoModuloCommessa per evidenziare in rosso i campi regione che hanno un valore null e l'altro valorizzato
+  const checkifRegioneHasBothValuesNull = (regioni: Regioni[]) => {
+    return regioni
+      .filter(el => {
+        const arIsNull = el.ar === null;
+        const val890IsNull = el[890] === null;
+        // Check if only one of them is null (mismatch)
+        return arIsNull !== val890IsNull;
+      })
+      .map(el => el.istatRegione);
+  };
 
-    return (
-        <>
-            <BasicModal setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} dispatchMainState={dispatchMainState} handleGetDettaglioModuloCommessa={()=> console.log("ciao")}  mainState={mainState}></BasicModal>
-            {/*Hide   modulo commessa sul click contina , save del modulo commessa cosi da mostrare dati fatturazione,
-            il componente visualizzato è AreaPersonaleUtenteEnte  */}
-            <div>
-                <NavigatorHeader pageFrom={"Modulo commessa/"} pageIn={"Modifica modulo commessa"} backPath={backPath} icon={<ViewModuleIcon sx={{padding:"3px"}}  fontSize='small'></ViewModuleIcon>}></NavigatorHeader>
-            </div>
-            <div className="marginTop24 ms-5 me-5">
-                <div className="marginTop24">
-                    <Typography variant="h4">{`${month[activeCommessa.meseValidita-1]} / ${mainState.infoTrimestreComSelected.nomeEnteClickOn}`}</Typography>
-                </div>
-                <div className='mt-5 mb-5'>
-                    <MainInserimentoModuloCommessa 
-                        activeCommessa={activeCommessa}
-                        onChangeModuloValue={onChangeModuloValue}
-                        isEditAllow={isEditAllow}
-                        errorAnyValueIsEqualNull={errorAnyValueIsEqualNull}
-                        dataTotali={dataTotali}
-                        arrayRegioniSelected={arrayRegioniSelected}
-                        setArrayRegioniSelected={setArrayRegioniSelected}
-                        arrayRegioni={arrayRegioni}
-                        onAddRegioniButton={onAddRegioniButton}
-                        errorArRegioni={errorArRegioni}
-                        handleChangeTotale_Ar_890_regione={handleChangeTotale_Ar_890_regione}
-                        error890Regioni={error890Regioni}
-                        onDeleteSingleRegione={onDeleteSingleRegione}
-                        dataModuli={dataModuli}
-                        activeStep={activeStep}
-                        mainState={mainState}
-                        coperturaAr={coperturaAr}
-                        copertura890={copertura890}
-                        loadingData={loadingData}
-                        coperturaArInseritaManualmente={coperturaArInseritaManualmente}
-                        copertura890InseritaManualmente={copertura890InseritaManualmente}
-                    ></MainInserimentoModuloCommessa>
-                </div>
-            </div> 
-            {!loadingData &&
-                        <div className="d-flex justify-content-between m-5 ">
-                            <div>
-
-                            </div>
-                            {((dataModuli.length > 0 && (activeCommessa?.source === "archiviato")) || !activeCommessa.modifica) ? null:
-                                <div className="d-flex justify-content-center align-items-center">
-                                    <Button  disabled={error890Regioni|| errorArRegioni } onClick={onHandleSalvaModificaButton} variant={"outlined"}>{labelButtonAvantiListaModuliSave}
-                                    </Button>
-                                </div>} 
-                            { (activeCommessa?.totaleNotifiche !== null && !isEditAllow && !loadingData) && 
-                            <div  className="d-flex justify-content-center align-items-center">
-                                <Button onClick={()=>{
-                                    navigate(profilePathModuloCommessapdf+`/${activeCommessa.annoValidita}/${activeCommessa.meseValidita}`);}
-                                } variant="contained">Vedi anteprima</Button>   
-                            </div> 
-                            }
-                            <div>
-                                
-                            </div>
-                        </div> 
-            }
-            <ModalRedirect 
-                setOpen={setOpenModalRedirect}
-                open={openModalRedirect}
-                sentence={`Per poter inserire il modulo commessa è obbligatorio fornire  i seguenti dati di fatturazione:`}></ModalRedirect>
-            <ModalInfo 
-                setOpen={setOpenModalInfo}
-                open={openModalInfo}
-                width={600}></ModalInfo>
-            <ModalConfermaInserimento
-                setOpen={setOpenModalConfermaIns}
-                open={openModalConfermaIns}
-                onButtonComfermaPopUp={onButtonComfermaPopUp}
-                mainState={mainState}
-                sentence={`Verrà effettuata la modifica del Modulo Commessa di ${month[Number(mainState.mese) - 1]} ${mainState.anno}: confermi l'operazione?`}
-            ></ModalConfermaInserimento>
-            <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}></ModalLoading>
-        </>
+  if(loadingData){
+    return(
+      <SkeletonComIns></SkeletonComIns>
     );
+  }
+
+  return (
+    <>
+      <BasicModal setOpen={setOpenBasicModal_DatFat_ModCom} open={openBasicModal_DatFat_ModCom} dispatchMainState={dispatchMainState} handleGetDettaglioModuloCommessa={()=> console.log("ciao")}  mainState={mainState}></BasicModal>
+      {/*Hide   modulo commessa sul click contina , save del modulo commessa cosi da mostrare dati fatturazione,
+            il componente visualizzato è AreaPersonaleUtenteEnte  */}
+      <div>
+        <NavigatorHeader pageFrom={"Modulo commessa/"} pageIn={"Modifica modulo commessa"} backPath={backPath} icon={<ViewModuleIcon sx={{padding:"3px"}}  fontSize='small'></ViewModuleIcon>}></NavigatorHeader>
+      </div>
+      <div className="marginTop24 ms-5 me-5">
+        <div className="marginTop24">
+          <Typography variant="h4">{`${month[activeCommessa.meseValidita-1]} / ${mainState.infoTrimestreComSelected.nomeEnteClickOn}`}</Typography>
+        </div>
+        <div className='mt-5 mb-5'>
+          <MainInserimentoModuloCommessa 
+            activeCommessa={activeCommessa}
+            onChangeModuloValue={onChangeModuloValue}
+            isEditAllow={isEditAllow}
+            errorAnyValueIsEqualNull={errorAnyValueIsEqualNull}
+            dataTotali={dataTotali}
+            arrayRegioniSelected={arrayRegioniSelected}
+            setArrayRegioniSelected={setArrayRegioniSelected}
+            arrayRegioni={arrayRegioni}
+            onAddRegioniButton={onAddRegioniButton}
+            errorArRegioni={errorArRegioni}
+            handleChangeTotale_Ar_890_regione={handleChangeTotale_Ar_890_regione}
+            error890Regioni={error890Regioni}
+            onDeleteSingleRegione={onDeleteSingleRegione}
+            dataModuli={dataModuli}
+            activeStep={activeStep}
+            mainState={mainState}
+            coperturaAr={coperturaAr}
+            copertura890={copertura890}
+            loadingData={loadingData}
+            coperturaArInseritaManualmente={coperturaArInseritaManualmente}
+            copertura890InseritaManualmente={copertura890InseritaManualmente}
+          ></MainInserimentoModuloCommessa>
+        </div>
+      </div> 
+      {!loadingData &&
+        <div className="d-flex justify-content-between m-5 ">
+          <div>
+
+          </div>
+          {((dataModuli.length > 0 && (activeCommessa?.source === "archiviato")) || !activeCommessa.modifica) ? null:
+            <div className="d-flex justify-content-center align-items-center">
+              <Button  disabled={error890Regioni|| errorArRegioni } onClick={onHandleSalvaModificaButton} variant={"outlined"}>{labelButtonAvantiListaModuliSave}
+              </Button>
+            </div>} 
+          { (activeCommessa?.totaleNotifiche !== null && !isEditAllow && !loadingData) && 
+            <div  className="d-flex justify-content-center align-items-center">
+              <Button onClick={()=>{
+                navigate(profilePathModuloCommessapdf+`/${activeCommessa.annoValidita}/${activeCommessa.meseValidita}`);}
+              } variant="contained">Vedi anteprima</Button>   
+            </div> 
+          }
+          <div>
+                                
+          </div>
+        </div> 
+      }
+      <ModalRedirect 
+        setOpen={setOpenModalRedirect}
+        open={openModalRedirect}
+        sentence={`Per poter inserire il modulo commessa è obbligatorio fornire  i seguenti dati di fatturazione:`}/>
+      <ModalInfo 
+        setOpen={setOpenModalInfo}
+        open={openModalInfo}
+        width={600}/>
+      <ModalConfermaInserimento
+        setOpen={setOpenModalConfermaIns}
+        open={openModalConfermaIns}
+        onButtonComfermaPopUp={onButtonComfermaPopUp}
+        mainState={mainState}
+        sentence={`Verrà effettuata la modifica del Modulo Commessa di ${month[Number(mainState.mese) - 1]} ${mainState.anno}: confermi l'operazione?`}
+      />
+      <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}/>
+    </>
+  );
 };
 
 export default ModuloCommessaInserimentoPn;

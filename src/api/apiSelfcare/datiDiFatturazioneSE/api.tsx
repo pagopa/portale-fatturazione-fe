@@ -5,54 +5,54 @@ import { DatiFatturazione, DatiFatturazionePost } from '../../../types/typesArea
 
 export const getDatiFatturazione  = async (token:string, nonce:string) => {
   
-    const response = await axios.get(
-        `${url}/api/datifatturazione/ente?nonce=${nonce}`,
-        { headers: {
-            Authorization: 'Bearer ' + token
-        }});
-    return response;
+  const response = await axios.get(
+    `${url}/api/datifatturazione/ente?nonce=${nonce}`,
+    { headers: {
+      Authorization: 'Bearer ' + token
+    }});
+  return response;
 };
 
 
 export const modifyDatiFatturazione = async (datiFatturazione: DatiFatturazione, token:string, nonce:string) => {
 
-    const response= await axios.put(`${url}/api/datifatturazione?nonce=${nonce}`,
-        datiFatturazione,
-        { headers: {
-            Authorization: 'Bearer ' + token
-        },}
+  const response= await axios.put(`${url}/api/datifatturazione?nonce=${nonce}`,
+    datiFatturazione,
+    { headers: {
+      Authorization: 'Bearer ' + token
+    },}
 
-    );
+  );
 
-    return response;
+  return response;
 };
 
 export const insertDatiFatturazione = async (datiFatturazione: DatiFatturazionePost, token:string, nonce:string) => {
-    const response = await axios.post(`${url}/api/datifatturazione?nonce=${nonce}`,
-        datiFatturazione,
-        { headers: {
-            Authorization: 'Bearer ' + token
-        },}
-    );
-    return response;
+  const response = await axios.post(`${url}/api/datifatturazione?nonce=${nonce}`,
+    datiFatturazione,
+    { headers: {
+      Authorization: 'Bearer ' + token
+    },}
+  );
+  return response;
 };
 
 export const getValidationCodiceSdiEnte = async (token:string, nonce:string ,body: {codiceSDI:string|null}) => {
-    const response =  await axios.post(`${url}/api/datifatturazione/codiceSDI?nonce=${nonce}`,
-        body,
-        { headers: {
-            Authorization: 'Bearer ' + token
-        },}
-    );
-    return response;
+  const response =  await axios.post(`${url}/api/datifatturazione/codiceSDI?nonce=${nonce}`,
+    body,
+    { headers: {
+      Authorization: 'Bearer ' + token
+    },}
+  );
+  return response;
 };
 
 export const getSdi  = async (token:string, nonce:string) => {
   
-    const response = await axios.get(
-        `${url}/api/datifatturazione/ente/contractCodiceSDI?nonce=${nonce}`,
-        { headers: {
-            Authorization: 'Bearer ' + token
-        }});
-    return response;
+  const response = await axios.get(
+    `${url}/api/datifatturazione/ente/contractCodiceSDI?nonce=${nonce}`,
+    { headers: {
+      Authorization: 'Bearer ' + token
+    }});
+  return response;
 };

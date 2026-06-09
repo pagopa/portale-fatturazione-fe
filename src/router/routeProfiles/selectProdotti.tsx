@@ -6,8 +6,8 @@ import LayoutLoggedOut from "../../layout/layoutLoggedOut";
 
 const SelectProdottiRoute = () => {
 
-    const selectProfiloRoute = <Route  path="/selezionaprodotto" element={<LayoutLoggedOut></LayoutLoggedOut>}></Route>;
-    return selectProfiloRoute;
+  const selectProfiloRoute = <Route  path="/selezionaprodotto" element={<LayoutLoggedOut></LayoutLoggedOut>}></Route>;
+  return selectProfiloRoute;
 };
 
 export default SelectProdottiRoute;

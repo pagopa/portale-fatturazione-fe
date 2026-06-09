@@ -21,142 +21,142 @@ interface GridCustomProps {
 
 const GridMessaggi : React.FC<GridCustomProps> = ({elements, changePage, changeRow, page, total, rows, headerNames,disabled,dispatchMainState}) =>{
 
-    const navigate = useNavigate() ;
+  const navigate = useNavigate() ;
 
-    const handleModifyMainState = (valueObj) => {
-        dispatchMainState({
-            type:'MODIFY_MAIN_STATE',
-            value:valueObj
-        });
-    };
+  const handleModifyMainState = (valueObj) => {
+    dispatchMainState({
+      type:'MODIFY_MAIN_STATE',
+      value:valueObj
+    });
+  };
 
-    const handleClickOnGrid = (element) =>{
-        navigate(`/dettagliomessaggio/${element.id}`);
+  const handleClickOnGrid = (element) =>{
+    navigate(`/dettagliomessaggio/${element.id}`);
 
-        handleModifyMainState({messaggioSelected:element});
-    };
+    handleModifyMainState({messaggioSelected:element});
+  };
    
-    return (
-        <div>
-            <div>
-                <Card >
-                    <Table >
-                        <TableHead sx={{backgroundColor:'#f2f2f2'}}>
-                            <TableRow>
-                                {headerNames.map((el)=>{
-                                    return (
-                                        <TableCell key={Math.random()}>
-                                            {el}
-                                        </TableCell>
-                                    );
-                                })}
-                            </TableRow>
-                        </TableHead>
+  return (
+    <div>
+      <div>
+        <Card >
+          <Table >
+            <TableHead sx={{backgroundColor:'#f2f2f2'}}>
+              <TableRow>
+                {headerNames.map((el)=>{
+                  return (
+                    <TableCell key={Math.random()}>
+                      {el}
+                    </TableCell>
+                  );
+                })}
+              </TableRow>
+            </TableHead>
 
-                        {elements.length === 0 ?
-                            <TableBody  style={{height: '50px'}}>
+            {elements.length === 0 ?
+              <TableBody  style={{height: '50px'}}>
 
-                            </TableBody> :
-                            <TableBody sx={{marginLeft:'20px'}}>
-                                {elements.map((element:Messaggi) =>{
-                                    // tolgo da ogni oggetto la prima chiave valore  perchè il cliente non vuole vedere es. l'id ma serve per la chiamata get di dettaglio 
-                                    const sliced = Object.fromEntries(
-                                        Object.entries(element).slice(1)
-                                    );
-                                    if(sliced?.tipologiaFattura === 'ASSEVERAZIONE'){
-                                        return (
+              </TableBody> :
+              <TableBody sx={{marginLeft:'20px'}}>
+                {elements.map((element:Messaggi) =>{
+                  // tolgo da ogni oggetto la prima chiave valore  perchè il cliente non vuole vedere es. l'id ma serve per la chiamata get di dettaglio 
+                  const sliced = Object.fromEntries(
+                    Object.entries(element).slice(1)
+                  );
+                  if(sliced?.tipologiaFattura === 'ASSEVERAZIONE'){
+                    return (
                 
-                                            <TableRow key={Math.random()}>
-                                                {
-                                                    Object.values(sliced).map((value:string, i:number)=>{
-                                                        const cssFirstColum = i === 0 ? {color:'#606060', fontWeight: 'bold', cursor: 'pointer'} : null;
-                                                        return (
-                                                            <TableCell
-                                                                key={Math.random()}
-                                                                sx={cssFirstColum} 
-                                                            >
-                                                                {value}
-                                                            </TableCell>
-                                                        );
-                                                    })
-                                                }
-                                            </TableRow>
-                                        );
-                                    }else{
-                                        return (
-                                            <TableRow key={Math.random()}>
-                                                {
-                                                    Object.values(sliced).map((value:string, i:number)=>{
-                                                        const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
-                                                        return (
-                                                            <TableCell
-                                                                sx={cssFirstColum} 
-                                                                key={Math.random()}
-                                                                onClick={()=>{
-                                                                    if(i === 0){
-                                                                        handleClickOnGrid(element);
-                                                                    }            
-                                                                } }
-                                                            >
-                                                                {value}
-                                                            </TableCell>
-                                                        );
-                                                    })
-                                                }
-                                
-                                                <TableCell onClick={()=>{
-                                                    handleClickOnGrid(element);            
-                                                } }>
-                                                    <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
-                                                </TableCell>
-                       
-                                            </TableRow>
-                    
-                                        );
-                                    }
-                                    
-                                } )}
-                            </TableBody>
+                      <TableRow key={Math.random()}>
+                        {
+                          Object.values(sliced).map((value:string, i:number)=>{
+                            const cssFirstColum = i === 0 ? {color:'#606060', fontWeight: 'bold', cursor: 'pointer'} : null;
+                            return (
+                              <TableCell
+                                key={Math.random()}
+                                sx={cssFirstColum} 
+                              >
+                                {value}
+                              </TableCell>
+                            );
+                          })
                         }
-                    </Table>
+                      </TableRow>
+                    );
+                  }else{
+                    return (
+                      <TableRow key={Math.random()}>
+                        {
+                          Object.values(sliced).map((value:string, i:number)=>{
+                            const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
+                            return (
+                              <TableCell
+                                sx={cssFirstColum} 
+                                key={Math.random()}
+                                onClick={()=>{
+                                  if(i === 0){
+                                    handleClickOnGrid(element);
+                                  }            
+                                } }
+                              >
+                                {value}
+                              </TableCell>
+                            );
+                          })
+                        }
+                                
+                        <TableCell onClick={()=>{
+                          handleClickOnGrid(element);            
+                        } }>
+                          <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
+                        </TableCell>
+                       
+                      </TableRow>
+                    
+                    );
+                  }
+                                    
+                } )}
+              </TableBody>
+            }
+          </Table>
                             
-                </Card>
-            </div>
-            <div className="pt-3">                           
-                <TablePagination
-                    sx={{'.MuiTablePagination-selectLabel': {
-                        display:'none',
-                        backgroundColor:'#f2f2f2'
+        </Card>
+      </div>
+      <div className="pt-3">                           
+        <TablePagination
+          sx={{'.MuiTablePagination-selectLabel': {
+            display:'none',
+            backgroundColor:'#f2f2f2'
                                                 
-                    }}}
-                    component="div"
-                    page={page}
-                    count={total}
-                    rowsPerPage={rows}
-                    onPageChange={changePage}
-                    onRowsPerPageChange={changeRow}
-                    SelectProps={{
-                        disabled: disabled
-                    }}
-                    backIconButtonProps={
-                        disabled
-                            ? {
-                                disabled: disabled
-                            }
-                            : undefined
-                    }
-                    nextIconButtonProps={
-                        disabled
-                            ? {
-                                disabled: disabled
-                            }
-                            : undefined
-                    }
-                ></TablePagination>
-            </div>
-        </div>
+          }}}
+          component="div"
+          page={page}
+          count={total}
+          rowsPerPage={rows}
+          onPageChange={changePage}
+          onRowsPerPageChange={changeRow}
+          SelectProps={{
+            disabled: disabled
+          }}
+          backIconButtonProps={
+            disabled
+              ? {
+                disabled: disabled
+              }
+              : undefined
+          }
+          nextIconButtonProps={
+            disabled
+              ? {
+                disabled: disabled
+              }
+              : undefined
+          }
+        ></TablePagination>
+      </div>
+    </div>
         
-    );
+  );
 };
 
 export default GridMessaggi;

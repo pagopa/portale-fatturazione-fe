@@ -3,13 +3,13 @@ import RouteProfile from './router/route';
 
 const App = ({ instance }) => {
   
-    return (
+  return (
        
-        <MsalProvider instance={instance}>
-            <RouteProfile></RouteProfile>
-        </MsalProvider>
+    <MsalProvider instance={instance}>
+      <RouteProfile></RouteProfile>
+    </MsalProvider>
      
-    );
+  );
 };
 
 export default App;

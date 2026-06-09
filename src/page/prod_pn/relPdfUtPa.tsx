@@ -1,6 +1,6 @@
 import { SingleFileInput } from '@pagopa/mui-italia';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { Box, BoxProps, Button, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { useNavigate, useParams } from 'react-router';
 import TextDettaglioPdf from '../../components/commessaPdf/textDettaglioPdf';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -198,26 +198,26 @@ const RelPdfPage : React.FC = () =>{
       </div>
       <div className="ms-5 me-5 mb-3">
         {showComponentActionOnBottomEnte  &&
-                    <Box sx={{display:"flex",justifyContent:"space-between"}}>
-                      <div>
-                        <Button sx={{width:'274px'}} onClick={downloadPdf}  variant="contained">{labelScaricaPdf}<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+            <Box sx={{display:"flex",justifyContent:"space-between"}}>
+              <div>
+                <Button sx={{width:'274px'}} onClick={downloadPdf}  variant="contained">{labelScaricaPdf}<DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+              </div>
+              <div id='singleInput' style={{minWidth: '300px', height:'40px'}}>
+                <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".pdf"]} onFileSelected={(e) => uploadPdf(e)} onFileRemoved={() => setFile(null)} dropzoneLabel={(rel?.caricata === 1 || rel?.caricata === 2) ? 'Reinserisci nuovo PDF Reg. Es. firmato' : "Inserisci PDF Reg. Es. firmato"} rejectedLabel="Tipo file non supportato" dropzoneButton=""></SingleFileInput>
+              </div> 
+              {showDownloadPdfRELEnteFirmato &&
+                <div>
+                  <div>
+                    <Button sx={{width:'300px'}} onClick={() => downloadPdfRelFirmato()}   variant="contained">Scarica PDF Firmato <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
+                  </div>
+                  {lastUpdateDocFirmato !== '' &&
+                      <div className='text-center mt-2'>
+                        <Typography variant="overline" >{createDateFromString(lastUpdateDocFirmato)}</Typography>
                       </div>
-                      <div id='singleInput' style={{minWidth: '300px', height:'40px'}}>
-                        <SingleFileInput  value={file} loading={loadingUpload} error={errorUpload} accept={[".pdf"]} onFileSelected={(e) => uploadPdf(e)} onFileRemoved={() => setFile(null)} dropzoneLabel={(rel?.caricata === 1 || rel?.caricata === 2) ? 'Reinserisci nuovo PDF Reg. Es. firmato' : "Inserisci PDF Reg. Es. firmato"} rejectedLabel="Tipo file non supportato" dropzoneButton=""></SingleFileInput>
-                      </div> 
-                      {showDownloadPdfRELEnteFirmato &&
-                         <div>
-                           <div>
-                             <Button sx={{width:'300px'}} onClick={() => downloadPdfRelFirmato()}   variant="contained">Scarica PDF Firmato <DownloadIcon sx={{marginLeft:'20px'}}></DownloadIcon></Button>
-                           </div>
-                           {lastUpdateDocFirmato !== '' &&
-                            <div className='text-center mt-2'>
-                              <Typography variant="overline" >{createDateFromString(lastUpdateDocFirmato)}</Typography>
-                            </div>
-                           }
-                         </div>
-                      }
-                    </Box> 
+                  }
+                </div>
+              }
+            </Box> 
         }
         {showDownloadPdfDocEmessiSospesiEnte &&
                     <Box>
@@ -228,14 +228,12 @@ const RelPdfPage : React.FC = () =>{
         }
       </div>
       {openModalConfirmUploadPdf &&
-            <ModalUploadPdf setOpen={setOpenModalConfirmUploadPdf} open={openModalConfirmUploadPdf}></ModalUploadPdf>
-      }
-           
+            <ModalUploadPdf setOpen={setOpenModalConfirmUploadPdf} open={openModalConfirmUploadPdf}/>
+      } 
       <ModalLoading 
         open={showDownloading} 
         setOpen={setShowDownloading}
-        sentence={'Downloading...'} >
-      </ModalLoading>
+        sentence={'Downloading...'} />
     </div>
   );
 };
@@ -302,9 +300,9 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
     
   return ( 
     <div>
-      <div className="bg-white mb-5 me-5 ms-5">
+      <CardBox>
         <div className="d-flex justify-content-center pt-3">
-          <Typography variant="h4">Dati di Fatturazione</Typography>
+          <Typography variant="h4">Dati di Fatturazione </Typography>
         </div>
         <div className="pt-3 pb-3 ">
           <div className="container text-center">
@@ -317,9 +315,9 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
             <TextDettaglioPdf description='Cup' value={mainObj.cup||"--"}></TextDettaglioPdf>
           </div>
         </div>
-      </div>
+      </CardBox>
       { numeroNotificheSectionIsVisible && 
-         <div className="bg-white mb-5 me-5 ms-5">
+         <CardBox>
            <div className="d-flex justify-content-center pt-3">
              <Typography variant="h4">Numero Notifiche</Typography>
            </div>
@@ -330,9 +328,9 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
                <TextDettaglioPdf description='N. Totale Notifiche' value={Number(mainObj.totaleNotificheDigitali) + Number(mainObj.totaleNotificheAnalogiche) }></TextDettaglioPdf>
              </div>
            </div>
-         </div>
+         </CardBox>
       }
-      <div className="bg-white mb-5 me-5 ms-5">
+      <CardBox>
         <div className="d-flex justify-content-center pt-3">
           <Typography variant="h4">Posizione Imponibile</Typography>
         </div>
@@ -358,8 +356,8 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
             {imponibile_da_fatturare_IsVisible && <TextDettaglioPdf description='Imponibile da Fatturare' value={imponibileDaFatturareCalculateByFE.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
           </div>
         </div>
-      </div>
-      <div className="bg-white mb-5 me-5 ms-5">
+      </CardBox>
+      <CardBox>
         <div className="d-flex justify-content-center pt-3">
           <Typography variant="h4">Posizione Ivato</Typography>
         </div>
@@ -372,9 +370,9 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
             {ivato_da_fatturare_IsVisible && <TextDettaglioPdf description='Ivato da Fatturare' value={ivatoDaFatturareCalcolatoByFe.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}></TextDettaglioPdf>}
           </div>
         </div>
-      </div>
+      </CardBox>
       {mainObj?.fattureSospese?.length > 0 &&
-                <div className="bg-white mb-5 me-5 ms-5">
+                <CardBox>
                   <div className="d-flex justify-content-center pt-3">
                     <Typography variant="h4">Elenco Fatture Emesse</Typography>
                   </div>
@@ -413,11 +411,21 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
                       </div>
                     </div>
                   </div>
-                </div>
-      }
-         
+                </CardBox>
+      }   
     </div>
+  ); 
+};
+
+interface CardBoxProps extends BoxProps {
+  children: React.ReactNode;
+}
+
+
+const CardBox = ({ children, className, ...props }: CardBoxProps) => {
+  return (
+    <Box className={`bg-white mb-5 me-5 ms-5 ${className ?? ''}`} {...props}>
+      {children}
+    </Box>
   );
-    
-    
 };

@@ -53,233 +53,233 @@ import DocSos from '../page/ente/docContSos';
 import DocEm from '../page/ente/docConEme';
 import DocStorico from '../page/ente/docConStorico';
 import Messaggi from '../page/messaggi';
-import EmailPsp from '../page/prod_pagopa/emailpsp';
+//import EmailPsp from '../page/prod_pagopa/emailpsp';
 import { useEffect } from 'react';
 import { authVerify, authVerifyIsLoggedEnte, authVerifyIsLoggedProdPn, authVerifyIsLoggedSend, authVerifyIfEnteAllowRelSection, authVerifyPageProdotto } from '../loaderRoutes/loaderAuthVerify';
 import DocSospesiSend from '../page/prod_pn/docSospesiSend';
 import DocStoricoSend from '../page/prod_pn/docStoricoSend';
 
 const RouteProfile = () => {
-    const mainState = useGlobalStore(state => state.mainState);
-    const globalLocalStorage = localStorage.getItem('globalStatePF') || '{}';
-    const result =  JSON.parse(globalLocalStorage);
-    const tabActive = useIsTabActive();
+  const mainState = useGlobalStore(state => state.mainState);
+  const globalLocalStorage = localStorage.getItem('globalStatePF') || '{}';
+  const result =  JSON.parse(globalLocalStorage);
+  const tabActive = useIsTabActive();
    
-    useEffect(()=>{
-        if(mainState.authenticated === true  && tabActive === true){
-            if(mainState.profilo?.nonce  !== result?.state?.mainState?.profilo?.nonce){
-                window.location.href = redirect;
-            }
-        }
-    },[tabActive]);
+  useEffect(()=>{
+    if(mainState.authenticated === true  && tabActive === true){
+      if(mainState.profilo?.nonce  !== result?.state?.mainState?.profilo?.nonce){
+        window.location.href = redirect;
+      }
+    }
+  },[tabActive]);
 
-    return (
-        <ThemeProvider theme={theme}>
-            <div className="App">
-                <RouterProvider router={router2} />
-            </div>
-        </ThemeProvider> 
-    );
+  return (
+    <ThemeProvider theme={theme}>
+      <div className="App">
+        <RouterProvider router={router2} />
+      </div>
+    </ThemeProvider> 
+  );
 };
 export default RouteProfile;
 
 
 
 const router2 = createBrowserRouter([
-    {
-        path: "/",
-        Component:LayoutLoggedOut,
-        errorElement: <RouteErrorBoundary />,
-        loader:authVerify,
+  {
+    path: "/",
+    Component:LayoutLoggedOut,
+    errorElement: <RouteErrorBoundary />,
+    loader:authVerify,
+    children: [
+      {
+        index: true,
+        element: <RoleBasedIndexRedirect />
+      },
+      { 
+        path: "azureLogin",
+        Component: AzureLogin, 
+      },
+      {
+        path: "azure",
+        Component: Azure,
+      },
+      {
+        path: "auth",
+        Component: Auth,
+      },
+      {
+        path: "selezionaprodotto",
+        loader:authVerifyPageProdotto,
+        Component: AuthAzureProdotti,
+      },
+      {
+        path: "auth/azure",
+        Component: AuthAzure,
+      },
+      {
+        path: "send",
+        loader:authVerifyIsLoggedSend,
+        Component: () => <LayoutAzure sideNav={<SideNavSend />} />,
         children: [
-            {
-                index: true,
-                element: <RoleBasedIndexRedirect />
-            },
-            { 
-                path: "azureLogin",
-                Component: AzureLogin, 
-            },
-            {
-                path: "azure",
-                Component: Azure,
-            },
-            {
-                path: "auth",
-                Component: Auth,
-            },
-            {
-                path: "selezionaprodotto",
-                loader:authVerifyPageProdotto,
-                Component: AuthAzureProdotti,
-            },
-            {
-                path: "auth/azure",
-                Component: AuthAzure,
-            },
-            {
-                path: "send",
-                loader:authVerifyIsLoggedSend,
-                Component: () => <LayoutAzure sideNav={<SideNavSend />} />,
-                children: [
-                    { index: true, element: <Navigate to={PathRoutePf.LISTA_DATI_FATTURAZIONE} replace /> },
-                    { path: PathRoutePf.LISTA_DATI_FATTURAZIONE, Component: PagoPaListaDatiFatturazione },
-                    { path: PathRoutePf.DATI_FATTURAZIONE, Component: AreaPersonaleUtenteEnte },
-                    { path: PathRoutePf.TIPOLOGIA_CONTRATTO, Component: PageTipologiaContratto },
-                    { path: PathRoutePf.LISTA_MODULICOMMESSA_PREVISONALE, Component: ListaCommessaPrevisionale },
-                    { path: PathRoutePf.LISTA_MODULICOMMESSA, Component: PagoPaListaModuliCommessa },
-                    { path: PathRoutePf.LISTA_NOTIFICHE, Component: ReportDettaglio },
-                    { path: PathRoutePf.INSERIMENTO_CONTESTAZIONI, Component: InserimentoContestazioni },
-                    { path: PathRoutePf.STORICO_CONTEST, Component: Storico },
-                    { path: PathRoutePf.STORICO_DETTAGLIO_CONTEST, Component: DettaglioStoricoContestazione },
-                    { path: PathRoutePf.MODULOCOMMESSA, Component: ModuloCommessaInserimentoPn },
-                    { path: PathRoutePf.PDF_COMMESSA+"/:annoPdf?/:mesePdf?", Component: ModuloCommessaPdf },
-                    { path: PathRoutePf.LISTA_REL, Component: RelPage },
-                    { path: PathRoutePf.PDF_REL+"/:pageFrom/:id/:idEnte?/:idTipoContratto?", Component: RelPdfPage },
-                    { path: PathRoutePf.ADESIONE_BANDO, Component: AdesioneBando },
-                    { path: PathRoutePf.FATTURAZIONE, Component: Fatturazione },
-                    { path: PathRoutePf.MESSAGGI, Component: Messaggi },
-                    { path: PathRoutePf.ACCERTAMENTI, Component: Accertamenti },
-                    { path: PathRoutePf.LISTA_DOC_EMESSI, Component: ListaDocEmessi },
-                    { path: PathRoutePf.JSON_TO_SAP, Component: InvioFatture },
-                    { path: PathRoutePf.JSON_TO_SAP_DETAILS, Component: InvioFattureDetails },
-                    { path: PathRoutePf.ORCHESTRATORE, Component: ProcessiOrchestartore },
-                    { path: PathRoutePf.LISTA_STORICO_DOCUMENTI_SEND, Component:  DocStoricoSend },
-                    { path: PathRoutePf.DOCUMENTI_SOSPESI_SEND, Component:  DocSospesiSend },
-                ],
-            },
-            {
-                path: "pn",
-                loader:authVerifyIsLoggedProdPn,
-                Component: () => <LayoutAzure sideNav={<SideNavPagopa />} />,
-                children: [
-                    { index: true, element: <Navigate to={PathRoutePf.ANAGRAFICAPSP} replace /> },
-                    { path:PathRoutePf.ANAGRAFICAPSP, Component: AnagraficaPsp },
-                    { path:PathRoutePf.DOCUMENTICONTABILI, Component: DocumentiContabili },
-                    { path:PathRoutePf.DETTAGLIO_DOC_CONTABILE, Component: DettaglioDocContabile },
-                    { path:PathRoutePf.KPI, Component: KpiPagamenti },
-                    { path: PathRoutePf.MESSAGGI, Component: Messaggi },
-                    // { path: PathRoutePf.EMAIL_PSP, Component: EmailPsp }
-                ],
-            },
-            {
-                path: "ente",
-                loader:authVerifyIsLoggedEnte,
-                Component: () => <LayoutEnte sideNav={<SideNavEnte />} />,
-                children: [
-                    { index: true, element: <Navigate to={PathRoutePf.DATI_FATTURAZIONE} replace /> },
-                    {path: PathRoutePf.DATI_FATTURAZIONE,Component: AreaPersonaleUtenteEnte},
-                    {path: PathRoutePf.LISTA_COMMESSE, Component: ModuloCommessaElencoUtPa},
-                    {path: PathRoutePf.MODULOCOMMESSA,Component: ModuloCommessaInserimentoUtEn30},
-                    {path: PathRoutePf.PDF_COMMESSA + "/:annoPdf?/:mesePdf?",Component: ModuloCommessaPdf},
-                    {path: PathRoutePf.LISTA_REL, loader: authVerifyIfEnteAllowRelSection,Component: RelPage},
-                    {path: PathRoutePf.PDF_REL+"/:pageFrom/:id",Component: RelPdfPage},
-                    {path: PathRoutePf.LISTA_NOTIFICHE, Component: ReportDettaglio},
-                    {path: PathRoutePf.ASYNC_DOCUMENTI_ENTE, Component: AsyncDocumenti},
-                    {path: PathRoutePf.API_KEY_ENTE,Component: ApiKeyEnte},
-                    {path: PathRoutePf.LISTA_STORICO_DOCUMENTI,Component: DocStorico},
-                    {path: PathRoutePf.DOCUMENTI_EMESSI,Component: DocEm},
-                    {path: PathRoutePf.DOCUMENTI_SOSPESI,Component: DocSos} 
-                ],
-            },
-            {
-                path: "reccon",
-                Component: () => <LayoutEnte sideNav={<SideNavRecCon />} />,
-                children: [
-                    { index: true, element: <Navigate to={PathRoutePf.LISTA_NOTIFICHE} replace /> },
-                    {path: PathRoutePf.LISTA_NOTIFICHE, Component: ReportDettaglio}
-                ],
-            },
-            {
-                path: "*",
-                Component: () => <RoleBasedIndexRedirect></RoleBasedIndexRedirect>,
-            },
+          { index: true, element: <Navigate to={PathRoutePf.LISTA_DATI_FATTURAZIONE} replace /> },
+          { path: PathRoutePf.LISTA_DATI_FATTURAZIONE, Component: PagoPaListaDatiFatturazione },
+          { path: PathRoutePf.DATI_FATTURAZIONE, Component: AreaPersonaleUtenteEnte },
+          { path: PathRoutePf.TIPOLOGIA_CONTRATTO, Component: PageTipologiaContratto },
+          { path: PathRoutePf.LISTA_MODULICOMMESSA_PREVISONALE, Component: ListaCommessaPrevisionale },
+          { path: PathRoutePf.LISTA_MODULICOMMESSA, Component: PagoPaListaModuliCommessa },
+          { path: PathRoutePf.LISTA_NOTIFICHE, Component: ReportDettaglio },
+          { path: PathRoutePf.INSERIMENTO_CONTESTAZIONI, Component: InserimentoContestazioni },
+          { path: PathRoutePf.STORICO_CONTEST, Component: Storico },
+          { path: PathRoutePf.STORICO_DETTAGLIO_CONTEST, Component: DettaglioStoricoContestazione },
+          { path: PathRoutePf.MODULOCOMMESSA, Component: ModuloCommessaInserimentoPn },
+          { path: PathRoutePf.PDF_COMMESSA+"/:annoPdf?/:mesePdf?", Component: ModuloCommessaPdf },
+          { path: PathRoutePf.LISTA_REL, Component: RelPage },
+          { path: PathRoutePf.PDF_REL+"/:pageFrom/:id/:idEnte?/:idTipoContratto?", Component: RelPdfPage },
+          { path: PathRoutePf.ADESIONE_BANDO, Component: AdesioneBando },
+          { path: PathRoutePf.FATTURAZIONE, Component: Fatturazione },
+          { path: PathRoutePf.MESSAGGI, Component: Messaggi },
+          { path: PathRoutePf.ACCERTAMENTI, Component: Accertamenti },
+          { path: PathRoutePf.LISTA_DOC_EMESSI, Component: ListaDocEmessi },
+          { path: PathRoutePf.JSON_TO_SAP, Component: InvioFatture },
+          { path: PathRoutePf.JSON_TO_SAP_DETAILS, Component: InvioFattureDetails },
+          { path: PathRoutePf.ORCHESTRATORE, Component: ProcessiOrchestartore },
+          { path: PathRoutePf.LISTA_STORICO_DOCUMENTI_SEND, Component:  DocStoricoSend },
+          { path: PathRoutePf.DOCUMENTI_SOSPESI_SEND, Component:  DocSospesiSend },
         ],
-    }, 
+      },
+      {
+        path: "pn",
+        loader:authVerifyIsLoggedProdPn,
+        Component: () => <LayoutAzure sideNav={<SideNavPagopa />} />,
+        children: [
+          { index: true, element: <Navigate to={PathRoutePf.ANAGRAFICAPSP} replace /> },
+          { path:PathRoutePf.ANAGRAFICAPSP, Component: AnagraficaPsp },
+          { path:PathRoutePf.DOCUMENTICONTABILI, Component: DocumentiContabili },
+          { path:PathRoutePf.DETTAGLIO_DOC_CONTABILE, Component: DettaglioDocContabile },
+          { path:PathRoutePf.KPI, Component: KpiPagamenti },
+          { path: PathRoutePf.MESSAGGI, Component: Messaggi },
+          // { path: PathRoutePf.EMAIL_PSP, Component: EmailPsp }
+        ],
+      },
+      {
+        path: "ente",
+        loader:authVerifyIsLoggedEnte,
+        Component: () => <LayoutEnte sideNav={<SideNavEnte />} />,
+        children: [
+          { index: true, element: <Navigate to={PathRoutePf.DATI_FATTURAZIONE} replace /> },
+          {path: PathRoutePf.DATI_FATTURAZIONE,Component: AreaPersonaleUtenteEnte},
+          {path: PathRoutePf.LISTA_COMMESSE, Component: ModuloCommessaElencoUtPa},
+          {path: PathRoutePf.MODULOCOMMESSA,Component: ModuloCommessaInserimentoUtEn30},
+          {path: PathRoutePf.PDF_COMMESSA + "/:annoPdf?/:mesePdf?",Component: ModuloCommessaPdf},
+          {path: PathRoutePf.LISTA_REL, loader: authVerifyIfEnteAllowRelSection,Component: RelPage},
+          {path: PathRoutePf.PDF_REL+"/:pageFrom/:id",Component: RelPdfPage},
+          {path: PathRoutePf.LISTA_NOTIFICHE, Component: ReportDettaglio},
+          {path: PathRoutePf.ASYNC_DOCUMENTI_ENTE, Component: AsyncDocumenti},
+          {path: PathRoutePf.API_KEY_ENTE,Component: ApiKeyEnte},
+          {path: PathRoutePf.LISTA_STORICO_DOCUMENTI,Component: DocStorico},
+          {path: PathRoutePf.DOCUMENTI_EMESSI,Component: DocEm},
+          {path: PathRoutePf.DOCUMENTI_SOSPESI,Component: DocSos} 
+        ],
+      },
+      {
+        path: "reccon",
+        Component: () => <LayoutEnte sideNav={<SideNavRecCon />} />,
+        children: [
+          { index: true, element: <Navigate to={PathRoutePf.LISTA_NOTIFICHE} replace /> },
+          {path: PathRoutePf.LISTA_NOTIFICHE, Component: ReportDettaglio}
+        ],
+      },
+      {
+        path: "*",
+        Component: () => <RoleBasedIndexRedirect></RoleBasedIndexRedirect>,
+      },
+    ],
+  }, 
 ]);
 
 
 
 const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: 420,
-    bgcolor: "background.paper",
-    borderRadius: 3,
-    boxShadow: "0px 20px 60px rgba(38, 189, 203, 0.25)",
-    border: "2px solid",
-    borderColor: "#1BB8C6",
-    p: 4,
-    outline: "none",
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 420,
+  bgcolor: "background.paper",
+  borderRadius: 3,
+  boxShadow: "0px 20px 60px rgba(38, 189, 203, 0.25)",
+  border: "2px solid",
+  borderColor: "#1BB8C6",
+  p: 4,
+  outline: "none",
 };
 
 
 function RouteErrorBoundary() {
-    const error = useRouteError();
-    const location = useLocation();
+  const error = useRouteError();
+  const location = useLocation();
 
-    const errorMessage = isRouteErrorResponse(error)
-        ? `Error ${error.status}: ${error.statusText}`
-        : error instanceof Error
-            ? error.message
-            : "Unknown error";
+  const errorMessage = isRouteErrorResponse(error)
+    ? `Error ${error.status}: ${error.statusText}`
+    : error instanceof Error
+      ? error.message
+      : "Unknown error";
 
-    const handleClose = () => {
-        localStorage.clear();
-        window.location.href = redirect;
+  const handleClose = () => {
+    localStorage.clear();
+    window.location.href = redirect;
+  };
+  const handleCopy = () => {
+    const infoObject = {
+      page:location.pathname.split("/")?.filter(Boolean)?.pop()||"ERROR",
+      version:import.meta.env.VITE_APP_VERSION,
+      message:errorMessage
     };
-    const handleCopy = () => {
-        const infoObject = {
-            page:location.pathname.split("/")?.filter(Boolean)?.pop()||"ERROR",
-            version:import.meta.env.VITE_APP_VERSION,
-            message:errorMessage
-        };
-        const stringMessage = JSON.stringify(infoObject);
-        navigator.clipboard.writeText(stringMessage);
-    };
+    const stringMessage = JSON.stringify(infoObject);
+    navigator.clipboard.writeText(stringMessage);
+  };
 
     
-    return (
-        <div>
-            <Modal
-                open={true}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Box sx={style}>
-                    <div className='text-center'>
-                        <Typography fontSize={"2.2rem"} fontWeight={900} id="modal-modal-title" variant="h4" component="h2">
+  return (
+    <div>
+      <Modal
+        open={true}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <div className='text-center'>
+            <Typography fontSize={"2.2rem"} fontWeight={900} id="modal-modal-title" variant="h4" component="h2">
             ERRORE!
-                        </Typography>
-                        <Typography fontSize={"1.15rem"} fontWeight={500}   id="modal-modal-description" sx={{ mt: 2 }}>
-                            {`${location.pathname.split("/")?.filter(Boolean)?.pop() } V.${import.meta.env.VITE_APP_VERSION}`||`Generic V.${import.meta.env.VITE_APP_VERSION}`}
-                        </Typography>
+            </Typography>
+            <Typography fontSize={"1.15rem"} fontWeight={500}   id="modal-modal-description" sx={{ mt: 2 }}>
+              {`${location.pathname.split("/")?.filter(Boolean)?.pop() } V.${import.meta.env.VITE_APP_VERSION}`||`Generic V.${import.meta.env.VITE_APP_VERSION}`}
+            </Typography>
                         
-                        <Typography fontSize={"1.15rem"} fontWeight={500} id="modal-modal-description" sx={{ mt: 2 }}>
+            <Typography fontSize={"1.15rem"} fontWeight={500} id="modal-modal-description" sx={{ mt: 2 }}>
             Contattare l'assistenza.
-                        </Typography>
-                    </div>
+            </Typography>
+          </div>
                    
-                    <div className='container_buttons_modal d-flex justify-content-center'>
-                        <Button 
-                            sx={{marginRight:'20px'}} 
-                            variant='contained'
-                            onClick={handleClose}
-                        >Login</Button>
-                        <Button 
-                            sx={{marginRight:'20px'}} 
-                            variant='outlined'
-                            onClick={handleCopy}
-                        >Copia Errore</Button>
+          <div className='container_buttons_modal d-flex justify-content-center'>
+            <Button 
+              sx={{marginRight:'20px'}} 
+              variant='contained'
+              onClick={handleClose}
+            >Login</Button>
+            <Button 
+              sx={{marginRight:'20px'}} 
+              variant='outlined'
+              onClick={handleCopy}
+            >Copia Errore</Button>
                       
-                    </div>
-                </Box>
-            </Modal>
-        </div>
-    );
+          </div>
+        </Box>
+      </Modal>
+    </div>
+  );
 }
 
 

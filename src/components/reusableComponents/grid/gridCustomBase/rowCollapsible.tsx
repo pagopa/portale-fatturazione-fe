@@ -34,102 +34,102 @@ interface GridCollapsible{
 }
 
 
-const RowCollapsible = ({sliced,element ,headerNames, headerNamesCollapse, apiGet,nameParameterApi}) => {
-    const [open, setOpen] = useState(false);
+const RowCollapsible = ({sliced,element, headerNamesCollapse, apiGet}) => {
+  const [open, setOpen] = useState(false);
 
       
  
-    return(
-        <Fragment key={element.id}>
-            <TableRow key={`tableRow-${element.id}-${element.idFattura}`} sx={{
-                height: '80px',
-                borderTop: '4px solid #F2F2F2',
-                borderBottom: '2px solid #F2F2F2',
-                '&:hover': {
-                    backgroundColor: '#EDEFF1',
-                },
-            }}>
+  return(
+    <Fragment key={element.id}>
+      <TableRow key={`tableRow-${element.id}-${element.idFattura}`} sx={{
+        height: '80px',
+        borderTop: '4px solid #F2F2F2',
+        borderBottom: '2px solid #F2F2F2',
+        '&:hover': {
+          backgroundColor: '#EDEFF1',
+        },
+      }}>
             
-                {
-                    Object.values(sliced)?.map((value:any, i:number)=>{
-                        const cssFirstColum : {
+        {
+          Object.values(sliced)?.map((value:any, i:number)=>{
+            const cssFirstColum : {
                             color: string;
                             fontWeight: string;
                             cursor?: string;
                         } | null = i === 1 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
                        
-                        const valueEl = (i === 1 && value?.toString().length > 20) ? value?.toString().slice(0, 20) + '...' : value;
-                        if(i === 0){
-                            return(
-                                <TableCell key={`expand-${element.id}-${i}`} align={"center"}>
-                                    <IconButton
-                                        sx={{color:'#227AFC'}}
-                                        aria-label="expand row"
-                                        size="small"
-                                        onClick={() => setOpen(!open)}
-                                    >
-                                        {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                                    </IconButton>
-                                </TableCell>
-                            );
-                        }else if(value === "arrowDetails"){
-                            return (
-                                <TableCell key={`expand-${element.id}-${i}`} align="center" onClick={()=>{apiGet && apiGet(element);}}>
-                                    <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
-                                </TableCell> 
-                            );
-                        }else{
-                            return (
-                                <Tooltip key={`${value}-${i}`}  title={(i === 1 && value?.toString().length > 20) ?value:null} >
-                                    <TableCell key={`expand-${element.id}-${i}`}  onClick={()=>{(i === 1 && apiGet) && apiGet(element);}} sx={cssFirstColum}  align={"center"}>{valueEl}</TableCell>
-                                </Tooltip>
-                            );
-                        }             
-                    })
-                }
-           
-            </TableRow>
-            <TableRow key={`tableRow-position-${element.id}`} >
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0}} colSpan={7}>
-                    <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Box sx={{ margin: 2 , backgroundColor:'#F8F8F8', padding:'10px'}}>
-                            <Typography sx={{marginLeft:"6px"}} variant="h6" gutterBottom component="div">
-                Posizioni
-                            </Typography>
-                            <Table size="small" aria-label="purchases">
-                                <TableHead>
-                                    <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
-                                        {
-                                            Object.values(headerNamesCollapse)?.map((value:any, i:number)=>{
-                                                return (
-                                                    <TableCell key={`position-${value.label}-${i}`} align='center'>{value.label}</TableCell>
-                                                );
-                                            })
-                                        }
-                                    
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
-                                    {element?.posizioni?.map((obj,i) => (
-                                        <TableRow key={`position-row-${i}`}>
-                                            {
-                                                Object.values(obj)?.map((value:any, i:number)=>{
-                                                    return (
-                                                        <TableCell key={`position-value-${value}-${i}`} align='center' >{value}</TableCell>
-                                                    );
-                                                })
-                                            } 
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </Box>
-                    </Collapse>
+            const valueEl = (i === 1 && value?.toString().length > 20) ? value?.toString().slice(0, 20) + '...' : value;
+            if(i === 0){
+              return(
+                <TableCell key={`expand-${element.id}-${i}`} align={"center"}>
+                  <IconButton
+                    sx={{color:'#227AFC'}}
+                    aria-label="expand row"
+                    size="small"
+                    onClick={() => setOpen(!open)}
+                  >
+                    {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                  </IconButton>
                 </TableCell>
-            </TableRow> 
-        </Fragment> 
+              );
+            }else if(value === "arrowDetails"){
+              return (
+                <TableCell key={`expand-${element.id}-${i}`} align="center" onClick={()=>{apiGet && apiGet(element);}}>
+                  <ArrowForwardIcon sx={{ color: '#1976D2', cursor: 'pointer' }} /> 
+                </TableCell> 
+              );
+            }else{
+              return (
+                <Tooltip key={`${value}-${i}`}  title={(i === 1 && value?.toString().length > 20) ?value:null} >
+                  <TableCell key={`expand-${element.id}-${i}`}  onClick={()=>{(i === 1 && apiGet) && apiGet(element);}} sx={cssFirstColum}  align={"center"}>{valueEl}</TableCell>
+                </Tooltip>
+              );
+            }             
+          })
+        }
+           
+      </TableRow>
+      <TableRow key={`tableRow-position-${element.id}`} >
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0}} colSpan={7}>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <Box sx={{ margin: 2 , backgroundColor:'#F8F8F8', padding:'10px'}}>
+              <Typography sx={{marginLeft:"6px"}} variant="h6" gutterBottom component="div">
+                Posizioni
+              </Typography>
+              <Table size="small" aria-label="purchases">
+                <TableHead>
+                  <TableRow sx={{borderColor:"white",borderWidth:"thick"}}>
+                    {
+                      Object.values(headerNamesCollapse)?.map((value:any, i:number)=>{
+                        return (
+                          <TableCell key={`position-${value.label}-${i}`} align='center'>{value.label}</TableCell>
+                        );
+                      })
+                    }
+                                    
+                  </TableRow>
+                </TableHead>
+                <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
+                  {element?.posizioni?.map((obj,i) => (
+                    <TableRow key={`position-row-${i}`}>
+                      {
+                        Object.values(obj)?.map((value:any, i:number)=>{
+                          return (
+                            <TableCell key={`position-value-${value}-${i}`} align='center' >{value}</TableCell>
+                          );
+                        })
+                      } 
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Box>
+          </Collapse>
+        </TableCell>
+      </TableRow> 
+    </Fragment> 
 
-    );
+  );
    
    
    
