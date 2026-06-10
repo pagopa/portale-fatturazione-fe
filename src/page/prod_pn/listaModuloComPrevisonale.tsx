@@ -165,7 +165,7 @@ const ListaCommessaPrevisionale:React.FC = () =>{
             tipologiaContratto:el.tipologiaContratto||"--",
             dataContratto:dayjs(el.dataContratto).format("YYYY-MM-DD"),
             dataInserimento:dayjs(el.dataInserimento).format("YYYY-MM-DD"),
-            dataChiusura:dayjs(el.dataChiusura).format("YYYY-MM-DD"),
+            dataChiusura:el.source === "archiviato" ? "--" : el.source === "facoltativo" ? "TBD" : dayjs(el.dataChiusura).format("YYYY-MM-DD"),
             totaleNotificheDigitaleNaz:el.totaleNotificheDigitaleNaz !== null && el.totaleNotificheDigitaleNaz !== "" ? el.totaleNotificheDigitaleNaz :"--",
             totaleNotificheDigitaleInternaz:el.totaleNotificheDigitaleInternaz !== null && el.totaleNotificheDigitaleInternaz !== "" ? el.totaleNotificheDigitaleInternaz:"--",
             totaleNotificheAnalogicoARNaz:el.totaleNotificheAnalogicoARNaz !== null && el.totaleNotificheAnalogicoARNaz !== "" ? el.totaleNotificheAnalogicoARNaz:"--",
@@ -451,19 +451,15 @@ const ListaCommessaPrevisionale:React.FC = () =>{
         disabled={showLoadingLista}
         widthCustomSize="2000px"
         body={bodyGetLista}
-        sentenseEmpty={"Non sono presenti moduli commessa"}
-      ></GridCustom>
-          
+        sentenseEmpty={"Non sono presenti moduli commessa"}/>
       <ModalLoading 
         open={showLoading} 
         setOpen={setShowLoading}
-        sentence={'Downloading...'} >
-      </ModalLoading>
+        sentence={'Downloading...'} />
       <ModalLoading 
         open={showLoadingLista} 
         setOpen={setShowLoadingLista}
-        sentence={'Loading...'} >
-      </ModalLoading>
+        sentence={'Loading...'} />
     </MainBoxStyled>
   );
 };

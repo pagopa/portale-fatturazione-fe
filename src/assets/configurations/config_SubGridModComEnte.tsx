@@ -1,20 +1,7 @@
-import { Chip, IconButton, Tooltip } from "@mui/material";
+import { Chip, IconButton,  Tooltip } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-
-
-export interface HeaderGridCustom {
-    label:string,
-    align:"center"|"left"|"right",
-    width:number|string,
-    headerAction:boolean,
-    headerTooltip?: (title: any, label: any, color: any) => JSX.Element,
-    headerChip?: (title: any, label: any, color: any) => JSX.Element,
-    gridAction?:(fun:(id) => void,color:string,disabled:boolean,obj:any) => JSX.Element,
-    gridOpenDetail?:(disabled:boolean,open?:boolean,setOpen?:(val)=>void) => JSX.Element,
-}
-
-
+import { HeaderGridCustom } from "../../components/reusableComponents/grid/gridCustom";
 
 export const subHeaderNameModComTrimestraleENTE: HeaderGridCustom[] = [
   { label: 'Mese/Anno',align:'center',width:'160px', headerAction:false},
