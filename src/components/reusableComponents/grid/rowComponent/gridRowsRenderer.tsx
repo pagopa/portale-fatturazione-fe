@@ -8,13 +8,14 @@ import RowContestazioni from "../gridCustomBase/rowContestazioni";
 import DefaultRow from "../gridCustomBase/rowDefault";
 import RowModCommessaPrevisionale from "../gridCustomBase/rowModCommessaPrevisonale";
 import RowCollapsible from "../gridCustomBase/rowCollapsible";
+import { HeaderGridCustom } from "../gridCustom";
 
 interface GridRowsRendererProps {
   element: any;
   sliced: any;
   nameParameterApi: string;
   apiGet?: (el: any) => void;
-  headerNames:{label:string,align: TableCellProps['align'],width:number|string,keyValue:string}[];
+  headerNames:HeaderGridCustom[];
   headerNamesCollapse?: string[] | { label: string; align: TableCellProps['align']; width: number | string }[];
   selected?: number[];
   setSelected?: React.Dispatch<React.SetStateAction<number[]>>;

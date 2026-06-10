@@ -166,43 +166,43 @@ const ModuloCommessaInserimentoPn : React.FC = () => {
         </div>
       </div> 
       {!loadingData &&
-                        <div className="d-flex justify-content-between m-5 ">
-                          <div>
+        <div className="d-flex justify-content-between m-5 ">
+          <div>
 
-                          </div>
-                          {((dataModuli.length > 0 && (activeCommessa?.source === "archiviato")) || !activeCommessa.modifica) ? null:
-                            <div className="d-flex justify-content-center align-items-center">
-                              <Button  disabled={error890Regioni|| errorArRegioni } onClick={onHandleSalvaModificaButton} variant={"outlined"}>{labelButtonAvantiListaModuliSave}
-                              </Button>
-                            </div>} 
-                          { (activeCommessa?.totaleNotifiche !== null && !isEditAllow && !loadingData) && 
-                            <div  className="d-flex justify-content-center align-items-center">
-                              <Button onClick={()=>{
-                                navigate(profilePathModuloCommessapdf+`/${activeCommessa.annoValidita}/${activeCommessa.meseValidita}`);}
-                              } variant="contained">Vedi anteprima</Button>   
-                            </div> 
-                          }
-                          <div>
+          </div>
+          {((dataModuli.length > 0 && (activeCommessa?.source === "archiviato")) || !activeCommessa.modifica) ? null:
+            <div className="d-flex justify-content-center align-items-center">
+              <Button  disabled={error890Regioni|| errorArRegioni } onClick={onHandleSalvaModificaButton} variant={"outlined"}>{labelButtonAvantiListaModuliSave}
+              </Button>
+            </div>} 
+          { (activeCommessa?.totaleNotifiche !== null && !isEditAllow && !loadingData) && 
+            <div  className="d-flex justify-content-center align-items-center">
+              <Button onClick={()=>{
+                navigate(profilePathModuloCommessapdf+`/${activeCommessa.annoValidita}/${activeCommessa.meseValidita}`);}
+              } variant="contained">Vedi anteprima</Button>   
+            </div> 
+          }
+          <div>
                                 
-                          </div>
-                        </div> 
+          </div>
+        </div> 
       }
       <ModalRedirect 
         setOpen={setOpenModalRedirect}
         open={openModalRedirect}
-        sentence={`Per poter inserire il modulo commessa è obbligatorio fornire  i seguenti dati di fatturazione:`}></ModalRedirect>
+        sentence={`Per poter inserire il modulo commessa è obbligatorio fornire  i seguenti dati di fatturazione:`}/>
       <ModalInfo 
         setOpen={setOpenModalInfo}
         open={openModalInfo}
-        width={600}></ModalInfo>
+        width={600}/>
       <ModalConfermaInserimento
         setOpen={setOpenModalConfermaIns}
         open={openModalConfermaIns}
         onButtonComfermaPopUp={onButtonComfermaPopUp}
         mainState={mainState}
         sentence={`Verrà effettuata la modifica del Modulo Commessa di ${month[Number(mainState.mese) - 1]} ${mainState.anno}: confermi l'operazione?`}
-      ></ModalConfermaInserimento>
-      <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}></ModalLoading>
+      />
+      <ModalLoading open={openModalLoading} setOpen={setOpenModalLoading} sentence={'Loading...'}/>
     </>
   );
 };

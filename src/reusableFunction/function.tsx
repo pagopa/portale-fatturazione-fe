@@ -1,14 +1,11 @@
 import dayjs from "dayjs";
-import { DataGridCommessa } from "../types/typeModuloCommessaElenco";
 import { ArrayTipologieCommesse, DatiModuloCommessaPdf, ModuliCommessa } from "../types/typeModuloCommessaInserimento";
 import { month, objMesiWithZero } from "./reusableArrayObj";
 import { ManageErrorResponse } from "../types/typesGeneral";
 import { Fattura } from "../page/ente/docConEme";
 
-export const fixResponseForDataGrid = (arr:any[]):any =>{
-      
-  const res = arr.map( (singlObj:any) =>{
-        
+export const fixResponseForDataGrid = <T,>(arr:T[]) =>{
+  const res = arr.map( (singlObj:any) =>{    
     return {
       id : Math.random(),
       ...singlObj
@@ -143,8 +140,6 @@ export const getIdByTipo = (string:string, array:ArrayTipologieCommesse[]) =>{
 
 
 export const findStatoContestazioni = (code:number) => {
-  const result = '';
-
   switch (code) {
   case 0:
     return "Caricamento file";
@@ -209,7 +204,7 @@ export function isDateInvalid(dateInput) {
   return isNaN(date.getTime()); // Check if the date is invalid
 }
 
-export const formatDateToValidation = (date:any) => {
+export const formatDateToValidation = (date) => {
   if(!isDateInvalid(date)){
     return  dayjs(new Date(date)).format("YYYY-MM-DD").replace(/-/g,"");
   }else{
@@ -219,13 +214,9 @@ export const formatDateToValidation = (date:any) => {
 
 
 
-export const fixResponseForDataGridRollBack = (arr:any[]):any =>{
- 
+export const fixResponseForDataGridRollBack = ( arr ) =>{
   try{
-    return arr.map((el:any)=> {
-         
-
-
+    return arr.map((el)=> {
       let inserimentoInfo = {inserimento:"--",color:"#ffffff"};
 
       if(el.totaleNotifiche === null ){
@@ -240,7 +231,7 @@ export const fixResponseForDataGridRollBack = (arr:any[]):any =>{
         stato:el.source.charAt(0).toUpperCase() + el.source.slice(1)||"--",
         inserimento:inserimentoInfo,
         dataInserimento:el.dataInserimento?.split('T')[0]|| "--",
-        dataChiusura:el.dataChiusura?.split('T')[0]|| "--",
+        dataChiusura:el.source === "archiviato" ? "--" : el.source === "facoltativo" ? "TBD" : (el.dataChiusura?.split('T')[0]|| "--"),
         totaleDig:el.totaleNotificheDigitaleNaz !== null ?el.totaleNotificheDigitaleNaz:"--",
         totaleNotificheDigitaleInternaz:el.totaleNotificheDigitaleInternaz !== null ? el.totaleNotificheDigitaleInternaz: "--",
         totaleAR:el.totaleNotificheAnalogicoARNaz!== null ?el.totaleNotificheAnalogicoARNaz :"--",
@@ -256,7 +247,6 @@ export const fixResponseForDataGridRollBack = (arr:any[]):any =>{
   }catch(err){
     console.log({err});
   }
-  
   return [];
 };
 
@@ -275,7 +265,7 @@ export function toLocalISOString(date: Date) {
 
 
 
-export function isManageErrorResponse(err: any): err is ManageErrorResponse {
+export function isManageErrorResponse(err): err is ManageErrorResponse {
   return err && typeof err === "object" && "statusCode" in err;
 }
 
@@ -348,7 +338,7 @@ export const sortByNumeroFattura = (array, state,key) => {
   return array;
 };
 
-export const sortByTotale = (array: any[], state: boolean, key: string) => {
+export const sortByTotale =  <T,> (array: T[], state: boolean, key: string) => {
   // helper to clean the value: remove non-digits
   const parseValue = (val: string | number) => {
     if (typeof val === 'number') return val;
@@ -377,8 +367,8 @@ export const sortByTotale = (array: any[], state: boolean, key: string) => {
   return array;
 };
 
-export const sortByTipoFattura = (
-  array: any[],
+export const sortByTipoFattura = <T,>(
+  array: T[],
   state: boolean | null,
   key: string
 ) => {

@@ -50,7 +50,6 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
   const [openModalRedirect, setOpenModalRedirect] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [totDoc,setTotDoc] = useState(0);
   const [loadingMandatory, setLoadingMandatory] = useState(true);
   const [showButtonInsertModulo,setShowButtonInsertModulo] = useState(false);
   const [openModalModObbligatori,setOpenModalModObbligatori] = useState({open:false,sentence:''});
@@ -106,7 +105,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
   const getAnniSelect = async () =>{
     await getAnni(token, profilo.nonce).then((res:GetAnniResponse)=>{
       setAnni(res.data);
-    }).catch((err:ManageErrorResponse)=>{
+    }).catch(()=>{
       // manageError(err,dispatchMainState);
     });
   };
@@ -294,25 +293,25 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
               }}>
                 <CustomButton onClick={()=>{
                   getListaCommessaGrid(valueSelect);
-                  updateFilters({valueSelect,pathPage:PathPf.LISTA_COMMESSE,});
+                  updateFilters({valueSelect,pathPage:PathPf.LISTA_COMMESSE});
                 }} variant="contained" disabled={valueSelect === ''}>
                                     Filtra
                 </CustomButton>
                 {valueSelect !== '' &&
-                                <CustomButton sx={{marginLeft:"40px"}} onClick={()=>{
-                                  setValueSelect('');
-                                  getListaCommessaGrid('');
-                                  resetFilters();
-                                }} variant="text" disabled={valueSelect === ''}>
+                  <CustomButton sx={{marginLeft:"40px"}} onClick={()=>{
+                    setValueSelect('');
+                    getListaCommessaGrid('');
+                    resetFilters();
+                  }} variant="text" disabled={valueSelect === ''}>
                                     Annulla filtri
-                                </CustomButton>
+                  </CustomButton>
                 }
               </Box>
             </div>
             {showButtonInsertModulo &&
-                            <Button  sx={{ marginTop: 'auto', marginBottom: 'auto', marginLeft: '30px' }} variant="contained" onClick={()=>{
-                              handleListItemClickModuloCommessa();
-                            }}>Inserisci modulo commessa</Button>
+              <Button  sx={{ marginTop: 'auto', marginBottom: 'auto', marginLeft: '30px' }} variant="contained" onClick={()=>{
+                handleListItemClickModuloCommessa();
+              }}>Inserisci modulo commessa</Button>
             }
           </div>
           <div className='mb-5'>
@@ -333,7 +332,7 @@ const ModuloCommessaElencoUtPa: React.FC = () => {
               elements={gridData}
               changePage={handleChangePage}
               changeRow={handleChangeRowsPerPage} 
-              total={totDoc}
+              total={0}
               page={page}
               rows={rowsPerPage}
               headerNames={subHeaderNameModComTrimestraleENTE}
