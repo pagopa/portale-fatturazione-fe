@@ -1,13 +1,5 @@
-export interface HeaderGridCustom {
-    label:string,
-    align:string,
-    width:number|string,
-    headerAction?:boolean,
-    headerActionSort?:boolean,
-    headerTooltip?: (title: any, label: any, color: any) => JSX.Element,
-    gridAction?:(fun:(id) => void,color:string,disabled:boolean,obj:any) => JSX.Element,
-    gridOpenDetail?:(disabled:boolean,open?:boolean,setOpen?:(val)=>void) => JSX.Element,
-}
+import { HeaderGridCustom } from "../../components/reusableComponents/grid/gridCustom";
+
 
 export const headersDocumentiSospesiiSend : HeaderGridCustom[] = [
   {label:"",align:"center",width:"30px"},
