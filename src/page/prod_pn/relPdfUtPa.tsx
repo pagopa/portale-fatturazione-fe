@@ -245,10 +245,10 @@ export default RelPdfPage;
 
 const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProfile}) => {
   const isRel = profilePath === PathPf.LISTA_REL || profilePath === PathPf.LISTA_REL_EN;
-  const imponibile_Ivato_IsVisible = mainObj.tipologiaFattura === "PRIMO SALDO" || mainObj.tipologiaFattura === "SECONDO SALDO" || mainObj.tipologiaFattura === "VAR. SEMESTRALE";    
+  const imponibile_Ivato_IsVisible = mainObj.tipologiaFattura === "PRIMO SALDO" || mainObj.tipologiaFattura === "SECONDO SALDO" || mainObj.tipologiaFattura === "VAR. SEMESTRALE" || mainObj.tipologiaFattura === "SEM. SOSPESI";    
   const anticipo_analogico_digitale_IsVisible = mainObj.tipologiaFattura === "ANTICIPO" && !isRel;
   const acconto_analogico_digitale_IsVisible = mainObj.tipologiaFattura === "ACCONTO" && idTipoContrattoBasedOnProfile === 2;
-  const storno_analogico_digitale_totale_storno_IsVisible = (mainObj.tipologiaFattura === "PRIMO SALDO" || mainObj.tipologiaFattura === "SECONDO SALDO" || mainObj.tipologiaFattura === "VAR. SEMESTRALE" ) && !isRel;  // nella rel ne anticipo ne acconto
+  const storno_analogico_digitale_totale_storno_IsVisible = (mainObj.tipologiaFattura === "PRIMO SALDO" || mainObj.tipologiaFattura === "SECONDO SALDO" || mainObj.tipologiaFattura === "VAR. SEMESTRALE"|| mainObj.tipologiaFattura === "SEM. SOSPESI" ) && !isRel;  // nella rel ne anticipo ne acconto
   const storno_acconto_anticito_rel_IsVisible = isRel;
 
   let numeroNotificheSectionIsVisible = true;
@@ -278,7 +278,7 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
   let digitaleIvatoCalcolatoByFront = mainObj.totaleDigitaleIva;
   let totaleImponibileCalcolatoByFront = Number(mainObj.totaleAnalogico) + Number(mainObj.totaleDigitale);
 
-  if(mainObj.tipologiaFattura === "PRIMO SALDO" || mainObj.tipologiaFattura === 'SECONDO SALDO' || mainObj.tipologiaFattura === 'VAR. SEMESTRALE'){
+  if(mainObj.tipologiaFattura === "PRIMO SALDO" || mainObj.tipologiaFattura === 'SECONDO SALDO' || mainObj.tipologiaFattura === 'VAR. SEMESTRALE'|| mainObj.tipologiaFattura === "SEM. SOSPESI"){
     totaleIvatoCalcolatoByFront = Number(analogicoIvatoCalcolatoByFront) + Number(digitaleIvatoCalcolatoByFront);
   }else if(mainObj.tipologiaFattura === "ANTICIPO"){
     analogicoIvatoCalcolatoByFront = Number(mainObj.anticipoAnalogico||0)* (((mainObj.iva||22)/100)+1);
@@ -394,9 +394,9 @@ const MainComponentBasedOnUrl = ({mainObj,profilePath,idTipoContrattoBasedOnProf
                                   </TableHead>
                                   <TableBody sx={{borderColor:"white",borderWidth:"thick"}}>
                                     <TableRow>
-                                      <TableCell align="center" sx={{ width:"300px"}}>{new Date(fat.dataFattura).toLocaleDateString('en-CA')}</TableCell>
-                                      <TableCell align="center" sx={{ width:"300px"}}>{fat.tipoDocumento}</TableCell>
-                                      <TableCell align="center" sx={{ width:"300px"}}>{fat.metodoPagamento}</TableCell>
+                                      <TableCell align="center" sx={{ width:"300px"}}>{fat.dataFattura  ? new Date(fat.dataFattura).toLocaleDateString('en-CA'):"--"}</TableCell>
+                                      <TableCell align="center" sx={{ width:"300px"}}>{fat.tipoDocumento||"--"}</TableCell>
+                                      <TableCell align="center" sx={{ width:"300px"}}>{fat.metodoPagamento||"--"}</TableCell>
                                       <TableCell align="center" sx={{ width:"300px"}}>{fat.totaleFatturaImponibile != null 
                                         ? Number(fat.totaleFatturaImponibile||0).toLocaleString("de-DE", { style: "currency", currency: "EUR" })
                                         : '--'}
