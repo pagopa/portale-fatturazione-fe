@@ -353,15 +353,30 @@ export const getDocSospesiExelPagoPa = async ( token:string ,nonce:string, id:st
 };
     
 export const downloadReportRelNonFatturate = async (token:string, nonce:string,body: {tipologiaFattura: string[]|null}) => {
-    const response = await fetch(`${url}/api/fatture/pagopa/non-inviate/report?nonce=${nonce}`, 
-        {
-            headers: {
-                Authorization: 'Bearer '+token,
-                'Content-type':'application/json'
-            },
-            method: 'POST',
-            body:JSON.stringify(body),
-        });
+  const response = await fetch(`${url}/api/fatture/pagopa/non-inviate/report?nonce=${nonce}`, 
+    {
+      headers: {
+        Authorization: 'Bearer '+token,
+        'Content-type':'application/json'
+      },
+      method: 'POST',
+      body:JSON.stringify(body),
+    });
     
-    return response;
+  return response;
 };
+
+export const downloadReportSospeseCreditoAderentePagopa = async (token:string, nonce:string) => {
+  const response = await fetch(`${url}/api/fatture/andamento-sospese/download?nonce=${nonce}`, 
+    {
+      headers: {
+        Authorization: 'Bearer '+token,
+        'Content-type':'application/json'
+      },
+      method: 'POST',
+      body:JSON.stringify({}),
+    });
+   
+  return response;
+};
+

@@ -12,11 +12,9 @@ import { ManageErrorResponse } from "../../types/typesGeneral";
 import { month } from "../../reusableFunction/reusableArrayObj";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
 import { headersDocumentiSospesiiSend, headersDocumentiSospesiSendCollapse } from "../../assets/configurations/conf_GridDocSospesiSend";
-import { downloadFattureReportSospesiPagopa, downloadFattureSospesePagopa, getAnniDocSospesiPagoPa, getFatturazioneSospesePagoPa, getMesiDocSospesiPagoPa, getTipologieFaSospesePagoPa, getTipologieFaSospesePagoPaWithData, getTipologieSospeseContratto } from "../../api/apiPagoPa/fatturazionePA/api";
+import { downloadFattureReportSospesiPagopa, downloadFattureSospesePagopa, downloadReportSospeseCreditoAderentePagopa, getAnniDocSospesiPagoPa, getFatturazioneSospesePagoPa, getMesiDocSospesiPagoPa, getTipologieFaSospesePagoPa, getTipologieFaSospesePagoPaWithData, getTipologieSospeseContratto } from "../../api/apiPagoPa/fatturazionePA/api";
 import { listaEntiNotifichePage } from "../../api/apiSelfcare/notificheSE/api";
 import ModalLoading from "../../components/reusableComponents/modals/modalLoading";
-
-
 export interface BodyFatturazioneSospeseSend{
     anno:number|null,
     mese:number|null,
@@ -44,8 +42,7 @@ export type Fattura = {
     split: boolean;
     inviata: number;
     posizioni: Posizione[];
-    datiGeneraliDocumento:any[],
-    metodoPagamento:any,
+    metodoPagamento:string|null,
     idFattura:number, 
 };
 
@@ -59,8 +56,6 @@ export type Posizione = {
     periodoRiferimento: string; // MM/YYYY
 };
 
-
-
 const DocSospesiSend : React.FC = () =>{
   const mainState = useGlobalStore(state => state.mainState);
   const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
@@ -68,7 +63,6 @@ const DocSospesiSend : React.FC = () =>{
  
   const token =  mainState.profilo.jwt;
   const profilo =  mainState.profilo;
-
 
   const { 
     filters,
@@ -191,8 +185,7 @@ const DocSospesiSend : React.FC = () =>{
           getlistaFatturazione({...bodyFatturazione,...{anno:Number(year),mese:mesiCamelCase[0].mese, tipologiaFattura:[],cancellata:false,idEnti:[],idTipoContratto:null}});
         }else{
           setShowLoadingGrid(false);
-        }
-                   
+        }          
       }
     }).catch((err)=>{
       setArrayMonths([]);
@@ -337,9 +330,7 @@ const DocSospesiSend : React.FC = () =>{
       //setBodyFatturazione(body);
       setBodyFatturazioneDownload(body);
             
-      callLista.current = false;
-           
-                        
+      callLista.current = false;            
     } catch (err) {
       if (err && typeof err === "object") {
         manageError(err as ManageErrorResponse, dispatchMainState);
@@ -372,6 +363,29 @@ const DocSospesiSend : React.FC = () =>{
       setShowDownloading(false);
       manageError(err,dispatchMainState);
     }));
+  };
+
+  const downloadReportCreditoSospeso = async () => {
+    setShowDownloading(true);
+    try{
+      const res = await downloadReportSospeseCreditoAderentePagopa(token,profilo.nonce);
+      if (!res.ok) {
+        throw new Error(`${res.status}`);
+      }
+      const blob = await res.blob();
+      if (!blob || blob.size === 0) {
+        throw new Error('Invalid blob');
+      }
+      const title = `Report Sospesi Credito Aderente.xlsx`;
+      
+      saveAs(blob,title);
+    } catch (err) {
+      console.log({err});
+      manageErrorDownload('404',dispatchMainState);
+    }finally{
+      setShowDownloading(false);
+    }
+   
   };
 
   const clearOnChangeFilter = () => {
@@ -493,9 +507,6 @@ const DocSospesiSend : React.FC = () =>{
     }
     navigate(`${PathPf.PDF_REL}/documentisospesi/${el.idFattura}/${el.istitutioID}/${idTipoContratto}`); 
   }; 
-
-   
-   
 
   const statusAnnulla = ( 
     bodyFatturazione.anno !== firstYearMonth[0] ||
@@ -622,13 +633,12 @@ const DocSospesiSend : React.FC = () =>{
           keyValue={"idEnte"}
           keyBody={"idEnti"}
         ></MainFilter>
-
       </ResponsiveGridContainer>
       <FilterActionButtons 
         onButtonFiltra={onButtonFiltra} 
         onButtonAnnulla={onButtonAnnulla} 
         statusAnnulla={statusAnnulla ? "hidden":"show"} 
-      ></FilterActionButtons>
+      />
       <ActionTopGrid
         actionButtonRight={[{
           onButtonClick:downloadListaReportFatturazione,
@@ -639,11 +649,19 @@ const DocSospesiSend : React.FC = () =>{
         },{
           onButtonClick:downloadListaFatturazione,
           variant: "outlined",
-          label: "Download risultati",
+          label: "Download Risultati",
           icon:{name:"download"},
           disabled:(gridData.length === 0)
         }]}
-        actionButtonLeft={[]}/>
+        actionButtonLeft={[
+          {
+            onButtonClick:downloadReportCreditoSospeso,
+            variant: "outlined",
+            label: "Download Report Sospesi Credito Aderente",
+            icon:{name:"download"},
+            disabled:(false)
+          }
+        ]}/>
       <GridCustom
         nameParameterApi='docSospesiSend'
         elements={gridData}
@@ -661,19 +679,15 @@ const DocSospesiSend : React.FC = () =>{
         listaResponse={listaResponse}
         sentenseEmpty={"Non sono presenti fatture sospese"}
         apiGet={setIdDoc}
-      ></GridCustom>
-           
-          
+      /> 
       <ModalLoading 
         open={showDownloading} 
         setOpen={setShowDownloading} 
-        sentence={'Downloading...'}>
-      </ModalLoading>
+        sentence={'Downloading...'}/>
       <ModalLoading 
         open={showLoadingGrid} 
         setOpen={setShowLoadingGrid} 
-        sentence={'Loading...'}>
-      </ModalLoading>
+        sentence={'Loading...'}/>
     </MainBoxStyled>
   );
 };
