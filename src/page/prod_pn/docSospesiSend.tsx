@@ -368,7 +368,7 @@ const DocSospesiSend : React.FC = () =>{
   const downloadReportCreditoSospeso = async () => {
     setShowDownloading(true);
     try{
-      const res = await downloadReportSospeseCreditoAderentePagopa(token,profilo.nonce+"1");
+      const res = await downloadReportSospeseCreditoAderentePagopa(token,profilo.nonce);
       if (!res.ok) {
         throw new Error(`${res.status}`);
       }
