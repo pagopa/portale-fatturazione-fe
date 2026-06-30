@@ -48,7 +48,8 @@ export interface HeaderGridCustom {
     headerChip?: (title: string, label: string, color: string) => JSX.Element,
     gridAction?:(fun:(id) => void,color:string,disabled:boolean,obj:any) => JSX.Element,
     gridOpenDetail?:(disabled:boolean,open?:boolean,setOpen?:(val)=>void) => JSX.Element,
-    headerActionSort?:boolean
+    headerActionSort?:boolean,
+    keyValue:string
 }
 
 
@@ -88,7 +89,7 @@ const GridCustom: React.FC<GridCustomProps> = ({
     
   return (
     <div>
-      {nameParameterApi === "idWhite" && <EnhancedTableCustom  setOpenModal={setOpenModalDelete} setOpenModalAdd={setOpenModalAdd} selected={selected||[]} buttons={buttons} ></EnhancedTableCustom>}
+     
       <div style={{ overflowX: 'auto', width: '100%' }}>
         <Card sx={{ width: widthCustomSize, minWidth: '100%', backgroundColor: 'transparent' }}>
           <Table sx={{ backgroundColor: 'white' }}>

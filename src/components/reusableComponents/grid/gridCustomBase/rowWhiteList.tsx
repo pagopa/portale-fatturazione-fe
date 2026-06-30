@@ -1,10 +1,12 @@
-import { Checkbox, TableCell, TableCellProps, TableRow, Tooltip } from "@mui/material";
+import { TableCell, TableCellProps, TableRow, Tooltip } from "@mui/material";
 interface RowWhite {
     element:any,
     setSelected:any,
     checkIfChecked:any,
     selected:number[],
-    headerNames:{label:string,align:TableCellProps['align'],width:number|string,keyValue:string}[]
+    headerNames:{label:string,align:TableCellProps['align'],width:number|string,keyValue:string,
+    gridAction?:(fun:(id) => void,color:string,disabled:boolean,obj:any) => JSX.Element,
+    }[]
 }
 
 
@@ -19,6 +21,10 @@ const RowWhiteList :React.FC<RowWhite>  = ({element, setSelected,selected,checkI
     }
   };
   console.log({headerNames});
+
+  const test = (a) => {
+    return a;
+  };
   return (
     <TableRow  sx={{
       height: '80px',
@@ -34,10 +40,14 @@ const RowWhiteList :React.FC<RowWhite>  = ({element, setSelected,selected,checkI
           // stato per loa switch utilizzato nella page tipologia contratto
           const cssFirstColum = header.keyValue === "ragioneSociale" ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer'} : null;
           const valueEl = (header.keyValue === "ragioneSociale" && element[header.keyValue]?.toString().length > 20) ? element[header.keyValue]?.toString().slice(0, 20) + '...' : element[header.keyValue];
-          if(header.keyValue === 'checkbox'){
-            return  <TableCell align="center"  sx={{ width: "80px" }}>
-              <Checkbox key={Math.random()} onClick={handleCheckSingleRow} disabled={!element.cancella} checked={checkIfChecked(element.idWhite)} />
-            </TableCell>; 
+          if(headerNames[i]?.gridAction){
+            return (
+              <TableCell
+                key={i}
+                align={headerNames[i]?.align}>
+                {headerNames[i]?.gridAction(test(1),"primary",false,element)}                
+              </TableCell>
+            );
           }else{
             return (
               <Tooltip key={Math.random()} title={(element[header.keyValue]?.toString().length > 20 && i === 0) ? element[header.keyValue] : null}>

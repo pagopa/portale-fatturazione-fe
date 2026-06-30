@@ -20,8 +20,6 @@ const EnhancedTableCustom = (props: EnhancedTable) =>{
   
   const bgColor = selected.length < 1 ? "#F2FAF2" : "rgba(23, 50, 77, 0.08)";
   
-   
-
   return (
     <Toolbar
       sx={{bgcolor:bgColor}}

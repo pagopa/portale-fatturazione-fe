@@ -13,32 +13,33 @@ import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { month } from "../../reusableFunction/reusableArrayObj";
 import { PathPf } from "../../types/enum";
 import { ElementMultiSelect, OptionMultiselectChackbox } from "../../types/typeReportDettaglio";
-import { BodyWhite, getAnniWhite, getMesiWhite, getTipologiaFatturaWhite, getWhiteListPagoPa, deleteWhiteListPagoPa, downloadWhiteListPagopa } from "../../api/apiPagoPa/whiteListPA/whiteList";
+import { getAnniWhite, getMesiWhite, getTipologiaFatturaWhite, getWhiteListPagoPa, deleteWhiteListPagoPa, downloadWhiteListPagopa, GestioneFatture } from "../../api/apiPagoPa/whiteListPA/whiteList";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
+import EnhancedTableCustom from "../../components/reusableComponents/grid/gridCustomBase/enhancedTabalToolbarCustom";
 
 
 
 export interface BodyLista {
-    idEnti: string[]
-    tipologiaContratto: number|null
-    tipologiaFattura: string
-    anno: number
-    mese: number
+  idEnti: string[]
+  tipologiaContratto: number|null
+  tipologiaFattura: string
+  anno: number
+  mese: number
 }
 export interface WhitelistData {
-    count: number
-    whitelist: Whitelist[]
+  count: number
+  whitelist: Whitelist[]
 }
 export interface Whitelist {
-    idWhite?: number;
-    ragioneSociale:string;
-    anno: number;
-    mese: number;
-    tipologiaFatture: string;
-    tipoContratto: string;
-    cancella?:boolean;
+  idWhite?: number;
+  ragioneSociale:string;
+  anno: number;
+  mese: number;
+  tipologiaFatture: string;
+  tipoContratto: string;
+  cancella?:boolean;
 }
 
 
@@ -46,11 +47,11 @@ export interface Whitelist {
 const ListaDocEmessi : React.FC = () => {
   const mainState = useGlobalStore(state => state.mainState);
   const dispatchMainState = useGlobalStore(state => state.dispatchMainState);
-    
+  
   const token =  mainState.profilo.jwt;
-
+  
   const profilo =  mainState.profilo;
-
+  
   const [gridData, setGridData] = useState<Whitelist[]>([]);
   const [statusAnnulla, setStatusAnnulla] = useState('hidden');
   const [getListaLoading, setGetListaLoading] = useState(false);
@@ -65,32 +66,34 @@ const ListaDocEmessi : React.FC = () => {
   const [arrayYears,setArrayYears] = useState<number[]>([]);
   const [arrayMonths,setArrayMonths] = useState<{descrizione:string,mese:number}[]>([]);
   const contratti = [{id:3,descrizione:"Tutte"},{id:2,descrizione:"PAC"},{id:1,descrizione:"PAL"}];
-
+  const azioni = [{id:3,descrizione:"Tutte"},{id:2,descrizione:"Posticipate"},{id:1,descrizione:"Eliminate"}];
+  
   const [tipologiaFatture, setTipologiaFatture] = useState<string[]>([]);
   const [openModalAction, setOpenModalAction] = useState(false);
   const [openModalAdd, setOpenModalAdd] = useState(false);
   
   const [selected, setSelected] = useState<number[]>([]);
-  const [bodyGetLista, setBodyGetLista] = useState<BodyWhite>({
+  const [bodyGetLista, setBodyGetLista] = useState<GestioneFatture>({
     idEnti: [],
     tipologiaContratto:null,
     tipologiaFattura:null,
     anno: null,
-    mesi: []
+    mesi: [],
+    azione:null
   });
- 
+  
   const { 
     filters,
     updateFilters,
     resetFilters,
     isInitialRender
   } = useSavedFilters(PathPf.LISTA_DOC_EMESSI,{});
-
+  
   useEffect(()=>{
     getAnni();
   },[]);
-
-
+  
+  
   useEffect(()=>{
     if(!isInitialRender.current){
       updateFilters( {
@@ -99,7 +102,7 @@ const ListaDocEmessi : React.FC = () => {
     } 
   },[selected]);
   
-
+  
   useEffect(()=>{
     if(bodyGetLista.idEnti.length !== 0 || bodyGetLista.mesi.length !== 0 || bodyGetLista.tipologiaFattura !== null || bodyGetLista.tipologiaContratto !== null  ){
       setStatusAnnulla('show');
@@ -107,7 +110,7 @@ const ListaDocEmessi : React.FC = () => {
       setStatusAnnulla('hidden');
     }
   },[bodyGetLista]);
-
+  
   const getAnni = async(year = null, action = '' ) => {
     await getAnniWhite(token, profilo.nonce).then(async(res)=>{
       setArrayYears(res.data);
@@ -135,7 +138,8 @@ const ListaDocEmessi : React.FC = () => {
             tipologiaContratto:null,
             tipologiaFattura:null,
             anno: null,
-            mesi: []
+            mesi: [],
+            azione:null
           });
           setArrayMonths([]);
           setGridData([]);
@@ -146,24 +150,26 @@ const ListaDocEmessi : React.FC = () => {
             tipologiaContratto: null,
             tipologiaFattura:null,
             anno: year,
-            mesi: []
+            mesi: [],
+            azione:null
           };
           setBodyGetLista(bodyToSet);
           await getMesi(year);
           await getLista(1,10,bodyToSet);
         }else if(year && action === 'Delete' &&  !res.data.includes(year)){
-        
+          
           const bodyToSet = {
             idEnti: [],
             tipologiaContratto: null,
             tipologiaFattura:null,
             anno: res.data[0],
-            mesi: []
+            mesi: [],
+            azione:null
           };
           setBodyGetLista(bodyToSet);
           await getMesi(res.data[0]);
           await getLista(1,10,bodyToSet);
-                   
+          
         }else{
           setBodyGetLista((prev)=>({...prev,...{anno:res.data[0]}}));
           await getMesi(res.data[0]);
@@ -175,7 +181,7 @@ const ListaDocEmessi : React.FC = () => {
             mesi: []
           });
         }  
-                
+        
       }
       setGetListaLoading(false);
     }).catch((err)=>{
@@ -185,7 +191,7 @@ const ListaDocEmessi : React.FC = () => {
       manageError(err,dispatchMainState);
     });
   };
-    
+  
   const getMesi = async(y) => {
     setGetListaLoading(true);
     await getMesiWhite(token, profilo.nonce, {anno:y}).then((res)=>{
@@ -205,7 +211,7 @@ const ListaDocEmessi : React.FC = () => {
       isInitialRender.current = false;
     });
   };
-
+  
   useEffect(()=>{
     const timer = setTimeout(() => {
       if(textValue.length >= 3){ 
@@ -214,7 +220,7 @@ const ListaDocEmessi : React.FC = () => {
     }, 800);
     return () => clearTimeout(timer);
   },[textValue]);
-    
+  
   const listaEntiPageOnSelect = async () =>{
     await listaEntiNotifichePage(token, profilo.nonce, {descrizione:textValue} )
       .then((res)=>{
@@ -223,19 +229,19 @@ const ListaDocEmessi : React.FC = () => {
         manageError(err,dispatchMainState);
       }));
   };
-
-
+  
+  
   const getListTipologiaFattura = async() => {
     await getTipologiaFatturaWhite(token, profilo.nonce).then((res)=>{
       setTipologiaFatture([...["Tutte"],...res.data]);
-          
+      
     }).catch(((err)=>{
       setTipologiaFatture([]);
-
+      
       manageError(err,dispatchMainState);
     }));   
   };
-
+  
   const getLista = async(pg,row,body) => {
     setGetListaLoading(true);
     await getWhiteListPagoPa(token, profilo.nonce,pg,row,body).then((res)=>{
@@ -247,6 +253,7 @@ const ListaDocEmessi : React.FC = () => {
           mese:month[el.mese-1],
           tipologiaFatture:el.tipologiaFattura,
           tipoContratto:el.tipoContratto,
+          stato:Math.random() < 0.5 ? "Posticipata" : "Eliminata",
           cancella:el.cancella
         };
       });
@@ -260,7 +267,7 @@ const ListaDocEmessi : React.FC = () => {
       manageError(err,dispatchMainState);
     }));     
   };
-
+  
   const deleteElements = async (y) => {
     setGetListaLoading(true);
     resetFilters();
@@ -273,17 +280,17 @@ const ListaDocEmessi : React.FC = () => {
       manageError(err,dispatchMainState);
     });
   };
-
+  
   const onButtonAggiungi = async(yearAdd) => {
     resetFilters();
     getAnni(yearAdd, "Add");
   };
-
+  
   const clearOnChangeFilter = () => {
     setGridData([]);
     setSelected([]);
   };
-
+  
   const onButtonFiltra = () => {
     getLista(1,10,bodyGetLista);
     updateFilters(
@@ -301,8 +308,8 @@ const ListaDocEmessi : React.FC = () => {
     setRowsPerPage(10);
     setSelected([]);
   };
-
- 
+    
+    
   const onButtonAnnulla = () => {
     getLista(1,10,{
       idEnti: [],
@@ -316,14 +323,15 @@ const ListaDocEmessi : React.FC = () => {
       tipologiaContratto: null,
       tipologiaFattura:null,
       anno: arrayYears[0],
-      mesi: []
+      mesi: [],
+      azione:null
     });
     setValueAutocomplete([]);
     setValueSelectMonths([]);
     setTextValue('');
     resetFilters();
   };
-
+    
     
   const onDownload = async() => {
     setShowLoading(true);
@@ -341,7 +349,7 @@ const ListaDocEmessi : React.FC = () => {
         if(bodyGetLista.idEnti.length === 1 && bodyGetLista.mesi.length === 1){
           fileName = `White list Fatturazione/${dataSelect[0].descrizione}/${month[bodyGetLista?.mesi[0] -1]}/${bodyGetLista.anno}.xlsx`;
         }
-                
+          
         setShowLoading(true);
         saveAs(response,fileName);
         setShowLoading(false);
@@ -350,8 +358,8 @@ const ListaDocEmessi : React.FC = () => {
       manageError(err,dispatchMainState);
     } );
   };
-
-
+      
+      
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number,
@@ -369,7 +377,7 @@ const ListaDocEmessi : React.FC = () => {
       selected:selected
     });
   };
-                    
+      
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
@@ -385,30 +393,25 @@ const ListaDocEmessi : React.FC = () => {
       rows:parseInt(event.target.value, 10),
       selected:selected
     });
-    
+        
     getLista(1,parseInt(event.target.value, 10),bodyGetLista);                     
   };
-
+      
   const onButtonComfermaPopUp = () => {
     deleteElements(bodyGetLista.anno);
   };
-
+      
   const buttonsTopHeader =  [
-    {
-      stringIcon:"Elimina",
-      icon:<DeleteIcon sx={{ color: selected.length > 0 ? "#1976D2":"#A2ADB8" , cursor: 'pointer' }} />,
-      action:"Delete",
-    },
     {
       stringIcon:"Aggiungi",
       icon:<AddCircleIcon sx={{ color:selected.length === 0 ? "#1976D2" : "#A2ADB8", cursor: 'pointer' }} />,
       action:"Add"
     }];
-
-   
-
+        
+        
+        
   return (
-    <MainBoxStyled title={"White list"}>
+    <MainBoxStyled title={"Gestione Fatture"}>
       <ResponsiveGridContainer >
         <MainFilter 
           filterName={"select_value_string"}
@@ -497,12 +500,27 @@ const ListaDocEmessi : React.FC = () => {
           keyValue={"idEnte"}
           keyBody={"idEnti"}
         ></MainFilter>
+        <MainFilter 
+          filterName={"select_key_value"}
+          inputLabel={"Azioni"}
+          clearOnChangeFilter={clearOnChangeFilter}
+          setBody={setBodyGetLista}
+          body={bodyGetLista}
+          keyDescription={"descrizione"}
+          keyBody={"idTipoContratto"}
+          keyValue={"id"}
+          arrayValues={azioni}
+          defaultValue={3}
+          extraCodeOnChange={(e)=>{
+            const val = (Number(e) === 3) ? null : Number(e);
+            setBodyGetLista((prev)=>({...prev,...{azione:val}}));
+          }}
+        ></MainFilter>
       </ResponsiveGridContainer>
       <FilterActionButtons 
         onButtonFiltra={onButtonFiltra} 
         onButtonAnnulla={onButtonAnnulla} 
-        statusAnnulla={statusAnnulla} 
-      ></FilterActionButtons>
+        statusAnnulla={statusAnnulla}/>
       <ActionTopGrid
         actionButtonRight={[{
           onButtonClick:onDownload,
@@ -511,6 +529,7 @@ const ListaDocEmessi : React.FC = () => {
           icon:{name:"download"},
           disabled:(gridData.length === 0||getListaLoading)
         }]}/>
+      <EnhancedTableCustom setOpenModalAdd={setOpenModalAdd} selected={selected||[]} buttons={buttonsTopHeader} />
       <GridCustom
         nameParameterApi='idWhite'
         elements={gridData}
@@ -532,26 +551,25 @@ const ListaDocEmessi : React.FC = () => {
       <ModalAggiungi 
         getLista={onButtonAggiungi}
         open={openModalAdd}
-        setOpen={setOpenModalAdd} ></ModalAggiungi>
+        setOpen={setOpenModalAdd} />
       <ModalLoading 
         open={getListaLoading} 
         setOpen={setGetListaLoading}
-        sentence={'Loading...'} >
-      </ModalLoading>
+        sentence={'Loading...'} />
       <ModalLoading 
         open={showLoading} 
         setOpen={setShowLoading}
-        sentence={'Downloading...'} >
-      </ModalLoading>
+        sentence={'Downloading...'} />
       <ModalConfermaInserimento
         setOpen={setOpenModalAction}
         open={openModalAction}
         onButtonComfermaPopUp={onButtonComfermaPopUp}
         mainState={mainState}
         sentence={"Sei sicuro di voler procedere"}
-      ></ModalConfermaInserimento>
+      />
     </MainBoxStyled>
-      
+          
   );
 };
 export default ListaDocEmessi;
+      

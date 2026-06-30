@@ -40,7 +40,6 @@ const GridRowsRenderer = ({
   case 'idWhite':
     return (
       <RowWhiteList
-        key={Math.random()}
         element={element}
         headerNames={headerNames}
         setSelected={setSelected}

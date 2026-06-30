@@ -2,6 +2,7 @@ import { Switch, TableCell, TableRow, Tooltip, Typography } from "@mui/material"
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import { TipologiaContrattoConfig } from "../../../../assets/configurations/conf_GridTipologia";
+import { HeaderGridCustom } from "../gridCustom";
 
 
 const RowContratto = ({ apiGet, element, headerNames}: { apiGet:any; element: any; headerNames: TipologiaContrattoConfig[] }) => {
@@ -21,7 +22,7 @@ const RowContratto = ({ apiGet, element, headerNames}: { apiGet:any; element: an
       },
     }}   key={element.idEnte}>
       {
-        Object.values(headerNames).map((value:TipologiaContrattoConfig, i:number)=>{
+        Object.values(headerNames).map((value:HeaderGridCustom, i:number)=>{
          
           //const indexContractType =  Object.entries(sliced).findIndex(([key]) => key === 'tipoContratto');
           // stato per loa switch utilizzato nella page tipologia contratto

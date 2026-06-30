@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useState, useEffect } from 'react';
 import {
   List,
@@ -270,7 +270,7 @@ const SideNavSend : React.FC = () => {
               <ListItemIcon>
                 <FormatListBulletedIcon fontSize="inherit" />
               </ListItemIcon>
-              <ListItemText primary="White list" />
+              <ListItemText primary="Gestione Fatture" />
             </ListItemButton>
           </List>
         </Collapse> 

@@ -1,12 +1,13 @@
 import axios from "axios";
 import { url } from "../../api";
 
-export interface BodyWhite {
+export interface GestioneFatture {
     idEnti: string[]
     tipologiaContratto: number|null
     tipologiaFattura: string|null
     anno: number|null
-    mesi: number[]
+    mesi: number[],
+    azione:null|number
 }
 
 
@@ -41,7 +42,7 @@ export const getTipologiaFatturaWhite = async (token:string, nonce:string) => {
   return response;
 };
 
-export const getWhiteListPagoPa = async (token:string, nonce:string, page:number, pageSize:number, body:BodyWhite) => {
+export const getWhiteListPagoPa = async (token:string, nonce:string, page:number, pageSize:number, body:GestioneFatture) => {
   const response =  await axios.post(`${url}/api/fatture/pagopa/whitelist?page=${page}&pageSize=${pageSize}&nonce=${nonce}`,
     body,
     { headers: {
@@ -93,7 +94,7 @@ export const whiteListAdd = async (token:string, nonce:string,body:{mesi: string
   return response;
 };
 
-export const downloadWhiteListPagopa = async (token:string, nonce:string,body:BodyWhite) => {
+export const downloadWhiteListPagopa = async (token:string, nonce:string,body:GestioneFatture) => {
   const response = await fetch(`${url}/api/fatture/pagopa/whitelist/download?nonce=${nonce}`, 
     {
       headers: {
