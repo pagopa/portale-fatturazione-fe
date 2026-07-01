@@ -1,27 +1,29 @@
 import { TableCell, TableCellProps, TableRow, Tooltip } from "@mui/material";
-interface RowWhite {
+interface RowWhite<T = any> {
     element:any,
-    setSelected:any,
-    checkIfChecked:any,
-    selected:number[],
-    headerNames:{label:string,align:TableCellProps['align'],width:number|string,keyValue:string,
-    gridAction?:(fun:(id) => void,color:string,disabled:boolean,obj:any) => JSX.Element,
-    }[]
+    headerNames:{
+      label:string,
+      align:TableCellProps['align'],
+      width:number|string,
+      keyValue:string,
+      gridAction?:(fun:(obj:T,action:string) => void,color:string,disabled:boolean,obj:any) => JSX.Element,
+    }[],
+    setOpenModalAction?: (obj:T, action:string) => void;
 }
 
 
-const RowWhiteList :React.FC<RowWhite>  = ({element, setSelected,selected,checkIfChecked,headerNames}) => {
+const RowWhiteList :React.FC<RowWhite>  = ({element,headerNames,setOpenModalAction}) => {
 
-  const handleCheckSingleRow = () => {
-    if(checkIfChecked(element.idWhite)){
-      const newSelected =  selected.filter((el) => el !== element.idWhite);
-      setSelected(newSelected);
-    }else{
-      setSelected((prev)=>([...prev,...[element.idWhite]]));
-    }
-  };
-  console.log({headerNames});
+   let bgColorRow = "#FFF0F5"
 
+   if(element.stato === 'Eliminata'){
+      bgColorRow = "#FFF0F5";
+   }else if(element.stato === 'Posticipata'){
+      bgColorRow = "#FFFAF0";
+   }else if(element.stato === 'Ripristinata'){
+       bgColorRow = "#F0FFF0";
+   }
+ 
   const test = (a) => {
     return a;
   };
@@ -30,6 +32,7 @@ const RowWhiteList :React.FC<RowWhite>  = ({element, setSelected,selected,checkI
       height: '80px',
       borderTop: '4px solid #F2F2F2',
       borderBottom: '2px solid #F2F2F2',
+      //backgroundColor:bgColorRow,
       '&:hover': {
         backgroundColor: '#EDEFF1',
       },
@@ -45,7 +48,7 @@ const RowWhiteList :React.FC<RowWhite>  = ({element, setSelected,selected,checkI
               <TableCell
                 key={i}
                 align={headerNames[i]?.align}>
-                {headerNames[i]?.gridAction(test(1),"primary",false,element)}                
+                {headerNames[i]?.gridAction((obj, action) => setOpenModalAction?.(obj, action), "primary", false, element)}
               </TableCell>
             );
           }else{

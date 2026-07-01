@@ -11,8 +11,8 @@ import { ReactNode } from "react";
 
 
 export interface ModalInfoProps {
-    setOpen:(v: { open: boolean; sentence: string }) => void,
-    open:{open:boolean,sentence:string,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void,icon?:React.ElementType},
+    setOpen:(v: { open: boolean; sentence: React.ReactNode|string }) => void,
+    open:{open:boolean,sentence:React.ReactNode|string,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void,icon?:React.ElementType},
     width?:number,
     
 }

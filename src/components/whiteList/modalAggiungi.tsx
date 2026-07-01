@@ -28,16 +28,16 @@ const style = {
 };
 
 interface ModalAggiungiProps {
-    open:boolean,
-    setOpen:React.Dispatch<SetStateAction<boolean>>,
-    getLista:any
+  open:boolean,
+  setOpen:React.Dispatch<SetStateAction<boolean>>,
+  getLista:any
 }
 
 interface Bodyadd {
-    mesi: number[]
-    anno: number|null,
-    tipologiaFattura: string|null,
-    idEnte: string|null
+  mesi: number[]
+  anno: number|null,
+  tipologiaFattura: string|null,
+  idEnte: string|null
 }
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
@@ -60,6 +60,9 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
   const [arrayYears,setArrayYears] = useState<number[]>([]);
   const [arrayMonths,setArrayMonths] = useState<{descrizione:string,mese:number}[]>([]);
   const [showLoader, setShowLoader] = useState(false);
+  const [noteText, setNoteText] = useState('');
+  const [azioni, setAzioni] = useState(["Posticipa","Elimina"]);
+  const [azioneSelected, setAzioneSelected] = useState<string|null>(null);
   const [bodyAdd, setBodyAdd] = useState<Bodyadd>({
     mesi: [],
     anno: null,
@@ -189,6 +192,8 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
     setTextValue('');
   };
 
+  //TODO: SISTEMARE IL MODALE CON I FILTRI CUSTOM E TOGLI TUTTA LA LOGICA DAGLI USEEFFECT
+
   return (
     <div>
       <Modal
@@ -207,9 +212,35 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
               </div>
             </div>
           </div>
-          <div className="row mb-5 mt-5" >
+             <div className="row mb-5 mt-5" >
             <div  className="col-6">
-              <Autocomplete
+               <FormControl
+                fullWidth
+                size="medium"
+              >
+                <InputLabel>
+                                Azione  
+                </InputLabel>
+                <Select
+                  label='Azione'
+                  onChange={(e) => setAzioneSelected(e.target.value||null)}     
+                  value={azioneSelected||''}       
+                >
+                  {azioni.map((el,i) =>{ 
+                    return (            
+                      <MenuItem
+                        key={`${el}-${i}`}
+                        value={el}
+                      >
+                        {el}
+                      </MenuItem>              
+                    );
+                  } )}   
+                </Select>
+              </FormControl>
+            </div>
+            <div  className="col-6">
+ <Autocomplete
                 limitTags={1}
                 onChange={(event, value) => {
                   setBodyAdd((prev:any) => ({...prev,...{idEnte:value?.idEnte||null}}));
@@ -243,6 +274,9 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
                 }}
               />
             </div>
+            </div>
+          <div className="row mb-5 mt-5" >
+            
             <div className='col-6'>
               <FormControl
                 fullWidth
@@ -270,10 +304,8 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
                 </Select>
               </FormControl>
             </div>
-          </div>
-          <div className="row mb-5 mt-5" >
-            <div className="col-6">
-              <Box >
+            <div  className="col-6">
+             <Box >
                 <FormControl
                   fullWidth
                   size="medium"
@@ -302,6 +334,9 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
                 </FormControl>
               </Box>
             </div>
+          </div>
+          <div className="row mb-5 mt-5" >
+            
             <div className="col-6">
               <Autocomplete
                 limitTags={1}
@@ -336,6 +371,19 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
                 }}     
               />
             </div>
+            <div className="col-6">
+              <Box>
+                <TextField
+                  label="Nota"
+                  multiline
+                  minRows={2}
+                  fullWidth
+                  value={noteText}
+                  onChange={(e) => setNoteText(e.target.value)}
+                />
+              </Box>
+            </div>
+           
           </div>
           {!showLoader ?
             <div className='container_buttons_modal d-flex justify-content-center mt-5'>

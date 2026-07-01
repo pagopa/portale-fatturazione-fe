@@ -17,8 +17,7 @@ interface GridCustomProps<T = any> {
     apiGet?:(el: any)=>void 
     disabled:boolean
     widthCustomSize:string
-    setOpenModalDelete?:React.Dispatch<SetStateAction<boolean>>
-    setOpenModalAdd?:React.Dispatch<SetStateAction<boolean>>
+    setOpenModalAction?:(obj:any,action:string) => void
     selected?:number[]
     setSelected?:React.Dispatch<SetStateAction<number[]>>
     buttons?:{
@@ -27,7 +26,7 @@ interface GridCustomProps<T = any> {
         action:string
     }[],
     headerAction?:(val:number) =>void,
-    body?: any,
+    body?: T,
     paginationVisibile?:boolean,
     objectSort?:{[key:string]:number},
     sentenseEmpty?:string,
@@ -46,10 +45,12 @@ export interface HeaderGridCustom {
     headerAction?:boolean,
     headerTooltip?: (title: string, label: string, color: string) => JSX.Element,
     headerChip?: (title: string, label: string, color: string) => JSX.Element,
-    gridAction?:(fun:(id) => void,color:string,disabled:boolean,obj:any) => JSX.Element,
+    gridAction?:(fun:(obj:any,action:string) => void,color:string,disabled:boolean,obj:any) => JSX.Element,
     gridOpenDetail?:(disabled:boolean,open?:boolean,setOpen?:(val)=>void) => JSX.Element,
     headerActionSort?:boolean,
-    keyValue:string
+    keyValue:string,
+    renderValue?:(el,fun:(el,string) => any) => JSX.Element,
+    
 }
 
 
@@ -64,8 +65,7 @@ const GridCustom: React.FC<GridCustomProps> = ({
   nameParameterApi,
   apiGet,
   widthCustomSize,
-  setOpenModalDelete,
-  setOpenModalAdd,
+  setOpenModalAction,
   buttons,
   selected,
   setSelected,
@@ -131,6 +131,8 @@ const GridCustom: React.FC<GridCustomProps> = ({
                   sliced = Object.fromEntries(Object.entries(element).slice(4, -2));
                 } else if (nameParameterApi === 'docSospesiSend') {
                   sliced = Object.fromEntries(Object.entries(element).slice(2, -3));
+                }else if (nameParameterApi === 'docEmessiSend') {
+                  sliced = Object.fromEntries(Object.entries(element).slice(4,-1));
                 }
 
                 const elementKey = (element as Record<string, unknown>).id ?? Math.random();
@@ -147,6 +149,7 @@ const GridCustom: React.FC<GridCustomProps> = ({
                     selected={selected}
                     setSelected={setSelected}
                     checkIfChecked={checkIfChecked}
+                    setOpenModalAction={setOpenModalAction}
                   />
                 );
               })}

@@ -18,6 +18,9 @@ import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, Responsi
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
 import EnhancedTableCustom from "../../components/reusableComponents/grid/gridCustomBase/enhancedTabalToolbarCustom";
+import ModalShowInfo from "../../components/reusableComponents/modals/dialogInfo";
+import DialogInfo from "../../components/reusableComponents/modals/dialogInfo";
+import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
 
 
 
@@ -65,6 +68,9 @@ const ListaDocEmessi : React.FC = () => {
   const [totalElements, setTotalElements]  = useState(0);
   const [arrayYears,setArrayYears] = useState<number[]>([]);
   const [arrayMonths,setArrayMonths] = useState<{descrizione:string,mese:number}[]>([]);
+  const [showPopUpNota, setShowPopUpNota] = useState(false);
+  const [notes, setNotes] = useState<{IdNota:number,Testo:string,Data:Date}[]>([]);
+  const [openModalInfo, setOpenModalInfo] = useState<{open:boolean,sentence:React.ReactNode,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void,icon?:React.ElementType }>({open:false, sentence:''});
   const contratti = [{id:3,descrizione:"Tutte"},{id:2,descrizione:"PAC"},{id:1,descrizione:"PAL"}];
   const azioni = [{id:3,descrizione:"Tutte"},{id:2,descrizione:"Posticipate"},{id:1,descrizione:"Eliminate"}];
   
@@ -241,11 +247,34 @@ const ListaDocEmessi : React.FC = () => {
       manageError(err,dispatchMainState);
     }));   
   };
+
+
+  const notaMock = [
+
+  {
+
+    "IdNota": "B13C89FD-4C92-44BA-80C2-2435E91AD102",
+
+    "Testo": "Creazione di una fattura posticipata",
+
+    "Data": "2026-07-01T08:58:36.4713059Z"  },
+
+  {
+
+    "IdNota": "79E02493-65EA-4BB8-BC4C-4E3CC0DA3776",
+
+    "Testo": "Ripristino di una fattura posticipata",
+
+    "Data": "2026-07-01T08:58:42.3053355Z"  }
+
+]
   
   const getLista = async(pg,row,body) => {
     setGetListaLoading(true);
     await getWhiteListPagoPa(token, profilo.nonce,pg,row,body).then((res)=>{
-      const customObj = res.data.whitelist.map(el => {
+      const customObj = res.data.whitelist.map((el ,i) => {
+        //TODO: aggiungere LA LOGICA IN BASE ALLO STATO
+        const isEliminata = el.tipologiaFattura === "ACCONTO" || el.tipologiaFattura === "ANTICIPO" ? true : false;
         return {
           idWhite:el.id,
           ragioneSociale:el.ragioneSociale,
@@ -253,7 +282,8 @@ const ListaDocEmessi : React.FC = () => {
           mese:month[el.mese-1],
           tipologiaFatture:el.tipologiaFattura,
           tipoContratto:el.tipoContratto,
-          stato:Math.random() < 0.5 ? "Posticipata" : "Eliminata",
+          stato:isEliminata ? "Eliminata" : i % 2 === 0 ? "Posticipata" : "Ripristinata",
+          nota:notaMock,
           cancella:el.cancella
         };
       });
@@ -400,6 +430,29 @@ const ListaDocEmessi : React.FC = () => {
   const onButtonComfermaPopUp = () => {
     deleteElements(bodyGetLista.anno);
   };
+
+
+  const showPopUpAction = (obj, action) => {  
+    if(action === "nota"){
+      const sortedNotes = [...obj.nota].sort(
+        (a, b) => new Date(b.Data).getTime() - new Date(a.Data).getTime()
+       );
+      setNotes(sortedNotes);
+      setShowPopUpNota(true);
+    }else if(action === "ripristina"){
+      setOpenModalInfo({open:true, sentence: (
+    <>
+      Sei sicuro di voler <strong>Ripristinare</strong> la fattura selezionata?
+    </>
+  ),buttonIsVisible:true,labelButton:"Prosegui",actionButton:() => console.log("ripristina")});
+    }else if(action === "annulla"){
+       setOpenModalInfo({open:true, sentence: (
+    <>
+      Sei sicuro di voler <strong>Annullare</strong> la posticipazione della fattura selezionata?
+    </>
+  ),buttonIsVisible:true,labelButton:"Prosegui",actionButton:() => console.log("ANNULLA")});
+    }
+  }
       
   const buttonsTopHeader =  [
     {
@@ -541,11 +594,8 @@ const ListaDocEmessi : React.FC = () => {
         headerNames={headerNames}
         disabled={false}
         widthCustomSize="auto"
-        setOpenModalDelete={setOpenModalAction}
-        setOpenModalAdd={setOpenModalAdd}
+        setOpenModalAction={showPopUpAction}
         buttons={buttonsTopHeader}
-        selected={selected}
-        setSelected={setSelected}
         sentenseEmpty={"Non sono presenti documenti"}
       />
       <ModalAggiungi 
@@ -567,6 +617,15 @@ const ListaDocEmessi : React.FC = () => {
         mainState={mainState}
         sentence={"Sei sicuro di voler procedere"}
       />
+      <DialogInfo 
+        open={showPopUpNota}
+        onClose={setShowPopUpNota}
+        clearAction={()=>{setNotes([])}}
+        array={notes}
+        title="Storico Note"
+        sentenseEmptyArray="Nessuna nota disponibile."
+      />
+      <ModalInfo setOpen={setOpenModalInfo} open={openModalInfo}/>
     </MainBoxStyled>
           
   );

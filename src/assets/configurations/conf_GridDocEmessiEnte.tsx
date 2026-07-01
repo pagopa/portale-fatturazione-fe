@@ -2,43 +2,43 @@ import { HeaderGridCustom } from "../../components/reusableComponents/grid/gridC
 
 
 export const headersDocumentiEmessiEnte : HeaderGridCustom[] = [
-  {label:"",align:"center",width:"30px"},
-  {label:"Data Fattura",align:"center",width:"160px",headerActionSort:true},
-  {label:"Stato",align:"center",width:"100px"},
-  {label:"T. Fattura",align:"center",width:"100px"},
-  {label:"Ident.",align:"center",width:"100px",headerActionSort:true},
-  {label:"Tipo Contratto",align:"center",width:"100px"},
-  {label:"Tot.",align:"center",width:"100px",headerActionSort:true},
-  {label:"N. Fattura",align:"center",width:"150px",headerActionSort:true},
-  {label:"Tipo Documento",align:"center",width:"150px",headerActionSort:true},
-  {label:"Divisa",align:"center",width:"100px"},
-  {label:"M. Pagamento",align:"center",width:"100px"},
-  {label:"Split",align:"center",width:"100px"},
-  {label:"",align:"center",width:"80px"},
+  {label:"",keyValue:"",align:"center",width:"30px"},
+  {label:"Data Fattura",keyValue:"",align:"center",width:"160px",headerActionSort:true},
+  {label:"Stato",keyValue:"",align:"center",width:"100px"},
+  {label:"T. Fattura",keyValue:"",align:"center",width:"100px"},
+  {label:"Ident.",keyValue:"",align:"center",width:"100px",headerActionSort:true},
+  {label:"Tipo Contratto",keyValue:"",align:"center",width:"100px"},
+  {label:"Tot.",keyValue:"",align:"center",width:"100px",headerActionSort:true},
+  {label:"N. Fattura",keyValue:"",align:"center",width:"150px",headerActionSort:true},
+  {label:"Tipo Documento",keyValue:"",align:"center",width:"150px",headerActionSort:true},
+  {label:"Divisa",keyValue:"",align:"center",width:"100px"},
+  {label:"M. Pagamento",keyValue:"",align:"center",width:"100px"},
+  {label:"Split",keyValue:"",align:"center",width:"100px"},
+  {label:"",keyValue:"",align:"center",width:"80px"},
 
 ];
 
 export const headersDocumentiEmessiEnteCollapse : HeaderGridCustom[] = [
-  {label:"Numero Linea",align:"center",width:"100px"},
-  {label:"Codice Materiale",align:"center",width:"100px"},
-  {label:"Imponibile",align:"center",width:"100px"},
-  {label:"Periodo di riferimento",align:"center",width:"100px"},
-  {label:"Periodo di fatturazione",align:"center",width:"100px"},
+  {label:"Numero Linea",keyValue:"",align:"center",width:"100px"},
+  {label:"Codice Materiale",keyValue:"",align:"center",width:"100px"},
+  {label:"Imponibile",keyValue:"",align:"center",width:"100px"},
+  {label:"Periodo di riferimento",keyValue:"",align:"center",width:"100px"},
+  {label:"Periodo di fatturazione",keyValue:"",align:"center",width:"100px"},
     
 ];
 
 
 export const headersDocumentiEmessiEnteContestate : HeaderGridCustom[] = [
-  {label:"Data Fattura",align:"center",width:"160px",headerActionSort:true},
-  {label:"Stato",align:"center",width:"100px"},
-  {label:"T. Fattura",align:"center",width:"100px"},
-  {label:"Ident.",align:"center",width:"100px",headerActionSort:true},
-  {label:"Tipo Contratto",align:"center",width:"100px"},
-  {label:"Tot.",align:"center",width:"100px",headerActionSort:true},
-  {label:"N. Fattura",align:"center",width:"150px",headerActionSort:true},
-  {label:"Tipo Documento",align:"center",width:"150px",headerActionSort:true},
-  {label:"Divisa",align:"center",width:"100px"},
-  {label:"M. Pagamento",align:"center",width:"100px"},
-  {label:"Split",align:"center",width:"100px"}
+  {label:"Data Fattura",keyValue:"",align:"center",width:"160px",headerActionSort:true},
+  {label:"Stato",keyValue:"",align:"center",width:"100px"},
+  {label:"T. Fattura",keyValue:"",align:"center",width:"100px"},
+  {label:"Ident.",keyValue:"",align:"center",width:"100px",headerActionSort:true},
+  {label:"Tipo Contratto",keyValue:"",align:"center",width:"100px"},
+  {label:"Tot.",keyValue:"",align:"center",width:"100px",headerActionSort:true},
+  {label:"N. Fattura",keyValue:"",align:"center",width:"150px",headerActionSort:true},
+  {label:"Tipo Documento",keyValue:"",align:"center",width:"150px",headerActionSort:true},
+  {label:"Divisa",keyValue:"",align:"center",width:"100px"},
+  {label:"M. Pagamento",keyValue:"",align:"center",width:"100px"},
+  {label:"Split",keyValue:"",align:"center",width:"100px"}
 
 ];

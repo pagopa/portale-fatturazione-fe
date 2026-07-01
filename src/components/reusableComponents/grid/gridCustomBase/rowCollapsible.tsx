@@ -30,15 +30,13 @@ interface GridCollapsible{
         rowsPerPage:number,
         count:number
     },
-    headerNamesCollapse:HeaderCollapsible[]
+    headerNamesCollapse:HeaderCollapsible[],
+    setOpenModalAction:(obj:any,action:string) => void,
 }
 
 
-const RowCollapsible = ({sliced,element, headerNamesCollapse, apiGet}) => {
+const RowCollapsible = ({sliced,element, headerNamesCollapse, apiGet, headerNames, setOpenModalAction}) => {
   const [open, setOpen] = useState(false);
-
-      
- 
   return(
     <Fragment key={element.id}>
       <TableRow key={`tableRow-${element.id}-${element.idFattura}`} sx={{
@@ -72,6 +70,14 @@ const RowCollapsible = ({sliced,element, headerNamesCollapse, apiGet}) => {
                   </IconButton>
                 </TableCell>
               );
+            }else if(headerNames[i]?.renderValue){
+               return (
+                  <TableCell
+                    key={i}
+                    align={headerNames[i]?.align}>
+                    {headerNames[i]?.renderValue(element, (obj, action) => setOpenModalAction?.(obj, action))}              
+                  </TableCell>
+                    );
             }else if(value === "arrowDetails"){
               return (
                 <TableCell key={`expand-${element.id}-${i}`} align="center" onClick={()=>{apiGet && apiGet(element);}}>

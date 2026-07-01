@@ -8,18 +8,18 @@ import { saveAs } from "file-saver";
 import { month, statoInvio } from "../../reusableFunction/reusableArrayObj";
 import ModalSap from "../../components/fatturazione/modalSap";
 import { useNavigate } from "react-router";
-
 import useSavedFilters from "../../hooks/useSaveFiltersLocalStorage";
 import { PathPf } from "../../types/enum";
 import { downloadFatturePagopa, downloadFattureReportPagopa, fattureCancellazioneRipristinoPagoPa, fattureTipologiaSapPa, getAnniDocEmessiPagoPa, getFatturazionePagoPa, getMesiDocEmessiPagoPa, getTipologieContratto, getTipologieFaPagoPa, getTipologieFaPagoPaWithData } from "../../api/apiPagoPa/fatturazionePA/api";
 import { getMessaggiCount } from "../../api/apiPagoPa/centroMessaggi/api";
-import CollapsibleTable from "../../components/reusableComponents/grid/gridCollapsible/gridCustomCollapsibleWithCheckbox";
 import ModalConfermaRipristina from "../../components/fatturazione/modalConfermaRipristina";
 import ModalResetFilter from "../../components/fatturazione/modalResetFilter";
-import { headersObjGrid } from "../../assets/configurations/config_GridFatturazione";
+import {  headersObjGridDocemessiSend, headersObjGridDocemessiSendCollapse } from "../../assets/configurations/config_GridFatturazione";
 import { ActionTopGrid, FilterActionButtons, MainBoxStyled, RenderIcon, ResponsiveGridContainer } from "../../components/reusableComponents/layout/mainComponent";
 import MainFilter from "../../components/reusableComponents/mainFilter";
 import { useGlobalStore } from "../../store/context/useGlobalStore";
+import GridCustom from "../../components/reusableComponents/grid/gridCustom";
+import ModalInfo from "../../components/reusableComponents/modals/modalInfo";
 
 
 const Fatturazione : React.FC = () =>{
@@ -33,13 +33,8 @@ const Fatturazione : React.FC = () =>{
   const callLista = useRef(true);
   const callAnnulla = useRef(false);
   const navigate = useNavigate();
-  let profilePath; 
+  let profilePath = PathPf.FATTURAZIONE;
 
-  if(profilo.auth === 'PAGOPA'){
-    profilePath = PathPf.FATTURAZIONE;
-  }else{
-    profilePath = PathPf.FATTURAZIONE_EN;
-  }
 
   const [firstYearMonth, setFirstYearMonth] = useState<number[]>([]);
   const [gridData, setGridData] = useState<FattureObj[]>([]);
@@ -63,6 +58,12 @@ const Fatturazione : React.FC = () =>{
   const [valueMulitselectDateTipologie, setValueMultiselectDateTipologie] = useState<string[]>([]);
   const [arrayContratti, setArrayContratto] = useState<{id:number,descrizione:string}[]>([{id:3,descrizione:"Tutti"}]);
 
+   const [openModalInfo, setOpenModalInfo] = useState<{open:boolean,sentence:React.ReactNode,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void,icon?:React.ElementType }>({open:false, sentence:''});
+
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [count, setCount] = useState(0);
 
    
   const [bodyFatturazione, setBodyFatturazione] = useState<BodyFatturazione>({
@@ -208,6 +209,47 @@ const Fatturazione : React.FC = () =>{
         setDateTipologie([]);
       }));
   };
+ //TODO : la stessa funzione è utilizzata nei doc emessi lato ente , valutare se procedere con renderizzazione
+ //delle row tramite file config
+   const funcToMapElements = (obj:any) => {
+    return obj.map((obj, index) => ({
+      idFattura:obj.idfattura,
+      id: obj.identificativo ?? index,
+      istitutioID:obj.istitutioID,
+      inviata:obj.inviata,
+      arrow: '',
+      ragioneSociale: obj.ragionesociale || '--',
+      action:'action',
+      dataFattura: obj.dataFattura
+        ?  new Date(obj.dataFattura).toLocaleDateString('it-IT')
+        : '--',
+      stato: 'Emessa',
+      tipologiaFattura: obj.tipologiaFattura || "--",
+      identificativo: obj.identificativo,
+      tipocontratto: obj.tipocontratto === 'PAL'
+        ? 'PAC - PAL senza requisiti'
+        : 'PAC - PAL con requisiti',
+      totale: obj.totale.toLocaleString('de-DE', {
+        style: 'currency',
+        currency: 'EUR',
+      }),
+      numero: obj.numero,
+      tipoDocumento: obj.tipoDocumento,
+      divisa: obj.divisa,
+      metodoPagamento: obj.metodoPagamento,
+      split: obj.split ? 'Si' : 'No',
+      //nota:"qui ci sarà la nota",
+      arrowDetails: 'arrowDetails',
+      posizioni:obj?.posizioni ? obj?.posizioni.map(el => ({
+        numerolinea: el.numerolinea,
+        codiceMateriale: el.codiceMateriale,
+        imponibile:el.imponibile.toLocaleString("de-DE", { style: "currency", currency: "EUR" })  || '--',
+        periodoRiferimento: el.periodoRiferimento
+          ? el.periodoRiferimento : '--', 
+        periodoFatturazione:el?.periodoFatturazione || '--',
+      }))?.sort((a, b) => (a.numerolinea ?? 0) - (b.numerolinea ?? 0)):[],
+    }));
+  };
 
   const getlistaFatturazione = async (bodyToModify) => {
     let body = bodyToModify;
@@ -234,15 +276,11 @@ const Fatturazione : React.FC = () =>{
       }else{
         data = res.data.map(el => el?.fattura).filter(obj => dataString.includes(obj.dataFattura));
       } 
-      //ATTENZIONE :Tipo contratto è utilizzato come valore nella sezione dettaglio , 
-      //se bisogna modificare la label nella grid bisogna modificare anche la funzione al click sulla row grid che porta al dettaglio documento emesso 
-      if(data.length > 0){
-        data = data.map(fat =>{
-          fat.tipocontratto === 'PAL' ? fat.tipocontratto = 'PAC - PAL senza requisiti' : fat.tipocontratto = 'PAC - PAL con requisiti';
-          return fat;
-        } );
-      } 
-      setGridData(data);
+    
+      const customObjData : FattureObj[] = funcToMapElements(data)
+    
+      setCount(customObjData?.length || 0)
+      setGridData(customObjData);
       setShowLoadingGrid(false);
       setBodyFatturazioneDownload(body);
       callAnnulla.current = false;
@@ -439,6 +477,43 @@ const Fatturazione : React.FC = () =>{
   };
 
 
+    const handleGoToDetail = async(el) => {
+    let idTipoContratto = 0;
+    if(el.tipocontratto === "PAC - PAL senza requisiti"){
+      idTipoContratto = 1;
+    }else if(el.tipocontratto === "PAC - PAL con requisiti"){
+      idTipoContratto = 2;
+    }
+    if(idTipoContratto !== 0){
+      navigate(`${PathPf.PDF_REL}/documentiemessi/${el.idFattura}/${el.istitutioID}/${idTipoContratto}`);
+    }
+  }; 
+  const handleChangePage = () => {
+    console.log("cahange page")
+  }
+
+   const handleChangeRowsPerPage = () => {
+    console.log("cahange row")
+  }
+
+
+    const showPopUpAction = (obj, action) => {  
+      console.log({OBJ:obj, ACTION:action})
+    if(action === "posticipa"){
+      setOpenModalInfo({open:true, sentence: (
+    <>
+      Sei sicuro di voler <strong>Posticipare</strong> la fattura selezionata?
+    </>
+  ),buttonIsVisible:true,labelButton:"Prosegui",actionButton:() => console.log("ripristina")});
+    }else if(action === "elimina"){
+       setOpenModalInfo({open:true, sentence: (
+    <>
+      Sei sicuro di voler <strong>Eliminare</strong> la fattura selezionata?
+    </>
+  ),buttonIsVisible:true,labelButton:"Prosegui",actionButton:() => console.log("ANNULLA")});
+    }
+  }
+    
 
   const statusAnnulla = bodyFatturazione.idEnti.length !== 0 || 
      bodyFatturazione.tipologiaFattura.length !== 0 ||
@@ -636,28 +711,23 @@ const Fatturazione : React.FC = () =>{
           icon:{name:"download"},
           disabled:(gridData.length === 0)
         }]}/>
-              
-      <CollapsibleTable 
-        data={gridData}
-        headerNames={headersObjGrid}
-        stato={bodyFatturazioneDownload.cancellata}
-        setOpenConfermaModal={setOpenConfermaModal}
-        setOpenResetFilterModal={setOpenResetFilterModal}
-        monthFilterIsEqualMonthDownload={bodyFatturazione.mese === bodyFatturazioneDownload.mese}
-        selected={fattureSelected}
-        setSelected={setFattureSelected}
-        updateFilters={updateFilters}
-        pathPage={profilePath}
-        body={{
-          body:bodyFatturazioneDownload,
-          textValue:textValue,
-          valueAutocomplete:valueAutocomplete,
-          valueMulitselectTipologie:valueMulitselectTipologie,
-          fattureSelected:fattureSelected}}
-        infoPageLocalStorage={{page:filters.page,rows:filters.rows}}
-        firstRender={isInitialRender.current}
-        upadateOnSelctedChange={upadateOnSelctedChange}
-      />
+
+      <GridCustom
+        nameParameterApi='docEmessiSend'
+        elements={gridData}
+        changePage={handleChangePage}
+        changeRow={handleChangeRowsPerPage} 
+        total={count}
+        page={page}
+        rows={rowsPerPage}
+        headerNames={headersObjGridDocemessiSend}
+        headerNamesCollapse={headersObjGridDocemessiSendCollapse}
+        apiGet={handleGoToDetail}
+        disabled={showLoadingGrid}
+        widthCustomSize="2000px"
+        setOpenModalAction={showPopUpAction}
+        sentenseEmpty={"Non sono presenti Regolari esecuzioni/Documenti di cortesia"}
+      />  
       <ModalLoading 
         open={showLoadingGrid} 
         setOpen={setShowLoadingGrid}
@@ -687,6 +757,7 @@ const Fatturazione : React.FC = () =>{
         filterInfo={bodyFatturazioneDownload}
         filterNotExecuted={bodyFatturazione}
         getListaFatture={getlistaFatturazione}/>
+        <ModalInfo setOpen={setOpenModalInfo} open={openModalInfo}/>
     </MainBoxStyled>   
   );
 };

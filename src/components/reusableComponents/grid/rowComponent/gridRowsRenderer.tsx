@@ -10,7 +10,7 @@ import RowModCommessaPrevisionale from "../gridCustomBase/rowModCommessaPrevison
 import RowCollapsible from "../gridCustomBase/rowCollapsible";
 import { HeaderGridCustom } from "../gridCustom";
 
-interface GridRowsRendererProps {
+interface GridRowsRendererProps<T = any>{
   element: any;
   sliced: any;
   nameParameterApi: string;
@@ -20,6 +20,7 @@ interface GridRowsRendererProps {
   selected?: number[];
   setSelected?: React.Dispatch<React.SetStateAction<number[]>>;
   checkIfChecked?: (id: any) => boolean;
+  setOpenModalAction?: (obj:T, action:string) => void;
 }
 
 const GridRowsRenderer = ({
@@ -32,31 +33,27 @@ const GridRowsRenderer = ({
   selected,
   setSelected,
   checkIfChecked,
+  setOpenModalAction
 }: GridRowsRendererProps) => {
+
+  console.log({element})
   switch (nameParameterApi) {
   case 'idContratto':
     return <RowContratto key={Math.random()} apiGet={apiGet} element={element} headerNames={headerNames} />;
-
   case 'idWhite':
     return (
       <RowWhiteList
         element={element}
         headerNames={headerNames}
-        setSelected={setSelected}
-        selected={selected || []}
-        checkIfChecked={checkIfChecked}
+        setOpenModalAction={setOpenModalAction}
       />
     );
-
   case 'idOrchestratore':
     return <RowOrchestratore key={Math.random()} sliced={sliced} element={element} headerNames={headerNames} />;
-
   case 'asyncDocEnte':
     return <RowAsyncDoc key={Math.random()} sliced={sliced} headerNames={headerNames} element={element} apiGet={apiGet} />;
-
   case 'contestazionePage':
     return <RowContestazioni key={Math.random()} sliced={sliced} apiGet={apiGet} element={element} headerNames={headerNames} />;
-
   case 'modComTrimestrale':
   case 'idNotifica':
     return (
@@ -75,13 +72,16 @@ const GridRowsRenderer = ({
 
   case 'docEmessiEnte':
   case 'docSospesiSend':
+  case 'docEmessiSend':
     return (
       <RowCollapsible
         key={`${element.idFattura}-${element.id}`}
         sliced={sliced}
         element={element}
         headerNamesCollapse={headerNamesCollapse}
+        headerNames={headerNames}
         apiGet={apiGet}
+        setOpenModalAction={setOpenModalAction}
       />
     );
   default:
