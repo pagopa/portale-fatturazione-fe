@@ -71,6 +71,8 @@ const ListaDocEmessi : React.FC = () => {
   const [showPopUpNota, setShowPopUpNota] = useState(false);
   const [notes, setNotes] = useState<{IdNota:number,Testo:string,Data:Date}[]>([]);
   const [openModalInfo, setOpenModalInfo] = useState<{open:boolean,sentence:React.ReactNode,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void,icon?:React.ElementType }>({open:false, sentence:''});
+  const [textAreaValue, setTextAreaValue] = useState<string>('');
+
   const contratti = [{id:3,descrizione:"Tutte"},{id:2,descrizione:"PAC"},{id:1,descrizione:"PAL"}];
   const azioni = [{id:3,descrizione:"Tutte"},{id:2,descrizione:"Posticipate"},{id:1,descrizione:"Eliminate"}];
   
@@ -625,7 +627,13 @@ const ListaDocEmessi : React.FC = () => {
         title="Storico Note"
         sentenseEmptyArray="Nessuna nota disponibile."
       />
-      <ModalInfo setOpen={setOpenModalInfo} open={openModalInfo}/>
+      <ModalInfo 
+      setOpen={setOpenModalInfo}
+       open={openModalInfo}
+        width={600}
+        textAreaValue={textAreaValue}
+        setTextAreaValue={setTextAreaValue}
+        />
     </MainBoxStyled>
           
   );

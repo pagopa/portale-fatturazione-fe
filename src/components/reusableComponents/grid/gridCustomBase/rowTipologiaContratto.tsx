@@ -1,5 +1,4 @@
-import { Switch, TableCell, TableRow, Tooltip, Typography } from "@mui/material";
-import { Box } from "@mui/system";
+import { Box, Switch, TableCell, TableRow, Tooltip, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { TipologiaContrattoConfig } from "../../../../assets/configurations/conf_GridTipologia";
 import { HeaderGridCustom } from "../gridCustom";
@@ -28,11 +27,9 @@ const RowContratto = ({ apiGet, element, headerNames}: { apiGet:any; element: an
           // stato per loa switch utilizzato nella page tipologia contratto
           const cssFirstColum = i === 0 ? {color:'#0D6EFD', fontWeight: 'bold', cursor: 'pointer',width:"350px"} : null;
           const valueEl = (i === 0 && element[value["keyValue"]]?.toString().length > 50) ? element[value["keyValue"]]?.toString().slice(0, 47) + '...' : element[value["keyValue"]];
-          console.log({
-            ss:value["keyValue"]
-          });
+       
           if(value["keyValue"] === "tipoContratto"){
-            console.log("dentro");
+        
             return(
               apiGet &&  <TableCell key={Math.random()} align="center"> <Box 
                 sx={{

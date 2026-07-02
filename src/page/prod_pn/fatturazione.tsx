@@ -57,13 +57,14 @@ const Fatturazione : React.FC = () =>{
   const [dateTipologie, setDateTipologie] = useState<string[]>([]);
   const [valueMulitselectDateTipologie, setValueMultiselectDateTipologie] = useState<string[]>([]);
   const [arrayContratti, setArrayContratto] = useState<{id:number,descrizione:string}[]>([{id:3,descrizione:"Tutti"}]);
-
    const [openModalInfo, setOpenModalInfo] = useState<{open:boolean,sentence:React.ReactNode,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void,icon?:React.ElementType }>({open:false, sentence:''});
+   const [textAreaValue, setTextAreaValue] = useState<string>('');
 
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [count, setCount] = useState(0);
+  const [showedData, setShowedData] = useState<FattureObj[]>([]);
 
    
   const [bodyFatturazione, setBodyFatturazione] = useState<BodyFatturazione>({
@@ -281,6 +282,9 @@ const Fatturazione : React.FC = () =>{
     
       setCount(customObjData?.length || 0)
       setGridData(customObjData);
+
+      const elementsToShow = customObjData.slice(0, 10);
+      setShowedData(elementsToShow);
       setShowLoadingGrid(false);
       setBodyFatturazioneDownload(body);
       callAnnulla.current = false;
@@ -488,15 +492,37 @@ const Fatturazione : React.FC = () =>{
       navigate(`${PathPf.PDF_REL}/documentiemessi/${el.idFattura}/${el.istitutioID}/${idTipoContratto}`);
     }
   }; 
-  const handleChangePage = () => {
-    console.log("cahange page")
-  }
-
-   const handleChangeRowsPerPage = () => {
-    console.log("cahange row")
-  }
 
 
+    const handleChangePage = (
+      event: React.MouseEvent<HTMLButtonElement> | null,
+      newPage: number,
+    ) => {
+      setPage(newPage);
+          
+      const start = newPage * rowsPerPage;
+      const end = start + rowsPerPage;
+       
+      const elementsToShow = gridData.slice(start, end);
+      setShowedData(elementsToShow);
+  
+      upadateOnSelctedChange(newPage,rowsPerPage);
+    };
+                          
+    const handleChangeRowsPerPage = (
+      event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+      const newRows = parseInt(event.target.value, 10);
+  
+      setRowsPerPage(newRows);
+      setPage(0);
+  
+      const elementsToShow = gridData.slice(0, newRows);
+      setShowedData(elementsToShow);
+      upadateOnSelctedChange(0,newRows);
+    };
+
+    
     const showPopUpAction = (obj, action) => {  
       console.log({OBJ:obj, ACTION:action})
     if(action === "posticipa"){
@@ -714,7 +740,7 @@ const Fatturazione : React.FC = () =>{
 
       <GridCustom
         nameParameterApi='docEmessiSend'
-        elements={gridData}
+        elements={showedData}
         changePage={handleChangePage}
         changeRow={handleChangeRowsPerPage} 
         total={count}
@@ -757,7 +783,13 @@ const Fatturazione : React.FC = () =>{
         filterInfo={bodyFatturazioneDownload}
         filterNotExecuted={bodyFatturazione}
         getListaFatture={getlistaFatturazione}/>
-        <ModalInfo setOpen={setOpenModalInfo} open={openModalInfo}/>
+        <ModalInfo 
+         setOpen={setOpenModalInfo}
+         open={openModalInfo}
+         width={600}
+         textAreaValue={textAreaValue}
+         setTextAreaValue={setTextAreaValue}
+          />
     </MainBoxStyled>   
   );
 };

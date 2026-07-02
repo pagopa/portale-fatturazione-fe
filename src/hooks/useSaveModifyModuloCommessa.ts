@@ -28,7 +28,7 @@ function useSaveModifyModuloCommessa({
   const [loadingData, setLoadingData] = useState(true);
   const [isEditAllow, setisEditAllow] = useState<boolean>(false);
   const [openModalLoading, setOpenModalLoading] = useState(false);
-  const [openModalInfo, setOpenModalInfo] = useState<{open:boolean,sentence:string,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void,icon?:React.ElementType }>({open:false, sentence:''});
+  const [openModalInfo, setOpenModalInfo] = useState<{open:boolean,sentence:string|React.ReactNode,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void,icon?:React.ElementType }>({open:false, sentence:''});
   const [dataObbligatori, setDataObbligatori] = useState(false);
   const [dataModuli, setDataModuli] = useState<ModuloCommessaType[]>([]);
   const [dataTotali, setDataTotali] = useState<TotaleCommessa[]>([]);

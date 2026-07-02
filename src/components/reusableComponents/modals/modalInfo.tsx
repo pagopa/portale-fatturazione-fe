@@ -2,22 +2,19 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { Dispatch, SetStateAction } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
-import { Button } from '@mui/material';
-import { ReactNode } from "react";
-
-
-
+import { Button, TextField } from '@mui/material';
 
 export interface ModalInfoProps {
     setOpen:(v: { open: boolean; sentence: React.ReactNode|string }) => void,
     open:{open:boolean,sentence:React.ReactNode|string,buttonIsVisible?:boolean|null,labelButton?:string,actionButton?:()=>void,icon?:React.ElementType},
     width?:number,
+    textAreaValue?:string,
+    setTextAreaValue?:(v:string)=>void
     
 }
 
-const ModalInfo : React.FC<ModalInfoProps> = ({setOpen, open,width}) => {
+const ModalInfo : React.FC<ModalInfoProps> = ({setOpen, open,width,textAreaValue,setTextAreaValue}) => {
    
   const handleClose = () =>{
     setOpen({open:false, sentence:''});
@@ -59,6 +56,20 @@ const ModalInfo : React.FC<ModalInfoProps> = ({setOpen, open,width}) => {
             {open.sentence}
           </Typography>
         </div> 
+    
+        {setTextAreaValue && (
+          <Box sx={{ mt: 2 }}>
+            <TextField
+              label="Inserisci una nota (opzionale)"
+              multiline
+              minRows={2}
+              fullWidth
+              value={textAreaValue}
+              onChange={(e) => setTextAreaValue && setTextAreaValue(e.target.value)}
+            />
+          </Box>
+        )}
+        
         {open?.buttonIsVisible &&
                     <div className='d-flex justify-content-evenly text-center mt-5'>
                       <Button variant="outlined" onClick={handleClose}>Annulla</Button>
