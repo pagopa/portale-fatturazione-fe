@@ -241,6 +241,7 @@ const ModalAggiungi : React.FC<ModalAggiungiProps> = ({open,setOpen,getLista}) =
             </div>
             <div  className="col-6">
               <Autocomplete
+                disabled={azioneSelected === null || azioneSelected === ""}
                 limitTags={1}
                 onChange={(event, value) => {
                   setBodyAdd((prev:any) => ({...prev,...{idEnte:value?.idEnte||null}}));

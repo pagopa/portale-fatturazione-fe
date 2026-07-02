@@ -380,7 +380,6 @@ const DocSospesiSend : React.FC = () =>{
       
       saveAs(blob,title);
     } catch (err) {
-      console.log({err});
       manageErrorDownload('404',dispatchMainState);
     }finally{
       setShowDownloading(false);

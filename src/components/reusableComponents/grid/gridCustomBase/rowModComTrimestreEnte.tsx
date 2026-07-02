@@ -6,11 +6,7 @@ import { subHeaderNameModComTrimestraleENTE } from "../../../../assets/configura
 
 const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element}) => {
   
-    
   const [open, setOpen] = useState(false);
-    
-    
-
   const isOpenOnStart = element.moduli.filter(el => el.source === "obbligatorio").length > 0;
 
   useEffect(()=>{
@@ -19,7 +15,6 @@ const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element}) 
 
 
   let chipBgColor = "#A2ADB8";
-    
   if(sliced.stato === "Completo"){
     chipBgColor = "#6CC66A";
   }
@@ -35,9 +30,7 @@ const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element}) 
         borderBottom: "2px solid #F2F2F2"
       }} 
       key={element.id}>
-        { Object.values(sliced).map((value:any, i:number)=>{
-                    
-                    
+        { Object.values(sliced).map((value:any, i:number)=>{           
           if(headerNames[i]?.headerTooltip){
             return (
               <TableCell
@@ -67,9 +60,8 @@ const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element}) 
                             
               <TableCell
                 align={headerNames[i]?.align}>
-                <Typography style={{ fontSize: "1rem", fontWeight: 600 }} variant="caption-semibold">{value}</Typography>   
-              </TableCell>
-                        
+                <Typography style={{ fontSize: "1rem", fontWeight: 600 }} >{value}</Typography>   
+              </TableCell>         
             );
           }
         })
@@ -96,13 +88,11 @@ const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element}) 
                   {element.moduli.map(el => {
                     return(
                                         
-                      <DefaultRow key={element?.id} handleClickOnGrid={handleClickOnGrid} element={el} sliced={el} apiGet={goToDetails}  headerNames={subHeaderNameModComTrimestraleENTE}></DefaultRow>
+                      <DefaultRow key={element?.id} element={el} sliced={el} apiGet={goToDetails}  headerNames={subHeaderNameModComTrimestraleENTE} nameParameterApi={""}/>
                     );
                   })}
                 </TableBody>
-              </Table>
-                        
-                           
+              </Table>          
             </Box>
           </Collapse>
         </TableCell>
@@ -110,24 +100,5 @@ const RowModComTrimestreEnte = ({sliced,headerNames,handleClickOnGrid,element}) 
     </>
   );
 };
-
-
 export default RowModComTrimestreEnte;
-
-
-                                
-                                
-                                  
-{/* 
-                                    <TableRow>
-                                        <TableCell align="center">{mesiGrid[element.mese-1]||''}</TableCell>
-                                        <TableCell align="center">{element.anno}</TableCell>
-                                        <TableCell align="center">{element.stato||'--'}</TableCell>
-                                        <TableCell align="center">{element.dataModifica||'--'}</TableCell>
-                                        <TableCell align="center">{element.prodotto||'--'}</TableCell>
-                                        <TableCell align="center">{element.totale ||'--'}</TableCell>
-                                        <TableCell align="center">{element.totaleDigitale||'--'}</TableCell>
-                                        <TableCell align="center">{element.totaleAnalogico ||'--'}</TableCell>
-                                    </TableRow>
-                                    */}
                         

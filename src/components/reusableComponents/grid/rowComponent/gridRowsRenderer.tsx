@@ -36,7 +36,6 @@ const GridRowsRenderer = ({
   setOpenModalAction
 }: GridRowsRendererProps) => {
 
-  console.log({element})
   switch (nameParameterApi) {
   case 'idContratto':
     return <RowContratto key={Math.random()} apiGet={apiGet} element={element} headerNames={headerNames} />;

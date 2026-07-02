@@ -628,8 +628,8 @@ const ListaDocEmessi : React.FC = () => {
         sentenseEmptyArray="Nessuna nota disponibile."
       />
       <ModalInfo 
-      setOpen={setOpenModalInfo}
-       open={openModalInfo}
+        setOpen={setOpenModalInfo}
+        open={openModalInfo}
         width={600}
         textAreaValue={textAreaValue}
         setTextAreaValue={setTextAreaValue}

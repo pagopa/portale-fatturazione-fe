@@ -524,7 +524,6 @@ const Fatturazione : React.FC = () =>{
 
     
     const showPopUpAction = (obj, action) => {  
-      console.log({OBJ:obj, ACTION:action})
     if(action === "posticipa"){
       setOpenModalInfo({open:true, sentence: (
     <>

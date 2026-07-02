@@ -24,7 +24,7 @@ export const headerNames: WhiteListConfig[] = [
     gridAction:(fun:(obj:any,action:string) => void,color:string,disabled:boolean,obj:any) => {
 
   let colorChip:string|undefined = undefined;
-  console.log('obj.stato',obj.stato)
+
   if(obj.stato === "Ripristinata"){
     colorChip = '#B5E2B4'
   }else if(obj.stato === "Posticipata"){
@@ -68,7 +68,6 @@ export const headerNames: WhiteListConfig[] = [
             <IconButton
               size="medium"
               onClick={() =>{
-                console.log("2222",fun)
                 fun && fun(obj,'ripristina')
               } }
               disabled={disabled}
